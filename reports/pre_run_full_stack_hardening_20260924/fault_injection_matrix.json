@@ -1,0 +1,24 @@
+{
+  "real_provider_calls": 0,
+  "scenarios": [
+    {"fault":"summary temporary write","expected":"ABORTED/FAILED_START, never COMPLETE without valid summary","result":"PASS","test":"test_pre_run_faults.py::test_finalization_fault_never_publishes_complete_without_summary"},
+    {"fault":"summary atomic replacement","expected":"no COMPLETE without summary","result":"PASS","test":"test_pre_run_faults.py::test_finalization_fault_never_publishes_complete_without_summary"},
+    {"fault":"summary read-back","expected":"no COMPLETE on invalid/missing read-back","result":"PASS","test":"test_pre_run_faults.py::test_finalization_fault_never_publishes_complete_without_summary"},
+    {"fault":"terminal lifecycle temporary write","expected":"summary remains valid; terminal state cannot falsely claim COMPLETE","result":"PASS","test":"test_pre_run_faults.py::test_finalization_fault_never_publishes_complete_without_summary"},
+    {"fault":"terminal lifecycle atomic replacement","expected":"summary remains valid; lifecycle cannot become impossible COMPLETE","result":"PASS","test":"test_pre_run_faults.py::test_finalization_fault_never_publishes_complete_without_summary"},
+    {"fault":"ledger append persistence","expected":"poison ledger, release reservation, no further provider work","result":"PASS","test":"test_pre_run_faults.py::test_ledger_failure_poisons_and_releases_reservation"},
+    {"fault":"two retryable transport failures then success","expected":"three physical attempts, one success, no reservation leak","result":"PASS","test":"test_pre_run_faults.py::test_real_solver_transport_retry_rows_reconcile"},
+    {"fault":"nonretryable transport failure","expected":"one failed physical attempt, no duplicate request","result":"PASS","test":"test_pre_run_faults.py::test_real_solver_transport_retry_rows_reconcile"},
+    {"fault":"transport timeout","expected":"bounded retry and durable failure accounting","result":"PASS","test":"test_pre_run_faults.py::test_real_solver_transport_retry_rows_reconcile"},
+    {"fault":"post-success reflection source callback","expected":"one successful physical call, no failed retry","result":"PASS","test":"test_pre_run_faults.py::test_reflection_post_provider_callback_failure_is_one_success_no_retry"},
+    {"fault":"malformed successful reflection response","expected":"one successful physical call; no retry","result":"PASS","test":"test_pre_run_faults.py::test_reflection_malformed_provider_response_is_success_not_failed_retry"},
+    {"fault":"post-success Solver parse or response extraction","expected":"durable one-success accounting and no repeated external request","result":"PASS","test":"test_pre_run_faults.py::test_solver_post_provider_parser_failure_does_not_retry_or_lose_success; test_malformed_success_response_is_durable_without_retry"},
+    {"fault":"eight concurrent requests near global success ceiling","expected":"no overshoot","result":"PASS","test":"test_pre_run_faults.py::test_eight_concurrent_solver_requests_never_overshoot_shared_success_ceiling"},
+    {"fault":"legacy source-freeze environment poison from three CWDs","expected":"pre-provider rejection, no constructor/attempt","result":"PASS","test":"test_pre_run_faults.py::test_legacy_environment_poison_rejected_by_real_cli_fresh_process"},
+    {"fault":"stale run or .starting root","expected":"reject before authorization consumption","result":"PASS","test":"test_pre_run_faults.py::test_stale_local_state_rejected_before_authorization"},
+    {"fault":"missing/corrupt completed-run artifacts","expected":"offline auditor HOLD, never uncaught success","result":"PASS","test":"test_pre_run_faults.py::test_incomplete_offline_evidence_is_hold"},
+    {"fault":"TeamMiniBatch failure after local acceptance","expected":"mandatory diagnostic Full, no ordinary promotion or commit","result":"PASS","test":"test_online_transfer_full_fake.py::test_mandatory_diagnostic_full_after_real_minibatch_failure"},
+    {"fault":"ordinary promoted Full then Shadow failure","expected":"no commit; no diagnostic double-Full","result":"PASS","test":"test_online_transfer_full_fake.py::test_ordinary_promoted_full_then_shadow_failure"},
+    {"fault":"emergency interruptions and stop-rule paths","expected":"aborted/incomplete, not scientific TARGET_NOT_REACHED, with frozen sample ceilings","result":"PASS","test":"test_online_transfer_diagnostic.py::test_emergency_ceiling_marks_incomplete_attempt_aborted; test_frozen_target_and_proposal_stop_rules; test_dynamic_preopportunity_stop_uses_no_extra_parent_or_provider"}
+  ]
+}

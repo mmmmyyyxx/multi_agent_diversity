@@ -1,0 +1,16 @@
+{
+  "scope": "production-reachable environment and working-directory dependencies",
+  "dependencies": [
+    {"name":"LWJ_DASHSCOPE_API_KEY","status":"required only for authorized real execution; exact provider binding validated pre-client; fake rehearsals use injected transport","test":"provider binding/preflight tests"},
+    {"name":"LWJ_DASHSCOPE_BASE_URL","status":"must match frozen endpoint fingerprint; no generic credential or endpoint fallback","test":"provider poison/preflight tests"},
+    {"name":"DASHSCOPE_PROVIDER_PROFILE","status":"frozen manifest must select lwj; myx poison cannot override","test":"provider binding tests"},
+    {"name":"DASHSCOPE_API_KEY and generic base URL","status":"not sufficient for lwj authorization","test":"provider poison tests"},
+    {"name":"V17_FORMAL_SOURCE_FREEZE","status":"rejected pre-provider in unified runtime; sitecustomize monkey-patch skipped","test":"fresh-process poison from repository/scripts/unrelated CWD"},
+    {"name":"V16_M2F_ONLINE_SOURCE_FREEZE","status":"rejected pre-provider in unified runtime; sitecustomize monkey-patch skipped","test":"fresh-process poison from repository/scripts/unrelated CWD"},
+    {"name":"PYTHONPATH/sitecustomize","status":"unified CLI skips historical hook; normal imports anchored to repository source","test":"fresh-process CLI and poison tests"},
+    {"name":"GEPA source/root environment","status":"pinned official source identity checked by frozen source/preflight; no algorithm-core mutation","test":"GEPA pin tests and long native-run rehearsal"},
+    {"name":"current working directory","status":"relative prep/run arguments resolved against repository root","test":"fresh-process cross-CWD poison and CLI composition tests"}
+  ],
+  "implicit_provider_fallback": false,
+  "unvalidated_behavior_affecting_environment_dependencies": []
+}

@@ -1,0 +1,24 @@
+{
+  "entry": "scripts/run_experiment.py --execute",
+  "experiment": "gepa_layer2_local_to_team_transfer_diagnostic_v2",
+  "nodes": [
+    {"module":"scripts/run_experiment.py","classification":"PRODUCTION_ACTIVE","role":"CLI preflight, readiness, admission, final summary and lifecycle"},
+    {"module":"multi_dataset_diverse_rl/governance/production_execution.py","classification":"PRODUCTION_ACTIVE","role":"freeze and authorization validation, local readiness, RUNNING/terminal events"},
+    {"module":"multi_dataset_diverse_rl/production_transfer_diagnostic.py","classification":"PRODUCTION_ACTIVE","role":"initialization, dynamic opportunities, candidate funnel, stop and summary"},
+    {"module":"multi_dataset_diverse_rl/team_search/controller.py; primary_responsibility_scheduler.py; primary_responsibility_binding.py; task_builder.py","classification":"SHARED_PRODUCTION","role":"current-parent responsibility, assignment and immutable Layer-2 local task construction"},
+    {"module":"multi_dataset_diverse_rl/team_search/candidate_evaluator.py; progressive_evaluation.py; candidate_selector.py; system_runtime.py","classification":"SHARED_PRODUCTION","role":"TeamMiniBatch, mandatory diagnostic Full, ordinary Full, Common-Safe, Shadow, selection and atomic team transition"},
+    {"module":"multi_dataset_diverse_rl/evaluation/categorical_profiles.py; endpoint_identifiability.py; fixed_probe.py","classification":"SHARED_PRODUCTION","role":"five-member initialization state and categorical evidence"},
+    {"module":"multi_dataset_diverse_rl/team_search/execution_runtime.py","classification":"SHARED_PRODUCTION","role":"common Solver transport, exact-request cache, ledger and stage attribution"},
+    {"module":"multi_dataset_diverse_rl/evaluation/prompt_question.py","classification":"SHARED_PRODUCTION","role":"run-scoped prompt/question cache and logical cache-hit accounting"},
+    {"module":"infrastructure/common_solver_contract_v1/evaluator.py","classification":"SHARED_PRODUCTION","role":"frozen Solver serialization, retry, parse and cache"},
+    {"module":"multi_dataset_diverse_rl/llm_client.py","classification":"SHARED_PRODUCTION","role":"reflection transport, retry and physical usage"},
+    {"module":"multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py","classification":"PRODUCTION_ACTIVE","role":"official pinned GEPA adapter and local empirical evaluation"},
+    {"module":"multi_dataset_diverse_rl/local_optimizers/gepa_callbacks.py","classification":"PRODUCTION_ACTIVE","role":"GEPA lineage and proposal diagnostics"},
+    {"module":"multi_dataset_diverse_rl/persistence/artifacts.py","classification":"SHARED_PRODUCTION","role":"categorical profiles, endpoint identifiability, CSV/JSON/JSONL artifacts"},
+    {"module":"multi_dataset_diverse_rl/persistence/durable_io.py","classification":"SHARED_PRODUCTION","role":"single Windows-safe file path, durable append and atomic replace"},
+    {"module":"scripts/audit_online_transfer_diagnostic.py","classification":"PRODUCTION_ACTIVE","role":"read-only completed-run integrity audit"},
+    {"module":"scripts/sitecustomize.py","classification":"HISTORICAL_NOT_REACHABLE","role":"legacy monkey-patch skipped for unified CLI; legacy variables rejected by governance"},
+    {"module":"historical v15-v17 and MARS/SEPO runners","classification":"HISTORICAL_NOT_REACHABLE","role":"not changed by this task"}
+  ],
+  "ordered_path": ["validate_execution","validate_local_readiness","admit_execution","provider construction","5x100 initialization","initial team/profile artifacts","Layer2 responsibility and packet","official GEPA reflection/proposal","candidate Solver and local delta","TeamMiniBatch","mandatory diagnostic Full on failure","ordinary Full on promotion","Common-Safe","Shadow","commit and changed parent","next opportunity/stop","summary atomic persistence/read-back","terminal lifecycle","offline auditor"]
+}

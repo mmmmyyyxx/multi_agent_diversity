@@ -1,0 +1,12 @@
+{
+  "platform": "native Windows filesystem and Python process",
+  "real_provider_calls": 0,
+  "frozen_scientific_method_changed": false,
+  "windows_long_path_matrix": {"lengths":[259,260,261,320,512],"spaces":true,"non_ascii":true,"write_json":true,"write_jsonl":true,"write_csv":true,"append_jsonl":true,"read_back":true,"cleanup":true,"result":"PASS"},
+  "pinned_official_gepa_long_run_dir": {"fake_evaluator":true,"fake_reflection":true,"official_search_core_modified":false,"result":"PASS"},
+  "complete_full_stack_fake_rehearsals": {"independent_native_windows_roots":3,"completed":3,"initialization_logical_rows_each":500,"initial_profiles_each":5,"reflection_and_changed_candidate":true,"candidate_solver_reached":true,"local_accept":true,"ordinary_full_common_safe_shadow":true,"commits":true,"changed_second_parent":true,"offline_auditor":"PASS 3/3","leaked_temp_state":0,"result":"PASS"},
+  "fresh_process_real_cli": {"entry":"scripts/run_experiment.py main()","external_network":false,"complete":true,"offline_auditor":"PASS","result":"PASS"},
+  "additional_funnels": {"minibatch_fail_diagnostic_full":"PASS","promoted_full_shadow_fail":"PASS","ordinary_commit_next_parent":"PASS","same_process_twice_identity_isolation":"PASS"},
+  "test50_calls":0,
+  "validation50_calls":0
+}
