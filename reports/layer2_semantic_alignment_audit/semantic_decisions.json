@@ -1,0 +1,18 @@
+{
+  "status": "SCIENTIFIC_DECISION_REQUIRED",
+  "requested_semantics": {
+    "raw_legal_overlap": "confirmed_in_current_layer2_path",
+    "primary_not_exclusive": "confirmed_in_allocation",
+    "coalition_as_independent_evidence": "must_be_removed_from_new_path_but_frozen_v1_conflicts",
+    "team_minibatch": "requested_4_repair_4_preservation_4_team_hard_conflicts_with_frozen_v1",
+    "initialization": "shared_identical_retained",
+    "score_tie_break": "requested_seed_independent_conflicts_with_frozen_v1_seed_rr_policy"
+  },
+  "unresolved_decisions": [
+    "Confirm a new versioned opt-in Layer-2 contract while preserving frozen V1 protocols and historical replay.",
+    "Define how vulnerable currently-correct preservation rows are identified and ordered without introducing a new scientific mechanism."
+  ],
+  "scientific_method_changed": false,
+  "requires_new_freeze_if_implemented": true,
+  "ready_for_experiment_freeze": false
+}

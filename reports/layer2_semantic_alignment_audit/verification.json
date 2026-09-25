@@ -1,0 +1,16 @@
+{
+  "status": "BLOCKED_BEFORE_IMPLEMENTATION",
+  "focused_test": {
+    "command": "python -m pytest -q tests/test_layer2_raw_responsibility.py",
+    "result": "2 passed"
+  },
+  "full_tests": "not_run_no_implementation",
+  "compileall": "not_run_no_implementation",
+  "sanitization": "report_contains_only_source_references_and_categories",
+  "hash_replay": "not_run_no_new_freeze",
+  "git_diff_check": "passed_for_tracked_changes; audit-only new files are untracked",
+  "api_calls": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "historical_artifacts_modified": false
+}
