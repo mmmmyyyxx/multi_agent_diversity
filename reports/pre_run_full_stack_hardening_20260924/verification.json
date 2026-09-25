@@ -29,6 +29,7 @@
   "offline_auditor": "PASS on completed fake runs; HOLD on deliberate corruption",
   "source_and_freeze_replay": "PASS",
   "preflight": "PREREGISTERED_NOT_EXECUTED, zero provider/Validation/Test calls",
+  "exact_source_checkout_preflight": "PASS from clean detached e907477 execution checkout; current report-only main HEAD intentionally fails source identity",
   "sanitization_scan": "PASS",
   "git_diff_check": "PASS",
   "commands": [

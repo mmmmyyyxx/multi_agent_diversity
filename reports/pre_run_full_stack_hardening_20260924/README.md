@@ -14,6 +14,8 @@ The full test suite finished at `1336 passed, 1 skipped, 15 failed, 13 errors`. 
 
 The new freeze identity is recorded in `verification.json` after the source commit. `READY_FOR_AUTHORIZATION` does **not** authorize execution. Only a separate, explicit one-time user authorization can permit the real diagnostic.
 
+The prep is bound to execution source `e9074773562bf9b15e62401bf0750bc23169a544`. The later report-only `main` commit is not an execution checkout: preflight from that HEAD correctly rejects `execution source mismatch`. A clean detached checkout of the exact source commit independently replayed the prep and returned `PREREGISTERED_NOT_EXECUTED` with the same preregistration and run-identity hashes. Any future authorized execution must use that exact source checkout; this task did not execute it.
+
 ## Evidence map
 
 - `issue_inventory.json`: all observed issues, severity, fix, and regression proof.

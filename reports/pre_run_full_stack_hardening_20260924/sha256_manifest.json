@@ -3,13 +3,13 @@
   "text_normalization": "CRLF_to_LF_before_hash",
   "scope": "report files excluding this self-referential manifest",
   "files": {
-    "README.md": "323ef10d63be03d263825a01b6ad3fc0d6e14201d26e90ab558d520acdce5be0",
+    "README.md": "5a01de6cc8a50425cb47ae70fd240798b3a41e5b4ab0ccb92b854087c82f2c21",
     "active_graph.json": "0c038ae93e8a2d6f576354c266cd3d8fdcc0ca1dc9ad3601416c93251ec17107",
     "environment_dependency_inventory.json": "1ed17d7df90e00530ff4309e9161340f3598947b0c2fcff986e559388d21e873",
     "fault_injection_matrix.json": "30facf7b5d0cfebd31ec3c0c4fe8a62fc9253e8d0f793d75416d26281dd8a638",
     "filesystem_side_effect_inventory.json": "21178002f2ad9f6ec29d79268adcfdec9a9af6ab1133f7686198ad909e218569",
     "issue_inventory.json": "cef2e30a56c8df5b16062ccf952e92abccc791b2f47c37cc237a497de59baa60",
     "rehearsal_results.json": "1ee88baf3eb7a8e0933318022b1ec38afb87408f355f12786759e7f6a830d94c",
-    "verification.json": "5bf94e4007e821a51e3a345e12a3eec79b4d7a6c6dc3e3c0d455a0ccd9c7c365"
+    "verification.json": "7d461329dedb0cee388ea74891f899b006e7ead54419647cc9e51a356eddaf98"
   }
 }
