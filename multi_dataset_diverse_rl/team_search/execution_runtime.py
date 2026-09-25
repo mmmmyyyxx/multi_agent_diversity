@@ -35,6 +35,7 @@ from ..provider_factory import ProviderClientFactory
 from ..system import PromptEnsembleOptimizationSystem
 from ..local_optimizers.base import LocalPromptOptimizer
 from ..local_optimizers.schemas import LocalOptimizationResult, LocalOptimizationTask
+from ..persistence.durable_io import append_jsonl, ensure_directory, io_path
 
 
 class LocalOptimizerConfigurationError(RuntimeError):
@@ -104,13 +105,16 @@ class DurableLedger:
     """Append-only run-local accounting; raw text is never persisted here."""
 
     def __init__(self, path: Path) -> None:
-        if path.exists():
+        if os.path.exists(io_path(path)):
             raise FileExistsError("ledger path must be fresh")
-        path.parent.mkdir(parents=True, exist_ok=True)
+        ensure_directory(path.parent)
         self.path = path
         self.identities: set[str] = set()
+        self.poisoned = False
 
     def append(self, row: Mapping[str, Any]) -> None:
+        if self.poisoned:
+            raise RuntimeError("execution ledger persistence is poisoned")
         required = {
             "record_id", "phase", "logical_role", "client_role",
             "provider_attempts", "successful_provider_calls", "cache_hit",
@@ -126,13 +130,12 @@ class DurableLedger:
         identity = str(row["record_id"])
         if identity in self.identities:
             raise ValueError("duplicate execution ledger record identity")
+        try:
+            append_jsonl(self.path, dict(row))
+        except BaseException:
+            self.poisoned = True
+            raise
         self.identities.add(identity)
-        with self.path.open("a", encoding="utf-8") as handle:
-            handle.write(
-                json.dumps(dict(row), sort_keys=True, separators=(",", ":")) + "\n"
-            )
-            handle.flush()
-            os.fsync(handle.fileno())
 
 
 class CappedDurableLedger(DurableLedger):
@@ -158,6 +161,8 @@ class CappedDurableLedger(DurableLedger):
         if role not in {"solver", "reflection"}:
             raise ValueError("unrecognized provider role at emergency boundary")
         with self._lock:
+            if self.poisoned:
+                raise RuntimeError("execution ledger persistence is poisoned")
             if self._reserved_attempts >= self.attempt_ceiling:
                 raise RuntimeError("transport_attempt_emergency_ceiling")
             if self._successful + self._inflight >= self.successful_ceiling:
@@ -170,10 +175,20 @@ class CappedDurableLedger(DurableLedger):
         successful = int(row.get("successful_provider_calls", 0))
         with self._lock:
             if attempts and (attempts != 1 or successful not in {0, 1} or self._inflight <= 0):
+                self.poisoned = True
                 raise RuntimeError("provider accounting/reservation mismatch")
-            super().append(row)
-            self._inflight -= attempts
-            self._successful += successful
+            try:
+                super().append(row)
+            except BaseException:
+                # Even a validation error after a reserved physical attempt
+                # leaves an unpersisted accounting fact. Never continue this
+                # attempt or silently reuse the success slot.
+                self.poisoned = True
+                raise
+            finally:
+                self._inflight -= attempts
+            if not self.poisoned:
+                self._successful += successful
 
 
 class CommonContractExecutionSystem(PromptEnsembleOptimizationSystem):
@@ -223,13 +238,27 @@ class CommonContractExecutionSystem(PromptEnsembleOptimizationSystem):
                     }
                 )
                 raise
-            usage = response.usage
-            return TransportResponse(
-                text=response.choices[0].message.content or "",
-                prompt_tokens=int(getattr(usage, "prompt_tokens", 0) or 0),
-                completion_tokens=int(getattr(usage, "completion_tokens", 0) or 0),
-                finish_reason=str(response.choices[0].finish_reason or ""),
+            try:
+                usage = getattr(response, "usage", None)
+                choices = getattr(response, "choices", ()) or ()
+                first = choices[0] if choices else None
+                message = getattr(first, "message", None)
+                result = TransportResponse(
+                    text=str(getattr(message, "content", None) or ""),
+                    prompt_tokens=int(getattr(usage, "prompt_tokens", 0) or 0),
+                    completion_tokens=int(getattr(usage, "completion_tokens", 0) or 0),
+                    finish_reason=str(getattr(first, "finish_reason", None) or ""),
+                )
+            except BaseException:
+                # The physical request succeeded; malformed/local response
+                # extraction must neither retry it nor lose its reservation.
+                persist_successful_attempt(request, 0, 0, postprocess_failed=True)
+                raise
+            persist_successful_attempt(
+                request, result.prompt_tokens, result.completion_tokens,
+                postprocess_failed=False,
             )
+            return result
 
         self.arm = arm
         self.ledger = ledger
@@ -267,6 +296,30 @@ class CommonContractExecutionSystem(PromptEnsembleOptimizationSystem):
                 }
             )
 
+        def persist_successful_attempt(
+            request: Mapping[str, Any], prompt_tokens: int,
+            completion_tokens: int, *, postprocess_failed: bool,
+        ) -> None:
+            if self._solver_stage is None:
+                raise RuntimeError("successful Solver attempt lacks frozen stage attribution")
+            self._solver_sequence += 1
+            stage = dict(self._solver_stage)
+            self.ledger.append({
+                "record_id": f"{arm}:solver:{self._solver_sequence}",
+                "record_kind": "solver_provider_attempt_success",
+                "phase": stage["phase"], "logical_role": "solver", "client_role": "solver",
+                "provider_attempts": 1, "successful_provider_calls": 1,
+                "cache_hit": False, "input_tokens": prompt_tokens,
+                "output_tokens": completion_tokens,
+                "total_tokens": prompt_tokens + completion_tokens,
+                "seed": self.cfg.training.seed, "arm": arm,
+                "update_index": int(stage.get("update_index", -1)),
+                "target_member": int(stage.get("target_member", -1)),
+                "candidate_id": str(stage.get("candidate_id", "")),
+                "request_identity": hashlib.sha256(canonical_json_bytes(request)).hexdigest(),
+                "postprocess_failed": postprocess_failed,
+            })
+
         self.common = CommonSolverEvaluator(
             transport=transport,
             cache=raw_cache,
@@ -292,12 +345,12 @@ class CommonContractExecutionSystem(PromptEnsembleOptimizationSystem):
                     "phase": stage["phase"],
                     "logical_role": "solver",
                     "client_role": "solver",
-                    "provider_attempts": int(not result.cache_hit),
-                    "successful_provider_calls": int(not result.cache_hit),
+                    "provider_attempts": 0,
+                    "successful_provider_calls": 0,
                     "cache_hit": result.cache_hit,
-                    "input_tokens": result.prompt_tokens,
-                    "output_tokens": result.completion_tokens,
-                    "total_tokens": result.prompt_tokens + result.completion_tokens,
+                    "input_tokens": 0,
+                    "output_tokens": 0,
+                    "total_tokens": 0,
                     "seed": self.cfg.training.seed,
                     "arm": arm,
                     "update_index": int(stage.get("update_index", -1)),
@@ -333,6 +386,29 @@ class CommonContractExecutionSystem(PromptEnsembleOptimizationSystem):
             )
 
         super().__init__(cfg, solver=solver)
+        def record_prompt_question_cache_hit(
+            prompt_hash: str, question_hash: str, answer: PromptAnswer,
+        ) -> None:
+            if self._solver_stage is None:
+                raise RuntimeError("cached Solver evaluation lacks frozen stage attribution")
+            self._solver_sequence += 1
+            stage = dict(self._solver_stage)
+            self.ledger.append({
+                "record_id": f"{arm}:solver:{self._solver_sequence}",
+                "record_kind": "solver_logical_completion",
+                "cache_layer": "prompt_question",
+                "phase": stage["phase"], "logical_role": "solver", "client_role": "solver",
+                "provider_attempts": 0, "successful_provider_calls": 0,
+                "cache_hit": True, "input_tokens": 0, "output_tokens": 0,
+                "total_tokens": 0, "seed": self.cfg.training.seed, "arm": arm,
+                "update_index": int(stage.get("update_index", -1)),
+                "target_member": int(stage.get("target_member", -1)),
+                "candidate_id": str(stage.get("candidate_id", "")),
+                "request_identity": answer.request_identity,
+                "prompt_hash": prompt_hash, "question_hash": question_hash,
+            })
+
+        self.prompt_question_evaluator.cache_hit_callback = record_prompt_question_cache_hit
         optimizer_attempt_guard = getattr(self.ledger, "reserve_provider_attempt", None)
         if optimizer_attempt_guard is not None:
             self.llm.provider_attempt_guard = lambda: optimizer_attempt_guard("reflection")
@@ -533,7 +609,7 @@ def execution_context_from_system(
 
 
 def read_csv_rows(path: Path) -> list[dict[str, str]]:
-    with path.open(newline="", encoding="utf-8") as handle:
+    with open(io_path(path), newline="", encoding="utf-8") as handle:
         return list(csv.DictReader(handle))
 
 
@@ -560,15 +636,13 @@ def profile_identity(system: CommonContractExecutionSystem) -> dict[str, Any]:
 
 
 def ledger_summary(path: Path) -> dict[str, int]:
-    rows = [
-        json.loads(line)
-        for line in path.read_text(encoding="utf-8").splitlines()
-        if line
-    ]
+    with open(io_path(path), encoding="utf-8") as handle:
+        rows = [json.loads(line) for line in handle if line.strip()]
     completed = [
-        row
-        for row in rows
-        if row.get("record_kind") != "solver_provider_attempt_failure"
+        row for row in rows
+        if row.get("record_kind") not in {
+            "solver_provider_attempt_failure", "solver_provider_attempt_success",
+        }
     ]
     return {
         "logical_calls": len(completed),

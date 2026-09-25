@@ -25,6 +25,7 @@ from .local_optimizers.gepa_native import GEPALayer2EvidenceOptimizer
 from .local_optimizers.gepa_optimizer import GEPALocalPromptOptimizer, local_gepa_budget_capacity
 from .local_optimizers.production_backends import GEPABackend
 from .persistence.identity import build_run_identity
+from .persistence.durable_io import io_path
 from .production_canary import ContextBoundGEPALayer2, _UnusedNative
 from .team_search.candidate_selector import CommonSafeTeamCandidateSelector
 from .team_search.controller import TeamSearchController
@@ -50,7 +51,8 @@ _OPPORTUNITY_PHASES = (
 
 
 def _ledger_rows(path: Path) -> list[dict[str, Any]]:
-    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
+    with open(io_path(path), encoding="utf-8") as handle:
+        return [json.loads(line) for line in handle if line.strip()]
 
 
 def _usage(rows: list[dict[str, Any]], *, scope: str) -> dict[str, Any]:
@@ -59,7 +61,9 @@ def _usage(rows: list[dict[str, Any]], *, scope: str) -> dict[str, Any]:
     Ledger tokens include reported token counts on cached logical completions;
     provider-success tokens exclude those cache echoes. The two are not mixed.
     """
-    completed = [row for row in rows if row.get("record_kind") != "solver_provider_attempt_failure"]
+    completed = [row for row in rows if row.get("record_kind") not in {
+        "solver_provider_attempt_failure", "solver_provider_attempt_success",
+    }]
     provider = [row for row in rows if int(row.get("successful_provider_calls", 0))]
     reflection_records = sum(row.get("logical_role") == "reflection" for row in completed)
     return {

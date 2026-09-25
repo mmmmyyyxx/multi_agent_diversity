@@ -12,7 +12,9 @@ from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
+import uuid
 from typing import Any, Mapping
 
 from .execution_harness_v2 import (
@@ -27,6 +29,14 @@ from .startup_identity import (
 from ..experiment import ExperimentSpec, RuntimeContext
 from ..local_optimizers.gepa_runtime import verify_frozen_gepa
 from ..provider_credentials import LWJ_DASHSCOPE_API_KEY_ENV
+from ..persistence.durable_io import (
+    atomic_replace, atomic_write_json, ensure_directory, io_path, read_json,
+)
+
+
+LEGACY_FREEZE_ENV_VARS = (
+    "V17_FORMAL_SOURCE_FREEZE", "V16_M2F_ONLINE_SOURCE_FREEZE",
+)
 
 
 def _utc_now() -> str:
@@ -34,15 +44,16 @@ def _utc_now() -> str:
 
 
 def _write_new(path: Path, value: Mapping[str, Any]) -> None:
-    with path.open("x", encoding="utf-8", newline="\n") as handle:
-        json.dump(dict(value), handle, ensure_ascii=False, sort_keys=True, indent=2)
+    with open(io_path(path), "x", encoding="utf-8", newline="\n") as handle:
+        json.dump(dict(value), handle, ensure_ascii=False, sort_keys=True,
+                  indent=2, allow_nan=False)
         handle.write("\n")
         handle.flush()
         os.fsync(handle.fileno())
 
 
 def _read(path: Path) -> dict[str, Any]:
-    value = json.loads(path.read_text(encoding="utf-8"))
+    value = read_json(path)
     if not isinstance(value, dict):
         raise StartupIdentityError("ABORT_PRE_PROVIDER: frozen artifact is not an object")
     return value
@@ -126,6 +137,9 @@ def validate_execution(
     *, root: Path, prep: Path, require_authorized: bool,
 ) -> ValidatedExecutionContext:
     """Replay disk facts, source bytes, dependency, and binding pre-provider."""
+
+    if any(os.environ.get(name, "").strip() for name in LEGACY_FREEZE_ENV_VARS):
+        raise StartupIdentityError("ABORT_PRE_PROVIDER: legacy source-freeze environment")
 
     manifest = _read(prep / "manifest.json")
     protocol = _read(prep / "protocol.json")
@@ -244,22 +258,74 @@ def _scientific_kwargs(payload: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
+def validate_local_readiness(run_root: Path) -> None:
+    """Rehearse local writes before consuming the one-time authorization."""
+
+    root = run_root.resolve()
+    staging = root.with_name(f".{root.name}.starting")
+    if os.path.exists(io_path(root)) or os.path.exists(io_path(staging)):
+        raise StartupIdentityError("ABORT_PRE_PROVIDER: stale run or staging root")
+    ensure_directory(root.parent)
+    if any(root.parent.glob(f".{root.name}.*.tmp")):
+        raise StartupIdentityError("ABORT_PRE_PROVIDER: stale finalization temp")
+    rehearsal = root.with_name(f".{root.name}.readiness-{uuid.uuid4().hex[:8]}")
+    if rehearsal.resolve().parent != root.parent:
+        raise StartupIdentityError("ABORT_PRE_PROVIDER: invalid rehearsal target")
+    from ..persistence.artifacts import ArtifactWriter
+    from ..local_optimizers.gepa_callbacks import GEPALineageCallback
+    from ..team_search.execution_runtime import CappedDurableLedger, ledger_summary
+
+    try:
+        ensure_directory(rehearsal)
+        writer = ArtifactWriter(rehearsal / "system")
+        writer.write_json("team_full_categorical_profiles/" + "a" * 64 + ".json", {"ok": True})
+        writer.write_jsonl("nested/profiles.jsonl", [{"ok": True}])
+        writer.append_jsonl("nested/profiles.jsonl", [{"also": True}])
+        writer.write_csv("nested/profiles.csv", [{"ok": 1}], ["ok"])
+        atomic_write_json(rehearsal / "execution_summary.json", {"ok": True})
+        atomic_write_json(rehearsal / "run_lifecycle.json", {"status": "RUNNING"})
+        ledger = CappedDurableLedger(
+            rehearsal / "ledger.jsonl", successful_ceiling=2, attempt_ceiling=2,
+        )
+        ledger.reserve_provider_attempt("solver")
+        ledger.append({
+            "record_id": "readiness", "phase": "initialization", "logical_role": "solver",
+            "client_role": "solver", "provider_attempts": 1,
+            "successful_provider_calls": 1, "cache_hit": False,
+            "input_tokens": 1, "output_tokens": 1, "total_tokens": 2,
+            "seed": 0, "arm": "readiness", "update_index": -1, "target_member": -1,
+        })
+        lineage = GEPALineageCallback(rehearsal / "local_gepa" / "g-test.lineage.jsonl")
+        lineage.on_optimization_start({"trainset_size": 1, "valset_size": 1,
+                                       "seed_candidate": {"decision_procedure": "test"}})
+        if (read_json(rehearsal / "execution_summary.json") != {"ok": True}
+                or ledger_summary(rehearsal / "ledger.jsonl")["successful_provider_calls"] != 1):
+            raise StartupIdentityError("ABORT_PRE_PROVIDER: readiness read-back mismatch")
+        moved = rehearsal.with_name(rehearsal.name + ".renamed")
+        atomic_replace(rehearsal, moved)
+        rehearsal = moved
+    finally:
+        if os.path.exists(io_path(rehearsal)):
+            shutil.rmtree(io_path(rehearsal))
+
+
 def admit_execution(permit: ValidatedExecutionContext, run_root: Path) -> ValidatedExecutionContext:
     """Consume once, then publish a fresh run-local RUNNING fact atomically."""
 
-    if permit.admitted or run_root.exists():
+    if permit.admitted:
         raise StartupIdentityError("ABORT_PRE_PROVIDER: run already started")
+    validate_local_readiness(run_root)
+    staging = run_root.with_name(f".{run_root.name}.starting")
+    if os.path.exists(io_path(run_root)) or os.path.exists(io_path(staging)):
+        raise StartupIdentityError("ABORT_PRE_PROVIDER: stale run or staging root")
     consumed = permit.prep_root / "authorization_consumed.json"
     _write_new(consumed, {
         "attempt_id": permit.attempt_id,
         "run_identity_sha256": permit.run_identity_sha256,
         "status": "CONSUMED",
     })
-    staging = run_root.with_name(f".{run_root.name}.starting")
-    if staging.exists():
-        raise StartupIdentityError("ABORT_PRE_PROVIDER: launch staging already exists")
     try:
-        staging.mkdir(parents=True)
+        ensure_directory(staging)
         _write_new(staging / "run_lifecycle.json", {
             "attempt_id": permit.attempt_id,
             "status": "RUNNING",
@@ -271,7 +337,7 @@ def admit_execution(permit: ValidatedExecutionContext, run_root: Path) -> Valida
             "provider_failures": 0,
             "events": [{"status": "RUNNING", "timestamp": _utc_now()}],
         })
-        os.replace(staging, run_root)
+        atomic_replace(staging, run_root)
     except BaseException:
         # The consumed marker is intentionally never rolled back. A failed
         # launch cannot silently reuse the same one-time authorization.
@@ -295,9 +361,9 @@ def terminal_lifecycle(permit: ValidatedExecutionContext, *, status: str, provid
         "provider_failures": provider_failures,
         "events": [*current["events"], {"status": status, "timestamp": _utc_now()}],
     })
-    temporary = path.with_name(".run_lifecycle.terminal.tmp")
-    _write_new(temporary, current)
-    os.replace(temporary, path)
+    atomic_write_json(path, current)
+    if _read(path).get("status") != status:
+        raise StartupIdentityError("terminal lifecycle read-back mismatch")
 
 
 def mark_provider_client_constructed(permit: ValidatedExecutionContext) -> None:
@@ -310,6 +376,6 @@ def mark_provider_client_constructed(permit: ValidatedExecutionContext) -> None:
     if current.get("status") != "RUNNING" or current.get("provider_client_constructed"):
         raise StartupIdentityError("invalid provider construction boundary")
     current["provider_client_constructed"] = True
-    temporary = path.with_name(".run_lifecycle.constructed.tmp")
-    _write_new(temporary, current)
-    os.replace(temporary, path)
+    atomic_write_json(path, current)
+    if not _read(path).get("provider_client_constructed"):
+        raise StartupIdentityError("provider construction read-back mismatch")

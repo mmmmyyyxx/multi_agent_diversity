@@ -77,6 +77,7 @@ class PromptQuestionEvaluator:
         cache_metadata: Mapping[str, Any] | None = None,
         shared_cache: SharedSolverCache | None = None,
         observation_callback: Callable[[str, str, PromptAnswer], None] | None = None,
+        cache_hit_callback: Callable[[str, str, PromptAnswer], None] | None = None,
         version: str = "prompt_question_v1",
     ):
         self.version = str(version)
@@ -87,6 +88,7 @@ class PromptQuestionEvaluator:
         self.cache_metadata = dict(cache_metadata or {})
         self.shared_cache = shared_cache
         self.observation_callback = observation_callback
+        self.cache_hit_callback = cache_hit_callback
         self.cache: dict[str, PromptAnswer] = {}
         self.inflight: dict[str, asyncio.Future[PromptAnswer]] = {}
         self.lock = asyncio.Lock()
@@ -121,6 +123,8 @@ class PromptQuestionEvaluator:
         cached = self.cache.get(key)
         if cached is not None:
             self.cache_hits += 1
+            if self.cache_hit_callback is not None:
+                self.cache_hit_callback(str(prompt_hash), str(question_hash), cached)
             return cached
         owner = False
         async with self.lock:
@@ -131,7 +135,10 @@ class PromptQuestionEvaluator:
                 owner = True
         if not owner:
             self.cache_hits += 1
-            return await future
+            answer = await future
+            if self.cache_hit_callback is not None:
+                self.cache_hit_callback(str(prompt_hash), str(question_hash), answer)
+            return answer
         try:
             self.cache_misses += 1
             async def produce() -> PromptAnswer:

@@ -169,9 +169,12 @@ class RoleAwareLLMClient:
             if attempt_guard is not None:
                 attempt_guard()
             started = time.time()
+            physical_succeeded = False
+            success_recorded = False
             try:
                 if self.override is not None and role in {"optimizer", "evaluator"}:
                     text = await self.override(system_prompt, user_prompt, temperature, max_tokens)
+                    physical_succeeded = True
                     prompt_tokens = completion_tokens = 0
                     finish_reason = "stop"
                 else:
@@ -190,6 +193,7 @@ class RoleAwareLLMClient:
                     response = await self._client_or_raise(role).chat.completions.create(
                         **request_kwargs,
                     )
+                    physical_succeeded = True
                     text = response.choices[0].message.content or ""
                     usage = response.usage
                     prompt_tokens = int(getattr(usage, "prompt_tokens", 0) or 0)
@@ -214,9 +218,8 @@ class RoleAwareLLMClient:
                 if role == "solver" and max_tokens is not None:
                     call_record["configured_solver_max_tokens"] = max_tokens
                 self.calls.append(call_record)
-                if guard is not None:
-                    guard("after_successful_provider_call")
-                return LLMCallResult(
+                success_recorded = True
+                completed = LLMCallResult(
                     text=text,
                     prompt_tokens=prompt_tokens,
                     completion_tokens=completion_tokens,
@@ -224,7 +227,26 @@ class RoleAwareLLMClient:
                     latency_seconds=latency,
                     finish_reason=finish_reason,
                 )
+                break
             except Exception as exc:
+                if physical_succeeded:
+                    if not success_recorded:
+                        self.calls.append({
+                            "provider_profile": self.cfg.models.provider_profile,
+                            "role": logical_role or role,
+                            "client_role": role,
+                            "model": model,
+                            "attempt": attempt,
+                            "success": True,
+                            "status_code": 200,
+                            "error_type": "postprocess_failed",
+                            "prompt_tokens": 0,
+                            "completion_tokens": 0,
+                            "total_tokens": 0,
+                            "latency_seconds": time.time() - started,
+                            "finish_reason": "",
+                        })
+                    raise
                 last_error = exc
                 status = self._status_code(exc)
                 self.calls.append({
@@ -253,7 +275,14 @@ class RoleAwareLLMClient:
                     self.cfg.persistence.max_retry_backoff, exponential,
                 )
                 await asyncio.sleep(base_delay + jitter)
-        raise RuntimeError(f"LLM call failed: {last_error}")
+        else:
+            raise RuntimeError(f"LLM call failed: {last_error}")
+        # The provider success is already an immutable physical fact. A local
+        # source-freeze/callback failure must abort, never create a second
+        # failed-provider record or retry the same successful response.
+        if guard is not None:
+            guard("after_successful_provider_call")
+        return completed
 
     def cost_summary(self) -> dict[str, Any]:
         successful = [row for row in self.calls if row["success"]]

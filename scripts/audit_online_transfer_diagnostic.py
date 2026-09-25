@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 from collections import Counter
 import json
+import os
 from pathlib import Path
 import sys
 
@@ -13,6 +14,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from multi_dataset_diverse_rl.team_search.execution_runtime import ledger_summary  # noqa: E402
+from multi_dataset_diverse_rl.persistence.durable_io import io_path, read_json  # noqa: E402
 from multi_dataset_diverse_rl.production_transfer_diagnostic import (  # noqa: E402
     _candidate_stage_costs, _opportunity_costs, _usage,
 )
@@ -25,11 +27,12 @@ ALLOWED_LEDGER_PHASES = {
 }
 
 
-def audit(run_root: Path) -> dict[str, object]:
-    summary = json.loads((run_root / "execution_summary.json").read_text(encoding="utf-8"))
-    lifecycle = json.loads((run_root / "run_lifecycle.json").read_text(encoding="utf-8"))
+def _audit_complete(run_root: Path) -> dict[str, object]:
+    summary = read_json(run_root / "execution_summary.json")
+    lifecycle = read_json(run_root / "run_lifecycle.json")
     ledger_path = run_root / "ledger.jsonl"
-    ledger_rows = [json.loads(line) for line in ledger_path.read_text(encoding="utf-8").splitlines() if line]
+    with open(io_path(ledger_path), encoding="utf-8") as handle:
+        ledger_rows = [json.loads(line) for line in handle if line.strip()]
     usage = ledger_summary(ledger_path)
     rows = summary["candidate_diagnostics"]
     failures: list[str] = []
@@ -49,6 +52,9 @@ def audit(run_root: Path) -> dict[str, object]:
         failures.append("duplicate_ledger_record")
     if {str(row["phase"]) for row in ledger_rows} - ALLOWED_LEDGER_PHASES:
         failures.append("unexpected_provider_phase")
+    if any(row.get("postprocess_failed") or row.get("error_type") == "postprocess_failed"
+           for row in ledger_rows):
+        failures.append("provider_success_postprocess_failure")
     if usage["successful_provider_calls"] > 1200 or usage["provider_attempts"] > 4800:
         failures.append("emergency_ceiling")
     opportunities = int(summary["opportunities"])
@@ -60,6 +66,29 @@ def audit(run_root: Path) -> dict[str, object]:
     if len(parents) != opportunities or len(rows) != accepted:
         failures.append("parent_or_mandatory_full_count")
     if v2:
+        initialization_rows = [
+            row for row in ledger_rows
+            if row.get("phase") == "initialization"
+            and row.get("record_kind") == "solver_logical_completion"
+        ]
+        if len(initialization_rows) != 500:
+            failures.append("initialization_500_logical_rows")
+        profile_dir = run_root / "system" / "team_full_categorical_profiles"
+        with os.scandir(io_path(profile_dir)) as entries:
+            baseline_profiles = [
+                read_json(entry.path) for entry in entries if entry.name.endswith(".json")
+            ]
+        baseline_profiles = [
+            row for row in baseline_profiles
+            if row.get("evaluation_stage") == "fixed_probe_initialization"
+        ]
+        if (
+            len(baseline_profiles) != 5
+            or {row.get("target_member") for row in baseline_profiles} != set(range(5))
+            or any(row.get("row_count") != 100 or len(row.get("rows", ())) != 100
+                   for row in baseline_profiles)
+        ):
+            failures.append("initialization_five_profiles")
         expected_stage = {
             "global": _usage(ledger_rows, scope="global"),
             "initialization": _usage(
@@ -145,6 +174,20 @@ def audit(run_root: Path) -> dict[str, object]:
         "validation50_calls": 0,
         "test50_calls": 0,
     }
+
+
+def audit(run_root: Path) -> dict[str, object]:
+    """Malformed or incomplete evidence is a deterministic HOLD, never PASS."""
+
+    try:
+        return _audit_complete(run_root)
+    except (OSError, ValueError, KeyError, TypeError, IndexError, RuntimeError) as exc:
+        return {
+            "gate": "HOLD",
+            "failed_checks": ["incomplete_or_malformed_evidence", type(exc).__name__],
+            "validation50_calls": None,
+            "test50_calls": None,
+        }
 
 
 if __name__ == "__main__":

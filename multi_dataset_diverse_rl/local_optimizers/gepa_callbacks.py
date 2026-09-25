@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import os
 from pathlib import Path
 import re
 from typing import Any, Sequence
@@ -14,6 +13,7 @@ from .gepa_adapter import (
     primary_prompt_rejection_category,
 )
 from .schemas import LocalEvidenceExample
+from ..persistence.durable_io import append_jsonl
 
 
 def _hash(value: Any) -> str:
@@ -50,11 +50,7 @@ class GEPALineageCallback:
         row = {"event_index": len(self.events), "event_type": event_type, **values}
         self.events.append(row)
         if self.event_path is not None:
-            self.event_path.parent.mkdir(parents=True, exist_ok=True)
-            with self.event_path.open("a", encoding="utf-8", newline="\n") as handle:
-                handle.write(json.dumps(row, sort_keys=True, separators=(",", ":")) + "\n")
-                handle.flush()
-                os.fsync(handle.fileno())
+            append_jsonl(self.event_path, row)
 
     def on_optimization_start(self, event: dict[str, Any]) -> None:
         self._append(

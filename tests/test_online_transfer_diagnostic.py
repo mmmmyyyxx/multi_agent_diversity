@@ -601,6 +601,13 @@ def test_v2_completed_fixture_reconciles_candidate_and_global_stage_costs(tmp_pa
     from multi_dataset_diverse_rl.team_search.execution_runtime import ledger_summary
 
     ledger_rows = [{
+        "record_id": f"initialization-{index}",
+        "record_kind": "solver_logical_completion",
+        "phase": "initialization", "logical_role": "solver",
+        "provider_attempts": 0, "successful_provider_calls": 0,
+        "cache_hit": True, "input_tokens": 0, "output_tokens": 0,
+        "total_tokens": 0, "update_index": -1,
+    } for index in range(500)] + [{
         "record_id": "full-1", "record_kind": "solver_logical_completion",
         "phase": "diagnostic_full_eval", "logical_role": "solver",
         "provider_attempts": 1, "successful_provider_calls": 1,
@@ -613,6 +620,14 @@ def test_v2_completed_fixture_reconciles_candidate_and_global_stage_costs(tmp_pa
     (tmp_path / "run_lifecycle.json").write_text(
         json.dumps({"status": "EXECUTION_COMPLETE"}), encoding="utf-8",
     )
+    profile_dir = tmp_path / "system" / "team_full_categorical_profiles"
+    profile_dir.mkdir(parents=True)
+    for member in range(5):
+        (profile_dir / f"member-{member}.json").write_text(json.dumps({
+            "evaluation_stage": "fixed_probe_initialization",
+            "target_member": member, "row_count": 100,
+            "rows": [{} for _ in range(100)],
+        }), encoding="utf-8")
     candidate = {
         "candidate_id": "child", "candidate_hash": "a" * 64,
         "update_index": 0, "parent_team_hash": "S0",
@@ -634,7 +649,7 @@ def test_v2_completed_fixture_reconciles_candidate_and_global_stage_costs(tmp_pa
         "parent_sequence": ["S0"], "candidate_diagnostics": [candidate],
         "stage_accounting": {
             "global": _usage(ledger_rows, scope="global"),
-            "initialization": _usage([], scope="global_initialization"),
+            "initialization": _usage(ledger_rows[:500], scope="global_initialization"),
             "opportunities": [_opportunity_costs(ledger_rows, 0)],
         },
     }

@@ -10,6 +10,12 @@ from pathlib import Path
 
 
 def _install() -> None:
+    # The unified production CLI has its own immutable source/authorization
+    # replay. Historical freeze hooks must never monkey-patch that runtime;
+    # production_execution.validate_execution rejects their environment state
+    # explicitly before provider construction.
+    if any("run_experiment" in argument for argument in sys.argv[:2]):
+        return
     freeze_path = (
         os.environ.get("V17_FORMAL_SOURCE_FREEZE", "").strip()
         or os.environ.get("V16_M2F_ONLINE_SOURCE_FREEZE", "").strip()

@@ -7,6 +7,7 @@ from dataclasses import asdict, dataclass
 import hashlib
 import inspect
 import json
+import os
 from pathlib import Path
 from typing import Any, Callable, Mapping, Protocol
 
@@ -34,6 +35,7 @@ from ..saturation import (
     SaturationState,
     state_hash,
 )
+from ..persistence.durable_io import ensure_directory, io_path
 from ..versions import (
     LOCAL_GEPA_ENGINE_ACCEPTANCE_SEMANTICS,
     LOCAL_GEPA_CANDIDATE_COMPONENT,
@@ -261,9 +263,9 @@ class GEPALocalPromptOptimizer:
             raise ValueError("PARENT_DECISION_PROCEDURE_CONTRACT_VIOLATION") from exc
         task_run = self.run_root / task.task_id
         lineage_path = task_run.parent / f"{task.task_id}.lineage.jsonl"
-        if task_run.exists() or lineage_path.exists():
+        if os.path.exists(io_path(task_run)) or os.path.exists(io_path(lineage_path)):
             raise FileExistsError("GEPA local search run root must be fresh")
-        task_run.parent.mkdir(parents=True, exist_ok=True)
+        ensure_directory(task_run.parent)
         adapter = self._adapter_factory(
             self.evaluator,
             parent_prompt=task.parent_prompt,
@@ -326,7 +328,9 @@ class GEPALocalPromptOptimizer:
             max_merge_invocations=self.config.max_merge_invocations,
             merge_val_overlap_floor=self.config.merge_val_overlap_floor,
             custom_candidate_proposer=None,
-            run_dir=str(task_run),
+            # Official GEPA owns its files. Pass a native extended-length path
+            # rather than changing its search core or relocating artifacts.
+            run_dir=io_path(task_run),
             callbacks=(
                 [callback, saturation_callback]
                 if saturation_callback is not None

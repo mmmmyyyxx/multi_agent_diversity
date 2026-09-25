@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import asyncio
+import os
 from pathlib import Path
+import shutil
 
 from multi_dataset_diverse_rl.local_optimizers.base import LocalSolverObservation
 from multi_dataset_diverse_rl.local_optimizers.gepa_adapter import GEPAAdapter
@@ -28,6 +30,7 @@ from multi_dataset_diverse_rl.team_search.schemas import (
 from multi_dataset_diverse_rl.team_search.task_builder import (
     Layer2EvidenceRequestBuilder,
 )
+from multi_dataset_diverse_rl.persistence.durable_io import io_path
 
 
 def row(index: int) -> LocalEvidenceExample:
@@ -236,6 +239,23 @@ def test_layer2_schedule_replaces_native_sampler_and_reaches_solver(
     assert "TEAM RESPONSIBILITY EVIDENCE" in reflection.prompts[0]
     assert "RECENT REGRESSION / FOCUS EVIDENCE" in reflection.prompts[0]
     assert "RECENT GAIN / ANCHOR EVIDENCE" in reflection.prompts[0]
+
+
+def test_pinned_gepa_writes_under_realistic_windows_run_depth(tmp_path: Path) -> None:
+    if os.name != "nt":
+        return
+    run_root = tmp_path / ("p" * max(1, 208 - len(str(tmp_path)) - 1))
+    assert len(str(run_root)) >= 208
+    optimizer, evaluator, reflection = build_layer2_optimizer(run_root)
+    try:
+        result = asyncio.run(optimizer.optimize_layer2(layer2_request()))
+        assert result.solver_calls > 0
+        assert reflection.prompts
+        assert evaluator.ids
+        assert os.path.exists(io_path(run_root))
+    finally:
+        if os.path.exists(io_path(run_root)):
+            shutil.rmtree(io_path(run_root))
 
 
 def test_layer2_packet_changes_gepa_reflection_input(tmp_path: Path) -> None:

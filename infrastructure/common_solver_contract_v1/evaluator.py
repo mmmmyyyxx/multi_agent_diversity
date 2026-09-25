@@ -83,34 +83,38 @@ class CommonSolverEvaluator:
             self.provider_attempts += 1
             try:
                 response = await self.transport(request)
-                if isinstance(response, TransportResponse):
-                    raw = response.text
-                    prompt_tokens = int(response.prompt_tokens)
-                    completion_tokens = int(response.completion_tokens)
-                    finish_reason = str(response.finish_reason)
-                else:
-                    raw = str(response)
-                    prompt_tokens = completion_tokens = 0
-                    finish_reason = ""
-                self.successful_provider_calls += 1
-                self.prompt_tokens += prompt_tokens
-                self.completion_tokens += completion_tokens
-                self.cache[identity] = raw
-                return EvaluationResult(
-                    identity,
-                    parse_solver_output(raw, question=question),
-                    attempt,
-                    False,
-                    prompt_tokens,
-                    completion_tokens,
-                    finish_reason,
-                )
             except Exception as exc:
                 last_error = exc
                 self.failed_provider_attempts += 1
                 if not self.retryable(exc) or attempt == CONTRACT_SPEC.transport_attempt_cap:
                     raise
                 await asyncio.sleep(CONTRACT_SPEC.retry_backoff_seconds[attempt - 1])
+                continue
+            # Response extraction/parsing is local post-transport work. Its
+            # failure must not relabel a successful physical call as a failed
+            # provider attempt or cause a duplicate external request.
+            self.successful_provider_calls += 1
+            if isinstance(response, TransportResponse):
+                raw = response.text
+                prompt_tokens = int(response.prompt_tokens)
+                completion_tokens = int(response.completion_tokens)
+                finish_reason = str(response.finish_reason)
+            else:
+                raw = str(response)
+                prompt_tokens = completion_tokens = 0
+                finish_reason = ""
+            self.prompt_tokens += prompt_tokens
+            self.completion_tokens += completion_tokens
+            self.cache[identity] = raw
+            return EvaluationResult(
+                identity,
+                parse_solver_output(raw, question=question),
+                attempt,
+                False,
+                prompt_tokens,
+                completion_tokens,
+                finish_reason,
+            )
         raise RuntimeError(f"unreachable transport failure: {last_error}")
 
     def accounting(self) -> dict[str, int]:
