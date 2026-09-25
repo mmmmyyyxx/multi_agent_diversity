@@ -20,6 +20,7 @@ from multi_dataset_diverse_rl.governance.production_execution import (
 from multi_dataset_diverse_rl.persistence.durable_io import atomic_write_json, io_path, read_json
 from multi_dataset_diverse_rl.production_transfer_diagnostic import execute_online_transfer_diagnostic
 from multi_dataset_diverse_rl.provider_factory import ProviderClientFactory
+from multi_dataset_diverse_rl.team_search.system_runtime import FrozenResponsibilitySnapshot
 from scripts.audit_online_transfer_diagnostic import audit
 from scripts.prepare_online_transfer_diagnostic_v2 import frozen_payload
 from scripts.prepare_post_refactor_gepa_canary import _private_splits
@@ -36,6 +37,21 @@ def rehearse(
     prep.mkdir(parents=True)
     _private_splits(prep)
     manifest, protocol = frozen_payload(execution_source_sha="a" * 40)
+    # This fixture replays the superseded v2 routed-source freeze. Current
+    # Layer-2 raw-legal behavior has its own source/poison regression tests.
+    def v2_routed_snapshot(system, *, update_index):
+        _, assigned = system.assign_responsibilities(update_index=update_index)
+        states, _, _ = system.current_states_and_opportunities()
+        return FrozenResponsibilitySnapshot(
+            assigned={member: tuple(rows) for member, rows in assigned.items()},
+            state_by_question={row.question_hash: row for row in states},
+            current_margin_by_question={row.question_hash: row.plurality_margin for row in states},
+            source_version="historical_service_routed_v1",
+        )
+    monkeypatch.setattr(
+        "multi_dataset_diverse_rl.production_transfer_diagnostic.freeze_current_responsibility",
+        v2_routed_snapshot,
+    )
     (prep / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
     (prep / "protocol.json").write_text(json.dumps(protocol), encoding="utf-8")
     labels = {}

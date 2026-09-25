@@ -92,6 +92,7 @@ TARGET_SCORE_WAIT_WEIGHT = 0.05
 PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION = (
     "primary_responsibility_persistent_realizability_v1"
 )
+LAYER2_RESPONSIBILITY_SOURCE_VERSION = "raw_legal_pre_routing_v1"
 PERSISTENT_REALIZABILITY_SEMANTICS_VERSION = "eventual_write_back_realizability_v1"
 SATURATION_STOPPING_CONTRACT_VERSION = "backend_neutral_saturation_stopping_v1"
 LAYER2_EVIDENCE_EPOCH_POLICY_VERSION = "replay_same_frozen_packet_v1"

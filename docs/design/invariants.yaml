@@ -152,6 +152,14 @@ invariants:
     failure_refs: []
     critical: true
     status: ACTIVE
+  - id: INV-LAYER2-RAW-RESPONSIBILITY-001
+    description: Layer-2 scores, targets and evidence derive from overlapping raw legal member-residual assignments, independent of historical routing.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/team_search/system_runtime.py, multi_dataset_diverse_rl/responsibility.py]
+    tests: [tests/test_layer2_raw_responsibility.py]
+    failure_refs: []
+    critical: true
+    status: ACTIVE
   - id: INV-OPTIMIZER-FIDELITY-001
     description: Official GEPA remains a source-verified Level-B API-compatible adaptation with an unmodified search core.
     authority: docs/design/CURRENT_SPEC.md

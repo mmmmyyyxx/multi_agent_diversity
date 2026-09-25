@@ -25,10 +25,11 @@ from ..local_optimizers.base import LocalSolverObservation
 from ..local_optimizers.schemas import LocalPromptCandidate
 from ..native_feed import CandidateTransitionAudit
 from ..peer_state import TeamVoteState, build_team_vote_state
-from ..responsibility import MemberAwareRepairOpportunity
+from ..responsibility import MemberAwareRepairOpportunity, compute_repair_eligibility_sets
 from ..shadow_gate import ShadowGateDecision, ShadowGateMetrics, evaluate_shadow_gate
 from ..system import PromptEnsembleOptimizationSystem
 from ..vote_aligned_scheduler import classify_opportunity_lane
+from ..versions import LAYER2_RESPONSIBILITY_SOURCE_VERSION
 from .candidate_evaluator import EvaluationCost
 from .schemas import TeamEvidenceCase, TeamMiniBatchMetrics, TeamSearchAssignment, TeamSearchRequest
 from .task_builder import LocalTaskBuilder
@@ -82,6 +83,7 @@ class FrozenResponsibilitySnapshot:
     assigned: Mapping[int, tuple[MemberAwareRepairOpportunity, ...]]
     state_by_question: Mapping[str, TeamVoteState]
     current_margin_by_question: Mapping[str, int]
+    source_version: str = "unspecified_test_fixture"
 
 
 class LatestTransitionStore:
@@ -108,17 +110,27 @@ def freeze_current_responsibility(
     *,
     update_index: int,
 ) -> FrozenResponsibilitySnapshot:
-    """Materialize the one parent-state responsibility snapshot used by both branches."""
+    """Freeze raw legal parent-state assignments, before historical routing."""
 
-    _, assigned = system.assign_responsibilities(update_index=update_index)
-    states, _, _ = system.current_states_and_opportunities()
+    del update_index  # Historical routing/update state is not a Layer-2 input.
+    states, _, opportunities = system.current_states_and_opportunities()
     state_by_question = {row.question_hash: row for row in states}
+    # Eligibility is the shared legal member-residual relation.  The historical
+    # system method also applies service routing and active-lane slicing, so it
+    # must not be called here.  Work on a copy because the eligibility helper
+    # records its audit mapping on the supplied state.
+    _, assigned, _ = compute_repair_eligibility_sets(
+        team_states=state_by_question,
+        opportunities=opportunities,
+        state=deepcopy(system.responsibility_state),
+    )
     return FrozenResponsibilitySnapshot(
         assigned={member: tuple(rows) for member, rows in assigned.items()},
         state_by_question=state_by_question,
         current_margin_by_question={
             row.question_hash: int(row.plurality_margin) for row in states
         },
+        source_version=LAYER2_RESPONSIBILITY_SOURCE_VERSION,
     )
 
 

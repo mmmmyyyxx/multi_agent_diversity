@@ -334,6 +334,25 @@ def test_post_refactor_canary_fake_provider_stops_before_team_stage(
         ProviderClientFactory, "create",
         lambda *args, **kwargs: fake,
     )
+    # This fixture replays the historical canary freeze's routed source. The
+    # current raw-legal source is tested separately, including its strict
+    # TeamMiniBatch quota failure under an identical-parent fake Solver.
+    from multi_dataset_diverse_rl.team_search.system_runtime import FrozenResponsibilitySnapshot
+
+    def routed_snapshot(system, *, update_index):
+        _, assigned = system.assign_responsibilities(update_index=update_index)
+        states, _, _ = system.current_states_and_opportunities()
+        return FrozenResponsibilitySnapshot(
+            assigned={member: tuple(rows) for member, rows in assigned.items()},
+            state_by_question={row.question_hash: row for row in states},
+            current_margin_by_question={row.question_hash: row.plurality_margin for row in states},
+            source_version="historical_service_routed_v1",
+        )
+
+    monkeypatch.setattr(
+        "multi_dataset_diverse_rl.production_canary.freeze_current_responsibility",
+        routed_snapshot,
+    )
     result = asyncio.run(execute_post_refactor_canary(
         permit, root=Path(__file__).resolve().parents[1],
     ))

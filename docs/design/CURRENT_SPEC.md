@@ -135,6 +135,13 @@ the canonical v15 runtime above.
   complete optimization curriculum. Layer 1 owns prompt mutation, optimizer-
   specific reasoning, parent/candidate search, frontier and acceptance, but may
   not select or fetch examples outside the packet.
+- **INV-LAYER2-RAW-RESPONSIBILITY-001** — Layer-2 responsibility scores
+  (`D_i`, `N_i`, `C_i`), primary lane, target selection, and responsibility
+  evidence MUST derive from the current parent state's raw legal
+  member–residual assignments, before historical service routing, active-lane
+  slicing, portfolio/load balancing, or freeze policy. A residual legally
+  assigned to multiple members remains in each member's opportunity set.
+  Historical routing state MUST NOT affect Layer-2 allocation or evidence.
 - **INV-LAYER2-FEED-CONTROL-001** — Native GEPA and Native MARS remain separate
   controls with their frozen native data flow. Treatment deliberately replaces
   native example selection while retaining each optimizer's search core.

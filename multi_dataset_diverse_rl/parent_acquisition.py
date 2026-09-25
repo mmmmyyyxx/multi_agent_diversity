@@ -111,7 +111,8 @@ def build_catalog(inputs: dict, observations: list[dict], *, seed: int, local_me
                                    eligible_agents_by_question=eligible, state=responsibility, seed=seed)
     margins = {ident: state.plurality_margin for ident, state in states.items()}
     snapshot = FrozenResponsibilitySnapshot(assigned=routing.active_slices, state_by_question=states,
-                                            current_margin_by_question=margins)
+                                            current_margin_by_question=margins,
+                                            source_version="historical_service_routed_v1")
     summaries = build_primary_responsibility_summaries(assigned=snapshot.assigned,
                   current_margin_by_question=margins, failure_count_by_member={i: 0 for i in range(5)})
     source_state = digest({"seed": seed, "prompt_hash": text_hash(prompt),
