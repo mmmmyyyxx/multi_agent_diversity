@@ -7,6 +7,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 from multi_dataset_diverse_rl.peer_state import build_peer_vote_context, build_team_vote_state
+from multi_dataset_diverse_rl.native_feed import CandidateTransitionAudit
 from multi_dataset_diverse_rl.responsibility import (
     ResponsibilityState, compute_member_aware_repair_opportunity,
 )
@@ -22,7 +23,7 @@ from multi_dataset_diverse_rl.team_search.task_builder import (
     Layer2EvidenceRequestBuilder, LocalTaskBuilder,
 )
 from multi_dataset_diverse_rl.team_search.system_runtime import (
-    SystemResponsibilityAssignmentFactory, freeze_current_responsibility,
+    LatestTransitionStore, SystemResponsibilityAssignmentFactory, freeze_current_responsibility,
 )
 from multi_dataset_diverse_rl.versions import TEAM_MINIBATCH_CONTRACT_VERSION
 
@@ -216,3 +217,59 @@ def test_preservation_vulnerability_and_hash_tie_ordering() -> None:
         "preserve-2",
     ]
     assert ordered[-1].example_id == "preserve-0"
+
+
+def test_production_preservation_sensitive_for_latest_change_or_current_pivotality() -> None:
+    identifiers = tuple(f"wrong-{index:02d}" for index in range(8)) + tuple(
+        f"right-{index:02d}" for index in range(4)
+    )
+    answer_vectors = tuple(("B",) * 5 for _ in range(8)) + (
+        ("A", "A", "A", "B", "B"),
+        ("A",) * 5, ("A",) * 5, ("A",) * 5,
+    )
+    states = tuple(build_team_vote_state(
+        question_hash=row_id, gold_answer="A", answers=answers,
+        valid_vector=(True,) * 5,
+    ) for row_id, answers in zip(identifiers, answer_vectors))
+    opportunities = {state.question_hash: tuple(
+        compute_member_aware_repair_opportunity(
+            team_state=state, peer_context=build_peer_vote_context(state, member)
+        ) for member in range(5)
+    ) for state in states}
+
+    class System:
+        responsibility_state = ResponsibilityState(
+            updates_since_selected_by_agent={member: 0 for member in range(5)}
+        )
+        fixed_probe = SimpleNamespace(examples=tuple(
+            SimpleNamespace(question_hash=row_id, question="case", gold_answer="A")
+            for row_id in identifiers
+        ))
+        active_profiles = tuple(tuple(SimpleNamespace(answer=answers[member], valid=True)
+                                      for answers in answer_vectors) for member in range(5))
+        agents = tuple(SimpleNamespace(current_prompt="same prompt") for _ in range(5))
+        protocol = SimpleNamespace(tie_policy="abstain")
+
+        def current_states_and_opportunities(self):
+            return states, {}, opportunities
+
+    parent = tuple((row_id, False) for row_id in identifiers)
+    child = tuple((row_id, row_id == "right-01") for row_id in identifiers)
+    latest = LatestTransitionStore()
+    latest.record(0, CandidateTransitionAudit(
+        parent_candidate_hash="prior", child_candidate_hash="current",
+        parent_correctness=parent, child_correctness=child,
+    ))
+    system = System()
+    snapshot = freeze_current_responsibility(system, update_index=0)
+    assignment = SystemResponsibilityAssignmentFactory(
+        system=system, snapshot_reader=lambda: snapshot,
+        task_builder=LocalTaskBuilder(), transition_store=latest,
+    ).build_from_member(
+        request=TeamSearchRequest(81, 0, "team", 36, "solver", "output"),
+        member_id=0, primary_lane="fallback", responsibility_identity="raw-legal",
+    )
+    sensitive = {row.example_id: row.mutation_sensitive for row in assignment.evidence}
+    assert sensitive["right-00"] is True  # currently pivotal; not transition-changed
+    assert sensitive["right-01"] is True  # latest transition-changed; not pivotal
+    assert sensitive["right-02"] is False
