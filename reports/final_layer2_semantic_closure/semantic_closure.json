@@ -1,0 +1,24 @@
+{
+  "api_calls": 0,
+  "checkpoint_policy": "persistent_member_realizability_state_v3_only_fail_closed",
+  "historical_routing_affects_current_layer2": false,
+  "identical_five_prompt_initialization": true,
+  "invariant": "INV-LAYER2-LOCAL-EVAL-TEAM-MINIBATCH-001",
+  "local_eval_ids_equal_team_minibatch_ids": true,
+  "local_eval_stage": "target_member_parent_vs_candidate",
+  "preservation_ranking": [
+    "mutation_sensitive_descending",
+    "positive_team_margin_ascending",
+    "valid_answer_disagreement_descending",
+    "sha256_example_id_ascending",
+    "raw_example_id_ascending_hash_collision_only"
+  ],
+  "preservation_vulnerability": "latest_accepted_target_transition_changed_example OR target_currently_pivotal_to_correct_plurality",
+  "responsibility_overlap": true,
+  "scientific_method_changed": true,
+  "team_admission_stage": "fixed_peer_plurality_and_team_metrics",
+  "team_feedback_can_change_local_acceptance": false,
+  "team_minibatch": "four_repair_four_preservation_four_team_hard_twelve_unique_no_backfill",
+  "test_calls": 0,
+  "validation_calls": 0
+}

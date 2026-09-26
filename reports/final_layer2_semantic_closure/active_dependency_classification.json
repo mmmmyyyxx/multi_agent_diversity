@@ -1,0 +1,19 @@
+{
+  "correction_to_immutable_prior_report": "system.py was incorrectly classified as historical-only; the published prior file is not rewritten",
+  "ACTIVE_SUBSTRATE": [
+    "multi_dataset_diverse_rl/system.py supplies team profiles, fixed Optimize probe, Solver execution, team state, and artifact persistence to team_search/system_runtime.py"
+  ],
+  "ACTIVE_LAYER2": [
+    "multi_dataset_diverse_rl/team_search/system_runtime.py",
+    "multi_dataset_diverse_rl/team_search/task_builder.py",
+    "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py",
+    "multi_dataset_diverse_rl/team_search/controller.py",
+    "multi_dataset_diverse_rl/team_search/progressive_evaluation.py"
+  ],
+  "HISTORICAL_ONLY": [
+    "historical service-routing decisions and active-lane slicing",
+    "historical v15/v17 experiment-specific runners not imported by the production composition entrypoint"
+  ],
+  "historical_routing_policy_poison_test": "PASS",
+  "substrate_refactor_performed": false
+}
