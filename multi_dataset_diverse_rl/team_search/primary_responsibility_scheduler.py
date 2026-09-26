@@ -52,8 +52,6 @@ class PrimaryTargetSelection:
     scheduler_version: str
     summaries: tuple[PrimaryResponsibilitySummary, ...]
     selected_member_ids: tuple[int, ...]
-    rr_cursor_before: int
-    rr_cursor_after: int
     fallback_used: bool
 
 
@@ -74,7 +72,6 @@ class RealizabilityTransition:
 @dataclass
 class PersistentRealizabilityState:
     failure_count_by_member: dict[int, int] = field(default_factory=dict)
-    rr_cursor: int = 0
     target_count_by_member: dict[int, int] = field(default_factory=dict)
     commit_count_by_member: dict[int, int] = field(default_factory=dict)
     primary_lane_target_counts: dict[str, int] = field(default_factory=dict)
@@ -94,11 +91,10 @@ class PersistentRealizabilityState:
     def checkpoint_payload(self) -> dict[str, object]:
         """Return a JSON-safe resume payload with no team-hash coupling."""
         return {
-            "schema_version": "persistent_member_realizability_state_v2",
+            "schema_version": "persistent_member_realizability_state_v3",
             "scheduler_version": PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION,
             "realizability_semantics": PERSISTENT_REALIZABILITY_SEMANTICS_VERSION,
             "failure_count_by_member": dict(self.failure_count_by_member),
-            "rr_cursor": int(self.rr_cursor),
             "target_count_by_member": dict(self.target_count_by_member),
             "commit_count_by_member": dict(self.commit_count_by_member),
             "primary_lane_target_counts": dict(self.primary_lane_target_counts),
@@ -110,7 +106,7 @@ class PersistentRealizabilityState:
     def from_checkpoint_payload(
         cls, payload: Mapping[str, object], *, member_ids: Sequence[int]
     ) -> "PersistentRealizabilityState":
-        if payload.get("schema_version") != "persistent_member_realizability_state_v2":
+        if payload.get("schema_version") != "persistent_member_realizability_state_v3":
             raise ValueError("persistent realizability checkpoint schema mismatch")
         if payload.get("scheduler_version") != PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION:
             raise ValueError("persistent realizability scheduler version mismatch")
@@ -137,7 +133,6 @@ class PersistentRealizabilityState:
 
         state = cls(
             failure_count_by_member=member_counts("failure_count_by_member"),
-            rr_cursor=int(payload.get("rr_cursor", -1)),
             target_count_by_member=member_counts("target_count_by_member"),
             commit_count_by_member=member_counts("commit_count_by_member"),
             primary_lane_target_counts=lane_counts("primary_lane_target_counts"),
@@ -146,8 +141,6 @@ class PersistentRealizabilityState:
                 int(index) for index in payload.get("completed_update_indices", ())
             },
         )
-        if state.rr_cursor < 0:
-            raise ValueError("persistent realizability rr cursor cannot be negative")
         if any(index < 0 for index in state.completed_update_indices):
             raise ValueError("completed update indices cannot be negative")
         expected = set(map(int, member_ids))
@@ -244,40 +237,22 @@ def select_primary_responsibility_targets(
     *,
     seed: int,
     update_index: int,
-    rr_cursor: int,
     target_count: int = 2,
 ) -> PrimaryTargetSelection:
-    """Select Top-2 by score; equal-score groups use deterministic stateful RR."""
+    """Select Top-2 by score, then ascending member ID independent of seed."""
     if target_count <= 0:
         raise ValueError("target_count must be positive")
     rows = tuple(summaries)
     if len({row.member_id for row in rows}) != len(rows):
         raise ValueError("member summaries must be unique")
+    del seed, update_index
     fallback = not any(row.target_score > 0 for row in rows)
-    start = (
-        (int(seed) + 2 * int(update_index))
-        if fallback
-        else (int(seed) + int(update_index) + int(rr_cursor))
-    ) % max(1, len(rows))
-    cyclic_rank = {
-        rows[(start + offset) % len(rows)].member_id: offset
-        for offset in range(len(rows))
-    } if rows else {}
-    ordered = sorted(
-        rows,
-        key=(
-            (lambda row: (cyclic_rank[row.member_id], row.member_id))
-            if fallback
-            else (lambda row: (-row.target_score, cyclic_rank[row.member_id], row.member_id))
-        ),
-    )
+    ordered = sorted(rows, key=lambda row: (-row.target_score, row.member_id))
     chosen = tuple(row.member_id for row in ordered[: min(target_count, len(ordered))])
     return PrimaryTargetSelection(
         scheduler_version=PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION,
         summaries=rows,
         selected_member_ids=chosen,
-        rr_cursor_before=int(rr_cursor),
-        rr_cursor_after=int(rr_cursor) + 1,
         fallback_used=fallback,
     )
 
@@ -316,10 +291,8 @@ class PrimaryResponsibilityPersistentRealizabilityScheduler:
             summaries,
             seed=seed,
             update_index=update_index,
-            rr_cursor=self.state.rr_cursor,
             target_count=target_count,
         )
-        self.state.rr_cursor = decision.rr_cursor_after
         return decision
 
     def record_outcome(

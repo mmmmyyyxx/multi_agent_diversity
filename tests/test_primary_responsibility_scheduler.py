@@ -120,8 +120,6 @@ def test_selected_failure_persists_across_teammate_commit_and_own_commit_resets(
         second.scheduler_version,
         second.summaries,
         (failed_member, teammate),
-        second.rr_cursor_before,
-        second.rr_cursor_after,
         second.fallback_used,
     )
     scheduler.record_outcome(
@@ -166,7 +164,6 @@ def test_persistent_state_checkpoint_round_trip_has_no_team_hash_reset_key() -> 
     scheduler.state.commit_count_by_member[0] = 1
     scheduler.state.primary_lane_target_counts[DIRECT_FLIP] = 4
     scheduler.state.primary_lane_commit_counts[DIRECT_FLIP] = 1
-    scheduler.state.rr_cursor = 9
     scheduler.state.completed_update_indices.add(8)
     payload = scheduler.state.checkpoint_payload()
     assert not any("team_hash" in key for key in payload)
@@ -193,28 +190,28 @@ def test_one_positive_score_still_selects_two_targets_for_compute_parity() -> No
     ) == 0
 
 
-def test_all_zero_uses_existing_deterministic_fallback_order() -> None:
+def test_all_zero_uses_seed_independent_member_order() -> None:
     summaries = build_primary_responsibility_summaries(
         assigned={}, current_margin_by_question={}, failure_count_by_member={}
     )
     first = select_primary_responsibility_targets(
-        summaries, seed=3, update_index=4, rr_cursor=9
+        summaries, seed=3, update_index=4
     )
     replay = select_primary_responsibility_targets(
-        summaries, seed=3, update_index=4, rr_cursor=9
+        summaries, seed=99, update_index=100
     )
     assert first == replay
     assert first.fallback_used
-    assert first.selected_member_ids == (1, 2)  # (seed + 2*update) % 5
+    assert first.selected_member_ids == (0, 1)
     assert all(row.primary_lane == FALLBACK for row in summaries)
 
 
-def test_primary_lane_filters_only_responsibility_evidence() -> None:
+def test_primary_lane_filters_only_repair_evidence() -> None:
     evidence = (
-        TeamEvidenceCase("d", "payload", "A", None, None, "responsibility", (DIRECT_FLIP,)),
-        TeamEvidenceCase("n", "payload", "A", None, None, "responsibility", (NEAR_MARGIN,)),
+        TeamEvidenceCase("d", "payload", "A", None, None, "repair", (DIRECT_FLIP,)),
+        TeamEvidenceCase("n", "payload", "A", None, None, "repair", (NEAR_MARGIN,)),
         TeamEvidenceCase("p", "payload", "A", None, None, "preservation", ()),
-        TeamEvidenceCase("c", "payload", "A", None, None, "coalition", ()),
+        TeamEvidenceCase("c", "payload", "A", None, None, "team_hard", ("team_hard",)),
     )
     assignment = TeamSearchAssignment(
         0,
@@ -232,15 +229,15 @@ def test_primary_lane_filters_only_responsibility_evidence() -> None:
     assert "primary_responsibility_lane=near_margin" in task.optimization_context
 
 
-def test_only_team_contract_changes_for_opt_in_scheduler() -> None:
+def test_target_policy_identity_is_explicit_in_team_contract() -> None:
     local_hash = GEPAOptimizerConfig().identity()
     current = TeamSearchContract()
     experimental = TeamSearchContract(
-        target_policy="primary_responsibility_persistent_realizability_v1"
+        target_policy="synthetic_alternative_target_policy"
     )
     # Component-only proposer clarification changes the Layer-1 identity,
     # while both target policies still share the same local optimizer.
     assert local_hash == "9b9f7c0cd98294f4fd1b87d2193f622c01189508e95a319dd0e193b0bc66cde4"
-    assert current.identity() == "43c8f44c321ddb89e91b122d0e27e0e60c1b0556661e7bb06202c0ca043f1312"
+    assert current.identity() == "75b69ab8318969c0df9d80f8e02dad8747ebd66862f0af3431a5943648a575a7"
     assert experimental.identity() != current.identity()
     assert asdict(current) | {"target_policy": experimental.target_policy} == asdict(experimental)

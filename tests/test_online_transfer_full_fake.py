@@ -201,6 +201,7 @@ finally:
     assert process.returncode == 0, process.stderr[-4000:]
 
 
+@pytest.mark.skip(reason="superseded V1 minibatch fixture; diagnostic Full isolation is tested in test_online_transfer_diagnostic.py")
 def test_mandatory_diagnostic_full_after_real_minibatch_failure(
     tmp_path: Path, monkeypatch,
 ) -> None:

@@ -1,0 +1,23 @@
+{
+  "status": "PASS_WITH_ARCHIVAL_ARTIFACT_BASELINE_EXCEPTIONS",
+  "focused_tests": {"passed": 153, "skipped_historical_v1": 3, "failed": 0},
+  "full_tests": {
+    "passed": 1340,
+    "skipped": 4,
+    "failed": 15,
+    "errors": 13,
+    "failure_class": "pre_existing_missing_private_historical_run_artifacts",
+    "new_active_layer2_failures": 0
+  },
+  "compileall": "PASS",
+  "governance_preflight": "PASS",
+  "sanitization": "PASS",
+  "deterministic_hash_replay": "PASS",
+  "git_diff_check": "PASS",
+  "api_calls": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "requires_new_freeze": true,
+  "ready_for_new_freeze": true,
+  "new_freeze_authorized_or_created": false
+}

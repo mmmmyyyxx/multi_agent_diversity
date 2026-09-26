@@ -61,7 +61,8 @@ MARS_LAYER2_EVIDENCE_BACKEND_VERSION = (
 LOCAL_GEPA_PROPOSAL_TELEMETRY_VERSION = "proposal_behavior_telemetry_v1"
 LOCAL_GEPA_PHASE_B_TELEMETRY_VERSION = "single_state_member_task_telemetry_v2"
 LOCAL_GEPA_TOKEN_EDIT_SIMILARITY_VERSION = "token_edit_similarity_v1"
-TEAM_MINIBATCH_CONTRACT_VERSION = "primary_lane_strict_4_4_4_v1"
+TEAM_MINIBATCH_CONTRACT_VERSION = "repair_preservation_team_hard_4_4_4_v2"
+LAYER2_TEAM_SEARCH_PROTOCOL_VERSION = "two_layer_responsibility_v2"
 ACCEPTED_LOCAL_MUTATION_TEAM_TRANSFER_VERSION = "accepted_local_mutation_team_transfer_v1"
 TEAM_TRANSFER_DECOMPOSITION_VERSION = "fixed_baseline_read_only_case_mapping_v1"
 ACCEPTED_LOCAL_MUTATION_TEAM_TRANSFER_V2_VERSION = "accepted_local_mutation_team_transfer_v2"
@@ -90,7 +91,7 @@ TARGET_SCORE_WAIT_WEIGHT = 0.05
 # Experimental Layer-2 target scheduler.  This identity is opt-in and does not
 # change the canonical v15 target-selection or repairability versions above.
 PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION = (
-    "primary_responsibility_persistent_realizability_v1"
+    "primary_responsibility_persistent_realizability_v2"
 )
 LAYER2_RESPONSIBILITY_SOURCE_VERSION = "raw_legal_pre_routing_v1"
 PERSISTENT_REALIZABILITY_SEMANTICS_VERSION = "eventual_write_back_realizability_v1"

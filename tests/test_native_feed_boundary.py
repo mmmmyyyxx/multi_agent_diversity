@@ -42,8 +42,8 @@ def test_native_request_contains_outer_control_but_no_backend_samples() -> None:
         _evidence(i, group, tag)
         for i, (group, tag) in enumerate(
             [
-                ("responsibility", "direct_flip"),
-                ("coalition", "near_margin"),
+                ("repair", "direct_flip"),
+                ("team_hard", "near_margin"),
                 ("preservation", "coverage"),
             ]
         )
@@ -149,7 +149,7 @@ def test_team_controller_consumes_native_feed_candidate_end_to_end() -> None:
     evidence = tuple(
         _evidence(index + group_index * 4, group, "direct_flip")
         for group_index, group in enumerate(
-            ("responsibility", "coalition", "preservation")
+            ("repair", "team_hard", "preservation")
         )
         for index in range(4)
     )

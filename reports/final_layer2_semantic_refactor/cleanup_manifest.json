@@ -1,0 +1,56 @@
+{
+  "production_rewritten": [
+    "multi_dataset_diverse_rl/team_search/schemas.py",
+    "multi_dataset_diverse_rl/team_search/system_runtime.py",
+    "multi_dataset_diverse_rl/team_search/task_builder.py",
+    "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py",
+    "multi_dataset_diverse_rl/team_search/progressive_evaluation.py",
+    "multi_dataset_diverse_rl/team_search/controller.py",
+    "multi_dataset_diverse_rl/team_search/protocol.py",
+    "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py",
+    "multi_dataset_diverse_rl/local_optimizers/gepa_callbacks.py",
+    "multi_dataset_diverse_rl/local_optimizers/proposal_telemetry.py"
+  ],
+  "historical_archive_unchanged": [
+    "experiments/",
+    "historical reports/",
+    "historical v15-v17 runtime and service-routing code",
+    "historical scripts and tests that reconstruct old frozen attempts"
+  ],
+  "residual_keyword_classification": {
+    "A_historical_archive_only": [
+      "multi_dataset_diverse_rl/system.py historical v15 responsibility refresh and service routing",
+      "multi_dataset_diverse_rl/protocol.py historical protocol settings",
+      "multi_dataset_diverse_rl/parent_acquisition.py historical acquisition path",
+      "multi_dataset_diverse_rl/vote_aligned_scheduler.py historical scheduler",
+      "multi_dataset_diverse_rl/persistence/ historical checkpoint readers",
+      "scripts/* historical experiment-specific runners and audits",
+      "tests/* historical replay assertions",
+      "AGENTS.md and method.md marked historical v15 mirror",
+      "docs/two_layer_optimizer_architecture.md marked historical architecture note"
+    ],
+    "B_production_non_deprecated_metric": [
+      "multi_dataset_diverse_rl/candidate_selection.py retains plurality coalition diagnostics used by Common-Safe; this is not an independent TeamMiniBatch evidence group"
+    ],
+    "B_production_rewritten": [
+      "multi_dataset_diverse_rl/team_search/ contains no coalition, unassigned_residual, service_routing, active_slice or rr_cursor reference",
+      "multi_dataset_diverse_rl/local_optimizers/ accepts only repair, preservation and team_hard Layer-2 evidence groups"
+    ],
+    "C_dead_active_code": "obsolete TeamMiniBatch evidence fields and RR cursor state removed; no duplicate active implementation retained"
+  },
+  "superseded_contracts": [
+    "primary_lane_strict_4_4_4_v1",
+    "seed_or_rr_equal_score_target_ordering",
+    "unassigned_residual_coalition_evidence"
+  ],
+  "not_modified": [
+    "GEPA search core",
+    "MARS search core",
+    "plurality aggregation",
+    "Common-Safe",
+    "Shadow",
+    "provider governance",
+    "atomic write-back"
+  ],
+  "new_api_attempt_created": false
+}

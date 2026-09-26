@@ -152,9 +152,9 @@ def layer2_request(suffix: str = "") -> Layer2OptimizationRequest:
             "B",
             "sanitized outcome",
             group,
-            (("direct_flip",) if group == "responsibility" else ()),
+            (("direct_flip",) if group == "repair" else ()),
         )
-        for group in ("responsibility", "coalition", "preservation")
+        for group in ("repair", "team_hard", "preservation")
         for index in range(4)
     )
     assignment = TeamSearchAssignment(

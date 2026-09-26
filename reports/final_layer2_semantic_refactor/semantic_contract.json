@@ -1,0 +1,24 @@
+{
+  "status": "PRODUCTION_SEMANTICS_V2",
+  "protocol_version": "two_layer_responsibility_v2",
+  "responsibility_graph": "overlapping_raw_legal_member_residual",
+  "primary_responsibility": "target_justification_not_exclusive_ownership",
+  "target_score": "max(4*D,2*N,C)/(1+f)",
+  "target_tie_break": "ascending_member_id_seed_independent",
+  "initialization": "five_identical_prompts_allowed",
+  "team_minibatch": {
+    "contract": "repair_preservation_team_hard_4_4_4_v2",
+    "repair": 4,
+    "preservation": 4,
+    "team_hard": 4,
+    "unique_example_ids": 12,
+    "missing_quota": "fail_closed",
+    "preservation_order": ["latest_transition_sensitive_first", "smaller_positive_margin", "greater_current_disagreement", "sha256_example_id_ascending"],
+    "team_hard_order": ["greater_current_disagreement", "more_current_wrong_members", "sha256_example_id_ascending"],
+    "residual_frequency_proxy": "current_wrong_member_count_no_historical_memory"
+  },
+  "independent_coalition_evidence_group": false,
+  "layer1_input": "immutable_layer2_evidence_packet",
+  "api_calls": 0,
+  "new_experiment_freeze_created": false
+}

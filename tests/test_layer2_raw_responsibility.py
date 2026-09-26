@@ -134,22 +134,22 @@ def test_historical_service_routing_poison_cannot_change_layer2_scores_targets_o
     ] == [(4, 0, 0), (4, 0, 0)]
     assert {
         row.example_id for row in left_assignment.evidence
-        if row.evidence_group == "responsibility"
+        if row.evidence_group == "repair"
     } == expected
     assert [
         row.example_id for row in left_assignment.evidence
-        if row.evidence_group == "responsibility"
+        if row.evidence_group == "repair"
     ] == [
         row.example_id for row in right_assignment.evidence
-        if row.evidence_group == "responsibility"
+        if row.evidence_group == "repair"
     ]
 
 
-def test_shared_identical_parent_exposes_unmodified_coalition_quota_blocker():
+def test_shared_identical_parent_uses_overlapping_repair_and_team_hard_rows():
     system = _System(routed_member=0)
     states = tuple(build_team_vote_state(
         question_hash=f"q{index}", gold_answer="A",
-        answers=["B" if index < 4 else "A"] * 5,
+        answers=["B" if index < 8 else "A"] * 5,
         valid_vector=[True] * 5,
     ) for index in range(12))
     opportunities = {
@@ -161,20 +161,27 @@ def test_shared_identical_parent_exposes_unmodified_coalition_quota_blocker():
     }
     system.current_states_and_opportunities = lambda: (states, {}, opportunities)
     system.active_profiles = [tuple(
-        SimpleNamespace(valid=True, answer="B" if index < 4 else "A")
+        SimpleNamespace(valid=True, answer="B" if index < 8 else "A")
         for index in range(12)
     ) for _ in range(5)]
     snapshot = freeze_current_responsibility(system, update_index=0)
-    assert all(len(snapshot.assigned[member]) == 4 for member in range(5))
+    assert all(len(snapshot.assigned[member]) == 8 for member in range(5))
     factory = SystemResponsibilityAssignmentFactory(
         system=system,
         snapshot_reader=lambda: snapshot,
         task_builder=Layer2EvidenceRequestBuilder(),
     )
-    with pytest.raises(ValueError, match="4 unique coalition examples"):
-        factory.build_from_member(
-            request=TeamSearchRequest(80, 0, "parent", 36, "solver", "output"),
-            member_id=1,
-            primary_lane="coverage",
-            responsibility_identity="raw-legal",
-        )
+    assignment = factory.build_from_member(
+        request=TeamSearchRequest(80, 0, "parent", 36, "solver", "output"),
+        member_id=1,
+        primary_lane="coverage",
+        responsibility_identity="raw-legal",
+    )
+    selected = Layer2EvidenceRequestBuilder().select_team_minibatch(
+        assignment.evidence, primary_responsibility_lane="coverage"
+    )
+    assert {group: sum(row.evidence_group == group for row in selected)
+            for group in ("repair", "preservation", "team_hard")} == {
+                "repair": 4, "preservation": 4, "team_hard": 4
+            }
+    assert len({row.example_id for row in selected}) == 12

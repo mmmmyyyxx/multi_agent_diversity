@@ -30,6 +30,13 @@ evaluation, and team-level selection/write-back. This architecture is not the
 canonical v15 runtime and requires a separately frozen experiment before
 promotion.
 
+In the current opt-in production path, raw legal residual responsibility may
+overlap across members. Primary responsibility is target-selection evidence,
+not exclusive ownership. Its TeamMiniBatch12 is four repair, four preservation,
+and four team-hard residual rows. The old coalition/unassigned-residual quota
+is archived, not an active Layer-2 mechanism. Equal target scores use ascending
+member ID; identical initial prompts remain the experimental baseline.
+
 The team contains five prompts and uses equal-weight plurality with
 tie-as-abstain. Model weights remain fixed. Every evaluated candidate changes
 one target prompt while holding four peers fixed.

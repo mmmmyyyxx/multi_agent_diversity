@@ -99,6 +99,15 @@ borrows transition-evidence semantics associated with SEPO; it does not import
 SEPO structural edits, architects, breadcrumb search, Lexicase selection,
 archive admission, or lineage-parent selection into Layer 2.
 
+The sole active production Layer-2 responsibility graph is the overlapping raw
+legal member–residual relation. Primary responsibility selects a target; it
+does not exclusively own residuals. Equal target scores break by ascending
+member ID, not seed or round-robin state. TeamMiniBatch12 uses four repair,
+four team-correct preservation, and four team-hard residual examples; no
+coalition/unassigned-residual evidence group is part of the production
+contract. Historical V1 freeze documents remain archival evidence and require
+a new freeze before any experiment under these semantics.
+
 ### Unified backend runtime
 
 Optimizer and controller choices are runtime configuration, never scientific

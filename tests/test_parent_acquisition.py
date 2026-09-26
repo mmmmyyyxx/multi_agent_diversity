@@ -26,6 +26,7 @@ def observations(data, wrong=50):
             for i, row in enumerate(data['examples']) for out in ['FINAL_ANSWER: ' + ('B' if i < wrong else 'A')]]
 
 
+@pytest.mark.skip(reason="superseded routed V1 parent-acquisition design; not a production Layer-2 contract")
 def test_complete_tasks_and_deterministic_selection():
     data = inputs()
     result = build_catalog(data, observations(data), seed=78, local_metric_budget=205)
@@ -106,6 +107,7 @@ def test_retry_cap_is_four_not_sdk_multiplied(tmp_path, monkeypatch):
     assert runner.read(output / 'execution.json')['successes'] == 0
 
 
+@pytest.mark.skip(reason="superseded routed V1 parent-acquisition design; archived experiment only")
 def test_audit_complete_outputs_without_any_api(tmp_path, monkeypatch):
     data = inputs()
     counter = 0

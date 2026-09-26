@@ -38,8 +38,8 @@ class _Assignment:
     def __init__(self):
         evidence = tuple(
             TeamEvidenceCase(f"{group}-{i}", f"question {group} {i}", "A", None,
-                             None, group, ("direct_flip",) if group == "responsibility" else ())
-            for group in ("responsibility", "coalition", "preservation")
+                             None, group, ("direct_flip",) if group == "repair" else ())
+            for group in ("repair", "team_hard", "preservation")
             for i in range(4)
         )
         self.value = TeamSearchAssignment(

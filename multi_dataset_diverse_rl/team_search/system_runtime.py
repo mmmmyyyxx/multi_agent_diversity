@@ -29,7 +29,10 @@ from ..responsibility import MemberAwareRepairOpportunity, compute_repair_eligib
 from ..shadow_gate import ShadowGateDecision, ShadowGateMetrics, evaluate_shadow_gate
 from ..system import PromptEnsembleOptimizationSystem
 from ..vote_aligned_scheduler import classify_opportunity_lane
-from ..versions import LAYER2_RESPONSIBILITY_SOURCE_VERSION
+from ..versions import (
+    LAYER2_RESPONSIBILITY_SOURCE_VERSION,
+    PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION,
+)
 from .candidate_evaluator import EvaluationCost
 from .schemas import TeamEvidenceCase, TeamMiniBatchMetrics, TeamSearchAssignment, TeamSearchRequest
 from .task_builder import LocalTaskBuilder
@@ -135,7 +138,7 @@ def freeze_current_responsibility(
 
 
 class SystemResponsibilityAssignmentFactory:
-    """Build disjoint Optimize-only evidence from one frozen parent state."""
+    """Build target repair and global team evidence from the raw parent state."""
 
     def __init__(
         self,
@@ -165,35 +168,57 @@ class SystemResponsibilityAssignmentFactory:
         snapshot = self.snapshot_reader()
         assigned_rows = tuple(snapshot.assigned.get(target, ()))
         assigned_by_hash = {row.question_hash: row for row in assigned_rows}
+        latest = self.transition_store.get(target) if self.transition_store else None
+        changed_by_latest = set(latest.newly_broken_ids) | set(latest.newly_fixed_ids) if latest else set()
         evidence: list[TeamEvidenceCase] = []
         for index, example in enumerate(self.system.fixed_probe.examples):
             state = snapshot.state_by_question[example.question_hash]
             opportunity = assigned_by_hash.get(example.question_hash)
             target_answer = self.system.active_profiles[target][index]
-            if opportunity is not None:
+            answers = tuple(getattr(state, "team_answers", ()))
+            validity = tuple(getattr(state, "team_validity", ()))
+            disagreement = len({answer for answer, valid in zip(answers, validity)
+                                if valid and answer})
+            residual_frequency = sum(not correct for correct in state.team_correctness)
+            pivotal = False
+            if state.vote_correct and len(answers) == 5 and len(validity) == 5:
+                without_answers = list(answers)
+                without_validity = list(validity)
+                without_answers[target] = ""
+                without_validity[target] = False
+                pivotal = not build_team_vote_state(
+                    question_hash=state.question_hash,
+                    gold_answer=state.gold_answer,
+                    answers=without_answers,
+                    valid_vector=without_validity,
+                    normalize_answer=getattr(self.system, "normalize_answer", None),
+                    match_answer=getattr(self.system, "match_answer", None),
+                    tie_break=getattr(getattr(self.system, "protocol", None), "tie_policy", "abstain"),
+                ).vote_correct
+            if not state.vote_correct and opportunity is not None:
                 lane = classify_opportunity_lane(
                     opportunity, snapshot.current_margin_by_question
                 ) or "coverage"
-                group = "responsibility"
-                tags = ("responsibility", lane)
+                group = "repair"
+                tags = ("repair", lane, "team_hard")
                 feedback = (
-                    "Improve the general decision procedure for this assigned residual "
+                    "Improve the general decision procedure for this legal residual "
                     f"while preserving unrelated competence; lane={lane}."
                 )
-            elif not state.vote_correct and not state.team_correctness[target]:
-                group = "coalition"
-                tags = ("coalition", "vote_wrong")
+            elif not state.vote_correct:
+                group = "team_hard"
+                tags = ("team_hard", "vote_wrong")
                 feedback = (
-                    "This is an unassigned coalition diagnostic. Improve only through a "
-                    "general rule; do not specialize to this item."
+                    "This is a current team failure. Preserve general competence "
+                    "while testing team-level transfer."
                 )
             else:
                 group = "preservation"
                 tags = (
                     "preservation",
-                    "target_correct" if state.team_correctness[target] else "broad_context",
+                    "target_correct" if state.team_correctness[target] else "team_correct",
                 )
-                feedback = "Preserve broad correct behavior and the immutable output contract."
+                feedback = "Preserve current correct team behavior and the immutable output contract."
             evidence.append(
                 TeamEvidenceCase(
                     example_id=example.question_hash,
@@ -203,6 +228,10 @@ class SystemResponsibilityAssignmentFactory:
                     feedback=feedback,
                     evidence_group=group,
                     tags=tags,
+                    team_disagreement=disagreement,
+                    residual_frequency=residual_frequency,
+                    team_margin=int(state.plurality_margin),
+                    mutation_sensitive=pivotal or example.question_hash in changed_by_latest,
                 )
             )
         provisional = TeamSearchAssignment(
@@ -215,13 +244,10 @@ class SystemResponsibilityAssignmentFactory:
             ),
             responsibility_identity=responsibility_identity,
             primary_responsibility_lane=primary_lane,
-            latest_transition=(
-                self.transition_store.get(target)
-                if self.transition_store is not None else None
-            ),
+            latest_transition=latest,
         )
-        # Local validation and TeamMiniBatch use the same primary-lane-aligned
-        # responsibility quota while coalition and preservation remain global.
+        # Local validation and TeamMiniBatch use the same primary-lane repair
+        # quota; preservation and team-hard rows are global parent-state evidence.
         minibatch = self.task_builder.select_team_minibatch(
             provisional.evidence,
             primary_responsibility_lane=primary_lane,
@@ -238,7 +264,7 @@ class SystemResponsibilityAssignmentFactory:
             request=request,
             member_id=int(summary.member_id),
             primary_lane=str(summary.primary_lane),
-            responsibility_identity="primary_responsibility_persistent_realizability_v1",
+            responsibility_identity=PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION,
         )
 
 
@@ -355,7 +381,7 @@ class SystemTeamCandidateEvaluator:
         return {
             row.example_id
             for row in assignment.evidence
-            if row.evidence_group == "responsibility"
+            if row.evidence_group == "repair"
         }
 
     def active_evaluation(self, assignment: TeamSearchAssignment) -> CandidateEvaluation:
@@ -560,7 +586,7 @@ class SystemTeamCandidateEvaluator:
                 candidate_eval.competence.correct_count
                 - active_eval.competence.correct_count
             ),
-            coalition_delta=candidate_eval.marginal.net_vote_delta,
+            team_net_vote_delta=candidate_eval.marginal.net_vote_delta,
             responsibility_delta=candidate_eval.marginal.assigned_residual_repair_count,
             broad_delta=(
                 candidate_eval.member_gain.total_gain_count
@@ -770,24 +796,6 @@ class SystemTeamCommitter:
         old_team_state_version = self.system.team_state_version
         old_responsibility_state_version = self.system.responsibility_state_version
         old_refresh_count = self.system.responsibility_refresh_count
-        old_cached = (
-            deepcopy(self.system.cached_responsibility_eligibility),
-            deepcopy(self.system.cached_responsibility_assignments),
-            deepcopy(self.system.cached_service_assignments),
-            deepcopy(self.system.cached_repair_lane_by_question),
-            deepcopy(self.system.cached_service_portfolios),
-            deepcopy(self.system.cached_active_lane_by_agent),
-            deepcopy(self.system.cached_active_responsibility_assignments),
-            deepcopy(self.system.cached_member_opportunities),
-        )
-        old_lengths = (
-            len(self.system.peer_state_history),
-            len(self.system.responsibility_assignments),
-            len(self.system.service_routing_audit),
-            len(self.system.specialization_anchor_trajectory),
-            len(self.system.responsibility_portfolio_trajectory),
-            len(self.system.member_opportunities),
-        )
         transition = (
             self.evaluator.transition_audits.get(key)
             if self.transition_store is not None else None
@@ -803,9 +811,10 @@ class SystemTeamCommitter:
             self.system.responsibility_state.accepted_updates_by_agent[target] = (
                 self.system.responsibility_state.accepted_updates_by_agent.get(target, 0) + 1
             )
-            self.system.refresh_responsibility_after_commit(
-                update_index=self.update_index_reader()
-            )
+            # Production Layer 2 reconstructs raw legal responsibility from the
+            # successor profiles at its next decision. Invalidate the legacy
+            # responsibility cache without invoking historical service routing.
+            self.system.team_state_version += 1
             self.system.persist_endpoint_identifiability_state(
                 update_index=self.update_index_reader(),
                 trigger="two_layer_team_commit",
@@ -824,24 +833,4 @@ class SystemTeamCommitter:
             self.system.team_state_version = old_team_state_version
             self.system.responsibility_state_version = old_responsibility_state_version
             self.system.responsibility_refresh_count = old_refresh_count
-            (
-                self.system.cached_responsibility_eligibility,
-                self.system.cached_responsibility_assignments,
-                self.system.cached_service_assignments,
-                self.system.cached_repair_lane_by_question,
-                self.system.cached_service_portfolios,
-                self.system.cached_active_lane_by_agent,
-                self.system.cached_active_responsibility_assignments,
-                self.system.cached_member_opportunities,
-            ) = old_cached
-            histories = (
-                self.system.peer_state_history,
-                self.system.responsibility_assignments,
-                self.system.service_routing_audit,
-                self.system.specialization_anchor_trajectory,
-                self.system.responsibility_portfolio_trajectory,
-                self.system.member_opportunities,
-            )
-            for history, length in zip(histories, old_lengths):
-                del history[length:]
             raise

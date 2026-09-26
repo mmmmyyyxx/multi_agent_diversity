@@ -288,7 +288,7 @@ class TeamSearchController:
                         "invalid_delta": metrics.invalid_delta,
                         "vote_delta": metrics.vote_delta,
                         "target_delta": metrics.target_delta,
-                        "coalition_delta": metrics.coalition_delta,
+                        "team_net_vote_delta": metrics.team_net_vote_delta,
                         "responsibility_delta": metrics.responsibility_delta,
                         "broad_delta": metrics.broad_delta,
                         "oracle_delta": metrics.oracle_delta,

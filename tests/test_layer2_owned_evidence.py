@@ -21,7 +21,7 @@ PARENT_HASH = hashlib.sha256(PARENT.encode("utf-8")).hexdigest()
 
 def evidence(*, context_suffix: str = "") -> tuple[TeamEvidenceCase, ...]:
     rows = []
-    for group, tag in (("responsibility", "direct_flip"), ("coalition", "near_margin"), ("preservation", "coverage")):
+    for group, tag in (("repair", "direct_flip"), ("team_hard", "near_margin"), ("preservation", "coverage")):
         for index in range(4):
             rows.append(TeamEvidenceCase(
                 f"{group}-{index}{context_suffix}", f"payload {group} {index}{context_suffix}",
@@ -87,8 +87,8 @@ def test_transition_roles_distinguish_responsibility_focus_and_anchor() -> None:
     responsibility_ids = {row.example_id for row in packet.responsibility_examples}
     focus_ids = {row.example_id for row in packet.focus_examples}
     anchor_ids = {row.example_id for row in packet.anchor_examples}
-    assert "responsibility-0" in responsibility_ids
-    assert "responsibility-0" not in focus_ids
+    assert "repair-0" in responsibility_ids
+    assert "repair-0" not in focus_ids
     assert focus_ids == {"preservation-0"}
     assert anchor_ids == {"preservation-1"}
     assert packet.latest_transition is not None
@@ -128,7 +128,7 @@ def test_transition_store_exposes_only_latest_one_step_transition() -> None:
 def test_local_eval_is_frozen_separately_and_overlap_is_reportable() -> None:
     packet = build(latest=transition()).packet
     local_eval = {row.example_id for row in packet.local_eval_examples}
-    assert local_eval == {f"coalition-{index}" for index in range(4)}
+    assert local_eval == {f"team_hard-{index}" for index in range(4)}
     assert not local_eval & {row.example_id for row in packet.responsibility_examples}
     assert not local_eval & {row.example_id for row in packet.focus_examples}
     assert not local_eval & {row.example_id for row in packet.anchor_examples}
@@ -149,7 +149,7 @@ def test_explicit_layer2_local_eval_ids_are_honored_exactly_and_overlap_is_count
         evidence=evidence(),
         optimization_context="repair direct flips",
         responsibility_identity="responsibility",
-        local_validation_example_ids=("responsibility-0", "coalition-1"),
+        local_validation_example_ids=("repair-0", "team_hard-1"),
         primary_responsibility_lane="direct_flip",
         responsibility_value=8.0,
     )
@@ -159,7 +159,7 @@ def test_explicit_layer2_local_eval_ids_are_honored_exactly_and_overlap_is_count
     )
     packet = Layer2EvidenceRequestBuilder().build(request, assignment).packet
     assert [row.example_id for row in packet.local_eval_examples] == [
-        "responsibility-0", "coalition-1"
+        "repair-0", "team_hard-1"
     ]
     assert packet.role_intersection_counts["responsibility_x_local_eval"] == 1
     assert dict(packet.provenance)["local_eval_source"] == "assignment_frozen_ids"
@@ -197,8 +197,8 @@ def test_layer2_packet_content_directly_changes_optimizer_input() -> None:
 def test_transition_must_end_at_current_parent() -> None:
     wrong = CandidateTransitionAudit(
         parent_candidate_hash="old", child_candidate_hash="not-current-parent",
-        parent_correctness=(("responsibility-0", True),),
-        child_correctness=(("responsibility-0", False),),
+        parent_correctness=(("repair-0", True),),
+        child_correctness=(("repair-0", False),),
     )
     with pytest.raises(ValueError, match="current parent prompt"):
         build(latest=wrong)
@@ -208,5 +208,5 @@ def test_heldout_rows_are_rejected_before_packet_creation() -> None:
     with pytest.raises(ValueError, match="Optimize-derived"):
         TeamEvidenceCase(
             "heldout", "private heldout payload", "A", None, None,
-            "responsibility", ("direct_flip",), source_split="validation",
+            "repair", ("direct_flip",), source_split="validation",
         )

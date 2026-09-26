@@ -86,7 +86,7 @@ def evaluation_schema() -> dict[str, Any]:
                 "binary_scores": array({"type": "integer", "enum": [0, 1]}),
                 "provider_called": array({"type": "boolean"}),
                 "capture_traces": {"type": "boolean"},
-                "evidence_group": array({"enum": ["responsibility", "coalition", "preservation", "general"]}),
+                "evidence_group": array({"enum": ["repair", "preservation", "team_hard", "general"]}),
                 "reasoning_lane": array({"enum": ["direct_flip", "near_margin", "coverage", "fallback", "general"]}),
             }}
 
@@ -268,7 +268,7 @@ class ProposalTelemetry(GEPALineageCallback):
                    "delta_local_rate": None, "preservation_loss": None,
                    "preservation_loss_count": None, "outcome_class": None,
                    "zero_delta_decomposition": None}
-            for group in ("responsibility", "coalition", "preservation"):
+            for group in ("repair", "preservation", "team_hard"):
                 row[group + "_newly_fixed"] = None
                 row[group + "_newly_broken"] = None
             local_patterns: Counter = Counter()
@@ -307,7 +307,7 @@ class ProposalTelemetry(GEPALineageCallback):
                            zero_delta_decomposition=zero_kind,
                            parent_evaluation_sequence_id=before["evaluation_sequence_id"],
                            child_evaluation_sequence_id=after["evaluation_sequence_id"])
-                for group in ("responsibility", "coalition", "preservation"):
+                for group in ("repair", "preservation", "team_hard"):
                     indices = [i for i, value in enumerate(before["evidence_group"]) if value == group]
                     row[group + "_newly_fixed"] = sum(fixes[i] for i in indices) if indices else None
                     row[group + "_newly_broken"] = sum(breaks[i] for i in indices) if indices else None

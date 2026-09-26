@@ -149,7 +149,7 @@ class GEPALineageCallback:
         outcomes: list[dict[str, Any]] = []
         pattern_counts: dict[str, int] = {}
         allowlisted_tags = {
-            "responsibility", "coalition", "preservation",
+            "repair", "preservation", "team_hard",
             "direct_flip", "near_margin", "coverage", "fallback",
         }
         for row in self._proposal_records:

@@ -20,9 +20,13 @@ class TeamEvidenceCase:
     evidence_group: str
     tags: tuple[str, ...]
     source_split: str = "optimize"
+    team_disagreement: int = 0
+    residual_frequency: int = 0
+    team_margin: int = 0
+    mutation_sensitive: bool = False
 
     def __post_init__(self) -> None:
-        if self.evidence_group not in {"responsibility", "coalition", "preservation"}:
+        if self.evidence_group not in {"repair", "preservation", "team_hard"}:
             raise ValueError("unknown team evidence group")
         if self.source_split != "optimize":
             raise ValueError("local optimizer evidence must be Optimize-derived")
@@ -57,7 +61,7 @@ class TeamMiniBatchMetrics:
     invalid_delta: int = 0
     vote_delta: int = 0
     target_delta: int = 0
-    coalition_delta: int = 0
+    team_net_vote_delta: int = 0
     responsibility_delta: int = 0
     broad_delta: int = 0
     oracle_delta: int = 0  # diagnostic only; never enters promotion

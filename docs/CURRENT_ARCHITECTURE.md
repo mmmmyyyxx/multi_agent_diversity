@@ -120,6 +120,14 @@ Roots have empty focus and anchor. Uncommitted mutations cannot change either.
 Local evaluation examples are frozen by Layer 2. GEPA and MARS Layer2 modes
 consume the same packet schema and cannot fetch or backfill examples.
 
+The production responsibility graph permits the same team residual to be
+legally assigned to several members. Primary responsibility chooses who is
+optimized, without exclusive ownership. TeamMiniBatch12 draws four
+primary-lane repair, four team-correct preservation, and four global team-hard
+residual rows; team-hard rows need not be unassigned. Equal target scores use
+ascending member ID. The former coalition quota and seed/RR tie ordering are
+superseded and occur only in archived experiment definitions.
+
 The production Layer2 modules depend only on the `LocalOptimizerBackend`
 boundary. They do not import GEPA or MARS implementations. Given identical
 local results, both backends produce identical team evaluation, admission and

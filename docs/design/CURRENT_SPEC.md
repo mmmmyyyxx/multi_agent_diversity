@@ -142,6 +142,15 @@ the canonical v15 runtime above.
   slicing, portfolio/load balancing, or freeze policy. A residual legally
   assigned to multiple members remains in each member's opportunity set.
   Historical routing state MUST NOT affect Layer-2 allocation or evidence.
+- **INV-LAYER2-FINAL-SEMANTICS-001** — The production Layer-2 responsibility
+  graph is the overlapping raw legal member–residual relation. Primary
+  responsibility justifies choosing a target and does not grant exclusive
+  ownership. The current score is `max(4D_i, 2N_i, C_i)/(1+f_i)`; equal scores
+  are ordered by ascending member ID, independent of seed, update index or
+  RR state. Evidence examples are ranked by the stated heuristic and then
+  ascending SHA-256 of example ID (raw ID breaks a theoretical hash tie).
+  Identical five-prompt initialization is retained. Historical
+  service routing remains archival and cannot enter production Layer-2.
 - **INV-LAYER2-FEED-CONTROL-001** — Native GEPA and Native MARS remain separate
   controls with their frozen native data flow. Treatment deliberately replaces
   native example selection while retaining each optimizer's search core.
@@ -157,7 +166,7 @@ the canonical v15 runtime above.
   independently through explicit Layer-2 example identities and role intersections
   are persisted as sanitized counts. Missing explicit identities fail closed; a
   backend may never fetch or backfill from a global pool. Direct packet fixtures
-  without explicit identities use deterministic coalition rows selected by Layer 2.
+  without explicit identities use deterministic team-hard rows selected by Layer 2.
   These semantics do not add
   SEPO search operators, architects, breadcrumb search, Lexicase selection,
   archive admission, or lineage-parent selection to Layer 2.
@@ -199,7 +208,7 @@ on repeated complete optimization units with no accepted deployable update.
 - **INV-SATURATION-003** — Layer-2 team saturation is backend-neutral. A team
   epoch observes existing scheduler decisions until every member eligible at
   epoch start has received an opportunity. Members may repeat; scheduler
-  scores, RR behavior, persistent realizability, and focus/anchor semantics are
+  scores, deterministic member-ID tie ordering, persistent realizability, and focus/anchor semantics are
   unchanged. Only a successful atomic team commit resets outer patience. A
   Common-Safe commit with zero Vote delta still counts; local-only acceptance
   does not.
@@ -232,10 +241,19 @@ those questions require separate fixed-budget experiments.
   raw failure codes, raw Solver responses, free-form controller instructions,
   and immutable answer/interface lines. This is a component-representation
   adapter boundary; it does not change official GEPA search semantics.
-- **INV-TEAM-MINIBATCH-001** — TeamMiniBatch12 is exactly twelve unique Optimize
-  rows: four from the selected primary responsibility lane, four global
-  coalition rows, and four global preservation rows. Missing quotas fail closed;
-  no silent backfill or smaller minibatch is permitted.
+- **INV-TEAM-MINIBATCH-001** — Production TeamMiniBatch12 is exactly twelve
+  unique Optimize rows: four target-member primary-lane repair residuals,
+  four currently team-correct preservation rows, and four global team-hard
+  vote-wrong residuals. Team-hard rows may also have legal member
+  responsibility; they do not require an unassigned residual. The same ID
+  cannot occupy two slots. Missing quotas fail closed; no silent backfill or
+  smaller minibatch is permitted. Preservation order is latest-transition
+  sensitivity first, smaller positive plurality margin, greater current
+  disagreement, then ascending example ID. Team-hard order is greater current
+  disagreement, more currently wrong members, then ascending example ID.
+  This last count is a current-state frequency proxy, not new historical
+  memory. Team collateral effects are measured after generation in
+  TeamMiniBatch/Full/Common-Safe/Shadow, never predicted by a coalition module.
 - **INV-PAIRED-EVAL-001** — Paired final evaluations share one exact-request
   realization cache across arms. Equal prompt/question/solver-contract request
   identities reuse the same provider realization, so byte-identical final teams

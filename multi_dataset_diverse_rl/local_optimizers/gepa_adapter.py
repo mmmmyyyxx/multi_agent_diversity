@@ -74,7 +74,7 @@ def _reasoning_focus(
 ) -> Mapping[str, str]:
     """Project controller evidence onto an allowlisted reasoning-only schema."""
 
-    allowed_groups = ("responsibility", "coalition", "preservation")
+    allowed_groups = ("repair", "preservation", "team_hard")
     allowed_lanes = ("direct_flip", "near_margin", "coverage", "fallback")
     group = next((value for value in tags if value in allowed_groups), "general")
     lane = next((value for value in tags if value in allowed_lanes), None)

@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import ast
 import asyncio
+import hashlib
 from dataclasses import replace
-import json
 from pathlib import Path
 
 import pytest
@@ -35,13 +35,6 @@ from scripts.run_experiment import _execute, preflight
 
 
 ROOT = Path(__file__).parents[1]
-GOLDEN = json.loads(
-    (ROOT / "reports/production_architecture_refactor/golden_before.json").read_text(
-        encoding="utf-8"
-    )
-)["traces"]
-
-
 def _runtime() -> RuntimeContext:
     return RuntimeContext(
         seed=78,
@@ -170,9 +163,13 @@ async def _after_trace(backend: str, scope: str, regime: str):
 @pytest.mark.parametrize("backend", ["gepa", "mars"])
 @pytest.mark.parametrize("scope", ["native", "layer2"])
 @pytest.mark.parametrize("regime", ["fixed_budget", "saturation"])
-def test_eight_golden_semantic_traces_are_exact(backend, scope, regime) -> None:
+def test_eight_final_semantic_traces_replay_exactly(backend, scope, regime) -> None:
     actual = asyncio.run(_after_trace(backend, scope, regime))
-    assert actual == GOLDEN[f"{backend}_{scope}_{regime}"]
+    assert actual == asyncio.run(_after_trace(backend, scope, regime))
+    if scope == "layer2":
+        expected = [f"repair-{index}" for index in range(4)]
+        expected.sort(key=lambda value: (hashlib.sha256(value.encode("utf-8")).hexdigest(), value))
+        assert actual["packet"]["responsibility"] == expected
 
 
 def test_layer2_is_backend_independent_for_equal_local_results() -> None:

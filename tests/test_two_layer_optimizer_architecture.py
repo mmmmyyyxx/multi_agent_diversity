@@ -751,26 +751,26 @@ def test_quota_builder_and_optimize_only_governance() -> None:
             target_output=None,
             feedback=None,
             evidence_group=group,
-            tags=("direct_flip",) if group == "responsibility" else (),
+            tags=("direct_flip",) if group == "repair" else (),
         )
-        for group in ("responsibility", "coalition", "preservation")
+        for group in ("repair", "team_hard", "preservation")
         for index in range(5)
     )
     assignment = TeamSearchAssignment(0, "parent", rows, "context", "r")
     request = TeamSearchRequest(1, 2, "team", 20, COMMON_SOLVER_CONTRACT_V1_ID, "output")
     builder = LocalTaskBuilder()
     built = builder.build(request, assignment)
-    counts = {group: 0 for group in ("responsibility", "coalition", "preservation")}
+    counts = {group: 0 for group in ("repair", "team_hard", "preservation")}
     by_id = {row.example_id: row for row in rows}
     assert len(built.local_validation_examples) == 15
     for row in builder.select_team_minibatch(rows):
         counts[by_id[row.example_id].evidence_group] += 1
-    assert counts == {"responsibility": 4, "coalition": 4, "preservation": 4}
+    assert counts == {"repair": 4, "team_hard": 4, "preservation": 4}
     assert builder.team_minibatch_telemetry(builder.select_team_minibatch(rows)) == {
-        "contract_version": "primary_lane_strict_4_4_4_v1",
+        "contract_version": "repair_preservation_team_hard_4_4_4_v2",
         "total_count": 12,
-        "responsibility_count": 4,
-        "coalition_count": 4,
+        "repair_count": 4,
+        "team_hard_count": 4,
         "preservation_count": 4,
         "backfill_count": 0,
     }
@@ -779,14 +779,14 @@ def test_quota_builder_and_optimize_only_governance() -> None:
             tuple(row for row in rows if row.example_id not in {"preservation-3", "preservation-4"})
         )
     with pytest.raises(ValueError):
-        TeamEvidenceCase("x", "payload", "A", None, None, "responsibility", (), "test")
+        TeamEvidenceCase("x", "payload", "A", None, None, "repair", (), "test")
 
 
-def test_team_minibatch_responsibility_quota_matches_primary_lane() -> None:
-    responsibility = tuple(
+def test_team_minibatch_repair_quota_matches_primary_lane() -> None:
+    repair = tuple(
         TeamEvidenceCase(
             f"{lane}-{index}", f"payload {lane} {index}", "A", None, None,
-            "responsibility", (lane,),
+            "repair", (lane,),
         )
         for lane in ("direct_flip", "near_margin")
         for index in range(4)
@@ -796,17 +796,17 @@ def test_team_minibatch_responsibility_quota_matches_primary_lane() -> None:
             f"{group}-{index}", f"payload {group} {index}", "A", None, None,
             group, (),
         )
-        for group in ("coalition", "preservation")
+        for group in ("team_hard", "preservation")
         for index in range(4)
     )
     selected = LocalTaskBuilder().select_team_minibatch(
-        responsibility + global_rows,
+        repair + global_rows,
         primary_responsibility_lane="near_margin",
     )
-    responsibility_rows = [row for row in selected if row.evidence_group == "responsibility"]
+    repair_rows = [row for row in selected if row.evidence_group == "repair"]
     assert len(selected) == len({row.example_id for row in selected}) == 12
-    assert len(responsibility_rows) == 4
-    assert all("near_margin" in row.tags for row in responsibility_rows)
+    assert len(repair_rows) == 4
+    assert all("near_margin" in row.tags for row in repair_rows)
 
 
 class StubResponsibility:
@@ -827,9 +827,9 @@ def strict_team_evidence(lane: str = DIRECT_FLIP) -> tuple[TeamEvidenceCase, ...
             None,
             None,
             group,
-            (lane,) if group == "responsibility" else (),
+            (lane,) if group == "repair" else (),
         )
-        for group in ("responsibility", "coalition", "preservation")
+        for group in ("repair", "team_hard", "preservation")
         for index in range(4)
     )
 
@@ -914,10 +914,10 @@ def test_team_controller_is_backend_agnostic() -> None:
     assert outcome.funnel["committed_candidates"] == 1
     assert committer.ids == ["stub"]
     assert outcome.audit_metadata["team_minibatch"] == {
-        "contract_version": "primary_lane_strict_4_4_4_v1",
+        "contract_version": "repair_preservation_team_hard_4_4_4_v2",
         "total_count": 12,
-        "responsibility_count": 4,
-        "coalition_count": 4,
+        "repair_count": 4,
+        "team_hard_count": 4,
         "preservation_count": 4,
         "backfill_count": 0,
     }
@@ -970,7 +970,7 @@ def test_fake_provider_end_to_end_positive_path_commits_once(tmp_path: Path) -> 
     )
     minibatch_ids = outcome.audit_metadata["team_minibatch_example_ids"]
     assert len(minibatch_ids) == len(set(minibatch_ids)) == 12
-    assert set(minibatch_ids[:4]) == {f"responsibility-{index}" for index in range(4)}
+    assert set(minibatch_ids[:4]) == {f"repair-{index}" for index in range(4)}
     assert outcome.audit_metadata["primary_responsibility_lane"] == "near_margin"
     telemetry = outcome.audit_metadata["local_optimizer_telemetry"]
     assert telemetry["accepted_mutations"] >= 1

@@ -1,0 +1,7 @@
+# After: single active Layer-2 contract
+
+Production Layer-2 now uses overlapping raw legal member–residual responsibility. A primary lane justifies the selected member; it does not remove another member's legal relation to the same residual. Equal target scores use ascending member ID without seed/update/RR tie state. Identical five-prompt initialization remains supported.
+
+TeamMiniBatch12 is four primary-lane repair, four team-correct preservation, and four global team-hard vote-wrong rows, with twelve distinct example IDs. The four team-hard rows can come from residuals that also belong to a member's repair set; the selected TeamMiniBatch role is distinct from ownership. Missing quotas fail closed. Preservation ranking uses available latest accepted-transition sensitivity, then smaller positive plurality margin, greater current valid-answer disagreement, and ascending SHA-256 of example ID. Team-hard ranking uses disagreement, current wrong-member count, and the same hashed-ID tie-break. There is no new historical-frequency store or vulnerability prediction model.
+
+Layer 1 still receives an immutable packet and controls local search. GEPA/MARS search cores, Common-Safe, Shadow, plurality voting, provider governance and write-back were not changed. The old V1 protocol documents and reports are historical archives, not valid execution identities for this production contract. New experiments require a fresh source/protocol freeze and authorization; this report does not create one.

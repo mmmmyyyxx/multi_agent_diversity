@@ -1,5 +1,10 @@
 # Two-layer prompt-team optimization architecture
 
+> Historical architecture note. Some interface names and backend examples below
+> predate the unified production runtime. The sole active Layer-2 semantics are
+> specified in `docs/design/CURRENT_SPEC.md` and summarized in
+> `docs/CURRENT_ARCHITECTURE.md`; do not use this note as an experiment freeze.
+
 ```text
 ┌─────────────────────────────────────────────┐
 │ Layer 2: Team-Level Responsibility Search   │

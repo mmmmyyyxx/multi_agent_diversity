@@ -137,9 +137,9 @@ def _assignment() -> TeamSearchAssignment:
         TeamEvidenceCase(
             f"{group}-{index}", f"payload-{group}-{index}", "A", "B",
             "sanitized", group,
-            (("direct_flip",) if group == "responsibility" else ()),
+            (("direct_flip",) if group == "repair" else ()),
         )
-        for group in ("responsibility", "coalition", "preservation")
+        for group in ("repair", "team_hard", "preservation")
         for index in range(4)
     )
     return TeamSearchAssignment(

@@ -6,6 +6,11 @@ from dataclasses import asdict, dataclass
 import hashlib
 import json
 
+from ..versions import (
+    LAYER2_TEAM_SEARCH_PROTOCOL_VERSION,
+    PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION,
+)
+
 def _hash(value: object) -> str:
     return hashlib.sha256(
         json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -14,9 +19,9 @@ def _hash(value: object) -> str:
 
 @dataclass(frozen=True)
 class TeamSearchContract:
-    protocol_version: str = "two_layer_rg_gepa_v1"
-    target_policy: str = "current_responsibility_scheduler"
-    team_minibatch_composition: str = "4_responsibility_4_coalition_4_preservation"
+    protocol_version: str = LAYER2_TEAM_SEARCH_PROTOCOL_VERSION
+    target_policy: str = PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION
+    team_minibatch_composition: str = "4_repair_4_preservation_4_team_hard"
     team_minibatch_size: int = 12
     team_minibatch_responsibility_lane: str = "primary_lane_aligned"
     team_minibatch_quota_semantics: str = "strict_no_backfill"

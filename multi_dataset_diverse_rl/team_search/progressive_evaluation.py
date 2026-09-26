@@ -9,7 +9,7 @@ from .schemas import TeamCandidateRecord, TeamMiniBatchMetrics
 
 
 def is_catastrophic(metrics: TeamMiniBatchMetrics) -> bool:
-    return metrics.invalid_delta > 0 or metrics.vote_delta <= -2 or metrics.coalition_delta <= -3
+    return metrics.invalid_delta > 0 or metrics.vote_delta <= -2 or metrics.team_net_vote_delta <= -3
 
 
 def has_promotion_signal(metrics: TeamMiniBatchMetrics) -> bool:
@@ -20,7 +20,7 @@ def has_promotion_signal(metrics: TeamMiniBatchMetrics) -> bool:
             metrics.target_delta,
             metrics.vote_delta,
             metrics.broad_delta,
-            metrics.coalition_delta,
+            metrics.team_net_vote_delta,
         )
     )
 
@@ -31,7 +31,7 @@ def promotion_key(record: TeamCandidateRecord) -> tuple[int, int, int, int, int,
     metrics = record.minibatch_metrics
     return (
         metrics.vote_delta,
-        metrics.coalition_delta,
+        metrics.team_net_vote_delta,
         metrics.responsibility_delta,
         metrics.target_delta,
         metrics.broad_delta,
