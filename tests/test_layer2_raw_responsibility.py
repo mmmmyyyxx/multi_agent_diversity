@@ -143,6 +143,8 @@ def test_historical_service_routing_poison_cannot_change_layer2_scores_targets_o
         row.example_id for row in right_assignment.evidence
         if row.evidence_group == "repair"
     ]
+    assert left_assignment.evidence == right_assignment.evidence
+    assert left_assignment.local_validation_example_ids == right_assignment.local_validation_example_ids
 
 
 def test_shared_identical_parent_uses_overlapping_repair_and_team_hard_rows():

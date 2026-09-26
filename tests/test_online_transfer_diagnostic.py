@@ -524,6 +524,28 @@ def test_v2_integrity_amendment_preserves_scientific_freeze(monkeypatch):
     assert new_protocol["accepted_frontier_enforcement"] == "immediate_pre_team_typed_abort"
 
 
+def test_v3_semantic_refreeze_is_unapproved_and_keeps_diagnostic_budget(monkeypatch):
+    from scripts.prepare_online_transfer_diagnostic_v2 import frozen_payload as prior
+    from scripts.prepare_online_transfer_diagnostic_v3 import frozen_payload as current
+    from multi_dataset_diverse_rl.provider_credentials import LWJ_DASHSCOPE_BASE_URL_ENV
+    from multi_dataset_diverse_rl.versions import (
+        LAYER2_TEAM_SEARCH_PROTOCOL_VERSION, TEAM_MINIBATCH_CONTRACT_VERSION,
+    )
+
+    monkeypatch.setenv(LWJ_DASHSCOPE_BASE_URL_ENV, "https://example.invalid/compatible-mode/v1")
+    old, old_protocol = prior(execution_source_sha="a" * 40)
+    new, protocol = current(execution_source_sha="a" * 40)
+    for key in ("scientific", "diagnostic_contract", "runtime", "models", "dependency", "access"):
+        assert old[key] == new[key]
+    assert old_protocol["max_opportunities"] == protocol["max_opportunities"] == 10
+    assert new["semantic_contract"]["layer2_protocol"] == LAYER2_TEAM_SEARCH_PROTOCOL_VERSION
+    assert new["semantic_contract"]["team_minibatch"] == TEAM_MINIBATCH_CONTRACT_VERSION
+    assert protocol["semantic_contract"] == new["semantic_contract"]
+    assert new["api_authorization"]["authorized"] is False
+    assert new["access"] == {"validation50_calls": 0, "test50_calls": 0}
+    assert new["integrity_amendment"]["scientific_method_changed"] is True
+
+
 def test_dynamic_preopportunity_stop_uses_no_extra_parent_or_provider():
     class Backend:
         name = "gepa"

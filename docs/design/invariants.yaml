@@ -168,6 +168,14 @@ invariants:
     failure_refs: []
     critical: true
     status: ACTIVE
+  - id: INV-LAYER2-LOCAL-EVAL-TEAM-MINIBATCH-001
+    description: Layer 2 freezes M_eval from the same TeamMiniBatch12 IDs before candidate generation; member-level GEPA acceptance and later fixed-peer team admission remain separate, and team outcomes never influence local acceptance.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/team_search/system_runtime.py, multi_dataset_diverse_rl/team_search/task_builder.py, multi_dataset_diverse_rl/team_search/controller.py]
+    tests: [tests/test_final_layer2_semantics.py, tests/test_two_layer_optimizer_architecture.py]
+    failure_refs: []
+    critical: true
+    status: ACTIVE
   - id: INV-OPTIMIZER-FIDELITY-001
     description: Official GEPA remains a source-verified Level-B API-compatible adaptation with an unmodified search core.
     authority: docs/design/CURRENT_SPEC.md
@@ -193,7 +201,7 @@ invariants:
     critical: true
     status: ACTIVE
   - id: INV-TEAM-MINIBATCH-001
-    description: TeamMiniBatch12 has exactly four primary-lane repair, four team-correct preservation and four global team-hard residual rows with unique IDs and no backfill.
+    description: TeamMiniBatch12 has exactly four primary-lane repair, four team-correct preservation and four global team-hard residual rows with unique IDs and no backfill; preservation vulnerability is latest accepted target transition change OR current target pivotality, followed by smaller positive margin, greater valid-answer disagreement, SHA256(example ID), and raw ID only on hash collision.
     authority: docs/design/CURRENT_SPEC.md
     implementation_refs: [multi_dataset_diverse_rl/team_search/task_builder.py, multi_dataset_diverse_rl/team_search/controller.py]
     tests: [tests/test_two_layer_optimizer_architecture.py, tests/test_primary_responsibility_scheduler.py]

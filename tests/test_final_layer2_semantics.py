@@ -122,6 +122,14 @@ def test_routing_policy_poison_cannot_change_raw_graph_or_scores() -> None:
     ) for system, snapshot in ((System(0), left), (System(4), right)))
     assert assignments[0].evidence == assignments[1].evidence
     assert assignments[0].local_validation_example_ids == assignments[1].local_validation_example_ids
+    assert {row.example_id for row in assignments[0].evidence if "team_hard" in row.tags} == {
+        f"wrong-{index:02d}" for index in range(8)
+    }
+    selected = LocalTaskBuilder().select_team_minibatch(assignments[0].evidence)
+    assert assignments[0].local_validation_example_ids == tuple(row.example_id for row in selected)
+    assert tuple(row.example_id for row in Layer2EvidenceRequestBuilder().build(
+        request, assignments[0]
+    ).packet.local_eval_examples) == assignments[0].local_validation_example_ids
     assert sum(row.evidence_group == "repair" for row in assignments[0].evidence) == 8
     assert sum(row.evidence_group == "preservation" for row in assignments[0].evidence) == 4
 
@@ -185,3 +193,26 @@ def test_production_layer2_does_not_reintroduce_unassigned_coalition_group() -> 
     runtime = (root / "team_search" / "system_runtime.py").read_text(encoding="utf-8")
     assert "refresh_responsibility_after_commit" not in runtime
     assert "service_routing_audit" not in runtime
+
+
+def test_preservation_vulnerability_and_hash_tie_ordering() -> None:
+    rows = tuple(
+        TeamEvidenceCase(
+            f"preserve-{index}", "case", "A", "A", None,
+            "preservation", ("preservation",),
+            team_margin=margin,
+            team_disagreement=disagreement,
+            mutation_sensitive=sensitive,
+        )
+        for index, (sensitive, margin, disagreement) in enumerate((
+            (False, 1, 9), (True, 3, 9), (True, 1, 1),
+            (True, 1, 3), (True, 1, 3),
+        ))
+    )
+    ordered = sorted(rows, key=LocalTaskBuilder._preservation_priority)
+    assert [row.example_id for row in ordered[:3]] == [
+        "preserve-3" if hashlib.sha256(b"preserve-3").hexdigest() < hashlib.sha256(b"preserve-4").hexdigest() else "preserve-4",
+        "preserve-4" if hashlib.sha256(b"preserve-3").hexdigest() < hashlib.sha256(b"preserve-4").hexdigest() else "preserve-3",
+        "preserve-2",
+    ]
+    assert ordered[-1].example_id == "preserve-0"

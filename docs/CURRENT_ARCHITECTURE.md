@@ -117,7 +117,14 @@ Layer 2 owns:
 Responsibility is current team evidence. Focus is the latest committed
 parent-correct to child-wrong set; anchor is parent-wrong to child-correct.
 Roots have empty focus and anchor. Uncommitted mutations cannot change either.
-Local evaluation examples are frozen by Layer 2. GEPA and MARS Layer2 modes
+Layer 2 freezes local `M_eval` from the same TeamMiniBatch12 example IDs before
+candidate generation. Local GEPA acceptance compares target-member scores;
+later TeamMiniBatch promotion compares fixed-peer team metrics. Team-level
+outcomes cannot change the local accepted frontier, candidate IDs or scores.
+Preservation prioritizes latest accepted target-transition changes OR current
+target pivotality to correct plurality, then smaller positive margin, greater
+valid-answer disagreement, SHA256(example ID), and raw ID only on hash collision.
+This is a deterministic proxy, not a learned vulnerability model. GEPA and MARS Layer2 modes
 consume the same packet schema and cannot fetch or backfill examples.
 
 The production responsibility graph permits the same team residual to be

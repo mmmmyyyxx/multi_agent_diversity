@@ -34,7 +34,7 @@ class LocalTaskBuilder:
         self.quota = quota or TeamMiniBatchQuota()
         self.local_return_budget = local_return_budget
         if self.quota.total != 12:
-            raise ValueError("two_layer_rg_gepa_v1 requires TeamMiniBatch12")
+            raise ValueError(f"{TEAM_MINIBATCH_CONTRACT_VERSION} requires TeamMiniBatch12")
 
     @staticmethod
     def _example_rank(row: TeamEvidenceCase) -> tuple[str, str]:

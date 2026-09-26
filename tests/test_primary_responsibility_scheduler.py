@@ -170,6 +170,11 @@ def test_persistent_state_checkpoint_round_trip_has_no_team_hash_reset_key() -> 
     restored = PersistentRealizabilityState.from_checkpoint_payload(payload, member_ids=(0, 1))
     assert restored.checkpoint_payload() == payload
     assert restored.completed_update_indices == {8}
+    with pytest.raises(ValueError, match="checkpoint schema mismatch"):
+        PersistentRealizabilityState.from_checkpoint_payload(
+            {**payload, "schema_version": "persistent_member_realizability_state_v2"},
+            member_ids=(0, 1),
+        )
 
 
 def test_one_positive_score_still_selects_two_targets_for_compute_parity() -> None:

@@ -94,8 +94,18 @@ The experimental treatment decomposes Layer-2 evidence as
 `E_L2 = E_team union E_transition`: current team residuals provide
 responsibility evidence, while only the latest accepted parent-to-child edit
 provides focus (newly broken) and anchor (newly fixed) evidence. Root prompts
-have empty focus and anchor sets. Local evaluation is frozen separately. This
-borrows transition-evidence semantics associated with SEPO; it does not import
+have empty focus and anchor sets. Layer 2 freezes `M_eval` from the exact
+TeamMiniBatch12 example IDs before candidate generation. Identity reuse does
+not merge decisions: GEPA local acceptance compares target-member performance;
+TeamMiniBatch subsequently tests fixed-peer plurality/team metrics. No
+TeamMiniBatch, Full, Common-Safe, or Shadow result feeds back into local
+acceptance. Preservation vulnerability is latest accepted target-member
+transition change OR current target pivotality to correct plurality, ordered
+first, then smaller positive plurality margin, greater valid-answer
+disagreement, ascending SHA256(example ID), and raw ID only for a theoretical
+hash collision. This deterministic proxy is not learned or frequency memory.
+The focus/anchor design borrows transition-evidence semantics associated with
+SEPO; it does not import
 SEPO structural edits, architects, breadcrumb search, Lexicase selection,
 archive admission, or lineage-parent selection into Layer 2.
 

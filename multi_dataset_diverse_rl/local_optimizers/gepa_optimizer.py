@@ -37,6 +37,7 @@ from ..saturation import (
 )
 from ..persistence.durable_io import ensure_directory, io_path
 from ..versions import (
+    LAYER2_TEAM_SEARCH_PROTOCOL_VERSION,
     LOCAL_GEPA_ENGINE_ACCEPTANCE_SEMANTICS,
     LOCAL_GEPA_CANDIDATE_COMPONENT,
     LOCAL_GEPA_PROPOSER_CONTRACT_VERSION,
@@ -121,7 +122,7 @@ class GEPAOptimizerConfig:
             self.seed_source,
         )
         if actual != expected:
-            raise ValueError("two_layer_rg_gepa_v1 local GEPA contract changed")
+            raise ValueError(f"{LAYER2_TEAM_SEARCH_PROTOCOL_VERSION} local GEPA contract changed")
         validate_proposer_contract()
 
     def identity(self) -> str:
@@ -241,7 +242,7 @@ class GEPALocalPromptOptimizer:
         saturation_mode_name: str | None = None,
     ) -> LocalOptimizationResult:
         if task.backend_state is not None:
-            raise ValueError("two_layer_rg_gepa_v1 starts fresh GEPA state for every team update")
+            raise ValueError(f"{LAYER2_TEAM_SEARCH_PROTOCOL_VERSION} starts fresh GEPA state for every team update")
         if task.budget.reflection_minibatch_size != self.config.reflection_minibatch_size:
             raise ValueError("task/config reflection minibatch mismatch")
         if task.budget.max_returned_candidates != self.config.k_local_return:

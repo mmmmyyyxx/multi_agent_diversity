@@ -53,7 +53,7 @@ from multi_dataset_diverse_rl.team_search.schemas import (
     TeamSearchAssignment,
     TeamSearchRequest,
 )
-from multi_dataset_diverse_rl.team_search.task_builder import LocalTaskBuilder
+from multi_dataset_diverse_rl.team_search.task_builder import Layer2EvidenceRequestBuilder, LocalTaskBuilder
 from multi_dataset_diverse_rl.versions import (
     COMMON_SOLVER_CONTRACT_V1_ID,
     LOCAL_GEPA_CANDIDATE_COMPONENT,
@@ -921,6 +921,83 @@ def test_team_controller_is_backend_agnostic() -> None:
         "preservation_count": 4,
         "backfill_count": 0,
     }
+
+
+def test_shared_local_ids_are_frozen_before_generation_and_team_results_cannot_change_local_frontier() -> None:
+    evidence = strict_team_evidence()
+    frozen_ids = tuple(row.example_id for row in LocalTaskBuilder().select_team_minibatch(evidence))
+    assignment = TeamSearchAssignment(
+        0, "parent", evidence, "context", "raw-legal",
+        local_validation_example_ids=frozen_ids,
+        primary_responsibility_lane=DIRECT_FLIP,
+    )
+    request = TeamSearchRequest(81, 0, "parent-team", 36, COMMON_SOLVER_CONTRACT_V1_ID, "output")
+    events = []
+
+    class LocalPositive:
+        async def optimize_layer2(self, local_task):
+            assert tuple(row.example_id for row in local_task.packet.local_eval_examples) == frozen_ids
+            events.append("local")
+            candidate = LocalPromptCandidate(
+                "local-positive", "changed procedure", 1.0,
+                {row.example_id: 1.0 for row in local_task.packet.local_eval_examples}, (), 0,
+                backend_metadata={"local_acceptance_delta": 1.0},
+            )
+            return LocalOptimizationResult((candidate,), "gepa", "fake", None, 1, 1, 1, 1, 2, "complete")
+
+    class TeamNeutral(StubEvaluator):
+        def evaluate_minibatch(self, assignment, candidate, minibatch):
+            assert events == ["local"]
+            assert tuple(row.example_id for row in minibatch) == frozen_ids
+            events.append("team")
+            return TeamMiniBatchMetrics(), EvaluationCost(1, 1, 1)
+
+        def evaluate_full(self, assignment, candidate):
+            raise AssertionError("Full must not influence local acceptance")
+
+        def evaluate_shadow(self, assignment, candidate):
+            raise AssertionError("Shadow must not influence local acceptance")
+
+    class PoisonSelector(StubSelector):
+        def annotate(self, records, *, active):
+            assert events == ["local", "team"]
+            return records
+
+        def select(self, records):
+            raise AssertionError("Common-Safe must not influence local acceptance")
+
+    controller = TeamSearchController(
+        responsibility=StubResponsibility(assignment),
+        task_builder=Layer2EvidenceRequestBuilder(),
+        local_optimizer=LocalPositive(), evaluator=TeamNeutral(),
+        selector=PoisonSelector(), committer=StubCommitter(),
+    )
+    branch = asyncio.run(controller._evaluate_frozen_branch(request, assignment))
+    assert events == ["local", "team"]
+    assert [row.local_candidate.candidate_id for row in branch.candidates] == ["local-positive"]
+    assert [row.local_candidate.local_score for row in branch.candidates] == [1.0]
+    assert not branch.candidates[0].promoted
+    assert branch.audit_metadata["team_minibatch_example_ids"] == list(frozen_ids)
+    accepted = tuple((row.local_candidate.candidate_id, row.local_candidate.local_score)
+                     for row in branch.candidates)
+
+    class TeamCatastrophic(TeamNeutral):
+        def evaluate_minibatch(self, assignment, candidate, minibatch):
+            assert events == ["local"]
+            events.append("team")
+            return TeamMiniBatchMetrics(invalid_delta=1, vote_delta=-2), EvaluationCost(1, 1, 1)
+
+    events.clear()
+    poisoned = TeamSearchController(
+        responsibility=StubResponsibility(assignment),
+        task_builder=Layer2EvidenceRequestBuilder(),
+        local_optimizer=LocalPositive(), evaluator=TeamCatastrophic(),
+        selector=PoisonSelector(), committer=StubCommitter(),
+    )
+    poisoned_branch = asyncio.run(poisoned._evaluate_frozen_branch(request, assignment))
+    assert tuple((row.local_candidate.candidate_id, row.local_candidate.local_score)
+                 for row in poisoned_branch.candidates) == accepted
+    assert not poisoned_branch.candidates[0].promoted
 
 
 def test_fake_provider_end_to_end_positive_path_commits_once(tmp_path: Path) -> None:

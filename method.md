@@ -36,6 +36,13 @@ not exclusive ownership. Its TeamMiniBatch12 is four repair, four preservation,
 and four team-hard residual rows. The old coalition/unassigned-residual quota
 is archived, not an active Layer-2 mechanism. Equal target scores use ascending
 member ID; identical initial prompts remain the experimental baseline.
+Layer 2 freezes `M_eval` from the same TeamMiniBatch12 IDs before candidate
+generation. Local acceptance is target-member-only; subsequent TeamMiniBatch
+promotion uses fixed-peer plurality/team metrics and cannot feed back into
+local acceptance. Preservation vulnerability is a latest accepted target-member
+transition change OR current target pivotality to correct plurality, ranked
+before smaller positive margin, greater valid-answer disagreement,
+SHA256(example ID), then raw ID solely on theoretical hash collision.
 
 The team contains five prompts and uses equal-weight plurality with
 tie-as-abstain. Model weights remain fixed. Every evaluated candidate changes

@@ -1,4 +1,4 @@
-"""Layered protocol identities for two_layer_rg_gepa_v1."""
+"""Layered protocol identities for the current Layer-2 team search."""
 
 from __future__ import annotations
 

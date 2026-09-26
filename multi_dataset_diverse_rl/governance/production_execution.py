@@ -126,6 +126,7 @@ def _expected_bundle(
             if manifest["experiment_id"] in {
                 "gepa_layer2_local_to_team_transfer_diagnostic_v1",
                 "gepa_layer2_local_to_team_transfer_diagnostic_v2",
+                "gepa_layer2_local_to_team_transfer_diagnostic_v3",
             }
             else "single_opportunity_engineering_canary"
         ),
@@ -148,12 +149,34 @@ def validate_execution(
         "gepa_layer2_real_canary_post_refactor_v2",
         "gepa_layer2_local_to_team_transfer_diagnostic_v1",
         "gepa_layer2_local_to_team_transfer_diagnostic_v2",
+        "gepa_layer2_local_to_team_transfer_diagnostic_v3",
     }:
         raise StartupIdentityError("ABORT_PRE_PROVIDER: unsupported experiment")
     diagnostic = manifest["experiment_id"] in {
         "gepa_layer2_local_to_team_transfer_diagnostic_v1",
         "gepa_layer2_local_to_team_transfer_diagnostic_v2",
+        "gepa_layer2_local_to_team_transfer_diagnostic_v3",
     }
+    if manifest["experiment_id"] == "gepa_layer2_local_to_team_transfer_diagnostic_v3":
+        from ..versions import (
+            LAYER2_TEAM_SEARCH_PROTOCOL_VERSION,
+            TEAM_MINIBATCH_CONTRACT_VERSION,
+            PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION,
+            LAYER2_RESPONSIBILITY_SOURCE_VERSION,
+        )
+        semantic = {
+            "layer2_protocol": LAYER2_TEAM_SEARCH_PROTOCOL_VERSION,
+            "team_minibatch": TEAM_MINIBATCH_CONTRACT_VERSION,
+            "scheduler": PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION,
+            "responsibility_source": LAYER2_RESPONSIBILITY_SOURCE_VERSION,
+            "local_eval_identity": "same_frozen_team_minibatch12_ids",
+            "local_acceptance": "target_member_only_no_team_feedback",
+        }
+        if (manifest.get("semantic_contract") != semantic
+                or protocol.get("semantic_contract") != semantic
+                or manifest.get("schema_version") != "online_transfer_diagnostic_freeze_v3"
+                or protocol.get("schema_version") != "online_local_to_team_transfer_diagnostic_v3"):
+            raise StartupIdentityError("ABORT_PRE_PROVIDER: v3 semantic contract mismatch")
     if manifest.get("attempt_id") != manifest.get("experiment_id"):
         raise StartupIdentityError("ABORT_PRE_PROVIDER: attempt identity mismatch")
     if manifest.get("scientific", {}).get("backend") != "gepa" or manifest.get("scientific", {}).get("optimization_scope") != "layer2":

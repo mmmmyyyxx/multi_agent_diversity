@@ -97,7 +97,10 @@ async def execute_frozen(prep: Path, run_root: Path) -> dict[str, Any]:
     permit = validate_execution(root=ROOT, prep=prep, require_authorized=True)
     admitted = admit_execution(permit, run_root)
     try:
-        if admitted.experiment_id == "gepa_layer2_local_to_team_transfer_diagnostic_v2":
+        if admitted.experiment_id in {
+            "gepa_layer2_local_to_team_transfer_diagnostic_v2",
+            "gepa_layer2_local_to_team_transfer_diagnostic_v3",
+        }:
             result = await execute_online_transfer_diagnostic(admitted, root=ROOT)
         else:
             result = await execute_post_refactor_canary(admitted, root=ROOT)

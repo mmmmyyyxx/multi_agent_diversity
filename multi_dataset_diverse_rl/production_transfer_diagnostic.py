@@ -41,6 +41,7 @@ from .team_search.system_runtime import (
     SystemTeamCommitter, freeze_current_responsibility,
 )
 from .team_search.task_builder import Layer2EvidenceRequestBuilder
+from .versions import PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION
 
 
 _OPPORTUNITY_PHASES = (
@@ -194,7 +195,10 @@ async def execute_online_transfer_diagnostic(
     spec = experiment_spec_from_mapping(manifest["scientific"])
     protocol = json.loads((prep / "protocol.json").read_text(encoding="utf-8"))
     if (
-        permit.experiment_id != "gepa_layer2_local_to_team_transfer_diagnostic_v2"
+        permit.experiment_id not in {
+            "gepa_layer2_local_to_team_transfer_diagnostic_v2",
+            "gepa_layer2_local_to_team_transfer_diagnostic_v3",
+        }
         or permit.allowed_phase != "diagnostic"
         or spec.mode_id != "GEPA_LAYER2"
         or spec.fixed_budget_units != 10
@@ -322,7 +326,7 @@ async def execute_online_transfer_diagnostic(
         ).build_from_member(
             request=request, member_id=target,
             primary_lane=summary.primary_lane,
-            responsibility_identity="primary_responsibility_persistent_realizability_v1",
+            responsibility_identity=PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION,
         )
         current.parent_hash = parent_hash
         parent_sequence.append(parent_hash)

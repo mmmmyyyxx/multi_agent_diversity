@@ -162,14 +162,21 @@ the canonical v15 runtime above.
   team residuals. Focus rows are exactly parent-correct to child-wrong cases,
   and anchor rows are exactly parent-wrong to child-correct cases from the
   current parent's latest accepted transition. Root focus/anchor sets are empty;
-  histories do not accumulate in optimizer input. Local evaluation is frozen
-  independently through explicit Layer-2 example identities and role intersections
-  are persisted as sanitized counts. Missing explicit identities fail closed; a
+  histories do not accumulate in optimizer input. Local evaluation is explicitly
+  frozen by Layer 2 through example identities; role intersections are
+  persisted as sanitized counts. Missing explicit identities fail closed; a
   backend may never fetch or backfill from a global pool. Direct packet fixtures
   without explicit identities use deterministic team-hard rows selected by Layer 2.
   These semantics do not add
   SEPO search operators, architects, breadcrumb search, Lexicase selection,
   archive admission, or lineage-parent selection to Layer 2.
+- **INV-LAYER2-LOCAL-EVAL-TEAM-MINIBATCH-001** — Production Layer 2 freezes
+  `M_eval` from the exact frozen TeamMiniBatch12 example identities before
+  candidate generation. This is identity sharing, not decision sharing: local
+  GEPA acceptance compares target-member performance with its parent, while
+  the subsequent TeamMiniBatch stage evaluates the candidate with fixed peers
+  using plurality/team metrics. TeamMiniBatch, Full, Common-Safe, and Shadow
+  outcomes MUST NOT influence Layer-1 acceptance, frontier, IDs, or scores.
 - **INV-UNIFIED-BACKEND-RUNTIME-001** — `optimizer_backend` (`gepa` or `mars`)
   and `optimization_mode` (`native` or `layer2`) are independent runtime
   configuration fields. GEPA_NATIVE, GEPA_LAYER2, MARS_NATIVE, and MARS_LAYER2
@@ -249,8 +256,13 @@ those questions require separate fixed-budget experiments.
   cannot occupy two slots. Missing quotas fail closed; no silent backfill or
   smaller minibatch is permitted. Preservation order is latest-transition
   sensitivity first, smaller positive plurality margin, greater current
-  disagreement, then ascending example ID. Team-hard order is greater current
-  disagreement, more currently wrong members, then ascending example ID.
+  valid-answer disagreement, then ascending SHA-256 of example ID with raw ID
+  only as a theoretical hash-collision fallback. Mutation sensitivity is the
+  deterministic proxy: the target's latest accepted transition changed this
+  example OR the target is currently pivotal to correct team plurality. It is
+  neither a learned vulnerability model nor historical change frequency.
+  Team-hard order is greater current valid-answer disagreement, more currently
+  wrong members, then the same SHA-256/raw-ID tie ordering.
   This last count is a current-state frequency proxy, not new historical
   memory. Team collateral effects are measured after generation in
   TeamMiniBatch/Full/Common-Safe/Shadow, never predicted by a coalition module.
