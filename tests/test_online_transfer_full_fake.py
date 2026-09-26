@@ -21,14 +21,16 @@ from multi_dataset_diverse_rl.persistence.durable_io import atomic_write_json, i
 from multi_dataset_diverse_rl.production_transfer_diagnostic import execute_online_transfer_diagnostic
 from multi_dataset_diverse_rl.provider_factory import ProviderClientFactory
 from multi_dataset_diverse_rl.team_search.system_runtime import FrozenResponsibilitySnapshot
+from multi_dataset_diverse_rl.team_search.task_builder import Layer2EvidenceRequestBuilder
 from scripts.audit_online_transfer_diagnostic import audit
 from scripts.prepare_online_transfer_diagnostic_v2 import frozen_payload
+from scripts.prepare_online_transfer_diagnostic_v3 import frozen_payload as v3_frozen_payload
 from scripts.prepare_post_refactor_gepa_canary import _private_splits
 
 
 def rehearse(
     tmp_path: Path, monkeypatch, rehearsal: int, *, through_cli: bool = False,
-    scenario: str = "commit",
+    scenario: str = "commit", v3: bool = False,
 ) -> dict:
     # Exceed the intended formal root and its deepest categorical-profile path
     # on native Windows without relying on the machine-wide long-path switch.
@@ -36,7 +38,9 @@ def rehearse(
     prep = base / "prep"
     prep.mkdir(parents=True)
     _private_splits(prep)
-    manifest, protocol = frozen_payload(execution_source_sha="a" * 40)
+    manifest, protocol = (
+        v3_frozen_payload if v3 else frozen_payload
+    )(execution_source_sha="a" * 40)
     # This fixture replays the superseded v2 routed-source freeze. Current
     # Layer-2 raw-legal behavior has its own source/poison regression tests.
     def v2_routed_snapshot(system, *, update_index):
@@ -48,10 +52,11 @@ def rehearse(
             current_margin_by_question={row.question_hash: row.plurality_margin for row in states},
             source_version="historical_service_routed_v1",
         )
-    monkeypatch.setattr(
-        "multi_dataset_diverse_rl.production_transfer_diagnostic.freeze_current_responsibility",
-        v2_routed_snapshot,
-    )
+    if not v3:
+        monkeypatch.setattr(
+            "multi_dataset_diverse_rl.production_transfer_diagnostic.freeze_current_responsibility",
+            v2_routed_snapshot,
+        )
     (prep / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
     (prep / "protocol.json").write_text(json.dumps(protocol), encoding="utf-8")
     labels = {}
@@ -220,3 +225,51 @@ def test_two_consecutive_rehearsals_have_no_mutable_state_leak(tmp_path: Path, m
     with monkeypatch.context() as second:
         right = rehearse(tmp_path / "second", second, 7)
     assert left == right
+
+
+@pytest.mark.parametrize("rehearsal", range(3))
+def test_v3_raw_legal_full_stack_exposes_packet_schedule_capacity(
+    tmp_path: Path, monkeypatch, rehearsal: int,
+) -> None:
+    original = Layer2EvidenceRequestBuilder.build
+    observed = []
+
+    def capture(self, request, assignment):
+        repair = tuple(row for row in assignment.evidence
+                       if row.evidence_group == "repair" and
+                       self._matches_primary_lane(row, assignment.primary_responsibility_lane))
+        observed.append({
+            "repair_count": len(repair),
+            "local_eval_count": len(assignment.local_validation_example_ids),
+            "metric_budget": request.local_metric_budget,
+        })
+        return original(self, request, assignment)
+
+    monkeypatch.setattr(Layer2EvidenceRequestBuilder, "build", capture)
+    with pytest.raises(ValueError, match="packet schedule must cover every selected search example"):
+        rehearse(tmp_path, monkeypatch, rehearsal, v3=True)
+    assert observed
+    assert observed[0]["repair_count"] > observed[0]["metric_budget"]
+    assert observed[0]["local_eval_count"] == 12
+
+
+def test_v3_fresh_cli_also_exposes_packet_schedule_capacity(tmp_path: Path) -> None:
+    source = Path(__file__).resolve()
+    code = """
+import importlib.util, pathlib, pytest, sys
+spec = importlib.util.spec_from_file_location('full_fake_rehearsal', sys.argv[1])
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+monkeypatch = pytest.MonkeyPatch()
+try:
+    with pytest.raises(ValueError, match='packet schedule must cover every selected search example'):
+        module.rehearse(pathlib.Path(sys.argv[2]), monkeypatch, 80, through_cli=True, v3=True)
+finally:
+    monkeypatch.undo()
+"""
+    process = subprocess.run(
+        [sys.executable, "-c", code, str(source), str(tmp_path)],
+        cwd=Path(__file__).resolve().parents[1], text=True,
+        capture_output=True, timeout=180,
+    )
+    assert process.returncode == 0, process.stderr[-4000:]

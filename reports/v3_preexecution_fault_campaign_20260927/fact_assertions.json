@@ -1,0 +1,25 @@
+{
+  "baseline_commit": "a9b7adeefd669769fbecdabc2c27bf5039225272",
+  "scientific_execution_source": "3ab6b5253a2be797cb682e8c1302653a22dcca1c",
+  "api_calls": 0,
+  "validation50_calls": 0,
+  "test50_calls": 0,
+  "production_science_files_changed": 0,
+  "v3_direct_raw_legal_rehearsals": 3,
+  "v3_cli_raw_legal_rehearsals": 1,
+  "v3_failure_gate": "PACKET_SCHEDULE_CAPACITY",
+  "aligned_repair_count_exceeds_metric_budget_36": true,
+  "local_eval_id_count": 12,
+  "production_assignment_responsibility_value": 0.0,
+  "production_packet_responsibility_value": 0.0,
+  "observed_scheduler_primary_score_for_same_assignment": 16,
+  "quota_probe": {
+    "lanes": ["direct_flip", "near_margin", "coverage"],
+    "repair_counts_failing": [1, 2, 3],
+    "repair_count_passing_with_other_quotas": 4
+  },
+  "no_cache_provider_success_upper_envelope": 2880,
+  "frozen_provider_success_emergency_ceiling": 1200,
+  "upper_envelope_is_actual_consumption": false,
+  "ready_for_authorization": "HOLD"
+}

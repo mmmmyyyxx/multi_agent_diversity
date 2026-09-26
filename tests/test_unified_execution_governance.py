@@ -199,6 +199,15 @@ def test_gepa_dependency_identity_is_location_independent(tmp_path: Path, monkey
         gepa_runtime.verify_frozen_gepa(second)
 
 
+def test_frozen_source_byte_poison_rejects_before_provider(tmp_path: Path, monkeypatch) -> None:
+    root, prep = _fixture(tmp_path, monkeypatch)
+    assert validate_execution(root=root, prep=prep, require_authorized=True).run_root is None
+    (root / "source.py").write_text("frozen = False\n", encoding="utf-8")
+    with pytest.raises(StartupIdentityError, match="scientific_identity mismatch"):
+        validate_execution(root=root, prep=prep, require_authorized=True)
+    assert not (tmp_path / "run").exists()
+
+
 def test_entry_import_graph_is_current_and_historical_runner_free() -> None:
     root = Path(__file__).resolve().parents[1]
     entry = (root / "scripts/run_experiment.py").read_text(encoding="utf-8")
