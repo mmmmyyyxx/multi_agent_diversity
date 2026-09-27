@@ -1,0 +1,30 @@
+{
+  "all_complete_fake_audits_pass": true,
+  "cache_hits_in_budget_stress": 2440,
+  "complete_cases": 10,
+  "failure_cases": [
+    {
+      "case": "postprocess",
+      "failed_provider_attempts": 0,
+      "ledger_records": 617,
+      "lifecycle_status": "ABORTED",
+      "provider_attempts": 102,
+      "successful_provider_calls": 102
+    },
+    {
+      "case": "transport",
+      "failed_provider_attempts": 4,
+      "ledger_records": 620,
+      "lifecycle_status": "ABORTED",
+      "provider_attempts": 105,
+      "successful_provider_calls": 101
+    }
+  ],
+  "stage_cache_reuse": {
+    "team_full_eval": 412,
+    "team_minibatch_eval": 60,
+    "team_shadow_eval": 1400
+  },
+  "test50_calls": 0,
+  "validation50_calls": 0
+}

@@ -1,0 +1,13 @@
+{
+  "README.md": "caa59cb89e7380d8e6137951ec3b85ef916ed4343500a5f731895dff36b0c48a",
+  "evidence_view_trace.json": "ac459041bb1e74160b37ec3e14b386eaf0e5e333ebedee7d75656da9e837259a",
+  "fact_assertions.json": "b48d1c1c735ec6ea1ca047a6dce240c70de661948b01350520d69b2641b4bc10",
+  "feasibility_trace.json": "b96d3aaadf30c964de9070e00528e6636c17b18312f8be9405ebc9ccc827a48f",
+  "freeze_identity.json": "741bf923ef369fe713299da923b412481d4cc520af5eafbd090b5fc435de31aa",
+  "full_stack_scenarios.json": "2f0053aa12e9ce65ffcdc0f3b503f1e66dbf1c3ff62a4e8700b0eb3bd9aa3744",
+  "ledger_reconciliation.json": "061b58479f5ada914f45b2f5323346f666d69d52538347110a8cb21aeb36084f",
+  "method_delta.json": "408a6b3ef76a3357df8615e0757f9c81f8657fb9e03ca936dc90cd8d916cebbe",
+  "provider_budget_stress.json": "8f502a699ec3eac62196c70f94dcc6dc26b63f0dc89b4f0543ae41ca6a813c4b",
+  "responsibility_value_trace.json": "bfb70f314af4ae6943391bdf21c4471ac1512ee8b48a500159ccba4d40ff6951",
+  "verification.json": "5ba1f115171e4c96cea970fae3964cf473b128a3ac41c6c2fd722943a314e160"
+}

@@ -1,0 +1,18 @@
+{
+  "assertions": {
+    "feasible_reranking": true,
+    "five_local_accepts_under_ceilings": true,
+    "m_eval_equals_team_minibatch": true,
+    "no_feasible_scientific_stop": true,
+    "proposal_ceiling_20": true,
+    "real_api_calls_zero": true,
+    "root_delivery_not_implied": true,
+    "root_full_primary_count_50": true,
+    "root_raw_V_50": true,
+    "root_schedule_bounded_36": true,
+    "team_minibatch_exact_12": true,
+    "test50_calls_zero": true,
+    "validation50_calls_zero": true
+  },
+  "gate": "PASS"
+}

@@ -1,0 +1,35 @@
+{
+  "complete_fake_cases": 10,
+  "fake_campaign_gate": "PASS",
+  "full_pytest": {
+    "passed": 1545,
+    "skipped": 4,
+    "failed": 15,
+    "errors": 13,
+    "nonpassing_class": "MISSING_PRIVATE_HISTORICAL_ARTIFACTS_ONLY",
+    "new_active_path_failure_classes": 0,
+    "full_tests_pass": false
+  },
+  "focused_tests": "152 passed, 1 skipped; additional V4 reranking and source-poison tests passed",
+  "source_poison": {
+    "gate": "PASS",
+    "tests_passed": 116,
+    "manifest_source_entries_byte_poisoned": 115,
+    "provider_reached": false
+  },
+  "governance_preflight": "PASS",
+  "compileall": "PASS",
+  "git_diff_check": "PASS",
+  "sanitization_scan": "PASS",
+  "isolated_prep_byte_replay": {
+    "gate": "PASS",
+    "identical_files": 7,
+    "preregistration_hash_identical": true,
+    "run_identity_hash_identical": true
+  },
+  "ready_for_authorization": true,
+  "authorization_consumed": false,
+  "validation50_calls": 0,
+  "test50_calls": 0,
+  "zero_real_api": true
+}

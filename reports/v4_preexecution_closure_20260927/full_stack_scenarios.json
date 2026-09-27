@@ -1,0 +1,22 @@
+{
+  "A": {
+    "audited": "PASS",
+    "commits": 3
+  },
+  "B": {
+    "commits": 0,
+    "local_accepted": 5,
+    "mandatory_diagnostic_full": true,
+    "minibatch_rejected": true
+  },
+  "C": {
+    "commits": 0,
+    "common_safe_rejected": true
+  },
+  "D": {
+    "commits": 0,
+    "shadow_rejected": true
+  },
+  "all_fake_audits_pass": true,
+  "successor_chain_commits": 4
+}

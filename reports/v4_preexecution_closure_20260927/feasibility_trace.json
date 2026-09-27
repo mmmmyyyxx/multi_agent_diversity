@@ -1,0 +1,644 @@
+{
+  "feasible_rerank": {
+    "latest_transition_effect_hash_by_member": {
+      "0": null,
+      "1": null,
+      "2": null,
+      "3": null,
+      "4": null
+    },
+    "members": [
+      {
+        "coverage_count": 50,
+        "direct_count": 0,
+        "failure_count": 0,
+        "feasibility_reason": "INSUFFICIENT_PRIMARY_REPAIR_QUOTA",
+        "feasible_rank": null,
+        "member_id": 0,
+        "near_margin_count": 0,
+        "primary_lane": "coverage",
+        "raw_V": 50,
+        "raw_rank": 1,
+        "raw_target_score": 50.0
+      },
+      {
+        "coverage_count": 50,
+        "direct_count": 0,
+        "failure_count": 0,
+        "feasibility_reason": "FEASIBLE",
+        "feasible_rank": 1,
+        "member_id": 1,
+        "near_margin_count": 0,
+        "primary_lane": "coverage",
+        "raw_V": 50,
+        "raw_rank": 2,
+        "raw_target_score": 50.0
+      },
+      {
+        "coverage_count": 50,
+        "direct_count": 0,
+        "failure_count": 0,
+        "feasibility_reason": "FEASIBLE",
+        "feasible_rank": 2,
+        "member_id": 2,
+        "near_margin_count": 0,
+        "primary_lane": "coverage",
+        "raw_V": 50,
+        "raw_rank": 3,
+        "raw_target_score": 50.0
+      },
+      {
+        "coverage_count": 50,
+        "direct_count": 0,
+        "failure_count": 0,
+        "feasibility_reason": "FEASIBLE",
+        "feasible_rank": 3,
+        "member_id": 3,
+        "near_margin_count": 0,
+        "primary_lane": "coverage",
+        "raw_V": 50,
+        "raw_rank": 4,
+        "raw_target_score": 50.0
+      },
+      {
+        "coverage_count": 50,
+        "direct_count": 0,
+        "failure_count": 0,
+        "feasibility_reason": "FEASIBLE",
+        "feasible_rank": 4,
+        "member_id": 4,
+        "near_margin_count": 0,
+        "primary_lane": "coverage",
+        "raw_V": 50,
+        "raw_rank": 5,
+        "raw_target_score": 50.0
+      }
+    ],
+    "parent_team_hash": "6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89",
+    "policy_version": "raw_positive_score_preselection_exact_minibatch_packet_v1",
+    "selected_member": 1,
+    "update_index": 0
+  },
+  "no_feasible": {
+    "latest_transition_effect_hash_by_member": {
+      "0": null,
+      "1": null,
+      "2": null,
+      "3": null,
+      "4": null
+    },
+    "members": [
+      {
+        "coverage_count": 100,
+        "direct_count": 0,
+        "failure_count": 0,
+        "feasibility_reason": "INSUFFICIENT_PRESERVATION_QUOTA",
+        "feasible_rank": null,
+        "member_id": 0,
+        "near_margin_count": 0,
+        "primary_lane": "coverage",
+        "raw_V": 100,
+        "raw_rank": 1,
+        "raw_target_score": 100.0
+      },
+      {
+        "coverage_count": 100,
+        "direct_count": 0,
+        "failure_count": 0,
+        "feasibility_reason": "INSUFFICIENT_PRESERVATION_QUOTA",
+        "feasible_rank": null,
+        "member_id": 1,
+        "near_margin_count": 0,
+        "primary_lane": "coverage",
+        "raw_V": 100,
+        "raw_rank": 2,
+        "raw_target_score": 100.0
+      },
+      {
+        "coverage_count": 100,
+        "direct_count": 0,
+        "failure_count": 0,
+        "feasibility_reason": "INSUFFICIENT_PRESERVATION_QUOTA",
+        "feasible_rank": null,
+        "member_id": 2,
+        "near_margin_count": 0,
+        "primary_lane": "coverage",
+        "raw_V": 100,
+        "raw_rank": 3,
+        "raw_target_score": 100.0
+      },
+      {
+        "coverage_count": 100,
+        "direct_count": 0,
+        "failure_count": 0,
+        "feasibility_reason": "INSUFFICIENT_PRESERVATION_QUOTA",
+        "feasible_rank": null,
+        "member_id": 3,
+        "near_margin_count": 0,
+        "primary_lane": "coverage",
+        "raw_V": 100,
+        "raw_rank": 4,
+        "raw_target_score": 100.0
+      },
+      {
+        "coverage_count": 100,
+        "direct_count": 0,
+        "failure_count": 0,
+        "feasibility_reason": "INSUFFICIENT_PRESERVATION_QUOTA",
+        "feasible_rank": null,
+        "member_id": 4,
+        "near_margin_count": 0,
+        "primary_lane": "coverage",
+        "raw_V": 100,
+        "raw_rank": 5,
+        "raw_target_score": 100.0
+      }
+    ],
+    "parent_team_hash": "6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89",
+    "policy_version": "raw_positive_score_preselection_exact_minibatch_packet_v1",
+    "selected_member": null,
+    "update_index": 0
+  },
+  "root": {
+    "latest_transition_effect_hash_by_member": {
+      "0": null,
+      "1": null,
+      "2": null,
+      "3": null,
+      "4": null
+    },
+    "members": [
+      {
+        "coverage_count": 50,
+        "direct_count": 0,
+        "failure_count": 0,
+        "feasibility_reason": "FEASIBLE",
+        "feasible_rank": 1,
+        "member_id": 0,
+        "near_margin_count": 0,
+        "primary_lane": "coverage",
+        "raw_V": 50,
+        "raw_rank": 1,
+        "raw_target_score": 50.0
+      },
+      {
+        "coverage_count": 50,
+        "direct_count": 0,
+        "failure_count": 0,
+        "feasibility_reason": "FEASIBLE",
+        "feasible_rank": 2,
+        "member_id": 1,
+        "near_margin_count": 0,
+        "primary_lane": "coverage",
+        "raw_V": 50,
+        "raw_rank": 2,
+        "raw_target_score": 50.0
+      },
+      {
+        "coverage_count": 50,
+        "direct_count": 0,
+        "failure_count": 0,
+        "feasibility_reason": "FEASIBLE",
+        "feasible_rank": 3,
+        "member_id": 2,
+        "near_margin_count": 0,
+        "primary_lane": "coverage",
+        "raw_V": 50,
+        "raw_rank": 3,
+        "raw_target_score": 50.0
+      },
+      {
+        "coverage_count": 50,
+        "direct_count": 0,
+        "failure_count": 0,
+        "feasibility_reason": "FEASIBLE",
+        "feasible_rank": 4,
+        "member_id": 3,
+        "near_margin_count": 0,
+        "primary_lane": "coverage",
+        "raw_V": 50,
+        "raw_rank": 4,
+        "raw_target_score": 50.0
+      },
+      {
+        "coverage_count": 50,
+        "direct_count": 0,
+        "failure_count": 0,
+        "feasibility_reason": "FEASIBLE",
+        "feasible_rank": 5,
+        "member_id": 4,
+        "near_margin_count": 0,
+        "primary_lane": "coverage",
+        "raw_V": 50,
+        "raw_rank": 5,
+        "raw_target_score": 50.0
+      }
+    ],
+    "parent_team_hash": "6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89",
+    "policy_version": "raw_positive_score_preselection_exact_minibatch_packet_v1",
+    "selected_member": 0,
+    "update_index": 0
+  },
+  "successor_chain": [
+    {
+      "latest_transition_effect_hash_by_member": {
+        "0": null,
+        "1": null,
+        "2": null,
+        "3": null,
+        "4": null
+      },
+      "members": [
+        {
+          "coverage_count": 50,
+          "direct_count": 0,
+          "failure_count": 0,
+          "feasibility_reason": "FEASIBLE",
+          "feasible_rank": 1,
+          "member_id": 0,
+          "near_margin_count": 0,
+          "primary_lane": "coverage",
+          "raw_V": 50,
+          "raw_rank": 1,
+          "raw_target_score": 50.0
+        },
+        {
+          "coverage_count": 50,
+          "direct_count": 0,
+          "failure_count": 0,
+          "feasibility_reason": "FEASIBLE",
+          "feasible_rank": 2,
+          "member_id": 1,
+          "near_margin_count": 0,
+          "primary_lane": "coverage",
+          "raw_V": 50,
+          "raw_rank": 2,
+          "raw_target_score": 50.0
+        },
+        {
+          "coverage_count": 50,
+          "direct_count": 0,
+          "failure_count": 0,
+          "feasibility_reason": "FEASIBLE",
+          "feasible_rank": 3,
+          "member_id": 2,
+          "near_margin_count": 0,
+          "primary_lane": "coverage",
+          "raw_V": 50,
+          "raw_rank": 3,
+          "raw_target_score": 50.0
+        },
+        {
+          "coverage_count": 50,
+          "direct_count": 0,
+          "failure_count": 0,
+          "feasibility_reason": "FEASIBLE",
+          "feasible_rank": 4,
+          "member_id": 3,
+          "near_margin_count": 0,
+          "primary_lane": "coverage",
+          "raw_V": 50,
+          "raw_rank": 4,
+          "raw_target_score": 50.0
+        },
+        {
+          "coverage_count": 50,
+          "direct_count": 0,
+          "failure_count": 0,
+          "feasibility_reason": "FEASIBLE",
+          "feasible_rank": 5,
+          "member_id": 4,
+          "near_margin_count": 0,
+          "primary_lane": "coverage",
+          "raw_V": 50,
+          "raw_rank": 5,
+          "raw_target_score": 50.0
+        }
+      ],
+      "parent_team_hash": "6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89",
+      "policy_version": "raw_positive_score_preselection_exact_minibatch_packet_v1",
+      "selected_member": 0,
+      "update_index": 0
+    },
+    {
+      "latest_transition_effect_hash_by_member": {
+        "0": "ab7763ac3499d7664249c87120fe2ea33fe1d89ba3c7b615f543b5fa84a8f32f",
+        "1": null,
+        "2": null,
+        "3": null,
+        "4": null
+      },
+      "members": [
+        {
+          "coverage_count": 26,
+          "direct_count": 0,
+          "failure_count": 0,
+          "feasibility_reason": "FEASIBLE",
+          "feasible_rank": 1,
+          "member_id": 0,
+          "near_margin_count": 0,
+          "primary_lane": "coverage",
+          "raw_V": 26,
+          "raw_rank": 1,
+          "raw_target_score": 26.0
+        },
+        {
+          "coverage_count": 26,
+          "direct_count": 0,
+          "failure_count": 0,
+          "feasibility_reason": "FEASIBLE",
+          "feasible_rank": 2,
+          "member_id": 1,
+          "near_margin_count": 0,
+          "primary_lane": "coverage",
+          "raw_V": 26,
+          "raw_rank": 2,
+          "raw_target_score": 26.0
+        },
+        {
+          "coverage_count": 26,
+          "direct_count": 0,
+          "failure_count": 0,
+          "feasibility_reason": "FEASIBLE",
+          "feasible_rank": 3,
+          "member_id": 2,
+          "near_margin_count": 0,
+          "primary_lane": "coverage",
+          "raw_V": 26,
+          "raw_rank": 3,
+          "raw_target_score": 26.0
+        },
+        {
+          "coverage_count": 26,
+          "direct_count": 0,
+          "failure_count": 0,
+          "feasibility_reason": "FEASIBLE",
+          "feasible_rank": 4,
+          "member_id": 3,
+          "near_margin_count": 0,
+          "primary_lane": "coverage",
+          "raw_V": 26,
+          "raw_rank": 4,
+          "raw_target_score": 26.0
+        },
+        {
+          "coverage_count": 26,
+          "direct_count": 0,
+          "failure_count": 0,
+          "feasibility_reason": "FEASIBLE",
+          "feasible_rank": 5,
+          "member_id": 4,
+          "near_margin_count": 0,
+          "primary_lane": "coverage",
+          "raw_V": 26,
+          "raw_rank": 5,
+          "raw_target_score": 26.0
+        }
+      ],
+      "parent_team_hash": "9b959e243a8821c29b69dc24d9f5d81b8ededa2a9b4c4fda695024223d33109a",
+      "policy_version": "raw_positive_score_preselection_exact_minibatch_packet_v1",
+      "selected_member": 0,
+      "update_index": 1
+    },
+    {
+      "latest_transition_effect_hash_by_member": {
+        "0": "ab7763ac3499d7664249c87120fe2ea33fe1d89ba3c7b615f543b5fa84a8f32f",
+        "1": null,
+        "2": null,
+        "3": null,
+        "4": null
+      },
+      "members": [
+        {
+          "coverage_count": 26,
+          "direct_count": 0,
+          "failure_count": 1,
+          "feasibility_reason": "FEASIBLE",
+          "feasible_rank": 5,
+          "member_id": 0,
+          "near_margin_count": 0,
+          "primary_lane": "coverage",
+          "raw_V": 26,
+          "raw_rank": 5,
+          "raw_target_score": 13.0
+        },
+        {
+          "coverage_count": 26,
+          "direct_count": 0,
+          "failure_count": 0,
+          "feasibility_reason": "FEASIBLE",
+          "feasible_rank": 1,
+          "member_id": 1,
+          "near_margin_count": 0,
+          "primary_lane": "coverage",
+          "raw_V": 26,
+          "raw_rank": 1,
+          "raw_target_score": 26.0
+        },
+        {
+          "coverage_count": 26,
+          "direct_count": 0,
+          "failure_count": 0,
+          "feasibility_reason": "FEASIBLE",
+          "feasible_rank": 2,
+          "member_id": 2,
+          "near_margin_count": 0,
+          "primary_lane": "coverage",
+          "raw_V": 26,
+          "raw_rank": 2,
+          "raw_target_score": 26.0
+        },
+        {
+          "coverage_count": 26,
+          "direct_count": 0,
+          "failure_count": 0,
+          "feasibility_reason": "FEASIBLE",
+          "feasible_rank": 3,
+          "member_id": 3,
+          "near_margin_count": 0,
+          "primary_lane": "coverage",
+          "raw_V": 26,
+          "raw_rank": 3,
+          "raw_target_score": 26.0
+        },
+        {
+          "coverage_count": 26,
+          "direct_count": 0,
+          "failure_count": 0,
+          "feasibility_reason": "FEASIBLE",
+          "feasible_rank": 4,
+          "member_id": 4,
+          "near_margin_count": 0,
+          "primary_lane": "coverage",
+          "raw_V": 26,
+          "raw_rank": 4,
+          "raw_target_score": 26.0
+        }
+      ],
+      "parent_team_hash": "9b959e243a8821c29b69dc24d9f5d81b8ededa2a9b4c4fda695024223d33109a",
+      "policy_version": "raw_positive_score_preselection_exact_minibatch_packet_v1",
+      "selected_member": 1,
+      "update_index": 2
+    },
+    {
+      "latest_transition_effect_hash_by_member": {
+        "0": "ab7763ac3499d7664249c87120fe2ea33fe1d89ba3c7b615f543b5fa84a8f32f",
+        "1": "907ed5514843483da565564356c2378287d26a55b5cfa4bf603e4a9b9d1426be",
+        "2": null,
+        "3": null,
+        "4": null
+      },
+      "members": [
+        {
+          "coverage_count": 0,
+          "direct_count": 0,
+          "failure_count": 1,
+          "feasibility_reason": "NO_POSITIVE_RESPONSIBILITY",
+          "feasible_rank": null,
+          "member_id": 0,
+          "near_margin_count": 0,
+          "primary_lane": "fallback",
+          "raw_V": 0,
+          "raw_rank": 4,
+          "raw_target_score": 0.0
+        },
+        {
+          "coverage_count": 0,
+          "direct_count": 0,
+          "failure_count": 0,
+          "feasibility_reason": "NO_POSITIVE_RESPONSIBILITY",
+          "feasible_rank": null,
+          "member_id": 1,
+          "near_margin_count": 0,
+          "primary_lane": "fallback",
+          "raw_V": 0,
+          "raw_rank": 5,
+          "raw_target_score": 0.0
+        },
+        {
+          "coverage_count": 0,
+          "direct_count": 24,
+          "failure_count": 0,
+          "feasibility_reason": "FEASIBLE",
+          "feasible_rank": 1,
+          "member_id": 2,
+          "near_margin_count": 0,
+          "primary_lane": "direct_flip",
+          "raw_V": 96,
+          "raw_rank": 1,
+          "raw_target_score": 96.0
+        },
+        {
+          "coverage_count": 0,
+          "direct_count": 24,
+          "failure_count": 0,
+          "feasibility_reason": "FEASIBLE",
+          "feasible_rank": 2,
+          "member_id": 3,
+          "near_margin_count": 0,
+          "primary_lane": "direct_flip",
+          "raw_V": 96,
+          "raw_rank": 2,
+          "raw_target_score": 96.0
+        },
+        {
+          "coverage_count": 0,
+          "direct_count": 24,
+          "failure_count": 0,
+          "feasibility_reason": "FEASIBLE",
+          "feasible_rank": 3,
+          "member_id": 4,
+          "near_margin_count": 0,
+          "primary_lane": "direct_flip",
+          "raw_V": 96,
+          "raw_rank": 3,
+          "raw_target_score": 96.0
+        }
+      ],
+      "parent_team_hash": "6c8e0abfd4e2ebb7d7d0dd060362fdd29413b0851aec0d9f5ae0c505571e7350",
+      "policy_version": "raw_positive_score_preselection_exact_minibatch_packet_v1",
+      "selected_member": 2,
+      "update_index": 3
+    },
+    {
+      "latest_transition_effect_hash_by_member": {
+        "0": "ab7763ac3499d7664249c87120fe2ea33fe1d89ba3c7b615f543b5fa84a8f32f",
+        "1": "907ed5514843483da565564356c2378287d26a55b5cfa4bf603e4a9b9d1426be",
+        "2": "115514ae178c3e918a79b7648e6205ce336a37c7ac215987bbfe5f2a31d0ebce",
+        "3": null,
+        "4": null
+      },
+      "members": [
+        {
+          "coverage_count": 0,
+          "direct_count": 26,
+          "failure_count": 1,
+          "feasibility_reason": "FEASIBLE",
+          "feasible_rank": 3,
+          "member_id": 0,
+          "near_margin_count": 0,
+          "primary_lane": "direct_flip",
+          "raw_V": 104,
+          "raw_rank": 3,
+          "raw_target_score": 52.0
+        },
+        {
+          "coverage_count": 0,
+          "direct_count": 0,
+          "failure_count": 0,
+          "feasibility_reason": "NO_POSITIVE_RESPONSIBILITY",
+          "feasible_rank": null,
+          "member_id": 1,
+          "near_margin_count": 0,
+          "primary_lane": "fallback",
+          "raw_V": 0,
+          "raw_rank": 4,
+          "raw_target_score": 0.0
+        },
+        {
+          "coverage_count": 0,
+          "direct_count": 0,
+          "failure_count": 0,
+          "feasibility_reason": "NO_POSITIVE_RESPONSIBILITY",
+          "feasible_rank": null,
+          "member_id": 2,
+          "near_margin_count": 0,
+          "primary_lane": "fallback",
+          "raw_V": 0,
+          "raw_rank": 5,
+          "raw_target_score": 0.0
+        },
+        {
+          "coverage_count": 0,
+          "direct_count": 26,
+          "failure_count": 0,
+          "feasibility_reason": "FEASIBLE",
+          "feasible_rank": 1,
+          "member_id": 3,
+          "near_margin_count": 0,
+          "primary_lane": "direct_flip",
+          "raw_V": 104,
+          "raw_rank": 1,
+          "raw_target_score": 104.0
+        },
+        {
+          "coverage_count": 0,
+          "direct_count": 26,
+          "failure_count": 0,
+          "feasibility_reason": "FEASIBLE",
+          "feasible_rank": 2,
+          "member_id": 4,
+          "near_margin_count": 0,
+          "primary_lane": "direct_flip",
+          "raw_V": 104,
+          "raw_rank": 2,
+          "raw_target_score": 104.0
+        }
+      ],
+      "parent_team_hash": "19e35b238f9cf9b66bc36ba0c18dc12e95a1d47aea0d95f094eddb6cdda6dd54",
+      "policy_version": "raw_positive_score_preselection_exact_minibatch_packet_v1",
+      "selected_member": 3,
+      "update_index": 4
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "bounded_view_affects_only_layer1_curriculum": true,
+  "evidence_selection_policy_version": "raw_universe_exact_transition_bounded_nominal_schedule_v1",
+  "local_eval_equals_full_universe_team_minibatch_ids": true,
+  "packet_version": "responsibility_evidence_packet_v4_bounded_search_view",
+  "protocol_version": "two_layer_feasibility_bounded_view_v4",
+  "raw_V_and_target_score_formula_unchanged": true,
+  "scientific_change": true,
+  "target_feasibility_policy_version": "raw_positive_score_preselection_exact_minibatch_packet_v1",
+  "team_minibatch_version_unchanged": "repair_preservation_team_hard_4_4_4_v2",
+  "v3_original_files_modified": false
+}
