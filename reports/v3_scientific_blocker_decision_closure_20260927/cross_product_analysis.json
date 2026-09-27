@@ -1,0 +1,42 @@
+{
+  "evidence_type": "SYNTHETIC_STRUCTURAL_COUNTERFACTUAL_ONLY",
+  "method_pair": "A3 explicit raw-universe/36-slot bounded scheduled view + B1 preselection exact 4/4/4 and packet feasibility",
+  "grid": {
+    "members": 5,
+    "potentially_actionable_members": [0, 1],
+    "other_members": "three zero-score controls",
+    "DNC_patterns_per_actionable_member": [[0,0,0],[1,0,0],[2,0,0],[3,0,0],[4,0,0],[5,0,0],[0,1,0],[0,2,0],[0,4,0],[0,0,1],[0,0,4],[2,2,0],[0,3,5],[40,0,0],[0,0,40]],
+    "f_values": [0,2],
+    "preservation_pool_sizes": [3,4,8],
+    "global_hard_pool_sizes": [6,8,20,60],
+    "member_responsibility_overlap": ["none","all IDs of smaller member universe shared"],
+    "latest_transition_focus_anchor_counts": [[0,0],[4,4],[16,16],[20,20]],
+    "team_margin_and_pivotality_variants": [0,1],
+    "margin_pivotality_caveat": "Negative-control axis for preservation ordering; with frozen D/N/C and quota counts it cannot change this structural selection predicate. No real team predictions are claimed.",
+    "skip_rule": "Exclude states where assigned legal-union size exceeds global hard-universe size",
+    "B1_eligibility": "primary lane >=4, preservation >=4, >=8 unique global-hard IDs including four selected repair IDs, and 36-focus-anchor >=4",
+    "A3_scheduled_responsibility_rows": "min(primary-lane rows,36-focus-anchor); all exact transition items reserved"
+  },
+  "counts": {
+    "valid_grid_states": 128544,
+    "positive_raw_target_states": 127776,
+    "same_target": 24888,
+    "different_target": 4824,
+    "no_feasible_target": 98064,
+    "raw_target_quota_infeasible": 94592,
+    "raw_target_packet_capacity_infeasible": 31944,
+    "selected_target_responsibility_truncated": 7248,
+    "selected_target_not_truncated": 22464,
+    "raw_target_would_be_truncated_when_selected": 7112
+  },
+  "by_overlap_degree": {
+    "no_overlap": {"valid_states":60672,"different_target":2340,"no_feasible_target":45936,"selected_target_truncated":3448},
+    "full_smaller_universe_overlap": {"valid_states":67872,"different_target":2484,"no_feasible_target":52128,"selected_target_truncated":3800}
+  },
+  "structural_witnesses": {
+    "different_target": {"member0_DNC":[1,0,0],"member1_DNC":[0,4,0],"f0":0,"f1":2,"preservation":4,"global_hard":8,"focus":0,"anchor":0,"raw_target":0,"feasible_target":1},
+    "no_feasible_target": {"member0_DNC":[0,0,0],"member1_DNC":[1,0,0],"preservation":3,"global_hard":6,"focus":0,"anchor":0,"raw_target":1,"feasible_target":null},
+    "truncated": {"member0_DNC":[0,0,0],"member1_DNC":[5,0,0],"preservation":4,"global_hard":8,"focus":16,"anchor":16,"raw_target":1,"feasible_target":1,"selected_repair_rows":4,"full_primary_rows":5}
+  },
+  "interpretation": "Both filters can structurally favor members with at least four same-lane repair examples and enough global evidence. A3 does not alter the full raw V or the ordering among B1-eligible members, but its subset can underexpose high-count members. The many no-feasible grid states are deliberately stress-tested quota/budget corners, not an empirical incidence estimate."
+}

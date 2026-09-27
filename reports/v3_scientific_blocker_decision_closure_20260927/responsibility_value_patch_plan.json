@@ -1,0 +1,63 @@
+{
+  "semantic_status": "CLOSED_BY_CURRENT_SPEC_AND_FROZEN_FORMULA",
+  "invariants": [
+    "summary.primary_score == V_i == max(4*D_i,2*N_i,C_i)",
+    "assignment.responsibility_value == V_i",
+    "packet.responsibility_value == V_i",
+    "summary.target_score == V_i/(1+f_i) is selection-only and must not populate responsibility_value"
+  ],
+  "current_defect": "SystemResponsibilityAssignmentFactory.build_from_member omits responsibility_value, leaving TeamSearchAssignment at its 0.0 default. Layer2EvidenceRequestBuilder.build faithfully copies that wrong default into the packet. Initial fake V3 composition observes V=50, target_score=50, assignment.responsibility_value=0.",
+  "future_production_patch_only_after_scientific_A_B_approval": [
+    {
+      "file": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "function": "next_opportunity",
+      "change": "Pass the selected scheduler summary.primary_score explicitly to the assignment factory, never summary.target_score; preserve selected member/lane and frozen snapshot identity."
+    },
+    {
+      "file": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "function": "SystemResponsibilityAssignmentFactory.build_from_member",
+      "change": "Accept explicit nonnegative responsibility_value for Layer2 and set it on TeamSearchAssignment. Reject omission on the active Layer2 path rather than retaining an accidental zero default. Audit historical/native call sites before signature migration."
+    },
+    {
+      "file": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "function": "SystemResponsibilityAssignmentFactory.build",
+      "change": "Propagate summary.primary_score, not summary.target_score, through its build_from_member call."
+    },
+    {
+      "file": "multi_dataset_diverse_rl/team_search/task_builder.py",
+      "function": "Layer2EvidenceRequestBuilder.build",
+      "change": "Keep existing assignment-to-packet copy; assert the value is the selected raw primary score in integration tests. NativeFeedRequestBuilder generic zero context is a separate native control and must not be reinterpreted as V."
+    },
+    {
+      "file": "multi_dataset_diverse_rl/production_canary.py and multi_dataset_diverse_rl/parent_acquisition.py",
+      "function": "all SystemResponsibilityAssignmentFactory.build_from_member call sites",
+      "change": "Inspect how each obtains a frozen scheduler summary; pass V when Layer2 semantics apply. Do not synthesize target_score or silently default; migrate historical-only callers explicitly if needed."
+    },
+    {
+      "file": "scripts/run_level_b_gepa_local_acceptance_rate_pilot.py, scripts/run_level_b_gepa_real_canary.py, scripts/run_seed78_primary_responsibility_ab.py",
+      "function": "historical direct build_from_member call sites",
+      "change": "Audit for signature compatibility and freeze identity only; do not rewrite historical artifacts or alter a prior experiment's interpretation."
+    }
+  ],
+  "tests_to_add_or_update": [
+    "tests/test_layer2_raw_responsibility.py: raw overlapping D/N/C -> summary V -> assignment V, with f>0 to distinguish selection score",
+    "tests/test_primary_responsibility_scheduler.py: direct/near/coverage ties and V/(1+f) remain selection-only",
+    "tests/test_final_layer2_semantics.py: assignment and packet value invariants and packet-hash change when V changes",
+    "tests/test_two_layer_optimizer_architecture.py: native generic context stays separate; both Layer2 backends consume same packet value",
+    "tests/test_online_transfer_full_fake.py: full fake production path checks nonzero V reaches GEPA packet and stable identity",
+    "tests/test_online_transfer_diagnostic.py: current diagnostic trace records selected V without changing target_score",
+    "tests/test_v3_scientific_blocker_decision_closure.py: retain zero-API pre-fix defect assertion as historical audit evidence or version it for post-fix expected behavior",
+    "all direct build_from_member call-site tests: require explicit V or historical/native identity"
+  ],
+  "identity_effects": {
+    "scientific_semantics": "No formula or target-policy change from the value fix alone; it conforms implementation to already frozen V semantics.",
+    "implementation_conformance": "Yes; packet content and optimizer context become correct rather than default zero.",
+    "method_identity": "The value fix alone is conformance to existing semantics; approved A/B curriculum and feasibility rules are method changes requiring versioned method identity.",
+    "packet_hash": "Changes whenever V was nonzero, because responsibility_value is included in the packet payload/hash.",
+    "execution_source_sha": "Changes when source is patched.",
+    "preregistration_sha": "New successor protocol/implementation freeze required; do not reuse an old hash.",
+    "run_identity": "New attempt and packet/config/source identity required.",
+    "historical_frozen_artifacts": "Remain immutable and must not be rewritten."
+  },
+  "additional_successor_audit_work": "The current audit_online_transfer_diagnostic script recognizes v1/v2 experiment IDs only. After approval update the successor-specific auditor and fault campaign without changing historical report interpretations."
+}

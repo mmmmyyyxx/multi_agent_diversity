@@ -1,0 +1,74 @@
+{
+  "evidence": "real scheduler and strict TeamMiniBatch selector on synthetic five-member states; no real provider",
+  "contract": "4 unique primary-lane repair + 4 unique global team-correct preservation + 4 unique global team-hard, all 12 IDs distinct; no backfill",
+  "lane_case_schema": "Each row is [input_lane, lane_count, D, N, C, V, primary_lane, target_score, selected_member, result]. In all rows f=0; members other than member 2 have zero responsibility. For zero-count rows the scheduler returns fallback member 0 but no actionable responsibility exists.",
+  "status_to_current_exception": {
+    "REPAIR_QUOTA_VALUE_ERROR": "repair_preservation_team_hard_4_4_4_v2 requires exactly 4 unique repair examples",
+    "PRESERVATION_QUOTA_VALUE_ERROR": "repair_preservation_team_hard_4_4_4_v2 requires exactly 4 unique preservation examples",
+    "TEAM_HARD_QUOTA_VALUE_ERROR": "repair_preservation_team_hard_4_4_4_v2 requires exactly 4 unique team_hard examples"
+  },
+  "lane_cases": [
+    ["direct_flip",0,0,0,0,0,"fallback",0,0,"NO_ALIGNED_RESPONSIBILITY_TARGET_NOT_REACHED"],
+    ["direct_flip",1,1,0,0,4,"direct_flip",4,2,"REPAIR_QUOTA_VALUE_ERROR"],
+    ["direct_flip",2,2,0,0,8,"direct_flip",8,2,"REPAIR_QUOTA_VALUE_ERROR"],
+    ["direct_flip",3,3,0,0,12,"direct_flip",12,2,"REPAIR_QUOTA_VALUE_ERROR"],
+    ["direct_flip",4,4,0,0,16,"direct_flip",16,2,"CONSTRUCTIBLE"],
+    ["direct_flip",5,5,0,0,20,"direct_flip",20,2,"CONSTRUCTIBLE"],
+    ["direct_flip",6,6,0,0,24,"direct_flip",24,2,"CONSTRUCTIBLE"],
+    ["near_margin",0,0,0,0,0,"fallback",0,0,"NO_ALIGNED_RESPONSIBILITY_TARGET_NOT_REACHED"],
+    ["near_margin",1,0,1,0,2,"near_margin",2,2,"REPAIR_QUOTA_VALUE_ERROR"],
+    ["near_margin",2,0,2,0,4,"near_margin",4,2,"REPAIR_QUOTA_VALUE_ERROR"],
+    ["near_margin",3,0,3,0,6,"near_margin",6,2,"REPAIR_QUOTA_VALUE_ERROR"],
+    ["near_margin",4,0,4,0,8,"near_margin",8,2,"CONSTRUCTIBLE"],
+    ["near_margin",5,0,5,0,10,"near_margin",10,2,"CONSTRUCTIBLE"],
+    ["near_margin",6,0,6,0,12,"near_margin",12,2,"CONSTRUCTIBLE"],
+    ["coverage",0,0,0,0,0,"fallback",0,0,"NO_ALIGNED_RESPONSIBILITY_TARGET_NOT_REACHED"],
+    ["coverage",1,0,0,1,1,"coverage",1,2,"REPAIR_QUOTA_VALUE_ERROR"],
+    ["coverage",2,0,0,2,2,"coverage",2,2,"REPAIR_QUOTA_VALUE_ERROR"],
+    ["coverage",3,0,0,3,3,"coverage",3,2,"REPAIR_QUOTA_VALUE_ERROR"],
+    ["coverage",4,0,0,4,4,"coverage",4,2,"CONSTRUCTIBLE"],
+    ["coverage",5,0,0,5,5,"coverage",5,2,"CONSTRUCTIBLE"],
+    ["coverage",6,0,0,6,6,"coverage",6,2,"CONSTRUCTIBLE"]
+  ],
+  "other_quota_cases": {
+    "preservation_available_0_to_4": ["PRESERVATION_QUOTA_VALUE_ERROR","PRESERVATION_QUOTA_VALUE_ERROR","PRESERVATION_QUOTA_VALUE_ERROR","PRESERVATION_QUOTA_VALUE_ERROR","CONSTRUCTIBLE"],
+    "extra_global_hard_available_0_to_4": ["TEAM_HARD_QUOTA_VALUE_ERROR","TEAM_HARD_QUOTA_VALUE_ERROR","TEAM_HARD_QUOTA_VALUE_ERROR","TEAM_HARD_QUOTA_VALUE_ERROR","CONSTRUCTIBLE"],
+    "note": "These cases hold four repair, four rows in the other group, and distinct IDs. The four selected repair rows are themselves team-hard, so the hard pool requires eight IDs including repair IDs."
+  },
+  "current_runtime_behavior": "Positive V with 1–3 primary-lane repair rows is selectable. The strict selector raises ValueError; the Layer2 runner does not convert it into a preregistered scientific early stop, so the attempt aborts before provider evaluation of that opportunity.",
+  "resolution_families": [
+    {
+      "id": "B1_PRESELECTION_FEASIBILITY",
+      "method_change": true,
+      "strict_4_4_4_preserved": true,
+      "target_selection_change": "Rank only members whose frozen parent snapshot can construct the complete unique 4/4/4 and the approved bounded packet; retain raw V/(1+f) among eligible members",
+      "f_semantics": "Infeasible members are never selected; their f remains unchanged. No-feasible scientific stop before provider also changes no f.",
+      "scientific_bias": "Conditions allocation on evidence availability; may favor broad/high-frequency members"
+    },
+    {
+      "id": "B2_RANK_THEN_FALL_THROUGH",
+      "method_change": true,
+      "strict_4_4_4_preserved": true,
+      "target_selection_change": "Try raw rank in order, skip infeasible, choose first feasible",
+      "f_semantics": "Equivalent to B1 only if skipped members are never recorded as selected and f is unchanged",
+      "scientific_bias": "Same feasibility-conditioned allocation as B1 when equivalent"
+    },
+    {
+      "id": "B3_TOP_TARGET_AUTHORITATIVE_EARLY_STOP",
+      "method_change": true,
+      "strict_4_4_4_preserved": true,
+      "target_selection_change": false,
+      "f_semantics": "Pre-provider no-op/stop should not increment f; needs explicit scientific definition",
+      "scientific_bias": "Can terminate despite another lower-ranked feasible member"
+    },
+    {
+      "id": "B4_ADAPTIVE_QUOTA_OR_BACKFILL",
+      "method_change": true,
+      "strict_4_4_4_preserved": false,
+      "target_selection_change": "Not necessarily, but changes evaluation evidence",
+      "f_semantics": "Depends on a newly approved contract",
+      "scientific_bias": "Changes TeamMiniBatch sampling and comparability"
+    }
+  ],
+  "recommendation": "RECOMMENDATION_ONLY — USER SCIENTIFIC APPROVAL REQUIRED: B1. Compute unique-ID 4/4/4 and packet feasibility from one frozen parent snapshot before final selection; select the highest existing score among feasible members. If none, explicit scientific no-feasible-opportunity stop with zero provider calls and unchanged f."
+}

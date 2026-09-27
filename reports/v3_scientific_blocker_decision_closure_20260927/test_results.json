@@ -1,0 +1,14 @@
+{
+  "focused_tests": "144 passed, 1 skipped",
+  "focused_command": "python -m pytest -q tests/test_v3_preexecution_fault_campaign.py tests/test_online_transfer_full_fake.py tests/test_online_transfer_diagnostic.py tests/test_final_layer2_semantics.py tests/test_layer2_raw_responsibility.py tests/test_primary_responsibility_scheduler.py tests/test_two_layer_optimizer_architecture.py tests/test_unified_execution_governance.py tests/test_v3_scientific_blocker_decision_closure.py --tb=short",
+  "full_tests": "NOT_RUN; optional for this zero-API decision audit",
+  "compileall": "PASS",
+  "governance_preflight": "PASS: zero_api_zero_dataset_evaluation; 27 experiments; 28 active invariants; 9 known failures; 27 lineage nodes; deterministic hash replay PASS; sanitization fixture PASS; errors=[]",
+  "deterministic_analysis_replay": "PASS: initial fake-state replay and cross-product grid repeat exactly",
+  "fact_assertions": "PASS: published JSON is valid; dynamic zero-API analysis and synthetic partitions reconciled in focused tests",
+  "report_sanitization": "PASS: findings=[]",
+  "git_diff_check": "PASS: git diff --cached --check",
+  "real_api_calls": 0,
+  "validation50_calls": 0,
+  "test50_calls": 0
+}
