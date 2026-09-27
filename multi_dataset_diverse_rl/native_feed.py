@@ -12,6 +12,8 @@ import hashlib
 import json
 from typing import Any, Mapping
 
+from .versions import LAYER2_EVIDENCE_PACKET_V4_VERSION
+
 
 NATIVE_FEED_REQUEST_VERSION = "backend_native_feed_request_v1"
 LAYER2_RESPONSIBILITY_CONTEXT_VERSION = "layer2_responsibility_context_v1"
@@ -372,6 +374,8 @@ class ResponsibilityEvidencePacket:
                 raise ValueError("focus evidence is not the exact newly-broken set")
             if role_sets["anchor"] != set(self.latest_transition.newly_fixed_ids):
                 raise ValueError("anchor evidence is not the exact newly-fixed set")
+        if self.packet_version == LAYER2_EVIDENCE_PACKET_V4_VERSION and len(scheduled) > 36:
+            raise ValueError("v4 local-search view exceeds frozen nominal schedule capacity")
         payload = self.identity_payload(include_hash=False)
         object.__setattr__(self, "packet_hash", _stable_hash(payload))
 

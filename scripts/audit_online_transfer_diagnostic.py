@@ -39,9 +39,14 @@ def _audit_complete(run_root: Path) -> dict[str, object]:
     if summary.get("experiment_id") not in {
         "gepa_layer2_local_to_team_transfer_diagnostic_v1",
         "gepa_layer2_local_to_team_transfer_diagnostic_v2",
+        "gepa_layer2_local_to_team_transfer_diagnostic_v4",
     }:
         failures.append("experiment_identity")
-    v2 = summary.get("experiment_id") == "gepa_layer2_local_to_team_transfer_diagnostic_v2"
+    v2 = summary.get("experiment_id") in {
+        "gepa_layer2_local_to_team_transfer_diagnostic_v2",
+        "gepa_layer2_local_to_team_transfer_diagnostic_v4",
+    }
+    v4 = summary.get("experiment_id") == "gepa_layer2_local_to_team_transfer_diagnostic_v4"
     if lifecycle.get("status") != "EXECUTION_COMPLETE":
         failures.append("lifecycle")
     if summary.get("seed") != 81 or summary.get("validation50_calls") != 0 or summary.get("test50_calls") != 0:
@@ -65,6 +70,27 @@ def _audit_complete(run_root: Path) -> dict[str, object]:
     parents = summary["parent_sequence"]
     if len(parents) != opportunities or len(rows) != accepted:
         failures.append("parent_or_mandatory_full_count")
+    if v4:
+        feasibility = summary.get("feasibility_trace", ())
+        evidence = summary.get("evidence_view_trace", ())
+        if len(feasibility) not in {opportunities, opportunities + 1} or len(evidence) != opportunities:
+            failures.append("v4_preselection_trace_count")
+        for position, trace in enumerate(evidence):
+            if trace.get("update_index") != position or not (
+                trace.get("raw_V") == trace.get("assignment_V") == trace.get("packet_V")
+            ):
+                failures.append("v4_responsibility_value")
+            if trace.get("team_minibatch_ids") != trace.get("local_eval_ids"):
+                failures.append("v4_minibatch_local_eval_identity")
+            if len(trace.get("nominal_schedule", ())) != 12:
+                failures.append("v4_schedule_length")
+            delivered = trace.get("evidence_delivered", {})
+            if not isinstance(delivered.get("batch_ids"), list) or not isinstance(
+                delivered.get("scheduled_but_not_delivered_count"), int
+            ):
+                failures.append("v4_delivery_trace")
+        if len(feasibility) == opportunities + 1 and summary.get("stop_reason") != "NO_FEASIBLE_LAYER2_OPPORTUNITY":
+            failures.append("v4_no_feasible_stop_mismatch")
     if v2:
         initialization_rows = [
             row for row in ledger_rows

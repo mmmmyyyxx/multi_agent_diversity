@@ -365,7 +365,13 @@ def test_parent_changes_iff_ordinary_commit_not_diagnostic_full():
 
 
 @pytest.mark.parametrize("phase", ["diagnostic_full_eval", "team_shadow_eval"])
-def test_emergency_ceiling_marks_incomplete_attempt_aborted(tmp_path, monkeypatch, phase):
+@pytest.mark.parametrize("experiment_id", [
+    "gepa_layer2_local_to_team_transfer_diagnostic_v2",
+    "gepa_layer2_local_to_team_transfer_diagnostic_v4",
+])
+def test_emergency_ceiling_marks_incomplete_attempt_aborted(
+    tmp_path, monkeypatch, phase, experiment_id,
+):
     from scripts import run_experiment as entry
 
     run_root = tmp_path / "formal"
@@ -377,7 +383,7 @@ def test_emergency_ceiling_marks_incomplete_attempt_aborted(tmp_path, monkeypatc
         "input_tokens": 2, "output_tokens": 1, "total_tokens": 3,
     }) + "\n", encoding="utf-8")
     permit = SimpleNamespace(
-        experiment_id="gepa_layer2_local_to_team_transfer_diagnostic_v2",
+        experiment_id=experiment_id,
         run_root=run_root,
     )
     monkeypatch.setattr(entry, "validate_execution", lambda **kwargs: permit)
@@ -407,9 +413,12 @@ def test_local_capacity_and_unconstrained_cost_envelope():
 
 
 def test_frozen_target_and_proposal_stop_rules():
-    assert _diagnostic_stop_reason(4, 16) is None
+    assert all(_diagnostic_stop_reason(4, count) is None for count in (15, 16))
     assert _diagnostic_stop_reason(5, 16) == "ACCEPTED_MUTATION_TARGET_REACHED"
-    assert _diagnostic_stop_reason(4, 17) == "REFLECTION_PROPOSAL_PREOPPORTUNITY_GUARD"
+    assert all(
+        _diagnostic_stop_reason(4, count) == "REFLECTION_PROPOSAL_PREOPPORTUNITY_GUARD"
+        for count in (17, 18, 19)
+    )
     assert _diagnostic_stop_reason(4, 20) == "REFLECTION_PROPOSAL_CEILING_REACHED"
     with pytest.raises(RuntimeError, match="ceiling overshoot"):
         _diagnostic_stop_reason(6, 1)

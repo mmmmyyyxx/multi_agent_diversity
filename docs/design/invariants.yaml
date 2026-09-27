@@ -168,6 +168,22 @@ invariants:
     failure_refs: []
     critical: true
     status: ACTIVE
+  - id: INV-LAYER2-BOUNDED-EVIDENCE-V4
+    description: V4 preserves full raw-legal responsibility scores and exact latest-transition roles while scheduling at most 36 nominal role items; actual GEPA delivery is separately audited.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/team_search/task_builder.py, multi_dataset_diverse_rl/native_feed.py, multi_dataset_diverse_rl/local_optimizers/gepa_native.py]
+    tests: [tests/test_v4_bounded_feasibility.py, tests/test_online_transfer_full_fake.py]
+    failure_refs: []
+    critical: true
+    status: ACTIVE
+  - id: INV-LAYER2-FEASIBILITY-V4
+    description: V4 admits only members satisfying the unchanged TeamMiniBatch quotas and exact packet capacity before target selection; infeasible members leave f unchanged and an empty feasible set stops scientifically.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/team_search/feasibility.py, multi_dataset_diverse_rl/production_transfer_diagnostic.py, multi_dataset_diverse_rl/team_search/system_runtime.py]
+    tests: [tests/test_v4_bounded_feasibility.py, tests/test_online_transfer_full_fake.py]
+    failure_refs: []
+    critical: true
+    status: ACTIVE
   - id: INV-LAYER2-LOCAL-EVAL-TEAM-MINIBATCH-001
     description: Layer 2 freezes M_eval from the same TeamMiniBatch12 IDs before candidate generation; member-level GEPA acceptance and later fixed-peer team admission remain separate, and team outcomes never influence local acceptance.
     authority: docs/design/CURRENT_SPEC.md

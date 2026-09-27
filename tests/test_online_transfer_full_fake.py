@@ -7,6 +7,7 @@ import csv
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -21,7 +22,12 @@ from multi_dataset_diverse_rl.persistence.durable_io import atomic_write_json, i
 from multi_dataset_diverse_rl.production_transfer_diagnostic import execute_online_transfer_diagnostic
 from multi_dataset_diverse_rl.provider_factory import ProviderClientFactory
 from multi_dataset_diverse_rl.team_search.system_runtime import FrozenResponsibilitySnapshot
+from multi_dataset_diverse_rl.team_search.system_runtime import SystemResponsibilityAssignmentFactory
+from multi_dataset_diverse_rl.team_search.feasibility import (
+    Layer2EvidenceInfeasible, Layer2FeasibilityReason,
+)
 from multi_dataset_diverse_rl.team_search.task_builder import Layer2EvidenceRequestBuilder
+from multi_dataset_diverse_rl.team_search.execution_runtime import ledger_summary
 from scripts.audit_online_transfer_diagnostic import audit
 from scripts.prepare_online_transfer_diagnostic_v2 import frozen_payload
 from scripts.prepare_online_transfer_diagnostic_v3 import frozen_payload as v3_frozen_payload
@@ -31,6 +37,7 @@ from scripts.prepare_post_refactor_gepa_canary import _private_splits
 def rehearse(
     tmp_path: Path, monkeypatch, rehearsal: int, *, through_cli: bool = False,
     scenario: str = "commit", v3: bool = False,
+    v4: bool = False,
 ) -> dict:
     # Exceed the intended formal root and its deepest categorical-profile path
     # on native Windows without relying on the machine-wide long-path switch.
@@ -39,8 +46,13 @@ def rehearse(
     prep.mkdir(parents=True)
     _private_splits(prep)
     manifest, protocol = (
-        v3_frozen_payload if v3 else frozen_payload
+        v3_frozen_payload if (v3 or v4) else frozen_payload
     )(execution_source_sha="a" * 40)
+    if v4:
+        manifest["experiment_id"] = manifest["attempt_id"] = (
+            "gepa_layer2_local_to_team_transfer_diagnostic_v4"
+        )
+        protocol["experiment_id"] = manifest["experiment_id"]
     # This fixture replays the superseded v2 routed-source freeze. Current
     # Layer-2 raw-legal behavior has its own source/poison regression tests.
     def v2_routed_snapshot(system, *, update_index):
@@ -52,7 +64,7 @@ def rehearse(
             current_margin_by_question={row.question_hash: row.plurality_margin for row in states},
             source_version="historical_service_routed_v1",
         )
-    if not v3:
+    if not (v3 or v4):
         monkeypatch.setattr(
             "multi_dataset_diverse_rl.production_transfer_diagnostic.freeze_current_responsibility",
             v2_routed_snapshot,
@@ -61,6 +73,37 @@ def rehearse(
     (prep / "protocol.json").write_text(json.dumps(protocol), encoding="utf-8")
     labels = {}
     shadow_questions = set()
+    minibatch_hashes: set[str] = set()
+    minibatch_questions: set[str] = set()
+    if scenario == "common_safe_fail":
+        original_assignment = SystemResponsibilityAssignmentFactory.build_from_member
+
+        def capture_assignment(self, **kwargs):
+            selected = original_assignment(self, **kwargs)
+            minibatch_hashes.update(selected.local_validation_example_ids)
+            minibatch_questions.update(
+                row.question.replace("\r\n", "\n").strip()
+                for row in self.system.fixed_probe.examples
+                if row.question_hash in selected.local_validation_example_ids
+            )
+            return selected
+
+        monkeypatch.setattr(
+            SystemResponsibilityAssignmentFactory, "build_from_member", capture_assignment,
+        )
+    if scenario == "feasible_rerank":
+        original_assignment = SystemResponsibilityAssignmentFactory.build_from_member
+
+        def exclude_first_member(self, **kwargs):
+            if kwargs["member_id"] == 0:
+                raise Layer2EvidenceInfeasible(
+                    Layer2FeasibilityReason.INSUFFICIENT_PRIMARY_REPAIR_QUOTA
+                )
+            return original_assignment(self, **kwargs)
+
+        monkeypatch.setattr(
+            SystemResponsibilityAssignmentFactory, "build_from_member", exclude_first_member,
+        )
     for name in ("optimize100.csv", "shadow50.csv"):
         with (prep / "splits_private" / name).open(encoding="utf-8", newline="") as handle:
             for row in csv.DictReader(handle):
@@ -95,8 +138,18 @@ def rehearse(
                     "Distinguish the referent by checking pronoun agreement and "
                     "local semantic context before choosing an option."
                 )
+                if scenario in {"two_commits", "transition_chain"}:
+                    content += f" Apply refinement step {calls['reflection']}."
             else:
                 calls["solver"] += 1
+                if scenario == "transport_failure" and calls["solver"] >= 101:
+                    raise ConnectionError("synthetic V4 transport failure")
+                if scenario == "postprocess_failure" and calls["solver"] >= 101:
+                    return SimpleNamespace(
+                        choices=[SimpleNamespace(message=SimpleNamespace(content="FINAL_ANSWER: A"),
+                                                 finish_reason="stop")],
+                        usage=SimpleNamespace(prompt_tokens="invalid-token-count", completion_tokens=5),
+                    )
                 question = request["messages"][1]["content"]
                 gold = labels[question]
                 changed = "Distinguish the referent by checking" in request["messages"][0]["content"]
@@ -104,8 +157,20 @@ def rehearse(
                 # local repair is consistently useful and has no regression.
                 score = hashlib.sha256(question.encode("utf-8")).digest()[0]
                 ceiling = 148 if scenario == "minibatch_fail" else 180
+                if scenario in {"two_commits", "transition_chain"} and changed:
+                    match = re.search(r"refinement step (\d+)", request["messages"][0]["content"])
+                    if match:
+                        ceiling = min(256, 150 + 40 * int(match.group(1)))
+                        if scenario == "transition_chain" and int(match.group(1)) == 3 and question in shadow_questions:
+                            ceiling = 0
                 correct = score < 128 or (changed and score < ceiling)
-                if scenario == "shadow_fail" and changed and question in shadow_questions:
+                if scenario == "common_safe_fail" and changed:
+                    correct = question in minibatch_questions
+                if scenario == "no_feasible":
+                    correct = False
+                if scenario == "proposal_ceiling":
+                    correct = score < 128
+                if scenario in {"shadow_fail", "budget_stress"} and changed and question in shadow_questions:
                     correct = False
                 answer = gold if correct else ("B" if gold == "A" else "A")
                 content = f"FINAL_ANSWER: {answer}"
@@ -127,6 +192,24 @@ def rehearse(
             "scripts/run_experiment.py", "--prep", str(prep),
             "--run-root", str(run_root), "--execute",
         ])
+        if scenario in {"transport_failure", "postprocess_failure"}:
+            expected_error = ConnectionError if scenario == "transport_failure" else ValueError
+            with pytest.raises(expected_error):
+                entry.main()
+            usage = ledger_summary(run_root / "ledger.jsonl")
+            lifecycle = read_json(run_root / "run_lifecycle.json")
+            assert lifecycle["status"] == "ABORTED"
+            assert lifecycle["provider_attempts"] == usage["provider_attempts"]
+            assert lifecycle["provider_successes"] == usage["successful_provider_calls"]
+            assert not (run_root / "execution_summary.json").exists()
+            assert usage["provider_attempts"] > 0
+            if scenario == "transport_failure":
+                assert usage["failed_provider_attempts"] >= 1
+            else:
+                assert usage["successful_provider_calls"] >= 1
+                with open(io_path(run_root / "ledger.jsonl"), encoding="utf-8") as handle:
+                    assert any(json.loads(line).get("postprocess_failed") for line in handle)
+            return {"failure": scenario, "ledger": usage, "lifecycle": lifecycle["status"]}
         entry.main()
         result = read_json(run_root / "execution_summary.json")
     else:
@@ -134,19 +217,100 @@ def rehearse(
             permit, root=Path(__file__).resolve().parents[1],
         ))
     assert calls["solver"] >= 100
-    assert calls["reflection"] >= 1
-    assert result["accepted_mutations"] >= 1
-    if scenario == "commit":
+    if scenario == "no_feasible":
+        assert calls["reflection"] == 0
+        assert result["stop_reason"] == "NO_FEASIBLE_LAYER2_OPPORTUNITY"
+        assert result["opportunities"] == result["accepted_mutations"] == 0
+        assert result["feasibility_trace"][0]["selected_member"] is None
+        assert not result["evidence_view_trace"]
+        assert all(row["failure_count"] == 0 for row in result["feasibility_trace"][0]["members"])
+    elif scenario == "proposal_ceiling":
+        assert result["accepted_mutations"] == 0
+        assert result["reflection_proposals"] == 20
+        assert result["stop_reason"] == "REFLECTION_PROPOSAL_CEILING_REACHED"
+        assert len(result["feasibility_trace"]) == result["opportunities"]
+        assert len(result["evidence_view_trace"]) == result["opportunities"]
+        assert calls["reflection"] == 20
+    else:
+        assert calls["reflection"] >= 1
+        assert result["accepted_mutations"] >= 1
+    if v4 and scenario != "no_feasible":
+        root = result["evidence_view_trace"][0]
+        if scenario == "feasible_rerank":
+            first = result["feasibility_trace"][0]
+            assert first["selected_member"] == 1
+            skipped = next(row for row in first["members"] if row["member_id"] == 0)
+            assert skipped["raw_rank"] == 1
+            assert skipped["feasible_rank"] is None
+            assert skipped["failure_count"] == 0
+            assert skipped["feasibility_reason"] == "INSUFFICIENT_PRIMARY_REPAIR_QUOTA"
+        else:
+            assert root["raw_V"] == root["assignment_V"] == root["packet_V"] == 50
+        assert root["responsibility_universe"]["responsibility_universe_count"] == "50"
+        assert root["responsibility_scheduled"]["count"] <= 36
+        assert root["focus_ids"] == root["anchor_ids"] == []
+        assert root["team_minibatch_ids"] == root["local_eval_ids"]
+        assert len(root["team_minibatch_ids"]) == 12
+        assert len(root["evidence_delivered"]["batch_ids"]) <= 12
+        assert len(root["evidence_delivered"]["role_item_ids"]) <= 36
+    if scenario in {"no_feasible", "proposal_ceiling"}:
+        pass
+    elif scenario in {"commit", "two_commits", "transition_chain", "feasible_rerank"}:
         assert result["opportunities"] >= 2, (result["stop_reason"], result["parent_sequence"])
-        assert result["commits"] >= 1, result
+        assert result["commits"] >= (2 if scenario in {"two_commits", "transition_chain"} else 1), result
         assert result["parent_sequence"][0] != result["parent_sequence"][1]
+        if scenario == "transition_chain":
+            assert len(result["parent_sequence"]) >= 3
+            assert result["parent_sequence"][1] == result["parent_sequence"][2]
+            assert result["final_team_hash"] != result["parent_sequence"][2]
+            first, rejected, resumed = result["evidence_view_trace"][:3]
+            assert first["committed_candidate_id"] is not None
+            assert first["successor_team_hash"] == rejected["parent_team_hash"]
+            assert rejected["committed_candidate_id"] is None
+            assert rejected["successor_team_hash"] == rejected["parent_team_hash"]
+            assert resumed["parent_team_hash"] == rejected["parent_team_hash"]
+            assert (
+                result["feasibility_trace"][2]["latest_transition_effect_hash_by_member"]
+                == result["feasibility_trace"][1]["latest_transition_effect_hash_by_member"]
+            )
+            before = {row["member_id"]: row for row in result["feasibility_trace"][1]["members"]}
+            after = {row["member_id"]: row for row in result["feasibility_trace"][2]["members"]}
+            rejected_target = rejected["target_member"]
+            assert after[rejected_target]["failure_count"] == before[rejected_target]["failure_count"] + 1
+            assert all(
+                after[member]["failure_count"] == before[member]["failure_count"]
+                for member in before if member != rejected_target
+            )
     elif scenario == "minibatch_fail":
         assert any(not row["team_minibatch"]["passed"] for row in result["candidate_diagnostics"]), result["candidate_diagnostics"]
         assert any(row["full"]["diagnostic_only"] for row in result["candidate_diagnostics"])
+        if v4:
+            assert all(row["successor_team_hash"] == row["parent_team_hash"]
+                       for row in result["evidence_view_trace"])
+    elif scenario == "common_safe_fail":
+        assert any(row["team_minibatch"]["passed"] for row in result["candidate_diagnostics"])
+        assert any(row["ordinary_common_safe"] not in {"NOT_REACHED", "PASS"}
+                   for row in result["candidate_diagnostics"])
+        assert result["commits"] == 0
+        if v4:
+            assert all(row["successor_team_hash"] == row["parent_team_hash"]
+                       for row in result["evidence_view_trace"])
+    elif scenario == "budget_stress":
+        assert result["accepted_mutations"] == 5
+        assert result["commits"] == 0
+        assert result["ledger"]["successful_provider_calls"] <= 1200
+        assert result["ledger"]["provider_attempts"] <= 4800
+        assert result["ledger"]["cache_hits"] > 0
+        phase_rows = [row["by_phase"] for row in result["stage_accounting"]["opportunities"]]
+        for phase in ("team_minibatch_eval", "team_full_eval", "team_shadow_eval"):
+            assert sum(row[phase]["cache_hits"] for row in phase_rows) > 0
     else:
         assert any(row["team_minibatch"]["passed"] for row in result["candidate_diagnostics"])
         assert any(row["ordinary_shadow"] not in {"NOT_REACHED", "PASS"} for row in result["candidate_diagnostics"]), result["candidate_diagnostics"]
         assert result["commits"] == 0
+        if v4:
+            assert all(row["successor_team_hash"] == row["parent_team_hash"]
+                       for row in result["evidence_view_trace"])
     assert result["validation50_calls"] == result["test50_calls"] == 0
     assert result["ledger"]["successful_provider_calls"] == sum(calls.values())
     assert result["stage_accounting"]["initialization"]["logical_solver_rows"] == 500
@@ -178,6 +342,54 @@ def rehearse(
     }
 
 
+def test_v4_raw_legal_bounded_full_stack_commit(tmp_path: Path, monkeypatch) -> None:
+    rehearse(tmp_path, monkeypatch, 90, v4=True)
+
+
+def test_v4_no_feasible_is_scientific_stop_without_opportunity_provider_calls(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    rehearse(tmp_path, monkeypatch, 92, v4=True, scenario="no_feasible")
+
+
+def test_v4_feasible_reranking_skips_unselectable_highest_raw_rank(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    rehearse(tmp_path, monkeypatch, 98, v4=True, scenario="feasible_rerank")
+
+
+def test_v4_multi_commit_successor_state(tmp_path: Path, monkeypatch) -> None:
+    rehearse(tmp_path, monkeypatch, 93, v4=True, scenario="two_commits")
+
+
+def test_v4_commit_no_commit_commit_successor_chain(tmp_path: Path, monkeypatch) -> None:
+    rehearse(tmp_path, monkeypatch, 95, v4=True, scenario="transition_chain")
+
+
+def test_v4_fake_provider_budget_stress_to_five_local_accepts(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    rehearse(tmp_path, monkeypatch, 94, v4=True, scenario="budget_stress")
+
+
+def test_v4_proposal_ceiling_has_no_post_guard_assignment_or_provider(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    rehearse(tmp_path, monkeypatch, 96, v4=True, scenario="proposal_ceiling")
+
+
+@pytest.mark.parametrize("scenario", ("transport_failure", "postprocess_failure"))
+def test_v4_failed_physical_or_postprocess_attempt_is_durable_and_aborted(
+    tmp_path: Path, monkeypatch, scenario: str,
+) -> None:
+    rehearse(tmp_path, monkeypatch, 97, v4=True, scenario=scenario, through_cli=True)
+
+
+@pytest.mark.parametrize("scenario", ("minibatch_fail", "common_safe_fail", "shadow_fail"))
+def test_v4_raw_legal_downstream_boundaries(tmp_path: Path, monkeypatch, scenario: str) -> None:
+    rehearse(tmp_path, monkeypatch, 91, v4=True, scenario=scenario)
+
+
 @pytest.mark.parametrize("rehearsal", range(3))
 def test_real_topology_fake_provider_reaches_local_and_team(
     tmp_path: Path, monkeypatch, rehearsal: int,
@@ -203,7 +415,7 @@ finally:
         cwd=Path(__file__).resolve().parents[1], text=True,
         capture_output=True, timeout=180,
     )
-    assert process.returncode == 0, process.stderr[-4000:]
+    assert process.returncode == 0, (process.stdout[-1500:], process.stderr[-4000:])
 
 
 @pytest.mark.skip(reason="superseded V1 minibatch fixture; diagnostic Full isolation is tested in test_online_transfer_diagnostic.py")
@@ -272,4 +484,4 @@ finally:
         cwd=Path(__file__).resolve().parents[1], text=True,
         capture_output=True, timeout=180,
     )
-    assert process.returncode == 0, process.stderr[-4000:]
+    assert process.returncode == 0, (process.stdout[-1500:], process.stderr[-4000:])

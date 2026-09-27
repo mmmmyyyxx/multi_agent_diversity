@@ -208,6 +208,76 @@ def test_frozen_source_byte_poison_rejects_before_provider(tmp_path: Path, monke
     assert not (tmp_path / "run").exists()
 
 
+V4_REQUIRED_DEPENDENCIES = (
+    "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+    "multi_dataset_diverse_rl/experiment.py",
+    "multi_dataset_diverse_rl/team_search/system_runtime.py",
+    "multi_dataset_diverse_rl/team_search/task_builder.py",
+    "multi_dataset_diverse_rl/team_search/controller.py",
+    "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py",
+    "multi_dataset_diverse_rl/team_search/execution_runtime.py",
+    "multi_dataset_diverse_rl/team_search/feasibility.py",
+    "multi_dataset_diverse_rl/native_feed.py",
+    "multi_dataset_diverse_rl/local_optimizers/gepa_native.py",
+    "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py",
+    "multi_dataset_diverse_rl/candidate_selection.py",
+    "multi_dataset_diverse_rl/system.py",
+    "infrastructure/common_solver_contract_v1/__init__.py",
+    "infrastructure/common_solver_contract_v1/contract.py",
+    "infrastructure/common_solver_contract_v1/entrypoints.py",
+    "infrastructure/common_solver_contract_v1/evaluator.py",
+    "infrastructure/common_solver_contract_v1/system_adapter.py",
+)
+from scripts.prepare_online_transfer_diagnostic_v4 import frozen_payload as v4_frozen_payload
+
+V4_ACTIVE_DEPENDENCIES = tuple(
+    v4_frozen_payload(execution_source_sha=SOURCE)[0]["execution"]["source_paths"]
+)
+assert set(V4_REQUIRED_DEPENDENCIES).issubset(V4_ACTIVE_DEPENDENCIES)
+
+
+@pytest.mark.parametrize("poison_relative", V4_ACTIVE_DEPENDENCIES)
+def test_v4_each_active_source_byte_poison_aborts_pre_provider(
+    tmp_path: Path, monkeypatch, poison_relative: str,
+) -> None:
+    from multi_dataset_diverse_rl.governance import production_execution as governance
+    from scripts.prepare_online_transfer_diagnostic_v4 import frozen_payload
+
+    root, prep = _fixture(tmp_path, monkeypatch)
+    manifest, protocol = frozen_payload(execution_source_sha=SOURCE)
+    manifest["runtime"]["endpoint_fingerprint"] = "endpoint-digest"
+    manifest["dependency"] = {"gepa": DEPENDENCY}
+    manifest["execution"]["source_paths"] = sorted(V4_ACTIVE_DEPENDENCIES)
+    repository = Path(__file__).resolve().parents[1]
+    for relative in V4_ACTIVE_DEPENDENCIES:
+        destination = root / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(repository / relative, destination)
+    (prep / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    (prep / "protocol.json").write_text(json.dumps(protocol), encoding="utf-8")
+    bundle = _expected_bundle(
+        root=root, manifest=manifest, protocol=protocol,
+        execution_source_sha=SOURCE, prep=prep,
+    )
+    bundle["authorization"] = authorized_artifact(
+        bundle, scope=manifest["attempt_id"], explicit_user_authorized=True,
+    )
+    write_bundle(prep / "startup_identity", bundle)
+    assert validate_execution(root=root, prep=prep, require_authorized=True).run_root is None
+    poisoned = root / poison_relative
+    poisoned.write_bytes(poisoned.read_bytes() + b"\n# synthetic source poison\n")
+    with pytest.raises(StartupIdentityError, match="scientific_identity mismatch"):
+        validate_execution(root=root, prep=prep, require_authorized=True)
+    assert not (tmp_path / "run").exists()
+
+
+def test_v4_freeze_inventory_contains_all_active_dependencies() -> None:
+    from scripts.prepare_online_transfer_diagnostic_v4 import frozen_payload
+
+    manifest, _ = frozen_payload(execution_source_sha=SOURCE)
+    assert tuple(manifest["execution"]["source_paths"]) == V4_ACTIVE_DEPENDENCIES
+
+
 def test_entry_import_graph_is_current_and_historical_runner_free() -> None:
     root = Path(__file__).resolve().parents[1]
     entry = (root / "scripts/run_experiment.py").read_text(encoding="utf-8")

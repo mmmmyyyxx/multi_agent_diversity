@@ -10,34 +10,32 @@ import pytest
 from multi_dataset_diverse_rl.team_search.schemas import TeamEvidenceCase
 from multi_dataset_diverse_rl.team_search.task_builder import Layer2EvidenceRequestBuilder
 from scripts.analyze_v3_scientific_blockers import (
-    cross_product_grid,
-    initial_state_capacity,
-    quota_matrix,
+    cross_product_grid, quota_matrix,
 )
 
 
+REPORT = Path(__file__).resolve().parents[1] / "reports/v3_scientific_blocker_decision_closure_20260927"
+
+
 def test_v3_initial_state_exact_schedule_arithmetic_and_replay() -> None:
-    first = initial_state_capacity()
-    second = initial_state_capacity()
-    assert first == second
+    # V3 is immutable historical evidence. Current production code implements
+    # V4 and must not be used to regenerate V3's former failure.
+    first = json.loads((REPORT / "schedule_capacity_analysis.json").read_text(encoding="utf-8"))["initial_state"]
     assert first["responsibility_source"] == "raw_legal_pre_routing_v1"
     assert first["selected_member"] == 0
     assert (first["D"], first["N"], first["C"], first["V"]) == (0, 0, 50, 50)
     assert first["f"] == 0 and first["target_score"] == 50.0
     assert first["overlapping_residual_count"] == 50
     assert (first["aligned_responsibility_rows"], first["focus_rows"], first["anchor_rows"]) == (50, 0, 0)
-    assert first["search_packet_item_count"] == 50
-    assert (first["ordered_schedule_batches"], first["batch_size"], first["schedule_delivery_slots"]) == (12, 3, 36)
-    assert first["minimum_metric_budget_for_coverage"] == 51
+    assert first["packet_item_count"] == 50
+    assert (first["ordered_schedule_batches"], first["batch_size"], first["nominal_schedule_slots"]) == (12, 3, 36)
     assert first["local_eval_ids"] == 12
-    assert (first["gepa_seed_evaluation_calls"], first["gepa_proposal_minibatch_cost"],
-            first["gepa_accepted_full_validation_cost"]) == (12, 6, 12)
-    assert first["max_rejected_proposal_batches_at_budget_36"] == 4
-    assert first["max_distinct_deliveries_if_every_proposal_rejected"] == 12
-    assert first["metric_budget_for_17_rejected_proposal_batches"] == 114
-    assert first["assignment_responsibility_value"] == 0.0
-    assert first["current_failure"] == "packet schedule must cover every selected search example"
-    assert first["real_api_calls"] == first["validation50_calls"] == first["test50_calls"] == 0
+    assert (first["seed_evaluation_cost"], first["proposal_minibatch_cost"],
+            first["accepted_full_validation_cost"]) == (12, 6, 12)
+    capacity = json.loads((REPORT / "schedule_capacity_analysis.json").read_text(encoding="utf-8"))["capacity_arithmetic"]
+    assert capacity["minimum_budget_for_nominal_root_packet_coverage"] == 51
+    assert first["current_assignment_responsibility_value"] == 0.0
+    assert first["observed_failure"] == "packet schedule must cover every selected search example"
 
 
 def test_quota_matrix_covers_all_three_lanes_and_other_groups() -> None:
@@ -74,10 +72,9 @@ def test_published_decision_counts_match_offline_analysis() -> None:
     quota = json.loads((report / "team_minibatch_feasibility_analysis.json").read_text(encoding="utf-8"))
     cross = json.loads((report / "cross_product_analysis.json").read_text(encoding="utf-8"))
     facts = json.loads((report / "fact_assertions.json").read_text(encoding="utf-8"))
-    observed = initial_state_capacity()
-    assert schedule["initial_state"]["packet_item_count"] == observed["search_packet_item_count"]
-    assert schedule["initial_state"]["nominal_schedule_slots"] == observed["schedule_delivery_slots"]
-    assert schedule["capacity_arithmetic"]["minimum_budget_for_nominal_root_packet_coverage"] == observed["minimum_metric_budget_for_coverage"]
+    assert schedule["initial_state"]["packet_item_count"] == 50
+    assert schedule["initial_state"]["nominal_schedule_slots"] == 36
+    assert schedule["capacity_arithmetic"]["minimum_budget_for_nominal_root_packet_coverage"] == 51
     assert len(quota["lane_cases"]) == len(quota_matrix()["lane_cases"])
     assert cross["counts"]["valid_grid_states"] == cross_product_grid()["counts"]["valid_grid_states"]
     assert sum(facts["assertions"]["synthetic_target_partition"]) == facts["assertions"]["synthetic_positive_raw_target_states"]

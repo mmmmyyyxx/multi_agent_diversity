@@ -109,6 +109,19 @@ SEPO; it does not import
 SEPO structural edits, architects, breadcrumb search, Lexicase selection,
 archive admission, or lineage-parent selection into Layer 2.
 
+The opt-in V4 diagnostic computes responsibility `D/N/C/V`, lane and target
+scores from the complete pre-routing raw-legal universe. Before selecting a
+target, Layer 2 masks members unable to form the unchanged TeamMiniBatch12 or
+an exact-transition packet with at least four repair slots. Among feasible
+members it retains `V/(1+f)` and member-ID ties; skipped members do not update
+`f`. The immutable Layer-1 search packet schedules at most 36 nominal role
+items, reserving exact focus/anchor and taking deterministic primary-lane
+repair rows for the remainder. Full responsibility, scheduled evidence and
+actually delivered GEPA evidence must be audited separately. The packet and
+assignment carry raw `V`, never the discounted target score. No feasible
+member ends the opportunity scientifically with
+`NO_FEASIBLE_LAYER2_OPPORTUNITY` before its provider calls.
+
 The sole active production Layer-2 responsibility graph is the overlapping raw
 legal member–residual relation. Primary responsibility selects a target; it
 does not exclusively own residuals. Equal target scores break by ascending

@@ -142,6 +142,27 @@ the canonical v15 runtime above.
   slicing, portfolio/load balancing, or freeze policy. A residual legally
   assigned to multiple members remains in each member's opportunity set.
   Historical routing state MUST NOT affect Layer-2 allocation or evidence.
+- **INV-LAYER2-BOUNDED-EVIDENCE-V4** — `D_i/N_i/C_i`, raw
+  `V_i=max(4D_i,2N_i,C_i)`, primary lane and raw target score use the complete
+  pre-routing raw-legal responsibility universe, never the bounded GEPA view.
+  The V4 diagnostic reserves exact latest-transition focus and anchor role
+  items in 36 nominal schedule slots, then takes the first
+  `min(R_full,36-|focus|-|anchor|)` primary-lane repair rows under the existing
+  deterministic lane/SHA256/example-ID order. Role-qualified items count
+  separately. Focus and anchor are never truncated. The full responsibility
+  universe, scheduled curriculum and evidence actually delivered by GEPA are
+  distinct auditable objects; scheduling does not imply delivery.
+- **INV-LAYER2-FEASIBILITY-V4** — On one immutable parent snapshot, V4 checks
+  each positive-score member for four unique primary-lane repair, four unique
+  preservation, four additional unique team-hard rows and at least four repair
+  slots after exact transition evidence. It freezes the unchanged 4/4/4
+  TeamMiniBatch and `M_eval` IDs before selection. Feasibility only masks
+  members; among feasible members the original `V_i/(1+f_i)` and ascending
+  member-ID tie break apply. An infeasible member is not selected and its `f_i`
+  does not change. If none is feasible, stop scientifically with exactly
+  `NO_FEASIBLE_LAYER2_OPPORTUNITY` before any provider call for that
+  opportunity. Assignment and packet responsibility value equal raw `V_i`,
+  not the discounted target score.
 - **INV-LAYER2-FINAL-SEMANTICS-001** — The production Layer-2 responsibility
   graph is the overlapping raw legal member–residual relation. Primary
   responsibility justifies choosing a target and does not grant exclusive

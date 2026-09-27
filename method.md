@@ -36,6 +36,15 @@ not exclusive ownership. Its TeamMiniBatch12 is four repair, four preservation,
 and four team-hard residual rows. The old coalition/unassigned-residual quota
 is archived, not an active Layer-2 mechanism. Equal target scores use ascending
 member ID; identical initial prompts remain the experimental baseline.
+The V4 diagnostic computes `D/N/C`, raw `V=max(4D,2N,C)` and the discounted
+target score from the full raw-legal universe. It first checks immutable-parent
+evidence feasibility, then selects among feasible members by the unchanged
+`V/(1+f)` ranking. An infeasible member is not selected and does not accrue an
+`f` failure. Its GEPA search view has at most 36 nominal role-item slots:
+exact latest focus/anchor first and deterministically ordered primary-lane
+repair in the remainder. Full responsibility, scheduled evidence and evidence
+actually delivered to GEPA are reported separately. The unchanged TeamMiniBatch
+and `M_eval` IDs may include cases outside the scheduled search view.
 Layer 2 freezes `M_eval` from the same TeamMiniBatch12 IDs before candidate
 generation. Local acceptance is target-member-only; subsequent TeamMiniBatch
 promotion uses fixed-peer plurality/team metrics and cannot feed back into

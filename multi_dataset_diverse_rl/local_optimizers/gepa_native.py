@@ -413,12 +413,35 @@ class GEPALayer2EvidenceOptimizer:
             else {}
         )
         telemetry = dict(prior_payload.get("telemetry", {}))
+        delivered_role_items = tuple(dict.fromkeys(
+            item for batch in sampler.delivered_ids for item in batch
+        ))
+        scheduled_role_items = frozenset(ordered_ids)
+        delivered_source_ids = tuple(dict.fromkeys(
+            item.split(":", 1)[1] for item in delivered_role_items
+        ))
         telemetry.update(
             {
                 "responsibility_packet_hash": packet.packet_hash,
                 "scheduled_batch_count": len(packet.ordered_batch_schedule),
                 "batch_delivery_calls": sampler.delivery_calls,
                 "delivered_batch_ids": [list(batch) for batch in sampler.delivered_ids],
+                "evidence_delivered_role_item_ids": list(delivered_role_items),
+                "evidence_delivered_source_ids": list(delivered_source_ids),
+                "scheduled_but_not_delivered_role_item_count": len(
+                    scheduled_role_items - set(delivered_role_items)
+                ),
+                "responsibility_universe": {
+                    key: value for key, value in packet.provenance
+                    if key.startswith("responsibility_universe_")
+                },
+                "responsibility_scheduled": {
+                    "source_ids": [row.example_id for row in packet.responsibility_examples],
+                    "role_item_ids": [row.packet_item_id for row in packet.responsibility_examples],
+                },
+                "focus_role_item_ids": [row.packet_item_id for row in packet.focus_examples],
+                "anchor_role_item_ids": [row.packet_item_id for row in packet.anchor_examples],
+                "nominal_schedule": [list(batch) for batch in packet.ordered_batch_schedule],
                 "backend_example_selection_calls": 0,
                 "native_sampler_called": False,
                 "evidence_epoch_policy": sampler.epoch_policy,

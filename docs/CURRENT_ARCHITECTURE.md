@@ -135,6 +135,15 @@ residual rows; team-hard rows need not be unassigned. Equal target scores use
 ascending member ID. The former coalition quota and seed/RR tie ordering are
 superseded and occur only in archived experiment definitions.
 
+The V4 Layer2 diagnostic keeps full pre-routing raw-legal responsibility for
+`D/N/C/V` and target scores. Before selection, Layer2 masks members that cannot
+form the unchanged 4/4/4 TeamMiniBatch or fit four repair role items after
+reserving exact latest-transition focus/anchor within 36 nominal packet slots.
+The mask does not alter `V/(1+f)`; skipped members do not change `f`. Layer2
+then supplies a deterministic bounded search curriculum to GEPA. The full
+responsibility universe, scheduled packet and actually delivered batches are
+separate audit objects; `M_eval` remains the full frozen TeamMiniBatch12 IDs.
+
 The production Layer2 modules depend only on the `LocalOptimizerBackend`
 boundary. They do not import GEPA or MARS implementations. Given identical
 local results, both backends produce identical team evaluation, admission and

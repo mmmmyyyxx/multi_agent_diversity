@@ -100,6 +100,7 @@ async def execute_frozen(prep: Path, run_root: Path) -> dict[str, Any]:
         if admitted.experiment_id in {
             "gepa_layer2_local_to_team_transfer_diagnostic_v2",
             "gepa_layer2_local_to_team_transfer_diagnostic_v3",
+            "gepa_layer2_local_to_team_transfer_diagnostic_v4",
         }:
             result = await execute_online_transfer_diagnostic(admitted, root=ROOT)
         else:

@@ -32,8 +32,11 @@ from ..vote_aligned_scheduler import classify_opportunity_lane
 from ..versions import (
     LAYER2_RESPONSIBILITY_SOURCE_VERSION,
     PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION,
+    PRIMARY_RESPONSIBILITY_FEASIBILITY_VERSION,
 )
+from .feasibility import Layer2EvidenceInfeasible, Layer2FeasibilityReason
 from .candidate_evaluator import EvaluationCost
+from .primary_responsibility_scheduler import build_primary_responsibility_summaries
 from .schemas import TeamEvidenceCase, TeamMiniBatchMetrics, TeamSearchAssignment, TeamSearchRequest
 from .task_builder import LocalTaskBuilder
 
@@ -160,12 +163,26 @@ class SystemResponsibilityAssignmentFactory:
         member_id: int,
         primary_lane: str | None,
         responsibility_identity: str,
+        responsibility_value: float | None = None,
     ) -> TeamSearchAssignment:
         del request
         if self.system.fixed_probe is None:
             raise RuntimeError("fixed Optimize probe is not initialized")
         target = int(member_id)
         snapshot = self.snapshot_reader()
+        raw_summary = build_primary_responsibility_summaries(
+            assigned=snapshot.assigned,
+            current_margin_by_question=snapshot.current_margin_by_question,
+            failure_count_by_member={},
+            member_ids=(target,),
+        )[0]
+        if responsibility_value is not None and float(responsibility_value) != raw_summary.primary_score:
+            raise ValueError("assignment responsibility value differs from raw V")
+        if responsibility_identity == PRIMARY_RESPONSIBILITY_FEASIBILITY_VERSION and responsibility_value is None:
+            raise ValueError("active Layer2 assignment requires explicit raw V")
+        if (responsibility_identity == PRIMARY_RESPONSIBILITY_FEASIBILITY_VERSION
+                and primary_lane != raw_summary.primary_lane):
+            raise ValueError("assignment primary lane differs from raw responsibility")
         assigned_rows = tuple(snapshot.assigned.get(target, ()))
         assigned_by_hash = {row.question_hash: row for row in assigned_rows}
         latest = self.transition_store.get(target) if self.transition_store else None
@@ -243,15 +260,29 @@ class SystemResponsibilityAssignmentFactory:
                 "examples, and do not modify or discuss the output interface."
             ),
             responsibility_identity=responsibility_identity,
+            responsibility_value=float(raw_summary.primary_score),
             primary_responsibility_lane=primary_lane,
             latest_transition=latest,
         )
         # Local validation and TeamMiniBatch use the same primary-lane repair
         # quota; preservation and team-hard rows are global parent-state evidence.
-        minibatch = self.task_builder.select_team_minibatch(
-            provisional.evidence,
-            primary_responsibility_lane=primary_lane,
-        )
+        try:
+            minibatch = self.task_builder.select_team_minibatch(
+                provisional.evidence,
+                primary_responsibility_lane=primary_lane,
+            )
+        except ValueError as exc:
+            if responsibility_identity != PRIMARY_RESPONSIBILITY_FEASIBILITY_VERSION:
+                raise
+            quota_reasons = {
+                "requires exactly 4 unique repair examples": Layer2FeasibilityReason.INSUFFICIENT_PRIMARY_REPAIR_QUOTA,
+                "requires exactly 4 unique preservation examples": Layer2FeasibilityReason.INSUFFICIENT_PRESERVATION_QUOTA,
+                "requires exactly 4 unique team_hard examples": Layer2FeasibilityReason.INSUFFICIENT_TEAM_HARD_QUOTA,
+            }
+            for marker, reason in quota_reasons.items():
+                if marker in str(exc):
+                    raise Layer2EvidenceInfeasible(reason) from exc
+            raise
         return TeamSearchAssignment(
             **{
                 **provisional.__dict__,
@@ -265,6 +296,7 @@ class SystemResponsibilityAssignmentFactory:
             member_id=int(summary.member_id),
             primary_lane=str(summary.primary_lane),
             responsibility_identity=PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION,
+            responsibility_value=float(summary.primary_score),
         )
 
 

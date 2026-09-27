@@ -127,6 +127,7 @@ def _expected_bundle(
                 "gepa_layer2_local_to_team_transfer_diagnostic_v1",
                 "gepa_layer2_local_to_team_transfer_diagnostic_v2",
                 "gepa_layer2_local_to_team_transfer_diagnostic_v3",
+                "gepa_layer2_local_to_team_transfer_diagnostic_v4",
             }
             else "single_opportunity_engineering_canary"
         ),
@@ -150,12 +151,14 @@ def validate_execution(
         "gepa_layer2_local_to_team_transfer_diagnostic_v1",
         "gepa_layer2_local_to_team_transfer_diagnostic_v2",
         "gepa_layer2_local_to_team_transfer_diagnostic_v3",
+        "gepa_layer2_local_to_team_transfer_diagnostic_v4",
     }:
         raise StartupIdentityError("ABORT_PRE_PROVIDER: unsupported experiment")
     diagnostic = manifest["experiment_id"] in {
         "gepa_layer2_local_to_team_transfer_diagnostic_v1",
         "gepa_layer2_local_to_team_transfer_diagnostic_v2",
         "gepa_layer2_local_to_team_transfer_diagnostic_v3",
+        "gepa_layer2_local_to_team_transfer_diagnostic_v4",
     }
     if manifest["experiment_id"] == "gepa_layer2_local_to_team_transfer_diagnostic_v3":
         from ..versions import (
@@ -177,6 +180,41 @@ def validate_execution(
                 or manifest.get("schema_version") != "online_transfer_diagnostic_freeze_v3"
                 or protocol.get("schema_version") != "online_local_to_team_transfer_diagnostic_v3"):
             raise StartupIdentityError("ABORT_PRE_PROVIDER: v3 semantic contract mismatch")
+    if manifest["experiment_id"] == "gepa_layer2_local_to_team_transfer_diagnostic_v4":
+        from ..versions import (
+            LAYER2_TEAM_SEARCH_PROTOCOL_V4_VERSION,
+            TEAM_MINIBATCH_CONTRACT_VERSION,
+            PRIMARY_RESPONSIBILITY_FEASIBILITY_VERSION,
+            LAYER2_RESPONSIBILITY_SOURCE_VERSION,
+            LAYER2_EVIDENCE_PACKET_V4_VERSION,
+            LAYER2_EVIDENCE_SELECTION_POLICY_V4_VERSION,
+            LAYER2_TARGET_FEASIBILITY_POLICY_V4_VERSION,
+        )
+        semantic = {
+            "layer2_protocol": LAYER2_TEAM_SEARCH_PROTOCOL_V4_VERSION,
+            "responsibility_source": LAYER2_RESPONSIBILITY_SOURCE_VERSION,
+            "scheduler": PRIMARY_RESPONSIBILITY_FEASIBILITY_VERSION,
+            "feasibility_policy": LAYER2_TARGET_FEASIBILITY_POLICY_V4_VERSION,
+            "packet_version": LAYER2_EVIDENCE_PACKET_V4_VERSION,
+            "evidence_selection_policy": LAYER2_EVIDENCE_SELECTION_POLICY_V4_VERSION,
+            "team_minibatch": TEAM_MINIBATCH_CONTRACT_VERSION,
+            "local_eval_identity": "same_frozen_team_minibatch12_ids",
+            "local_acceptance": "target_member_only_no_team_feedback",
+            "responsibility_value": "raw_V_not_discounted_target_score",
+            "no_feasible_stop": "NO_FEASIBLE_LAYER2_OPPORTUNITY",
+        }
+        if (manifest.get("semantic_contract") != semantic
+                or protocol.get("semantic_contract") != semantic
+                or manifest.get("schema_version") != "online_transfer_diagnostic_freeze_v4"
+                or protocol.get("schema_version") != "online_local_to_team_transfer_diagnostic_v4"
+                or protocol.get("packet_capacity") != {
+                    "local_metric_budget": 36, "batch_size": 3,
+                    "nominal_role_item_slots": 36,
+                    "focus_anchor": "exact_latest_transition_never_truncated",
+                    "repair": "first_min_Rfull_capacity_existing_deterministic_order",
+                    "delivery": "separately_observed_not_implied_by_schedule",
+                }):
+            raise StartupIdentityError("ABORT_PRE_PROVIDER: v4 semantic contract mismatch")
     if manifest.get("attempt_id") != manifest.get("experiment_id"):
         raise StartupIdentityError("ABORT_PRE_PROVIDER: attempt identity mismatch")
     if manifest.get("scientific", {}).get("backend") != "gepa" or manifest.get("scientific", {}).get("optimization_scope") != "layer2":

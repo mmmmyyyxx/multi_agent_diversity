@@ -34,6 +34,7 @@ from .team_search.execution_runtime import (
     ledger_summary, read_csv_rows,
 )
 from .team_search.primary_responsibility_scheduler import PrimaryResponsibilityPersistentRealizabilityScheduler
+from .team_search.feasibility import Layer2EvidenceInfeasible, Layer2FeasibilityReason
 from .team_search.schemas import TeamSearchAssignment, TeamSearchRequest
 from .team_search.system_runtime import (
     LatestTransitionStore, SystemLocalSolverEvaluator,
@@ -41,7 +42,11 @@ from .team_search.system_runtime import (
     SystemTeamCommitter, freeze_current_responsibility,
 )
 from .team_search.task_builder import Layer2EvidenceRequestBuilder
-from .versions import PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION
+from .versions import (
+    PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION,
+    PRIMARY_RESPONSIBILITY_FEASIBILITY_VERSION,
+    LAYER2_TARGET_FEASIBILITY_POLICY_V4_VERSION,
+)
 
 
 _OPPORTUNITY_PHASES = (
@@ -198,6 +203,7 @@ async def execute_online_transfer_diagnostic(
         permit.experiment_id not in {
             "gepa_layer2_local_to_team_transfer_diagnostic_v2",
             "gepa_layer2_local_to_team_transfer_diagnostic_v3",
+            "gepa_layer2_local_to_team_transfer_diagnostic_v4",
         }
         or permit.allowed_phase != "diagnostic"
         or spec.mode_id != "GEPA_LAYER2"
@@ -264,9 +270,13 @@ async def execute_online_transfer_diagnostic(
 
     initial_hash = system.team_prompt_state_hash()
     current = _CurrentAssignment()
-    scheduler = PrimaryResponsibilityPersistentRealizabilityScheduler()
+    v4 = permit.experiment_id == "gepa_layer2_local_to_team_transfer_diagnostic_v4"
+    scheduler = PrimaryResponsibilityPersistentRealizabilityScheduler(
+        version=(PRIMARY_RESPONSIBILITY_FEASIBILITY_VERSION if v4
+                 else PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION),
+    )
     transition_store = LatestTransitionStore()
-    task_builder = Layer2EvidenceRequestBuilder()
+    task_builder = Layer2EvidenceRequestBuilder(bounded_search_view=v4)
     loop = asyncio.get_running_loop()
     update_index = 0
     local_solver = SystemLocalSolverEvaluator(
@@ -296,6 +306,8 @@ async def execute_online_transfer_diagnostic(
     parent_sequence: list[str] = []
     opportunity_costs: list[dict[str, Any]] = []
     accepted_by_group: dict[tuple[str, int, str], dict[str, Any]] = {}
+    feasibility_trace: list[dict[str, Any]] = []
+    evidence_trace: list[dict[str, Any]] = []
 
     def next_opportunity(index: int, parent_hash: str) -> Layer2Opportunity:
         nonlocal update_index, decision
@@ -303,16 +315,12 @@ async def execute_online_transfer_diagnostic(
         if system.team_prompt_state_hash() != parent_hash:
             raise RuntimeError("online parent must equal actual committed team state")
         snapshot = freeze_current_responsibility(system, update_index=update_index)
-        decision = scheduler.select(
+        raw_decision = scheduler.select(
             assigned=snapshot.assigned,
             current_margin_by_question=snapshot.current_margin_by_question,
             seed=runtime.seed, update_index=update_index, target_count=1,
         )
-        if len(decision.selected_member_ids) != 1:
-            raise RuntimeError("online diagnostic requires one production target")
-        target = decision.selected_member_ids[0]
-        summary = next(row for row in decision.summaries if row.member_id == target)
-        if summary.primary_lane == "fallback":
+        if not v4 and not any(row.primary_score > 0 for row in raw_decision.summaries):
             raise ExperimentEarlyStop("NO_ALIGNED_RESPONSIBILITY_TARGET_NOT_REACHED")
         request = TeamSearchRequest(
             seed=runtime.seed, update_index=update_index,
@@ -320,13 +328,121 @@ async def execute_online_transfer_diagnostic(
             solver_contract_id=spec.solver_contract_id,
             output_contract_id=SOLVER_OUTPUT_CONTRACT_VERSION,
         )
-        current.assignment = SystemResponsibilityAssignmentFactory(
+        factory = SystemResponsibilityAssignmentFactory(
             system=system, snapshot_reader=lambda: snapshot,
             task_builder=task_builder, transition_store=transition_store,
-        ).build_from_member(
-            request=request, member_id=target,
-            primary_lane=summary.primary_lane,
-            responsibility_identity=PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION,
+        )
+        feasible_assignments: dict[int, TeamSearchAssignment] = {}
+        if v4:
+            feasible_packets: dict[int, Any] = {}
+            feasibility_reasons: dict[int, str] = {}
+            for row in raw_decision.summaries:
+                if row.primary_score <= 0:
+                    feasibility_reasons[row.member_id] = (
+                        Layer2FeasibilityReason.NO_POSITIVE_RESPONSIBILITY.value
+                    )
+                    continue
+                try:
+                    candidate_assignment = factory.build_from_member(
+                        request=request, member_id=row.member_id,
+                        primary_lane=row.primary_lane,
+                        responsibility_identity=PRIMARY_RESPONSIBILITY_FEASIBILITY_VERSION,
+                        responsibility_value=row.primary_score,
+                    )
+                    # Materialization is zero-provider and checks the complete
+                    # bounded packet before a member becomes selectable.
+                    packet_request = task_builder.build(request, candidate_assignment)
+                except Layer2EvidenceInfeasible as exc:
+                    feasibility_reasons[row.member_id] = exc.reason.value
+                else:
+                    feasible_assignments[row.member_id] = candidate_assignment
+                    feasible_packets[row.member_id] = packet_request.packet
+                    feasibility_reasons[row.member_id] = Layer2FeasibilityReason.FEASIBLE.value
+            raw_order = sorted(raw_decision.summaries, key=lambda row: (-row.target_score, row.member_id))
+            eligible_order = [row for row in raw_order if row.member_id in feasible_assignments]
+            feasibility_trace.append({
+                "update_index": update_index,
+                "parent_team_hash": parent_hash,
+                "policy_version": LAYER2_TARGET_FEASIBILITY_POLICY_V4_VERSION,
+                "members": [{
+                    "member_id": row.member_id,
+                    "direct_count": row.direct_count,
+                    "near_margin_count": row.near_margin_count,
+                    "coverage_count": row.coverage_count,
+                    "raw_V": row.primary_score,
+                    "failure_count": row.failure_count,
+                    "raw_target_score": row.target_score,
+                    "primary_lane": row.primary_lane,
+                    "feasibility_reason": feasibility_reasons[row.member_id],
+                    "raw_rank": raw_order.index(row) + 1,
+                    "feasible_rank": (eligible_order.index(row) + 1 if row in eligible_order else None),
+                } for row in raw_decision.summaries],
+                "selected_member": eligible_order[0].member_id if eligible_order else None,
+                "latest_transition_effect_hash_by_member": {
+                    str(member_id): (
+                        transition_store.get(member_id).transition_effect_hash
+                        if transition_store.get(member_id) is not None else None
+                    )
+                    for member_id in range(5)
+                },
+            })
+            if not feasible_assignments:
+                raise ExperimentEarlyStop("NO_FEASIBLE_LAYER2_OPPORTUNITY")
+            decision = scheduler.select(
+                assigned=snapshot.assigned,
+                current_margin_by_question=snapshot.current_margin_by_question,
+                seed=runtime.seed, update_index=update_index, target_count=1,
+                eligible_member_ids=tuple(feasible_assignments),
+            )
+        else:
+            decision = raw_decision
+        if len(decision.selected_member_ids) != 1:
+            raise RuntimeError("online diagnostic requires one production target")
+        target = decision.selected_member_ids[0]
+        summary = next(row for row in decision.summaries if row.member_id == target)
+        if v4:
+            packet = feasible_packets[target]
+            evidence_trace.append({
+                "update_index": update_index,
+                "parent_team_hash": parent_hash,
+                "target_member": target,
+                "raw_V": summary.primary_score,
+                "assignment_V": feasible_assignments[target].responsibility_value,
+                "packet_V": packet.responsibility_value,
+                "responsibility_universe": {
+                    key: value for key, value in packet.provenance
+                    if key.startswith("responsibility_universe_")
+                },
+                "responsibility_scheduled": {
+                    "ids": [row.example_id for row in packet.responsibility_examples],
+                    "count": len(packet.responsibility_examples),
+                },
+                "focus_ids": [row.example_id for row in packet.focus_examples],
+                "anchor_ids": [row.example_id for row in packet.anchor_examples],
+                "nominal_schedule": [list(batch) for batch in packet.ordered_batch_schedule],
+                "team_minibatch_ids": list(feasible_assignments[target].local_validation_example_ids),
+                "local_eval_ids": [row.example_id for row in packet.local_eval_examples],
+                "packet_hash": packet.packet_hash,
+                "latest_transition_effect_hash": (
+                    packet.latest_transition.transition_effect_hash
+                    if packet.latest_transition is not None else None
+                ),
+                "latest_transition_parent_candidate_hash": (
+                    packet.latest_transition.parent_candidate_hash
+                    if packet.latest_transition is not None else None
+                ),
+                "latest_transition_child_candidate_hash": (
+                    packet.latest_transition.child_candidate_hash
+                    if packet.latest_transition is not None else None
+                ),
+            })
+        current.assignment = (
+            feasible_assignments[target] if v4 else factory.build_from_member(
+                request=request, member_id=target,
+                primary_lane=summary.primary_lane,
+                responsibility_identity=PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION,
+                responsibility_value=summary.primary_score,
+            )
         )
         current.parent_hash = parent_hash
         parent_sequence.append(parent_hash)
@@ -356,6 +472,17 @@ async def execute_online_transfer_diagnostic(
             scheduler, decision=decision, update_index=index - 1, outcome=outcome,
         )
         telemetry = outcome.audit_metadata["local_optimizer_telemetry"]
+        if v4:
+            evidence_trace[-1]["evidence_delivered"] = {
+                "batch_ids": telemetry["delivered_batch_ids"],
+                "role_item_ids": telemetry["evidence_delivered_role_item_ids"],
+                "source_ids": telemetry["evidence_delivered_source_ids"],
+                "scheduled_but_not_delivered_count": telemetry[
+                    "scheduled_but_not_delivered_role_item_count"
+                ],
+            }
+            evidence_trace[-1]["committed_candidate_id"] = outcome.committed_candidate_id
+            evidence_trace[-1]["successor_team_hash"] = system.team_prompt_state_hash()
         accepted_total += int(telemetry["accepted_mutations"])
         proposal_total += int(telemetry["proposal_attempts"])
         return _diagnostic_stop_reason(accepted_total, proposal_total)
@@ -413,6 +540,8 @@ async def execute_online_transfer_diagnostic(
         "initial_team_hash": initial_hash,
         "final_team_hash": result.final_state_hash,
         "parent_sequence": parent_sequence,
+        "feasibility_trace": feasibility_trace,
+        "evidence_view_trace": evidence_trace,
         "opportunities": len(result.team_outcomes),
         "accepted_mutations": accepted_total,
         "reflection_proposals": proposal_total,

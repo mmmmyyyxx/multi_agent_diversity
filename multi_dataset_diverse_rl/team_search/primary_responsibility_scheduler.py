@@ -238,6 +238,8 @@ def select_primary_responsibility_targets(
     seed: int,
     update_index: int,
     target_count: int = 2,
+    eligible_member_ids: Sequence[int] | None = None,
+    scheduler_version: str = PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION,
 ) -> PrimaryTargetSelection:
     """Select Top-2 by score, then ascending member ID independent of seed."""
     if target_count <= 0:
@@ -246,11 +248,17 @@ def select_primary_responsibility_targets(
     if len({row.member_id for row in rows}) != len(rows):
         raise ValueError("member summaries must be unique")
     del seed, update_index
+    eligible = None if eligible_member_ids is None else set(map(int, eligible_member_ids))
+    if eligible is not None and not eligible.issubset({row.member_id for row in rows}):
+        raise ValueError("eligible member identity is not in frozen summaries")
     fallback = not any(row.target_score > 0 for row in rows)
-    ordered = sorted(rows, key=lambda row: (-row.target_score, row.member_id))
+    ordered = sorted(
+        (row for row in rows if eligible is None or row.member_id in eligible),
+        key=lambda row: (-row.target_score, row.member_id),
+    )
     chosen = tuple(row.member_id for row in ordered[: min(target_count, len(ordered))])
     return PrimaryTargetSelection(
-        scheduler_version=PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION,
+        scheduler_version=scheduler_version,
         summaries=rows,
         selected_member_ids=chosen,
         fallback_used=fallback,
@@ -267,7 +275,9 @@ class PrimaryResponsibilityPersistentRealizabilityScheduler:
         *,
         member_ids: Sequence[int] = (0, 1, 2, 3, 4),
         state: PersistentRealizabilityState | None = None,
+        version: str = PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION,
     ) -> None:
+        self.version = version
         self.member_ids = tuple(map(int, member_ids))
         self.state = state or PersistentRealizabilityState()
         self.state.initialize(self.member_ids)
@@ -280,6 +290,7 @@ class PrimaryResponsibilityPersistentRealizabilityScheduler:
         seed: int,
         update_index: int,
         target_count: int = 2,
+        eligible_member_ids: Sequence[int] | None = None,
     ) -> PrimaryTargetSelection:
         summaries = build_primary_responsibility_summaries(
             assigned=assigned,
@@ -292,6 +303,8 @@ class PrimaryResponsibilityPersistentRealizabilityScheduler:
             seed=seed,
             update_index=update_index,
             target_count=target_count,
+            eligible_member_ids=eligible_member_ids,
+            scheduler_version=self.version,
         )
         return decision
 

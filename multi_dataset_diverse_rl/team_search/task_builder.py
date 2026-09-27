@@ -15,7 +15,12 @@ from ..native_feed import (
     ResponsibilityContext,
 )
 from .schemas import TeamEvidenceCase, TeamSearchAssignment, TeamSearchRequest
-from ..versions import TEAM_MINIBATCH_CONTRACT_VERSION
+from .feasibility import Layer2EvidenceInfeasible, Layer2FeasibilityReason
+from ..versions import (
+    TEAM_MINIBATCH_CONTRACT_VERSION,
+    LAYER2_EVIDENCE_PACKET_V4_VERSION,
+    LAYER2_EVIDENCE_SELECTION_POLICY_V4_VERSION,
+)
 
 
 @dataclass(frozen=True)
@@ -267,6 +272,13 @@ class Layer2EvidenceRequestBuilder(LocalTaskBuilder):
 
     packet_selection_policy = "responsibility_plus_latest_transition_frozen_eval_v2"
 
+    def __init__(self, *, bounded_search_view: bool = False,
+                 local_return_budget: int = 4) -> None:
+        super().__init__(local_return_budget=local_return_budget)
+        self.bounded_search_view = bounded_search_view
+        if bounded_search_view:
+            self.packet_selection_policy = LAYER2_EVIDENCE_SELECTION_POLICY_V4_VERSION
+
     @staticmethod
     def _packet_row(
         row: TeamEvidenceCase, *, role: str, lane: str
@@ -306,6 +318,16 @@ class Layer2EvidenceRequestBuilder(LocalTaskBuilder):
         return hashlib.sha256(
             json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
         ).hexdigest()
+
+    @staticmethod
+    def _ids_hash(rows: tuple[TeamEvidenceCase, ...]) -> str:
+        return hashlib.sha256(Layer2EvidenceRequestBuilder._ids_json(rows).encode("utf-8")).hexdigest()
+
+    @staticmethod
+    def _ids_json(rows: tuple[TeamEvidenceCase, ...]) -> str:
+        import json
+
+        return json.dumps([row.example_id for row in rows], separators=(",", ":"))
 
     @staticmethod
     def _schedule(
@@ -352,6 +374,7 @@ class Layer2EvidenceRequestBuilder(LocalTaskBuilder):
                 key=self._priority,
             )
         )
+        full_responsibility_rows = responsibility_rows
         if assignment.local_validation_example_ids:
             if len(assignment.local_validation_example_ids) != len(
                 set(assignment.local_validation_example_ids)
@@ -401,6 +424,23 @@ class Layer2EvidenceRequestBuilder(LocalTaskBuilder):
             or len(anchor_rows) != len(transition.newly_fixed_ids)
         ):
             raise ValueError("INSUFFICIENT_LAYER2_EVIDENCE: transition example absent from frozen universe")
+        if self.bounded_search_view:
+            if request.local_metric_budget != 36:
+                raise ValueError("v4 bounded search view requires frozen local metric budget 36")
+            if len(assignment.local_validation_example_ids) != 12:
+                raise ValueError("v4 requires frozen TeamMiniBatch12 local-eval identities")
+            frozen_minibatch = self.select_team_minibatch(
+                assignment.evidence,
+                primary_responsibility_lane=lane,
+            )
+            if tuple(row.example_id for row in frozen_minibatch) != assignment.local_validation_example_ids:
+                raise ValueError("v4 local-eval identities differ from frozen TeamMiniBatch12")
+            repair_capacity = (request.local_metric_budget // 3) * 3 - len(focus_rows) - len(anchor_rows)
+            if repair_capacity < 4:
+                raise Layer2EvidenceInfeasible(
+                    Layer2FeasibilityReason.INSUFFICIENT_PACKET_REPAIR_CAPACITY
+                )
+            responsibility_rows = responsibility_rows[:repair_capacity]
         budget = NativeResourceBudget(
             native_unit_limit=max(1, request.local_metric_budget // 3),
             metric_call_limit=request.local_metric_budget,
@@ -453,10 +493,21 @@ class Layer2EvidenceRequestBuilder(LocalTaskBuilder):
                 ("builder", "Layer2EvidenceRequestBuilder"),
                 ("source_split", "optimize_only"),
                 ("selection_policy", self.packet_selection_policy),
+                *((
+                    ("responsibility_universe_count", str(len(full_responsibility_rows))),
+                    ("responsibility_universe_ids_json", self._ids_json(full_responsibility_rows)),
+                    ("responsibility_universe_ids_sha256", self._ids_hash(full_responsibility_rows)),
+                    ("responsibility_scheduled_count", str(len(responsibility_rows))),
+                    ("responsibility_scheduled_ids_json", self._ids_json(responsibility_rows)),
+                    ("responsibility_scheduled_ids_sha256", self._ids_hash(responsibility_rows)),
+                ) if self.bounded_search_view else ()),
                 ("local_eval_source", local_eval_source),
                 ("batch_fill_policy", "cyclic_repeat_within_frozen_packet_v1"),
             ),
             latest_transition=transition,
+            **({"packet_version": LAYER2_EVIDENCE_PACKET_V4_VERSION,
+                "selection_policy_version": LAYER2_EVIDENCE_SELECTION_POLICY_V4_VERSION}
+               if self.bounded_search_view else {}),
         )
         return Layer2OptimizationRequest(
             request_id=(
