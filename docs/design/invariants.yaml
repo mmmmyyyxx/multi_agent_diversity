@@ -184,6 +184,14 @@ invariants:
     failure_refs: []
     critical: true
     status: ACTIVE
+  - id: INV-SATURATION-V4-EPOCH-001
+    description: V4 team epochs cover the frozen positive-score feasible member set on one parent; commit resets patience and restarts coverage from the successor, while no-feasible and incomplete opportunities do not count.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/experiment.py, multi_dataset_diverse_rl/saturation.py, multi_dataset_diverse_rl/production_transfer_diagnostic.py]
+    tests: [tests/test_formal_v4_epoch_semantics.py]
+    failure_refs: []
+    critical: true
+    status: ACTIVE
   - id: INV-LAYER2-LOCAL-EVAL-TEAM-MINIBATCH-001
     description: Layer 2 freezes M_eval from the same TeamMiniBatch12 IDs before candidate generation; member-level GEPA acceptance and later fixed-peer team admission remain separate, and team outcomes never influence local acceptance.
     authority: docs/design/CURRENT_SPEC.md

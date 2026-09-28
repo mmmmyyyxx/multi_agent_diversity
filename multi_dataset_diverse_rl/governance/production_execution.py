@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import uuid
@@ -37,6 +38,40 @@ from ..persistence.durable_io import (
 LEGACY_FREEZE_ENV_VARS = (
     "V17_FORMAL_SOURCE_FREEZE", "V16_M2F_ONLINE_SOURCE_FREEZE",
 )
+
+
+def formal_v3_contract() -> dict[str, Any]:
+    """The active formal treatment binding, shared by freeze and admission."""
+
+    from ..versions import (
+        LAYER2_EVIDENCE_PACKET_V4_VERSION,
+        LAYER2_EVIDENCE_SELECTION_POLICY_V4_VERSION,
+        LAYER2_TARGET_FEASIBILITY_POLICY_V4_VERSION,
+        LAYER2_RESPONSIBILITY_SOURCE_VERSION,
+        LAYER2_TEAM_SEARCH_PROTOCOL_V4_VERSION,
+        PRIMARY_RESPONSIBILITY_FEASIBILITY_VERSION,
+        SATURATION_STOPPING_CONTRACT_VERSION,
+        TEAM_EPOCH_SEMANTICS_V4_VERSION,
+        TEAM_MINIBATCH_CONTRACT_VERSION,
+    )
+
+    return {
+        "native_method": "GEPA_NATIVE",
+        "treatment_method": "GEPA_LAYER2_V4",
+        "layer2_protocol": LAYER2_TEAM_SEARCH_PROTOCOL_V4_VERSION,
+        "responsibility_source": LAYER2_RESPONSIBILITY_SOURCE_VERSION,
+        "scheduler": PRIMARY_RESPONSIBILITY_FEASIBILITY_VERSION,
+        "target_feasibility": LAYER2_TARGET_FEASIBILITY_POLICY_V4_VERSION,
+        "evidence_packet": LAYER2_EVIDENCE_PACKET_V4_VERSION,
+        "evidence_selection": LAYER2_EVIDENCE_SELECTION_POLICY_V4_VERSION,
+        "team_minibatch": TEAM_MINIBATCH_CONTRACT_VERSION,
+        "team_epoch": TEAM_EPOCH_SEMANTICS_V4_VERSION,
+        "saturation": SATURATION_STOPPING_CONTRACT_VERSION,
+        "bounded_search_view": True,
+        "local_eval_identity": "same_frozen_team_minibatch12_ids",
+        "validation50_calls": 0,
+        "test50_calls": 0,
+    }
 
 
 def _utc_now() -> str:
@@ -122,6 +157,9 @@ def _expected_bundle(
         local_patience=int(manifest["scientific"]["local_no_update_patience"]),
         team_patience=int(manifest["scientific"]["team_no_update_patience"]),
         saturation_mode=(
+            "formal_gepa_saturation_v3"
+            if str(manifest["experiment_id"]).startswith("gepa_saturation_comparison_v3_")
+            else
             "online_local_to_team_transfer_diagnostic_v1"
             if manifest["experiment_id"] in {
                 "gepa_layer2_local_to_team_transfer_diagnostic_v1",
@@ -145,7 +183,11 @@ def validate_execution(
 
     manifest = _read(prep / "manifest.json")
     protocol = _read(prep / "protocol.json")
-    if manifest.get("experiment_id") not in {
+    formal = bool(re.fullmatch(
+        r"gepa_saturation_comparison_v3_seed(80|81|82)_(native|layer2)_attempt1",
+        str(manifest.get("experiment_id", "")),
+    ))
+    if not formal and manifest.get("experiment_id") not in {
         "gepa_layer2_real_canary_post_refactor_v1",
         "gepa_layer2_real_canary_post_refactor_v2",
         "gepa_layer2_local_to_team_transfer_diagnostic_v1",
@@ -217,9 +259,54 @@ def validate_execution(
             raise StartupIdentityError("ABORT_PRE_PROVIDER: v4 semantic contract mismatch")
     if manifest.get("attempt_id") != manifest.get("experiment_id"):
         raise StartupIdentityError("ABORT_PRE_PROVIDER: attempt identity mismatch")
-    if manifest.get("scientific", {}).get("backend") != "gepa" or manifest.get("scientific", {}).get("optimization_scope") != "layer2":
+    if manifest.get("scientific", {}).get("backend") != "gepa" or (
+        manifest.get("scientific", {}).get("optimization_scope") not in
+        ({"native", "layer2"} if formal else {"layer2"})
+    ):
         raise StartupIdentityError("ABORT_PRE_PROVIDER: unsupported mode")
     spec = ExperimentSpec(**_scientific_kwargs(manifest["scientific"]))
+    if formal:
+        match = re.fullmatch(
+            r"gepa_saturation_comparison_v3_seed(80|81|82)_(native|layer2)_attempt1",
+            str(manifest["experiment_id"]),
+        )
+        assert match is not None
+        expected_scope = match.group(2)
+        if (
+            manifest.get("schema_version") != "formal_gepa_saturation_freeze_v3"
+            or protocol.get("schema_version") != "formal_gepa_saturation_protocol_v3"
+            or manifest["scientific"].get("stopping_regime") != "saturation"
+            or spec.optimization_scope.value != expected_scope
+            or spec.local_no_update_patience != 3
+            or spec.team_no_update_patience != 2
+            or (expected_scope == "layer2" and not spec.is_v4_layer2)
+            or (expected_scope == "native" and spec.layer2_protocol_version is not None)
+            or protocol.get("seed") != int(match.group(1))
+            or manifest.get("runtime", {}).get("seed") != int(match.group(1))
+            or protocol.get("arm") != ("GEPA_NATIVE" if expected_scope == "native" else "GEPA_LAYER2_V4")
+            or protocol.get("optimize_rows") != 100
+            or protocol.get("shadow_rows") != 50
+            or protocol.get("scientific_budget") != "none_saturation_only"
+            or protocol.get("local_no_update_patience") != 3
+            or protocol.get("team_no_update_patience") != 2
+            or protocol.get("emergency_ceiling") != {
+                key: manifest["scientific"][key] for key in (
+                    "emergency_max_provider_calls", "emergency_max_optimizer_steps",
+                    "emergency_max_team_epochs", "emergency_max_wall_seconds",
+                )
+            }
+            or protocol.get("data_identity") != manifest["scientific"].get("data_identity")
+            or protocol.get("initialization_policy") != INITIALIZATION_POLICY
+            or protocol.get("validation50_calls") != 0
+            or protocol.get("test50_calls") != 0
+            or manifest.get("formal_v3_contract") != formal_v3_contract()
+            or protocol.get("formal_v3_contract") != formal_v3_contract()
+        ):
+            raise StartupIdentityError("ABORT_PRE_PROVIDER: formal V3 contract mismatch")
+        if require_authorized and manifest.get("execution_gate", {}).get(
+            "real_v4_diagnostic"
+        ) != "SCIENTIFICALLY_VALID":
+            raise StartupIdentityError("ABORT_PRE_PROVIDER: formal V3 prerequisite not satisfied")
     if diagnostic:
         if (
             manifest["scientific"].get("stopping_regime") != "fixed_budget"
@@ -279,7 +366,7 @@ def validate_execution(
         execution_source_sha=source, prep=prep,
     )
     stored = read_bundle(prep / "startup_identity")
-    allowed_phase = "diagnostic" if diagnostic else "canary"
+    allowed_phase = "formal" if formal else "diagnostic" if diagnostic else "canary"
     result = validate_startup_bundle(
         stored=stored, expected=expected, require_authorized=require_authorized,
         phase=allowed_phase, roles=("solver", "reflection"),
@@ -316,6 +403,14 @@ def _scientific_kwargs(payload: Mapping[str, Any]) -> dict[str, Any]:
         "fixed_budget_units": int(payload["fixed_budget_units"]),
         "local_no_update_patience": int(payload["local_no_update_patience"]),
         "team_no_update_patience": int(payload["team_no_update_patience"]),
+        "layer2_protocol_version": payload.get("layer2_protocol_version"),
+        "emergency_max_provider_calls": int(payload.get("emergency_max_provider_calls", 100_000)),
+        "emergency_max_optimizer_steps": int(payload.get("emergency_max_optimizer_steps", 100_000)),
+        "emergency_max_team_epochs": int(payload.get("emergency_max_team_epochs", 10_000)),
+        "emergency_max_wall_seconds": (
+            int(payload["emergency_max_wall_seconds"])
+            if payload.get("emergency_max_wall_seconds") is not None else 86_400
+        ),
     }
 
 

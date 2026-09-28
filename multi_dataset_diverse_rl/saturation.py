@@ -43,12 +43,23 @@ class StopReason(str, Enum):
     INSUFFICIENT_LAYER2_EVIDENCE = "INSUFFICIENT_LAYER2_EVIDENCE"
 
 
+class SaturationEmergency(RuntimeError):
+    """A completed local search hit an operational ceiling, not a candidate."""
+
+    def __init__(self, reason: StopReason) -> None:
+        if not reason.name.startswith("EMERGENCY_"):
+            raise ValueError("only emergency stop reasons may cross this boundary")
+        self.reason = reason
+        super().__init__(reason.value)
+
+
 class OptimizationUnitType(str, Enum):
     GEPA_NATIVE_EPOCH = "GEPA_NATIVE_EPOCH"
     LAYER2_EVIDENCE_EPOCH = "LAYER2_EVIDENCE_EPOCH"
     MARS_NATIVE_ROUND = "MARS_NATIVE_ROUND"
     MARS_LAYER2_ROUND = "MARS_LAYER2_ROUND"
     TEAM_EPOCH = "TEAM_EPOCH"
+    TEAM_COMMIT = "TEAM_COMMIT"
 
 
 @dataclass(frozen=True)
@@ -114,6 +125,8 @@ class SaturationUnitRecord:
     no_update_counter_before: int
     no_update_counter_after: int
     stop_triggered: str | None
+    coverage_complete: bool | None = None
+    epoch_end_reason: str | None = None
 
 
 @dataclass
@@ -129,6 +142,7 @@ class SaturationCostAccounting:
     provider_attempts: int = 0
     provider_successes: int = 0
     provider_failures: int = 0
+    cache_hits: int = 0
     prompt_tokens: int = 0
     completion_tokens: int = 0
     total_tokens: int = 0
@@ -214,6 +228,31 @@ class SaturationState:
 
     def add_cost(self, **deltas: int) -> None:
         self.cost.add(**deltas)
+
+    def sync_durable_provider_usage(self, usage: Mapping[str, int]) -> None:
+        """Reconcile emergency accounting against persisted physical attempts."""
+
+        attempts = int(usage["provider_attempts"])
+        successes = int(usage["successful_provider_calls"])
+        failures = int(usage["failed_provider_attempts"])
+        cache_hits = int(usage["cache_hits"])
+        if attempts != successes + failures or min(attempts, successes, failures, cache_hits) < 0:
+            raise ValueError("durable provider accounting is inconsistent")
+        previous = self.cost
+        if any((new < old) for new, old in (
+            (attempts, previous.provider_attempts),
+            (successes, previous.provider_successes),
+            (failures, previous.provider_failures),
+            (cache_hits, previous.cache_hits),
+        )):
+            raise ValueError("durable provider accounting regressed")
+        previous.add(
+            provider_attempts=attempts - previous.provider_attempts,
+            provider_successes=successes - previous.provider_successes,
+            provider_failures=failures - previous.provider_failures,
+            cache_hits=cache_hits - previous.cache_hits,
+        )
+        self.provider_calls = attempts
 
     def _emergency_reason(self) -> StopReason | None:
         cfg = self.config
@@ -342,6 +381,45 @@ class SaturationState:
             no_update_counter_before=before,
             no_update_counter_after=self.team_no_update_counter,
             stop_triggered=stop.value if stop else None,
+            coverage_complete=True,
+            epoch_end_reason="TEAM_COMMIT" if team_commit else "COVERAGE_COMPLETE_NO_COMMIT",
+        ))
+        return stop
+
+    def observe_team_commit(
+        self, *, start_state_hash: str, end_state_hash: str,
+        coverage_complete: bool,
+    ) -> StopReason | None:
+        """End a parent-scoped coverage window on commit without a no-update epoch."""
+
+        if self.stop_reason is not None:
+            raise RuntimeError("cannot observe a commit after termination")
+        if start_state_hash == end_state_hash:
+            self.stop_reason = StopReason.INVALID_STATE
+            return self.stop_reason
+        before = self.team_no_update_counter
+        self.team_commit_count += 1
+        self.team_no_update_counter = 0
+        self._observe_hash(end_state_hash, accepted=True)
+        stop = self.check_emergency()
+        self.trajectory.append(SaturationUnitRecord(
+            unit_index=len(self.trajectory) + 1,
+            unit_type=OptimizationUnitType.TEAM_COMMIT.value,
+            backend=self.backend,
+            mode=self.mode,
+            start_state_hash=start_state_hash,
+            end_state_hash=end_state_hash,
+            accepted_local_update=True,
+            team_commit=True,
+            local_objective_before=None,
+            local_objective_after=None,
+            vote_acc=None,
+            oracle_acc=None,
+            no_update_counter_before=before,
+            no_update_counter_after=0,
+            stop_triggered=stop.value if stop else None,
+            coverage_complete=coverage_complete,
+            epoch_end_reason="TEAM_COMMIT",
         ))
         return stop
 
@@ -378,14 +456,13 @@ class SaturationState:
 
 @dataclass
 class TeamEpochTracker:
-    """Observe one epoch without changing scheduler choices.
+    """Observe a caller-supplied, parent-scoped eligible set without reranking.
 
-    Eligibility is frozen at epoch start from scheduler summaries.  Existing
-    scheduler decisions are then observed until every eligible member has
-    received at least one opportunity.  A member may appear multiple times;
-    zero-score members remain eligible when the scheduler's always-two/fallback
-    policy includes them.  Persistent realizability is owned by the scheduler
-    and is intentionally not reset here.
+    The V4 caller supplies exactly the positive-V, evidence-feasible members
+    from one immutable parent snapshot. Historical callers may supply their
+    own frozen eligible set; this tracker does not reinterpret either policy.
+    Repeated selections are valid, but coverage completes only after every
+    supplied member has received a complete opportunity.
     """
 
     eligible_member_ids: tuple[int, ...]

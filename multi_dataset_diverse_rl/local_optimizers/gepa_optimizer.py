@@ -208,6 +208,7 @@ class GEPALocalPromptOptimizer:
         reflection_lm: ReflectionLanguageModel,
         accounting_reader: AccountingReader,
         run_root: Path,
+        durable_usage_reader: Callable[[], Mapping[str, int]] | None = None,
         config: GEPAOptimizerConfig | None = None,
         optimize_fn: Callable[..., Any] | None = None,
         callback_factory: Callable[..., GEPALineageCallback] | None = None,
@@ -216,6 +217,7 @@ class GEPALocalPromptOptimizer:
         self.evaluator = evaluator
         self.reflection_lm = reflection_lm
         self.accounting_reader = accounting_reader
+        self.durable_usage_reader = durable_usage_reader
         self.run_root = Path(run_root)
         self.config = config or GEPAOptimizerConfig()
         self._optimize_fn = optimize_fn
@@ -299,6 +301,7 @@ class GEPALocalPromptOptimizer:
                 mode=saturation_mode_name or "gepa_native",
                 unit_type=saturation_unit_type,
                 accounting_reader=self.accounting_reader,
+                durable_usage_reader=self.durable_usage_reader,
                 initial_prompt=task.parent_prompt,
             )
             stop_callbacks = saturation_callback
@@ -584,13 +587,17 @@ class _GEPASaturationCallback:
         mode: str,
         unit_type: OptimizationUnitType,
         accounting_reader: AccountingReader,
+        durable_usage_reader: Callable[[], Mapping[str, int]] | None,
         initial_prompt: str,
     ) -> None:
         self.sampler = sampler
         self.state = SaturationState(config=config, backend=backend, mode=mode)
         self.unit_type = unit_type
         self.accounting_reader = accounting_reader
+        self.durable_usage_reader = durable_usage_reader
         self.last_accounting = dict(accounting_reader())
+        if durable_usage_reader is not None:
+            self.state.sync_durable_provider_usage(durable_usage_reader())
         self.epoch_had_accepted_update = False
         self.epoch_start_hash = state_hash({"prompt": initial_prompt})
         self.last_metric_calls = 0
@@ -604,7 +611,10 @@ class _GEPASaturationCallback:
         metric_calls = int(getattr(event["state"], "total_num_evals", 0))
         metric_delta = max(0, metric_calls - self.last_metric_calls)
         self.last_metric_calls = metric_calls
-        self.state.add_usage(provider_calls=reflection_delta + metric_delta)
+        if self.durable_usage_reader is None:
+            self.state.add_usage(provider_calls=reflection_delta + metric_delta)
+        else:
+            self.state.sync_durable_provider_usage(self.durable_usage_reader())
         self.state.add_cost(
             solver_calls=metric_delta,
             optimizer_calls=reflection_delta,
@@ -631,5 +641,7 @@ class _GEPASaturationCallback:
 
     def __call__(self, state: Any) -> bool:
         del state
+        if self.durable_usage_reader is not None:
+            self.state.sync_durable_provider_usage(self.durable_usage_reader())
         self.state.check_emergency()
         return self.state.stop_reason is not None

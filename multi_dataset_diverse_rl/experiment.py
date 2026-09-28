@@ -11,6 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 import hashlib
+import itertools
 import json
 from typing import Callable, Mapping, Protocol
 
@@ -18,7 +19,7 @@ from . import versions
 from .local_optimizers.base import LocalOptimizerBackend
 from .local_optimizers.schemas import LocalOptimizationResult
 from .native_feed import Layer2OptimizationRequest, NativeOptimizationRequest
-from .saturation import SaturationConfig, SaturationState
+from .saturation import SaturationConfig, SaturationEmergency, SaturationState, StopReason, TeamEpochTracker
 from .team_search.controller import TeamSearchController
 from .team_search.schemas import TeamSearchOutcome, TeamSearchRequest
 
@@ -65,6 +66,11 @@ class ExperimentSpec:
     agent_count: int = 5
     solver_contract_id: str = "COMMON_SOLVER_CONTRACT_V1"
     output_contract_id: str = "task_output_contract_v1"
+    layer2_protocol_version: str | None = None
+    emergency_max_provider_calls: int = 100_000
+    emergency_max_optimizer_steps: int = 100_000
+    emergency_max_team_epochs: int = 10_000
+    emergency_max_wall_seconds: int | None = 86_400
 
     def __post_init__(self) -> None:
         if not isinstance(self.backend, OptimizerBackend):
@@ -82,6 +88,16 @@ class ExperimentSpec:
             raise ExperimentContractError("fixed_budget_units must be positive")
         if self.local_no_update_patience != 3 or self.team_no_update_patience != 2:
             raise ExperimentContractError("production saturation patience must remain 3/2")
+        if self.layer2_protocol_version is not None and self.optimization_scope is not OptimizationScope.LAYER2:
+            raise ExperimentContractError("Layer2 protocol identity requires Layer2 scope")
+        if self.layer2_protocol_version not in {
+            None, versions.LAYER2_TEAM_SEARCH_PROTOCOL_V4_VERSION,
+        }:
+            raise ExperimentContractError("unsupported opt-in Layer2 protocol identity")
+        for value in (self.emergency_max_provider_calls, self.emergency_max_optimizer_steps,
+                      self.emergency_max_team_epochs):
+            if value <= 0:
+                raise ExperimentContractError("emergency ceilings must be positive")
 
     @property
     def mode_id(self) -> str:
@@ -91,7 +107,12 @@ class ExperimentSpec:
     def method_identity(self) -> str:
         """Opt-in method identity, distinct from the historical v15 runtime."""
 
-        return f"{versions.UNIFIED_EXPERIMENT_ENGINE_VERSION}:{self.mode_id}"
+        suffix = "_V4" if self.layer2_protocol_version == versions.LAYER2_TEAM_SEARCH_PROTOCOL_V4_VERSION else ""
+        return f"{versions.UNIFIED_EXPERIMENT_ENGINE_VERSION}:{self.mode_id}{suffix}"
+
+    @property
+    def is_v4_layer2(self) -> bool:
+        return self.layer2_protocol_version == versions.LAYER2_TEAM_SEARCH_PROTOCOL_V4_VERSION
 
     def identity(self) -> str:
         payload = {
@@ -107,6 +128,11 @@ class ExperimentSpec:
             "agent_count": self.agent_count,
             "solver_contract_id": self.solver_contract_id,
             "output_contract_id": self.output_contract_id,
+            "layer2_protocol_version": self.layer2_protocol_version,
+            "emergency_max_provider_calls": self.emergency_max_provider_calls,
+            "emergency_max_optimizer_steps": self.emergency_max_optimizer_steps,
+            "emergency_max_team_epochs": self.emergency_max_team_epochs,
+            "emergency_max_wall_seconds": self.emergency_max_wall_seconds,
             "backend_feed_version": {
                 (OptimizerBackend.GEPA, OptimizationScope.NATIVE): versions.GEPA_NATIVE_FEED_VERSION,
                 (OptimizerBackend.GEPA, OptimizationScope.LAYER2): versions.GEPA_LAYER2_EVIDENCE_BACKEND_VERSION,
@@ -114,7 +140,8 @@ class ExperimentSpec:
                 (OptimizerBackend.MARS, OptimizationScope.LAYER2): versions.MARS_LAYER2_EVIDENCE_BACKEND_VERSION,
             }[(self.backend, self.optimization_scope)],
             "layer2_packet_version": (
-                versions.LAYER2_EVIDENCE_PACKET_VERSION
+                (versions.LAYER2_EVIDENCE_PACKET_V4_VERSION if self.is_v4_layer2
+                 else versions.LAYER2_EVIDENCE_PACKET_VERSION)
                 if self.optimization_scope is OptimizationScope.LAYER2 else None
             ),
             "layer2_policy_versions": (
@@ -123,6 +150,13 @@ class ExperimentSpec:
                     "realizability": versions.PERSISTENT_REALIZABILITY_SEMANTICS_VERSION,
                     "team_minibatch": versions.TEAM_MINIBATCH_CONTRACT_VERSION,
                     "team_admission": versions.CANDIDATE_SELECTION_VERSION,
+                    **({
+                        "responsibility_source": versions.LAYER2_RESPONSIBILITY_SOURCE_VERSION,
+                        "evidence_selection": versions.LAYER2_EVIDENCE_SELECTION_POLICY_V4_VERSION,
+                        "target_feasibility": versions.LAYER2_TARGET_FEASIBILITY_POLICY_V4_VERSION,
+                        "team_search": versions.LAYER2_TEAM_SEARCH_PROTOCOL_V4_VERSION,
+                        "team_epoch": versions.TEAM_EPOCH_SEMANTICS_V4_VERSION,
+                    } if self.is_v4_layer2 else {}),
                 }
                 if self.optimization_scope is OptimizationScope.LAYER2 else None
             ),
@@ -232,6 +266,7 @@ class LocalOptimizationRequest:
 class Layer2Opportunity:
     request: TeamSearchRequest
     completes_team_epoch: bool = True
+    eligible_member_ids: tuple[int, ...] | None = None
 
 
 @dataclass(frozen=True)
@@ -258,6 +293,7 @@ class ExperimentServices:
     technical_local_canary_only: bool = False
     layer2_opportunity_factory: Callable[[int, str], Layer2Opportunity] | None = None
     layer2_outcome_observer: Callable[[int, TeamSearchOutcome], str | None] | None = None
+    durable_usage_reader: Callable[[], Mapping[str, int]] | None = None
 
 
 @dataclass(frozen=True)
@@ -340,12 +376,75 @@ class ExperimentEngine:
             local_no_update_patience=spec.local_no_update_patience,
             provenance={"engine": "production_v1"},
         )
-        result = await services.backend.optimize(request, runtime)
-        stop_reason = (
-            "SATURATION_REACHED"
-            if spec.stopping_regime is StoppingRegime.SATURATION
-            else "SCIENTIFIC_BUDGET_REACHED"
+        if services.durable_usage_reader is not None:
+            usage = services.durable_usage_reader()
+            if int(usage["provider_attempts"]) >= spec.emergency_max_provider_calls:
+                stop_reason = StopReason.EMERGENCY_PROVIDER_CALL_CEILING.value
+                event = EngineEvent(
+                    index=1, kind="LOCAL_OPTIMIZATION",
+                    request_identity=inputs.native_problem.identity(),
+                    candidate_ids=(), committed_candidate_id=None,
+                    state_hash=inputs.initial_state_hash, stop_reason=stop_reason,
+                    telemetry={"canonical_stop_reason": stop_reason,
+                               "backend_termination_reason": "pre_native_durable_ceiling"},
+                )
+                return ExperimentResult(
+                    spec.mode_id, spec.stopping_regime.value,
+                    inputs.initial_state_hash, inputs.initial_state_hash,
+                    stop_reason, (event,), None, (),
+                )
+        try:
+            result = await services.backend.optimize(request, runtime)
+        except SaturationEmergency as exc:
+            stop_reason = exc.reason.value
+            event = EngineEvent(
+                index=1, kind="LOCAL_OPTIMIZATION",
+                request_identity=inputs.native_problem.identity(),
+                candidate_ids=(), committed_candidate_id=None,
+                state_hash=inputs.initial_state_hash, stop_reason=stop_reason,
+                telemetry={"canonical_stop_reason": stop_reason,
+                           "backend_termination_reason": stop_reason},
+            )
+            return ExperimentResult(
+                spec.mode_id, spec.stopping_regime.value,
+                inputs.initial_state_hash, inputs.initial_state_hash,
+                stop_reason, (event,), None, (),
+            )
+        except RuntimeError as exc:
+            if str(exc) not in {"transport_attempt_emergency_ceiling",
+                                "successful_provider_emergency_ceiling"}:
+                raise
+            stop_reason = StopReason.EMERGENCY_PROVIDER_CALL_CEILING.value
+            event = EngineEvent(
+                index=1, kind="LOCAL_OPTIMIZATION",
+                request_identity=inputs.native_problem.identity(),
+                candidate_ids=(), committed_candidate_id=None,
+                state_hash=inputs.initial_state_hash, stop_reason=stop_reason,
+                telemetry={"canonical_stop_reason": stop_reason,
+                           "backend_termination_reason": str(exc)},
+            )
+            return ExperimentResult(
+                spec.mode_id, spec.stopping_regime.value,
+                inputs.initial_state_hash, inputs.initial_state_hash,
+                stop_reason, (event,), None, (),
+            )
+        saturation = (
+            result.optimizer_state.payload.get("saturation")
+            if result.optimizer_state is not None else None
         )
+        if spec.stopping_regime is StoppingRegime.SATURATION:
+            backend_stop = result.termination_reason
+            if backend_stop == StopReason.SATURATION_REACHED.value and isinstance(saturation, Mapping) and (
+                saturation.get("stop_reason") == backend_stop
+                and int(saturation.get("local_no_update_counter", -1)) >= spec.local_no_update_patience
+            ):
+                stop_reason = backend_stop
+            elif backend_stop in {reason.value for reason in StopReason if reason.name.startswith("EMERGENCY_")}:
+                stop_reason = backend_stop
+            else:
+                stop_reason = StopReason.OPERATIONAL_ABORT.value
+        else:
+            stop_reason = "SCIENTIFIC_BUDGET_REACHED"
         final_hash = (
             result.candidates[0].candidate_id if result.candidates else inputs.initial_state_hash
         )
@@ -357,7 +456,9 @@ class ExperimentEngine:
             committed_candidate_id=None,
             state_hash=final_hash,
             stop_reason=stop_reason,
-            telemetry={"backend_termination_reason": result.termination_reason},
+            telemetry={"backend_termination_reason": result.termination_reason,
+                       "backend_saturation": saturation,
+                       "canonical_stop_reason": stop_reason},
         )
         return ExperimentResult(
             spec.mode_id, spec.stopping_regime.value, inputs.initial_state_hash,
@@ -386,6 +487,10 @@ class ExperimentEngine:
                     spec.team_no_update_patience
                     if spec.stopping_regime is StoppingRegime.SATURATION else None
                 ),
+                emergency_max_provider_calls=spec.emergency_max_provider_calls,
+                emergency_max_optimizer_steps=spec.emergency_max_optimizer_steps,
+                emergency_max_team_epochs=spec.emergency_max_team_epochs,
+                emergency_max_wall_seconds=spec.emergency_max_wall_seconds,
             ),
             backend=spec.backend.value,
             mode=spec.mode_id.lower(),
@@ -395,11 +500,21 @@ class ExperimentEngine:
         current_hash = inputs.initial_state_hash
         completed_epochs = 0
         opportunity_source = (
-            range(1, spec.fixed_budget_units + 1)
-            if dynamic else range(1, len(inputs.layer2_opportunities) + 1)
+            itertools.count(1) if dynamic and spec.stopping_regime is StoppingRegime.SATURATION
+            else range(1, spec.fixed_budget_units + 1) if dynamic
+            else range(1, len(inputs.layer2_opportunities) + 1)
         )
         external_stop: str | None = None
+        epoch: TeamEpochTracker | None = None
+        epoch_parent_hash: str | None = None
+        v4_saturation = spec.is_v4_layer2 and spec.stopping_regime is StoppingRegime.SATURATION
         for index in opportunity_source:
+            if services.durable_usage_reader is not None:
+                state.sync_durable_provider_usage(services.durable_usage_reader())
+            emergency = state.check_emergency()
+            if emergency is not None:
+                external_stop = emergency.value
+                break
             if dynamic:
                 try:
                     opportunity = services.layer2_opportunity_factory(index, current_hash)
@@ -415,6 +530,15 @@ class ExperimentEngine:
                 or opportunity.request.update_index != index - 1
             ):
                 raise ExperimentContractError("dynamic Layer2 parent/update identity mismatch")
+            if v4_saturation:
+                eligible = opportunity.eligible_member_ids
+                if eligible is None or not eligible or len(set(eligible)) != len(eligible):
+                    raise ExperimentContractError("V4 saturation requires a nonempty frozen feasible eligible set")
+                if epoch is None:
+                    epoch = TeamEpochTracker(eligible)
+                    epoch_parent_hash = current_hash
+                elif eligible != epoch.eligible_member_ids or current_hash != epoch_parent_hash:
+                    raise ExperimentContractError("V4 epoch eligibility/parent changed without commit")
             if services.technical_local_canary_only:
                 if (spec.backend is not OptimizerBackend.GEPA
                     or spec.stopping_regime is not StoppingRegime.FIXED_BUDGET
@@ -422,13 +546,66 @@ class ExperimentEngine:
                     raise ExperimentContractError("local canary requires one fixed-budget GEPA opportunity")
                 outcome = await controller.run_local_empirical_canary(opportunity.request)
             else:
-                outcome = await controller.run_opportunity(opportunity.request)
+                try:
+                    outcome = await controller.run_opportunity(opportunity.request)
+                except SaturationEmergency as exc:
+                    if services.durable_usage_reader is not None:
+                        state.sync_durable_provider_usage(services.durable_usage_reader())
+                    external_stop = exc.reason.value
+                    break
+                except RuntimeError as exc:
+                    if str(exc) not in {"transport_attempt_emergency_ceiling",
+                                        "successful_provider_emergency_ceiling"}:
+                        raise
+                    if services.durable_usage_reader is not None:
+                        state.sync_durable_provider_usage(services.durable_usage_reader())
+                    external_stop = StopReason.EMERGENCY_PROVIDER_CALL_CEILING.value
+                    break
             outcomes.append(outcome)
+            if services.durable_usage_reader is not None:
+                state.sync_durable_provider_usage(services.durable_usage_reader())
+            state.optimizer_steps += sum(
+                int(branch.get("local_saturation", {}).get("optimizer_steps", 0))
+                for branch in outcome.audit_metadata.get("branch_metadata", ())
+                if isinstance(branch, Mapping)
+            )
             current_hash = services.team_state_hash_reader()
+            committed = outcome.committed_candidate_id is not None
+            if v4_saturation and ((not committed and current_hash != epoch_parent_hash)
+                                  or (committed and current_hash == epoch_parent_hash)):
+                raise ExperimentContractError("V4 parent state changed without matching atomic commit")
             if services.layer2_outcome_observer is not None:
                 external_stop = services.layer2_outcome_observer(index, outcome)
             stop = None
-            if opportunity.completes_team_epoch:
+            coverage_complete: bool | None = None
+            if v4_saturation:
+                selected = tuple(outcome.audit_metadata.get("selected_target_ids", ()))
+                if not selected or epoch is None or epoch_parent_hash is None:
+                    raise ExperimentContractError("V4 opportunity lacks selected target/epoch")
+                coverage_complete = epoch.observe_opportunity(
+                    selected_member_ids=selected,
+                    local_accepted_update=bool(outcome.candidates),
+                    team_commit=committed,
+                )
+                if committed:
+                    stop = state.observe_team_commit(
+                        start_state_hash=epoch_parent_hash,
+                        end_state_hash=current_hash,
+                        coverage_complete=coverage_complete,
+                    )
+                    epoch = None
+                    epoch_parent_hash = None
+                elif coverage_complete:
+                    completed_epochs += 1
+                    stop = state.observe_team_epoch(
+                        start_state_hash=epoch_parent_hash,
+                        end_state_hash=current_hash,
+                        team_commit=False,
+                        accepted_local_update=epoch.any_local_update,
+                    )
+                    epoch = None
+                    epoch_parent_hash = None
+            elif opportunity.completes_team_epoch:
                 completed_epochs += 1
                 stop = state.observe_team_epoch(
                     start_state_hash=(
@@ -443,6 +620,8 @@ class ExperimentEngine:
                         and completed_epochs >= spec.fixed_budget_units
                     ),
                 )
+            if stop is None and state.stop_reason is None:
+                stop = state.check_emergency()
             events.append(EngineEvent(
                 index=index,
                 kind="TEAM_OPPORTUNITY",
@@ -454,7 +633,12 @@ class ExperimentEngine:
                 committed_candidate_id=outcome.committed_candidate_id,
                 state_hash=current_hash,
                 stop_reason=external_stop or (stop.value if stop else None),
-                telemetry={"funnel": dict(outcome.funnel), "audit": dict(outcome.audit_metadata)},
+                telemetry={"funnel": dict(outcome.funnel), "audit": dict(outcome.audit_metadata),
+                           "coverage_complete": coverage_complete,
+                           "epoch_end_reason": ("TEAM_COMMIT" if committed else
+                                                "COVERAGE_COMPLETE_NO_COMMIT" if coverage_complete
+                                                else None),
+                           "saturation": state.telemetry()},
             ))
             if stop is not None or external_stop is not None:
                 break
@@ -492,6 +676,13 @@ def experiment_spec_from_mapping(payload: Mapping[str, object]) -> ExperimentSpe
             agent_count=int(payload.get("agent_count", 5)),
             solver_contract_id=str(payload.get("solver_contract_id", "COMMON_SOLVER_CONTRACT_V1")),
             output_contract_id=str(payload.get("output_contract_id", "task_output_contract_v1")),
+            layer2_protocol_version=(str(payload["layer2_protocol_version"])
+                                     if payload.get("layer2_protocol_version") is not None else None),
+            emergency_max_provider_calls=int(payload.get("emergency_max_provider_calls", 100_000)),
+            emergency_max_optimizer_steps=int(payload.get("emergency_max_optimizer_steps", 100_000)),
+            emergency_max_team_epochs=int(payload.get("emergency_max_team_epochs", 10_000)),
+            emergency_max_wall_seconds=(int(payload.get("emergency_max_wall_seconds", 86_400))
+                                        if payload.get("emergency_max_wall_seconds", 86_400) is not None else None),
         )
     except (KeyError, TypeError, ValueError) as exc:
         raise ExperimentContractError(f"invalid scientific manifest: {exc}") from exc

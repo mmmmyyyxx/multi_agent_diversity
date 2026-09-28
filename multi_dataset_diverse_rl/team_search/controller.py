@@ -14,6 +14,7 @@ from ..local_optimizers.base import (
 from ..local_optimizers.backend_registry import Layer1Backend
 from ..local_optimizers.schemas import LocalOptimizationResult, LocalOptimizationTask
 from ..native_feed import Layer2OptimizationRequest, NativeOptimizationRequest
+from ..saturation import SaturationEmergency, StopReason
 from ..candidate_selection import evaluate_constraints
 from .candidate_evaluator import TeamCandidateEvaluator, TeamCommitter
 from .candidate_selector import CommonSafeTeamCandidateSelector
@@ -67,6 +68,7 @@ class TeamSearchController:
         selector: CommonSafeTeamCandidateSelector,
         committer: TeamCommitter,
         diagnostic_full_for_local_accepts: bool = False,
+        diagnostic_allow_multi_accepted: bool = False,
     ) -> None:
         self.responsibility = responsibility
         self.task_builder = task_builder
@@ -75,9 +77,9 @@ class TeamSearchController:
         self.selector = selector
         self.committer = committer
         self.diagnostic_full_for_local_accepts = diagnostic_full_for_local_accepts
+        self.diagnostic_allow_multi_accepted = diagnostic_allow_multi_accepted
 
-    @staticmethod
-    def _validate_diagnostic_local_result(local: LocalOptimizationResult) -> None:
+    def _validate_diagnostic_local_result(self, local: LocalOptimizationResult) -> None:
         """Fail before team evaluation when GEPA's accepted sample is censored."""
         telemetry = (
             local.optimizer_state.payload.get("telemetry", {})
@@ -86,9 +88,10 @@ class TeamSearchController:
         accepted = telemetry.get("accepted_mutations")
         if type(accepted) is not int or accepted < 0:
             raise DiagnosticSamplingIntegrityError("diagnostic accepted-event count missing")
-        if accepted > 1:
+        if not self.diagnostic_allow_multi_accepted and accepted > 1:
             raise DiagnosticSamplingIntegrityError("diagnostic local acceptance exceeds capacity")
-        if accepted != len(local.candidates):
+        if (accepted < len(local.candidates) if self.diagnostic_allow_multi_accepted
+                else accepted != len(local.candidates)):
             raise DiagnosticSamplingIntegrityError("diagnostic local-acceptance/frontier mismatch")
         if len({row.candidate_id for row in local.candidates}) != len(local.candidates):
             raise DiagnosticSamplingIntegrityError("diagnostic returned frontier is not unique")
@@ -207,6 +210,8 @@ class TeamSearchController:
         )
         minibatch_telemetry = self.task_builder.team_minibatch_telemetry(team_minibatch)
         local = await self._run_local_optimizer(task)
+        if local.termination_reason in {reason.value for reason in StopReason if reason.name.startswith("EMERGENCY_")}:
+            raise SaturationEmergency(StopReason(local.termination_reason))
         if self.diagnostic_full_for_local_accepts:
             self._validate_diagnostic_local_result(local)
         records: list[TeamCandidateRecord] = []
@@ -343,6 +348,11 @@ class TeamSearchController:
                 "primary_responsibility_lane": assignment.primary_responsibility_lane,
                 "local_optimizer_telemetry": (
                     dict(local.optimizer_state.payload.get("telemetry", {}))
+                    if local.optimizer_state is not None
+                    else {}
+                ),
+                "local_saturation": (
+                    dict(local.optimizer_state.payload.get("saturation", {}))
                     if local.optimizer_state is not None
                     else {}
                 ),

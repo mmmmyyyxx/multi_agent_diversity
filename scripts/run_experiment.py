@@ -34,6 +34,9 @@ from multi_dataset_diverse_rl.production_canary import (  # noqa: E402
 from multi_dataset_diverse_rl.production_transfer_diagnostic import (  # noqa: E402
     execute_online_transfer_diagnostic,
 )
+from multi_dataset_diverse_rl.production_formal_saturation import (  # noqa: E402
+    execute_formal_gepa_saturation,
+)
 from multi_dataset_diverse_rl.team_search.execution_runtime import (  # noqa: E402
     ledger_summary,
 )
@@ -73,9 +76,15 @@ def preflight(manifest: Mapping[str, Any]) -> dict[str, Any]:
 
 def governed_preflight(prep: Path) -> dict[str, Any]:
     permit = validate_execution(root=ROOT, prep=prep, require_authorized=False)
+    formal_pending = permit.experiment_id.startswith("gepa_saturation_comparison_v3_")
+    if formal_pending:
+        manifest = json.loads((prep / "manifest.json").read_text(encoding="utf-8"))
+        formal_pending = manifest.get("execution_gate", {}).get(
+            "real_v4_diagnostic"
+        ) != "SCIENTIFICALLY_VALID"
     return {
-        "gate": "PREREGISTERED_NOT_EXECUTED",
-        "ready_for_authorization": True,
+        "gate": "PREREGISTERED_EXECUTION_GATED" if formal_pending else "PREREGISTERED_NOT_EXECUTED",
+        "ready_for_authorization": not formal_pending,
         "attempt_id": permit.attempt_id,
         "preregistration_sha256": permit.preregistration_sha256,
         "run_identity_sha256": permit.run_identity_sha256,
@@ -103,6 +112,8 @@ async def execute_frozen(prep: Path, run_root: Path) -> dict[str, Any]:
             "gepa_layer2_local_to_team_transfer_diagnostic_v4",
         }:
             result = await execute_online_transfer_diagnostic(admitted, root=ROOT)
+        elif admitted.experiment_id.startswith("gepa_saturation_comparison_v3_"):
+            result = await execute_formal_gepa_saturation(admitted, root=ROOT)
         else:
             result = await execute_post_refactor_canary(admitted, root=ROOT)
         summary_path = run_root / "execution_summary.json"

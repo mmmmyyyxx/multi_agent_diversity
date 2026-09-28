@@ -587,6 +587,69 @@ def test_dynamic_preopportunity_stop_uses_no_extra_parent_or_provider():
     assert result.stop_reason == "NO_ALIGNED_RESPONSIBILITY_TARGET_NOT_REACHED"
 
 
+@pytest.mark.parametrize("proposal_count,should_begin_second", [
+    (15, True), (16, True), (17, False), (18, False), (19, False), (20, False),
+])
+def test_proposal_ceiling_engine_guard_stops_before_second_opportunity(
+    proposal_count, should_begin_second,
+):
+    counts = {name: 0 for name in (
+        "parent_snapshot", "assignment", "feasibility", "reflection", "solver",
+        "team_evaluation", "provider_attempts",
+    )}
+
+    class Backend:
+        name = "gepa"
+        fidelity = "fake"
+
+    class Controller:
+        async def run_opportunity(self, request):
+            assert request.update_index == 0
+            for name in ("reflection", "solver", "team_evaluation", "provider_attempts"):
+                counts[name] += 1
+            return SimpleNamespace(
+                candidates=(), committed_candidate_id=None,
+                funnel={}, audit_metadata={},
+            )
+
+    spec = ExperimentSpec(
+        OptimizerBackend.GEPA, OptimizationScope.LAYER2,
+        StoppingRegime.FIXED_BUDGET, "BBH", "fold_ab", fixed_budget_units=10,
+    )
+    runtime = RuntimeContext(81, "fake", "solver", "reflection", "evaluator",
+                             "a" * 64, "attempt", "cache", "ledger")
+
+    def next_opportunity(index, parent):
+        counts["parent_snapshot"] += 1
+        counts["assignment"] += 1
+        counts["feasibility"] += 1
+        if index == 2:
+            raise ExperimentEarlyStop("SECOND_OPPORTUNITY_BEGAN")
+        return Layer2Opportunity(TeamSearchRequest(
+            81, 0, parent, 36, "COMMON_SOLVER_CONTRACT_V1", "output-v1",
+        ))
+
+    result = asyncio.run(run_experiment(
+        spec, runtime, ExperimentInputs("S0"),
+        ExperimentServices(
+            backend=Backend(), layer2_controller_factory=lambda _: Controller(),
+            team_state_hash_reader=lambda: "S0",
+            layer2_opportunity_factory=next_opportunity,
+            layer2_outcome_observer=lambda _index, _outcome: _diagnostic_stop_reason(4, proposal_count),
+        ),
+    ))
+    assert counts["parent_snapshot"] == counts["assignment"] == counts["feasibility"] == (2 if should_begin_second else 1)
+    assert all(counts[name] == 1 for name in (
+        "reflection", "solver", "team_evaluation", "provider_attempts",
+    ))
+    assert len(result.events) == 1
+    assert result.stop_reason == (
+        "SECOND_OPPORTUNITY_BEGAN" if should_begin_second else
+        "REFLECTION_PROPOSAL_CEILING_REACHED" if proposal_count == 20 else
+        "REFLECTION_PROPOSAL_PREOPPORTUNITY_GUARD"
+    )
+
+
 def test_offline_auditor_detects_false_negative_without_online_override(tmp_path):
     from scripts.audit_online_transfer_diagnostic import audit
     from multi_dataset_diverse_rl.team_search.execution_runtime import ledger_summary

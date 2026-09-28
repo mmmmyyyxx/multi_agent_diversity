@@ -240,6 +240,19 @@ on repeated complete optimization units with no accepted deployable update.
   unchanged. Only a successful atomic team commit resets outer patience. A
   Common-Safe commit with zero Vote delta still counts; local-only acceptance
   does not.
+- **INV-SATURATION-V4-EPOCH-001** — For V4 GEPA Layer-2 saturation, the
+  epoch-start eligible set on one immutable parent state `s` is exactly
+  `E(s) = {i | V_i > 0 and evidence_feasibility_i == FEASIBLE}`. Feasibility
+  masks selection without changing `V_i/(1+f_i)` or member-ID ties. The set is
+  frozen while the parent remains `s`; selected members may repeat. A complete,
+  scientifically valid opportunity contributes coverage for its selected
+  member. Only coverage of every member in `E(s)` with no atomic team commit
+  increments the team no-update counter. A commit immediately resets that
+  counter, ends the old coverage window even when partial, and requires a new
+  `E(s')` from the successor parent. No team epoch mixes parent states. If
+  `E(s)` is empty, `NO_FEASIBLE_LAYER2_OPPORTUNITY` stops before an opportunity:
+  no team epoch, failure-count, or opportunity-stage provider delta is added.
+  Incomplete or emergency-aborted opportunities never advance team patience.
 - **INV-SATURATION-004** — Provider-call, optimizer-step, team-epoch, and wall
   ceilings remain mandatory operational safeguards. Reaching one aborts the
   run and MUST NOT be reported as scientific convergence.

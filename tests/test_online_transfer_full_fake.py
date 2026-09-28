@@ -28,6 +28,7 @@ from multi_dataset_diverse_rl.team_search.feasibility import (
 )
 from multi_dataset_diverse_rl.team_search.task_builder import Layer2EvidenceRequestBuilder
 from multi_dataset_diverse_rl.team_search.execution_runtime import ledger_summary
+from multi_dataset_diverse_rl.team_search.evidence_audit import sanitize_v4_evidence_trace
 from scripts.audit_online_transfer_diagnostic import audit
 from scripts.prepare_online_transfer_diagnostic_v2 import frozen_payload
 from scripts.prepare_online_transfer_diagnostic_v3 import frozen_payload as v3_frozen_payload
@@ -182,6 +183,16 @@ def rehearse(
             )
 
     fake = SimpleNamespace(chat=SimpleNamespace(completions=FakeCompletion()))
+    # The zero-network harness removes all real credentials. Keep the normal
+    # role-client/factory path under test using inert, in-memory placeholders.
+    monkeypatch.setattr(
+        "multi_dataset_diverse_rl.llm_client.resolve_api_key",
+        lambda _configured, _profile: ("OFFLINE_FAKE_KEY_NAME", "OFFLINE_FAKE_VALUE"),
+    )
+    monkeypatch.setattr(
+        "multi_dataset_diverse_rl.llm_client.resolve_base_url",
+        lambda _configured, _profile: ("OFFLINE_FAKE_BASE_NAME", "https://invalid.example"),
+    )
     monkeypatch.setattr(ProviderClientFactory, "from_environment", lambda *a, **kw: fake)
     monkeypatch.setattr(ProviderClientFactory, "create", lambda *a, **kw: fake)
     if through_cli:
@@ -224,6 +235,10 @@ def rehearse(
         assert result["feasibility_trace"][0]["selected_member"] is None
         assert not result["evidence_view_trace"]
         assert all(row["failure_count"] == 0 for row in result["feasibility_trace"][0]["members"])
+        assert result["stage_accounting"]["opportunities"] == []
+        for field in ("provider_attempts", "provider_successes", "failed_provider_attempts",
+                      "logical_solver_rows", "reflection_provider_records", "cache_hits"):
+            assert result["stage_accounting"]["global"][field] == result["stage_accounting"]["initialization"][field]
     elif scenario == "proposal_ceiling":
         assert result["accepted_mutations"] == 0
         assert result["reflection_proposals"] == 20
@@ -339,11 +354,20 @@ def rehearse(
             "initial_team_hash", "final_team_hash", "opportunities",
             "accepted_mutations", "reflection_proposals", "commits", "stop_reason",
         )
-    }
+    } | ({"evidence_view_trace": result["evidence_view_trace"]} if v4 else {})
 
 
 def test_v4_raw_legal_bounded_full_stack_commit(tmp_path: Path, monkeypatch) -> None:
-    rehearse(tmp_path, monkeypatch, 90, v4=True)
+    result = rehearse(tmp_path, monkeypatch, 90, v4=True)
+    trace = sanitize_v4_evidence_trace(result["evidence_view_trace"][0])
+    assert trace["responsibility_universe_count"] >= trace["responsibility_scheduled_count"]
+    assert trace["nominal_role_item_slots"] <= 36
+    assert trace["packet_hash"]
+    assert len(trace["responsibility_scheduled_ids_sha256"]) == 64
+    assert len(trace["focus_ids_sha256"]) == 64
+    assert len(trace["anchor_ids_sha256"]) == 64
+    assert len(trace["delivered_batch_ids_sha256"]) == 64
+    assert "ids" not in trace
 
 
 def test_v4_no_feasible_is_scientific_stop_without_opportunity_provider_calls(

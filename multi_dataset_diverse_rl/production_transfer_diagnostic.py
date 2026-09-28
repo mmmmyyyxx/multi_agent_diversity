@@ -42,6 +42,9 @@ from .team_search.system_runtime import (
     SystemTeamCommitter, freeze_current_responsibility,
 )
 from .team_search.task_builder import Layer2EvidenceRequestBuilder
+from .team_search.v4_opportunity import (
+    V4NoFeasibleOpportunity, select_v4_feasible_opportunity,
+)
 from .versions import (
     PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION,
     PRIMARY_RESPONSIBILITY_FEASIBILITY_VERSION,
@@ -332,34 +335,19 @@ async def execute_online_transfer_diagnostic(
             system=system, snapshot_reader=lambda: snapshot,
             task_builder=task_builder, transition_store=transition_store,
         )
-        feasible_assignments: dict[int, TeamSearchAssignment] = {}
         if v4:
-            feasible_packets: dict[int, Any] = {}
-            feasibility_reasons: dict[int, str] = {}
-            for row in raw_decision.summaries:
-                if row.primary_score <= 0:
-                    feasibility_reasons[row.member_id] = (
-                        Layer2FeasibilityReason.NO_POSITIVE_RESPONSIBILITY.value
-                    )
-                    continue
-                try:
-                    candidate_assignment = factory.build_from_member(
-                        request=request, member_id=row.member_id,
-                        primary_lane=row.primary_lane,
-                        responsibility_identity=PRIMARY_RESPONSIBILITY_FEASIBILITY_VERSION,
-                        responsibility_value=row.primary_score,
-                    )
-                    # Materialization is zero-provider and checks the complete
-                    # bounded packet before a member becomes selectable.
-                    packet_request = task_builder.build(request, candidate_assignment)
-                except Layer2EvidenceInfeasible as exc:
-                    feasibility_reasons[row.member_id] = exc.reason.value
-                else:
-                    feasible_assignments[row.member_id] = candidate_assignment
-                    feasible_packets[row.member_id] = packet_request.packet
-                    feasibility_reasons[row.member_id] = Layer2FeasibilityReason.FEASIBLE.value
+            selected = select_v4_feasible_opportunity(
+                snapshot=snapshot, scheduler=scheduler, factory=factory,
+                task_builder=task_builder, request=request,
+                raw_decision=raw_decision,
+            )
+            feasibility_reasons = dict(selected.feasibility_reasons)
             raw_order = sorted(raw_decision.summaries, key=lambda row: (-row.target_score, row.member_id))
-            eligible_order = [row for row in raw_order if row.member_id in feasible_assignments]
+            eligible_order = [
+                row for row in raw_order
+                if not isinstance(selected, V4NoFeasibleOpportunity)
+                and row.member_id in selected.eligible_member_ids
+            ]
             feasibility_trace.append({
                 "update_index": update_index,
                 "parent_team_hash": parent_hash,
@@ -386,14 +374,9 @@ async def execute_online_transfer_diagnostic(
                     for member_id in range(5)
                 },
             })
-            if not feasible_assignments:
+            if isinstance(selected, V4NoFeasibleOpportunity):
                 raise ExperimentEarlyStop("NO_FEASIBLE_LAYER2_OPPORTUNITY")
-            decision = scheduler.select(
-                assigned=snapshot.assigned,
-                current_margin_by_question=snapshot.current_margin_by_question,
-                seed=runtime.seed, update_index=update_index, target_count=1,
-                eligible_member_ids=tuple(feasible_assignments),
-            )
+            decision = selected.decision
         else:
             decision = raw_decision
         if len(decision.selected_member_ids) != 1:
@@ -401,13 +384,13 @@ async def execute_online_transfer_diagnostic(
         target = decision.selected_member_ids[0]
         summary = next(row for row in decision.summaries if row.member_id == target)
         if v4:
-            packet = feasible_packets[target]
+            packet = selected.packet
             evidence_trace.append({
                 "update_index": update_index,
                 "parent_team_hash": parent_hash,
                 "target_member": target,
                 "raw_V": summary.primary_score,
-                "assignment_V": feasible_assignments[target].responsibility_value,
+                "assignment_V": selected.assignment.responsibility_value,
                 "packet_V": packet.responsibility_value,
                 "responsibility_universe": {
                     key: value for key, value in packet.provenance
@@ -420,7 +403,7 @@ async def execute_online_transfer_diagnostic(
                 "focus_ids": [row.example_id for row in packet.focus_examples],
                 "anchor_ids": [row.example_id for row in packet.anchor_examples],
                 "nominal_schedule": [list(batch) for batch in packet.ordered_batch_schedule],
-                "team_minibatch_ids": list(feasible_assignments[target].local_validation_example_ids),
+                "team_minibatch_ids": list(selected.assignment.local_validation_example_ids),
                 "local_eval_ids": [row.example_id for row in packet.local_eval_examples],
                 "packet_hash": packet.packet_hash,
                 "latest_transition_effect_hash": (
@@ -437,7 +420,7 @@ async def execute_online_transfer_diagnostic(
                 ),
             })
         current.assignment = (
-            feasible_assignments[target] if v4 else factory.build_from_member(
+            selected.assignment if v4 else factory.build_from_member(
                 request=request, member_id=target,
                 primary_lane=summary.primary_lane,
                 responsibility_identity=PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION,
@@ -446,7 +429,10 @@ async def execute_online_transfer_diagnostic(
         )
         current.parent_hash = parent_hash
         parent_sequence.append(parent_hash)
-        return Layer2Opportunity(request)
+        return Layer2Opportunity(
+            request,
+            eligible_member_ids=selected.eligible_member_ids if v4 else None,
+        )
 
     def observe(index: int, outcome) -> str | None:
         nonlocal accepted_total, proposal_total

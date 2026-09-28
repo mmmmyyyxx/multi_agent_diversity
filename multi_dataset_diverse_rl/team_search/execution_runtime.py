@@ -216,7 +216,7 @@ class CommonContractExecutionSystem(PromptEnsembleOptimizationSystem):
                 response = await client.chat.completions.create(
                     **request, timeout=CONTRACT_SPEC.timeout_seconds
                 )
-            except Exception as exc:
+            except (Exception, asyncio.CancelledError) as exc:
                 request_identity = hashlib.sha256(
                     canonical_json_bytes(request)
                 ).hexdigest()

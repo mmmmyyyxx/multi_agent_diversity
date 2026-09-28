@@ -7,7 +7,9 @@ import pytest
 
 from multi_dataset_diverse_rl.local_optimizers.base import LocalSolverObservation
 from multi_dataset_diverse_rl.local_optimizers.gepa_native import Layer2FrozenBatchSampler
-from multi_dataset_diverse_rl.local_optimizers.gepa_optimizer import GEPALocalPromptOptimizer
+from multi_dataset_diverse_rl.local_optimizers.gepa_optimizer import (
+    GEPALocalPromptOptimizer, _GEPASaturationCallback,
+)
 from multi_dataset_diverse_rl.local_optimizers.mars_native import (
     MARSLayer2EvidenceOptimizer,
     MARSNativeDataBuilder,
@@ -67,6 +69,59 @@ def sat(*, local: int = 2, team: int | None = None, **overrides) -> SaturationCo
     )
     values.update(overrides)
     return SaturationConfig(**values)
+
+
+@pytest.mark.parametrize("failed_stage", ["transport", "postprocess"])
+def test_gepa_saturation_uses_durable_attempts_not_logical_or_cache_counts(failed_stage):
+    # Both failure stages persist one failed physical attempt. Three cache hits
+    # must not consume the provider ceiling; a failed attempt must consume it.
+    usage = {
+        "provider_attempts": 0, "successful_provider_calls": 0,
+        "failed_provider_attempts": 0, "cache_hits": 0,
+    }
+    class Sampler:
+        last_delivery_completed_epoch = False
+
+    callback = _GEPASaturationCallback(
+        sampler=Sampler(), config=sat(local=3, emergency_max_provider_calls=2),
+        backend="gepa", mode="gepa_native",
+        unit_type=OptimizationUnitType.GEPA_NATIVE_EPOCH,
+        accounting_reader=lambda: {"successful_calls": 0},
+        durable_usage_reader=lambda: dict(usage), initial_prompt="parent",
+    )
+    usage.update(cache_hits=3)
+    assert callback(None) is False
+    usage.update(provider_attempts=1, failed_provider_attempts=1)
+    assert callback(None) is False, failed_stage
+    usage.update(provider_attempts=2, successful_provider_calls=1)
+    assert callback(None) is True
+    assert callback.state.stop_reason is StopReason.EMERGENCY_PROVIDER_CALL_CEILING
+    assert callback.state.cost.provider_attempts == 2
+    assert callback.state.cost.provider_failures == 1
+    assert callback.state.cost.provider_successes == 1
+    assert callback.state.cost.cache_hits == 3
+
+
+def test_gepa_saturation_optimizer_step_ceiling_is_not_scientific_saturation():
+    class Sampler:
+        last_delivery_completed_epoch = False
+    class State:
+        total_num_evals = 0
+        program_candidates = [{"decision_procedure": "parent"}]
+    callback = _GEPASaturationCallback(
+        sampler=Sampler(), config=sat(local=3, emergency_max_optimizer_steps=1),
+        backend="gepa", mode="gepa_native",
+        unit_type=OptimizationUnitType.GEPA_NATIVE_EPOCH,
+        accounting_reader=lambda: {"successful_calls": 0},
+        durable_usage_reader=lambda: {
+            "provider_attempts": 0, "successful_provider_calls": 0,
+            "failed_provider_attempts": 0, "cache_hits": 4,
+        }, initial_prompt="parent",
+    )
+    callback.on_iteration_end({"state": State(), "proposal_accepted": False})
+    assert callback.state.stop_reason is StopReason.EMERGENCY_OPTIMIZER_STEP_CEILING
+    assert callback.state.local_epoch_or_round_count == 0
+    assert callback.state.cost.cache_hits == 4
 
 
 @pytest.mark.parametrize(

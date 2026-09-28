@@ -406,6 +406,14 @@ def test_post_refactor_canary_fake_provider_stops_before_team_stage(
 
     fake = SimpleNamespace(chat=SimpleNamespace(completions=FakeCompletion()))
     monkeypatch.setattr(
+        "multi_dataset_diverse_rl.llm_client.resolve_api_key",
+        lambda _configured, _profile: ("OFFLINE_FAKE_KEY_NAME", "OFFLINE_FAKE_VALUE"),
+    )
+    monkeypatch.setattr(
+        "multi_dataset_diverse_rl.llm_client.resolve_base_url",
+        lambda _configured, _profile: ("OFFLINE_FAKE_BASE_NAME", "https://invalid.example"),
+    )
+    monkeypatch.setattr(
         ProviderClientFactory, "from_environment",
         lambda *args, **kwargs: fake,
     )
