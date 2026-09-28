@@ -20,6 +20,7 @@ from .experiment import (
     OptimizationScope, OptimizerBackend, RuntimeContext, StoppingRegime,
     experiment_spec_from_mapping, run_experiment,
 )
+from .formal_final_team import persist_final_team
 from .governance.freeze_hash import source_freeze_sha256
 from .governance.production_execution import ValidatedExecutionContext, mark_provider_client_constructed
 from .local_optimizers.gepa_native import (
@@ -201,6 +202,7 @@ async def execute_formal_gepa_saturation(
     finally:
         system.set_stage(None)
     initial_hash = system.team_prompt_state_hash()
+    initial_prompts = tuple(agent.current_prompt for agent in system.agents)
     loop = asyncio.get_running_loop()
     local_solver = SystemLocalSolverEvaluator(
         system=system, loop=loop, stage=system.set_stage,
@@ -263,10 +265,21 @@ async def execute_formal_gepa_saturation(
                 durable_usage_reader=lambda: ledger_summary(run_root / "ledger.jsonl"),
             ),
         )
+        candidate = result.local_result.candidates[0] if (
+            result.local_result is not None and result.local_result.candidates
+        ) else None
+        native_prompts = ((candidate.prompt,) * 5 if candidate is not None else initial_prompts)
+        final_team = persist_final_team(
+            run_root / "final_team_materialization.json", mode="GEPA_NATIVE",
+            initial_prompts=initial_prompts, final_prompts=native_prompts,
+            candidate_id=candidate.candidate_id if candidate is not None else None,
+            initial_team_hash=initial_hash, search_final_identity=result.final_state_hash,
+        )
         return {
             "experiment_id": permit.experiment_id, "mode_id": "GEPA_NATIVE",
             "seed": runtime.seed, "initial_team_hash": initial_hash,
             "final_native_candidate_hash": result.final_state_hash,
+            "final_team_materialization": final_team,
             "stop_reason": result.stop_reason,
             "events": [event.__dict__ for event in result.events],
             "ledger": ledger_summary(run_root / "ledger.jsonl"),
@@ -491,10 +504,18 @@ async def execute_formal_gepa_saturation(
             durable_usage_reader=lambda: ledger_summary(run_root / "ledger.jsonl"),
         ),
     )
+    final_team = persist_final_team(
+        run_root / "final_team_materialization.json", mode="GEPA_LAYER2_V4",
+        initial_prompts=initial_prompts,
+        final_prompts=tuple(agent.current_prompt for agent in system.agents),
+        candidate_id=None, initial_team_hash=initial_hash,
+        search_final_identity=result.final_state_hash,
+    )
     return {
         "experiment_id": permit.experiment_id, "mode_id": "GEPA_LAYER2_V4",
         "seed": runtime.seed, "initial_team_hash": initial_hash,
         "final_team_hash": result.final_state_hash,
+        "final_team_materialization": final_team,
         "stop_reason": result.stop_reason,
         "events": [event.__dict__ for event in result.events],
         "feasibility_trace": feasibility_trace,

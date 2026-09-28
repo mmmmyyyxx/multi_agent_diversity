@@ -39,6 +39,49 @@ LEGACY_FREEZE_ENV_VARS = (
     "V17_FORMAL_SOURCE_FREEZE", "V16_M2F_ONLINE_SOURCE_FREEZE",
 )
 
+FORMAL_ATTEMPT2_PREREQUISITE = {
+    "attempt_id": "gepa_layer2_local_to_team_transfer_diagnostic_v4_seed81_attempt3",
+    "execution_source_sha": "66e1762ad7ea8d85f71de3b604d0e04fb8b9c7d0",
+    "audit_commit": "766c8c6cbcd5dfcbf7b7445f3c41b2cdecad821f",
+    "scientific_validity": "VALID",
+    "efficacy": "NOT_EVALUABLE",
+    "pilot_status": "CLOSED_VALID_INCONCLUSIVE",
+    "raw_evidence_freeze_sha256": "a907c155c720f2d218f393e46594bac7261595a54e7953d3628e01c4a47e979b",
+}
+
+
+def formal_attempt2_prerequisite(root: Path) -> dict[str, Any]:
+    closure = _read(root / "experiments/gepa_saturation_comparison_v3/PILOT_CLOSURE.json")
+    if (closure.get("schema_version") != "formal_v3_pilot_closure_v1"
+            or closure.get("PILOT_STATUS") != "CLOSED_VALID_INCONCLUSIVE"
+            or closure.get("FORMAL_PREREQUISITE") != "SATISFIED"
+            or closure.get("ADDITIONAL_DIAGNOSTIC_REQUIRED") != "NO"
+            or closure.get("diagnostic_prerequisite") != FORMAL_ATTEMPT2_PREREQUISITE
+            or closure.get("attempt2_status") != "INVALID"
+            or closure.get("sole_valid_diagnostic") != FORMAL_ATTEMPT2_PREREQUISITE["attempt_id"]
+            or closure.get("prospective_returned_candidates_observed") != 1
+            or closure.get("attempt4_planned_or_required") is not False
+            or closure.get("efficacy_may_change_formal_scientific_semantics") is not False
+            or closure.get("old_formal_attempt1_status") != "SUPERSEDED_BEFORE_EXECUTION"):
+        raise StartupIdentityError("ABORT_PRE_PROVIDER: Formal pilot closure mismatch")
+    audit_path = "reports/v4_seed81_attempt3_execution_20260928/scientific_validity_audit.json"
+    try:
+        frozen_audit = json.loads(subprocess.check_output(
+            ["git", "-C", str(root), "show",
+             f"{FORMAL_ATTEMPT2_PREREQUISITE['audit_commit']}:{audit_path}"],
+            text=True, encoding="utf-8",
+        ))
+    except (subprocess.CalledProcessError, json.JSONDecodeError) as exc:
+        raise StartupIdentityError("ABORT_PRE_PROVIDER: Formal pilot audit commit unavailable") from exc
+    if any(frozen_audit.get(key) != FORMAL_ATTEMPT2_PREREQUISITE[key] for key in (
+        "attempt_id", "execution_source_sha", "scientific_validity", "efficacy",
+        "raw_evidence_freeze_sha256",
+    )) or (frozen_audit.get("audit_gate") != "PASS"
+           or frozen_audit.get("returned_candidate_count") != 1
+           or frozen_audit.get("lifecycle") != "EXECUTION_COMPLETE"):
+        raise StartupIdentityError("ABORT_PRE_PROVIDER: Formal pilot audit evidence mismatch")
+    return dict(FORMAL_ATTEMPT2_PREREQUISITE)
+
 
 def formal_v3_contract() -> dict[str, Any]:
     """The active formal treatment binding, shared by freeze and admission."""
@@ -183,10 +226,12 @@ def validate_execution(
 
     manifest = _read(prep / "manifest.json")
     protocol = _read(prep / "protocol.json")
-    formal = bool(re.fullmatch(
-        r"gepa_saturation_comparison_v3_seed(80|81|82)_(native|layer2)_attempt1",
+    formal_match = re.fullmatch(
+        r"gepa_saturation_comparison_v3_seed(80|81|82)_(native|layer2)_attempt(1|2)",
         str(manifest.get("experiment_id", "")),
-    ))
+    )
+    formal = formal_match is not None
+    formal_attempt2 = formal and formal_match.group(3) == "2"
     if not formal and manifest.get("experiment_id") not in {
         "gepa_layer2_real_canary_post_refactor_v1",
         "gepa_layer2_real_canary_post_refactor_v2",
@@ -308,10 +353,7 @@ def validate_execution(
         raise StartupIdentityError("ABORT_PRE_PROVIDER: unsupported mode")
     spec = ExperimentSpec(**_scientific_kwargs(manifest["scientific"]))
     if formal:
-        match = re.fullmatch(
-            r"gepa_saturation_comparison_v3_seed(80|81|82)_(native|layer2)_attempt1",
-            str(manifest["experiment_id"]),
-        )
+        match = formal_match
         assert match is not None
         expected_scope = match.group(2)
         if (
@@ -345,10 +387,40 @@ def validate_execution(
             or protocol.get("formal_v3_contract") != formal_v3_contract()
         ):
             raise StartupIdentityError("ABORT_PRE_PROVIDER: formal V3 contract mismatch")
-        if require_authorized and manifest.get("execution_gate", {}).get(
-            "real_v4_diagnostic"
-        ) != "SCIENTIFICALLY_VALID":
-            raise StartupIdentityError("ABORT_PRE_PROVIDER: formal V3 prerequisite not satisfied")
+        if formal_attempt2:
+            expected_prerequisite = formal_attempt2_prerequisite(root)
+            required_source_paths = {
+                path.relative_to(root).as_posix()
+                for directory in ("multi_dataset_diverse_rl", "infrastructure/common_solver_contract_v1")
+                for path in (root / directory).rglob("*.py")
+            } | {
+                "scripts/run_experiment.py",
+                "scripts/prepare_gepa_saturation_comparison_v3.py",
+                "scripts/audit_formal_v3_offline_freeze.py",
+                "scripts/freeze_formal_v3_execution.py",
+                "scripts/derive_formal_trajectory_trace.py",
+                "experiments/gepa_saturation_comparison_v3/PROTOCOL.md",
+                "experiments/gepa_saturation_comparison_v3/PILOT_CLOSURE.json",
+                "experiments/gepa_saturation_comparison_v3/POST_FREEZE_VALIDATION50_EVALUATION.md",
+            }
+            if (manifest.get("execution_gate") != {"real_v4_diagnostic": "SCIENTIFICALLY_VALID"}
+                    or manifest.get("diagnostic_prerequisite") != expected_prerequisite
+                    or protocol.get("diagnostic_prerequisite") != expected_prerequisite
+                    or protocol.get("post_search_final_team") != {
+                        "native": "replicate_first_returned_native_candidate_to_all_five_else_initial_team",
+                        "layer2": "preserve_final_committed_five_member_team",
+                        "validation50": "POST_FREEZE_VALIDATION50_EVALUATION_separate_authorization",
+                        "test50": "SEALED_ZERO_CALLS_STAGE0",
+                    }
+                    or not required_source_paths <= set(
+                        manifest.get("execution", {}).get("source_paths", ())
+                    )):
+                raise StartupIdentityError("ABORT_PRE_PROVIDER: formal V3 diagnostic prerequisite mismatch")
+        elif (manifest.get("execution_gate") != {"real_v4_diagnostic": "PENDING_SCIENTIFIC_VALIDITY"}
+              or manifest.get("diagnostic_prerequisite") is not None):
+            raise StartupIdentityError("ABORT_PRE_PROVIDER: historical formal attempt1 identity mismatch")
+        if require_authorized and not formal_attempt2:
+            raise StartupIdentityError("ABORT_PRE_PROVIDER: formal attempt1 superseded before execution")
     if diagnostic:
         from .v4_attempt3_contract import diagnostic_contract, resource_upper_bounds
         expected_diagnostic_contract = (

@@ -48,6 +48,7 @@ def derive_formal_trajectory_records(summary: Mapping[str, Any]) -> tuple[dict[s
             "backend_termination_reason": event["telemetry"].get("backend_termination_reason"),
             "backend_saturation": event["telemetry"].get("backend_saturation"),
             "final_native_candidate_hash": summary["final_native_candidate_hash"],
+            "final_team_hash": summary["final_team_materialization"]["final_team_hash"],
         } for event in events)
 
     feasibility_rows = summary["feasibility_trace"]

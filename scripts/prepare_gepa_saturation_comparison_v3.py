@@ -18,7 +18,7 @@ from multi_dataset_diverse_rl.governance.execution_harness_v2 import (  # noqa: 
     SOLVER_MODEL, endpoint_fingerprint_from_environment,
 )
 from multi_dataset_diverse_rl.governance.production_execution import (  # noqa: E402
-    _expected_bundle, formal_v3_contract, validate_execution,
+    _expected_bundle, formal_attempt2_prerequisite, formal_v3_contract, validate_execution,
 )
 from multi_dataset_diverse_rl.governance.startup_identity import (  # noqa: E402
     canonical_json_bytes, write_bundle,
@@ -44,10 +44,13 @@ def _git(*args: str) -> str:
     ).strip()
 
 
-def frozen_payload(*, execution_source_sha: str, seed: int, scope: str) -> tuple[dict, dict]:
+def frozen_payload(*, execution_source_sha: str, seed: int, scope: str,
+                   attempt_number: int = 1) -> tuple[dict, dict]:
     if seed not in FORMAL_SEEDS or scope not in {"native", "layer2"}:
         raise ValueError("Formal V3 supports only seeds 80/81/82 and native/layer2")
-    attempt = f"{SUCCESSOR_ID}_seed{seed}_{scope}_attempt1"
+    if attempt_number not in {1, 2}:
+        raise ValueError("Formal V3 supports only historical attempt1 and fresh attempt2")
+    attempt = f"{SUCCESSOR_ID}_seed{seed}_{scope}_attempt{attempt_number}"
     scientific = {
         "backend": "gepa", "optimization_scope": scope,
         "stopping_regime": "saturation", "task_identity": "BBH_disambiguation_qa",
@@ -67,6 +70,17 @@ def frozen_payload(*, execution_source_sha: str, seed: int, scope: str) -> tuple
         "scripts/build_formal_v3_closure_report.py",
         "experiments/gepa_saturation_comparison_v3/PROTOCOL.md",
     })
+    prerequisite = None
+    if attempt_number == 2:
+        prerequisite = formal_attempt2_prerequisite(ROOT)
+        sources = sorted(set(sources) | {
+            "experiments/gepa_saturation_comparison_v3/PILOT_CLOSURE.json",
+            "experiments/gepa_saturation_comparison_v3/POST_FREEZE_VALIDATION50_EVALUATION.md",
+            "multi_dataset_diverse_rl/formal_trajectory.py",
+            "multi_dataset_diverse_rl/formal_final_team.py",
+            "scripts/derive_formal_trajectory_trace.py",
+            "scripts/freeze_formal_v3_execution.py",
+        })
     manifest = {
         "schema_version": "formal_gepa_saturation_freeze_v3",
         "experiment_id": attempt, "attempt_id": attempt,
@@ -93,13 +107,17 @@ def frozen_payload(*, execution_source_sha: str, seed: int, scope: str) -> tuple
             "initialization_policy": INITIALIZATION_POLICY,
             "source_paths": sources,
         },
-        "execution_gate": {"real_v4_diagnostic": "PENDING_SCIENTIFIC_VALIDITY"},
+        "execution_gate": {"real_v4_diagnostic": (
+            "SCIENTIFICALLY_VALID" if attempt_number == 2 else "PENDING_SCIENTIFIC_VALIDITY"
+        )},
         "api_authorization": {
             "authorized": False, "authorization_state": "AUTHORIZATION_REQUIRED",
             "allowed_roles": ["solver", "reflection"], "allowed_phases": ["formal"],
         },
         "access": {"validation50_calls": 0, "test50_calls": 0},
     }
+    if prerequisite is not None:
+        manifest["diagnostic_prerequisite"] = prerequisite
     protocol = {
         "schema_version": "formal_gepa_saturation_protocol_v3",
         "experiment_id": attempt, "successor_id": SUCCESSOR_ID,
@@ -117,10 +135,18 @@ def frozen_payload(*, execution_source_sha: str, seed: int, scope: str) -> tuple
         "reflection_model": ROLE_MODEL,
         "execution_prerequisite": "real_seed81_v4_diagnostic_scientifically_valid_then_separate_authorization",
     }
+    if prerequisite is not None:
+        protocol["diagnostic_prerequisite"] = prerequisite
+        protocol["post_search_final_team"] = {
+            "native": "replicate_first_returned_native_candidate_to_all_five_else_initial_team",
+            "layer2": "preserve_final_committed_five_member_team",
+            "validation50": "POST_FREEZE_VALIDATION50_EVALUATION_separate_authorization",
+            "test50": "SEALED_ZERO_CALLS_STAGE0",
+        }
     return manifest, protocol
 
 
-def prepare(prep_root: Path) -> dict[str, object]:
+def prepare(prep_root: Path, *, attempt_number: int = 1) -> dict[str, object]:
     if prep_root.exists():
         raise FileExistsError("fresh Formal V3 prep root required")
     if _git("status", "--porcelain", "--untracked-files=no"):
@@ -132,6 +158,7 @@ def prepare(prep_root: Path) -> dict[str, object]:
         for scope in ("native", "layer2"):
             manifest, protocol = frozen_payload(
                 execution_source_sha=source, seed=seed, scope=scope,
+                attempt_number=attempt_number,
             )
             prep = prep_root / manifest["attempt_id"]
             prep.mkdir()
@@ -161,4 +188,6 @@ def prepare(prep_root: Path) -> dict[str, object]:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--prep-root", type=Path, default=DEFAULT_PREP)
-    print(json.dumps(prepare(parser.parse_args().prep_root), sort_keys=True, indent=2))
+    parser.add_argument("--attempt-number", type=int, choices=(1, 2), default=1)
+    args = parser.parse_args()
+    print(json.dumps(prepare(args.prep_root, attempt_number=args.attempt_number), sort_keys=True, indent=2))

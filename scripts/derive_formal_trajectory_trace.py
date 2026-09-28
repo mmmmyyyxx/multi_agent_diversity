@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import sys
@@ -18,6 +19,15 @@ from multi_dataset_diverse_rl.persistence.durable_io import io_path, read_json  
 def derive(run_root: Path) -> dict[str, object]:
     if read_json(run_root / "run_lifecycle.json").get("status") != "EXECUTION_COMPLETE":
         raise ValueError("Formal V3 trajectory requires a completed frozen execution")
+    inventory = read_json(run_root / "execution_evidence_freeze.json")
+    files = {row["path"]: row for row in inventory.get("files", ())}
+    for name in ("execution_summary.json", "run_lifecycle.json", "final_team_materialization.json"):
+        if name not in files:
+            raise ValueError("Formal V3 trajectory requires frozen execution artifacts")
+        path = run_root / name
+        raw = path.read_bytes()
+        if len(raw) != files[name]["size_bytes"] or hashlib.sha256(raw).hexdigest() != files[name]["sha256"]:
+            raise ValueError("Formal V3 frozen execution artifact hash mismatch")
     summary = read_json(run_root / "execution_summary.json")
     rows = derive_formal_trajectory_records(summary)
     destination = run_root / "formal_trajectory_trace.jsonl"

@@ -30,3 +30,24 @@ gated until the separate real Seed81 V4 diagnostic is scientifically valid,
 the pilot phase is closed, and a new attempt-specific API authorization is
 given. This zero-API preparation consumes no authorization and does not run
 either real arm.
+
+## Attempt2 pilot closure and final-state representation
+
+The six attempt1 preparations remain immutable historical preregistrations and
+are `SUPERSEDED_BEFORE_EXECUTION`. Attempt2 binds the Seed81 V4 attempt3 pilot
+closure in `PILOT_CLOSURE.json`: scientific validity is `VALID`, efficacy is
+`NOT_EVALUABLE`, and the pilot is `CLOSED_VALID_INCONCLUSIVE`. This satisfies
+the diagnostic prerequisite without changing the scientific method or
+authorizing a Formal API call.
+
+After search, Native's first returned official GEPA candidate is represented
+as a homogeneous five-member team. If no candidate is returned, its initial
+five-member team remains final. Layer2's final five committed prompts remain
+in member order. Each cell privately persists the five prompts and their
+hashes in `final_team_materialization.json`; this representation does not
+feed back into search. A completed cell's raw artifacts are inventoried before
+the read-only `formal_trajectory_trace.jsonl` is derived.
+
+The separate `POST_FREEZE_VALIDATION50_EVALUATION.md` fixes the later Stage 0
+generalization endpoint. It requires new explicit authorization after all
+six searches are frozen. Test50 remains sealed throughout Stage 0.

@@ -52,12 +52,14 @@ def _files(prep: Path) -> dict[str, str]:
     }
 
 
-def audit(prep_a: Path, prep_b: Path) -> dict[str, object]:
+def audit(prep_a: Path, prep_b: Path, *, attempt_number: int = 1) -> dict[str, object]:
+    if attempt_number not in {1, 2}:
+        raise ValueError("unsupported Formal attempt number")
     a, b = _files(prep_a), _files(prep_b)
     if a != b:
         raise AssertionError("two isolated Formal V3 preparations differ in bytes")
     expected_cells = {
-        f"gepa_saturation_comparison_v3_seed{seed}_{scope}_attempt1"
+        f"gepa_saturation_comparison_v3_seed{seed}_{scope}_attempt{attempt_number}"
         for seed in (80, 81, 82) for scope in ("native", "layer2")
     }
     if {path.name for path in prep_a.iterdir() if path.is_dir()} != expected_cells:
@@ -89,11 +91,31 @@ def audit(prep_a: Path, prep_b: Path) -> dict[str, object]:
                 raise AssertionError("formal cells do not share one source closure")
             if not REQUIRED_SOURCE_PATHS <= set(source_paths):
                 raise AssertionError("formal source closure misses a required active dependency")
+            if attempt_number == 2:
+                if not {
+                    "multi_dataset_diverse_rl/formal_final_team.py",
+                    "multi_dataset_diverse_rl/formal_trajectory.py",
+                    "scripts/freeze_formal_v3_execution.py",
+                    "scripts/derive_formal_trajectory_trace.py",
+                } <= set(source_paths):
+                    raise AssertionError("formal final-team or trajectory source missing")
+                active_python = {
+                    path.relative_to(ROOT).as_posix()
+                    for directory in ("multi_dataset_diverse_rl", "infrastructure/common_solver_contract_v1")
+                    for path in (ROOT / directory).rglob("*.py")
+                }
+                if not active_python <= set(source_paths):
+                    raise AssertionError("formal production Python source escapes frozen closure")
             if not any(path.startswith("infrastructure/common_solver_contract_v1/")
                        for path in source_paths):
                 raise AssertionError("common Solver contract source omitted")
-            if manifest["execution_gate"]["real_v4_diagnostic"] == "SCIENTIFICALLY_VALID":
-                raise AssertionError("real V4 prerequisite was falsely promoted")
+            if attempt_number == 1:
+                if manifest["execution_gate"]["real_v4_diagnostic"] != "PENDING_SCIENTIFIC_VALIDITY":
+                    raise AssertionError("historical Formal prerequisite changed")
+            elif (manifest.get("diagnostic_prerequisite") != admission.formal_attempt2_prerequisite(ROOT)
+                  or protocol.get("diagnostic_prerequisite") != manifest["diagnostic_prerequisite"]
+                  or manifest["execution_gate"]["real_v4_diagnostic"] != "SCIENTIFICALLY_VALID"):
+                raise AssertionError("Formal attempt2 pilot evidence mismatch")
             if manifest["api_authorization"]["authorized"]:
                 raise AssertionError("offline formal freeze must not authorize API execution")
             if manifest["scientific"]["emergency_max_provider_calls"] != 100_000:
@@ -148,5 +170,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--prep-a", type=Path, required=True)
     parser.add_argument("--prep-b", type=Path, required=True)
+    parser.add_argument("--attempt-number", type=int, choices=(1, 2), default=1)
     args = parser.parse_args()
-    print(json.dumps(audit(args.prep_a, args.prep_b), sort_keys=True, indent=2))
+    print(json.dumps(audit(args.prep_a, args.prep_b, attempt_number=args.attempt_number), sort_keys=True, indent=2))

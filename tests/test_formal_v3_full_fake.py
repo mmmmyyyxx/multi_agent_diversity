@@ -17,6 +17,7 @@ import pytest
 from multi_dataset_diverse_rl.governance.production_execution import ValidatedExecutionContext
 from multi_dataset_diverse_rl.production_formal_saturation import execute_formal_gepa_saturation
 from multi_dataset_diverse_rl.formal_trajectory import derive_formal_trajectory_records
+from multi_dataset_diverse_rl.formal_final_team import team_hash
 from multi_dataset_diverse_rl.provider_factory import ProviderClientFactory
 from multi_dataset_diverse_rl.local_optimizers.gepa_optimizer import GEPALocalPromptOptimizer
 from multi_dataset_diverse_rl.local_optimizers.schemas import (
@@ -410,10 +411,27 @@ def test_formal_v3_native_reaches_factual_local_saturation(tmp_path, monkeypatch
     assert calls["reflection"] > 0
     assert calls["from_environment"] == 1 and calls["create"] == 1
     assert result["ledger"]["provider_attempts"] == calls["solver"] + calls["reflection"]
+    materialized = json.loads((permit.run_root / "final_team_materialization.json").read_text(encoding="utf-8"))
+    assert len(materialized["prompts"]) == 5
+    assert len(set(materialized["prompts"])) == 1
+    assert materialized["final_team_hash"] == team_hash(materialized["prompts"])
+    assert materialized["search_final_identity"] == result["final_native_candidate_hash"]
     assert derive_formal_trajectory_records(result)[0]["record_type"] == "NATIVE_OPTIMIZATION_UNIT"
     _assert_success_ledger(permit, calls)
     _capture_case("native_saturation", permit, calls, result)
     assert result["validation50_calls"] == result["test50_calls"] == 0
+
+
+def test_formal_v3_native_returned_candidate_materializes_five_member_team(tmp_path, monkeypatch):
+    permit, _calls = _formal_fixture(tmp_path, monkeypatch, scope="native")
+    _inject_one_local_candidate(monkeypatch)
+    result = asyncio.run(execute_formal_gepa_saturation(
+        permit, root=Path(__file__).resolve().parents[1],
+    ))
+    artifact = json.loads((permit.run_root / "final_team_materialization.json").read_text(encoding="utf-8"))
+    assert artifact["selected_native_candidate_id"] == result["final_native_candidate_hash"] == "fake-local-child"
+    assert artifact["prompts"] == [artifact["prompts"][0]] * 5
+    assert artifact["final_team_hash"] == team_hash(artifact["prompts"])
 
 
 def test_formal_v3_layer2_reaches_factual_team_saturation(tmp_path, monkeypatch):
@@ -422,6 +440,9 @@ def test_formal_v3_layer2_reaches_factual_team_saturation(tmp_path, monkeypatch)
         permit, root=Path(__file__).resolve().parents[1],
     ))
     assert result["stop_reason"] == "SATURATION_REACHED"
+    materialized = json.loads((permit.run_root / "final_team_materialization.json").read_text(encoding="utf-8"))
+    assert materialized["final_team_hash"] == result["final_team_hash"]
+    assert len(materialized["prompts"]) == 5
     assert result["events"]
     assert result["events"][-1]["telemetry"]["saturation"]["team_no_update_counter"] == 2
     evidence = [sanitize_v4_evidence_trace(row) for row in result["evidence_view_trace"]]

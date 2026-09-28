@@ -36,12 +36,13 @@ def _write(root: Path, name: str, value: object) -> None:
 
 
 def build(*, prep_a: Path, prep_b: Path, evidence_root: Path, report: Path,
-          historical_failed: int, historical_errors: int) -> dict:
+          historical_failed: int, historical_errors: int,
+          attempt_number: int = 1) -> dict:
     if report.exists():
         raise FileExistsError("fresh sanitized report root required")
     if not evidence_root.resolve().is_relative_to((ROOT / "runs").resolve()):
         raise ValueError("private fake evidence must remain under ignored runs/")
-    offline = audit_freeze(prep_a, prep_b)
+    offline = audit_freeze(prep_a, prep_b, attempt_number=attempt_number)
     cases = {case: _read(evidence_root / f"{case}.json") for case in CASES}
     for case, row in cases.items():
         ledger = row["ledger"]
@@ -80,7 +81,8 @@ def build(*, prep_a: Path, prep_b: Path, evidence_root: Path, report: Path,
                 sort_keys=True, separators=(",", ":"),
             ).encode("utf-8")).hexdigest(),
             "source_file_count": len(scientific_identity["payload"]["source_files"]),
-            "api_authorized": False, "real_v4_prerequisite": "PENDING_SCIENTIFIC_VALIDITY",
+            "api_authorized": False, "real_v4_prerequisite": manifest["execution_gate"]["real_v4_diagnostic"],
+            "diagnostic_prerequisite": manifest.get("diagnostic_prerequisite"),
         }
     if len(cells) != 6 or len(sources) != 1 or len(data_hashes) != 1:
         raise AssertionError("six-cell formal comparison identity mismatch")
@@ -157,7 +159,9 @@ def build(*, prep_a: Path, prep_b: Path, evidence_root: Path, report: Path,
     })
     _write(report, "governance_preflight.json", {
         "gate": "PASS_EXECUTION_GATED", "validated_cells": 6,
-        "real_v4_prerequisite": "PENDING_SCIENTIFIC_VALIDITY",
+        "real_v4_prerequisite": (
+            "SCIENTIFICALLY_VALID" if attempt_number == 2 else "PENDING_SCIENTIFIC_VALIDITY"
+        ),
         "api_authorized": False, "provider_profile": "lwj",
         "solver_model": "qwen3-8b", "solver_thinking": False,
         "reflection_model": "qwen3.7-flash", "seeds": [80, 81, 82],
@@ -166,7 +170,10 @@ def build(*, prep_a: Path, prep_b: Path, evidence_root: Path, report: Path,
     })
     _write(report, "freeze_identity.json", {
         "successor_id": "gepa_saturation_comparison_v3",
-        "supersedes_unexecuted": "gepa_saturation_comparison_v2",
+        "supersedes_unexecuted": (
+            "gepa_saturation_comparison_v3_attempt1" if attempt_number == 2
+            else "gepa_saturation_comparison_v2"
+        ),
         "execution_source_sha": next(iter(sources)),
         "cells": cells, "prep_replay_identical": offline["prep_replay_identical"],
         "deterministic_artifacts": offline["deterministic_artifacts"],
@@ -193,9 +200,14 @@ def build(*, prep_a: Path, prep_b: Path, evidence_root: Path, report: Path,
         "offline preparations are byte-identical. Each frozen active source file was "
         "poisoned in memory, and startup validation rejected it before provider "
         "construction. Validation50 and Test50 remain at zero calls.\n\n"
-        "The next real step is the separately frozen Seed81 V4 diagnostic and scientific "
-        "validity audit. Only then may a separate authorization permit formal execution. "
-        "This report does not authorize or execute either real experiment.\n"
+        + ("The V4 Seed81 attempt3 pilot is CLOSED_VALID_INCONCLUSIVE: scientific validity "
+         "is VALID and efficacy is NOT_EVALUABLE. This satisfies the Formal prerequisite. "
+         "Native final teams replicate the selected GEPA candidate across five members; "
+         "post-freeze Validation50 requires separate authorization and Test50 stays sealed. "
+         if attempt_number == 2 else
+         "The next real step is the separately frozen Seed81 V4 diagnostic and scientific "
+         "validity audit. Only then may a separate authorization permit formal execution. ")
+        + "This report does not authorize or execute any real experiment.\n"
     )
     (report / "README.md").write_text(readme, encoding="utf-8")
     manifest = {
@@ -215,9 +227,11 @@ if __name__ == "__main__":
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--historical-failed", type=int, required=True)
     parser.add_argument("--historical-errors", type=int, required=True)
+    parser.add_argument("--attempt-number", type=int, choices=(1, 2), default=1)
     args = parser.parse_args()
     print(json.dumps(build(prep_a=args.prep_a, prep_b=args.prep_b,
                            evidence_root=args.evidence_root, report=args.report,
                            historical_failed=args.historical_failed,
-                           historical_errors=args.historical_errors),
+                           historical_errors=args.historical_errors,
+                           attempt_number=args.attempt_number),
                      sort_keys=True, indent=2))
