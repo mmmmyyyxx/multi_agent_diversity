@@ -1,0 +1,9 @@
+{
+  "authorization_consumed": false,
+  "gate": "PASS",
+  "real_api_calls": 0,
+  "real_credentials_present_in_fake_process": false,
+  "real_network_attempts": 0,
+  "test50_calls": 0,
+  "validation50_calls": 0
+}

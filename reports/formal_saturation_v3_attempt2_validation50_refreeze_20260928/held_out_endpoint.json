@@ -1,0 +1,26 @@
+{
+  "correction": "pre_execution_held_out_endpoint_correction",
+  "formal_efficacy_observed": false,
+  "optimize100": "fold_a_plus_fold_b_adaptive_search",
+  "shadow50": "fold_c_adaptive_write_back_gate",
+  "superseded_preexecution_source_sha": "504dadb4024a0c69cc2f8aac6e6d400f77f3a680",
+  "test50": "sealed_zero_calls_stage0",
+  "validation50": {
+    "count": 50,
+    "evaluation_phase": "POST_FREEZE_ONLY_SEPARATE_AUTHORIZATION",
+    "fold_assignment_sha256": "4b093252dc4ea45e5e0a1b56d37ed359377cb6995a461c404b8b9f732bcb96a4",
+    "optimize100_question_hash_set_sha256": "d1aa6e83e545466b037b7ff0d5ff25470030e3b8067bc80cbedd098e217b973a",
+    "question_hash_set_hash_semantics": "sorted_unique_canonical_json_utf8_lf_v1",
+    "question_hash_set_sha256": "d6514ca588f124460502afbc44a5314e9ef7f141ee826411cb6f02abad736df5",
+    "schema_version": "formal_post_freeze_validation50_policy_v2",
+    "search_access": "FORBIDDEN_ZERO_CALLS",
+    "shadow50_identity": "anti_overfitting_split_v1/fold_c",
+    "shadow50_question_hash_set_sha256": "04b7f74e986f45135ea00b1c30e6a700cbf83f0b08b24c4d057b90a232e9b100",
+    "split_identity": "anti_overfitting_split_v1/validation",
+    "split_manifest": "experiments/anti_overfitting_split_v1/split_manifest.json",
+    "split_manifest_schema": "anti_overfitting_split_manifest_v1",
+    "split_manifest_sha256": "42843456e13bbbda1a86615ae278ff059372dc199a8ccf5ade4cb338641d12c4",
+    "test50_question_hash_set_sha256": "949517a268fbfae82bd15006ed0cb870fd41f9bc03bd782797fb4dce01a13747",
+    "test50_stage0": "SEALED_ZERO_CALLS"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "external_host_whitelist": false,
+  "gate": "PASS",
+  "normal_fake_network_attempts": 0,
+  "pre_import_sitecustomize_guard": true,
+  "socket_negative_control": "PASS_BLOCKED_BEFORE_TRANSMISSION"
+}
