@@ -1,0 +1,136 @@
+{
+  "authorization_consumed": false,
+  "cells": {
+    "gepa_saturation_comparison_v3_seed80_layer2_attempt2": {
+      "api_authorized": false,
+      "arm": "GEPA_LAYER2_V4",
+      "diagnostic_prerequisite": {
+        "attempt_id": "gepa_layer2_local_to_team_transfer_diagnostic_v4_seed81_attempt3",
+        "audit_commit": "766c8c6cbcd5dfcbf7b7445f3c41b2cdecad821f",
+        "efficacy": "NOT_EVALUABLE",
+        "execution_source_sha": "66e1762ad7ea8d85f71de3b604d0e04fb8b9c7d0",
+        "pilot_status": "CLOSED_VALID_INCONCLUSIVE",
+        "raw_evidence_freeze_sha256": "a907c155c720f2d218f393e46594bac7261595a54e7953d3628e01c4a47e979b",
+        "scientific_validity": "VALID"
+      },
+      "execution_source_sha": "504dadb4024a0c69cc2f8aac6e6d400f77f3a680",
+      "preregistration_sha256": "b75b8fa202122622f4b360f7ce34fa56d9dee512aec477e008cef5ac9a0981b4",
+      "protocol_sha256": "b9bf1e6a4a397c6af863a20a44067170e2e0054140e458dc0a299d18de92747e",
+      "real_v4_prerequisite": "SCIENTIFICALLY_VALID",
+      "run_identity_sha256": "353e3eb926dedad8453bedbd44892817b613061e3275d204fe1866cb586c67e0",
+      "seed": 80,
+      "source_file_count": 121,
+      "source_manifest_sha256": "997fc04b4df71c855498e1101b7cda26aa3fdc6db60ce7dcaa1a7531e830721b"
+    },
+    "gepa_saturation_comparison_v3_seed80_native_attempt2": {
+      "api_authorized": false,
+      "arm": "GEPA_NATIVE",
+      "diagnostic_prerequisite": {
+        "attempt_id": "gepa_layer2_local_to_team_transfer_diagnostic_v4_seed81_attempt3",
+        "audit_commit": "766c8c6cbcd5dfcbf7b7445f3c41b2cdecad821f",
+        "efficacy": "NOT_EVALUABLE",
+        "execution_source_sha": "66e1762ad7ea8d85f71de3b604d0e04fb8b9c7d0",
+        "pilot_status": "CLOSED_VALID_INCONCLUSIVE",
+        "raw_evidence_freeze_sha256": "a907c155c720f2d218f393e46594bac7261595a54e7953d3628e01c4a47e979b",
+        "scientific_validity": "VALID"
+      },
+      "execution_source_sha": "504dadb4024a0c69cc2f8aac6e6d400f77f3a680",
+      "preregistration_sha256": "d299e415a2a3e045bf44fd9feef44be78be2f8247cd2eb2ed4768915841e4ccf",
+      "protocol_sha256": "155236766da98b902a9c4248ae0010c1b33229b51af3a8e6eefe58bf0dcc943c",
+      "real_v4_prerequisite": "SCIENTIFICALLY_VALID",
+      "run_identity_sha256": "c50c5a7c51ff20fd13e7121c084092087bbbd9b5c96107d2af0eb5620fba9335",
+      "seed": 80,
+      "source_file_count": 121,
+      "source_manifest_sha256": "997fc04b4df71c855498e1101b7cda26aa3fdc6db60ce7dcaa1a7531e830721b"
+    },
+    "gepa_saturation_comparison_v3_seed81_layer2_attempt2": {
+      "api_authorized": false,
+      "arm": "GEPA_LAYER2_V4",
+      "diagnostic_prerequisite": {
+        "attempt_id": "gepa_layer2_local_to_team_transfer_diagnostic_v4_seed81_attempt3",
+        "audit_commit": "766c8c6cbcd5dfcbf7b7445f3c41b2cdecad821f",
+        "efficacy": "NOT_EVALUABLE",
+        "execution_source_sha": "66e1762ad7ea8d85f71de3b604d0e04fb8b9c7d0",
+        "pilot_status": "CLOSED_VALID_INCONCLUSIVE",
+        "raw_evidence_freeze_sha256": "a907c155c720f2d218f393e46594bac7261595a54e7953d3628e01c4a47e979b",
+        "scientific_validity": "VALID"
+      },
+      "execution_source_sha": "504dadb4024a0c69cc2f8aac6e6d400f77f3a680",
+      "preregistration_sha256": "56e6b49b494bf53071fdaed49a1efe9d7afc2311f35f78d73ef7b56f3a246938",
+      "protocol_sha256": "ae1b6099a07abcd10751f4e6aba589b44b4ce7fcaa71bcc7f431b4fbfd9ab4bb",
+      "real_v4_prerequisite": "SCIENTIFICALLY_VALID",
+      "run_identity_sha256": "5baa2a18e03ce80ee749dc61c3b9837ca05e7b881bba404fbede9038e099aa23",
+      "seed": 81,
+      "source_file_count": 121,
+      "source_manifest_sha256": "997fc04b4df71c855498e1101b7cda26aa3fdc6db60ce7dcaa1a7531e830721b"
+    },
+    "gepa_saturation_comparison_v3_seed81_native_attempt2": {
+      "api_authorized": false,
+      "arm": "GEPA_NATIVE",
+      "diagnostic_prerequisite": {
+        "attempt_id": "gepa_layer2_local_to_team_transfer_diagnostic_v4_seed81_attempt3",
+        "audit_commit": "766c8c6cbcd5dfcbf7b7445f3c41b2cdecad821f",
+        "efficacy": "NOT_EVALUABLE",
+        "execution_source_sha": "66e1762ad7ea8d85f71de3b604d0e04fb8b9c7d0",
+        "pilot_status": "CLOSED_VALID_INCONCLUSIVE",
+        "raw_evidence_freeze_sha256": "a907c155c720f2d218f393e46594bac7261595a54e7953d3628e01c4a47e979b",
+        "scientific_validity": "VALID"
+      },
+      "execution_source_sha": "504dadb4024a0c69cc2f8aac6e6d400f77f3a680",
+      "preregistration_sha256": "0b1ec4f5018f3232924eca4434eb916749e1e3a7b8977205936eba00c4833606",
+      "protocol_sha256": "7be057abcc9622a8c9f229f9cd19d6451d3fee41da798fc74fea0ac0ea6cfa97",
+      "real_v4_prerequisite": "SCIENTIFICALLY_VALID",
+      "run_identity_sha256": "1a8d0a18f8f91e596e08c70f3657aaf1d312329f55fa67bc216f34e7ec54f64c",
+      "seed": 81,
+      "source_file_count": 121,
+      "source_manifest_sha256": "997fc04b4df71c855498e1101b7cda26aa3fdc6db60ce7dcaa1a7531e830721b"
+    },
+    "gepa_saturation_comparison_v3_seed82_layer2_attempt2": {
+      "api_authorized": false,
+      "arm": "GEPA_LAYER2_V4",
+      "diagnostic_prerequisite": {
+        "attempt_id": "gepa_layer2_local_to_team_transfer_diagnostic_v4_seed81_attempt3",
+        "audit_commit": "766c8c6cbcd5dfcbf7b7445f3c41b2cdecad821f",
+        "efficacy": "NOT_EVALUABLE",
+        "execution_source_sha": "66e1762ad7ea8d85f71de3b604d0e04fb8b9c7d0",
+        "pilot_status": "CLOSED_VALID_INCONCLUSIVE",
+        "raw_evidence_freeze_sha256": "a907c155c720f2d218f393e46594bac7261595a54e7953d3628e01c4a47e979b",
+        "scientific_validity": "VALID"
+      },
+      "execution_source_sha": "504dadb4024a0c69cc2f8aac6e6d400f77f3a680",
+      "preregistration_sha256": "7ff0501a0f395f9c926cd5733a2b99580172f8e54d589adb9adb0c5e1f026012",
+      "protocol_sha256": "15c587e8096e65e939d79f9879d3ef8c749d61900e1cba96256aaa267d2c915a",
+      "real_v4_prerequisite": "SCIENTIFICALLY_VALID",
+      "run_identity_sha256": "1ea207c139262453b2473d58756d937713f502955953c16a34c223da4a9ef335",
+      "seed": 82,
+      "source_file_count": 121,
+      "source_manifest_sha256": "997fc04b4df71c855498e1101b7cda26aa3fdc6db60ce7dcaa1a7531e830721b"
+    },
+    "gepa_saturation_comparison_v3_seed82_native_attempt2": {
+      "api_authorized": false,
+      "arm": "GEPA_NATIVE",
+      "diagnostic_prerequisite": {
+        "attempt_id": "gepa_layer2_local_to_team_transfer_diagnostic_v4_seed81_attempt3",
+        "audit_commit": "766c8c6cbcd5dfcbf7b7445f3c41b2cdecad821f",
+        "efficacy": "NOT_EVALUABLE",
+        "execution_source_sha": "66e1762ad7ea8d85f71de3b604d0e04fb8b9c7d0",
+        "pilot_status": "CLOSED_VALID_INCONCLUSIVE",
+        "raw_evidence_freeze_sha256": "a907c155c720f2d218f393e46594bac7261595a54e7953d3628e01c4a47e979b",
+        "scientific_validity": "VALID"
+      },
+      "execution_source_sha": "504dadb4024a0c69cc2f8aac6e6d400f77f3a680",
+      "preregistration_sha256": "37ad24653f8f2d4fcfc4df843e972d25e571fbe5d2a573e6aec38bfd980416e2",
+      "protocol_sha256": "05720c650dcb720828b2fbeb512bd06327a9add1cd6cf61d4b8e49ff7e46ffe1",
+      "real_v4_prerequisite": "SCIENTIFICALLY_VALID",
+      "run_identity_sha256": "3b8f3b9d688b66180c79dc3b97428f9f18d1a4d49e6c9f58a95b90cb3c358a49",
+      "seed": 82,
+      "source_file_count": 121,
+      "source_manifest_sha256": "997fc04b4df71c855498e1101b7cda26aa3fdc6db60ce7dcaa1a7531e830721b"
+    }
+  },
+  "deterministic_artifacts": 42,
+  "execution_source_sha": "504dadb4024a0c69cc2f8aac6e6d400f77f3a680",
+  "prep_replay_identical": true,
+  "successor_id": "gepa_saturation_comparison_v3",
+  "supersedes_unexecuted": "gepa_saturation_comparison_v3_attempt1"
+}

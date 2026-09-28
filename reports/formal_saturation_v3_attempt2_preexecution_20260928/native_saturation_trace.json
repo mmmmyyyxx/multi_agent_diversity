@@ -1,0 +1,81 @@
+{
+  "case": "native_saturation",
+  "events": [
+    {
+      "backend_termination_reason": "SATURATION_REACHED",
+      "committed": false,
+      "epoch_end_reason": null,
+      "index": 1,
+      "kind": "LOCAL_OPTIMIZATION",
+      "local_no_update_counter": 3,
+      "stop_reason": "SATURATION_REACHED",
+      "team_no_update_counter": null
+    }
+  ],
+  "evidence": [],
+  "fake_physical_calls": {
+    "reflection": 63,
+    "solver": 172
+  },
+  "ledger": {
+    "cache_hits": 767,
+    "failed_provider_attempts": 0,
+    "input_tokens": 2585,
+    "logical_calls": 1002,
+    "output_tokens": 1175,
+    "provider_attempts": 235,
+    "successful_provider_calls": 235,
+    "total_tokens": 3760
+  },
+  "provider_constructor_calls": {
+    "create": 1,
+    "from_environment": 1
+  },
+  "roles": {
+    "reflection": {
+      "cache_hits": 0,
+      "input_tokens": 693,
+      "output_tokens": 315,
+      "provider_attempts": 63,
+      "successful_provider_calls": 63,
+      "total_tokens": 1008
+    },
+    "solver": {
+      "cache_hits": 767,
+      "input_tokens": 1892,
+      "output_tokens": 860,
+      "provider_attempts": 172,
+      "successful_provider_calls": 172,
+      "total_tokens": 2752
+    }
+  },
+  "stages": {
+    "initialization": {
+      "cache_hits": 400,
+      "input_tokens": 1100,
+      "output_tokens": 500,
+      "provider_attempts": 100,
+      "successful_provider_calls": 100,
+      "total_tokens": 1600
+    },
+    "local_optimizer_reflection": {
+      "cache_hits": 0,
+      "input_tokens": 693,
+      "output_tokens": 315,
+      "provider_attempts": 63,
+      "successful_provider_calls": 63,
+      "total_tokens": 1008
+    },
+    "local_optimizer_solver_eval": {
+      "cache_hits": 367,
+      "input_tokens": 792,
+      "output_tokens": 360,
+      "provider_attempts": 72,
+      "successful_provider_calls": 72,
+      "total_tokens": 1152
+    }
+  },
+  "stop_reason": "SATURATION_REACHED",
+  "test50_calls": 0,
+  "validation50_calls": 0
+}

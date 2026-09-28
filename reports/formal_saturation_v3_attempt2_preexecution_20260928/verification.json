@@ -1,0 +1,13 @@
+{
+  "compileall": "PASS",
+  "diff_check": "PASS",
+  "focused_formal_fake": "PASS_ZERO_NETWORK",
+  "full_tests": "HISTORICAL_PRIVATE_ARTIFACT_FAILURES_ONLY",
+  "historical_errors": 13,
+  "historical_failed": 15,
+  "new_active_failure_classes": 0,
+  "prep_replay": "PASS_IDENTICAL",
+  "real_api_calls": 0,
+  "sanitization": "PASS",
+  "source_poison": "PASS"
+}

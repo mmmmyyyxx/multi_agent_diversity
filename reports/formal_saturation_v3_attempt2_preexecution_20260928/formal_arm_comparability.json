@@ -1,0 +1,10 @@
+{
+  "cells": 6,
+  "gate": "PASS",
+  "nominal_native_and_layer2_units_not_equated": true,
+  "only_treatment_scope_difference": "native_feed_vs_layer2_v4_packet_and_team_controller",
+  "same_fresh_initialization_policy": true,
+  "same_optimize100_shadow50_hashes": true,
+  "same_provider_and_models": true,
+  "same_source": true
+}

@@ -1,0 +1,581 @@
+{
+  "cases": {
+    "layer2_commit_restart": {
+      "fake_physical_calls": {
+        "reflection": 0,
+        "solver": 300
+      },
+      "ledger": {
+        "cache_hits": 612,
+        "failed_provider_attempts": 0,
+        "input_tokens": 3300,
+        "logical_calls": 912,
+        "output_tokens": 1500,
+        "provider_attempts": 300,
+        "successful_provider_calls": 300,
+        "total_tokens": 4800
+      },
+      "roles": {
+        "solver": {
+          "cache_hits": 612,
+          "input_tokens": 3300,
+          "output_tokens": 1500,
+          "provider_attempts": 300,
+          "successful_provider_calls": 300,
+          "total_tokens": 4800
+        }
+      },
+      "stages": {
+        "initialization": {
+          "cache_hits": 400,
+          "input_tokens": 1100,
+          "output_tokens": 500,
+          "provider_attempts": 100,
+          "successful_provider_calls": 100,
+          "total_tokens": 1600
+        },
+        "team_full_eval": {
+          "cache_hits": 12,
+          "input_tokens": 968,
+          "output_tokens": 440,
+          "provider_attempts": 88,
+          "successful_provider_calls": 88,
+          "total_tokens": 1408
+        },
+        "team_minibatch_eval": {
+          "cache_hits": 0,
+          "input_tokens": 132,
+          "output_tokens": 60,
+          "provider_attempts": 12,
+          "successful_provider_calls": 12,
+          "total_tokens": 192
+        },
+        "team_shadow_eval": {
+          "cache_hits": 200,
+          "input_tokens": 1100,
+          "output_tokens": 500,
+          "provider_attempts": 100,
+          "successful_provider_calls": 100,
+          "total_tokens": 1600
+        }
+      }
+    },
+    "layer2_common_safe_rejection": {
+      "fake_physical_calls": {
+        "reflection": 0,
+        "solver": 200
+      },
+      "ledger": {
+        "cache_hits": 1420,
+        "failed_provider_attempts": 0,
+        "input_tokens": 2200,
+        "logical_calls": 1620,
+        "output_tokens": 1000,
+        "provider_attempts": 200,
+        "successful_provider_calls": 200,
+        "total_tokens": 3200
+      },
+      "roles": {
+        "solver": {
+          "cache_hits": 1420,
+          "input_tokens": 2200,
+          "output_tokens": 1000,
+          "provider_attempts": 200,
+          "successful_provider_calls": 200,
+          "total_tokens": 3200
+        }
+      },
+      "stages": {
+        "initialization": {
+          "cache_hits": 400,
+          "input_tokens": 1100,
+          "output_tokens": 500,
+          "provider_attempts": 100,
+          "successful_provider_calls": 100,
+          "total_tokens": 1600
+        },
+        "team_full_eval": {
+          "cache_hits": 912,
+          "input_tokens": 968,
+          "output_tokens": 440,
+          "provider_attempts": 88,
+          "successful_provider_calls": 88,
+          "total_tokens": 1408
+        },
+        "team_minibatch_eval": {
+          "cache_hits": 108,
+          "input_tokens": 132,
+          "output_tokens": 60,
+          "provider_attempts": 12,
+          "successful_provider_calls": 12,
+          "total_tokens": 192
+        }
+      }
+    },
+    "layer2_local_emergency": {
+      "fake_physical_calls": {
+        "reflection": 0,
+        "solver": 100
+      },
+      "ledger": {
+        "cache_hits": 400,
+        "failed_provider_attempts": 0,
+        "input_tokens": 1100,
+        "logical_calls": 500,
+        "output_tokens": 500,
+        "provider_attempts": 100,
+        "successful_provider_calls": 100,
+        "total_tokens": 1600
+      },
+      "roles": {
+        "solver": {
+          "cache_hits": 400,
+          "input_tokens": 1100,
+          "output_tokens": 500,
+          "provider_attempts": 100,
+          "successful_provider_calls": 100,
+          "total_tokens": 1600
+        }
+      },
+      "stages": {
+        "initialization": {
+          "cache_hits": 400,
+          "input_tokens": 1100,
+          "output_tokens": 500,
+          "provider_attempts": 100,
+          "successful_provider_calls": 100,
+          "total_tokens": 1600
+        }
+      }
+    },
+    "layer2_minibatch_rejection": {
+      "fake_physical_calls": {
+        "reflection": 0,
+        "solver": 200
+      },
+      "ledger": {
+        "cache_hits": 1420,
+        "failed_provider_attempts": 0,
+        "input_tokens": 2200,
+        "logical_calls": 1620,
+        "output_tokens": 1000,
+        "provider_attempts": 200,
+        "successful_provider_calls": 200,
+        "total_tokens": 3200
+      },
+      "roles": {
+        "solver": {
+          "cache_hits": 1420,
+          "input_tokens": 2200,
+          "output_tokens": 1000,
+          "provider_attempts": 200,
+          "successful_provider_calls": 200,
+          "total_tokens": 3200
+        }
+      },
+      "stages": {
+        "diagnostic_full_eval": {
+          "cache_hits": 912,
+          "input_tokens": 968,
+          "output_tokens": 440,
+          "provider_attempts": 88,
+          "successful_provider_calls": 88,
+          "total_tokens": 1408
+        },
+        "initialization": {
+          "cache_hits": 400,
+          "input_tokens": 1100,
+          "output_tokens": 500,
+          "provider_attempts": 100,
+          "successful_provider_calls": 100,
+          "total_tokens": 1600
+        },
+        "team_minibatch_eval": {
+          "cache_hits": 108,
+          "input_tokens": 132,
+          "output_tokens": 60,
+          "provider_attempts": 12,
+          "successful_provider_calls": 12,
+          "total_tokens": 192
+        }
+      }
+    },
+    "layer2_no_feasible": {
+      "fake_physical_calls": {
+        "reflection": 0,
+        "solver": 100
+      },
+      "ledger": {
+        "cache_hits": 400,
+        "failed_provider_attempts": 0,
+        "input_tokens": 1100,
+        "logical_calls": 500,
+        "output_tokens": 500,
+        "provider_attempts": 100,
+        "successful_provider_calls": 100,
+        "total_tokens": 1600
+      },
+      "roles": {
+        "solver": {
+          "cache_hits": 400,
+          "input_tokens": 1100,
+          "output_tokens": 500,
+          "provider_attempts": 100,
+          "successful_provider_calls": 100,
+          "total_tokens": 1600
+        }
+      },
+      "stages": {
+        "initialization": {
+          "cache_hits": 400,
+          "input_tokens": 1100,
+          "output_tokens": 500,
+          "provider_attempts": 100,
+          "successful_provider_calls": 100,
+          "total_tokens": 1600
+        }
+      }
+    },
+    "layer2_partial_delivery": {
+      "fake_physical_calls": {
+        "reflection": 0,
+        "solver": 100
+      },
+      "ledger": {
+        "cache_hits": 400,
+        "failed_provider_attempts": 0,
+        "input_tokens": 1100,
+        "logical_calls": 500,
+        "output_tokens": 500,
+        "provider_attempts": 100,
+        "successful_provider_calls": 100,
+        "total_tokens": 1600
+      },
+      "roles": {
+        "solver": {
+          "cache_hits": 400,
+          "input_tokens": 1100,
+          "output_tokens": 500,
+          "provider_attempts": 100,
+          "successful_provider_calls": 100,
+          "total_tokens": 1600
+        }
+      },
+      "stages": {
+        "initialization": {
+          "cache_hits": 400,
+          "input_tokens": 1100,
+          "output_tokens": 500,
+          "provider_attempts": 100,
+          "successful_provider_calls": 100,
+          "total_tokens": 1600
+        }
+      }
+    },
+    "layer2_saturation": {
+      "fake_physical_calls": {
+        "reflection": 360,
+        "solver": 136
+      },
+      "ledger": {
+        "cache_hits": 2644,
+        "failed_provider_attempts": 0,
+        "input_tokens": 5456,
+        "logical_calls": 3140,
+        "output_tokens": 2480,
+        "provider_attempts": 496,
+        "successful_provider_calls": 496,
+        "total_tokens": 7936
+      },
+      "roles": {
+        "reflection": {
+          "cache_hits": 0,
+          "input_tokens": 3960,
+          "output_tokens": 1800,
+          "provider_attempts": 360,
+          "successful_provider_calls": 360,
+          "total_tokens": 5760
+        },
+        "solver": {
+          "cache_hits": 2644,
+          "input_tokens": 1496,
+          "output_tokens": 680,
+          "provider_attempts": 136,
+          "successful_provider_calls": 136,
+          "total_tokens": 2176
+        }
+      },
+      "stages": {
+        "initialization": {
+          "cache_hits": 400,
+          "input_tokens": 1100,
+          "output_tokens": 500,
+          "provider_attempts": 100,
+          "successful_provider_calls": 100,
+          "total_tokens": 1600
+        },
+        "local_optimizer_reflection": {
+          "cache_hits": 0,
+          "input_tokens": 3960,
+          "output_tokens": 1800,
+          "provider_attempts": 360,
+          "successful_provider_calls": 360,
+          "total_tokens": 5760
+        },
+        "local_optimizer_solver_eval": {
+          "cache_hits": 2244,
+          "input_tokens": 396,
+          "output_tokens": 180,
+          "provider_attempts": 36,
+          "successful_provider_calls": 36,
+          "total_tokens": 576
+        }
+      }
+    },
+    "layer2_shadow_rejection": {
+      "fake_physical_calls": {
+        "reflection": 0,
+        "solver": 200
+      },
+      "ledger": {
+        "cache_hits": 1420,
+        "failed_provider_attempts": 0,
+        "input_tokens": 2200,
+        "logical_calls": 1620,
+        "output_tokens": 1000,
+        "provider_attempts": 200,
+        "successful_provider_calls": 200,
+        "total_tokens": 3200
+      },
+      "roles": {
+        "solver": {
+          "cache_hits": 1420,
+          "input_tokens": 2200,
+          "output_tokens": 1000,
+          "provider_attempts": 200,
+          "successful_provider_calls": 200,
+          "total_tokens": 3200
+        }
+      },
+      "stages": {
+        "initialization": {
+          "cache_hits": 400,
+          "input_tokens": 1100,
+          "output_tokens": 500,
+          "provider_attempts": 100,
+          "successful_provider_calls": 100,
+          "total_tokens": 1600
+        },
+        "team_full_eval": {
+          "cache_hits": 912,
+          "input_tokens": 968,
+          "output_tokens": 440,
+          "provider_attempts": 88,
+          "successful_provider_calls": 88,
+          "total_tokens": 1408
+        },
+        "team_minibatch_eval": {
+          "cache_hits": 108,
+          "input_tokens": 132,
+          "output_tokens": 60,
+          "provider_attempts": 12,
+          "successful_provider_calls": 12,
+          "total_tokens": 192
+        }
+      }
+    },
+    "native_optimizer_emergency": {
+      "fake_physical_calls": {
+        "reflection": 1,
+        "solver": 103
+      },
+      "ledger": {
+        "cache_hits": 428,
+        "failed_provider_attempts": 0,
+        "input_tokens": 1144,
+        "logical_calls": 532,
+        "output_tokens": 520,
+        "provider_attempts": 104,
+        "successful_provider_calls": 104,
+        "total_tokens": 1664
+      },
+      "roles": {
+        "reflection": {
+          "cache_hits": 0,
+          "input_tokens": 11,
+          "output_tokens": 5,
+          "provider_attempts": 1,
+          "successful_provider_calls": 1,
+          "total_tokens": 16
+        },
+        "solver": {
+          "cache_hits": 428,
+          "input_tokens": 1133,
+          "output_tokens": 515,
+          "provider_attempts": 103,
+          "successful_provider_calls": 103,
+          "total_tokens": 1648
+        }
+      },
+      "stages": {
+        "initialization": {
+          "cache_hits": 400,
+          "input_tokens": 1100,
+          "output_tokens": 500,
+          "provider_attempts": 100,
+          "successful_provider_calls": 100,
+          "total_tokens": 1600
+        },
+        "local_optimizer_reflection": {
+          "cache_hits": 0,
+          "input_tokens": 11,
+          "output_tokens": 5,
+          "provider_attempts": 1,
+          "successful_provider_calls": 1,
+          "total_tokens": 16
+        },
+        "local_optimizer_solver_eval": {
+          "cache_hits": 28,
+          "input_tokens": 33,
+          "output_tokens": 15,
+          "provider_attempts": 3,
+          "successful_provider_calls": 3,
+          "total_tokens": 48
+        }
+      }
+    },
+    "native_provider_emergency": {
+      "fake_physical_calls": {
+        "reflection": 0,
+        "solver": 100
+      },
+      "ledger": {
+        "cache_hits": 400,
+        "failed_provider_attempts": 0,
+        "input_tokens": 1100,
+        "logical_calls": 500,
+        "output_tokens": 500,
+        "provider_attempts": 100,
+        "successful_provider_calls": 100,
+        "total_tokens": 1600
+      },
+      "roles": {
+        "solver": {
+          "cache_hits": 400,
+          "input_tokens": 1100,
+          "output_tokens": 500,
+          "provider_attempts": 100,
+          "successful_provider_calls": 100,
+          "total_tokens": 1600
+        }
+      },
+      "stages": {
+        "initialization": {
+          "cache_hits": 400,
+          "input_tokens": 1100,
+          "output_tokens": 500,
+          "provider_attempts": 100,
+          "successful_provider_calls": 100,
+          "total_tokens": 1600
+        }
+      }
+    },
+    "native_saturation": {
+      "fake_physical_calls": {
+        "reflection": 63,
+        "solver": 172
+      },
+      "ledger": {
+        "cache_hits": 767,
+        "failed_provider_attempts": 0,
+        "input_tokens": 2585,
+        "logical_calls": 1002,
+        "output_tokens": 1175,
+        "provider_attempts": 235,
+        "successful_provider_calls": 235,
+        "total_tokens": 3760
+      },
+      "roles": {
+        "reflection": {
+          "cache_hits": 0,
+          "input_tokens": 693,
+          "output_tokens": 315,
+          "provider_attempts": 63,
+          "successful_provider_calls": 63,
+          "total_tokens": 1008
+        },
+        "solver": {
+          "cache_hits": 767,
+          "input_tokens": 1892,
+          "output_tokens": 860,
+          "provider_attempts": 172,
+          "successful_provider_calls": 172,
+          "total_tokens": 2752
+        }
+      },
+      "stages": {
+        "initialization": {
+          "cache_hits": 400,
+          "input_tokens": 1100,
+          "output_tokens": 500,
+          "provider_attempts": 100,
+          "successful_provider_calls": 100,
+          "total_tokens": 1600
+        },
+        "local_optimizer_reflection": {
+          "cache_hits": 0,
+          "input_tokens": 693,
+          "output_tokens": 315,
+          "provider_attempts": 63,
+          "successful_provider_calls": 63,
+          "total_tokens": 1008
+        },
+        "local_optimizer_solver_eval": {
+          "cache_hits": 367,
+          "input_tokens": 792,
+          "output_tokens": 360,
+          "provider_attempts": 72,
+          "successful_provider_calls": 72,
+          "total_tokens": 1152
+        }
+      }
+    },
+    "native_unexpected_return": {
+      "fake_physical_calls": {
+        "reflection": 0,
+        "solver": 100
+      },
+      "ledger": {
+        "cache_hits": 400,
+        "failed_provider_attempts": 0,
+        "input_tokens": 1100,
+        "logical_calls": 500,
+        "output_tokens": 500,
+        "provider_attempts": 100,
+        "successful_provider_calls": 100,
+        "total_tokens": 1600
+      },
+      "roles": {
+        "solver": {
+          "cache_hits": 400,
+          "input_tokens": 1100,
+          "output_tokens": 500,
+          "provider_attempts": 100,
+          "successful_provider_calls": 100,
+          "total_tokens": 1600
+        }
+      },
+      "stages": {
+        "initialization": {
+          "cache_hits": 400,
+          "input_tokens": 1100,
+          "output_tokens": 500,
+          "provider_attempts": 100,
+          "successful_provider_calls": 100,
+          "total_tokens": 1600
+        }
+      }
+    }
+  },
+  "gate": "PASS"
+}
