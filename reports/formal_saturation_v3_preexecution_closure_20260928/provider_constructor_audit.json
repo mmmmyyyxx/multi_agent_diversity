@@ -1,0 +1,17 @@
+{
+  "active_reflection_path": "ProviderClientFactory.create",
+  "active_solver_path": "ProviderClientFactory.from_environment",
+  "evaluator_separate_client_reached": false,
+  "gate": "PASS",
+  "layer2_constructor_counts": {
+    "create": 1,
+    "from_environment": 1
+  },
+  "native_constructor_counts": {
+    "create": 1,
+    "from_environment": 1
+  },
+  "other_active_direct_sdk_constructors": 0,
+  "reflection_fake_sentinel_asserted": true,
+  "solver_fake_sentinel_asserted": true
+}

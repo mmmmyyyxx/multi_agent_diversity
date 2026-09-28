@@ -1,0 +1,119 @@
+{
+  "commit_interrupted_partial_epoch_not_counted_as_no_update": true,
+  "commit_restart_trajectory": [
+    {
+      "backend_termination_reason": null,
+      "committed": true,
+      "epoch_end_reason": "TEAM_COMMIT",
+      "index": 1,
+      "kind": "TEAM_OPPORTUNITY",
+      "local_no_update_counter": null,
+      "stop_reason": null,
+      "team_no_update_counter": 0
+    }
+  ],
+  "empty_eligible_set": [],
+  "no_commit_epoch_trajectory": [
+    {
+      "backend_termination_reason": null,
+      "committed": false,
+      "epoch_end_reason": null,
+      "index": 1,
+      "kind": "TEAM_OPPORTUNITY",
+      "local_no_update_counter": null,
+      "stop_reason": null,
+      "team_no_update_counter": 0
+    },
+    {
+      "backend_termination_reason": null,
+      "committed": false,
+      "epoch_end_reason": null,
+      "index": 2,
+      "kind": "TEAM_OPPORTUNITY",
+      "local_no_update_counter": null,
+      "stop_reason": null,
+      "team_no_update_counter": 0
+    },
+    {
+      "backend_termination_reason": null,
+      "committed": false,
+      "epoch_end_reason": null,
+      "index": 3,
+      "kind": "TEAM_OPPORTUNITY",
+      "local_no_update_counter": null,
+      "stop_reason": null,
+      "team_no_update_counter": 0
+    },
+    {
+      "backend_termination_reason": null,
+      "committed": false,
+      "epoch_end_reason": null,
+      "index": 4,
+      "kind": "TEAM_OPPORTUNITY",
+      "local_no_update_counter": null,
+      "stop_reason": null,
+      "team_no_update_counter": 0
+    },
+    {
+      "backend_termination_reason": null,
+      "committed": false,
+      "epoch_end_reason": "COVERAGE_COMPLETE_NO_COMMIT",
+      "index": 5,
+      "kind": "TEAM_OPPORTUNITY",
+      "local_no_update_counter": null,
+      "stop_reason": null,
+      "team_no_update_counter": 1
+    },
+    {
+      "backend_termination_reason": null,
+      "committed": false,
+      "epoch_end_reason": null,
+      "index": 6,
+      "kind": "TEAM_OPPORTUNITY",
+      "local_no_update_counter": null,
+      "stop_reason": null,
+      "team_no_update_counter": 1
+    },
+    {
+      "backend_termination_reason": null,
+      "committed": false,
+      "epoch_end_reason": null,
+      "index": 7,
+      "kind": "TEAM_OPPORTUNITY",
+      "local_no_update_counter": null,
+      "stop_reason": null,
+      "team_no_update_counter": 1
+    },
+    {
+      "backend_termination_reason": null,
+      "committed": false,
+      "epoch_end_reason": null,
+      "index": 8,
+      "kind": "TEAM_OPPORTUNITY",
+      "local_no_update_counter": null,
+      "stop_reason": null,
+      "team_no_update_counter": 1
+    },
+    {
+      "backend_termination_reason": null,
+      "committed": false,
+      "epoch_end_reason": null,
+      "index": 9,
+      "kind": "TEAM_OPPORTUNITY",
+      "local_no_update_counter": null,
+      "stop_reason": null,
+      "team_no_update_counter": 1
+    },
+    {
+      "backend_termination_reason": null,
+      "committed": false,
+      "epoch_end_reason": "COVERAGE_COMPLETE_NO_COMMIT",
+      "index": 10,
+      "kind": "TEAM_OPPORTUNITY",
+      "local_no_update_counter": null,
+      "stop_reason": "SATURATION_REACHED",
+      "team_no_update_counter": 2
+    }
+  ],
+  "parent_state_scoped": true
+}

@@ -1,0 +1,7 @@
+{
+  "cases": 113,
+  "each_active_source_byte_poison_aborted_pre_provider": true,
+  "fake_provider_constructions": 0,
+  "gate": "PASS",
+  "network_attempts": 0
+}

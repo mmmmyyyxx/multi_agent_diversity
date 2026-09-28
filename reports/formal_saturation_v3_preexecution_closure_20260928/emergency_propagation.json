@@ -1,0 +1,249 @@
+{
+  "layer2_local_emergency": {
+    "case": "layer2_local_emergency",
+    "events": [],
+    "evidence": [
+      {
+        "delivery_not_reached_due_to_emergency": true,
+        "responsibility_scheduled_count": 36,
+        "update_index": 0
+      }
+    ],
+    "fake_physical_calls": {
+      "reflection": 0,
+      "solver": 100
+    },
+    "ledger": {
+      "cache_hits": 400,
+      "failed_provider_attempts": 0,
+      "input_tokens": 1100,
+      "logical_calls": 500,
+      "output_tokens": 500,
+      "provider_attempts": 100,
+      "successful_provider_calls": 100,
+      "total_tokens": 1600
+    },
+    "provider_constructor_calls": {
+      "create": 0,
+      "from_environment": 1
+    },
+    "roles": {
+      "solver": {
+        "cache_hits": 400,
+        "input_tokens": 1100,
+        "output_tokens": 500,
+        "provider_attempts": 100,
+        "successful_provider_calls": 100,
+        "total_tokens": 1600
+      }
+    },
+    "stages": {
+      "initialization": {
+        "cache_hits": 400,
+        "input_tokens": 1100,
+        "output_tokens": 500,
+        "provider_attempts": 100,
+        "successful_provider_calls": 100,
+        "total_tokens": 1600
+      }
+    },
+    "stop_reason": "EMERGENCY_OPTIMIZER_STEP_CEILING",
+    "test50_calls": 0,
+    "validation50_calls": 0
+  },
+  "native_optimizer_emergency": {
+    "case": "native_optimizer_emergency",
+    "events": [
+      {
+        "backend_termination_reason": "EMERGENCY_OPTIMIZER_STEP_CEILING",
+        "committed": false,
+        "epoch_end_reason": null,
+        "index": 1,
+        "kind": "LOCAL_OPTIMIZATION",
+        "local_no_update_counter": 0,
+        "stop_reason": "EMERGENCY_OPTIMIZER_STEP_CEILING",
+        "team_no_update_counter": null
+      }
+    ],
+    "evidence": [],
+    "fake_physical_calls": {
+      "reflection": 1,
+      "solver": 103
+    },
+    "ledger": {
+      "cache_hits": 428,
+      "failed_provider_attempts": 0,
+      "input_tokens": 1144,
+      "logical_calls": 532,
+      "output_tokens": 520,
+      "provider_attempts": 104,
+      "successful_provider_calls": 104,
+      "total_tokens": 1664
+    },
+    "provider_constructor_calls": {
+      "create": 1,
+      "from_environment": 1
+    },
+    "roles": {
+      "reflection": {
+        "cache_hits": 0,
+        "input_tokens": 11,
+        "output_tokens": 5,
+        "provider_attempts": 1,
+        "successful_provider_calls": 1,
+        "total_tokens": 16
+      },
+      "solver": {
+        "cache_hits": 428,
+        "input_tokens": 1133,
+        "output_tokens": 515,
+        "provider_attempts": 103,
+        "successful_provider_calls": 103,
+        "total_tokens": 1648
+      }
+    },
+    "stages": {
+      "initialization": {
+        "cache_hits": 400,
+        "input_tokens": 1100,
+        "output_tokens": 500,
+        "provider_attempts": 100,
+        "successful_provider_calls": 100,
+        "total_tokens": 1600
+      },
+      "local_optimizer_reflection": {
+        "cache_hits": 0,
+        "input_tokens": 11,
+        "output_tokens": 5,
+        "provider_attempts": 1,
+        "successful_provider_calls": 1,
+        "total_tokens": 16
+      },
+      "local_optimizer_solver_eval": {
+        "cache_hits": 28,
+        "input_tokens": 33,
+        "output_tokens": 15,
+        "provider_attempts": 3,
+        "successful_provider_calls": 3,
+        "total_tokens": 48
+      }
+    },
+    "stop_reason": "EMERGENCY_OPTIMIZER_STEP_CEILING",
+    "test50_calls": 0,
+    "validation50_calls": 0
+  },
+  "native_provider_emergency": {
+    "case": "native_provider_emergency",
+    "events": [
+      {
+        "backend_termination_reason": "pre_native_durable_ceiling",
+        "committed": false,
+        "epoch_end_reason": null,
+        "index": 1,
+        "kind": "LOCAL_OPTIMIZATION",
+        "local_no_update_counter": null,
+        "stop_reason": "EMERGENCY_PROVIDER_CALL_CEILING",
+        "team_no_update_counter": null
+      }
+    ],
+    "evidence": [],
+    "fake_physical_calls": {
+      "reflection": 0,
+      "solver": 100
+    },
+    "ledger": {
+      "cache_hits": 400,
+      "failed_provider_attempts": 0,
+      "input_tokens": 1100,
+      "logical_calls": 500,
+      "output_tokens": 500,
+      "provider_attempts": 100,
+      "successful_provider_calls": 100,
+      "total_tokens": 1600
+    },
+    "provider_constructor_calls": {
+      "create": 0,
+      "from_environment": 1
+    },
+    "roles": {
+      "solver": {
+        "cache_hits": 400,
+        "input_tokens": 1100,
+        "output_tokens": 500,
+        "provider_attempts": 100,
+        "successful_provider_calls": 100,
+        "total_tokens": 1600
+      }
+    },
+    "stages": {
+      "initialization": {
+        "cache_hits": 400,
+        "input_tokens": 1100,
+        "output_tokens": 500,
+        "provider_attempts": 100,
+        "successful_provider_calls": 100,
+        "total_tokens": 1600
+      }
+    },
+    "stop_reason": "EMERGENCY_PROVIDER_CALL_CEILING",
+    "test50_calls": 0,
+    "validation50_calls": 0
+  },
+  "native_unexpected_return": {
+    "case": "native_unexpected_return",
+    "events": [
+      {
+        "backend_termination_reason": "UNEXPECTED_BACKEND_RETURN",
+        "committed": false,
+        "epoch_end_reason": null,
+        "index": 1,
+        "kind": "LOCAL_OPTIMIZATION",
+        "local_no_update_counter": null,
+        "stop_reason": "OPERATIONAL_ABORT",
+        "team_no_update_counter": null
+      }
+    ],
+    "evidence": [],
+    "fake_physical_calls": {
+      "reflection": 0,
+      "solver": 100
+    },
+    "ledger": {
+      "cache_hits": 400,
+      "failed_provider_attempts": 0,
+      "input_tokens": 1100,
+      "logical_calls": 500,
+      "output_tokens": 500,
+      "provider_attempts": 100,
+      "successful_provider_calls": 100,
+      "total_tokens": 1600
+    },
+    "provider_constructor_calls": {
+      "create": 0,
+      "from_environment": 1
+    },
+    "roles": {
+      "solver": {
+        "cache_hits": 400,
+        "input_tokens": 1100,
+        "output_tokens": 500,
+        "provider_attempts": 100,
+        "successful_provider_calls": 100,
+        "total_tokens": 1600
+      }
+    },
+    "stages": {
+      "initialization": {
+        "cache_hits": 400,
+        "input_tokens": 1100,
+        "output_tokens": 500,
+        "provider_attempts": 100,
+        "successful_provider_calls": 100,
+        "total_tokens": 1600
+      }
+    },
+    "stop_reason": "OPERATIONAL_ABORT",
+    "test50_calls": 0,
+    "validation50_calls": 0
+  }
+}

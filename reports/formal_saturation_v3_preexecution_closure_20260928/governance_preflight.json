@@ -1,0 +1,19 @@
+{
+  "api_authorized": false,
+  "gate": "PASS_EXECUTION_GATED",
+  "local_no_update_patience": 3,
+  "provider_profile": "lwj",
+  "real_v4_prerequisite": "PENDING_SCIENTIFIC_VALIDITY",
+  "reflection_model": "qwen3.7-flash",
+  "seeds": [
+    80,
+    81,
+    82
+  ],
+  "solver_model": "qwen3-8b",
+  "solver_thinking": false,
+  "team_no_update_patience": 2,
+  "test50_calls": 0,
+  "validated_cells": 6,
+  "validation50_calls": 0
+}

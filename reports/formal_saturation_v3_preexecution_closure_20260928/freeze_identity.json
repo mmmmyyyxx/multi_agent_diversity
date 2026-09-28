@@ -1,0 +1,82 @@
+{
+  "authorization_consumed": false,
+  "cells": {
+    "gepa_saturation_comparison_v3_seed80_layer2_attempt1": {
+      "api_authorized": false,
+      "arm": "GEPA_LAYER2_V4",
+      "execution_source_sha": "92a89ff9b4edeb52032028b8439c5d05038308c0",
+      "preregistration_sha256": "8fc42408ef0f97045e75e2312d98614e1da6f3dc3e7fbe2fbe368a0cbf03eb05",
+      "protocol_sha256": "a89a1c4892c0ed9c5dee343feef902e0ac83a4f2e0e97341cf0f067f5dda1fa4",
+      "real_v4_prerequisite": "PENDING_SCIENTIFIC_VALIDITY",
+      "run_identity_sha256": "a1928ab0fce2aea5609e58819fcbbbf28dc86d681a2eb0377e6f6585f0d815ff",
+      "seed": 80,
+      "source_file_count": 113,
+      "source_manifest_sha256": "6e5e8d99e8a4082c0c4aa5db7d2d594a4c8e35640717c1d0cb22e2d0cdff6265"
+    },
+    "gepa_saturation_comparison_v3_seed80_native_attempt1": {
+      "api_authorized": false,
+      "arm": "GEPA_NATIVE",
+      "execution_source_sha": "92a89ff9b4edeb52032028b8439c5d05038308c0",
+      "preregistration_sha256": "5a5cf3984e5769e8852b12fae53daa7f7030f7763a09e88dc6404c2e012e5b28",
+      "protocol_sha256": "4673c3d08cf0c07568cb258e7b0876c34e76d3e6c0cf5572ddbfdea6df520bde",
+      "real_v4_prerequisite": "PENDING_SCIENTIFIC_VALIDITY",
+      "run_identity_sha256": "6860e2ac994dce9d28de2036f83211c5345d38d75e874aa501513e7ced11d540",
+      "seed": 80,
+      "source_file_count": 113,
+      "source_manifest_sha256": "6e5e8d99e8a4082c0c4aa5db7d2d594a4c8e35640717c1d0cb22e2d0cdff6265"
+    },
+    "gepa_saturation_comparison_v3_seed81_layer2_attempt1": {
+      "api_authorized": false,
+      "arm": "GEPA_LAYER2_V4",
+      "execution_source_sha": "92a89ff9b4edeb52032028b8439c5d05038308c0",
+      "preregistration_sha256": "6bad2c316b9775d0fa867af6b579a65bec84bfdd8d9baa74edc92c84c24ce0f2",
+      "protocol_sha256": "64862e98477b3966467219dd2879439b51fade4ac5c6c749da462c1857c7c538",
+      "real_v4_prerequisite": "PENDING_SCIENTIFIC_VALIDITY",
+      "run_identity_sha256": "893e41b40601f973d46a1dbfd5e761302913fb75869e61354473c403c4d75b45",
+      "seed": 81,
+      "source_file_count": 113,
+      "source_manifest_sha256": "6e5e8d99e8a4082c0c4aa5db7d2d594a4c8e35640717c1d0cb22e2d0cdff6265"
+    },
+    "gepa_saturation_comparison_v3_seed81_native_attempt1": {
+      "api_authorized": false,
+      "arm": "GEPA_NATIVE",
+      "execution_source_sha": "92a89ff9b4edeb52032028b8439c5d05038308c0",
+      "preregistration_sha256": "abb7f3fa7b515bbc30d35ef7b550ee89f7e03f52e59e4a61b2d99d29cca3f550",
+      "protocol_sha256": "b8d33ad32cde880df167a31ace093618ac79d4dfd7a67a421df9917da0f4fab8",
+      "real_v4_prerequisite": "PENDING_SCIENTIFIC_VALIDITY",
+      "run_identity_sha256": "a3d21fb5272544387d32c5690f25642c40779a0169941c3c0b3f54cb065c0edd",
+      "seed": 81,
+      "source_file_count": 113,
+      "source_manifest_sha256": "6e5e8d99e8a4082c0c4aa5db7d2d594a4c8e35640717c1d0cb22e2d0cdff6265"
+    },
+    "gepa_saturation_comparison_v3_seed82_layer2_attempt1": {
+      "api_authorized": false,
+      "arm": "GEPA_LAYER2_V4",
+      "execution_source_sha": "92a89ff9b4edeb52032028b8439c5d05038308c0",
+      "preregistration_sha256": "e5bb14ce72590f3345205367f1fb53167f7755bdc8c3f81c1cfec2904918e2bf",
+      "protocol_sha256": "37edf98f4cc176cb53d16c0d3e54eced3b4f46127c42dc2698feae5753221026",
+      "real_v4_prerequisite": "PENDING_SCIENTIFIC_VALIDITY",
+      "run_identity_sha256": "c70ec2538c71aa8d13ae8cf25d81012cdd4c108a252cb7b21db612269cbbec7a",
+      "seed": 82,
+      "source_file_count": 113,
+      "source_manifest_sha256": "6e5e8d99e8a4082c0c4aa5db7d2d594a4c8e35640717c1d0cb22e2d0cdff6265"
+    },
+    "gepa_saturation_comparison_v3_seed82_native_attempt1": {
+      "api_authorized": false,
+      "arm": "GEPA_NATIVE",
+      "execution_source_sha": "92a89ff9b4edeb52032028b8439c5d05038308c0",
+      "preregistration_sha256": "256ba1c592ef0401ced343eb93fa911b81f949d11c729c6133ad3f7a8586deb9",
+      "protocol_sha256": "68e1ad6a8e0131f92fd4f0ac0fc7d69f0982d7f1ae9289cf922dac4407b772ae",
+      "real_v4_prerequisite": "PENDING_SCIENTIFIC_VALIDITY",
+      "run_identity_sha256": "e33a685265cfcfadbae4e3e28f1fdc933dc4f45264372136d38c56777f8c1f10",
+      "seed": 82,
+      "source_file_count": 113,
+      "source_manifest_sha256": "6e5e8d99e8a4082c0c4aa5db7d2d594a4c8e35640717c1d0cb22e2d0cdff6265"
+    }
+  },
+  "deterministic_artifacts": 42,
+  "execution_source_sha": "92a89ff9b4edeb52032028b8439c5d05038308c0",
+  "prep_replay_identical": true,
+  "successor_id": "gepa_saturation_comparison_v3",
+  "supersedes_unexecuted": "gepa_saturation_comparison_v2"
+}
