@@ -50,6 +50,7 @@ from .team_search.task_builder import Layer2EvidenceRequestBuilder
 from .team_search.v4_opportunity import V4NoFeasibleOpportunity, select_v4_feasible_opportunity
 from .versions import (
     LAYER2_TEAM_SEARCH_PROTOCOL_V4_VERSION,
+    LAYER2_TARGET_FEASIBILITY_POLICY_V4_VERSION,
     PRIMARY_RESPONSIBILITY_FEASIBILITY_VERSION,
 )
 
@@ -280,7 +281,10 @@ async def execute_formal_gepa_saturation(
     transition_store = LatestTransitionStore()
     task_builder = Layer2EvidenceRequestBuilder(bounded_search_view=True)
     assignment = {"current": None, "parent_hash": None, "decision": None, "update": 0}
+    feasibility_trace: list[dict[str, Any]] = []
     evidence_trace: list[dict[str, Any]] = []
+    candidate_diagnostics: list[dict[str, Any]] = []
+    transition_trace: list[dict[str, Any]] = []
 
     class CurrentAssignment:
         def assign(self, request):
@@ -322,21 +326,75 @@ async def execute_formal_gepa_saturation(
             snapshot=snapshot, scheduler=scheduler, factory=factory,
             task_builder=task_builder, request=request,
         )
+        raw_order = sorted(selected.raw_decision.summaries,
+                           key=lambda row: (-row.target_score, row.member_id))
+        eligible_order = [
+            row for row in raw_order
+            if not isinstance(selected, V4NoFeasibleOpportunity)
+            and row.member_id in selected.eligible_member_ids
+        ]
+        feasibility_reasons = dict(selected.feasibility_reasons)
+        feasibility_trace.append({
+            "update_index": update,
+            "parent_team_hash": parent_hash,
+            "policy_version": LAYER2_TARGET_FEASIBILITY_POLICY_V4_VERSION,
+            "members": [{
+                "member_id": row.member_id,
+                "direct_count": row.direct_count,
+                "near_margin_count": row.near_margin_count,
+                "coverage_count": row.coverage_count,
+                "raw_V": row.primary_score,
+                "failure_count": row.failure_count,
+                "raw_target_score": row.target_score,
+                "primary_lane": row.primary_lane,
+                "feasibility_reason": feasibility_reasons[row.member_id],
+                "raw_rank": raw_order.index(row) + 1,
+                "feasible_rank": (eligible_order.index(row) + 1 if row in eligible_order else None),
+            } for row in selected.raw_decision.summaries],
+            "selected_member": eligible_order[0].member_id if eligible_order else None,
+            "eligible_member_ids": [row.member_id for row in eligible_order],
+            "latest_transition_effect_hash_by_member": {
+                str(member_id): (
+                    transition_store.get(member_id).transition_effect_hash
+                    if transition_store.get(member_id) is not None else None
+                ) for member_id in range(5)
+            },
+        })
         if isinstance(selected, V4NoFeasibleOpportunity):
             raise ExperimentEarlyStop("NO_FEASIBLE_LAYER2_OPPORTUNITY")
         assignment.update(current=selected.assignment, parent_hash=parent_hash,
                           decision=selected.decision)
         packet = selected.packet
+        target = selected.decision.selected_member_ids[0]
+        raw_summary = next(row for row in selected.raw_decision.summaries
+                           if row.member_id == target)
         evidence_trace.append({
             "update_index": update, "parent_team_hash": parent_hash,
-            "target_member": selected.decision.selected_member_ids[0],
-            "raw_V": packet.responsibility_value,
-            "responsibility_universe": dict(packet.provenance),
-            "responsibility_scheduled_ids": [row.example_id for row in packet.responsibility_examples],
+            "target_member": target,
+            "raw_V": raw_summary.primary_score,
+            "assignment_V": selected.assignment.responsibility_value,
+            "packet_V": packet.responsibility_value,
+            "responsibility_universe": {
+                key: value for key, value in packet.provenance
+                if key.startswith("responsibility_universe_")
+            },
+            "responsibility_scheduled": {
+                "ids": [row.example_id for row in packet.responsibility_examples],
+                "count": len(packet.responsibility_examples),
+            },
+            "responsibility_scheduled_ids": [
+                row.example_id for row in packet.responsibility_examples
+            ],
             "focus_ids": [row.example_id for row in packet.focus_examples],
             "anchor_ids": [row.example_id for row in packet.anchor_examples],
             "nominal_schedule": [list(batch) for batch in packet.ordered_batch_schedule],
+            "team_minibatch_ids": list(selected.assignment.local_validation_example_ids),
+            "local_eval_ids": [row.example_id for row in packet.local_eval_examples],
             "packet_hash": packet.packet_hash,
+            "latest_transition_effect_hash": (
+                packet.latest_transition.transition_effect_hash
+                if packet.latest_transition is not None else None
+            ),
         })
         return Layer2Opportunity(request, eligible_member_ids=selected.eligible_member_ids)
 
@@ -348,12 +406,65 @@ async def execute_formal_gepa_saturation(
         )
         local_telemetry = outcome.audit_metadata.get("local_optimizer_telemetry", {})
         evidence_trace[-1]["evidence_delivered"] = {
-            key: local_telemetry.get(key) for key in (
-                "delivered_batch_ids", "evidence_delivered_role_item_ids",
-                "evidence_delivered_source_ids", "scheduled_but_not_delivered_role_item_count",
-            )
+            "batch_ids": local_telemetry.get("delivered_batch_ids"),
+            "role_item_ids": local_telemetry.get("evidence_delivered_role_item_ids"),
+            "source_ids": local_telemetry.get("evidence_delivered_source_ids"),
+            "scheduled_but_not_delivered_count": local_telemetry.get(
+                "scheduled_but_not_delivered_role_item_count"
+            ),
         }
-        evidence_trace[-1]["successor_team_hash"] = system.team_prompt_state_hash()
+        candidates = {
+            row.local_candidate.candidate_id: row.local_candidate
+            for row in outcome.candidates
+        }
+        for row in outcome.audit_metadata.get("transfer_diagnostic", ()):
+            candidate = candidates[row["candidate_id"]]
+            diagnostic = dict(row)
+            diagnostic["candidate_hash"] = hashlib.sha256(
+                candidate.prompt.encode("utf-8")
+            ).hexdigest()
+            diagnostic["generation"] = candidate.generation
+            diagnostic["shadow_gate"] = next((
+                dict(event) for event in evaluator.shadow_events
+                if event["update_index"] == index - 1
+                and event["candidate_id"] == candidate.candidate_id
+            ), None)
+            candidate_diagnostics.append(diagnostic)
+        parent_hash = evidence_trace[-1]["parent_team_hash"]
+        successor_hash = system.team_prompt_state_hash()
+        committed_id = outcome.committed_candidate_id
+        committed_member = outcome.audit_metadata.get("committed_member_id")
+        transition = (
+            transition_store.get(committed_member)
+            if committed_member is not None else None
+        )
+        if committed_id is None:
+            if successor_hash != parent_hash or committed_member is not None:
+                raise RuntimeError("formal state changed without commit")
+        elif (successor_hash == parent_hash or transition is None
+              or committed_id not in candidates):
+            raise RuntimeError("formal commit lacks successor transition")
+        committed_hash = (
+            hashlib.sha256(candidates[committed_id].prompt.encode("utf-8")).hexdigest()
+            if committed_id is not None else None
+        )
+        if (transition is not None and transition.child_candidate_hash
+                != system.prompt_hash(candidates[committed_id].prompt)):
+            raise RuntimeError("formal committed candidate transition mismatch")
+        transition_trace.append({
+            "update_index": index - 1,
+            "parent_team_hash": parent_hash,
+            "selected_member": outcome.assignment.target_member,
+            "committed_candidate_id": committed_id,
+            "committed_candidate_hash": committed_hash,
+            "committed_member_id": committed_member,
+            "successor_team_hash": successor_hash,
+            "candidate_transition": (
+                dict(transition.sanitized_payload()) if transition is not None else None
+            ),
+        })
+        evidence_trace[-1]["committed_candidate_id"] = committed_id
+        evidence_trace[-1]["successor_team_hash"] = successor_hash
         return None
 
     def controller_factory(bound_backend):
@@ -386,7 +497,10 @@ async def execute_formal_gepa_saturation(
         "final_team_hash": result.final_state_hash,
         "stop_reason": result.stop_reason,
         "events": [event.__dict__ for event in result.events],
+        "feasibility_trace": feasibility_trace,
         "evidence_view_trace": evidence_trace,
+        "candidate_diagnostics": candidate_diagnostics,
+        "transition_trace": transition_trace,
         "commits": sum(outcome.committed_candidate_id is not None for outcome in result.team_outcomes),
         "ledger": ledger_summary(run_root / "ledger.jsonl"),
         "validation50_calls": 0, "test50_calls": 0,

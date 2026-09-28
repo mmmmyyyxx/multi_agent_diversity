@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import copy
 import csv
 from dataclasses import replace
 import hashlib
@@ -15,6 +16,7 @@ import pytest
 
 from multi_dataset_diverse_rl.governance.production_execution import ValidatedExecutionContext
 from multi_dataset_diverse_rl.production_formal_saturation import execute_formal_gepa_saturation
+from multi_dataset_diverse_rl.formal_trajectory import derive_formal_trajectory_records
 from multi_dataset_diverse_rl.provider_factory import ProviderClientFactory
 from multi_dataset_diverse_rl.local_optimizers.gepa_optimizer import GEPALocalPromptOptimizer
 from multi_dataset_diverse_rl.local_optimizers.schemas import (
@@ -305,6 +307,7 @@ def test_formal_v3_layer2_no_feasible_is_scientific_zero_opportunity_delta(tmp_p
     assert calls["reflection"] == 0
     assert result["ledger"]["provider_attempts"] == 100
     assert result["ledger"]["cache_hits"] == 400
+    assert derive_formal_trajectory_records(result)[0]["record_type"] == "LAYER2_NO_FEASIBLE_STOP"
     _assert_success_ledger(permit, calls)
     _capture_case("layer2_no_feasible", permit, calls, result)
     assert result["validation50_calls"] == result["test50_calls"] == 0
@@ -407,6 +410,7 @@ def test_formal_v3_native_reaches_factual_local_saturation(tmp_path, monkeypatch
     assert calls["reflection"] > 0
     assert calls["from_environment"] == 1 and calls["create"] == 1
     assert result["ledger"]["provider_attempts"] == calls["solver"] + calls["reflection"]
+    assert derive_formal_trajectory_records(result)[0]["record_type"] == "NATIVE_OPTIMIZATION_UNIT"
     _assert_success_ledger(permit, calls)
     _capture_case("native_saturation", permit, calls, result)
     assert result["validation50_calls"] == result["test50_calls"] == 0
@@ -425,6 +429,12 @@ def test_formal_v3_layer2_reaches_factual_team_saturation(tmp_path, monkeypatch)
     assert all(row["responsibility_universe_count"] >= row["responsibility_scheduled_count"]
                and row["nominal_role_item_slots"] <= 36 for row in evidence)
     assert all(row["scheduled_but_not_delivered_count"] >= 0 for row in evidence)
+    trace = derive_formal_trajectory_records(result)
+    assert len([row for row in trace if row["record_type"] == "LAYER2_OPPORTUNITY"]) == len(result["events"])
+    corrupted = copy.deepcopy(result)
+    corrupted["evidence_view_trace"][0]["packet_V"] += 1
+    with pytest.raises(ValueError, match="packet identity"):
+        derive_formal_trajectory_records(corrupted)
     assert calls["reflection"] > 0
     assert calls["from_environment"] == 1 and calls["create"] == 1
     assert result["ledger"]["provider_attempts"] == calls["solver"] + calls["reflection"]
@@ -474,6 +484,10 @@ def test_formal_v3_layer2_local_positive_minibatch_rejects_with_read_only_full(t
     assert "team_full_eval" not in phases and "team_shadow_eval" not in phases
     assert result["ledger"] == summary
     assert result["ledger"]["provider_attempts"] == calls["solver"] + calls["reflection"]
+    trace = derive_formal_trajectory_records(result)
+    rejected = [row for row in trace if row["record_type"] == "LOCAL_ACCEPTED_CANDIDATE"]
+    assert rejected and all(row["full"]["diagnostic_only"] for row in rejected)
+    assert all(row["ordinary_common_safe"] == "NOT_REACHED" for row in rejected)
     _capture_case("layer2_minibatch_rejection", permit, calls, result)
     assert result["validation50_calls"] == result["test50_calls"] == 0
 
@@ -541,6 +555,10 @@ def test_formal_v3_layer2_successful_commit_restarts_from_successor(tmp_path, mo
     assert first["telemetry"]["epoch_end_reason"] == "TEAM_COMMIT"
     assert first["telemetry"]["saturation"]["team_no_update_counter"] == 0
     assert first["state_hash"] != result["initial_team_hash"]
+    trace = derive_formal_trajectory_records(result)
+    committed = [row for row in trace if row["record_type"] == "LAYER2_OPPORTUNITY"
+                 and row["transition"]["committed_candidate_id"] is not None]
+    assert committed and committed[0]["transition"]["candidate_transition"] is not None
     if first_commit + 1 < len(result["events"]):
         assert result["events"][first_commit + 1]["request_identity"] != first["request_identity"]
     _capture_case("layer2_commit_restart", permit, calls, result)
