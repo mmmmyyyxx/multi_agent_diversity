@@ -80,7 +80,7 @@ class TeamSearchController:
         self.diagnostic_allow_multi_accepted = diagnostic_allow_multi_accepted
 
     def _validate_diagnostic_local_result(self, local: LocalOptimizationResult) -> None:
-        """Fail before team evaluation when GEPA's accepted sample is censored."""
+        """Validate returned strict-positive candidates before team evaluation."""
         telemetry = (
             local.optimizer_state.payload.get("telemetry", {})
             if local.optimizer_state is not None else {}

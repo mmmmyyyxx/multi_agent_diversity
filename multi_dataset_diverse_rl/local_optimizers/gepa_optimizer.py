@@ -508,6 +508,13 @@ class GEPALocalPromptOptimizer:
             "budget_capacity": budget_capacity,
             "telemetry": {
                 "proposal_attempts": callback.proposal_count,
+                "accepted_event_indices": [int(row["candidate_index"]) for row in accepted_events],
+                "accepted_event_iterations": [int(row["iteration"]) for row in accepted_events],
+                "frontier_candidate_indices": frontier,
+                "changed_frontier_indices": changed_frontier,
+                "valid_unique_frontier_indices": ranked,
+                "returned_candidate_indices": chosen,
+                "returned_candidate_count": len(chosen),
                 "all_scores_perfect_skips": sum(
                     row["reason"] == "all_scores_perfect" for row in skipped_events
                 ),

@@ -23,6 +23,7 @@ from .governance.freeze_hash import source_freeze_sha256
 from .governance.production_execution import ValidatedExecutionContext, mark_provider_client_constructed
 from .local_optimizers.gepa_native import GEPALayer2EvidenceOptimizer
 from .local_optimizers.gepa_optimizer import GEPALocalPromptOptimizer, local_gepa_budget_capacity
+from .governance import v4_attempt3_contract as attempt3_contract
 from .local_optimizers.production_backends import GEPABackend
 from .persistence.identity import build_run_identity
 from .persistence.durable_io import io_path
@@ -167,7 +168,17 @@ def _record_ordinary_scheduler_outcome(
     )
 
 
-def _diagnostic_stop_reason(accepted_total: int, proposal_total: int) -> str | None:
+def _diagnostic_stop_reason(accepted_total: int, proposal_total: int, *, attempt3: bool = False) -> str | None:
+    if attempt3:
+        if proposal_total > attempt3_contract.PROPOSAL_CEILING:
+            raise RuntimeError("diagnostic proposal ceiling overshoot")
+        if accepted_total >= attempt3_contract.SAMPLE_TARGET:
+            return "RETURNED_CANDIDATE_TARGET_REACHED"
+        if proposal_total == attempt3_contract.PROPOSAL_CEILING:
+            return "REFLECTION_PROPOSAL_CEILING_REACHED"
+        if proposal_total + attempt3_contract.MAX_PROPOSALS_PER_OPPORTUNITY > attempt3_contract.PROPOSAL_CEILING:
+            return "REFLECTION_PROPOSAL_PREOPPORTUNITY_GUARD"
+        return None
     if accepted_total > 5 or proposal_total > 20:
         raise RuntimeError("diagnostic accepted/proposal ceiling overshoot")
     if accepted_total == 5:
@@ -202,6 +213,7 @@ async def execute_online_transfer_diagnostic(
     manifest = json.loads((prep / "manifest.json").read_text(encoding="utf-8"))
     spec = experiment_spec_from_mapping(manifest["scientific"])
     protocol = json.loads((prep / "protocol.json").read_text(encoding="utf-8"))
+    attempt3 = permit.attempt_id == "gepa_layer2_local_to_team_transfer_diagnostic_v4_seed81_attempt3"
     if (
         permit.experiment_id not in {
             "gepa_layer2_local_to_team_transfer_diagnostic_v2",
@@ -211,7 +223,7 @@ async def execute_online_transfer_diagnostic(
         or permit.allowed_phase != "diagnostic"
         or spec.mode_id != "GEPA_LAYER2"
         or spec.fixed_budget_units != 10
-        or protocol["accepted_mutation_target"] != 5
+        or (protocol.get("returned_candidate_target") if attempt3 else protocol.get("accepted_mutation_target")) != 5
         or protocol["reflection_proposal_ceiling"] != 20
     ):
         raise ValueError("online transfer diagnostic freeze mismatch")
@@ -247,12 +259,18 @@ async def execute_online_transfer_diagnostic(
         seed=runtime.seed, proposal_memory_mode="off", num_candidates_per_parent=2,
         candidate_eval_pool_size=100, eval_solver_call_concurrency=8,
         stage_b_candidate_budget=2, out_dir=str(run_root / "system"),
-        shared_solver_cache_path="", provider_call_budget=1200,
+        shared_solver_cache_path="", provider_call_budget=(
+            attempt3_contract.SUCCESSFUL_PROVIDER_CEILING if attempt3 else 1200
+        ),
         total_token_budget=100_000_000, final_test_enabled=False,
         preserve_final_checkpoint=True,
     )
     ledger = CappedDurableLedger(
-        run_root / "ledger.jsonl", successful_ceiling=1200, attempt_ceiling=4800,
+        run_root / "ledger.jsonl", successful_ceiling=(
+            attempt3_contract.SUCCESSFUL_PROVIDER_CEILING if attempt3 else 1200
+        ), attempt_ceiling=(
+            attempt3_contract.TRANSPORT_ATTEMPT_CEILING if attempt3 else 4800
+        ),
     )
     system = CommonContractExecutionSystem(
         cfg, arm="GEPA_LAYER2_ONLINE_TRANSFER_DIAGNOSTIC", ledger=ledger, raw_cache={},
@@ -306,6 +324,8 @@ async def execute_online_transfer_diagnostic(
     )
     decision = None
     accepted_total = proposal_total = 0
+    internal_accepted_total = 0
+    local_boundary_trace: list[dict[str, Any]] = []
     parent_sequence: list[str] = []
     opportunity_costs: list[dict[str, Any]] = []
     accepted_by_group: dict[tuple[str, int, str], dict[str, Any]] = {}
@@ -435,7 +455,7 @@ async def execute_online_transfer_diagnostic(
         )
 
     def observe(index: int, outcome) -> str | None:
-        nonlocal accepted_total, proposal_total
+        nonlocal accepted_total, proposal_total, internal_accepted_total
         if decision is None:
             raise RuntimeError("scheduler decision missing for online outcome")
         ledger_rows = _ledger_rows(run_root / "ledger.jsonl")
@@ -469,9 +489,36 @@ async def execute_online_transfer_diagnostic(
             }
             evidence_trace[-1]["committed_candidate_id"] = outcome.committed_candidate_id
             evidence_trace[-1]["successor_team_hash"] = system.team_prompt_state_hash()
-        accepted_total += int(telemetry["accepted_mutations"])
+        internal_accepted_total += int(telemetry["accepted_mutations"])
+        if attempt3:
+            returned_ids = [item.local_candidate.candidate_id for item in outcome.candidates]
+            returned_indices = telemetry.get("returned_candidate_indices")
+            accepted_indices = telemetry.get("accepted_event_indices")
+            if (not isinstance(returned_indices, list) or not isinstance(accepted_indices, list)
+                    or len(returned_indices) != len(returned_ids)
+                    or len(accepted_indices) != int(telemetry["accepted_mutations"])
+                    or not set(returned_indices).issubset(set(accepted_indices))):
+                raise RuntimeError("diagnostic Layer1 return/acceptance telemetry mismatch")
+            local_boundary_trace.append({
+                "update_index": index - 1,
+                "accepted_event_indices": accepted_indices,
+                "accepted_event_iterations": telemetry.get("accepted_event_iterations", []),
+                "frontier_candidate_indices": telemetry.get("frontier_candidate_indices", []),
+                "changed_frontier_indices": telemetry.get("changed_frontier_indices", []),
+                "valid_unique_frontier_indices": telemetry.get("valid_unique_frontier_indices", []),
+                "returned_candidate_indices": returned_indices,
+                "returned_candidate_ids": returned_ids,
+                "internal_accepted_mutations": len(accepted_indices),
+                "returned_candidate_count": len(returned_ids),
+                "accepted_to_returned_retention": (
+                    len(returned_ids) / len(accepted_indices) if accepted_indices else None
+                ),
+            })
+            accepted_total += len(returned_ids)
+        else:
+            accepted_total += int(telemetry["accepted_mutations"])
         proposal_total += int(telemetry["proposal_attempts"])
-        return _diagnostic_stop_reason(accepted_total, proposal_total)
+        return _diagnostic_stop_reason(accepted_total, proposal_total, attempt3=attempt3)
 
     def controller_factory(bound_backend):
         return TeamSearchController(
@@ -484,6 +531,7 @@ async def execute_online_transfer_diagnostic(
                 transition_store=transition_store,
             ),
             diagnostic_full_for_local_accepts=True,
+            diagnostic_allow_multi_accepted=attempt3,
         )
 
     result = await run_experiment(
@@ -505,7 +553,7 @@ async def execute_online_transfer_diagnostic(
         != outcome.funnel["local_candidates"]
         for outcome in result.team_outcomes
     ):
-        raise RuntimeError("accepted mutation lacks mandatory diagnostic Full")
+        raise RuntimeError("sampled candidate lacks mandatory diagnostic Full")
     final_ledger_rows = _ledger_rows(run_root / "ledger.jsonl")
     if any(int(row.get("update_index", -2)) < -1 for row in final_ledger_rows):
         raise RuntimeError("diagnostic ledger has unassigned update index")
@@ -521,6 +569,7 @@ async def execute_online_transfer_diagnostic(
         raise RuntimeError("diagnostic ledger partition is incomplete")
     return {
         "experiment_id": permit.experiment_id,
+        "attempt_id": permit.attempt_id,
         "run_identity_sha256": permit.run_identity_sha256,
         "seed": runtime.seed,
         "initial_team_hash": initial_hash,
@@ -529,9 +578,18 @@ async def execute_online_transfer_diagnostic(
         "feasibility_trace": feasibility_trace,
         "evidence_view_trace": evidence_trace,
         "opportunities": len(result.team_outcomes),
-        "accepted_mutations": accepted_total,
+        "accepted_mutations": internal_accepted_total if attempt3 else accepted_total,
+        **({
+            "sample_unit": attempt3_contract.SAMPLE_UNIT,
+            "returned_candidate_count": accepted_total,
+            "internal_accepted_mutations": internal_accepted_total,
+            "accepted_to_returned_retention": (
+                accepted_total / internal_accepted_total if internal_accepted_total else None
+            ),
+            "local_boundary_trace": local_boundary_trace,
+        } if attempt3 else {}),
         "reflection_proposals": proposal_total,
-        "target_status": "TARGET_REACHED" if accepted_total == 5 else "TARGET_NOT_REACHED",
+        "target_status": "TARGET_REACHED" if accepted_total >= 5 else "TARGET_NOT_REACHED",
         "stop_reason": result.stop_reason,
         "candidate_diagnostics": rows,
         "stage_accounting": {

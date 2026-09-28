@@ -328,6 +328,65 @@ def test_changed_frontier_is_validated_and_deduplicated_before_top_k(tmp_path: P
     assert captured["seed_candidate"] == {"decision_procedure": task().parent_prompt}
 
 
+def test_internal_gepa_acceptance_can_exceed_layer1_returned_frontier(tmp_path: Path) -> None:
+    parent = task().parent_prompt
+    prompts = [
+        parent,
+        "Use semantic compatibility to resolve the referent in context.",
+        "Compare interpretations and choose the coherent referent in context.",
+    ]
+
+    class Result:
+        per_val_instance_best_candidates = {index: {0, 2} for index in range(3)}
+        val_aggregate_scores = [0.0, 0.5, 0.75]
+        candidates = [{"decision_procedure": prompt} for prompt in prompts]
+        num_candidates = 3
+        val_subscores = [{0: 0.0, 1: 0.0, 2: 0.0} for _ in prompts]
+        parents = [[None], [0], [0]]
+        discovery_eval_counts = [3, 12, 21]
+
+        @staticmethod
+        def to_dict():
+            return {"candidate_count": 3}
+
+    def optimize(**kwargs):
+        callback = kwargs["callbacks"][0]
+        for index in (1, 2):
+            callback.on_minibatch_sampled({
+                "iteration": index, "minibatch_ids": ["e0", "e1", "e2"],
+            })
+            callback.on_proposal_end({
+                "iteration": index,
+                "new_instructions": {"decision_procedure": prompts[index]},
+            })
+            callback.on_evaluation_end({
+                "iteration": index, "candidate_idx": 0, "scores": [0.0, 0.0, 0.0],
+            })
+            callback.on_evaluation_end({
+                "iteration": index, "candidate_idx": None, "scores": [1.0, 0.0, 0.0],
+            })
+            callback.on_candidate_accepted({
+                "iteration": index, "new_candidate_idx": index,
+                "new_score": 1.0, "parent_ids": [0],
+            })
+        return Result()
+
+    reflection = FakeReflection()
+    result = asyncio.run(GEPALocalPromptOptimizer(
+        evaluator=FakeLocalEvaluator(), reflection_lm=reflection,
+        accounting_reader=lambda: reflection.accounting,
+        run_root=tmp_path, optimize_fn=optimize,
+    ).optimize(task()))
+    assert len(result.candidates) == 1
+    assert result.candidates[0].backend_metadata["local_acceptance_delta"] == 1.0
+    assert result.optimizer_state is not None
+    telemetry = result.optimizer_state.payload["telemetry"]
+    assert telemetry["accepted_mutations"] == 2
+    assert telemetry["accepted_event_indices"] == [1, 2]
+    assert telemetry["frontier_candidate_indices"] == [0, 2]
+    assert telemetry["returned_candidate_indices"] == [2]
+
+
 def test_proposer_diagnostics_classify_four_illegal_proposal_types(tmp_path: Path) -> None:
     parent = "Use a generic decision procedure."
     copied = (

@@ -18,6 +18,10 @@ from multi_dataset_diverse_rl.persistence.durable_io import io_path, read_json  
 from multi_dataset_diverse_rl.production_transfer_diagnostic import (  # noqa: E402
     _candidate_stage_costs, _opportunity_costs, _usage,
 )
+from multi_dataset_diverse_rl.governance.v4_attempt3_contract import (  # noqa: E402
+    SAMPLE_UNIT, SAMPLE_TARGET, MAX_RETURNED_PER_OPPORTUNITY,
+    SUCCESSFUL_PROVIDER_CEILING, TRANSPORT_ATTEMPT_CEILING,
+)
 
 
 ALLOWED_LEDGER_PHASES = {
@@ -47,6 +51,7 @@ def _audit_complete(run_root: Path) -> dict[str, object]:
         "gepa_layer2_local_to_team_transfer_diagnostic_v4",
     }
     v4 = summary.get("experiment_id") == "gepa_layer2_local_to_team_transfer_diagnostic_v4"
+    attempt3 = summary.get("attempt_id") == "gepa_layer2_local_to_team_transfer_diagnostic_v4_seed81_attempt3"
     if lifecycle.get("status") != "EXECUTION_COMPLETE":
         failures.append("lifecycle")
     if summary.get("seed") != 81 or summary.get("validation50_calls") != 0 or summary.get("test50_calls") != 0:
@@ -60,15 +65,49 @@ def _audit_complete(run_root: Path) -> dict[str, object]:
     if any(row.get("postprocess_failed") or row.get("error_type") == "postprocess_failed"
            for row in ledger_rows):
         failures.append("provider_success_postprocess_failure")
-    if usage["successful_provider_calls"] > 1200 or usage["provider_attempts"] > 4800:
+    if (usage["successful_provider_calls"] > (SUCCESSFUL_PROVIDER_CEILING if attempt3 else 1200)
+            or usage["provider_attempts"] > (TRANSPORT_ATTEMPT_CEILING if attempt3 else 4800)):
         failures.append("emergency_ceiling")
     opportunities = int(summary["opportunities"])
     accepted = int(summary["accepted_mutations"])
+    sampled = int(summary["returned_candidate_count"]) if attempt3 else accepted
     proposals = int(summary["reflection_proposals"])
-    if not (0 <= opportunities <= 10 and 0 <= accepted <= 5 and 0 <= proposals <= 20):
+    if not (0 <= opportunities <= 10 and 0 <= sampled <= (8 if attempt3 else 5)
+            and 0 <= proposals <= 20):
         failures.append("sample_or_search_ceiling")
+    if attempt3 and (accepted < sampled or accepted > proposals):
+        failures.append("internal_returned_count_order")
+    if attempt3:
+        trace = summary.get("local_boundary_trace", ())
+        if (summary.get("sample_unit") != SAMPLE_UNIT
+                or summary.get("internal_accepted_mutations") != accepted
+                or summary.get("accepted_to_returned_retention") != (
+                    sampled / accepted if accepted else None
+                )
+                or len(trace) != opportunities
+                or sum(int(row.get("returned_candidate_count", -1)) for row in trace) != sampled
+                or sum(int(row.get("internal_accepted_mutations", -1)) for row in trace)
+                != summary.get("internal_accepted_mutations")):
+            failures.append("returned_boundary_accounting")
+        for item in trace:
+            returned = item.get("returned_candidate_indices", ())
+            accepted_indices = item.get("accepted_event_indices", ())
+            if (len(returned) > MAX_RETURNED_PER_OPPORTUNITY
+                    or len(returned) != len(item.get("returned_candidate_ids", ()))
+                    or not set(returned).issubset(set(accepted_indices))):
+                failures.append("returned_boundary_identity")
+        if any(
+            len(by_update_rows) != len(trace[index].get("returned_candidate_ids", ()))
+            or {str(row["candidate_id"]) for row in by_update_rows}
+            != set(trace[index].get("returned_candidate_ids", ()))
+            for index, by_update_rows in (
+                (index, [row for row in rows if int(row["update_index"]) == index])
+                for index in range(min(opportunities, len(trace)))
+            )
+        ):
+            failures.append("returned_candidate_full_evidence_partition")
     parents = summary["parent_sequence"]
-    if len(parents) != opportunities or len(rows) != accepted:
+    if len(parents) != opportunities or len(rows) != sampled:
         failures.append("parent_or_mandatory_full_count")
     if v4:
         feasibility = summary.get("feasibility_trace", ())
@@ -130,12 +169,16 @@ def _audit_complete(run_root: Path) -> dict[str, object]:
             for row in ledger_rows
         ):
             failures.append("stage_ledger_reconciliation")
-    by_update = {int(row["update_index"]): row for row in rows}
-    if len(by_update) != len(rows):
+    by_update: dict[int, list[dict[str, object]]] = {}
+    for row in rows:
+        by_update.setdefault(int(row["update_index"]), []).append(row)
+    if not attempt3 and any(len(group) != 1 for group in by_update.values()):
         failures.append("multiple_local_accepts_per_opportunity")
     for index in range(max(0, len(parents) - 1)):
-        candidate = by_update.get(index)
-        committed = bool(candidate and candidate.get("committed"))
+        group = by_update.get(index, ())
+        committed = any(bool(candidate.get("committed")) for candidate in group)
+        if attempt3 and sum(bool(candidate.get("committed")) for candidate in group) > 1:
+            failures.append("multiple_commits_per_opportunity")
         if (parents[index + 1] != parents[index]) != committed:
             failures.append("online_parent_transition")
     for row in rows:
@@ -170,7 +213,7 @@ def _audit_complete(run_root: Path) -> dict[str, object]:
             except (KeyError, TypeError, ValueError):
                 failures.append("candidate_stage_cost_incomplete")
     if summary.get("target_status") != (
-        "TARGET_REACHED" if accepted == 5 else "TARGET_NOT_REACHED"
+        "TARGET_REACHED" if sampled >= SAMPLE_TARGET else "TARGET_NOT_REACHED"
     ):
         failures.append("target_status")
     vote_counts = Counter(
@@ -188,6 +231,7 @@ def _audit_complete(run_root: Path) -> dict[str, object]:
         "failed_checks": sorted(set(failures)),
         "opportunities": opportunities,
         "accepted_mutations": accepted,
+        **({"returned_candidate_count": sampled} if attempt3 else {}),
         "reflection_proposals": proposals,
         "target_status": summary.get("target_status"),
         "distinct_parent_count": len(set(parents)),

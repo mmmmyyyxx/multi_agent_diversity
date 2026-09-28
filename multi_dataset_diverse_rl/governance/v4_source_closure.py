@@ -48,10 +48,14 @@ def _module_file(root: Path, name: str) -> Path | None:
     return None
 
 
-def active_v4_source_paths(root: Path) -> tuple[str, ...]:
+def active_v4_source_paths(root: Path, *, attempt3: bool = False) -> tuple[str, ...]:
     """Return the repository-local import closure plus frozen non-code inputs."""
     root = root.resolve()
     pending = [root / relative for relative in ENTRYPOINTS]
+    if attempt3:
+        pending.append(root / "scripts/prepare_online_transfer_diagnostic_v4_attempt3.py")
+        pending.append(root / "scripts/audit_online_transfer_diagnostic.py")
+        pending.append(root / "scripts/audit_v4_attempt3_freeze.py")
     # Contract modules are selected through runtime composition and therefore
     # must be bound even if a future adapter imports them lazily.
     pending.extend((root / "infrastructure/common_solver_contract_v1").glob("*.py"))
@@ -93,6 +97,8 @@ def active_v4_source_paths(root: Path) -> tuple[str, ...]:
                 pending.append(initializer)
     relative_paths = {path.relative_to(root).as_posix() for path in seen}
     relative_paths.update(DATA_AND_CONTRACT)
+    if attempt3:
+        relative_paths.add("experiments/gepa_layer2_local_to_team_transfer_diagnostic_v4/ATTEMPT3_PROTOCOL.md")
     if not set(REQUIRED_ACTIVE).issubset(relative_paths):
         missing = sorted(set(REQUIRED_ACTIVE) - relative_paths)
         raise ValueError(f"V4 active source closure missing {missing}")

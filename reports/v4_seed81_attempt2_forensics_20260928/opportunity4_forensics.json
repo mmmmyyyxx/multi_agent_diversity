@@ -1,0 +1,78 @@
+{
+  "accepted_candidate_indices": [
+    1,
+    2
+  ],
+  "accepted_iterations": [
+    1,
+    2
+  ],
+  "accepted_mutations_equal_returned_count_in_this_run": true,
+  "all_materialized_candidate_indices": [
+    0,
+    1,
+    2
+  ],
+  "changed_frontier_indices": [
+    1,
+    2
+  ],
+  "execution_source_sha": "85812a7d891e6a2c3bfdca00a1cb4d14074735a4",
+  "frontier_return_cap": 4,
+  "gepa_accepted_mutation_events": 2,
+  "gepa_proposal_attempts": 2,
+  "local_optimization_result_candidate_count": 2,
+  "materialized_candidate_hashes": [
+    "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+    "8cbbcb0f5371d0c489a5d6e468d3b788d4904940e49e3e48cbdc349ea61dc32e",
+    "f17b89933a047ffebd096b29722e4ba60363a81633dcc997ba4acfc062f79522"
+  ],
+  "materialized_candidate_local_scores": [
+    0.3333333333333333,
+    0.5833333333333334,
+    0.4166666666666667
+  ],
+  "member_id": 3,
+  "pareto_frontier_candidate_indices": [
+    0,
+    1,
+    2
+  ],
+  "proposal_event_counts": {
+    "candidate_accepted": 2,
+    "candidate_selected": 2,
+    "local_gepa_front_updated": 2,
+    "minibatch_sampled": 2,
+    "optimization_end": 1,
+    "optimization_start": 1,
+    "proposal_end": 2,
+    "valset_evaluated": 3
+  },
+  "raw_evidence_freeze_sha256": "767edd031a57c5e6957b232a43cbcd229fa7c35bcbb6103a0099d7011394a319",
+  "returned_candidate_indices": [
+    1,
+    2
+  ],
+  "returned_candidates": [
+    {
+      "candidate_hash": "8cbbcb0f5371d0c489a5d6e468d3b788d4904940e49e3e48cbdc349ea61dc32e",
+      "candidate_id": "gepa:1:8cbbcb0f5371",
+      "candidate_index": 1,
+      "local_acceptance_delta": 2.0,
+      "local_score": 0.5833333333333334
+    },
+    {
+      "candidate_hash": "f17b89933a047ffebd096b29722e4ba60363a81633dcc997ba4acfc062f79522",
+      "candidate_id": "gepa:2:f17b89933a04",
+      "candidate_index": 2,
+      "local_acceptance_delta": 2.0,
+      "local_score": 0.4166666666666667
+    }
+  ],
+  "schema_version": "v4_seed81_attempt2_opportunity_forensics_v1",
+  "update_index": 3,
+  "valid_unique_frontier_indices": [
+    1,
+    2
+  ]
+}

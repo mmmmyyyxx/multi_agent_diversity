@@ -35,14 +35,18 @@ from scripts.prepare_online_transfer_diagnostic_v3 import frozen_payload as v3_f
 from scripts.prepare_online_transfer_diagnostic_v4 import (
     ATTEMPT2_ID, frozen_payload as v4_frozen_payload,
 )
+from scripts.prepare_online_transfer_diagnostic_v4_attempt3 import (
+    frozen_payload as v4_attempt3_frozen_payload,
+)
 from scripts.prepare_post_refactor_gepa_canary import _private_splits
 
 
 def rehearse(
     tmp_path: Path, monkeypatch, rehearsal: int, *, through_cli: bool = False,
     scenario: str = "commit", v3: bool = False,
-    v4: bool = False,
+    v4: bool = False, v4_attempt3: bool = False,
 ) -> dict:
+    v4 = v4 or v4_attempt3
     # Exceed the intended formal root and its deepest categorical-profile path
     # on native Windows without relying on the machine-wide long-path switch.
     base = tmp_path / ("深 路径 " + "x" * 36) / ("depth " + "y" * 12)
@@ -50,6 +54,8 @@ def rehearse(
     prep.mkdir(parents=True)
     _private_splits(prep)
     manifest, protocol = (
+        v4_attempt3_frozen_payload(execution_source_sha="a" * 40)
+        if v4_attempt3 else
         v4_frozen_payload(execution_source_sha="a" * 40, attempt_id=ATTEMPT2_ID)
         if v4 else
         (v3_frozen_payload if v3 else frozen_payload)(execution_source_sha="a" * 40)
@@ -357,7 +363,23 @@ def rehearse(
             "initial_team_hash", "final_team_hash", "opportunities",
             "accepted_mutations", "reflection_proposals", "commits", "stop_reason",
         )
-    } | ({"evidence_view_trace": result["evidence_view_trace"]} if v4 else {})
+    } | ({
+        "ordinary_projection": {
+            "parents": result["parent_sequence"],
+            "feasibility": result["feasibility_trace"],
+            "evidence": result["evidence_view_trace"],
+            "candidate_decisions": [{
+                key: row[key] for key in (
+                    "update_index", "candidate_id", "team_minibatch",
+                    "ordinary_common_safe", "ordinary_shadow", "committed",
+                )
+            } for row in result["candidate_diagnostics"]],
+        },
+    } if v4 else {}) | ({"evidence_view_trace": result["evidence_view_trace"]} if v4 else {}) | (
+        {"returned_candidate_count": result["returned_candidate_count"],
+         "local_boundary_trace": result["local_boundary_trace"]}
+        if v4_attempt3 else {}
+    )
 
 
 def test_v4_raw_legal_bounded_full_stack_commit(tmp_path: Path, monkeypatch) -> None:
@@ -371,6 +393,40 @@ def test_v4_raw_legal_bounded_full_stack_commit(tmp_path: Path, monkeypatch) -> 
     assert len(trace["anchor_ids_sha256"]) == 64
     assert len(trace["delivered_batch_ids_sha256"]) == 64
     assert "ids" not in trace
+
+
+@pytest.mark.parametrize("scenario", ["commit", "shadow_fail", "minibatch_fail"])
+def test_v4_attempt3_full_stack_fake_provider(tmp_path: Path, monkeypatch, scenario: str) -> None:
+    result = rehearse(tmp_path, monkeypatch, 110, v4_attempt3=True, scenario=scenario)
+    assert len(result["local_boundary_trace"]) == result["opportunities"]
+    assert result["returned_candidate_count"] == sum(
+        row["returned_candidate_count"] for row in result["local_boundary_trace"]
+    )
+
+
+def test_v4_attempt3_full_stack_ordinary_semantics_equal_attempt2(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    prior = rehearse(tmp_path / "prior", monkeypatch, 111, v4=True, scenario="commit")
+    prospective = rehearse(
+        tmp_path / "prospective", monkeypatch, 112, v4_attempt3=True, scenario="commit",
+    )
+    overlap = min(prior["opportunities"], prospective["opportunities"])
+    assert overlap >= 1
+    for key in ("parents", "feasibility", "evidence"):
+        assert prospective["ordinary_projection"][key][:overlap] == prior[
+            "ordinary_projection"
+        ][key][:overlap]
+    for trace in (prior, prospective):
+        trace["ordinary_projection"]["candidate_decisions"] = [
+            row for row in trace["ordinary_projection"]["candidate_decisions"]
+            if row["update_index"] < overlap
+        ]
+    assert prospective["ordinary_projection"]["candidate_decisions"] == prior[
+        "ordinary_projection"
+    ]["candidate_decisions"]
+    if prior["opportunities"] == prospective["opportunities"]:
+        assert prospective["final_team_hash"] == prior["final_team_hash"]
 
 
 def test_v4_no_feasible_is_scientific_stop_without_opportunity_provider_calls(

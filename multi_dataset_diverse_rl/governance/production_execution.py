@@ -262,6 +262,11 @@ def validate_execution(
         and manifest.get("attempt_id")
         == "gepa_layer2_local_to_team_transfer_diagnostic_v4_seed81_attempt2"
     )
+    v4_attempt3 = (
+        manifest.get("experiment_id") == "gepa_layer2_local_to_team_transfer_diagnostic_v4"
+        and manifest.get("attempt_id")
+        == "gepa_layer2_local_to_team_transfer_diagnostic_v4_seed81_attempt3"
+    )
     if v4_attempt2:
         from .v4_source_closure import active_v4_source_paths
 
@@ -274,6 +279,26 @@ def validate_execution(
             active_v4_source_paths(root)
         ):
             raise StartupIdentityError("ABORT_PRE_PROVIDER: V4 source closure mismatch")
+    elif v4_attempt3:
+        from .v4_source_closure import active_v4_source_paths
+
+        if manifest.get("execution_refresh") != {
+            "scientific_method_changed": False,
+            "execution_implementation_refreshed": True,
+            "supersedes_for_execution": "gepa_layer2_local_to_team_transfer_diagnostic_v4_seed81_attempt2",
+            "reason": "diagnostic_returned_candidate_sampling_integrity_repair",
+        } or manifest.get("execution", {}).get("scientific_method_anchor_sha") != (
+            "85812a7d891e6a2c3bfdca00a1cb4d14074735a4"
+        ) or manifest.get("diagnostic_protocol_repair") != {
+            "prior_attempt": "gepa_layer2_local_to_team_transfer_diagnostic_v4_seed81_attempt2",
+            "prior_validity": "INVALID_NOT_EVALUABLE_DIAGNOSTIC_SAMPLING_INTEGRITY",
+            "scientific_method_changed": False,
+            "sampled_boundary": "Layer1_to_Layer2_returned_candidates",
+            "prior_provider_calls_excluded": True,
+        } or manifest.get("execution", {}).get("source_paths") != list(
+            active_v4_source_paths(root, attempt3=True)
+        ):
+            raise StartupIdentityError("ABORT_PRE_PROVIDER: V4 attempt3 source closure mismatch")
     elif manifest.get("attempt_id") != manifest.get("experiment_id"):
         raise StartupIdentityError("ABORT_PRE_PROVIDER: attempt identity mismatch")
     if manifest.get("scientific", {}).get("backend") != "gepa" or (
@@ -325,11 +350,9 @@ def validate_execution(
         ) != "SCIENTIFICALLY_VALID":
             raise StartupIdentityError("ABORT_PRE_PROVIDER: formal V3 prerequisite not satisfied")
     if diagnostic:
-        if (
-            manifest["scientific"].get("stopping_regime") != "fixed_budget"
-            or manifest["scientific"].get("fixed_budget_units") != 10
-            or manifest["scientific"].get("data_identity") != "anti_overfitting_split_v1_fold_a+b_to_c"
-            or manifest.get("diagnostic_contract") != {
+        from .v4_attempt3_contract import diagnostic_contract, resource_upper_bounds
+        expected_diagnostic_contract = (
+            diagnostic_contract() if v4_attempt3 else {
                 "accepted_mutation_target": 5,
                 "max_opportunities": 10,
                 "reflection_proposal_ceiling": 20,
@@ -338,6 +361,12 @@ def validate_execution(
                 "mandatory_full": True,
                 "diagnostic_full_is_admission_inert": True,
             }
+        )
+        if (
+            manifest["scientific"].get("stopping_regime") != "fixed_budget"
+            or manifest["scientific"].get("fixed_budget_units") != 10
+            or manifest["scientific"].get("data_identity") != "anti_overfitting_split_v1_fold_a+b_to_c"
+            or manifest.get("diagnostic_contract") != expected_diagnostic_contract
         ):
             raise StartupIdentityError("ABORT_PRE_PROVIDER: diagnostic budget/policy mismatch")
     if manifest.get("method_identity") != spec.method_identity or manifest.get("spec_identity") != spec.identity():
@@ -346,10 +375,24 @@ def validate_execution(
     if diagnostic and (
         runtime.get("seed") != 81
         or protocol.get("seed") != 81
-        or protocol.get("accepted_mutation_target") != 5
+        or (protocol.get("returned_candidate_target") if v4_attempt3
+            else protocol.get("accepted_mutation_target")) != 5
         or protocol.get("reflection_proposal_ceiling") != 20
-        or protocol.get("successful_provider_ceiling") != 1200
-        or protocol.get("transport_attempt_ceiling") != 4800
+        or protocol.get("successful_provider_ceiling") != (7000 if v4_attempt3 else 1200)
+        or protocol.get("transport_attempt_ceiling") != (150000 if v4_attempt3 else 4800)
+        or (v4_attempt3 and any(
+            protocol.get(key) != value for key, value in expected_diagnostic_contract.items()
+        ))
+        or (v4_attempt3 and protocol.get("resource_upper_bounds") != resource_upper_bounds())
+        or (v4_attempt3 and protocol.get("within_opportunity_target_crossing")
+            != "retain_all_returned_candidates_then_stop")
+        or (v4_attempt3 and protocol.get("diagnostic_protocol_repair_only") is not True)
+        or (v4_attempt3 and protocol.get("scientific_method_change") is not False)
+        or (v4_attempt3 and protocol.get("diagnostic_full_policy")
+            != "mandatory_all_returned_strict_positive_admission_inert")
+        or (v4_attempt3 and protocol.get("full_rows_per_returned_candidate") != 100)
+        or (v4_attempt3 and protocol.get("proposal_ceiling_guard")
+            != "stop_before_next_opportunity_if_12_proposals_could_overshoot")
         or protocol.get("diagnostic_full_is_admission_inert") is not True
         or protocol.get("validation50_calls") != 0
         or protocol.get("test50_calls") != 0
