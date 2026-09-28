@@ -1,0 +1,11 @@
+{
+  "actual_byte_poison_cases_in_focused_test": 94,
+  "cases": 94,
+  "gate": "PASS",
+  "network_attempts": 0,
+  "provider_attempts": 0,
+  "provider_constructor_calls": 0,
+  "shared_selector_byte_poison_detected": true,
+  "startup_hash_poison_cases_in_report_audit": 94,
+  "v4_opportunity_poisoned": true
+}

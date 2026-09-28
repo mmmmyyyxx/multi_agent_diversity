@@ -1,0 +1,37 @@
+{
+  "compileall": "PASS",
+  "fake_scenarios": 10,
+  "focused_tests": {
+    "errors": 0,
+    "failed": 0,
+    "passed": 241,
+    "skipped": 1
+  },
+  "formal_experiment_executed": false,
+  "full_tests": {
+    "errors": 13,
+    "failed": 15,
+    "full_tests_pass": false,
+    "new_active_failure_classes": 0,
+    "nonpassing_class": "MISSING_PRIVATE_HISTORICAL_ARTIFACTS_ONLY",
+    "passed": 1563,
+    "skipped": 4
+  },
+  "gate": "PASS",
+  "git_diff_check": "PASS",
+  "guarded_official_gepa_fake_tests": {
+    "deselected": 11,
+    "failed": 0,
+    "normal_network_attempts": 0,
+    "passed": 12
+  },
+  "ready_for_real_api_authorization": true,
+  "real_diagnostic_executed": false,
+  "sanitization_scan": "PASS",
+  "semantic_equivalence": "SEMANTIC_EQUIVALENT_TELEMETRY_ONLY",
+  "source_poison_cases": 94,
+  "test50_calls": 0,
+  "validation50_calls": 0,
+  "zero_api": true,
+  "zero_network": true
+}

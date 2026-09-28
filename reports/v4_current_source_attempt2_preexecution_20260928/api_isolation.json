@@ -1,0 +1,10 @@
+{
+  "authorization_consumed": false,
+  "gate": "PASS",
+  "provider_create_isolated": true,
+  "provider_from_environment_isolated": true,
+  "real_api_calls": 0,
+  "real_credentials_present": false,
+  "test50_calls": 0,
+  "validation50_calls": 0
+}

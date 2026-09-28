@@ -1,0 +1,13 @@
+{
+  "attempt_id": "gepa_layer2_local_to_team_transfer_diagnostic_v4_seed81_attempt2",
+  "authorization_consumed": false,
+  "execution_source_sha": "85812a7d891e6a2c3bfdca00a1cb4d14074735a4",
+  "prep_files_byte_identical": 7,
+  "prep_replay_identical": true,
+  "preregistration_sha256": "76c491f1f1d78c4ee94b3f283b9c74009214e46cdb44cdb75cf3b2b1e9d2df1f",
+  "protocol_sha256": "820942cf72df7876755ed6e05730311131a9045ab874d9956f597f185303c0ac",
+  "real_execution_started": false,
+  "run_identity_sha256": "95b9bbb8e5c6bcfabd12e7e550a9eaf0dbf38b31d2d7000a3c25bdf5435cc1aa",
+  "successful_provider_emergency_ceiling": 1200,
+  "transport_attempt_emergency_ceiling": 4800
+}

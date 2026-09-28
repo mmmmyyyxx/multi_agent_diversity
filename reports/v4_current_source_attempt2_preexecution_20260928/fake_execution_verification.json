@@ -1,0 +1,19 @@
+{
+  "gate": "PASS",
+  "official_gepa_a_commits": 3,
+  "official_gepa_candidate_solver_calls_positive": true,
+  "official_gepa_full_fake": true,
+  "official_gepa_reflection_fake_calls_positive": true,
+  "provider_successful_calls_in_budget_stress": 310,
+  "scheduled_not_delivered": true,
+  "scripted_fake_provider_outcome_controls": {
+    "B_diagnostic_full": true,
+    "B_minibatch_rejection": true,
+    "C_common_safe_rejection": true,
+    "D_shadow_rejection": true
+  },
+  "scripted_local_backend_state_machine_controls": "SEPARATE_FROM_OFFICIAL_GEPA_FAKE; see focused test_online_transfer_diagnostic",
+  "successor_commit_no_commit_commit": true,
+  "test50_calls": 0,
+  "validation50_calls": 0
+}

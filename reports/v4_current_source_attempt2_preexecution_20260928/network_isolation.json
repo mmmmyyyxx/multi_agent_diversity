@@ -1,0 +1,7 @@
+{
+  "gate": "PASS",
+  "guarded_official_gepa_fake_tests_passed": 12,
+  "negative_control": "PASS_BLOCKED_BEFORE_TRANSMISSION",
+  "normal_fake_network_attempts": 0,
+  "pre_import_sitecustomize_guard": true
+}

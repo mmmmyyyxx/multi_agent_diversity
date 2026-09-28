@@ -1,0 +1,14 @@
+{
+  "base_sha": "8e2eaaa42ff8c8ecd3d142372d5849ac07d64a5b",
+  "current_attempt": "gepa_layer2_local_to_team_transfer_diagnostic_v4_seed81_attempt2",
+  "current_execution_source_sha": "85812a7d891e6a2c3bfdca00a1cb4d14074735a4",
+  "formal_v3_implementation_source_sha": "92a89ff9b4edeb52032028b8439c5d05038308c0",
+  "historical_attempt": "gepa_layer2_local_to_team_transfer_diagnostic_v4",
+  "historical_attempt_label": "V4_ATTEMPT1",
+  "historical_execution_source_sha": "6314eef1839cc0270e6a3635f1e363a5babe9b7c",
+  "historical_execution_status": "SUPERSEDED_FOR_EXECUTION_BY_CURRENT_SOURCE_ATTEMPT",
+  "historical_status": "PREREGISTERED_NOT_EXECUTED",
+  "protocol_changed": false,
+  "scientific_method_changed": false,
+  "supersedes_for_execution": "V4_ATTEMPT1"
+}
