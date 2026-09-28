@@ -24,23 +24,41 @@ from scripts.prepare_online_transfer_diagnostic_v3 import (  # noqa: E402
     _git, _private_splits, _expected_bundle, validate_execution,
     canonical_json_bytes, write_bundle, frozen_payload as v3_frozen_payload,
 )
+from multi_dataset_diverse_rl.governance.v4_source_closure import (  # noqa: E402
+    active_v4_source_paths,
+)
 
 
 EXPERIMENT_ID = "gepa_layer2_local_to_team_transfer_diagnostic_v4"
-DEFAULT_PREP = ROOT / "runs" / EXPERIMENT_ID / "prep_final1"
+ATTEMPT2_ID = "gepa_layer2_local_to_team_transfer_diagnostic_v4_seed81_attempt2"
+DEFAULT_PREP = ROOT / "runs" / ATTEMPT2_ID / "prep"
 
 
-def frozen_payload(*, execution_source_sha: str) -> tuple[dict, dict]:
+def frozen_payload(*, execution_source_sha: str,
+                   attempt_id: str = EXPERIMENT_ID) -> tuple[dict, dict]:
+    if attempt_id not in {EXPERIMENT_ID, ATTEMPT2_ID}:
+        raise ValueError("unsupported V4 diagnostic attempt")
     manifest, protocol = v3_frozen_payload(execution_source_sha=execution_source_sha)
     manifest["schema_version"] = "online_transfer_diagnostic_freeze_v4"
-    manifest["experiment_id"] = manifest["attempt_id"] = EXPERIMENT_ID
+    manifest["experiment_id"] = EXPERIMENT_ID
+    manifest["attempt_id"] = attempt_id
     manifest["execution"]["scientific_method_anchor_sha"] = execution_source_sha
-    manifest["execution"]["source_paths"] = sorted(
-        set(manifest["execution"]["source_paths"]) | {
-            "scripts/prepare_online_transfer_diagnostic_v4.py",
-            "experiments/gepa_layer2_local_to_team_transfer_diagnostic_v4/PROTOCOL.md",
+    if attempt_id == ATTEMPT2_ID:
+        manifest["execution"]["source_paths"] = list(active_v4_source_paths(ROOT))
+        manifest["execution_refresh"] = {
+            "scientific_method_changed": False,
+            "execution_implementation_refreshed": True,
+            "supersedes_for_execution": EXPERIMENT_ID,
+            "reason": "current_shared_v4_selector_and_complete_source_identity_closure",
         }
-    )
+    else:
+        # Preserve the historical attempt's payload constructor for replay.
+        manifest["execution"]["source_paths"] = sorted(
+            set(manifest["execution"]["source_paths"]) | {
+                "scripts/prepare_online_transfer_diagnostic_v4.py",
+                "experiments/gepa_layer2_local_to_team_transfer_diagnostic_v4/PROTOCOL.md",
+            }
+        )
     manifest["integrity_amendment"] = {
         "supersedes_unexecuted_attempt": "gepa_layer2_local_to_team_transfer_diagnostic_v3",
         "reason": "approved_bounded_evidence_and_feasibility_admission",
@@ -81,7 +99,9 @@ def prepare(prep: Path) -> dict[str, str | bool]:
     if _git("status", "--porcelain", "--untracked-files=no"):
         raise RuntimeError("tracked worktree must be clean before freeze")
     source = _git("rev-parse", "HEAD")
-    manifest, protocol = frozen_payload(execution_source_sha=source)
+    manifest, protocol = frozen_payload(
+        execution_source_sha=source, attempt_id=ATTEMPT2_ID,
+    )
     prep.mkdir(parents=True)
     _private_splits(prep)
     for name, payload in (("manifest.json", manifest), ("protocol.json", protocol)):

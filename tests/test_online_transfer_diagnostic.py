@@ -555,6 +555,29 @@ def test_v3_semantic_refreeze_is_unapproved_and_keeps_diagnostic_budget(monkeypa
     assert new["integrity_amendment"]["scientific_method_changed"] is True
 
 
+def test_v4_attempt2_changes_execution_identity_not_scientific_protocol(monkeypatch):
+    from scripts.prepare_online_transfer_diagnostic_v4 import (
+        ATTEMPT2_ID, EXPERIMENT_ID, frozen_payload,
+    )
+    from multi_dataset_diverse_rl.provider_credentials import LWJ_DASHSCOPE_BASE_URL_ENV
+
+    monkeypatch.setenv(LWJ_DASHSCOPE_BASE_URL_ENV, "https://example.invalid/compatible-mode/v1")
+    old, old_protocol = frozen_payload(execution_source_sha="a" * 40)
+    current, current_protocol = frozen_payload(
+        execution_source_sha="b" * 40, attempt_id=ATTEMPT2_ID,
+    )
+    assert old_protocol == current_protocol
+    for key in ("scientific", "diagnostic_contract", "runtime", "models", "dependency",
+                "access", "semantic_contract", "api_authorization"):
+        assert old[key] == current[key]
+    assert old["attempt_id"] == EXPERIMENT_ID
+    assert current["attempt_id"] == ATTEMPT2_ID
+    assert current["execution_refresh"]["scientific_method_changed"] is False
+    assert "multi_dataset_diverse_rl/team_search/v4_opportunity.py" in current[
+        "execution"
+    ]["source_paths"]
+
+
 def test_dynamic_preopportunity_stop_uses_no_extra_parent_or_provider():
     class Backend:
         name = "gepa"

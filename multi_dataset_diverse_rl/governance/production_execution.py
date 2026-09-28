@@ -257,7 +257,24 @@ def validate_execution(
                     "delivery": "separately_observed_not_implied_by_schedule",
                 }):
             raise StartupIdentityError("ABORT_PRE_PROVIDER: v4 semantic contract mismatch")
-    if manifest.get("attempt_id") != manifest.get("experiment_id"):
+    v4_attempt2 = (
+        manifest.get("experiment_id") == "gepa_layer2_local_to_team_transfer_diagnostic_v4"
+        and manifest.get("attempt_id")
+        == "gepa_layer2_local_to_team_transfer_diagnostic_v4_seed81_attempt2"
+    )
+    if v4_attempt2:
+        from .v4_source_closure import active_v4_source_paths
+
+        if manifest.get("execution_refresh") != {
+            "scientific_method_changed": False,
+            "execution_implementation_refreshed": True,
+            "supersedes_for_execution": "gepa_layer2_local_to_team_transfer_diagnostic_v4",
+            "reason": "current_shared_v4_selector_and_complete_source_identity_closure",
+        } or manifest.get("execution", {}).get("source_paths") != list(
+            active_v4_source_paths(root)
+        ):
+            raise StartupIdentityError("ABORT_PRE_PROVIDER: V4 source closure mismatch")
+    elif manifest.get("attempt_id") != manifest.get("experiment_id"):
         raise StartupIdentityError("ABORT_PRE_PROVIDER: attempt identity mismatch")
     if manifest.get("scientific", {}).get("backend") != "gepa" or (
         manifest.get("scientific", {}).get("optimization_scope") not in

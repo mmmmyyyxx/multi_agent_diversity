@@ -217,6 +217,7 @@ V4_REQUIRED_DEPENDENCIES = (
     "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py",
     "multi_dataset_diverse_rl/team_search/execution_runtime.py",
     "multi_dataset_diverse_rl/team_search/feasibility.py",
+    "multi_dataset_diverse_rl/team_search/v4_opportunity.py",
     "multi_dataset_diverse_rl/native_feed.py",
     "multi_dataset_diverse_rl/local_optimizers/gepa_native.py",
     "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py",
@@ -228,10 +229,12 @@ V4_REQUIRED_DEPENDENCIES = (
     "infrastructure/common_solver_contract_v1/evaluator.py",
     "infrastructure/common_solver_contract_v1/system_adapter.py",
 )
-from scripts.prepare_online_transfer_diagnostic_v4 import frozen_payload as v4_frozen_payload
+from scripts.prepare_online_transfer_diagnostic_v4 import (
+    ATTEMPT2_ID, frozen_payload as v4_frozen_payload,
+)
 
 V4_ACTIVE_DEPENDENCIES = tuple(
-    v4_frozen_payload(execution_source_sha=SOURCE)[0]["execution"]["source_paths"]
+    v4_frozen_payload(execution_source_sha=SOURCE, attempt_id=ATTEMPT2_ID)[0]["execution"]["source_paths"]
 )
 assert set(V4_REQUIRED_DEPENDENCIES).issubset(V4_ACTIVE_DEPENDENCIES)
 
@@ -244,7 +247,7 @@ def test_v4_each_active_source_byte_poison_aborts_pre_provider(
     from scripts.prepare_online_transfer_diagnostic_v4 import frozen_payload
 
     root, prep = _fixture(tmp_path, monkeypatch)
-    manifest, protocol = frozen_payload(execution_source_sha=SOURCE)
+    manifest, protocol = frozen_payload(execution_source_sha=SOURCE, attempt_id=ATTEMPT2_ID)
     manifest["runtime"]["endpoint_fingerprint"] = "endpoint-digest"
     manifest["dependency"] = {"gepa": DEPENDENCY}
     manifest["execution"]["source_paths"] = sorted(V4_ACTIVE_DEPENDENCIES)
@@ -274,7 +277,7 @@ def test_v4_each_active_source_byte_poison_aborts_pre_provider(
 def test_v4_freeze_inventory_contains_all_active_dependencies() -> None:
     from scripts.prepare_online_transfer_diagnostic_v4 import frozen_payload
 
-    manifest, _ = frozen_payload(execution_source_sha=SOURCE)
+    manifest, _ = frozen_payload(execution_source_sha=SOURCE, attempt_id=ATTEMPT2_ID)
     assert tuple(manifest["execution"]["source_paths"]) == V4_ACTIVE_DEPENDENCIES
 
 

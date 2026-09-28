@@ -32,6 +32,9 @@ from multi_dataset_diverse_rl.team_search.evidence_audit import sanitize_v4_evid
 from scripts.audit_online_transfer_diagnostic import audit
 from scripts.prepare_online_transfer_diagnostic_v2 import frozen_payload
 from scripts.prepare_online_transfer_diagnostic_v3 import frozen_payload as v3_frozen_payload
+from scripts.prepare_online_transfer_diagnostic_v4 import (
+    ATTEMPT2_ID, frozen_payload as v4_frozen_payload,
+)
 from scripts.prepare_post_refactor_gepa_canary import _private_splits
 
 
@@ -47,13 +50,10 @@ def rehearse(
     prep.mkdir(parents=True)
     _private_splits(prep)
     manifest, protocol = (
-        v3_frozen_payload if (v3 or v4) else frozen_payload
-    )(execution_source_sha="a" * 40)
-    if v4:
-        manifest["experiment_id"] = manifest["attempt_id"] = (
-            "gepa_layer2_local_to_team_transfer_diagnostic_v4"
-        )
-        protocol["experiment_id"] = manifest["experiment_id"]
+        v4_frozen_payload(execution_source_sha="a" * 40, attempt_id=ATTEMPT2_ID)
+        if v4 else
+        (v3_frozen_payload if v3 else frozen_payload)(execution_source_sha="a" * 40)
+    )
     # This fixture replays the superseded v2 routed-source freeze. Current
     # Layer-2 raw-legal behavior has its own source/poison regression tests.
     def v2_routed_snapshot(system, *, update_index):
@@ -249,6 +249,9 @@ def rehearse(
     else:
         assert calls["reflection"] >= 1
         assert result["accepted_mutations"] >= 1
+        if v4:
+            assert result["ledger"]["successful_provider_calls"] >= calls["reflection"]
+            assert result["stage_accounting"]["global"]["reflection_provider_records"] > 0
     if v4 and scenario != "no_feasible":
         root = result["evidence_view_trace"][0]
         if scenario == "feasible_rerank":
