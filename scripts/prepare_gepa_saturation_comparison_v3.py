@@ -13,6 +13,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from multi_dataset_diverse_rl.experiment import experiment_spec_from_mapping  # noqa: E402
+from multi_dataset_diverse_rl.formal_validation_policy import formal_validation50_policy  # noqa: E402
 from multi_dataset_diverse_rl.governance.execution_harness_v2 import (  # noqa: E402
     FORMAL_SEEDS, INITIALIZATION_POLICY, PROVIDER_PROFILE, ROLE_MODEL,
     SOLVER_MODEL, endpoint_fingerprint_from_environment,
@@ -71,9 +72,12 @@ def frozen_payload(*, execution_source_sha: str, seed: int, scope: str,
         "experiments/gepa_saturation_comparison_v3/PROTOCOL.md",
     })
     prerequisite = None
+    validation_policy = None
     if attempt_number == 2:
         prerequisite = formal_attempt2_prerequisite(ROOT)
+        validation_policy = formal_validation50_policy(ROOT)
         sources = sorted(set(sources) | {
+            "experiments/anti_overfitting_split_v1/split_manifest.json",
             "experiments/gepa_saturation_comparison_v3/PILOT_CLOSURE.json",
             "experiments/gepa_saturation_comparison_v3/POST_FREEZE_VALIDATION50_EVALUATION.md",
             "multi_dataset_diverse_rl/formal_trajectory.py",
@@ -118,6 +122,13 @@ def frozen_payload(*, execution_source_sha: str, seed: int, scope: str,
     }
     if prerequisite is not None:
         manifest["diagnostic_prerequisite"] = prerequisite
+        manifest["post_freeze_validation50"] = validation_policy
+        manifest["preexecution_refreeze"] = {
+            "superseded_execution_source_sha": "504dadb4024a0c69cc2f8aac6e6d400f77f3a680",
+            "reason": "held_out_validation50_was_mislabeled_shadow50_fold_c",
+            "formal_real_calls_observed": 0,
+            "scientific_search_changed": False,
+        }
     protocol = {
         "schema_version": "formal_gepa_saturation_protocol_v3",
         "experiment_id": attempt, "successor_id": SUCCESSOR_ID,
@@ -137,6 +148,8 @@ def frozen_payload(*, execution_source_sha: str, seed: int, scope: str,
     }
     if prerequisite is not None:
         protocol["diagnostic_prerequisite"] = prerequisite
+        protocol["post_freeze_validation50"] = validation_policy
+        protocol["preexecution_refreeze"] = manifest["preexecution_refreeze"]
         protocol["post_search_final_team"] = {
             "native": "replicate_first_returned_native_candidate_to_all_five_else_initial_team",
             "layer2": "preserve_final_committed_five_member_team",

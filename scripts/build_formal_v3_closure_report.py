@@ -62,6 +62,7 @@ def build(*, prep_a: Path, prep_b: Path, evidence_root: Path, report: Path,
     cells = {}
     data_hashes = set()
     sources = set()
+    validation_policies = set()
     for prep in sorted(prep_a.iterdir()):
         manifest = _read(prep / "manifest.json")
         protocol = _read(prep / "protocol.json")
@@ -70,6 +71,8 @@ def build(*, prep_a: Path, prep_b: Path, evidence_root: Path, report: Path,
         source = manifest["execution"]["execution_source_sha"]
         sources.add(source)
         data_hashes.add(json.dumps(scientific_identity["payload"]["data_hashes"], sort_keys=True))
+        if attempt_number == 2:
+            validation_policies.add(json.dumps(manifest["post_freeze_validation50"], sort_keys=True))
         cells[prep.name] = {
             "seed": manifest["runtime"]["seed"], "arm": protocol["arm"],
             "execution_source_sha": source,
@@ -83,8 +86,10 @@ def build(*, prep_a: Path, prep_b: Path, evidence_root: Path, report: Path,
             "source_file_count": len(scientific_identity["payload"]["source_files"]),
             "api_authorized": False, "real_v4_prerequisite": manifest["execution_gate"]["real_v4_diagnostic"],
             "diagnostic_prerequisite": manifest.get("diagnostic_prerequisite"),
+            "post_freeze_validation50": manifest.get("post_freeze_validation50"),
         }
-    if len(cells) != 6 or len(sources) != 1 or len(data_hashes) != 1:
+    if (len(cells) != 6 or len(sources) != 1 or len(data_hashes) != 1
+            or (attempt_number == 2 and len(validation_policies) != 1)):
         raise AssertionError("six-cell formal comparison identity mismatch")
     report.mkdir(parents=True)
     _write(report, "api_isolation.json", {
@@ -168,6 +173,17 @@ def build(*, prep_a: Path, prep_b: Path, evidence_root: Path, report: Path,
         "local_no_update_patience": 3, "team_no_update_patience": 2,
         "validation50_calls": 0, "test50_calls": 0,
     })
+    if attempt_number == 2:
+        policy = json.loads(next(iter(validation_policies)))
+        _write(report, "held_out_endpoint.json", {
+            "correction": "pre_execution_held_out_endpoint_correction",
+            "formal_efficacy_observed": False,
+            "superseded_preexecution_source_sha": "504dadb4024a0c69cc2f8aac6e6d400f77f3a680",
+            "optimize100": "fold_a_plus_fold_b_adaptive_search",
+            "shadow50": "fold_c_adaptive_write_back_gate",
+            "validation50": policy,
+            "test50": "sealed_zero_calls_stage0",
+        })
     _write(report, "freeze_identity.json", {
         "successor_id": "gepa_saturation_comparison_v3",
         "supersedes_unexecuted": (
@@ -204,6 +220,9 @@ def build(*, prep_a: Path, prep_b: Path, evidence_root: Path, report: Path,
          "is VALID and efficacy is NOT_EVALUABLE. This satisfies the Formal prerequisite. "
          "Native final teams replicate the selected GEPA candidate across five members; "
          "post-freeze Validation50 requires separate authorization and Test50 stays sealed. "
+         "This pre-execution correction binds Validation50 to the independent validation "
+         "set in split_manifest.json; fold_c remains adaptive Shadow50. No Formal efficacy "
+         "was observed before this correction. "
          if attempt_number == 2 else
          "The next real step is the separately frozen Seed81 V4 diagnostic and scientific "
          "validity audit. Only then may a separate authorization permit formal execution. ")

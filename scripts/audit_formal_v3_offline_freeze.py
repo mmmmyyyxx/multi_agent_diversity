@@ -13,6 +13,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from multi_dataset_diverse_rl.governance import production_execution as admission  # noqa: E402
+from multi_dataset_diverse_rl.formal_validation_policy import formal_validation50_policy  # noqa: E402
 from multi_dataset_diverse_rl.governance.freeze_hash import (  # noqa: E402
     normalized_lf_bytes, source_freeze_sha256,
 )
@@ -92,6 +93,11 @@ def audit(prep_a: Path, prep_b: Path, *, attempt_number: int = 1) -> dict[str, o
             if not REQUIRED_SOURCE_PATHS <= set(source_paths):
                 raise AssertionError("formal source closure misses a required active dependency")
             if attempt_number == 2:
+                if (manifest.get("post_freeze_validation50") != formal_validation50_policy(ROOT)
+                        or protocol.get("post_freeze_validation50") != manifest["post_freeze_validation50"]
+                        or "experiments/anti_overfitting_split_v1/split_manifest.json"
+                        not in source_paths):
+                    raise AssertionError("Formal Validation50 endpoint identity mismatch")
                 if not {
                     "multi_dataset_diverse_rl/formal_final_team.py",
                     "multi_dataset_diverse_rl/formal_trajectory.py",

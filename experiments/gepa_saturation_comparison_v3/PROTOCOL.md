@@ -51,3 +51,11 @@ the read-only `formal_trajectory_trace.jsonl` is derived.
 The separate `POST_FREEZE_VALIDATION50_EVALUATION.md` fixes the later Stage 0
 generalization endpoint. It requires new explicit authorization after all
 six searches are frozen. Test50 remains sealed throughout Stage 0.
+
+The initial attempt2 prep at execution source `504dadb4024a0c69cc2f8aac6e6d400f77f3a680`
+is superseded before execution because its post-freeze policy mislabeled
+adaptive Shadow50/fold_c as Validation50. No Formal real call or Formal efficacy
+observation preceded this correction. The fresh attempt2 prep retains the same
+search method and six cell names but binds the independent `validation` 50
+question-hash set from `anti_overfitting_split_v1/split_manifest.json` as the
+post-freeze endpoint. Fold_c remains Shadow50, and Test50 stays sealed.

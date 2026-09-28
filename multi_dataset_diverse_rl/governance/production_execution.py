@@ -388,7 +388,21 @@ def validate_execution(
         ):
             raise StartupIdentityError("ABORT_PRE_PROVIDER: formal V3 contract mismatch")
         if formal_attempt2:
+            from ..formal_validation_policy import formal_validation50_policy
+
             expected_prerequisite = formal_attempt2_prerequisite(root)
+            try:
+                expected_validation_policy = formal_validation50_policy(root)
+            except (ValueError, KeyError, TypeError) as exc:
+                raise StartupIdentityError(
+                    "ABORT_PRE_PROVIDER: Formal Validation50 split integrity failure"
+                ) from exc
+            expected_refreeze = {
+                "superseded_execution_source_sha": "504dadb4024a0c69cc2f8aac6e6d400f77f3a680",
+                "reason": "held_out_validation50_was_mislabeled_shadow50_fold_c",
+                "formal_real_calls_observed": 0,
+                "scientific_search_changed": False,
+            }
             required_source_paths = {
                 path.relative_to(root).as_posix()
                 for directory in ("multi_dataset_diverse_rl", "infrastructure/common_solver_contract_v1")
@@ -402,10 +416,15 @@ def validate_execution(
                 "experiments/gepa_saturation_comparison_v3/PROTOCOL.md",
                 "experiments/gepa_saturation_comparison_v3/PILOT_CLOSURE.json",
                 "experiments/gepa_saturation_comparison_v3/POST_FREEZE_VALIDATION50_EVALUATION.md",
+                "experiments/anti_overfitting_split_v1/split_manifest.json",
             }
             if (manifest.get("execution_gate") != {"real_v4_diagnostic": "SCIENTIFICALLY_VALID"}
                     or manifest.get("diagnostic_prerequisite") != expected_prerequisite
                     or protocol.get("diagnostic_prerequisite") != expected_prerequisite
+                    or manifest.get("post_freeze_validation50") != expected_validation_policy
+                    or protocol.get("post_freeze_validation50") != expected_validation_policy
+                    or manifest.get("preexecution_refreeze") != expected_refreeze
+                    or protocol.get("preexecution_refreeze") != expected_refreeze
                     or protocol.get("post_search_final_team") != {
                         "native": "replicate_first_returned_native_candidate_to_all_five_else_initial_team",
                         "layer2": "preserve_final_committed_five_member_team",
