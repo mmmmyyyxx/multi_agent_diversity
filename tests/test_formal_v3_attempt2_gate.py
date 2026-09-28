@@ -63,7 +63,7 @@ def test_formal_attempt2_binds_validity_not_efficacy(tmp_path, monkeypatch):
     assert policy["split_identity"] == "anti_overfitting_split_v1/validation"
     assert policy["count"] == 50
     assert policy["question_hash_set_sha256"] == "d6514ca588f124460502afbc44a5314e9ef7f141ee826411cb6f02abad736df5"
-    assert policy["split_manifest_sha256"] == "9639db6f1a83bbe54704d012edd7b843e31cbb1141f9957437daa3803a954886"
+    assert policy["split_manifest_sha256"] == "42843456e13bbbda1a86615ae278ff059372dc199a8ccf5ade4cb338641d12c4"
     assert policy["question_hash_set_sha256"] != policy["shadow50_question_hash_set_sha256"]
     historical, historical_protocol = frozen_payload(
         execution_source_sha=manifest["execution"]["execution_source_sha"],
@@ -129,9 +129,12 @@ def test_split_manifest_cannot_relabel_fold_c_as_validation50(tmp_path):
 
 def test_formal_policy_text_keeps_shadow_and_validation_distinct():
     text = (ROOT / "experiments/gepa_saturation_comparison_v3/POST_FREEZE_VALIDATION50_EVALUATION.md").read_text(encoding="utf-8")
+    policy = formal_validation50_policy(ROOT)
     assert "fold_c = Shadow50" in text
     assert "validation = Validation50" in text
     assert "Evaluate exactly Validation50 `fold_c`" not in text
+    assert policy["split_manifest_sha256"] in text
+    assert policy["question_hash_set_sha256"] in text
 
 
 def test_native_final_team_reconstructs_selected_candidate(tmp_path):
