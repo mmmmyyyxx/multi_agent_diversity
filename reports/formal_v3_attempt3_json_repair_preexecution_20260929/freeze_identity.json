@@ -1,0 +1,88 @@
+{
+  "cells": {
+    "gepa_saturation_comparison_v3_seed80_layer2_attempt3": {
+      "arm": "GEPA_LAYER2_V4",
+      "authorization": "REQUIRED_NOT_GRANTED",
+      "execution_source_sha": "b5bf32d0ac933e1b9478432148a8233472fed6fe",
+      "preregistration_sha256": "e3e7c492d48f1fe13ec4bd40d2767073e4bf3de7f2cb25c10a9c364054438a0a",
+      "protocol_sha256": "e081462beb184cfa24f5c0852bb0a444ff90fe64fc11ba580412eba83cb363b6",
+      "run_identity_sha256": "d53f9b3a8025dcd39e7dd14f99f019efe12c5078ab009762e039ff754bd18a81",
+      "seed": 80,
+      "source_file_count": 124,
+      "test50_calls": 0,
+      "validation50_calls": 0
+    },
+    "gepa_saturation_comparison_v3_seed80_native_attempt3": {
+      "arm": "GEPA_NATIVE",
+      "authorization": "REQUIRED_NOT_GRANTED",
+      "execution_source_sha": "b5bf32d0ac933e1b9478432148a8233472fed6fe",
+      "preregistration_sha256": "b825fc0d7bc25668a0125e7d23d5d338116eba08e21f6fa6ff59ea1b9397c71a",
+      "protocol_sha256": "2ad2cf1693cca8b6814fcf98fc9f6461948fa971f88711b0da11c2d08b5d9a40",
+      "run_identity_sha256": "342b13d9732b75cb3537b8e916e6cf88d88483eab5799bf2a2d4c35175b93e0b",
+      "seed": 80,
+      "source_file_count": 124,
+      "test50_calls": 0,
+      "validation50_calls": 0
+    },
+    "gepa_saturation_comparison_v3_seed81_layer2_attempt3": {
+      "arm": "GEPA_LAYER2_V4",
+      "authorization": "REQUIRED_NOT_GRANTED",
+      "execution_source_sha": "b5bf32d0ac933e1b9478432148a8233472fed6fe",
+      "preregistration_sha256": "a40155eb9eec4eb5a397c240bb6316f340aaca5ccb2b5345b433c763d7a969b0",
+      "protocol_sha256": "3ab07af59d32fd6114bfae024d39eaa7f47495ad59812d05ca3f069e3c1697f9",
+      "run_identity_sha256": "96b53109b6fb61486109c834882941ff670dab18a158ab522cf44cb4dcda1787",
+      "seed": 81,
+      "source_file_count": 124,
+      "test50_calls": 0,
+      "validation50_calls": 0
+    },
+    "gepa_saturation_comparison_v3_seed81_native_attempt3": {
+      "arm": "GEPA_NATIVE",
+      "authorization": "REQUIRED_NOT_GRANTED",
+      "execution_source_sha": "b5bf32d0ac933e1b9478432148a8233472fed6fe",
+      "preregistration_sha256": "325485dd557d9720c345facf58b0328d901e79181a399bcc88d1f4d19b2f3df0",
+      "protocol_sha256": "05c5afb41d7073a83fadcec5016b7b0db03d073eea4bcc61b36b00a4e4c58678",
+      "run_identity_sha256": "19277bc771c6126ae59beb12a74a93338b1ff4268fe0b740525811403f42baa9",
+      "seed": 81,
+      "source_file_count": 124,
+      "test50_calls": 0,
+      "validation50_calls": 0
+    },
+    "gepa_saturation_comparison_v3_seed82_layer2_attempt3": {
+      "arm": "GEPA_LAYER2_V4",
+      "authorization": "REQUIRED_NOT_GRANTED",
+      "execution_source_sha": "b5bf32d0ac933e1b9478432148a8233472fed6fe",
+      "preregistration_sha256": "32b9d0862edfe7bfe44973f02fea471793a9b3170972958b44c90660323cb270",
+      "protocol_sha256": "cda3702998b23841941e9ce0ba2c6914ef16dcd9c92b9037a0ac34fea0c60dde",
+      "run_identity_sha256": "4f8ad84931624c365a7f715ef10d06bcaf2865902811b24b6aef2e75749cd3bd",
+      "seed": 82,
+      "source_file_count": 124,
+      "test50_calls": 0,
+      "validation50_calls": 0
+    },
+    "gepa_saturation_comparison_v3_seed82_native_attempt3": {
+      "arm": "GEPA_NATIVE",
+      "authorization": "REQUIRED_NOT_GRANTED",
+      "execution_source_sha": "b5bf32d0ac933e1b9478432148a8233472fed6fe",
+      "preregistration_sha256": "158b5c5383e950285d0fada057aeb7b012cfb6107c82eeef1ab6d102f2f6dceb",
+      "protocol_sha256": "523e4f4452cd00f67b93f860315fdbfee6c5d2dcd364a9f01f6c9f04773c1de3",
+      "run_identity_sha256": "6c1fc78afdadac33b871e76efc4deb38082b9429df84246db43bea748004e4fa",
+      "seed": 82,
+      "source_file_count": 124,
+      "test50_calls": 0,
+      "validation50_calls": 0
+    }
+  },
+  "execution_source_sha": "b5bf32d0ac933e1b9478432148a8233472fed6fe",
+  "gepa_dependency": {
+    "commit": "b4dbb55b7601dac448cdb836d5a401ca7d9eb920",
+    "source_sha256": "84c3c7e5f80fd272f0841357ec9327e3b0ea8ee53cd8107d1ab8d4cdb36ff1f8",
+    "version": "v0.1.1"
+  },
+  "independent_prep_sets_byte_identical": true,
+  "old_attempt2_execution_source_sha": "9737626373790aeb55a8ab6b99937b6d3085eace",
+  "prep_files_per_independent_set": 42,
+  "scientific_method_anchor_sha": "9737626373790aeb55a8ab6b99937b6d3085eace",
+  "scientific_payload_equals_frozen_attempt2": true,
+  "source_closure_file_count": 124
+}

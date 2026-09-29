@@ -1,0 +1,35 @@
+{
+  "attempt2_campaign": "CLOSED_INVALID_EXECUTION_CAMPAIGN",
+  "attempt2_seed80_native": {
+    "efficacy": "NOT_ASSESSED",
+    "failure_boundary": "POST_SEARCH_EXECUTION_SUMMARY_JSON_READBACK",
+    "historical_successful_provider_calls": 1137,
+    "lifecycle": "ABORTED",
+    "raw_artifact_hashes_still_match_published_audit": true,
+    "scientific_validity": "INVALID_EXECUTION_CONFORMANCE"
+  },
+  "incident_audit_sha256": "f001b2693645102059c1afdfc4e521f032d3fac4b9b615adb904f492c724e657",
+  "incident_commit": "c29bdceca25d63b93edba9eaf57bff33b9ad51c3",
+  "offline_replay": {
+    "attempt_id": "gepa_saturation_comparison_v3_seed80_native_attempt2",
+    "canonical_json_equal_to_readback": true,
+    "container_type_changes": [
+      {
+        "after": "list",
+        "before": "tuple",
+        "path": "$.events[0].candidate_ids"
+      }
+    ],
+    "frozen_summary_sha256": "e8e8596e2c9930c720111b112de0ba1c735fef9778ed21171fb0fa12aa17494c",
+    "numeric_string_boolean_and_hash_values_unchanged": true,
+    "provider_calls": 0,
+    "provider_constructions": 0,
+    "raw_python_equal_to_json_readback": false,
+    "schema_version": "formal_v3_attempt2_json_roundtrip_replay_v1",
+    "test50_calls": 0,
+    "unchanged_scalar_count": 298,
+    "validation50_calls": 0
+  },
+  "other_five_attempt2_cells": "SUPERSEDED_BEFORE_EXECUTION",
+  "other_five_authorizations_unconsumed": true
+}
