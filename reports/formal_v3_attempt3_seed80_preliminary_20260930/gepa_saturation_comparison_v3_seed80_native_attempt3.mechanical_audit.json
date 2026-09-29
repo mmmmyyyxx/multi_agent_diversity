@@ -1,0 +1,23 @@
+{
+  "arm": "GEPA_NATIVE",
+  "attempt_id": "gepa_saturation_comparison_v3_seed80_native_attempt3",
+  "execution_source_sha": "9e498496abff9228bd10697d8d97d36f56fca3f9",
+  "failed_provider_attempts": 0,
+  "final_team_hash": "870fc8b1837c53e4847df659606fe90ecc0220c3df9718769a6eb9dc9525f8d7",
+  "initial_team_hash": "6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89",
+  "preregistration_sha256": "8d6d32e4a8c2a41f1603e7f065c605f83f47ccd2f8e39f796e3600112270bbcd",
+  "protocol_conformance": "PASS",
+  "protocol_sha256": "c07e203346f88848b5890284531bf018a8b792424004dbc968ad982332902627",
+  "provider_attempts": 2272,
+  "raw_artifact_count": 51,
+  "raw_freeze_sha256": "3fad3e6344d8c7b256b4227eaf8d35489ea5ebb7e3183cf00a208c0f43785c4d",
+  "run_identity_sha256": "0302a373bc52f8753c4983921e7c2ecfcd167c1593f5078707b88f799eab68dc",
+  "scientific_validity": "VALID",
+  "seed": 80,
+  "stop_reason": "SATURATION_REACHED",
+  "successful_provider_calls": 2272,
+  "test50_calls": 0,
+  "trajectory_record_count": 1,
+  "trajectory_sha256": "fde9bcdd40bb701c18570af3fc3a030e376733504b42e7442ee1ba95b5083c1c",
+  "validation50_calls": 0
+}
