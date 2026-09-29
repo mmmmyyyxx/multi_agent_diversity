@@ -32,6 +32,9 @@ from multi_dataset_diverse_rl.versions import LAYER2_TEAM_SEARCH_PROTOCOL_V4_VER
 from multi_dataset_diverse_rl.governance.production_execution import formal_v3_contract
 from scripts.prepare_gepa_saturation_comparison_v3 import frozen_payload
 from scripts.prepare_post_refactor_gepa_canary import _private_splits
+from scripts import run_experiment as formal_runner
+from scripts.freeze_formal_v3_execution import freeze as freeze_formal, verify_freeze
+from scripts.derive_formal_trajectory_trace import derive as derive_formal
 
 
 @pytest.fixture(autouse=True)
@@ -46,6 +49,8 @@ def _formal_fixture(
     tmp_path: Path, monkeypatch, *, scope: str, ceiling: int = 6000,
     optimizer_ceiling: int = 1000, solver_failure: str | None = None,
     candidate_improves: bool = False,
+    reflection_text: str | None = None,
+    shadow_candidate_hurts: bool = False,
 ):
     # Exercise RoleAwareLLMClient's normal credential-resolution and factory
     # path without placing a usable secret in the subprocess environment.
@@ -63,6 +68,8 @@ def _formal_fixture(
     _private_splits(prep)
     (run_root / "run_lifecycle.json").write_text(json.dumps({
         "status": "RUNNING", "provider_client_constructed": False,
+        "attempt_id": f"gepa_saturation_comparison_v3_seed80_{scope}",
+        "provider_attempts": 0, "provider_successes": 0, "provider_failures": 0,
         "events": [{"status": "RUNNING"}],
     }), encoding="utf-8")
     manifest = {
@@ -87,17 +94,21 @@ def _formal_fixture(
     }
     (prep / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
     labels = {}
+    shadow_questions = set()
     for name in ("optimize100.csv", "shadow50.csv"):
         with (prep / "splits_private" / name).open(encoding="utf-8", newline="") as handle:
             for row in csv.DictReader(handle):
-                labels[row["question"].replace("\r\n", "\n").strip()] = row["answer"].strip("()")
+                question = row["question"].replace("\r\n", "\n").strip()
+                labels[question] = row["answer"].strip("()")
+                if name == "shadow50.csv":
+                    shadow_questions.add(question)
     calls = {"solver": 0, "reflection": 0, "create": 0, "from_environment": 0}
 
     class FakeCompletion:
         async def create(self, **request):
             if request["model"] == "qwen3.7-flash":
                 calls["reflection"] += 1
-                content = (
+                content = reflection_text or (
                     "Identify each candidate referent and compare pronoun agreement, "
                     "then use contextual evidence before selecting the answer."
                 )
@@ -118,9 +129,12 @@ def _formal_fixture(
                 gold = labels[question]
                 score = hashlib.sha256(question.encode("utf-8")).digest()[0]
                 procedure = request["messages"][0]["content"]
+                improved = candidate_improves and "Check pronoun agreement against each referent." in procedure
                 answer = (
-                    gold if candidate_improves and "Check pronoun agreement against each referent." in procedure
-                    else gold if score < 150 else ("B" if gold == "A" else "A")
+                    ("B" if gold == "A" else "A")
+                    if improved and shadow_candidate_hurts and question in shadow_questions
+                    else gold if improved or score < 150
+                    else ("B" if gold == "A" else "A")
                 )
                 content = f"FINAL_ANSWER: {answer}"
             return SimpleNamespace(
@@ -247,6 +261,52 @@ def _inject_one_local_candidate(monkeypatch):
             total_tokens=0, termination_reason="SATURATION_REACHED",
         )
     monkeypatch.setattr(GEPALocalPromptOptimizer, "optimize_saturation", local_candidate)
+
+
+@pytest.mark.parametrize("scope,reflection_text,candidate_improves,shadow_candidate_hurts", [
+    ("native", None, False, False),
+    ("layer2", None, False, False),
+    ("layer2", "```Check pronoun agreement against each referent.```", True, True),
+    ("layer2", "```Check pronoun agreement against each referent.```", True, False),
+])
+def test_actual_formal_composition_crosses_complete_persistence_seam(
+    tmp_path, monkeypatch, scope, reflection_text, candidate_improves, shadow_candidate_hurts,
+):
+    permit, calls = _formal_fixture(
+        tmp_path, monkeypatch, scope=scope,
+        reflection_text=reflection_text, candidate_improves=candidate_improves,
+        shadow_candidate_hurts=shadow_candidate_hurts,
+    )
+    monkeypatch.setattr(formal_runner, "validate_execution", lambda **_kwargs: permit)
+    monkeypatch.setattr(formal_runner, "admit_execution", lambda _permit, _run: permit)
+    result = asyncio.run(formal_runner.execute_frozen(permit.prep_root, permit.run_root))
+    if reflection_text is None:
+        assert result["stop_reason"] == "SATURATION_REACHED"
+    else:
+        assert result["stop_reason"] in {"SATURATION_REACHED", "NO_FEASIBLE_LAYER2_OPPORTUNITY"}
+    assert json.loads((permit.run_root / "execution_summary.json").read_text()) == result
+    assert json.loads((permit.run_root / "run_lifecycle.json").read_text())["status"] == "EXECUTION_COMPLETE"
+    frozen = freeze_formal(permit.run_root)
+    assert frozen["artifact_count"] >= 4
+    assert verify_freeze(permit.run_root)["artifact_count"] == frozen["artifact_count"]
+    derived = derive_formal(permit.run_root)
+    rows = [json.loads(line) for line in (permit.run_root / "formal_trajectory_trace.jsonl").read_text().splitlines()]
+    assert len(rows) == derived["record_count"] > 0
+    assert verify_freeze(permit.run_root)["artifact_count"] == frozen["artifact_count"]
+    assert calls["solver"] > 0 and calls["reflection"] > 0
+    if scope == "layer2":
+        assert result["feasibility_trace"] and result["evidence_view_trace"]
+        assert result["events"] and result["transition_trace"]
+        if reflection_text is None:
+            assert result["commits"] == 0
+        else:
+            assert result["candidate_diagnostics"]
+            assert any(row.get("full") and row.get("ordinary_common_safe")
+                       for row in result["candidate_diagnostics"])
+            assert result["commits"] == (0 if shadow_candidate_hurts else 1)
+            if not shadow_candidate_hurts:
+                assert any(row["committed_candidate_id"] for row in result["events"])
+                assert result["transition_trace"]
 
 
 def test_formal_fake_fixture_blocks_both_unpatched_provider_factories():

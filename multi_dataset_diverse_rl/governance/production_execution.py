@@ -58,6 +58,14 @@ FORMAL_ATTEMPT3_REPAIR = {
     "scientific_method_changed": False,
 }
 
+FORMAL_ATTEMPT3_LAST_MILE = {
+    "superseded_execution_source_sha": "b5bf32d0ac933e1b9478432148a8233472fed6fe",
+    "superseded_status": "SUPERSEDED_BEFORE_EXECUTION",
+    "reason": "post_search_freeze_trajectory_durability_and_full_chain_seam",
+    "scientific_method_changed": False,
+    "formal_real_calls_observed": 0,
+}
+
 
 def formal_attempt3_incident(root: Path) -> dict[str, Any]:
     """Bind the published aborted-attempt evidence without reading private runs."""
@@ -273,6 +281,10 @@ def validate_execution(
     formal = formal_match is not None
     formal_attempt2 = formal and formal_match.group(3) == "2"
     formal_attempt3 = formal and formal_match.group(3) == "3"
+    if (formal_attempt3 and require_authorized
+            and manifest.get("execution", {}).get("execution_source_sha")
+            == FORMAL_ATTEMPT3_LAST_MILE["superseded_execution_source_sha"]):
+        raise StartupIdentityError("ABORT_PRE_PROVIDER: prior Formal attempt3 prep superseded before execution")
     if not formal and manifest.get("experiment_id") not in {
         "gepa_layer2_real_canary_post_refactor_v1",
         "gepa_layer2_real_canary_post_refactor_v2",
@@ -480,6 +492,8 @@ def validate_execution(
                 incident = formal_attempt3_incident(root)
                 if (manifest.get("execution_repair") != incident
                         or protocol.get("execution_repair") != incident
+                        or manifest.get("preexecution_hardening") != FORMAL_ATTEMPT3_LAST_MILE
+                        or protocol.get("preexecution_hardening") != FORMAL_ATTEMPT3_LAST_MILE
                         or manifest.get("execution", {}).get("scientific_method_anchor_sha")
                         != "9737626373790aeb55a8ab6b99937b6d3085eace"):
                     raise StartupIdentityError("ABORT_PRE_PROVIDER: formal V3 attempt3 repair identity mismatch")

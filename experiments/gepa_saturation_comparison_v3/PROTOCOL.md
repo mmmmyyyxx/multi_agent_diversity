@@ -80,3 +80,16 @@ generation, selection, stopping, team materialization, or any online decision.
 
 All six attempt3 cells require new attempt-specific authorization. This
 preparation authorizes no real API calls or held-out evaluation.
+
+## Attempt3 pre-execution post-search hardening
+
+The first attempt3 prep, frozen at execution source
+`b5bf32d0ac933e1b9478432148a8233472fed6fe`, was never authorized or
+executed and is `SUPERSEDED_BEFORE_EXECUTION`. Fresh attempt3 prep retains the
+same scientific payload and six attempt names. Its execution-only boundary
+durably publishes the raw evidence inventory and trajectory, verifies the
+complete inventory, and reconciles the completed lifecycle, physical ledger,
+summary, and final team before freeze. A freeze or trajectory failure after
+`EXECUTION_COMPLETE` is an archival/post-processing failure; recovery uses the
+unchanged completed run and never repeats provider search. No real Formal API
+call or held-out evaluation preceded this hardening.

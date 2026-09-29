@@ -19,7 +19,7 @@ from multi_dataset_diverse_rl.governance.execution_harness_v2 import (  # noqa: 
     SOLVER_MODEL, endpoint_fingerprint_from_environment,
 )
 from multi_dataset_diverse_rl.governance.production_execution import (  # noqa: E402
-    _expected_bundle, formal_attempt2_prerequisite, formal_attempt3_incident,
+    FORMAL_ATTEMPT3_LAST_MILE, _expected_bundle, formal_attempt2_prerequisite, formal_attempt3_incident,
     formal_v3_contract, validate_execution,
 )
 from multi_dataset_diverse_rl.governance.startup_identity import (  # noqa: E402
@@ -139,6 +139,7 @@ def frozen_payload(*, execution_source_sha: str, seed: int, scope: str,
         }
     if attempt_number == 3:
         manifest["execution_repair"] = formal_attempt3_incident(ROOT)
+        manifest["preexecution_hardening"] = dict(FORMAL_ATTEMPT3_LAST_MILE)
     protocol = {
         "schema_version": "formal_gepa_saturation_protocol_v3",
         "experiment_id": attempt, "successor_id": SUCCESSOR_ID,
@@ -168,6 +169,7 @@ def frozen_payload(*, execution_source_sha: str, seed: int, scope: str,
         }
     if attempt_number == 3:
         protocol["execution_repair"] = manifest["execution_repair"]
+        protocol["preexecution_hardening"] = manifest["preexecution_hardening"]
     return manifest, protocol
 
 

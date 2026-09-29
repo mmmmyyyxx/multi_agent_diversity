@@ -126,6 +126,8 @@ def audit(prep_a: Path, prep_b: Path, *, attempt_number: int = 1) -> dict[str, o
                 incident = admission.formal_attempt3_incident(ROOT)
                 if (manifest.get("execution_repair") != incident
                         or protocol.get("execution_repair") != incident
+                        or manifest.get("preexecution_hardening") != admission.FORMAL_ATTEMPT3_LAST_MILE
+                        or protocol.get("preexecution_hardening") != admission.FORMAL_ATTEMPT3_LAST_MILE
                         or manifest.get("execution", {}).get("scientific_method_anchor_sha")
                         != "9737626373790aeb55a8ab6b99937b6d3085eace"
                         or "scripts/audit_formal_v3_json_roundtrip.py"

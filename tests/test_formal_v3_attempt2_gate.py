@@ -8,7 +8,7 @@ import pytest
 from multi_dataset_diverse_rl.formal_final_team import persist_final_team, team_hash
 from multi_dataset_diverse_rl.formal_validation_policy import formal_validation50_policy
 from multi_dataset_diverse_rl.governance.production_execution import (
-    _expected_bundle, formal_attempt3_incident, validate_execution,
+    FORMAL_ATTEMPT3_LAST_MILE, _expected_bundle, formal_attempt3_incident, validate_execution,
 )
 from multi_dataset_diverse_rl.governance.startup_identity import (
     StartupIdentityError, write_bundle,
@@ -113,6 +113,7 @@ def test_attempt3_retains_scientific_payload_and_binds_aborted_incident(tmp_path
     assert manifest["post_freeze_validation50"] == historical["post_freeze_validation50"]
     assert manifest["execution"]["scientific_method_anchor_sha"] == "9737626373790aeb55a8ab6b99937b6d3085eace"
     assert manifest["execution_repair"] == protocol["execution_repair"] == formal_attempt3_incident(ROOT)
+    assert manifest["preexecution_hardening"] == protocol["preexecution_hardening"] == FORMAL_ATTEMPT3_LAST_MILE
     assert manifest["api_authorization"]["authorized"] is False
     assert validate_execution(root=ROOT, prep=tmp_path, require_authorized=False).attempt_id.endswith("attempt3")
     monkeypatch.setenv("LWJ_DASHSCOPE_API_KEY", "OFFLINE_TEST_PLACEHOLDER")
@@ -127,6 +128,14 @@ def test_attempt3_retains_scientific_payload_and_binds_aborted_incident(tmp_path
 def test_attempt2_campaign_cannot_be_readmitted(tmp_path, monkeypatch):
     _prep(tmp_path, monkeypatch, attempt_number=2)
     with pytest.raises(StartupIdentityError, match="attempt2 campaign closed"):
+        validate_execution(root=ROOT, prep=tmp_path, require_authorized=True)
+
+
+def test_prior_unexecuted_attempt3_prep_cannot_be_readmitted(tmp_path, monkeypatch):
+    manifest, _ = _prep(tmp_path, monkeypatch, attempt_number=3)
+    manifest["execution"]["execution_source_sha"] = FORMAL_ATTEMPT3_LAST_MILE["superseded_execution_source_sha"]
+    (tmp_path / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    with pytest.raises(StartupIdentityError, match="superseded before execution"):
         validate_execution(root=ROOT, prep=tmp_path, require_authorized=True)
 
 

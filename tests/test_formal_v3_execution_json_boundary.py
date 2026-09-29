@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import replace
+import copy
 import json
+import os
 from pathlib import Path
 
 import pytest
@@ -17,6 +19,11 @@ from multi_dataset_diverse_rl.team_search.execution_runtime import ledger_summar
 from scripts import run_experiment as runner
 from scripts.derive_formal_trajectory_trace import derive
 from scripts.freeze_formal_v3_execution import freeze
+from scripts.freeze_formal_v3_execution import verify_freeze
+from scripts import freeze_formal_v3_execution as freeze_module
+from scripts import derive_formal_trajectory_trace as derive_module
+from multi_dataset_diverse_rl.persistence import durable_io
+from multi_dataset_diverse_rl.governance import production_execution
 
 
 def test_strict_json_boundary_normalizes_all_nested_tuples():
@@ -167,3 +174,198 @@ def test_execution_rejects_unsupported_value_before_summary_write(tmp_path, monk
         __import__("asyncio").run(runner.execute_frozen(tmp_path / "prep", run))
     assert not (run / "execution_summary.json").exists()
     assert read_json(run / "run_lifecycle.json")["status"] == "FAILED_START"
+
+
+@pytest.mark.parametrize("boundary", [
+    "summary_temp_write", "summary_replace", "summary_readback",
+    "lifecycle_write", "lifecycle_replace",
+])
+def test_execution_finalization_fault_never_marks_corrupt_summary_complete(
+    tmp_path, monkeypatch, boundary,
+):
+    _, run = _offline_native(tmp_path, monkeypatch)
+    if boundary == "summary_temp_write":
+        original = durable_io.json.dump
+
+        def fail_summary_dump(payload, handle, **kwargs):
+            if isinstance(payload, dict) and payload.get("experiment_id"):
+                raise OSError("injected summary temporary write")
+            return original(payload, handle, **kwargs)
+
+        monkeypatch.setattr(durable_io.json, "dump", fail_summary_dump)
+    elif boundary in {"summary_replace", "lifecycle_replace"}:
+        original = durable_io.atomic_replace
+        name = "execution_summary.json" if boundary == "summary_replace" else "run_lifecycle.json"
+        failed = False
+
+        def fail_replace(source, destination):
+            nonlocal failed
+            if Path(destination).name == name and (name != "run_lifecycle.json" or Path(destination).exists()) and not failed:
+                failed = True
+                raise OSError(f"injected {boundary}")
+            return original(source, destination)
+
+        monkeypatch.setattr(durable_io, "atomic_replace", fail_replace)
+        if boundary == "lifecycle_replace":
+            monkeypatch.setattr(production_execution, "atomic_write_json", durable_io.atomic_write_json)
+    elif boundary == "summary_readback":
+        original = runner.read_json
+        failed = False
+
+        def fail_readback(path):
+            nonlocal failed
+            if Path(path).name == "execution_summary.json" and not failed:
+                failed = True
+                raise OSError("injected summary read-back")
+            return original(path)
+
+        monkeypatch.setattr(runner, "read_json", fail_readback)
+    else:
+        original = production_execution.atomic_write_json
+        failed = False
+
+        def fail_lifecycle_write(path, payload):
+            nonlocal failed
+            if Path(path).name == "run_lifecycle.json" and not failed:
+                failed = True
+                raise OSError("injected lifecycle temporary write")
+            return original(path, payload)
+
+        monkeypatch.setattr(production_execution, "atomic_write_json", fail_lifecycle_write)
+    with pytest.raises(OSError, match="injected"):
+        __import__("asyncio").run(runner.execute_frozen(tmp_path / "prep", run))
+    assert read_json(run / "run_lifecycle.json")["status"] != "EXECUTION_COMPLETE"
+    assert not list(run.glob(".*.tmp"))
+    if boundary in {"summary_temp_write", "summary_replace"}:
+        assert not (run / "execution_summary.json").exists()
+
+
+def _completed_native(tmp_path, monkeypatch):
+    _, run = _offline_native(tmp_path, monkeypatch)
+    __import__("asyncio").run(runner.execute_frozen(tmp_path / "prep", run))
+    assert read_json(run / "run_lifecycle.json")["status"] == "EXECUTION_COMPLETE"
+    return run
+
+
+@pytest.mark.parametrize("boundary", ["temp_write", "replace", "readback"])
+def test_raw_freeze_fault_is_recoverable_without_provider_rerun(tmp_path, monkeypatch, boundary):
+    run = _completed_native(tmp_path, monkeypatch)
+    original_summary = (run / "execution_summary.json").read_bytes()
+    with monkeypatch.context() as patch:
+        if boundary == "temp_write":
+            original = freeze_module.json.dump
+
+            def fail_dump(payload, handle, **kwargs):
+                if isinstance(payload, dict) and payload.get("schema_version") == freeze_module.SCHEMA:
+                    raise OSError("injected freeze temporary write")
+                return original(payload, handle, **kwargs)
+
+            patch.setattr(freeze_module.json, "dump", fail_dump)
+        elif boundary == "replace":
+            patch.setattr(freeze_module, "atomic_replace", lambda *_args: (_ for _ in ()).throw(OSError("injected freeze replace")))
+        else:
+            patch.setattr(freeze_module, "verify_freeze", lambda *_args, **_kwargs: (_ for _ in ()).throw(OSError("injected freeze read-back")))
+        with pytest.raises(OSError, match="injected"):
+            freeze(run)
+    assert read_json(run / "run_lifecycle.json")["status"] == "EXECUTION_COMPLETE"
+    assert not (run / "execution_evidence_freeze.json").exists()
+    assert not list(run.glob(".execution_evidence_freeze.json.*.tmp"))
+    assert (run / "execution_summary.json").read_bytes() == original_summary
+    frozen = freeze(run)
+    assert verify_freeze(run)["artifact_count"] == frozen["artifact_count"]
+
+
+@pytest.mark.parametrize("boundary", ["temp_write", "serialize_midway", "replace", "readback"])
+def test_trajectory_fault_is_recoverable_without_provider_rerun(tmp_path, monkeypatch, boundary):
+    run = _completed_native(tmp_path, monkeypatch)
+    if boundary == "serialize_midway":
+        summary = read_json(run / "execution_summary.json")
+        second = copy.deepcopy(summary["events"][0])
+        second["index"] = 2
+        summary["events"].append(second)
+        atomic_write_json(run / "execution_summary.json", summary)
+    freeze(run)
+    frozen_hash = freeze_module._digest(run / "execution_evidence_freeze.json")[1]
+    with monkeypatch.context() as patch:
+        if boundary == "temp_write":
+            import builtins
+            original_open = builtins.open
+
+            def fail_open(path, mode="r", *args, **kwargs):
+                if ".formal_trajectory_trace.jsonl." in str(path) and mode == "x":
+                    raise OSError("injected trajectory temporary write")
+                return original_open(path, mode, *args, **kwargs)
+
+            patch.setattr(builtins, "open", fail_open)
+        elif boundary == "serialize_midway":
+            original = derive_module.json.dumps
+            calls = 0
+
+            def fail_second(value, **kwargs):
+                nonlocal calls
+                calls += 1
+                if calls == 2:
+                    raise OSError("injected trajectory serialization midway")
+                return original(value, **kwargs)
+
+            patch.setattr(derive_module.json, "dumps", fail_second)
+        elif boundary == "replace":
+            patch.setattr(derive_module, "atomic_replace", lambda *_args: (_ for _ in ()).throw(OSError("injected trajectory replace")))
+        else:
+            import builtins
+            original_open = builtins.open
+
+            def fail_readback(path, mode="r", *args, **kwargs):
+                if Path(path).name == "formal_trajectory_trace.jsonl" and mode == "rb":
+                    raise OSError("injected trajectory read-back")
+                return original_open(path, mode, *args, **kwargs)
+
+            patch.setattr(builtins, "open", fail_readback)
+        with pytest.raises(OSError, match="injected"):
+            derive(run)
+    assert read_json(run / "run_lifecycle.json")["status"] == "EXECUTION_COMPLETE"
+    assert not (run / "formal_trajectory_trace.jsonl").exists()
+    assert not list(run.glob(".formal_trajectory_trace.jsonl.*.tmp"))
+    assert freeze_module._digest(run / "execution_evidence_freeze.json")[1] == frozen_hash
+    assert derive(run)["record_count"] >= 1
+
+
+@pytest.mark.parametrize("corruption", [
+    "schema", "attempt", "count", "duplicate", "traversal", "absolute",
+    "size", "sha", "missing", "extra", "symlink",
+])
+def test_full_freeze_inventory_rejects_corruption(tmp_path, monkeypatch, corruption):
+    run = _completed_native(tmp_path, monkeypatch)
+    freeze(run)
+    inventory_path = run / "execution_evidence_freeze.json"
+    inventory = read_json(inventory_path)
+    if corruption == "schema":
+        inventory["schema_version"] = "other"
+    elif corruption == "attempt":
+        inventory["attempt_id"] = "other"
+    elif corruption == "count":
+        inventory["artifact_count"] += 1
+    elif corruption == "duplicate":
+        inventory["files"].append(dict(inventory["files"][0]))
+        inventory["artifact_count"] += 1
+    elif corruption == "traversal":
+        inventory["files"][0]["path"] = "../escape"
+    elif corruption == "absolute":
+        inventory["files"][0]["path"] = "C:/escape"
+    elif corruption == "size":
+        inventory["files"][0]["size_bytes"] += 1
+    elif corruption == "sha":
+        inventory["files"][0]["sha256"] = "0" * 64
+    elif corruption == "missing":
+        (run / inventory["files"][0]["path"]).unlink()
+    elif corruption == "extra":
+        (run / "unlisted.json").write_text("{}", encoding="utf-8")
+    else:
+        try:
+            os.symlink(run / "execution_summary.json", run / "linked.json")
+        except (OSError, NotImplementedError):
+            pytest.skip("symlink creation unavailable")
+    if corruption in {"schema", "attempt", "count", "duplicate", "traversal", "absolute", "size", "sha"}:
+        atomic_write_json(inventory_path, inventory)
+    with pytest.raises((ValueError, KeyError, FileNotFoundError)):
+        verify_freeze(run)
