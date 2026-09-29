@@ -41,7 +41,7 @@ from multi_dataset_diverse_rl.team_search.execution_runtime import (  # noqa: E4
     ledger_summary,
 )
 from multi_dataset_diverse_rl.persistence.durable_io import (  # noqa: E402
-    atomic_write_json, read_json,
+    atomic_write_json, canonical_json_payload, read_json,
 )
 
 
@@ -77,14 +77,25 @@ def preflight(manifest: Mapping[str, Any]) -> dict[str, Any]:
 def governed_preflight(prep: Path) -> dict[str, Any]:
     permit = validate_execution(root=ROOT, prep=prep, require_authorized=False)
     formal_pending = permit.experiment_id.startswith("gepa_saturation_comparison_v3_")
+    gate = "PREREGISTERED_NOT_EXECUTED"
     if formal_pending:
         manifest = json.loads((prep / "manifest.json").read_text(encoding="utf-8"))
-        formal_pending = manifest.get("execution_gate", {}).get(
-            "real_v4_diagnostic"
-        ) != "SCIENTIFICALLY_VALID"
+        if permit.attempt_id.endswith("_attempt1"):
+            gate = "SUPERSEDED_BEFORE_EXECUTION"
+        elif permit.attempt_id.endswith("_attempt2"):
+            gate = (
+                "INVALID_EXECUTION_CONFORMANCE"
+                if permit.attempt_id == "gepa_saturation_comparison_v3_seed80_native_attempt2"
+                else "SUPERSEDED_BEFORE_EXECUTION"
+            )
+        else:
+            formal_pending = manifest.get("execution_gate", {}).get(
+                "real_v4_diagnostic"
+            ) != "SCIENTIFICALLY_VALID"
+            gate = "PREREGISTERED_EXECUTION_GATED" if formal_pending else gate
     return {
-        "gate": "PREREGISTERED_EXECUTION_GATED" if formal_pending else "PREREGISTERED_NOT_EXECUTED",
-        "ready_for_authorization": not formal_pending,
+        "gate": gate,
+        "ready_for_authorization": not formal_pending and gate == "PREREGISTERED_NOT_EXECUTED",
         "attempt_id": permit.attempt_id,
         "preregistration_sha256": permit.preregistration_sha256,
         "run_identity_sha256": permit.run_identity_sha256,
@@ -117,17 +128,18 @@ async def execute_frozen(prep: Path, run_root: Path) -> dict[str, Any]:
         else:
             result = await execute_post_refactor_canary(admitted, root=ROOT)
         summary_path = run_root / "execution_summary.json"
-        atomic_write_json(summary_path, result)
-        if read_json(summary_path) != result:
+        persisted_result = canonical_json_payload(result)
+        atomic_write_json(summary_path, persisted_result)
+        if read_json(summary_path) != persisted_result:
             raise RuntimeError("execution summary read-back mismatch")
-        usage = result["ledger"]
+        usage = persisted_result["ledger"]
         terminal_lifecycle(
             admitted, status="EXECUTION_COMPLETE",
             provider_attempts=int(usage["provider_attempts"]),
             provider_successes=int(usage["successful_provider_calls"]),
             provider_failures=int(usage["failed_provider_attempts"]),
         )
-        return result
+        return persisted_result
     except BaseException:
         ledger_path = run_root / "ledger.jsonl"
         usage = ledger_summary(ledger_path) if ledger_path.exists() else {}

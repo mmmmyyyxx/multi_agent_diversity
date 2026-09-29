@@ -59,3 +59,24 @@ observation preceded this correction. The fresh attempt2 prep retains the same
 search method and six cell names but binds the independent `validation` 50
 question-hash set from `anti_overfitting_split_v1/split_manifest.json` as the
 post-freeze endpoint. Fold_c remains Shadow50, and Test50 stays sealed.
+
+## Attempt3 execution-only repair
+
+The corrected attempt2 campaign is closed as an invalid execution campaign.
+Seed80 Native consumed its one-time authorization and made 1137 successful
+provider calls, but its lifecycle ended `ABORTED` after a post-search JSON
+read-back type mismatch. Its scientific validity is
+`INVALID_EXECUTION_CONFORMANCE`; efficacy is `NOT_ASSESSED`. The other five
+attempt2 cells are `SUPERSEDED_BEFORE_EXECUTION`. The published incident is
+bound to commit `c29bdceca25d63b93edba9eaf57bff33b9ad51c3`.
+
+Attempt3 keeps the same six seeds and arms, scientific search method, models,
+Optimize100, Shadow50, and independent post-freeze Validation50 policy. Its
+execution wrapper first converts the completed result to the strict JSON value
+that disk read-back will produce, then verifies the persisted summary against
+that value. Tuples become JSON arrays; unsupported values and non-finite
+numbers fail. This repair occurs after search and does not feed into candidate
+generation, selection, stopping, team materialization, or any online decision.
+
+All six attempt3 cells require new attempt-specific authorization. This
+preparation authorizes no real API calls or held-out evaluation.

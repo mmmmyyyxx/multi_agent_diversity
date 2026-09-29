@@ -8,18 +8,19 @@ import pytest
 from multi_dataset_diverse_rl.formal_final_team import persist_final_team, team_hash
 from multi_dataset_diverse_rl.formal_validation_policy import formal_validation50_policy
 from multi_dataset_diverse_rl.governance.production_execution import (
-    _expected_bundle, validate_execution,
+    _expected_bundle, formal_attempt3_incident, validate_execution,
 )
 from multi_dataset_diverse_rl.governance.startup_identity import (
     StartupIdentityError, write_bundle,
 )
 from scripts.prepare_gepa_saturation_comparison_v3 import frozen_payload
 from scripts.prepare_post_refactor_gepa_canary import _private_splits
+from scripts.run_experiment import governed_preflight
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def _prep(tmp_path, monkeypatch, *, attempt_number):
+def _prep(tmp_path, monkeypatch, *, attempt_number, seed=80, scope="native"):
     monkeypatch.setattr(
         "scripts.prepare_gepa_saturation_comparison_v3.endpoint_fingerprint_from_environment",
         lambda: "f" * 64,
@@ -32,7 +33,7 @@ def _prep(tmp_path, monkeypatch, *, attempt_number):
         ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True,
     ).strip()
     manifest, protocol = frozen_payload(
-        execution_source_sha=source, seed=80, scope="native",
+        execution_source_sha=source, seed=seed, scope=scope,
         attempt_number=attempt_number,
     )
     _private_splits(tmp_path)
@@ -97,6 +98,50 @@ def test_formal_attempt2_binds_validity_not_efficacy(tmp_path, monkeypatch):
     (tmp_path / "protocol.json").write_text(json.dumps(protocol), encoding="utf-8")
     with pytest.raises(StartupIdentityError, match="diagnostic prerequisite mismatch"):
         validate_execution(root=ROOT, prep=tmp_path, require_authorized=False)
+
+
+def test_attempt3_retains_scientific_payload_and_binds_aborted_incident(tmp_path, monkeypatch):
+    manifest, protocol = _prep(tmp_path, monkeypatch, attempt_number=3)
+    historical, historical_protocol = frozen_payload(
+        execution_source_sha="9737626373790aeb55a8ab6b99937b6d3085eace",
+        seed=80, scope="native", attempt_number=2,
+    )
+    assert manifest["scientific"] == historical["scientific"]
+    assert manifest["spec_identity"] == historical["spec_identity"]
+    assert manifest["formal_v3_contract"] == historical["formal_v3_contract"]
+    assert protocol["formal_v3_contract"] == historical_protocol["formal_v3_contract"]
+    assert manifest["post_freeze_validation50"] == historical["post_freeze_validation50"]
+    assert manifest["execution"]["scientific_method_anchor_sha"] == "9737626373790aeb55a8ab6b99937b6d3085eace"
+    assert manifest["execution_repair"] == protocol["execution_repair"] == formal_attempt3_incident(ROOT)
+    assert manifest["api_authorization"]["authorized"] is False
+    assert validate_execution(root=ROOT, prep=tmp_path, require_authorized=False).attempt_id.endswith("attempt3")
+    monkeypatch.setenv("LWJ_DASHSCOPE_API_KEY", "OFFLINE_TEST_PLACEHOLDER")
+    with pytest.raises(StartupIdentityError, match="authorization required"):
+        validate_execution(root=ROOT, prep=tmp_path, require_authorized=True)
+    manifest["execution_repair"]["scientific_method_changed"] = True
+    (tmp_path / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    with pytest.raises(StartupIdentityError, match="repair identity mismatch"):
+        validate_execution(root=ROOT, prep=tmp_path, require_authorized=False)
+
+
+def test_attempt2_campaign_cannot_be_readmitted(tmp_path, monkeypatch):
+    _prep(tmp_path, monkeypatch, attempt_number=2)
+    with pytest.raises(StartupIdentityError, match="attempt2 campaign closed"):
+        validate_execution(root=ROOT, prep=tmp_path, require_authorized=True)
+
+
+@pytest.mark.parametrize("seed,scope", [
+    (80, "native"), (80, "layer2"), (81, "native"),
+    (81, "layer2"), (82, "native"), (82, "layer2"),
+])
+def test_attempt2_campaign_status_is_frozen_without_execution(tmp_path, monkeypatch, seed, scope):
+    _prep(tmp_path, monkeypatch, attempt_number=2, seed=seed, scope=scope)
+    status = governed_preflight(tmp_path)
+    assert status["gate"] == (
+        "INVALID_EXECUTION_CONFORMANCE" if (seed, scope) == (80, "native")
+        else "SUPERSEDED_BEFORE_EXECUTION"
+    )
+    assert status["ready_for_authorization"] is False
 
 
 @pytest.mark.parametrize("other", ["optimize100", "shadow50", "test50"])

@@ -59,6 +59,29 @@ def atomic_write_json(path: str | Path, payload: Any) -> None:
         raise
 
 
+def canonical_json_payload(payload: Any) -> Any:
+    """Return the exact JSON value that a strict write/read cycle will load.
+
+    Tuples are JSON arrays. Non-string mapping keys are rejected instead of
+    being silently converted to strings by Python's JSON encoder.
+    """
+
+    def require_string_keys(value: Any) -> None:
+        if isinstance(value, dict):
+            if any(not isinstance(key, str) for key in value):
+                raise TypeError("JSON object keys must be strings")
+            for item in value.values():
+                require_string_keys(item)
+        elif isinstance(value, (list, tuple)):
+            for item in value:
+                require_string_keys(item)
+
+    require_string_keys(payload)
+    return json.loads(json.dumps(
+        payload, ensure_ascii=False, sort_keys=True, allow_nan=False,
+    ))
+
+
 def read_json(path: str | Path) -> Any:
     with open(io_path(path), "r", encoding="utf-8") as handle:
         return json.load(handle)

@@ -54,7 +54,7 @@ def _files(prep: Path) -> dict[str, str]:
 
 
 def audit(prep_a: Path, prep_b: Path, *, attempt_number: int = 1) -> dict[str, object]:
-    if attempt_number not in {1, 2}:
+    if attempt_number not in {1, 2, 3}:
         raise ValueError("unsupported Formal attempt number")
     a, b = _files(prep_a), _files(prep_b)
     if a != b:
@@ -92,7 +92,7 @@ def audit(prep_a: Path, prep_b: Path, *, attempt_number: int = 1) -> dict[str, o
                 raise AssertionError("formal cells do not share one source closure")
             if not REQUIRED_SOURCE_PATHS <= set(source_paths):
                 raise AssertionError("formal source closure misses a required active dependency")
-            if attempt_number == 2:
+            if attempt_number >= 2:
                 if (manifest.get("post_freeze_validation50") != formal_validation50_policy(ROOT)
                         or protocol.get("post_freeze_validation50") != manifest["post_freeze_validation50"]
                         or "experiments/anti_overfitting_split_v1/split_manifest.json"
@@ -121,7 +121,16 @@ def audit(prep_a: Path, prep_b: Path, *, attempt_number: int = 1) -> dict[str, o
             elif (manifest.get("diagnostic_prerequisite") != admission.formal_attempt2_prerequisite(ROOT)
                   or protocol.get("diagnostic_prerequisite") != manifest["diagnostic_prerequisite"]
                   or manifest["execution_gate"]["real_v4_diagnostic"] != "SCIENTIFICALLY_VALID"):
-                raise AssertionError("Formal attempt2 pilot evidence mismatch")
+                raise AssertionError("Formal pilot evidence mismatch")
+            if attempt_number == 3:
+                incident = admission.formal_attempt3_incident(ROOT)
+                if (manifest.get("execution_repair") != incident
+                        or protocol.get("execution_repair") != incident
+                        or manifest.get("execution", {}).get("scientific_method_anchor_sha")
+                        != "9737626373790aeb55a8ab6b99937b6d3085eace"
+                        or "scripts/audit_formal_v3_json_roundtrip.py"
+                        not in source_paths):
+                    raise AssertionError("Formal attempt3 incident binding mismatch")
             if manifest["api_authorization"]["authorized"]:
                 raise AssertionError("offline formal freeze must not authorize API execution")
             if manifest["scientific"]["emergency_max_provider_calls"] != 100_000:
@@ -176,6 +185,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--prep-a", type=Path, required=True)
     parser.add_argument("--prep-b", type=Path, required=True)
-    parser.add_argument("--attempt-number", type=int, choices=(1, 2), default=1)
+    parser.add_argument("--attempt-number", type=int, choices=(1, 2, 3), default=1)
     args = parser.parse_args()
     print(json.dumps(audit(args.prep_a, args.prep_b, attempt_number=args.attempt_number), sort_keys=True, indent=2))

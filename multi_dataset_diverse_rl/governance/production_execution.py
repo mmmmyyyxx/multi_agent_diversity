@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime, timezone
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -48,6 +49,45 @@ FORMAL_ATTEMPT2_PREREQUISITE = {
     "pilot_status": "CLOSED_VALID_INCONCLUSIVE",
     "raw_evidence_freeze_sha256": "a907c155c720f2d218f393e46594bac7261595a54e7953d3628e01c4a47e979b",
 }
+
+FORMAL_ATTEMPT3_REPAIR = {
+    "superseded_campaign": "Formal V3 attempt2",
+    "retry_justification": "INVALID_EXECUTION_CONFORMANCE",
+    "incident_commit": "c29bdceca25d63b93edba9eaf57bff33b9ad51c3",
+    "failure_class": "POST_SEARCH_JSON_ROUNDTRIP_TYPE_NORMALIZATION",
+    "scientific_method_changed": False,
+}
+
+
+def formal_attempt3_incident(root: Path) -> dict[str, Any]:
+    """Bind the published aborted-attempt evidence without reading private runs."""
+
+    prefix = "reports/formal_v3_attempt2_seed80_native_abort_20260929/"
+    commit = FORMAL_ATTEMPT3_REPAIR["incident_commit"]
+    try:
+        raw = subprocess.check_output(
+            ["git", "-C", str(root), "show", f"{commit}:{prefix}scientific_validity_audit.json"],
+        )
+        manifest = json.loads(subprocess.check_output(
+            ["git", "-C", str(root), "show", f"{commit}:{prefix}sha256_manifest.json"],
+            text=True, encoding="utf-8",
+        ))
+        audit = json.loads(raw)
+    except (subprocess.CalledProcessError, json.JSONDecodeError) as exc:
+        raise StartupIdentityError("ABORT_PRE_PROVIDER: Formal attempt2 incident unavailable") from exc
+    if (manifest.get("scientific_validity_audit.json") != hashlib.sha256(raw).hexdigest()
+            or audit.get("attempt_id") != "gepa_saturation_comparison_v3_seed80_native_attempt2"
+            or audit.get("execution_source_sha") != "9737626373790aeb55a8ab6b99937b6d3085eace"
+            or audit.get("lifecycle") != "ABORTED"
+            or audit.get("scientific_validity") != "INVALID_EXECUTION_CONFORMANCE"
+            or audit.get("efficacy") != "NOT_ASSESSED"
+            or audit.get("failure_boundary") != "POST_SEARCH_EXECUTION_SUMMARY_JSON_READBACK"
+            or audit.get("successful_provider_calls") != 1137
+            or audit.get("remaining_five_attempts") != "UNAUTHORIZED_UNCONSUMED_UNEXECUTED"
+            or audit.get("validation50_calls") != 0
+            or audit.get("test50_calls") != 0):
+        raise StartupIdentityError("ABORT_PRE_PROVIDER: Formal attempt2 incident mismatch")
+    return dict(FORMAL_ATTEMPT3_REPAIR)
 
 
 def formal_attempt2_prerequisite(root: Path) -> dict[str, Any]:
@@ -227,11 +267,12 @@ def validate_execution(
     manifest = _read(prep / "manifest.json")
     protocol = _read(prep / "protocol.json")
     formal_match = re.fullmatch(
-        r"gepa_saturation_comparison_v3_seed(80|81|82)_(native|layer2)_attempt(1|2)",
+        r"gepa_saturation_comparison_v3_seed(80|81|82)_(native|layer2)_attempt(1|2|3)",
         str(manifest.get("experiment_id", "")),
     )
     formal = formal_match is not None
     formal_attempt2 = formal and formal_match.group(3) == "2"
+    formal_attempt3 = formal and formal_match.group(3) == "3"
     if not formal and manifest.get("experiment_id") not in {
         "gepa_layer2_real_canary_post_refactor_v1",
         "gepa_layer2_real_canary_post_refactor_v2",
@@ -387,7 +428,7 @@ def validate_execution(
             or protocol.get("formal_v3_contract") != formal_v3_contract()
         ):
             raise StartupIdentityError("ABORT_PRE_PROVIDER: formal V3 contract mismatch")
-        if formal_attempt2:
+        if formal_attempt2 or formal_attempt3:
             from ..formal_validation_policy import formal_validation50_policy
 
             expected_prerequisite = formal_attempt2_prerequisite(root)
@@ -435,10 +476,21 @@ def validate_execution(
                         manifest.get("execution", {}).get("source_paths", ())
                     )):
                 raise StartupIdentityError("ABORT_PRE_PROVIDER: formal V3 diagnostic prerequisite mismatch")
+            if formal_attempt3:
+                incident = formal_attempt3_incident(root)
+                if (manifest.get("execution_repair") != incident
+                        or protocol.get("execution_repair") != incident
+                        or manifest.get("execution", {}).get("scientific_method_anchor_sha")
+                        != "9737626373790aeb55a8ab6b99937b6d3085eace"):
+                    raise StartupIdentityError("ABORT_PRE_PROVIDER: formal V3 attempt3 repair identity mismatch")
+            elif manifest.get("execution_repair") is not None or protocol.get("execution_repair") is not None:
+                raise StartupIdentityError("ABORT_PRE_PROVIDER: historical formal attempt2 repair identity mismatch")
         elif (manifest.get("execution_gate") != {"real_v4_diagnostic": "PENDING_SCIENTIFIC_VALIDITY"}
               or manifest.get("diagnostic_prerequisite") is not None):
             raise StartupIdentityError("ABORT_PRE_PROVIDER: historical formal attempt1 identity mismatch")
-        if require_authorized and not formal_attempt2:
+        if require_authorized and formal_attempt2:
+            raise StartupIdentityError("ABORT_PRE_PROVIDER: formal attempt2 campaign closed before further execution")
+        if require_authorized and not (formal_attempt2 or formal_attempt3):
             raise StartupIdentityError("ABORT_PRE_PROVIDER: formal attempt1 superseded before execution")
     if diagnostic:
         from .v4_attempt3_contract import diagnostic_contract, resource_upper_bounds

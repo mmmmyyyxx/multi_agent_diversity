@@ -19,7 +19,8 @@ from multi_dataset_diverse_rl.governance.execution_harness_v2 import (  # noqa: 
     SOLVER_MODEL, endpoint_fingerprint_from_environment,
 )
 from multi_dataset_diverse_rl.governance.production_execution import (  # noqa: E402
-    _expected_bundle, formal_attempt2_prerequisite, formal_v3_contract, validate_execution,
+    _expected_bundle, formal_attempt2_prerequisite, formal_attempt3_incident,
+    formal_v3_contract, validate_execution,
 )
 from multi_dataset_diverse_rl.governance.startup_identity import (  # noqa: E402
     canonical_json_bytes, write_bundle,
@@ -49,8 +50,8 @@ def frozen_payload(*, execution_source_sha: str, seed: int, scope: str,
                    attempt_number: int = 1) -> tuple[dict, dict]:
     if seed not in FORMAL_SEEDS or scope not in {"native", "layer2"}:
         raise ValueError("Formal V3 supports only seeds 80/81/82 and native/layer2")
-    if attempt_number not in {1, 2}:
-        raise ValueError("Formal V3 supports only historical attempt1 and fresh attempt2")
+    if attempt_number not in {1, 2, 3}:
+        raise ValueError("Formal V3 supports only attempts 1, 2 and 3")
     attempt = f"{SUCCESSOR_ID}_seed{seed}_{scope}_attempt{attempt_number}"
     scientific = {
         "backend": "gepa", "optimization_scope": scope,
@@ -73,7 +74,7 @@ def frozen_payload(*, execution_source_sha: str, seed: int, scope: str,
     })
     prerequisite = None
     validation_policy = None
-    if attempt_number == 2:
+    if attempt_number >= 2:
         prerequisite = formal_attempt2_prerequisite(ROOT)
         validation_policy = formal_validation50_policy(ROOT)
         sources = sorted(set(sources) | {
@@ -84,6 +85,10 @@ def frozen_payload(*, execution_source_sha: str, seed: int, scope: str,
             "multi_dataset_diverse_rl/formal_final_team.py",
             "scripts/derive_formal_trajectory_trace.py",
             "scripts/freeze_formal_v3_execution.py",
+        })
+    if attempt_number == 3:
+        sources = sorted(set(sources) | {
+            "scripts/audit_formal_v3_json_roundtrip.py",
         })
     manifest = {
         "schema_version": "formal_gepa_saturation_freeze_v3",
@@ -106,13 +111,16 @@ def frozen_payload(*, execution_source_sha: str, seed: int, scope: str,
         },
         "dependency": {"gepa": verify_frozen_gepa()},
         "execution": {
-            "scientific_method_anchor_sha": execution_source_sha,
+            "scientific_method_anchor_sha": (
+                "9737626373790aeb55a8ab6b99937b6d3085eace"
+                if attempt_number == 3 else execution_source_sha
+            ),
             "execution_source_sha": execution_source_sha,
             "initialization_policy": INITIALIZATION_POLICY,
             "source_paths": sources,
         },
         "execution_gate": {"real_v4_diagnostic": (
-            "SCIENTIFICALLY_VALID" if attempt_number == 2 else "PENDING_SCIENTIFIC_VALIDITY"
+            "SCIENTIFICALLY_VALID" if attempt_number >= 2 else "PENDING_SCIENTIFIC_VALIDITY"
         )},
         "api_authorization": {
             "authorized": False, "authorization_state": "AUTHORIZATION_REQUIRED",
@@ -129,6 +137,8 @@ def frozen_payload(*, execution_source_sha: str, seed: int, scope: str,
             "formal_real_calls_observed": 0,
             "scientific_search_changed": False,
         }
+    if attempt_number == 3:
+        manifest["execution_repair"] = formal_attempt3_incident(ROOT)
     protocol = {
         "schema_version": "formal_gepa_saturation_protocol_v3",
         "experiment_id": attempt, "successor_id": SUCCESSOR_ID,
@@ -156,6 +166,8 @@ def frozen_payload(*, execution_source_sha: str, seed: int, scope: str,
             "validation50": "POST_FREEZE_VALIDATION50_EVALUATION_separate_authorization",
             "test50": "SEALED_ZERO_CALLS_STAGE0",
         }
+    if attempt_number == 3:
+        protocol["execution_repair"] = manifest["execution_repair"]
     return manifest, protocol
 
 
@@ -201,6 +213,6 @@ def prepare(prep_root: Path, *, attempt_number: int = 1) -> dict[str, object]:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--prep-root", type=Path, default=DEFAULT_PREP)
-    parser.add_argument("--attempt-number", type=int, choices=(1, 2), default=1)
+    parser.add_argument("--attempt-number", type=int, choices=(1, 2, 3), default=1)
     args = parser.parse_args()
     print(json.dumps(prepare(args.prep_root, attempt_number=args.attempt_number), sort_keys=True, indent=2))
