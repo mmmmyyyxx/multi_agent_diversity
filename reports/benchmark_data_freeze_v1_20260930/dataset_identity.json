@@ -1,0 +1,177 @@
+{
+  "hotpotqa": {
+    "actual_counts": null,
+    "local_download_complete": false,
+    "partial_source_file": {
+      "bytes": 165624177,
+      "path": "data/benchmark_suite_v1/raw/hotpotqa/fullwiki__train-00000-of-00002.parquet",
+      "sha256": "76d3bb3048a7cc73c1958107c0c5872a00d7e7d00c105b81e92f6769e7822e68",
+      "status": "ONE_SHARD_ONLY_NOT_DATA_READY"
+    },
+    "planned_counts": {
+      "search": 150,
+      "shadow": 300,
+      "test": 300,
+      "validation": 0
+    },
+    "source_pin": {
+      "config": "fullwiki",
+      "repository": "hotpotqa/hotpot_qa",
+      "revision": "1908d6afbbead072334abe2965f91bd2709910ab"
+    },
+    "source_rows": null,
+    "status": "PENDING_USER_DOWNLOAD"
+  },
+  "hover": {
+    "actual_counts": null,
+    "local_download_complete": false,
+    "planned_counts": {
+      "search": 150,
+      "shadow": 300,
+      "test": 300,
+      "validation": 0
+    },
+    "source_pin": {
+      "config": "default",
+      "data_repository": "hover-nlp/hover",
+      "data_revision": "39b84697f196308f398a251a7aea9b82ae0f0562",
+      "repository": "hover-nlp/hover",
+      "revision": "c0e43052759879b3461642ca6c0dd26658f47691"
+    },
+    "source_rows": null,
+    "status": "PENDING_USER_DOWNLOAD"
+  },
+  "ifbench": {
+    "actual_counts": {
+      "search": 150,
+      "shadow": 300,
+      "test": 294,
+      "validation": 0
+    },
+    "hashes": {
+      "search": "915efe457211308dea94ea252a092e4d454ba3f8a55a70903a8dfedd32b18f5b",
+      "shadow": "77dd6e708d6f1e44ad69a891dc36165b8f75392e50e89c347333751a99cd171e",
+      "test": "9b009a41f19320a2b8211d043535b98ee5aec7d9de00c42865384e626211545e",
+      "validation": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "local_download_complete": true,
+    "materialized": {
+      "search": {
+        "bytes": 162550,
+        "path": "materialized/ifbench/search.jsonl",
+        "sha256": "25a68937c7be4a51747a9bcc89564bef842dba108f658ce83f3ae344c6185ade"
+      },
+      "shadow": {
+        "bytes": 340925,
+        "path": "materialized/ifbench/shadow.jsonl",
+        "sha256": "7841c078f8f778e71e47fcb7127b861308357319da1abc92d58aefbae89b3478"
+      },
+      "test": {
+        "bytes": 502902,
+        "path": "materialized/ifbench/test.jsonl",
+        "sha256": "c7f88267d286f60be73248b9e3ad09a49bff8b3fe53d3fccd5cab3d1664f168f"
+      },
+      "validation": {
+        "bytes": 0,
+        "path": "materialized/ifbench/validation.jsonl",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "membership_sha256": "18e2b9e3377c0d623341afb8d9c30ab8a6b0b1455991f3fff4ee933de8d208e2",
+    "source": {
+      "canonical_sources": [
+        {
+          "canonical_sha256": "83e38ac163c443f8a4488bd5049f91938faf581a0317dfd25c8e48c4a8aa4128",
+          "name": "train",
+          "row_count": 14971
+        },
+        {
+          "canonical_sha256": "c7f88267d286f60be73248b9e3ad09a49bff8b3fe53d3fccd5cab3d1664f168f",
+          "name": "test",
+          "row_count": 294
+        }
+      ],
+      "config": "vendored_IFBench",
+      "dataset_fingerprints": {
+        "test": "76a5a80f52ecacf7",
+        "train": "0cd4979e9f79d8a1"
+      },
+      "datasets_version": "3.6.0",
+      "files": [
+        {
+          "bytes": 17115408,
+          "git_blob_sha1": "e93fdcb8bb891db9d790c361b5049920cba5a470",
+          "line_count": 14971,
+          "local_name": "IFBench_train.jsonl",
+          "sha256": "a5ec13223a93879b7172da783d54669d5873dc4632b57fd6d961730c9679fc8c",
+          "url": "https://raw.githubusercontent.com/gepa-ai/gepa-artifact/cbefbc1aa0f43dd39874ec4bf42211365dbda42e/gepa_artifact/benchmarks/IFBench/data/IFBench_train.jsonl"
+        },
+        {
+          "bytes": 419877,
+          "git_blob_sha1": "1ba17107c6e8fc0cfaf4e11fa4d73486223b894a",
+          "line_count": 294,
+          "local_name": "IFBench_test.jsonl",
+          "sha256": "11c3d683dcc7f4908a4d3cacd05c9a8bbd5484af2f8fde969e7abe2b8bad3e34",
+          "url": "https://raw.githubusercontent.com/gepa-ai/gepa-artifact/cbefbc1aa0f43dd39874ec4bf42211365dbda42e/gepa_artifact/benchmarks/IFBench/data/IFBench_test.jsonl"
+        }
+      ],
+      "fingerprint_scope": "local explicit loading recipe, not claimed historical paper fingerprint",
+      "loading_recipe": "exact pinned source files; no remote executable imports; Dataset.from_list fingerprint",
+      "repository": "gepa-ai/gepa-artifact",
+      "revision": "cbefbc1aa0f43dd39874ec4bf42211365dbda42e",
+      "upstream_splits": [
+        "train",
+        "test"
+      ]
+    },
+    "source_rows": {
+      "test": 294,
+      "train": 14971
+    },
+    "status": "FROZEN"
+  },
+  "math": {
+    "actual_counts": null,
+    "local_download_complete": false,
+    "planned_counts": {
+      "search": 150,
+      "shadow": 300,
+      "test": 300,
+      "validation": 0
+    },
+    "source_pin": {
+      "config": "canonical_seven_subjects",
+      "repository": "EleutherAI/hendrycks_math",
+      "revision": "21a5633873b6a120296cce3e2df9d5550074f4a3",
+      "subject_configs": [
+        "algebra",
+        "counting_and_probability",
+        "geometry",
+        "intermediate_algebra",
+        "number_theory",
+        "prealgebra",
+        "precalculus"
+      ]
+    },
+    "source_rows": null,
+    "status": "PENDING_USER_DOWNLOAD"
+  },
+  "pupa": {
+    "actual_counts": null,
+    "local_download_complete": false,
+    "planned_counts": {
+      "search": 111,
+      "shadow": 111,
+      "test": 221,
+      "validation": 0
+    },
+    "source_pin": {
+      "auxiliary_config": "pupa_tnb",
+      "config": "pupa_new",
+      "repository": "Columbia-NLP/PUPA",
+      "revision": "9981b49b6ced0033988a224b6712895ebf119294"
+    },
+    "source_rows": null,
+    "status": "PENDING_USER_DOWNLOAD"
+  }
+}

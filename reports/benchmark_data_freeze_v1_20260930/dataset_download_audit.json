@@ -1,0 +1,86 @@
+{
+  "dataset_network_requests": "ALLOWED; exact session-wide count not instrumented; local downloader events count later requests only",
+  "download_inventory": [
+    {
+      "bytes": 165624177,
+      "path": "data/benchmark_suite_v1/raw/hotpotqa/fullwiki__train-00000-of-00002.parquet",
+      "sha256": "76d3bb3048a7cc73c1958107c0c5872a00d7e7d00c105b81e92f6769e7822e68"
+    },
+    {
+      "bytes": 224,
+      "path": "data/benchmark_suite_v1/raw/hotpotqa/fullwiki__train-00000-of-00002.parquet.receipt.json",
+      "sha256": "0239047a9d8a22866f4916de4652a16e563f57e63811b7a179da80fd3189b370"
+    },
+    {
+      "bytes": 95,
+      "path": "data/benchmark_suite_v1/raw/ifbench/download_events.jsonl",
+      "sha256": "a3be10968e508d59b90ad240b5724b198890550f4bc436476fe9975915c56f0e"
+    },
+    {
+      "bytes": 419877,
+      "path": "data/benchmark_suite_v1/raw/ifbench/IFBench_test.jsonl",
+      "sha256": "11c3d683dcc7f4908a4d3cacd05c9a8bbd5484af2f8fde969e7abe2b8bad3e34"
+    },
+    {
+      "bytes": 240,
+      "path": "data/benchmark_suite_v1/raw/ifbench/IFBench_test.jsonl.receipt.json",
+      "sha256": "ff7c7b4cde03856c28a6f25f4c67767c2b6cd1952dc47cc7883e350f13ffbe5c"
+    },
+    {
+      "bytes": 17115408,
+      "path": "data/benchmark_suite_v1/raw/ifbench/IFBench_train.jsonl",
+      "sha256": "a5ec13223a93879b7172da783d54669d5873dc4632b57fd6d961730c9679fc8c"
+    },
+    {
+      "bytes": 241,
+      "path": "data/benchmark_suite_v1/raw/ifbench/IFBench_train.jsonl.receipt.json",
+      "sha256": "dde1ea72bbd44bf0c8477e5dda00d22f00b93b06589c521137b0df49f2838f19"
+    },
+    {
+      "bytes": 502902,
+      "path": "data/benchmark_suite_v1/raw/ifbench/test.jsonl",
+      "sha256": "c7f88267d286f60be73248b9e3ad09a49bff8b3fe53d3fccd5cab3d1664f168f"
+    },
+    {
+      "bytes": 22742611,
+      "path": "data/benchmark_suite_v1/raw/ifbench/train.jsonl",
+      "sha256": "83e38ac163c443f8a4488bd5049f91938faf581a0317dfd25c8e48c4a8aa4128"
+    },
+    {
+      "bytes": 162550,
+      "path": "data/benchmark_suite_v1/materialized/ifbench/search.jsonl",
+      "sha256": "25a68937c7be4a51747a9bcc89564bef842dba108f658ce83f3ae344c6185ade"
+    },
+    {
+      "bytes": 340925,
+      "path": "data/benchmark_suite_v1/materialized/ifbench/shadow.jsonl",
+      "sha256": "7841c078f8f778e71e47fcb7127b861308357319da1abc92d58aefbae89b3478"
+    },
+    {
+      "bytes": 502902,
+      "path": "data/benchmark_suite_v1/materialized/ifbench/test.jsonl",
+      "sha256": "c7f88267d286f60be73248b9e3ad09a49bff8b3fe53d3fccd5cab3d1664f168f"
+    },
+    {
+      "bytes": 0,
+      "path": "data/benchmark_suite_v1/materialized/ifbench/validation.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "environment": {
+    "datasets": "3.6.0",
+    "huggingface_hub": "0.34.4",
+    "main_environment_modified": false,
+    "pyarrow": "23.0.1",
+    "python": "3.13.5"
+  },
+  "observed_completed_source_downloads": 3,
+  "provider_attempts": 0,
+  "remaining_downloads": "USER_DEFERRED; no further requests after steering",
+  "transport_failures": [
+    "HuggingFace DNS failure",
+    "TLS unexpected EOF through existing proxy",
+    "preferred official MATH.zip anonymous probe HTTP 401",
+    "HotpotQA pyarrow19 decoder error resolved by isolated pyarrow23.0.1"
+  ]
+}

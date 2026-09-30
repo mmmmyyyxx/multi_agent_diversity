@@ -1,0 +1,14 @@
+{
+  "AGGREGATOR_CALLS": 0,
+  "BENCHMARK_DATA_FROZEN": "NO",
+  "GEPA_REFLECTION_CALLS": 0,
+  "LLM_PROVIDER_ATTEMPTS": 0,
+  "REAL_EXECUTION_READY": "NO",
+  "REAL_LLM_JUDGE_CALLS": 0,
+  "SHADOW_MODEL_EVALUATION_CALLS": 0,
+  "TEST_MODEL_EVALUATION_CALLS": 0,
+  "dataset_network": "PUBLIC_DOWNLOADS_ALLOWED_THEN_USER_DEFERRED",
+  "download_guard": "fixed public HuggingFace/GitHub URLs only; provider host rejected by test; no upstream code execution",
+  "offline_tests": "credential removal and network guard active before application imports; bootstrap and attempted-network negative control pass; normal network_attempt_count=0",
+  "real_search_executed": false
+}

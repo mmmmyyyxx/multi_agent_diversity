@@ -1,0 +1,72 @@
+{
+  "hotpotqa": {
+    "benchmark_id": "hotpotqa",
+    "blockers": [
+      "BENCHMARK_PROVENANCE_NOT_FROZEN",
+      "BENCHMARK_SPLIT_NOT_FROZEN",
+      "AGGREGATION_POLICY_NOT_FROZEN",
+      "RESPONSIBILITY_POLICY_NOT_FROZEN"
+    ],
+    "gate": "HOLD_PRE_PROVIDER",
+    "provider_attempts": 0,
+    "reason": "Project variant, answer-only versus joint metric, corpus and split are unselected; current BBH responsibility has no HotpotQA implementation."
+  },
+  "hover": {
+    "benchmark_id": "hover",
+    "blockers": [
+      "BENCHMARK_ADAPTER_NOT_READY",
+      "BENCHMARK_PROVENANCE_NOT_FROZEN",
+      "BENCHMARK_SPLIT_NOT_FROZEN",
+      "BENCHMARK_EVALUATOR_NOT_FROZEN",
+      "AGGREGATION_POLICY_NOT_FROZEN",
+      "RESPONSIBILITY_POLICY_NOT_FROZEN",
+      "OUTPUT_CONTRACT_NOT_FROZEN"
+    ],
+    "gate": "HOLD_PRE_PROVIDER",
+    "provider_attempts": 0,
+    "reason": "Exact project task, evidence unit, metric, aggregate and split are unselected."
+  },
+  "ifbench": {
+    "benchmark_id": "ifbench",
+    "blockers": [
+      "BENCHMARK_ADAPTER_NOT_READY",
+      "BENCHMARK_EVALUATOR_NOT_FROZEN",
+      "AGGREGATION_POLICY_NOT_FROZEN",
+      "RESPONSIBILITY_POLICY_NOT_FROZEN",
+      "OUTPUT_CONTRACT_NOT_FROZEN"
+    ],
+    "gate": "HOLD_PRE_PROVIDER",
+    "provider_attempts": 0,
+    "reason": "Vendored source and memberships are frozen. GEPA fraction-of-constraints scorer provenance is audited; evaluator integration, aggregate and responsibility remain unselected."
+  },
+  "math": {
+    "benchmark_id": "math",
+    "blockers": [
+      "BENCHMARK_ADAPTER_NOT_READY",
+      "BENCHMARK_PROVENANCE_NOT_FROZEN",
+      "BENCHMARK_SPLIT_NOT_FROZEN",
+      "BENCHMARK_EVALUATOR_NOT_FROZEN",
+      "AGGREGATION_POLICY_NOT_FROZEN",
+      "RESPONSIBILITY_POLICY_NOT_FROZEN",
+      "OUTPUT_CONTRACT_NOT_FROZEN"
+    ],
+    "gate": "HOLD_PRE_PROVIDER",
+    "provider_attempts": 0,
+    "reason": "Exact dataset variant and trusted equivalence evaluator are unbound; equivalence-aware voting is unproved."
+  },
+  "pupa": {
+    "benchmark_id": "pupa",
+    "blockers": [
+      "BENCHMARK_ADAPTER_NOT_READY",
+      "BENCHMARK_PROVENANCE_NOT_FROZEN",
+      "BENCHMARK_SPLIT_NOT_FROZEN",
+      "BENCHMARK_EVALUATOR_NOT_FROZEN",
+      "AGGREGATION_POLICY_NOT_FROZEN",
+      "RESPONSIBILITY_POLICY_NOT_FROZEN",
+      "OUTPUT_CONTRACT_NOT_FROZEN"
+    ],
+    "gate": "HOLD_PRE_PROVIDER",
+    "provider_attempts": 0,
+    "reason": "No project PUPA source, privacy task contract or scorer is retained."
+  }
+}

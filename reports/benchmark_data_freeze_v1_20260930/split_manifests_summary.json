@@ -1,0 +1,68 @@
+{
+  "hotpotqa": {
+    "counts": null,
+    "membership_hashes": null,
+    "planned_counts": {
+      "search": 150,
+      "shadow": 300,
+      "test": 300,
+      "validation": 0
+    },
+    "planned_exactness": "SOURCE_LOGIC_REPRODUCED",
+    "status": "PENDING_USER_DOWNLOAD"
+  },
+  "hover": {
+    "counts": null,
+    "membership_hashes": null,
+    "planned_counts": {
+      "search": 150,
+      "shadow": 300,
+      "test": 300,
+      "validation": 0
+    },
+    "planned_exactness": "SOURCE_LOGIC_REPRODUCED",
+    "status": "PENDING_USER_DOWNLOAD"
+  },
+  "ifbench": {
+    "counts": {
+      "search": 150,
+      "shadow": 300,
+      "test": 294,
+      "validation": 0
+    },
+    "exactness": "EXACT_SOURCE_AND_INSTANCE_ALIGNED",
+    "hashes": {
+      "search": "915efe457211308dea94ea252a092e4d454ba3f8a55a70903a8dfedd32b18f5b",
+      "shadow": "77dd6e708d6f1e44ad69a891dc36165b8f75392e50e89c347333751a99cd171e",
+      "test": "9b009a41f19320a2b8211d043535b98ee5aec7d9de00c42865384e626211545e",
+      "validation": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "manifest_sha256": "7076ebb0dac504fd279093043dd3851be0d2d577af8d02a530b08a7840181e2d",
+    "membership_sha256": "18e2b9e3377c0d623341afb8d9c30ab8a6b0b1455991f3fff4ee933de8d208e2",
+    "status": "FROZEN"
+  },
+  "math": {
+    "counts": null,
+    "membership_hashes": null,
+    "planned_counts": {
+      "search": 150,
+      "shadow": 300,
+      "test": 300,
+      "validation": 0
+    },
+    "planned_exactness": "PROJECT_PROPOSED",
+    "status": "PENDING_USER_DOWNLOAD"
+  },
+  "pupa": {
+    "counts": null,
+    "membership_hashes": null,
+    "planned_counts": {
+      "search": 111,
+      "shadow": 111,
+      "test": 221,
+      "validation": 0
+    },
+    "planned_exactness": "SOURCE_LOGIC_REPRODUCED",
+    "status": "PENDING_USER_DOWNLOAD"
+  }
+}

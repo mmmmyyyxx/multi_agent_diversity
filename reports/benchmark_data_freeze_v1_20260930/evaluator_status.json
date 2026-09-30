@@ -1,0 +1,39 @@
+{
+  "hotpotqa": {
+    "answer_em_f1_component": "READY",
+    "full_evaluator": "HOLD_TASK_SYSTEM_UNFROZEN",
+    "real_frozen_example_canonicalization": "PENDING_USER_DOWNLOAD"
+  },
+  "hover": {
+    "gepa_metric": "Boolean gold document title subset of retrieved predicted titles",
+    "integration": "UNFROZEN",
+    "note": "Not official verdict-and-evidence HoVer score"
+  },
+  "ifbench": {
+    "gepa_metric": "Fraction of constraints satisfied after eight response variations",
+    "integration": "UNFROZEN",
+    "note": "Not prompt-level all-constraints Boolean; constraint vector must be retained in any future evaluator",
+    "provenance": "AUDITED"
+  },
+  "math": {
+    "MATH_EVALUATOR_STATUS": "UNFROZEN",
+    "actual_extraction_counts": null,
+    "artifact_dependency": "math-verify==0.6.0",
+    "reference_extraction": "balanced last boxed/fbox payload; extraction only; not mathematical equivalence",
+    "scorer_policy": "Parser/extraction/normalization/timeouts/equivalence/terminal-invalid semantics require separate freeze"
+  },
+  "pupa": {
+    "calls_per_score": {
+      "leakage": 1,
+      "quality": 2
+    },
+    "fake_contract": "PASS",
+    "judge_model": "openai/gpt-4.1-mini",
+    "leakage": "num_pii_leaked / unique_unit_count if count > 0 else 0",
+    "overall": "(quality + 1 - leakage) / 2; trace mode score >= 1",
+    "pii_units": "set(pii_str.split(\"||\")); empty-string behavior intentionally retained",
+    "quality": "forward OR (forward == reverse)",
+    "real_calls": 0,
+    "real_scorer": "HOLD"
+  }
+}

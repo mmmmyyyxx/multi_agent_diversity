@@ -1,0 +1,86 @@
+[
+  {
+    "path": "gepa_artifact/benchmarks/benchmark.py",
+    "revision": "cbefbc1aa0f43dd39874ec4bf42211365dbda42e",
+    "sha256": "ca1112991a73271fd433cbe621dc6b6162030525cb5fc7a031da6173a8c42068",
+    "git_blob_sha1": "a4b23ac240dd1b68455889b3e59f651881b5e638"
+  },
+  {
+    "path": "gepa_artifact/benchmarks/hotpotQA/hotpot_data.py",
+    "revision": "cbefbc1aa0f43dd39874ec4bf42211365dbda42e",
+    "sha256": "1dbbc5df71588946367afd6c45604a03590d81548aa0ead03ffb14dd3e605b2d",
+    "git_blob_sha1": "a6a2c153045e1173fa3d17f74a160381897d9c09"
+  },
+  {
+    "path": "gepa_artifact/benchmarks/hotpotQA/hotpot_program.py",
+    "revision": "cbefbc1aa0f43dd39874ec4bf42211365dbda42e",
+    "sha256": "bc11bada2a2ffa84ca4ad5a33c0170f4be616cf8177d4dfadc575f2607170df0",
+    "git_blob_sha1": "514c911b94fd0d3a994a01db74f18c157d3b5ae9"
+  },
+  {
+    "path": "gepa_artifact/benchmarks/hotpotQA/hotpot_utils.py",
+    "revision": "cbefbc1aa0f43dd39874ec4bf42211365dbda42e",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+  },
+  {
+    "path": "gepa_artifact/benchmarks/hover/hover_data.py",
+    "revision": "cbefbc1aa0f43dd39874ec4bf42211365dbda42e",
+    "sha256": "702cbecdf5bb1c6725910cd6cfd37804d6be3f03778549bb37ffc11871bcf183",
+    "git_blob_sha1": "4944443f36be772521d7aa36e68982a9791bbdfb"
+  },
+  {
+    "path": "gepa_artifact/benchmarks/hover/hover_program.py",
+    "revision": "cbefbc1aa0f43dd39874ec4bf42211365dbda42e",
+    "sha256": "705a1d4fa5452d66d21c00d8d915d5dcd57e820b077a68bf3786407d040d3522",
+    "git_blob_sha1": "fc396c0640eba7e4a58f2abf16dded0f5061816a"
+  },
+  {
+    "path": "gepa_artifact/benchmarks/hover/hover_utils.py",
+    "revision": "cbefbc1aa0f43dd39874ec4bf42211365dbda42e",
+    "sha256": "1bb0203800caa8c347aab173df319fc2d0507db4c737bec45b6ade915f101f5a",
+    "git_blob_sha1": "f6deee18e4f9402e1c92a91f555df8280c1ff15f"
+  },
+  {
+    "path": "gepa_artifact/benchmarks/IFBench/ifbench_data.py",
+    "revision": "cbefbc1aa0f43dd39874ec4bf42211365dbda42e",
+    "sha256": "e575cb0efe687a6fc213e82b776845f7aaa0ea068b4c0e952b41c44267c49960",
+    "git_blob_sha1": "b881644f38798daaaca9a465a1756afce5a5989f"
+  },
+  {
+    "path": "gepa_artifact/benchmarks/IFBench/ifbench_metric.py",
+    "revision": "cbefbc1aa0f43dd39874ec4bf42211365dbda42e",
+    "sha256": "96e4d69e9adafb765b535c994e4ee2888c0f9e70fde0fa218b898c16d74b103e",
+    "git_blob_sha1": "c800063a08b0cee62c28e82cdec5c16fe79085bb"
+  },
+  {
+    "path": "gepa_artifact/benchmarks/papillon/papillon_data.py",
+    "revision": "cbefbc1aa0f43dd39874ec4bf42211365dbda42e",
+    "sha256": "090cdd1cf42ab08020a4b978a04ebc766418cf45079cd8856965a0d99184a996",
+    "git_blob_sha1": "de9ebb2138c90083ae85ef95ddfcad8613fbba0e"
+  },
+  {
+    "path": "gepa_artifact/benchmarks/papillon/papillon_program.py",
+    "revision": "cbefbc1aa0f43dd39874ec4bf42211365dbda42e",
+    "sha256": "c57fbc2215fa51d3b72e5198a143e4ae5cb443b463e65deafa2f50d7e6e48ce9",
+    "git_blob_sha1": "b68ee922265c63b4277022c30adfa718306a0c05"
+  },
+  {
+    "path": "gepa_artifact/benchmarks/papillon/papillon_utils.py",
+    "revision": "cbefbc1aa0f43dd39874ec4bf42211365dbda42e",
+    "sha256": "a068e8db9b1d62c99313f00657c651dcb975b4058532c92a59decdf95e0e1fce",
+    "git_blob_sha1": "d4b2b628fbbd862ca8d9ab81f109de20eb6a24ee"
+  },
+  {
+    "path": "gepa_artifact/benchmarks/livebench_math/livebenchmath_utils/AMPS_Hard/utils.py",
+    "revision": "cbefbc1aa0f43dd39874ec4bf42211365dbda42e",
+    "sha256": "d02f6c1b721aec02074fe15d06e6d755143889296be5cc77ed29d86eede68c73",
+    "git_blob_sha1": "dcc361994d8001e07814ce48713f090d4d8ee2b2"
+  },
+  {
+    "path": "gepa_artifact/benchmarks/livebench_math/livebenchmath_utils/math_competitions/utils.py",
+    "revision": "cbefbc1aa0f43dd39874ec4bf42211365dbda42e",
+    "sha256": "79ed8745507bfe220f879a29dc3f4da2764bcf0486fe59052a668b802e1ffed9",
+    "git_blob_sha1": "8a347ac1d09fc8856b53182bc0efd6734e27a64b"
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "duplicates_preserved": true,
+  "full_source_duplicates_do_not_change_preregistered_selection": true,
+  "ifbench": {
+    "test": {
+      "content_sha256": 0,
+      "input_sha256": 0,
+      "stable_example_id": 0
+    },
+    "train": {
+      "content_sha256": 0,
+      "input_sha256": 0,
+      "stable_example_id": 0
+    }
+  },
+  "other_sources": "PENDING_USER_DOWNLOAD"
+}

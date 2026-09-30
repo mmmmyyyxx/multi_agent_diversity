@@ -40,10 +40,12 @@ def test_registry_and_preprovider_holds() -> None:
     assert set(BENCHMARKS) == {"hotpotqa", "hover", "ifbench", "pupa", "math"}
     for key, spec in BENCHMARKS.items():
         assert spec.benchmark_id == key and spec.upstream
-        assert not spec.provenance_frozen and not spec.split_frozen
+        assert spec.provenance_frozen == (key == "ifbench")
+        assert spec.split_frozen == (key == "ifbench")
         assert not spec.unified_search_ready
-        assert "BENCHMARK_PROVENANCE_NOT_FROZEN" in spec.blockers()
-        assert "BENCHMARK_SPLIT_NOT_FROZEN" in spec.blockers()
+        if key != "ifbench":
+            assert "BENCHMARK_PROVENANCE_NOT_FROZEN" in spec.blockers()
+            assert "BENCHMARK_SPLIT_NOT_FROZEN" in spec.blockers()
         assert benchmark_preflight(key)["gate"] == "HOLD_PRE_PROVIDER"
     with pytest.raises(SearchContractError, match="BENCHMARK_UNKNOWN"):
         benchmark_preflight("not-a-benchmark")
@@ -55,7 +57,7 @@ def test_registry_and_preprovider_holds() -> None:
         result = preflight({"scientific": {"method": "unified_team_prompt_search_v1",
                                              "benchmark_id": key}, "runtime": runtime})
         assert result["gate"] == "HOLD" and result["provider_attempts"] == 0
-        assert "BENCHMARK_PROVENANCE_NOT_FROZEN" in result["blockers"]
+        assert "RESPONSIBILITY_POLICY_NOT_FROZEN" in result["blockers"]
 
 
 def test_unselected_adapters_fail_closed_before_parsing_or_scoring() -> None:
@@ -63,11 +65,11 @@ def test_unselected_adapters_fail_closed_before_parsing_or_scoring() -> None:
                  PUPABenchmarkAdapter, MATHBenchmarkAdapter):
         adapter = kind()
         assert not adapter.capabilities.supports_current_responsibility
-        with pytest.raises(SearchContractError, match="BENCHMARK_PROVENANCE_NOT_FROZEN"):
+        with pytest.raises(SearchContractError, match="BENCHMARK_TASK_EVALUATOR_NOT_FROZEN"):
             adapter.parse_member_output("some response", _item())
-        with pytest.raises(SearchContractError, match="BENCHMARK_PROVENANCE_NOT_FROZEN"):
+        with pytest.raises(SearchContractError, match="BENCHMARK_TASK_EVALUATOR_NOT_FROZEN"):
             adapter.format_input(_item())
-        with pytest.raises(SearchContractError, match="BENCHMARK_PROVENANCE_NOT_FROZEN"):
+        with pytest.raises(SearchContractError, match="BENCHMARK_TASK_EVALUATOR_NOT_FROZEN"):
             adapter.score_member_output(None, None)
 
 

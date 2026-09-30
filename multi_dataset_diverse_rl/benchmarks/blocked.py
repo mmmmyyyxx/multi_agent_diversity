@@ -12,7 +12,7 @@ class _UnfrozenAdapter:
     benchmark_id = ""
 
     def _hold(self) -> None:
-        raise SearchContractError(f"BENCHMARK_PROVENANCE_NOT_FROZEN: {self.benchmark_id}")
+        raise SearchContractError(f"BENCHMARK_TASK_EVALUATOR_NOT_FROZEN: {self.benchmark_id}")
 
     def format_input(self, item: BenchmarkInput) -> str:
         del item

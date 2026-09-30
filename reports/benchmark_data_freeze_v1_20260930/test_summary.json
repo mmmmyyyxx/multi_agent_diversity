@@ -1,0 +1,66 @@
+{
+  "compileall": {
+    "status": "PASS",
+    "targets": [
+      "multi_dataset_diverse_rl/benchmarks",
+      "scripts/materialize_benchmark_suite_v1.py",
+      "tests/test_benchmark_data_freeze_v1.py",
+      "tests/test_unified_benchmark_migration.py"
+    ]
+  },
+  "final_focused": {
+    "duration_seconds": 2.15,
+    "failed": 0,
+    "files": [
+      "tests/test_benchmark_data_freeze_v1.py",
+      "tests/test_unified_benchmark_migration.py"
+    ],
+    "passed": 48,
+    "skipped": 4
+  },
+  "guarded_relevant_regression": {
+    "duration_seconds": 172.8,
+    "failed": 0,
+    "files": [
+      "tests/test_benchmark_data_freeze_v1.py",
+      "tests/test_unified_benchmark_migration.py",
+      "tests/test_unified_search_architecture.py",
+      "tests/test_unified_bbh_replay.py",
+      "tests/test_unified_execution_governance.py",
+      "tests/test_unified_backend_runtime.py",
+      "tests/test_production_architecture.py"
+    ],
+    "passed": 229,
+    "scope": "Prior to final schema/cache-only assertions; final focused run below covers those edits.",
+    "skipped": 4
+  },
+  "network_guard": {
+    "active_before_application_import": true,
+    "bootstrap": "PASS",
+    "credentials_removed": true,
+    "negative_control": "PASS",
+    "normal_network_attempt_count": 0
+  },
+  "not_claimed": [
+    "full repository pytest",
+    "real data verification of pending four benchmarks",
+    "real HotpotQA canonicalization",
+    "real PUPA scorer or optimization"
+  ],
+  "offline_verify_ifbench": {
+    "network_attempts": 0,
+    "provider_attempts": 0,
+    "status": "PASS"
+  },
+  "preflight": {
+    "all_five": "HOLD_PRE_PROVIDER",
+    "provider_attempts": 0
+  },
+  "skip_reason": "USER_DEFERRED_DOWNLOAD; no real frozen-data manifest",
+  "skipped_benchmarks": [
+    "hotpotqa",
+    "hover",
+    "pupa",
+    "math"
+  ]
+}

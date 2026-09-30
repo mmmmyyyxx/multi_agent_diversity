@@ -1,0 +1,10 @@
+{
+  "findings": [],
+  "historical_reports": "excluded and untouched",
+  "line_ending_identity": ".gitattributes pins LF for tracked data manifests and this report snapshot",
+  "pii_scan": "No real PUPA data available; approved manifest field/schema and synthetic redaction controls pass",
+  "raw_materialized_staging_candidates": 0,
+  "scanned_task_files": 36,
+  "status": "PASS",
+  "unrelated_retry2_report": "excluded and untouched"
+}

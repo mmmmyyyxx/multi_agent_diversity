@@ -1,0 +1,10 @@
+{
+  "PUPA_EVALUATOR_DATA_READY": "NO_PENDING_USER_DOWNLOAD",
+  "PUPA_REAL_SCORER_READY": "HOLD",
+  "data_downloaded": false,
+  "manifest_policy": "source indexes, hashed IDs, content/input SHA256 and PII count only",
+  "raw_pii_committed": false,
+  "real_data_value_scan": "NOT_APPLICABLE_NO_PUPA_RAW_DATA",
+  "real_judge_calls": 0,
+  "synthetic_report_and_membership_redaction_test": "PASS"
+}

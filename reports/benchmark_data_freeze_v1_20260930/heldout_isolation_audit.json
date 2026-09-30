@@ -1,0 +1,105 @@
+{
+  "formally_ready": false,
+  "ifbench": {
+    "FORMAL_READY": "DATA_ISOLATION_ONLY",
+    "pairwise": [
+      {
+        "groups": [
+          "search",
+          "shadow"
+        ],
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        }
+      },
+      {
+        "groups": [
+          "search",
+          "validation"
+        ],
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        }
+      },
+      {
+        "groups": [
+          "search",
+          "test"
+        ],
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        }
+      },
+      {
+        "groups": [
+          "shadow",
+          "validation"
+        ],
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        }
+      },
+      {
+        "groups": [
+          "shadow",
+          "test"
+        ],
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        }
+      },
+      {
+        "groups": [
+          "validation",
+          "test"
+        ],
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        }
+      }
+    ],
+    "status": "DISJOINT",
+    "within_split_duplicate_counts": {
+      "search": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      },
+      "shadow": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      },
+      "test": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      },
+      "validation": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      }
+    }
+  },
+  "pending": {
+    "hotpotqa": "NOT_AUDITABLE_UNTIL_DOWNLOADED",
+    "hover": "NOT_AUDITABLE_UNTIL_DOWNLOADED",
+    "math": "NOT_AUDITABLE_UNTIL_DOWNLOADED",
+    "pupa": "NOT_AUDITABLE_UNTIL_DOWNLOADED"
+  },
+  "policy": "search and shadow evaluation only; test/validation raw/gold/feedback forbidden during search; shadow raw forbidden in mutation/reflection/evidence/pattern/memory; test hashes permitted",
+  "validation": "EMPTY for all V1 planned splits"
+}

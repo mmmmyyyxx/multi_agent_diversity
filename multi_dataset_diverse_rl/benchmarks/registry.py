@@ -49,8 +49,7 @@ class BenchmarkSpec:
 
     @property
     def unified_search_ready(self) -> bool:
-        return (self.dataset_adapter_ready and self.evaluator_ready
-                and self.aggregation_ready and self.responsibility_ready)
+        return not self.blockers()
 
     def blockers(self) -> tuple[str, ...]:
         checks = (
@@ -83,11 +82,13 @@ BENCHMARKS: dict[str, BenchmarkSpec] = {
         "Exact project task, evidence unit, metric, aggregate and split are unselected.",
     ),
     "ifbench": BenchmarkSpec(
-        "ifbench", "allenai/IFBench", None, "instruction following (candidate)",
+        "ifbench", "gepa-ai/gepa-artifact (vendored IFBench)", "cbefbc1aa0f43dd39874ec4bf42211365dbda42e", "instruction following (candidate)",
         "free-form response", None, None, (), _NO_VOTE,
-        False, False, False, False, False, False, False,
-        "Exact source/version and official constraint evaluator are unbound; "
-        "no aggregate or responsibility policy is frozen.",
+        False, False, True, True, False, False, False,
+        "Vendored source and memberships are frozen. GEPA fraction-of-constraints "
+        "scorer provenance is audited; evaluator integration, aggregate and responsibility remain unselected.",
+        dataset_identity="f552cacf1f51be8bc7b5867609eae5690fd4e250ab254310d86bf35119095a62",
+        split_identity="7076ebb0dac504fd279093043dd3851be0d2d577af8d02a530b08a7840181e2d",
     ),
     "pupa": BenchmarkSpec(
         "pupa", "PAPILLON/PUPA (candidate)", None, "privacy-preserving response (candidate)",
@@ -103,7 +104,6 @@ BENCHMARKS: dict[str, BenchmarkSpec] = {
         "equivalence-aware voting is unproved.",
     ),
 }
-
 
 def benchmark_spec(benchmark_id: str) -> BenchmarkSpec:
     try:

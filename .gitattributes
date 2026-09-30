@@ -1,0 +1,3 @@
+# Frozen identities and report receipts hash exact UTF-8 LF bytes on Windows.
+data/benchmark_suite_v1/manifests/** text eol=lf
+reports/benchmark_data_freeze_v1_20260930/** text eol=lf

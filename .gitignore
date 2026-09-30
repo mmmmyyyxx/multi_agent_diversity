@@ -11,4 +11,6 @@ qwen/
 artifacts/
 training_checkpoint.json
 *.sqlite
+data/benchmark_suite_v1/raw/
+data/benchmark_suite_v1/materialized/
 gate1_contract_smoke_*/

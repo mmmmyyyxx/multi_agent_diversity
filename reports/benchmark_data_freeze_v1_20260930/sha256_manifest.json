@@ -1,0 +1,31 @@
+{
+  "algorithm": "sha256",
+  "files": {
+    "README.md": "dd19904ba385434cdcf0723262580bcfc75866c42b5ee942225cafa6d4d6e7bf",
+    "aggregation_compatibility.md": "cdef23181fee6727bca9739a98e21ed8205474d14628e917cade6d9f09d78299",
+    "dataset_download_audit.json": "6f3cef84016d595409bd14dfb17514b7c1932938383ad0b582f28390378fe8f0",
+    "dataset_identity.json": "7f17df9defea3fbd7b7db4692253073c5902c9974a51e43cd11ebaa285b503fd",
+    "evaluator_status.json": "f4f03c21d59e4f47d120b91f4a0758b0d66d293f69743832b5b3a7a291139d11",
+    "heldout_isolation_audit.json": "d27336df2ffb3258eb5446ae68b0b4fcec37484dd5c28619baf0f4f6a2e24de0",
+    "ifbench_ood_isolation_audit.json": "c2f26c9a6c59109242ebb60dc874f6794de2666d7e681a33f472af5a830b08d0",
+    "math_agentgrad_macm_audit.md": "ab2ce6e49fe9ace4ae3c251d003ca67512106e5a6c1df5d91a2c8ad66901da83",
+    "preflight.json": "8aa516bbc2fc5e2b01645333f98ec4c42492dbe36ac369da5aca10135d1ba54d",
+    "pupa_privacy_audit.json": "2f9cde5d0f7ac31351aac83cd86351602957071d88cab8af43a1a8c2c5b1760a",
+    "responsibility_compatibility.md": "60aad9feac23ff9f0e0588d64620f5e5e6ec3018259e3642d4abc783b3b79c95",
+    "retrieval_dependency.md": "72fddaf952a0856dbfd2a2908751397644dedb4ed04b3828b575a7c83b3c0c90",
+    "sanitization_audit.json": "c835f3de3c00daeec8711ef9f38d2c1c05dd87fbcd3537b36ab28c9de443f866",
+    "source_duplication_audit.json": "045baf612187b61330eccee9e4eafa8cb7fa2675b5e8f912b1040d0055b93e79",
+    "source_provenance.json": "d13f78393c52d50303898e6efe869dc731792d09a9cce8a293568814a01b46b5",
+    "split_exactness.md": "14416d5748cb2d58a1f061557308ba6ff25fab2a19be81b477834dcaf48798a8",
+    "split_manifests_summary.json": "c30f8bc3382c0714ee34996601b44bcb23d6f76b909eace831e01708c93f869e",
+    "test_summary.json": "d5c598e5d2cdd746fc366f4bfab9a034dfd369095bb21500930176d98d19d4d6",
+    "zero_api_audit.json": "e090ae2f2e4df0d5dfc818a139a4d576b3a17ee03812c3b25edd5b64d7595448"
+  },
+  "frozen_data_manifests": {
+    "download_plan.json": "096e6713450cf17208b52975f8f260384bd2dbce127477d9467f28fd104fd4b9",
+    "ifbench.ids.jsonl": "18e2b9e3377c0d623341afb8d9c30ab8a6b0b1455991f3fff4ee933de8d208e2",
+    "ifbench.json": "7076ebb0dac504fd279093043dd3851be0d2d577af8d02a530b08a7840181e2d",
+    "source_code_identity.json": "9157973f842369d986faaf8f569591bae769ebc49005d5d7641bcf3daebdde51"
+  },
+  "scope": "report files only; excludes this self-referential hash receipt"
+}
