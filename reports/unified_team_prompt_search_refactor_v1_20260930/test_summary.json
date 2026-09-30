@@ -1,0 +1,27 @@
+{
+  "guard": "tests/formal_zero_api_runner.py",
+  "targeted_unified_governance_production_tests": {
+    "status": "PASS",
+    "passed": 35,
+    "network_attempts": 0
+  },
+  "broad_repository_suite": {
+    "status": "PASS_WITH_HISTORICAL_PRIVATE_ARTIFACT_FILES_EXCLUDED",
+    "passed": 1645,
+    "skipped": 4,
+    "test_files_excluded": 8,
+    "excluded_reason": "Historical tests require private frozen artifacts absent from this worktree.",
+    "network_attempts": 0
+  },
+  "unfiltered_repository_suite": {
+    "initial_status": "16_FAILED_13_ERRORS_BEFORE_DOC_TEST_UPDATE",
+    "current_code_related_failure": "Old governance documentation test expected an active two-layer heading; updated for unified architecture and passed targeted rerun.",
+    "other_failures_and_errors": "Historical private frozen artifact files are unavailable; no algorithm failure was observed in those cases."
+  },
+  "compileall": "PASS",
+  "git_diff_check": "PASS",
+  "full_saturation_fake_replay": "NOT_EXECUTED",
+  "real_api_calls": 0,
+  "validation50_calls": 0,
+  "test50_calls": 0
+}

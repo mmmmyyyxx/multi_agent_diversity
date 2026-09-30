@@ -1,4 +1,4 @@
-"""Minimal production experiment contract and orchestration engine.
+"""Experiment composition, with the old two-layer engine retained for replay.
 
 The engine selects only three orthogonal dimensions: Layer-1 backend,
 native/Layer-2 scope, and fixed-budget/saturation stopping. Scientific search,
@@ -22,6 +22,8 @@ from .native_feed import Layer2OptimizationRequest, NativeOptimizationRequest
 from .saturation import SaturationConfig, SaturationEmergency, SaturationState, StopReason, TeamEpochTracker
 from .team_search.controller import TeamSearchController
 from .team_search.schemas import TeamSearchOutcome, TeamSearchRequest
+from .search.orchestrator import UnifiedSearchOrchestrator, UnifiedSearchResult
+from .search.schemas import SearchMethodConfig
 
 
 class ExperimentContractError(ValueError):
@@ -294,6 +296,18 @@ class ExperimentServices:
     layer2_opportunity_factory: Callable[[int, str], Layer2Opportunity] | None = None
     layer2_outcome_observer: Callable[[int, TeamSearchOutcome], str | None] | None = None
     durable_usage_reader: Callable[[], Mapping[str, int]] | None = None
+
+
+@dataclass(frozen=True)
+class UnifiedExperimentInputs:
+    """Operational ceiling only; scientific stopping is owned by the search loop."""
+
+    max_opportunities: int
+
+
+@dataclass(frozen=True)
+class UnifiedExperimentServices:
+    orchestrator: UnifiedSearchOrchestrator
 
 
 @dataclass(frozen=True)
@@ -650,12 +664,28 @@ class ExperimentEngine:
 
 
 async def run_experiment(
-    spec: ExperimentSpec,
+    spec: ExperimentSpec | SearchMethodConfig,
     runtime: RuntimeContext,
-    inputs: ExperimentInputs,
-    services: ExperimentServices,
-) -> ExperimentResult:
-    """Public production API for every new experiment."""
+    inputs: ExperimentInputs | UnifiedExperimentInputs,
+    services: ExperimentServices | UnifiedExperimentServices,
+) -> ExperimentResult | UnifiedSearchResult:
+    """New methods use one orchestrator; frozen identities use the old engine."""
+
+    if isinstance(spec, SearchMethodConfig):
+        if not isinstance(inputs, UnifiedExperimentInputs) or not isinstance(
+            services, UnifiedExperimentServices
+        ):
+            raise ExperimentContractError("unified method requires unified composition")
+        if services.orchestrator.method.identity() != spec.identity():
+            raise ExperimentContractError("unified method identity mismatch")
+        # The runtime is validated by composition and authorization before
+        # provider construction; the search loop receives only explicit ports.
+        if not isinstance(runtime, RuntimeContext):
+            raise ExperimentContractError("runtime identity is required")
+        return await services.orchestrator.run(max_opportunities=inputs.max_opportunities)
+
+    if not isinstance(inputs, ExperimentInputs) or not isinstance(services, ExperimentServices):
+        raise ExperimentContractError("historical method requires historical composition")
 
     return await ExperimentEngine().run(spec, runtime, inputs, services)
 

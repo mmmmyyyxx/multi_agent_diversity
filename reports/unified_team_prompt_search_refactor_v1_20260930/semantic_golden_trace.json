@@ -1,0 +1,30 @@
+{
+  "fixture": "deterministic_fake_bbh_v4",
+  "network_guard_before_project_import": true,
+  "root_parent_opportunity": {
+    "responsibility_dnc_v": "MATCH",
+    "feasible_target": "MATCH",
+    "team_probe_ids": "MATCH",
+    "search_validation_ids": "MATCH",
+    "complete_gepa_packet_object_and_hash": "MATCH",
+    "ordered_gepa_batch_schedule": "MATCH",
+    "fake_official_gepa_solver_calls": "MATCH",
+    "fake_reflection_accounting": "MATCH",
+    "returned_prompts": "MATCH",
+    "team_probe_full_shadow_event_order": "MATCH",
+    "committed_candidate": "MATCH",
+    "final_team_hash": "MATCH"
+  },
+  "shadow_rejection_fixture": {
+    "winner_only_gate": "MATCH",
+    "no_commit_final_team_hash": "MATCH"
+  },
+  "successor_after_commit": {
+    "latest_transition_anchor_ids": "MATCH",
+    "gepa_packet_hash": "MATCH"
+  },
+  "full_saturation_replay": "NOT_EXECUTED",
+  "real_api_calls": 0,
+  "validation_calls": 0,
+  "test_calls": 0
+}

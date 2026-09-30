@@ -1,0 +1,24 @@
+{
+  "entrypoint": "multi_dataset_diverse_rl.experiment.run_experiment",
+  "current_method": "unified_team_prompt_search_v1",
+  "ordered_ports": [
+    "BenchmarkAdapter",
+    "AggregationPolicy",
+    "TeamStateSnapshot",
+    "StateAnalyzer",
+    "OpportunityBuilder",
+    "SearchEngine",
+    "CandidateEvaluationPipeline",
+    "TransitionPolicy",
+    "AdaptiveValidationGate",
+    "Committer",
+    "HistoryState",
+    "MemoryProvider",
+    "GlobalStopPolicy"
+  ],
+  "current_bbh_adapter": "multi_dataset_diverse_rl.search.current_bbh_runtime.build_current_bbh_orchestrator",
+  "historical_entrypoints_retained": true,
+  "historical_controller_invoked_by_current_bbh_adapter": false,
+  "historical_task_builder_invoked_by_current_bbh_adapter": false,
+  "real_api_execution_route_for_unified_method": "HOLD_PRE_PROVIDER"
+}

@@ -35,7 +35,60 @@ manifest, and engineering workflow from this file. Historical reports are
 immutable evidence and cannot silently promote an experimental arm into the
 canonical runtime.
 
-## Current active research architecture
+## Active Unified Team Prompt Search architecture
+
+The new opt-in production method is `unified_team_prompt_search_v1`. Its
+scientific identity is the versioned set of search engine, diagnosis, target,
+feasibility, evidence, evaluation, transition, adaptive gate, aggregation,
+pattern, memory, and stopping policies in `versions.py` and the method manifest.
+The historical canonical v15 runtime and frozen Formal V3 attempts keep their
+original identities and reproduction paths.
+
+The production search loop is `BenchmarkAdapter -> TeamStateSnapshot ->
+StateAnalyzer -> OpportunityBuilder -> SearchEngine ->
+CandidateEvaluationPipeline -> TransitionPolicy -> AdaptiveValidationGate ->
+TeamStateCommitter -> HistoryState/MemoryProvider -> GlobalStopPolicy`.
+`multi_dataset_diverse_rl.search.orchestrator.UnifiedSearchOrchestrator` owns
+this control flow. Candidate exploration and team write-back are separate
+decisions; neither is described as a Layer 1/Layer 2 ownership boundary.
+
+GEPA in the new method is a versioned, modifiable derived search engine. Its
+current strict local acceptance stays explicit in method identity for the
+behavior-preserving migration. The pinned official GEPA baseline and historical
+Formal V3 replay retain their exact frozen contracts. Future GEPA search changes
+require new scientific identities, not permission from a permanent Layer 1
+immutability rule.
+
+Evidence has independent mutation, search-validation, TeamProbe, Full and
+adaptive-gate roles. For current BBH compatibility, search-validation and
+TeamProbe example IDs may coincide, but their roles remain distinct. Current
+BBH responsibility retains overlapping raw legal `D/N/C`,
+`V=max(4D,2N,C)`, feasibility masking, and `V/(1+f)` target ranking. It is
+available only when the benchmark and aggregation declare the required
+plurality capabilities. LLM aggregation responsibility has no default policy
+and fails closed pending a scientific decision.
+
+Aggregation is a team-state policy selected by benchmark capabilities and the
+versioned method config. Plurality remains equal-weight and tie-as-abstain.
+LLM aggregation uses the optimizer model identity but a distinct `aggregator`
+role, `team_aggregation` stage, cache key and accounting. Its request can
+contain only public problem input, member outputs, public benchmark context,
+and the immutable output instruction; gold, labels and evaluation state are
+never passed to the aggregator. Structured search history is separate from
+LLM memory. Pattern and memory seams default to null implementations.
+
+New scientific experiments call the unified graph. Existing two-layer source
+is retained only as a historical reproduction and deterministic migration
+comparator. No new method should take the old `native/layer2` scope as its
+scientific identity. Real API execution continues to require a frozen source,
+governed prep and fresh explicit authorization; architectural tests use fake
+providers only.
+
+## Historical two-layer architecture (frozen replay reference only)
+
+The remainder of this section describes the former production direction and
+must not constrain the unified method. Its frozen rules still govern exact
+historical reproduction.
 
 The active research direction is a backend-neutral two-layer architecture:
 

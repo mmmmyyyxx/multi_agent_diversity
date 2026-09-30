@@ -1,0 +1,20 @@
+{
+  "method": "unified_team_prompt_search_v1",
+  "default_method_config_sha256": "4064d39fb39bb702f10b59d14b88d1c55e663d143331cf73144870ff34d3221c",
+  "search_engine": "gepa_derived_v1",
+  "diagnosis_policy": "plurality_raw_responsibility_v1",
+  "target_policy": "responsibility_failure_discount_v1",
+  "feasibility_policy": "v4_exact_evidence_feasibility_v1",
+  "evidence_policy": "role_view_4_4_4_v1",
+  "evaluation_policy": "team_probe_full_v1",
+  "transition_policy": "common_safe_v1",
+  "adaptive_gate_policy": "winner_only_shadow_v1",
+  "aggregation_policy": "equal_plurality_abstain_v1",
+  "memory_policy": "null_memory_v1",
+  "pattern_policy": "null_pattern_v1",
+  "search_acceptance_policy": "gepa_strict_local_improvement_v1",
+  "search_stop": "gepa_strict_local_saturation_v1",
+  "global_stop": "team_epoch_no_commit_v1",
+  "official_gepa_baseline": "official_gepa_v0_1_1_pinned_baseline",
+  "frozen_formal_v3_identity_modified": false
+}

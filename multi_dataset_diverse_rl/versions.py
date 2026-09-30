@@ -113,3 +113,22 @@ TEAM_EPOCH_SEMANTICS_V4_VERSION = "feasible_parent_scoped_coverage_commit_reset_
 PRIMARY_RESPONSIBILITY_DIRECT_WEIGHT = 4
 PRIMARY_RESPONSIBILITY_NEAR_MARGIN_WEIGHT = 2
 PRIMARY_RESPONSIBILITY_COVERAGE_WEIGHT = 1
+
+# New opt-in Unified Team Prompt Search identity. Historical v15 and Formal V3
+# constants above remain available for exact replay and are not reinterpreted.
+UNIFIED_TEAM_PROMPT_SEARCH_VERSION = "unified_team_prompt_search_v1"
+UNIFIED_GEPA_DERIVED_ENGINE_VERSION = "gepa_derived_v1"
+UNIFIED_PLURALITY_RESPONSIBILITY_VERSION = "plurality_raw_responsibility_v1"
+UNIFIED_TARGET_POLICY_VERSION = "responsibility_failure_discount_v1"
+UNIFIED_FEASIBILITY_POLICY_VERSION = "v4_exact_evidence_feasibility_v1"
+UNIFIED_EVIDENCE_POLICY_VERSION = "role_view_4_4_4_v1"
+UNIFIED_EVALUATION_POLICY_VERSION = "team_probe_full_v1"
+UNIFIED_TRANSITION_POLICY_VERSION = "common_safe_v1"
+UNIFIED_ADAPTIVE_GATE_VERSION = "winner_only_shadow_v1"
+UNIFIED_PLURALITY_AGGREGATION_VERSION = "equal_plurality_abstain_v1"
+UNIFIED_LLM_AGGREGATION_VERSION = "equal_status_llm_aggregation_v1"
+UNIFIED_NULL_MEMORY_VERSION = "null_memory_v1"
+UNIFIED_NULL_PATTERN_VERSION = "null_pattern_v1"
+UNIFIED_GEPA_ACCEPTANCE_VERSION = "gepa_strict_local_improvement_v1"
+UNIFIED_SEARCH_STOP_VERSION = "gepa_strict_local_saturation_v1"
+UNIFIED_GLOBAL_STOP_VERSION = "team_epoch_no_commit_v1"

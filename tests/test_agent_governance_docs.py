@@ -8,9 +8,11 @@ def _read(relative: str) -> str:
     return (ROOT / relative).read_text(encoding="utf-8")
 
 
-def test_agents_defines_two_layer_architecture_and_role_boundary() -> None:
+def test_agents_defines_unified_architecture_and_historical_role_boundary() -> None:
     agents = _read("AGENTS.md")
-    assert "## Current active research architecture" in agents
+    assert "## Active Unified Team Prompt Search architecture" in agents
+    assert "UnifiedSearchOrchestrator" in agents
+    assert "## Historical two-layer architecture (frozen replay reference only)" in agents
     assert "Layer 1 — Local Prompt Optimizer" in agents
     assert "Layer 2 — Team-Level Responsibility/Search Controller" in agents
     assert "The active research direction" in agents

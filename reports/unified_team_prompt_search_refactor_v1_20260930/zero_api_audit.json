@@ -1,0 +1,12 @@
+{
+  "task_policy": "ZERO_REAL_API",
+  "guard": "tests/formal_zero_api_runner.py",
+  "guard_installed_before_application_import": true,
+  "credentials_removed_by_guard": true,
+  "negative_control": "PASS",
+  "network_attempt_count_in_targeted_unified_tests": 0,
+  "validation50_calls": 0,
+  "test50_calls": 0,
+  "real_search_executed": false,
+  "historical_run_artifacts_modified": false
+}

@@ -1,11 +1,43 @@
 # Current Production Architecture
 
-This document describes the current execution architecture. Scientific
-invariants remain normative in `docs/design/CURRENT_SPEC.md`; frozen runtime
-identities and numeric constants remain authoritative in `versions.py`.
-The active two-layer implementation is opt-in. The v15 method identity remains
-reserved for historical canonical replay and must not be attached to a new
-GEPA/MARS Layer-2 run.
+This document describes the opt-in Unified Team Prompt Search architecture.
+Scientific invariants remain normative in `docs/design/CURRENT_SPEC.md`;
+runtime identities and numeric constants remain authoritative in `versions.py`.
+The canonical v15 and the former two-layer modes remain historical replay
+paths with their original identities.
+
+## Current unified production graph
+
+```text
+run_experiment(SearchMethodConfig, RuntimeContext, UnifiedExperimentInputs,
+               UnifiedExperimentServices)
+    -> UnifiedSearchOrchestrator
+    -> BenchmarkAdapter + AggregationPolicy
+    -> TeamStateSnapshot + StateAnalyzer
+    -> OpportunityBuilder(feasibility, target, role evidence)
+    -> SearchEngine
+    -> CandidateEvaluationPipeline(TeamProbe, Full)
+    -> TransitionPolicy + AdaptiveValidationGate
+    -> TeamStateCommitter + HistoryState/MemoryProvider
+    -> GlobalStopPolicy
+```
+
+The current BBH composition lives in `search/current_bbh_runtime.py`. It uses
+raw overlapping plurality responsibility, V4 4/4/4 evidence and a derived
+GEPA search adapter. Low-level fixed-peer BBH evaluation and atomic system
+write-back are reused at a compatibility boundary to preserve semantics.
+The old controller and task builder are absent from the new method's control
+flow. `SearchMethodConfig` identifies every active policy; a future GEPA
+change receives a new method identity. The official GEPA baseline remains
+pinned for its historical control.
+
+Plurality is active for current BBH. Equal-status LLM aggregation is available
+for inference with public input only; no LLM-aggregation responsibility policy
+is frozen, so those optimization tasks fail closed. New real-API execution is
+also held before provider construction until a separate governed prep and
+authorization exist.
+
+## Historical two-layer production map (replay only)
 
 ## Production module map
 

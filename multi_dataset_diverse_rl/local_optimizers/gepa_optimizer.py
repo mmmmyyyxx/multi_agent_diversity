@@ -249,7 +249,11 @@ class GEPALocalPromptOptimizer:
             raise ValueError("task/config reflection minibatch mismatch")
         if task.budget.max_returned_candidates != self.config.k_local_return:
             raise ValueError("task/config local return budget mismatch")
-        verify_frozen_gepa_engine_contract()
+        # The current derived method still claims pinned strict acceptance,
+        # so verify that claim exactly as the historical baseline does. A
+        # future versioned acceptance policy may supply a different validator.
+        if self.config.engine_acceptance_semantics == LOCAL_GEPA_ENGINE_ACCEPTANCE_SEMANTICS:
+            verify_frozen_gepa_engine_contract()
         all_examples = tuple(
             {row.example_id: row for row in (*task.search_examples, *task.local_validation_examples)}.values()
         )

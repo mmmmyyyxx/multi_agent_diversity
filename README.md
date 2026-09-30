@@ -1,10 +1,11 @@
 # Multi-Agent Diversity
 
-The active research direction is a backend-neutral two-layer system: Layer 2
-owns responsibility, evidence, team evaluation and write-back; Layer 1 runs
-GEPA or MARS local prompt search. The [current architecture map](docs/CURRENT_ARCHITECTURE.md)
-shows the unified engine and its four backend/scope modes. Each experiment
-retains its own frozen identity.
+The active opt-in research direction is Unified Team Prompt Search: one search
+loop composes diagnosis, target and evidence policies, a replaceable search
+engine, team evaluation, aggregation, transition, adaptive gate, commit and
+stopping. The [current architecture map](docs/CURRENT_ARCHITECTURE.md) describes
+that graph and keeps the older two-layer GEPA/MARS modes as historical replay.
+Each experiment retains its own frozen identity.
 
 The v15 method documented below remains the canonical **historical replay**
 runtime. Its `METHOD_VERSION` and checkpoint v25 still apply to v15 runs; they

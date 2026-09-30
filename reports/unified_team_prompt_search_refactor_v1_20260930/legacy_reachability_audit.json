@@ -1,0 +1,12 @@
+{
+  "new_method_dispatch": "SearchMethodConfig -> UnifiedSearchOrchestrator",
+  "historical_dispatch": "ExperimentSpec -> ExperimentEngine",
+  "new_bbh_composition": "build_current_bbh_orchestrator",
+  "new_bbh_uses_historical_controller": false,
+  "new_bbh_uses_historical_task_builder": false,
+  "new_bbh_uses_historical_seed_runner": false,
+  "new_bbh_uses_low_level_bbh_evaluator_and_atomic_committer": true,
+  "reason_for_low_level_reuse": "Preserves frozen fixed-peer evaluation and atomic write-back while the search owner moves to the unified orchestrator.",
+  "historical_formal_v3_reproduction_paths_retained": true,
+  "new_real_api_governance": "HOLD_PRE_PROVIDER"
+}

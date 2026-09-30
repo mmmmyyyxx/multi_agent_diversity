@@ -25,6 +25,7 @@ from multi_dataset_diverse_rl.experiment import (  # noqa: E402
     experiment_spec_from_mapping,
     runtime_context_from_mapping,
 )
+from multi_dataset_diverse_rl.search.schemas import SearchMethodConfig  # noqa: E402
 from multi_dataset_diverse_rl.governance.production_execution import (  # noqa: E402
     admit_execution, terminal_lifecycle, validate_execution,
 )
@@ -53,6 +54,21 @@ def _load(path: Path) -> Mapping[str, Any]:
 
 
 def preflight(manifest: Mapping[str, Any]) -> dict[str, Any]:
+    scientific = manifest.get("scientific", {})
+    if isinstance(scientific, dict) and scientific.get("method") == "unified_team_prompt_search_v1":
+        method = SearchMethodConfig.from_mapping(scientific)
+        runtime = runtime_context_from_mapping(manifest.get("runtime", {}))
+        return {
+            "gate": "HOLD",
+            "blockers": ["FROZEN_EXECUTION_GOVERNANCE_NOT_BOUND"],
+            "method": method.method,
+            "method_identity": method.identity(),
+            "seed": runtime.seed,
+            "aggregation_model": runtime.optimizer_model,
+            "provider_attempts": 0,
+            "validation_calls": 0,
+            "test_calls": 0,
+        }
     spec = experiment_spec_from_mapping(manifest.get("scientific", {}))
     runtime = runtime_context_from_mapping(manifest.get("runtime", {}))
     factory = str(manifest.get("execution_factory", ""))

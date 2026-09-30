@@ -1,0 +1,19 @@
+{
+  "plurality": {
+    "identity": "equal_plurality_abstain_v1",
+    "votes_per_valid_member": 1,
+    "top_count_tie": "abstain_incorrect",
+    "provider_calls_per_row": 0
+  },
+  "llm": {
+    "identity": "equal_status_llm_aggregation_v1",
+    "model_source": "RuntimeContext.optimizer_model",
+    "independent_role": "aggregator",
+    "accounting_stage": "team_aggregation",
+    "prompt_contains": ["public_problem", "public_context", "equal_status_member_outputs", "output_contract", "versioned_instruction"],
+    "prompt_excludes": ["gold", "reward", "correct_vector", "evaluation_result"],
+    "parsed_by": "BenchmarkAdapter.parse_output",
+    "cache_identity_fields": ["model", "role", "prompt", "input_id", "seed", "decoding_identity"],
+    "responsibility_policy": "SCIENTIFIC_DECISION_REQUIRED"
+  }
+}
