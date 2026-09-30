@@ -66,6 +66,17 @@ FORMAL_ATTEMPT3_LAST_MILE = {
     "formal_real_calls_observed": 0,
 }
 
+FORMAL_ATTEMPT4_EXECUTION = {
+    "superseded_execution_source_sha": "9e498496abff9228bd10697d8d97d36f56fca3f9",
+    "reason": "local_gepa_solver_batch_execution_concurrency",
+    "scientific_method_changed": False,
+    "solver_request_identity_changed": False,
+    "cache_identity_changed": False,
+    "reflection_parallelized": False,
+    "previous_configured_solver_concurrency": 8,
+    "eval_solver_call_concurrency": 16,
+}
+
 
 def formal_attempt3_incident(root: Path) -> dict[str, Any]:
     """Bind the published aborted-attempt evidence without reading private runs."""
@@ -275,12 +286,13 @@ def validate_execution(
     manifest = _read(prep / "manifest.json")
     protocol = _read(prep / "protocol.json")
     formal_match = re.fullmatch(
-        r"gepa_saturation_comparison_v3_seed(80|81|82)_(native|layer2)_attempt(1|2|3)",
+        r"gepa_saturation_comparison_v3_seed(80|81|82)_(native|layer2)_attempt(1|2|3|4)",
         str(manifest.get("experiment_id", "")),
     )
     formal = formal_match is not None
     formal_attempt2 = formal and formal_match.group(3) == "2"
     formal_attempt3 = formal and formal_match.group(3) == "3"
+    formal_attempt4 = formal and formal_match.group(3) == "4"
     if (formal_attempt3 and require_authorized
             and manifest.get("execution", {}).get("execution_source_sha")
             == FORMAL_ATTEMPT3_LAST_MILE["superseded_execution_source_sha"]):
@@ -440,7 +452,7 @@ def validate_execution(
             or protocol.get("formal_v3_contract") != formal_v3_contract()
         ):
             raise StartupIdentityError("ABORT_PRE_PROVIDER: formal V3 contract mismatch")
-        if formal_attempt2 or formal_attempt3:
+        if formal_attempt2 or formal_attempt3 or formal_attempt4:
             from ..formal_validation_policy import formal_validation50_policy
 
             expected_prerequisite = formal_attempt2_prerequisite(root)
@@ -488,7 +500,7 @@ def validate_execution(
                         manifest.get("execution", {}).get("source_paths", ())
                     )):
                 raise StartupIdentityError("ABORT_PRE_PROVIDER: formal V3 diagnostic prerequisite mismatch")
-            if formal_attempt3:
+            if formal_attempt3 or formal_attempt4:
                 incident = formal_attempt3_incident(root)
                 if (manifest.get("execution_repair") != incident
                         or protocol.get("execution_repair") != incident
@@ -497,6 +509,17 @@ def validate_execution(
                         or manifest.get("execution", {}).get("scientific_method_anchor_sha")
                         != "9737626373790aeb55a8ab6b99937b6d3085eace"):
                     raise StartupIdentityError("ABORT_PRE_PROVIDER: formal V3 attempt3 repair identity mismatch")
+                if formal_attempt4 and (
+                    manifest.get("execution_scheduling") != FORMAL_ATTEMPT4_EXECUTION
+                    or protocol.get("execution_scheduling") != FORMAL_ATTEMPT4_EXECUTION
+                    or manifest.get("runtime", {}).get("eval_solver_call_concurrency") != 16
+                    or not {
+                        "scripts/audit_formal_v3_concurrent_equivalence.py",
+                        "scripts/benchmark_formal_v3_local_batch.py",
+                        "scripts/compare_formal_v3_concurrent_equivalence.py",
+                    } <= set(manifest.get("execution", {}).get("source_paths", ()))
+                ):
+                    raise StartupIdentityError("ABORT_PRE_PROVIDER: formal V3 attempt4 execution identity mismatch")
             elif manifest.get("execution_repair") is not None or protocol.get("execution_repair") is not None:
                 raise StartupIdentityError("ABORT_PRE_PROVIDER: historical formal attempt2 repair identity mismatch")
         elif (manifest.get("execution_gate") != {"real_v4_diagnostic": "PENDING_SCIENTIFIC_VALIDITY"}
@@ -504,7 +527,7 @@ def validate_execution(
             raise StartupIdentityError("ABORT_PRE_PROVIDER: historical formal attempt1 identity mismatch")
         if require_authorized and formal_attempt2:
             raise StartupIdentityError("ABORT_PRE_PROVIDER: formal attempt2 campaign closed before further execution")
-        if require_authorized and not (formal_attempt2 or formal_attempt3):
+        if require_authorized and not (formal_attempt2 or formal_attempt3 or formal_attempt4):
             raise StartupIdentityError("ABORT_PRE_PROVIDER: formal attempt1 superseded before execution")
     if diagnostic:
         from .v4_attempt3_contract import diagnostic_contract, resource_upper_bounds

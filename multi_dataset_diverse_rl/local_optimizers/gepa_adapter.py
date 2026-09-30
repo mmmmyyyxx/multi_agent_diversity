@@ -229,9 +229,12 @@ class DiversityGEPAAdapter:
             # The evaluator is the sole owner of composing the mutable decision
             # procedure with COMMON_SOLVER_CONTRACT_V1's immutable task shell and
             # output interface. The adapter must never append a second contract.
-            observations = [
-                self.evaluator.evaluate(decision_procedure, row) for row in batch
-            ]
+            batch_evaluator = getattr(self.evaluator, "evaluate_batch", None)
+            observations = (
+                list(batch_evaluator(decision_procedure, batch))
+                if callable(batch_evaluator)
+                else [self.evaluator.evaluate(decision_procedure, row) for row in batch]
+            )
             outputs = [
                 {
                     "example_id": row.example_id,

@@ -54,7 +54,7 @@ def _files(prep: Path) -> dict[str, str]:
 
 
 def audit(prep_a: Path, prep_b: Path, *, attempt_number: int = 1) -> dict[str, object]:
-    if attempt_number not in {1, 2, 3}:
+    if attempt_number not in {1, 2, 3, 4}:
         raise ValueError("unsupported Formal attempt number")
     a, b = _files(prep_a), _files(prep_b)
     if a != b:
@@ -122,7 +122,7 @@ def audit(prep_a: Path, prep_b: Path, *, attempt_number: int = 1) -> dict[str, o
                   or protocol.get("diagnostic_prerequisite") != manifest["diagnostic_prerequisite"]
                   or manifest["execution_gate"]["real_v4_diagnostic"] != "SCIENTIFICALLY_VALID"):
                 raise AssertionError("Formal pilot evidence mismatch")
-            if attempt_number == 3:
+            if attempt_number >= 3:
                 incident = admission.formal_attempt3_incident(ROOT)
                 if (manifest.get("execution_repair") != incident
                         or protocol.get("execution_repair") != incident
@@ -133,6 +133,16 @@ def audit(prep_a: Path, prep_b: Path, *, attempt_number: int = 1) -> dict[str, o
                         or "scripts/audit_formal_v3_json_roundtrip.py"
                         not in source_paths):
                     raise AssertionError("Formal attempt3 incident binding mismatch")
+            if attempt_number == 4:
+                if (manifest.get("execution_scheduling") != admission.FORMAL_ATTEMPT4_EXECUTION
+                        or protocol.get("execution_scheduling") != admission.FORMAL_ATTEMPT4_EXECUTION
+                        or manifest.get("runtime", {}).get("eval_solver_call_concurrency") != 16
+                        or not {
+                            "scripts/audit_formal_v3_concurrent_equivalence.py",
+                            "scripts/benchmark_formal_v3_local_batch.py",
+                            "scripts/compare_formal_v3_concurrent_equivalence.py",
+                        } <= set(source_paths)):
+                    raise AssertionError("Formal attempt4 execution scheduling drift")
             if manifest["api_authorization"]["authorized"]:
                 raise AssertionError("offline formal freeze must not authorize API execution")
             if manifest["scientific"]["emergency_max_provider_calls"] != 100_000:
@@ -187,6 +197,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--prep-a", type=Path, required=True)
     parser.add_argument("--prep-b", type=Path, required=True)
-    parser.add_argument("--attempt-number", type=int, choices=(1, 2, 3), default=1)
+    parser.add_argument("--attempt-number", type=int, choices=(1, 2, 3, 4), default=1)
     args = parser.parse_args()
     print(json.dumps(audit(args.prep_a, args.prep_b, attempt_number=args.attempt_number), sort_keys=True, indent=2))

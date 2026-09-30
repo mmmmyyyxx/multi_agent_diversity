@@ -181,6 +181,28 @@ def _assert_success_ledger(permit, calls):
     return rows, summary
 
 
+def test_concurrent_local_gepa_ledger_keeps_stage_and_unique_records(tmp_path, monkeypatch):
+    permit, calls = _formal_fixture(tmp_path, monkeypatch, scope="native")
+    monkeypatch.setattr(formal_runner, "validate_execution", lambda **_kwargs: permit)
+    monkeypatch.setattr(formal_runner, "admit_execution", lambda _permit, _run: permit)
+    result = asyncio.run(formal_runner.execute_frozen(permit.prep_root, permit.run_root))
+    rows, summary = _assert_success_ledger(permit, calls)
+    local = [row for row in rows if row["phase"] == "local_optimizer_solver_eval"]
+    assert local
+    assert all(row["update_index"] == 0 and row["target_member"] == 0
+               and row["candidate_id"] == "local_gepa" for row in local)
+    assert all(row["record_kind"] in {"solver_provider_attempt_success",
+                                       "solver_logical_completion"} for row in local)
+    assert sum(row["provider_attempts"] for row in local) == sum(
+        row["successful_provider_calls"] for row in local
+    )
+    assert sum(row["record_kind"] == "solver_logical_completion" for row in local) >= sum(
+        row["provider_attempts"] for row in local
+    )
+    assert summary["provider_attempts"] == calls["solver"] + calls["reflection"]
+    assert result["validation50_calls"] == result["test50_calls"] == 0
+
+
 def _capture_case(case: str, permit, calls, result):
     """Optional private sanitized evidence for the offline closure report."""
 

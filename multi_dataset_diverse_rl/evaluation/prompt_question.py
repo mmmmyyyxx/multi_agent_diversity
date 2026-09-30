@@ -165,8 +165,13 @@ class PromptQuestionEvaluator:
                 self.observation_callback(str(prompt_hash), str(question_hash), answer)
             future.set_result(answer)
             return answer
-        except Exception as exc:
-            future.set_exception(exc)
+        except BaseException as exc:
+            # The owner can be cancelled while duplicate callers await this
+            # same key. Wake every waiter and mark an unobserved owner-only
+            # failure as retrieved; the original exception still propagates.
+            if not future.done():
+                future.set_exception(exc)
+                future.exception()
             raise
         finally:
             async with self.lock:

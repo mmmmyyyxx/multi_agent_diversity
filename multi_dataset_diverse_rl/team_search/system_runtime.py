@@ -36,6 +36,7 @@ from ..versions import (
 )
 from .feasibility import Layer2EvidenceInfeasible, Layer2FeasibilityReason
 from .candidate_evaluator import EvaluationCost
+from .execution_runtime import LOCAL_SOLVER_BATCH_OBSERVER
 from .primary_responsibility_scheduler import build_primary_responsibility_summaries
 from .schemas import TeamEvidenceCase, TeamMiniBatchMetrics, TeamSearchAssignment, TeamSearchRequest
 from .task_builder import LocalTaskBuilder
@@ -381,6 +382,126 @@ class SystemLocalSolverEvaluator:
                 > int(before.get("successful_provider_calls", 0))
             ),
         )
+
+    def evaluate_batch(
+        self, decision_procedure: str, examples: Sequence[Any]
+    ) -> tuple[LocalSolverObservation, ...]:
+        """Evaluate one GEPA batch concurrently, retaining its input order."""
+        if self.system.fixed_probe is None:
+            raise RuntimeError("fixed Optimize probe is not initialized")
+        context = getattr(self, "task_context", None)
+        if not isinstance(context, Mapping):
+            raise RuntimeError("local GEPA Solver call lacks task attribution")
+        if not examples:
+            return ()
+        probe = self.system.fixed_probe
+        target = int(context["target_member"])
+        index_by_id = {row.question_hash: i for i, row in enumerate(probe.examples)}
+        indices: list[int] = []
+        for example in examples:
+            source_id = str(example.example_id)
+            if source_id not in index_by_id and ":" in source_id:
+                role, candidate_id = source_id.split(":", 1)
+                if role not in {"responsibility", "focus", "anchor", "local_eval"}:
+                    raise KeyError("unknown Layer-2 packet evidence role")
+                source_id = candidate_id
+            index = index_by_id[source_id]
+            row = probe.examples[index]
+            if example.input_payload != row.question or not self.system.match_answer(
+                example.gold, row.gold_answer
+            ):
+                raise ValueError("Layer-2 packet evidence differs from frozen Optimize case")
+            indices.append(index)
+
+        prompt_hash = self.system.prompt_hash(decision_procedure)
+        prompt_question = probe.prompt_question_evaluator
+        cached_before = set(prompt_question.cache)
+        # The observer records per-response usage. Aggregate accounting deltas
+        # cannot attribute concurrent calls to individual GEPA rows.
+        observed: dict[str, list[tuple[bool, int, int]]] = {}
+
+        def record(
+            question_hash: str, request_identity: str, provider_called: bool,
+            input_tokens: int, output_tokens: int,
+        ) -> None:
+            del request_identity
+            observed.setdefault(question_hash, []).append(
+                (provider_called, input_tokens, output_tokens)
+            )
+
+        async def run() -> dict[int, Any]:
+            self.stage(validate_solver_stage_attribution({
+                **dict(context),
+                "candidate_id": "local_gepa",
+                "evaluation_stage": "local_optimizer_solver_eval",
+            }))
+            token = LOCAL_SOLVER_BATCH_OBSERVER.set(record)
+            parent_tasks = asyncio.all_tasks()
+            try:
+                answers = await probe.evaluate_prompt_indices(
+                    target, decision_procedure, prompt_hash, tuple(indices),
+                    self.system.solve,
+                )
+                # FixedProbe evaluates each unique index once. A role-qualified
+                # duplicate is still a separate GEPA logical evaluation, so
+                # replay its ordinary run-local cache hit under the same stage.
+                seen: set[int] = set()
+                for index in indices:
+                    if index in seen:
+                        row = probe.examples[index]
+                        await prompt_question.evaluate(
+                            question=row.question, question_hash=row.question_hash,
+                            prompt=decision_procedure, prompt_hash=prompt_hash,
+                            agent_id=target, solve=self.system.solve,
+                        )
+                    seen.add(index)
+                return answers
+            except BaseException:
+                # Gather can fail while sibling transports remain in flight.
+                # Drain their cancellation and ledger records before clearing
+                # the one batch-wide stage attribution.
+                spawned = [task for task in asyncio.all_tasks() - parent_tasks
+                           if not task.done()]
+                for task in spawned:
+                    task.cancel()
+                if spawned:
+                    await asyncio.gather(*spawned, return_exceptions=True)
+                raise
+            finally:
+                LOCAL_SOLVER_BATCH_OBSERVER.reset(token)
+                self.stage(None)
+
+        answers = _run_on_loop(self.loop, run())
+        observations: list[LocalSolverObservation] = []
+        seen: set[int] = set()
+        for example, index in zip(examples, indices, strict=True):
+            row = probe.examples[index]
+            answer = answers[index]
+            key = prompt_question.key(prompt_hash, row.question_hash)
+            if key in cached_before or index in seen:
+                provider_called = False
+                input_tokens = output_tokens = 0
+            else:
+                calls = observed.get(row.question_hash)
+                if not calls:
+                    raise RuntimeError("local GEPA batch lacks per-row Solver accounting")
+                provider_called = any(call[0] for call in calls)
+                input_tokens = sum(call[1] for call in calls)
+                output_tokens = sum(call[2] for call in calls)
+                if not provider_called and (input_tokens or output_tokens):
+                    raise RuntimeError("cached Solver row has physical token usage")
+            observations.append(LocalSolverObservation(
+                parsed_answer=answer.answer if answer.valid else None,
+                raw_output=answer.trace,
+                correct=bool(answer.valid and self.system.match_answer(answer.answer, example.gold)),
+                valid=bool(answer.valid),
+                failure_reason=None if answer.valid else answer.validity_status,
+                input_tokens=input_tokens,
+                output_tokens=output_tokens,
+                provider_called=provider_called,
+            ))
+            seen.add(index)
+        return tuple(observations)
 
 
 class SystemTeamCandidateEvaluator:

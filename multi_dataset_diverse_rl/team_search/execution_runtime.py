@@ -16,7 +16,7 @@ import json
 import os
 from pathlib import Path
 from threading import Lock
-from typing import Any, Mapping
+from typing import Any, Callable, Mapping
 
 from openai import APIConnectionError
 
@@ -87,6 +87,13 @@ class LocalOptimizerExecutionContext:
 LOCAL_OPTIMIZER_INVOCATION: contextvars.ContextVar[dict[str, Any] | None] = (
     contextvars.ContextVar("local_optimizer_invocation", default=None)
 )
+
+# An execution-only observer scoped to one local GEPA evaluation batch. It
+# records the physical result of each exact Solver request without changing
+# the cached PromptAnswer or its scientific request identity.
+LOCAL_SOLVER_BATCH_OBSERVER: contextvars.ContextVar[
+    Callable[[str, str, bool, int, int], None] | None
+] = contextvars.ContextVar("local_solver_batch_observer", default=None)
 
 
 def _retryable(exc: Exception) -> bool:
@@ -333,6 +340,13 @@ class CommonContractExecutionSystem(PromptEnsembleOptimizationSystem):
             result = await self.common.evaluate(
                 decision_procedure=prompt, question=question
             )
+            observer = LOCAL_SOLVER_BATCH_OBSERVER.get()
+            if observer is not None:
+                observer(
+                    hashlib.sha256(question.encode("utf-8")).hexdigest(),
+                    result.request_identity, not result.cache_hit,
+                    result.prompt_tokens, result.completion_tokens,
+                )
             parsed = result.response
             raw = self.common.cache[result.request_identity]
             response_hash = hashlib.sha256(raw.encode("utf-8")).hexdigest()

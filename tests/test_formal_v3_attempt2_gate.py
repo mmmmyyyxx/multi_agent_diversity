@@ -8,7 +8,8 @@ import pytest
 from multi_dataset_diverse_rl.formal_final_team import persist_final_team, team_hash
 from multi_dataset_diverse_rl.formal_validation_policy import formal_validation50_policy
 from multi_dataset_diverse_rl.governance.production_execution import (
-    FORMAL_ATTEMPT3_LAST_MILE, _expected_bundle, formal_attempt3_incident, validate_execution,
+    FORMAL_ATTEMPT3_LAST_MILE, FORMAL_ATTEMPT4_EXECUTION,
+    _expected_bundle, formal_attempt3_incident, validate_execution,
 )
 from multi_dataset_diverse_rl.governance.startup_identity import (
     StartupIdentityError, write_bundle,
@@ -122,6 +123,29 @@ def test_attempt3_retains_scientific_payload_and_binds_aborted_incident(tmp_path
     manifest["execution_repair"]["scientific_method_changed"] = True
     (tmp_path / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
     with pytest.raises(StartupIdentityError, match="repair identity mismatch"):
+        validate_execution(root=ROOT, prep=tmp_path, require_authorized=False)
+
+
+def test_attempt4_changes_only_execution_scheduling_and_remains_unauthorized(tmp_path, monkeypatch):
+    manifest, protocol = _prep(tmp_path, monkeypatch, attempt_number=4)
+    prior, prior_protocol = frozen_payload(
+        execution_source_sha="9e498496abff9228bd10697d8d97d36f56fca3f9",
+        seed=80, scope="native", attempt_number=3,
+    )
+    assert manifest["scientific"] == prior["scientific"]
+    assert manifest["spec_identity"] == prior["spec_identity"]
+    assert manifest["formal_v3_contract"] == prior["formal_v3_contract"]
+    assert protocol["formal_v3_contract"] == prior_protocol["formal_v3_contract"]
+    assert manifest["execution_scheduling"] == protocol["execution_scheduling"] == FORMAL_ATTEMPT4_EXECUTION
+    assert manifest["runtime"]["eval_solver_call_concurrency"] == 16
+    assert manifest["api_authorization"]["authorized"] is False
+    assert validate_execution(root=ROOT, prep=tmp_path, require_authorized=False).attempt_id.endswith("attempt4")
+    monkeypatch.setenv("LWJ_DASHSCOPE_API_KEY", "OFFLINE_TEST_PLACEHOLDER")
+    with pytest.raises(StartupIdentityError, match="authorization required"):
+        validate_execution(root=ROOT, prep=tmp_path, require_authorized=True)
+    manifest["runtime"]["eval_solver_call_concurrency"] = 32
+    (tmp_path / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    with pytest.raises(StartupIdentityError, match="attempt4 execution identity mismatch"):
         validate_execution(root=ROOT, prep=tmp_path, require_authorized=False)
 
 
