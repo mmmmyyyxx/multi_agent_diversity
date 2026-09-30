@@ -1,0 +1,10 @@
+{
+  "pass": true,
+  "files_scanned": 55,
+  "secret_findings": [],
+  "PII_or_absolute_path_findings_in_reports": [],
+  "raw_execution_payload_fields": [],
+  "scope": "task-related changed source, licensed checker source and sanitized reports; synthetic fixture literals and upstream checker examples are public source, not real run payloads",
+  "unrelated_untracked_report_preserved": true,
+  "absolute_path_findings_in_source": []
+}

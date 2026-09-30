@@ -1,0 +1,258 @@
+{
+  "hotpotqa": {
+    "data_frozen": false,
+    "data_identity": null,
+    "protocol": {
+      "aggregation_output_semantics": "normalized answer class",
+      "aggregation_policy_frozen": true,
+      "aggregation_policy_id": "normalized_equal_plurality_v1",
+      "benchmark_id": "hotpotqa",
+      "hidden_evaluator_fields": [
+        "answer",
+        "supporting_facts",
+        "gold",
+        "evaluation_feedback"
+      ],
+      "input_contract_id": "question_only_v1",
+      "member_metric_id": "normalized_answer_em_v1",
+      "member_success_semantics": "Boolean normalized answer EM; F1 reporting only",
+      "output_contract_id": "short_final_answer_v1",
+      "parser_contract_id": "hotpot_normalized_answer_v1",
+      "protocol_frozen": true,
+      "public_solver_fields": [
+        "question"
+      ],
+      "responsibility_policy_frozen": true,
+      "responsibility_policy_id": "binary_plurality_raw_responsibility_v1",
+      "system_contract_id": "hotpot_gepa_two_hop_7_7_v1",
+      "system_dependencies": [
+        {
+          "blocker": "SYSTEM_DEPENDENCY_RETRIEVAL_NOT_FROZEN",
+          "identity": "hotpot_wikipedia_colbert_v1",
+          "integration_frozen": false,
+          "required_components": [
+            "wikipedia_corpus",
+            "retrieval_index",
+            "retriever",
+            "two_hop_summary_query_answer_integration"
+          ]
+        }
+      ],
+      "task_contract_id": "HOTPotQA_GEPA_ANSWER_V1",
+      "team_metric_id": "normalized_answer_em_v1",
+      "trusted_pipeline_input_fields": [],
+      "unresolved_scientific_blockers": []
+    },
+    "protocol_sha256": "15a7aaff1c9c337d981ea55ddaaa3206252a0faaa7b246b529fd7eb96e3f50ce",
+    "split_identity": null,
+    "system_ready": false,
+    "unified_search_ready": false
+  },
+  "hover": {
+    "data_frozen": false,
+    "data_identity": null,
+    "protocol": {
+      "aggregation_output_semantics": "retrieved evidence titles",
+      "aggregation_policy_frozen": true,
+      "aggregation_policy_id": "llm_evidence_union_24_v1",
+      "benchmark_id": "hover",
+      "hidden_evaluator_fields": [
+        "supporting_facts",
+        "supporting_documents",
+        "gold_titles",
+        "label",
+        "coverage_success"
+      ],
+      "input_contract_id": "claim_only_v1",
+      "member_metric_id": "gold_title_subset_coverage_v1",
+      "member_success_semantics": "Boolean gold-title subset coverage, not a claim verdict",
+      "output_contract_id": "retrieved_evidence_titles_v1",
+      "parser_contract_id": "hover_normalized_titles_v1",
+      "protocol_frozen": true,
+      "public_solver_fields": [
+        "claim"
+      ],
+      "responsibility_policy_frozen": false,
+      "responsibility_policy_id": null,
+      "system_contract_id": "hover_gepa_three_hop_7_7_10_v1",
+      "system_dependencies": [
+        {
+          "blocker": "SYSTEM_DEPENDENCY_RETRIEVAL_NOT_FROZEN",
+          "identity": "hover_wiki_abstracts_2017_bm25_v1",
+          "integration_frozen": false,
+          "required_components": [
+            "wiki.abstracts.2017",
+            "BM25_k1_0.9_b_0.4",
+            "english_stemming",
+            "three_hop_summary_query_retrieval_integration"
+          ]
+        }
+      ],
+      "task_contract_id": "HOVER_GEPA_RETRIEVAL_V1",
+      "team_metric_id": "gold_title_subset_coverage_v1",
+      "trusted_pipeline_input_fields": [],
+      "unresolved_scientific_blockers": [
+        "RESPONSIBILITY_POLICY_NOT_FROZEN"
+      ]
+    },
+    "protocol_sha256": "7e2111a7217ba9289c4cd417750c854ce28339648d905b2f17e033aebcc9d68b",
+    "split_identity": null,
+    "system_ready": false,
+    "unified_search_ready": false
+  },
+  "ifbench": {
+    "data_frozen": true,
+    "data_identity": "f552cacf1f51be8bc7b5867609eae5690fd4e250ab254310d86bf35119095a62",
+    "protocol": {
+      "aggregation_output_semantics": "raw final response, byte-preserving; no answer marker",
+      "aggregation_policy_frozen": true,
+      "aggregation_policy_id": "llm_equal_raw_responses_v1",
+      "benchmark_id": "ifbench",
+      "hidden_evaluator_fields": [
+        "instruction_id_list",
+        "kwargs",
+        "success_vector",
+        "score",
+        "evaluator_feedback"
+      ],
+      "input_contract_id": "prompt_only_v1",
+      "member_metric_id": "gepa_fraction_constraints_eight_variants_v1",
+      "member_success_semantics": "fraction satisfied; per-instruction any of eight variants",
+      "output_contract_id": "raw_free_form_response_v1",
+      "parser_contract_id": "nonempty_raw_response_v1",
+      "protocol_frozen": true,
+      "public_solver_fields": [
+        "prompt"
+      ],
+      "responsibility_policy_frozen": false,
+      "responsibility_policy_id": null,
+      "system_contract_id": "ifbench_gepa_constraint_checkers_v1",
+      "system_dependencies": [
+        {
+          "blocker": "IFBENCH_LOCAL_EVALUATOR_DEPENDENCIES_NOT_FROZEN",
+          "identity": "ifbench_pinned_apache_checkers_v1",
+          "integration_frozen": false,
+          "required_components": [
+            "pinned_checker_code",
+            "spacy_en_core_web_sm",
+            "nltk_resources",
+            "checker_python_packages"
+          ]
+        }
+      ],
+      "task_contract_id": "IFBENCH_GEPA_CONSTRAINT_V1",
+      "team_metric_id": "gepa_fraction_constraints_eight_variants_v1",
+      "trusted_pipeline_input_fields": [],
+      "unresolved_scientific_blockers": [
+        "RESPONSIBILITY_POLICY_NOT_FROZEN"
+      ]
+    },
+    "protocol_sha256": "77519e9f26d82c2053d532d8750d5c46f50d4804de7340e9876148d1365736c9",
+    "split_identity": "7076ebb0dac504fd279093043dd3851be0d2d577af8d02a530b08a7840181e2d",
+    "system_ready": false,
+    "unified_search_ready": false
+  },
+  "math": {
+    "data_frozen": false,
+    "data_identity": null,
+    "protocol": {
+      "aggregation_output_semantics": "actual member answer in largest equivalence class",
+      "aggregation_policy_frozen": true,
+      "aggregation_policy_id": "equal_equivalence_plurality_consistency_v1",
+      "benchmark_id": "math",
+      "hidden_evaluator_fields": [
+        "solution",
+        "answer",
+        "gold",
+        "evaluation_feedback"
+      ],
+      "input_contract_id": "problem_only_v1",
+      "member_metric_id": "math_verify_0.6.0_equivalence_v1",
+      "member_success_semantics": "Boolean parsed equivalence; parse/error/timeout fail closed",
+      "output_contract_id": "math_final_expression_v1",
+      "parser_contract_id": "math_verify_no_fallback_v1",
+      "protocol_frozen": true,
+      "public_solver_fields": [
+        "problem"
+      ],
+      "responsibility_policy_frozen": true,
+      "responsibility_policy_id": "binary_plurality_raw_responsibility_v1",
+      "system_contract_id": "math_verify_0.6.0_isolated_timeout_v1",
+      "system_dependencies": [
+        {
+          "blocker": null,
+          "identity": "math_verify_0.6.0_dependency_lock_v1",
+          "integration_frozen": true,
+          "required_components": [
+            "math-verify==0.6.0",
+            "latex2sympy2_extended==1.0.9",
+            "sympy==1.14.0",
+            "antlr4-python3-runtime==4.13.2",
+            "mpmath==1.3.0"
+          ]
+        }
+      ],
+      "task_contract_id": "MATH_ANSWER_EQUIVALENCE_V1",
+      "team_metric_id": "math_verify_0.6.0_equivalence_v1",
+      "trusted_pipeline_input_fields": [],
+      "unresolved_scientific_blockers": []
+    },
+    "protocol_sha256": "00f3377e1a3cc1452e0cbba51a41ae25777a3c5eaa020622b45f44b9229509f3",
+    "split_identity": null,
+    "system_ready": true,
+    "unified_search_ready": false
+  },
+  "pupa": {
+    "data_frozen": false,
+    "data_identity": null,
+    "protocol": {
+      "aggregation_output_semantics": "HOLD: team trust boundary and leakage exposure unselected",
+      "aggregation_policy_frozen": false,
+      "aggregation_policy_id": null,
+      "benchmark_id": "pupa",
+      "hidden_evaluator_fields": [
+        "pii_str",
+        "reference_response",
+        "judge_outputs",
+        "score"
+      ],
+      "input_contract_id": "private_query_trusted_pipeline_v1",
+      "member_metric_id": "papillon_quality_privacy_fake_oracle_v1",
+      "member_success_semantics": "(forward OR forward==reverse + 1 - leakage)/2; trace >=1",
+      "output_contract_id": "papillon_three_artifacts_v1",
+      "parser_contract_id": "papillon_artifacts_v1",
+      "protocol_frozen": true,
+      "public_solver_fields": [
+        "llm_request"
+      ],
+      "responsibility_policy_frozen": false,
+      "responsibility_policy_id": null,
+      "system_contract_id": "papillon_trusted_untrusted_trusted_v1",
+      "system_dependencies": [
+        {
+          "blocker": "PUPA_REAL_JUDGE_AND_MODEL_PIPELINE_NOT_FROZEN",
+          "identity": "papillon_model_roles_v1",
+          "integration_frozen": false,
+          "required_components": [
+            "trusted_model",
+            "untrusted_model",
+            "GPT-4.1-mini_judge"
+          ]
+        }
+      ],
+      "task_contract_id": "PUPA_PAPILLON_PRIVACY_V1",
+      "team_metric_id": "papillon_team_metric_unfrozen",
+      "trusted_pipeline_input_fields": [
+        "user_query"
+      ],
+      "unresolved_scientific_blockers": [
+        "PUPA_TEAM_AGGREGATION_POLICY_NOT_FROZEN",
+        "PUPA_RESPONSIBILITY_POLICY_NOT_FROZEN"
+      ]
+    },
+    "protocol_sha256": "336e271fe1c65b835f3b66da90129a3ede82e7709f8d3dc6068cc9e3519c9813",
+    "split_identity": null,
+    "system_ready": false,
+    "unified_search_ready": false
+  }
+}

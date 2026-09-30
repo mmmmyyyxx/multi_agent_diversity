@@ -1,0 +1,32 @@
+{
+  "hotpotqa": {
+    "contract": "short_final_answer_v1",
+    "frozen": true,
+    "parser": "hotpot_normalized_answer_v1",
+    "semantics": "normalized answer class"
+  },
+  "hover": {
+    "contract": "retrieved_evidence_titles_v1",
+    "frozen": true,
+    "parser": "hover_normalized_titles_v1",
+    "semantics": "retrieved evidence titles"
+  },
+  "ifbench": {
+    "contract": "raw_free_form_response_v1",
+    "frozen": true,
+    "parser": "nonempty_raw_response_v1",
+    "semantics": "raw final response, byte-preserving; no answer marker"
+  },
+  "math": {
+    "contract": "math_final_expression_v1",
+    "frozen": true,
+    "parser": "math_verify_no_fallback_v1",
+    "semantics": "actual member answer in largest equivalence class"
+  },
+  "pupa": {
+    "contract": "papillon_three_artifacts_v1",
+    "frozen": true,
+    "parser": "papillon_artifacts_v1",
+    "semantics": "HOLD: team trust boundary and leakage exposure unselected"
+  }
+}

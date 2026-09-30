@@ -1,0 +1,18 @@
+{
+  "diagnosis_sha256": "b8659225043b1a4c8d8bb34ce5e8022486f645b8d74a56640261bba8b43a8cbc",
+  "feasibility_masks": 32,
+  "fields": [
+    "D",
+    "N",
+    "C",
+    "V",
+    "lane",
+    "raw_legal_portfolios",
+    "target_scores",
+    "selected_member"
+  ],
+  "pass": true,
+  "reference": "frozen V4 freeze_current_responsibility / build_primary_responsibility_summaries",
+  "target_sha256": "46a7aff309200444e3b735d6a40f86aec5b3d69d0638427ae8165f2e8d0dce06",
+  "vote_states": 1024
+}

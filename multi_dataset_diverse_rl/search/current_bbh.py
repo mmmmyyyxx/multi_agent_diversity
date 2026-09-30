@@ -2,14 +2,11 @@
 
 from __future__ import annotations
 
-from copy import deepcopy
 from typing import Any
 
 from ..peer_state import build_team_vote_state
-from ..responsibility import compute_repair_eligibility_sets
 from ..vote_aligned_scheduler import classify_opportunity_lane
 from .history import HistoryState
-from .policies import ResponsibilitySignal
 from .schemas import (
     Diagnosis, EvidenceItem, ParsedOutput, SearchContractError,
     TeamStateSnapshot,
@@ -58,39 +55,11 @@ class PluralityResponsibilityAnalyzer:
         del history
         if self.system.team_prompt_state_hash() != state.team_state_id:
             raise SearchContractError("BBH parent state changed during diagnosis")
-        states = tuple(state.diagnostics["team_states"])
-        by_id = {row.question_hash: row for row in states}
-        _, assigned, _ = compute_repair_eligibility_sets(
-            team_states=by_id,
-            opportunities=state.diagnostics["opportunities"],
-            state=deepcopy(self.system.responsibility_state),
-        )
-        margins = {row.question_hash: int(row.plurality_margin) for row in states}
-        signals: dict[int, ResponsibilitySignal] = {}
-        for member in range(len(state.member_prompts)):
-            counts = {"direct_flip": 0, "near_margin": 0, "coverage": 0}
-            for row in assigned.get(member, ()):
-                lane = classify_opportunity_lane(row, margins)
-                if lane == "pure_coverage":
-                    lane = "coverage"
-                if lane in counts:
-                    counts[lane] += 1
-            scores = {"direct_flip": 4 * counts["direct_flip"],
-                      "near_margin": 2 * counts["near_margin"],
-                      "coverage": counts["coverage"]}
-            lane = min(scores, key=lambda name: (-scores[name],
-                                                 ("direct_flip", "near_margin", "coverage").index(name)))
-            if max(scores.values()) == 0:
-                lane = "fallback"
-            signals[member] = ResponsibilitySignal(
-                member, counts["direct_flip"], counts["near_margin"],
-                counts["coverage"], lane,
-            )
-        return Diagnosis(
-            responsibility=signals,
-            benchmark_signals={"assigned": {key: tuple(value) for key, value in assigned.items()},
-                               "margins": margins},
-        )
+        from .binary_responsibility import BinaryPluralityResponsibilityAnalyzer
+        from .schemas import BenchmarkCapabilities
+        return BinaryPluralityResponsibilityAnalyzer(
+            BenchmarkCapabilities(True, True, True, True, True),
+        ).analyze(state, None, responsibility_state=self.system.responsibility_state)
 
 
 class CurrentBBHEvidenceSource:

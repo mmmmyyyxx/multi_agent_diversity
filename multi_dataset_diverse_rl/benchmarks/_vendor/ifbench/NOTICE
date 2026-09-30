@@ -1,0 +1,5 @@
+IFBench checker sources: Copyright 2025 Allen Institute for AI.
+IFEval checker sources: Copyright 2023 Google Research.
+Source headers retained. Apache License, Version 2.0.
+Local modifications: replace resource downloads with offline assertions only.
+No checker predicate, checker registry, or checker description was changed.

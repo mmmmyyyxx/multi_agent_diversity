@@ -1,0 +1,56 @@
+{
+  "commit": "cbefbc1aa0f43dd39874ec4bf42211365dbda42e",
+  "files": [
+    {
+      "file": "instructions.py",
+      "license": "Apache-2.0",
+      "patch": "download calls replaced by offline resource assertions; checker logic unchanged",
+      "upstream_path": "gepa_artifact/benchmarks/IFBench/utils_ifbench/instructions.py",
+      "upstream_sha256": "4b3559bb2d5b4e0a040246d1eb506cffdbdd150d1d6bc24b04e91e9161354398",
+      "vendored_sha256": "f7037bc1254eb84b42c72a6945f1f9c9623973fe4965adeba0c3b6bc7825cfcf"
+    },
+    {
+      "file": "instructions_ifeval.py",
+      "license": "Apache-2.0",
+      "patch": "none",
+      "upstream_path": "gepa_artifact/benchmarks/IFBench/utils_ifbench/instructions_ifeval.py",
+      "upstream_sha256": "1df003c58f28797f6504f0b2c3aaa1146aaf1f032a4e9814724089f5e2e60c18",
+      "vendored_sha256": "1df003c58f28797f6504f0b2c3aaa1146aaf1f032a4e9814724089f5e2e60c18"
+    },
+    {
+      "file": "instructions_util.py",
+      "license": "Apache-2.0",
+      "patch": "download calls replaced by offline resource assertions; checker logic unchanged",
+      "upstream_path": "gepa_artifact/benchmarks/IFBench/utils_ifbench/instructions_util.py",
+      "upstream_sha256": "ab845134085826f6cfb400f5ac74c2062c5b1590e611732831c2fc62c8c5fa7c",
+      "vendored_sha256": "f6cba0e6727975b7195298667dd18541fa9ed58fd76c3d65d18c5e8c40744867"
+    },
+    {
+      "file": "instructions_util_ifeval.py",
+      "license": "Apache-2.0",
+      "patch": "download calls replaced by offline resource assertions; checker logic unchanged",
+      "upstream_path": "gepa_artifact/benchmarks/IFBench/utils_ifbench/instructions_util_ifeval.py",
+      "upstream_sha256": "4b79a54a5aa98ed336e9a2c494713e36f40d635955f73e58b8cc78a81d93da89",
+      "vendored_sha256": "67db27cbb7baa1d69a8bbf0938b6f49987c985c028936fc3b2949854fb6ff36e"
+    },
+    {
+      "file": "instructions_registry.py",
+      "license": "Apache-2.0",
+      "patch": "none",
+      "upstream_path": "gepa_artifact/benchmarks/IFBench/utils_ifbench/instructions_registry.py",
+      "upstream_sha256": "042422686d6ed61897fb0b25923f592ae1963956eba3561c2d04c2a1fd0ffec2",
+      "vendored_sha256": "042422686d6ed61897fb0b25923f592ae1963956eba3561c2d04c2a1fd0ffec2"
+    },
+    {
+      "file": "instructions_registry_ifeval.py",
+      "license": "Apache-2.0",
+      "patch": "none",
+      "upstream_path": "gepa_artifact/benchmarks/IFBench/utils_ifbench/instructions_registry_ifeval.py",
+      "upstream_sha256": "f9dfa4b7a34bcd09044f0f84029110b80f01fdb59f9b0f6cef076a64ae10ea71",
+      "vendored_sha256": "f9dfa4b7a34bcd09044f0f84029110b80f01fdb59f9b0f6cef076a64ae10ea71"
+    }
+  ],
+  "repository": "gepa-ai/gepa-artifact",
+  "runtime_blocker": "IFBENCH_LOCAL_EVALUATOR_DEPENDENCIES_NOT_FROZEN",
+  "runtime_dependencies_frozen": false
+}

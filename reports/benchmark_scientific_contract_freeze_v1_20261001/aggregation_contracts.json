@@ -1,0 +1,52 @@
+{
+  "hotpotqa": {
+    "equal_members": 5,
+    "frozen": true,
+    "model_rule": null,
+    "policy": "normalized_equal_plurality_v1",
+    "router": false,
+    "semantics": "normalized answer class",
+    "weighted_votes": false
+  },
+  "hover": {
+    "ceiling_definition": "GEPA-system-aligned engineering ceiling, not official benchmark metric",
+    "equal_members": 5,
+    "frozen": true,
+    "instruction_sha256": "b4561d1cf87cd45c132ec0cf30e2ac6076f4f5a04e377748f2cd5fe3012c3f2f",
+    "max_titles": 24,
+    "model_rule": "optimizer model, distinct team_aggregation role/cache/accounting",
+    "policy": "llm_evidence_union_24_v1",
+    "router": false,
+    "semantics": "retrieved evidence titles",
+    "union_guard": true,
+    "weighted_votes": false
+  },
+  "ifbench": {
+    "equal_members": 5,
+    "frozen": true,
+    "instruction_sha256": "f228ff1d66dd8c67d89cb74c7d4e1feff7456511c0cf38398ef02f61ab50bfb5",
+    "model_rule": "optimizer model, distinct team_aggregation role/cache/accounting",
+    "policy": "llm_equal_raw_responses_v1",
+    "router": false,
+    "semantics": "raw final response, byte-preserving; no answer marker",
+    "weighted_votes": false
+  },
+  "math": {
+    "equal_members": 5,
+    "frozen": true,
+    "model_rule": null,
+    "policy": "equal_equivalence_plurality_consistency_v1",
+    "router": false,
+    "semantics": "actual member answer in largest equivalence class",
+    "weighted_votes": false
+  },
+  "pupa": {
+    "equal_members": 5,
+    "frozen": false,
+    "model_rule": null,
+    "policy": null,
+    "router": false,
+    "semantics": "HOLD: team trust boundary and leakage exposure unselected",
+    "weighted_votes": false
+  }
+}

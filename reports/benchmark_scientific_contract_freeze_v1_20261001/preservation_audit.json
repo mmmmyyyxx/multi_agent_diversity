@@ -1,0 +1,10 @@
+{
+  "Common_Safe_feasibility_target_weights_stopping_modified": false,
+  "GEPA_acceptance_modified": false,
+  "IFBench_data_manifest_and_memberships_unchanged": true,
+  "all_existing_constants_unchanged": true,
+  "existing_constant_count": 97,
+  "historical_reports_edited": false,
+  "memory_provider": "null",
+  "pattern_provider": "null"
+}

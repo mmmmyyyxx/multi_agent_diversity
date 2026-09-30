@@ -1,0 +1,62 @@
+{
+  "hotpotqa": {
+    "binary_analyzer_allowed": true,
+    "capabilities": {
+      "supports_boolean_member_success": true,
+      "supports_current_responsibility": true,
+      "supports_plurality": true,
+      "supports_plurality_margin": true,
+      "supports_vote_classes": true
+    },
+    "frozen": true,
+    "policy": "binary_plurality_raw_responsibility_v1"
+  },
+  "hover": {
+    "binary_analyzer_allowed": false,
+    "capabilities": {
+      "supports_boolean_member_success": true,
+      "supports_current_responsibility": false,
+      "supports_plurality": false,
+      "supports_plurality_margin": false,
+      "supports_vote_classes": false
+    },
+    "frozen": false,
+    "policy": null
+  },
+  "ifbench": {
+    "binary_analyzer_allowed": false,
+    "capabilities": {
+      "supports_boolean_member_success": false,
+      "supports_current_responsibility": false,
+      "supports_plurality": false,
+      "supports_plurality_margin": false,
+      "supports_vote_classes": false
+    },
+    "frozen": false,
+    "policy": null
+  },
+  "math": {
+    "binary_analyzer_allowed": true,
+    "capabilities": {
+      "supports_boolean_member_success": true,
+      "supports_current_responsibility": true,
+      "supports_plurality": true,
+      "supports_plurality_margin": true,
+      "supports_vote_classes": true
+    },
+    "frozen": true,
+    "policy": "binary_plurality_raw_responsibility_v1"
+  },
+  "pupa": {
+    "binary_analyzer_allowed": false,
+    "capabilities": {
+      "supports_boolean_member_success": false,
+      "supports_current_responsibility": false,
+      "supports_plurality": false,
+      "supports_plurality_margin": false,
+      "supports_vote_classes": false
+    },
+    "frozen": false,
+    "policy": null
+  }
+}

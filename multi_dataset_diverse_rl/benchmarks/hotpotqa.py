@@ -1,4 +1,4 @@
-"""HotpotQA answer-only metric component; project task/split remain unselected."""
+"""Frozen GEPA answer task; retrieval runtime and dataset freeze remain separate."""
 
 from __future__ import annotations
 
@@ -21,9 +21,9 @@ def normalize_answer(text: str) -> str:
 
 
 class HotpotQAAnswerAdapter:
-    """Answer-only EM/F1; not an assertion that this project chose that task."""
+    """Normalized answer EM. F1 is reporting-only, never binary responsibility."""
 
-    capabilities = BenchmarkCapabilities(True, False, True)
+    capabilities = BenchmarkCapabilities(True, True, True, True, True)
     benchmark_id = "hotpotqa"
     preferred_aggregation = "plurality"
     output_contract = "Return exactly one final line: FINAL_ANSWER: <short answer>"

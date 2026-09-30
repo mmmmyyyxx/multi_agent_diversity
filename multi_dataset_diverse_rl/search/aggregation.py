@@ -130,6 +130,8 @@ class LLMAggregation:
     """Inference-time team aggregation using the optimizer model identity."""
 
     identity = versions.UNIFIED_LLM_AGGREGATION_VERSION
+    instruction = AGGREGATION_INSTRUCTION_V1
+    request_role = "aggregator"  # Historical BBH cache namespace stays fixed.
 
     def __init__(
         self, *, runtime: RuntimeModelIdentity, provider: AggregationProvider,
@@ -143,10 +145,14 @@ class LLMAggregation:
         self, *, item: BenchmarkInput, member_outputs: tuple[str, ...],
         benchmark: BenchmarkAdapter,
     ) -> AggregationResult:
+        if item.benchmark_id == "pupa":
+            raise SearchContractError("PUPA_TEAM_AGGREGATION_POLICY_NOT_FROZEN")
         if not member_outputs:
             raise SearchContractError("aggregation needs member outputs")
+        from .information_firewall import require_public_context
+        require_public_context(item.public_context)
         public = {
-            "instruction": AGGREGATION_INSTRUCTION_V1,
+            "instruction": self.instruction,
             "problem": benchmark.format_input(item),
             "public_context": dict(item.public_context),
             "output_contract": item.output_contract,
@@ -154,7 +160,7 @@ class LLMAggregation:
         }
         request = AggregationRequest(
             model=self.runtime.optimizer_model,
-            role="aggregator",
+            role=self.request_role,
             prompt=json.dumps(public, ensure_ascii=False, sort_keys=True),
             input_id=item.input_id,
             seed=self.runtime.seed,
@@ -179,6 +185,6 @@ class LLMAggregation:
             int(response.provider_called),
             response.input_tokens + response.output_tokens,
             request.cache_identity(),
-            {"prompt_version": AGGREGATION_INSTRUCTION_SHA256},
+            {"prompt_version": hashlib.sha256(self.instruction.encode("utf-8")).hexdigest()},
             1, int(not response.provider_called),
         )

@@ -351,6 +351,73 @@ those questions require separate fixed-budget experiments.
 
 ## Authority map
 
+### Benchmark scientific contracts V1
+
+`benchmarks/protocols.py` freezes task/system/input/output/parser/metric,
+aggregation, responsibility and external system contracts independently of
+data provenance and split readiness. Runtime task identifiers are in
+`versions.py`. A data freeze cannot imply scientific or system readiness.
+All five benchmark preflights remain closed for real unified search.
+
+- HotpotQA is the GEPA two-hop retrieval/summary/query/answer system (7+7
+  retrieved documents), with normalized final-answer EM. Answer F1 is only
+  reported. Five members use equal normalized-answer plurality, tie abstains.
+  The Wikipedia corpus/index/retrieval integration is not frozen.
+- HoVer is the GEPA three-hop retrieval system (7+7+10), not a verdict task.
+  A member returns `RetrievedEvidence`; success is normalized gold-title
+  subset coverage. The optimizer-model LLM aggregator can select only titles
+  from the five equal-status members' evidence union, at most 24 distinct
+  titles. This ceiling is an engineering contract, not the official metric.
+  Retrieval runtime and set-valued LLM responsibility remain unfrozen.
+- IFBench emits the raw, nonempty response unchanged. Each constraint passes
+  if any of the exact eight GEPA response variants passes its pinned checker;
+  the metric is the satisfied fraction with the instruction success vector.
+  The LLM aggregator sees only the original prompt and equal raw responses.
+  Checker source is vendored with Apache-2.0 notices/provenance; automatic
+  resource downloads are replaced by offline assertions. Language resources
+  and package identities are not frozen, so the default checker loader holds.
+  Synthetic injected checkers verify the evaluator contract. Fractional/LLM
+  responsibility remains unfrozen; no scalar threshold creates BBH eligibility.
+- MATH has a strict final mathematical expression; preceding reasoning is not
+  scored. Install `requirements-benchmark-evaluators.txt` for the exact
+  math-verify 0.6.0 dependency identity. Only successfully parsed objects are
+  compared, with no string fallback, strict verification, float rounding 6
+  and numeric precision 15. The inspected pinned parser/grader run in an
+  offline worker with an 8-second whole-process deadline. Only inner timeout
+  decorators are substituted, to avoid the package's Windows spawn closure
+  defect; mathematical parsing/grading code is unchanged. Invalid/unsupported
+  expressions, errors and timeouts fail closed. Equivalence plurality checks
+  reflexivity, symmetry and transitivity before grouping; inconsistency and
+  top-count ties abstain. The result is an actual member output, never a new
+  synthesized answer. Sets use the pinned strict grader. Comma-parenthesis
+  tuples are explicitly unsupported and rejected: the pinned extractor would
+  otherwise interpret them as a set and discard ordering.
+- PUPA retains trusted redaction -> untrusted response -> trusted synthesis,
+  preserving `llm_request`, `llm_response`, `response`. The fake judge oracle
+  preserves the two quality directions and leakage arithmetic. Team leakage
+  exposure, multiple untrusted requests, aggregator trust boundary and scored
+  requests have no frozen policy. Team aggregation and responsibility hold
+  before a provider; no real judge is authorized by this contract freeze.
+
+`BinaryPluralityResponsibilityAnalyzer` requires vote classes, Boolean member
+success, plurality margin and explicit responsibility support. It reuses the
+unchanged BBH raw legal eligibility and overlapping D/N/C core; V=max(4D,2N,C),
+lane priorities, feasibility, failure counters and V/(1+f) ranking are
+unchanged. HotpotQA and MATH have protocol-level eligibility; HoVer, IFBench
+and PUPA cannot use this analyzer. The historical BBH entrypoint keeps its
+original identity and delegates to this shared calculation.
+
+Public inputs are constructed by allowlist projection; recursive public-context
+keys cannot carry evaluator fields. Gold/reference/score, constraint IDs/kwargs,
+success vectors, supporting gold documents and PII annotations remain evaluator
+state. Public problem text and member outputs are intentionally inference
+visible. HoVer/IFBench use the optimizer model with role `team_aggregation`,
+an independent request cache and usage accounting. Historical BBH aggregation
+role/cache identities are preserved. Pattern and memory stay null.
+
+No new download, materialization, provider, judge, retrieval or formal execution
+is enabled by this scientific contract freeze.
+
 Machine-readable mirrors of these invariant IDs live in
 `docs/design/invariants.yaml`. Experiment-specific deltas belong in manifests;
 evidence and conclusions belong in reports. `method.md` is explanatory prose.

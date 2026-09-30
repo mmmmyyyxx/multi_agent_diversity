@@ -57,20 +57,20 @@ def test_registry_and_preprovider_holds() -> None:
         result = preflight({"scientific": {"method": "unified_team_prompt_search_v1",
                                              "benchmark_id": key}, "runtime": runtime})
         assert result["gate"] == "HOLD" and result["provider_attempts"] == 0
-        assert "RESPONSIBILITY_POLICY_NOT_FROZEN" in result["blockers"]
+        assert result["blockers"]
+        if key in {"hover", "ifbench", "pupa"}:
+            assert "RESPONSIBILITY_POLICY_NOT_FROZEN" in result["blockers"]
 
 
-def test_unselected_adapters_fail_closed_before_parsing_or_scoring() -> None:
-    for kind in (HoVerBenchmarkAdapter, IFBenchBenchmarkAdapter,
-                 PUPABenchmarkAdapter, MATHBenchmarkAdapter):
-        adapter = kind()
-        assert not adapter.capabilities.supports_current_responsibility
-        with pytest.raises(SearchContractError, match="BENCHMARK_TASK_EVALUATOR_NOT_FROZEN"):
-            adapter.parse_member_output("some response", _item())
-        with pytest.raises(SearchContractError, match="BENCHMARK_TASK_EVALUATOR_NOT_FROZEN"):
-            adapter.format_input(_item())
-        with pytest.raises(SearchContractError, match="BENCHMARK_TASK_EVALUATOR_NOT_FROZEN"):
-            adapter.score_member_output(None, None)
+def test_pupa_unselected_team_fails_closed_before_parsing_or_scoring() -> None:
+    adapter = PUPABenchmarkAdapter()
+    assert not adapter.capabilities.supports_current_responsibility
+    with pytest.raises(SearchContractError, match="PUPA_TEAM_AGGREGATION_POLICY_NOT_FROZEN"):
+        adapter.parse_member_output("some response", _item())
+    with pytest.raises(SearchContractError, match="PUPA_TEAM_AGGREGATION_POLICY_NOT_FROZEN"):
+        adapter.format_input(_item())
+    with pytest.raises(SearchContractError, match="PUPA_TEAM_AGGREGATION_POLICY_NOT_FROZEN"):
+        adapter.score_member_output(None, None)
 
 
 @pytest.mark.parametrize("kind", [HotpotQAAnswerAdapter, HoVerBenchmarkAdapter,

@@ -1,0 +1,32 @@
+{
+  "hotpotqa": {
+    "assertion": "test_hotpotqa_task_protocol_and_normalization",
+    "pass": true,
+    "real_provider_attempts": 0,
+    "synthetic_only": true
+  },
+  "hover": {
+    "assertion": "test_hover_evidence_aggregation_union_guard_and_coverage_e2e",
+    "pass": true,
+    "real_provider_attempts": 0,
+    "synthetic_only": true
+  },
+  "ifbench": {
+    "assertion": "test_ifbench_hidden_fields_not_in_solver_input_or_aggregator_request",
+    "pass": true,
+    "real_provider_attempts": 0,
+    "synthetic_only": true
+  },
+  "math": {
+    "assertion": "test_math_equivalence_plurality_tie_invalid_and_e2e",
+    "pass": true,
+    "real_provider_attempts": 0,
+    "synthetic_only": true
+  },
+  "pupa": {
+    "assertion": "test_pupa_member_pipeline_preserves_artifacts_scorer_and_team_hold",
+    "pass": true,
+    "real_provider_attempts": 0,
+    "synthetic_only": true
+  }
+}

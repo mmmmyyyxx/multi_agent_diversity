@@ -1,0 +1,208 @@
+{
+  "hotpotqa": {
+    "benchmark": {
+      "aggregation_policy_frozen": true,
+      "benchmark_id": "hotpotqa",
+      "blockers": [
+        "BENCHMARK_PROVENANCE_NOT_FROZEN",
+        "BENCHMARK_SPLIT_NOT_FROZEN",
+        "SYSTEM_DEPENDENCY_RETRIEVAL_NOT_FROZEN"
+      ],
+      "data_frozen": false,
+      "evaluator_contract_frozen": true,
+      "gate": "HOLD_PRE_PROVIDER",
+      "output_contract_frozen": true,
+      "protocol_identity": "15a7aaff1c9c337d981ea55ddaaa3206252a0faaa7b246b529fd7eb96e3f50ce",
+      "provider_attempts": 0,
+      "reason": "Scientific task/output/evaluator contracts frozen independently of data, system dependencies and responsibility readiness.",
+      "responsibility_policy_frozen": true,
+      "system_ready": false,
+      "task_contract_frozen": true,
+      "test_calls": 0,
+      "validation_calls": 0
+    },
+    "composition": {
+      "aggregation_model": "optimizer",
+      "benchmark_id": "hotpotqa",
+      "blockers": [
+        "FROZEN_EXECUTION_GOVERNANCE_NOT_BOUND",
+        "BENCHMARK_PROVENANCE_NOT_FROZEN",
+        "BENCHMARK_SPLIT_NOT_FROZEN",
+        "SYSTEM_DEPENDENCY_RETRIEVAL_NOT_FROZEN"
+      ],
+      "gate": "HOLD",
+      "method": "unified_team_prompt_search_v1",
+      "method_identity": "4064d39fb39bb702f10b59d14b88d1c55e663d143331cf73144870ff34d3221c",
+      "provider_attempts": 0,
+      "seed": 81,
+      "test_calls": 0,
+      "validation_calls": 0
+    }
+  },
+  "hover": {
+    "benchmark": {
+      "aggregation_policy_frozen": true,
+      "benchmark_id": "hover",
+      "blockers": [
+        "BENCHMARK_PROVENANCE_NOT_FROZEN",
+        "BENCHMARK_SPLIT_NOT_FROZEN",
+        "RESPONSIBILITY_POLICY_NOT_FROZEN",
+        "SYSTEM_DEPENDENCY_RETRIEVAL_NOT_FROZEN"
+      ],
+      "data_frozen": false,
+      "evaluator_contract_frozen": true,
+      "gate": "HOLD_PRE_PROVIDER",
+      "output_contract_frozen": true,
+      "protocol_identity": "7e2111a7217ba9289c4cd417750c854ce28339648d905b2f17e033aebcc9d68b",
+      "provider_attempts": 0,
+      "reason": "Scientific task/output/evaluator contracts frozen independently of data, system dependencies and responsibility readiness.",
+      "responsibility_policy_frozen": false,
+      "system_ready": false,
+      "task_contract_frozen": true,
+      "test_calls": 0,
+      "validation_calls": 0
+    },
+    "composition": {
+      "aggregation_model": "optimizer",
+      "benchmark_id": "hover",
+      "blockers": [
+        "FROZEN_EXECUTION_GOVERNANCE_NOT_BOUND",
+        "BENCHMARK_PROVENANCE_NOT_FROZEN",
+        "BENCHMARK_SPLIT_NOT_FROZEN",
+        "RESPONSIBILITY_POLICY_NOT_FROZEN",
+        "SYSTEM_DEPENDENCY_RETRIEVAL_NOT_FROZEN"
+      ],
+      "gate": "HOLD",
+      "method": "unified_team_prompt_search_v1",
+      "method_identity": "4064d39fb39bb702f10b59d14b88d1c55e663d143331cf73144870ff34d3221c",
+      "provider_attempts": 0,
+      "seed": 81,
+      "test_calls": 0,
+      "validation_calls": 0
+    }
+  },
+  "ifbench": {
+    "benchmark": {
+      "aggregation_policy_frozen": true,
+      "benchmark_id": "ifbench",
+      "blockers": [
+        "RESPONSIBILITY_POLICY_NOT_FROZEN",
+        "IFBENCH_LOCAL_EVALUATOR_DEPENDENCIES_NOT_FROZEN"
+      ],
+      "data_frozen": true,
+      "evaluator_contract_frozen": true,
+      "gate": "HOLD_PRE_PROVIDER",
+      "output_contract_frozen": true,
+      "protocol_identity": "77519e9f26d82c2053d532d8750d5c46f50d4804de7340e9876148d1365736c9",
+      "provider_attempts": 0,
+      "reason": "Scientific task/output/evaluator contracts frozen independently of data, system dependencies and responsibility readiness.",
+      "responsibility_policy_frozen": false,
+      "system_ready": false,
+      "task_contract_frozen": true,
+      "test_calls": 0,
+      "validation_calls": 0
+    },
+    "composition": {
+      "aggregation_model": "optimizer",
+      "benchmark_id": "ifbench",
+      "blockers": [
+        "FROZEN_EXECUTION_GOVERNANCE_NOT_BOUND",
+        "RESPONSIBILITY_POLICY_NOT_FROZEN",
+        "IFBENCH_LOCAL_EVALUATOR_DEPENDENCIES_NOT_FROZEN"
+      ],
+      "gate": "HOLD",
+      "method": "unified_team_prompt_search_v1",
+      "method_identity": "4064d39fb39bb702f10b59d14b88d1c55e663d143331cf73144870ff34d3221c",
+      "provider_attempts": 0,
+      "seed": 81,
+      "test_calls": 0,
+      "validation_calls": 0
+    }
+  },
+  "math": {
+    "benchmark": {
+      "aggregation_policy_frozen": true,
+      "benchmark_id": "math",
+      "blockers": [
+        "BENCHMARK_PROVENANCE_NOT_FROZEN",
+        "BENCHMARK_SPLIT_NOT_FROZEN"
+      ],
+      "data_frozen": false,
+      "evaluator_contract_frozen": true,
+      "gate": "HOLD_PRE_PROVIDER",
+      "output_contract_frozen": true,
+      "protocol_identity": "00f3377e1a3cc1452e0cbba51a41ae25777a3c5eaa020622b45f44b9229509f3",
+      "provider_attempts": 0,
+      "reason": "Scientific task/output/evaluator contracts frozen independently of data, system dependencies and responsibility readiness.",
+      "responsibility_policy_frozen": true,
+      "system_ready": true,
+      "task_contract_frozen": true,
+      "test_calls": 0,
+      "validation_calls": 0
+    },
+    "composition": {
+      "aggregation_model": "optimizer",
+      "benchmark_id": "math",
+      "blockers": [
+        "FROZEN_EXECUTION_GOVERNANCE_NOT_BOUND",
+        "BENCHMARK_PROVENANCE_NOT_FROZEN",
+        "BENCHMARK_SPLIT_NOT_FROZEN"
+      ],
+      "gate": "HOLD",
+      "method": "unified_team_prompt_search_v1",
+      "method_identity": "4064d39fb39bb702f10b59d14b88d1c55e663d143331cf73144870ff34d3221c",
+      "provider_attempts": 0,
+      "seed": 81,
+      "test_calls": 0,
+      "validation_calls": 0
+    }
+  },
+  "pupa": {
+    "benchmark": {
+      "aggregation_policy_frozen": false,
+      "benchmark_id": "pupa",
+      "blockers": [
+        "BENCHMARK_PROVENANCE_NOT_FROZEN",
+        "BENCHMARK_SPLIT_NOT_FROZEN",
+        "AGGREGATION_POLICY_NOT_FROZEN",
+        "RESPONSIBILITY_POLICY_NOT_FROZEN",
+        "PUPA_TEAM_AGGREGATION_POLICY_NOT_FROZEN",
+        "PUPA_RESPONSIBILITY_POLICY_NOT_FROZEN",
+        "PUPA_REAL_JUDGE_AND_MODEL_PIPELINE_NOT_FROZEN"
+      ],
+      "data_frozen": false,
+      "evaluator_contract_frozen": true,
+      "gate": "HOLD_PRE_PROVIDER",
+      "output_contract_frozen": true,
+      "protocol_identity": "336e271fe1c65b835f3b66da90129a3ede82e7709f8d3dc6068cc9e3519c9813",
+      "provider_attempts": 0,
+      "reason": "Scientific task/output/evaluator contracts frozen independently of data, system dependencies and responsibility readiness.",
+      "responsibility_policy_frozen": false,
+      "system_ready": false,
+      "task_contract_frozen": true,
+      "test_calls": 0,
+      "validation_calls": 0
+    },
+    "composition": {
+      "aggregation_model": "optimizer",
+      "benchmark_id": "pupa",
+      "blockers": [
+        "FROZEN_EXECUTION_GOVERNANCE_NOT_BOUND",
+        "BENCHMARK_PROVENANCE_NOT_FROZEN",
+        "BENCHMARK_SPLIT_NOT_FROZEN",
+        "AGGREGATION_POLICY_NOT_FROZEN",
+        "RESPONSIBILITY_POLICY_NOT_FROZEN",
+        "PUPA_TEAM_AGGREGATION_POLICY_NOT_FROZEN",
+        "PUPA_RESPONSIBILITY_POLICY_NOT_FROZEN",
+        "PUPA_REAL_JUDGE_AND_MODEL_PIPELINE_NOT_FROZEN"
+      ],
+      "gate": "HOLD",
+      "method": "unified_team_prompt_search_v1",
+      "method_identity": "4064d39fb39bb702f10b59d14b88d1c55e663d143331cf73144870ff34d3221c",
+      "provider_attempts": 0,
+      "seed": 81,
+      "test_calls": 0,
+      "validation_calls": 0
+    }
+  }
+}

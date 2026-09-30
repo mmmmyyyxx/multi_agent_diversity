@@ -1,0 +1,24 @@
+{
+  "audit_network_attempts": 0,
+  "credentials_removed_for_tests": true,
+  "dataset_downloads": 0,
+  "formal_experiments": 0,
+  "negative_control_pass": true,
+  "network_guard_active_before_application_import": true,
+  "non_dataset_network_activity": {
+    "exact_total_request_count": null,
+    "git_fetch_commands": 1,
+    "note": "Dependency/source preparation permitted; HTTP count was not instrumented. Do not claim whole-task network requests=0.",
+    "pip_HTTP_request_count": null,
+    "pip_dependency_install_performed": true,
+    "public_source_browser_open_calls": 2
+  },
+  "raw_data_required_for_default_tests": false,
+  "real_dataset_materializations": 0,
+  "real_judge_calls": 0,
+  "real_provider_attempts": 0,
+  "retrieval_runtime_calls": 0,
+  "test_model_calls": 0,
+  "test_network_attempts": 0,
+  "validation_model_calls": 0
+}

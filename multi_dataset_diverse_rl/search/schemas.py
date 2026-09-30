@@ -19,6 +19,19 @@ class BenchmarkCapabilities:
     supports_plurality: bool
     supports_current_responsibility: bool
     supports_boolean_member_success: bool
+    supports_vote_classes: bool | None = None
+    supports_plurality_margin: bool | None = None
+
+    def __post_init__(self) -> None:
+        # Preserve the three-field historical BBH constructor and identity.
+        for name in ("supports_vote_classes", "supports_plurality_margin"):
+            if getattr(self, name) is None:
+                object.__setattr__(self, name, self.supports_plurality)
+
+    @property
+    def binary_plurality_responsibility(self) -> bool:
+        return bool(self.supports_current_responsibility and self.supports_vote_classes
+                    and self.supports_boolean_member_success and self.supports_plurality_margin)
 
 
 @dataclass(frozen=True)

@@ -23,10 +23,8 @@ class BenchmarkInput:
     parser_contract: str = "legacy_bbh"
 
     def __post_init__(self) -> None:
-        forbidden = {"gold", "reward", "correct_vector", "evaluation_result",
-                     "label", "reference_answer"}
-        if forbidden.intersection(key.casefold() for key in self.public_context):
-            raise ValueError("inference input contains evaluation-only context")
+        from .information_firewall import require_public_context
+        require_public_context(self.public_context)
         if not all((self.input_id, self.benchmark_id, self.benchmark_version,
                     self.parser_contract, self.output_contract)):
             raise ValueError("benchmark request identity is incomplete")

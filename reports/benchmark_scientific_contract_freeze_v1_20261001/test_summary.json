@@ -1,0 +1,50 @@
+{
+  "broad_regression": {
+    "failed_initially": 1,
+    "failure": "legacy exception message compatibility; fixed and retested",
+    "passed": 293,
+    "seconds": 388.05,
+    "skipped": 4
+  },
+  "compileall": "PASS",
+  "counting": "distinct current test coverage across broad regression and targeted retests; superseded tuple-acceptance parameter excluded; duplicate replays not counted",
+  "development_findings": [
+    "fixed recursive-firewall exception message to preserve historical compatibility",
+    "pinned MATH parser treats comma-parentheses as a set; V1 now rejects ordered tuple syntax explicitly",
+    "removed partial numeric-expression extraction fallback after a malformed full mathematical payload"
+  ],
+  "failed": 0,
+  "git_diff_check": "PASS",
+  "math_retest": {
+    "deselected": 45,
+    "failed": 0,
+    "passed": 10,
+    "purpose": "final Latex-only extraction, malformed parse, strict set versus unsupported ordered tuple, portable deadline and equivalence tests",
+    "seconds": 41.58
+  },
+  "network_attempt_count": 0,
+  "passed": 294,
+  "privacy_projection_retest": {
+    "failed": 0,
+    "passed": 3,
+    "purpose": "PUPA private input belongs only to trusted pipeline; public solver projection uses redacted llm_request; team aggregation stays pre-provider HOLD",
+    "seconds": 0.75
+  },
+  "resolved_retest": {
+    "failed": 0,
+    "passed": 56,
+    "seconds": 40.249
+  },
+  "skipped": 4,
+  "skipped_reason": "four benchmarks do not have frozen real-data manifests; deterministic tests use synthetic fixtures",
+  "test_scopes": [
+    "test_benchmark_scientific_contracts",
+    "test_unified_benchmark_migration",
+    "test_unified_bbh_replay",
+    "test_unified_search_architecture",
+    "test_unified_execution_governance",
+    "test_unified_backend_runtime",
+    "test_production_architecture",
+    "test_benchmark_data_freeze_v1"
+  ]
+}
