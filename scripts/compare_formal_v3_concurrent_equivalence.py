@@ -49,6 +49,9 @@ def _gepa_artifacts(root: Path, case: str) -> dict[str, str]:
         for path in sorted(local.rglob(name)):
             relative = path.relative_to(local).as_posix()
             result[relative] = hashlib.sha256(path.read_bytes()).hexdigest()
+    for path in sorted(local.rglob("iter_*.json")):
+        relative = path.relative_to(local).as_posix()
+        result[relative] = hashlib.sha256(path.read_bytes()).hexdigest()
     if not result:
         raise ValueError("missing official GEPA fake artifacts")
     return result
@@ -74,6 +77,10 @@ def compare(old_root: Path, new_root: Path) -> dict:
             "lineage": before["lineage"] == after["lineage"],
             "official_gepa_artifacts": old_artifacts == new_artifacts,
             "fake_physical_calls": before["fake_physical_calls"] == after["fake_physical_calls"],
+            "optimize_question_ids": before["optimize_question_ids"] == after["optimize_question_ids"],
+            "shadow_question_ids": before["shadow_question_ids"] == after["shadow_question_ids"],
+            "reflection_input_identities": before["reflection_request_sha256"] == after["reflection_request_sha256"],
+            "reflection_outputs": before["reflection_response_sha256"] == after["reflection_response_sha256"],
             "heldout_zero": all(c["summary"]["validation50_calls"] == c["summary"]["test50_calls"] == 0
                                 for c in (before, after)),
         }
@@ -84,6 +91,11 @@ def compare(old_root: Path, new_root: Path) -> dict:
             "lineage_sha256": _digest(before["lineage"]),
             "official_gepa_artifact_count": len(old_artifacts),
             "official_gepa_artifact_hashes_sha256": _digest(old_artifacts),
+            "optimize_question_ids_sha256": _digest(before["optimize_question_ids"]),
+            "shadow_question_ids_sha256": _digest(before["shadow_question_ids"]),
+            "reflection_input_sequence_sha256": _digest(before["reflection_request_sha256"]),
+            "reflection_output_sequence_sha256": _digest(before["reflection_response_sha256"]),
+            "reflection_call_count": len(before["reflection_request_sha256"]),
             "old_wall_seconds_fields": old_timing,
             "new_wall_seconds_fields": new_timing,
             "old_successful_provider_calls": before["summary"]["ledger"]["successful_provider_calls"],

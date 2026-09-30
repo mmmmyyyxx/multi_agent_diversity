@@ -9,6 +9,8 @@ from __future__ import annotations
 import argparse
 import asyncio
 from collections import Counter
+import csv
+import hashlib
 import importlib.util
 import json
 from pathlib import Path
@@ -36,6 +38,12 @@ def _helper():
 def _json_rows(path: Path) -> list[dict]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()
             if line.strip()]
+
+
+def _split_ids(path: Path) -> list[str]:
+    with path.open(encoding="utf-8", newline="") as handle:
+        return [hashlib.sha256(row["question"].encode("utf-8")).hexdigest()
+                for row in csv.DictReader(handle)]
 
 
 def main(out: Path, *, solver_concurrency: int | None = None) -> None:
@@ -69,6 +77,39 @@ def main(out: Path, *, solver_concurrency: int | None = None) -> None:
                 manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
                 manifest["runtime"]["eval_solver_call_concurrency"] = solver_concurrency
                 manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            reflection_requests: list[str] = []
+            reflection_responses: list[str] = []
+
+            def instrument(factory):
+                def construct(*args, **kwargs):
+                    client = factory(*args, **kwargs)
+                    completions = client.chat.completions
+                    if not getattr(completions, "_equivalence_observed", False):
+                        original = completions.create
+
+                        async def observed_create(**request):
+                            reflection = request.get("model") == "qwen3.7-flash"
+                            if reflection:
+                                reflection_requests.append(hashlib.sha256(
+                                    json.dumps(request, sort_keys=True, ensure_ascii=False,
+                                               separators=(",", ":")).encode("utf-8")
+                                ).hexdigest())
+                            response = await original(**request)
+                            if reflection:
+                                reflection_responses.append(hashlib.sha256(
+                                    str(response.choices[0].message.content).encode("utf-8")
+                                ).hexdigest())
+                            return response
+
+                        completions.create = observed_create
+                        completions._equivalence_observed = True
+                    return client
+                return construct
+
+            patch.setattr(helper.ProviderClientFactory, "from_environment",
+                          instrument(helper.ProviderClientFactory.from_environment))
+            patch.setattr(helper.ProviderClientFactory, "create",
+                          instrument(helper.ProviderClientFactory.create))
             patch.setattr(helper.formal_runner, "validate_execution", lambda **_kwargs: permit)
             patch.setattr(helper.formal_runner, "admit_execution", lambda _permit, _run: permit)
             result = asyncio.run(helper.formal_runner.execute_frozen(
@@ -94,6 +135,10 @@ def main(out: Path, *, solver_concurrency: int | None = None) -> None:
                 ),
                 "lineage": lineage,
                 "fake_physical_calls": calls,
+                "optimize_question_ids": _split_ids(permit.prep_root / "splits_private/optimize100.csv"),
+                "shadow_question_ids": _split_ids(permit.prep_root / "splits_private/shadow50.csv"),
+                "reflection_request_sha256": reflection_requests,
+                "reflection_response_sha256": reflection_responses,
             }
             print(name, result["stop_reason"], len(ledger), flush=True)
         finally:
