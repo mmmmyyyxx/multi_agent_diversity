@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 $ErrorActionPreference = "Stop"
 if ($env:MODEL_HEADROOM_SCREENING_AUTHORIZED -ne "1") {
     throw "Task Model Headroom Screening API execution is not authorized."

@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """One-parent real-provider canary for the Level-B GEPA adapter."""
 
 from __future__ import annotations

@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Freeze COMMON_SOLVER_CONTRACT_V1 and a zero-API cross-repo replay plan."""
 
 from __future__ import annotations

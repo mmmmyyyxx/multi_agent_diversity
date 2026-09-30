@@ -1,0 +1,1882 @@
+{
+  "schema_version": "tooling_classification_v1",
+  "scripts": [
+    {
+      "path": "scripts/admit_v18_hybrid_online_scientific_analysis.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_common_solver_contract_replay.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_diversity_matrix_d0_d5.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_final_method_agent_clusters.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_gepa_candidate_breadth_pilot.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_model_headroom_screening.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_owner_policy_alignment.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_responsibility_mechanism_history.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_solver_headroom_multimodel.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_solver_headroom_screening.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_v16_generic_m20_fixed_parent_probe.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_v16_m20_m2e_fixed_parent_probe.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_v16_m2f_feedback_necessity_probe.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_v16_m2f_probe.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_v17_conversion_priority_hybrid_pilot.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_v17_conversion_target2_differentiation.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_v17_hybrid_target_allocation_pilot.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_v17_module1_2x2_probe.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_v18_historical_teacher_safety.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_v18_hybrid_online_accumulation.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_v18_m2f_trigger_extension_pilot.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_v18_no_semantic_critic_transfer.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_v18_qwen3_8b_light_replication.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_v18_safety_only_critic_pilot.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_v18_shadow_raw_critic_pilot.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_v18_teacher_critic_pipeline_ablation.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_v18_trajectory_gain_loss_decomposition.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_v3_scientific_blockers.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/analyze_v4_offline_audit.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/anti_overfitting_shadow_support.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_accepted_local_mutation_team_transfer_v2.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_accepted_mutation_compositional_state_graph_v1.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_backend_branch_consolidation.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_benchmark_scientific_contracts.py",
+      "classification": "CURRENT_TOOLING",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_cross_method_cost_accounting.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_cross_repo_p0_parity.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_diversity_matrix_d0_d5.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_diversity_matrix_split_balance.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_diversity_writeback_cost_mechanism.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_final_method_stage.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_formal_v3_concurrent_equivalence.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_formal_v3_json_roundtrip.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_formal_v3_offline_freeze.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_gepa_canary_runtime_compatibility_fix.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_gepa_candidate_breadth.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_gepa_candidate_breadth_pilot.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_gepa_critic_gate_failure.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_gepa_proposal_contract.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_level_b_gepa_adapter_closure.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_level_b_gepa_reflection_input_attribution.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_level_b_gepa_v2_precanary_closure.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_local_gepa_acceptance_rate_phase_b_v2.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_model_headroom_screening.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_mutable_prompt_contamination.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_online_transfer_diagnostic.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_pre_authorization_startup_identity.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_primary_responsibility_persistent_realizability.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_saturation_mode_refactor.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_seed78_gepa_differential.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_seed78_gepa_teamminibatch_postmortem.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_solver_headroom_screening.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_solver_stage_attribution_closure.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_static_checkpoint_restore.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_terminal_rejection_streak.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_two_layer_gepa_grounded_refactor.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v13_search_budget_control.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v16_fixed_parent_generation_probe.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v16_generic_m20_fixed_parent_probe.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v16_m20_collateral_structure.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v16_m2f_critical_competence_exchange.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v16_m2f_feedback_necessity_probe.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v16_m2f_online_mechanism_pilot.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v16_m2f_probe.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v16_module2_compute_matched_efficacy.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v16_module2_pilot.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v16_responsibility_coherence.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v17_conversion_priority_hybrid_pilot.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v17_failure_decomposition.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v17_formal.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v17_hybrid_recovered_update_conversion.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v17_hybrid_target_allocation_pilot.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v17_module1_2x2_probe.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v17_w1_target_allocation.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v18_critic_safety_only_counterfactual.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v18_hybrid_online_accumulation.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v18_m2f_trigger_extension_pilot.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v18_no_semantic_critic_candidate_ranking.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v18_revision_parity_semantics.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v18_safety_only_critic_pilot.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v18_shadow_raw_critic_pilot.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v18_teacher_critic_pipeline_ablation.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v18_writeback_quality.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v4_attempt2_forensics.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v4_attempt3_execution.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v4_attempt3_freeze.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_v4_current_source_attempt2.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/benchmark_formal_v3_local_batch.py",
+      "classification": "CURRENT_TOOLING",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/build_final_method_complete_report.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/build_formal_v3_closure_report.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/build_sanitized_pilot_report.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/build_sha256_manifest.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/build_strict_v2_s345_report.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/build_v16_fixed_parent_probe_registry.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/build_v16_generic_m20_probe_registry.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/build_v16_m20_m2e_probe_registry.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/build_v16_m2d_probe_registry.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/build_v16_m2f_probe_registry.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/build_v16_residual_diag_probe_registry.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/build_v17_conversion_priority_hybrid_registry.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/build_v17_failure_decomposition_report.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/build_v17_formal_preregistration.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/build_v17_hybrid_target_allocation_registry.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/build_v17_module1_2x2_registry.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/build_v18_hybrid_online_accumulation_registry.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/build_v4_full_high_frequency_report.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/build_v4_v5_matched_pair_report.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/build_v6_matched_comparison_records.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/capture_production_golden_traces.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/check_spec_invariants.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/compare_formal_v3_concurrent_equivalence.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/critic_calibration_replay.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/derive_formal_trajectory_trace.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/deterministic_aggregate_acceptance_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/deterministic_dual_target_competition_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/deterministic_final_state_protocol_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/deterministic_high_frequency_update_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/deterministic_member_aware_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/deterministic_member_aware_system_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/deterministic_member_objective_unit_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/deterministic_proposal_memory_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/deterministic_rcru_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/deterministic_repairability_selector_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/deterministic_runner_cache_isolation_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/deterministic_solver_invalid_recovery_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/deterministic_student_recovery_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/deterministic_target_scheduler_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/deterministic_team_differentiation_metrics_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/deterministic_v14_protocol_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/deterministic_v15_protocol_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/deterministic_v17_failure_decomposition_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/deterministic_v17_formal_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/deterministic_validation_selection_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/diversity_matrix_d0_d5_support.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/evaluate_model_headroom_validation.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/evaluate_solver_headroom_multimodel.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/evaluate_solver_headroom_validation.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/evaluate_v17_formal_final_states.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/experiment_config.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/experiment_io.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/final_method_source_identity.py",
+      "classification": "CURRENT_TOOLING",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/finalize_local_gepa_acceptance_rate_phase_b_v2_checks.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/freeze_formal_v3_execution.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/freeze_v16_generic_m20_probe.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/freeze_v16_m20_m2e_probe.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/freeze_v16_m2f_online_seed52_pilot.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/freeze_v16_m2f_probe.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/freeze_v16_module2_compute_matched_efficacy.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/freeze_v17_conversion_priority_hybrid.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/freeze_v17_formal.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/freeze_v17_hybrid_target_allocation_phase_a.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/freeze_v17_module1_2x2_phase_a.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/freeze_v18_hybrid_online_accumulation.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/gate1_contract_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/generic_m20_probe_support.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/gepa_candidate_breadth_support.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/historical_proposal_memory_trigger_replay.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/m2f_probe_support.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/materialize_benchmark_suite_v1.py",
+      "classification": "CURRENT_TOOLING",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/model_headroom_screening_support.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/package_v16_m2f_online_mechanism_report.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/package_v16_module2_compute_matched_efficacy.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/package_v16_responsibility_reports.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/package_v17_formal_report.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/package_v18_harmful_commit_m2f_report.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/package_v18_hybrid_online_scientific_report.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/package_v18_trajectory_gain_loss_report.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/package_v18_writeback_quality_report.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/preflight_accepted_local_mutation_team_transfer_v1.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/preflight_accepted_local_mutation_team_transfer_v2.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/preflight_experiment_governance.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/preflight_local_gepa_acceptance_rate_phase_b_v2.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/preflight_member_aware.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/preflight_peer_state.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/preflight_primary_responsibility_online_binding.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/preflight_v16_fixed_parent_generation_probe.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/preflight_v16_generic_m20_probe.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/preflight_v16_m20_m2e_probe.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/preflight_v16_m2f_probe.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/preflight_v16_residual_diag_probe.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/preflight_v17_conversion_priority_hybrid.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/preflight_v17_formal.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/preflight_v17_hybrid_target_allocation.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/preflight_v17_module1_2x2.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/preflight_v18_hybrid_online_accumulation.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_accepted_local_mutation_team_transfer_v1.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_accepted_local_mutation_team_transfer_v2.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_common_solver_contract_v1.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_contract_adapted_rg_gepa_fixed_parent_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_contract_adapted_rg_gepa_fixed_parent_pilot_v2.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_execution_harness_refreeze_20260922.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_final_saturation_preregistration.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_gepa_candidate_breadth_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_gepa_saturation_comparison_v3.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_local_gepa_acceptance_rate_phase_b_v2.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_local_gepa_acceptance_rate_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_local_gepa_parent_acquisition.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_mmlu_data.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_model_headroom_screening.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_online_transfer_diagnostic.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_online_transfer_diagnostic_v2.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_online_transfer_diagnostic_v3.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_online_transfer_diagnostic_v4.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_online_transfer_diagnostic_v4_attempt3.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_post_refactor_gepa_canary.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_responsibility_guided_gepa_fixed_parent_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_rg_gepa_hypothesis_interface_v2_qualification.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_solver_headroom_generic_retry4.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_solver_headroom_multimodel.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_solver_headroom_multimodel_retry.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_solver_headroom_screening.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_v16_m2f_feedback_necessity_probe.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_v18_harmful_commit_m2f_repair_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_v18_m2f_trigger_extension_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_v18_safety_only_critic_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_v18_shadow_raw_critic_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/prepare_v18_teacher_critic_pipeline_ablation.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/real_api_resume_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/real_api_role_transport_smoke.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/recover_accepted_mutation_exact_state_graph_v2.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/render_experiment_lineage.py",
+      "classification": "CURRENT_TOOLING",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/render_known_failures.py",
+      "classification": "CURRENT_TOOLING",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/replay_v16_module2_contexts.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/report_v4_preexecution_closure.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_accepted_local_mutation_team_transfer_v1.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_accepted_local_mutation_team_transfer_v2.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_common_contract_seed77_p1_e2e.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_common_contract_seed77_sensitivity.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_common_solver_contract_replay.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_contract_adapted_rg_gepa_fixed_parent_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_contract_adapted_rg_gepa_fixed_parent_pilot_v2.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_diversity_matrix_combined_validation.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_diversity_matrix_d0_d5.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_experiment.py",
+      "classification": "CURRENT_ENTRYPOINT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_gepa_candidate_breadth_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_gepa_layer2_real_canary_v2.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_gepa_saturation_comparison_v2.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_level_b_gepa_local_acceptance_rate_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_level_b_gepa_real_canary.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_level_b_gepa_real_canary_v2.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_local_gepa_acceptance_rate_phase_b_v2.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_local_gepa_acceptance_rate_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_local_gepa_parent_acquisition.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_matched_gpt4omini_seed42.ps1",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_model_headroom_screening.ps1",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_responsibility_guided_gepa_fixed_parent_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_rg_gepa_hypothesis_interface_v2_qualification.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_seed78_primary_responsibility_ab.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_sequential_symmetry_breaking_online_pilot_v1.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_sequential_symmetry_breaking_online_pilot_v2.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_shadow_gated_evolution.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_solver_headroom_availability_smoke.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_solver_headroom_multimodel.ps1",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_solver_headroom_multimodel_smoke.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_solver_headroom_screening.ps1",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_task_level_accuracy.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v13_search_budget_control.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v16_fixed_parent_generation_probe.ps1",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v16_fixed_parent_generation_probe.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v16_generic_m20_fixed_parent_probe.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v16_m2f_feedback_necessity_probe.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v16_m2f_online_seed52_pilot.ps1",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v16_m2f_probe.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v16_module2_compute_matched_efficacy.ps1",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v16_module2_seed51_pilot.ps1",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v17_conversion_priority_hybrid_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v17_formal_test.ps1",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v17_formal_train.ps1",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v17_formal_validation.ps1",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v17_hybrid_target_allocation_phase_b.ps1",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v17_hybrid_target_allocation_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v17_module1_2x2_phase_b.ps1",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v17_module1_2x2_probe.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v18_hybrid_online_accumulation.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v18_m2f_trigger_extension_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v18_safety_only_critic_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v18_shadow_raw_critic_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v18_teacher_critic_pipeline_ablation.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v4_full_high_frequency_seed42.ps1",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_v4_full_high_frequency_seed42.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_vote_aligned_confirmatory_replication.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_vote_aligned_generic_shadow_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/run_vote_aligned_seed75_static_control.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/sample_jsonl_splits.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/seal_v17_formal_test.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/select_solver_headroom_multimodel.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/sitecustomize.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/solver_headroom_multimodel_support.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/solver_headroom_screening_support.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/summarize_optimization_funnel.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/v17_conversion_priority_hybrid_support.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/v17_failure_decomposition_support.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/v17_formal_support.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/v17_hybrid_target_allocation_support.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/v17_module1_2x2_support.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/v18_hybrid_online_accumulation_support.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/v18_no_semantic_critic_online.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/v18_safety_only_critic_pilot_support.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/v18_shadow_raw_critic_support.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/v18_teacher_critic_pipeline_support.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/validate_experiment_manifest.py",
+      "classification": "CURRENT_TOOLING",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/validate_sanitized_artifacts.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/verify_v17_formal_source.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+    },
+    {
+      "path": "scripts/audit_repository_governance.py",
+      "classification": "CURRENT_TOOLING",
+      "move": false
+    }
+  ]
+}

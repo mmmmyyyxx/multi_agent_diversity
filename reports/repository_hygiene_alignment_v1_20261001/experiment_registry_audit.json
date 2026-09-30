@@ -1,0 +1,16 @@
+{
+  "node_count": 179,
+  "errors": [],
+  "schema_version": "experiment_registry_v2",
+  "eras": [
+    "BENCHMARK_GENERALIZATION",
+    "FORMAL_V3_V4",
+    "GEPA_TWO_LAYER",
+    "HISTORICAL_V15_V16_AND_EARLIER",
+    "UNIFIED_TEAM_PROMPT_SEARCH",
+    "V17_V18_MEMBER_AWARE"
+  ],
+  "scientific_classifiers_changed": false,
+  "unresolved_node_count": 135,
+  "old_registry_scientific_classifier_preservation": true
+}

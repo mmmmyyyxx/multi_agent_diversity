@@ -5,6 +5,8 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 ## FAIL-TARGET-CONCENTRATION: Target allocation concentration
 
 - Status: `DIAGNOSED`
+- Lifecycle: `HISTORICAL`
+- Lifecycle context: Historical observed facts retained; not an active Unified scientific decision.
 - Evidence level: `observed`
 - First observed: `v17_formal_5arm_3seed`
 - Root-cause status: Allocation behavior was isolated from residual-context behavior.
@@ -15,6 +17,8 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 ## FAIL-LOW-UPDATE-THROUGHPUT: Low feasible-update throughput
 
 - Status: `DIAGNOSED`
+- Lifecycle: `HISTORICAL`
+- Lifecycle context: Historical observed facts retained; not an active Unified scientific decision.
 - Evidence level: `observed`
 - First observed: `v17_formal_5arm_3seed`
 - Root-cause status: Multiple upstream bottlenecks exist; no single universal cause is established.
@@ -25,6 +29,8 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 ## FAIL-PRE-STUDENT-CRITIC-GATE: Pre-Student semantic Critic gate bottleneck
 
 - Status: `DIAGNOSED`
+- Lifecycle: `HISTORICAL`
+- Lifecycle context: Historical observed facts retained; not an active Unified scientific decision.
 - Evidence level: `causally_supported`
 - First observed: `gepa_critic_gate_failure_audit`
 - Root-cause status: Shadow continuation established feasible candidate-supply loss on fixed parents.
@@ -35,6 +41,8 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 ## FAIL-CANDIDATE-SELECTION-NOT-PRIMARY: Historical winner selection is not the primary harmful-pool bottleneck
 
 - Status: `NOT_PRIMARY`
+- Lifecycle: `HISTORICAL`
+- Lifecycle context: Historical observed facts retained; not an active Unified scientific decision.
 - Evidence level: `observed`
 - First observed: `gepa_candidate_selection_audit`
 - Root-cause status: Retrospective evidence excludes only the audited pools and rule.
@@ -45,6 +53,8 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 ## FAIL-FEASIBLE-SET-QUALITY: Feasible-set candidate quality gap
 
 - Status: `DIAGNOSED`
+- Lifecycle: `HISTORICAL`
+- Lifecycle context: Historical observed facts retained; not an active Unified scientific decision.
 - Evidence level: `observed`
 - First observed: `v18_writeback_quality_diagnostic`
 - Root-cause status: Candidate breadth remained untested where the pre-Student gate blocked generation.
@@ -55,6 +65,8 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 ## FAIL-WRITEBACK-TRANSFER: Train-safe write-back can transfer poorly to validation
 
 - Status: `DIAGNOSED`
+- Lifecycle: `HISTORICAL`
+- Lifecycle context: Historical observed facts retained; not an active Unified scientific decision.
 - Evidence level: `observed`
 - First observed: `v18_online_accumulation`
 - Root-cause status: Transfer and trajectory overwrite are measured; a train-only discriminator is not established.
@@ -65,6 +77,8 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 ## FAIL-TEACHER-PRESERVATION-PATTERN: Stable Teacher preservation-rule safety marker pattern
 
 - Status: `DIAGNOSED`
+- Lifecycle: `HISTORICAL`
+- Lifecycle context: Historical observed facts retained; not an active Unified scientific decision.
 - Evidence level: `observed`
 - First observed: `historical_teacher_safety_audit`
 - Root-cause status: Pattern is stable but does not discriminate canonical Critic pass from block.
@@ -75,6 +89,8 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 ## FAIL-DETERMINISTIC-SAFETY-OVERBROAD-RISK: Deterministic safety classifier may over-block benign wording
 
 - Status: `OPEN`
+- Lifecycle: `HISTORICAL`
+- Lifecycle context: Historical observed facts retained; not an active Unified scientific decision.
 - Evidence level: `hypothesized`
 - First observed: `safety_only_prospective_pilot`
 - Root-cause status: Historical regression is low for the selected candidate gate, but broader sufficiency is unproven.
@@ -85,9 +101,23 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 ## FAIL-SEMANTIC-CRITIC-OVERFILTERING: Semantic Critic removes some useful fixed-parent opportunities
 
 - Status: `DIAGNOSED`
+- Lifecycle: `HISTORICAL`
+- Lifecycle context: Historical observed facts retained; not an active Unified scientific decision.
 - Evidence level: `causally_supported`
 - First observed: `shadow_raw_critic_pilot`
 - Root-cause status: Fixed-parent candidate-supply effect is supported; trajectory efficacy is untested.
 - Symptom: Canonically rejected plans produced feasible candidates under no-commit shadow continuation.
 - Forbidden inference: Do not claim Critic removal improves Vote, test, or online trajectories.
 - Mitigation: Candidate C remains selected only for future online validation.
+
+## FAIL-GEPA-SERIAL-EVALUATION: GEPA synchronous local evaluation serializes Solver batches
+
+- Status: `MITIGATED`
+- Lifecycle: `MITIGATED`
+- Lifecycle context: MITIGATED_IMPLEMENTATION; REAL_PERFORMANCE_UNVERIFIED. Fake equivalence and concurrency only.
+- Evidence level: `observed`
+- First observed: `formal_v3_attempt3_seed80_preliminary`
+- Root-cause status: Serial batch submission replaced by ordered existing gather path; deterministic fake equivalence passed.
+- Symptom: Old GEPA local adapter had effective concurrency 1 despite a higher configured semaphore.
+- Forbidden inference: Do not infer real throughput, efficacy or API authorization from fake concurrency calibration.
+- Mitigation: Use the versioned current batch path only within separately frozen and authorized execution.

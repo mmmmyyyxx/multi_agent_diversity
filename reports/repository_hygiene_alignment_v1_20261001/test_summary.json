@@ -1,0 +1,94 @@
+{
+  "status": "PASS_CURRENT_SUITE_COVERAGE_WITH_EXPLICIT_HISTORICAL_EXCLUSIONS",
+  "passed": 392,
+  "skipped": 4,
+  "failed": 0,
+  "distinct_current_test_cases": 396,
+  "counting": "Full current run plus final governance/source-scope retest; latest result per test ID, duplicates not counted.",
+  "full_current_run": {
+    "passed": 389,
+    "skipped": 4,
+    "failed": 0,
+    "deselected": 1468,
+    "seconds": 423.02
+  },
+  "final_governance_retest": {
+    "passed": 98,
+    "failed": 0
+  },
+  "historical_private_artifact_modules": 8,
+  "historical_private_artifact_cases": 64,
+  "historical_replay_cases_not_executed": 1404,
+  "full_historical_suite": "COLLECTION_ONLY_NOT_EXECUTED",
+  "full_historical_cases_collected": 1864,
+  "private_artifact_presence_only": [
+    {
+      "path": "tests/test_accepted_local_mutation_team_transfer_v2.py",
+      "missing": [
+        "runs/accepted_local_mutation_team_transfer_v2_prep/private_bundle.json",
+        "runs/accepted_local_mutation_team_transfer_v1_prep/private_bundle.json"
+      ],
+      "presence_is_not_integrity_validation": true
+    },
+    {
+      "path": "tests/test_common_solver_contract_replay.py",
+      "missing": [
+        "runs/common_solver_contract_v1_replay_20260906",
+        "runs/common_solver_contract_v1_seed77_prep_20260907/private_replay_registry.json"
+      ],
+      "presence_is_not_integrity_validation": true
+    },
+    {
+      "path": "tests/test_local_gepa_phase_b_v2_freeze.py",
+      "missing": [
+        "runs/local_gepa_acceptance_rate_pilot_phase_b_v2_freeze/selected_parent_tasks_private.json"
+      ],
+      "presence_is_not_integrity_validation": true
+    },
+    {
+      "path": "tests/test_v16_generic_m20_fixed_parent_probe.py",
+      "missing": [],
+      "presence_is_not_integrity_validation": true
+    },
+    {
+      "path": "tests/test_v16_m20_collateral_structure_audit.py",
+      "missing": [],
+      "presence_is_not_integrity_validation": true
+    },
+    {
+      "path": "tests/test_v16_m20_m2e_fixed_parent_probe.py",
+      "missing": [],
+      "presence_is_not_integrity_validation": true
+    },
+    {
+      "path": "tests/test_v17_hybrid_target_allocation_phase_a.py",
+      "missing": [],
+      "presence_is_not_integrity_validation": true
+    },
+    {
+      "path": "tests/test_v17_module1_2x2_phase_a.py",
+      "missing": [],
+      "presence_is_not_integrity_validation": true
+    }
+  ],
+  "compileall": "PASS",
+  "governance_manifest_invariant_audits": "PASS",
+  "network_attempts": 0,
+  "initial_new_test_failures_resolved": [
+    "Explicit UTF-8 archive read",
+    "Bare reports import rejected",
+    "LF portability fixture canonicalized before CRLF conversion"
+  ],
+  "git_diff_check": "PASS",
+  "final_archive_source_scope_recheck": {
+    "passed": 7,
+    "failed": 0,
+    "deselected": 32,
+    "network_attempts": 0
+  },
+  "archive_boundary_recheck": {
+    "passed": 13,
+    "failed": 0,
+    "network_attempts": 0
+  }
+}

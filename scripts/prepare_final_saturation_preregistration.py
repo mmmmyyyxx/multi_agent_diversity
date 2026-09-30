@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Build the final zero-API preregistration bundle for saturation studies.
 
 The generated artifacts contain hashes and logical provider identities only.

@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "structured_report_errors": [],
+  "secret_payloads_added": false,
+  "pii_payloads_added": false,
+  "inventory_contains_paths_hashes_references_only": true,
+  "raw_logs_remain_ignored": true
+}

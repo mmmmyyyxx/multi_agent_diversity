@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Unified runner for the anti-overfitting cross-fit protocol.
 
 Phase A is fully zero-API.  ``--run``/``--resume`` stay fail-closed until a

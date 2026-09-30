@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Zero-API preparation of one post-refactor GEPA/Layer2 canary.
 
 Run from the exact clean execution-source commit. The fresh ignored prep root

@@ -1,0 +1,35 @@
+{
+  "phase": "A_INVENTORY_AND_PROPOSED_ACTIONS",
+  "base_sha": "ec993b13a252699f19b93348b01570ffd9bea879",
+  "actions": [
+    {
+      "action": "KEEP",
+      "scope": "all historical reports, manifests, data memberships and replay source",
+      "reason": "immutable provenance and reproduction dependencies"
+    },
+    {
+      "action": "ARCHIVE",
+      "scope": "historical AGENTS/CURRENT_SPEC/method/README/docs content",
+      "reason": "verbatim provenance-preserving archive plus current-document replacements/stubs"
+    },
+    {
+      "action": "REWRITE_CURRENT_DOC",
+      "scope": "AGENTS.md,README.md,method.md,CURRENT_SPEC,current architecture and research pointers",
+      "reason": "sole active Unified architecture; governance distinct from scientific specification"
+    },
+    {
+      "action": "GENERATE",
+      "scope": "registry v2, lineage, report indices, schema/template, classification and audits",
+      "reason": "complete metadata authorities and deterministic projections"
+    },
+    {
+      "action": "KEEP",
+      "scope": "untracked retry2 directory",
+      "reason": "explicitly excluded from deletion, mutation and staging"
+    }
+  ],
+  "delete_candidates": [],
+  "physical_source_moves": [],
+  "unknown_policy": "KEEP; no unknown file is deleted",
+  "real_api_authorized": false
+}

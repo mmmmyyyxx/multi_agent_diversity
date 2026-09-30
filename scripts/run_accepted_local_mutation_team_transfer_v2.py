@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Read-only mandatory-Full team replay of five frozen accepted mutations."""
 
 from __future__ import annotations

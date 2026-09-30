@@ -1,0 +1,245 @@
+{
+  "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879",
+  "invariants": [
+    {
+      "invariant_id": "INV-ID-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Identity and team semantics",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-VOTE-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Identity and team semantics",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-DATA-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Dataset lifecycle and isolation",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-TEST-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Dataset lifecycle and isolation",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-RESP-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Responsibility and target scheduling",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-ROUTE-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Responsibility and target scheduling",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-TARGET-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Responsibility and target scheduling",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-REPAIR-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Responsibility and target scheduling",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-BRANCH-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Branch construction and TCS",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-TCS-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Branch construction and TCS",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-COMMONSAFE-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Candidate evaluation, Common-Safe, and ranking",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-RANK-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Candidate evaluation, Common-Safe, and ranking",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-COMMIT-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Candidate evaluation, Common-Safe, and ranking",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-ARTIFACT-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Artifacts and access evidence",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-STRUCTURAL-EVIDENCE-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Artifacts and access evidence",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-AUTH-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Artifacts and access evidence",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-MANIFEST-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Artifacts and access evidence",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-LAYER-OWNERSHIP-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Historical Two-Layer Research Architecture (frozen replay only)",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-LAYER2-RAW-RESPONSIBILITY-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Historical Two-Layer Research Architecture (frozen replay only)",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-LAYER2-BOUNDED-EVIDENCE-V4",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Historical Two-Layer Research Architecture (frozen replay only)",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-LAYER2-FEASIBILITY-V4",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Historical Two-Layer Research Architecture (frozen replay only)",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-LAYER2-FINAL-SEMANTICS-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Historical Two-Layer Research Architecture (frozen replay only)",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-LAYER2-FEED-CONTROL-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Historical Two-Layer Research Architecture (frozen replay only)",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-LAYER2-TRANSITION-EVIDENCE-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Historical Two-Layer Research Architecture (frozen replay only)",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-LAYER2-LOCAL-EVAL-TEAM-MINIBATCH-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Historical Two-Layer Research Architecture (frozen replay only)",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-UNIFIED-BACKEND-RUNTIME-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Historical Two-Layer Research Architecture (frozen replay only)",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-UNIFIED-RUN-SCHEMA-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Historical Two-Layer Research Architecture (frozen replay only)",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-OPTIMIZER-FIDELITY-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Historical Two-Layer Research Architecture (frozen replay only)",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-LOCAL-COMPONENT-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Historical Two-Layer Research Architecture (frozen replay only)",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-SATURATION-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Fixed-budget and saturation execution regimes",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-SATURATION-002",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Fixed-budget and saturation execution regimes",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-SATURATION-003",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Fixed-budget and saturation execution regimes",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-SATURATION-V4-EPOCH-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Fixed-budget and saturation execution regimes",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-SATURATION-004",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Fixed-budget and saturation execution regimes",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-LOCAL-RESULT-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Fixed-budget and saturation execution regimes",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-LOCAL-GEPA-CONTRACT-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Fixed-budget and saturation execution regimes",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-LOCAL-REFLECTION-DATA-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Fixed-budget and saturation execution regimes",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-TEAM-MINIBATCH-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Fixed-budget and saturation execution regimes",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-PAIRED-EVAL-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Fixed-budget and saturation execution regimes",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    },
+    {
+      "invariant_id": "INV-SOLVER-STAGE-001",
+      "archive_file": "docs/archive/specs/historical_current_spec.md",
+      "section": "Fixed-budget and saturation execution regimes",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879"
+    }
+  ]
+}

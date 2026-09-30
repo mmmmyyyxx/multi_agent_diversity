@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 param(
   [Parameter(Mandatory=$true)][string]$Registry,
   [Parameter(Mandatory=$true)][string]$SourceFreeze,

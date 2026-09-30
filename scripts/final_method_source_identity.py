@@ -155,10 +155,17 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--workspace", type=Path, default=Path("."))
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--family", choices=("unified", "historical-v5"), default="unified")
+    parser.add_argument("--dataset-manifest", type=Path)
+    parser.add_argument("--config", type=Path, action="append", default=[])
     args = parser.parse_args()
     workspace = args.workspace.resolve()
     out = args.out if args.out.is_absolute() else workspace / args.out
-    payload = build_source_identity(workspace)
+    if args.family == "historical-v5":
+        payload = build_source_identity(workspace)
+    else:
+        from multi_dataset_diverse_rl.governance.source_identity import build_unified_source_identity
+        payload = build_unified_source_identity(workspace, args.dataset_manifest, args.config)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2) + "\n",

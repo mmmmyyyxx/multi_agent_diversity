@@ -1,0 +1,16 @@
+{
+  "historical_indexed_count": 54,
+  "historical_migrated": false,
+  "schema_v2": "experiments/schema/experiment_manifest_v2.schema.json",
+  "v2_template_valid": true,
+  "real_api_authorized_default": false,
+  "test_access_default": "sealed",
+  "pattern_default": "null_pattern_v1",
+  "memory_default": "null_memory_v1",
+  "schema_profiles": {
+    "SHARED_V1": 39,
+    "HISTORICAL_BESPOKE_IMMUTABLE": 15
+  },
+  "historical_manifest_paths_preserved": true,
+  "historical_baseline_schema_incompatibilities_indexed": true
+}

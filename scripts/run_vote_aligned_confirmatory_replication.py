@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Seed76/77 Static/P0/P1 vote-aligned confirmatory replication.
 
 ``--prepare-only`` is strictly zero-API. Execution is fail-closed until the

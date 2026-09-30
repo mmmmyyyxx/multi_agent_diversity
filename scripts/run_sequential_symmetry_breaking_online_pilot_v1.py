@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Frozen prospective pilot for sequential plurality symmetry breaking.
 
 Preparation, preflight, audit, and analysis are zero-API operations. Execution

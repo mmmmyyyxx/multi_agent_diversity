@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Authorized, non-committing RG-GEPA fixed-parent pilot runner.
 
 This runner is deliberately separate from the canonical v15 trajectory.  It

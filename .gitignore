@@ -14,3 +14,17 @@ training_checkpoint.json
 data/benchmark_suite_v1/raw/
 data/benchmark_suite_v1/materialized/
 gate1_contract_smoke_*/
+
+# Local runtime/download/tool caches (frozen manifests and sanitized evidence remain tracked).
+.venv*/
+venv/
+.cache/huggingface/
+.hf_cache/
+api_cache/
+api_caches/
+hf_cache/
+checkpoints/
+tmp_prep*/
+local_prep*/
+*.run-local.log
+reports/*_retry_scratch*/

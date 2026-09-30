@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Finalize the zero-API Phase-B 4x8 preregistration from frozen Phase-A tasks."""
 from __future__ import annotations
 

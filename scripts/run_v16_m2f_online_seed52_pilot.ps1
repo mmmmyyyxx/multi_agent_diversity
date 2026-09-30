@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 $ErrorActionPreference = "Stop"
 
 if ($env:V16_M2F_ONLINE_SEED52_AUTHORIZED -ne "1") {

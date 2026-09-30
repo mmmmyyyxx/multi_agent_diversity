@@ -1,0 +1,381 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Unified experiment manifest v2",
+  "type": "object",
+  "properties": {
+    "experiment_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "method_identity": {
+      "type": "string",
+      "minLength": 1
+    },
+    "benchmark_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "benchmark_protocol_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "search_engine_identity": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aggregation_identity": {
+      "type": "string",
+      "minLength": 1
+    },
+    "responsibility_identity": {
+      "type": "string",
+      "minLength": 1
+    },
+    "transition_identity": {
+      "type": "string",
+      "minLength": 1
+    },
+    "adaptive_gate_identity": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pattern_identity": {
+      "type": "string",
+      "minLength": 1
+    },
+    "memory_identity": {
+      "type": "string",
+      "minLength": 1
+    },
+    "global_stop_identity": {
+      "type": "string",
+      "minLength": 1
+    },
+    "schema_version": {
+      "const": "experiment_manifest_v2"
+    },
+    "method_family": {
+      "const": "unified_team_prompt_search_v1"
+    },
+    "source_sha": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "dataset_manifest_identity": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "split_identity": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "preregistration_identity": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "models": {
+      "type": "object",
+      "properties": {
+        "solver": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "optimizer": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "solver_thinking": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "solver",
+        "optimizer",
+        "solver_thinking"
+      ],
+      "additionalProperties": false
+    },
+    "concurrency": {
+      "type": "object",
+      "properties": {
+        "solver": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "optimizer": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "solver",
+        "optimizer"
+      ],
+      "additionalProperties": false
+    },
+    "provider_policy": {
+      "type": "object",
+      "properties": {
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "frozen": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "identity",
+        "frozen"
+      ],
+      "additionalProperties": false
+    },
+    "cache_policy": {
+      "type": "object",
+      "properties": {
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "frozen": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "identity",
+        "frozen"
+      ],
+      "additionalProperties": false
+    },
+    "access": {
+      "type": "object",
+      "properties": {
+        "search_access": {
+          "type": "string",
+          "enum": [
+            "not_authorized",
+            "frozen_search",
+            "frozen_adaptive_gate",
+            "separately_authorized_post_freeze"
+          ]
+        },
+        "shadow_access": {
+          "type": "string",
+          "enum": [
+            "not_authorized",
+            "frozen_search",
+            "frozen_adaptive_gate",
+            "separately_authorized_post_freeze"
+          ]
+        },
+        "validation_access": {
+          "type": "string",
+          "enum": [
+            "not_authorized",
+            "frozen_search",
+            "frozen_adaptive_gate",
+            "separately_authorized_post_freeze"
+          ]
+        },
+        "test_access": {
+          "type": "string",
+          "enum": [
+            "sealed",
+            "separately_authorized_post_freeze"
+          ]
+        }
+      },
+      "required": [
+        "search_access",
+        "shadow_access",
+        "validation_access",
+        "test_access"
+      ],
+      "additionalProperties": false
+    },
+    "budget": {
+      "type": "object",
+      "properties": {
+        "regime": {
+          "enum": [
+            "saturation",
+            "fixed_budget"
+          ]
+        },
+        "saturation_identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "successful_provider_call_ceiling": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "transport_attempt_ceiling": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        }
+      },
+      "required": [
+        "regime",
+        "saturation_identity",
+        "successful_provider_call_ceiling",
+        "transport_attempt_ceiling"
+      ],
+      "additionalProperties": false
+    },
+    "authorization": {
+      "type": "object",
+      "properties": {
+        "real_api_authorized": {
+          "type": "boolean",
+          "default": false
+        },
+        "attempt_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "authorization_identity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "single_use": {
+          "const": true
+        }
+      },
+      "required": [
+        "real_api_authorized",
+        "attempt_id",
+        "authorization_identity",
+        "single_use"
+      ],
+      "additionalProperties": false
+    },
+    "lifecycle": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "DRAFT",
+            "PREREGISTERED",
+            "FROZEN",
+            "RUNNING",
+            "COMPLETED",
+            "ABORTED"
+          ]
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "required": [
+        "status",
+        "history"
+      ],
+      "additionalProperties": false
+    },
+    "hash_closure": {
+      "type": "object",
+      "properties": {
+        "scientific_source_hash": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "governance_hash": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "benchmark_contract_hash": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "dataset_manifest_hash": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "scientific_source_hash",
+        "governance_hash",
+        "benchmark_contract_hash",
+        "dataset_manifest_hash"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "experiment_id",
+    "method_identity",
+    "benchmark_id",
+    "benchmark_protocol_id",
+    "search_engine_identity",
+    "aggregation_identity",
+    "responsibility_identity",
+    "transition_identity",
+    "adaptive_gate_identity",
+    "pattern_identity",
+    "memory_identity",
+    "global_stop_identity",
+    "schema_version",
+    "method_family",
+    "source_sha",
+    "dataset_manifest_identity",
+    "split_identity",
+    "preregistration_identity",
+    "seed",
+    "models",
+    "concurrency",
+    "provider_policy",
+    "cache_policy",
+    "access",
+    "budget",
+    "authorization",
+    "lifecycle",
+    "hash_closure"
+  ],
+  "additionalProperties": false
+}

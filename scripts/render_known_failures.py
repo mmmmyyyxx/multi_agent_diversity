@@ -30,6 +30,8 @@ def render(workspace: Path) -> str:
                 f"## {row['failure_id']}: {row['title']}",
                 "",
                 f"- Status: `{row['status']}`",
+                f"- Lifecycle: `{row.get('lifecycle', 'OPEN')}`",
+                f"- Lifecycle context: {row.get('lifecycle_note', 'See evidence below.')}",
                 f"- Evidence level: `{row['evidence_level']}`",
                 f"- First observed: `{row['first_observed']}`",
                 f"- Root-cause status: {row['root_cause_status']}",

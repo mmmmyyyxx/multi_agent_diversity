@@ -21,6 +21,9 @@ def validate_experiment_registry(
     schema: Mapping[str, Any],
 ) -> tuple[list[str], dict[str, dict[str, Any]]]:
     root = Path(workspace)
+    if registry.get("schema_version") == "experiment_registry_v2":
+        from .repository import validate_registry_v2
+        return validate_registry_v2(root, registry)
     errors: list[str] = []
     entries = registry.get("experiments", [])
     ids = [row.get("experiment_id") for row in entries]
@@ -63,7 +66,9 @@ def validate_lineage(
     seen: set[tuple[str, str, str]] = set()
     graph: dict[str, set[str]] = defaultdict(set)
     indegree = {node: 0 for node in known}
-    allowed = {"derived_experiment", "audit_of", "followup_of", "supersedes"}
+    allowed = {"derived_experiment", "audit_of", "followup_of", "supersedes",
+               "derived_from", "replication_of", "ablation_of", "diagnostic_of",
+               "refactor_of", "migration_of", "freeze_of"}
     for row in edges:
         source, target, relation = row.get("from"), row.get("to"), row.get("relation")
         key = (source, target, relation)

@@ -1,0 +1,78 @@
+{
+  "physical_moves": [],
+  "logical_archives": [
+    {
+      "source_document": "AGENTS.md",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879",
+      "source_section": "Historical two-layer architecture",
+      "archive": "docs/archive/specs/two_layer_gepa_replay_contract.md",
+      "body_sha256": "e2d8cc9284afc42d303de4d6cd645bfd8df5e2badb5ea5231fe612394ac6f440",
+      "verbatim_git_blob_section": true
+    },
+    {
+      "source_document": "AGENTS.md",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879",
+      "source_section": "Historical v15 sections 1-9",
+      "archive": "docs/archive/specs/v15_replay_contract.md",
+      "body_sha256": "5a0d4ca68e042953764151616b1b0c4f9dd1434ab63d3e5388d7845b084ff9b4",
+      "verbatim_git_blob_section": true
+    },
+    {
+      "source_document": "AGENTS.md",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879",
+      "source_section": "FULL_DOCUMENT",
+      "archive": "docs/archive/specs/agents_baseline.md",
+      "body_sha256": "817e5db6fabcfb25913001d8fcdfaa494c9cbb55da8e0e9674dbb968a3c80d48",
+      "verbatim_git_blob_section": true
+    },
+    {
+      "source_document": "docs/design/CURRENT_SPEC.md",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879",
+      "source_section": "Canonical v15 through historical two-layer",
+      "archive": "docs/archive/specs/historical_current_spec.md",
+      "body_sha256": "a74a54a119184086b51713b26d6a9b9d20f670f2ae65be2f404f5c6ef9eb8b5a",
+      "verbatim_git_blob_section": true
+    },
+    {
+      "source_document": "method.md",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879",
+      "source_section": "FULL_DOCUMENT",
+      "archive": "docs/archive/methods/v15_method.md",
+      "body_sha256": "41b81e66d689deb6a2c54f4bf0cdc4c98c02a0d1910328870ccd877c9d527aad",
+      "verbatim_git_blob_section": true
+    },
+    {
+      "source_document": "README.md",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879",
+      "source_section": "FULL_DOCUMENT",
+      "archive": "docs/archive/methods/baseline_readme.md",
+      "body_sha256": "9a49bd6c48e04ea1dddd1c07858533095624b0867a0a117bce77e870294ec349",
+      "verbatim_git_blob_section": true
+    },
+    {
+      "source_document": "docs/CURRENT_ARCHITECTURE.md",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879",
+      "source_section": "FULL_DOCUMENT",
+      "archive": "docs/archive/architecture/baseline_architecture.md",
+      "body_sha256": "5b3900fe7829810afeba12dadd0f7233c411dbb548920ce6f53bf7fab3508fdb",
+      "verbatim_git_blob_section": true
+    },
+    {
+      "source_document": "docs/two_layer_optimizer_architecture.md",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879",
+      "source_section": "FULL_DOCUMENT",
+      "archive": "docs/archive/architecture/two_layer_optimizer_architecture.md",
+      "body_sha256": "1bb8f9127ed868c7f116fefe0c9fb88628307e3d2edbc808400d1237147e409d",
+      "verbatim_git_blob_section": true
+    },
+    {
+      "source_document": "docs/research/CURRENT_RESEARCH_STATE.md",
+      "source_commit": "ec993b13a252699f19b93348b01570ffd9bea879",
+      "source_section": "FULL_DOCUMENT",
+      "archive": "docs/archive/research/research_state_baseline.md",
+      "body_sha256": "87aafb548fe9c0394469085ed672f43ad3271a3cfb634e485994d0d36bc5fb59",
+      "verbatim_git_blob_section": true
+    }
+  ],
+  "original_replay_paths_preserved": true
+}

@@ -377,7 +377,7 @@ def test_telemetry_schemas_reject_unstructured_payloads() -> None:
 
 def test_runtime_identity_matches_versions() -> None:
     """INV-ID-001: normative prose mirrors the runtime identity authority."""
-    spec = (ROOT / "docs" / "design" / "CURRENT_SPEC.md").read_text(encoding="utf-8")
+    spec = (ROOT / "docs" / "archive" / "specs" / "historical_current_spec.md").read_text(encoding="utf-8")
     assert versions.METHOD_VERSION in spec
     assert f"checkpoint v{versions.CHECKPOINT_VERSION}" in spec
 

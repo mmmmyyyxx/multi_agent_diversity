@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 from __future__ import annotations
 import argparse,asyncio,json,os,subprocess,sys,uuid
 from pathlib import Path

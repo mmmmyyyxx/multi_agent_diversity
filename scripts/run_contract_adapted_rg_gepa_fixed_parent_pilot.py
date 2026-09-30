@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Run the non-committing contract-adapted RG-GEPA fixed-parent pilot.
 
 Only closed-vocabulary reflection hypotheses cross the optimizer boundary.

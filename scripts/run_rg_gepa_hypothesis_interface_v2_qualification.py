@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Isolated 12-call schema qualification for RG-GEPA Hypothesis Interface V2.
 
 This is engineering evidence only.  It never calls a Solver, evaluates a

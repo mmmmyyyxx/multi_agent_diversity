@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Zero-API semantic-closure freeze for the fresh Seed81 transfer diagnostic."""
 
 from __future__ import annotations

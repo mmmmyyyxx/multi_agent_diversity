@@ -1,0 +1,37 @@
+{
+  "resolutions": [
+    {
+      "experiment_id": "anti_overfitting_shadow_gate_v1",
+      "before": "RUNNING",
+      "after": "PREPARED_NOT_EXECUTED",
+      "evidence": "reports/anti_overfitting_shadow_gate_v1/README.md",
+      "reason": "README explicitly states Phase B has not run / PHASE_B_RUN=false; original classifier retained.",
+      "classifier_preserved": true
+    },
+    {
+      "experiment_id": "v18_teacher_critic_four_arm",
+      "before": "SELECTED_FOR_NEXT_ONLINE_VALIDATION",
+      "after": "COMPLETED",
+      "evidence": "reports/v18_teacher_critic_pipeline_ablation_20260902/README.md",
+      "reason": "Selection milestone has a published result and registered completed online descendant; original C classifier retained.",
+      "classifier_preserved": true
+    },
+    {
+      "experiment_id": "primary_responsibility_persistent_realizability_v1",
+      "before": "IMPLEMENTED",
+      "after": "IMPLEMENTED_NOT_EXECUTED",
+      "evidence": "reports/primary_responsibility_online_binding_20260912/README.md",
+      "reason": "Report states IMPLEMENTED_NOT_RUN / execution not frozen; no run is inferred.",
+      "classifier_preserved": true
+    },
+    {
+      "experiment_id": "sequential_symmetry_breaking_online_pilot_v1",
+      "before": "PREFLIGHT_PASS",
+      "after": "STATUS_UNRESOLVED",
+      "evidence": "reports/sequential_symmetry_breaking_online_pilot_v1_prep_20260921/README.md",
+      "reason": "Prep READY_TO_RUN=false is not runtime evidence; later report identities are not assumed identical.",
+      "classifier_preserved": true
+    }
+  ],
+  "scientific_classifiers_changed": false
+}

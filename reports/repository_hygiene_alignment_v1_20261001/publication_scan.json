@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "scanned_staged_files": 162,
+  "checks": [
+    "credential_payload",
+    "credential_literal",
+    "host_path",
+    "personal_email"
+  ],
+  "introduced_hits": [],
+  "inherited_baseline_findings": [
+    {
+      "path": "scripts/run_v16_fixed_parent_generation_probe.ps1",
+      "check": "host_path",
+      "baseline_git_blob_contains_same_literal": true,
+      "reason": "Original historical body preserved; only historical-only marker added."
+    },
+    {
+      "path": "scripts/run_v16_module2_seed51_pilot.ps1",
+      "check": "host_path",
+      "baseline_git_blob_contains_same_literal": true,
+      "reason": "Original historical body preserved; only historical-only marker added."
+    }
+  ],
+  "limitations": "Pattern scan, not a proof of absence of all possible PII. Inherited historical host references are explicitly recorded; no ignored raw data/logs/caches scanned or staged."
+}

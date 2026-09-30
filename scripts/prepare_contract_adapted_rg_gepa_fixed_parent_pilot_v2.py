@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Zero-API refreeze for the six-parent contract-adapted RG-GEPA V2 pilot."""
 from __future__ import annotations
 

@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Execution gate and explicit configurations for the GEPA saturation study.
 
 The formal experiment deliberately remains blocked until both predecessor gates

@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Execute the authorized COMMON_SOLVER_CONTRACT_V1 ExternalValidation50 replay.
 
 This is deliberately a single evaluator entry point for all source methods. It

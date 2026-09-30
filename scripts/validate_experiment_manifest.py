@@ -29,8 +29,13 @@ def main() -> None:
     if args.manifest:
         from multi_dataset_diverse_rl.governance.manifest import load_manifest, validate_manifest
 
-        manifest = load_manifest(args.manifest)
-        errors.extend(validate_manifest(manifest, schema))
+        manifest_path = args.manifest if args.manifest.is_absolute() else root / args.manifest
+        manifest = load_manifest(manifest_path)
+        if manifest.get("schema_version") == "experiment_manifest_v2":
+            from multi_dataset_diverse_rl.governance.repository import validate_manifest_v2
+            errors.extend(validate_manifest_v2(root, manifest))
+        else:
+            errors.extend(validate_manifest(manifest, schema))
     result = {
         "ok": not errors,
         "manifest_count": len(manifests),

@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Fresh-execution GEPA Layer-2 real canary (pre-authorized freeze family).
 
 The scientific path is inherited from the audited Level-B canary.  This module

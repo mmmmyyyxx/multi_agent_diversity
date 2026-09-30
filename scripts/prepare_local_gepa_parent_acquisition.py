@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Zero-API preparation of the explicitly amended Phase-A acquisition."""
 from __future__ import annotations
 import argparse

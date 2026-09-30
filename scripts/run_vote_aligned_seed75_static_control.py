@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Evaluation-only Static control for the completed Seed75 P0/P1 pilot."""
 
 from __future__ import annotations

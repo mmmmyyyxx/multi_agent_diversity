@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 param(
     [string]$OutRoot = "runs_v4_full_highfreq_seed42_$(Get-Date -Format yyyyMMdd_HHmmss)"
 )

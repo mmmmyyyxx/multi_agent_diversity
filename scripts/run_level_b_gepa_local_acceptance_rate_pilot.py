@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Preregistered Layer-1-only GEPA local acceptance-rate pilot."""
 
 from __future__ import annotations

@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Vote-aligned target scheduling on the frozen Shadow-gated D2 pipeline.
 
 ``--prepare-only`` is zero-API. Run and resume stay fail-closed until the task

@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Reproducible zero-API inventory and preparation package, never a run freeze."""
 from __future__ import annotations
 

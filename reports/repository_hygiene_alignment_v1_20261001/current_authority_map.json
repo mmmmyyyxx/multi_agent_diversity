@@ -1,0 +1,38 @@
+{
+  "authorities": [
+    {
+      "path": "AGENTS.md",
+      "scope": "stable engineering/agent/safety"
+    },
+    {
+      "path": "docs/design/CURRENT_SPEC.md",
+      "scope": "active scientific method"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/versions.py",
+      "scope": "runtime constants"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/",
+      "scope": "benchmark contracts"
+    },
+    {
+      "path": "experiments/registry.yaml",
+      "scope": "experiment metadata"
+    },
+    {
+      "path": "experiments/lineage.yaml",
+      "scope": "lineage"
+    },
+    {
+      "path": "frozen experiment manifest",
+      "scope": "experiment preregistration"
+    },
+    {
+      "path": "reports/",
+      "scope": "immutable evidence; never design authority"
+    }
+  ],
+  "sole_active_architecture": "Unified Team Prompt Search",
+  "frontier": "experiments/current_frontier.yaml"
+}

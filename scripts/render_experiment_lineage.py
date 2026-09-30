@@ -20,6 +20,9 @@ from multi_dataset_diverse_rl.governance.registries import (
 def render(workspace: Path) -> str:
     registry = load_yaml(workspace / "experiments" / "registry.yaml")
     lineage = load_yaml(workspace / "experiments" / "lineage.yaml")
+    if lineage.get("schema_version") == "experiment_lineage_v2":
+        from multi_dataset_diverse_rl.governance.repository import render_lineage_v2
+        return render_lineage_v2(workspace)
     known = [row["experiment_id"] for row in registry["experiments"]]
     errors, order = validate_lineage(lineage, known)
     if errors:

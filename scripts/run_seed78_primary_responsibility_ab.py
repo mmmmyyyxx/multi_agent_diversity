@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Seed78 scheduler-only A/B pilot using the official local GEPA backend.
 
 ``--prepare`` and ``--preflight`` are strictly zero API.  ``--execute`` is a

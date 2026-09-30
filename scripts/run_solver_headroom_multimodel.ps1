@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 param([ValidateSet("generic")][string]$Phase="generic")
 $ErrorActionPreference = "Stop"
 if ($env:SOLVER_MULTIMODEL_SCREENING_AUTHORIZED -ne "1") { throw "API execution not authorized" }

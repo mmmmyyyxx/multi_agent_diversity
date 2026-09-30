@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Freeze the zero-dataset RG-GEPA Hypothesis Interface V2 qualification."""
 from __future__ import annotations
 

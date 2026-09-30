@@ -1,0 +1,18 @@
+{
+  "dataset_downloads": 0,
+  "real_llm_calls": 0,
+  "real_provider_calls": 0,
+  "real_judge_calls": 0,
+  "real_aggregator_calls": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "experiment_executions": 0,
+  "authorization_consumptions": 0,
+  "guard": "tests/formal_zero_api_runner.py",
+  "credential_free_before_application_import": true,
+  "guarded_network_attempt_count": 0,
+  "intentional_network_negative_controls": "blocked and not provider calls",
+  "outside_guard_network": "One initial git fetch; no dataset or model network operation",
+  "real_execution_ready": false,
+  "pushes": 0
+}

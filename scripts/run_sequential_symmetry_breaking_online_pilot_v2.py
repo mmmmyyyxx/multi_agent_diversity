@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Fresh-initialized successor to the sequential symmetry-breaking pilot.
 
 Only initialization/provider/freeze mechanics differ from v1.  The online

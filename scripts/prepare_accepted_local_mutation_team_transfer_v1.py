@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Zero-API freeze of all five accepted Phase-B mutations for team replay."""
 
 from __future__ import annotations

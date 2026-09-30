@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Layer-1-only pilot harness; preparation has no API authorization.
 
 The callable parent harness takes an already frozen LocalOptimizationTask and

@@ -1,0 +1,93 @@
+{
+  "hash_semantics": "SHA256 of staged Git blob bytes; sha256_manifest.json excluded from self-reference",
+  "files": [
+    {
+      "path": "reports/repository_hygiene_alignment_v1_20261001/README.md",
+      "sha256": "8fbf49bddce744d9c50fdc31d856d148158f3b9769144f2a008e0b900de2ba8c"
+    },
+    {
+      "path": "reports/repository_hygiene_alignment_v1_20261001/classification.json",
+      "sha256": "d8c75774d1131ac5990faf9daed947407b55d605f30eeba87730ca14d7dc8078"
+    },
+    {
+      "path": "reports/repository_hygiene_alignment_v1_20261001/cleanup_applied.json",
+      "sha256": "7930aedccdcfa688fa8459d5d6a9e15407064a39089dc9769c083d08cdb5f6e6"
+    },
+    {
+      "path": "reports/repository_hygiene_alignment_v1_20261001/cleanup_plan.json",
+      "sha256": "d68005406b7e5445be23384bbb2f195c6158941266d099870d60172c2c0cc831"
+    },
+    {
+      "path": "reports/repository_hygiene_alignment_v1_20261001/current_authority_map.json",
+      "sha256": "2d86dc3b799db8f922e0fe86be41a6ba2b9254441294630427e2f1d7567e0abb"
+    },
+    {
+      "path": "reports/repository_hygiene_alignment_v1_20261001/current_doc_alignment.json",
+      "sha256": "4b18bdc106fa6da981345dd10ff7878fe384fb6a772d7b99ff58ac5b6cfb4142"
+    },
+    {
+      "path": "reports/repository_hygiene_alignment_v1_20261001/deleted_files.json",
+      "sha256": "0741ce128bccd3d2a28b880b9918b25b3a052b50a54fbe58b51c0279c1e80188"
+    },
+    {
+      "path": "reports/repository_hygiene_alignment_v1_20261001/experiment_registry_audit.json",
+      "sha256": "3e133a080590f15bbad656ff55b26f6b5a9e78a70c29d9b1ff4e291e940de89b"
+    },
+    {
+      "path": "reports/repository_hygiene_alignment_v1_20261001/git_handoff.json",
+      "sha256": "bed994461d9070a42581e9441fae479e181aecc2eb81c9e4480c164b637df12a"
+    },
+    {
+      "path": "reports/repository_hygiene_alignment_v1_20261001/historical_archive_map.json",
+      "sha256": "0ff1ac96bdc05fb0afe206f29867c8a71c806646cd0200d25211ed6462767a0c"
+    },
+    {
+      "path": "reports/repository_hygiene_alignment_v1_20261001/historical_preservation_audit.json",
+      "sha256": "069a52d62060d41fced20a157ec81d4c044d4df0e7010223b44e42f88ce129ff"
+    },
+    {
+      "path": "reports/repository_hygiene_alignment_v1_20261001/lineage_audit.json",
+      "sha256": "c7be5dfd3b73c509ec7eed65dacbbc0783b15a59c89681dc661c3012b4fa1529"
+    },
+    {
+      "path": "reports/repository_hygiene_alignment_v1_20261001/manifest_audit.json",
+      "sha256": "4bbcfba331d1fb4c52f3bf4556dc86877ae1ac3228b24424ff255cb17d0d63f4"
+    },
+    {
+      "path": "reports/repository_hygiene_alignment_v1_20261001/moved_files.json",
+      "sha256": "394bf3504cb940fb9144b919a827d14ebff76877d8eb01ca04e3dac2cb0684b5"
+    },
+    {
+      "path": "reports/repository_hygiene_alignment_v1_20261001/publication_scan.json",
+      "sha256": "ec78a8fde656903edd0e3a9c039beda81f20e61864365c6a7e2037878b17bbeb"
+    },
+    {
+      "path": "reports/repository_hygiene_alignment_v1_20261001/report_index_audit.json",
+      "sha256": "e4b280e31b724e6b9797ea5fdaa9d0266268690e40114acfdce6cf4397e0e1cc"
+    },
+    {
+      "path": "reports/repository_hygiene_alignment_v1_20261001/repository_inventory.json",
+      "sha256": "4c68baf73e72f97306350e4eac3a0d0a15f7c0fe61a014809bbc9247fa8caf06"
+    },
+    {
+      "path": "reports/repository_hygiene_alignment_v1_20261001/sanitization_audit.json",
+      "sha256": "3ac94eceefebb1518d861fc953624909f0034eb392430b4fe75d33ea162bdd91"
+    },
+    {
+      "path": "reports/repository_hygiene_alignment_v1_20261001/source_identity_audit.json",
+      "sha256": "3f3c661ced28d99d821091036a3a7f259c53771660b6e6a30372c8703675f490"
+    },
+    {
+      "path": "reports/repository_hygiene_alignment_v1_20261001/stale_status_resolution.json",
+      "sha256": "d655ad4cee2fdc63a9e37d84969986913cec84250bdb5d85c04a93f7d0c5e0d0"
+    },
+    {
+      "path": "reports/repository_hygiene_alignment_v1_20261001/test_summary.json",
+      "sha256": "89a4724f7367d293d837146774d77681f9934aac0764f60c02865bd15ae87c79"
+    },
+    {
+      "path": "reports/repository_hygiene_alignment_v1_20261001/zero_api_audit.json",
+      "sha256": "6d9b1624dcf9782a484e48eda1a32766c3f93df92e8b8cb69753acf91bc2a984"
+    }
+  ]
+}

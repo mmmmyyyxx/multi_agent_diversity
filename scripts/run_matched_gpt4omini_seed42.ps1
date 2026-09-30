@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 [CmdletBinding()]
 param(
     [string]$OutRoot = "runs_matched_gpt4omini_seed42_20260725"

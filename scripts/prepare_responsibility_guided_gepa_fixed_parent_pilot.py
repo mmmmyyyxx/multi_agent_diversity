@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Freeze the six analytical parents and minibatches for RG-GEPA v1.
 
 This preparation is deliberately zero-API.  The private registry holds frozen

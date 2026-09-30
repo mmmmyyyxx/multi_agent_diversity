@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Prospective Seed77 Diversity P1 rerun under COMMON_SOLVER_CONTRACT_V1."""
 
 from __future__ import annotations

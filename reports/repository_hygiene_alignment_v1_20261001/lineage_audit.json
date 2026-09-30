@@ -1,0 +1,10 @@
+{
+  "node_count": 179,
+  "edge_count": 58,
+  "errors": [],
+  "all_nodes_registered": true,
+  "all_registry_nodes_in_lineage": true,
+  "parent_sets_consistent": true,
+  "cycles": 0,
+  "engineering_edges_not_efficacy": true
+}

@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Seed77 2x2 solver-contract sensitivity diagnostic.
 
 The study is deliberately evaluation-only.  It compares LF/CRLF question

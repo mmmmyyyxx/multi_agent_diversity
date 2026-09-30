@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 $ErrorActionPreference = "Stop"
 
 if ($env:V16_MODULE2_EFFICACY_AUTHORIZED -ne "1") {

@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Run the frozen six-parent contract-adapted RG-GEPA V2 pilot.
 
 V1 remains untouched for historical replay. V2 shares its wire builder with the

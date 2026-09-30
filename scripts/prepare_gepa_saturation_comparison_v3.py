@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Create six fresh, execution-gated Formal V3 preparations without API calls."""
 
 from __future__ import annotations

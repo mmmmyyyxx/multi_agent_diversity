@@ -1,3 +1,4 @@
+# HISTORICAL_REPLAY_ONLY: preserved frozen reproduction utility; new experiments use scripts/run_experiment.py.
 """Zero-API freeze for the Seed81 online local-to-team transfer diagnostic."""
 
 from __future__ import annotations

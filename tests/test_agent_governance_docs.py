@@ -10,13 +10,13 @@ def _read(relative: str) -> str:
 
 def test_agents_defines_unified_architecture_and_historical_role_boundary() -> None:
     agents = _read("AGENTS.md")
-    assert "## Active Unified Team Prompt Search architecture" in agents
+    assert "The sole active research architecture is Unified Team Prompt Search." in agents
     assert "UnifiedSearchOrchestrator" in agents
-    assert "## Historical two-layer architecture (frozen replay reference only)" in agents
-    assert "Layer 1 — Local Prompt Optimizer" in agents
-    assert "Layer 2 — Team-Level Responsibility/Search Controller" in agents
-    assert "The active research direction" in agents
-    assert "canonical historical" in agents
+    historical = _read("docs/archive/specs/two_layer_gepa_replay_contract.md")
+    assert "HISTORICAL_REPLAY_ONLY" in historical
+    assert "Layer 1 — Local Prompt Optimizer" in historical
+    assert "Layer 2 — Team-Level Responsibility/Search Controller" in historical
+    assert "The active research direction" in historical
     assert "## Agent execution model" in agents
     assert "GPT-5.6 Sol" in agents
     assert "GPT-5.6 Luna" in agents
