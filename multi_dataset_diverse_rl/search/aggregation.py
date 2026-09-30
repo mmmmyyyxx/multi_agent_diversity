@@ -36,10 +36,18 @@ class AggregationRequest:
     input_id: str
     seed: int
     decoding_identity: str
+    benchmark_id: str = "bbh"
+    benchmark_version: str = "legacy_bbh"
+    parser_contract: str = "legacy_bbh"
+    output_contract_sha256: str = ""
 
     def cache_identity(self) -> str:
         payload = (self.model, self.role, self.prompt, self.input_id,
                    self.seed, self.decoding_identity)
+        if (self.benchmark_id, self.benchmark_version, self.parser_contract,
+                self.output_contract_sha256) != ("bbh", "legacy_bbh", "legacy_bbh", ""):
+            payload += (self.benchmark_id, self.benchmark_version,
+                        self.parser_contract, self.output_contract_sha256)
         return hashlib.sha256(json.dumps(payload, ensure_ascii=False,
                                          separators=(",", ":")).encode("utf-8")).hexdigest()
 
@@ -62,6 +70,8 @@ class AggregationResult:
     tokens: int
     cache_identity: str | None
     diagnostics: Mapping[str, object] = field(default_factory=dict)
+    logical_evaluations: int = 0
+    cache_hits: int = 0
 
 
 class AggregationPolicy(Protocol):
@@ -149,6 +159,13 @@ class LLMAggregation:
             input_id=item.input_id,
             seed=self.runtime.seed,
             decoding_identity=self.runtime.decoding_identity,
+            benchmark_id=item.benchmark_id,
+            benchmark_version=item.benchmark_version,
+            parser_contract=item.parser_contract,
+            output_contract_sha256=("" if (item.benchmark_id, item.benchmark_version,
+                                           item.parser_contract) ==
+                                    ("bbh", "legacy_bbh", "legacy_bbh")
+                                    else item.output_contract_sha256),
         )
         response = await self.provider(request)
         if not response.provider_called and (response.input_tokens or response.output_tokens):
@@ -163,4 +180,5 @@ class LLMAggregation:
             response.input_tokens + response.output_tokens,
             request.cache_identity(),
             {"prompt_version": AGGREGATION_INSTRUCTION_SHA256},
+            1, int(not response.provider_called),
         )

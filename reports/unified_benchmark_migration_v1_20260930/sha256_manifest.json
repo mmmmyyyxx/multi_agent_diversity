@@ -1,0 +1,62 @@
+{
+  "files": [
+    {
+      "path": "reports/unified_benchmark_migration_v1_20260930/aggregation_compatibility.md",
+      "sha256": "7241943b2336e04c2645e7777da1ee9de881ad7b97ccd43e7e10e7e390c98d09"
+    },
+    {
+      "path": "reports/unified_benchmark_migration_v1_20260930/benchmark_capabilities.json",
+      "sha256": "0b240af1e8f43cb33c44d6a873b883eb7a4ccc34f28b638a826c1006d2e81f87"
+    },
+    {
+      "path": "reports/unified_benchmark_migration_v1_20260930/benchmark_capability_matrix.md",
+      "sha256": "6e3a54cb4376cebe0d66e4a7ec689df5a55ede6493ec010a0491eeaf62d5ec00"
+    },
+    {
+      "path": "reports/unified_benchmark_migration_v1_20260930/benchmark_provenance.md",
+      "sha256": "902a60ac806c80152d2f9a8a8e6eb672319bfac5580d12b45655002602f714d0"
+    },
+    {
+      "path": "reports/unified_benchmark_migration_v1_20260930/build_hashes.py",
+      "sha256": "e8a0e792743357cdb25dcba7b124b81b1421d0759d583a4dbe023fa78714fb73"
+    },
+    {
+      "path": "reports/unified_benchmark_migration_v1_20260930/freeze_identity.json",
+      "sha256": "d40e9e4459c41e72b1a8d39e5e799fb6247a1073fe1a53edf85e154e1ce28c84"
+    },
+    {
+      "path": "reports/unified_benchmark_migration_v1_20260930/full_fake_saturation_audit.md",
+      "sha256": "064f2923fee8037c9285609d1ff1fcd87b61f078c7023c86240fc13afcc502d2"
+    },
+    {
+      "path": "reports/unified_benchmark_migration_v1_20260930/historical_regression.md",
+      "sha256": "d6ed420c34eab692ac5681c110562e339fec4247dd2290d25da337163fbb9210"
+    },
+    {
+      "path": "reports/unified_benchmark_migration_v1_20260930/README.md",
+      "sha256": "68b2c07bb636a6c8fd973cdc19ff4e29c32976a22d8b2bcfaa2218852a1b2357"
+    },
+    {
+      "path": "reports/unified_benchmark_migration_v1_20260930/responsibility_compatibility.md",
+      "sha256": "0d797a053e50d9a4212e646c426a46435aa24b40694a7ffa0a2e2737a3fa6ed4"
+    },
+    {
+      "path": "reports/unified_benchmark_migration_v1_20260930/source_closure.json",
+      "sha256": "9c32ca37d3c843c03ce656cce9194a45f2ff31c5aa1d9b9b0b5cb9070c11302b"
+    },
+    {
+      "path": "reports/unified_benchmark_migration_v1_20260930/split_audit.md",
+      "sha256": "4f407253bada3a77b6b539c2fe8513f65cca21a050eb1d8c4669fb7cf9616744"
+    },
+    {
+      "path": "reports/unified_benchmark_migration_v1_20260930/test_summary.json",
+      "sha256": "9b0824bab2c286217522cb446418b6f444f2254c8749a79d473a69c321493f8d"
+    },
+    {
+      "path": "reports/unified_benchmark_migration_v1_20260930/zero_api_e2e_audit.md",
+      "sha256": "08e30b680da814d53e59f420b998643ac65f76bbf028b076afdebbf9f345bd39"
+    }
+  ],
+  "hash_algorithm": "SHA-256",
+  "scope": "All report files except this manifest, which cannot self-hash"
+}

@@ -56,11 +56,17 @@ def _load(path: Path) -> Mapping[str, Any]:
 def preflight(manifest: Mapping[str, Any]) -> dict[str, Any]:
     scientific = manifest.get("scientific", {})
     if isinstance(scientific, dict) and scientific.get("method") == "unified_team_prompt_search_v1":
-        method = SearchMethodConfig.from_mapping(scientific)
+        method = SearchMethodConfig.from_mapping({key: value for key, value in scientific.items()
+                                                 if key != "benchmark_id"})
         runtime = runtime_context_from_mapping(manifest.get("runtime", {}))
+        from multi_dataset_diverse_rl.benchmarks.registry import benchmark_preflight
+        benchmark_id = str(manifest.get("benchmark_id", scientific.get("benchmark_id", "bbh")))
+        capability = benchmark_preflight(benchmark_id) if benchmark_id != "bbh" else None
         return {
             "gate": "HOLD",
-            "blockers": ["FROZEN_EXECUTION_GOVERNANCE_NOT_BOUND"],
+            "blockers": (["FROZEN_EXECUTION_GOVERNANCE_NOT_BOUND"]
+                         + (list(capability["blockers"]) if capability else [])),
+            "benchmark_id": benchmark_id,
             "method": method.method,
             "method_identity": method.identity(),
             "seed": runtime.seed,

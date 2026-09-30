@@ -1,0 +1,32 @@
+{
+  "guard": "tests/formal_zero_api_runner.py",
+  "focused": {"passed": 30, "failed": 0, "skipped": 0, "network_attempts": 0},
+  "full_fake_formal_regression": {"passed": 28, "failed": 0, "skipped": 0, "network_attempts": 0},
+  "unfiltered_broad": {"passed": 1686, "failed": 15, "errors": 13, "skipped": 4,
+                       "failure_category": "missing historical private frozen run artifacts",
+                       "network_attempts": 0},
+  "broad_excluding_exact_unavailable_artifact_files": {
+    "status": "PASS",
+    "passed": 1661,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 4,
+    "network_attempts": 0,
+    "excluded_files": [
+      "tests/test_accepted_local_mutation_team_transfer_v2.py",
+      "tests/test_common_solver_contract_replay.py",
+      "tests/test_local_gepa_phase_b_v2_freeze.py",
+      "tests/test_sequential_symmetry_breaking_online_pilot_v1.py",
+      "tests/test_v16_fixed_parent_generation_probe.py",
+      "tests/test_v16_generic_m20_fixed_parent_probe.py",
+      "tests/test_v16_m20_collateral_structure_audit.py",
+      "tests/test_v16_m20_m2e_fixed_parent_probe.py"
+    ]
+  },
+  "compileall": "PASS",
+  "git_diff_check": "PASS",
+  "secret_scan": "PASS_27_STAGED_FILES_ZERO_SENSITIVE_HITS",
+  "real_api_calls": 0,
+  "bbh_validation50_calls": 0,
+  "bbh_test50_calls": 0
+}

@@ -1,0 +1,7 @@
+# Aggregation compatibility
+
+HotpotQA answer-only fixture normalizes case, ASCII punctuation, articles and whitespace as in the [official evaluator](https://github.com/hotpotqa/hotpot/blob/master/hotpot_evaluate_v1.py). Thus answer EM-equivalent strings collapse to one discrete class in the fixture. This does not prove that normalized text captures semantic aliases or that answer-only is the chosen project endpoint. Current D/N/C is disabled.
+
+HoVer's official score combines verdict and ranked evidence [per the authors](https://hover-nlp.github.io/); a verdict-only vote would discard evidence. IFBench's [official evaluator](https://github.com/allenai/IFBench/blob/main/evaluation_lib.py) tracks per-instruction outcomes; no team policy is selected. PUPA's privacy and utility objectives are not a single canonical answer class. MATH requires an equivalence relation matching the selected trusted scorer; fractions, decimals and algebraic forms cannot be voted by raw string. These four declare no plurality capability.
+
+The existing LLM aggregator remains symmetric over five member responses. Its request has no gold, reference, reward or correctness input. The request/cache identity now includes benchmark, version, parser contract and output contract hash in addition to example, model, role, prompt, seed and decoding identity. A fake request test verifies this and separate aggregator call accounting. An LLM aggregate is not a responsibility policy; no new benchmark is allowed to search with it.

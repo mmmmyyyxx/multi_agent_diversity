@@ -1,0 +1,11 @@
+{
+  "base_sha": "b8555b9005fb117a086c639e51e0a5e6f9ba1443",
+  "bbh_test50_calls": 0,
+  "bbh_validation50_calls": 0,
+  "execution_status": "ZERO_API_SOFTWARE_FREEZE",
+  "formal_execution_ready": false,
+  "new_commit_sha": "RECORDED_BY_GIT_COMMIT_NOT_SELF_REFERENTIAL",
+  "real_api_calls": 0,
+  "source_closure_sha256": "9c32ca37d3c843c03ce656cce9194a45f2ff31c5aa1d9b9b0b5cb9070c11302b",
+  "task": "unified_benchmark_migration_v1_20260930"
+}

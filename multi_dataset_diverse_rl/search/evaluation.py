@@ -22,6 +22,8 @@ class ScoredTeamRow:
     aggregation_diagnostics: dict[str, object]
     aggregation_calls: int = 0
     aggregation_tokens: int = 0
+    aggregation_logical_evaluations: int = 0
+    aggregation_cache_hits: int = 0
 
 
 class TeamEvaluator:
@@ -51,6 +53,7 @@ class TeamEvaluator:
             item.input_id, member_scores, aggregate_score,
             aggregated.parsed_output.valid, dict(aggregated.diagnostics),
             aggregated.calls, aggregated.tokens,
+            aggregated.logical_evaluations, aggregated.cache_hits,
         )
 
 

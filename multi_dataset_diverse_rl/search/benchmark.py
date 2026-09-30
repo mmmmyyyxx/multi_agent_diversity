@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import hashlib
+import json
 from typing import Any, Mapping, Protocol
 
 from .schemas import BenchmarkCapabilities, ParsedOutput
@@ -16,12 +18,34 @@ class BenchmarkInput:
     problem: str
     output_contract: str
     public_context: Mapping[str, str] = field(default_factory=dict)
+    benchmark_id: str = "bbh"
+    benchmark_version: str = "legacy_bbh"
+    parser_contract: str = "legacy_bbh"
 
     def __post_init__(self) -> None:
         forbidden = {"gold", "reward", "correct_vector", "evaluation_result",
                      "label", "reference_answer"}
         if forbidden.intersection(key.casefold() for key in self.public_context):
             raise ValueError("inference input contains evaluation-only context")
+        if not all((self.input_id, self.benchmark_id, self.benchmark_version,
+                    self.parser_contract, self.output_contract)):
+            raise ValueError("benchmark request identity is incomplete")
+
+    @property
+    def output_contract_sha256(self) -> str:
+        return hashlib.sha256(self.output_contract.encode("utf-8")).hexdigest()
+
+    def request_identity(self, *, role: str, model_identity: str,
+                         prompt_identity: str, seed: int,
+                         decoding_identity: str) -> str:
+        """Shared key material for future benchmark-aware solver request caches."""
+        if not all((role, model_identity, prompt_identity, decoding_identity)):
+            raise ValueError("request identity is incomplete")
+        value = (self.benchmark_id, self.benchmark_version, self.input_id,
+                 role, model_identity, prompt_identity, seed, decoding_identity,
+                 self.parser_contract, self.output_contract_sha256)
+        return hashlib.sha256(json.dumps(value, ensure_ascii=False,
+                                         separators=(",", ":")).encode("utf-8")).hexdigest()
 
 
 class BenchmarkAdapter(Protocol):

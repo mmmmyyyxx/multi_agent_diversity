@@ -377,6 +377,61 @@ def test_atomic_rollback_when_memory_observation_fails() -> None:
     assert history.transitions == [] and history.target_counts == {}
 
 
+def test_full_dynamic_fake_saturation_replay() -> None:
+    """Two commits change the parent; two full no-commit epochs then saturate."""
+    class SequentialEngine:
+        def __init__(self):
+            self.parents = []
+
+        async def search(self, opportunity, context):
+            self.parents.append((opportunity.parent_state_id,
+                                 opportunity.parent_prompt,
+                                 context.history.latest_member_transition(0)))
+            index = len(self.parents)
+            candidates = ((SearchCandidate(f"child-{index}", f"improved-{index}"),)
+                          if index <= 2 else ())
+            return SearchResult(candidates, "SATURATION_REACHED")
+
+    orchestrator, state, history = _orchestrator()
+    class RecordingAnalyzer(FakeAnalyzer):
+        def __init__(self):
+            self.parents = []
+
+        def analyze(self, state, history):
+            self.parents.append(state.team_state_id)
+            return super().analyze(state, history)
+
+    responsibility = RecordingAnalyzer()
+    orchestrator.analyzer = StateAnalyzer(responsibility)
+    engine = SequentialEngine()
+    orchestrator.engine = engine
+    first = asyncio.run(orchestrator.run(max_opportunities=10))
+    assert first.stop_reason == "SATURATION_REACHED"
+    assert len(first.trace) == 4 and len(first.transitions) == 2
+    assert [row.committed_candidate_id for row in first.trace] == [
+        "child-1", "child-2", None, None,
+    ]
+    assert first.trace[0].child_state_id == first.trace[1].parent_state_id
+    assert all(row.parent_state_id == first.trace[1].child_state_id
+               for row in first.trace[2:])
+    assert [row[1] for row in engine.parents] == [
+        "parent", "improved-1", "improved-2", "improved-2",
+    ]
+    assert responsibility.parents == [row.parent_state_id for row in first.trace]
+    assert engine.parents[0][2] is None
+    assert engine.parents[1][2] == first.transitions[0]
+    assert engine.parents[2][2] == first.transitions[1]
+    assert history.commit_counts == {0: 2} and history.failure_counts == {0: 2}
+    assert orchestrator.stop.no_commit_epochs == 2
+    assert len({record.child_state_id for record in first.transitions}) == 2
+    assert first.final_state_id == state.snapshot().team_state_id
+    replay, _, _ = _orchestrator()
+    replay.engine = SequentialEngine()
+    second = asyncio.run(replay.run(max_opportunities=10))
+    assert second.final_state_id == first.final_state_id
+    assert second.stop_reason == first.stop_reason
+
+
 def test_new_search_package_has_no_historical_ownership_interfaces() -> None:
     root = Path(__file__).resolve().parents[1] / "multi_dataset_diverse_rl" / "search"
     source = "\n".join(path.read_text(encoding="utf-8") for path in root.glob("*.py")

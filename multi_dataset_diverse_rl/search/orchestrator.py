@@ -170,6 +170,12 @@ class UnifiedSearchOrchestrator:
     async def run(self, *, max_opportunities: int) -> UnifiedSearchResult:
         if max_opportunities <= 0:
             raise SearchContractError("positive operational opportunity ceiling required")
+        benchmark_id = getattr(self.benchmark, "benchmark_id", None)
+        if benchmark_id is not None:
+            from ..benchmarks.registry import benchmark_spec
+            blockers = benchmark_spec(benchmark_id).blockers()
+            if blockers:
+                raise SearchContractError("HOLD_PRE_PROVIDER: " + ",".join(blockers))
         if (self.method.diagnosis_policy == versions.UNIFIED_PLURALITY_RESPONSIBILITY_VERSION
                 and self.method.aggregation_policy != versions.UNIFIED_PLURALITY_AGGREGATION_VERSION):
             raise SearchContractError("SCIENTIFIC_DECISION_REQUIRED: LLM aggregation responsibility")

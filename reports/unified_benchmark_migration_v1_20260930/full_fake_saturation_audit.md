@@ -1,0 +1,3 @@
+# Full fake saturation replay
+
+`test_full_dynamic_fake_saturation_replay` runs the real unified orchestrator with fake search/evaluation and frozen BBH policy objects. It accepts two atomic commits on successive parent states, verifies each successor becomes the next opportunity's parent, checks latest-member transition history, then completes two no-commit epochs and stops with `SATURATION_REACHED`. It verifies two distinct child hashes, exactly two commits, failure counts, no stale parent, deterministic final hash and deterministic stop reason on replay. This validates architecture state flow only; no scientific efficacy is inferred.
