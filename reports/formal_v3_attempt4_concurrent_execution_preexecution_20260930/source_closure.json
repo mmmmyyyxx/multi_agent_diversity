@@ -1,0 +1,521 @@
+{
+  "execution_source_sha": "6b16c8abe8717895c26a6a05bbdbc2e9e636388e",
+  "independent_preparations_identical": true,
+  "pre_provider_rejections": 127,
+  "provider_constructions_during_audit": 0,
+  "schema_version": "formal_v3_attempt4_source_closure_v1",
+  "source_file_count": 127,
+  "source_files": [
+    {
+      "path": "experiments/anti_overfitting_split_v1/fold_assignment.json",
+      "sha256": "4b093252dc4ea45e5e0a1b56d37ed359377cb6995a461c404b8b9f732bcb96a4"
+    },
+    {
+      "path": "experiments/anti_overfitting_split_v1/split_manifest.json",
+      "sha256": "42843456e13bbbda1a86615ae278ff059372dc199a8ccf5ade4cb338641d12c4"
+    },
+    {
+      "path": "experiments/gepa_saturation_comparison_v3/PILOT_CLOSURE.json",
+      "sha256": "44d21597fd01eb7f9c9f0b7a1d26e1cdb5a69a044e584e52157b97a8662fec88"
+    },
+    {
+      "path": "experiments/gepa_saturation_comparison_v3/POST_FREEZE_VALIDATION50_EVALUATION.md",
+      "sha256": "0c1fb5b55d610c6bd8a2c048480e0fdb17c0362f1e83ccea0c22748e93c01ff2"
+    },
+    {
+      "path": "experiments/gepa_saturation_comparison_v3/PROTOCOL.md",
+      "sha256": "7e7de13224531e0f4ad48a8c9768328b6df1d8bcbebe693413c5e13feff5ccbe"
+    },
+    {
+      "path": "infrastructure/common_solver_contract_v1/__init__.py",
+      "sha256": "9d8f412348e94bf67b68321eded891c3182925870a098f373b7d95f4fb59399b"
+    },
+    {
+      "path": "infrastructure/common_solver_contract_v1/contract.py",
+      "sha256": "751805a3cb18e55a014e9d568c491bf4a6dffc3fb366f60d42656c76abc79042"
+    },
+    {
+      "path": "infrastructure/common_solver_contract_v1/entrypoints.py",
+      "sha256": "7971b536c08a1758bead4b2e0a72df582aa924d9e56f5a469d98f29ddce623d5"
+    },
+    {
+      "path": "infrastructure/common_solver_contract_v1/evaluator.py",
+      "sha256": "c5180ec87bf4924788d4d52550658212fac4dbd7f239caca45340ef4be1e9072"
+    },
+    {
+      "path": "infrastructure/common_solver_contract_v1/system_adapter.py",
+      "sha256": "f4e3da38f551371f913223b11fa63d49801efb706d3c929e20b926e5e63a54f1"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/__init__.py",
+      "sha256": "21914b76a4bb94cd6aab50a1b53b954906e137b5991c5e7287f8414b9ae1dc53"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/answer_formats.py",
+      "sha256": "d5c3c274391bacd3bd2f473940a300a5f8d475e656dc363a3d82b93880c73863"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/candidate_selection.py",
+      "sha256": "acf0c459700bcf542bc56407521d1e3fd7bf2357883148ad40e303ceeac9c2be"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/cli.py",
+      "sha256": "76e53240b02abb3c6417f825412b5fca95ca63afe524dc3bcc91736e389f5d14"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/compatibility_repair.py",
+      "sha256": "cb64ff0c634127cd4776279d2680ef1acf37759bf8545f5aa50b71d012232d26"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/config.py",
+      "sha256": "1a87426ef31c92e80916438370be1f521fa58895b098c0adbbfaedd8d3f08c65"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/critic_calibration.py",
+      "sha256": "e10a6d64706d1d5c98fc66b57b99fad9b65327ec091f2232f2733f7fc7bdfaf4"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/diagnosis_aggregation.py",
+      "sha256": "fe773c9b22b11d9367ef04911d913fc507bf5e7ed215f47b3bda4cfc6a969002"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/categorical_profiles.py",
+      "sha256": "0095eaaee712b4e69174b2c11e73b5bea23a2cb4613b517997d0ac43c3ce3c39"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/endpoint_identifiability.py",
+      "sha256": "d28175560b9b8caf1b4bbdb3936378886c795319fd0927ee2ef80f05c8286534"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/fixed_probe.py",
+      "sha256": "1c44c4425311128a085e30ac943ec2028a7a1cf8e82c1fd9c69105c7e1dbf73a"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/mutable_prompt_contract.py",
+      "sha256": "60859f603cc4c012fc0cdf82d3e3a1efc9df97bb48e38cde830bdcdd4a4f3761"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/output_contract.py",
+      "sha256": "f76e6dab59aedb3ba301b0b1b0e1a488882f894faa8d12f0f1fcbf162bcc56fd"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/persistent_solver_cache.py",
+      "sha256": "b1b039681d74577f7967001efc35f12f028d9544cabda3cbd293ff44ac6b0313"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/prompt_question.py",
+      "sha256": "7b99f99aac6ba88752da12d96ba142ff8a59e719d7c6e261429c5629123ca568"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/solver_output.py",
+      "sha256": "ed40c2de71fb0c9a1824fbc998a7ea22ba4473b07ac64e42b80eabbf31894f9b"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/solver_stage.py",
+      "sha256": "da5972c57be2e7a0b8974ec467757dd78c17ffd9e7219b8f6b7acc068c3643b9"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/validation.py",
+      "sha256": "dc9c66f07d78c545b9f758cf36d95f299d598c4e6acecadbc6f6981098848691"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/experiment.py",
+      "sha256": "cc0ae136027aaded147efe4dfbaadbce12431f561180bdfdbcc517e9ded0cf5a"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/experimental_contract_adapted_rg_gepa.py",
+      "sha256": "5634d0edd0db8ef9244022c9892480633738b0520559813994e899f9050b0d2e"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/experimental_rg_gepa.py",
+      "sha256": "7ba1539793dfacf998b3067cda4e49d88f1124415e9521c16480bdee039a6bfc"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/formal_final_team.py",
+      "sha256": "609f9232fde07a2f21019e24b3e003ecaa7e440c307bdb600f507ca000a42e84"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/formal_trajectory.py",
+      "sha256": "b58402d22d507ed54c75fb289bcc958a25d4fb30118c0df0422a133896aabb9e"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/formal_validation_policy.py",
+      "sha256": "9c910192562752428bfd9cb25596e62eefbad950f548e78626005bebd715a94f"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/__init__.py",
+      "sha256": "f491cea27d8ab20affa8bc3981198925e4e2bee27309dc63443e634c1fad0281"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/artifacts.py",
+      "sha256": "6499b620024370278a83490659dc7f04645936c5a7f171bc2c85377465e178db"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/authorization.py",
+      "sha256": "7c267977b03ed4ef4db0373e1f21a1810833d8c91c8d643f4cca582133fa38ac"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/execution_harness_v2.py",
+      "sha256": "6d41c0a90e4b80c0e23e4587923723503bb4480f6fa4c250aca5a88343cab440"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/freeze_hash.py",
+      "sha256": "d7332d5e8fcf04c04570fe7e9ce24077b652f51b9ceba9bdcbacc08922f8a0af"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/manifest.py",
+      "sha256": "f34c3a5d0e658225dace3443d03aacf51bdcaf86009350ca301044c2eb16cff1"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/production_execution.py",
+      "sha256": "a708291964c1f5e5ee9f8f4c8ef8161600bac75db5e359d501633d9aedfb93c3"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/provenance.py",
+      "sha256": "ea8baa1dde152c9c45b7c240a63921733057f824628165cab6c01bd336b86523"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/registries.py",
+      "sha256": "105cb449b549a0b0c1cfae53626dd4f7cebfd013645786774c2ac2cc9706e582"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/run_lifecycle.py",
+      "sha256": "14bb0dc0e188f408ca6ffe78eb93949ba2661497b91e4545bf89a1927a4a1361"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/startup_identity.py",
+      "sha256": "59e0cee4bc3ba8aa60d9ae52e7a0b4cbca01e2e74b570ca7b3d7eb00d3f3be2c"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/telemetry.py",
+      "sha256": "f3e5d742631f092074bac2ae3cd624eb0f7e43ca71d070ce3963047150b1a8aa"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/v4_attempt3_contract.py",
+      "sha256": "357fb48b868a3011c32d4d10cbc116820ab75262fd86b39e6e26270f2815cca6"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/v4_source_closure.py",
+      "sha256": "a6d777df827e2c5a5d514219e9dcab0e3761025cf7ac8ae3718f53404688034d"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/llm_client.py",
+      "sha256": "7508e59386e186b85a4ae49cfe6c5a85ca37bc6eb4ed23216a50a8cccf99a3d5"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/__init__.py",
+      "sha256": "2b464fbe8c9be51d3f154128714ed01b23140f992d15d69c27706cec24a4578c"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/backend_registry.py",
+      "sha256": "c86dc42a8aff3f5eb443e1ec43cc857f56f78fac4361ef9fd6aa03bc2c28a072"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/base.py",
+      "sha256": "8820fe3a5eb23f96a96a6b6b78129661915839aa8d4e79948b919190a58f3c6d"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/config.py",
+      "sha256": "1c43a0874140d6f072c373c5ecac217503f46921bdc46afa62832f22b7fd8689"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py",
+      "sha256": "3e8190837605c85a90bae913d54a7a9b2a5554191bd835234076fba6e9c50379"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_callbacks.py",
+      "sha256": "19851aca3cd404edd0f7ea3f7c539567ab3142c0720a6488c3819e46c71cb620"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py",
+      "sha256": "d78b4f21f615a9b5234b416cc5450c39788673fe73aaf375c6a252eee4e7072e"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py",
+      "sha256": "8d6e041fa8c521b44fba0e647880b4722e9f2d2b21245f2ab68aa5ed96c4fa88"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_proposer_contract.py",
+      "sha256": "0eb2d1a8a661ce7421352c0ba8e149839d2d1c724cd98a733f4e36241fafe401"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_runtime.py",
+      "sha256": "0f6fecba9fdf01a1210265c00b713bae7ee5d11757b7125ad41e6a781c4969db"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/legacy_tcs.py",
+      "sha256": "3d9c822fa5ef6600d91206da646abb61ee4f864b6a26250ea9835c4f7ce2c0f7"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/mars_native.py",
+      "sha256": "8e676f22e9254040ec9703eb9eff4b386b6f57855072c75eb81e39acce81a449"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/production_backends.py",
+      "sha256": "46f74c6ef0012fc575eea74dce4c83a06c1a1b61ed68e973ccab4f96b48b2a93"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/proposal_telemetry.py",
+      "sha256": "adb88ee7b3b967633ac664c5df1e62447bf144781edfd25dcccf2c675958c0a0"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/registry.py",
+      "sha256": "8c28634f2d93dfd6580ca2c87de3e3cc5b52d78c6cefdae22fb4ba6bbac54259"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/schemas.py",
+      "sha256": "99661d70ad11727301405ec23c36dc0ee02126e77d2a2f9fa8f453c1626e6696"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/member_objectives.py",
+      "sha256": "d31c394838d7e585f41fc3fc8e185b507204416cadce70a2dac17747aa1dd652"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/module2_context.py",
+      "sha256": "ab7e4a0980528b1dfeeca956b1ad54961dfcddb772f1b8cb4280c3f7f14ed6f4"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/native_feed.py",
+      "sha256": "f85497bc6de0a624537ec7075de9807c01344df0daa054316ac85516dc76ed4f"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/native_feed_audit.py",
+      "sha256": "dce9fe54aa53e49d7b0cdfabee2f5873f304ffeac20f8ec710639534e3803b22"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/parent_acquisition.py",
+      "sha256": "80a073cdf03f5b83af26fe33b96a0bb44ece7db10df33d1f90d3ba7cac748d29"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/peer_state.py",
+      "sha256": "fb5c948fbea5d12b9050e5ffd40166dcebaf92c8e7d71099d290b77c2e1c38be"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/persistence/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/persistence/artifacts.py",
+      "sha256": "8da887e8806f9583866dfb36196757b90ffb192534eb3ea142f288dadea3ff5d"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/persistence/checkpoint.py",
+      "sha256": "11660190c32b2cdb7d564158de0b60b26820423491030d01665e53ff9d261116"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/persistence/durable_io.py",
+      "sha256": "969b4b34169970b9ed69d60960a01b3543c1e38c0f50ac6e5036bb3bf11d80e6"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/persistence/identity.py",
+      "sha256": "97d204b0ee2fd609a26b483c2d165799b7be3d2b6511923ed9e78f541e927e63"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/production_canary.py",
+      "sha256": "46585526ab158238f828fcfb0c48d102bc520375ae90771c9dd1cc69dea118c3"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "sha256": "475b769ff315b1e93eaddb981c1d03171380846c27901ea97f7b9bedf1b52f5a"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "sha256": "97dd6ffe1e10a6dbc8d3b835f3a4cb7a1ee72d32c75896531f29680eba72f52e"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/proposal_memory.py",
+      "sha256": "5920559247e37ea5c2800c1c66b07151fbe7414acd1441b97edae5e716d6a4c4"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/protocol.py",
+      "sha256": "8d167454487f157ff8898abfeb9f7ac2fc904e6ea30a8588de465d2e968812c7"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/provider_credentials.py",
+      "sha256": "41e7282cbe5dfb59a9e834931e70e4d651ad373f3670fb523dd33b910691c2cf"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/provider_factory.py",
+      "sha256": "1931af16fd26afe7b63864ce2c088e108ec11743abafad5b54b00802234109b4"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/responsibility.py",
+      "sha256": "18df7782a63b31938d5e1031725f1ee3b5f1907031dba8a77a6df83b6ba86011"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/responsibility_contribution.py",
+      "sha256": "a20aeeb721651939e71b03bbc5dc758f8a32eb6edd4c2513b2ab614a1f4af8f4"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/saturation.py",
+      "sha256": "817031a9fedec4f221b21639a1e1243dd711659250972bb88e3adc31d75ffab0"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/shadow_gate.py",
+      "sha256": "69370e46a9d932a16816ca47b48e2e8478a4828db6ff03acd12386e7ddf5cbf8"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/system.py",
+      "sha256": "27c34d41552258b339892aa37a3c30e02b0147383b5d51eaa5a6e71ce879fd1c"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/task_manifest.py",
+      "sha256": "90a80938eb80521036355fb9ae099eef6848cb8476257115044a3d69cfd9fd9c"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/tasks.py",
+      "sha256": "9410ba7bfe41860d751782a6ae488b980372c37bf192f407b9e86a47f0634dd9"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/tcs.py",
+      "sha256": "f121d6012294c1ef669fce15a56e0fd39d8ebfe6ef1122c0cd69020b1922e883"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_differentiation.py",
+      "sha256": "a6ce9242f6f20417ed119fdcd72fcafcb2dcff2c9420ec2f7dca066528a84843"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/__init__.py",
+      "sha256": "38c6f7bb6ee4488cbbe40e5aea5437359fc042bcc12b3fda39cb7f65d8ba2c3e"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/accepted_mutation_replay.py",
+      "sha256": "42c4cd396f6dbe1cb89bfb2c63d82f37ca64f7be1b42de63a80da74f8ca8a406"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/candidate_evaluator.py",
+      "sha256": "0a6cb71f8d5d0d8d3ac5f9c5a7506657e24e8b09c28a45cf8d4a86dd0a9e2c53"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/candidate_selector.py",
+      "sha256": "f7ba817c711f3bf270a2bcfac73ba238e7906270f9d592206dea7bf7df5af5c6"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/controller.py",
+      "sha256": "d78006592fa4e6255f85dad4323d07de22bf72ff42976afba5479ee832d6122b"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/evidence_audit.py",
+      "sha256": "bc12a40ee4cc9209785efc88b6fc8c78774132b3ca872b7d1661a6eee6a8714c"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/execution_runtime.py",
+      "sha256": "e709c62e18aedb78a7523b370d82684d5ba886f15d634218e33e2b30ace16685"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/feasibility.py",
+      "sha256": "56e4bf9c90a7f597bde23f0fba376b23daf7bd5054ea88bdc3462db537e4f359"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/ledger.py",
+      "sha256": "1cb2ee566ed439a6106d7f6c2a31102aee2f225fc90eea66573914c88e8ca043"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/primary_responsibility_binding.py",
+      "sha256": "4a2ff69c55d93952079032c0f241f76f00c80ebbb8fe98a52739b21c09bb04e5"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py",
+      "sha256": "b8f0a474075e9a4725ea3f40d42a46117b5dc447bc37c48e14a683dccb42fa6c"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/progressive_evaluation.py",
+      "sha256": "9fd036feee79326ea5c1b2199e2c83b7dcad3a7d8e1a826e2a742d88e5d2e00f"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/protocol.py",
+      "sha256": "8b6fd90a0c4114e87a33f9fbf7449cfa7312044615bb46ec11591328b4c7d8b1"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/run_record.py",
+      "sha256": "451f121095b63735be81dd6372e9e8c4ead49ce5d5547ff755a9620f221e44db"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/schemas.py",
+      "sha256": "b76c345ee2f5b0d475ae187bb8e84a9e9554f360aa11b13817f344e06035a1d0"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/symmetry_breaking.py",
+      "sha256": "28434823e3b843125e596ce22d2dee240bb71db19ae1cc633d8cc09bce603c9f"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "sha256": "5e2b82a11f6e66eaac29f7999292be1a5079c5d5c2b038b45b5eaa5bc05bd87c"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/task_builder.py",
+      "sha256": "041d517d3e41727180286695b4310a27ce6a8d579c61aa66261d566e06233261"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/v4_opportunity.py",
+      "sha256": "f9adaec980df3092681c07e98f9799587319efda06722f80b8d4d9751d825c93"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/termination.py",
+      "sha256": "e2a866380ed639f7a58e536dd94f600a28d16eb55d95b7543e69d65a3e136bc6"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/utils.py",
+      "sha256": "b8205623991c1f636c380fb42f2637d90710e32a5ea68896eafe25c2c37bbc57"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/versions.py",
+      "sha256": "2b27b9dbd24ee869ec45d399f7f6759d6cf83c0878222b6f48a6bd9cec903c8e"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/vote_aligned_scheduler.py",
+      "sha256": "09a828ffbbccec3ed513da8edf5355d157ffd5b3343c7fcac75086b6c4218802"
+    },
+    {
+      "path": "scripts/audit_formal_v3_concurrent_equivalence.py",
+      "sha256": "c95e2e620a82a0c5a733ba3c6994fccc1d314d7e9b5ee7d3add81d14ccd329aa"
+    },
+    {
+      "path": "scripts/audit_formal_v3_json_roundtrip.py",
+      "sha256": "0fc01bc2f989aaa1b97ea18229383e13b7a7cc1c784b17dcb4b6914481386510"
+    },
+    {
+      "path": "scripts/audit_formal_v3_offline_freeze.py",
+      "sha256": "974bc4535b777c3b18752c9d351ad47f8f66b9516d03b9a06faac58446ce4c0a"
+    },
+    {
+      "path": "scripts/benchmark_formal_v3_local_batch.py",
+      "sha256": "2464fb2d8aef27ba1a74095bba6c3c2d4b3c8e082581a06be332fabf720c4dd3"
+    },
+    {
+      "path": "scripts/build_formal_v3_closure_report.py",
+      "sha256": "d2e3a739a23b34cd92a737a379c05bdf5f757ce6aa1f05e6c38f7091b86ca31a"
+    },
+    {
+      "path": "scripts/compare_formal_v3_concurrent_equivalence.py",
+      "sha256": "6e5300a1f8c2dad0e954023331b482556a642c112215ccee85649d7979216b7c"
+    },
+    {
+      "path": "scripts/derive_formal_trajectory_trace.py",
+      "sha256": "9634c1adc245dff2b5682354490fa53ba7b11f963c68feddc547860e158ab15b"
+    },
+    {
+      "path": "scripts/freeze_formal_v3_execution.py",
+      "sha256": "318bd3c6bb0d0b69d751df19736158a98996425b5bddacc67a1173c9013dd741"
+    },
+    {
+      "path": "scripts/prepare_gepa_saturation_comparison_v3.py",
+      "sha256": "49b1ce28e72b175774f1594ef91a9713b4feaf1a2f5e943dcb1547b49eeca77c"
+    },
+    {
+      "path": "scripts/prepare_post_refactor_gepa_canary.py",
+      "sha256": "d9cea93be769b5ec5d972dbc97c19621606e389bf19a8b9d6331ba8899f527b7"
+    },
+    {
+      "path": "scripts/run_experiment.py",
+      "sha256": "a7c75e8ae1c97d7d5986b747a9c8cd116fecdd2919501aabb964f5e6193172bc"
+    }
+  ],
+  "source_files_sha256": "3f3f39e68831baac17614e9a369ad52ffadb63709dfb10991887a2d67b22ca56",
+  "source_poison_cases": 127,
+  "status": "PASS"
+}

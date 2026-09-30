@@ -1,0 +1,41 @@
+{
+  "file_count": 7,
+  "files": [
+    {
+      "path": "cache_reuse_audit.json",
+      "sha256": "8460dee32d06e504543434e5325fa905fe3f80c22e594afd49307467ad88d5d0",
+      "size_bytes": 918
+    },
+    {
+      "path": "concurrency_audit.json",
+      "sha256": "65fd333a5cc1d339aef2510810b5909e2acfc7a42f96b4ccc0ed8cf93db0cdbf",
+      "size_bytes": 7099
+    },
+    {
+      "path": "freeze_identity.json",
+      "sha256": "6b9b71a7e43fb8f4bf431361b476080aee65dee4099611abac45975feac497ee",
+      "size_bytes": 6497
+    },
+    {
+      "path": "README.md",
+      "sha256": "6662bb2701cf8fcde89f1d5be60c3119874247a760f4a535de228ff7ee589540",
+      "size_bytes": 5398
+    },
+    {
+      "path": "semantic_equivalence_audit.json",
+      "sha256": "81ce1dcfe70d84439730d5287c69398d485ac9ca6954fced257d04f65c79355a",
+      "size_bytes": 6678
+    },
+    {
+      "path": "source_closure.json",
+      "sha256": "e9e779e300148ebaeeb5a70bddbb15ea6988b27ff594be671fe39dfbe2847de9",
+      "size_bytes": 21280
+    },
+    {
+      "path": "test_summary.json",
+      "sha256": "f9621007c8fb080f2fee7ba488c2913c8c864df05aaeab563bb49fe999ef7f70",
+      "size_bytes": 918
+    }
+  ],
+  "schema_version": "formal_v3_attempt4_report_sha256_manifest_v1"
+}

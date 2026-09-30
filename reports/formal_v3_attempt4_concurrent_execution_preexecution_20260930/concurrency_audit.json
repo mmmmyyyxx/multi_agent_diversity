@@ -1,0 +1,231 @@
+{
+  "benchmark": {
+    "all_scientific_evaluations_preserved": true,
+    "concurrent_variants": [
+      {
+        "batch_size": 32,
+        "configured_concurrency": 1,
+        "elapsed_seconds": 1.9899,
+        "logical_evaluations": 32,
+        "max_inflight": 1,
+        "physical_calls": 32,
+        "speedup_vs_serial": 1.004
+      },
+      {
+        "batch_size": 32,
+        "configured_concurrency": 4,
+        "elapsed_seconds": 0.4976,
+        "logical_evaluations": 32,
+        "max_inflight": 4,
+        "physical_calls": 32,
+        "speedup_vs_serial": 4.013
+      },
+      {
+        "batch_size": 32,
+        "configured_concurrency": 8,
+        "elapsed_seconds": 0.2467,
+        "logical_evaluations": 32,
+        "max_inflight": 8,
+        "physical_calls": 32,
+        "speedup_vs_serial": 8.095
+      },
+      {
+        "batch_size": 32,
+        "configured_concurrency": 16,
+        "elapsed_seconds": 0.1236,
+        "logical_evaluations": 32,
+        "max_inflight": 16,
+        "physical_calls": 32,
+        "speedup_vs_serial": 16.157
+      },
+      {
+        "batch_size": 32,
+        "configured_concurrency": 32,
+        "elapsed_seconds": 0.0658,
+        "logical_evaluations": 32,
+        "max_inflight": 32,
+        "physical_calls": 32,
+        "speedup_vs_serial": 30.35
+      }
+    ],
+    "fake_delay_ms_per_request": 50,
+    "real_provider_calls": 0,
+    "schema_version": "formal_v3_local_batch_fake_benchmark_v1",
+    "serial_reference": {
+      "batch_size": 32,
+      "configured_concurrency": 1,
+      "elapsed_seconds": 1.997,
+      "logical_evaluations": 32,
+      "max_inflight": 1,
+      "physical_calls": 32
+    }
+  },
+  "configured_concurrency_observed_inflight": 16,
+  "deterministic_batch_order_test": "PASS",
+  "execution_source_sha": "6b16c8abe8717895c26a6a05bbdbc2e9e636388e",
+  "failure_and_cancellation_tests": "PASS",
+  "fake_full_path_ledger_cases": {
+    "layer2_commit": {
+      "failed_provider_attempts": 0,
+      "local_candidate_attribution_valid": true,
+      "phase_counts": {
+        "initialization": {
+          "cache_hits": 400,
+          "logical_solver_completions": 500,
+          "physical_attempts": 100,
+          "successful_provider_calls": 100
+        },
+        "local_optimizer_reflection": {
+          "cache_hits": 0,
+          "logical_solver_completions": 0,
+          "physical_attempts": 1,
+          "successful_provider_calls": 1
+        },
+        "local_optimizer_solver_eval": {
+          "cache_hits": 131,
+          "logical_solver_completions": 171,
+          "physical_attempts": 40,
+          "successful_provider_calls": 40
+        },
+        "team_full_eval": {
+          "cache_hits": 40,
+          "logical_solver_completions": 100,
+          "physical_attempts": 60,
+          "successful_provider_calls": 60
+        },
+        "team_minibatch_eval": {
+          "cache_hits": 12,
+          "logical_solver_completions": 12,
+          "physical_attempts": 0,
+          "successful_provider_calls": 0
+        },
+        "team_shadow_eval": {
+          "cache_hits": 200,
+          "logical_solver_completions": 300,
+          "physical_attempts": 100,
+          "successful_provider_calls": 100
+        }
+      },
+      "provider_attempts": 301,
+      "record_count": 1384,
+      "record_ids_unique": true,
+      "stage_attribution_complete": true,
+      "successful_provider_calls": 301,
+      "within_emergency_ceiling": true
+    },
+    "layer2_no_commit": {
+      "failed_provider_attempts": 0,
+      "local_candidate_attribution_valid": true,
+      "phase_counts": {
+        "initialization": {
+          "cache_hits": 400,
+          "logical_solver_completions": 500,
+          "physical_attempts": 100,
+          "successful_provider_calls": 100
+        },
+        "local_optimizer_reflection": {
+          "cache_hits": 0,
+          "logical_solver_completions": 0,
+          "physical_attempts": 360,
+          "successful_provider_calls": 360
+        },
+        "local_optimizer_solver_eval": {
+          "cache_hits": 2244,
+          "logical_solver_completions": 2280,
+          "physical_attempts": 36,
+          "successful_provider_calls": 36
+        }
+      },
+      "provider_attempts": 496,
+      "record_count": 3276,
+      "record_ids_unique": true,
+      "stage_attribution_complete": true,
+      "successful_provider_calls": 496,
+      "within_emergency_ceiling": true
+    },
+    "layer2_shadow_reject": {
+      "failed_provider_attempts": 0,
+      "local_candidate_attribution_valid": true,
+      "phase_counts": {
+        "initialization": {
+          "cache_hits": 400,
+          "logical_solver_completions": 500,
+          "physical_attempts": 100,
+          "successful_provider_calls": 100
+        },
+        "local_optimizer_reflection": {
+          "cache_hits": 0,
+          "logical_solver_completions": 0,
+          "physical_attempts": 10,
+          "successful_provider_calls": 10
+        },
+        "local_optimizer_solver_eval": {
+          "cache_hits": 1670,
+          "logical_solver_completions": 1710,
+          "physical_attempts": 40,
+          "successful_provider_calls": 40
+        },
+        "team_full_eval": {
+          "cache_hits": 940,
+          "logical_solver_completions": 1000,
+          "physical_attempts": 60,
+          "successful_provider_calls": 60
+        },
+        "team_minibatch_eval": {
+          "cache_hits": 120,
+          "logical_solver_completions": 120,
+          "physical_attempts": 0,
+          "successful_provider_calls": 0
+        },
+        "team_shadow_eval": {
+          "cache_hits": 2900,
+          "logical_solver_completions": 3000,
+          "physical_attempts": 100,
+          "successful_provider_calls": 100
+        }
+      },
+      "provider_attempts": 310,
+      "record_count": 6640,
+      "record_ids_unique": true,
+      "stage_attribution_complete": true,
+      "successful_provider_calls": 310,
+      "within_emergency_ceiling": true
+    },
+    "native": {
+      "failed_provider_attempts": 0,
+      "local_candidate_attribution_valid": true,
+      "phase_counts": {
+        "initialization": {
+          "cache_hits": 400,
+          "logical_solver_completions": 500,
+          "physical_attempts": 100,
+          "successful_provider_calls": 100
+        },
+        "local_optimizer_reflection": {
+          "cache_hits": 0,
+          "logical_solver_completions": 0,
+          "physical_attempts": 63,
+          "successful_provider_calls": 63
+        },
+        "local_optimizer_solver_eval": {
+          "cache_hits": 367,
+          "logical_solver_completions": 439,
+          "physical_attempts": 72,
+          "successful_provider_calls": 72
+        }
+      },
+      "provider_attempts": 235,
+      "record_count": 1174,
+      "record_ids_unique": true,
+      "stage_attribution_complete": true,
+      "successful_provider_calls": 235,
+      "within_emergency_ceiling": true
+    }
+  },
+  "ledger_integrity": "PASS",
+  "real_provider_calls": 0,
+  "schema_version": "formal_v3_attempt4_concurrency_audit_v1",
+  "selected_solver_concurrency": 16,
+  "test50_calls": 0,
+  "validation50_calls": 0
+}

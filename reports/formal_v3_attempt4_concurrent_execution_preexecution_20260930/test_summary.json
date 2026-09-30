@@ -1,0 +1,28 @@
+{
+  "compileall": "PASS",
+  "deterministic_semantic_equivalence": "PASS",
+  "execution_source_sha": "6b16c8abe8717895c26a6a05bbdbc2e9e636388e",
+  "guarded_relevant_pytest": {
+    "duration_seconds": 140.71,
+    "failed": 0,
+    "files": [
+      "tests/test_formal_v3_concurrent_local_batch.py",
+      "tests/test_formal_v3_full_fake.py",
+      "tests/test_formal_v3_attempt2_gate.py",
+      "tests/test_pre_run_faults.py",
+      "tests/test_v3_preexecution_fault_campaign.py",
+      "tests/test_local_optimizer_execution_runtime.py"
+    ],
+    "passed": 112,
+    "status": "PASS"
+  },
+  "independent_six_cell_prep": "PASS",
+  "network_attempts": 0,
+  "network_guard_bootstrap": "PASS",
+  "network_guard_negative_control": "PASS",
+  "real_provider_calls": 0,
+  "schema_version": "formal_v3_attempt4_test_summary_v1",
+  "source_poison": "127/127 pre-provider rejection",
+  "test50_calls": 0,
+  "validation50_calls": 0
+}

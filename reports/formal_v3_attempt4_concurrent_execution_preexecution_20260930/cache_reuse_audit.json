@@ -1,0 +1,27 @@
+{
+  "cached_logical_completion_token_delta_zero": true,
+  "common_solver_exact_request_cache_unchanged": true,
+  "cross_seed_response_reuse": false,
+  "full_path_layer2_commit": {
+    "full_cache_hits": 40,
+    "full_logical": 100,
+    "full_physical": 60,
+    "team_minibatch_cache_hits": 12,
+    "team_minibatch_logical": 12,
+    "team_minibatch_physical": 0
+  },
+  "gepa_cache_evaluation": false,
+  "minibatch_to_full_unit_test": {
+    "additional_physical_calls": 88,
+    "full_rows": 100,
+    "initial_unique_rows": 12,
+    "status": "PASS"
+  },
+  "prompt_question_cache": "run_local_with_inflight_future_and_asyncio_lock",
+  "prompt_question_cache_key_retains_evaluation_replica_seed": true,
+  "same_prompt_question_concurrent_consumers": 3,
+  "same_prompt_question_physical_calls": 1,
+  "schema_version": "formal_v3_attempt4_cache_reuse_audit_v1",
+  "shared_solver_cache_path_empty": true,
+  "status": "PASS"
+}
