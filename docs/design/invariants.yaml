@@ -494,3 +494,43 @@ invariants:
   failure_refs: []
   critical: true
   status: ACTIVE
+- id: INV-SEARCH-TEAM-ADMISSION-DECOUPLING
+  description: Active V2 mechanism contract; see normative specification.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/gepa_v2.py
+  tests:
+  - tests/test_unified_search_v2.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-VARIABLE-EVIDENCE-001
+  description: Active V2 mechanism contract; see normative specification.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/variable_evidence.py
+  tests:
+  - tests/test_unified_search_v2.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-PATTERN-DIAGNOSTIC-001
+  description: Active V2 mechanism contract; see normative specification.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/patterns.py
+  tests:
+  - tests/test_unified_search_v2.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-LONG-TERM-MEMORY-001
+  description: Active V2 mechanism contract; see normative specification.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/memory.py
+  tests:
+  - tests/test_unified_search_v2.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE

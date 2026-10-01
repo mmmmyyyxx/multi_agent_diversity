@@ -1,0 +1,32 @@
+{
+  "commit_count": 1,
+  "context_scope": "optimizer_reflection_only",
+  "evidence_audit": {
+    "DPR": 0.6,
+    "evidence_ids_hash": "7d332f1fcfe105b81db5bf52c5579bf4e7ef17b0efeb5f95d0ce902339caaad1",
+    "focus_pattern_id": "P1",
+    "generic_backfill_count": 0,
+    "mutation_count": 3,
+    "normalized_entropy": 0.8649735207179272,
+    "operational_validation_capacity": 12,
+    "pattern_count": 3,
+    "pattern_enabled": true,
+    "pattern_risk_count": 0,
+    "pattern_support_count": 3,
+    "role_counts": {
+      "MUTATION": 3,
+      "REPAIR": 3,
+      "TEAM_HARD": 3,
+      "direct_flip": 3
+    },
+    "search_validation_count": 3,
+    "team_probe_count": 3
+  },
+  "evidence_class": "FAKE_PATTERN_PROVIDER_WITH_SCRIPTED_GEPA",
+  "other_pattern_mutation_support_excluded": true,
+  "provider_fake_calls": 1,
+  "raw_DNCV_parity": true,
+  "real_pattern_provider_calls": 0,
+  "target_member": 2,
+  "target_parity_with_null": true
+}

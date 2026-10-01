@@ -27,3 +27,26 @@ Historical paper text is preserved in
 [v15 method archive](docs/archive/methods/v15_method.md); historical contracts
 do not define the active method. See [open questions](docs/research/OPEN_QUESTIONS.md)
 for changes requiring separate scientific identities and experiments.
+
+## Unified Team Prompt Search V2
+
+```text
+Diagnosis -> Target -> Pattern diagnostic (optional)
+    -> Variable evidence composition -> GEPA search
+       (local survival and team candidate exposure are separate decisions)
+    -> TeamProbe -> promotion -> Full -> Common-Safe -> winner-only Shadow
+    -> atomic transition -> Memory outcome update (optional)
+```
+
+V2 exposes changed, contract-valid, unique, Solver-evaluated proposals even when
+GEPA rejects their local improvement or they leave its frontier. GEPA internal
+search remains strict. Team-level outcomes decide deployment; local scores do
+not enter promotion or transition keys. Evidence uses technical minima and
+budget-derived maxima; V1's 4+4+4 view remains only for explicit replay.
+
+The target-specific mechanism diagnostic and deterministic private-success /
+shared-risk memory are implemented dormant mechanisms, default disabled. They
+alter reflection context only when explicitly selected and bound. Null mechanisms
+add no context or tokens. Memory learns only after complete outcomes, with
+prepared updates and no provider call at apply. Benchmark blockers remain in
+force. V2 mechanism correctness has zero-API proofs; efficacy is unverified.

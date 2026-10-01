@@ -55,7 +55,7 @@ def _load(path: Path) -> Mapping[str, Any]:
 
 def preflight(manifest: Mapping[str, Any]) -> dict[str, Any]:
     scientific = manifest.get("scientific", {})
-    if isinstance(scientific, dict) and scientific.get("method") == "unified_team_prompt_search_v1":
+    if isinstance(scientific, dict) and scientific.get("method") in {"unified_team_prompt_search_v1", "unified_team_prompt_search_v2"}:
         method = SearchMethodConfig.from_mapping({key: value for key, value in scientific.items()
                                                  if key != "benchmark_id"})
         runtime = runtime_context_from_mapping(manifest.get("runtime", {}))

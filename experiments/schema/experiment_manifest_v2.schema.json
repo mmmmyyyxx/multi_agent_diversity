@@ -55,7 +55,10 @@
       "const": "experiment_manifest_v2"
     },
     "method_family": {
-      "const": "unified_team_prompt_search_v1"
+      "enum": [
+        "unified_team_prompt_search_v1",
+        "unified_team_prompt_search_v2"
+      ]
     },
     "source_sha": {
       "type": [
@@ -345,6 +348,21 @@
         "dataset_manifest_hash"
       ],
       "additionalProperties": false
+    },
+    "search_acceptance_identity": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence_identity": {
+      "type": "string",
+      "minLength": 1
+    },
+    "feasibility_identity": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mechanism_config": {
+      "type": "object"
     }
   },
   "required": [
@@ -377,5 +395,115 @@
     "lifecycle",
     "hash_closure"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "method_family": {
+            "const": "unified_team_prompt_search_v2"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "search_acceptance_identity",
+          "evidence_identity",
+          "feasibility_identity",
+          "mechanism_config"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "method_family": {
+            "const": "unified_team_prompt_search_v2"
+          },
+          "memory_identity": {
+            "const": "structured_agent_memory_v1"
+          }
+        },
+        "required": [
+          "method_family",
+          "memory_identity"
+        ]
+      },
+      "then": {
+        "properties": {
+          "mechanism_config": {
+            "required": [
+              "memory"
+            ],
+            "properties": {
+              "memory": {
+                "type": "object",
+                "required": [
+                  "top_k_private",
+                  "top_k_shared",
+                  "max_context_chars",
+                  "private_storage_limit",
+                  "shared_storage_limit"
+                ],
+                "properties": {
+                  "top_k_private": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "top_k_shared": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "max_context_chars": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "private_storage_limit": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "shared_storage_limit": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "method_family": {
+            "const": "unified_team_prompt_search_v2"
+          },
+          "pattern_identity": {
+            "const": "pattern_diagnostic_v1"
+          }
+        },
+        "required": [
+          "method_family",
+          "pattern_identity"
+        ]
+      },
+      "then": {
+        "properties": {
+          "mechanism_config": {
+            "required": [
+              "pattern_provider_binding"
+            ],
+            "properties": {
+              "pattern_provider_binding": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }

@@ -25,3 +25,13 @@ The sole current composition CLI is `scripts/run_experiment.py`.
 See [repository map](REPOSITORY_MAP.md) for current/historical classifications,
 [frontier](../experiments/current_frontier.yaml) for readiness and
 [historical architecture](archive/architecture/baseline_architecture.md) for replay.
+
+## Current V2 method state
+
+The active opt-in method is `unified_team_prompt_search_v2`. Team admission is
+independent of strict GEPA local survival; evidence sizes are variable. Pattern
+and deterministic private/shared Memory are implemented, default disabled.
+Use `SearchMethodConfig.v2()` and the V2 composition; the V1 constructor and
+adapters remain reproduction paths. See the normative CURRENT_SPEC for policy
+boundaries. Mechanism correctness is tested offline; efficacy is unverified.
+Benchmark blockers remain unchanged; no new real execution is ready or authorized.

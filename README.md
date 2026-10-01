@@ -43,3 +43,13 @@ generates [LINEAGE](docs/experiments/LINEAGE.md). New experiments use the
 [Reports index](reports/INDEX.md) catalogs immutable evidence. Reports are
 evidence, never design authority. [Archives](docs/archive/) preserve historical
 contracts and paper text with source provenance.
+
+## Current V2 method state
+
+The active opt-in method is `unified_team_prompt_search_v2`. Team admission is
+independent of strict GEPA local survival; evidence sizes are variable. Pattern
+and deterministic private/shared Memory are implemented, default disabled.
+Use `SearchMethodConfig.v2()` and the V2 composition; the V1 constructor and
+adapters remain reproduction paths. See the normative CURRENT_SPEC for policy
+boundaries. Mechanism correctness is tested offline; efficacy is unverified.
+Benchmark blockers remain unchanged; no new real execution is ready or authorized.

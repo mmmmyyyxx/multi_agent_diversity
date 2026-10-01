@@ -1,0 +1,14 @@
+{
+  "checks": [
+    "host paths",
+    "credential payloads",
+    "raw synthetic proposal/question/reasoning",
+    "raw report JSON fields"
+  ],
+  "issues": [],
+  "memory_entries": "fixed abstract structural templates and hashes/counts only; fixture checks passed",
+  "method_report_has_no_raw_llm_or_dataset_payload": true,
+  "rejected_proposal_storage": "process memory only; pinned logger disabled, raw backend state not persisted",
+  "report_file_count_scanned": 17,
+  "status": "PASS"
+}

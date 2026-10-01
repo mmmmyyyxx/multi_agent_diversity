@@ -1,0 +1,23 @@
+{
+  "benchmark_contracts_and_data_unchanged": true,
+  "changed_protected": [],
+  "explicit_shared_interface_adaptations": [
+    "search/schemas.py",
+    "search/orchestrator.py",
+    "search/history.py",
+    "search/evaluation.py",
+    "search/current_bbh_runtime.py"
+  ],
+  "historical_wrapper_paths": [
+    "search/gepa.py",
+    "local_optimizers/gepa_optimizer.py",
+    "local_optimizers/gepa_callbacks.py",
+    "local_optimizers/gepa_native.py"
+  ],
+  "pinned_core_unchanged": true,
+  "protected_file_count": 2613,
+  "retained_runtime_constants": 113,
+  "status": "PASS",
+  "v1_config_identity_retained": true,
+  "v1_golden_replay_tests": "tests/test_unified_bbh_replay.py; same packet, solver calls, candidate/team states"
+}

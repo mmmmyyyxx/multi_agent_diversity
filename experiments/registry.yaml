@@ -5079,7 +5079,7 @@ experiments:
   manifest: null
   report: reports/repository_hygiene_alignment_v1_20261001
   classifier: null
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -5529,3 +5529,31 @@ experiments:
   evidence_fields:
     scientific_status: reports/v4_seed81_attempt3_execution_20260928/scientific_validity_audit.json#scientific_validity
     execution_commit: reports/v4_seed81_attempt3_execution_20260928/scientific_validity_audit.json#execution_source_sha
+- experiment_id: unified_team_prompt_search_v2_method_refactor
+  kind: ARCHITECTURE_REFACTOR
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2
+  parent_ids:
+  - repository_hygiene_alignment_v1
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: IMPLEMENTED_ZERO_API__EFFICACY_UNTESTED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: null
+  report: reports/unified_team_prompt_search_v2_20261001
+  classifier: IMPLEMENTED_ZERO_API__EFFICACY_UNTESTED
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Versioned method milestone; synthetic correctness only, no efficacy claim or API authorization.
+  - V1 replay and benchmark blockers retained; Pattern/Memory implemented default off.
+  reports:
+  - reports/unified_team_prompt_search_v2_20261001
+  unavailable:
+    manifest: Engineering method milestone; no real experiment preregistration or attempt is created.
+    implementation_commit: Containing local commit in Git history; not the baseline or execution SHA.
+    execution_commit: No real execution authorized or performed.
+    result_commit: No formal result exists.
+  baseline_commit: bad63e9577573a3bea7d004f3a6e333778c967ad

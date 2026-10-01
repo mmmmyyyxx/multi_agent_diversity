@@ -538,6 +538,9 @@ nodes:
 - experiment_id: gepa_layer2_local_to_team_transfer_diagnostic_v4_seed81_attempt3
   kind: DIAGNOSTIC
   era: FORMAL_V3_V4
+- experiment_id: unified_team_prompt_search_v2_method_refactor
+  kind: ARCHITECTURE_REFACTOR
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -781,4 +784,9 @@ edges:
   relation: derived_from
   evidence: experiments/gepa_saturation_comparison_v3/PROTOCOL.md
   scope: Protocol explicitly states V3 supersedes the unexecuted V2 freeze; frozen scientific results are unchanged.
+- from: repository_hygiene_alignment_v1
+  to: unified_team_prompt_search_v2_method_refactor
+  relation: refactor_of
+  evidence: reports/unified_team_prompt_search_v2_20261001/README.md
+  scope: Zero-API mechanism implementation; scientific efficacy not evaluated.
 current_frontier: experiments/current_frontier.yaml

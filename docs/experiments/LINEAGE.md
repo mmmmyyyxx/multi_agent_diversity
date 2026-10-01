@@ -8,9 +8,9 @@ Registry provides node metadata; current_frontier.yaml provides readiness only.
 ```yaml
 schema_version: current_frontier_v1
 current_architecture: Unified Team Prompt Search
-method_identity: unified_team_prompt_search_v1
-current_method: unified_team_prompt_search_v1
-current_implementation: Unified graph and benchmark contracts; engineering milestones only
+method_identity: unified_team_prompt_search_v2
+current_method: unified_team_prompt_search_v2
+current_implementation: V2 decoupled admission and variable evidence; Pattern/Memory dormant
 current_experiment: NO_AUTHORIZED_NEW_EXPERIMENT
 last_governance_milestone: repository_hygiene_alignment_v1
 last_scientific_contract_milestone: benchmark_scientific_contract_freeze_v1
@@ -19,6 +19,7 @@ real_api_authorized: false
 validation_access: not_authorized
 test_access: sealed
 open_questions: docs/research/OPEN_QUESTIONS.md
+last_method_milestone: unified_team_prompt_search_v2_method_refactor
 ```
 
 ## Experiment and engineering DAG
@@ -181,6 +182,7 @@ flowchart TD
   end
   subgraph era4["UNIFIED_TEAM_PROMPT_SEARCH"]
     n158["unified_team_prompt_search_refactor_v1<br/>ARCHITECTURE_REFACTOR<br/>COMPLETED"]
+    n179["unified_team_prompt_search_v2_method_refactor<br/>ARCHITECTURE_REFACTOR<br/>IMPLEMENTED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -276,6 +278,7 @@ flowchart TD
   n0 -->|refactor_of| n124
   n124 -->|freeze_of| n34
   n34 -->|derived_from| n51
+  n162 -->|refactor_of| n179
 ```
 
 ## Archived branches and unresolved evidence

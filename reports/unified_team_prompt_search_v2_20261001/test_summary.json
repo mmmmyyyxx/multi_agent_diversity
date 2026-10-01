@@ -1,0 +1,81 @@
+{
+  "compileall": {
+    "scopes": [
+      "multi_dataset_diverse_rl",
+      "scripts",
+      "tests"
+    ],
+    "status": "PASS"
+  },
+  "current_suite": {
+    "deselected_historical": 1468,
+    "passed": 453,
+    "receipt": {
+      "path": "runs/unified_v2_zero_api/final_scoped_current_suite.log",
+      "sha256": "5a470756fb55e185d3cdf9d5eb5c25bf7e3a4b2685a532dcc0d8620ce741675a"
+    },
+    "scope": "tests/; classified current mode",
+    "seconds": 259.95,
+    "selected": 457,
+    "skipped": 4
+  },
+  "efficacy_verified": false,
+  "governance_manifest_preflight": "PASS; CLI HOLD_PRE_PROVIDER is expected and tested",
+  "guard": {
+    "before_project_import": true,
+    "bootstrap": "PASS",
+    "negative_control": "PASS; intentional blocked attempts isolated",
+    "normal_network_attempts": 0,
+    "real_credentials_present": false
+  },
+  "historical_scope": {
+    "full_historical_replay_pass_claimed": false,
+    "private_artifact_deselected": 64,
+    "protected_files": 2613,
+    "replay_deselected": 1404,
+    "retained_runtime_constants": 113,
+    "v1_golden_replay_passed": 3
+  },
+  "prior_execution_issues": [
+    {
+      "failed": 8,
+      "passed": 435,
+      "reason": "Default interpreter lacked existing frozen MATH scorer dependencies",
+      "resolution": "Used existing offline pinned environment; no install, download or scorer modification",
+      "scope": "initial current suite using default interpreter",
+      "skipped": 4
+    },
+    {
+      "collection_errors": 63,
+      "reason": "Ignored old checkout collected alongside project tests; duplicate module names",
+      "resolution": "Explicit tests/ scope; old artifacts preserved",
+      "scope": "unscoped pytest discovery"
+    }
+  ],
+  "real_execution_ready": false,
+  "shared_interface_focused_suite": {
+    "passed": 112,
+    "receipt": {
+      "path": "runs/unified_v2_zero_api/latest_focused_tests.log",
+      "sha256": "3c451884a9b39b0f1f889a68054160f63504505bd24b5b2d28f3a127d75b0262"
+    },
+    "scope": "earlier snapshot; V2, V1 BBH golden replay, architecture, governance"
+  },
+  "status": "PASS",
+  "v2_focused_suite": {
+    "coverage": [
+      "acceptance conflict",
+      "variable evidence",
+      "Pattern",
+      "Memory",
+      "Unified fake E2E",
+      "pinned GEPA fake controls",
+      "stale Shadow failure isolation"
+    ],
+    "passed": 60,
+    "receipt": {
+      "path": "runs/unified_v2_zero_api/final_v2_suite.log",
+      "sha256": "7df32ffb59ed6ada060e8a781ac144f4b6388559586730ebb00bda2d6567fac3"
+    }
+  }
+}

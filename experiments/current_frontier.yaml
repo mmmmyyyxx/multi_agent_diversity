@@ -1,8 +1,8 @@
 schema_version: current_frontier_v1
 current_architecture: Unified Team Prompt Search
-method_identity: unified_team_prompt_search_v1
-current_method: unified_team_prompt_search_v1
-current_implementation: Unified graph and benchmark contracts; engineering milestones only
+method_identity: unified_team_prompt_search_v2
+current_method: unified_team_prompt_search_v2
+current_implementation: V2 decoupled admission and variable evidence; Pattern/Memory dormant
 current_experiment: NO_AUTHORIZED_NEW_EXPERIMENT
 last_governance_milestone: repository_hygiene_alignment_v1
 last_scientific_contract_milestone: benchmark_scientific_contract_freeze_v1
@@ -11,3 +11,4 @@ real_api_authorized: false
 validation_access: not_authorized
 test_access: sealed
 open_questions: docs/research/OPEN_QUESTIONS.md
+last_method_milestone: unified_team_prompt_search_v2_method_refactor

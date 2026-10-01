@@ -1,0 +1,48 @@
+{
+  "DPR": "dominant_support / assigned_residuals",
+  "default": "null_pattern_v1",
+  "diagnostic_fields": [
+    "patterns",
+    "dominant_pattern_id",
+    "support_count",
+    "total_residual_count",
+    "dominant_pattern_ratio",
+    "normalized_entropy",
+    "mixed_pattern_count",
+    "unassigned_residual_ids"
+  ],
+  "entropy_range": [
+    0,
+    1
+  ],
+  "focus_key": [
+    "primary_lane_support_count",
+    "total_support_count",
+    "confidence",
+    "stable_pattern_hash"
+  ],
+  "hypothesis_fields": [
+    "pattern_id",
+    "failure_mechanism",
+    "corrective_principle",
+    "support_ids",
+    "counterexample_ids",
+    "risk_ids",
+    "confidence"
+  ],
+  "identity": "pattern_diagnostic_v1",
+  "input_fields": [
+    "parent_state_id",
+    "target_member",
+    "primary_lane",
+    "Optimize_evidence_rows",
+    "residual_ids",
+    "structured_history",
+    "prompt_contract"
+  ],
+  "provider_binding_required": true,
+  "real_provider_model_prompt_realization": "NOT_FROZEN",
+  "scope": "target_Optimize_only",
+  "status": "IMPLEMENTED_DEFAULT_OFF",
+  "target_effect": false
+}

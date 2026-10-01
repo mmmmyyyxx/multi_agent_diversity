@@ -137,6 +137,11 @@ class SearchResult:
     search_meta_calls: int = 0
     solver_tokens: int = 0
     search_meta_tokens: int = 0
+    proposal_count: int = 0
+    team_candidate_count: int = 0
+    local_survival_update_count: int = 0
+    strict_accepted_count: int = 0
+    strict_rejected_exported_count: int = 0
 
 
 @dataclass(frozen=True)
@@ -228,10 +233,25 @@ class SearchMethodConfig:
     search_stop: SearchStopConfig = field(default_factory=SearchStopConfig)
     global_stop: GlobalStopConfig = field(default_factory=GlobalStopConfig)
 
+    @classmethod
+    def v2(cls, **overrides: Any) -> "SearchMethodConfig":
+        """V2 defaults; the zero-argument constructor retains the V1 replay identity."""
+        values = dict(method=versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION,
+                      search_engine=versions.UNIFIED_GEPA_EXPOSURE_V2_VERSION,
+                      search_acceptance_policy=versions.UNIFIED_DECOUPLED_ACCEPTANCE_VERSION,
+                      evidence_policy=versions.UNIFIED_VARIABLE_EVIDENCE_VERSION,
+                      feasibility_policy=versions.UNIFIED_VARIABLE_FEASIBILITY_VERSION)
+        values.update(overrides)
+        return cls(**values)
+
+    mechanism_config: Mapping[str, Any] = field(default_factory=dict)
+
     def identity(self) -> str:
         from dataclasses import asdict
-
-        return hashlib.sha256(json.dumps(asdict(self), sort_keys=True,
+        payload = asdict(self)
+        if self.method == versions.UNIFIED_TEAM_PROMPT_SEARCH_VERSION and not self.mechanism_config:
+            payload.pop("mechanism_config")  # Exact historical V1 hash payload.
+        return hashlib.sha256(json.dumps(payload, sort_keys=True,
                                          separators=(",", ":")).encode("utf-8")).hexdigest()
 
     @classmethod
@@ -239,9 +259,11 @@ class SearchMethodConfig:
         allowed = {row.name for row in fields(cls)}
         if set(payload) - allowed:
             raise SearchContractError("unknown unified method component")
-        if payload.get("method", cls.method) != versions.UNIFIED_TEAM_PROMPT_SEARCH_VERSION:
+        if payload.get("method", cls.method) not in {versions.UNIFIED_TEAM_PROMPT_SEARCH_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION}:
             raise SearchContractError("unsupported unified method identity")
-        values = dict(payload)
+        from dataclasses import asdict
+        values = (asdict(cls.v2()) if payload.get("method") == versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION else {})
+        values.update(payload)
         for key, kind in (("search_stop", SearchStopConfig),
                           ("global_stop", GlobalStopConfig)):
             if key in values:

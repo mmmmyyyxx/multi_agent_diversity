@@ -1,0 +1,46 @@
+{
+  "apply_external_calls": 0,
+  "context_scope": "optimizer_reflection_only",
+  "default": "null_memory_v1",
+  "entry_fields": [
+    "memory_id",
+    "scope",
+    "owner_member",
+    "kind",
+    "pattern_id",
+    "principle",
+    "risk_code",
+    "source_opportunity_id",
+    "source_candidate_hash",
+    "source_transition_id",
+    "fixed_count",
+    "broken_count",
+    "support_count",
+    "created_update",
+    "lane"
+  ],
+  "identity": "structured_agent_memory_v1",
+  "limits_enter_method_identity": true,
+  "limits_required": [
+    "top_k_private",
+    "top_k_shared",
+    "max_context_chars",
+    "private_storage_limit",
+    "shared_storage_limit"
+  ],
+  "operational_failure_creates_risk": false,
+  "pattern_independent": true,
+  "principle_policy": "fixed_abstract_structural_templates_only; external raw context never stored",
+  "promotion_capacity_losers_create_risk": false,
+  "read_scope": "target_private_plus_shared",
+  "retrieval": [
+    "pattern_match",
+    "lane_risk_relevance",
+    "recency",
+    "stable_memory_id"
+  ],
+  "risk_scope": "deterministic_structural_team_rejections_shared",
+  "status": "IMPLEMENTED_DEFAULT_OFF",
+  "success_scope": "committed_target_private",
+  "write_timing": "prepare_and_validate_before_transition; apply_after_complete_outcome"
+}

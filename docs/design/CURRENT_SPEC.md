@@ -8,7 +8,7 @@ and authorization come from the frozen manifest. Reports are evidence, never
 design authority. Historical specifications and invariant IDs are preserved in
 `docs/archive/specs/historical_current_spec.md` and its invariant index.
 
-## Active Unified Team Prompt Search (opt-in)
+## Active Unified Team Prompt Search V2 (opt-in)
 
 - **INV-UNIFIED-FLOW-001**: One orchestrator owns snapshot, state analysis,
   opportunity construction, candidate search, progressive team evaluation,
@@ -19,17 +19,17 @@ design authority. Historical specifications and invariant IDs are preserved in
   opportunity and context to explore candidates. Team transition policy alone
   selects a candidate for write-back. This is a modularity boundary, not a
   restriction that team evidence can never enter future search research.
-- **INV-GEPA-DERIVED-001**: The current derived GEPA engine preserves strict
-  local improvement for migration and records it as a policy identity. The new
-  architecture permits future versioned GEPA changes. Historical official
-  baseline and Formal V3 frozen source retain their own exact contracts.
+- **INV-GEPA-DERIVED-001**: V2 uses pinned GEPA public adapter, callback,
+  logger and stopper seams. Its strict local improvement, Pareto/frontier,
+  parent selection and search lineage remain owned by the untouched GEPA core.
+  V1 migration and historical official/Formal baselines retain their identities.
 - **INV-EVIDENCE-ROLE-001**: Mutation, search validation, TeamProbe, Full and
   adaptive-gate evidence have distinct role-bearing views or scopes. Current BBH compatibility
   may use the same Optimize IDs for search validation and TeamProbe. Validation
   and Test never enter adaptive search without separate frozen authorization.
 - **INV-RESP-CAPABILITY-001**: Current raw-overlap plurality responsibility,
-  feasibility masking, raw `V=max(4D,2N,C)` and target score `V/(1+f)` remain unchanged
-  during migration. A benchmark without current-responsibility capability
+  raw `V=max(4D,2N,C)` and target score `V/(1+f)` remain unchanged.
+  V2 masks only members failing variable-evidence technical feasibility. A benchmark without current-responsibility capability
   fails closed; no plurality diagnostic is fabricated for LLM aggregation.
 - **INV-AGGREGATION-001**: Plurality uses one equal vote per valid parsed member
   answer and abstains on top-count ties. The benchmark adapter owns parsing and
@@ -47,16 +47,85 @@ design authority. Historical specifications and invariant IDs are preserved in
 
 ## Active search and stopping contract
 
-The current migration preserves its versioned strict local acceptance,
-responsibility/feasibility policies, immutable evidence roles, progressive
-TeamProbe/Full evaluation, Common-Safe transition, winner-only adaptive gate,
-at most one atomic prompt commit, persistent realizability and parent-scoped
-team epochs. The frozen component identities in `versions.py` and the manifest
-select these policies; architecture consolidation does not modify them.
+V2 preserves strict local search survival, raw responsibility, target ranking,
+progressive TeamProbe/Full, promotion budget two, Common-Safe transition,
+winner-only Shadow, at most one atomic prompt commit, persistent realizability
+and parent-scoped team epochs. It explicitly replaces candidate exposure and
+fixed evidence quotas with separately versioned policies. Reflection minibatch
+three, local metric budget 36, local no-update patience three and team no-commit
+patience two remain unchanged. Public pre-iteration stopping reserves the next
+complete pair plus possible Full local validation, so the metric ceiling cannot
+overshoot. Resource exhaustion is not scientific convergence.
 Only a successful atomic team commit resets team no-update patience. A
 Vote-neutral safe commit still counts. Incomplete or emergency-aborted
 opportunities do not advance scientific saturation. Operational ceilings
 abort execution and must never be reported as convergence.
+
+## V2 mechanism invariants
+
+- **INV-SEARCH-TEAM-ADMISSION-DECOUPLING**: GEPA local survival controls search
+  lineage only. Every changed, contract-valid, unique proposal actually reaching
+  local Solver evaluation in the current immutable opportunity is eligible for
+  outer team evaluation, independently of local delta or final frontier status.
+  Accepted and rejected proposals share the TeamProbe -> promotion -> Full ->
+  Common-Safe -> winner-only Shadow -> atomic commit pipeline. Team ranking and
+  admission never use local scores or GEPA rank. Same-prompt exports appear once;
+  accepted lineage metadata takes precedence. Proposal text exists in process
+  memory only; callback and public evidence retain hashes, scores and status.
+  V2 disables pinned backend persistence and its raw-text logger through supported
+  API seams. Exposure adds no proposal or local Solver calls. Export capacity is
+  `(metric_budget - validation_size) // (2 * reflection_minibatch_size)`; exceeding
+  it fails closed. Proposal exposure, local survival and team commit are distinct
+  telemetry. Global stopping reads actual survival, never candidate-pool presence.
+- **INV-VARIABLE-EVIDENCE-001**: No 4/4/4 role quotas, exact 12 requirement or
+  four-repair minimum apply to V2. Positive raw responsibility, Optimize-only
+  mutation-eligible evidence, nonempty validation/probe and executable backend
+  budget are necessary. Mutation rows meet the backend unique technical minimum
+  three, using deterministic generic backfill only until that minimum. Validation
+  may contain 1..capacity rows, with capacity `floor((36 - 4*3)/2)=12`: an
+  operational maximum guaranteeing seed validation, two proposal minibatch pairs
+  and one accepted full local validation. No fill to capacity occurs. Generic
+  priority is primary-lane repair, transition focus, transition anchor, sensitive
+  preservation, high-disagreement team-hard; ordinary lower-priority rows are
+  technical backfill only. IDs are deduplicated and SHA256/ID ties are stable.
+  Mutation and validation/probe are independently bounded and role qualified.
+- **INV-PATTERN-DIAGNOSTIC-001**: Pattern diagnosis occurs after raw D/N/C/V,
+  failure-discount ranking and target selection. It reads only the selected
+  member's supplied Optimize evidence, parent identity and structured past
+  history. Mechanisms, missing reasoning steps and corrective principles are
+  distinguished from topics/entities. Support partitions target legal residuals;
+  risk/counterexample IDs remain inside its Optimize universe. One focus is
+  selected by primary-lane support, total support, confidence and stable pattern
+  hash. DPR is dominant support / assigned residuals; entropy is normalized to
+  [0,1]. Other mechanisms cannot fill mutation evidence except explicit shortage
+  backfill to the technical minimum. Pattern may alter composition/reflection,
+  never responsibility or target. Provider/model/prompt realization is not frozen;
+  the structural prompt contract is frozen and non-null use needs explicit binding.
+  Default `null_pattern_v1` adds no provider calls or optional context.
+- **INV-LONG-TERM-MEMORY-001**: Successful atomic commits may write target-private
+  success; deterministic TeamProbe catastrophe, Full/Common-Safe or Shadow
+  rejection may write shared structural risk. Promotion-capacity losers do not
+  become risk events. Operational/incomplete outcomes never teach memory. Memory
+  stores only abstract fixed principle templates, mechanism hashes, risk codes,
+  counts, member/update indices and source hashes; never raw questions, gold,
+  outputs, reasoning, prompts or PII. Optimize/search trajectory and adaptive-gate
+  structural rejection are allowed; held-out final Validation/Test never update
+  memory. Prepare and validate an immutable MemoryDelta before team mutation;
+  apply prepared tuples after the complete outcome without provider or I/O. The
+  committer receives null memory and owns only atomic team transition. Reads see
+  only target-private success and shared risk, ranked by pattern match, lane/risk
+  relevance, recency and memory ID. Explicit top-k/context/storage limits enter
+  method identity; no real-experiment values are preregistered here. Context
+  enters optimizer reflection only, never solver problems, aggregation or scoring.
+  Pattern and Memory toggle independently. Default `null_memory_v1` adds no
+  context, writes or stateful reads. Non-null mechanisms require manifest-selected
+  policies and explicit method identity; no CLI hidden flag may activate them.
+
+V1 identity and reproduction use `SearchMethodConfig()`; new V2 default composition
+uses `SearchMethodConfig.v2()` and `build_v2_bbh_orchestrator`. V1 identities
+`unified_team_prompt_search_v1`, `gepa_derived_v1`, `role_view_4_4_4_v1` and
+`v4_exact_evidence_feasibility_v1` remain explicit compatibility contracts.
+Mechanism correctness does not establish efficacy or real-execution readiness.
 
 ## Benchmark interface invariants
 

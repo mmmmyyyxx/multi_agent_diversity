@@ -115,7 +115,12 @@ class CurrentBBHTeamEvaluationProvider:
         self.costs.append(("team_probe", cost))
         return TeamEvaluation(float(metrics.vote_delta), None,
                               (float(metrics.target_delta),) * 5,
-                              aggregation_diagnostics={"bbh_probe": metrics})
+                              aggregation_diagnostics={"bbh_probe": metrics,
+                                  **({"operational_failure":True} if opportunity.evaluation_plan.get("v2_candidate_contract") and metrics.invalid_delta > 0 else {}),
+                                  **({"scientific_risk_code":"TEAM_PROBE_REJECTION"} if
+                                     opportunity.evaluation_plan.get("v2_candidate_contract") and
+                                     (metrics.invalid_delta > 0 or metrics.vote_delta <= -2 or metrics.team_net_vote_delta <= -3)
+                                     else {})})
 
     async def full(self, opportunity: OptimizationOpportunity,
                    candidate: SearchCandidate) -> TeamEvaluation:
@@ -123,10 +128,22 @@ class CurrentBBHTeamEvaluationProvider:
             self.assignment.build(opportunity), self._raw(candidate),
         )
         self.costs.append(("full", cost))
+        diagnostics = {"bbh_full": evaluation}
+        if opportunity.evaluation_plan.get("v2_candidate_contract"):
+            active = self.evaluator.active_evaluation(self.assignment.build(opportunity))
+            if evaluation.competence.invalid_count > active.competence.invalid_count:
+                diagnostics["operational_failure"] = True
+            if not evaluate_constraints(evaluation, active).passed:
+                diagnostics["scientific_risk_code"] = "COMMON_SAFE_REJECTION"
+            key = (opportunity.target_member, candidate.candidate_id, opportunity.parent_state_id)
+            audit = self.evaluator.transition_audits.get(key)
+            if audit is not None:
+                diagnostics.update(team_newly_fixed_count=len(audit.newly_fixed_ids),
+                                   team_newly_broken_count=len(audit.newly_broken_ids))
         return TeamEvaluation(float(evaluation.team_outcome.vote_correct_count), None,
                               tuple(float(value) for value in
                                     evaluation.member_gain.candidate_correct_counts),
-                              aggregation_diagnostics={"bbh_full": evaluation})
+                              aggregation_diagnostics=diagnostics)
 
 
 class CurrentBBHPromotion(PromotionPolicy):
@@ -190,6 +207,15 @@ class CurrentBBHShadowGate:
             self.assignment.build(opportunity), raw,
         )
         self.costs.append(cost)
+        self.operational_failure = False
+        if opportunity.evaluation_plan.get("v2_candidate_contract"):
+            # Existing gate cache validity only; no raw Shadow content or extra calls.
+            probe = self.evaluator.shadow_probe
+            cache = probe.prompt_question_evaluator
+            prompts = tuple(a.current_prompt for a in self.evaluator.system.agents) + (raw.prompt,)
+            keys = (cache.key(self.evaluator.system.prompt_hash(p), row.question_hash)
+                    for p in prompts for row in probe.examples)
+            self.operational_failure = any(k not in cache.cache or not cache.cache[k].valid for k in keys)
         return bool(decision.passed)
 
 
@@ -251,6 +277,13 @@ def build_current_bbh_orchestrator(
 ) -> UnifiedSearchOrchestrator:
     """Compose one current BBH search graph from explicit runtime services."""
     selected = method or SearchMethodConfig()
+    if selected.method == "unified_team_prompt_search_v2":
+        from .runtime_v2 import build_v2_bbh_orchestrator
+        return build_v2_bbh_orchestrator(
+            system=system, benchmark=benchmark, optimizer=optimizer, evaluator=evaluator,
+            committer=committer, seed=seed, solver_contract_id=solver_contract_id,
+            output_contract_id=output_contract_id, method=selected, history=history,
+            provider_call_reader=provider_call_reader)
     expected = SearchMethodConfig()
     if selected.identity() != expected.identity():
         raise SearchContractError("current BBH composition requires frozen component identities")

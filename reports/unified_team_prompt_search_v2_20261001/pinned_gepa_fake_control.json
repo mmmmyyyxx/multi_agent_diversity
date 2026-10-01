@@ -1,0 +1,19 @@
+{
+  "evidence_class": "ACTUAL_PINNED_GEPA_WITH_FAKE_SOLVER_REFLECTION",
+  "logical_metric_evaluations": 29,
+  "raw_prompt_persistence": false,
+  "solver_calls": 29,
+  "solver_requests_after_export": 29,
+  "strict_acceptance_unchanged": true,
+  "strict_accepted_count": 0,
+  "telemetry": {
+    "local_metric_evaluations": 29,
+    "local_survival_update_count": 0,
+    "metric_limit": 36,
+    "proposal_count": 4,
+    "strict_accepted_count": 0,
+    "strict_rejected_exported_count": 1,
+    "team_candidate_count": 1
+  },
+  "unique_rejected_export_count": 1
+}

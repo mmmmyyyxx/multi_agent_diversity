@@ -1547,6 +1547,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/unified_team_prompt_search_v2_20261001",
+      "document": "reports/unified_team_prompt_search_v2_20261001/README.md",
+      "date": "20261001",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "ARCHITECTURE",
+      "experiment_id": "unified_team_prompt_search_v2_method_refactor",
+      "status": "IMPLEMENTED_NOT_EXECUTED",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/v11_full_seed43_32updates_20260727",
       "document": "reports/v11_full_seed43_32updates_20260727/README.md",
       "date": "20260727",

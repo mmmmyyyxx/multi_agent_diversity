@@ -1,0 +1,15 @@
+{
+  "active_method": "unified_team_prompt_search_v2",
+  "benchmark_blockers_unchanged": true,
+  "efficacy_unverified": true,
+  "invariants": [
+    "INV-SEARCH-TEAM-ADMISSION-DECOUPLING",
+    "INV-VARIABLE-EVIDENCE-001",
+    "INV-PATTERN-DIAGNOSTIC-001",
+    "INV-LONG-TERM-MEMORY-001"
+  ],
+  "null_defaults": true,
+  "real_execution_ready": false,
+  "status": "PASS",
+  "test_access": "sealed"
+}

@@ -1,0 +1,17 @@
+{
+  "DATASET_DOWNLOADS": 0,
+  "MEMORY_LLM_CALLS": 0,
+  "PATTERN_PROVIDER_CALLS": 0,
+  "REAL_LLM_CALLS": 0,
+  "TEST_MODEL_CALLS": 0,
+  "VALIDATION_MODEL_CALLS": 0,
+  "evidence": "pre-import credential-free network guard and deterministic fake-only fixtures",
+  "formal_experiments": 0,
+  "git_pushes": 0,
+  "negative_network_controls": "intentional blocked attempts in isolated subprocess; excluded from normal execution",
+  "non_model_network": [
+    "git fetch origin: baseline identity verification"
+  ],
+  "normal_guarded_network_attempts": 0,
+  "real_api_authorized": false
+}

@@ -61,6 +61,15 @@ class NullMemoryProvider:
     def observe_transition(self, transition: TransitionRecord) -> None:
         del transition
 
+    def prepare_outcome(self, outcome):
+        return None
+
+    def validate_delta(self, delta):
+        return None
+
+    def apply_outcome(self, delta):
+        return None
+
 
 class PatternAnalyzer(Protocol):
     def analyze(self, state: Any) -> Mapping[str, Any]: ...

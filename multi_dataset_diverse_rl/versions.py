@@ -7,6 +7,14 @@ order. Shared compatibility constants retain their original names and values.
 # ACTIVE_UNIFIED_IDENTITIES
 UNIFIED_TEAM_PROMPT_SEARCH_VERSION = "unified_team_prompt_search_v1"
 UNIFIED_GEPA_DERIVED_ENGINE_VERSION = "gepa_derived_v1"
+# V1 identities above and below remain frozen replay contracts.
+UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION = "unified_team_prompt_search_v2"
+UNIFIED_GEPA_EXPOSURE_V2_VERSION = "gepa_derived_team_candidate_exposure_v2"
+UNIFIED_DECOUPLED_ACCEPTANCE_VERSION = "local_survival_team_admission_decoupled_v1"
+UNIFIED_VARIABLE_EVIDENCE_VERSION = "variable_pattern_capable_evidence_v1"
+UNIFIED_VARIABLE_FEASIBILITY_VERSION = "variable_evidence_feasibility_v1"
+UNIFIED_PATTERN_DIAGNOSTIC_VERSION = "pattern_diagnostic_v1"
+UNIFIED_STRUCTURED_MEMORY_VERSION = "structured_agent_memory_v1"
 UNIFIED_PLURALITY_RESPONSIBILITY_VERSION = "plurality_raw_responsibility_v1"
 UNIFIED_TARGET_POLICY_VERSION = "responsibility_failure_discount_v1"
 UNIFIED_FEASIBILITY_POLICY_VERSION = "v4_exact_evidence_feasibility_v1"

@@ -1,0 +1,64 @@
+{
+  "candidates": [
+    {
+      "backend_details": {
+        "changed": true,
+        "contract_valid": true,
+        "duplicate": false,
+        "gepa_frontier_member": true,
+        "gepa_local_acceptance_status": "ACCEPTED",
+        "gepa_search_survived": true,
+        "local_acceptance_delta": 1.0,
+        "local_effect_scope": "minibatch",
+        "local_full_validation_delta": 0.20000000000000007,
+        "local_newly_broken": 0,
+        "local_newly_fixed": 1,
+        "local_preservation_loss": 0,
+        "opportunity_id": "unified_v2_e132b9aa46376855a87249fe337ccce6d6b6bc5586269752666b60f19a7d2bd5",
+        "program_candidate_index": 1,
+        "proposal_hash": "80acc093df3eb7ad1cb8c8faddf806af1e33dd89ca610d7a2c0f2d334de5d659",
+        "proposal_iteration": 1,
+        "solver_evaluated": true
+      },
+      "candidate_id": "gepa:proposal:1:80acc093df3e",
+      "prompt_hash": "80acc093df3eb7ad1cb8c8faddf806af1e33dd89ca610d7a2c0f2d334de5d659"
+    },
+    {
+      "backend_details": {
+        "changed": true,
+        "contract_valid": true,
+        "duplicate": false,
+        "gepa_frontier_member": false,
+        "gepa_local_acceptance_status": "REJECTED",
+        "gepa_search_survived": false,
+        "local_acceptance_delta": 0.0,
+        "local_effect_scope": "minibatch",
+        "local_full_validation_delta": null,
+        "local_newly_broken": 1,
+        "local_newly_fixed": 1,
+        "local_preservation_loss": 0,
+        "opportunity_id": "unified_v2_e132b9aa46376855a87249fe337ccce6d6b6bc5586269752666b60f19a7d2bd5",
+        "proposal_hash": "e4c4ab1f26524d24c5aa89c504baaaf1df7bcd1a14e10adb0ddf8f633b5f0640",
+        "proposal_iteration": 2,
+        "solver_evaluated": true
+      },
+      "candidate_id": "gepa:proposal:2:e4c4ab1f2652",
+      "prompt_hash": "e4c4ab1f26524d24c5aa89c504baaaf1df7bcd1a14e10adb0ddf8f633b5f0640"
+    }
+  ],
+  "eligibility": [
+    "changed",
+    "contract_valid",
+    "unique_prompt",
+    "solver_evaluated",
+    "current_immutable_opportunity"
+  ],
+  "extra_local_mutation_calls": 0,
+  "extra_local_solver_calls_for_export": 0,
+  "local_delta_is_eligibility_gate": false,
+  "proposal_count": 2,
+  "raw_proposal_storage": "ephemeral_process_only",
+  "strict_accepted_count": 1,
+  "strict_rejected_exported_count": 1,
+  "team_candidate_count": 2
+}

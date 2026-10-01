@@ -1,0 +1,113 @@
+{
+  "catastrophe_commit_count": 0,
+  "catastrophe_local_accepted": 1,
+  "catastrophe_local_delta": 1,
+  "catastrophe_vote_delta": -2,
+  "commit_count": 1,
+  "committed_local_rejected": true,
+  "evidence_class": "SCRIPTED_FAKE_GEPA_LIFECYCLE_WITH_MEASURED_LOCAL_SOLVER_AND_FIVE_MEMBER_PLURALITY",
+  "extra_local_export_calls": 0,
+  "full_count": 2,
+  "local_A_delta": 1.0,
+  "local_B_delta": 0,
+  "local_rejected_exported": 1,
+  "method_identity": "743efee620e00242a822da2fb6a266ff63ea805bf823801be342f15683261ca3",
+  "shadow_winner_count": 1,
+  "team_A": {
+    "aggregate_score": 3.0,
+    "aggregate_success": null,
+    "aggregation_diagnostics": {},
+    "member_scores": [
+      4.0,
+      4.0,
+      4.0,
+      1.0,
+      1.0
+    ],
+    "oracle_score": null
+  },
+  "team_B": {
+    "aggregate_score": 4.0,
+    "aggregate_success": null,
+    "aggregation_diagnostics": {},
+    "member_scores": [
+      4.0,
+      4.0,
+      3.0,
+      1.0,
+      1.0
+    ],
+    "oracle_score": null
+  },
+  "team_C": {
+    "aggregate_score": 1.0,
+    "aggregate_success": null,
+    "aggregation_diagnostics": {},
+    "member_scores": [
+      4.0,
+      4.0,
+      2.0,
+      1.0,
+      1.0
+    ],
+    "oracle_score": null
+  },
+  "team_before": {
+    "aggregate_score": 3.0,
+    "aggregate_success": null,
+    "aggregation_diagnostics": {},
+    "member_scores": [
+      4.0,
+      4.0,
+      3.0,
+      1.0,
+      1.0
+    ],
+    "oracle_score": null
+  },
+  "team_probe_count": 2,
+  "trace": [
+    {
+      "candidate_ids": [
+        "gepa:proposal:1:80acc093df3e",
+        "gepa:proposal:2:e4c4ab1f2652"
+      ],
+      "child_state_id": "3ca91c7ef5aaf42321434d77e2e5df332bfce6cb677d31dbb1750e78529c416a",
+      "committed_candidate_id": "gepa:proposal:2:e4c4ab1f2652",
+      "evidence_audit": {
+        "DPR": 0.0,
+        "evidence_ids_hash": "a80e95ac5537394e43456a8972d11e10edf49a7b7bbe9fa85b4ddda0c19f7c5a",
+        "focus_pattern_id": null,
+        "generic_backfill_count": 0,
+        "mutation_count": 5,
+        "normalized_entropy": 0.0,
+        "operational_validation_capacity": 12,
+        "pattern_count": 0,
+        "pattern_enabled": false,
+        "pattern_risk_count": 0,
+        "pattern_support_count": 0,
+        "role_counts": {
+          "MUTATION": 5,
+          "PRESERVATION": 3,
+          "REPAIR": 1,
+          "TEAM_HARD": 2,
+          "direct_flip": 1
+        },
+        "search_validation_count": 5,
+        "team_probe_count": 5
+      },
+      "local_search_survival_update": 1,
+      "memory_audit": {},
+      "opportunity_id": "34302d4b5b2e58977fde776caa8d0cab6cc670d7be50fb9f16961ee649cab512:0:2",
+      "parent_state_id": "34302d4b5b2e58977fde776caa8d0cab6cc670d7be50fb9f16961ee649cab512",
+      "promoted_ids": [
+        "gepa:proposal:1:80acc093df3e",
+        "gepa:proposal:2:e4c4ab1f2652"
+      ],
+      "proposal_exposed": 2,
+      "selected_candidate_id": "gepa:proposal:2:e4c4ab1f2652",
+      "stop_reason": null,
+      "target_member": 2
+    }
+  ]
+}

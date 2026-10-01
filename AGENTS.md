@@ -41,6 +41,9 @@ Pattern and Memory default to null and require a versioned experiment to
 activate. Structured optimizer history is separate from LLM memory.
 New experiments use `scripts/run_experiment.py`, the sole current composition
 entrypoint. Domain logic belongs in production modules, not scripts.
+Local search acceptance cannot silently gate outer team candidate admission.
+Pattern and Memory require explicit non-null policy identities and provider/limit
+bindings; optimizer-only context must never enter Solver or aggregator inputs.
 Shared compatibility physics and historical replay have explicit classifications
 in docs/REPOSITORY_MAP.md; they cannot determine new experiment identity.
 

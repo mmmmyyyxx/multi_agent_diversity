@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from typing import Any, Callable, Mapping, Protocol, Sequence
 
 from .. import versions
@@ -47,6 +47,10 @@ class OpportunityTrace:
     committed_candidate_id: str | None
     child_state_id: str
     stop_reason: str | None
+    proposal_exposed: int = 0
+    local_search_survival_update: int = 0
+    evidence_audit: Mapping[str, Any] = field(default_factory=dict)
+    memory_audit: Mapping[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -183,6 +187,23 @@ class UnifiedSearchOrchestrator:
             raise SearchContractError("SCIENTIFIC_DECISION_REQUIRED: aggregation-aware responsibility")
         if getattr(self.aggregation, "identity", None) != self.method.aggregation_policy:
             raise SearchContractError("aggregation implementation/method identity mismatch")
+        if self.method.method == versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION:
+            if self.method.search_acceptance_policy != versions.UNIFIED_DECOUPLED_ACCEPTANCE_VERSION:
+                raise SearchContractError("V2 requires decoupled team candidate admission")
+            if (self.opportunities.search_metric_budget != 36 or
+                    self.opportunities.evidence.metric_budget != 36 or
+                    self.opportunities.evidence.minimum != 3):
+                raise SearchContractError("V2 backend budget differs from frozen method")
+            checks = ((self.engine, self.method.search_engine), (self.memory, self.method.memory_policy),
+                      (self.opportunities.patterns, self.method.pattern_policy),
+                      (self.opportunities.evidence, self.method.evidence_policy),
+                      (self.opportunities.feasibility, self.method.feasibility_policy))
+            if any(getattr(obj, "identity", None) != expected for obj, expected in checks):
+                raise SearchContractError("V2 component identity mismatch")
+            if self.method.memory_policy != versions.UNIFIED_NULL_MEMORY_VERSION and self.method.mechanism_config.get("memory") != self.memory.limits:
+                raise SearchContractError("memory limits must enter explicit method identity")
+            if self.method.pattern_policy != versions.UNIFIED_NULL_PATTERN_VERSION and not self.method.mechanism_config.get("pattern_provider_binding"):
+                raise SearchContractError("PATTERN_PROVIDER_NOT_BOUND")
         initial = self.state.snapshot().team_state_id
         trace: list[OpportunityTrace] = []
         reason = "OPERATIONAL_OPPORTUNITY_CEILING"
@@ -205,7 +226,7 @@ class UnifiedSearchOrchestrator:
             )
             context = UnifiedSearchContext(
                 self.benchmark, self.aggregation, self.history,
-                diagnosis.patterns, opportunity.memory_view,
+                opportunity.pattern_context, opportunity.memory_view,
             )
             searched = await self.engine.search(opportunity, context)
             evaluated = await self.evaluation.evaluate(opportunity, searched)
@@ -213,11 +234,23 @@ class UnifiedSearchOrchestrator:
             decision = self.transition.select(active, evaluated)
             selected = decision.candidate.candidate.candidate_id if decision.candidate else None
             committed: str | None = None
-            if decision.candidate is not None and await self.gate.check(
-                opportunity, decision.candidate,
-            ):
+            gate_passed = (await self.gate.check(opportunity, decision.candidate)
+                           if decision.candidate is not None else None)
+            v2 = self.method.method == versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION
+            memory_delta = None
+            if v2:
+                from .memory import OpportunityOutcome
+                memory_delta = self.memory.prepare_outcome(OpportunityOutcome(
+                    opportunity, tuple(evaluated), selected,
+                    bool(decision.candidate is not None and gate_passed), gate_passed, index,
+                    operational_failure=(bool(searched.search_state.get("operational_failure")) or
+                                         any(r.diagnostics.get("operational_failure") for r in evaluated) or
+                                         bool(decision.candidate is not None and
+                                              getattr(self.gate, "operational_failure", False)))))
+                self.memory.validate_delta(memory_delta)
+            if decision.candidate is not None and gate_passed:
                 record = self.committer.commit(
-                    opportunity, decision, self.history, self.memory,
+                    opportunity, decision, self.history, NullMemoryProvider() if v2 else self.memory,
                 )
                 committed = record.candidate_id
                 self.history.observe_opportunity(opportunity.target_member, committed=True)
@@ -227,13 +260,15 @@ class UnifiedSearchOrchestrator:
             if (committed is None and child.team_state_id != parent.team_state_id
                     or committed is not None and child.team_state_id == parent.team_state_id):
                 raise SearchContractError("state changed without matching atomic commit")
+            if v2:
+                self.memory.apply_outcome(memory_delta)
             stopped = self.stop.observe_opportunity(
                 parent_state_id=parent.team_state_id,
                 eligible_members=tuple(opportunity.objective.get(
                     "eligible_members", (opportunity.target_member,),
                 )),
                 selected_member=opportunity.target_member,
-                local_update=bool(searched.candidates),
+                local_update=(searched.local_survival_update_count > 0 if v2 else bool(searched.candidates)),
                 committed=committed is not None,
             )
             trace.append(OpportunityTrace(
@@ -242,6 +277,9 @@ class UnifiedSearchOrchestrator:
                 tuple(row.candidate_id for row in searched.candidates),
                 tuple(row.candidate.candidate_id for row in evaluated if row.promoted),
                 selected, committed, child.team_state_id, stopped,
+                searched.team_candidate_count, searched.local_survival_update_count,
+                opportunity.evaluation_plan.get("evidence_audit", {}),
+                self.memory.audit() if hasattr(self.memory, "audit") else {},
             ))
             if stopped is not None:
                 reason = stopped

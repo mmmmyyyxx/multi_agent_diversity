@@ -1,0 +1,46 @@
+{
+  "audit": {
+    "memory_ids": [
+      "ed60de3cef611ae64206c0c01bda33c317b21fafb2d94bb318ee902d58ea0c33",
+      "a5be0a61a9f2b962f12be1f7f71d31722617258c4ab99300c00050e6cbe99a8b",
+      "fada4aa20f01f45da240211e0db1d42fc86ea2cd2906f0c402994fae99cd5abe"
+    ],
+    "memory_policy_identity": "structured_agent_memory_v1",
+    "private_memory_count_by_member": {
+      "0": 0,
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 0
+    },
+    "read_private_count": 0,
+    "read_shared_count": 2,
+    "shared_risk_count": 2,
+    "stateful_write_count": 3
+  },
+  "commit_count": 1,
+  "evidence_class": "DETERMINISTIC_FIXTURE_MEMORY_WITH_SCRIPTED_GEPA",
+  "fake_fixture_limits": {
+    "max_context_chars": 6000,
+    "private_storage_limit": 4,
+    "shared_storage_limit": 4,
+    "top_k_private": 2,
+    "top_k_shared": 2
+  },
+  "limits_are_real_experiment_preregistration": false,
+  "operational_failure_writes": 0,
+  "opportunity_count": 3,
+  "optional_context_in_aggregator": false,
+  "optional_context_in_solver": false,
+  "other_private_count": 0,
+  "parent_chain_verified": true,
+  "pattern_required": false,
+  "private_owner": 2,
+  "private_visible_to_owner": true,
+  "raw_dataset_fields_stored": false,
+  "second_commit_count": 0,
+  "second_optimizer_read_private": true,
+  "shared_visible_to_other": true,
+  "stop_reason": "SATURATION_REACHED",
+  "third_optimizer_read_shared": true
+}

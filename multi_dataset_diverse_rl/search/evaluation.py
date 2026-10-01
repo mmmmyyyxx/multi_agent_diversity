@@ -94,7 +94,17 @@ class CandidateEvaluationPipeline:
         self, opportunity: OptimizationOpportunity, search: SearchResult,
     ) -> tuple[EvaluatedCandidate, ...]:
         evaluated_probe: list[tuple[SearchCandidate, TeamEvaluation]] = []
+        seen_prompts = set()
         for candidate in search.candidates:
+            if opportunity.evaluation_plan.get("v2_candidate_contract"):
+                import hashlib
+                h = hashlib.sha256(candidate.prompt.encode()).hexdigest()
+                d = candidate.backend_details
+                if (candidate.prompt == opportunity.parent_prompt or h in seen_prompts or
+                        not all(d.get(k) for k in ("changed", "contract_valid", "solver_evaluated")) or
+                        d.get("opportunity_id") != opportunity.opportunity_id):
+                    raise SearchContractError("V2 team candidate eligibility mismatch")
+                seen_prompts.add(h)
             evaluated_probe.append((
                 candidate, await self.provider.team_probe(opportunity, candidate),
             ))
@@ -111,7 +121,13 @@ class CandidateEvaluationPipeline:
             full = await self.provider.full(opportunity, candidate) if promoted else None
             output.append(EvaluatedCandidate(
                 candidate, probe, full, promoted, False,
-                {"target_member": opportunity.target_member},
+                {"target_member": opportunity.target_member,
+                 **({k:v for k,v in probe.aggregation_diagnostics.items() if k in
+                     {"scientific_risk_code", "team_newly_fixed_count", "team_newly_broken_count", "operational_failure"}}
+                    if opportunity.evaluation_plan.get("v2_candidate_contract") else {}),
+                 **({k:v for k,v in full.aggregation_diagnostics.items() if k in
+                     {"scientific_risk_code", "team_newly_fixed_count", "team_newly_broken_count", "operational_failure"}}
+                    if opportunity.evaluation_plan.get("v2_candidate_contract") and full is not None else {})},
             ))
         return tuple(output)
 
