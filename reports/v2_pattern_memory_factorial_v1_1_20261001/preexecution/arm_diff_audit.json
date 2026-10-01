@@ -1,0 +1,21 @@
+{
+  "allowed_differences": {
+    "A1_to_A2": [
+      "pattern policy",
+      "pattern provider",
+      "pattern context",
+      "pattern accounting"
+    ],
+    "A1_to_A3": [
+      "memory policy",
+      "memory state",
+      "memory context",
+      "memory limits"
+    ],
+    "A1_to_A4": "Union of A2 and A3 differences"
+  },
+  "budget_probe_toggle_independence": "PASS",
+  "note": "Synthetic budget probe is not proof of four frozen real arm bindings.",
+  "real_arm_diff_gate": "NOT_REACHED_AFTER_MODEL_STOP",
+  "status": "NOT_FROZEN"
+}

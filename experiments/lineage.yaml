@@ -543,6 +543,9 @@ nodes:
   era: UNIFIED_TEAM_PROMPT_SEARCH
 - experiment_id: v2_pattern_memory_factorial_v1_preexecution_audit
   kind: ZERO_API_AUDIT
+- experiment_id: v2_pattern_memory_factorial_v1_1
+  kind: FORMAL_EXPERIMENT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -796,4 +799,14 @@ edges:
   relation: audit_of
   evidence: reports/v2_pattern_memory_factorial_v1_20261001/README.md
   scope: Preexecution budget gate STOP; zero real API calls and no efficacy evidence.
+- from: unified_team_prompt_search_v2_method_refactor
+  to: v2_pattern_memory_factorial_v1_1
+  relation: derived_from
+  evidence: reports/v2_pattern_memory_factorial_v1_1_20261001/preexecution/protocol_revision.md
+  scope: Proposed within-V2 factorial; no historical V1 causal comparison or efficacy observation.
+- from: v2_pattern_memory_factorial_v1_preexecution_audit
+  to: v2_pattern_memory_factorial_v1_1
+  relation: followup_of
+  evidence: reports/v2_pattern_memory_factorial_v1_1_20261001/preexecution/prior_stop_reference.json
+  scope: Prior blocked audit unchanged; new draft stops at unresolved model binding.
 current_frontier: experiments/current_frontier.yaml

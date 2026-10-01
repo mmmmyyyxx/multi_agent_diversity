@@ -1,0 +1,159 @@
+{
+  "base_sha": "a5997898c30c4d4daad5511203657d3c687c90e5",
+  "evidence_class": "PUBLIC_GEPA_BOUNDARY_CAPTURE_WITH_SYNTHETIC_OPPORTUNITY",
+  "gate": "V2_FACTORIAL_SEARCH_BUDGET_EQUIVALENCE",
+  "limitations": [
+    "GEPA core is replaced only at its public invocation boundary.",
+    "Synthetic Pattern fixture is not a frozen real Pattern binding.",
+    "Fresh Memory is empty; this is budget parity, not Memory exposure or efficacy.",
+    "No real search, provider evaluation, or Full/Shadow rollout occurred."
+  ],
+  "observations": [
+    {
+      "arm": "A1",
+      "declared_metric_budget": 36,
+      "explicit_sampler_batch_sizes": [
+        3
+      ],
+      "export_capacity": 5,
+      "full_scope": "optimize_full",
+      "local_no_update_patience": 3,
+      "max_metric_calls": 36,
+      "memory_on": false,
+      "mutation_count": 5,
+      "pattern_on": false,
+      "persistence_disabled": true,
+      "promotion_max": 2,
+      "public_pre_iteration_budget_guard": {
+        "boundary_allowed": true,
+        "next_evaluation_rejected": true,
+        "reserve_boundary": 25
+      },
+      "public_reflection_minibatch_size": null,
+      "real_pattern_calls": 0,
+      "real_reflection_calls": 0,
+      "real_solver_calls": 0,
+      "reflection_minibatch": 3,
+      "shadow_scope": "shadow_adaptive",
+      "stop_policy": "V2 bounded pre-iteration reserve + complete-evidence-epoch observer",
+      "team_no_commit_patience": 2,
+      "validation_count": 5
+    },
+    {
+      "arm": "A2",
+      "declared_metric_budget": 36,
+      "explicit_sampler_batch_sizes": [
+        3
+      ],
+      "export_capacity": 5,
+      "full_scope": "optimize_full",
+      "local_no_update_patience": 3,
+      "max_metric_calls": 36,
+      "memory_on": false,
+      "mutation_count": 5,
+      "pattern_on": true,
+      "persistence_disabled": true,
+      "promotion_max": 2,
+      "public_pre_iteration_budget_guard": {
+        "boundary_allowed": true,
+        "next_evaluation_rejected": true,
+        "reserve_boundary": 25
+      },
+      "public_reflection_minibatch_size": null,
+      "real_pattern_calls": 0,
+      "real_reflection_calls": 0,
+      "real_solver_calls": 0,
+      "reflection_minibatch": 3,
+      "shadow_scope": "shadow_adaptive",
+      "stop_policy": "V2 bounded pre-iteration reserve + complete-evidence-epoch observer",
+      "team_no_commit_patience": 2,
+      "validation_count": 5
+    },
+    {
+      "arm": "A3",
+      "declared_metric_budget": 36,
+      "explicit_sampler_batch_sizes": [
+        3
+      ],
+      "export_capacity": 5,
+      "full_scope": "optimize_full",
+      "local_no_update_patience": 3,
+      "max_metric_calls": 36,
+      "memory_on": true,
+      "mutation_count": 5,
+      "pattern_on": false,
+      "persistence_disabled": true,
+      "promotion_max": 2,
+      "public_pre_iteration_budget_guard": {
+        "boundary_allowed": true,
+        "next_evaluation_rejected": true,
+        "reserve_boundary": 25
+      },
+      "public_reflection_minibatch_size": null,
+      "real_pattern_calls": 0,
+      "real_reflection_calls": 0,
+      "real_solver_calls": 0,
+      "reflection_minibatch": 3,
+      "shadow_scope": "shadow_adaptive",
+      "stop_policy": "V2 bounded pre-iteration reserve + complete-evidence-epoch observer",
+      "team_no_commit_patience": 2,
+      "validation_count": 5
+    },
+    {
+      "arm": "A4",
+      "declared_metric_budget": 36,
+      "explicit_sampler_batch_sizes": [
+        3
+      ],
+      "export_capacity": 5,
+      "full_scope": "optimize_full",
+      "local_no_update_patience": 3,
+      "max_metric_calls": 36,
+      "memory_on": true,
+      "mutation_count": 5,
+      "pattern_on": true,
+      "persistence_disabled": true,
+      "promotion_max": 2,
+      "public_pre_iteration_budget_guard": {
+        "boundary_allowed": true,
+        "next_evaluation_rejected": true,
+        "reserve_boundary": 25
+      },
+      "public_reflection_minibatch_size": null,
+      "real_pattern_calls": 0,
+      "real_reflection_calls": 0,
+      "real_solver_calls": 0,
+      "reflection_minibatch": 3,
+      "shadow_scope": "shadow_adaptive",
+      "stop_policy": "V2 bounded pre-iteration reserve + complete-evidence-epoch observer",
+      "team_no_commit_patience": 2,
+      "validation_count": 5
+    }
+  ],
+  "old_gate_retained_only_in_prior_evidence": true,
+  "protocol_version": "1.1",
+  "public_minibatch_note": "reflection_minibatch_size=None is the pinned API requirement with an explicit sampler; every actual supplied sampler batch has three rows. No native selection fallback is used.",
+  "source_receipts": [
+    {
+      "normalized_lf_sha256": "64f9174567f2e34369e5531e04031b813cbf3c7cd3960712f062a17c604a5764",
+      "path": "multi_dataset_diverse_rl/search/runtime_v2.py"
+    },
+    {
+      "normalized_lf_sha256": "8c14ba0fc5dc4e40c8b53eb391fb587f3cdf82e8f03ff3cb55063d3498c54075",
+      "path": "multi_dataset_diverse_rl/search/gepa_v2.py"
+    },
+    {
+      "normalized_lf_sha256": "189887e23418909893cfb5f9b62e8c405aedec86eaef9f700b636870f209570f",
+      "path": "multi_dataset_diverse_rl/search/gepa.py"
+    },
+    {
+      "normalized_lf_sha256": "58de8c2b6b89a33fddfb3c810f388c8c2a6f5e91907e77161d4b0c2276cae0e5",
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py"
+    },
+    {
+      "normalized_lf_sha256": "d78b4f21f615a9b5234b416cc5450c39788673fe73aaf375c6a252eee4e7072e",
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py"
+    }
+  ],
+  "status": "PASS"
+}

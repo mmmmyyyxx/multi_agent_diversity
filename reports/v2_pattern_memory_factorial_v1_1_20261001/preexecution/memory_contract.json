@@ -1,0 +1,13 @@
+{
+  "implementation_field_mapping": {
+    "max_private_entries_per_member": "private_storage_limit",
+    "max_shared_entries": "shared_storage_limit"
+  },
+  "max_context_chars": 1200,
+  "max_private_entries_per_member": 24,
+  "max_shared_entries": 48,
+  "memory_gate": "NOT_REACHED_AFTER_MODEL_STOP",
+  "status": "TASK_SPECIFIED_NOT_FROZEN",
+  "top_k_private": 3,
+  "top_k_shared": 3
+}

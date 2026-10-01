@@ -1,0 +1,58 @@
+{
+  "dataset_downloads": 0,
+  "hash_semantics": "sorted_unique_canonical_json_utf8_lf_v1",
+  "heldout_model_access": 0,
+  "membership_receipts": [
+    {
+      "normalized_lf_sha256": "42843456e13bbbda1a86615ae278ff059372dc199a8ccf5ade4cb338641d12c4",
+      "path": "experiments/anti_overfitting_split_v1/split_manifest.json"
+    },
+    {
+      "normalized_lf_sha256": "4b093252dc4ea45e5e0a1b56d37ed359377cb6995a461c404b8b9f732bcb96a4",
+      "path": "experiments/anti_overfitting_split_v1/fold_assignment.json"
+    }
+  ],
+  "note": "Membership metadata and byte hashes only; no held-out rows or IDs are published.",
+  "pairwise_disjoint": true,
+  "raw_source_receipts": [
+    {
+      "file": "opt.csv",
+      "matches_frozen_source": true,
+      "sha256": "5491dfdf103802eb02aa49521dbde52d41a3bd2acbdfcf72837260de5033880c"
+    },
+    {
+      "file": "test.csv",
+      "matches_frozen_source": true,
+      "sha256": "e42c3f3d93583aed353099f4e28c012ff62028f682ebdb758435b4c8755e3ae0"
+    },
+    {
+      "file": "val.csv",
+      "matches_frozen_source": true,
+      "sha256": "79591c8614188670757849a96c65742e34a03314cb4299568c9f917be96d2ccb"
+    }
+  ],
+  "resplit": false,
+  "splits": {
+    "Optimize100": {
+      "count": 100,
+      "identity": "anti_overfitting_split_v1/fold_a+fold_b",
+      "question_hash_set_sha256": "d1aa6e83e545466b037b7ff0d5ff25470030e3b8067bc80cbedd098e217b973a"
+    },
+    "Shadow50": {
+      "count": 50,
+      "identity": "anti_overfitting_split_v1/fold_c",
+      "question_hash_set_sha256": "04b7f74e986f45135ea00b1c30e6a700cbf83f0b08b24c4d057b90a232e9b100"
+    },
+    "Test50": {
+      "count": 50,
+      "identity": "anti_overfitting_split_v1/test",
+      "question_hash_set_sha256": "949517a268fbfae82bd15006ed0cb870fd41f9bc03bd782797fb4dce01a13747"
+    },
+    "Validation50": {
+      "count": 50,
+      "identity": "anti_overfitting_split_v1/validation",
+      "question_hash_set_sha256": "d6514ca588f124460502afbc44a5314e9ef7f141ee826411cb6f02abad736df5"
+    }
+  },
+  "status": "PASS"
+}

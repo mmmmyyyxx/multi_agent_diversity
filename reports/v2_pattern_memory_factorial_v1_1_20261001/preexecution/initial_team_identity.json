@@ -1,0 +1,8 @@
+{
+  "gate": "NOT_REACHED_AFTER_MODEL_STOP",
+  "initial_solver_output_cache_identity": null,
+  "note": "No initial team chosen from defaults or historical runs after the model STOP. No ambiguity PASS or FAIL is asserted.",
+  "ordered_team_hash": null,
+  "prompt_hashes": null,
+  "status": "NOT_FROZEN"
+}

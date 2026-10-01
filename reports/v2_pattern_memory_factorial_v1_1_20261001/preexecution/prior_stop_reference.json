@@ -1,0 +1,67 @@
+{
+  "audit_publication_sha": "a5997898c30c4d4daad5511203657d3c687c90e5",
+  "prior_evidence_gate_amended": false,
+  "node": {
+    "active_for_new_work": false,
+    "baseline_commit": "0da8bf96e957ae227fdbf988ad6e3d67cd190ef7",
+    "classifier": "PREEXECUTION_BLOCKED",
+    "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+    "execution_commit": null,
+    "experiment_id": "v2_pattern_memory_factorial_v1_preexecution_audit",
+    "historical_replay": false,
+    "implementation_commit": null,
+    "kind": "ZERO_API_AUDIT",
+    "manifest": null,
+    "method_family": "unified_team_prompt_search_v2",
+    "notes": [
+      "Zero-API audit of the proposed factorial experiment; A0/A1 search budget equivalence fails.",
+      "No execution freeze, canary, real API call, or efficacy observation; publication does not authorize execution."
+    ],
+    "parent_ids": [
+      "unified_team_prompt_search_v2_method_refactor"
+    ],
+    "report": "reports/v2_pattern_memory_factorial_v1_20261001",
+    "reports": [
+      "reports/v2_pattern_memory_factorial_v1_20261001"
+    ],
+    "result_commit": null,
+    "scientific_status": "PREEXECUTION_BLOCKED",
+    "status": "HOLD",
+    "superseded_by": [],
+    "unavailable": {
+      "execution_commit": "No execution source was frozen and no real experiment ran.",
+      "implementation_commit": "No source changes were made by this audit.",
+      "manifest": "STOP gate failed before preregistration and execution freeze.",
+      "result_commit": "Audit publication is recorded by its containing Git commit; no scientific result exists."
+    }
+  },
+  "prior_budget_gate": "FAIL",
+  "prior_real_provider_calls": 0,
+  "protected_files": [
+    {
+      "git_blob_sha256": "4222dd06274d02f9780cc2ca439138973de8cefc0f34cd71fed349f97b85c2a3",
+      "path": "reports/v2_pattern_memory_factorial_v1_20261001/README.md"
+    },
+    {
+      "git_blob_sha256": "d60d9b23fc178f450d92204ff9ca87a2bb09782e690da8ac8cf635336b6b65a2",
+      "path": "reports/v2_pattern_memory_factorial_v1_20261001/preexecution/budget_equivalence_gate.json"
+    },
+    {
+      "git_blob_sha256": "48f5faf0a7bf096057efa4b4eb9d362e8e17dafa0ed77ffd7c7aaee73bc71bf7",
+      "path": "reports/v2_pattern_memory_factorial_v1_20261001/preexecution/final_requested_fields.json"
+    },
+    {
+      "git_blob_sha256": "06bcfccfc85b241b9f1e757594cdd1551364464611b3685614f2543f7ed1e36f",
+      "path": "reports/v2_pattern_memory_factorial_v1_20261001/preexecution/prerequisite_identity_audit.json"
+    },
+    {
+      "git_blob_sha256": "e481043a049a5e55ff5528e28aca3345487894d709a9d0ef05a9d24756399aeb",
+      "path": "reports/v2_pattern_memory_factorial_v1_20261001/preexecution/zero_api_sanitization_audit.json"
+    },
+    {
+      "git_blob_sha256": "f8d71e1cb064c8e8d49f29b2f18534610fc2dc1cc1d1f6cb29ee98f2f4dfdd45",
+      "path": "reports/v2_pattern_memory_factorial_v1_20261001/sha256_manifest.json"
+    }
+  ],
+  "status": "UNCHANGED"
+}

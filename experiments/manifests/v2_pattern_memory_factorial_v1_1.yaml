@@ -1,0 +1,68 @@
+schema_version: experiment_manifest_v2
+experiment_id: v2_pattern_memory_factorial_v1_1
+method_family: unified_team_prompt_search_v2
+method_identity: unified_team_prompt_search_v2
+source_sha: null
+benchmark_id: bbh
+benchmark_protocol_id: UNBOUND
+dataset_manifest_identity: null
+split_identity: null
+search_engine_identity: gepa_derived_team_candidate_exposure_v2
+search_acceptance_identity: local_survival_team_admission_decoupled_v1
+evidence_identity: variable_pattern_capable_evidence_v1
+feasibility_identity: variable_evidence_feasibility_v1
+mechanism_config: {}
+aggregation_identity: equal_plurality_abstain_v1
+responsibility_identity: plurality_raw_responsibility_v1
+transition_identity: common_safe_v1
+adaptive_gate_identity: winner_only_shadow_v1
+pattern_identity: null_pattern_v1
+memory_identity: null_memory_v1
+global_stop_identity: team_epoch_no_commit_v1
+models:
+  solver: null
+  optimizer: null
+  solver_thinking: false
+seed: 81
+concurrency:
+  solver: 1
+  optimizer: 1
+provider_policy:
+  identity: UNBOUND
+  frozen: false
+cache_policy:
+  identity: UNBOUND
+  frozen: false
+access:
+  search_access: not_authorized
+  shadow_access: not_authorized
+  validation_access: not_authorized
+  test_access: sealed
+budget:
+  regime: saturation
+  saturation_identity: team_epoch_no_commit_v1
+  successful_provider_call_ceiling: null
+  transport_attempt_ceiling: null
+preregistration_identity: null
+authorization:
+  real_api_authorized: false
+  attempt_id: null
+  authorization_identity: null
+  single_use: true
+lifecycle:
+  status: DRAFT
+  history:
+  - status: DRAFT
+    event: PREEXECUTION_BLOCKED
+    reason: STOP_MODEL_IDENTITY_CONFLICT
+    protocol_version: '1.1'
+    base_sha: a5997898c30c4d4daad5511203657d3c687c90e5
+    proposed_seeds: [81, 82, 83]
+    proposed_arms: [A1, A2, A3, A4]
+    proposed_formal_run_count: 12
+    representative_seed_is_not_execution_authorization: true
+hash_closure:
+  scientific_source_hash: null
+  governance_hash: null
+  benchmark_contract_hash: null
+  dataset_manifest_hash: null

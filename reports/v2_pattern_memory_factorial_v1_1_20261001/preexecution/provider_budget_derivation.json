@@ -1,0 +1,10 @@
+{
+  "actual_provider_calls": 0,
+  "actual_provider_tokens": 0,
+  "canary_upper_bound": null,
+  "execution_allowed": false,
+  "full_study_upper_bound": null,
+  "per_arm_upper_bound": null,
+  "per_run_upper_bound": null,
+  "status": "NOT_DERIVED_AFTER_MODEL_STOP"
+}

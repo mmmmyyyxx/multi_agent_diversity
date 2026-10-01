@@ -1,0 +1,19 @@
+{
+  "authorization_consumed": false,
+  "dataset_downloads": 0,
+  "guard_bootstrap": "PASS",
+  "guard_negative_control": "PASS",
+  "initial_probe_harness_issue": "Capture assumed integer public reflection_minibatch_size; pinned explicit sampler API uses None. Corrected only the ignored harness to inspect actual batch sizes; no provider evaluation occurred.",
+  "issues": [],
+  "normal_guarded_network_attempts": 0,
+  "preexecution_frozen": false,
+  "prior_report_preservation": "PASS",
+  "real_optimizer_calls": 0,
+  "real_pattern_calls": 0,
+  "real_provider_calls": 0,
+  "real_solver_calls": 0,
+  "scientific_source_edits": 0,
+  "status": "PASS",
+  "test_calls": 0,
+  "validation_calls": 0
+}

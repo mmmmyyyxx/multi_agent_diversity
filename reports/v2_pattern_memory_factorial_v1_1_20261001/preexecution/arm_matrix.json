@@ -1,0 +1,53 @@
+{
+  "V2_CORE_EFFECT": "NOT_ESTIMATED_IN_V1_1",
+  "arms": [
+    {
+      "arm": "A1",
+      "memory_on": false,
+      "pattern_on": false,
+      "seeds": [
+        81,
+        82,
+        83
+      ],
+      "status": "NOT_RUN_PREEXECUTION_BLOCKED"
+    },
+    {
+      "arm": "A2",
+      "memory_on": false,
+      "pattern_on": true,
+      "seeds": [
+        81,
+        82,
+        83
+      ],
+      "status": "NOT_RUN_PREEXECUTION_BLOCKED"
+    },
+    {
+      "arm": "A3",
+      "memory_on": true,
+      "pattern_on": false,
+      "seeds": [
+        81,
+        82,
+        83
+      ],
+      "status": "NOT_RUN_PREEXECUTION_BLOCKED"
+    },
+    {
+      "arm": "A4",
+      "memory_on": true,
+      "pattern_on": true,
+      "seeds": [
+        81,
+        82,
+        83
+      ],
+      "status": "NOT_RUN_PREEXECUTION_BLOCKED"
+    }
+  ],
+  "binding_status": "DRAFT_NOT_EXECUTABLE",
+  "formal_run_count": 12,
+  "historical_v1": "UNMATCHED HISTORICAL CONTEXT; NOT A CAUSAL ARM; NOT INCLUDED IN FACTORIAL ESTIMATES",
+  "protocol_version": "1.1"
+}

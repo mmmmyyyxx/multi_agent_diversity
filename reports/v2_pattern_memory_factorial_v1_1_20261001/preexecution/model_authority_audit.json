@@ -1,0 +1,212 @@
+{
+  "captures": {
+    "default_config": {
+      "optimizer": "qwen3.7-flash-2026-07-15",
+      "provider": "myx",
+      "solver": "qwen3.7-flash-2026-07-15",
+      "temperature": 0.0
+    },
+    "executable_binding_rejections": [
+      {
+        "error": "ABORT_PRE_PROVIDER: provider_profile must be lwj",
+        "probe": "unmodified_current_defaults",
+        "provider_constructed": false
+      },
+      {
+        "error": "ABORT_PRE_PROVIDER: solver model mismatch",
+        "probe": "defaults_with_only_legacy_provider_override",
+        "provider_constructed": false
+      }
+    ],
+    "frozen_v2_model_binding": null,
+    "historical_governed_execution_binding": {
+      "forbidden_role_model": "qwen3.7-flash-2026-07-15",
+      "optimizer": "qwen3.7-flash",
+      "provider": "lwj",
+      "solver": "qwen3-8b"
+    },
+    "real_provider_calls": 0,
+    "unified_entrypoint_preflight": {
+      "aggregation_model": "qwen3.7-flash-2026-07-15",
+      "benchmark_id": "bbh",
+      "blockers": [
+        "FROZEN_EXECUTION_GOVERNANCE_NOT_BOUND"
+      ],
+      "gate": "HOLD",
+      "method": "unified_team_prompt_search_v2",
+      "method_identity": "743efee620e00242a822da2fb6a266ff63ea805bf823801be342f15683261ca3",
+      "provider_attempts": 0,
+      "seed": 81,
+      "test_calls": 0,
+      "validation_calls": 0
+    }
+  },
+  "conflicting_models_are_not_alias_normalized": true,
+  "credential_or_endpoint_values_read": false,
+  "explanation": "Configuration defaults and the existing governed real-execution binding disagree. No current frozen V2 experiment resolves this mismatch. Neither defaults nor historical locks are silently selected as formal V2 authority.",
+  "old_stop_probe_models_not_inherited": true,
+  "real_api_calls": 0,
+  "resolved_formal_optimizer": null,
+  "resolved_formal_pattern": null,
+  "resolved_formal_solver": null,
+  "result": "UNRESOLVED_CURRENT_V2_MODEL_BINDING",
+  "source_receipts": [
+    {
+      "normalized_lf_sha256": "40abffa6b464f4025aba6e650a1852b336643fa87b2bcd65dae10b3ede8cbdd2",
+      "path": "AGENTS.md"
+    },
+    {
+      "normalized_lf_sha256": "2886daecf6f23eb3196f218470d5e8602dfbd6fc2839c9cfe812b45a9ec54a27",
+      "path": "docs/design/CURRENT_SPEC.md"
+    },
+    {
+      "normalized_lf_sha256": "651335918495673ce85fba2eff051e6e99cc41af8d8e13f686f34609ef5d5669",
+      "path": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "normalized_lf_sha256": "7ac27f05fbf26d414c1726fc158c038eae77d523e61c7cae2e36ebdb8d1ce6e7",
+      "path": "experiments/current_frontier.yaml"
+    },
+    {
+      "normalized_lf_sha256": "5cc33cd69ecd1962eb66d7a4af587b08a0093ae0c552f81fac4091e91a0adfef",
+      "path": "experiments/templates/unified_experiment_v2.yaml"
+    },
+    {
+      "normalized_lf_sha256": "1a87426ef31c92e80916438370be1f521fa58895b098c0adbbfaedd8d3f08c65",
+      "path": "multi_dataset_diverse_rl/config.py"
+    },
+    {
+      "normalized_lf_sha256": "41e7282cbe5dfb59a9e834931e70e4d651ad373f3670fb523dd33b910691c2cf",
+      "path": "multi_dataset_diverse_rl/provider_credentials.py"
+    },
+    {
+      "normalized_lf_sha256": "6d41c0a90e4b80c0e23e4587923723503bb4480f6fa4c250aca5a88343cab440",
+      "path": "multi_dataset_diverse_rl/governance/execution_harness_v2.py"
+    },
+    {
+      "normalized_lf_sha256": "a708291964c1f5e5ee9f8f4c8ef8161600bac75db5e359d501633d9aedfb93c3",
+      "path": "multi_dataset_diverse_rl/governance/production_execution.py"
+    },
+    {
+      "normalized_lf_sha256": "7ee28bd9efdaa9f11ed166433d928731d21634b4ad8fbc0476942aa3049244ed",
+      "path": "scripts/run_experiment.py"
+    },
+    {
+      "normalized_lf_sha256": "7508e59386e186b85a4ae49cfe6c5a85ca37bc6eb4ed23216a50a8cccf99a3d5",
+      "path": "multi_dataset_diverse_rl/llm_client.py"
+    }
+  ],
+  "sources": [
+    {
+      "field": "sections 2, 6, 8",
+      "resolved_model": null,
+      "resolved_provider": null,
+      "resolved_thinking_reasoning_config": null,
+      "scope": "Workflow: exact frozen models, roles and execution required",
+      "source_path": "AGENTS.md"
+    },
+    {
+      "field": "Active Unified V2 and Pattern mechanism invariants",
+      "resolved_model": null,
+      "resolved_provider": null,
+      "resolved_thinking_reasoning_config": null,
+      "scope": "Scientific components; no model/provider selection",
+      "source_path": "docs/design/CURRENT_SPEC.md"
+    },
+    {
+      "field": "MODEL_THINKING_MODE_VERSION",
+      "resolved_model": null,
+      "resolved_provider": null,
+      "resolved_thinking_reasoning_config": "explicitly_disabled_v1",
+      "scope": "Shared disabled-thinking identity; no Solver/optimizer model names",
+      "source_path": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "field": "current_experiment, real_execution_ready",
+      "resolved_model": null,
+      "resolved_provider": null,
+      "resolved_thinking_reasoning_config": null,
+      "scope": "No frozen active real V2 experiment: NO_AUTHORIZED_NEW_EXPERIMENT, false",
+      "source_path": "experiments/current_frontier.yaml"
+    },
+    {
+      "field": "models.solver, models.optimizer, provider_policy",
+      "resolved_model": null,
+      "resolved_provider": null,
+      "resolved_thinking_reasoning_config": {
+        "optimizer": null,
+        "solver_thinking": false
+      },
+      "scope": "Unbound Unified draft template; null models",
+      "source_path": "experiments/templates/unified_experiment_v2.yaml"
+    },
+    {
+      "field": "ModelConfig.provider_profile, agent_model, optimizer_model, temperature",
+      "resolved_model": {
+        "optimizer": "qwen3.7-flash-2026-07-15",
+        "solver": "qwen3.7-flash-2026-07-15"
+      },
+      "resolved_provider": "myx",
+      "resolved_thinking_reasoning_config": {
+        "temperature": 0.0,
+        "thinking_read_point": "llm_client.py request kwargs"
+      },
+      "scope": "Configuration defaults; not an explicit V2 experiment binding",
+      "source_path": "multi_dataset_diverse_rl/config.py"
+    },
+    {
+      "field": "DEFAULT_PROVIDER_PROFILE",
+      "resolved_model": null,
+      "resolved_provider": "myx",
+      "resolved_thinking_reasoning_config": null,
+      "scope": "Default provider registry profile, no credentials or endpoints read",
+      "source_path": "multi_dataset_diverse_rl/provider_credentials.py"
+    },
+    {
+      "field": "PROVIDER_PROFILE, SOLVER_MODEL, ROLE_MODEL, FORBIDDEN_ROLE_MODEL, assert_config_binding",
+      "resolved_model": {
+        "forbidden_optimizer": "qwen3.7-flash-2026-07-15",
+        "optimizer": "qwen3.7-flash",
+        "solver": "qwen3-8b"
+      },
+      "resolved_provider": "lwj",
+      "resolved_thinking_reasoning_config": {
+        "solver_thinking": false
+      },
+      "scope": "2026-09-22 historical frozen execution binding still used by governed entry; not promoted to scientific V2 authority",
+      "source_path": "multi_dataset_diverse_rl/governance/execution_harness_v2.py"
+    },
+    {
+      "field": "validate_execution runtime and models checks",
+      "resolved_model": {
+        "optimizer": "qwen3.7-flash",
+        "solver": "qwen3-8b"
+      },
+      "resolved_provider": "lwj",
+      "resolved_thinking_reasoning_config": {
+        "solver_thinking": false
+      },
+      "scope": "Executable mandatory binding on existing governed path; rejects defaults",
+      "source_path": "multi_dataset_diverse_rl/governance/production_execution.py"
+    },
+    {
+      "field": "preflight Unified V2 branch",
+      "resolved_model": null,
+      "resolved_provider": null,
+      "resolved_thinking_reasoning_config": null,
+      "scope": "Real Unified execution is not bound; actual preflight HOLD",
+      "source_path": "scripts/run_experiment.py"
+    },
+    {
+      "field": "request_kwargs.extra_body.enable_thinking",
+      "resolved_model": null,
+      "resolved_provider": null,
+      "resolved_thinking_reasoning_config": {
+        "enable_thinking": false
+      },
+      "scope": "Shared request implementation default, not experiment role binding",
+      "source_path": "multi_dataset_diverse_rl/llm_client.py"
+    }
+  ],
+  "status": "STOP_MODEL_IDENTITY_CONFLICT"
+}

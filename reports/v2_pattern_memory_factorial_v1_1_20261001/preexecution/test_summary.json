@@ -1,0 +1,55 @@
+{
+  "current_suite": {
+    "command": "python tests/formal_zero_api_runner.py tests --suite=current",
+    "passed": 453,
+    "skipped": 4,
+    "deselected": 1468,
+    "selected": 457,
+    "elapsed_seconds": 317.89
+  },
+  "historical_suite": "NOT_RUN; full historical/private-artifact replay PASS is not claimed",
+  "compileall": "PASS",
+  "governance_manifest_preflight": "PASS_FOR_BLOCKED_DRAFT_ONLY",
+  "model_binding": "STOP_MODEL_IDENTITY_CONFLICT; passing tests do not override this gate",
+  "budget_capture": "PASS_A1_A2_A3_A4",
+  "initial_team_gate": "NOT_REACHED",
+  "real_mechanism_arm_diff_gate": "NOT_FROZEN",
+  "frozen_startup_and_poison_audit": "NOT_REACHED; no execution SHA exists",
+  "normal_guarded_network_attempts": 0,
+  "real_api_calls": 0,
+  "dataset_downloads": 0,
+  "local_evidence_receipts": [
+    {
+      "path": "runs/v2_pattern_memory_factorial_v1_1_preexecution_20261001/audit_probe.py",
+      "sha256": "9bfaa2ccf29c3dce3c6f8c2744a4723899dd958af7f40249b539aa7fea3b22dc"
+    },
+    {
+      "path": "runs/v2_pattern_memory_factorial_v1_1_preexecution_20261001/audit_probe.log",
+      "sha256": "d759547045c92722ba740b75039b33dd6f32ea4c4a68f1b61dbc95675ab4bb67"
+    },
+    {
+      "path": "runs/v2_pattern_memory_factorial_v1_1_preexecution_20261001/preserve_audit.py",
+      "sha256": "4cf96df5a89845d5acbffb2aa61ade6e742bca0e108705cf5b55580a24199db4"
+    },
+    {
+      "path": "runs/v2_pattern_memory_factorial_v1_1_preexecution_20261001/preserve_audit.log",
+      "sha256": "69ff8cd650dbfa6b91309f05100be665643a6d7ee7835d4af526a2100dcde6b1"
+    },
+    {
+      "path": "runs/v2_pattern_memory_factorial_v1_1_preexecution_20261001/current_suite.log",
+      "sha256": "334d52a22145b2d5b102a49df14cd582af46bc14238085d54bce8003c4ba7e8d"
+    },
+    {
+      "path": "runs/v2_pattern_memory_factorial_v1_1_preexecution_20261001/governance_audit.json",
+      "sha256": "dbe04db5b5d51594427bfaf22151e4ae3f35ba9f86787926f8abaed4f9aec36c"
+    },
+    {
+      "path": "runs/v2_pattern_memory_factorial_v1_1_preexecution_20261001/governance_audit.log",
+      "sha256": "5501bd5e05efab51496a35036e7614b20ff12903a895bf5626b55a9cdb51aa60"
+    },
+    {
+      "path": "runs/v2_pattern_memory_factorial_v1_1_preexecution_20261001/compileall.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

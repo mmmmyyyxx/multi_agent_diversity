@@ -1,0 +1,9 @@
+{
+  "identity": "PATTERN_REAL_CONTRACT_V1",
+  "model": null,
+  "note": "No real prompt/provider/cache/accounting contract frozen after STOP; no Pattern prompt file claims readiness.",
+  "prompt_sha256": null,
+  "proposed_successful_calls_per_opportunity": 1,
+  "provider": null,
+  "status": "NOT_FROZEN"
+}

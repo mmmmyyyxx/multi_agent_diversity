@@ -184,6 +184,7 @@ flowchart TD
     n158["unified_team_prompt_search_refactor_v1<br/>ARCHITECTURE_REFACTOR<br/>COMPLETED"]
     n179["unified_team_prompt_search_v2_method_refactor<br/>ARCHITECTURE_REFACTOR<br/>IMPLEMENTED_NOT_EXECUTED"]
     n180["v2_pattern_memory_factorial_v1_preexecution_audit<br/>ZERO_API_AUDIT<br/>HOLD"]
+    n181["v2_pattern_memory_factorial_v1_1<br/>FORMAL_EXPERIMENT<br/>HOLD"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -281,6 +282,8 @@ flowchart TD
   n34 -->|derived_from| n51
   n162 -->|refactor_of| n179
   n179 -->|audit_of| n180
+  n179 -->|derived_from| n181
+  n180 -->|followup_of| n181
 ```
 
 ## Archived branches and unresolved evidence

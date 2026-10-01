@@ -1,0 +1,487 @@
+{
+  "missing_values_policy": "null is not observed; zero counters are actual zero calls/events, not zero efficacy. Variable evidence in the budget fixture is not a real observation.",
+  "ordered_fields": [
+    {
+      "field": "BASE_SHA",
+      "number": 1,
+      "value": "a5997898c30c4d4daad5511203657d3c687c90e5"
+    },
+    {
+      "field": "previous_blocked_audit_SHA",
+      "number": 2,
+      "value": "a5997898c30c4d4daad5511203657d3c687c90e5"
+    },
+    {
+      "field": "PREEXECUTION_SHA",
+      "number": 3,
+      "value": null
+    },
+    {
+      "field": "EXECUTION_SHA",
+      "number": 4,
+      "value": null
+    },
+    {
+      "field": "result_SHA",
+      "number": 5,
+      "value": null
+    },
+    {
+      "field": "model_authority_result",
+      "number": 6,
+      "value": "STOP_MODEL_IDENTITY_CONFLICT"
+    },
+    {
+      "field": "Solver",
+      "number": 7,
+      "value": null
+    },
+    {
+      "field": "Optimizer",
+      "number": 8,
+      "value": null
+    },
+    {
+      "field": "Pattern_model",
+      "number": 9,
+      "value": null
+    },
+    {
+      "field": "initial_team_hash",
+      "number": 10,
+      "value": null
+    },
+    {
+      "field": "Optimize_Shadow_Validation_Test_hashes",
+      "number": 11,
+      "value": {
+        "Optimize100": {
+          "count": 100,
+          "identity": "anti_overfitting_split_v1/fold_a+fold_b",
+          "question_hash_set_sha256": "d1aa6e83e545466b037b7ff0d5ff25470030e3b8067bc80cbedd098e217b973a"
+        },
+        "Shadow50": {
+          "count": 50,
+          "identity": "anti_overfitting_split_v1/fold_c",
+          "question_hash_set_sha256": "04b7f74e986f45135ea00b1c30e6a700cbf83f0b08b24c4d057b90a232e9b100"
+        },
+        "Test50": {
+          "count": 50,
+          "identity": "anti_overfitting_split_v1/test",
+          "question_hash_set_sha256": "949517a268fbfae82bd15006ed0cb870fd41f9bc03bd782797fb4dce01a13747"
+        },
+        "Validation50": {
+          "count": 50,
+          "identity": "anti_overfitting_split_v1/validation",
+          "question_hash_set_sha256": "d6514ca588f124460502afbc44a5314e9ef7f141ee826411cb6f02abad736df5"
+        }
+      }
+    },
+    {
+      "field": "A1_A4_budget_capture",
+      "number": 12,
+      "value": [
+        {
+          "arm": "A1",
+          "declared_metric_budget": 36,
+          "explicit_sampler_batch_sizes": [
+            3
+          ],
+          "export_capacity": 5,
+          "full_scope": "optimize_full",
+          "local_no_update_patience": 3,
+          "max_metric_calls": 36,
+          "memory_on": false,
+          "mutation_count": 5,
+          "pattern_on": false,
+          "persistence_disabled": true,
+          "promotion_max": 2,
+          "public_pre_iteration_budget_guard": {
+            "boundary_allowed": true,
+            "next_evaluation_rejected": true,
+            "reserve_boundary": 25
+          },
+          "public_reflection_minibatch_size": null,
+          "real_pattern_calls": 0,
+          "real_reflection_calls": 0,
+          "real_solver_calls": 0,
+          "reflection_minibatch": 3,
+          "shadow_scope": "shadow_adaptive",
+          "stop_policy": "V2 bounded pre-iteration reserve + complete-evidence-epoch observer",
+          "team_no_commit_patience": 2,
+          "validation_count": 5
+        },
+        {
+          "arm": "A2",
+          "declared_metric_budget": 36,
+          "explicit_sampler_batch_sizes": [
+            3
+          ],
+          "export_capacity": 5,
+          "full_scope": "optimize_full",
+          "local_no_update_patience": 3,
+          "max_metric_calls": 36,
+          "memory_on": false,
+          "mutation_count": 5,
+          "pattern_on": true,
+          "persistence_disabled": true,
+          "promotion_max": 2,
+          "public_pre_iteration_budget_guard": {
+            "boundary_allowed": true,
+            "next_evaluation_rejected": true,
+            "reserve_boundary": 25
+          },
+          "public_reflection_minibatch_size": null,
+          "real_pattern_calls": 0,
+          "real_reflection_calls": 0,
+          "real_solver_calls": 0,
+          "reflection_minibatch": 3,
+          "shadow_scope": "shadow_adaptive",
+          "stop_policy": "V2 bounded pre-iteration reserve + complete-evidence-epoch observer",
+          "team_no_commit_patience": 2,
+          "validation_count": 5
+        },
+        {
+          "arm": "A3",
+          "declared_metric_budget": 36,
+          "explicit_sampler_batch_sizes": [
+            3
+          ],
+          "export_capacity": 5,
+          "full_scope": "optimize_full",
+          "local_no_update_patience": 3,
+          "max_metric_calls": 36,
+          "memory_on": true,
+          "mutation_count": 5,
+          "pattern_on": false,
+          "persistence_disabled": true,
+          "promotion_max": 2,
+          "public_pre_iteration_budget_guard": {
+            "boundary_allowed": true,
+            "next_evaluation_rejected": true,
+            "reserve_boundary": 25
+          },
+          "public_reflection_minibatch_size": null,
+          "real_pattern_calls": 0,
+          "real_reflection_calls": 0,
+          "real_solver_calls": 0,
+          "reflection_minibatch": 3,
+          "shadow_scope": "shadow_adaptive",
+          "stop_policy": "V2 bounded pre-iteration reserve + complete-evidence-epoch observer",
+          "team_no_commit_patience": 2,
+          "validation_count": 5
+        },
+        {
+          "arm": "A4",
+          "declared_metric_budget": 36,
+          "explicit_sampler_batch_sizes": [
+            3
+          ],
+          "export_capacity": 5,
+          "full_scope": "optimize_full",
+          "local_no_update_patience": 3,
+          "max_metric_calls": 36,
+          "memory_on": true,
+          "mutation_count": 5,
+          "pattern_on": true,
+          "persistence_disabled": true,
+          "promotion_max": 2,
+          "public_pre_iteration_budget_guard": {
+            "boundary_allowed": true,
+            "next_evaluation_rejected": true,
+            "reserve_boundary": 25
+          },
+          "public_reflection_minibatch_size": null,
+          "real_pattern_calls": 0,
+          "real_reflection_calls": 0,
+          "real_solver_calls": 0,
+          "reflection_minibatch": 3,
+          "shadow_scope": "shadow_adaptive",
+          "stop_policy": "V2 bounded pre-iteration reserve + complete-evidence-epoch observer",
+          "team_no_commit_patience": 2,
+          "validation_count": 5
+        }
+      ]
+    },
+    {
+      "field": "V2_FACTORIAL_SEARCH_BUDGET_EQUIVALENCE",
+      "number": 13,
+      "value": "PASS"
+    },
+    {
+      "field": "Pattern_contract_hash",
+      "number": 14,
+      "value": null
+    },
+    {
+      "field": "Memory_contract_limits",
+      "number": 15,
+      "value": "TASK_SPECIFIED_NOT_FROZEN"
+    },
+    {
+      "field": "canary_status",
+      "number": 16,
+      "value": "NOT_RUN_PREEXECUTION_BLOCKED"
+    },
+    {
+      "field": "locally_rejected_export_count",
+      "number": 17,
+      "value": null
+    },
+    {
+      "field": "locally_rejected_commit_count",
+      "number": 18,
+      "value": null
+    },
+    {
+      "field": "variable_batch_sizes_observed",
+      "number": 19,
+      "value": null
+    },
+    {
+      "field": "A1_seed81_82_83_status",
+      "number": 20,
+      "value": {
+        "81": "NOT_RUN_PREEXECUTION_BLOCKED",
+        "82": "NOT_RUN_PREEXECUTION_BLOCKED",
+        "83": "NOT_RUN_PREEXECUTION_BLOCKED"
+      }
+    },
+    {
+      "field": "Pattern_diagnostic_count",
+      "number": 21,
+      "value": 0
+    },
+    {
+      "field": "schema_valid_rate",
+      "number": 22,
+      "value": null
+    },
+    {
+      "field": "mixed_pattern_rate",
+      "number": 23,
+      "value": null
+    },
+    {
+      "field": "DPR",
+      "number": 24,
+      "value": null
+    },
+    {
+      "field": "entropy",
+      "number": 25,
+      "value": null
+    },
+    {
+      "field": "Pattern_gate",
+      "number": 26,
+      "value": "NOT_EVALUATED"
+    },
+    {
+      "field": "potential_memory_writes",
+      "number": 27,
+      "value": null
+    },
+    {
+      "field": "post_write_reads",
+      "number": 28,
+      "value": null
+    },
+    {
+      "field": "Memory_gate",
+      "number": 29,
+      "value": "NOT_EVALUATED"
+    },
+    {
+      "field": "actually_run_arms",
+      "number": 30,
+      "value": []
+    },
+    {
+      "field": "run_completeness_matrix",
+      "number": 31,
+      "value": {
+        "A1": {
+          "81": "NOT_RUN_PREEXECUTION_BLOCKED",
+          "82": "NOT_RUN_PREEXECUTION_BLOCKED",
+          "83": "NOT_RUN_PREEXECUTION_BLOCKED"
+        },
+        "A2": {
+          "81": "NOT_RUN_PREEXECUTION_BLOCKED",
+          "82": "NOT_RUN_PREEXECUTION_BLOCKED",
+          "83": "NOT_RUN_PREEXECUTION_BLOCKED"
+        },
+        "A3": {
+          "81": "NOT_RUN_PREEXECUTION_BLOCKED",
+          "82": "NOT_RUN_PREEXECUTION_BLOCKED",
+          "83": "NOT_RUN_PREEXECUTION_BLOCKED"
+        },
+        "A4": {
+          "81": "NOT_RUN_PREEXECUTION_BLOCKED",
+          "82": "NOT_RUN_PREEXECUTION_BLOCKED",
+          "83": "NOT_RUN_PREEXECUTION_BLOCKED"
+        }
+      }
+    },
+    {
+      "field": "Validation_A1_A4_by_seed",
+      "number": 32,
+      "value": null
+    },
+    {
+      "field": "P_simple",
+      "number": 33,
+      "value": null
+    },
+    {
+      "field": "M_simple",
+      "number": 34,
+      "value": null
+    },
+    {
+      "field": "P_main",
+      "number": 35,
+      "value": null
+    },
+    {
+      "field": "M_main",
+      "number": 36,
+      "value": null
+    },
+    {
+      "field": "I_PM",
+      "number": 37,
+      "value": null
+    },
+    {
+      "field": "Pattern_mechanism_metrics",
+      "number": 38,
+      "value": null
+    },
+    {
+      "field": "Memory_mechanism_metrics",
+      "number": 39,
+      "value": null
+    },
+    {
+      "field": "Pattern_efficacy",
+      "number": 40,
+      "value": "NOT_RUN"
+    },
+    {
+      "field": "Memory_efficacy",
+      "number": 41,
+      "value": "NOT_RUN"
+    },
+    {
+      "field": "Pattern_Memory_interaction",
+      "number": 42,
+      "value": "NOT_ESTIMABLE"
+    },
+    {
+      "field": "A2C_trigger",
+      "number": 43,
+      "value": "NOT_EVALUATED"
+    },
+    {
+      "field": "A2_vs_A2C",
+      "number": 44,
+      "value": null
+    },
+    {
+      "field": "Pattern_specificity",
+      "number": 45,
+      "value": "NOT_TESTED"
+    },
+    {
+      "field": "bootstrap",
+      "number": 46,
+      "value": null
+    },
+    {
+      "field": "TEST_UNLOCK",
+      "number": 47,
+      "value": "SEALED_NOT_GENERATED"
+    },
+    {
+      "field": "Test_results",
+      "number": 48,
+      "value": null
+    },
+    {
+      "field": "Test_bootstrap",
+      "number": 49,
+      "value": null
+    },
+    {
+      "field": "provider_calls",
+      "number": 50,
+      "value": {
+        "optimizer": 0,
+        "pattern": 0,
+        "solver": 0
+      }
+    },
+    {
+      "field": "total_tokens",
+      "number": 51,
+      "value": 0
+    },
+    {
+      "field": "per_arm_cost",
+      "number": 52,
+      "value": {
+        "A1": 0,
+        "A2": 0,
+        "A3": 0,
+        "A4": 0
+      }
+    },
+    {
+      "field": "leakage",
+      "number": 53,
+      "value": {
+        "test_model_calls": 0,
+        "validation_model_calls": 0
+      }
+    },
+    {
+      "field": "illegal_Pattern_references",
+      "number": 54,
+      "value": 0
+    },
+    {
+      "field": "illegal_Memory_writes",
+      "number": 55,
+      "value": 0
+    },
+    {
+      "field": "raw_data_prompt_publication_audit",
+      "number": 56,
+      "value": "PASS"
+    },
+    {
+      "field": "secret_scan",
+      "number": 57,
+      "value": "PASS"
+    },
+    {
+      "field": "dataset_downloads",
+      "number": 58,
+      "value": 0
+    }
+  ],
+  "result_sha_note": "Audit-only commit, when created, is recorded by Git history; no execution/result freeze is claimed.",
+  "scientific_classification": {
+    "MEMORY_EFFICACY": "NOT_RUN",
+    "MEMORY_EXPOSURE": "NOT_EVALUATED",
+    "PATTERN_EFFICACY": "NOT_RUN",
+    "PATTERN_MEMORY_INTERACTION": "NOT_ESTIMABLE",
+    "PATTERN_PRECONDITION": "NOT_EVALUATED",
+    "PATTERN_SPECIFICITY": "NOT_TESTED",
+    "SCIENTIFIC_EFFICACY_VERIFIED": "NO",
+    "TEST_COMPLETE": "NO",
+    "V2_CORE_EFFECT": "NOT_ESTIMATED_IN_V1_1"
+  },
+  "status": "PREEXECUTION_BLOCKED"
+}

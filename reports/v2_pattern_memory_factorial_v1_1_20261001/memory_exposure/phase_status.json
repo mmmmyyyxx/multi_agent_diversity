@@ -1,0 +1,7 @@
+{
+  "real_api_calls": 0,
+  "reason": "STOP_MODEL_IDENTITY_CONFLICT",
+  "source_frozen": false,
+  "status": "NOT_RUN_PREEXECUTION_BLOCKED",
+  "test_unlocked": false
+}
