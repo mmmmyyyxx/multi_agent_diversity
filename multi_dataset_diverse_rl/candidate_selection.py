@@ -469,15 +469,20 @@ def common_monotone_safe_key(
 ) -> tuple:
     """Shared S0-S2 ranking over the common monotone-safe feasible set."""
 
-    return (
-        candidate.team_outcome.vote_correct_count,
-        candidate.competence.correct_count,
-        candidate.team_outcome.mean_soft_vote_utility,
-        -candidate.marginal.vote_loss_count,
-        -candidate.competence.invalid_count,
-        -int(generation),
-        candidate.prompt_hash,
-    )
+    return common_monotone_safe_measurement_key(
+        vote_correct=candidate.team_outcome.vote_correct_count,
+        target_correct=candidate.competence.correct_count,
+        soft_vote_utility=candidate.team_outcome.mean_soft_vote_utility,
+        vote_loss_count=candidate.marginal.vote_loss_count,
+        invalid_count=candidate.competence.invalid_count,
+        generation=generation, prompt_hash=candidate.prompt_hash)
+
+
+def common_monotone_safe_measurement_key(*, vote_correct, target_correct,
+        soft_vote_utility, vote_loss_count, invalid_count, generation, prompt_hash):
+    """One frozen S0-S2 key for historical and neutral measurement records."""
+    return (vote_correct, target_correct, soft_vote_utility, -vote_loss_count,
+            -invalid_count, -int(generation), prompt_hash)
 
 
 def common_cross_branch_transition_key(

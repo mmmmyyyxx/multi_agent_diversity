@@ -124,7 +124,7 @@ abort execution and must never be reported as convergence.
 V1 identity and reproduction use `SearchMethodConfig()`; V2 method composition
 uses `SearchMethodConfig.v2()`. `build_v2_bbh_orchestrator` is a historical
 development/replay and structural-test reference. Current multibench execution
-composition still requires a separate preexecution freeze. V1 identities
+composition requires a benchmark-specific preexecution freeze. V1 identities
 `unified_team_prompt_search_v1`, `gepa_derived_v1`, `role_view_4_4_4_v1` and
 `v4_exact_evidence_feasibility_v1` remain explicit compatibility contracts.
 Mechanism correctness does not establish efficacy or real-execution readiness.
@@ -179,6 +179,44 @@ All memberships precede any efficacy observation. Initial task-valid five-member
 prompts, provider/resource policy, V2 production composition and authorization
 require future benchmark-specific preexecution freeze. BBH prompts are not
 inherited. Pattern/Memory are IMPLEMENTED_DEFAULT_OFF, efficacy unverified.
+
+## MATH reference eligibility and versioned runtime binding
+
+- **INV-MATH-REFERENCE-VALIDITY-001**: `MATH_REFERENCE_VALIDITY_V1` admits a
+  correctness-dependent example only when the unchanged frozen deterministic
+  source extractor returns a nonempty answer after stripping whitespace.
+  Invalid references are data exclusions, never Solver errors. Eligibility is
+  applied to all canonical source rows before the unchanged seed, proportional
+  subject quotas, largest remainder, lexicographic ties and stable SHA ordering.
+  MATH uses `benchmark_experiment_split_v1_1`; prior memberships and canonical
+  source bytes remain immutable. Counts and source roles are unchanged.
+  Full-source preparation runs in an isolated `DATA_PREPARATION_CONTEXT`,
+  imports no optimizer/provider runtime and emits only metadata and hashes.
+- **INV-MATH-RUNTIME-BINDING-001**: MATH production readiness comes from the
+  explicit execution binding, checked canonical/split/initial-team hashes,
+  evaluator pins, aggregation/responsibility identities and shared model policy.
+  Static registry readiness alone cannot grant execution. The shared binary
+  ports use the benchmark's actual aggregation and check agreement with the
+  responsibility algebra. Common-Safe uses the existing monotone-safe S0-S2
+  key; local scores never enter team ranking. Shadow cardinality is manifest
+  driven, preserving its nonnegative Vote and target-loss-at-most-two guards.
+  Shadow raw records/cache stay within a private gate capability. Successful
+  commits write private success only; newly-broken counts cannot teach shared
+  risk. A committed winner is excluded from rejection risk even if stale
+  rejection diagnostics are present.
+  The fixed GEPA evidence schedule replays complete epochs so perfect-score
+  skips cannot exhaust it before frozen patience. Metric reserves and ceilings
+  remain unchanged. Initial prompts are generic mutable reasoning only; the
+  immutable output interface remains separate.
+- Canary readiness is scoped to a preregistered first parent team epoch or its
+  first atomic commit. This phase boundary does not redefine scientific
+  saturation or patience. Its finite opportunity bound follows from integer
+  positive raw V and failure-discount ranking; provider/transport bounds follow
+  from metric/proposal/promotion/split capacities. A phase boundary or resource
+  ceiling must never be reported as scientific convergence.
+  Readiness requires a frozen source/config/startup identity and gives no API
+  authorization. Only an exact single-use attempt authorization can construct
+  the real provider. Validation remains unauthorized and Test sealed.
 
 ## Authority map
 

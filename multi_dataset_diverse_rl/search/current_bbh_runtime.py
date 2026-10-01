@@ -12,7 +12,7 @@ from ..candidate_selection import common_monotone_safe_key, evaluate_constraints
 from ..native_feed import CandidateTransitionAudit
 from ..local_optimizers.gepa_native import GEPALayer2EvidenceOptimizer
 from ..team_search.schemas import TeamEvidenceCase, TeamSearchAssignment
-from .evaluation import PromotionPolicy
+from .evaluation import PromotionPolicy, FixedPeerPromotion
 from .aggregation import PluralityAggregation
 from .current_bbh import (
     CurrentBBHEvidenceSource, CurrentBBHStateSource,
@@ -146,27 +146,11 @@ class CurrentBBHTeamEvaluationProvider:
                               aggregation_diagnostics=diagnostics)
 
 
-class CurrentBBHPromotion(PromotionPolicy):
+class CurrentBBHPromotion(FixedPeerPromotion):
     """Exact V4 catastrophe guard and promotion key over frozen TeamProbe rows."""
 
-    def select(self, rows: Sequence[tuple[SearchCandidate, TeamEvaluation]]) -> tuple[str, ...]:
-        eligible = []
-        for candidate, evaluation in rows:
-            metrics = evaluation.aggregation_diagnostics["bbh_probe"]
-            if (metrics.invalid_delta > 0 or metrics.vote_delta <= -2 or
-                    metrics.team_net_vote_delta <= -3):
-                continue
-            if not any(value > 0 for value in (
-                metrics.responsibility_delta, metrics.target_delta,
-                metrics.vote_delta, metrics.broad_delta,
-                metrics.team_net_vote_delta,
-            )):
-                continue
-            key = (metrics.vote_delta, metrics.team_net_vote_delta,
-                   metrics.responsibility_delta, metrics.target_delta,
-                   metrics.broad_delta, candidate.candidate_id)
-            eligible.append((key, candidate.candidate_id))
-        return tuple(row[1] for row in sorted(eligible, reverse=True)[:2])
+    def __init__(self):
+        super().__init__(diagnostic_key="bbh_probe")
 
 
 class CurrentBBHTransitionPolicy:

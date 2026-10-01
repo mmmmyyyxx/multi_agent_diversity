@@ -57,6 +57,9 @@ class EquivalencePluralityAggregation:
         self.relation = relation
 
     async def aggregate(self, *, item, member_outputs, benchmark):
+        return self.aggregate_sync(item=item, member_outputs=member_outputs, benchmark=benchmark)
+
+    def aggregate_sync(self, *, item, member_outputs, benchmark):
         require_five(member_outputs)
         if not benchmark.capabilities.binary_plurality_responsibility:
             raise SearchContractError("EQUIVALENCE_PLURALITY_CAPABILITY_REQUIRED")

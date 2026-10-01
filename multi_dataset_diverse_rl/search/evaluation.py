@@ -77,6 +77,24 @@ class PromotionPolicy(Protocol):
     ) -> tuple[str, ...]: ...
 
 
+class FixedPeerPromotion:
+    """Shared frozen catastrophe thresholds, eligibility and promotion key."""
+    def __init__(self, diagnostic_key="team_probe_metrics"):
+        self.diagnostic_key = diagnostic_key
+
+    def select(self, rows):
+        eligible = []
+        for candidate, evaluation in rows:
+            m = evaluation.aggregation_diagnostics[self.diagnostic_key]
+            if m.invalid_delta > 0 or m.vote_delta <= -2 or m.team_net_vote_delta <= -3:
+                continue
+            if not any(v > 0 for v in (m.responsibility_delta, m.target_delta, m.vote_delta, m.broad_delta, m.team_net_vote_delta)):
+                continue
+            eligible.append(((m.vote_delta, m.team_net_vote_delta, m.responsibility_delta,
+                              m.target_delta, m.broad_delta, candidate.candidate_id), candidate.candidate_id))
+        return tuple(i for _, i in sorted(eligible, reverse=True)[:2])
+
+
 class CandidateEvaluationPipeline:
     """Search candidates → team probe → bounded Full; no write-back here."""
 

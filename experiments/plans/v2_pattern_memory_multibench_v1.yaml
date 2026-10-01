@@ -82,14 +82,16 @@ data_bindings:
   math:
     canonical_manifest: data/benchmark_suite_v1/manifests/math.json
     canonical_manifest_sha256: 7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f
-    experiment_split_manifest: experiments/data_splits/benchmark_experiment_v1/math.json
-    experiment_split_manifest_sha256: 0a960e81fbdf4b3955c397c1b263a5d1e7f975674d4222039acb131c813d79c3
+    experiment_split_manifest: experiments/data_splits/benchmark_experiment_v1_1/math.json
+    experiment_split_manifest_sha256: 753a24c9e2ee7bb6d7531c53acc83eacf562a431292d271a8d75ef0156fed70b
     scientific_contract_sha256: 00f3377e1a3cc1452e0cbba51a41ae25777a3c5eaa020622b45f44b9229509f3
     membership_hashes:
-      optimize: 07736245014e15c4a1b3f6365794b9bfd25d58032ee04fb0578731c6bf23fec9
-      shadow: 80d238e21644777f348694e2df3a93af395abbca648fb0e4e3f0c01211be3667
+      optimize: 52fd0a0253730a4392c879374d0963c46df4aa7daf042f3c0970162f87dbc947
+      shadow: 3f730fb428b3059d021c5b8354bad234939b16be79dc808dc41688206344ee74
       test: 9cba0605a224f1c1ebe15a01c65d1263f8cbee45d8ec2cfd67d496b119a6c32d
-      validation: 1016db4741d49bc8c965b6dbc5bfa55c30f5a4fa77165e70494e6f6cd0d698b3
+      validation: 506c2c10beff5a14ef593f90a13929ad4519e0921d4957df00a4c1b152b4cd22
+    experiment_split_version: benchmark_experiment_split_v1_1
+    reference_validity_policy: MATH_REFERENCE_VALIDITY_V1
   ifbench:
     canonical_manifest: data/benchmark_suite_v1/manifests/ifbench.json
     canonical_manifest_sha256: 7076ebb0dac504fd279093043dd3851be0d2d577af8d02a530b08a7840181e2d
@@ -112,3 +114,15 @@ data_bindings:
       shadow: 8fbafd859b76adaa78a4806fe41e8f62f364eec8cb3d38386d5f27634351f6d0
       test: f024aae08b5f4dd15f9805635563ff256004d97ff25c27d43e87693f4ef53ed6
       validation: 64c5304bf014cb19ec2b10e27aacad49ffeb35f21b1e733abd060cd68822f983
+historical_data_bindings:
+  math_pre_reference_validity_v1:
+    canonical_manifest: data/benchmark_suite_v1/manifests/math.json
+    canonical_manifest_sha256: 7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f
+    experiment_split_manifest: experiments/data_splits/benchmark_experiment_v1/math.json
+    experiment_split_manifest_sha256: 0a960e81fbdf4b3955c397c1b263a5d1e7f975674d4222039acb131c813d79c3
+    scientific_contract_sha256: 00f3377e1a3cc1452e0cbba51a41ae25777a3c5eaa020622b45f44b9229509f3
+    membership_hashes:
+      optimize: 07736245014e15c4a1b3f6365794b9bfd25d58032ee04fb0578731c6bf23fec9
+      shadow: 80d238e21644777f348694e2df3a93af395abbca648fb0e4e3f0c01211be3667
+      test: 9cba0605a224f1c1ebe15a01c65d1263f8cbee45d8ec2cfd67d496b119a6c32d
+      validation: 1016db4741d49bc8c965b6dbc5bfa55c30f5a4fa77165e70494e6f6cd0d698b3

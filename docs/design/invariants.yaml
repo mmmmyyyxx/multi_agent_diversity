@@ -534,3 +534,24 @@ invariants:
   failure_refs: []
   critical: true
   status: ACTIVE
+- id: INV-MATH-REFERENCE-VALIDITY-001
+  description: MATH V1.1 preexecution contract; see normative specification.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/data_preparation/math_reference_split.py
+  tests:
+  - tests/test_math_preexecution.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-MATH-RUNTIME-BINDING-001
+  description: MATH V1.1 preexecution contract; see normative specification.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/benchmarks/math_execution.py
+  - multi_dataset_diverse_rl/search/binary_composition.py
+  tests:
+  - tests/test_math_preexecution.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE

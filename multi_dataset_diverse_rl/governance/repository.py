@@ -23,7 +23,7 @@ ERAS = {'V17_V18_MEMBER_AWARE','GEPA_TWO_LAYER','FORMAL_V3_V4',
         'HISTORICAL_V15_V16_AND_EARLIER'}
 STATUSES = {'COMPLETED','IN_PROGRESS','PREPARED_NOT_EXECUTED','IMPLEMENTED_NOT_EXECUTED',
             'STATUS_UNRESOLVED','SUPERSEDED','ARCHIVED','ABANDONED','INVALID','HOLD',
-            'RUNNING','DRAFT','PREREGISTERED','TRAIN_FROZEN','READY'}
+            'RUNNING','DRAFT','PREREGISTERED','TRAIN_FROZEN','READY','PREEXECUTION_FROZEN'}
 REQUIRED = {'experiment_id','kind','era','method_family','parent_ids','status',
             'scientific_status','implementation_commit','execution_commit','result_commit',
             'manifest','report','classifier','active_for_new_work','historical_replay',
@@ -218,7 +218,21 @@ def audit_repository(root: Path, check_generated: bool=True) -> dict:
             target=target.split('#',1)[0]
             if not (root/path).parent.joinpath(target).exists():docs.append(f'{path}: broken link {target}')
     frontier=load_yaml(root/'experiments/current_frontier.yaml')
-    if frontier.get('real_api_authorized') is not False or frontier.get('real_execution_ready') is not False:docs.append('frontier must not authorize or change readiness')
+    if frontier.get('real_api_authorized') is not False:
+        docs.append('frontier cannot authorize real APIs')
+    readiness=frontier.get('real_execution_ready')
+    if readiness == 'true_for_canary_only':
+        path=frontier.get('canary_manifest')
+        if not path or not (root/path).is_file():
+            docs.append('canary readiness requires a frozen manifest')
+        else:
+            from .unified_execution import bound_preflight
+            if bound_preflight(root,load_yaml(root/path))['blockers']:
+                docs.append('canary readiness binding failed closed')
+        if frontier.get('validation_access')!='not_authorized' or frontier.get('test_access')!='sealed':
+            docs.append('canary readiness cannot unlock held-out access')
+    elif readiness is not False:
+        docs.append('frontier readiness must be closed or explicitly canary-only')
     if frontier.get('last_governance_milestone') not in {r['experiment_id'] for r in registry['experiments']}:docs.append('frontier node missing')
     imports=import_guard(root)
     identity=build_unified_source_identity(root)
@@ -247,4 +261,4 @@ def audit_repository(root: Path, check_generated: bool=True) -> dict:
             'manifest':{'historical_indexed_count':len(manifests),'historical_migrated':False},
             'current_docs':{'errors':docs},'imports':{'errors':imports},'archives':{'count':len(archive_map['archives']),'errors':archive_errors},
             'reports':{'indexed_count':len(index['reports']),'errors':index_errors},'source_identity':identity,
-            'generated_errors':generated,'real_api_authorized':False,'real_execution_ready':False}
+            'generated_errors':generated,'real_api_authorized':False,'real_execution_ready':readiness}

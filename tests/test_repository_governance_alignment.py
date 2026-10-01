@@ -98,7 +98,14 @@ def test_current_frontier_exists(registry):
 def test_current_frontier_has_no_api_authorization():
     frontier=load_yaml(ROOT/'experiments/current_frontier.yaml')
     assert frontier['real_api_authorized'] is False
-    assert frontier['real_execution_ready'] is False
+    if frontier['real_execution_ready'] == 'true_for_canary_only':
+        from multi_dataset_diverse_rl.governance.unified_execution import bound_preflight
+        assert frontier['validation_access']=='not_authorized'
+        manifest=load_yaml(ROOT/frontier['canary_manifest'])
+        assert manifest['lifecycle']['status']=='PREEXECUTION_FROZEN'
+        assert bound_preflight(ROOT,manifest)['gate']=='CANARY_READY_NOT_AUTHORIZED'
+    else:
+        assert frontier['real_execution_ready'] is False
     assert frontier['test_access']=='sealed'
 
 

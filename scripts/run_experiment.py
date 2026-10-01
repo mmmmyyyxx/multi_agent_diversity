@@ -54,6 +54,9 @@ def _load(path: Path) -> Mapping[str, Any]:
 
 
 def preflight(manifest: Mapping[str, Any]) -> dict[str, Any]:
+    if manifest.get("execution_binding") is not None:
+        from multi_dataset_diverse_rl.governance.unified_execution import bound_preflight
+        return bound_preflight(ROOT, manifest)
     scientific = manifest.get("scientific", {})
     if isinstance(scientific, dict) and scientific.get("method") in {"unified_team_prompt_search_v1", "unified_team_prompt_search_v2"}:
         method = SearchMethodConfig.from_mapping({key: value for key, value in scientific.items()
@@ -97,6 +100,12 @@ def preflight(manifest: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def governed_preflight(prep: Path) -> dict[str, Any]:
+    if (prep / "prep.json").is_file():
+        from multi_dataset_diverse_rl.governance.unified_execution import validate_prep
+        value = validate_prep(ROOT, prep)
+        return {"gate": "CANARY_READY_NOT_AUTHORIZED", "ready_for_authorization": True,
+                "attempt_id": value["scope"]["attempt_id"], "startup_identity_sha256": value["startup_identity_sha256"],
+                "provider_attempts": 0, "validation_calls": 0, "test_calls": 0}
     permit = validate_execution(root=ROOT, prep=prep, require_authorized=False)
     formal_pending = permit.experiment_id.startswith("gepa_saturation_comparison_v3_")
     gate = "PREREGISTERED_NOT_EXECUTED"
@@ -136,6 +145,9 @@ async def _execute(manifest: Mapping[str, Any]):
 
 
 async def execute_frozen(prep: Path, run_root: Path) -> dict[str, Any]:
+    if (prep / "prep.json").is_file():
+        from multi_dataset_diverse_rl.governance.unified_execution import execute_canary
+        return await execute_canary(ROOT, prep, run_root)
     permit = validate_execution(root=ROOT, prep=prep, require_authorized=True)
     admitted = admit_execution(permit, run_root)
     try:

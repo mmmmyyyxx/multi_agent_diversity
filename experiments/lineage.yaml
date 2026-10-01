@@ -555,6 +555,8 @@ nodes:
 - experiment_id: math_v2_preexecution_freeze_v1
   kind: PREEXECUTION_FREEZE
   era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_preexecution_freeze_v1_1
+  kind: PREEXECUTION_FREEZE
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -785,19 +787,20 @@ edges:
   to: two_layer_gepa_grounded_refactor_20260910
   relation: refactor_of
   evidence: reports/two_layer_gepa_grounded_refactor_20260910/README.md
-  scope: Engineering source-family migration of the canonical runtime used by V17; not result-derived or efficacy
-    evidence.
+  scope: Engineering source-family migration of the canonical runtime used by V17;
+    not result-derived or efficacy evidence.
 - from: two_layer_gepa_grounded_refactor_20260910
   to: gepa_saturation_comparison_v2
   relation: freeze_of
   evidence: experiments/manifests/gepa_saturation_comparison_v2.yaml
-  scope: Engineering freeze of backend-neutral controller with official GEPA Level-B, not a claim of the same scientific
-    protocol.
+  scope: Engineering freeze of backend-neutral controller with official GEPA Level-B,
+    not a claim of the same scientific protocol.
 - from: gepa_saturation_comparison_v2
   to: gepa_saturation_comparison_v3
   relation: derived_from
   evidence: experiments/gepa_saturation_comparison_v3/PROTOCOL.md
-  scope: Protocol explicitly states V3 supersedes the unexecuted V2 freeze; frozen scientific results are unchanged.
+  scope: Protocol explicitly states V3 supersedes the unexecuted V2 freeze; frozen
+    scientific results are unchanged.
 - from: repository_hygiene_alignment_v1
   to: unified_team_prompt_search_v2_method_refactor
   relation: refactor_of
@@ -812,7 +815,8 @@ edges:
   to: v2_pattern_memory_factorial_v1_1
   relation: derived_from
   evidence: reports/v2_pattern_memory_factorial_v1_1_20261001/preexecution/protocol_revision.md
-  scope: Proposed within-V2 factorial; no historical V1 causal comparison or efficacy observation.
+  scope: Proposed within-V2 factorial; no historical V1 causal comparison or efficacy
+    observation.
 - from: v2_pattern_memory_factorial_v1_preexecution_audit
   to: v2_pattern_memory_factorial_v1_1
   relation: followup_of
@@ -847,10 +851,18 @@ edges:
   to: math_v2_preexecution_freeze_v1
   relation: freeze_of
   evidence: reports/math_v2_preexecution_freeze_v1_20261001/README.md
-  scope: Zero-API attempted preexecution freeze stopped on a missing Optimize reference; no efficacy evidence.
+  scope: Zero-API attempted preexecution freeze stopped on a missing Optimize reference;
+    no efficacy evidence.
 - from: unified_team_prompt_search_v2_method_refactor
   to: math_v2_preexecution_freeze_v1
   relation: freeze_of
   evidence: reports/math_v2_preexecution_freeze_v1_20261001/README.md
-  scope: Zero-API attempted preexecution freeze; no runtime method or authorization change.
+  scope: Zero-API attempted preexecution freeze; no runtime method or authorization
+    change.
+- from: math_v2_preexecution_freeze_v1
+  to: math_v2_preexecution_freeze_v1_1
+  relation: resolves_blockers_of
+  evidence: reports/math_v2_preexecution_freeze_v1_1_20261001/README.md
+  scope: Zero-API reference validity and runtime conformance closure; no efficacy
+    evidence.
 current_frontier: experiments/current_frontier.yaml

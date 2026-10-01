@@ -54,8 +54,17 @@ def evaluate_shadow_gate(
     catastrophic_target_loss_count: int = SHADOW_CATASTROPHIC_TARGET_LOSS_COUNT,
 ) -> ShadowGateDecision:
     """Apply the frozen v1 gate without scores, retries, or feedback."""
-    if metrics.row_count != 50:
-        raise ValueError("shadow gate requires exactly 50 rows")
+    return evaluate_configured_shadow_gate(metrics, expected_row_count=50,
+        catastrophic_target_loss_count=catastrophic_target_loss_count)
+
+
+def evaluate_configured_shadow_gate(
+    metrics: ShadowGateMetrics, *, expected_row_count: int,
+    catastrophic_target_loss_count: int = SHADOW_CATASTROPHIC_TARGET_LOSS_COUNT,
+) -> ShadowGateDecision:
+    """Same frozen guard; cardinality comes from the bound split manifest."""
+    if type(expected_row_count) is not int or expected_row_count <= 0 or metrics.row_count != expected_row_count:
+        raise ValueError("shadow gate manifest cardinality mismatch")
     if catastrophic_target_loss_count < 0:
         raise ValueError("catastrophic threshold must be non-negative")
     reasons: list[str] = []

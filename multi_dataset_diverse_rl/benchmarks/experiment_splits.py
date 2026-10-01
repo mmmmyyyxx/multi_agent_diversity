@@ -11,7 +11,8 @@ import hashlib
 import json
 from pathlib import Path
 
-from ..versions import BENCHMARK_EXPERIMENT_SPLIT_VERSION, CURRENT_RESEARCH_BENCHMARK_SUITE
+from ..versions import (BENCHMARK_EXPERIMENT_SPLIT_VERSION, CURRENT_RESEARCH_BENCHMARK_SUITE,
+                        MATH_EXPERIMENT_SPLIT_VERSION)
 from ..search.schemas import SearchContractError
 from .access import DataPurpose
 from .data_freeze import (SOURCE_PINS, canonical, digest, file_hash, immutable_write,
@@ -57,24 +58,7 @@ def select_groups(benchmark, sources, legacy_members=(), *, seed=SEED):
     if benchmark == "math":
         if {s: len(sources[s]) for s in ("train", "test")} != {"train": 7500, "test": 5000}:
             raise ValueError("STOP_MATH_SOURCE_COUNT_MISMATCH")
-        groups = {}
-        for source, roles in (("train", ROLES[:3]), ("test", ("test",))):
-            pools = {s: hash_order([r for r in sources[source] if subject(r) == s], seed)
-                     for s in SOURCE_PINS["math"]["subject_configs"]}
-            if any(not pool for pool in pools.values()):
-                raise ValueError("MATH_SUBJECT_MISSING")
-            original = {s: len(pool) for s, pool in pools.items()}
-            offsets = Counter()
-            for role in roles:
-                allocation = quotas(original, counts[role])
-                groups[role] = []
-                for s in sorted(pools):
-                    part = pools[s][offsets[s]:offsets[s] + allocation[s]]
-                    if len(part) != allocation[s]:
-                        raise ValueError("MATH_SUBJECT_CAPACITY_EXHAUSTED")
-                    groups[role].extend(part)
-                    offsets[s] += allocation[s]
-        return groups
+        return stratified_math_groups(sources, counts, seed=seed)
     if benchmark == "hotpotqa":
         train, test = hash_order(sources["train"], seed), hash_order(sources["validation"], seed)
         return {"optimize": train[:150], "shadow": train[150:450], "validation": train[450:750], "test": test[:300]}
@@ -85,6 +69,30 @@ def select_groups(benchmark, sources, legacy_members=(), *, seed=SEED):
     used = {r["stable_example_id"] for role in ("optimize", "shadow") for r in groups[role]}
     groups["validation"] = hash_order([r for r in sources["train"] if r["stable_example_id"] not in used], "ifbench_validation_v1")[:300]
     return {role: groups[role] for role in ROLES}
+
+
+def stratified_math_groups(sources, counts, *, seed=SEED):
+    """Unchanged proportional algorithm; caller supplies its versioned universe."""
+    if seed != SEED or counts != COUNTS["math"]:
+        raise ValueError("EXPERIMENT_SPLIT_POLICY_MISMATCH")
+    groups = {}
+    for source, roles in (("train", ROLES[:3]), ("test", ("test",))):
+        pools = {s: hash_order([r for r in sources[source] if subject(r) == s], seed)
+                 for s in SOURCE_PINS["math"]["subject_configs"]}
+        if any(not pool for pool in pools.values()):
+            raise ValueError("MATH_SUBJECT_MISSING")
+        original = {s: len(pool) for s, pool in pools.items()}
+        offsets = Counter()
+        for role in roles:
+            allocation = quotas(original, counts[role])
+            groups[role] = []
+            for s in sorted(pools):
+                part = pools[s][offsets[s]:offsets[s] + allocation[s]]
+                if len(part) != allocation[s]:
+                    raise ValueError("MATH_SUBJECT_CAPACITY_EXHAUSTED")
+                groups[role].extend(part)
+                offsets[s] += allocation[s]
+    return groups
 
 
 def overlap_audit(groups):
@@ -189,7 +197,8 @@ def verify_experiment_split(canonical_root, destination, benchmark, *, expected_
 
 class ExperimentSplitReader:
     """Role API exposes only selected canonical rows, with no held-out fallback."""
-    def __init__(self, canonical_root: Path, destination: Path, benchmark: str, *, expected_manifest_sha256: str):
+    def __init__(self, canonical_root: Path, destination: Path, benchmark: str, *, expected_manifest_sha256: str,
+                 expected_protocol: str = PROTOCOL):
         if benchmark not in COUNTS:
             raise SearchContractError("BENCHMARK_UNKNOWN")
         self.root, self.benchmark = canonical_root, benchmark
@@ -197,9 +206,17 @@ class ExperimentSplitReader:
         if not expected_manifest_sha256 or file_hash(path) != expected_manifest_sha256:
             raise SearchContractError("EXPERIMENT_MANIFEST_IDENTITY_MISMATCH")
         self.manifest = json.loads(path.read_bytes())
-        if (self.manifest["benchmark_id"] != benchmark or self.manifest["protocol"] != PROTOCOL
+        from ..versions import MATH_EXPERIMENT_SPLIT_VERSION, MATH_REFERENCE_VALIDITY_VERSION, MATH_REFERENCE_EXTRACTOR_VERSION
+        if expected_protocol not in {PROTOCOL, MATH_EXPERIMENT_SPLIT_VERSION} or (expected_protocol != PROTOCOL and benchmark != "math"):
+            raise SearchContractError("EXPERIMENT_SPLIT_POLICY_MISMATCH")
+        if (self.manifest["benchmark_id"] != benchmark or self.manifest["protocol"] != expected_protocol
                 or self.manifest["status"] != "FROZEN" or self.manifest["access_policy"] != ACCESS):
             raise SearchContractError("EXPERIMENT_SPLIT_POLICY_MISMATCH")
+        if expected_protocol == MATH_EXPERIMENT_SPLIT_VERSION and (
+                self.manifest.get("reference_validity_policy") != MATH_REFERENCE_VALIDITY_VERSION or
+                self.manifest.get("reference_extractor") != MATH_REFERENCE_EXTRACTOR_VERSION or
+                self.manifest.get("invalid_reference_counts_by_role") != dict.fromkeys(ROLES, 0)):
+            raise SearchContractError("MATH_REFERENCE_POLICY_MISMATCH")
         canonical_path = canonical_root / "manifests" / (benchmark + ".json")
         if file_hash(canonical_path) != self.manifest["canonical_dataset_manifest_sha256"]:
             raise SearchContractError("CANONICAL_MANIFEST_IDENTITY_MISMATCH")
@@ -238,6 +255,8 @@ class ExperimentSplitReader:
                     row, expected = json.loads(line), wanted[index]
                     if any(row[k] != expected[k] for k in ("stable_example_id", "content_sha256", "input_sha256")):
                         raise SearchContractError("EXPERIMENT_SOURCE_ROW_MISMATCH")
+                    if self.manifest["protocol"] == MATH_EXPERIMENT_SPLIT_VERSION and not str(row.get("reference_final_answer") or "").strip():
+                        raise SearchContractError("REFERENCE_INVALID_NOT_SOLVER_WRONG")
                     result[row["stable_example_id"]] = row
         if len(result) != len(selected) or len(selected) != self.manifest["counts"][role]:
             raise SearchContractError("EXPERIMENT_SPLIT_COUNT_MISMATCH")

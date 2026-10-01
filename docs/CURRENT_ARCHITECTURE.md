@@ -37,7 +37,11 @@ boundaries. Mechanism correctness is tested offline; efficacy is unverified.
 Current research benchmarks are MATH, IFBench and HotpotQA. BBH composition
 is retained for historical development/replay and structural tests. Canonical
 data freeze and experiment-facing split readers are separate benchmark modules;
-their access policies precede raw-row resolution. Multibench real composition,
-task-valid initial prompts and governed execution bindings need a future freeze.
-IFBench responsibility and HotpotQA retrieval remain blockers; no real execution
-is ready or authorized.
+their access policies precede raw-row resolution. MATH composition uses the
+shared `binary_composition.py` graph and benchmark-owned `math_execution.py`
+binding. `private_gate.py` owns gate content and `unified_execution.py` owns
+source/startup identity, canary phase and single-use authorization. Reference
+eligibility preparation is isolated in `data_preparation/`, outside runtime.
+Readiness is checked from the permanent versioned manifest; real calls require
+a separate explicit authorization. IFBench responsibility and HotpotQA
+retrieval remain blockers. Efficacy is unverified.

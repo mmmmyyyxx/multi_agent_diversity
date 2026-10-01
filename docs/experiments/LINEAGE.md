@@ -10,21 +10,27 @@ schema_version: current_frontier_v1
 current_architecture: Unified Team Prompt Search
 method_identity: unified_team_prompt_search_v2
 current_method: unified_team_prompt_search_v2
-current_implementation: V2 decoupled admission and variable evidence; Pattern/Memory dormant
-current_experiment: NO_AUTHORIZED_REAL_EXPERIMENT
-current_benchmark_suite: [math, ifbench, hotpotqa]
+current_implementation: MATH V2 benchmark-neutral composition; mechanisms selected
+  only by versioned arms
+current_experiment: math_v2_pattern_memory_v1
+current_benchmark_suite:
+- math
+- ifbench
+- hotpotqa
 historical_benchmark_only: true
 historical_benchmark: bbh
 current_dataset_migration: multibench_dataset_migration_v1
 future_experiment_plan: v2_pattern_memory_multibench_v1
 last_governance_milestone: repository_hygiene_alignment_v1
 last_scientific_contract_milestone: benchmark_scientific_contract_freeze_v1
-real_execution_ready: false
+real_execution_ready: true_for_canary_only
 real_api_authorized: false
 validation_access: not_authorized
 test_access: sealed
 open_questions: docs/research/OPEN_QUESTIONS.md
 last_method_milestone: unified_team_prompt_search_v2_method_refactor
+canary_manifest: experiments/manifests/math_v2_pattern_memory_v1.yaml
+last_preexecution_milestone: math_v2_preexecution_freeze_v1_1
 ```
 
 ## Experiment and engineering DAG
@@ -41,6 +47,7 @@ flowchart TD
     n182["multibench_dataset_migration_v1<br/>DATASET_FREEZE_AND_PROTOCOL_MIGRATION<br/>PREPARED_NOT_EXECUTED"]
     n183["v2_pattern_memory_multibench_v1<br/>FORMAL_EXPERIMENT<br/>PREPARED_NOT_EXECUTED"]
     n184["math_v2_preexecution_freeze_v1<br/>PREEXECUTION_FREEZE<br/>HOLD"]
+    n185["math_v2_preexecution_freeze_v1_1<br/>PREEXECUTION_FREEZE<br/>PREEXECUTION_FROZEN"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -299,6 +306,7 @@ flowchart TD
   n182 -->|derived_from| n183
   n182 -->|freeze_of| n184
   n179 -->|freeze_of| n184
+  n184 -->|resolves_blockers_of| n185
 ```
 
 ## Archived branches and unresolved evidence

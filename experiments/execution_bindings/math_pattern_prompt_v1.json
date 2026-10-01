@@ -1,0 +1,4 @@
+{
+  "identity": "MATH_PATTERN_PROVIDER_PROMPT_V1",
+  "prompt": "Identify failure mechanisms, missing reasoning steps and corrective principles, not topics or entities. Use only supplied Optimize IDs, partition legal residual support, and keep risks and counterexamples inside the supplied universe. Do not rewrite prompts, choose a target or rank members. Return strict JSON with one patterns array. Each item has exactly pattern_id, failure_mechanism, corrective_principle, support_ids, counterexample_ids, risk_ids, confidence; ID collections are arrays and confidence is a number from zero to one."
+}

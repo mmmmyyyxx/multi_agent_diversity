@@ -228,7 +228,8 @@ class V2GEPABridge:
         ids = tuple(r.example_id for r in task.search_examples); m = task.budget.reflection_minibatch_size
         schedule = tuple(tuple(ids[(step*m+j) % len(ids)] for j in range(m))
                          for step in range(task.budget.max_metric_calls // (2*m)))
-        sampler = Layer2FrozenBatchSampler(ordered_batch_schedule=schedule, ordered_example_ids=ids)
+        sampler = Layer2FrozenBatchSampler(ordered_batch_schedule=schedule, ordered_example_ids=ids,
+                                          replay_epochs=True)
         result = await self.optimizer.optimize_with_batch_sampler(task, sampler)
         self.raw_candidates = {r.candidate_id:r for r in result.candidates}
         return result
@@ -243,7 +244,7 @@ class GEPATeamCandidateExposureEngine:
         result = await self.bridge.optimize(self.bridge.make_task(opportunity, context))
         t = result.optimizer_state.payload["telemetry"]
         return SearchResult(tuple(SearchCandidate(r.candidate_id, r.prompt, r.local_score,
-            {}, {**r.backend_metadata, "opportunity_id":opportunity.opportunity_id}) for r in result.candidates),
+            {}, {**r.backend_metadata, "generation":r.generation, "opportunity_id":opportunity.opportunity_id}) for r in result.candidates),
             result.termination_reason, dict(result.optimizer_state.payload), result.solver_calls,
             result.optimizer_calls,
             solver_tokens=result.optimizer_state.payload["token_accounting"]["solver_tokens"],

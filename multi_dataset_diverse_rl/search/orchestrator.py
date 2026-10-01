@@ -144,6 +144,8 @@ class UnifiedSearchOrchestrator:
         memory: MemoryProvider | None = None,
         stop: GlobalStopPolicy | None = None,
         provider_call_reader: Callable[[], int] | None = None,
+        runtime_readiness: Callable[[], Sequence[str]] | None = None,
+        execution_observer: Callable[[str, Mapping[str, Any]], None] | None = None,
     ) -> None:
         self.method = method
         self.benchmark = benchmark
@@ -162,6 +164,8 @@ class UnifiedSearchOrchestrator:
             method.global_stop.no_commit_patience,
         )
         self.provider_call_reader = provider_call_reader
+        self.runtime_readiness = runtime_readiness
+        self.execution_observer = execution_observer
 
     def _emergency_provider_limit_reached(self) -> bool:
         if self.provider_call_reader is None:
@@ -177,7 +181,8 @@ class UnifiedSearchOrchestrator:
         benchmark_id = getattr(self.benchmark, "benchmark_id", None)
         if benchmark_id is not None:
             from ..benchmarks.registry import benchmark_spec
-            blockers = benchmark_spec(benchmark_id).blockers()
+            blockers = (self.runtime_readiness() if self.runtime_readiness is not None
+                        else benchmark_spec(benchmark_id).blockers())
             if blockers:
                 raise SearchContractError("HOLD_PRE_PROVIDER: " + ",".join(blockers))
         if (self.method.diagnosis_policy == versions.UNIFIED_PLURALITY_RESPONSIBILITY_VERSION
@@ -224,12 +229,16 @@ class UnifiedSearchOrchestrator:
                 opportunity,
                 memory_view=dict(self.memory.read_for_opportunity(opportunity)),
             )
+            if self.execution_observer:
+                self.execution_observer("OPPORTUNITY", {"parent": parent, "opportunity": opportunity})
             context = UnifiedSearchContext(
                 self.benchmark, self.aggregation, self.history,
                 opportunity.pattern_context, opportunity.memory_view,
             )
             searched = await self.engine.search(opportunity, context)
             evaluated = await self.evaluation.evaluate(opportunity, searched)
+            if self.execution_observer:
+                self.execution_observer("EVALUATION", {"opportunity_id": opportunity.opportunity_id, "search": searched, "evaluated": evaluated})
             active = await self.evaluation.provider.active(opportunity)
             decision = self.transition.select(active, evaluated)
             selected = decision.candidate.candidate.candidate_id if decision.candidate else None
@@ -262,6 +271,9 @@ class UnifiedSearchOrchestrator:
                 raise SearchContractError("state changed without matching atomic commit")
             if v2:
                 self.memory.apply_outcome(memory_delta)
+            if self.execution_observer:
+                self.execution_observer("TRANSITION", {"opportunity_id": opportunity.opportunity_id, "selected": selected,
+                    "gate_passed": gate_passed, "committed": committed, "child": child})
             stopped = self.stop.observe_opportunity(
                 parent_state_id=parent.team_state_id,
                 eligible_members=tuple(opportunity.objective.get(

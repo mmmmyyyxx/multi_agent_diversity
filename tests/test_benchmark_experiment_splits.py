@@ -156,7 +156,17 @@ def test_current_suite_and_bbh_history_only():
     frontier = load_yaml(root / "experiments/current_frontier.yaml")
     assert frontier["current_benchmark_suite"] == ["math", "ifbench", "hotpotqa"]
     assert frontier["historical_benchmark_only"] is True
-    assert not frontier["real_execution_ready"] and not frontier["real_api_authorized"]
+    assert not frontier["real_api_authorized"]
+    if frontier["real_execution_ready"] == "true_for_canary_only":
+        # Versioned preexecution readiness supersedes the migration-time HOLD;
+        # independent authorization and held-out locks remain closed.
+        from multi_dataset_diverse_rl.governance.unified_execution import bound_preflight
+        assert frontier["validation_access"] == "not_authorized" and frontier["test_access"] == "sealed"
+        manifest = load_yaml(root / frontier["canary_manifest"])
+        assert manifest["lifecycle"]["status"] == "PREEXECUTION_FROZEN"
+        assert not bound_preflight(root, manifest)["blockers"]
+    else:
+        assert frontier["real_execution_ready"] is False
 
 
 def test_public_data_guard_denies_provider_and_hf_inference_before_transport(tmp_path):

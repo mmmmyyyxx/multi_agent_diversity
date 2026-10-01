@@ -8,13 +8,12 @@ import json
 from .. import versions
 from .schemas import SearchContractError
 
-RISK_CODES = frozenset({"TEAM_PROBE_REJECTION", "COMMON_SAFE_REJECTION", "SHADOW_REJECTION", "NEWLY_BROKEN"})
+RISK_CODES = frozenset({"TEAM_PROBE_REJECTION", "COMMON_SAFE_REJECTION", "SHADOW_REJECTION"})
 PRINCIPLES = {
     "SUCCESS": "Preserve fixed-peer team competence while repairing the selected responsibility.",
     "TEAM_PROBE_REJECTION": "Avoid edits that regress fixed-peer team probe behavior.",
     "COMMON_SAFE_REJECTION": "Preserve target, team and valid-output competence on the complete optimization scope.",
     "SHADOW_REJECTION": "Avoid deploying an edit that fails the adaptive safety gate.",
-    "NEWLY_BROKEN": "Preserve previously correct behavior when applying a targeted repair.",
 }
 
 
@@ -110,8 +109,7 @@ class StructuredLongTermMemoryProviderV1:
             cid = row.candidate.candidate_id
             if outcome.committed and cid == outcome.selected_candidate_id:
                 private.append(self._entry(outcome, row, "SUCCESS"))
-                if row.diagnostics.get("team_newly_broken_count", 0):
-                    shared.append(self._entry(outcome, row, "RISK", "NEWLY_BROKEN"))
+                continue
             risk = row.diagnostics.get("scientific_risk_code")
             if cid == outcome.selected_candidate_id and outcome.gate_passed is False:
                 risk = "SHADOW_REJECTION"

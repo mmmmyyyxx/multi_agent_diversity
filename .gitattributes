@@ -25,3 +25,8 @@ requirements-ifbench-evaluators.txt text eol=lf
 # Preserve already-recorded exact byte receipts for the blocked MATH audit.
 reports/math_v2_preexecution_freeze_v1_20261001/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 experiments/initial_teams/math_generic_team_seed_v1.json -text whitespace=trailing-space,space-before-tab,cr-at-eol
+
+# MATH follow-up freeze has new identities; historical HOLD bytes stay intact.
+experiments/initial_teams/math_generic_team_seed_v1_1.json text eol=lf
+experiments/execution_bindings/** text eol=lf
+reports/math_v2_preexecution_freeze_v1_1_20261001/** text eol=lf

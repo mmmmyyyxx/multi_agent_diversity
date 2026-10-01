@@ -293,7 +293,8 @@
             "FROZEN",
             "RUNNING",
             "COMPLETED",
-            "ABORTED"
+            "ABORTED",
+            "PREEXECUTION_FROZEN"
           ]
         },
         "history": {
@@ -363,6 +364,28 @@
     },
     "mechanism_config": {
       "type": "object"
+    },
+    "execution_binding": {
+      "type": "object",
+      "properties": {
+        "identity": {
+          "const": "MATH_EXECUTION_BINDING_V1"
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "identity",
+        "path",
+        "sha256"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [

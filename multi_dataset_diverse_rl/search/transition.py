@@ -90,6 +90,8 @@ class TeamStateCommitter:
                 opportunity.target_member, decision.candidate.candidate.candidate_id,
                 parent_prompt_hash=hashlib.sha256(opportunity.parent_prompt.encode("utf-8")).hexdigest(),
                 child_prompt_hash=hashlib.sha256(decision.candidate.candidate.prompt.encode("utf-8")).hexdigest(),
+                **(self.store.transition_fields(parent, child, opportunity.target_member)
+                   if hasattr(self.store, "transition_fields") else {}),
             )
             history.observe_transition(record)
             memory.observe_transition(record)
