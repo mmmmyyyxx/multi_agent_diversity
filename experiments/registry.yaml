@@ -5557,3 +5557,31 @@ experiments:
     execution_commit: No real execution authorized or performed.
     result_commit: No formal result exists.
   baseline_commit: bad63e9577573a3bea7d004f3a6e333778c967ad
+- experiment_id: v2_pattern_memory_factorial_v1_preexecution_audit
+  kind: ZERO_API_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2
+  parent_ids:
+  - unified_team_prompt_search_v2_method_refactor
+  status: HOLD
+  scientific_status: PREEXECUTION_BLOCKED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: null
+  report: reports/v2_pattern_memory_factorial_v1_20261001
+  classifier: PREEXECUTION_BLOCKED
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Zero-API audit of the proposed factorial experiment; A0/A1 search budget equivalence fails.
+  - No execution freeze, canary, real API call, or efficacy observation; publication does not authorize execution.
+  reports:
+  - reports/v2_pattern_memory_factorial_v1_20261001
+  unavailable:
+    manifest: STOP gate failed before preregistration and execution freeze.
+    implementation_commit: No source changes were made by this audit.
+    execution_commit: No execution source was frozen and no real experiment ran.
+    result_commit: Audit publication is recorded by its containing Git commit; no scientific result exists.
+  baseline_commit: 0da8bf96e957ae227fdbf988ad6e3d67cd190ef7

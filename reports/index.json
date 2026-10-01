@@ -2065,6 +2065,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/v2_pattern_memory_factorial_v1_20261001",
+      "document": "reports/v2_pattern_memory_factorial_v1_20261001/README.md",
+      "date": "20261001",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "ZERO_API",
+      "experiment_id": "v2_pattern_memory_factorial_v1_preexecution_audit",
+      "status": "HOLD",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/v3_preexecution_fault_campaign_20260927",
       "document": "reports/v3_preexecution_fault_campaign_20260927/README.md",
       "date": "20260927",

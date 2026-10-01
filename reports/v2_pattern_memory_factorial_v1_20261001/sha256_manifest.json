@@ -1,0 +1,25 @@
+{
+  "byte_scope": "UTF-8 LF report bytes matching staged Git blobs; excludes itself",
+  "files": [
+    {
+      "path": "preexecution/budget_equivalence_gate.json",
+      "sha256": "d60d9b23fc178f450d92204ff9ca87a2bb09782e690da8ac8cf635336b6b65a2"
+    },
+    {
+      "path": "preexecution/final_requested_fields.json",
+      "sha256": "48f5faf0a7bf096057efa4b4eb9d362e8e17dafa0ed77ffd7c7aaee73bc71bf7"
+    },
+    {
+      "path": "preexecution/prerequisite_identity_audit.json",
+      "sha256": "06bcfccfc85b241b9f1e757594cdd1551364464611b3685614f2543f7ed1e36f"
+    },
+    {
+      "path": "preexecution/zero_api_sanitization_audit.json",
+      "sha256": "e481043a049a5e55ff5528e28aca3345487894d709a9d0ef05a9d24756399aeb"
+    },
+    {
+      "path": "README.md",
+      "sha256": "4222dd06274d02f9780cc2ca439138973de8cefc0f34cd71fed349f97b85c2a3"
+    }
+  ]
+}

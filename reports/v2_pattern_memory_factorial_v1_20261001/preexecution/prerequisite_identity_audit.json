@@ -1,0 +1,61 @@
+{
+  "baseline_sha": "0da8bf96e957ae227fdbf988ad6e3d67cd190ef7",
+  "dataset_downloads": 0,
+  "fold_assignment_lf_sha256": "4b093252dc4ea45e5e0a1b56d37ed359377cb6995a461c404b8b9f732bcb96a4",
+  "head_origin_main_baseline_verified": true,
+  "heldout_content_sent_to_any_provider": false,
+  "model_identity_source": "runs/formal_v3_attempt4_concurrent_refreeze_a_20260930/gepa_saturation_comparison_v3_seed81_layer2_attempt4/manifest.json",
+  "models_resolved_from_frozen_config": {
+    "endpoint_fingerprint": "f2f656306ffa3dd37d1c50afda9b5e74787fd90b28bf7263d0ef2002f8b7d6a3",
+    "optimizer_model": "qwen3.7-flash",
+    "provider_profile": "lwj",
+    "solver_model": "qwen3-8b"
+  },
+  "new_experiment_registered": false,
+  "new_memory_real_contract_frozen": false,
+  "new_pattern_real_contract_frozen": false,
+  "question_hash_set_hash_semantics": "sorted_unique_canonical_json_utf8_lf_v1",
+  "raw_source_receipts": [
+    {
+      "file": "opt.csv",
+      "matches_frozen_source": true,
+      "sha256": "5491dfdf103802eb02aa49521dbde52d41a3bd2acbdfcf72837260de5033880c"
+    },
+    {
+      "file": "test.csv",
+      "matches_frozen_source": true,
+      "sha256": "e42c3f3d93583aed353099f4e28c012ff62028f682ebdb758435b4c8755e3ae0"
+    },
+    {
+      "file": "val.csv",
+      "matches_frozen_source": true,
+      "sha256": "79591c8614188670757849a96c65742e34a03314cb4299568c9f917be96d2ccb"
+    }
+  ],
+  "real_api_used": false,
+  "source_modified": false,
+  "split_manifest_lf_sha256": "42843456e13bbbda1a86615ae278ff059372dc199a8ccf5ade4cb338641d12c4",
+  "split_sets_pairwise_disjoint": true,
+  "splits": {
+    "Optimize100": {
+      "count": 100,
+      "identity": "anti_overfitting_split_v1/fold_a+fold_b",
+      "question_hash_set_sha256": "d1aa6e83e545466b037b7ff0d5ff25470030e3b8067bc80cbedd098e217b973a"
+    },
+    "Shadow50": {
+      "count": 50,
+      "identity": "anti_overfitting_split_v1/fold_c",
+      "question_hash_set_sha256": "04b7f74e986f45135ea00b1c30e6a700cbf83f0b08b24c4d057b90a232e9b100"
+    },
+    "Test50": {
+      "count": 50,
+      "identity": "anti_overfitting_split_v1/test",
+      "question_hash_set_sha256": "949517a268fbfae82bd15006ed0cb870fd41f9bc03bd782797fb4dce01a13747"
+    },
+    "Validation50": {
+      "count": 50,
+      "identity": "anti_overfitting_split_v1/validation",
+      "question_hash_set_sha256": "d6514ca588f124460502afbc44a5314e9ef7f141ee826411cb6f02abad736df5"
+    }
+  }
+}

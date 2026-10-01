@@ -1,0 +1,62 @@
+{
+  "baseline_sha": "0da8bf96e957ae227fdbf988ad6e3d67cd190ef7",
+  "canary_allowed": false,
+  "code_changed": false,
+  "dataset_downloads": 0,
+  "evidence_class": "PUBLIC_GEPA_INVOCATION_CAPTURE_WITH_SYNTHETIC_TASK",
+  "factory_evidence": "search/current_bbh_runtime.py requires enabled V1 saturation; local_optimizers/gepa_native.py selects optimize_saturation.",
+  "gate": "A0_A1_SEARCH_BUDGET_EQUIVALENCE",
+  "gate_result": "FAIL",
+  "guarded_log_receipt": {
+    "path": "runs/v2_pattern_memory_preexecution_gate_20261001/budget_probe_capture2.log",
+    "sha256": "2e0ccaf2080f0f65bf91ebabbdcda5a6a01c50ddf07ad271c6a58f003de5e986"
+  },
+  "observations": {
+    "A0_V1": {
+      "declared_task_metric_budget": 36,
+      "local_validation_count": 12,
+      "optimizer_engine_replaced_by_capture_at_public_call_boundary": true,
+      "public_gepa_max_metric_calls": null,
+      "reflection_calls": 0,
+      "solver_calls": 0,
+      "stop_callback_type": "_GEPASaturationCallback"
+    },
+    "A1_V2": {
+      "declared_task_metric_budget": 36,
+      "local_validation_count": 12,
+      "optimizer_engine_replaced_by_capture_at_public_call_boundary": true,
+      "public_gepa_max_metric_calls": 36,
+      "reflection_calls": 0,
+      "solver_calls": 0,
+      "stop_callback_type": "function"
+    }
+  },
+  "probe_limitations": "Captures wrapper invocation parameters only; no real GEPA search, Solver measurement or efficacy evidence.",
+  "protocol_frozen": false,
+  "provider_calls": 0,
+  "reason": "Task requires matched search metric budgets; current V1 real composition requires saturation and passes max_metric_calls=None, whereas V2 explicitly bounds it to 36.",
+  "source_receipts": [
+    {
+      "normalized_lf_sha256": "7aa58aca805a10539d43d92eb2631e903d4fcf68c26e15698f42c54b7ac9b993",
+      "path": "multi_dataset_diverse_rl/search/current_bbh_runtime.py"
+    },
+    {
+      "normalized_lf_sha256": "d78b4f21f615a9b5234b416cc5450c39788673fe73aaf375c6a252eee4e7072e",
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py"
+    },
+    {
+      "normalized_lf_sha256": "58de8c2b6b89a33fddfb3c810f388c8c2a6f5e91907e77161d4b0c2276cae0e5",
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py"
+    },
+    {
+      "normalized_lf_sha256": "8c14ba0fc5dc4e40c8b53eb391fb587f3cdf82e8f03ff3cb55063d3498c54075",
+      "path": "multi_dataset_diverse_rl/search/gepa_v2.py"
+    }
+  ],
+  "status": "PREEXECUTION_BLOCKED",
+  "test_model_calls": 0,
+  "test_unlocked": false,
+  "v1_method_identity": "4064d39fb39bb702f10b59d14b88d1c55e663d143331cf73144870ff34d3221c",
+  "v2_method_identity": "743efee620e00242a822da2fb6a266ff63ea805bf823801be342f15683261ca3",
+  "validation_model_calls": 0
+}

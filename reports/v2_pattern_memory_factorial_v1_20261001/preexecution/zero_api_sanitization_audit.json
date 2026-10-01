@@ -1,0 +1,21 @@
+{
+  "dataset_downloads": 0,
+  "git_pushes": 0,
+  "guard_bootstrap": "PASS",
+  "guard_negative_control": "PASS",
+  "initial_probe_harness_issue": "Missing fake evaluator contract attributes; corrected only the ignored probe before capture. No provider evaluation occurred.",
+  "issues": [],
+  "memory_llm_calls": 0,
+  "non_model_network": [
+    "git fetch origin for baseline identity"
+  ],
+  "normal_guarded_network_attempts": 0,
+  "preexecution_commit_created": false,
+  "real_optimizer_calls": 0,
+  "real_pattern_calls": 0,
+  "real_solver_calls": 0,
+  "source_edits": 0,
+  "status": "PASS",
+  "test_model_calls": 0,
+  "validation_model_calls": 0
+}

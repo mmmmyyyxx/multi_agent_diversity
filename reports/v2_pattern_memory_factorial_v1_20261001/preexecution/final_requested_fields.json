@@ -1,0 +1,403 @@
+{
+  "hard_gate_failure": "A0_A1_SEARCH_BUDGET_EQUIVALENCE",
+  "missing_values_policy": "null means no observation, never measured zero; preexecution STOP is not a negative efficacy result",
+  "ordered_fields": [
+    {
+      "field": "BASE_SHA",
+      "number": 1,
+      "value": "0da8bf96e957ae227fdbf988ad6e3d67cd190ef7"
+    },
+    {
+      "field": "PREEXECUTION_SHA",
+      "number": 2,
+      "value": null
+    },
+    {
+      "field": "EXECUTION_SHA",
+      "number": 3,
+      "value": null
+    },
+    {
+      "field": "result_commit_sha",
+      "number": 4,
+      "value": null
+    },
+    {
+      "field": "dirty_tree_status",
+      "number": 5,
+      "value": "Tracked clean; only new untracked blocker report and preserved unrelated retry2 directory"
+    },
+    {
+      "field": "exact_BBH_split_identities",
+      "number": 6,
+      "value": {
+        "Optimize100": {
+          "count": 100,
+          "identity": "anti_overfitting_split_v1/fold_a+fold_b",
+          "question_hash_set_sha256": "d1aa6e83e545466b037b7ff0d5ff25470030e3b8067bc80cbedd098e217b973a"
+        },
+        "Shadow50": {
+          "count": 50,
+          "identity": "anti_overfitting_split_v1/fold_c",
+          "question_hash_set_sha256": "04b7f74e986f45135ea00b1c30e6a700cbf83f0b08b24c4d057b90a232e9b100"
+        },
+        "Test50": {
+          "count": 50,
+          "identity": "anti_overfitting_split_v1/test",
+          "question_hash_set_sha256": "949517a268fbfae82bd15006ed0cb870fd41f9bc03bd782797fb4dce01a13747"
+        },
+        "Validation50": {
+          "count": 50,
+          "identity": "anti_overfitting_split_v1/validation",
+          "question_hash_set_sha256": "d6514ca588f124460502afbc44a5314e9ef7f141ee826411cb6f02abad736df5"
+        }
+      }
+    },
+    {
+      "field": "exact_initial_team_identity",
+      "number": 7,
+      "value": "NOT_FROZEN"
+    },
+    {
+      "field": "solver_model",
+      "number": 8,
+      "value": "qwen3-8b"
+    },
+    {
+      "field": "optimizer_model",
+      "number": 9,
+      "value": "qwen3.7-flash"
+    },
+    {
+      "field": "Pattern_model",
+      "number": 10,
+      "value": "NOT_FROZEN; task requires same qwen3.7-flash identity as optimizer"
+    },
+    {
+      "field": "Pattern_prompt_hash",
+      "number": 11,
+      "value": null
+    },
+    {
+      "field": "Memory_limits",
+      "number": 12,
+      "value": {
+        "max_context_chars": 1200,
+        "max_private_entries_per_member": 24,
+        "max_shared_entries": 48,
+        "status": "TASK_SPECIFIED_NOT_FROZEN",
+        "top_k_private": 3,
+        "top_k_shared": 3
+      }
+    },
+    {
+      "field": "canary_status",
+      "number": 13,
+      "value": "NOT_RUN_PREEXECUTION_BLOCKED"
+    },
+    {
+      "field": "canary_provider_calls",
+      "number": 14,
+      "value": 0
+    },
+    {
+      "field": "candidate_transfer_funnel",
+      "number": 15,
+      "value": "NOT_RUN_PREEXECUTION_BLOCKED"
+    },
+    {
+      "field": "locally_rejected_exports",
+      "number": 16,
+      "value": null
+    },
+    {
+      "field": "locally_rejected_commits",
+      "number": 17,
+      "value": null
+    },
+    {
+      "field": "A1_seed81_status",
+      "number": 18,
+      "value": "NOT_RUN_PREEXECUTION_BLOCKED"
+    },
+    {
+      "field": "A1_seed82_status",
+      "number": 19,
+      "value": "NOT_RUN_PREEXECUTION_BLOCKED"
+    },
+    {
+      "field": "A1_seed83_status",
+      "number": 20,
+      "value": "NOT_RUN_PREEXECUTION_BLOCKED"
+    },
+    {
+      "field": "Pattern_diagnostic_count",
+      "number": 21,
+      "value": 0
+    },
+    {
+      "field": "Pattern_schema_valid_rate",
+      "number": 22,
+      "value": null
+    },
+    {
+      "field": "mixed_pattern_rate",
+      "number": 23,
+      "value": null
+    },
+    {
+      "field": "mean_median_DPR",
+      "number": 24,
+      "value": null
+    },
+    {
+      "field": "mean_median_entropy",
+      "number": 25,
+      "value": null
+    },
+    {
+      "field": "focus_changes_batch_rate",
+      "number": 26,
+      "value": null
+    },
+    {
+      "field": "Pattern_precondition_gate",
+      "number": 27,
+      "value": "NOT_EVALUATED"
+    },
+    {
+      "field": "potential_private_writes",
+      "number": 28,
+      "value": null
+    },
+    {
+      "field": "potential_shared_risk_writes",
+      "number": 29,
+      "value": null
+    },
+    {
+      "field": "nonempty_post_write_memory_reads",
+      "number": 30,
+      "value": null
+    },
+    {
+      "field": "seeds_with_memory_exposure",
+      "number": 31,
+      "value": null
+    },
+    {
+      "field": "Memory_exposure_gate",
+      "number": 32,
+      "value": "NOT_EVALUATED"
+    },
+    {
+      "field": "arms_actually_run",
+      "number": 33,
+      "value": []
+    },
+    {
+      "field": "arm_seed_completeness_matrix",
+      "number": 34,
+      "value": {
+        "A0": {
+          "81": "NOT_RUN_PREEXECUTION_BLOCKED",
+          "82": "NOT_RUN_PREEXECUTION_BLOCKED",
+          "83": "NOT_RUN_PREEXECUTION_BLOCKED"
+        },
+        "A1": {
+          "81": "NOT_RUN_PREEXECUTION_BLOCKED",
+          "82": "NOT_RUN_PREEXECUTION_BLOCKED",
+          "83": "NOT_RUN_PREEXECUTION_BLOCKED"
+        },
+        "A2": {
+          "81": "NOT_RUN_PREEXECUTION_BLOCKED",
+          "82": "NOT_RUN_PREEXECUTION_BLOCKED",
+          "83": "NOT_RUN_PREEXECUTION_BLOCKED"
+        },
+        "A3": {
+          "81": "NOT_RUN_PREEXECUTION_BLOCKED",
+          "82": "NOT_RUN_PREEXECUTION_BLOCKED",
+          "83": "NOT_RUN_PREEXECUTION_BLOCKED"
+        },
+        "A4": {
+          "81": "NOT_RUN_PREEXECUTION_BLOCKED",
+          "82": "NOT_RUN_PREEXECUTION_BLOCKED",
+          "83": "NOT_RUN_PREEXECUTION_BLOCKED"
+        }
+      }
+    },
+    {
+      "field": "Validation_VoteAcc",
+      "number": 35,
+      "value": null
+    },
+    {
+      "field": "Pattern_simple_effect",
+      "number": 36,
+      "value": null
+    },
+    {
+      "field": "Memory_simple_effect",
+      "number": 37,
+      "value": null
+    },
+    {
+      "field": "Pattern_factorial_main_effect",
+      "number": 38,
+      "value": null
+    },
+    {
+      "field": "Memory_factorial_main_effect",
+      "number": 39,
+      "value": null
+    },
+    {
+      "field": "Pattern_Memory_interaction",
+      "number": 40,
+      "value": null
+    },
+    {
+      "field": "Pattern_mechanism_metrics",
+      "number": 41,
+      "value": null
+    },
+    {
+      "field": "Memory_mechanism_metrics",
+      "number": 42,
+      "value": null
+    },
+    {
+      "field": "Pattern_classification",
+      "number": 43,
+      "value": "NOT_RUN"
+    },
+    {
+      "field": "Memory_classification",
+      "number": 44,
+      "value": "NOT_RUN"
+    },
+    {
+      "field": "joint_classification",
+      "number": 45,
+      "value": "NOT_ESTIMABLE"
+    },
+    {
+      "field": "A2C_triggered",
+      "number": 46,
+      "value": false
+    },
+    {
+      "field": "A2_vs_A2C",
+      "number": 47,
+      "value": null
+    },
+    {
+      "field": "Pattern_specificity_classification",
+      "number": 48,
+      "value": "NOT_TESTED"
+    },
+    {
+      "field": "Validation_bootstrap",
+      "number": 49,
+      "value": null
+    },
+    {
+      "field": "TEST_UNLOCK_status",
+      "number": 50,
+      "value": "SEALED; not generated"
+    },
+    {
+      "field": "Test_VoteAcc",
+      "number": 51,
+      "value": null
+    },
+    {
+      "field": "Test_paired_effects",
+      "number": 52,
+      "value": null
+    },
+    {
+      "field": "Test_bootstrap",
+      "number": 53,
+      "value": null
+    },
+    {
+      "field": "total_real_Solver_calls",
+      "number": 54,
+      "value": 0
+    },
+    {
+      "field": "total_optimizer_calls",
+      "number": 55,
+      "value": 0
+    },
+    {
+      "field": "total_real_Pattern_calls",
+      "number": 56,
+      "value": 0
+    },
+    {
+      "field": "total_provider_tokens",
+      "number": 57,
+      "value": 0
+    },
+    {
+      "field": "per_arm_cost",
+      "number": 58,
+      "value": {
+        "A0": 0,
+        "A1": 0,
+        "A2": 0,
+        "A3": 0,
+        "A4": 0
+      }
+    },
+    {
+      "field": "Validation_leakage_count",
+      "number": 59,
+      "value": 0
+    },
+    {
+      "field": "Test_leakage_count",
+      "number": 60,
+      "value": 0
+    },
+    {
+      "field": "illegal_Memory_writes",
+      "number": 61,
+      "value": 0
+    },
+    {
+      "field": "illegal_Pattern_references",
+      "number": 62,
+      "value": 0
+    },
+    {
+      "field": "dataset_downloads",
+      "number": 63,
+      "value": 0
+    },
+    {
+      "field": "accidental_raw_payload_report_files",
+      "number": 64,
+      "value": 0
+    },
+    {
+      "field": "secret_scan",
+      "number": 65,
+      "value": "PASS"
+    }
+  ],
+  "scientific_classification": {
+    "MEMORY_EFFICACY": "NOT_RUN",
+    "MEMORY_EXPOSURE": "NOT_EVALUATED",
+    "PATTERN_EFFICACY": "NOT_RUN",
+    "PATTERN_MEMORY_INTERACTION": "NOT_ESTIMABLE",
+    "PATTERN_PRECONDITION": "NOT_EVALUATED",
+    "PATTERN_SPECIFICITY": "NOT_TESTED",
+    "SCIENTIFIC_EFFICACY_VERIFIED": "NO",
+    "TEST_COMPLETE": "NO",
+    "V2_CORE": "NOT_EVALUATED"
+  },
+  "status": "PREEXECUTION_BLOCKED"
+}
