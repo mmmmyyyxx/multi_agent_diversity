@@ -121,7 +121,8 @@ def build_unified_source_identity(workspace: Path, dataset_manifest: Path | None
         *list((root/'experiments/schema').rglob('*.json')), *bootstrap_files])
     benchmark = hash_scope(root, [*[p for p in (root/'multi_dataset_diverse_rl/benchmarks').rglob('*')
         if p.is_file() and '__pycache__' not in p.parts and p.suffix in {'.py','.json','.md','.txt'}],
-        root/'requirements-benchmark-evaluators.txt'])
+        root/'requirements-benchmark-evaluators.txt',
+        root/'requirements-ifbench-evaluators.txt'])
     data = hash_scope(root, [dataset] if dataset is not None else [])
     return {'source_identity_version':'unified_source_identity_v1',
             'scientific_source_hash':scientific['sha256'],

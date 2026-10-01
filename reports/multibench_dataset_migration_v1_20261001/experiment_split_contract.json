@@ -1,0 +1,89 @@
+{
+  "benchmarks": {
+    "hotpotqa": {
+      "access_policy": {
+        "optimize": [
+          "responsibility",
+          "target",
+          "pattern",
+          "memory",
+          "gepa",
+          "team_probe",
+          "full"
+        ],
+        "shadow": "ADAPTIVE_GATE_ONLY_SCORE_PASS_FAIL",
+        "test": "SEALED_REQUIRES_SEPARATE_AUTHORIZATION",
+        "validation": "POST_FREEZE_READ_ONLY_NEVER_ADAPTIVE"
+      },
+      "canonical_dataset_manifest_sha256": "649f9953b8ed6cd226fc6ccd803551929cedce6782bd9bc63f5be7a12f1a9ea6",
+      "counts": {
+        "optimize": 150,
+        "shadow": 300,
+        "test": 300,
+        "validation": 300
+      },
+      "exactness": "PROJECT_PROPOSED",
+      "project_test_source": "official_validation",
+      "source_revision": "1908d6afbbead072334abe2965f91bd2709910ab",
+      "split_algorithm": "SHA256(str(seed)+stable_id); train offsets 0:150/150:450/450:750; labeled validation first 300"
+    },
+    "ifbench": {
+      "access_policy": {
+        "optimize": [
+          "responsibility",
+          "target",
+          "pattern",
+          "memory",
+          "gepa",
+          "team_probe",
+          "full"
+        ],
+        "shadow": "ADAPTIVE_GATE_ONLY_SCORE_PASS_FAIL",
+        "test": "SEALED_REQUIRES_SEPARATE_AUTHORIZATION",
+        "validation": "POST_FREEZE_READ_ONLY_NEVER_ADAPTIVE"
+      },
+      "canonical_dataset_manifest_sha256": "7076ebb0dac504fd279093043dd3851be0d2d577af8d02a530b08a7840181e2d",
+      "counts": {
+        "optimize": 150,
+        "shadow": 300,
+        "test": 294,
+        "validation": 300
+      },
+      "exactness": "PROJECT_PROPOSED",
+      "project_test_source": "official_test",
+      "source_revision": "cbefbc1aa0f43dd39874ec4bf42211365dbda42e",
+      "split_algorithm": "inherit search/shadow/test exactly; unused train SHA256(ifbench_validation_v1+stable_id) first 300"
+    },
+    "math": {
+      "access_policy": {
+        "optimize": [
+          "responsibility",
+          "target",
+          "pattern",
+          "memory",
+          "gepa",
+          "team_probe",
+          "full"
+        ],
+        "shadow": "ADAPTIVE_GATE_ONLY_SCORE_PASS_FAIL",
+        "test": "SEALED_REQUIRES_SEPARATE_AUTHORIZATION",
+        "validation": "POST_FREEZE_READ_ONLY_NEVER_ADAPTIVE"
+      },
+      "canonical_dataset_manifest_sha256": "7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f",
+      "counts": {
+        "optimize": 150,
+        "shadow": 300,
+        "test": 300,
+        "validation": 300
+      },
+      "exactness": "PROJECT_PROPOSED",
+      "project_test_source": "official_test",
+      "source_revision": "21a5633873b6a120296cce3e2df9d5550074f4a3",
+      "split_algorithm": "original subject proportions; integer largest remainder; lexicographic subject ties; per-subject SHA256(str(seed)+stable_id); sequential disjoint role quotas"
+    }
+  },
+  "heldout_final_evaluation_implementation": "REQUIRES_SEPARATE_FUTURE_FREEZE; current reader denies all Validation/Test raw reads",
+  "protocol": "benchmark_experiment_split_v1",
+  "raw_rows_duplicated": false,
+  "seed": 20261001
+}

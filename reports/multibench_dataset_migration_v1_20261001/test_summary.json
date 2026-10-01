@@ -1,0 +1,33 @@
+{
+  "canonical_and_experiment_verify_only": {
+    "hotpotqa": "PASS",
+    "ifbench": "PASS",
+    "math": "PASS"
+  },
+  "compileall": "PASS",
+  "deselected": 1468,
+  "elapsed_seconds": 309.76,
+  "failed": 0,
+  "focused": {
+    "failed": 0,
+    "passed": 137,
+    "skipped": 2
+  },
+  "git_diff_check": "PASS",
+  "historical_private_artifact_tests": "64 private test cases and 1404 historical replay cases explicitly deselected; full historical replay PASS not claimed",
+  "ifbench_isolated_runtime_positive_negative_and_resource_poison": "PASS",
+  "network_guard_active_before_import": true,
+  "passed": 510,
+  "raw_log_sha256": "d09ac86c98869dcbdb15245a780b954fe5c1d488f79d4884a45690b62ccf7b0a",
+  "real_api_calls": 0,
+  "real_credentials_present": false,
+  "runtime_network_attempts": 0,
+  "sanitization": "PASS",
+  "scope": "CURRENT_CLASSIFIED_SUITE",
+  "skip_reasons": [
+    "HoVer/PUPA real-data manifests absent; outside active three-benchmark suite"
+  ],
+  "skipped": 2,
+  "source_count_and_hash_gates": "PASS",
+  "status": "PASS"
+}

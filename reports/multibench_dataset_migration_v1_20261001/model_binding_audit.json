@@ -1,0 +1,18 @@
+{
+  "applies_to": [
+    "all_three_benchmarks",
+    "all_five_members",
+    "A1/A2/A3/A4",
+    "all_seeds",
+    "adaptive_re_evaluations"
+  ],
+  "benchmark_arm_seed_solver_override_allowed": false,
+  "compatibility_defaults_are_authoritative": false,
+  "identity": "multibench_qwen3_8b_qwen3_7_flash_v1",
+  "optimizer_reflection": "qwen3.7-flash",
+  "pattern": "qwen3.7-flash",
+  "production_config_override_test": "PASS",
+  "real_api_authorized": false,
+  "sha256": "96e393bc337c2ca9ea3ece456a51006f7c5d885585a27ce6c417192dd1c2fe54",
+  "solver": "qwen3-8b"
+}

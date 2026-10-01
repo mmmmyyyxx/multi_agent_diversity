@@ -1,0 +1,28 @@
+{
+  "allowed_http_attempts_by_public_host": {
+    "api.github.com": 1,
+    "files.pythonhosted.org": 95,
+    "github.com": 1,
+    "huggingface.co": 16,
+    "pypi.org": 56,
+    "raw.githubusercontent.com": 4,
+    "release-assets.githubusercontent.com": 1,
+    "us.aws.cdn.hf.co": 16
+  },
+  "api_roles_executed": [],
+  "blocked_non_data_transport_attempts": 0,
+  "credentials_removed": true,
+  "dataset_primary_fetch_attempts": 16,
+  "dataset_retry_count": 0,
+  "dataset_transport_http_attempts_including_redirects": 32,
+  "evaluator_resource_github_http_attempts_observed": 7,
+  "formal_efficacy_runs": 0,
+  "llm_provider_attempts": 0,
+  "offline_guard_positive_and_negative_controls": "PASS",
+  "pip_http_attempts_observed": 151,
+  "public_data_guard_loaded_before_project_import": true,
+  "raw_dataset_bytes_downloaded": 199088156,
+  "synthetic_provider_control_uses_separate_log": true,
+  "test_model_calls": 0,
+  "validation_model_calls": 0
+}

@@ -5,6 +5,12 @@ order. Shared compatibility constants retain their original names and values.
 """
 
 # ACTIVE_UNIFIED_IDENTITIES
+BENCHMARK_EXPERIMENT_SPLIT_VERSION = "benchmark_experiment_split_v1"
+MULTIBENCH_MODEL_BINDING_VERSION = "multibench_qwen3_8b_qwen3_7_flash_v1"
+CURRENT_RESEARCH_BENCHMARK_SUITE = ("math", "ifbench", "hotpotqa")
+CURRENT_EXPERIMENT_SOLVER_MODEL = "qwen3-8b"
+CURRENT_EXPERIMENT_OPTIMIZER_MODEL = "qwen3.7-flash"
+CURRENT_EXPERIMENT_PATTERN_MODEL = "qwen3.7-flash"
 UNIFIED_TEAM_PROMPT_SEARCH_VERSION = "unified_team_prompt_search_v1"
 UNIFIED_GEPA_DERIVED_ENGINE_VERSION = "gepa_derived_v1"
 # V1 identities above and below remain frozen replay contracts.

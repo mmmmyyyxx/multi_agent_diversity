@@ -1,0 +1,114 @@
+schema_version: multibench_research_plan_v1
+experiment_id: v2_pattern_memory_multibench_v1
+status: PREPARED_NOT_EXECUTED
+scientific_status: PREPARED_NOT_EXECUTED
+method: unified_team_prompt_search_v2
+benchmark_suite:
+- math
+- ifbench
+- hotpotqa
+split_protocol: benchmark_experiment_split_v1
+split_seed: 20261001
+model_binding:
+  identity: multibench_qwen3_8b_qwen3_7_flash_v1
+  solver: qwen3-8b
+  optimizer_reflection: qwen3.7-flash
+  pattern: qwen3.7-flash
+  agents: 5
+  applies_to:
+  - all_benchmarks
+  - all_members
+  - A1
+  - A2
+  - A3
+  - A4
+  - all_seeds
+  - adaptive_re_evaluations
+  solver_override_allowed: false
+  sha256: 96e393bc337c2ca9ea3ece456a51006f7c5d885585a27ce6c417192dd1c2fe54
+provider:
+  proposed_identity: lwj
+  execution_policy_frozen: false
+arms:
+  A1:
+    pattern: false
+    memory: false
+  A2:
+    pattern: true
+    memory: false
+  A3:
+    pattern: false
+    memory: true
+  A4:
+    pattern: true
+    memory: true
+phases:
+- benchmark: math
+  role: mechanism_development
+  order: 1
+- benchmark: ifbench
+  role: cross_task_confirmation
+  order: 2
+- benchmark: hotpotqa
+  role: cross_task_confirmation
+  order: 3
+initial_team:
+  status: NOT_FROZEN
+  requirements:
+  - five_task_valid_generic_prompts
+  - ordered_prompt_hashes
+  - team_hash
+  inherit_bbh_prompts: false
+runtime_composition: NOT_BOUND
+seeds: REQUIRE_FUTURE_PREREGISTRATION
+pattern: IMPLEMENTED_DEFAULT_OFF
+memory: IMPLEMENTED_DEFAULT_OFF
+access:
+  optimize: adaptive_search
+  shadow: adaptive_gate_score_pass_fail_only
+  validation: post_freeze_read_only_never_adaptive
+  test: sealed
+real_api_authorized: false
+real_execution_ready: false
+formal_efficacy_runs: 0
+scientific_efficacy_verified: false
+sota_verified: false
+next_steps:
+- MATH V2 preexecution + canary; fresh authorization required
+- IFBench aggregation-aware responsibility freeze
+- HotpotQA retrieval-system freeze
+- Cross-benchmark Pattern/Memory formal protocol
+data_bindings:
+  math:
+    canonical_manifest: data/benchmark_suite_v1/manifests/math.json
+    canonical_manifest_sha256: 7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f
+    experiment_split_manifest: experiments/data_splits/benchmark_experiment_v1/math.json
+    experiment_split_manifest_sha256: 0a960e81fbdf4b3955c397c1b263a5d1e7f975674d4222039acb131c813d79c3
+    scientific_contract_sha256: 00f3377e1a3cc1452e0cbba51a41ae25777a3c5eaa020622b45f44b9229509f3
+    membership_hashes:
+      optimize: 07736245014e15c4a1b3f6365794b9bfd25d58032ee04fb0578731c6bf23fec9
+      shadow: 80d238e21644777f348694e2df3a93af395abbca648fb0e4e3f0c01211be3667
+      test: 9cba0605a224f1c1ebe15a01c65d1263f8cbee45d8ec2cfd67d496b119a6c32d
+      validation: 1016db4741d49bc8c965b6dbc5bfa55c30f5a4fa77165e70494e6f6cd0d698b3
+  ifbench:
+    canonical_manifest: data/benchmark_suite_v1/manifests/ifbench.json
+    canonical_manifest_sha256: 7076ebb0dac504fd279093043dd3851be0d2d577af8d02a530b08a7840181e2d
+    experiment_split_manifest: experiments/data_splits/benchmark_experiment_v1/ifbench.json
+    experiment_split_manifest_sha256: 88ce98dc99016853ab14b73b2da4ae795064b67aee2b570b685e66e613736d85
+    scientific_contract_sha256: ba306c46f91a741f229e99cb3718c67adc333b53f44524de751321dd4aa252d0
+    membership_hashes:
+      optimize: 915efe457211308dea94ea252a092e4d454ba3f8a55a70903a8dfedd32b18f5b
+      shadow: 77dd6e708d6f1e44ad69a891dc36165b8f75392e50e89c347333751a99cd171e
+      test: 9b009a41f19320a2b8211d043535b98ee5aec7d9de00c42865384e626211545e
+      validation: 70415c0bad3720cfc2beadec04f80601e4c8fed5a0e27eff9a5c9aba8eb7d827
+  hotpotqa:
+    canonical_manifest: data/benchmark_suite_v1/manifests/hotpotqa.json
+    canonical_manifest_sha256: 649f9953b8ed6cd226fc6ccd803551929cedce6782bd9bc63f5be7a12f1a9ea6
+    experiment_split_manifest: experiments/data_splits/benchmark_experiment_v1/hotpotqa.json
+    experiment_split_manifest_sha256: c5746cae9ec6ed2c3680445fe2795d59fd9ff05ffe629ae331d9eacc55c24789
+    scientific_contract_sha256: 15a7aaff1c9c337d981ea55ddaaa3206252a0faaa7b246b529fd7eb96e3f50ce
+    membership_hashes:
+      optimize: 799f0edcac9cdec67a10cf86f64fc4387811d705e7300b8382821f2c481deeea
+      shadow: 8fbafd859b76adaa78a4806fe41e8f62f364eec8cb3d38386d5f27634351f6d0
+      test: f024aae08b5f4dd15f9805635563ff256004d97ff25c27d43e87693f4ef53ed6
+      validation: 64c5304bf014cb19ec2b10e27aacad49ffeb35f21b1e733abd060cd68822f983

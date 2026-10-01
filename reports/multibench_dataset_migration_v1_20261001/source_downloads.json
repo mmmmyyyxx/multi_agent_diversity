@@ -1,0 +1,23 @@
+{
+  "hotpotqa": {
+    "http_attempts": 2,
+    "new_bytes": 194204299,
+    "operation": "DOWNLOAD_AND_FREEZE",
+    "retry_count": 0,
+    "reused_local_frozen_source_bytes": 165624177
+  },
+  "ifbench": {
+    "http_attempts": 0,
+    "new_bytes": 0,
+    "operation": "VERIFY_ONLY",
+    "retry_count": 0,
+    "reused_local_frozen_source_bytes": 17535285
+  },
+  "math": {
+    "http_attempts": 14,
+    "new_bytes": 4883857,
+    "operation": "DOWNLOAD_AND_FREEZE",
+    "retry_count": 0,
+    "reused_local_frozen_source_bytes": 0
+  }
+}

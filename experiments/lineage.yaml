@@ -546,6 +546,12 @@ nodes:
 - experiment_id: v2_pattern_memory_factorial_v1_1
   kind: FORMAL_EXPERIMENT
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: multibench_dataset_migration_v1
+  kind: DATASET_FREEZE_AND_PROTOCOL_MIGRATION
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: v2_pattern_memory_multibench_v1
+  kind: FORMAL_EXPERIMENT
+  era: BENCHMARK_GENERALIZATION
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -809,4 +815,29 @@ edges:
   relation: followup_of
   evidence: reports/v2_pattern_memory_factorial_v1_1_20261001/preexecution/prior_stop_reference.json
   scope: Prior blocked audit unchanged; new draft stops at unresolved model binding.
+- from: benchmark_data_freeze_v1
+  to: multibench_dataset_migration_v1
+  relation: migration_of
+  evidence: experiments/plans/multibench_dataset_migration_v1.yaml
+  scope: Zero-LLM data/protocol preparation; no efficacy evidence.
+- from: benchmark_scientific_contract_freeze_v1
+  to: multibench_dataset_migration_v1
+  relation: migration_of
+  evidence: experiments/plans/multibench_dataset_migration_v1.yaml
+  scope: Zero-LLM data/protocol preparation; no efficacy evidence.
+- from: unified_team_prompt_search_v2_method_refactor
+  to: multibench_dataset_migration_v1
+  relation: migration_of
+  evidence: experiments/plans/multibench_dataset_migration_v1.yaml
+  scope: Zero-LLM data/protocol preparation; no efficacy evidence.
+- from: unified_team_prompt_search_v2_method_refactor
+  to: v2_pattern_memory_multibench_v1
+  relation: derived_from
+  evidence: experiments/plans/v2_pattern_memory_multibench_v1.yaml
+  scope: Zero-LLM data/protocol preparation; no efficacy evidence.
+- from: multibench_dataset_migration_v1
+  to: v2_pattern_memory_multibench_v1
+  relation: derived_from
+  evidence: experiments/plans/v2_pattern_memory_multibench_v1.yaml
+  scope: Zero-LLM data/protocol preparation; no efficacy evidence.
 current_frontier: experiments/current_frontier.yaml

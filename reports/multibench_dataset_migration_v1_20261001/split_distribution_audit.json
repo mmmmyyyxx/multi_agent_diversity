@@ -1,0 +1,378 @@
+{
+  "benchmarks": {
+    "hotpotqa": {
+      "optimize": {
+        "context_paragraph_count": {
+          "10": 149,
+          "6": 1
+        },
+        "level": {
+          "easy": 31,
+          "hard": 24,
+          "medium": 95
+        },
+        "supporting_fact_count": {
+          "2": 103,
+          "3": 35,
+          "4": 10,
+          "5": 2
+        },
+        "type": {
+          "bridge": 120,
+          "comparison": 30
+        }
+      },
+      "shadow": {
+        "context_paragraph_count": {
+          "10": 298,
+          "3": 1,
+          "7": 1
+        },
+        "level": {
+          "easy": 65,
+          "hard": 43,
+          "medium": 192
+        },
+        "supporting_fact_count": {
+          "2": 217,
+          "3": 58,
+          "4": 21,
+          "5": 4
+        },
+        "type": {
+          "bridge": 244,
+          "comparison": 56
+        }
+      },
+      "test": {
+        "context_paragraph_count": {
+          "10": 298,
+          "8": 1,
+          "9": 1
+        },
+        "level": {
+          "hard": 300
+        },
+        "supporting_fact_count": {
+          "2": 199,
+          "3": 75,
+          "4": 21,
+          "5": 5
+        },
+        "type": {
+          "bridge": 241,
+          "comparison": 59
+        }
+      },
+      "validation": {
+        "context_paragraph_count": {
+          "10": 299,
+          "2": 1
+        },
+        "level": {
+          "easy": 53,
+          "hard": 49,
+          "medium": 198
+        },
+        "supporting_fact_count": {
+          "2": 207,
+          "3": 71,
+          "4": 20,
+          "5": 2
+        },
+        "type": {
+          "bridge": 254,
+          "comparison": 46
+        }
+      }
+    },
+    "ifbench": {
+      "optimize": {
+        "checker_family": {
+          "change_case": 21,
+          "combination": 46,
+          "detectable_content": 11,
+          "detectable_format": 41,
+          "keywords": 48,
+          "language": 5,
+          "length_constraints": 33,
+          "punctuation": 7,
+          "startend": 17
+        },
+        "instruction_count": {
+          "1": 94,
+          "2": 36,
+          "3": 17,
+          "4": 3
+        },
+        "instruction_type": {
+          "change_case:capital_word_frequency": 11,
+          "change_case:english_capital": 4,
+          "change_case:english_lowercase": 6,
+          "combination:repeat_prompt": 46,
+          "detectable_content:number_placeholders": 6,
+          "detectable_content:postscript": 5,
+          "detectable_format:constrained_response": 1,
+          "detectable_format:multiple_sections": 1,
+          "detectable_format:number_bullet_lists": 27,
+          "detectable_format:title": 12,
+          "keywords:existence": 10,
+          "keywords:forbidden_words": 9,
+          "keywords:frequency": 17,
+          "keywords:letter_frequency": 12,
+          "language:response_language": 5,
+          "length_constraints:nth_paragraph_first_word": 1,
+          "length_constraints:number_paragraphs": 1,
+          "length_constraints:number_sentences": 24,
+          "length_constraints:number_words": 7,
+          "punctuation:no_comma": 7,
+          "startend:end_checker": 11,
+          "startend:quotation": 6
+        }
+      },
+      "shadow": {
+        "checker_family": {
+          "change_case": 22,
+          "combination": 275,
+          "detectable_content": 12,
+          "detectable_format": 25,
+          "keywords": 42,
+          "language": 6,
+          "length_constraints": 38,
+          "punctuation": 10,
+          "startend": 12
+        },
+        "instruction_count": {
+          "1": 185,
+          "2": 92,
+          "3": 19,
+          "4": 4
+        },
+        "instruction_type": {
+          "change_case:capital_word_frequency": 9,
+          "change_case:english_capital": 10,
+          "change_case:english_lowercase": 3,
+          "combination:repeat_prompt": 275,
+          "detectable_content:number_placeholders": 7,
+          "detectable_content:postscript": 5,
+          "detectable_format:multiple_sections": 1,
+          "detectable_format:number_bullet_lists": 7,
+          "detectable_format:number_highlighted_sections": 6,
+          "detectable_format:title": 11,
+          "keywords:existence": 19,
+          "keywords:forbidden_words": 5,
+          "keywords:frequency": 8,
+          "keywords:letter_frequency": 10,
+          "language:response_language": 6,
+          "length_constraints:nth_paragraph_first_word": 3,
+          "length_constraints:number_paragraphs": 6,
+          "length_constraints:number_sentences": 21,
+          "length_constraints:number_words": 8,
+          "punctuation:no_comma": 10,
+          "startend:end_checker": 4,
+          "startend:quotation": 8
+        }
+      },
+      "test": {
+        "checker_family": {
+          "count": 62,
+          "custom": 10,
+          "format": 98,
+          "ratio": 44,
+          "repeat": 9,
+          "sentence": 28,
+          "words": 84
+        },
+        "instruction_count": {
+          "1": 253,
+          "2": 41
+        },
+        "instruction_type": {
+          "count:conjunctions": 7,
+          "count:keywords_multiple": 5,
+          "count:numbers": 8,
+          "count:person_names": 6,
+          "count:pronouns": 5,
+          "count:punctuation": 6,
+          "count:unique_word_count": 9,
+          "count:word_count_range": 11,
+          "count:words_japanese": 5,
+          "custom:csv_city": 1,
+          "custom:csv_quotes": 1,
+          "custom:csv_special_character": 1,
+          "custom:date_format_list": 1,
+          "custom:european_capitals_sort": 1,
+          "custom:mcq_count_length": 1,
+          "custom:multiples": 1,
+          "custom:reverse_newline": 1,
+          "custom:sentence_alphabet": 1,
+          "custom:word_reverse": 1,
+          "format:emoji": 9,
+          "format:line_indent": 9,
+          "format:list": 9,
+          "format:newline": 6,
+          "format:no_bullets_bullets": 5,
+          "format:no_whitespace": 4,
+          "format:options": 6,
+          "format:output_template": 4,
+          "format:parentheses": 8,
+          "format:quote_unquote": 5,
+          "format:quotes": 8,
+          "format:sub-bullets": 12,
+          "format:thesis": 9,
+          "format:title_case": 4,
+          "ratio:overlap": 12,
+          "ratio:sentence_balance": 7,
+          "ratio:sentence_type": 6,
+          "ratio:sentence_words": 7,
+          "ratio:stop_words": 12,
+          "repeat:repeat_change": 3,
+          "repeat:repeat_simple": 2,
+          "repeat:repeat_span": 4,
+          "sentence:alliteration_increment": 5,
+          "sentence:increment": 8,
+          "sentence:keyword": 15,
+          "words:alphabet": 6,
+          "words:consonants": 15,
+          "words:keywords_specific_position": 4,
+          "words:last_first": 5,
+          "words:no_consecutive": 8,
+          "words:odd_even_syllables": 9,
+          "words:palindrome": 7,
+          "words:paragraph_last_first": 6,
+          "words:prime_lengths": 5,
+          "words:repeats": 5,
+          "words:start_verb": 6,
+          "words:vowel": 5,
+          "words:words_position": 3
+        }
+      },
+      "validation": {
+        "checker_family": {
+          "change_case": 68,
+          "combination": 29,
+          "detectable_content": 48,
+          "detectable_format": 109,
+          "keywords": 67,
+          "language": 16,
+          "length_constraints": 90,
+          "punctuation": 23,
+          "startend": 52
+        },
+        "instruction_count": {
+          "1": 158,
+          "2": 87,
+          "3": 50,
+          "4": 5
+        },
+        "instruction_type": {
+          "change_case:capital_word_frequency": 25,
+          "change_case:english_capital": 13,
+          "change_case:english_lowercase": 30,
+          "combination:repeat_prompt": 15,
+          "combination:two_responses": 14,
+          "detectable_content:number_placeholders": 22,
+          "detectable_content:postscript": 26,
+          "detectable_format:constrained_response": 13,
+          "detectable_format:json_format": 10,
+          "detectable_format:multiple_sections": 18,
+          "detectable_format:number_bullet_lists": 15,
+          "detectable_format:number_highlighted_sections": 26,
+          "detectable_format:title": 27,
+          "keywords:existence": 16,
+          "keywords:forbidden_words": 17,
+          "keywords:frequency": 16,
+          "keywords:letter_frequency": 18,
+          "language:response_language": 16,
+          "length_constraints:nth_paragraph_first_word": 20,
+          "length_constraints:number_paragraphs": 17,
+          "length_constraints:number_sentences": 28,
+          "length_constraints:number_words": 25,
+          "punctuation:no_comma": 23,
+          "startend:end_checker": 22,
+          "startend:quotation": 30
+        }
+      }
+    },
+    "math": {
+      "optimize": {
+        "level": {
+          "Level 1": 11,
+          "Level 2": 31,
+          "Level 3": 30,
+          "Level 4": 33,
+          "Level 5": 45
+        },
+        "subject": {
+          "algebra": 35,
+          "counting_and_probability": 16,
+          "geometry": 17,
+          "intermediate_algebra": 26,
+          "number_theory": 17,
+          "prealgebra": 24,
+          "precalculus": 15
+        }
+      },
+      "shadow": {
+        "level": {
+          "Level 1": 24,
+          "Level 2": 52,
+          "Level 3": 65,
+          "Level 4": 72,
+          "Level 5": 87
+        },
+        "subject": {
+          "algebra": 70,
+          "counting_and_probability": 31,
+          "geometry": 35,
+          "intermediate_algebra": 52,
+          "number_theory": 34,
+          "prealgebra": 48,
+          "precalculus": 30
+        }
+      },
+      "test": {
+        "level": {
+          "Level 1": 23,
+          "Level 2": 49,
+          "Level 3": 80,
+          "Level 4": 78,
+          "Level 5": 70
+        },
+        "subject": {
+          "algebra": 71,
+          "counting_and_probability": 29,
+          "geometry": 29,
+          "intermediate_algebra": 54,
+          "number_theory": 32,
+          "prealgebra": 52,
+          "precalculus": 33
+        }
+      },
+      "validation": {
+        "level": {
+          "Level 1": 24,
+          "Level 2": 63,
+          "Level 3": 73,
+          "Level 4": 47,
+          "Level 5": 92,
+          "Level ?": 1
+        },
+        "subject": {
+          "algebra": 70,
+          "counting_and_probability": 31,
+          "geometry": 35,
+          "intermediate_algebra": 52,
+          "number_theory": 34,
+          "prealgebra": 48,
+          "precalculus": 30
+        }
+      }
+    }
+  },
+  "observations": [
+    "MATH Validation contains one upstream Level ? row; retained without resampling.",
+    "Hotpot answer type is not inferred heuristically; official type/level, support fact and context paragraph counts are audited."
+  ],
+  "selection_adjusted_after_audit": false
+}

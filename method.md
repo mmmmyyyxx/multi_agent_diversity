@@ -23,6 +23,21 @@ Pattern and LLM memory ports default to null. Global stopping uses the frozen
 team-epoch rule; emergency ceilings are operational failure conditions.
 Post-freeze Validation and sealed Test do not feed back into optimization.
 
+## Current research benchmarks
+
+MATH, IFBench and HotpotQA form the formal research suite. BBH remains a
+historical development/replay benchmark. MATH uses equivalence plurality;
+HotpotQA uses normalized answer plurality with question-only retrieval;
+IFBench uses LLM aggregation of equal raw responses and its responsibility
+policy remains HOLD. The method cores remain benchmark-neutral.
+
+Canonical source freeze is separate from experiment-facing Optimize150,
+Shadow300, Validation300 and Test300 memberships (IFBench Test294). Shadow
+is adaptive; Validation is read-only after freeze; Test stays sealed. All
+members, arms, seeds and adaptive re-evaluations bind Solver qwen3-8b;
+optimizer/reflection and Pattern bind qwen3.7-flash. Future initial prompts
+must be task-valid and frozen independently for each benchmark.
+
 Historical paper text is preserved in
 [v15 method archive](docs/archive/methods/v15_method.md); historical contracts
 do not define the active method. See [open questions](docs/research/OPEN_QUESTIONS.md)

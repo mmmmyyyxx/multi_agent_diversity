@@ -24,7 +24,7 @@ design authority. Historical specifications and invariant IDs are preserved in
   parent selection and search lineage remain owned by the untouched GEPA core.
   V1 migration and historical official/Formal baselines retain their identities.
 - **INV-EVIDENCE-ROLE-001**: Mutation, search validation, TeamProbe, Full and
-  adaptive-gate evidence have distinct role-bearing views or scopes. Current BBH compatibility
+  adaptive-gate evidence have distinct role-bearing views or scopes. Historical BBH compatibility
   may use the same Optimize IDs for search validation and TeamProbe. Validation
   and Test never enter adaptive search without separate frozen authorization.
 - **INV-RESP-CAPABILITY-001**: Current raw-overlap plurality responsibility,
@@ -121,8 +121,10 @@ abort execution and must never be reported as convergence.
   context, writes or stateful reads. Non-null mechanisms require manifest-selected
   policies and explicit method identity; no CLI hidden flag may activate them.
 
-V1 identity and reproduction use `SearchMethodConfig()`; new V2 default composition
-uses `SearchMethodConfig.v2()` and `build_v2_bbh_orchestrator`. V1 identities
+V1 identity and reproduction use `SearchMethodConfig()`; V2 method composition
+uses `SearchMethodConfig.v2()`. `build_v2_bbh_orchestrator` is a historical
+development/replay and structural-test reference. Current multibench execution
+composition still requires a separate preexecution freeze. V1 identities
 `unified_team_prompt_search_v1`, `gepa_derived_v1`, `role_view_4_4_4_v1` and
 `v4_exact_evidence_feasibility_v1` remain explicit compatibility contracts.
 Mechanism correctness does not establish efficacy or real-execution readiness.
@@ -140,6 +142,43 @@ Mechanism correctness does not establish efficacy or real-execution readiness.
   scorer is permitted in evaluation. Benchmark protocol implementations and
   IDs are authoritative in the benchmark package and `versions.py`, rather
   than duplicated here.
+
+## Current formal research suite and experiment data
+
+The current formal research suite is **MATH, IFBench, HotpotQA**, in that future
+phase order. BBH is a historical development/replay benchmark; its source,
+manifests, reports and structural tests remain reproduction evidence. The
+unexecuted BBH factorial proposals do not continue as new experiments.
+
+- **INV-EXPERIMENT-SPLIT-001**: `benchmark_data_freeze_v1` is the canonical
+  source/provenance layer. Its frozen memberships are immutable. The separate
+  `benchmark_experiment_split_v1` derives Optimize150, Shadow300, Validation300
+  and Test300 (IFBench Test294) without copying raw rows. Memberships, canonical
+  manifest SHA and scientific contract SHA are distinct identities.
+- **INV-EXPERIMENT-FIREWALL-001**: Optimize alone supplies responsibility,
+  target, Pattern, Memory, GEPA and TeamProbe/Full evidence. Shadow is an adaptive
+  gate with aggregate score/pass-fail feedback. Validation is post-freeze,
+  read-only development evaluation; it never changes prompts, selection, stops,
+  tuning or memory. Test remains sealed and requires separate explicit unlock.
+  Search readers expose held-out metadata only, never raw held-out rows.
+- **INV-EXPERIMENT-MODEL-001**: The versioned current experiment binding fixes
+  all five members, A1/A2/A3/A4, seeds and adaptive re-evaluations to Solver
+  `qwen3-8b`. Optimizer/GEPA reflection and Pattern use `qwen3.7-flash`. No
+  benchmark/arm/seed may override Solver; compatibility CLI defaults are not
+  experiment authority. Future execution must bind this policy in its identity.
+- **INV-MULTIBENCH-READINESS-001**: MATH retains pinned equivalence plurality
+  and binary responsibility; HotpotQA retains normalized plurality and binary
+  responsibility with question-only retrieval. IFBench retains LLM equal raw
+  responses and fails closed on unfrozen aggregation-aware responsibility.
+  Its checker package/resource lock is verified offline in the bound environment.
+  HotpotQA requires corpus, index, retriever and two-hop integration; supplied
+  gold context is not a substitute. No benchmark-specific logic belongs in the
+  orchestrator, Pattern/Memory cores or GEPA core.
+
+All memberships precede any efficacy observation. Initial task-valid five-member
+prompts, provider/resource policy, V2 production composition and authorization
+require future benchmark-specific preexecution freeze. BBH prompts are not
+inherited. Pattern/Memory are IMPLEMENTED_DEFAULT_OFF, efficacy unverified.
 
 ## Authority map
 

@@ -1,0 +1,65 @@
+{
+  "hotpotqa": {
+    "canonical_legacy_counts": {
+      "search": 150,
+      "shadow": 300,
+      "test": 300,
+      "validation": 0
+    },
+    "manifest_sha256": "649f9953b8ed6cd226fc6ccd803551929cedce6782bd9bc63f5be7a12f1a9ea6",
+    "new_experiment_split_is_separate": true,
+    "protocol": "benchmark_data_freeze_v1",
+    "raw_source_hashes": {
+      "train": "2a98eeac97dfc79f6ca5a5d7748bd500a1e63b0a89aaa3ed592d8a7eaba6bff6",
+      "validation": "bd0e39459a3fe2cade76ad1744fc3887ff9664e8fcc9466303c9d3c5e481e6f8"
+    },
+    "source_counts": {
+      "train": 90447,
+      "validation": 7405
+    },
+    "source_revision": "1908d6afbbead072334abe2965f91bd2709910ab",
+    "status": "FROZEN"
+  },
+  "ifbench": {
+    "canonical_legacy_counts": {
+      "search": 150,
+      "shadow": 300,
+      "test": 294,
+      "validation": 0
+    },
+    "manifest_sha256": "7076ebb0dac504fd279093043dd3851be0d2d577af8d02a530b08a7840181e2d",
+    "new_experiment_split_is_separate": true,
+    "protocol": "benchmark_data_freeze_v1",
+    "raw_source_hashes": {
+      "test": "c7f88267d286f60be73248b9e3ad09a49bff8b3fe53d3fccd5cab3d1664f168f",
+      "train": "83e38ac163c443f8a4488bd5049f91938faf581a0317dfd25c8e48c4a8aa4128"
+    },
+    "source_counts": {
+      "test": 294,
+      "train": 14971
+    },
+    "source_revision": "cbefbc1aa0f43dd39874ec4bf42211365dbda42e",
+    "status": "FROZEN"
+  },
+  "math": {
+    "canonical_legacy_counts": {
+      "search": 150,
+      "shadow": 300,
+      "test": 300,
+      "validation": 0
+    },
+    "manifest_sha256": "7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f",
+    "new_experiment_split_is_separate": true,
+    "protocol": "benchmark_data_freeze_v1",
+    "raw_source_hashes": {
+      "test": "c229f4e8194706dbf8580ad2a127cfc3fdc827e824396e0e220eff76f754ae8a",
+      "train": "fb770320beb0ab114fe50b5b1a7fbc93a0f7adefd91159db4ff33cd9d4f8058b"
+    },
+    "source_counts": {
+      "test": 5000,
+      "train": 7500
+    },
+    "source_revision": "21a5633873b6a120296cce3e2df9d5550074f4a3",
+    "status": "FROZEN"
+  }
+}

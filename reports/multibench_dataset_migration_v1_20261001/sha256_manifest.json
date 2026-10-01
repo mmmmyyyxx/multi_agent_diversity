@@ -1,0 +1,26 @@
+{
+  "files": {
+    "README.md": "fdb266ce2f4d46fa305507d3cdefd6b36963b6f3567b7b5025ded1636eed8009",
+    "bbh_retirement_audit.json": "10fe7d53805f6d0ac97d412f60891254eeeb64fd6f9022b09eee92f18fb6066c",
+    "benchmark_readiness_matrix.json": "e9e34a6a10c8b0d0469786d98b6c892119b63e4d71cb304a68e9ee96dc1b0b97",
+    "canonical_freeze_status.json": "195a92015f011b57340ea4e50014705e9ac784f1844b85ade8353c83899599c7",
+    "experiment_split_contract.json": "762af827be125fdea8a84484bb46add93f7c60eab1d8e1b2f04e8a92524d5d33",
+    "final_report_fields.json": "5d00f3243cc75839825f15a54fecb79b3622edf31a46dd5d0823bc4fa317156c",
+    "governance_audit.json": "d679d0acc517ca5a7327052fdaacaf27a2f74d83248cc54e333e4f01c1e8d638",
+    "hotpot_retrieval_freeze_plan.json": "c3f5122b7d73959282f9920830311e15901ea0676dbfcd38c6c32f61c1c1eb69",
+    "ifbench_evaluator_runtime_audit.json": "f76e29f4d979428db2da15d98efda0eeb28cbab9bbc71f7c2872fe60363816d2",
+    "ifbench_existing_freeze_parity.json": "8c0ff4b55bfbef977ac2984ac53ce36ca43fd51f1139af1cdf856f0d309bf937",
+    "model_binding_audit.json": "5003badb0088b0bda6bf28e4fc62877363c86df501520c03b9d973b725eebb90",
+    "network_audit.json": "bf250dad73cc173f5636939b0c1c4bc4bd1621d1ea6f1ccc9eeb03b401c8b7a4",
+    "remaining_blockers.md": "bd096a97ef3b2fb6f786df5a52aea5116d049e477f52a65c46767d74ed814c8c",
+    "sanitization_audit.json": "339c65b9beb934a55e1e435e6f8322b62b90c62918712860cafc369585233c1c",
+    "source_downloads.json": "1304efd2622d72b32cca3054f249258d97d3d54db103d6fa41129bdfd65b5325",
+    "source_identity.json": "c911689aa310e74b7052708b1699d108c4e76778303e1f4e38cfbcef7fa1d496",
+    "source_receipts.json": "56a1efd2a42ad78160d909d4a30705a0cc3478cbff5ee6551b65c5ca0fe1dd40",
+    "split_distribution_audit.json": "26e0ff70ae58a651680225a65c0d99ece3ff70348c361101c80e3ed8a0e8a194",
+    "split_membership_hashes.json": "f58732bacd4f09254f323802096a2104a3c2263da21fb0ff8a4e6c5433e1e9f3",
+    "split_overlap_audit.json": "15d44654e9a23d7d9dac7c6896436854c78a6af2634f254f8e005a287e25fc3a",
+    "test_summary.json": "de73b1f1d0eef711b6bd9fface2ae43f52a7d7c884f45f700f1432668a185a0b"
+  },
+  "scope": "all report files except this self-referential index"
+}

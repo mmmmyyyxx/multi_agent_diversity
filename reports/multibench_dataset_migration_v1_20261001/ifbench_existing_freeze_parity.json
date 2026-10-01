@@ -1,0 +1,21 @@
+{
+  "byte_identical": true,
+  "canonical_manifest_sha256_after": "7076ebb0dac504fd279093043dd3851be0d2d577af8d02a530b08a7840181e2d",
+  "canonical_manifest_sha256_before": "7076ebb0dac504fd279093043dd3851be0d2d577af8d02a530b08a7840181e2d",
+  "legacy_role_parity": {
+    "optimize": {
+      "legacy_hash": "915efe457211308dea94ea252a092e4d454ba3f8a55a70903a8dfedd32b18f5b",
+      "unchanged": true
+    },
+    "shadow": {
+      "legacy_hash": "77dd6e708d6f1e44ad69a891dc36165b8f75392e50e89c347333751a99cd171e",
+      "unchanged": true
+    },
+    "test": {
+      "legacy_hash": "9b009a41f19320a2b8211d043535b98ee5aec7d9de00c42865384e626211545e",
+      "unchanged": true
+    }
+  },
+  "membership_sha256_after": "18e2b9e3377c0d623341afb8d9c30ab8a6b0b1455991f3fff4ee933de8d208e2",
+  "membership_sha256_before": "18e2b9e3377c0d623341afb8d9c30ab8a6b0b1455991f3fff4ee933de8d208e2"
+}

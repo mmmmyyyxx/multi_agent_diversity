@@ -1,0 +1,37 @@
+{
+  "actual_retrieval_checks_executed": false,
+  "component_freeze_requirements": {
+    "retrieval_index": [
+      "index builder/code/dependency SHA",
+      "corpus ID binding and complete index asset hash",
+      "document/passages mapping SHA"
+    ],
+    "retriever": [
+      "ColBERT model repository/revision and asset hash",
+      "query parser/ranking/tie/top-k/tokenization policy",
+      "dependency/device/determinism identity"
+    ],
+    "two_hop_summary_query_answer_integration": [
+      "versioned 7/7 two-hop summary/query/answer contracts",
+      "role-specific model/provider/cache/accounting",
+      "gold/context firewall fake tests and governed canary"
+    ],
+    "wikipedia_corpus": [
+      "resolve exact corpus repository/revision from pinned GEPA dependency provenance",
+      "license/provenance and content inventory/hash",
+      "immutable passage IDs and preprocessing"
+    ]
+  },
+  "contract": "hotpot_wikipedia_colbert_v1",
+  "gold_context_fallback_allowed": false,
+  "missing_components": [
+    "wikipedia_corpus",
+    "retrieval_index",
+    "retriever",
+    "two_hop_summary_query_answer_integration"
+  ],
+  "no_corpus_or_retrieval_download_performed": true,
+  "retrieval_assets_present": false,
+  "scientific_choices_pending": true,
+  "task_input": "question_only"
+}

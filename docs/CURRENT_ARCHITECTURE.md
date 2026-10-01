@@ -34,4 +34,10 @@ and deterministic private/shared Memory are implemented, default disabled.
 Use `SearchMethodConfig.v2()` and the V2 composition; the V1 constructor and
 adapters remain reproduction paths. See the normative CURRENT_SPEC for policy
 boundaries. Mechanism correctness is tested offline; efficacy is unverified.
-Benchmark blockers remain unchanged; no new real execution is ready or authorized.
+Current research benchmarks are MATH, IFBench and HotpotQA. BBH composition
+is retained for historical development/replay and structural tests. Canonical
+data freeze and experiment-facing split readers are separate benchmark modules;
+their access policies precede raw-row resolution. Multibench real composition,
+task-valid initial prompts and governed execution bindings need a future freeze.
+IFBench responsibility and HotpotQA retrieval remain blockers; no real execution
+is ready or authorized.

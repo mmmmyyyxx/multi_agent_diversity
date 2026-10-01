@@ -16,7 +16,8 @@ from .source_identity import build_unified_source_identity
 
 KINDS = {'FORMAL_EXPERIMENT','PILOT','DIAGNOSTIC','ABLATION','FORENSIC_AUDIT',
          'ZERO_API_AUDIT','ARCHITECTURE_REFACTOR','BENCHMARK_MIGRATION',
-         'PROTOCOL_FREEZE','PREEXECUTION_FREEZE','INVALID_ATTEMPT'}
+         'PROTOCOL_FREEZE','PREEXECUTION_FREEZE','INVALID_ATTEMPT',
+         'DATASET_FREEZE_AND_PROTOCOL_MIGRATION'}
 ERAS = {'V17_V18_MEMBER_AWARE','GEPA_TWO_LAYER','FORMAL_V3_V4',
         'UNIFIED_TEAM_PROMPT_SEARCH','BENCHMARK_GENERALIZATION',
         'HISTORICAL_V15_V16_AND_EARLIER'}
@@ -153,7 +154,8 @@ def build_report_index(root: Path) -> dict:
     registry=load_yaml(root/'experiments/registry.yaml');rows=registry['experiments'];entries=[]
     mapping={'FORENSIC_AUDIT':'FORENSIC','ZERO_API_AUDIT':'ZERO_API','PREEXECUTION_FREEZE':'PREEXECUTION',
              'PROTOCOL_FREEZE':'ZERO_API','ARCHITECTURE_REFACTOR':'ARCHITECTURE','BENCHMARK_MIGRATION':'MIGRATION',
-             'DIAGNOSTIC':'DIAGNOSTIC','INVALID_ATTEMPT':'INVALID_ATTEMPT'}
+             'DIAGNOSTIC':'DIAGNOSTIC','INVALID_ATTEMPT':'INVALID_ATTEMPT',
+             'DATASET_FREEZE_AND_PROTOCOL_MIGRATION':'MIGRATION'}
     for path in report_paths(root):
         matches=[r for r in rows if path in r.get('reports',[]) or path==r.get('report') or
                  (r.get('report') and path.startswith(r['report']+'/'))]

@@ -1,9 +1,8 @@
-"""The pinned checker code is frozen; resource/package identities are not yet frozen."""
-from ..search.schemas import SearchContractError
+"""Pinned checker registry admitted only after offline resource lock verification."""
 
 
 def load_pinned_checkers():
-    # Never import upstream automatic-download modules or silently enable an
-    # unverified local resource installation. A later dependency freeze must
-    # bind package/model/resource hashes before changing this runtime gate.
-    raise SearchContractError("IFBENCH_LOCAL_EVALUATOR_DEPENDENCIES_NOT_FROZEN")
+    from .evaluator_resources import verify_ifbench_runtime
+    verify_ifbench_runtime()
+    from ._vendor.ifbench.instructions_registry import INSTRUCTION_DICT
+    return INSTRUCTION_DICT

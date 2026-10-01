@@ -5592,23 +5592,24 @@ experiments:
   parent_ids:
   - unified_team_prompt_search_v2_method_refactor
   - v2_pattern_memory_factorial_v1_preexecution_audit
-  status: HOLD
+  status: SUPERSEDED
   scientific_status: PREEXECUTION_BLOCKED
   implementation_commit: null
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/v2_pattern_memory_factorial_v1_1.yaml
   report: reports/v2_pattern_memory_factorial_v1_1_20261001
-  classifier: PREEXECUTION_DRAFT_MODELS_RESOLVED
+  classifier: SUPERSEDED_UNEXECUTED_BBH_DRAFT
   active_for_new_work: false
   historical_replay: false
-  superseded_by: []
+  superseded_by: [v2_pattern_memory_multibench_v1]
   notes:
   - Protocol revision before any efficacy observation; removes unmatched historical V1 from the factorial.
   - Proposed A1-A4 by seeds 81/82/83; twelve formal runs, none executed.
   - Synthetic four-arm budget gate PASS; explicit user directives resolve Solver qwen3-8b, optimizer/Pattern qwen3.7-flash and provider lwj.
   - Model correction and current initial-team hashes are recorded separately; prior STOP report remains unchanged.
-  - A2C matching clarification and Unified execution governance remain pending before protocol freeze.
+  - Historical unexecuted BBH proposal; new work retired in multibench_dataset_migration_v1.
+  - Creation-time model-binding audit is preserved; no real API authorization was consumed.
   - Registered DRAFT only; no preexecution freeze or authorization consumed, Test sealed.
   reports:
   - reports/v2_pattern_memory_factorial_v1_1_20261001
@@ -5618,3 +5619,54 @@ experiments:
     execution_commit: Model selection resolved; remaining protocol/governance gates prevent execution freeze.
     result_commit: No efficacy result exists; local audit metadata commit is discoverable in Git history.
   baseline_commit: a5997898c30c4d4daad5511203657d3c687c90e5
+- experiment_id: multibench_dataset_migration_v1
+  kind: DATASET_FREEZE_AND_PROTOCOL_MIGRATION
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2
+  parent_ids:
+  - benchmark_data_freeze_v1
+  - benchmark_scientific_contract_freeze_v1
+  - unified_team_prompt_search_v2_method_refactor
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: PREPARED_NOT_EXECUTED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/plans/multibench_dataset_migration_v1.yaml
+  report: reports/multibench_dataset_migration_v1_20261001
+  classifier: DATA_AND_SPLIT_FROZEN_NO_EFFICACY
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Dataset/protocol preparation only; no efficacy observation or real API authorization.
+  unavailable:
+    implementation_commit: Containing local Git commit; never an execution identity.
+    execution_commit: No real execution source is frozen.
+    result_commit: No scientific efficacy result exists.
+  baseline_commit: 19d0cbb38277ec0dde32e4df9b621be0364f0931
+- experiment_id: v2_pattern_memory_multibench_v1
+  kind: FORMAL_EXPERIMENT
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2
+  parent_ids:
+  - unified_team_prompt_search_v2_method_refactor
+  - multibench_dataset_migration_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: PREPARED_NOT_EXECUTED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/plans/v2_pattern_memory_multibench_v1.yaml
+  report: reports/multibench_dataset_migration_v1_20261001
+  classifier: PLAN_ONLY_NO_EXECUTION
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Dataset/protocol preparation only; no efficacy observation or real API authorization.
+  unavailable:
+    implementation_commit: Containing local Git commit; never an execution identity.
+    execution_commit: No real execution source is frozen.
+    result_commit: No scientific efficacy result exists.
+  baseline_commit: 19d0cbb38277ec0dde32e4df9b621be0364f0931

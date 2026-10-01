@@ -11,7 +11,12 @@ current_architecture: Unified Team Prompt Search
 method_identity: unified_team_prompt_search_v2
 current_method: unified_team_prompt_search_v2
 current_implementation: V2 decoupled admission and variable evidence; Pattern/Memory dormant
-current_experiment: NO_AUTHORIZED_NEW_EXPERIMENT
+current_experiment: NO_AUTHORIZED_REAL_EXPERIMENT
+current_benchmark_suite: [math, ifbench, hotpotqa]
+historical_benchmark_only: true
+historical_benchmark: bbh
+current_dataset_migration: multibench_dataset_migration_v1
+future_experiment_plan: v2_pattern_memory_multibench_v1
 last_governance_milestone: repository_hygiene_alignment_v1
 last_scientific_contract_milestone: benchmark_scientific_contract_freeze_v1
 real_execution_ready: false
@@ -33,6 +38,8 @@ flowchart TD
     n160["benchmark_data_freeze_v1<br/>PROTOCOL_FREEZE<br/>COMPLETED"]
     n161["benchmark_scientific_contract_freeze_v1<br/>PROTOCOL_FREEZE<br/>COMPLETED"]
     n162["repository_hygiene_alignment_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
+    n182["multibench_dataset_migration_v1<br/>DATASET_FREEZE_AND_PROTOCOL_MIGRATION<br/>PREPARED_NOT_EXECUTED"]
+    n183["v2_pattern_memory_multibench_v1<br/>FORMAL_EXPERIMENT<br/>PREPARED_NOT_EXECUTED"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -184,7 +191,7 @@ flowchart TD
     n158["unified_team_prompt_search_refactor_v1<br/>ARCHITECTURE_REFACTOR<br/>COMPLETED"]
     n179["unified_team_prompt_search_v2_method_refactor<br/>ARCHITECTURE_REFACTOR<br/>IMPLEMENTED_NOT_EXECUTED"]
     n180["v2_pattern_memory_factorial_v1_preexecution_audit<br/>ZERO_API_AUDIT<br/>HOLD"]
-    n181["v2_pattern_memory_factorial_v1_1<br/>FORMAL_EXPERIMENT<br/>HOLD"]
+    n181["v2_pattern_memory_factorial_v1_1<br/>FORMAL_EXPERIMENT<br/>SUPERSEDED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -284,6 +291,11 @@ flowchart TD
   n179 -->|audit_of| n180
   n179 -->|derived_from| n181
   n180 -->|followup_of| n181
+  n160 -->|migration_of| n182
+  n161 -->|migration_of| n182
+  n179 -->|migration_of| n182
+  n179 -->|derived_from| n183
+  n182 -->|derived_from| n183
 ```
 
 ## Archived branches and unresolved evidence
@@ -464,3 +476,4 @@ flowchart TD
 | gepa_saturation_comparison_v3_seed80_native_attempt3 | FORMAL_V3_V4 | COMPLETED | Not established |
 | gepa_layer2_local_to_team_transfer_diagnostic_v4_seed81_attempt2 | FORMAL_V3_V4 | INVALID | Not established |
 | gepa_layer2_local_to_team_transfer_diagnostic_v4_seed81_attempt3 | FORMAL_V3_V4 | COMPLETED | Not established |
+| v2_pattern_memory_factorial_v1_1 | UNIFIED_TEAM_PROMPT_SEARCH | SUPERSEDED | SUPERSEDED_UNEXECUTED_BBH_DRAFT |

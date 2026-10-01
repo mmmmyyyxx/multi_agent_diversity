@@ -1,0 +1,31 @@
+{
+  "byte_identity_paths": {
+    "data/benchmark_suite_v1/manifests/download_plan.json": "096e6713450cf17208b52975f8f260384bd2dbce127477d9467f28fd104fd4b9",
+    "data/benchmark_suite_v1/manifests/hotpotqa.ids.jsonl": "c6805f422f839f8ba143ac7df232849c768d99f6dcebb79c4894bcb34fc4ae99",
+    "data/benchmark_suite_v1/manifests/hotpotqa.json": "649f9953b8ed6cd226fc6ccd803551929cedce6782bd9bc63f5be7a12f1a9ea6",
+    "data/benchmark_suite_v1/manifests/ifbench.ids.jsonl": "18e2b9e3377c0d623341afb8d9c30ab8a6b0b1455991f3fff4ee933de8d208e2",
+    "data/benchmark_suite_v1/manifests/ifbench.json": "7076ebb0dac504fd279093043dd3851be0d2d577af8d02a530b08a7840181e2d",
+    "data/benchmark_suite_v1/manifests/math.ids.jsonl": "c80d33de2154e027e433bf1e4021d3cc419e97cfdbb6c341f9ebeb74dc7f002a",
+    "data/benchmark_suite_v1/manifests/math.json": "7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f",
+    "data/benchmark_suite_v1/manifests/source_code_identity.json": "9157973f842369d986faaf8f569591bae769ebc49005d5d7641bcf3daebdde51",
+    "experiments/data_splits/benchmark_experiment_v1/hotpotqa.ids.jsonl": "fe7192157ee551749a41244360c186c1e57e4779256581351d407ae9d07e6cc1",
+    "experiments/data_splits/benchmark_experiment_v1/hotpotqa.json": "c5746cae9ec6ed2c3680445fe2795d59fd9ff05ffe629ae331d9eacc55c24789",
+    "experiments/data_splits/benchmark_experiment_v1/ifbench.ids.jsonl": "b2c7ae35371bbe3f0fc846d66a6863c9797127ad72b655e9d44e8c41693fdeca",
+    "experiments/data_splits/benchmark_experiment_v1/ifbench.json": "88ce98dc99016853ab14b73b2da4ae795064b67aee2b570b685e66e613736d85",
+    "experiments/data_splits/benchmark_experiment_v1/math.ids.jsonl": "6fb25e9d7c2de73811b4393aa7459c990277bc5aa73aaa121c2c5ca11ff27e5b",
+    "experiments/data_splits/benchmark_experiment_v1/math.json": "0a960e81fbdf4b3955c397c1b263a5d1e7f975674d4222039acb131c813d79c3"
+  },
+  "checked_git_ignore": [
+    "canonical_raw",
+    "canonical_materialized",
+    "isolated_venv",
+    "nltk_resources"
+  ],
+  "materialized_rows_tracked": false,
+  "raw_data_tracked": false,
+  "raw_question_copy_sample_checks": 299,
+  "raw_resources_environments_caches_assets_tracked": false,
+  "secret_or_hostpath_findings": [],
+  "status": "PASS",
+  "task_related_staged_file_count": 61
+}

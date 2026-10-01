@@ -52,4 +52,8 @@ and deterministic private/shared Memory are implemented, default disabled.
 Use `SearchMethodConfig.v2()` and the V2 composition; the V1 constructor and
 adapters remain reproduction paths. See the normative CURRENT_SPEC for policy
 boundaries. Mechanism correctness is tested offline; efficacy is unverified.
-Benchmark blockers remain unchanged; no new real execution is ready or authorized.
+The active research suite is MATH, IFBench and HotpotQA. BBH is historical
+development/replay only. Canonical data and separate experiment memberships
+are frozen; IFBench responsibility and HotpotQA retrieval remain HOLD.
+The current experiment binding uses Solver qwen3-8b everywhere, with
+optimizer/reflection and Pattern qwen3.7-flash. No real execution is authorized.

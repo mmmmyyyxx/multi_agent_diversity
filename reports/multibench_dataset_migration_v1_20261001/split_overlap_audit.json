@@ -1,0 +1,281 @@
+{
+  "hotpotqa": {
+    "pairwise": [
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "optimize",
+          "shadow"
+        ]
+      },
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "optimize",
+          "validation"
+        ]
+      },
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "optimize",
+          "test"
+        ]
+      },
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "shadow",
+          "validation"
+        ]
+      },
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "shadow",
+          "test"
+        ]
+      },
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "validation",
+          "test"
+        ]
+      }
+    ],
+    "status": "DISJOINT",
+    "within_role_duplicate_counts": {
+      "optimize": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      },
+      "shadow": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      },
+      "test": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      },
+      "validation": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      }
+    }
+  },
+  "ifbench": {
+    "pairwise": [
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "optimize",
+          "shadow"
+        ]
+      },
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "optimize",
+          "validation"
+        ]
+      },
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "optimize",
+          "test"
+        ]
+      },
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "shadow",
+          "validation"
+        ]
+      },
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "shadow",
+          "test"
+        ]
+      },
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "validation",
+          "test"
+        ]
+      }
+    ],
+    "status": "DISJOINT",
+    "within_role_duplicate_counts": {
+      "optimize": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      },
+      "shadow": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      },
+      "test": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      },
+      "validation": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      }
+    }
+  },
+  "math": {
+    "pairwise": [
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "optimize",
+          "shadow"
+        ]
+      },
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "optimize",
+          "validation"
+        ]
+      },
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "optimize",
+          "test"
+        ]
+      },
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "shadow",
+          "validation"
+        ]
+      },
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "shadow",
+          "test"
+        ]
+      },
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "validation",
+          "test"
+        ]
+      }
+    ],
+    "status": "DISJOINT",
+    "within_role_duplicate_counts": {
+      "optimize": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      },
+      "shadow": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      },
+      "test": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      },
+      "validation": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      }
+    }
+  }
+}

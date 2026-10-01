@@ -82,7 +82,7 @@ PROTOCOLS = {
         ("instruction_id_list", "kwargs", "success_vector", "score", "evaluator_feedback"),
         ("prompt",), (SystemDependency("ifbench_pinned_apache_checkers_v1",
             ("pinned_checker_code", "spacy_en_core_web_sm", "nltk_resources", "checker_python_packages"),
-            False, "IFBENCH_LOCAL_EVALUATOR_DEPENDENCIES_NOT_FROZEN"),),
+            True, None),),
         True, True, False, ("RESPONSIBILITY_POLICY_NOT_FROZEN",)),
     "math": BenchmarkProtocolSpec(
         "math", versions.MATH_TASK_CONTRACT, "math_verify_0.6.0_isolated_timeout_v1",

@@ -3,7 +3,12 @@ current_architecture: Unified Team Prompt Search
 method_identity: unified_team_prompt_search_v2
 current_method: unified_team_prompt_search_v2
 current_implementation: V2 decoupled admission and variable evidence; Pattern/Memory dormant
-current_experiment: NO_AUTHORIZED_NEW_EXPERIMENT
+current_experiment: NO_AUTHORIZED_REAL_EXPERIMENT
+current_benchmark_suite: [math, ifbench, hotpotqa]
+historical_benchmark_only: true
+historical_benchmark: bbh
+current_dataset_migration: multibench_dataset_migration_v1
+future_experiment_plan: v2_pattern_memory_multibench_v1
 last_governance_milestone: repository_hygiene_alignment_v1
 last_scientific_contract_milestone: benchmark_scientific_contract_freeze_v1
 real_execution_ready: false

@@ -14,3 +14,10 @@ experiments/schema/** text eol=lf
 experiments/templates/** text eol=lf
 reports/INDEX.md text eol=lf
 reports/index.json text eol=lf
+
+# Current multibench memberships and exact-byte evaluator/report receipts.
+experiments/data_splits/** text eol=lf
+experiments/plans/** text eol=lf
+multi_dataset_diverse_rl/benchmarks/ifbench_runtime_lock.json text eol=lf
+reports/multibench_dataset_migration_v1_20261001/** text eol=lf
+requirements-ifbench-evaluators.txt text eol=lf

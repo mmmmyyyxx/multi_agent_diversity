@@ -1,0 +1,317 @@
+[
+  {
+    "field": "BASE_SHA",
+    "order": 1,
+    "value": "19d0cbb38277ec0dde32e4df9b621be0364f0931"
+  },
+  {
+    "field": "local commit SHA",
+    "order": 2,
+    "value": "See containing local Git commit; self-reference excluded"
+  },
+  {
+    "field": "changed files",
+    "order": 3,
+    "value": [
+      ".gitattributes",
+      "README.md",
+      "data/benchmark_suite_v1/manifests/hotpotqa.ids.jsonl",
+      "data/benchmark_suite_v1/manifests/hotpotqa.json",
+      "data/benchmark_suite_v1/manifests/math.ids.jsonl",
+      "data/benchmark_suite_v1/manifests/math.json",
+      "docs/CURRENT_ARCHITECTURE.md",
+      "docs/design/CURRENT_SPEC.md",
+      "docs/experiments/LINEAGE.md",
+      "docs/research/CURRENT_RESEARCH_STATE.md",
+      "docs/research/OPEN_QUESTIONS.md",
+      "experiments/current_frontier.yaml",
+      "experiments/data_splits/benchmark_experiment_v1/hotpotqa.ids.jsonl",
+      "experiments/data_splits/benchmark_experiment_v1/hotpotqa.json",
+      "experiments/data_splits/benchmark_experiment_v1/ifbench.ids.jsonl",
+      "experiments/data_splits/benchmark_experiment_v1/ifbench.json",
+      "experiments/data_splits/benchmark_experiment_v1/math.ids.jsonl",
+      "experiments/data_splits/benchmark_experiment_v1/math.json",
+      "experiments/lineage.yaml",
+      "experiments/plans/multibench_dataset_migration_v1.yaml",
+      "experiments/plans/v2_pattern_memory_multibench_v1.yaml",
+      "experiments/registry.yaml",
+      "method.md",
+      "multi_dataset_diverse_rl/__init__.py",
+      "multi_dataset_diverse_rl/benchmarks/data_sources.py",
+      "multi_dataset_diverse_rl/benchmarks/evaluator_resources.py",
+      "multi_dataset_diverse_rl/benchmarks/experiment_binding.py",
+      "multi_dataset_diverse_rl/benchmarks/experiment_splits.py",
+      "multi_dataset_diverse_rl/benchmarks/ifbench_checkers.py",
+      "multi_dataset_diverse_rl/benchmarks/ifbench_runtime_lock.json",
+      "multi_dataset_diverse_rl/benchmarks/protocols.py",
+      "multi_dataset_diverse_rl/benchmarks/registry.py",
+      "multi_dataset_diverse_rl/governance/repository.py",
+      "multi_dataset_diverse_rl/governance/source_identity.py",
+      "multi_dataset_diverse_rl/versions.py",
+      "reports/INDEX.md",
+      "reports/index.json",
+      "reports/multibench_dataset_migration_v1_20261001/README.md",
+      "reports/multibench_dataset_migration_v1_20261001/bbh_retirement_audit.json",
+      "reports/multibench_dataset_migration_v1_20261001/benchmark_readiness_matrix.json",
+      "reports/multibench_dataset_migration_v1_20261001/canonical_freeze_status.json",
+      "reports/multibench_dataset_migration_v1_20261001/experiment_split_contract.json",
+      "reports/multibench_dataset_migration_v1_20261001/final_report_fields.json",
+      "reports/multibench_dataset_migration_v1_20261001/governance_audit.json",
+      "reports/multibench_dataset_migration_v1_20261001/hotpot_retrieval_freeze_plan.json",
+      "reports/multibench_dataset_migration_v1_20261001/ifbench_evaluator_runtime_audit.json",
+      "reports/multibench_dataset_migration_v1_20261001/ifbench_existing_freeze_parity.json",
+      "reports/multibench_dataset_migration_v1_20261001/model_binding_audit.json",
+      "reports/multibench_dataset_migration_v1_20261001/network_audit.json",
+      "reports/multibench_dataset_migration_v1_20261001/remaining_blockers.md",
+      "reports/multibench_dataset_migration_v1_20261001/sanitization_audit.json",
+      "reports/multibench_dataset_migration_v1_20261001/sha256_manifest.json",
+      "reports/multibench_dataset_migration_v1_20261001/source_downloads.json",
+      "reports/multibench_dataset_migration_v1_20261001/source_identity.json",
+      "reports/multibench_dataset_migration_v1_20261001/source_receipts.json",
+      "reports/multibench_dataset_migration_v1_20261001/split_distribution_audit.json",
+      "reports/multibench_dataset_migration_v1_20261001/split_membership_hashes.json",
+      "reports/multibench_dataset_migration_v1_20261001/split_overlap_audit.json",
+      "reports/multibench_dataset_migration_v1_20261001/test_summary.json",
+      "requirements-ifbench-evaluators.txt",
+      "scripts/freeze_benchmark_experiment_splits.py",
+      "scripts/tooling_classification.json",
+      "tests/public_data_network/sitecustomize.py",
+      "tests/public_data_runner.py",
+      "tests/suite_classification.json",
+      "tests/test_benchmark_experiment_splits.py"
+    ]
+  },
+  {
+    "field": "BBH current status",
+    "order": 4,
+    "value": "HISTORICAL_DEVELOPMENT_REPLAY_ONLY"
+  },
+  {
+    "field": "active benchmark suite",
+    "order": 5,
+    "value": [
+      "math",
+      "ifbench",
+      "hotpotqa"
+    ]
+  },
+  {
+    "field": "MATH source revision",
+    "order": 6,
+    "value": "21a5633873b6a120296cce3e2df9d5550074f4a3"
+  },
+  {
+    "field": "MATH train/test counts",
+    "order": 7,
+    "value": {
+      "test": 5000,
+      "train": 7500
+    }
+  },
+  {
+    "field": "MATH raw source hashes",
+    "order": 8,
+    "value": {
+      "test": "c229f4e8194706dbf8580ad2a127cfc3fdc827e824396e0e220eff76f754ae8a",
+      "train": "fb770320beb0ab114fe50b5b1a7fbc93a0f7adefd91159db4ff33cd9d4f8058b"
+    }
+  },
+  {
+    "field": "MATH canonical freeze status",
+    "order": 9,
+    "value": "FROZEN"
+  },
+  {
+    "field": "MATH Optimize/Shadow/Validation/Test counts",
+    "order": 10,
+    "value": {
+      "optimize": 150,
+      "shadow": 300,
+      "test": 300,
+      "validation": 300
+    }
+  },
+  {
+    "field": "MATH membership hashes",
+    "order": 11,
+    "value": {
+      "optimize": "07736245014e15c4a1b3f6365794b9bfd25d58032ee04fb0578731c6bf23fec9",
+      "shadow": "80d238e21644777f348694e2df3a93af395abbca648fb0e4e3f0c01211be3667",
+      "test": "9cba0605a224f1c1ebe15a01c65d1263f8cbee45d8ec2cfd67d496b119a6c32d",
+      "validation": "1016db4741d49bc8c965b6dbc5bfa55c30f5a4fa77165e70494e6f6cd0d698b3"
+    }
+  },
+  {
+    "field": "MATH overlap audit",
+    "order": 12,
+    "value": "DISJOINT; all six pairs and all three hash types"
+  },
+  {
+    "field": "IFBench canonical manifest hash",
+    "order": 13,
+    "value": "7076ebb0dac504fd279093043dd3851be0d2d577af8d02a530b08a7840181e2d"
+  },
+  {
+    "field": "IFBench old Optimize parity",
+    "order": 14,
+    "value": "BYTE_MEMBERSHIP_ID_SEQUENCE_UNCHANGED"
+  },
+  {
+    "field": "IFBench old Shadow parity",
+    "order": 15,
+    "value": "BYTE_MEMBERSHIP_ID_SEQUENCE_UNCHANGED"
+  },
+  {
+    "field": "IFBench old Test parity",
+    "order": 16,
+    "value": "BYTE_MEMBERSHIP_ID_SEQUENCE_UNCHANGED"
+  },
+  {
+    "field": "IFBench new Validation count/hash",
+    "order": 17,
+    "value": {
+      "count": 300,
+      "hash": "70415c0bad3720cfc2beadec04f80601e4c8fed5a0e27eff9a5c9aba8eb7d827"
+    }
+  },
+  {
+    "field": "IFBench four-way overlap audit",
+    "order": 18,
+    "value": "DISJOINT"
+  },
+  {
+    "field": "Hotpot source revision",
+    "order": 19,
+    "value": "1908d6afbbead072334abe2965f91bd2709910ab"
+  },
+  {
+    "field": "Hotpot train/validation counts",
+    "order": 20,
+    "value": {
+      "train": 90447,
+      "validation": 7405
+    }
+  },
+  {
+    "field": "Hotpot source hashes",
+    "order": 21,
+    "value": {
+      "train": "2a98eeac97dfc79f6ca5a5d7748bd500a1e63b0a89aaa3ed592d8a7eaba6bff6",
+      "validation": "bd0e39459a3fe2cade76ad1744fc3887ff9664e8fcc9466303c9d3c5e481e6f8"
+    }
+  },
+  {
+    "field": "Hotpot canonical freeze status",
+    "order": 22,
+    "value": "FROZEN"
+  },
+  {
+    "field": "Hotpot Optimize/Shadow/Validation/Test counts",
+    "order": 23,
+    "value": {
+      "optimize": 150,
+      "shadow": 300,
+      "test": 300,
+      "validation": 300
+    }
+  },
+  {
+    "field": "Hotpot membership hashes",
+    "order": 24,
+    "value": {
+      "optimize": "799f0edcac9cdec67a10cf86f64fc4387811d705e7300b8382821f2c481deeea",
+      "shadow": "8fbafd859b76adaa78a4806fe41e8f62f364eec8cb3d38386d5f27634351f6d0",
+      "test": "f024aae08b5f4dd15f9805635563ff256004d97ff25c27d43e87693f4ef53ed6",
+      "validation": "64c5304bf014cb19ec2b10e27aacad49ffeb35f21b1e733abd060cd68822f983"
+    }
+  },
+  {
+    "field": "Hotpot overlap audit",
+    "order": 25,
+    "value": "DISJOINT"
+  },
+  {
+    "field": "MATH evaluator readiness",
+    "order": 26,
+    "value": "YES; pinned math-verify 0.6.0 isolated dependency environment"
+  },
+  {
+    "field": "MATH responsibility readiness",
+    "order": 27,
+    "value": "YES; binary plurality unchanged"
+  },
+  {
+    "field": "MATH system readiness",
+    "order": 28,
+    "value": "YES; execution binding still pending"
+  },
+  {
+    "field": "IFBench evaluator dependency readiness",
+    "order": 29,
+    "value": "YES; isolated lock verified with positive/negative and byte-poison controls"
+  },
+  {
+    "field": "IFBench responsibility readiness",
+    "order": 30,
+    "value": "NO; RESPONSIBILITY_POLICY_NOT_FROZEN"
+  },
+  {
+    "field": "Hotpot retrieval readiness",
+    "order": 31,
+    "value": "NO; SYSTEM_DEPENDENCY_RETRIEVAL_NOT_FROZEN"
+  },
+  {
+    "field": "Hotpot responsibility readiness",
+    "order": 32,
+    "value": "YES; normalized-answer binary plurality unchanged"
+  },
+  {
+    "field": "three-benchmark readiness matrix",
+    "order": 33,
+    "value": "benchmark_readiness_matrix.json"
+  },
+  {
+    "field": "downloaded bytes",
+    "order": 34,
+    "value": {
+      "hotpotqa": 194204299,
+      "ifbench": 0,
+      "math": 4883857
+    }
+  },
+  {
+    "field": "dataset HTTP attempts",
+    "order": 35,
+    "value": 16
+  },
+  {
+    "field": "LLM provider attempts",
+    "order": 36,
+    "value": 0
+  },
+  {
+    "field": "raw data tracked by git?",
+    "order": 37,
+    "value": "NO"
+  },
+  {
+    "field": "materialized rows tracked?",
+    "order": 38,
+    "value": "NO"
+  },
+  {
+    "field": "secret scan",
+    "order": 39,
+    "value": "PASS; sanitization_audit.json"
+  },
+  {
+    "field": "tests passed/skipped/failed",
+    "order": 40,
+    "value": {
+      "deselected": 1468,
+      "failed": 0,
+      "passed": 510,
+      "skipped": 2
+    }
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "bbh_active_new_experiment": false,
+  "bbh_v1_1_status": "SUPERSEDED_UNEXECUTED_DRAFT",
+  "current_new_experiment_benchmark_suite": [
+    "math",
+    "ifbench",
+    "hotpotqa"
+  ],
+  "current_new_experiment_references_to_bbh": 0,
+  "existing_bbh_structural_tests_changed": false,
+  "historical_bbh_replay_still_available": true,
+  "historical_files_deleted": 0,
+  "historical_report_manifest_replay_source_changes": [],
+  "historical_results_rewritten": 0,
+  "prior_v1_audit_status": "PREEXECUTION_BLOCKED"
+}

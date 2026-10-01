@@ -82,6 +82,12 @@ class BenchmarkSpec:
                     blockers.append("MATH_EVALUATOR_DEPENDENCY_IDENTITY_MISMATCH")
             except importlib.metadata.PackageNotFoundError:
                 blockers.append("MATH_EVALUATOR_DEPENDENCIES_NOT_AVAILABLE")
+        if self.benchmark_id == "ifbench":
+            from .evaluator_resources import verify_ifbench_runtime
+            try:
+                verify_ifbench_runtime()
+            except SearchContractError:
+                blockers.append("IFBENCH_LOCAL_EVALUATOR_RUNTIME_IDENTITY_MISMATCH")
         return tuple(dict.fromkeys(blockers))
 
 

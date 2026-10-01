@@ -89,7 +89,11 @@ def download_source(root: Path, benchmark: str) -> tuple[dict, dict]:
             rows.extend(pq.read_table(path).to_pylist())
         primary["train"] = wrap_rows(benchmark, "train", rows)
         fingerprints["train"] = fingerprint(rows)
-        recipe += "; pinned parquet train shards concatenated in shard/row order (fullwiki)"
+        validation_path = dl.hf(benchmark, "fullwiki/validation-00000-of-00001.parquet")
+        validation = pq.read_table(validation_path).to_pylist()
+        primary["validation"] = wrap_rows(benchmark, "validation", validation)
+        fingerprints["validation"] = fingerprint(validation)
+        recipe += "; pinned parquet train shards concatenated in shard/row order and official labeled validation (fullwiki)"
     elif benchmark == "hover":
         pin = SOURCE_PINS[benchmark]
         dl.hf(benchmark, "hover.py")
@@ -133,7 +137,7 @@ def download_source(root: Path, benchmark: str) -> tuple[dict, dict]:
                 path = dl.hf(benchmark, f"{subject}/{split}-00000-of-00001.parquet")
                 rows.extend(pq.read_table(path).to_pylist())
             if len(rows) != {"train": 7500, "test": 5000}[split]:
-                raise ValueError("CANONICAL_MATH_COUNT_MISMATCH")
+                raise ValueError("STOP_MATH_SOURCE_COUNT_MISMATCH")
             primary[split] = wrap_rows(benchmark, split, rows)
             fingerprints[split] = fingerprint(rows)
         recipe += "; canonical MATH mirror original train/test; fixed subject-config then parquet row order; project ordering (not paper identity)"

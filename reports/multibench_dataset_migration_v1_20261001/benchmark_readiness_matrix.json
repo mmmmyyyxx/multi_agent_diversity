@@ -1,0 +1,64 @@
+{
+  "hotpotqa": {
+    "V2_composition_bound": false,
+    "aggregation_frozen": true,
+    "blockers": [
+      "V2_MULTIBENCH_EXECUTION_COMPOSITION_NOT_BOUND",
+      "TASK_VALID_INITIAL_TEAM_NOT_FROZEN",
+      "PROVIDER_RESOURCE_AUTHORIZATION_GOVERNANCE_NOT_FROZEN",
+      "SYSTEM_DEPENDENCY_RETRIEVAL_NOT_FROZEN"
+    ],
+    "data_frozen": true,
+    "evaluator_frozen": true,
+    "evaluator_runtime": "local normalization/EM contract",
+    "output_frozen": true,
+    "real_api_authorized": false,
+    "real_execution_ready": false,
+    "responsibility_frozen": true,
+    "scientific_contract_sha256": "15a7aaff1c9c337d981ea55ddaaa3206252a0faaa7b246b529fd7eb96e3f50ce",
+    "split_frozen": true,
+    "system_dependencies_frozen": false,
+    "task_frozen": true
+  },
+  "ifbench": {
+    "V2_composition_bound": false,
+    "aggregation_frozen": true,
+    "blockers": [
+      "V2_MULTIBENCH_EXECUTION_COMPOSITION_NOT_BOUND",
+      "TASK_VALID_INITIAL_TEAM_NOT_FROZEN",
+      "PROVIDER_RESOURCE_AUTHORIZATION_GOVERNANCE_NOT_FROZEN",
+      "RESPONSIBILITY_POLICY_NOT_FROZEN"
+    ],
+    "data_frozen": true,
+    "evaluator_frozen": true,
+    "evaluator_runtime": "verified isolated environment",
+    "output_frozen": true,
+    "real_api_authorized": false,
+    "real_execution_ready": false,
+    "responsibility_frozen": false,
+    "scientific_contract_sha256": "ba306c46f91a741f229e99cb3718c67adc333b53f44524de751321dd4aa252d0",
+    "split_frozen": true,
+    "system_dependencies_frozen": true,
+    "task_frozen": true
+  },
+  "math": {
+    "V2_composition_bound": false,
+    "aggregation_frozen": true,
+    "blockers": [
+      "V2_MULTIBENCH_EXECUTION_COMPOSITION_NOT_BOUND",
+      "TASK_VALID_INITIAL_TEAM_NOT_FROZEN",
+      "PROVIDER_RESOURCE_AUTHORIZATION_GOVERNANCE_NOT_FROZEN"
+    ],
+    "data_frozen": true,
+    "evaluator_frozen": true,
+    "evaluator_runtime": "pinned MATH evaluator environment",
+    "output_frozen": true,
+    "real_api_authorized": false,
+    "real_execution_ready": false,
+    "responsibility_frozen": true,
+    "scientific_contract_sha256": "00f3377e1a3cc1452e0cbba51a41ae25777a3c5eaa020622b45f44b9229509f3",
+    "split_frozen": true,
+    "system_dependencies_frozen": true,
+    "task_frozen": true
+  }
+}

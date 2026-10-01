@@ -1877,6 +1877,11 @@
       "path": "scripts/audit_repository_governance.py",
       "classification": "CURRENT_TOOLING",
       "move": false
+    },
+    {
+      "path": "scripts/freeze_benchmark_experiment_splits.py",
+      "classification": "CURRENT_TOOLING",
+      "move": false
     }
   ]
 }

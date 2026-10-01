@@ -1,0 +1,15 @@
+schema_version: dataset_protocol_migration_v1
+experiment_id: multibench_dataset_migration_v1
+baseline_sha: 19d0cbb38277ec0dde32e4df9b621be0364f0931
+baseline_amendment: User explicitly authorized local HEAD as baseline; remote equality
+  prerequisite waived; no push authorized.
+canonical_protocol: benchmark_data_freeze_v1
+experiment_protocol: benchmark_experiment_split_v1
+status: PREPARED_NOT_EXECUTED
+real_api_authorized: false
+public_data_downloads_authorized: true
+benchmark_suite:
+- math
+- ifbench
+- hotpotqa
+report: reports/multibench_dataset_migration_v1_20261001
