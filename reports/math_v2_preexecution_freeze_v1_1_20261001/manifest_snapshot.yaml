@@ -1,0 +1,67 @@
+schema_version: experiment_manifest_v2
+experiment_id: math_v2_pattern_memory_v1
+method_family: unified_team_prompt_search_v2
+method_identity: unified_team_prompt_search_v2
+source_sha: d983a78864b6bed97ba877cb4265ad69ecdd562c
+benchmark_id: math
+benchmark_protocol_id: 00f3377e1a3cc1452e0cbba51a41ae25777a3c5eaa020622b45f44b9229509f3
+dataset_manifest_identity: 7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f
+split_identity: 753a24c9e2ee7bb6d7531c53acc83eacf562a431292d271a8d75ef0156fed70b
+seed: 81
+models:
+  solver: qwen3-8b
+  optimizer: qwen3.7-flash
+  solver_thinking: false
+concurrency:
+  solver: 1
+  optimizer: 1
+provider_policy:
+  identity: lwj
+  frozen: true
+cache_policy:
+  identity: exact_request_role_split_cache_v1
+  frozen: true
+access:
+  search_access: frozen_search
+  shadow_access: frozen_adaptive_gate
+  validation_access: not_authorized
+  test_access: sealed
+budget:
+  regime: saturation
+  saturation_identity: team_epoch_no_commit_v1
+  successful_provider_call_ceiling: 1690560
+  transport_attempt_ceiling: 35501760
+authorization:
+  real_api_authorized: false
+  attempt_id: null
+  authorization_identity: null
+  single_use: true
+lifecycle:
+  status: PREEXECUTION_FROZEN
+  history:
+  - status: DRAFT
+    event: ZERO_API_BLOCKER_CLOSURE
+  - status: PREEXECUTION_FROZEN
+    event: FROZEN_SOURCE_RECEIPT
+hash_closure:
+  scientific_source_hash: 64239f39db7038fa02df0bd8fcd8d1919d71fa689dd9f3b8473217890cec6452
+  governance_hash: 4f5574545a4f9e4e1b256bb43cf70a1de9f8c14d9f552de629d521b7cedec41c
+  benchmark_contract_hash: 0d10a616fa7fcd813717182e7fbe53aa762b611c7d9c0acbf07685fbaa12d45a
+  dataset_manifest_hash: d3c3f587bf9e08f5d9a12c8b777953c57cd30fc4c655e82e95f556b337119d81
+execution_binding:
+  identity: MATH_EXECUTION_BINDING_V1
+  path: experiments/execution_bindings/math_v2_execution_v1.json
+  sha256: 74fe8cb09b7f42dc23188e9212085d8afd85ac8dbf4812248bf979f4d80784d7
+mechanism_config: {}
+search_engine_identity: gepa_derived_team_candidate_exposure_v2
+aggregation_identity: equal_equivalence_plurality_consistency_v1
+responsibility_identity: binary_plurality_raw_responsibility_v1
+transition_identity: common_safe_v1
+adaptive_gate_identity: winner_only_shadow_v1
+pattern_identity: null_pattern_v1
+memory_identity: null_memory_v1
+search_acceptance_identity: local_survival_team_admission_decoupled_v1
+evidence_identity: variable_pattern_capable_evidence_v1
+feasibility_identity: variable_evidence_feasibility_v1
+global_stop_identity: team_epoch_no_commit_v1
+preregistration_identity: 90076d5977f58ce36e4b4a442d67b42d0c893618d639ef747e6d26cc2f4a2c3a

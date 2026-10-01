@@ -1,0 +1,65 @@
+{
+  "canonical_dataset_changed": false,
+  "data_preparation_context": "DATA_PREPARATION_CONTEXT",
+  "empty_final_markup_present": true,
+  "experiment_split_changed": true,
+  "extractor_changed": false,
+  "final_invalid_split_counts": {
+    "optimize": 0,
+    "shadow": 0,
+    "test": 0,
+    "validation": 0
+  },
+  "frozen_before_real_solver_and_efficacy": true,
+  "invalid_source_audit": {
+    "test": {
+      "canonical_source_sha256": "c229f4e8194706dbf8580ad2a127cfc3fdc827e824396e0e220eff76f754ae8a",
+      "eligible_count": 5000,
+      "eligible_universe_hash": "e7c16ec77fef3969363a17754b2bfe4acd54a6bd98d49421c28354ecd681f9fb",
+      "excluded_identity_set_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "invalid_by_level": {},
+      "invalid_by_subject": {},
+      "invalid_reference_count": 0,
+      "total": 5000
+    },
+    "train": {
+      "canonical_source_sha256": "fb770320beb0ab114fe50b5b1a7fbc93a0f7adefd91159db4ff33cd9d4f8058b",
+      "eligible_count": 7496,
+      "eligible_universe_hash": "2654035bdd553efbefd4a648ae2e5616e586fbc0d45175921f975e9934d5c8e6",
+      "excluded_identity_set_hash": "2ec6b6fb6fd8bee1ee9bb27a8075263fade9a8bbe0bb4bbf3f5b15241e928bed",
+      "invalid_by_level": {
+        "Level 3": 2,
+        "Level 5": 2
+      },
+      "invalid_by_subject": {
+        "Algebra": 2,
+        "Number Theory": 2
+      },
+      "invalid_reference_count": 4,
+      "total": 7500
+    }
+  },
+  "missing_reference_is_not_solver_wrong": true,
+  "new_membership_hashes": {
+    "optimize": "52fd0a0253730a4392c879374d0963c46df4aa7daf042f3c0970162f87dbc947",
+    "shadow": "3f730fb428b3059d021c5b8354bad234939b16be79dc808dc41688206344ee74",
+    "test": "9cba0605a224f1c1ebe15a01c65d1263f8cbee45d8ec2cfd67d496b119a6c32d",
+    "validation": "506c2c10beff5a14ef593f90a13929ad4519e0921d4957df00a4c1b152b4cd22"
+  },
+  "new_split_sha256": "753a24c9e2ee7bb6d7531c53acc83eacf562a431292d271a8d75ef0156fed70b",
+  "old_membership_hashes": {
+    "optimize": "07736245014e15c4a1b3f6365794b9bfd25d58032ee04fb0578731c6bf23fec9",
+    "shadow": "80d238e21644777f348694e2df3a93af395abbca648fb0e4e3f0c01211be3667",
+    "test": "9cba0605a224f1c1ebe15a01c65d1263f8cbee45d8ec2cfd67d496b119a6c32d",
+    "validation": "1016db4741d49bc8c965b6dbc5bfa55c30f5a4fa77165e70494e6f6cd0d698b3"
+  },
+  "old_split_sha256": "0a960e81fbdf4b3955c397c1b263a5d1e7f975674d4222039acb131c813d79c3",
+  "raw_excluded_examples_published": false,
+  "real_llm_calls": 0,
+  "reference_extractor_identity": "MATH_REFERENCE_EXTRACTOR_V1",
+  "reference_validity_identity": "MATH_REFERENCE_VALIDITY_V1",
+  "resolution_case": "B",
+  "runtime_content_exposure": false,
+  "source_authored_explicit_nonempty_final_answer": false,
+  "validity_filter_applied": true
+}

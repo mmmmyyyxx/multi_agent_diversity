@@ -1,0 +1,57 @@
+{
+  "status": "PASS",
+  "binding_identity": "MATH_EXECUTION_BINDING_V1",
+  "models": {
+    "solver": "qwen3-8b",
+    "optimizer_reflection": "qwen3.7-flash",
+    "pattern": "qwen3.7-flash",
+    "solver_thinking": false
+  },
+  "provider": "lwj",
+  "shadow_cardinality": 300,
+  "manifest_driven_cardinality": true,
+  "hardcoded_shadow50_active_call_references": 0,
+  "historical_shadow50_wrapper_preserved": true,
+  "evaluator": "math_verify_0.6.0_equivalence_v1",
+  "aggregation": "equal_equivalence_plurality_consistency_v1",
+  "responsibility": "binary_plurality_raw_responsibility_v1",
+  "pattern_prompt_sha256": "fb68a222ebf6cb6c14a0959b5d5576e03e11c181d872aa71c234035503c85046",
+  "pattern_contract_ready": true,
+  "memory_contract_ready": true,
+  "method_identity_collisions": 0,
+  "configured_seeds": [
+    81,
+    82,
+    83
+  ],
+  "provider_bounds": {
+    "max_opportunities": 2405,
+    "max_proposals_per_opportunity": 5,
+    "solver_per_opportunity": 696,
+    "solver_calls": 1676130,
+    "reflection_calls": 12025,
+    "pattern_calls": 2405,
+    "successful_provider_calls": 1690560,
+    "transport_attempts": 35501760
+  },
+  "bounds_derivation": {
+    "max_parent_v": 600,
+    "minimum_positive_v": 1,
+    "max_opportunities": "1 + 4 * (600 + 1) = 2405",
+    "solver_initialization": "5 * (150 + 300) = 2250",
+    "solver_per_opportunity": "36 + 5 * 12 + 2 * 150 + 300 = 696",
+    "proposals_per_opportunity": 5,
+    "pattern_per_opportunity": 1,
+    "transport_multiplier": "1 + 20 retries = 21"
+  },
+  "scientific_budget": {
+    "metric_calls": 36,
+    "reflection_minibatch_size": 3,
+    "promotion": 2,
+    "local_patience": 3,
+    "team_patience": 2
+  },
+  "canary_phase": "first_parent_team_epoch_or_first_commit",
+  "formal_patience_unmodified": true,
+  "canary_stop_is_not_scientific_saturation": true
+}

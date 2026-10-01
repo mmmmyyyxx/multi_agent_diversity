@@ -1,0 +1,17 @@
+{
+  "reference_integrity": true,
+  "readiness_bound": true,
+  "five_guarded_prompts": true,
+  "shared_unified_graph": true,
+  "actual_public_gepa_fake": true,
+  "four_arm_budget_equivalence": true,
+  "private_shadow300": true,
+  "memory_write_contract": true,
+  "all_source_files_pre_provider_poison_rejected": true,
+  "independent_final_preps_identical": true,
+  "actual_execution_registered": true,
+  "authorization_not_consumed": true,
+  "current_suite_pass": true,
+  "historical_replay_pass_claimed": false,
+  "governance_pass": true
+}

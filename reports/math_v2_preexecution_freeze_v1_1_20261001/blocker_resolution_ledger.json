@@ -1,0 +1,149 @@
+{
+  "blockers": [
+    {
+      "blocker_id": "REFERENCE_INTEGRITY",
+      "discovered_at": "closure step 01; no real efficacy observed",
+      "classification": "B. DATA_DERIVATION_DEFECT",
+      "root_cause": "Source final markup empty; no explicit nonempty source answer.",
+      "repair": "Apply MATH_REFERENCE_VALIDITY_V1 before unchanged deterministic stratified sampling; retain canonical source and extractor.",
+      "contract_changed": true,
+      "new_identity": "benchmark_experiment_split_v1_1",
+      "regression_test": "tests/test_math_preexecution.py::test_gold_complete_optimize_and_split_metadata",
+      "status": "PASS"
+    },
+    {
+      "blocker_id": "MATH_READINESS_BINDING",
+      "discovered_at": "closure step 02; no real efficacy observed",
+      "classification": "C. RUNTIME_BINDING_DEFECT",
+      "root_cause": "Static readiness could not prove an executable MATH composition.",
+      "repair": "Bind actual data, evaluator pins, team, model, provider, budget and source prerequisites at pre-provider read points.",
+      "contract_changed": true,
+      "new_identity": "MATH_RUNTIME_READINESS_V1",
+      "regression_test": "tests/test_math_preexecution.py::test_readiness_configuration_poison",
+      "status": "PASS"
+    },
+    {
+      "blocker_id": "SHADOW_CARDINALITY",
+      "discovered_at": "closure step 03; no real efficacy observed",
+      "classification": "C. RUNTIME_BINDING_DEFECT",
+      "root_cause": "Historical gate assumed exactly 50 rows.",
+      "repair": "Use manifest-driven configured cardinality 300 while retaining the historical 50-row wrapper and identical guards.",
+      "contract_changed": false,
+      "new_identity": "MATH_EXECUTION_BINDING_V1",
+      "regression_test": "tests/test_math_preexecution.py::test_shadow_cardinality_preserves_guards",
+      "status": "PASS"
+    },
+    {
+      "blocker_id": "INITIAL_PROMPT_ADMISSION",
+      "discovered_at": "closure step 04; no real efficacy observed",
+      "classification": "D. CONTRACT_CONFORMANCE_DEFECT",
+      "root_cause": "Old draft mutable prompts failed the frozen admission guard.",
+      "repair": "Freeze five generic equivalent wording variants without interface directions, examples or subject-specialist roles; keep old draft.",
+      "contract_changed": true,
+      "new_identity": "MATH_GENERIC_TEAM_SEED_V1_1",
+      "regression_test": "tests/test_math_preexecution.py::test_gold_complete_optimize_and_split_metadata",
+      "status": "PASS"
+    },
+    {
+      "blocker_id": "MEMORY_WRITE_SEMANTICS",
+      "discovered_at": "closure step 05; no real efficacy observed",
+      "classification": "A. IMPLEMENTATION_DEFECT",
+      "root_cause": "Committed winners with newly broken cases could teach shared risk.",
+      "repair": "Commit teaches private memory only; shared memory accepts preregistered structural rejection events only.",
+      "contract_changed": false,
+      "new_identity": "structured_long_term_memory_v1",
+      "regression_test": "tests/test_math_preexecution.py::test_memory_write_contract",
+      "status": "PASS"
+    },
+    {
+      "blocker_id": "MATH_V2_COMPOSITION",
+      "discovered_at": "closure step 06; no real efficacy observed",
+      "classification": "A. IMPLEMENTATION_DEFECT",
+      "root_cause": "MATH had contracts but no shared production composition.",
+      "repair": "Connect benchmark-neutral binary state, responsibility, evidence, fixed-peer probe/Full, shared Common-Safe key, private gate and atomic commit to UnifiedSearchOrchestrator.",
+      "contract_changed": true,
+      "new_identity": "MATH_EXECUTION_BINDING_V1",
+      "regression_test": "tests/test_math_preexecution.py::test_four_arm_actual_public_gepa_fake_e2e",
+      "status": "PASS"
+    },
+    {
+      "blocker_id": "PROVIDER_BINDING",
+      "discovered_at": "closure step 07; no real efficacy observed",
+      "classification": "C. RUNTIME_BINDING_DEFECT",
+      "root_cause": "No exact executable provider/model/cache/retry/accounting binding.",
+      "repair": "Freeze lwj, qwen3-8b thinking false, qwen3.7-flash reflection/Pattern, role/split cache identities and finite emergency ceilings; construct client after single-use authorization.",
+      "contract_changed": true,
+      "new_identity": "MATH_EXECUTION_BINDING_V1",
+      "regression_test": "tests/test_math_preexecution.py::test_request_cache_accounting_and_gate_capability",
+      "status": "PASS"
+    },
+    {
+      "blocker_id": "BUDGET_EQUIVALENCE",
+      "discovered_at": "closure step 08; no real efficacy observed",
+      "classification": "D. CONTRACT_CONFORMANCE_DEFECT",
+      "root_cause": "Four-arm real GEPA dispatch equivalence required direct proof.",
+      "repair": "Capture actual pinned public GEPA calls and pipeline controls for all arms; keep 36/3/2/3/2 identical and mechanism costs separate.",
+      "contract_changed": false,
+      "new_identity": "gepa_derived_team_candidate_exposure_v2",
+      "regression_test": "tests/test_math_preexecution.py::test_four_arm_actual_public_gepa_fake_e2e",
+      "status": "PASS"
+    },
+    {
+      "blocker_id": "HELDOUT_FIREWALL",
+      "discovered_at": "closure step 09; no real efficacy observed",
+      "classification": "D. CONTRACT_CONFORMANCE_DEFECT",
+      "root_cause": "Shadow and heldout raw content required capability isolation.",
+      "repair": "Optimize-only public reader, private closure and separate broker cache for Shadow300, denied Validation/Test purposes; isolated source-only data preparation.",
+      "contract_changed": false,
+      "new_identity": "MATH_EXECUTION_BINDING_V1",
+      "regression_test": "tests/test_math_preexecution.py::test_heldout_reader_firewall",
+      "status": "PASS"
+    },
+    {
+      "blocker_id": "FAKE_E2E",
+      "discovered_at": "closure step 10; no real efficacy observed",
+      "classification": "D. CONTRACT_CONFORMANCE_DEFECT",
+      "root_cause": "Static checks did not prove evaluator-to-commit and persistence paths.",
+      "repair": "Run actual pinned parser/equivalence/plurality/public GEPA through all four arms plus full fake canary lifecycle, ledger, summary roundtrip and inventory.",
+      "contract_changed": false,
+      "new_identity": "math_v2_fake_e2e_v1",
+      "regression_test": "tests/test_math_preexecution.py::test_fake_canary_full_persistence",
+      "status": "PASS"
+    },
+    {
+      "blocker_id": "GEPA_EPOCH_REPLAY",
+      "discovered_at": "closure step 11; no real efficacy observed",
+      "classification": "A. IMPLEMENTATION_DEFECT",
+      "root_cause": "Perfect minibatches consumed no metrics and exhausted a single-pass evidence schedule before frozen patience.",
+      "repair": "Replay the identical deterministic sampler cycle across epochs; keep metric ceiling, batch size and patience unchanged; pinned GEPA dependency unchanged.",
+      "contract_changed": false,
+      "new_identity": "gepa_derived_team_candidate_exposure_v2",
+      "regression_test": "tests/test_math_preexecution.py::test_four_arm_actual_public_gepa_fake_e2e",
+      "status": "PASS"
+    },
+    {
+      "blocker_id": "AUTHORIZATION_SINGLE_USE",
+      "discovered_at": "closure step 12; no real efficacy observed",
+      "classification": "D. CONTRACT_CONFORMANCE_DEFECT",
+      "root_cause": "Independent or copied prep must not reuse an authorization scope.",
+      "repair": "Consume one durable exclusive global scope marker before client construction, including failed construction; keep all actual preps unauthorized.",
+      "contract_changed": false,
+      "new_identity": "unified_canary_prep_v1",
+      "regression_test": "tests/test_math_preexecution.py::test_consumption_survives_failed_client_construction",
+      "status": "PASS"
+    },
+    {
+      "blocker_id": "EXECUTION_REGISTRATION",
+      "discovered_at": "closure step 13; no real efficacy observed",
+      "classification": "D. CONTRACT_CONFORMANCE_DEFECT",
+      "root_cause": "Frontier actual experiment ID had no independent registry node.",
+      "repair": "Register actual experiment and parent lineage, reject unregistered/mismatched frontier IDs, preserve intermediate preps and regenerate two fresh final preps.",
+      "contract_changed": false,
+      "new_identity": "math_v2_pattern_memory_v1",
+      "regression_test": "tests/test_repository_governance_alignment.py::test_current_experiment_registration_fails_closed",
+      "status": "PASS"
+    }
+  ],
+  "real_llm_calls": 0,
+  "unresolved_blockers": []
+}

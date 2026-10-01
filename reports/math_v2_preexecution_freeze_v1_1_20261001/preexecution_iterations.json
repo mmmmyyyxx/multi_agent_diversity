@@ -1,0 +1,13 @@
+{
+  "superseded_before_any_authorization_or_execution": [
+    {
+      "execution_source_sha": "8e27e50119fa244f46246d570224833b9872362b",
+      "startup_identity_sha256": "f2ec3e84ad7234b9292a973827efe1e0120e6a5bb94435e4c64b4c4623e3095d",
+      "independent_preps_preserved": true,
+      "authorization_consumed": false,
+      "reason": "Actual execution experiment registry node and fail-closed frontier checks added before final freeze."
+    }
+  ],
+  "real_llm_calls": 0,
+  "scientific_efficacy_observed": false
+}

@@ -1,0 +1,264 @@
+{
+  "ordered_final_fields": [
+    {
+      "number": 1,
+      "name": "BASE_SHA",
+      "value": "fa718b9842fcfb50c5a651a59225d1435ebdd7e5"
+    },
+    {
+      "number": 2,
+      "name": "PREEXECUTION_SHA",
+      "value": "containing required local freeze commit; resolved after commit"
+    },
+    {
+      "number": 3,
+      "name": "changed files",
+      "value": "changed_files.json"
+    },
+    {
+      "number": 4,
+      "name": "dirty tree",
+      "value": "no task changes after final commit; unrelated retry2 preserved"
+    },
+    {
+      "number": 5,
+      "name": "reference resolution",
+      "value": "Case B"
+    },
+    {
+      "number": 6,
+      "name": "reference extractor identity",
+      "value": "MATH_REFERENCE_EXTRACTOR_V1"
+    },
+    {
+      "number": 7,
+      "name": "reference validity policy identity",
+      "value": "MATH_REFERENCE_VALIDITY_V1"
+    },
+    {
+      "number": 8,
+      "name": "canonical MATH SHA",
+      "value": "7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f"
+    },
+    {
+      "number": 9,
+      "name": "experiment split SHA",
+      "value": "753a24c9e2ee7bb6d7531c53acc83eacf562a431292d271a8d75ef0156fed70b"
+    },
+    {
+      "number": 10,
+      "name": "Optimize hash",
+      "value": "52fd0a0253730a4392c879374d0963c46df4aa7daf042f3c0970162f87dbc947"
+    },
+    {
+      "number": 11,
+      "name": "Shadow hash",
+      "value": "3f730fb428b3059d021c5b8354bad234939b16be79dc808dc41688206344ee74"
+    },
+    {
+      "number": 12,
+      "name": "Validation hash",
+      "value": "506c2c10beff5a14ef593f90a13929ad4519e0921d4957df00a4c1b152b4cd22"
+    },
+    {
+      "number": 13,
+      "name": "Test hash",
+      "value": "9cba0605a224f1c1ebe15a01c65d1263f8cbee45d8ec2cfd67d496b119a6c32d"
+    },
+    {
+      "number": 14,
+      "name": "Solver provider/model",
+      "value": "lwj / qwen3-8b / thinking=false"
+    },
+    {
+      "number": 15,
+      "name": "Optimizer provider/model",
+      "value": "lwj / qwen3.7-flash"
+    },
+    {
+      "number": 16,
+      "name": "Pattern provider/model",
+      "value": "lwj / qwen3.7-flash"
+    },
+    {
+      "number": 17,
+      "name": "initial team version",
+      "value": "MATH_GENERIC_TEAM_SEED_V1_1"
+    },
+    {
+      "number": 18,
+      "name": "five prompt hashes",
+      "value": [
+        "57e468e68d9ab974a0018353e4bc0a15ca0e1e002c8dbd6676802d89839bc674",
+        "c6e4039d562e0f1cf9e7f4ab4a0245f91c605a566947bcc31b6f1db90d1e5d23",
+        "37d8569a6e38128535bae504b4e7a4acb165d5bb8a4528a5e1e86c51a51a94d5",
+        "ade4c363f59d20e8fc2e6d743c47d4e7e8d059ce9cb8fa0c309f61bd50c9e112",
+        "6f9ee08d5b0055d8d5986c2cd55aea000074e11df4aee614241ca6b4e59b3098"
+      ]
+    },
+    {
+      "number": 19,
+      "name": "ordered team hash",
+      "value": "4ca685adff5ca8a97e53b0aa0f5715783c7c6937433bd5bbc1308cbad9e97200"
+    },
+    {
+      "number": 20,
+      "name": "prompt guard pass count",
+      "value": "5/5"
+    },
+    {
+      "number": 21,
+      "name": "evaluator identity",
+      "value": "math_verify_0.6.0_equivalence_v1"
+    },
+    {
+      "number": 22,
+      "name": "aggregation identity",
+      "value": "equal_equivalence_plurality_consistency_v1"
+    },
+    {
+      "number": 23,
+      "name": "responsibility identity",
+      "value": "binary_plurality_raw_responsibility_v1"
+    },
+    {
+      "number": 24,
+      "name": "Shadow configured cardinality",
+      "value": 300
+    },
+    {
+      "number": 25,
+      "name": "hard-coded Shadow50 active references",
+      "value": 0
+    },
+    {
+      "number": 26,
+      "name": "illegal Memory write count",
+      "value": 0
+    },
+    {
+      "number": 27,
+      "name": "A1 budget",
+      "value": "metric=36; minibatch=3; promotion=2; patience=3/2"
+    },
+    {
+      "number": 28,
+      "name": "A2 budget",
+      "value": "metric=36; minibatch=3; promotion=2; patience=3/2"
+    },
+    {
+      "number": 29,
+      "name": "A3 budget",
+      "value": "metric=36; minibatch=3; promotion=2; patience=3/2"
+    },
+    {
+      "number": 30,
+      "name": "A4 budget",
+      "value": "metric=36; minibatch=3; promotion=2; patience=3/2"
+    },
+    {
+      "number": 31,
+      "name": "budget equivalence",
+      "value": "PASS"
+    },
+    {
+      "number": 32,
+      "name": "fake A1",
+      "value": "PASS"
+    },
+    {
+      "number": 33,
+      "name": "fake A2",
+      "value": "PASS"
+    },
+    {
+      "number": 34,
+      "name": "fake A3",
+      "value": "PASS"
+    },
+    {
+      "number": 35,
+      "name": "fake A4",
+      "value": "PASS"
+    },
+    {
+      "number": 36,
+      "name": "Optimize invalid references",
+      "value": 0
+    },
+    {
+      "number": 37,
+      "name": "Shadow invalid references",
+      "value": 0
+    },
+    {
+      "number": 38,
+      "name": "Validation invalid references",
+      "value": 0
+    },
+    {
+      "number": 39,
+      "name": "Test invalid references",
+      "value": 0
+    },
+    {
+      "number": 40,
+      "name": "Shadow raw search leakage",
+      "value": 0
+    },
+    {
+      "number": 41,
+      "name": "Validation raw search leakage",
+      "value": 0
+    },
+    {
+      "number": 42,
+      "name": "Test raw search leakage",
+      "value": 0
+    },
+    {
+      "number": 43,
+      "name": "real Solver calls",
+      "value": 0
+    },
+    {
+      "number": 44,
+      "name": "real optimizer calls",
+      "value": 0
+    },
+    {
+      "number": 45,
+      "name": "real Pattern calls",
+      "value": 0
+    },
+    {
+      "number": 46,
+      "name": "secret scan",
+      "value": "PASS"
+    },
+    {
+      "number": 47,
+      "name": "passed",
+      "value": 603
+    },
+    {
+      "number": 48,
+      "name": "skipped",
+      "value": 2
+    },
+    {
+      "number": 49,
+      "name": "failed",
+      "value": 0
+    },
+    {
+      "number": 50,
+      "name": "historical tests not run",
+      "value": 1468
+    }
+  ],
+  "status": "PREEXECUTION_FROZEN",
+  "readiness": "CANARY_READY_NOT_AUTHORIZED",
+  "real_llm_calls": 0,
+  "efficacy_verified": false
+}

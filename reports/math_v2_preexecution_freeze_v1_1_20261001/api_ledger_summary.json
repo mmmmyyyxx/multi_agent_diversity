@@ -1,0 +1,60 @@
+{
+  "real_solver_calls": 0,
+  "real_optimizer_calls": 0,
+  "real_pattern_calls": 0,
+  "real_aggregator_calls": 0,
+  "successful_real_provider_calls": 0,
+  "real_transport_attempts": 0,
+  "fake_ledger_counts_by_arm": {
+    "A1": {
+      "attempts": 2146,
+      "successes": 2146,
+      "failures": 0,
+      "input_tokens": 4292,
+      "output_tokens": 4292,
+      "solver": 2142,
+      "reflection": 4,
+      "pattern": 0,
+      "validation": 0,
+      "test": 0
+    },
+    "A2": {
+      "attempts": 2149,
+      "successes": 2149,
+      "failures": 0,
+      "input_tokens": 4298,
+      "output_tokens": 4298,
+      "solver": 2142,
+      "reflection": 4,
+      "pattern": 3,
+      "validation": 0,
+      "test": 0
+    },
+    "A3": {
+      "attempts": 2146,
+      "successes": 2146,
+      "failures": 0,
+      "input_tokens": 4292,
+      "output_tokens": 4292,
+      "solver": 2142,
+      "reflection": 4,
+      "pattern": 0,
+      "validation": 0,
+      "test": 0
+    },
+    "A4": {
+      "attempts": 2149,
+      "successes": 2149,
+      "failures": 0,
+      "input_tokens": 4298,
+      "output_tokens": 4298,
+      "solver": 2142,
+      "reflection": 4,
+      "pattern": 3,
+      "validation": 0,
+      "test": 0
+    }
+  },
+  "fake_counts_are_not_real_usage": true,
+  "authorization_scopes_consumed": 0
+}

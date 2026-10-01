@@ -1,0 +1,64 @@
+{
+  "status": "PASS",
+  "execution_source_sha": "d983a78864b6bed97ba877cb4265ad69ecdd562c",
+  "two_independent_preps_identical": true,
+  "startup_identity_sha256": "6d8e57441cae187c639134c3f171ed611d6a97031563d1cb971553efe027bcb4",
+  "scope": {
+    "attempt_id": "math_unified_v2_A1_seed81_canary_attempt1",
+    "arm": "A1",
+    "seed": 81,
+    "phase": "first_parent_team_epoch_or_first_commit",
+    "source_sha": "d983a78864b6bed97ba877cb4265ad69ecdd562c",
+    "preregistration_identity": "90076d5977f58ce36e4b4a442d67b42d0c893618d639ef747e6d26cc2f4a2c3a",
+    "binding_sha256": "74fe8cb09b7f42dc23188e9212085d8afd85ac8dbf4812248bf979f4d80784d7",
+    "models": {
+      "solver": "qwen3-8b",
+      "optimizer_reflection": "qwen3.7-flash",
+      "pattern": "qwen3.7-flash",
+      "solver_thinking": false
+    },
+    "provider": "lwj",
+    "roles": [
+      "solver",
+      "reflection"
+    ],
+    "successful_provider_call_ceiling": 1690560,
+    "transport_attempt_ceiling": 35501760,
+    "validation_calls": 0,
+    "test_calls": 0
+  },
+  "byte_poison_tests_passed": 171,
+  "byte_poison_tests_failed": 0,
+  "unauthorized_preps_rejected": 2,
+  "provider_boundary_reached": false,
+  "provider_attempts": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "source_commit_bytes_verified": true,
+  "all_intermediate_and_final_preps_unconsumed": [
+    {
+      "intermediate": true,
+      "prep_sha256": "fcee5dec563f34b9d95eeb48b5aac5c2b7d2e6cd4238c2c3cb8d07013b5786f4",
+      "authorized": false,
+      "consumed": false
+    },
+    {
+      "intermediate": true,
+      "prep_sha256": "fcee5dec563f34b9d95eeb48b5aac5c2b7d2e6cd4238c2c3cb8d07013b5786f4",
+      "authorized": false,
+      "consumed": false
+    },
+    {
+      "intermediate": false,
+      "prep_sha256": "320747b43639382667c4c21aa59e7237141bea1436f9aa192e6ef31490911d53",
+      "authorized": false,
+      "consumed": false
+    },
+    {
+      "intermediate": false,
+      "prep_sha256": "320747b43639382667c4c21aa59e7237141bea1436f9aa192e6ef31490911d53",
+      "authorized": false,
+      "consumed": false
+    }
+  ]
+}

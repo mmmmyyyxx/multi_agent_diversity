@@ -1,0 +1,9 @@
+{
+  "scientific_validity": "ZERO_API_PREEXECUTION_CONFORMANCE_PASS",
+  "efficacy": "NOT_EVALUATED",
+  "classifier": "CANARY_READY_NOT_AUTHORIZED",
+  "real_canary_authorized": false,
+  "formal_execution_authorized": false,
+  "validation_authorized": false,
+  "test_sealed": true
+}

@@ -1,0 +1,15 @@
+{
+  "base_sha": "fa718b9842fcfb50c5a651a59225d1435ebdd7e5",
+  "execution_source_sha": "d983a78864b6bed97ba877cb4265ad69ecdd562c",
+  "preexecution_sha_resolution": "Containing Git commit created with message: Freeze MATH Unified V2 preexecution after blocker closure",
+  "source_sha_is_execution_authority": true,
+  "report_commit_is_not_execution_identity": true,
+  "prior_hold_report_unchanged": true,
+  "prior_draft_initial_team_unchanged": true,
+  "intermediate_preps_preserved": true,
+  "canonical_dataset_unchanged": true,
+  "zero_api_guard": true,
+  "real_calls": 0,
+  "scientific_efficacy_observed": false,
+  "push_performed": false
+}

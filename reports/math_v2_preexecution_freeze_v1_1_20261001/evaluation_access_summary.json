@@ -1,0 +1,24 @@
+{
+  "optimize_count": 150,
+  "shadow_count": 300,
+  "validation_count": 300,
+  "test_count": 300,
+  "invalid_reference_counts": {
+    "optimize": 0,
+    "shadow": 0,
+    "validation": 0,
+    "test": 0
+  },
+  "pairwise_identity_overlap_count": 0,
+  "pairwise_content_overlap_count": 0,
+  "shadow_raw_search_leakage": 0,
+  "validation_raw_search_leakage": 0,
+  "test_raw_search_leakage": 0,
+  "validation_real_calls": 0,
+  "test_real_calls": 0,
+  "validation_search_access": "SEALED",
+  "test_access": "SEALED",
+  "full_source_access_exception": "Isolated DATA_PREPARATION_CONTEXT before sampling; no runtime import, provider or optimization.",
+  "shadow_private_cache_capability": true,
+  "source_extractor_unchanged": true
+}
