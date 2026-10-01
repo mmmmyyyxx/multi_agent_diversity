@@ -48,6 +48,7 @@ flowchart TD
     n183["v2_pattern_memory_multibench_v1<br/>FORMAL_EXPERIMENT<br/>PREPARED_NOT_EXECUTED"]
     n184["math_v2_preexecution_freeze_v1<br/>PREEXECUTION_FREEZE<br/>HOLD"]
     n185["math_v2_preexecution_freeze_v1_1<br/>PREEXECUTION_FREEZE<br/>PREEXECUTION_FROZEN"]
+    n186["math_v2_pattern_memory_v1<br/>FORMAL_EXPERIMENT<br/>PREEXECUTION_FROZEN"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -307,6 +308,7 @@ flowchart TD
   n182 -->|freeze_of| n184
   n179 -->|freeze_of| n184
   n184 -->|resolves_blockers_of| n185
+  n185 -->|derived_from| n186
 ```
 
 ## Archived branches and unresolved evidence

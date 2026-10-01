@@ -95,6 +95,23 @@ def test_current_frontier_exists(registry):
     assert frontier['last_governance_milestone'] in {r['experiment_id'] for r in registry['experiments']}
 
 
+@pytest.mark.parametrize('poison,expected',[
+    ('unregistered_experiment','current experiment is not registered'),
+    ('math_v2_preexecution_freeze_v1_1','current experiment differs from canary manifest identity'),
+])
+def test_current_experiment_registration_fails_closed(monkeypatch,poison,expected):
+    import multi_dataset_diverse_rl.governance.repository as repository
+    original=repository.load_yaml
+    def read(path):
+        result=original(path)
+        if Path(path)==ROOT/'experiments/current_frontier.yaml':
+            result=deepcopy(result)
+            result['current_experiment']=poison
+        return result
+    monkeypatch.setattr(repository,'load_yaml',read)
+    assert expected in repository.audit_repository(ROOT,check_generated=False)['errors']
+
+
 def test_current_frontier_has_no_api_authorization():
     frontier=load_yaml(ROOT/'experiments/current_frontier.yaml')
     assert frontier['real_api_authorized'] is False

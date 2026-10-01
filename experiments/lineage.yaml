@@ -557,6 +557,9 @@ nodes:
   era: BENCHMARK_GENERALIZATION
 - experiment_id: math_v2_preexecution_freeze_v1_1
   kind: PREEXECUTION_FREEZE
+- experiment_id: math_v2_pattern_memory_v1
+  kind: FORMAL_EXPERIMENT
+  era: BENCHMARK_GENERALIZATION
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -865,4 +868,9 @@ edges:
   evidence: reports/math_v2_preexecution_freeze_v1_1_20261001/README.md
   scope: Zero-API reference validity and runtime conformance closure; no efficacy
     evidence.
+- from: math_v2_preexecution_freeze_v1_1
+  to: math_v2_pattern_memory_v1
+  relation: derived_from
+  evidence: reports/math_v2_preexecution_freeze_v1_1_20261001/README.md
+  scope: Preexecution contract registration only; no real API calls or efficacy evidence.
 current_frontier: experiments/current_frontier.yaml

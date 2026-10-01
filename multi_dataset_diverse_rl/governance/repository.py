@@ -233,7 +233,14 @@ def audit_repository(root: Path, check_generated: bool=True) -> dict:
             docs.append('canary readiness cannot unlock held-out access')
     elif readiness is not False:
         docs.append('frontier readiness must be closed or explicitly canary-only')
-    if frontier.get('last_governance_milestone') not in {r['experiment_id'] for r in registry['experiments']}:docs.append('frontier node missing')
+    registered={r['experiment_id'] for r in registry['experiments']}
+    if frontier.get('last_governance_milestone') not in registered:docs.append('frontier node missing')
+    current=frontier.get('current_experiment')
+    if current != 'NO_AUTHORIZED_REAL_EXPERIMENT' and current not in registered:
+        docs.append('current experiment is not registered')
+    if readiness == 'true_for_canary_only' and path and (root/path).is_file():
+        if load_yaml(root/path).get('experiment_id') != current:
+            docs.append('current experiment differs from canary manifest identity')
     imports=import_guard(root)
     identity=build_unified_source_identity(root)
     bad=[f['path'] for f in identity['scopes']['scientific']['files'] if f['path'].startswith(('reports/','docs/archive/')) or f['path'] in {'README.md','method.md','AGENTS.md'}]

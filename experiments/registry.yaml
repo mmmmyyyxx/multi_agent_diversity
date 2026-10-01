@@ -5726,3 +5726,28 @@ experiments:
       and source receipt; containing report commit is not execution authority.
     execution_commit: No real canary or formal call is authorized or executed.
     result_commit: No scientific efficacy results exist.
+- experiment_id: math_v2_pattern_memory_v1
+  kind: FORMAL_EXPERIMENT
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2
+  parent_ids:
+  - math_v2_preexecution_freeze_v1_1
+  status: PREEXECUTION_FROZEN
+  scientific_status: ZERO_API_CONFORMANCE_PASS_EFFICACY_UNVERIFIED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_pattern_memory_v1.yaml
+  report: reports/math_v2_preexecution_freeze_v1_1_20261001
+  classifier: CANARY_READY_NOT_AUTHORIZED
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Registered actual execution identity before final preexecution freeze; no real
+    API execution or efficacy observed.
+  unavailable:
+    implementation_commit: Exact execution source is frozen in the permanent manifest
+      and source receipt.
+    execution_commit: No real canary or formal execution authorized or consumed.
+    result_commit: No scientific efficacy results exist.
