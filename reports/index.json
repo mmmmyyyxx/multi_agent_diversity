@@ -2079,6 +2079,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/v2_pattern_memory_factorial_v1_1_model_binding_20261001",
+      "document": "reports/v2_pattern_memory_factorial_v1_1_model_binding_20261001/README.md",
+      "date": "20261001",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "SCIENTIFIC_RESULT",
+      "experiment_id": "v2_pattern_memory_factorial_v1_1",
+      "status": "HOLD",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/v2_pattern_memory_factorial_v1_20261001",
       "document": "reports/v2_pattern_memory_factorial_v1_20261001/README.md",
       "date": "20261001",

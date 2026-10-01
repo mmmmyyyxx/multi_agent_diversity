@@ -1,0 +1,239 @@
+{
+  "a2c_matching_constraint": "USER_CLARIFICATION_PENDING_BEFORE_PROTOCOL_FREEZE",
+  "all_arms_same_solver_and_optimizer": true,
+  "arm_seed_bindings": [
+    {
+      "arm": "A1",
+      "execution_status": "NOT_RUN",
+      "models": {
+        "optimizer_model": "qwen3.7-flash",
+        "optimizer_provider": "lwj",
+        "optimizer_temperature": 0.0,
+        "optimizer_thinking": false,
+        "pattern_model": "qwen3.7-flash",
+        "pattern_provider": "lwj",
+        "solver_model": "qwen3-8b",
+        "solver_provider": "lwj",
+        "solver_temperature": 0.0,
+        "solver_thinking": false
+      },
+      "seed": 81
+    },
+    {
+      "arm": "A1",
+      "execution_status": "NOT_RUN",
+      "models": {
+        "optimizer_model": "qwen3.7-flash",
+        "optimizer_provider": "lwj",
+        "optimizer_temperature": 0.0,
+        "optimizer_thinking": false,
+        "pattern_model": "qwen3.7-flash",
+        "pattern_provider": "lwj",
+        "solver_model": "qwen3-8b",
+        "solver_provider": "lwj",
+        "solver_temperature": 0.0,
+        "solver_thinking": false
+      },
+      "seed": 82
+    },
+    {
+      "arm": "A1",
+      "execution_status": "NOT_RUN",
+      "models": {
+        "optimizer_model": "qwen3.7-flash",
+        "optimizer_provider": "lwj",
+        "optimizer_temperature": 0.0,
+        "optimizer_thinking": false,
+        "pattern_model": "qwen3.7-flash",
+        "pattern_provider": "lwj",
+        "solver_model": "qwen3-8b",
+        "solver_provider": "lwj",
+        "solver_temperature": 0.0,
+        "solver_thinking": false
+      },
+      "seed": 83
+    },
+    {
+      "arm": "A2",
+      "execution_status": "NOT_RUN",
+      "models": {
+        "optimizer_model": "qwen3.7-flash",
+        "optimizer_provider": "lwj",
+        "optimizer_temperature": 0.0,
+        "optimizer_thinking": false,
+        "pattern_model": "qwen3.7-flash",
+        "pattern_provider": "lwj",
+        "solver_model": "qwen3-8b",
+        "solver_provider": "lwj",
+        "solver_temperature": 0.0,
+        "solver_thinking": false
+      },
+      "seed": 81
+    },
+    {
+      "arm": "A2",
+      "execution_status": "NOT_RUN",
+      "models": {
+        "optimizer_model": "qwen3.7-flash",
+        "optimizer_provider": "lwj",
+        "optimizer_temperature": 0.0,
+        "optimizer_thinking": false,
+        "pattern_model": "qwen3.7-flash",
+        "pattern_provider": "lwj",
+        "solver_model": "qwen3-8b",
+        "solver_provider": "lwj",
+        "solver_temperature": 0.0,
+        "solver_thinking": false
+      },
+      "seed": 82
+    },
+    {
+      "arm": "A2",
+      "execution_status": "NOT_RUN",
+      "models": {
+        "optimizer_model": "qwen3.7-flash",
+        "optimizer_provider": "lwj",
+        "optimizer_temperature": 0.0,
+        "optimizer_thinking": false,
+        "pattern_model": "qwen3.7-flash",
+        "pattern_provider": "lwj",
+        "solver_model": "qwen3-8b",
+        "solver_provider": "lwj",
+        "solver_temperature": 0.0,
+        "solver_thinking": false
+      },
+      "seed": 83
+    },
+    {
+      "arm": "A3",
+      "execution_status": "NOT_RUN",
+      "models": {
+        "optimizer_model": "qwen3.7-flash",
+        "optimizer_provider": "lwj",
+        "optimizer_temperature": 0.0,
+        "optimizer_thinking": false,
+        "pattern_model": "qwen3.7-flash",
+        "pattern_provider": "lwj",
+        "solver_model": "qwen3-8b",
+        "solver_provider": "lwj",
+        "solver_temperature": 0.0,
+        "solver_thinking": false
+      },
+      "seed": 81
+    },
+    {
+      "arm": "A3",
+      "execution_status": "NOT_RUN",
+      "models": {
+        "optimizer_model": "qwen3.7-flash",
+        "optimizer_provider": "lwj",
+        "optimizer_temperature": 0.0,
+        "optimizer_thinking": false,
+        "pattern_model": "qwen3.7-flash",
+        "pattern_provider": "lwj",
+        "solver_model": "qwen3-8b",
+        "solver_provider": "lwj",
+        "solver_temperature": 0.0,
+        "solver_thinking": false
+      },
+      "seed": 82
+    },
+    {
+      "arm": "A3",
+      "execution_status": "NOT_RUN",
+      "models": {
+        "optimizer_model": "qwen3.7-flash",
+        "optimizer_provider": "lwj",
+        "optimizer_temperature": 0.0,
+        "optimizer_thinking": false,
+        "pattern_model": "qwen3.7-flash",
+        "pattern_provider": "lwj",
+        "solver_model": "qwen3-8b",
+        "solver_provider": "lwj",
+        "solver_temperature": 0.0,
+        "solver_thinking": false
+      },
+      "seed": 83
+    },
+    {
+      "arm": "A4",
+      "execution_status": "NOT_RUN",
+      "models": {
+        "optimizer_model": "qwen3.7-flash",
+        "optimizer_provider": "lwj",
+        "optimizer_temperature": 0.0,
+        "optimizer_thinking": false,
+        "pattern_model": "qwen3.7-flash",
+        "pattern_provider": "lwj",
+        "solver_model": "qwen3-8b",
+        "solver_provider": "lwj",
+        "solver_temperature": 0.0,
+        "solver_thinking": false
+      },
+      "seed": 81
+    },
+    {
+      "arm": "A4",
+      "execution_status": "NOT_RUN",
+      "models": {
+        "optimizer_model": "qwen3.7-flash",
+        "optimizer_provider": "lwj",
+        "optimizer_temperature": 0.0,
+        "optimizer_thinking": false,
+        "pattern_model": "qwen3.7-flash",
+        "pattern_provider": "lwj",
+        "solver_model": "qwen3-8b",
+        "solver_provider": "lwj",
+        "solver_temperature": 0.0,
+        "solver_thinking": false
+      },
+      "seed": 82
+    },
+    {
+      "arm": "A4",
+      "execution_status": "NOT_RUN",
+      "models": {
+        "optimizer_model": "qwen3.7-flash",
+        "optimizer_provider": "lwj",
+        "optimizer_temperature": 0.0,
+        "optimizer_thinking": false,
+        "pattern_model": "qwen3.7-flash",
+        "pattern_provider": "lwj",
+        "solver_model": "qwen3-8b",
+        "solver_provider": "lwj",
+        "solver_temperature": 0.0,
+        "solver_thinking": false
+      },
+      "seed": 83
+    }
+  ],
+  "authority": "EXPLICIT_CURRENT_USER_INSTRUCTIONS",
+  "common_contract_solver_model": "qwen3-8b",
+  "draft_model_binding": {
+    "optimizer": "qwen3.7-flash",
+    "solver": "qwen3-8b",
+    "solver_thinking": false
+  },
+  "draft_read_point": "experiments/manifests/v2_pattern_memory_factorial_v1_1.yaml: models and provider_policy",
+  "frozen_execution_identity": null,
+  "historical_governance_model_check": "PASS; provider/model check only, not complete execution admission",
+  "models": {
+    "optimizer_model": "qwen3.7-flash",
+    "optimizer_provider": "lwj",
+    "optimizer_temperature": 0.0,
+    "optimizer_thinking": false,
+    "pattern_model": "qwen3.7-flash",
+    "pattern_provider": "lwj",
+    "solver_model": "qwen3-8b",
+    "solver_provider": "lwj",
+    "solver_temperature": 0.0,
+    "solver_thinking": false
+  },
+  "old_report_amended": false,
+  "optimizer_provider_instruction": "qwen3.7-flash, provider=lwj; Pattern shares optimizer identity.",
+  "real_api_calls": 0,
+  "remaining_governance_binding": "Unified V2 execution factory/startup/authorization remains unbound until freeze",
+  "solver_default_read_point": "multi_dataset_diverse_rl/config.py: ModelConfig.agent_model",
+  "solver_instruction": "All Solvers should be qwen3-8b.",
+  "status": "MODEL_SELECTION_PASS"
+}

@@ -1,0 +1,42 @@
+{
+  "a2c_matching_constraint": "USER_CLARIFICATION_PENDING",
+  "compileall": "PASS",
+  "current_suite": {
+    "elapsed_seconds": 557.15,
+    "historical_deselected": 1468,
+    "passed": 454,
+    "skipped": 4
+  },
+  "dataset_downloads": 0,
+  "earlier_test_selection": "Historical request-identity module was deselected; regression placed in the classified current V2 module.",
+  "exact_execution_freeze": "NOT_CREATED",
+  "full_historical_private_replay": "NOT_RUN; no full historical PASS claimed",
+  "governance_manifest_preflight": "PASS_FOR_DRAFT_ONLY",
+  "local_receipts": [
+    {
+      "path": "runs/v2_pattern_memory_factorial_v1_1_preexecution_20261001/model_correction_audit.py",
+      "sha256": "354e63c02d99f99b49c7c95e8dc759ee0180d84ab0ad0ba7956b225abcb95f0a"
+    },
+    {
+      "path": "runs/v2_pattern_memory_factorial_v1_1_preexecution_20261001/model_correction_audit.log",
+      "sha256": "0876b3ae4ec49dadd3eb1ff3e3954a35117632941700a183ffbc6a076b54344d"
+    },
+    {
+      "path": "runs/v2_pattern_memory_factorial_v1_1_preexecution_20261001/model_correction_current_suite.log",
+      "sha256": "da6a325ca9f5bb689d201c88d8139506326d220328639d506e46df83f6cfe7b4"
+    },
+    {
+      "path": "runs/v2_pattern_memory_factorial_v1_1_preexecution_20261001/solver_binding_tests_current.log",
+      "sha256": "34f974b39adcb24460f601bf960118326bf03b1010dc3bb2ce08b22986b17977"
+    },
+    {
+      "path": "runs/v2_pattern_memory_factorial_v1_1_preexecution_20261001/model_correction_governance_audit.json",
+      "sha256": "e6e1e4a169a1588c4f5c1e335209d90eca8ff24ffb7ffa5999b52ce4d81ad8cc"
+    }
+  ],
+  "model_selection": "PASS_BY_EXPLICIT_USER_INSTRUCTION",
+  "normal_guarded_network_attempts": 0,
+  "prior_evidence_preservation": "PASS",
+  "real_api_calls": 0,
+  "v2_focused_passed": 61
+}

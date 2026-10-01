@@ -5599,19 +5599,22 @@ experiments:
   result_commit: null
   manifest: experiments/manifests/v2_pattern_memory_factorial_v1_1.yaml
   report: reports/v2_pattern_memory_factorial_v1_1_20261001
-  classifier: STOP_MODEL_IDENTITY_CONFLICT
+  classifier: PREEXECUTION_DRAFT_MODELS_RESOLVED
   active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
   - Protocol revision before any efficacy observation; removes unmatched historical V1 from the factorial.
   - Proposed A1-A4 by seeds 81/82/83; twelve formal runs, none executed.
-  - Synthetic four-arm budget gate PASS; model binding unresolved between defaults and existing governed execution.
+  - Synthetic four-arm budget gate PASS; explicit user directives resolve Solver qwen3-8b, optimizer/Pattern qwen3.7-flash and provider lwj.
+  - Model correction and current initial-team hashes are recorded separately; prior STOP report remains unchanged.
+  - A2C matching clarification and Unified execution governance remain pending before protocol freeze.
   - Registered DRAFT only; no preexecution freeze or authorization consumed, Test sealed.
   reports:
   - reports/v2_pattern_memory_factorial_v1_1_20261001
+  - reports/v2_pattern_memory_factorial_v1_1_model_binding_20261001
   unavailable:
-    implementation_commit: No scientific source changed; this is draft and audit metadata only.
-    execution_commit: STOP_MODEL_IDENTITY_CONFLICT prevents execution freeze.
+    implementation_commit: Solver-default correction is recorded in the containing local amendment commit; no execution source is frozen.
+    execution_commit: Model selection resolved; remaining protocol/governance gates prevent execution freeze.
     result_commit: No efficacy result exists; local audit metadata commit is discoverable in Git history.
   baseline_commit: a5997898c30c4d4daad5511203657d3c687c90e5

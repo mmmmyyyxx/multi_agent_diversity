@@ -20,15 +20,15 @@ pattern_identity: null_pattern_v1
 memory_identity: null_memory_v1
 global_stop_identity: team_epoch_no_commit_v1
 models:
-  solver: null
-  optimizer: null
+  solver: qwen3-8b
+  optimizer: qwen3.7-flash
   solver_thinking: false
 seed: 81
 concurrency:
   solver: 1
   optimizer: 1
 provider_policy:
-  identity: UNBOUND
+  identity: explicit_lwj_qwen3_8b_qwen3_7_flash_false_v1
   frozen: false
 cache_policy:
   identity: UNBOUND
@@ -61,6 +61,15 @@ lifecycle:
     proposed_arms: [A1, A2, A3, A4]
     proposed_formal_run_count: 12
     representative_seed_is_not_execution_authorization: true
+  - status: DRAFT
+    event: MODEL_SELECTION_RESOLVED_BY_EXPLICIT_USER_INSTRUCTION
+    solver: qwen3-8b
+    optimizer_reflection: qwen3.7-flash
+    pattern_model: qwen3.7-flash
+    provider: lwj
+    solver_thinking: false
+    all_arms_share_models: true
+    execution_governance_frozen: false
 hash_closure:
   scientific_source_hash: null
   governance_hash: null

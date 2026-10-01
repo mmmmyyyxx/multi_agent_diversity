@@ -13,6 +13,7 @@ from .versions import LEGACY_DIVERSITY_SOLVER_CONTRACT_ID
 
 
 DEFAULT_MODEL = "qwen3.7-flash-2026-07-15"
+DEFAULT_SOLVER_MODEL = "qwen3-8b"
 
 
 @dataclass(frozen=True)
@@ -34,7 +35,7 @@ class DataConfig:
 @dataclass(frozen=True)
 class ModelConfig:
     provider_profile: str = DEFAULT_PROVIDER_PROFILE
-    agent_model: str = DEFAULT_MODEL
+    agent_model: str = DEFAULT_SOLVER_MODEL
     optimizer_model: str = DEFAULT_MODEL
     evaluator_model: str = DEFAULT_MODEL
     solver_api_key_env: str = DASHSCOPE_API_KEY_ENV

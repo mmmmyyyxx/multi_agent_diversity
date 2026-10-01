@@ -1,0 +1,39 @@
+{
+  "byte_scope": "Staged Git blob UTF-8 LF bytes; excludes itself",
+  "files": [
+    {
+      "path": "initial_team_identity.json",
+      "sha256": "b4afb05280909a81e04b5f687bdee78426f9dd10aced2b0f3a32075896299adb"
+    },
+    {
+      "path": "model_authority_audit.json",
+      "sha256": "1a6208114675a4f076bc9614d8b04ec24c2462d134c7a1cf10353e0e0ed9ce13"
+    },
+    {
+      "path": "prior_evidence_preservation.json",
+      "sha256": "ccfab78d67f32b7100ac6f24799f4a08108033c9a4de81e4120221b0d8356856"
+    },
+    {
+      "path": "README.md",
+      "sha256": "fbea5bbe6fd315be435ee0a39135f2abaf3fbe1260f66a6f8d5684bb8c875be8"
+    },
+    {
+      "path": "test_summary.json",
+      "sha256": "d1ec8266c333774e7a90daa464ef3f2a01800708842924aaf2b748a1bd3dfa60"
+    }
+  ],
+  "source_and_draft_receipts": [
+    {
+      "path": "multi_dataset_diverse_rl/config.py",
+      "sha256": "7a721deda65f8158fcecfa99eeb2674253baeaa9895b764d40877edfd219250a"
+    },
+    {
+      "path": "experiments/manifests/v2_pattern_memory_factorial_v1_1.yaml",
+      "sha256": "799fd5b58aeb165c94dbe5bb70a1ecb9b32b2c1237c1ec286271e315c1386d18"
+    },
+    {
+      "path": "tests/test_unified_search_v2.py",
+      "sha256": "a4d82364090dc9c8422c8d0ead5f3f479cf998152a356c5648a2b3e0a83b1a1a"
+    }
+  ]
+}

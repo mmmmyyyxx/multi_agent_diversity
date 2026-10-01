@@ -1,0 +1,22 @@
+{
+  "agents": 5,
+  "authority": "TrainingConfig defaults and production _initial_prompts shared_identical read point",
+  "initial_solver_output_cache_identity": null,
+  "initialization_mode": "shared_identical",
+  "ordered_team_hash": "6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89",
+  "ordered_team_hash_semantics": "SHA256 compact JSON ordered member prompt hashes",
+  "prompt_hashes": [
+    "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+    "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+    "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+    "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+    "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63"
+  ],
+  "provider_constructor_called": false,
+  "raw_prompt_published": false,
+  "source_paths": [
+    "multi_dataset_diverse_rl/config.py",
+    "multi_dataset_diverse_rl/system.py"
+  ],
+  "status": "RESOLVED_CURRENT_CONFIG_NOT_EXECUTION_FROZEN"
+}

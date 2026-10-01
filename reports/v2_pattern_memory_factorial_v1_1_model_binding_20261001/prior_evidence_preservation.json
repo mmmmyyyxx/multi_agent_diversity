@@ -1,0 +1,122 @@
+{
+  "audit_parent_sha": "525ac7f9bc541cd87fefd519e6cd2c1a413fc3d7",
+  "files": [
+    {
+      "git_blob_sha256": "4222dd06274d02f9780cc2ca439138973de8cefc0f34cd71fed349f97b85c2a3",
+      "path": "reports/v2_pattern_memory_factorial_v1_20261001/README.md"
+    },
+    {
+      "git_blob_sha256": "d60d9b23fc178f450d92204ff9ca87a2bb09782e690da8ac8cf635336b6b65a2",
+      "path": "reports/v2_pattern_memory_factorial_v1_20261001/preexecution/budget_equivalence_gate.json"
+    },
+    {
+      "git_blob_sha256": "48f5faf0a7bf096057efa4b4eb9d362e8e17dafa0ed77ffd7c7aaee73bc71bf7",
+      "path": "reports/v2_pattern_memory_factorial_v1_20261001/preexecution/final_requested_fields.json"
+    },
+    {
+      "git_blob_sha256": "06bcfccfc85b241b9f1e757594cdd1551364464611b3685614f2543f7ed1e36f",
+      "path": "reports/v2_pattern_memory_factorial_v1_20261001/preexecution/prerequisite_identity_audit.json"
+    },
+    {
+      "git_blob_sha256": "e481043a049a5e55ff5528e28aca3345487894d709a9d0ef05a9d24756399aeb",
+      "path": "reports/v2_pattern_memory_factorial_v1_20261001/preexecution/zero_api_sanitization_audit.json"
+    },
+    {
+      "git_blob_sha256": "f8d71e1cb064c8e8d49f29b2f18534610fc2dc1cc1d1f6cb29ee98f2f4dfdd45",
+      "path": "reports/v2_pattern_memory_factorial_v1_20261001/sha256_manifest.json"
+    },
+    {
+      "git_blob_sha256": "ddbfce5835b7e88531240016f8776df59c788f2dd2ee9adf59119c9a79e24614",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/README.md"
+    },
+    {
+      "git_blob_sha256": "03d5ecd1432d6da459d47e4b0a47dfb37b443499637b2b7199bddb4f19bf988b",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/baseline/phase_status.json"
+    },
+    {
+      "git_blob_sha256": "03d5ecd1432d6da459d47e4b0a47dfb37b443499637b2b7199bddb4f19bf988b",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/canary/phase_status.json"
+    },
+    {
+      "git_blob_sha256": "03d5ecd1432d6da459d47e4b0a47dfb37b443499637b2b7199bddb4f19bf988b",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/formal_runs/phase_status.json"
+    },
+    {
+      "git_blob_sha256": "03d5ecd1432d6da459d47e4b0a47dfb37b443499637b2b7199bddb4f19bf988b",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/memory_exposure/phase_status.json"
+    },
+    {
+      "git_blob_sha256": "03d5ecd1432d6da459d47e4b0a47dfb37b443499637b2b7199bddb4f19bf988b",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/pattern_diagnostic/phase_status.json"
+    },
+    {
+      "git_blob_sha256": "24f82f1379bcc05ab96658b9af5f040b9e248cb055ed941cef78597af50a974d",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/preexecution/arm_diff_audit.json"
+    },
+    {
+      "git_blob_sha256": "75dd4acf2817a6eb648b93be37c3ae679607f19e66dbdc27bdc730370ad1fd38",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/preexecution/arm_matrix.json"
+    },
+    {
+      "git_blob_sha256": "632c945df77ce6a489b841c64ff5fcb0dcfbf12f9b43cdff1474a6d27f55ea87",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/preexecution/dataset_identity.json"
+    },
+    {
+      "git_blob_sha256": "88a34c1e0d97e8b42aa4719f472661190b0db5dde0bb1cf5d182f7397526669c",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/preexecution/final_requested_fields.json"
+    },
+    {
+      "git_blob_sha256": "5e6b4d2b7f639a0a494eb77c74e7537209a400db5724f9e536ea60044a331514",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/preexecution/initial_team_identity.json"
+    },
+    {
+      "git_blob_sha256": "047d95a5660fd397ba1391b3d95544a6dcac9a0b00d67e430a7219add355853b",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/preexecution/memory_contract.json"
+    },
+    {
+      "git_blob_sha256": "c6a659f86195829d7b486fc7da9308ebfa5522d27d700ccdf24da596bb6468c2",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/preexecution/model_authority_audit.json"
+    },
+    {
+      "git_blob_sha256": "fb243ddbb42eef67cc08b4e5ffb8e8cd858b95e8a2ef7ae22cf41130fb7e8ec5",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/preexecution/pattern_contract.json"
+    },
+    {
+      "git_blob_sha256": "0b51f1bf43dd3897df41d8f48f51ecb2cfcb12d52cf2af03edf3355e4aa36793",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/preexecution/prior_stop_reference.json"
+    },
+    {
+      "git_blob_sha256": "30c6440d1bef44bc9ccede7010216abcac44035b9062ba5e3b160c720a351799",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/preexecution/protocol_revision.md"
+    },
+    {
+      "git_blob_sha256": "77257552b23980cd17367c781c309a1f031d9b989a76188f51d266e0eb977655",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/preexecution/provider_budget_derivation.json"
+    },
+    {
+      "git_blob_sha256": "284e3da5e47d22adf123fef558801593c2b8743267d396bcdb0a1766f7e8fe3a",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/preexecution/test_summary.json"
+    },
+    {
+      "git_blob_sha256": "40adf11f8fce2f9f5bf2c46ec4213353879022c6a3c9fe5941deeec3d9a7f883",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/preexecution/v2_factorial_budget_equivalence.json"
+    },
+    {
+      "git_blob_sha256": "e5af70213c511f729e34e6d4d69894133a4cc2c019e71bccbca4803ee323a343",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/preexecution/zero_api_audit.json"
+    },
+    {
+      "git_blob_sha256": "6406746846ed6f57243d8008bdc04bb8a79ef4aabbff0483269b06c3c8b5be18",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/sha256_manifest.json"
+    },
+    {
+      "git_blob_sha256": "03d5ecd1432d6da459d47e4b0a47dfb37b443499637b2b7199bddb4f19bf988b",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/test/phase_status.json"
+    },
+    {
+      "git_blob_sha256": "03d5ecd1432d6da459d47e4b0a47dfb37b443499637b2b7199bddb4f19bf988b",
+      "path": "reports/v2_pattern_memory_factorial_v1_1_20261001/validation/phase_status.json"
+    }
+  ],
+  "status": "PASS"
+}

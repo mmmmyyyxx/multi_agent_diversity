@@ -41,6 +41,24 @@ LIMITS = dict(top_k_private=2, top_k_shared=2, max_context_chars=6000,
               private_storage_limit=4, shared_storage_limit=4)
 
 
+def test_cli_solver_default_uses_a_distinct_realization_identity():
+    import argparse
+    from multi_dataset_diverse_rl.config import Config, add_config_arguments, config_from_args
+    from multi_dataset_diverse_rl.persistence.identity import (
+        config_fingerprint, solver_request_components, solver_request_identity)
+
+    cfg = config_from_args(add_config_arguments(argparse.ArgumentParser()).parse_args([]))
+    request = solver_request_components(cfg)
+    assert request["solver_model"] == "qwen3-8b"
+    assert request["enable_thinking"] is False
+    # Optimizer selection must not alter the Solver's provider realization key.
+    assert solver_request_identity(cfg) == solver_request_identity(
+        Config.from_flat(optimizer_model="explicit_optimizer_fixture"))
+    previous_solver = Config.from_flat(agent_model="qwen3.7-flash-2026-07-15")
+    assert solver_request_identity(cfg) != solver_request_identity(previous_solver)
+    assert config_fingerprint(cfg) != config_fingerprint(previous_solver)
+
+
 def rows(n=5, repairs=None):
     return tuple(EvidenceItem(f"e{i}", "optimize", frozenset({"REPAIR", "direct_flip", "TEAM_HARD"}
         if repairs is None or i < repairs else {"PRESERVATION"}),
