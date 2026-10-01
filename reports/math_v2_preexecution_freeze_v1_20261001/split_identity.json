@@ -1,0 +1,118 @@
+{
+  "manifest_sha256": "0a960e81fbdf4b3955c397c1b263a5d1e7f975674d4222039acb131c813d79c3",
+  "membership_sha256": "6fb25e9d7c2de73811b4393aa7459c990277bc5aa73aaa121c2c5ca11ff27e5b",
+  "pairwise_overlap_audit": {
+    "pairwise": [
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "optimize",
+          "shadow"
+        ]
+      },
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "optimize",
+          "validation"
+        ]
+      },
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "optimize",
+          "test"
+        ]
+      },
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "shadow",
+          "validation"
+        ]
+      },
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "shadow",
+          "test"
+        ]
+      },
+      {
+        "overlap_counts": {
+          "content_sha256": 0,
+          "input_sha256": 0,
+          "stable_example_id": 0
+        },
+        "roles": [
+          "validation",
+          "test"
+        ]
+      }
+    ],
+    "status": "DISJOINT",
+    "within_role_duplicate_counts": {
+      "optimize": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      },
+      "shadow": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      },
+      "test": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      },
+      "validation": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      }
+    }
+  },
+  "protocol": "benchmark_experiment_split_v1",
+  "resampled": false,
+  "roles": {
+    "optimize": {
+      "count": 150,
+      "membership_hash": "07736245014e15c4a1b3f6365794b9bfd25d58032ee04fb0578731c6bf23fec9"
+    },
+    "shadow": {
+      "count": 300,
+      "membership_hash": "80d238e21644777f348694e2df3a93af395abbca648fb0e4e3f0c01211be3667"
+    },
+    "test": {
+      "count": 300,
+      "membership_hash": "9cba0605a224f1c1ebe15a01c65d1263f8cbee45d8ec2cfd67d496b119a6c32d"
+    },
+    "validation": {
+      "count": 300,
+      "membership_hash": "1016db4741d49bc8c965b6dbc5bfa55c30f5a4fa77165e70494e6f6cd0d698b3"
+    }
+  },
+  "status": "IDENTITY_MATCH"
+}

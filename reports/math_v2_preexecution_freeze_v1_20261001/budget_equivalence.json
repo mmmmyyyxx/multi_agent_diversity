@@ -1,0 +1,13 @@
+{
+  "budget_equivalence_verified": false,
+  "frozen": false,
+  "public_gepa_invocation_captures": {
+    "A1": null,
+    "A2": null,
+    "A3": null,
+    "A4": null
+  },
+  "requested_metric_budget": 36,
+  "status": "NOT_RUN_AFTER_HARD_STOP",
+  "stop_code": "STOP_MATH_EVIDENCE_CONTRACT_INCOMPLETE"
+}

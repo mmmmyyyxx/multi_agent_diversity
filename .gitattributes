@@ -21,3 +21,7 @@ experiments/plans/** text eol=lf
 multi_dataset_diverse_rl/benchmarks/ifbench_runtime_lock.json text eol=lf
 reports/multibench_dataset_migration_v1_20261001/** text eol=lf
 requirements-ifbench-evaluators.txt text eol=lf
+
+# Preserve already-recorded exact byte receipts for the blocked MATH audit.
+reports/math_v2_preexecution_freeze_v1_20261001/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+experiments/initial_teams/math_generic_team_seed_v1.json -text whitespace=trailing-space,space-before-tab,cr-at-eol

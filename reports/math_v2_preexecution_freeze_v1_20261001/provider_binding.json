@@ -1,0 +1,14 @@
+{
+  "client_constructed": false,
+  "credential_values_read": false,
+  "credentials_resolved": false,
+  "environment_variable_names": [
+    "LWJ_DASHSCOPE_API_KEY",
+    "LWJ_DASHSCOPE_BASE_URL"
+  ],
+  "execution_binding_frozen": false,
+  "fallback_provider_used": false,
+  "note": "Alias and explicitly selected models resolve in source; live access and the future execution resource/cache policy were not tested or frozen.",
+  "provider_alias": "lwj",
+  "status": "PROFILE_RESOLVES_NO_NETWORK"
+}

@@ -1,0 +1,32 @@
+{
+  "compileall": "PASS",
+  "deselected": 1468,
+  "deterministic_audit": {
+    "existing_math_synthetic_reference_scoring": "PASS",
+    "frozen_optimize_reference_integrity": "HARD_STOP_ONE_EMPTY_REFERENCE",
+    "initial_draft_hash_identity": "PASS",
+    "manifest_hash_identity": "PASS",
+    "math_reader_role_denials": 23
+  },
+  "elapsed_seconds": 310.16,
+  "failed": 0,
+  "git_diff_check": "PASS",
+  "historical_cases_not_run": 1468,
+  "historical_private_artifact_tests": "64 private cases and 1404 historical replay cases explicitly deselected; no full historical replay PASS claim",
+  "network_guard_active_before_application_import": true,
+  "new_math_preexecution_tests": {
+    "status": "NOT_RUN_AFTER_HARD_STOP",
+    "stop_code": "STOP_MATH_EVIDENCE_CONTRACT_INCOMPLETE"
+  },
+  "passed": 510,
+  "raw_log_sha256": "e5c30722daa54fef205bfc812be4d443882fe3b1643b3b4b4e5c12c7bb42b29b",
+  "real_credentials_present": false,
+  "real_llm_calls": 0,
+  "runtime_network_attempts": 0,
+  "scope": "CURRENT_CLASSIFIED_SUITE",
+  "skip_reasons": [
+    "HoVer/PUPA real-data manifests absent; outside active three-benchmark suite"
+  ],
+  "skipped": 2,
+  "status": "PASS_EXISTING_CONTRACTS_ONLY"
+}

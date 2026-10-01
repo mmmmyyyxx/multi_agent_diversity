@@ -1,0 +1,31 @@
+{
+  "affected_row": {
+    "content_sha256": "0bcdc4123eb25349f9c1ec2d0239a4c38518e57c9bff91849719b1516a0f804b",
+    "input_sha256": "debc1683173552965f459a0842c34b946893bc89d68e686bc97eca8e04a94c2a",
+    "source_index": 5343,
+    "source_split": "train",
+    "stable_example_id": "math:train:5343:0bcdc4123eb25349f9c1ec2d0239a4c38518e57c9bff91849719b1516a0f804b"
+  },
+  "frozen_extractor_reproduces_empty_string": true,
+  "implication": "An empty reference cannot establish genuine binary member success, responsibility or Full acceptance. Treating it as a wrong answer would introduce an unfrozen missing-gold policy.",
+  "missing_reference_count": 1,
+  "missing_reference_is_empty_string": true,
+  "no_fallback_defined": true,
+  "optimize_count": 150,
+  "raw_optimize_rows_read": 150,
+  "raw_shadow_rows_read": 0,
+  "raw_test_rows_read": 0,
+  "raw_validation_rows_read": 0,
+  "real_llm_calls": 0,
+  "reference_kind": "reference_final_answer",
+  "sample_removal_count": 0,
+  "split_replacement_count": 0,
+  "status": "HARD_STOP",
+  "stop_code": "STOP_MATH_EVIDENCE_CONTRACT_INCOMPLETE",
+  "synthetic_invalid_reference_scoring": {
+    "empty_reference_score": 0.0,
+    "null_reference_score": 0.0,
+    "valid_output": true,
+    "valid_reference_score": 1.0
+  }
+}

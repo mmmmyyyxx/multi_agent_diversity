@@ -1,0 +1,14 @@
+{
+  "existing_code_observation": "Existing prepare_outcome also emits NEWLY_BROKEN after a committed edit; this was observed during inspection and left unchanged after the primary hard stop.",
+  "frozen": false,
+  "intervention_or_fix_performed": false,
+  "requested_limits": {
+    "max_context_chars": 1200,
+    "max_private_entries_per_member": 24,
+    "max_shared_entries": 48,
+    "top_k_private": 3,
+    "top_k_shared": 3
+  },
+  "status": "NOT_RUN_AFTER_HARD_STOP",
+  "stop_code": "STOP_MATH_EVIDENCE_CONTRACT_INCOMPLETE"
+}

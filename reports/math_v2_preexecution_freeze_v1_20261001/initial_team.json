@@ -1,0 +1,23 @@
+{
+  "design_rationale": "Five generic, semantically equivalent wording variants. No specialist roles, examples, dataset-derived hints or seed-dependent text.",
+  "formal_freeze": false,
+  "initial_team_data_dependency": "NONE",
+  "ordered_member_ids": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "ordered_team_sha256": "3c58a0aff82a3aea60c396c527c77d28886a48f722b3bdd76c1960408076a384",
+  "prompt_hashes": [
+    "7567c61dd320798d419171a647550ba39dc48a6bf24cc99a29e85e87920154e1",
+    "13502b1b1278a92000c652f8af76dc8583aa79a2b4724b621ea4930e8fc7b06b",
+    "9df930b133dce91170c052fc4e7ae159c02e504da5e8d68d2ef1a911755295c0",
+    "7df92aedf9e8b12e450b37eac6b139a61d39a1eb5a1fff10d3f64bd9d66f708f",
+    "1504487203fca9ad3ec15f44408595d7517037b1a1dbab5858c62b32b1c479be"
+  ],
+  "source_artifact_sha256": "3f383118f8ed7ac0386f9ec67b2b6e9ea39704dcf92caae979473cae89af2491",
+  "status": "DRAFT_NOT_PREEXECUTION_FROZEN",
+  "team_version": "MATH_GENERIC_TEAM_SEED_V1"
+}

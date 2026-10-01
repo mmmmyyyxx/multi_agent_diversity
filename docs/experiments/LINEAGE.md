@@ -40,6 +40,7 @@ flowchart TD
     n162["repository_hygiene_alignment_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
     n182["multibench_dataset_migration_v1<br/>DATASET_FREEZE_AND_PROTOCOL_MIGRATION<br/>PREPARED_NOT_EXECUTED"]
     n183["v2_pattern_memory_multibench_v1<br/>FORMAL_EXPERIMENT<br/>PREPARED_NOT_EXECUTED"]
+    n184["math_v2_preexecution_freeze_v1<br/>PREEXECUTION_FREEZE<br/>HOLD"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -296,6 +297,8 @@ flowchart TD
   n179 -->|migration_of| n182
   n179 -->|derived_from| n183
   n182 -->|derived_from| n183
+  n182 -->|freeze_of| n184
+  n179 -->|freeze_of| n184
 ```
 
 ## Archived branches and unresolved evidence

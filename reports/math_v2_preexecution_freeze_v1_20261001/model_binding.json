@@ -1,0 +1,27 @@
+{
+  "arms": [
+    "A1",
+    "A2",
+    "A3",
+    "A4"
+  ],
+  "execution_binding_frozen": false,
+  "members": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "optimizer_reflection": "qwen3.7-flash",
+  "pattern": "qwen3.7-flash",
+  "provider": "lwj",
+  "seeds": [
+    81,
+    82,
+    83
+  ],
+  "solver": "qwen3-8b",
+  "solver_override_allowed": false,
+  "status": "USER_DECISION_CONFIRMED_NOT_EXECUTION_FROZEN"
+}

@@ -1,0 +1,23 @@
+{
+  "canonical_manifest_sha256": "7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f",
+  "canonical_manifest_unchanged": true,
+  "data_provenance_ready": true,
+  "experiment_reference_integrity_ready": false,
+  "no_raw_heldout_read": true,
+  "reference_extraction_metadata": {
+    "test": {
+      "missing": 0,
+      "total": 5000
+    },
+    "train": {
+      "missing": 2,
+      "total": 7500
+    }
+  },
+  "source_counts": {
+    "test": 5000,
+    "train": 7500
+  },
+  "source_revision": "21a5633873b6a120296cce3e2df9d5550074f4a3",
+  "status": "IDENTITY_MATCH"
+}

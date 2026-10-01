@@ -1,0 +1,8 @@
+{
+  "frozen": false,
+  "prompt_sha256": null,
+  "real_calls": 0,
+  "requested_prompt_identity": "MATH_PATTERN_DIAGNOSTIC_V1",
+  "status": "NOT_RUN_AFTER_HARD_STOP",
+  "stop_code": "STOP_MATH_EVIDENCE_CONTRACT_INCOMPLETE"
+}

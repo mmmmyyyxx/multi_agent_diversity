@@ -1,0 +1,29 @@
+{
+  "dependency_pins": {
+    "antlr4-python3-runtime": "4.13.2",
+    "latex2sympy2_extended": "1.0.9",
+    "math-verify": "0.6.0",
+    "mpmath": "1.3.0",
+    "sympy": "1.14.0"
+  },
+  "evaluator_identity": "math_verify_0.6.0_equivalence_v1",
+  "full_new_preexecution_parity_suite": {
+    "frozen": false,
+    "status": "NOT_RUN_AFTER_HARD_STOP",
+    "stop_code": "STOP_MATH_EVIDENCE_CONTRACT_INCOMPLETE"
+  },
+  "installed_versions": {
+    "antlr4-python3-runtime": "4.13.2",
+    "latex2sympy2_extended": "1.0.9",
+    "math-verify": "0.6.0",
+    "mpmath": "1.3.0",
+    "sympy": "1.14.0"
+  },
+  "llm_judge": false,
+  "missing_reference_policy_frozen": false,
+  "output_contract_sha256": "38f3108ccb6fded2ec2c64c1a2b0186d12699270b14e5ce0cd040b947f990cde",
+  "scorer_changed": false,
+  "status": "EXISTING_IMPLEMENTATION_REFERENCE_INTEGRITY_BLOCKED",
+  "synthetic_valid_vs_empty_reference_check": "PASS",
+  "task_identity": "MATH_ANSWER_EQUIVALENCE_V1"
+}

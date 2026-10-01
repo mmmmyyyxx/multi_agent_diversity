@@ -1,0 +1,28 @@
+{
+  "arms": {
+    "A1": {
+      "memory": false,
+      "pattern": false
+    },
+    "A2": {
+      "memory": false,
+      "pattern": true
+    },
+    "A3": {
+      "memory": true,
+      "pattern": false
+    },
+    "A4": {
+      "memory": true,
+      "pattern": true
+    }
+  },
+  "execution_frozen": false,
+  "seeds": [
+    81,
+    82,
+    83
+  ],
+  "status": "REQUESTED_NOT_PREREGISTERED",
+  "v1_arm": false
+}

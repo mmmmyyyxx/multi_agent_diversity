@@ -1,0 +1,10 @@
+{
+  "bounded_epoch_policy_frozen": false,
+  "emergency_limit_guessed": false,
+  "frozen": false,
+  "optimizer": null,
+  "pattern": null,
+  "solver": null,
+  "status": "NOT_RUN_AFTER_HARD_STOP",
+  "stop_code": "STOP_MATH_EVIDENCE_CONTRACT_INCOMPLETE"
+}

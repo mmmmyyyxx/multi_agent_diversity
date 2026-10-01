@@ -1,0 +1,140 @@
+{
+  "denial_count": 20,
+  "denials": [
+    {
+      "code": "SHADOW_CONTENT_SEARCH_VISIBILITY_FORBIDDEN",
+      "denied": true,
+      "purpose": "mutation",
+      "role": "shadow"
+    },
+    {
+      "code": "SHADOW_CONTENT_SEARCH_VISIBILITY_FORBIDDEN",
+      "denied": true,
+      "purpose": "reflection",
+      "role": "shadow"
+    },
+    {
+      "code": "SHADOW_CONTENT_SEARCH_VISIBILITY_FORBIDDEN",
+      "denied": true,
+      "purpose": "evidence",
+      "role": "shadow"
+    },
+    {
+      "code": "SHADOW_CONTENT_SEARCH_VISIBILITY_FORBIDDEN",
+      "denied": true,
+      "purpose": "pattern",
+      "role": "shadow"
+    },
+    {
+      "code": "SHADOW_CONTENT_SEARCH_VISIBILITY_FORBIDDEN",
+      "denied": true,
+      "purpose": "memory",
+      "role": "shadow"
+    },
+    {
+      "code": "SHADOW_CONTENT_SEARCH_VISIBILITY_FORBIDDEN",
+      "denied": true,
+      "purpose": "search_evaluation",
+      "role": "shadow"
+    },
+    {
+      "code": "HELDOUT_SEARCH_ACCESS_FORBIDDEN",
+      "denied": true,
+      "purpose": "mutation",
+      "role": "validation"
+    },
+    {
+      "code": "HELDOUT_SEARCH_ACCESS_FORBIDDEN",
+      "denied": true,
+      "purpose": "reflection",
+      "role": "validation"
+    },
+    {
+      "code": "HELDOUT_SEARCH_ACCESS_FORBIDDEN",
+      "denied": true,
+      "purpose": "evidence",
+      "role": "validation"
+    },
+    {
+      "code": "HELDOUT_SEARCH_ACCESS_FORBIDDEN",
+      "denied": true,
+      "purpose": "pattern",
+      "role": "validation"
+    },
+    {
+      "code": "HELDOUT_SEARCH_ACCESS_FORBIDDEN",
+      "denied": true,
+      "purpose": "memory",
+      "role": "validation"
+    },
+    {
+      "code": "HELDOUT_SEARCH_ACCESS_FORBIDDEN",
+      "denied": true,
+      "purpose": "search_evaluation",
+      "role": "validation"
+    },
+    {
+      "code": "HELDOUT_SEARCH_ACCESS_FORBIDDEN",
+      "denied": true,
+      "purpose": "adaptive_gate",
+      "role": "validation"
+    },
+    {
+      "code": "HELDOUT_SEARCH_ACCESS_FORBIDDEN",
+      "denied": true,
+      "purpose": "mutation",
+      "role": "test"
+    },
+    {
+      "code": "HELDOUT_SEARCH_ACCESS_FORBIDDEN",
+      "denied": true,
+      "purpose": "reflection",
+      "role": "test"
+    },
+    {
+      "code": "HELDOUT_SEARCH_ACCESS_FORBIDDEN",
+      "denied": true,
+      "purpose": "evidence",
+      "role": "test"
+    },
+    {
+      "code": "HELDOUT_SEARCH_ACCESS_FORBIDDEN",
+      "denied": true,
+      "purpose": "pattern",
+      "role": "test"
+    },
+    {
+      "code": "HELDOUT_SEARCH_ACCESS_FORBIDDEN",
+      "denied": true,
+      "purpose": "memory",
+      "role": "test"
+    },
+    {
+      "code": "HELDOUT_SEARCH_ACCESS_FORBIDDEN",
+      "denied": true,
+      "purpose": "search_evaluation",
+      "role": "test"
+    },
+    {
+      "code": "HELDOUT_SEARCH_ACCESS_FORBIDDEN",
+      "denied": true,
+      "purpose": "adaptive_gate",
+      "role": "test"
+    }
+  ],
+  "new_math_composition_firewall_audit": {
+    "frozen": false,
+    "status": "NOT_RUN_AFTER_HARD_STOP",
+    "stop_code": "STOP_MATH_EVIDENCE_CONTRACT_INCOMPLETE"
+  },
+  "optimize_evidence_read_allowed": true,
+  "raw_shadow_rows_read": 0,
+  "raw_test_rows_read": 0,
+  "raw_validation_rows_read": 0,
+  "shadow_raw_leakage_count": 0,
+  "status": "EXISTING_ROLE_READER_DENIALS_PASS",
+  "test_access": "SEALED",
+  "test_raw_leakage_count": 0,
+  "validation_access": "SEALED_FOR_SEARCH",
+  "validation_raw_leakage_count": 0
+}

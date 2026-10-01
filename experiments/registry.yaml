@@ -5670,3 +5670,31 @@ experiments:
     execution_commit: No real execution source is frozen.
     result_commit: No scientific efficacy result exists.
   baseline_commit: 19d0cbb38277ec0dde32e4df9b621be0364f0931
+- experiment_id: math_v2_preexecution_freeze_v1
+  kind: PREEXECUTION_FREEZE
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2
+  parent_ids:
+  - multibench_dataset_migration_v1
+  - unified_team_prompt_search_v2_method_refactor
+  status: HOLD
+  scientific_status: NOT_EVALUABLE_PREEXECUTION
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: null
+  report: reports/math_v2_preexecution_freeze_v1_20261001
+  classifier: STOP_MATH_EVIDENCE_CONTRACT_INCOMPLETE
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  baseline_commit: 0356365b8e1e667b1c694417adee77d0531e189a
+  notes:
+  - Zero-API hard stop; frozen Optimize150 contains one empty reference_final_answer.
+  - No gold fallback, sample removal, split replacement, method amendment or real API execution.
+  - Initial generic team is a draft input; no formal preexecution manifest or commit was frozen.
+  unavailable:
+    manifest: Hard stop before formal preexecution freeze; no frozen manifest exists.
+    implementation_commit: No implementation change or preexecution commit was made.
+    execution_commit: No canary or formal execution is ready or authorized.
+    result_commit: No scientific efficacy result exists; audit changes remain local for review.

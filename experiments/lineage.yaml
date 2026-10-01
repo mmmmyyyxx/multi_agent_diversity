@@ -552,6 +552,9 @@ nodes:
 - experiment_id: v2_pattern_memory_multibench_v1
   kind: FORMAL_EXPERIMENT
   era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_preexecution_freeze_v1
+  kind: PREEXECUTION_FREEZE
+  era: BENCHMARK_GENERALIZATION
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -840,4 +843,14 @@ edges:
   relation: derived_from
   evidence: experiments/plans/v2_pattern_memory_multibench_v1.yaml
   scope: Zero-LLM data/protocol preparation; no efficacy evidence.
+- from: multibench_dataset_migration_v1
+  to: math_v2_preexecution_freeze_v1
+  relation: freeze_of
+  evidence: reports/math_v2_preexecution_freeze_v1_20261001/README.md
+  scope: Zero-API attempted preexecution freeze stopped on a missing Optimize reference; no efficacy evidence.
+- from: unified_team_prompt_search_v2_method_refactor
+  to: math_v2_preexecution_freeze_v1
+  relation: freeze_of
+  evidence: reports/math_v2_preexecution_freeze_v1_20261001/README.md
+  scope: Zero-API attempted preexecution freeze; no runtime method or authorization change.
 current_frontier: experiments/current_frontier.yaml

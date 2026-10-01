@@ -1,0 +1,29 @@
+{
+  "arms": {
+    "A1": {
+      "frozen": false,
+      "status": "NOT_RUN_AFTER_HARD_STOP",
+      "stop_code": "STOP_MATH_EVIDENCE_CONTRACT_INCOMPLETE"
+    },
+    "A2": {
+      "frozen": false,
+      "status": "NOT_RUN_AFTER_HARD_STOP",
+      "stop_code": "STOP_MATH_EVIDENCE_CONTRACT_INCOMPLETE"
+    },
+    "A3": {
+      "frozen": false,
+      "status": "NOT_RUN_AFTER_HARD_STOP",
+      "stop_code": "STOP_MATH_EVIDENCE_CONTRACT_INCOMPLETE"
+    },
+    "A4": {
+      "frozen": false,
+      "status": "NOT_RUN_AFTER_HARD_STOP",
+      "stop_code": "STOP_MATH_EVIDENCE_CONTRACT_INCOMPLETE"
+    }
+  },
+  "frozen": false,
+  "real_llm_calls": 0,
+  "scientific_efficacy_verified": false,
+  "status": "NOT_RUN_AFTER_HARD_STOP",
+  "stop_code": "STOP_MATH_EVIDENCE_CONTRACT_INCOMPLETE"
+}

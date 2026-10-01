@@ -1,0 +1,14 @@
+{
+  "canary_authorized": false,
+  "network_guard_active_before_application_import": true,
+  "raw_test_rows_read": 0,
+  "raw_validation_rows_read": 0,
+  "real_credentials_present": false,
+  "real_optimizer_api_calls": 0,
+  "real_pattern_api_calls": 0,
+  "real_solver_api_calls": 0,
+  "runtime_network_attempts": 0,
+  "status": "PASS",
+  "test_api_calls": 0,
+  "validation_api_calls": 0
+}

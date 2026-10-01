@@ -1,0 +1,37 @@
+{
+  "formal_freeze": false,
+  "initial_team_data_dependency": "NONE",
+  "initial_team_data_leakage_count": 0,
+  "mutable_prompt_contract_check": "FAIL_DRAFT_ONLY",
+  "mutable_prompt_failures_by_member": {
+    "0": [
+      "copied_solver_interface"
+    ],
+    "1": [
+      "copied_solver_interface"
+    ],
+    "2": [
+      "copied_solver_interface"
+    ],
+    "3": [
+      "copied_solver_interface"
+    ],
+    "4": [
+      "copied_solver_interface"
+    ]
+  },
+  "mutable_prompt_rejected_count": 5,
+  "note": "The requested answer-format wording is recognized as copied_solver_interface by the current guard. The unexecuted draft was retained unchanged after the primary reference-integrity hard stop.",
+  "prompts_authored_before_optimize_reference_integrity_probe": true,
+  "seed_dependent_text": false,
+  "semantic_contract": [
+    "independent solution",
+    "careful reasoning",
+    "verification before finalizing",
+    "required answer format",
+    "no reliance on peers"
+  ],
+  "specialist_roles": false,
+  "status": "DRAFT_GENERIC_DESIGN_ONLY_NOT_EXECUTABLE",
+  "unique_prompt_hash_count": 5
+}
