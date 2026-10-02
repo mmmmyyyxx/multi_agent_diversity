@@ -15,7 +15,7 @@ current_dataset_migration: multibench_dataset_migration_v1
 future_experiment_plan: v2_pattern_memory_multibench_v1
 last_governance_milestone: repository_hygiene_alignment_v1
 last_scientific_contract_milestone: benchmark_scientific_contract_freeze_v1
-real_execution_ready: CANARY_ONLY_AFTER_USER_AUTHORIZATION
+real_execution_ready: true_for_canary_only
 real_api_authorized: false
 validation_access: not_authorized
 test_access: sealed
