@@ -384,3 +384,22 @@ failures:
   lifecycle: OPEN
   lifecycle_note: STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED; FAILED_ATTEMPTS_PRESERVED;
     NO_PILOT_OR_VALIDATION_EXECUTION
+- failure_id: FAIL-MATH-V21-FROZEN-DECODING-V1
+  title: Fresh frozen Solver decoding attempt failed closed
+  status: OPEN
+  first_observed: math_v2_1_a1_seed81_real_canary_v5
+  affected_components:
+  - Solver decoding execution
+  symptom: STOP_SOLVER_DECODING_POLICY_INSUFFICIENT
+  evidence:
+  - reports/math_v2_1_a1_seed81_real_canary_v5_20261003
+  - reports/math_v2_1_a1_seed81_pilot_v5_20261003
+  evidence_level: observed
+  root_cause_status: Exact client request policy verified; provider internal cause
+    unverified.
+  forbidden_inference: No efficacy conclusion or parameter adaptation.
+  regression_tests:
+  - tests/test_math_solver_decoding.py
+  mitigation: Preserve evidence and ledger; user scientific decision required.
+  lifecycle: OPEN
+  lifecycle_note: STOP_SOLVER_DECODING_POLICY_INSUFFICIENT

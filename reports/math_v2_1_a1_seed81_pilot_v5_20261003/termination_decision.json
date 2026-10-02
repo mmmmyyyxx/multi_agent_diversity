@@ -1,0 +1,9 @@
+{
+  "all_real_scopes_closed": true,
+  "failed_attempt_evidence_preserved": true,
+  "larger_cap_used": false,
+  "policy_changed_after_dispatch": false,
+  "push_performed": false,
+  "response_regenerated": false,
+  "stop_reason": "STOP_SOLVER_DECODING_POLICY_INSUFFICIENT"
+}

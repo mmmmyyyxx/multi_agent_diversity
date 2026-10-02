@@ -1,0 +1,19 @@
+{
+  "final_request_policy_dispatched": true,
+  "finish_reason": "length",
+  "frozen_policy_revised": false,
+  "implementation_defect_found": false,
+  "missing_final_marker": true,
+  "next_requirement": "New user scientific decision for SOLVER_DECODING_POLICY_V1; the current exact policy did not complete legal initialization.",
+  "output_tokens": 3600,
+  "provider_accepted_request": true,
+  "provider_internal_root_cause": "UNKNOWN",
+  "reason": "STOP_SOLVER_DECODING_POLICY_INSUFFICIENT",
+  "response_regenerated": false,
+  "user_clauses": [
+    8,
+    51,
+    52,
+    57
+  ]
+}

@@ -6552,9 +6552,9 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_a1_seed81_real_canary_v4
-  status: DRAFT
-  scientific_status: SOLVER_DECODING_POLICY_ZERO_API_PENDING
-  implementation_commit: null
+  status: COMPLETED
+  scientific_status: SOLVER_DECODING_ZERO_API_PASS_EFFICACY_UNVERIFIED
+  implementation_commit: b92ccec074c1075f3acd73fd40594bf90a861bc7
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_solver_decoding_policy_v1.yaml
@@ -6567,7 +6567,6 @@ experiments:
   - Only Solver decoding policy changes; optimizer policy, method, data, split, initial
     team and evaluator remain frozen.
   unavailable:
-    implementation_commit: Source preparation awaiting freeze.
     execution_commit: Not executed.
     result_commit: Awaiting evidence.
 - experiment_id: math_v2_1_preexecution_freeze_v5
@@ -6576,9 +6575,9 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_solver_decoding_policy_v1
-  status: DRAFT
-  scientific_status: SOLVER_DECODING_POLICY_ZERO_API_PENDING
-  implementation_commit: null
+  status: PREEXECUTION_FROZEN
+  scientific_status: SOLVER_DECODING_ZERO_API_PASS_EFFICACY_UNVERIFIED
+  implementation_commit: b92ccec074c1075f3acd73fd40594bf90a861bc7
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_preexecution_freeze_v5.yaml
@@ -6591,7 +6590,6 @@ experiments:
   - Only Solver decoding policy changes; optimizer policy, method, data, split, initial
     team and evaluator remain frozen.
   unavailable:
-    implementation_commit: Source preparation awaiting freeze.
     execution_commit: Not executed.
     result_commit: Awaiting evidence.
 - experiment_id: math_v2_1_a1_seed81_real_canary_v5
@@ -6600,10 +6598,10 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_preexecution_freeze_v5
-  status: DRAFT
-  scientific_status: SOLVER_DECODING_POLICY_ZERO_API_PENDING
-  implementation_commit: null
-  execution_commit: null
+  status: INVALID
+  scientific_status: EXECUTION_UNEVALUATED_STOP_SOLVER_DECODING_POLICY_INSUFFICIENT
+  implementation_commit: b92ccec074c1075f3acd73fd40594bf90a861bc7
+  execution_commit: 08d54881ce46a487f34be1e64e974c03ca6bdca0
   result_commit: null
   manifest: experiments/manifests/math_v2_1_a1_seed81_real_canary_v5.yaml
   report: reports/math_v2_1_a1_seed81_real_canary_v5_20261003
@@ -6615,30 +6613,29 @@ experiments:
   - Only Solver decoding policy changes; optimizer policy, method, data, split, initial
     team and evaluator remain frozen.
   unavailable:
-    implementation_commit: Source preparation awaiting freeze.
-    execution_commit: Not executed.
     result_commit: Awaiting evidence.
+  authorization_consumed: true
 - experiment_id: math_v2_1_a1_seed81_pilot_v5
   kind: PILOT
   era: BENCHMARK_GENERALIZATION
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_a1_seed81_real_canary_v5
-  status: DRAFT
-  scientific_status: SOLVER_DECODING_POLICY_ZERO_API_PENDING
-  implementation_commit: null
+  status: HOLD
+  scientific_status: EXECUTION_UNEVALUATED_STOP_SOLVER_DECODING_POLICY_INSUFFICIENT
+  implementation_commit: b92ccec074c1075f3acd73fd40594bf90a861bc7
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_a1_seed81_pilot_v5.yaml
   report: reports/math_v2_1_a1_seed81_pilot_v5_20261003
-  classifier: V2_1_MATH_SOLVER_DECODING_FREEZE
-  active_for_new_work: true
+  classifier: STOP_SOLVER_DECODING_POLICY_INSUFFICIENT
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
   - Only Solver decoding policy changes; optimizer policy, method, data, split, initial
     team and evaluator remain frozen.
   unavailable:
-    implementation_commit: Source preparation awaiting freeze.
     execution_commit: Not executed.
     result_commit: Awaiting evidence.
+  authorization_consumed: false

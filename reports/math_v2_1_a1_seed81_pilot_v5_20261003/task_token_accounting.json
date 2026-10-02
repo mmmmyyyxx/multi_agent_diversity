@@ -1,0 +1,9 @@
+{
+  "ledger_reset": false,
+  "new_fallback_charged": 0,
+  "new_provider_reported": 34928,
+  "prior_charged": 57648,
+  "remaining": 29907424,
+  "total_accounting_charged": 92576,
+  "total_authorized": 30000000
+}

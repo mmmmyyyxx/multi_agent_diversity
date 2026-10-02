@@ -1,0 +1,33 @@
+{
+  "candidate_generated": false,
+  "committed": false,
+  "historical": 4,
+  "historical_reasons": [
+    "missing FINAL_ANSWER",
+    "missing FINAL_ANSWER",
+    "output truncation @1800",
+    "output truncation/repetition @3600"
+  ],
+  "historical_statuses": [
+    "INVALID",
+    "INVALID",
+    "INVALID",
+    "INVALID"
+  ],
+  "new": 1,
+  "new_status": "INVALID",
+  "new_stop_reason": "STOP_SOLVER_DECODING_POLICY_INSUFFICIENT",
+  "new_successful_attempt": null,
+  "opportunity_completed": false,
+  "optimizer_calls": 0,
+  "response_counts": {
+    "invalid_marker_or_framing": 0,
+    "missing_marker": 1,
+    "truncated": 1,
+    "valid": 62
+  },
+  "responsibility_reached": false,
+  "solver_calls": 63,
+  "target_selected": false,
+  "total": 5
+}

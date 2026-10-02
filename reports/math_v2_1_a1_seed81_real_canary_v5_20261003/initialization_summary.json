@@ -1,0 +1,8 @@
+{
+  "expected_initial_logical_member_evaluations": 750,
+  "format_valid_responses": 62,
+  "initial_competence_floor_bound": false,
+  "initialization_complete": false,
+  "physical_solver_calls": 63,
+  "reason": "SOLVER_LENGTH_TERMINATION_WITHOUT_FINAL_MARKER"
+}

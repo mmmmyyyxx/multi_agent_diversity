@@ -1,0 +1,11 @@
+{
+  "SOTA_verified": false,
+  "memory_reads": 0,
+  "memory_writes": 0,
+  "other_arms_authorized": false,
+  "other_seeds_authorized": false,
+  "pattern_calls": 0,
+  "scientific_efficacy_verified": false,
+  "test_model_calls": 0,
+  "validation_used_during_search": false
+}

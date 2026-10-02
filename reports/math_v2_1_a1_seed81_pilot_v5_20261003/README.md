@@ -1,3 +1,73 @@
-# math_v2_1_a1_seed81_pilot_v5
+# MATH V2.1 A1 Seed81 Pilot closure
 
-Fresh user-authorized Solver decoding policy; zero-API source preparation only. No real execution yet. Historical Canary failures remain immutable. No efficacy or SOTA claim.
+STOP_SOLVER_DECODING_POLICY_INSUFFICIENT. INCOMPLETE. Local commits only; no push.
+
+Solver policy: enable_thinking=false, temperature=.7, top_p=.8, top_k=20, min_p=0, presence_penalty=0, frequency_penalty=0, max_output_tokens=3600 (wire max_tokens).
+All frozen fields transported: YES. Four historical Canaries remain INVALID. New Canary attempts:1.
+
+No tuning, regeneration, other arms/seeds or Test execution follows this closure. Search-time Validation feedback, Pattern calls and Memory activity remain zero. No efficacy or SOTA claim.
+
+| Metric | Initial | Final | Delta |
+|---|---|---|---|
+| VoteAcc | NOT_AVAILABLE | NOT_AVAILABLE | NOT_AVAILABLE |
+| MeanMemberAcc | NOT_AVAILABLE | NOT_AVAILABLE | NOT_AVAILABLE |
+| MinMemberAcc | NOT_AVAILABLE | NOT_AVAILABLE | NOT_AVAILABLE |
+| OracleAcc | NOT_AVAILABLE | NOT_AVAILABLE | NOT_AVAILABLE |
+| Member0Acc | NOT_AVAILABLE | NOT_AVAILABLE | NOT_AVAILABLE |
+| Member1Acc | NOT_AVAILABLE | NOT_AVAILABLE | NOT_AVAILABLE |
+| Member2Acc | NOT_AVAILABLE | NOT_AVAILABLE | NOT_AVAILABLE |
+| Member3Acc | NOT_AVAILABLE | NOT_AVAILABLE | NOT_AVAILABLE |
+| Member4Acc | NOT_AVAILABLE | NOT_AVAILABLE | NOT_AVAILABLE |
+
+Prior charged57648; new charged34928; total charged92576; remaining29907424. No inflight reservation or ledger reset.
+
+Current classified suite and deterministic gates are recorded in the fresh preexecution report. 1468 historical/private cases were not executed; full historical PASS is not claimed.
+
+```text
+CURRENT_METHOD = unified_team_prompt_search_v2_1
+SOLVER_DECODING_POLICY = SOLVER_DECODING_POLICY_V1
+SOLVER_DECODING_FIELDS_DISPATCHED = YES
+TEMPERATURE = 0.7
+TOP_P = 0.8
+TOP_K = 20
+MIN_P = 0
+PRESENCE_PENALTY = 0
+FREQUENCY_PENALTY = 0
+MAX_OUTPUT_TOKENS = 3600
+ANSWER_DOMAIN_AMENDMENT = PASS
+ACTIVE_SPLIT_REFERENCES_SCORABLE = YES
+V2_1_MATH_PREEXECUTION_FROZEN = YES
+TOTAL_REAL_TOKEN_AUTHORIZATION = 30000000
+PRIOR_ACCOUNTING_CHARGED = 57648
+TOTAL_ACCOUNTING_CHARGED = 92576
+TOTAL_ACCOUNTING_REMAINING = 29907424
+CANARY_FINAL_STATUS = STOP_SOLVER_DECODING_POLICY_INSUFFICIENT
+PILOT_SEARCH_COMPLETE = NO
+PILOT_VALIDATION_COMPLETE = NO
+PILOT_FINAL_STATUS = INCOMPLETE
+PILOT_SIGNAL = NOT_AVAILABLE
+PILOT_VOTEACC_INITIAL = NOT_AVAILABLE
+PILOT_VOTEACC_FINAL = NOT_AVAILABLE
+PILOT_VOTEACC_DELTA = NOT_AVAILABLE
+PILOT_ORACLE_INITIAL = NOT_AVAILABLE
+PILOT_ORACLE_FINAL = NOT_AVAILABLE
+PILOT_ORACLE_DELTA = NOT_AVAILABLE
+OPPORTUNITY_COUNTS_BY_MEMBER = [0, 0, 0, 0, 0]
+COMMIT_COUNTS_BY_MEMBER = [0, 0, 0, 0, 0]
+SPECIALIZATION_EVENTS = 0
+LOCAL_REJECTED_EXPORTED = 0
+LOCAL_REJECTED_COMMITTED = 0
+ROUND_ROBIN_ENFORCED = NO
+INCUMBENT_MONOTONICITY_ENFORCED = NO
+INITIAL_COMPETENCE_FLOOR_ENFORCED = YES
+STRICT_TEAM_GAIN_ENFORCED = YES
+PATTERN_REAL_CALLS = 0
+MEMORY_READS = 0
+MEMORY_WRITES = 0
+VALIDATION_USED_DURING_SEARCH = NO
+TEST_MODEL_CALLS = 0
+SCIENTIFIC_EFFICACY_VERIFIED = NO
+SOTA_VERIFIED = NO
+A2_A3_A4_AUTHORIZED = NO
+FORMAL_3SEED_AUTHORIZED = NO
+```

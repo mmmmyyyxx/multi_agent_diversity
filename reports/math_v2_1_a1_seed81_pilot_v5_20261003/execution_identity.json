@@ -1,0 +1,19 @@
+{
+  "initial_team_sha256": "4ca685adff5ca8a97e53b0aa0f5715783c7c6937433bd5bbc1308cbad9e97200",
+  "method": "unified_team_prompt_search_v2_1",
+  "preexecution_sha": "08d54881ce46a487f34be1e64e974c03ca6bdca0",
+  "solver_decoding_policy": {
+    "enable_thinking": false,
+    "frequency_penalty": 0,
+    "identity": "SOLVER_DECODING_POLICY_V1",
+    "max_output_tokens": 3600,
+    "min_p": 0,
+    "presence_penalty": 0,
+    "temperature": 0.7,
+    "top_k": 20,
+    "top_p": 0.8
+  },
+  "source_sha": "b92ccec074c1075f3acd73fd40594bf90a861bc7",
+  "split_identity": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+  "status": "NOT_EXECUTED"
+}

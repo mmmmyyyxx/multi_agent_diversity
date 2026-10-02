@@ -1,0 +1,52 @@
+[
+  {
+    "commit_count": 0,
+    "commit_rate": null,
+    "member_id": 0,
+    "opportunity_count": 0,
+    "opportunity_share": null,
+    "proposal_count": 0,
+    "realized_gain_events": [],
+    "specialization_events": 0
+  },
+  {
+    "commit_count": 0,
+    "commit_rate": null,
+    "member_id": 1,
+    "opportunity_count": 0,
+    "opportunity_share": null,
+    "proposal_count": 0,
+    "realized_gain_events": [],
+    "specialization_events": 0
+  },
+  {
+    "commit_count": 0,
+    "commit_rate": null,
+    "member_id": 2,
+    "opportunity_count": 0,
+    "opportunity_share": null,
+    "proposal_count": 0,
+    "realized_gain_events": [],
+    "specialization_events": 0
+  },
+  {
+    "commit_count": 0,
+    "commit_rate": null,
+    "member_id": 3,
+    "opportunity_count": 0,
+    "opportunity_share": null,
+    "proposal_count": 0,
+    "realized_gain_events": [],
+    "specialization_events": 0
+  },
+  {
+    "commit_count": 0,
+    "commit_rate": null,
+    "member_id": 4,
+    "opportunity_count": 0,
+    "opportunity_share": null,
+    "proposal_count": 0,
+    "realized_gain_events": [],
+    "specialization_events": 0
+  }
+]

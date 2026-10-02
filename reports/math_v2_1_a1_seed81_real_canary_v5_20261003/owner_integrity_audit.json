@@ -1,0 +1,19 @@
+{
+  "charged_total": 92576,
+  "exact_interface_and_role_caps_verified": true,
+  "execution_status": "EXECUTION_ABORTED",
+  "ledger_hash_chain_reconstructed": true,
+  "ledger_snapshot_matches_phase_end": true,
+  "physical_calls": {
+    "solver": 63
+  },
+  "raw_content_published": false,
+  "remaining": 29907424,
+  "request_trace_matches_physical_ledger": true,
+  "reserved_inflight": 0,
+  "source_and_inventory_verified": true,
+  "source_sha": "b92ccec074c1075f3acd73fd40594bf90a861bc7",
+  "status": "PASS",
+  "test_model_calls": 0,
+  "validation_search_calls": 0
+}

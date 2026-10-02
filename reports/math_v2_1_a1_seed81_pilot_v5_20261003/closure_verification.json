@@ -1,0 +1,41 @@
+{
+  "all_historical_replay_PASS_claimed": false,
+  "closure_governance_tests": {
+    "junit_sha256": "52df8eed245addff4372984fc0add0a014b6fed0deb8f0f6a4833620d771729f",
+    "passed": 72,
+    "skipped": 0
+  },
+  "compileall": "PASS",
+  "frozen_current_suite": {
+    "historical_private_deselected": 1468,
+    "passed": 803,
+    "skipped": 2
+  },
+  "governance": true,
+  "no_pilot_or_validation": true,
+  "phase_owner_integrity": {
+    "charged_total": 92576,
+    "exact_interface_and_role_caps_verified": true,
+    "execution_status": "EXECUTION_ABORTED",
+    "ledger_hash_chain_reconstructed": true,
+    "ledger_snapshot_matches_phase_end": true,
+    "physical_calls": {
+      "solver": 63
+    },
+    "raw_content_published": false,
+    "remaining": 29907424,
+    "request_trace_matches_physical_ledger": true,
+    "reserved_inflight": 0,
+    "source_and_inventory_verified": true,
+    "source_sha": "b92ccec074c1075f3acd73fd40594bf90a861bc7",
+    "status": "PASS",
+    "test_model_calls": 0,
+    "validation_search_calls": 0
+  },
+  "policy_failure_not_repaired_or_rerun": true,
+  "policy_report_sha256": "10476fd7e7c2b384c7ab93e87427711283b3ac936bb65168d41567a03f2407b7",
+  "preexecution_report_sha256": "c1b20b0aae58a4cbe86d5fbb97295e6a64b2f32bb9ee5c9e6e98c5056ce5b0ba",
+  "push_performed": false,
+  "source_poison_checks": 380,
+  "status": "PASS"
+}
