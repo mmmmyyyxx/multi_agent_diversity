@@ -1,0 +1,41 @@
+{
+  "diagnosis": {
+    "calls": 55,
+    "completed_framing_valid": 54,
+    "completed_responses": 54,
+    "finish_reasons": {
+      "length": 1,
+      "stop": 54
+    },
+    "last": {
+      "finish_reason": "length",
+      "marker_occurrences": 0,
+      "nonempty_lines": 102,
+      "output_tokens": 1800,
+      "requested_max_tokens": 1800,
+      "response_sha256": "b89af0005accf1769f9296228f356b8b6b6662dc5e955061145963883516f402"
+    }
+  },
+  "evaluator_changed": false,
+  "format_bytes_changed": false,
+  "initial_prompts_changed": false,
+  "materially_distinct_attempt": 2,
+  "method_or_gepa_budget_changed": false,
+  "new_interface": {
+    "identity": "MATH_SOLVER_INTERFACE_V5",
+    "parser_identity": "math_verify_no_fallback_v1",
+    "reflection_max_output_tokens": 1800,
+    "sha256": "6ff187ad4f0e6ffc7360c84263c1c2c8b18d59bded4bbfeb550db6fc818b7c06",
+    "solver_max_output_tokens": 3600,
+    "system_sha256": "655fa13b3e52c42903722b7418d164ef7adbde289fe925b52d2ab4ec72107376",
+    "user_suffix_sha256": "2d889a53f47fb5763bcc70579302a2289cd8d718811a1b3caf68c4134b59fdd4"
+  },
+  "old_interface": "MATH_SOLVER_INTERFACE_V4",
+  "operational_root_cause": "SOLVER_OUTPUT_TRUNCATION",
+  "parser_changed": false,
+  "reflection_output_cap": 1800,
+  "response_regeneration": false,
+  "solver_output_cap_new": 3600,
+  "solver_output_cap_old": 1800,
+  "total_authorization": 30000000
+}

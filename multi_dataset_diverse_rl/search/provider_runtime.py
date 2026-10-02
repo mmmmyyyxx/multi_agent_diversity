@@ -52,7 +52,9 @@ class RequestBroker:
         c = self.contract
         model = c["models"]["solver" if role == "solver" else "optimizer_reflection" if role == "reflection" else "pattern"]
         request = dict(model=model, messages=messages, temperature=c["decoding"]["temperature"],
-            max_tokens=c["decoding"]["max_output_tokens"], extra_body={"enable_thinking": False} if role == "solver" else {})
+            max_tokens=(c["decoding"].get("solver_max_output_tokens", c["decoding"]["max_output_tokens"])
+                if role == "solver" else c["decoding"]["max_output_tokens"]),
+            extra_body={"enable_thinking": False} if role == "solver" else {})
         identity = {"provider": c["provider"], "role": role, "split": split, "request": request,
                     "cache_namespace": c["cache_namespace"]}
         if role == "solver":

@@ -16,15 +16,15 @@ from multi_dataset_diverse_rl.local_optimizers.gepa_runtime import import_frozen
 ROOT=Path(__file__).resolve().parents[1]
 
 def contract(phase='pilot'):
-    return json.loads((ROOT/f'experiments/execution_bindings/math_v2_1_{phase}_v3.json').read_bytes())
+    return json.loads((ROOT/f'experiments/execution_bindings/math_v2_1_{phase}_v4.json').read_bytes())
 
 
 def test_output_repair_is_immutable_and_request_accounting_matches_solver():
-    from multi_dataset_diverse_rl.benchmarks.math_v21_interface import interface_for_contract, v4_interface_contract, MATH_SOLVER_INTERFACE_V4_USER_SUFFIX
+    from multi_dataset_diverse_rl.benchmarks.math_v21_interface import interface_for_contract, v5_interface_contract, MATH_SOLVER_INTERFACE_V4_USER_SUFFIX
     from multi_dataset_diverse_rl.benchmarks.math_accounting_prep import solver_request
     from multi_dataset_diverse_rl.benchmarks.math_domain_v2 import final_payload
     c=contract();adapter=MATHV21Binding(ROOT,c).benchmark()
-    assert adapter.solver_interface_contract()==v4_interface_contract()
+    assert adapter.solver_interface_contract()==v5_interface_contract()
     assert solver_request(c,'Synthetic decision procedure.','Synthetic arithmetic.')['messages'][0]['content']==adapter.output_contract
     request=solver_request(c,'Synthetic decision procedure.','Synthetic arithmetic.')
     assert request['messages'][1]['content'].endswith(MATH_SOLVER_INTERFACE_V4_USER_SUFFIX)
@@ -34,6 +34,17 @@ def test_output_repair_is_immutable_and_request_accounting_matches_solver():
     item=protocol_input('math','synthetic',{'problem':'Synthetic arithmetic.'},adapter.output_contract,protocol=adapter.protocol)
     BenchmarkSolver(adapter,broker).solve('Synthetic decision procedure.',item,stage='initial',split='optimize')
     assert captured==[request]
+    assert captured[0]['max_tokens']==3600
+    broker.complete(role='reflection',split='optimize',stage='synthetic',messages=[{'role':'user','content':'Synthetic optimizer context.'}])
+    assert captured[-1]['max_tokens']==1800
+    from multi_dataset_diverse_rl.benchmarks.math_accounting_prep import ValidationReserve
+    from multi_dataset_diverse_rl.governance.token_accounting import serialized_request,reservation
+    problems=['Synthetic arithmetic.','Synthetic relation.'];prompt='Synthetic procedure.'
+    metadata=dict(decoding=c['decoding'],examples=[dict(blank_prompt_serialized_request_bytes=len(serialized_request(solver_request(c,'',p)))) for p in problems])
+    reserve=ValidationReserve(metadata,(prompt,)*5)
+    assert reserve.remaining()==2*5*sum(reservation(solver_request(c,prompt,p))['amount'] for p in problems)
+    bad=deepcopy(c);bad['decoding']['solver_max_output_tokens']=1800
+    assert MATHV21Binding(ROOT,bad).blockers()
     assert final_payload('FINAL_ANSWER: 1')=='1'
     for bad in ('1','**FINAL_ANSWER: 1**','```FINAL_ANSWER: 1```','FINAL_ANSWER: 1\ncommentary','FINAL_ANSWER: 1\nFINAL_ANSWER: 2','FINAL_ANSWER:'):
         assert final_payload(bad) is None
@@ -85,11 +96,11 @@ def test_heldout_raw_access_denied_before_file_open(role,monkeypatch):
 def test_bound_manifest_requires_same_initial_support_and_fresh_components():
     from multi_dataset_diverse_rl.governance.unified_execution import preexecution_manifest,bound_preflight
     from multi_dataset_diverse_rl.governance.repository import validate_manifest_v2
-    m=preexecution_manifest(ROOT,source_sha='a'*40,binding_path='experiments/execution_bindings/math_v2_1_canary_v3.json',frozen=False)
+    m=preexecution_manifest(ROOT,source_sha='a'*40,binding_path='experiments/execution_bindings/math_v2_1_canary_v4.json',frozen=False)
     assert not validate_manifest_v2(ROOT,m)
     del m['initial_competence_binding']
     assert validate_manifest_v2(ROOT,m)
-    m=preexecution_manifest(ROOT,source_sha='a'*40,binding_path='experiments/execution_bindings/math_v2_1_canary_v3.json',frozen=False)
+    m=preexecution_manifest(ROOT,source_sha='a'*40,binding_path='experiments/execution_bindings/math_v2_1_canary_v4.json',frozen=False)
     m['transition_identity']='common_safe_v1'
     assert 'MANIFEST_EXECUTION_BINDING_MISMATCH' in bound_preflight(ROOT,m)['blockers']
 

@@ -5,7 +5,7 @@ import json
 from .math_execution import MATHExecutionBinding, provider_bounds
 from .math_domain_v2 import MATHBenchmarkAdapterV2, SETTINGS
 from .math_worker import PINS
-from .math_v21_interface import MATHV21BenchmarkAdapter, interface_for_contract
+from .math_v21_interface import MATHV21BenchmarkAdapter, interface_for_contract, v5_interface_contract
 from .experiment_splits import ExperimentSplitReader, COUNTS, ROLES
 from .data_freeze import digest, file_hash, SOURCE_PINS
 from .protocols import MATH_PROTOCOL_V2
@@ -52,6 +52,10 @@ class MATHV21Binding(MATHExecutionBinding):
         c = self.contract
         try:
             from ..governance.math_paired_validation import POLICY as VALIDATION_POLICY
+            decoding=dict(temperature=0.0, max_output_tokens=1800, invalid_response_retries=0, sdk_retries=0,
+                transport_retries=20, timeout_seconds=120, retry_sleep_seconds=1.5, retry_backoff_ceiling_seconds=60)
+            if c['solver_output_interface']==v5_interface_contract():
+                decoding['solver_max_output_tokens']=3600
             fixed = dict(identity=versions.MATH_V2_1_EXECUTION_BINDING_VERSION, benchmark_id="math",
                 method_identity=versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION,
                 method_implementation_sha="01025f7097ca3a3e248e370347e256ae0aea9046",
@@ -65,8 +69,7 @@ class MATHV21Binding(MATHExecutionBinding):
                 stop_policy=versions.UNIFIED_GLOBAL_STOP_VERSION,
                 models=dict(solver="qwen3-8b", optimizer_reflection="qwen3.7-flash", pattern="qwen3.7-flash", solver_thinking=False),
                 provider="lwj", concurrency=dict(solver=1, optimizer_reflection=1, pattern=1),
-                decoding=dict(temperature=0.0, max_output_tokens=1800, invalid_response_retries=0, sdk_retries=0,
-                    transport_retries=20, timeout_seconds=120, retry_sleep_seconds=1.5, retry_backoff_ceiling_seconds=60),
+                decoding=decoding,
                 budget=dict(metric_calls=36, reflection_minibatch_size=3, promotion=2, local_patience=3, team_patience=2),
                 memory_limits=dict(top_k_private=3, top_k_shared=3, max_context_chars=1200, private_storage_limit=24, shared_storage_limit=48),
                 arms=dict(A1=[False,False], A2=[True,False], A3=[False,True], A4=[True,True]), seeds=[81],

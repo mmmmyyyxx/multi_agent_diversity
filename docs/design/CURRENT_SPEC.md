@@ -347,6 +347,17 @@ and GEPA cannot change this suffix. The suffix contains no problem, reference,
 example, solution, strategy or held-out information. V2/V3 historical request
 compositions remain reproducible; unknown identities and altered hashes fail closed.
 
+`MATH_SOLVER_INTERFACE_V5` preserves the V4 system/suffix bytes and versions
+the Solver-only output envelope to 3600 tokens after an observed length abort.
+Reflection and Pattern retain the 1800-token cap; GEPA metric/minibatch/promotion/
+patience budgets, method semantics and total 30M authorization do not change.
+The explicit `decoding.solver_max_output_tokens` has read points in Solver request
+composition, isolated accounting preparation and protected Validation reservation.
+V5 requires exactly this role envelope; prior interfaces retain their original
+caps. Full initial/final Validation reservation must fit before admission and
+remain protected during search. Truncation still aborts without regeneration;
+no scientific stopper or parser guard changes to absorb incomplete outputs.
+
 ## Authority map
 
 See AGENTS.md for the complete authority hierarchy; method.md is a conceptual

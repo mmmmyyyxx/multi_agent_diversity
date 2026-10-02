@@ -41,6 +41,11 @@ def v4_interface_contract():
         parser_identity="math_verify_no_fallback_v1")
 
 
+def v5_interface_contract():
+    return dict(v4_interface_contract(), identity=versions.MATH_SOLVER_INTERFACE_V5_VERSION,
+        solver_max_output_tokens=3600, reflection_max_output_tokens=1800)
+
+
 def interface_for_contract(contract):
     frozen = contract["solver_output_interface"]
     if frozen == solver_interface_contract():
@@ -49,12 +54,14 @@ def interface_for_contract(contract):
         return MATH_SOLVER_INTERFACE_V3, v3_interface_contract()
     if frozen == v4_interface_contract():
         return MATH_SOLVER_INTERFACE_V3, v4_interface_contract()
+    if frozen == v5_interface_contract():
+        return MATH_SOLVER_INTERFACE_V3, v5_interface_contract()
     raise SearchContractError("MATH_SOLVER_INTERFACE_BINDING_MISMATCH")
 
 
 def solver_user_content(contract, prompt, problem):
     interface_for_contract(contract)
-    suffix = MATH_SOLVER_INTERFACE_V4_USER_SUFFIX if contract["solver_output_interface"] == v4_interface_contract() else ""
+    suffix = MATH_SOLVER_INTERFACE_V4_USER_SUFFIX if contract["solver_output_interface"] in (v4_interface_contract(), v5_interface_contract()) else ""
     return prompt + "\n\n" + problem + suffix
 
 

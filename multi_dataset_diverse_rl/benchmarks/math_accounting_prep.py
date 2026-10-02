@@ -51,7 +51,7 @@ def solver_request(contract, prompt, problem):
         interface = interface_for_contract(contract)[0]
         user_content = solver_user_content(contract, prompt, problem)
     return dict(model=contract["models"]["solver"], temperature=contract["decoding"]["temperature"],
-        max_tokens=contract["decoding"]["max_output_tokens"], extra_body={"enable_thinking": False},
+        max_tokens=contract["decoding"].get("solver_max_output_tokens", contract["decoding"]["max_output_tokens"]), extra_body={"enable_thinking": False},
         messages=[{"role":"system", "content":interface},
                   {"role":"user", "content":user_content}])
 
@@ -85,7 +85,7 @@ class ValidationReserve:
         self.max_prompt_size = max(self.max_prompt_size, escaped_prompt_bytes(prompt))
 
     def cost(self, sizes):
-        cap = self.metadata["decoding"]["max_output_tokens"]
+        cap = self.metadata["decoding"].get("solver_max_output_tokens", self.metadata["decoding"]["max_output_tokens"])
         return sum(r["blank_prompt_serialized_request_bytes"] + n + 4096 + cap
                    for r in self.metadata["examples"] for n in sizes)
 

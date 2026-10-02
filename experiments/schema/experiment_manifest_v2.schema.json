@@ -841,7 +841,7 @@
             "const": "unified_team_prompt_search_v2_1"
           },
           "solver_output_interface_identity": {
-            "enum": ["MATH_SOLVER_INTERFACE_V2", "MATH_SOLVER_INTERFACE_V3", "MATH_SOLVER_INTERFACE_V4"]
+            "enum": ["MATH_SOLVER_INTERFACE_V2", "MATH_SOLVER_INTERFACE_V3", "MATH_SOLVER_INTERFACE_V4", "MATH_SOLVER_INTERFACE_V5"]
           },
           "parser_identity": {
             "const": "MATH_PAYLOAD_PARSER_V2"
