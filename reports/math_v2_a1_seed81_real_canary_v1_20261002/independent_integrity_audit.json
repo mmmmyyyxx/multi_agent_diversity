@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "authorization_consumed_exactly_once": true,
+  "source_closure_byte_identity_at_execution": true,
+  "raw_inventory_hashes_verified": true,
+  "ledger_matches_lifecycle_and_scope_counters": true,
+  "request_role_model_thinking_verified": true,
+  "all_actual_calls_within_scope_bounds": true,
+  "parser_failure_reproduced_offline": true,
+  "canary_execution_completed": false,
+  "epoch_candidate_transition_paths_not_validated": true,
+  "no_scientific_efficacy_inference": true
+}

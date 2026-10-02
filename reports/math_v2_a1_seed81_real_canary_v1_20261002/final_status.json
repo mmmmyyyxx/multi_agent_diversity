@@ -1,0 +1,21 @@
+{
+  "classification": "CANARY_OPERATIONAL_FAILURE",
+  "MATH_A1_REAL_CANARY": "OPERATIONAL_FAILURE",
+  "COMPLETED_TEAM_EPOCHS": 0,
+  "SECOND_EPOCH_STARTED": "NO",
+  "REAL_SOLVER_CALLS": 1,
+  "REAL_OPTIMIZER_CALLS": 0,
+  "REAL_PATTERN_CALLS": 0,
+  "LOCAL_REJECTED_EXPORTED": 0,
+  "LOCAL_REJECTED_COMMITTED": 0,
+  "STATE_MUTATION_WITHOUT_COMMIT": 0,
+  "VALIDATION_MODEL_CALLS": 0,
+  "TEST_MODEL_CALLS": 0,
+  "SCIENTIFIC_EFFICACY_VERIFIED": "NO",
+  "MATH_FORMAL_A1_READY": "NO",
+  "MATH_FORMAL_A1_AUTHORIZED": "NO",
+  "authorization_consumed": true,
+  "future_attempt_requires_new_freeze_and_explicit_authorization": true,
+  "canary_in_formal_seed81_statistics": false,
+  "push_performed": false
+}

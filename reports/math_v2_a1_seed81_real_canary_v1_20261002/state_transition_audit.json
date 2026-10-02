@@ -1,0 +1,11 @@
+{
+  "state_mutation_without_commit": 0,
+  "atomic_commits": 0,
+  "rejected_candidate_state_changes": 0,
+  "memory_reads": 0,
+  "memory_writes": 0,
+  "pattern_state_changes": 0,
+  "transition_path_exercised": false,
+  "initial_final_prompt_hashes_equal": true,
+  "initialization_incomplete": true
+}

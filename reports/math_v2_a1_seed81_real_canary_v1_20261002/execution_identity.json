@@ -1,0 +1,47 @@
+{
+  "base_sha": "26386d8c87e3fe363cf13b58c343de34d25ce04c",
+  "execution_source_sha": "d983a78864b6bed97ba877cb4265ad69ecdd562c",
+  "preexecution_sha": "26386d8c87e3fe363cf13b58c343de34d25ce04c",
+  "result_commit_resolution": "Containing local commit: Record MATH V2 A1 Seed81 real canary",
+  "experiment": "math_v2_pattern_memory_v1",
+  "canary_node": "math_v2_a1_seed81_real_canary_v1",
+  "attempt_id": "math_unified_v2_A1_seed81_canary_attempt1",
+  "startup_identity_sha256": "6d8e57441cae187c639134c3f171ed611d6a97031563d1cb971553efe027bcb4",
+  "authorization_identity": "e362215a2fa38d073f782be34940adfe4284d1e8bcf03123a2339cf4800af1d2",
+  "guard_sha256": "19a8b464480543c722f7c2e6e6d2ad0692eff312595760769850c9ebda9cfd78",
+  "canonical_manifest_sha256": "7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f",
+  "split_sha256": "753a24c9e2ee7bb6d7531c53acc83eacf562a431292d271a8d75ef0156fed70b",
+  "membership_hashes": {
+    "optimize": "52fd0a0253730a4392c879374d0963c46df4aa7daf042f3c0970162f87dbc947",
+    "shadow": "3f730fb428b3059d021c5b8354bad234939b16be79dc808dc41688206344ee74",
+    "test": "9cba0605a224f1c1ebe15a01c65d1263f8cbee45d8ec2cfd67d496b119a6c32d",
+    "validation": "506c2c10beff5a14ef593f90a13929ad4519e0921d4957df00a4c1b152b4cd22"
+  },
+  "models": {
+    "solver": "qwen3-8b",
+    "optimizer_reflection": "qwen3.7-flash",
+    "pattern": "qwen3.7-flash",
+    "solver_thinking": false
+  },
+  "provider": "lwj",
+  "concurrency": {
+    "solver": 1,
+    "optimizer_reflection": 1,
+    "pattern": 1
+  },
+  "cache_policy": "exact_request_role_split_cache_v1",
+  "evaluator": "math_verify_0.6.0_equivalence_v1",
+  "aggregation": "equal_equivalence_plurality_consistency_v1",
+  "responsibility": "binary_plurality_raw_responsibility_v1",
+  "search_budget": {
+    "metric_calls": 36,
+    "reflection_minibatch_size": 3,
+    "promotion": 2,
+    "local_patience": 3,
+    "team_patience": 2
+  },
+  "source_closure_files": 171,
+  "source_and_governance_unchanged_during_execution": true,
+  "post_run_changes": "Canary registry/lineage/failure evidence, readiness closure and REAL_CANARY metadata validation only.",
+  "scientific_method_parser_prompt_split_models_budget_stopping_unchanged": true
+}

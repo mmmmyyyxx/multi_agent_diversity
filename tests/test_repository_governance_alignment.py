@@ -107,6 +107,7 @@ def test_current_experiment_registration_fails_closed(monkeypatch,poison,expecte
         if Path(path)==ROOT/'experiments/current_frontier.yaml':
             result=deepcopy(result)
             result['current_experiment']=poison
+            result['real_execution_ready']='true_for_canary_only'
         return result
     monkeypatch.setattr(repository,'load_yaml',read)
     assert expected in repository.audit_repository(ROOT,check_generated=False)['errors']
@@ -247,3 +248,23 @@ def test_readme_cannot_be_bound_as_scientific_config(identity_workspace):
 def test_complete_governance_audit():
     result=audit_repository(ROOT)
     assert result['ok'],result['errors']
+
+
+def test_real_canary_is_execution_evidence_only(registry):
+    row=next(r for r in registry['experiments'] if r['experiment_id']=='math_v2_a1_seed81_real_canary_v1')
+    assert row['kind']=='REAL_CANARY'
+    assert row['classifier']=='CANARY_OPERATIONAL_FAILURE'
+    assert row['scientific_status']=='EXECUTION_ABORTED_EFFICACY_UNEVALUATED'
+    assert row['authorization_consumed'] is True
+    assert row['active_for_new_work'] is False
+
+
+def test_canary_abort_does_not_unlock_formal_or_heldout():
+    frontier=load_yaml(ROOT/'experiments/current_frontier.yaml')
+    assert frontier['last_canary_milestone']=='math_v2_a1_seed81_real_canary_v1'
+    assert frontier['real_execution_ready'] is False
+    assert frontier['formal_a1_ready'] is False
+    assert frontier['formal_a1_authorized'] is False
+    assert frontier['real_api_authorized'] is False
+    assert frontier['validation_access']=='not_authorized'
+    assert frontier['test_access']=='sealed'

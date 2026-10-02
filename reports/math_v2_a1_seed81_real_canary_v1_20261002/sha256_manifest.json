@@ -1,0 +1,85 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "authorization_receipt.json",
+      "sha256": "08da145880d86d7c672fe20f6eecc88df7fe6b4ffc518359d54404dd6f60ba24"
+    },
+    {
+      "file": "canary_call_bounds.json",
+      "sha256": "12d1734a2b0906b8844c84762e6321ac52b39a1feaf77c682a5a1dce8834b297"
+    },
+    {
+      "file": "candidate_funnel.json",
+      "sha256": "aaee8e83eb90989d3aa8d26f91738eb3bcd774acdf955dda79e441b878bcc398"
+    },
+    {
+      "file": "execution_identity.json",
+      "sha256": "771211fcfc558d14eaa766ca807058c67626277bc034e0a0f647ae7d9acc5ca7"
+    },
+    {
+      "file": "final_state.json",
+      "sha256": "7baf345771ed51be8c8ff10bd3f0cb82b23dc2e9d5173a09c9b84be0eda55540"
+    },
+    {
+      "file": "final_status.json",
+      "sha256": "9e5901c4fd27bbf9c6e16335f6f2be3247d61c79774fc040e8671e28f3710c13"
+    },
+    {
+      "file": "governance_audit.json",
+      "sha256": "dd7427fc05b747d90394d2c0a4f63a47b6b2d1a7dae897687f0300d5a64ab082"
+    },
+    {
+      "file": "independent_integrity_audit.json",
+      "sha256": "04715ec1c0d500a47ae7bd20f64e21a5f608b78b40b5d07e57ca50169d147460"
+    },
+    {
+      "file": "initial_state.json",
+      "sha256": "1f18d2813ff6cd1adcc568b7976b9283e925cf79cc490b612ed42150d1dedf4c"
+    },
+    {
+      "file": "operational_events.json",
+      "sha256": "a6fc3b888b13c51c397b32c16a762f40d88ec09105b61e4e8754d524f44185d1"
+    },
+    {
+      "file": "opportunity_trace.json",
+      "sha256": "2f83767394a8b54cfec6db3cad99636cd1d2ab4d6e153a10049391258796369e"
+    },
+    {
+      "file": "provider_accounting.json",
+      "sha256": "2a6530704680229a4d53af94ef752e4b15351dd56852513d934a466d0c75b405"
+    },
+    {
+      "file": "raw_evidence_inventory.json",
+      "sha256": "b0162a7e7358672cfb0f1c946fed93ea005d5499f1cb23be2da9db28c59614d5"
+    },
+    {
+      "file": "README.md",
+      "sha256": "ddf4a612e9901a2c9107b1d6e5eba2a62c4cbe7af1748a12944690cab63e47ce"
+    },
+    {
+      "file": "sanitization_audit.json",
+      "sha256": "fd316f0d6f3a9635a234cf99e197837606c725ab9e06b6895b90f4200fe6a9d3"
+    },
+    {
+      "file": "split_access_audit.json",
+      "sha256": "b66ca45102c3bef926f53bb44b5d95e75a5cd751870c5d16aeacf378953363dd"
+    },
+    {
+      "file": "state_transition_audit.json",
+      "sha256": "ab29b1e3821e7f0167018b79779abf030f040c3343d4f908574e0378c04c5a1a"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "42fe6027624c1b7cf1c5540220ff4393ec904ad327e0d6960f28ef69a422b1a4"
+    },
+    {
+      "file": "test_summary.json",
+      "sha256": "f1eaf7f5ac1cd42d2d9442a99f82b5ec23c1363bc276fdc09929f4c11a69fc11"
+    },
+    {
+      "file": "variable_evidence_trace.json",
+      "sha256": "2b0100c39c3af4a275643fab34df2f31b2899f706985f1c6ecc4383612f25944"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "status": "NOT_EXERCISED",
+  "opportunities": 0,
+  "proposals": 0,
+  "local_accepted": 0,
+  "local_rejected": 0,
+  "accepted_exported": 0,
+  "rejected_exported": 0,
+  "TeamProbe": {
+    "attempted": 0,
+    "passed": 0
+  },
+  "Full": {
+    "attempted": 0,
+    "passed": 0
+  },
+  "Common_Safe": {
+    "attempted": 0,
+    "passed": 0
+  },
+  "Shadow": {
+    "attempted": 0,
+    "passed": 0
+  },
+  "commits": 0,
+  "candidates": [],
+  "local_rejected_teamprobe_pass_count": 0,
+  "local_rejected_full_pass_count": 0,
+  "local_rejected_commit_count": 0,
+  "transfer_matrix": {
+    "local_accepted_team_rejected": 0,
+    "local_accepted_team_committed": 0,
+    "local_rejected_team_rejected": 0,
+    "local_rejected_team_committed": 0
+  },
+  "rescue_observation": "NO_REAL_RESCUE_OBSERVED_IN_CANARY",
+  "admission_decoupling_efficacy_inference": "NOT_PERMITTED"
+}

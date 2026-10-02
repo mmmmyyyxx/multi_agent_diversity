@@ -1,0 +1,40 @@
+{
+  "initial_team_version": "MATH_GENERIC_TEAM_SEED_V1_1",
+  "initial_team_hash": "4ca685adff5ca8a97e53b0aa0f5715783c7c6937433bd5bbc1308cbad9e97200",
+  "five_prompt_hashes": [
+    "57e468e68d9ab974a0018353e4bc0a15ca0e1e002c8dbd6676802d89839bc674",
+    "c6e4039d562e0f1cf9e7f4ab4a0245f91c605a566947bcc31b6f1db90d1e5d23",
+    "37d8569a6e38128535bae504b4e7a4acb165d5bb8a4528a5e1e86c51a51a94d5",
+    "ade4c363f59d20e8fc2e6d743c47d4e7e8d059ce9cb8fa0c309f61bd50c9e112",
+    "6f9ee08d5b0055d8d5986c2cd55aea000074e11df4aee614241ca6b4e59b3098"
+  ],
+  "team_prompt_state_hash": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+  "completed_update_count": 0,
+  "memory": {
+    "identity": "null_memory_v1",
+    "stateful_reads": 0,
+    "writes": 0,
+    "private_entries": 0,
+    "shared_entries": 0
+  },
+  "pattern": {
+    "identity": "null_pattern_v1",
+    "constructed_provider_count": 0,
+    "logical_calls": 0,
+    "physical_calls": 0
+  },
+  "cache_namespace": "math_v2_a1_seed81_canary_attempt1_20261002",
+  "cache_initial_entries": 0,
+  "dataset_identities": {
+    "canonical": "7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f",
+    "split": "753a24c9e2ee7bb6d7531c53acc83eacf562a431292d271a8d75ef0156fed70b"
+  },
+  "models": {
+    "solver": "qwen3-8b",
+    "optimizer_reflection": "qwen3.7-flash",
+    "pattern": "qwen3.7-flash",
+    "solver_thinking": false
+  },
+  "evidence_basis": "Frozen preexecution artifacts and unmodified constructor guarantees; no full runtime profile snapshot reached.",
+  "optimize_profiles_initialization_complete": false
+}

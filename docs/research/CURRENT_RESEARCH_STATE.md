@@ -5,7 +5,7 @@ The sole active research architecture is Unified Team Prompt Search.
 - CURRENT_METHOD: unified_team_prompt_search_v2.
 - CURRENT_BENCHMARK_SUITE: MATH, IFBench, HotpotQA.
 - CURRENT_EXPERIMENT: math_v2_pattern_memory_v1 preexecution.
-- REAL_EXECUTION_READY = CANARY_ONLY after frozen-source preflight; REAL_API_AUTHORIZED = NO.
+- Execution readiness and authorization come from experiments/current_frontier.yaml.
 - Pattern = IMPLEMENTED_DEFAULT_OFF; Memory = IMPLEMENTED_DEFAULT_OFF.
 - SCIENTIFIC_EFFICACY_VERIFIED = NO; SOTA_VERIFIED = NO.
 
@@ -29,8 +29,11 @@ is sealed. Data availability does not confer held-out model access.
 
 1. MATH: V1.1 reference eligibility, split, initial team, production composition,
    models/provider and finite canary bounds are versioned. Four arms have
-   actual public GEPA fake E2E conformance evidence. The A1 Seed81 first-parent
-   epoch canary needs separate exact-source authorization; no real run occurred.
+   actual public GEPA fake E2E conformance evidence. The authorized A1 Seed81
+   first-parent epoch canary aborted during initialization: its first successful
+   Solver response lacked the frozen final marker. No search opportunity or
+   complete epoch occurred. The authorization is consumed; Formal readiness is
+   closed. See the current frontier and canary evidence for exact identities.
 2. IFBench: data and new split frozen; pinned checker packages, spaCy model and
    NLTK resources have a verified isolated runtime lock. Aggregation-aware
    responsibility remains RESPONSIBILITY_POLICY_NOT_FROZEN. Ambient runtimes

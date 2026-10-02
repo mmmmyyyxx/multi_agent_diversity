@@ -1,0 +1,70 @@
+{
+  "files": [
+    {
+      "bytes": 1272,
+      "path": "runs/math_v2_a1_seed81_canary_attempt1_20261002/consumed_authorization.json",
+      "sha256": "26d2b577b78896059e087c1657a0e6d84e0b0a14bcd0ce3cc32567248cc3ee7d"
+    },
+    {
+      "bytes": 490,
+      "path": "runs/math_v2_a1_seed81_canary_attempt1_20261002/ledger.jsonl",
+      "sha256": "10385e1386894dcaeb9ce28feb3d67c0ff097c58d55b87937537ff3c84fa4eff"
+    },
+    {
+      "bytes": 324,
+      "path": "runs/math_v2_a1_seed81_canary_attempt1_20261002/lifecycle.json",
+      "sha256": "d0dc1559c001aef1b1bf8bc04ff180b3b3f63081caa4abab22703ccda130bece"
+    },
+    {
+      "bytes": 878,
+      "path": "runs/math_v2_a1_seed81_canary_attempt1_20261002/operational_scope_state.json",
+      "sha256": "e7acb5013517d6f8bbc350114346f272c9060fb05ddfb0fea7c29eca82b7cd64"
+    },
+    {
+      "bytes": 131,
+      "path": "runs/math_v2_a1_seed81_canary_attempt1_20261002/outer_termination.json",
+      "sha256": "fd3f7b44f92f894185f71cc528a911d653726b039b53cc0d9ab9113703199bc4"
+    },
+    {
+      "bytes": 2038,
+      "path": "runs/math_v2_a1_seed81_canary_attempt1_20261002/provider_trace_private.jsonl",
+      "sha256": "18077e162328e18797d86f6fd1065fcbaba2838b70d915f26b6fdd1691008a0e"
+    },
+    {
+      "bytes": 801,
+      "path": "runs/math_v2_a1_seed81_canary_attempt1_20261002/raw_evidence_inventory.json",
+      "sha256": "fc947a3f7805de09dfccfdacb7ff15b1db2deac2bb0b79070930d2dbcb7e0989"
+    },
+    {
+      "bytes": 1500,
+      "path": "runs/math_v2_a1_seed81_canary_control_v1/authorization_scope_receipt.json",
+      "sha256": "6340c16558fa2fa63bc9d32b83d1af9c592b442f7b76d833d609fc231befb508"
+    },
+    {
+      "bytes": 1161,
+      "path": "runs/math_v2_a1_seed81_canary_control_v1/canary_call_bounds.json",
+      "sha256": "12d1734a2b0906b8844c84762e6321ac52b39a1feaf77c682a5a1dce8834b297"
+    },
+    {
+      "bytes": 3122,
+      "path": "runs/math_v2_a1_seed81_canary_control_v1/handoff.json",
+      "sha256": "e73e062a6a652ef00ddc6edc83e37f7b0b2cb04b453072b68f46e30eb220cd14"
+    },
+    {
+      "bytes": 904,
+      "path": "runs/math_v2_a1_seed81_canary_control_v1/prep_real_final/authorization_consumed.json",
+      "sha256": "a6ffa7ea242f305a07702106a280374a5a9a338a92d25232506ed57cd417e4db"
+    },
+    {
+      "bytes": 13667,
+      "path": "runs/math_v2_a1_seed81_canary_control_v1/run_canary.py",
+      "sha256": "19a8b464480543c722f7c2e6e6d2ad0692eff312595760769850c9ebda9cfd78"
+    },
+    {
+      "bytes": 789,
+      "path": "runs/unified_authorization_consumption/d51b38ab89bb74c0d47b0d9d2160fb590572c4ebf86977fcd3072e66feaa5ac5.json",
+      "sha256": "d10b9f746b114ebe3f1e4dc3130dad3e41605da9a9f2e4899617edda926e052f"
+    }
+  ],
+  "frozen_at": "2026-10-02T02:03:50.520107+00:00"
+}

@@ -1,0 +1,246 @@
+{
+  "fields": [
+    {
+      "number": 1,
+      "field": "BASE_SHA",
+      "value": "26386d8c87e3fe363cf13b58c343de34d25ce04c"
+    },
+    {
+      "number": 2,
+      "field": "execution source SHA",
+      "value": "d983a78864b6bed97ba877cb4265ad69ecdd562c"
+    },
+    {
+      "number": 3,
+      "field": "preexecution SHA",
+      "value": "26386d8c87e3fe363cf13b58c343de34d25ce04c"
+    },
+    {
+      "number": 4,
+      "field": "canary result commit SHA",
+      "value": "Containing local result commit; resolve after commit"
+    },
+    {
+      "number": 5,
+      "field": "attempt ID",
+      "value": "math_unified_v2_A1_seed81_canary_attempt1"
+    },
+    {
+      "number": 6,
+      "field": "authorization identity",
+      "value": "e362215a2fa38d073f782be34940adfe4284d1e8bcf03123a2339cf4800af1d2"
+    },
+    {
+      "number": 7,
+      "field": "canary-specific Solver ceiling",
+      "value": "logical=1673346; physical=1666143"
+    },
+    {
+      "number": 8,
+      "field": "actual Solver logical calls",
+      "value": 1
+    },
+    {
+      "number": 9,
+      "field": "actual Solver physical calls",
+      "value": 1
+    },
+    {
+      "number": 10,
+      "field": "optimizer ceiling",
+      "value": "logical=12005; physical=12005"
+    },
+    {
+      "number": 11,
+      "field": "actual optimizer logical calls",
+      "value": 0
+    },
+    {
+      "number": 12,
+      "field": "actual optimizer physical calls",
+      "value": 0
+    },
+    {
+      "number": 13,
+      "field": "retries",
+      "value": 0
+    },
+    {
+      "number": 14,
+      "field": "failed provider calls",
+      "value": 0
+    },
+    {
+      "number": 15,
+      "field": "total input tokens",
+      "value": 377
+    },
+    {
+      "number": 16,
+      "field": "total output tokens",
+      "value": 183
+    },
+    {
+      "number": 17,
+      "field": "completed team epochs",
+      "value": 0
+    },
+    {
+      "number": 18,
+      "field": "opportunities",
+      "value": 0
+    },
+    {
+      "number": 19,
+      "field": "proposal count",
+      "value": 0
+    },
+    {
+      "number": 20,
+      "field": "local accepted",
+      "value": 0
+    },
+    {
+      "number": 21,
+      "field": "local rejected",
+      "value": 0
+    },
+    {
+      "number": 22,
+      "field": "accepted exported",
+      "value": 0
+    },
+    {
+      "number": 23,
+      "field": "rejected exported",
+      "value": 0
+    },
+    {
+      "number": 24,
+      "field": "TeamProbe attempted/pass",
+      "value": "0/0"
+    },
+    {
+      "number": 25,
+      "field": "Full attempted/pass",
+      "value": "0/0"
+    },
+    {
+      "number": 26,
+      "field": "Common-Safe attempted/pass",
+      "value": "0/0"
+    },
+    {
+      "number": 27,
+      "field": "Shadow attempted/pass",
+      "value": "0/0"
+    },
+    {
+      "number": 28,
+      "field": "commits",
+      "value": 0
+    },
+    {
+      "number": 29,
+      "field": "local-rejected TeamProbe pass",
+      "value": 0
+    },
+    {
+      "number": 30,
+      "field": "local-rejected Full pass",
+      "value": 0
+    },
+    {
+      "number": 31,
+      "field": "local-rejected commits",
+      "value": 0
+    },
+    {
+      "number": 32,
+      "field": "mutation evidence sizes",
+      "value": []
+    },
+    {
+      "number": 33,
+      "field": "validation evidence sizes",
+      "value": []
+    },
+    {
+      "number": 34,
+      "field": "max GEPA metric calls observed",
+      "value": 0
+    },
+    {
+      "number": 35,
+      "field": "initial team hash",
+      "value": "4ca685adff5ca8a97e53b0aa0f5715783c7c6937433bd5bbc1308cbad9e97200"
+    },
+    {
+      "number": 36,
+      "field": "final team hash",
+      "value": "4ca685adff5ca8a97e53b0aa0f5715783c7c6937433bd5bbc1308cbad9e97200"
+    },
+    {
+      "number": 37,
+      "field": "changed members",
+      "value": 0
+    },
+    {
+      "number": 38,
+      "field": "state mutation without commit",
+      "value": 0
+    },
+    {
+      "number": 39,
+      "field": "Pattern calls",
+      "value": 0
+    },
+    {
+      "number": 40,
+      "field": "Memory reads",
+      "value": 0
+    },
+    {
+      "number": 41,
+      "field": "Memory writes",
+      "value": 0
+    },
+    {
+      "number": 42,
+      "field": "Optimize raw accesses",
+      "value": 150
+    },
+    {
+      "number": 43,
+      "field": "Shadow raw search leakage",
+      "value": 0
+    },
+    {
+      "number": 44,
+      "field": "Validation raw accesses",
+      "value": 0
+    },
+    {
+      "number": 45,
+      "field": "Test raw accesses",
+      "value": 0
+    },
+    {
+      "number": 46,
+      "field": "raw evolved prompt report leakage",
+      "value": 0
+    },
+    {
+      "number": 47,
+      "field": "secret scan",
+      "value": "PASS"
+    },
+    {
+      "number": 48,
+      "field": "operational errors",
+      "value": "1 invalid Solver response; missing FINAL_ANSWER marker"
+    }
+  ],
+  "result": "CANARY_OPERATIONAL_FAILURE",
+  "efficacy_verified": false
+}

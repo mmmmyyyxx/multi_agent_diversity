@@ -1,0 +1,19 @@
+{
+  "raw_rows_materialized": {
+    "optimize": 150,
+    "shadow": 0,
+    "test": 0,
+    "validation": 0
+  },
+  "optimize_raw_accesses": 150,
+  "shadow_raw_gate_accesses": 0,
+  "shadow_raw_search_leakage": 0,
+  "validation_raw_accesses": 0,
+  "test_raw_accesses": 0,
+  "validation_model_calls": 0,
+  "test_model_calls": 0,
+  "raw_access_definition": "Selected rows decoded and exposed through the governed reader, not byte hashing/scanning of immutable source files.",
+  "nonselected_rows_not_parsed": true,
+  "validation_search_access": "SEALED",
+  "test_access": "SEALED"
+}

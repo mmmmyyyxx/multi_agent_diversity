@@ -187,3 +187,26 @@ failures:
   regression_tests:
   - tests/test_formal_v3_concurrent_local_batch.py
   mitigation: Use the versioned current batch path only within separately frozen and authorized execution.
+- failure_id: FAIL-MATH-CANARY-FINAL-MARKER
+  title: MATH canary initial Solver response omitted final marker
+  status: DIAGNOSED
+  first_observed: math_v2_a1_seed81_real_canary_v1
+  affected_components:
+  - solver_output_contract
+  - math_parser
+  symptom: First qwen3-8b response contained zero FINAL_ANSWER marker lines; frozen
+    parser rejected without regeneration.
+  evidence:
+  - reports/math_v2_a1_seed81_real_canary_v1_20261002
+  evidence_level: observed
+  root_cause_status: Output-format nonconformance observed; reason the model omitted
+    the marker remains unproven.
+  forbidden_inference: Do not infer mathematical correctness, search effectiveness
+    or generalization from this aborted canary.
+  regression_tests:
+  - tests/test_math_preexecution.py
+  mitigation: Preserve strict parser and original attempt. No repair/resume/rerun;
+    new attempt needs fresh freeze and explicit authorization.
+  lifecycle: ACTIVE
+  lifecycle_note: Canary operational blocker; no scientific method or parser amendment
+    performed.

@@ -1,0 +1,31 @@
+{
+  "derivation": {
+    "initial_optimize": "5 * 150 = 750",
+    "initial_shadow_profiles": "5 * 300 = 1500; lazy, once per unchanged parent",
+    "max_positive_raw_v": 600,
+    "members": 5,
+    "minimum_positive_raw_v": 1,
+    "opportunity_bound": "1 + 4 * floor(600/1) = 2401",
+    "reflection_per_opportunity": "<=5 under frozen complete-pair metric reserve",
+    "solver_logical_per_opportunity": "36 + 5*12 + 2*150 + 300 = 696",
+    "solver_physical_per_opportunity": "<=693; warm local seed validation and nonempty probe for both possible Full candidates",
+    "transport_multiplier": 21
+  },
+  "excluded_roles": [
+    "pattern",
+    "aggregator",
+    "validation",
+    "test"
+  ],
+  "max_opportunities": 2401,
+  "optimizer_logical": 12005,
+  "optimizer_physical": 12005,
+  "pattern_logical": 0,
+  "pattern_physical": 0,
+  "refinement_rule": "After initial Optimize realization, max_j(1 + sum_{i != j} floor(V_i/V_j)); no online scientific decision changed.",
+  "scientific_budget_unchanged": true,
+  "solver_logical": 1673346,
+  "solver_physical": 1666143,
+  "status": "FROZEN_BEFORE_AUTHORIZATION_CONSUMPTION",
+  "total_transport_attempts": 35241108
+}

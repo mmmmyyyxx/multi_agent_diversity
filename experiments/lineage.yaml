@@ -560,6 +560,9 @@ nodes:
 - experiment_id: math_v2_pattern_memory_v1
   kind: FORMAL_EXPERIMENT
   era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_a1_seed81_real_canary_v1
+  kind: REAL_CANARY
+  era: BENCHMARK_GENERALIZATION
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -873,4 +876,10 @@ edges:
   relation: derived_from
   evidence: reports/math_v2_preexecution_freeze_v1_1_20261001/README.md
   scope: Preexecution contract registration only; no real API calls or efficacy evidence.
+- from: math_v2_preexecution_freeze_v1_1
+  to: math_v2_a1_seed81_real_canary_v1
+  relation: derived_from
+  evidence: reports/math_v2_a1_seed81_real_canary_v1_20261002/README.md
+  scope: Single-use execution canary aborted before search; no scientific efficacy
+    evidence.
 current_frontier: experiments/current_frontier.yaml

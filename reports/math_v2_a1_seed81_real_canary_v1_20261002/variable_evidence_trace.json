@@ -1,0 +1,9 @@
+{
+  "status": "NOT_EXERCISED",
+  "mutation_evidence_sizes": [],
+  "search_validation_evidence_sizes": [],
+  "opportunities": [],
+  "max_gepa_metric_calls_observed": 0,
+  "frozen_metric_ceiling": 36,
+  "fixed_4_4_4_or_exact12_required": false
+}

@@ -1,0 +1,18 @@
+{
+  "final_team_hash": "4ca685adff5ca8a97e53b0aa0f5715783c7c6937433bd5bbc1308cbad9e97200",
+  "team_prompt_state_hash": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+  "five_prompt_hashes": [
+    "57e468e68d9ab974a0018353e4bc0a15ca0e1e002c8dbd6676802d89839bc674",
+    "c6e4039d562e0f1cf9e7f4ab4a0245f91c605a566947bcc31b6f1db90d1e5d23",
+    "37d8569a6e38128535bae504b4e7a4acb165d5bb8a4528a5e1e86c51a51a94d5",
+    "ade4c363f59d20e8fc2e6d743c47d4e7e8d059ce9cb8fa0c309f61bd50c9e112",
+    "6f9ee08d5b0055d8d5986c2cd55aea000074e11df4aee614241ca6b4e59b3098"
+  ],
+  "members_changed_count": 0,
+  "atomic_commit_count": 0,
+  "completed_team_epochs": 0,
+  "second_epoch_started": false,
+  "optimize_profiles_initialization_complete": false,
+  "final_search_materialization_created": false,
+  "evidence_basis": "Aborted on first Solver response during initialize, before any opportunity/search/commit; frozen initial prompt tuple unchanged."
+}

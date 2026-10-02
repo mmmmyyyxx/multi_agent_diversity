@@ -1,0 +1,53 @@
+{
+  "accounting_reconciled": true,
+  "providers_constructed": 1,
+  "pattern_provider_constructions": 0,
+  "roles": {
+    "Solver": {
+      "model": "qwen3-8b",
+      "thinking": false,
+      "logical_calls": 1,
+      "physical_calls": 1,
+      "successful_physical_calls": 1,
+      "cache_hits": 0,
+      "cache_misses": 1,
+      "input_tokens": 377,
+      "output_tokens": 183,
+      "retry_attempts": 0,
+      "failed_calls": 0
+    },
+    "Optimizer_Reflection": {
+      "model": "qwen3.7-flash",
+      "logical_calls": 0,
+      "physical_calls": 0,
+      "successful_physical_calls": 0,
+      "cache_hits": 0,
+      "cache_misses": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "retry_attempts": 0,
+      "failed_calls": 0
+    },
+    "Pattern": {
+      "logical_calls": 0,
+      "physical_calls": 0,
+      "successful_physical_calls": 0,
+      "cache_hits": 0,
+      "cache_misses": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "retry_attempts": 0,
+      "failed_calls": 0
+    }
+  },
+  "total_transport_attempts": 1,
+  "total_successful_provider_calls": 1,
+  "total_failed_provider_calls": 0,
+  "total_input_tokens": 377,
+  "total_output_tokens": 183,
+  "retries": 0,
+  "parser_invalid_responses": 1,
+  "physical_calls_definition": "New uncached provider requests; retry attempts reported separately.",
+  "request_model_identity_verified": true,
+  "provider_returned_model_identity": "Not captured by the frozen runner; no backend alias inference."
+}

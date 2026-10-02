@@ -1,0 +1,40 @@
+{
+  "classification": "CANARY_OPERATIONAL_FAILURE",
+  "events": [
+    {
+      "stage": "initial",
+      "role": "solver",
+      "category": "SOLVER_INVALID_RESPONSE_NO_REGENERATION",
+      "parser_status": "INVALID",
+      "provider_transport_status": "SUCCESS",
+      "severity": "TERMINAL",
+      "automatic_resume": false
+    }
+  ],
+  "timeout_count": 0,
+  "retry_count": 0,
+  "rate_limit_count": 0,
+  "server_error_count": 0,
+  "provider_failed_calls": 0,
+  "provider_construction_failures": 0,
+  "invalid_response_count": 1,
+  "parser_failure_count": 1,
+  "parser_audit": {
+    "expression_present": false,
+    "final_marker_count": 0,
+    "final_marker_is_last_nonempty_line": false,
+    "frozen_payload_supported": false,
+    "no_parser_fallback": true,
+    "nonempty_line_count": 21,
+    "raw_response_not_published": true,
+    "reason": "FINAL_MARKER_SHAPE_INVALID",
+    "response_sha256": "dcbc712f553e085f1ebcea0ca2e2a032175628e9d2c4d3030850e385b3f3118e",
+    "status": "INVALID"
+  },
+  "raw_outputs_not_published": true,
+  "cause_of_model_marker_omission": "UNPROVEN",
+  "no_mathematical_correctness_or_efficacy_inference": true,
+  "frozen_parser_unchanged": true,
+  "same_attempt_repair": false,
+  "rerun": false
+}

@@ -30,3 +30,4 @@ experiments/initial_teams/math_generic_team_seed_v1.json -text whitespace=traili
 experiments/initial_teams/math_generic_team_seed_v1_1.json text eol=lf
 experiments/execution_bindings/** text eol=lf
 reports/math_v2_preexecution_freeze_v1_1_20261001/** text eol=lf
+reports/math_v2_a1_seed81_real_canary_v1_20261002/** text eol=lf
