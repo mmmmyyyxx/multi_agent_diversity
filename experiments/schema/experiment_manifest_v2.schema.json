@@ -57,7 +57,8 @@
     "method_family": {
       "enum": [
         "unified_team_prompt_search_v1",
-        "unified_team_prompt_search_v2"
+        "unified_team_prompt_search_v2",
+        "unified_team_prompt_search_v2_1"
       ]
     },
     "source_sha": {
@@ -365,13 +366,24 @@
     "mechanism_config": {
       "type": "object"
     },
-    "solver_output_interface_identity": {"type": "string", "minLength": 1},
-    "parser_identity": {"type": "string", "minLength": 1},
+    "solver_output_interface_identity": {
+      "type": "string",
+      "minLength": 1
+    },
+    "parser_identity": {
+      "type": "string",
+      "minLength": 1
+    },
     "execution_binding": {
       "type": "object",
       "properties": {
         "identity": {
-          "enum": ["MATH_EXECUTION_BINDING_V1", "MATH_EXECUTION_BINDING_V1_2", "MATH_EXECUTION_BINDING_V1_3", "MATH_EXECUTION_BINDING_V1_4"]
+          "enum": [
+            "MATH_EXECUTION_BINDING_V1",
+            "MATH_EXECUTION_BINDING_V1_2",
+            "MATH_EXECUTION_BINDING_V1_3",
+            "MATH_EXECUTION_BINDING_V1_4"
+          ]
         },
         "path": {
           "type": "string",
@@ -423,12 +435,67 @@
   "additionalProperties": false,
   "allOf": [
     {
-      "if": {"required": ["execution_binding"], "properties": {"execution_binding": {"properties": {"identity": {"const": "MATH_EXECUTION_BINDING_V1_4"}}}}},
-      "then": {"required": ["solver_output_interface_identity", "parser_identity"], "properties": {"solver_output_interface_identity": {"const": "MATH_SOLVER_INTERFACE_V2"}, "parser_identity": {"const": "MATH_PAYLOAD_PARSER_V2"}}}
+      "if": {
+        "required": [
+          "execution_binding"
+        ],
+        "properties": {
+          "execution_binding": {
+            "properties": {
+              "identity": {
+                "const": "MATH_EXECUTION_BINDING_V1_4"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "solver_output_interface_identity",
+          "parser_identity"
+        ],
+        "properties": {
+          "solver_output_interface_identity": {
+            "const": "MATH_SOLVER_INTERFACE_V2"
+          },
+          "parser_identity": {
+            "const": "MATH_PAYLOAD_PARSER_V2"
+          }
+        }
+      }
     },
     {
-      "if": {"required": ["execution_binding"], "properties": {"execution_binding": {"properties": {"identity": {"enum": ["MATH_EXECUTION_BINDING_V1_2", "MATH_EXECUTION_BINDING_V1_3"]}}}}},
-      "then": {"required": ["solver_output_interface_identity", "parser_identity"], "properties": {"solver_output_interface_identity": {"const": "MATH_SOLVER_INTERFACE_V2"}, "parser_identity": {"const": "math_verify_no_fallback_v1"}}}
+      "if": {
+        "required": [
+          "execution_binding"
+        ],
+        "properties": {
+          "execution_binding": {
+            "properties": {
+              "identity": {
+                "enum": [
+                  "MATH_EXECUTION_BINDING_V1_2",
+                  "MATH_EXECUTION_BINDING_V1_3"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "solver_output_interface_identity",
+          "parser_identity"
+        ],
+        "properties": {
+          "solver_output_interface_identity": {
+            "const": "MATH_SOLVER_INTERFACE_V2"
+          },
+          "parser_identity": {
+            "const": "math_verify_no_fallback_v1"
+          }
+        }
+      }
     },
     {
       "if": {
@@ -532,6 +599,162 @@
               "pattern_provider_binding": {
                 "type": "string",
                 "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "method_family": {
+            "const": "unified_team_prompt_search_v2_1"
+          },
+          "memory_identity": {
+            "const": "strategy_experience_memory_v2"
+          }
+        },
+        "required": [
+          "method_family",
+          "memory_identity"
+        ]
+      },
+      "then": {
+        "properties": {
+          "mechanism_config": {
+            "required": [
+              "memory"
+            ],
+            "properties": {
+              "memory": {
+                "type": "object",
+                "required": [
+                  "top_k_private",
+                  "top_k_shared",
+                  "max_context_chars",
+                  "private_storage_limit",
+                  "shared_storage_limit"
+                ],
+                "properties": {
+                  "top_k_private": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "top_k_shared": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "max_context_chars": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "private_storage_limit": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "shared_storage_limit": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "method_family": {
+            "const": "unified_team_prompt_search_v2_1"
+          },
+          "pattern_identity": {
+            "const": "focused_pattern_diagnostic_v2"
+          }
+        },
+        "required": [
+          "method_family",
+          "pattern_identity"
+        ]
+      },
+      "then": {
+        "properties": {
+          "mechanism_config": {
+            "required": [
+              "pattern_provider_binding"
+            ],
+            "properties": {
+              "pattern_provider_binding": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "method_family"
+        ],
+        "properties": {
+          "method_family": {
+            "const": "unified_team_prompt_search_v2_1"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "search_acceptance_identity",
+          "evidence_identity",
+          "feasibility_identity",
+          "mechanism_config"
+        ],
+        "properties": {
+          "method_identity": {
+            "const": "unified_team_prompt_search_v2_1"
+          },
+          "search_engine_identity": {
+            "const": "gepa_derived_team_candidate_exposure_v2"
+          },
+          "search_acceptance_identity": {
+            "const": "local_survival_team_admission_decoupled_v1"
+          },
+          "evidence_identity": {
+            "const": "single_mechanism_evidence_v2"
+          },
+          "feasibility_identity": {
+            "const": "variable_evidence_feasibility_v1"
+          },
+          "transition_identity": {
+            "const": "initial_competence_team_gain_v2"
+          },
+          "pattern_identity": {
+            "enum": [
+              "null_pattern_v1",
+              "focused_pattern_diagnostic_v2"
+            ]
+          },
+          "memory_identity": {
+            "enum": [
+              "null_memory_v1",
+              "strategy_experience_memory_v2"
+            ]
+          },
+          "models": {
+            "properties": {
+              "solver": {
+                "const": "qwen3-8b"
+              },
+              "optimizer": {
+                "const": "qwen3.7-flash"
+              },
+              "solver_thinking": {
+                "const": false
               }
             }
           }

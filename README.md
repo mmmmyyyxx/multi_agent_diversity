@@ -39,19 +39,21 @@ Test commands use fake providers and a pre-import network guard.
 
 [Registry](experiments/registry.yaml) records metadata; [lineage authority](experiments/lineage.yaml)
 generates [LINEAGE](docs/experiments/LINEAGE.md). New experiments use the
-[v2 template](experiments/templates/unified_experiment_v2.yaml).
+[current template](experiments/templates/unified_experiment_v2_1.yaml).
 [Reports index](reports/INDEX.md) catalogs immutable evidence. Reports are
 evidence, never design authority. [Archives](docs/archive/) preserve historical
 contracts and paper text with source provenance.
 
-## Current V2 method state
+## Current V2.1 method state
 
-The active opt-in method is `unified_team_prompt_search_v2`. Team admission is
-independent of strict GEPA local survival; evidence sizes are variable. Pattern
-and deterministic private/shared Memory are implemented, default disabled.
-Use `SearchMethodConfig.v2()` and the V2 composition; the V1 constructor and
-adapters remain reproduction paths. See the normative CURRENT_SPEC for policy
-boundaries. Mechanism correctness is tested offline; efficacy is unverified.
+The active opt-in method is `unified_team_prompt_search_v2_1`.
+Use `SearchMethodConfig.v2_1()` and the shared binary production composition.
+Pattern selects one mechanism after WHO, with explicit all-residual coverage
+metrics. Deployment requires strict team gain above an immutable initial member
+competence floor. Memory stores grounded strategy experience, default disabled.
+V1/V2 factories and frozen bindings remain replay identities; current experiments
+need a fresh V2.1 binding, preexecution freeze and explicit authorization.
+See CURRENT_SPEC for precise rules; fake conformance does not establish efficacy.
 The active research suite is MATH, IFBench and HotpotQA. BBH is historical
 development/replay only. Canonical data and separate experiment memberships
 are frozen; IFBench responsibility and HotpotQA retrieval remain HOLD.

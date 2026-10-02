@@ -57,8 +57,13 @@ def preflight(manifest: Mapping[str, Any]) -> dict[str, Any]:
     if manifest.get("execution_binding") is not None:
         from multi_dataset_diverse_rl.governance.unified_execution import bound_preflight
         return bound_preflight(ROOT, manifest)
+    if manifest.get("schema_version") == "experiment_manifest_v2" and manifest.get("method_family") == "unified_team_prompt_search_v2_1":
+        from multi_dataset_diverse_rl.governance.repository import validate_manifest_v2
+        return dict(gate="HOLD", method=manifest.get("method_identity"),
+                    blockers=validate_manifest_v2(ROOT, manifest) + ["FROZEN_EXECUTION_GOVERNANCE_NOT_BOUND"],
+                    provider_attempts=0, validation_calls=0, test_calls=0)
     scientific = manifest.get("scientific", {})
-    if isinstance(scientific, dict) and scientific.get("method") in {"unified_team_prompt_search_v1", "unified_team_prompt_search_v2"}:
+    if isinstance(scientific, dict) and scientific.get("method") in {"unified_team_prompt_search_v1", "unified_team_prompt_search_v2", "unified_team_prompt_search_v2_1"}:
         method = SearchMethodConfig.from_mapping({key: value for key, value in scientific.items()
                                                  if key != "benchmark_id"})
         runtime = runtime_context_from_mapping(manifest.get("runtime", {}))

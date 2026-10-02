@@ -43,13 +43,13 @@ Historical paper text is preserved in
 do not define the active method. See [open questions](docs/research/OPEN_QUESTIONS.md)
 for changes requiring separate scientific identities and experiments.
 
-## Unified Team Prompt Search V2
+## Unified Team Prompt Search V2.1
 
 ```text
 Diagnosis -> Target -> Pattern diagnostic (optional)
     -> Variable evidence composition -> GEPA search
        (local survival and team candidate exposure are separate decisions)
-    -> TeamProbe -> promotion -> Full -> Common-Safe -> winner-only Shadow
+    -> TeamProbe -> promotion -> Full -> initial competence / strict team gain -> winner-only Shadow
     -> atomic transition -> Memory outcome update (optional)
 ```
 
@@ -65,3 +65,11 @@ alter reflection context only when explicitly selected and bound. Null mechanism
 add no context or tokens. Memory learns only after complete outcomes, with
 prepared updates and no provider call at apply. Benchmark blockers remain in
 force. V2 mechanism correctness has zero-API proofs; efficacy is unverified.
+
+Responsibility allocates resources without opportunity equality. Pattern selects
+one repair mechanism after the target; low concentration is diagnostic, never
+an intervention gate. Other mechanisms do not fill repair evidence. Deployment
+permits incumbent member decline only above initial competence and with strict
+team gain. Memory distills actual edit strategies into private success and shared
+failure experience; unclassified edits produce no fabricated lesson. All claims
+remain bounded to the whole method unless a separate causal comparison is run.

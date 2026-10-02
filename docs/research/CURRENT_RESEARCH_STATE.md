@@ -2,9 +2,9 @@
 
 The sole active research architecture is Unified Team Prompt Search.
 
-- CURRENT_METHOD: unified_team_prompt_search_v2.
+- CURRENT_METHOD: unified_team_prompt_search_v2_1.
 - CURRENT_BENCHMARK_SUITE: MATH, IFBench, HotpotQA.
-- CURRENT_EXPERIMENT: math_v2_pattern_memory_v1 preexecution.
+- CURRENT_EXPERIMENT: unified_semantic_contract_v2_1 zero-API implementation audit.
 - Execution readiness and authorization come from experiments/current_frontier.yaml.
 - Pattern = IMPLEMENTED_DEFAULT_OFF; Memory = IMPLEMENTED_DEFAULT_OFF.
 - SCIENTIFIC_EFFICACY_VERIFIED = NO; SOTA_VERIFIED = NO.
@@ -59,3 +59,13 @@ BBH is historical development/replay only. Frozen source, manifests, reports,
 V17/V18, Formal V3/V4 and V2 BBH structural tests remain intact. The original
 V1 preexecution audit stays PREEXECUTION_BLOCKED. The unexecuted BBH V1.1 draft
 is superseded for new work; its creation-time reports remain unchanged.
+
+## Method semantic-contract amendment
+
+V2.1 is implemented with single-mechanism repair, separate coverage metrics,
+initial competence floors, strict team deployment gains and grounded experience.
+Allocation telemetry is descriptive and observation-only. Historical MATH V2
+Canary/Pilot preps remain immutable and unused; they cannot authorize the new
+method. Current readiness is HOLD pending a new benchmark execution binding,
+source/preexecution freeze and explicit attempt authorization. No real efficacy
+was observed for this amendment. Solver/model/data/access contracts are retained.

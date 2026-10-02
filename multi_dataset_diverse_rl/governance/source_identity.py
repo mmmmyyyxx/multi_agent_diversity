@@ -78,6 +78,9 @@ def current_scientific_files(root: Path, *, execution_closure: bool = False) -> 
     spec = root/'docs/design/CURRENT_SPEC.md'
     if spec.is_file():
         result.append(spec)
+    semantic_contract = root/'docs/design/UNIFIED_METHOD_SEMANTIC_CONTRACT.md'
+    if semantic_contract.is_file():
+        result.append(semantic_contract)
     return sorted(result, key=lambda p:p.relative_to(root).as_posix())
 
 

@@ -602,6 +602,9 @@ nodes:
 - experiment_id: math_v2_a1_seed81_pilot_v2
   kind: PILOT
   era: BENCHMARK_GENERALIZATION
+- experiment_id: unified_semantic_contract_v2_1
+  kind: ARCHITECTURE_REFACTOR
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -997,4 +1000,9 @@ edges:
   relation: derived_from
   evidence: reports/math_v2_a1_seed81_pilot_v2_20261002/README.md
   scope: Source-grounded answer-domain amendment and fresh execution plan; no efficacy observed.
+- from: math_v2_preexecution_freeze_v1_4
+  to: unified_semantic_contract_v2_1
+  relation: derived_from
+  evidence: reports/unified_semantic_contract_v2_1_20261002/README.md
+  scope: User-authored method semantic correction; zero-API only; prior frozen prep preserved.
 current_frontier: experiments/current_frontier.yaml

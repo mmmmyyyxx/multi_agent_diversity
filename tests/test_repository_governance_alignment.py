@@ -270,8 +270,12 @@ def test_canary_abort_does_not_unlock_formal_or_heldout():
     next_attempt = frontier['next_canary_attempt_id']
     if next_attempt is None:
         assert frontier['real_execution_ready'] is False
-        assert frontier['current_canary_status'] == 'STOP_SCIENTIFIC_CONTRACT_AMENDMENT_REQUIRED'
-        assert frontier['autonomous_authorization_status'] == 'HALTED_BY_NON_OPERATIONAL_FAILURE'
+        if frontier['current_method'] == 'unified_team_prompt_search_v2_1':
+            assert frontier['current_canary_status'] == 'METHOD_SEMANTIC_CONTRACT_REFREEZE_REQUIRED'
+            assert frontier['autonomous_authorization_status'] == 'PRIOR_SCOPES_DO_NOT_AUTHORIZE_V2_1'
+        else:
+            assert frontier['current_canary_status'] == 'STOP_SCIENTIFIC_CONTRACT_AMENDMENT_REQUIRED'
+            assert frontier['autonomous_authorization_status'] == 'HALTED_BY_NON_OPERATIONAL_FAILURE'
     else:
         assert next_attempt.startswith('math_unified_v2_A1_seed81_canary_attempt')
     assert frontier['formal_a1_ready'] is False

@@ -1743,6 +1743,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/unified_semantic_contract_v2_1_20261002",
+      "document": "reports/unified_semantic_contract_v2_1_20261002/README.md",
+      "date": "20261002",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "ARCHITECTURE",
+      "experiment_id": "unified_semantic_contract_v2_1",
+      "status": "IMPLEMENTED_NOT_EXECUTED",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/unified_team_prompt_search_refactor_v1_20260930",
       "document": "reports/unified_team_prompt_search_refactor_v1_20260930/README.md",
       "date": "20260930",

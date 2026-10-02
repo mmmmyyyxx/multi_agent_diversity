@@ -1,0 +1,90 @@
+{
+  "baseline_sha": "153ff13487085ef57f53d65b49005e80718226ba",
+  "compileall": true,
+  "diff_check": "PASS",
+  "discarded_verification": "An earlier test launch overlapped final source edits; identity guards rejected it. It is excluded from PASS evidence and replaced by this fixed-worktree suite.",
+  "evidence_hashes": [
+    {
+      "path": "runs/unified_semantic_contract_stable_guard/semantic_v21_A1.json",
+      "sha256": "1a2d666a1cf5760c9c79fdebf1363a8c62cef76ed284f3e91d0fccf2f350ca84"
+    },
+    {
+      "path": "runs/unified_semantic_contract_stable_guard/semantic_v21_A2.json",
+      "sha256": "f3ec56226a78ca4d5c916fdebe66ab14e99e72532722cf2adc1bbfe274e35cb2"
+    },
+    {
+      "path": "runs/unified_semantic_contract_stable_guard/semantic_v21_A3.json",
+      "sha256": "f6853dc2ea803d32fea874894f561da6dcdcb2a23d5c28f3bb28da53aabc9e76"
+    },
+    {
+      "path": "runs/unified_semantic_contract_stable_guard/semantic_v21_A4.json",
+      "sha256": "6a0cc70d6926a26d6dda66264c06cbe0007843b76b703ddd34fe4270b2e49118"
+    },
+    {
+      "path": "runs/unified_semantic_contract_stable.xml",
+      "sha256": "e63f2c6f4dbf123e896fe0738678f94d809d13be7c4022bc3c7fbfafbe637383"
+    },
+    {
+      "path": "runs/unified_semantic_contract_stable.log",
+      "sha256": "b705d7ee9c38f4e9c7d09714c2ae7436472f5cecf4a7da805b5cc51832c47204"
+    },
+    {
+      "path": "runs/unified_semantic_contract_offline.json",
+      "sha256": "020caa1bb6d71485d89606f2396795c0c4ad815bf3ed000eb2f225d57ea5d0a1"
+    },
+    {
+      "path": "runs/unified_semantic_contract_governance.json",
+      "sha256": "40a8571e4d4c05aed7d634296552be2e836e973bb9b4814f2f0689aae4be93ac"
+    }
+  ],
+  "execution_source_sha": null,
+  "fake_four_arms": "PASS_ACTUAL_PINNED_GEPA_AND_PRODUCTION_BINARY_COMPOSITION",
+  "governance": true,
+  "governance_check_generated": "PASS",
+  "governance_hash": "3a4658f1658c09385a2c0e7f7af1b09ce5dd473858215be6621226b34a113491",
+  "manifest_preflight": {
+    "blockers": [
+      "FROZEN_EXECUTION_GOVERNANCE_NOT_BOUND"
+    ],
+    "gate": "HOLD",
+    "method": "unified_team_prompt_search_v2_1",
+    "provider_attempts": 0,
+    "test_calls": 0,
+    "validation_calls": 0
+  },
+  "method": "unified_team_prompt_search_v2_1",
+  "network_guard": {
+    "active_before_import": true,
+    "bootstrap_control": "PASS",
+    "negative_control": "PASS",
+    "normal_test_network_attempts": 0,
+    "real_credentials_present": false
+  },
+  "original_frozen_manifests_and_bindings": "UNCHANGED",
+  "real_execution_readiness": "HOLD_FRESH_BINDING_FREEZE_AUTHORIZATION_REQUIRED",
+  "real_provider_calls": 0,
+  "required_closure_paths": [
+    "docs/design/CURRENT_SPEC.md",
+    "docs/design/UNIFIED_METHOD_SEMANTIC_CONTRACT.md",
+    "multi_dataset_diverse_rl/search/experience.py",
+    "multi_dataset_diverse_rl/search/semantic_contract.py"
+  ],
+  "sanitization": "PASS",
+  "scientific_conformance": "PASS_ZERO_API",
+  "scientific_efficacy": "UNVERIFIED",
+  "scientific_source_hash": "ab383319c0e7580d142a12f5b862866e6c2db1ab33070764b00572d3f45634e3",
+  "scientific_validity": "NOT_EVALUABLE_NO_REAL_RUN",
+  "source_hash_poison_rejections": 58,
+  "test_calls": 0,
+  "tests": {
+    "errors": 0,
+    "failures": 0,
+    "full_historical_replay_pass_claimed": false,
+    "historical_private_artifacts": "EXPLICITLY_DESELECTED",
+    "passed": 745,
+    "scope": "CURRENT_SUITE",
+    "skipped": 2,
+    "tests": 747
+  },
+  "validation_calls": 0
+}

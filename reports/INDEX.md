@@ -129,6 +129,7 @@ Reports are immutable evidence, never design authority. Unresolved metadata does
 | [two_layer_gepa_grounded_refactor_20260910](two_layer_gepa_grounded_refactor_20260910/README.md) | 20260910 | GEPA_TWO_LAYER | ARCHITECTURE | two_layer_gepa_grounded_refactor_20260910 | STATUS_UNRESOLVED |
 | [unified_benchmark_migration_v1_20260930](unified_benchmark_migration_v1_20260930/README.md) | 20260930 | BENCHMARK_GENERALIZATION | MIGRATION | unified_benchmark_migration_v1 | COMPLETED |
 | [unified_execution_governance_binding_20260923](unified_execution_governance_binding_20260923/AFTER.md) | 20260923 | GEPA_TWO_LAYER | ZERO_API | unified_execution_governance_binding_20260923 | STATUS_UNRESOLVED |
+| [unified_semantic_contract_v2_1_20261002](unified_semantic_contract_v2_1_20261002/README.md) | 20261002 | UNIFIED_TEAM_PROMPT_SEARCH | ARCHITECTURE | unified_semantic_contract_v2_1 | IMPLEMENTED_NOT_EXECUTED |
 | [unified_team_prompt_search_refactor_v1_20260930](unified_team_prompt_search_refactor_v1_20260930/README.md) | 20260930 | UNIFIED_TEAM_PROMPT_SEARCH | ARCHITECTURE | unified_team_prompt_search_refactor_v1 | COMPLETED |
 | [unified_team_prompt_search_v2_20261001](unified_team_prompt_search_v2_20261001/README.md) | 20261001 | UNIFIED_TEAM_PROMPT_SEARCH | ARCHITECTURE | unified_team_prompt_search_v2_method_refactor | IMPLEMENTED_NOT_EXECUTED |
 | [v11_full_seed43_32updates_20260727](v11_full_seed43_32updates_20260727/README.md) | 20260727 | HISTORICAL_V15_V16_AND_EARLIER | SCIENTIFIC_RESULT | v11_full_seed43_32updates_20260727 | STATUS_UNRESOLVED |

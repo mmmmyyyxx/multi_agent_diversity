@@ -1,0 +1,1133 @@
+{
+  "arms": [
+    {
+      "allocation_audits": [
+        {
+          "DNC": {
+            "0": {
+              "C": 0,
+              "D": 3,
+              "N": 0
+            },
+            "1": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "2": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "3": {
+              "C": 0,
+              "D": 3,
+              "N": 0
+            },
+            "4": {
+              "C": 0,
+              "D": 3,
+              "N": 0
+            }
+          },
+          "child_member_scores": [
+            5.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "committed": true,
+          "eligible_members": [
+            0,
+            3,
+            4
+          ],
+          "failure_counts": {
+            "0": 0,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0
+          },
+          "feasibility_by_member": {
+            "0": true,
+            "1": false,
+            "2": false,
+            "3": true,
+            "4": true
+          },
+          "incumbent_member_scores": [
+            3.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "inference_scope": "DESCRIPTIVE_NOT_COUNTERFACTUAL_OR_COMPONENT_CAUSAL",
+          "initial_member_scores": [
+            3.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "parent_team_score": 3.0,
+          "raw_values": {
+            "0": 12,
+            "1": 0,
+            "2": 0,
+            "3": 12,
+            "4": 12
+          },
+          "realized_team_gain": 2.0,
+          "target_count": 1,
+          "target_scores": {
+            "0": 12.0,
+            "3": 12.0,
+            "4": 12.0
+          }
+        },
+        {
+          "DNC": {
+            "0": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            },
+            "1": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "2": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "3": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            },
+            "4": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            }
+          },
+          "child_member_scores": [
+            5.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "committed": false,
+          "eligible_members": [
+            0,
+            3,
+            4
+          ],
+          "failure_counts": {
+            "0": 0,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0
+          },
+          "feasibility_by_member": {
+            "0": true,
+            "1": false,
+            "2": false,
+            "3": true,
+            "4": true
+          },
+          "incumbent_member_scores": [
+            5.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "inference_scope": "DESCRIPTIVE_NOT_COUNTERFACTUAL_OR_COMPONENT_CAUSAL",
+          "initial_member_scores": [
+            3.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "parent_team_score": 5.0,
+          "raw_values": {
+            "0": 4,
+            "1": 0,
+            "2": 0,
+            "3": 4,
+            "4": 4
+          },
+          "realized_team_gain": 0.0,
+          "target_count": 2,
+          "target_scores": {
+            "0": 4.0,
+            "3": 4.0,
+            "4": 4.0
+          }
+        },
+        {
+          "DNC": {
+            "0": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            },
+            "1": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "2": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "3": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            },
+            "4": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            }
+          },
+          "child_member_scores": [
+            5.0,
+            6.0,
+            6.0,
+            4.0,
+            0.0
+          ],
+          "committed": true,
+          "eligible_members": [
+            0,
+            3,
+            4
+          ],
+          "failure_counts": {
+            "0": 1,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0
+          },
+          "feasibility_by_member": {
+            "0": true,
+            "1": false,
+            "2": false,
+            "3": true,
+            "4": true
+          },
+          "incumbent_member_scores": [
+            5.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "inference_scope": "DESCRIPTIVE_NOT_COUNTERFACTUAL_OR_COMPONENT_CAUSAL",
+          "initial_member_scores": [
+            3.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "parent_team_score": 5.0,
+          "raw_values": {
+            "0": 4,
+            "1": 0,
+            "2": 0,
+            "3": 4,
+            "4": 4
+          },
+          "realized_team_gain": 1.0,
+          "target_count": 1,
+          "target_scores": {
+            "0": 2.0,
+            "3": 4.0,
+            "4": 4.0
+          }
+        }
+      ],
+      "arm": "A1",
+      "atomic_commits": 2,
+      "initial_floor_preserved": true,
+      "ledger_counts": {
+        "attempts": 2147,
+        "failures": 0,
+        "input_tokens": 4294,
+        "output_tokens": 4294,
+        "pattern": 0,
+        "reflection": 5,
+        "solver": 2142,
+        "successes": 2147,
+        "test": 0,
+        "validation": 0
+      },
+      "method_identity": "360233cd276e31b4714df7d2fc087c4239a7268664c9eb9a9f81c95a65377c7f",
+      "official_gepa": true,
+      "opportunity_count": 3,
+      "real_provider_calls": 0,
+      "shadow_raw_search_leakage": 0
+    },
+    {
+      "allocation_audits": [
+        {
+          "DNC": {
+            "0": {
+              "C": 0,
+              "D": 3,
+              "N": 0
+            },
+            "1": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "2": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "3": {
+              "C": 0,
+              "D": 3,
+              "N": 0
+            },
+            "4": {
+              "C": 0,
+              "D": 3,
+              "N": 0
+            }
+          },
+          "child_member_scores": [
+            5.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "committed": true,
+          "eligible_members": [
+            0,
+            3,
+            4
+          ],
+          "failure_counts": {
+            "0": 0,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0
+          },
+          "feasibility_by_member": {
+            "0": true,
+            "1": false,
+            "2": false,
+            "3": true,
+            "4": true
+          },
+          "incumbent_member_scores": [
+            3.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "inference_scope": "DESCRIPTIVE_NOT_COUNTERFACTUAL_OR_COMPONENT_CAUSAL",
+          "initial_member_scores": [
+            3.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "parent_team_score": 3.0,
+          "raw_values": {
+            "0": 12,
+            "1": 0,
+            "2": 0,
+            "3": 12,
+            "4": 12
+          },
+          "realized_team_gain": 2.0,
+          "target_count": 1,
+          "target_scores": {
+            "0": 12.0,
+            "3": 12.0,
+            "4": 12.0
+          }
+        },
+        {
+          "DNC": {
+            "0": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            },
+            "1": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "2": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "3": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            },
+            "4": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            }
+          },
+          "child_member_scores": [
+            5.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "committed": false,
+          "eligible_members": [
+            0,
+            3,
+            4
+          ],
+          "failure_counts": {
+            "0": 0,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0
+          },
+          "feasibility_by_member": {
+            "0": true,
+            "1": false,
+            "2": false,
+            "3": true,
+            "4": true
+          },
+          "incumbent_member_scores": [
+            5.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "inference_scope": "DESCRIPTIVE_NOT_COUNTERFACTUAL_OR_COMPONENT_CAUSAL",
+          "initial_member_scores": [
+            3.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "parent_team_score": 5.0,
+          "raw_values": {
+            "0": 4,
+            "1": 0,
+            "2": 0,
+            "3": 4,
+            "4": 4
+          },
+          "realized_team_gain": 0.0,
+          "target_count": 2,
+          "target_scores": {
+            "0": 4.0,
+            "3": 4.0,
+            "4": 4.0
+          }
+        },
+        {
+          "DNC": {
+            "0": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            },
+            "1": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "2": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "3": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            },
+            "4": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            }
+          },
+          "child_member_scores": [
+            5.0,
+            6.0,
+            6.0,
+            4.0,
+            0.0
+          ],
+          "committed": true,
+          "eligible_members": [
+            0,
+            3,
+            4
+          ],
+          "failure_counts": {
+            "0": 1,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0
+          },
+          "feasibility_by_member": {
+            "0": true,
+            "1": false,
+            "2": false,
+            "3": true,
+            "4": true
+          },
+          "incumbent_member_scores": [
+            5.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "inference_scope": "DESCRIPTIVE_NOT_COUNTERFACTUAL_OR_COMPONENT_CAUSAL",
+          "initial_member_scores": [
+            3.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "parent_team_score": 5.0,
+          "raw_values": {
+            "0": 4,
+            "1": 0,
+            "2": 0,
+            "3": 4,
+            "4": 4
+          },
+          "realized_team_gain": 1.0,
+          "target_count": 1,
+          "target_scores": {
+            "0": 2.0,
+            "3": 4.0,
+            "4": 4.0
+          }
+        }
+      ],
+      "arm": "A2",
+      "atomic_commits": 2,
+      "initial_floor_preserved": true,
+      "ledger_counts": {
+        "attempts": 2150,
+        "failures": 0,
+        "input_tokens": 4300,
+        "output_tokens": 4300,
+        "pattern": 3,
+        "reflection": 5,
+        "solver": 2142,
+        "successes": 2150,
+        "test": 0,
+        "validation": 0
+      },
+      "method_identity": "18b6a9369ff4ea90914b3446fedf33212393600f45b21306bb9fc016e4222965",
+      "official_gepa": true,
+      "opportunity_count": 3,
+      "real_provider_calls": 0,
+      "shadow_raw_search_leakage": 0
+    },
+    {
+      "allocation_audits": [
+        {
+          "DNC": {
+            "0": {
+              "C": 0,
+              "D": 3,
+              "N": 0
+            },
+            "1": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "2": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "3": {
+              "C": 0,
+              "D": 3,
+              "N": 0
+            },
+            "4": {
+              "C": 0,
+              "D": 3,
+              "N": 0
+            }
+          },
+          "child_member_scores": [
+            5.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "committed": true,
+          "eligible_members": [
+            0,
+            3,
+            4
+          ],
+          "failure_counts": {
+            "0": 0,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0
+          },
+          "feasibility_by_member": {
+            "0": true,
+            "1": false,
+            "2": false,
+            "3": true,
+            "4": true
+          },
+          "incumbent_member_scores": [
+            3.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "inference_scope": "DESCRIPTIVE_NOT_COUNTERFACTUAL_OR_COMPONENT_CAUSAL",
+          "initial_member_scores": [
+            3.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "parent_team_score": 3.0,
+          "raw_values": {
+            "0": 12,
+            "1": 0,
+            "2": 0,
+            "3": 12,
+            "4": 12
+          },
+          "realized_team_gain": 2.0,
+          "target_count": 1,
+          "target_scores": {
+            "0": 12.0,
+            "3": 12.0,
+            "4": 12.0
+          }
+        },
+        {
+          "DNC": {
+            "0": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            },
+            "1": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "2": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "3": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            },
+            "4": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            }
+          },
+          "child_member_scores": [
+            5.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "committed": false,
+          "eligible_members": [
+            0,
+            3,
+            4
+          ],
+          "failure_counts": {
+            "0": 0,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0
+          },
+          "feasibility_by_member": {
+            "0": true,
+            "1": false,
+            "2": false,
+            "3": true,
+            "4": true
+          },
+          "incumbent_member_scores": [
+            5.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "inference_scope": "DESCRIPTIVE_NOT_COUNTERFACTUAL_OR_COMPONENT_CAUSAL",
+          "initial_member_scores": [
+            3.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "parent_team_score": 5.0,
+          "raw_values": {
+            "0": 4,
+            "1": 0,
+            "2": 0,
+            "3": 4,
+            "4": 4
+          },
+          "realized_team_gain": 0.0,
+          "target_count": 2,
+          "target_scores": {
+            "0": 4.0,
+            "3": 4.0,
+            "4": 4.0
+          }
+        },
+        {
+          "DNC": {
+            "0": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            },
+            "1": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "2": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "3": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            },
+            "4": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            }
+          },
+          "child_member_scores": [
+            5.0,
+            6.0,
+            6.0,
+            4.0,
+            0.0
+          ],
+          "committed": true,
+          "eligible_members": [
+            0,
+            3,
+            4
+          ],
+          "failure_counts": {
+            "0": 1,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0
+          },
+          "feasibility_by_member": {
+            "0": true,
+            "1": false,
+            "2": false,
+            "3": true,
+            "4": true
+          },
+          "incumbent_member_scores": [
+            5.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "inference_scope": "DESCRIPTIVE_NOT_COUNTERFACTUAL_OR_COMPONENT_CAUSAL",
+          "initial_member_scores": [
+            3.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "parent_team_score": 5.0,
+          "raw_values": {
+            "0": 4,
+            "1": 0,
+            "2": 0,
+            "3": 4,
+            "4": 4
+          },
+          "realized_team_gain": 1.0,
+          "target_count": 1,
+          "target_scores": {
+            "0": 2.0,
+            "3": 4.0,
+            "4": 4.0
+          }
+        }
+      ],
+      "arm": "A3",
+      "atomic_commits": 2,
+      "initial_floor_preserved": true,
+      "ledger_counts": {
+        "attempts": 2147,
+        "failures": 0,
+        "input_tokens": 4294,
+        "output_tokens": 4294,
+        "pattern": 0,
+        "reflection": 5,
+        "solver": 2142,
+        "successes": 2147,
+        "test": 0,
+        "validation": 0
+      },
+      "method_identity": "314b5f0b508e58a790a31390501c916ce47cf2205f17adc57ab878b0cd91d39e",
+      "official_gepa": true,
+      "opportunity_count": 3,
+      "real_provider_calls": 0,
+      "shadow_raw_search_leakage": 0
+    },
+    {
+      "allocation_audits": [
+        {
+          "DNC": {
+            "0": {
+              "C": 0,
+              "D": 3,
+              "N": 0
+            },
+            "1": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "2": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "3": {
+              "C": 0,
+              "D": 3,
+              "N": 0
+            },
+            "4": {
+              "C": 0,
+              "D": 3,
+              "N": 0
+            }
+          },
+          "child_member_scores": [
+            5.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "committed": true,
+          "eligible_members": [
+            0,
+            3,
+            4
+          ],
+          "failure_counts": {
+            "0": 0,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0
+          },
+          "feasibility_by_member": {
+            "0": true,
+            "1": false,
+            "2": false,
+            "3": true,
+            "4": true
+          },
+          "incumbent_member_scores": [
+            3.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "inference_scope": "DESCRIPTIVE_NOT_COUNTERFACTUAL_OR_COMPONENT_CAUSAL",
+          "initial_member_scores": [
+            3.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "parent_team_score": 3.0,
+          "raw_values": {
+            "0": 12,
+            "1": 0,
+            "2": 0,
+            "3": 12,
+            "4": 12
+          },
+          "realized_team_gain": 2.0,
+          "target_count": 1,
+          "target_scores": {
+            "0": 12.0,
+            "3": 12.0,
+            "4": 12.0
+          }
+        },
+        {
+          "DNC": {
+            "0": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            },
+            "1": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "2": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "3": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            },
+            "4": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            }
+          },
+          "child_member_scores": [
+            5.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "committed": false,
+          "eligible_members": [
+            0,
+            3,
+            4
+          ],
+          "failure_counts": {
+            "0": 0,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0
+          },
+          "feasibility_by_member": {
+            "0": true,
+            "1": false,
+            "2": false,
+            "3": true,
+            "4": true
+          },
+          "incumbent_member_scores": [
+            5.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "inference_scope": "DESCRIPTIVE_NOT_COUNTERFACTUAL_OR_COMPONENT_CAUSAL",
+          "initial_member_scores": [
+            3.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "parent_team_score": 5.0,
+          "raw_values": {
+            "0": 4,
+            "1": 0,
+            "2": 0,
+            "3": 4,
+            "4": 4
+          },
+          "realized_team_gain": 0.0,
+          "target_count": 2,
+          "target_scores": {
+            "0": 4.0,
+            "3": 4.0,
+            "4": 4.0
+          }
+        },
+        {
+          "DNC": {
+            "0": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            },
+            "1": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "2": {
+              "C": 0,
+              "D": 0,
+              "N": 0
+            },
+            "3": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            },
+            "4": {
+              "C": 0,
+              "D": 1,
+              "N": 0
+            }
+          },
+          "child_member_scores": [
+            5.0,
+            6.0,
+            6.0,
+            4.0,
+            0.0
+          ],
+          "committed": true,
+          "eligible_members": [
+            0,
+            3,
+            4
+          ],
+          "failure_counts": {
+            "0": 1,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0
+          },
+          "feasibility_by_member": {
+            "0": true,
+            "1": false,
+            "2": false,
+            "3": true,
+            "4": true
+          },
+          "incumbent_member_scores": [
+            5.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "inference_scope": "DESCRIPTIVE_NOT_COUNTERFACTUAL_OR_COMPONENT_CAUSAL",
+          "initial_member_scores": [
+            3.0,
+            6.0,
+            6.0,
+            0.0,
+            0.0
+          ],
+          "parent_team_score": 5.0,
+          "raw_values": {
+            "0": 4,
+            "1": 0,
+            "2": 0,
+            "3": 4,
+            "4": 4
+          },
+          "realized_team_gain": 1.0,
+          "target_count": 1,
+          "target_scores": {
+            "0": 2.0,
+            "3": 4.0,
+            "4": 4.0
+          }
+        }
+      ],
+      "arm": "A4",
+      "atomic_commits": 2,
+      "initial_floor_preserved": true,
+      "ledger_counts": {
+        "attempts": 2150,
+        "failures": 0,
+        "input_tokens": 4300,
+        "output_tokens": 4300,
+        "pattern": 3,
+        "reflection": 5,
+        "solver": 2142,
+        "successes": 2150,
+        "test": 0,
+        "validation": 0
+      },
+      "method_identity": "02396a8fce8eda93bce27e4a3925914d5f1054df5c2c386380e429d8a5970854",
+      "official_gepa": true,
+      "opportunity_count": 3,
+      "real_provider_calls": 0,
+      "shadow_raw_search_leakage": 0
+    }
+  ],
+  "scope": "SYNTHETIC_CONFORMANCE_ONLY_NOT_EFFICACY"
+}

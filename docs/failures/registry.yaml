@@ -1,5 +1,26 @@
 schema_version: failure_registry_v1
 failures:
+- failure_id: FAIL-UNIFIED-METHOD-SEMANTIC-DRIFT
+  title: Historical V2 implementation differs from the newly supplied method semantic contract
+  status: MITIGATED
+  first_observed: unified_semantic_contract_v2_1
+  affected_components:
+  - pattern_concentration
+  - focused_evidence
+  - team_transition
+  - experience_memory
+  symptom: Assigned-only DPR, other-repair technical backfill, incumbent monotonicity and fixed-template memory contradict the current semantic contract.
+  evidence:
+  - reports/unified_semantic_contract_v2_1_20261002
+  evidence_level: deterministic_zero_api
+  root_cause_status: Historical policy definitions were narrower or different than the user-authored current research contract.
+  forbidden_inference: Fake conformance does not prove real efficacy, memory transfer benefit, counterfactual allocation optimality or independent component causality.
+  regression_tests:
+  - tests/test_unified_semantic_contract.py
+  mitigation: Fresh V2.1 policies and runtime identity; old frozen V2 artifacts preserved; new real execution requires fresh binding and authorization.
+  lifecycle: MITIGATED
+  lifecycle_note: ZERO_API_CONFORMANCE_ONLY; REAL_EXECUTION_AND_EFFICACY_UNVERIFIED
+  resolved_by: unified_semantic_contract_v2_1
 - failure_id: FAIL-TARGET-CONCENTRATION
   title: Target allocation concentration
   status: DIAGNOSED

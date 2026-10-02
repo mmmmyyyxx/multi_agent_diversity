@@ -41,10 +41,15 @@ class V2OpportunityBuilder(OpportunityBuilder):
         return OptimizationOpportunity(f"{state.team_state_id}:{update_index}:{member}",
             state.team_state_id, member, state.member_prompts[member],
             {"raw_responsibility":signal.raw_value, "target_score":target.target_scores[member],
-             "eligible_members":target.eligible_members}, diagnosis, view, pattern_context=pattern,
+             "eligible_members":target.eligible_members,
+             **({"target_scores":dict(target.target_scores),
+                 "feasibility_by_member":{m:m in feasible for m in rows_by_member}}
+                if self.evidence.identity == versions.UNIFIED_FOCUSED_EVIDENCE_VERSION else {})}, diagnosis, view, pattern_context=pattern,
             search_budget={"metric_calls":self.search_metric_budget},
             evaluation_plan={"max_promoted":2, "evidence_universe":rows,
-                             "evidence_audit":audit, "v2_candidate_contract":True})
+                             "evidence_audit":audit, "v2_candidate_contract":True,
+                             **({"allocation_failure_counts":{m:history.failure_counts.get(m, 0) for m in rows_by_member}}
+                                if self.evidence.identity == versions.UNIFIED_FOCUSED_EVIDENCE_VERSION else {})})
 
 
 def build_v2_bbh_orchestrator(*, system, benchmark, optimizer, evaluator, committer,

@@ -8,10 +8,11 @@ Registry provides node metadata; current_frontier.yaml provides readiness only.
 ```yaml
 schema_version: current_frontier_v1
 current_architecture: Unified Team Prompt Search
-method_identity: unified_team_prompt_search_v2
-current_method: unified_team_prompt_search_v2
-current_implementation: MATH V2 benchmark-neutral composition; mechanisms selected only by versioned arms
-current_experiment: math_v2_pattern_memory_v1
+method_identity: unified_team_prompt_search_v2_1
+current_method: unified_team_prompt_search_v2_1
+current_implementation: Versioned method semantic contract; benchmark-neutral production
+  composition; zero-API audit
+current_experiment: unified_semantic_contract_v2_1
 current_benchmark_suite:
 - math
 - ifbench
@@ -27,16 +28,17 @@ real_api_authorized: false
 validation_access: not_authorized
 test_access: sealed
 open_questions: docs/research/OPEN_QUESTIONS.md
-last_method_milestone: unified_team_prompt_search_v2_method_refactor
+last_method_milestone: unified_semantic_contract_v2_1
 canary_manifest: experiments/manifests/math_v2_a1_seed81_real_canary_v3.yaml
 last_preexecution_milestone: math_v2_preexecution_freeze_v1_2
 last_canary_milestone: math_v2_a1_seed81_real_canary_v3
-current_canary_status: PREPARING_ANSWER_DOMAIN_V2
+current_canary_status: METHOD_SEMANTIC_CONTRACT_REFREEZE_REQUIRED
 formal_a1_ready: false
 formal_a1_authorized: false
-current_execution_blocker: Answer-domain V2 gates and exact source/preexecution freeze pending.
-next_canary_milestone: math_v2_a1_seed81_real_canary_v4
-next_canary_attempt_id: math_unified_v2_A1_seed81_canary_attempt4_answer_domain_v2
+current_execution_blocker: Fresh V2.1 benchmark binding, source/preexecution freeze
+  and explicit attempt authorization required.
+next_canary_milestone: null
+next_canary_attempt_id: null
 last_autonomous_milestone: math_v2_answer_domain_amendment_v2
 autonomous_user_authorization_received: true
 autonomous_token_authorization: 30000000
@@ -44,7 +46,7 @@ autonomous_tokens_consumed: 15534
 autonomous_tokens_remaining: 29984466
 token_accounting_policy: RESERVATION_V2
 prior_accounting_stop_resolution: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2
-autonomous_authorization_status: ANSWER_DOMAIN_AMENDMENT_AND_FRESH_PHASES_AUTHORIZED
+autonomous_authorization_status: PRIOR_SCOPES_DO_NOT_AUTHORIZE_V2_1
 ```
 
 ## Experiment and engineering DAG
@@ -229,6 +231,7 @@ flowchart TD
     n179["unified_team_prompt_search_v2_method_refactor<br/>ARCHITECTURE_REFACTOR<br/>IMPLEMENTED_NOT_EXECUTED"]
     n180["v2_pattern_memory_factorial_v1_preexecution_audit<br/>ZERO_API_AUDIT<br/>HOLD"]
     n181["v2_pattern_memory_factorial_v1_1<br/>FORMAL_EXPERIMENT<br/>SUPERSEDED"]
+    n201["unified_semantic_contract_v2_1<br/>ARCHITECTURE_REFACTOR<br/>IMPLEMENTED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -352,6 +355,7 @@ flowchart TD
   n197 -->|derived_from| n198
   n198 -->|derived_from| n199
   n199 -->|derived_from| n200
+  n198 -->|derived_from| n201
 ```
 
 ## Archived branches and unresolved evidence

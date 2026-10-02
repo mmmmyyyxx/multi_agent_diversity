@@ -112,6 +112,17 @@ class V2ReflectionAdapter(GEPAAdapter):
 
     def make_reflective_dataset(self, candidate, eval_batch, components_to_update):
         rows = super().make_reflective_dataset(candidate, eval_batch, components_to_update)
+        tags = {t.example.example_id: t.example.tags for t in eval_batch.trajectories}
+        for records in rows.values():
+            for row in records:
+                purpose = tags[row["example_id"]]
+                if "safety_boundary_v2" in purpose:
+                    row["Reasoning Focus"] = (
+                        "BOUNDARY ONLY: observe preservation, collateral risk and applicability. "
+                        "Do not repair this row's different mechanism or add another repair objective, "
+                        "even when its evaluation outcome is incorrect.")
+                elif "focus_repair_v2" in purpose:
+                    row["Reasoning Focus"] = "REPAIR: address only the single selected focus mechanism."
         if "\n" not in self.optimization_context:
             return rows
         optional = self.optimization_context.split("\n", 1)[1]

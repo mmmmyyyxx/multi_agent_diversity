@@ -51,6 +51,7 @@ class OpportunityTrace:
     local_search_survival_update: int = 0
     evidence_audit: Mapping[str, Any] = field(default_factory=dict)
     memory_audit: Mapping[str, Any] = field(default_factory=dict)
+    allocation_audit: Mapping[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -192,7 +193,8 @@ class UnifiedSearchOrchestrator:
             raise SearchContractError("SCIENTIFIC_DECISION_REQUIRED: aggregation-aware responsibility")
         if getattr(self.aggregation, "identity", None) != self.method.aggregation_policy:
             raise SearchContractError("aggregation implementation/method identity mismatch")
-        if self.method.method == versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION:
+        current_semantics = self.method.method == versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION
+        if self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION}:
             if self.method.search_acceptance_policy != versions.UNIFIED_DECOUPLED_ACCEPTANCE_VERSION:
                 raise SearchContractError("V2 requires decoupled team candidate admission")
             if (self.opportunities.search_metric_budget != 36 or
@@ -205,11 +207,19 @@ class UnifiedSearchOrchestrator:
                       (self.opportunities.feasibility, self.method.feasibility_policy))
             if any(getattr(obj, "identity", None) != expected for obj, expected in checks):
                 raise SearchContractError("V2 component identity mismatch")
+            if current_semantics and getattr(self.transition, "identity", None) != self.method.transition_policy:
+                raise SearchContractError("TRANSITION_POLICY_IDENTITY_MISMATCH")
             if self.method.memory_policy != versions.UNIFIED_NULL_MEMORY_VERSION and self.method.mechanism_config.get("memory") != self.memory.limits:
                 raise SearchContractError("memory limits must enter explicit method identity")
             if self.method.pattern_policy != versions.UNIFIED_NULL_PATTERN_VERSION and not self.method.mechanism_config.get("pattern_provider_binding"):
                 raise SearchContractError("PATTERN_PROVIDER_NOT_BOUND")
         initial = self.state.snapshot().team_state_id
+        if current_semantics:
+            scores = getattr(self.state, "initial_member_scores", None)
+            identity = getattr(self.state, "initial_state_id", None)
+            if scores is None or identity is None:
+                raise SearchContractError("INITIAL_COMPETENCE_NOT_FROZEN")
+            self.transition.bind_initial(scores, identity)
         trace: list[OpportunityTrace] = []
         reason = "OPERATIONAL_OPPORTUNITY_CEILING"
         for index in range(max_opportunities):
@@ -245,7 +255,7 @@ class UnifiedSearchOrchestrator:
             committed: str | None = None
             gate_passed = (await self.gate.check(opportunity, decision.candidate)
                            if decision.candidate is not None else None)
-            v2 = self.method.method == versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION
+            v2 = self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION}
             memory_delta = None
             if v2:
                 from .memory import OpportunityOutcome
@@ -283,6 +293,24 @@ class UnifiedSearchOrchestrator:
                 local_update=(searched.local_survival_update_count > 0 if v2 else bool(searched.candidates)),
                 committed=committed is not None,
             )
+            allocation = {}
+            if current_semantics:
+                gain = (decision.candidate.full.aggregate_score - active.aggregate_score
+                        if committed is not None and decision.candidate is not None else 0.0)
+                # Observation only: this record has no scheduler read point.
+                allocation = dict(raw_values={str(m): s.raw_value for m, s in diagnosis.responsibility.items()},
+                    DNC={str(m):dict(D=s.direct_count, N=s.near_margin_count, C=s.coverage_count)
+                         for m, s in diagnosis.responsibility.items()},
+                    failure_counts=opportunity.evaluation_plan.get("allocation_failure_counts", {}),
+                    target_scores=opportunity.objective.get("target_scores", {}),
+                    eligible_members=opportunity.objective.get("eligible_members", ()),
+                    feasibility_by_member=opportunity.objective.get("feasibility_by_member", {}),
+                    target_count=self.history.target_counts.get(opportunity.target_member, 0),
+                    parent_team_score=active.aggregate_score,
+                    realized_team_gain=gain, committed=committed is not None,
+                    initial_member_scores=self.transition.initial_scores,
+                    incumbent_member_scores=parent.member_scores, child_member_scores=child.member_scores,
+                    inference_scope="DESCRIPTIVE_NOT_COUNTERFACTUAL_OR_COMPONENT_CAUSAL")
             trace.append(OpportunityTrace(
                 opportunity.opportunity_id, parent.team_state_id,
                 opportunity.target_member,
@@ -292,6 +320,7 @@ class UnifiedSearchOrchestrator:
                 searched.team_candidate_count, searched.local_survival_update_count,
                 opportunity.evaluation_plan.get("evidence_audit", {}),
                 self.memory.audit() if hasattr(self.memory, "audit") else {},
+                allocation,
             ))
             if stopped is not None:
                 reason = stopped

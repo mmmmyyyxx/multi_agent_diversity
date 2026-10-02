@@ -246,6 +246,15 @@ class SearchMethodConfig:
 
     mechanism_config: Mapping[str, Any] = field(default_factory=dict)
 
+    @classmethod
+    def v2_1(cls, **overrides: Any) -> "SearchMethodConfig":
+        """Current semantic contract; mechanisms remain explicit opt-ins."""
+        values = dict(method=versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION,
+                      evidence_policy=versions.UNIFIED_FOCUSED_EVIDENCE_VERSION,
+                      transition_policy=versions.UNIFIED_COMPETENCE_TRANSITION_VERSION)
+        values.update(overrides)
+        return cls.v2(**values)
+
     def identity(self) -> str:
         from dataclasses import asdict
         payload = asdict(self)
@@ -259,10 +268,12 @@ class SearchMethodConfig:
         allowed = {row.name for row in fields(cls)}
         if set(payload) - allowed:
             raise SearchContractError("unknown unified method component")
-        if payload.get("method", cls.method) not in {versions.UNIFIED_TEAM_PROMPT_SEARCH_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION}:
+        if payload.get("method", cls.method) not in {versions.UNIFIED_TEAM_PROMPT_SEARCH_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION}:
             raise SearchContractError("unsupported unified method identity")
         from dataclasses import asdict
-        values = (asdict(cls.v2()) if payload.get("method") == versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION else {})
+        factory = {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION: cls.v2,
+                   versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION: cls.v2_1}.get(payload.get("method"))
+        values = asdict(factory()) if factory else {}
         values.update(payload)
         for key, kind in (("search_stop", SearchStopConfig),
                           ("global_stop", GlobalStopConfig)):

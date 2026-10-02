@@ -29,7 +29,8 @@ class CorrectnessExample:
 
 
 class BinaryTeamStateStore:
-    def __init__(self, *, benchmark, examples, prompts, solver, aggregation):
+    def __init__(self, *, benchmark, examples, prompts, solver, aggregation,
+                 freeze_initial_competence=False):
         self.benchmark = benchmark
         self.examples = tuple(examples)
         self.prompts = tuple(prompts)
@@ -39,13 +40,21 @@ class BinaryTeamStateStore:
             raise SearchContractError("SYNCHRONOUS_BINARY_AGGREGATION_PORT_REQUIRED")
         self.profiles = {}
         self.full_profiles = {}
+        self.initial_member_scores = None
+        self.initial_state_id = None
+        self.freeze_initial_competence = freeze_initial_competence
         if len(self.prompts) != 5 or not self.examples or len({e.item.input_id for e in self.examples}) != len(self.examples):
             raise SearchContractError("BINARY_TEAM_INITIALIZATION_INVALID")
 
     def initialize(self):
+        if self.freeze_initial_competence and self.initial_state_id is not None:
+            raise SearchContractError("INITIAL_COMPETENCE_CANNOT_REBASE")
         self.profiles = {i: tuple(self.solver.solve(p, e.item, stage="initial", split="optimize")
                                  for e in self.examples) for i, p in enumerate(self.prompts)}
-        self.snapshot()  # Parse and audit the actual complete initial state.
+        initial = self.snapshot()  # Parse and audit the actual complete initial state.
+        if self.freeze_initial_competence:
+            self.initial_member_scores = initial.member_scores
+            self.initial_state_id = initial.team_state_id
 
     def snapshot(self):
         if set(self.profiles) != set(range(5)):
@@ -145,8 +154,9 @@ class BinaryEvidenceSource:
 
 
 class FixedPeerTeamEvaluationProvider:
-    def __init__(self, store):
+    def __init__(self, store, transition=None):
         self.store = store
+        self.transition = transition
         self.probed = []
         self.fulled = []
 
@@ -216,12 +226,19 @@ class FixedPeerTeamEvaluationProvider:
         broken = sum(a.vote_correct and not b.vote_correct for a, b in zip(before, after, strict=True))
         safe = (new.member_scores[t] >= old.member_scores[t] and new.aggregate_score >= old.aggregate_score
                 and (new.member_scores[t] > old.member_scores[t] or new.aggregate_score > old.aggregate_score) and invalid_delta <= 0)
-        return replace(new, aggregation_diagnostics=dict(terminal_invalid_delta=invalid_delta,
+        measurement = replace(new, aggregation_diagnostics=dict(terminal_invalid_delta=invalid_delta,
             team_newly_fixed_count=fixed, team_newly_broken_count=broken,
             mean_soft_vote_utility=sum(soft_vote_utility(s.gold_vote_count, s.plurality_margin) for s in after)/len(after),
             target_invalid_count=sum(not s.team_validity[t] for s in after),
-            **({"scientific_risk_code": "COMMON_SAFE_REJECTION"} if not safe else {}),
             **({"operational_failure": True} if any(not s.team_validity[t] for s in after) else {})))
+        if self.transition is not None:
+            safe = self.transition.allows(old, measurement, t)
+            measurement = replace(measurement, aggregation_diagnostics={**measurement.aggregation_diagnostics,
+                "team_score_delta": new.aggregate_score - old.aggregate_score,
+                "target_score_delta": new.member_scores[t] - old.member_scores[t],
+                "target_initial_margin": new.member_scores[t] - self.transition.initial_scores[t]})
+        return replace(measurement, aggregation_diagnostics={**measurement.aggregation_diagnostics,
+            **({"scientific_risk_code": "COMMON_SAFE_REJECTION"} if not safe else {})})
 
 
 class FixedPeerCommonSafe:
