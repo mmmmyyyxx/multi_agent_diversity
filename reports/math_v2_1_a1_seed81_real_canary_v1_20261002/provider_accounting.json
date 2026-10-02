@@ -1,0 +1,80 @@
+{
+  "accounting": {
+    "authorized_total": 30000000,
+    "by_attempt": {
+      "math_unified_v2_1_A1_seed81_canary_attempt1": {
+        "charged_total": 14245,
+        "fallback_charged": 0,
+        "input_tokens": 3423,
+        "output_tokens": 10822,
+        "physical_attempts": 27,
+        "provider_reported_actual": 14245
+      },
+      "math_unified_v2_A1_seed81_canary_attempt2": {
+        "charged_total": 7231,
+        "fallback_charged": 7231,
+        "input_tokens": 5431,
+        "output_tokens": 1800,
+        "physical_attempts": 1,
+        "provider_reported_actual": 0
+      },
+      "math_unified_v2_A1_seed81_canary_attempt3": {
+        "charged_total": 8303,
+        "fallback_charged": 0,
+        "input_tokens": 2149,
+        "output_tokens": 6154,
+        "physical_attempts": 16,
+        "provider_reported_actual": 8303
+      }
+    },
+    "by_model": {
+      "qwen3-8b": {
+        "charged_total": 29779,
+        "fallback_charged": 7231,
+        "input_tokens": 11003,
+        "output_tokens": 18776,
+        "physical_attempts": 44,
+        "provider_reported_actual": 22548
+      }
+    },
+    "by_role": {
+      "solver": {
+        "charged_total": 29779,
+        "fallback_charged": 7231,
+        "input_tokens": 11003,
+        "output_tokens": 18776,
+        "physical_attempts": 44,
+        "provider_reported_actual": 22548
+      }
+    },
+    "by_stage": {
+      "canary": {
+        "charged_total": 29779,
+        "fallback_charged": 7231,
+        "input_tokens": 11003,
+        "output_tokens": 18776,
+        "physical_attempts": 44,
+        "provider_reported_actual": 22548
+      }
+    },
+    "charged_total": 29779,
+    "fallback_charged": 7231,
+    "identity": "AUTONOMOUS_REAL_TOKEN_LEDGER_V2",
+    "input_tokens": 11003,
+    "last_event_sha256": "8d979bd60e0518c360a9445497f5dc74f393053bf9482e4d8996dda98221d0ea",
+    "output_tokens": 18776,
+    "provider_reported_actual": 22548,
+    "remaining": 29970221,
+    "reserved_inflight": 0,
+    "task_sha256": "3db28ade2b799d2169c6cdbdb03b82e63517ab74c46f8212905855f2fcf9cd9a"
+  },
+  "by_kind": {
+    "ATTEMPT": 27,
+    "SOLVER_REQUEST_CONTRACT": 27,
+    "SUCCESS": 27
+  },
+  "physical_attempts": 27,
+  "real_calls": {
+    "solver": 27
+  }
+}

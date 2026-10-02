@@ -1,0 +1,34 @@
+{
+  "calls": {
+    "solver": 27
+  },
+  "canary_completed_opportunities": 0,
+  "classifier": "OPERATIONAL_FAILURE",
+  "commit_counts": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "contract_violations": "EXECUTION_ABORTED_NOT_VALID",
+  "efficacy_observed": false,
+  "execution_status": "EXECUTION_ABORTED",
+  "opportunity_counts": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "pilot_final_status": "INCOMPLETE",
+  "pilot_search_complete": false,
+  "pilot_signal": "NOT_AVAILABLE",
+  "pilot_validation_complete": false,
+  "responsibility_computed": false,
+  "scientific_validity": "INVALID",
+  "specialization_events": 0,
+  "status": "EXECUTION_ABORTED",
+  "stop_reason": "SOLVER_INVALID_RESPONSE_NO_REGENERATION",
+  "target_selected": false
+}

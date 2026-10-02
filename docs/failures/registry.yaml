@@ -336,3 +336,24 @@ failures:
   lifecycle: MITIGATED
   lifecycle_note: SOURCE_GROUNDED_SCIENTIFIC_AMENDMENT_ZERO_API_PASS; REAL_EXECUTION_AND_EFFICACY_UNVERIFIED
   resolved_by: math_v2_answer_domain_amendment_v2
+- failure_id: FAIL-MATH-V21-FINAL-MARKER-OMITTED
+  title: Solver normally completed without the frozen final marker
+  status: OPEN
+  first_observed: math_v2_1_a1_seed81_real_canary_v1
+  affected_components:
+  - math_solver_output_interface
+  symptom: 27th Solver response has zero FINAL_ANSWER markers and finish_reason stop
+    below the output cap.
+  evidence:
+  - reports/math_v2_1_a1_seed81_real_canary_v1_20261002
+  evidence_level: observed
+  root_cause_status: OUTPUT_FORMAT_NONCOMPLIANCE; parser correctly fails closed; provider
+    cause unknown.
+  forbidden_inference: No mathematical correctness, method efficacy or causal claim
+    is established.
+  regression_tests:
+  - tests/test_math_v21_binding.py
+  mitigation: Separate immutable interface version; strict parser unchanged; fresh
+    source, authorization and process.
+  lifecycle: OPEN
+  lifecycle_note: FAILED_ATTEMPT_PRESERVED; REPAIR_PENDING
