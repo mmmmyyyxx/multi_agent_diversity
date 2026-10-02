@@ -44,19 +44,27 @@ def validation_rows(root, contract, *, context, search_complete_receipt=None):
 
 
 def solver_request(contract, prompt, problem):
+    interface = MATH_SOLVER_INTERFACE
+    if contract["identity"] == "MATH_V2_1_EXECUTION_BINDING_V1":
+        from .math_v21_interface import interface_for_contract
+        interface = interface_for_contract(contract)[0]
     return dict(model=contract["models"]["solver"], temperature=contract["decoding"]["temperature"],
         max_tokens=contract["decoding"]["max_output_tokens"], extra_body={"enable_thinking": False},
-        messages=[{"role":"system", "content":MATH_SOLVER_INTERFACE},
+        messages=[{"role":"system", "content":interface},
                   {"role":"user", "content":prompt + "\n\n" + problem}])
 
 
 def prepare_metadata(root, contract):
+    interface = solver_interface_contract()
+    if contract["identity"] == "MATH_V2_1_EXECUTION_BINDING_V1":
+        from .math_v21_interface import interface_for_contract
+        interface = interface_for_contract(contract)[1]
     examples = []
     for row in validation_rows(root, contract, context="ACCOUNTING_DATA_PREP_CONTEXT"):
         examples.append(dict(example_id=row["stable_example_id"], input_sha256=row["input_sha256"],
             blank_prompt_serialized_request_bytes=len(serialized_request(solver_request(contract, "", row["problem"])))))
     return dict(identity="MATH_VALIDATION_ACCOUNTING_METADATA_V2", context="ACCOUNTING_DATA_PREP_CONTEXT",
-        split_manifest_sha256=contract["split_manifest_sha256"], solver_output_interface=solver_interface_contract(),
+        split_manifest_sha256=contract["split_manifest_sha256"], solver_output_interface=interface,
         decoding=contract["decoding"], validation_raw_rows_read=300,
         model_calls=0, correctness_evaluations=0, content_exposed_to_search=False, examples=examples)
 

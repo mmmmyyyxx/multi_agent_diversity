@@ -5,7 +5,7 @@ import json
 from .math_execution import MATHExecutionBinding, provider_bounds
 from .math_domain_v2 import MATHBenchmarkAdapterV2, SETTINGS
 from .math_worker import PINS
-from .math_interface import solver_interface_contract
+from .math_v21_interface import MATHV21BenchmarkAdapter, interface_for_contract
 from .experiment_splits import ExperimentSplitReader, COUNTS, ROLES
 from .data_freeze import digest, file_hash, SOURCE_PINS
 from .protocols import MATH_PROTOCOL_V2
@@ -25,7 +25,7 @@ def competence_binding(contract):
 
 class MATHV21Binding(MATHExecutionBinding):
     def benchmark(self):
-        return MATHBenchmarkAdapterV2()
+        return MATHV21BenchmarkAdapter(self.contract)
 
     def reader(self):
         c = self.contract
@@ -73,7 +73,7 @@ class MATHV21Binding(MATHExecutionBinding):
                 access=dict(optimize="adaptive", shadow="private_adaptive_gate", validation="post_freeze_read_only_not_authorized", test="sealed"),
                 canary_phase="first_parent_team_epoch_or_first_commit", cache_policy="exact_request_role_split_cache_v1",
                 shadow_count=300, reference_extractor=versions.MATH_REFERENCE_EXTRACTOR_VERSION,
-                solver_output_interface=solver_interface_contract(), evaluator_pins=PINS,
+                solver_output_interface=interface_for_contract(c)[1], evaluator_pins=PINS,
                 verify_settings_sha256=digest(SETTINGS), initial_competence_binding=competence_binding(c),
                 post_search_validation_policy=VALIDATION_POLICY)
             if any(c.get(k) != v for k,v in fixed.items()):

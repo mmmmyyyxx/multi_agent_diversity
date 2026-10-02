@@ -12,7 +12,7 @@ method_identity: unified_team_prompt_search_v2_1
 current_method: unified_team_prompt_search_v2_1
 current_implementation: Versioned method semantic contract; benchmark-neutral production
   composition; zero-API audit
-current_experiment: math_v2_1_preexecution_freeze_v1
+current_experiment: math_v2_1_preexecution_freeze_v2
 current_benchmark_suite:
 - math
 - ifbench
@@ -35,11 +35,11 @@ last_canary_milestone: math_v2_1_a1_seed81_real_canary_v1
 current_canary_status: INVALID_OPERATIONAL_FAILURE
 formal_a1_ready: false
 formal_a1_authorized: false
-current_execution_blocker: Mandatory FINAL_ANSWER marker omitted; versioned output-interface
-  repair and fresh freeze required.
+current_execution_blocker: Output-interface V3 zero-API gates and fresh source/preexecution
+  freeze pending.
 next_canary_milestone: null
 next_canary_attempt_id: null
-last_autonomous_milestone: math_v2_1_answer_domain_amendment_v1
+last_autonomous_milestone: math_v2_1_output_interface_repair_v1
 autonomous_user_authorization_received: true
 autonomous_token_authorization: 30000000
 autonomous_tokens_consumed: 29779
@@ -83,6 +83,10 @@ flowchart TD
     n203["math_v2_1_preexecution_freeze_v1<br/>PREEXECUTION_FREEZE<br/>PREEXECUTION_FROZEN"]
     n204["math_v2_1_a1_seed81_real_canary_v1<br/>REAL_CANARY<br/>INVALID"]
     n205["math_v2_1_a1_seed81_pilot_v1<br/>PILOT<br/>SUPERSEDED"]
+    n206["math_v2_1_output_interface_repair_v1<br/>ARCHITECTURE_REFACTOR<br/>PREPARED_NOT_EXECUTED"]
+    n207["math_v2_1_preexecution_freeze_v2<br/>PREEXECUTION_FREEZE<br/>PREPARED_NOT_EXECUTED"]
+    n208["math_v2_1_a1_seed81_real_canary_v2<br/>REAL_CANARY<br/>PREPARED_NOT_EXECUTED"]
+    n209["math_v2_1_a1_seed81_pilot_v2<br/>PILOT<br/>PREPARED_NOT_EXECUTED"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -365,6 +369,10 @@ flowchart TD
   n202 -->|derived_from| n203
   n203 -->|derived_from| n204
   n204 -->|derived_from| n205
+  n204 -->|derived_from| n206
+  n206 -->|derived_from| n207
+  n207 -->|derived_from| n208
+  n208 -->|derived_from| n209
 ```
 
 ## Archived branches and unresolved evidence

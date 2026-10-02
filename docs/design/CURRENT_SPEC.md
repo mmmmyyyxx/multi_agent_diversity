@@ -329,6 +329,16 @@ no allocation or stopping read point. Canary retains its separately declared
 first-parent-epoch/first-commit phase boundary; Pilot uses the unchanged global
 scientific stopper. Neither phase forces round-robin.
 
+The separately versioned immutable `MATH_SOLVER_INTERFACE_V3` requires one
+literal `FINAL_ANSWER: <answer>` line and no visible reasoning or Markdown.
+This output-only repair cannot be optimized by GEPA. The prior V2 interface
+and strict marker/payload/equivalence parsers remain unchanged. Fresh bindings
+freeze the exact interface hash; Solver, Validation and isolated accounting
+preparation resolve the same interface bytes. An unknown interface or hash
+mismatch fails before dispatch. Format failure still aborts with zero response
+regenerations. Every interface change requires a fresh source, attempt,
+authorization, cache namespace and process.
+
 ## Authority map
 
 See AGENTS.md for the complete authority hierarchy; method.md is a conceptual
