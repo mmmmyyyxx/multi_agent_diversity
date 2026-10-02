@@ -1,0 +1,17 @@
+{
+  "final_initial_upper_reserve": 13599560,
+  "full_protected_reserve": 27173020,
+  "grows_with_candidate_prompt": true,
+  "initial_exact_reserve": 13573460,
+  "ledger_reset": false,
+  "logical_evaluations": 3000,
+  "policy": "RESERVATION_V2",
+  "prior_charged": 57648,
+  "search_spend_available": 2769332,
+  "solver_output_cap": 3600,
+  "team_size": 5,
+  "total_authorized": 30000000,
+  "total_remaining": 29942352,
+  "validation_count": 300,
+  "validation_reduction_allowed": false
+}

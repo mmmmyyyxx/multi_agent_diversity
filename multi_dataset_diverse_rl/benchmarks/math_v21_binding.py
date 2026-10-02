@@ -12,6 +12,8 @@ from .protocols import MATH_PROTOCOL_V2
 from ..search.schemas import SearchMethodConfig, GlobalStopConfig
 from ..governance.token_accounting import POLICY
 from .. import versions
+from .math_solver_decoding import frozen_solver_policy
+from ..search.schemas import SearchContractError
 
 
 def competence_binding(contract):
@@ -56,7 +58,10 @@ class MATHV21Binding(MATHExecutionBinding):
                 transport_retries=20, timeout_seconds=120, retry_sleep_seconds=1.5, retry_backoff_ceiling_seconds=60)
             if c['solver_output_interface']==v5_interface_contract():
                 decoding['solver_max_output_tokens']=3600
-            fixed = dict(identity=versions.MATH_V2_1_EXECUTION_BINDING_VERSION, benchmark_id="math",
+            policy = frozen_solver_policy(c)
+            if policy and c['solver_output_interface'] != v5_interface_contract():
+                return ("SOLVER_DECODING_INTERFACE_MISMATCH",)
+            fixed = dict(identity=versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION if policy else versions.MATH_V2_1_EXECUTION_BINDING_VERSION, benchmark_id="math",
                 method_identity=versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION,
                 method_implementation_sha="01025f7097ca3a3e248e370347e256ae0aea9046",
                 benchmark_protocol_sha256=MATH_PROTOCOL_V2.identity(),
@@ -144,6 +149,8 @@ class MATHV21Binding(MATHExecutionBinding):
                     or c["initial_team_sha256"] != "4ca685adff5ca8a97e53b0aa0f5715783c7c6937433bd5bbc1308cbad9e97200"):
                 return ("MATH_INITIAL_TEAM_HASH_MISMATCH",)
             metadata = json.loads(self.path(c["validation_accounting_metadata_path"]).read_bytes())
+            if metadata.get("solver_decoding_policy") != policy:
+                return ("VALIDATION_DECODING_POLICY_MISMATCH",)
             rows = [r for r in reader.members if r["project_split"] == "validation"]
             if (metadata["split_manifest_sha256"] != c["split_manifest_sha256"] or metadata["solver_output_interface"] != c["solver_output_interface"]
                     or metadata["decoding"] != c["decoding"] or metadata["context"] != "ACCOUNTING_DATA_PREP_CONTEXT"
@@ -155,5 +162,5 @@ class MATHV21Binding(MATHExecutionBinding):
             from ..local_optimizers.gepa_optimizer import verify_frozen_gepa_engine_contract
             verify_frozen_gepa_engine_contract()
             return ()
-        except (KeyError,OSError,ValueError,TypeError,importlib.metadata.PackageNotFoundError):
+        except (KeyError,OSError,ValueError,TypeError,SearchContractError,importlib.metadata.PackageNotFoundError):
             return ("MATH_V2_1_BINDING_INVALID",)

@@ -383,7 +383,8 @@
             "MATH_EXECUTION_BINDING_V1_2",
             "MATH_EXECUTION_BINDING_V1_3",
             "MATH_EXECUTION_BINDING_V1_4",
-            "MATH_V2_1_EXECUTION_BINDING_V1"
+            "MATH_V2_1_EXECUTION_BINDING_V1",
+            "MATH_V2_1_EXECUTION_BINDING_V2"
           ]
         },
         "path": {
@@ -451,6 +452,59 @@
         "immutable"
       ],
       "additionalProperties": false
+    },
+    "solver_decoding_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "enable_thinking",
+        "temperature",
+        "top_p",
+        "top_k",
+        "min_p",
+        "presence_penalty",
+        "frequency_penalty",
+        "max_output_tokens"
+      ],
+      "properties": {
+        "identity": {
+          "const": "SOLVER_DECODING_POLICY_V1",
+          "type": "string"
+        },
+        "enable_thinking": {
+          "const": false,
+          "type": "boolean"
+        },
+        "temperature": {
+          "const": 0.7,
+          "type": "number"
+        },
+        "top_p": {
+          "const": 0.8,
+          "type": "number"
+        },
+        "top_k": {
+          "const": 20,
+          "type": "integer"
+        },
+        "min_p": {
+          "const": 0,
+          "type": "integer"
+        },
+        "presence_penalty": {
+          "const": 0,
+          "type": "integer"
+        },
+        "frequency_penalty": {
+          "const": 0,
+          "type": "integer"
+        },
+        "max_output_tokens": {
+          "const": 3600,
+          "type": "integer"
+        }
+      }
     }
   },
   "required": [
@@ -821,7 +875,10 @@
           "execution_binding": {
             "properties": {
               "identity": {
-                "const": "MATH_V2_1_EXECUTION_BINDING_V1"
+                "enum": [
+                  "MATH_V2_1_EXECUTION_BINDING_V1",
+                  "MATH_V2_1_EXECUTION_BINDING_V2"
+                ]
               }
             }
           }
@@ -841,11 +898,71 @@
             "const": "unified_team_prompt_search_v2_1"
           },
           "solver_output_interface_identity": {
-            "enum": ["MATH_SOLVER_INTERFACE_V2", "MATH_SOLVER_INTERFACE_V3", "MATH_SOLVER_INTERFACE_V4", "MATH_SOLVER_INTERFACE_V5"]
+            "enum": [
+              "MATH_SOLVER_INTERFACE_V2",
+              "MATH_SOLVER_INTERFACE_V3",
+              "MATH_SOLVER_INTERFACE_V4",
+              "MATH_SOLVER_INTERFACE_V5"
+            ]
           },
           "parser_identity": {
             "const": "MATH_PAYLOAD_PARSER_V2"
           }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "execution_binding": {
+            "properties": {
+              "identity": {
+                "const": "MATH_V2_1_EXECUTION_BINDING_V2"
+              }
+            },
+            "required": [
+              "identity"
+            ]
+          }
+        },
+        "required": [
+          "execution_binding"
+        ]
+      },
+      "then": {
+        "required": [
+          "solver_decoding_policy"
+        ],
+        "properties": {
+          "solver_output_interface_identity": {
+            "const": "MATH_SOLVER_INTERFACE_V5"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "execution_binding": {
+            "properties": {
+              "identity": {
+                "const": "MATH_V2_1_EXECUTION_BINDING_V1"
+              }
+            },
+            "required": [
+              "identity"
+            ]
+          }
+        },
+        "required": [
+          "execution_binding"
+        ]
+      },
+      "then": {
+        "not": {
+          "required": [
+            "solver_decoding_policy"
+          ]
         }
       }
     }

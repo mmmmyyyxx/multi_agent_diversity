@@ -1,0 +1,39 @@
+{
+  "baseline_sha": "29a0254ea57f82a2479489c51dabefafb6d5df71",
+  "changed_binding_fields": [
+    "binding_path",
+    "cache_namespace",
+    "canary_attempt_id",
+    "continuation_authorization_sha256",
+    "execution_attempt_id",
+    "identity",
+    "solver_decoding_policy",
+    "validation_accounting_metadata_path",
+    "validation_accounting_metadata_sha256"
+  ],
+  "historical_failure_evidence_immutable": true,
+  "old_canary_statuses": [
+    "INVALID",
+    "INVALID",
+    "INVALID",
+    "INVALID"
+  ],
+  "sole_new_scientific_change": "Solver generation/decoding policy",
+  "status": "PASS",
+  "unchanged": [
+    "method",
+    "canonical data",
+    "split",
+    "initial team",
+    "evaluator",
+    "Responsibility",
+    "allocation",
+    "failure discount",
+    "transition",
+    "GEPA budget",
+    "Pattern",
+    "Memory",
+    "output interface",
+    "optimizer policy"
+  ]
+}

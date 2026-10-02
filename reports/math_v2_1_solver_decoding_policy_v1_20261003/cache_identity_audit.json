@@ -1,0 +1,28 @@
+{
+  "cross_attempt_cache_hits": 0,
+  "historical_cache_hits_allowed": false,
+  "isolated_same_namespace_policy_change": true,
+  "legacy_wire_policy": {
+    "extra_body": {
+      "enable_thinking": false
+    },
+    "max_tokens": 3600,
+    "temperature": 0.0
+  },
+  "new_attempt_namespace_distinct": true,
+  "new_request_cache_identity_sha256": "0a39c87c1bb8810accfc97ddf71dba1cfb4d4bd07d805653a366e5b3e737b931",
+  "new_wire_policy": {
+    "extra_body": {
+      "enable_thinking": false,
+      "min_p": 0,
+      "top_k": 20
+    },
+    "frequency_penalty": 0,
+    "max_tokens": 3600,
+    "presence_penalty": 0,
+    "temperature": 0.7,
+    "top_p": 0.8
+  },
+  "old_request_cache_identity_sha256": "db7a35ee2a923f1230c7e182836b444a12930145c3a169b9e7e628d3655173c2",
+  "status": "PASS"
+}

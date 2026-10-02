@@ -12,7 +12,7 @@ method_identity: unified_team_prompt_search_v2_1
 current_method: unified_team_prompt_search_v2_1
 current_implementation: Versioned method semantic contract; benchmark-neutral production
   composition; zero-API audit
-current_experiment: math_v2_1_a1_seed81_pilot_v4
+current_experiment: math_v2_1_a1_seed81_pilot_v5
 current_benchmark_suite:
 - math
 - ifbench
@@ -29,17 +29,15 @@ validation_access: not_authorized
 test_access: sealed
 open_questions: docs/research/OPEN_QUESTIONS.md
 last_method_milestone: unified_semantic_contract_v2_1
-canary_manifest: experiments/manifests/math_v2_1_a1_seed81_real_canary_v4.yaml
+canary_manifest: experiments/manifests/math_v2_1_a1_seed81_real_canary_v5.yaml
 last_preexecution_milestone: math_v2_1_preexecution_freeze_v4
 last_canary_milestone: math_v2_1_a1_seed81_real_canary_v4
 current_canary_status: INVALID_OPERATIONAL_FAILURE
 formal_a1_ready: false
 formal_a1_authorized: false
-current_execution_blocker: 'STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED: repeated length
-  termination under frozen temperature zero; provider cause unknown; no verified implementation
-  repair remaining.'
-next_canary_milestone: null
-next_canary_attempt_id: null
+current_execution_blocker: ZERO_API_DECODING_FREEZE_PENDING
+next_canary_milestone: math_v2_1_a1_seed81_real_canary_v5
+next_canary_attempt_id: math_unified_v2_1_A1_seed81_canary_attempt5
 last_autonomous_milestone: math_v2_1_a1_seed81_pilot_v4
 autonomous_user_authorization_received: true
 autonomous_token_authorization: 30000000
@@ -47,11 +45,11 @@ autonomous_tokens_consumed: 57648
 autonomous_tokens_remaining: 29942352
 token_accounting_policy: RESERVATION_V2
 prior_accounting_stop_resolution: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2
-autonomous_authorization_status: V2_1_CONTINUATION_EXACT_SCOPES_CLOSED
+autonomous_authorization_status: V2_1_CONTINUATION_RECEIVED_EXACT_SCOPE_PENDING
 pilot_search_complete: false
 pilot_validation_complete: false
 pilot_final_status: INCOMPLETE
-task_stop_reason: STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED
+task_stop_reason: null
 ```
 
 ## Experiment and engineering DAG
@@ -100,6 +98,10 @@ flowchart TD
     n215["math_v2_1_preexecution_freeze_v4<br/>PREEXECUTION_FREEZE<br/>PREEXECUTION_FROZEN"]
     n216["math_v2_1_a1_seed81_real_canary_v4<br/>REAL_CANARY<br/>INVALID"]
     n217["math_v2_1_a1_seed81_pilot_v4<br/>PILOT<br/>HOLD"]
+    n218["math_v2_1_solver_decoding_policy_v1<br/>ARCHITECTURE_REFACTOR<br/>DRAFT"]
+    n219["math_v2_1_preexecution_freeze_v5<br/>PREEXECUTION_FREEZE<br/>DRAFT"]
+    n220["math_v2_1_a1_seed81_real_canary_v5<br/>REAL_CANARY<br/>DRAFT"]
+    n221["math_v2_1_a1_seed81_pilot_v5<br/>PILOT<br/>DRAFT"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -394,6 +396,10 @@ flowchart TD
   n214 -->|derived_from| n215
   n215 -->|derived_from| n216
   n216 -->|derived_from| n217
+  n216 -->|derived_from| n218
+  n218 -->|derived_from| n219
+  n219 -->|derived_from| n220
+  n220 -->|derived_from| n221
 ```
 
 ## Archived branches and unresolved evidence

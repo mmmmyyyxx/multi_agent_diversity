@@ -12,6 +12,7 @@ from ..benchmarks.protocols import PROTOCOLS
 from .benchmark import BenchmarkInput
 from .patterns import PatternHypothesis
 from .schemas import SearchContractError
+from ..benchmarks.math_solver_decoding import generation_request_fields, frozen_solver_policy
 
 
 class RequestBroker:
@@ -51,14 +52,13 @@ class RequestBroker:
             raise SearchContractError("PATTERN_CALL_FORBIDDEN_IN_NULL_ARM")
         c = self.contract
         model = c["models"]["solver" if role == "solver" else "optimizer_reflection" if role == "reflection" else "pattern"]
-        request = dict(model=model, messages=messages, temperature=c["decoding"]["temperature"],
-            max_tokens=(c["decoding"].get("solver_max_output_tokens", c["decoding"]["max_output_tokens"])
-                if role == "solver" else c["decoding"]["max_output_tokens"]),
-            extra_body={"enable_thinking": False} if role == "solver" else {})
+        request = dict(model=model, messages=messages, **generation_request_fields(c, role))
         identity = {"provider": c["provider"], "role": role, "split": split, "request": request,
                     "cache_namespace": c["cache_namespace"]}
         if role == "solver":
             identity["solver_output_interface"] = c["solver_output_interface"]
+            if frozen_solver_policy(c) is not None:
+                identity["solver_decoding_policy"] = frozen_solver_policy(c)
         key = hashlib.sha256(json.dumps(identity, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
         with self.lock:
             if key in self.cache:
@@ -117,8 +117,8 @@ class RequestBroker:
                     response_sha256=hashlib.sha256(result["text"].encode()).hexdigest(), input_tokens=result["input_tokens"], output_tokens=result["output_tokens"]))
                 if self.raw_writer:
                     self.raw_writer(dict(role=role, split=split, stage=stage, request_sha256=key, request=request, response=result))
-                if self.token_ledger and result.get("finish_reason") in {"length", "max_tokens", "max_output_tokens"}:
-                    self.abort("OPERATIONAL_OUTPUT_TRUNCATION")
+                if (self.token_ledger or role == "solver" and frozen_solver_policy(c)) and result.get("finish_reason") in {"length", "max_tokens", "max_output_tokens"}:
+                    self.abort("STOP_SOLVER_DECODING_POLICY_INSUFFICIENT" if role == "solver" and frozen_solver_policy(c) else "OPERATIONAL_OUTPUT_TRUNCATION")
                 if self.token_ledger and type(result.get("provider_reported_output_tokens")) is int and result["provider_reported_output_tokens"] > request["max_tokens"]:
                     self.abort("OPERATIONAL_OUTPUT_CAP_NOT_ENFORCED")
                 result = {**result, "provider_called": True}
@@ -160,11 +160,14 @@ class BenchmarkSolver:
         user_content = (self.benchmark.solver_user_content(prompt, item)
             if hasattr(self.benchmark, "solver_user_content")
             else prompt + "\n\n" + self.benchmark.format_input(item))
-        effective = hashlib.sha256(json.dumps(dict(solver_interface=contract,
+        effective_contract = dict(solver_interface=contract,
             mutable_prompt_sha256=hashlib.sha256(prompt.encode()).hexdigest(),
             benchmark_input_sha256=hashlib.sha256(self.benchmark.format_input(item).encode()).hexdigest(),
             model=self.broker.contract["models"]["solver"], decoding=self.broker.contract["decoding"],
-            solver_thinking=self.broker.contract["models"]["solver_thinking"]), sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+            solver_thinking=self.broker.contract["models"]["solver_thinking"])
+        if frozen_solver_policy(self.broker.contract) is not None:
+            effective_contract["solver_decoding_policy"] = frozen_solver_policy(self.broker.contract)
+        effective = hashlib.sha256(json.dumps(effective_contract, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
         self.broker._write(dict(kind="SOLVER_REQUEST_CONTRACT", role="solver", split=split, stage=stage,
             solver_interface_identity=contract["identity"], mutable_prompt_sha256=hashlib.sha256(prompt.encode()).hexdigest(),
             effective_solver_request_contract_hash=effective))
@@ -176,9 +179,9 @@ class BenchmarkSolver:
         result = self._request(prompt, item, stage=stage, split=split)
         if hasattr(self.benchmark,"final_payload"):
             if self.benchmark.final_payload(result["text"]) is None:
-                self.broker.abort("SOLVER_INVALID_RESPONSE_NO_REGENERATION")
+                self.broker.abort("STOP_SOLVER_DECODING_POLICY_INSUFFICIENT" if frozen_solver_policy(self.broker.contract) else "SOLVER_INVALID_RESPONSE_NO_REGENERATION")
         elif not self.benchmark.parse_member_output(result["text"], item).valid:
-            self.broker.abort("SOLVER_INVALID_RESPONSE_NO_REGENERATION")
+            self.broker.abort("STOP_SOLVER_DECODING_POLICY_INSUFFICIENT" if frozen_solver_policy(self.broker.contract) else "SOLVER_INVALID_RESPONSE_NO_REGENERATION")
         return result["text"]
 
     def evaluate(self, prompt, example):
@@ -205,9 +208,9 @@ class BenchmarkSolver:
         parsed = self.benchmark.parse_member_output(result["text"], item)
         if hasattr(self.benchmark,"final_payload"):
             if self.benchmark.final_payload(result["text"]) is None:
-                self.broker.abort("SOLVER_INVALID_RESPONSE_NO_REGENERATION")
+                self.broker.abort("STOP_SOLVER_DECODING_POLICY_INSUFFICIENT" if frozen_solver_policy(self.broker.contract) else "SOLVER_INVALID_RESPONSE_NO_REGENERATION")
         elif not parsed.valid:
-            self.broker.abort("SOLVER_INVALID_RESPONSE_NO_REGENERATION")
+            self.broker.abort("STOP_SOLVER_DECODING_POLICY_INSUFFICIENT" if frozen_solver_policy(self.broker.contract) else "SOLVER_INVALID_RESPONSE_NO_REGENERATION")
         return LocalSolverObservation(parsed.answer, result["text"], self.benchmark.score_member_output(parsed, example.gold) == 1,
             parsed.valid, input_tokens=result["input_tokens"], output_tokens=result["output_tokens"], provider_called=result["provider_called"])
 

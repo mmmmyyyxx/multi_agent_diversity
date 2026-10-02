@@ -1,0 +1,26 @@
+{
+  "client_sends_exact_frozen_bytes": true,
+  "final_sdk_http_body_captured": true,
+  "flattened_extension_fields": [
+    "top_k",
+    "min_p",
+    "enable_thinking"
+  ],
+  "output_cap_mapping": {
+    "max_output_tokens": "max_tokens"
+  },
+  "provider_internal_execution_verified": false,
+  "real_provider_calls": 0,
+  "sdk": {
+    "name": "openai",
+    "version": "2.37.0"
+  },
+  "status": "PASS",
+  "top_level_fields": [
+    "temperature",
+    "top_p",
+    "presence_penalty",
+    "frequency_penalty",
+    "max_tokens"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "initial_members": 5,
+  "optimizer_cap": 1800,
+  "optimizer_fields": {
+    "max_tokens": 1800,
+    "temperature": 0.0
+  },
+  "roles": {
+    "full": 8,
+    "gepa_local": 8,
+    "initial": 8,
+    "optimize": 8,
+    "shadow": 8,
+    "team_probe": 8,
+    "validation_final": 8,
+    "validation_initial": 8
+  },
+  "solver_cap": 3600,
+  "solver_policy": {
+    "enable_thinking": false,
+    "frequency_penalty": 0,
+    "identity": "SOLVER_DECODING_POLICY_V1",
+    "max_output_tokens": 3600,
+    "min_p": 0,
+    "presence_penalty": 0,
+    "temperature": 0.7,
+    "top_k": 20,
+    "top_p": 0.8
+  },
+  "status": "PASS",
+  "synthetic_evolved_prompts": 3
+}

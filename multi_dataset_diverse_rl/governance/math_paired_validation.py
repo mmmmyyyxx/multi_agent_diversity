@@ -54,6 +54,8 @@ def prepare_validation(root,search_prep,pilot_run,destination):
         final_team_sha256=receipt['final_team_sha256'],split_identity=c['split_manifest_sha256'],
         policy_sha256=canonical_sha256(POLICY),models=c['models'],roles=['solver'],provider='lwj',
         successful_provider_call_ceiling=3000,transport_attempt_ceiling=63000,validation_calls=3000,test_calls=0)
+    if 'solver_decoding_policy' in c:
+        scope['solver_decoding_policy']=c['solver_decoding_policy']
     result=dict(schema_version=SCHEMA,source_identity=payload['source_identity'],
         search_prep=str(search_prep.relative_to(root)),pilot_run=str(pilot_run.relative_to(root)),scope=scope)
     result['startup_identity_sha256']=canonical_sha256(result)
@@ -78,6 +80,8 @@ def validate_validation(root,prep,*,require_authorized):
         final_team_sha256=receipt['final_team_sha256'],split_identity=c['split_manifest_sha256'],
         policy_sha256=canonical_sha256(POLICY),models=c['models'],roles=['solver'],provider='lwj',
         successful_provider_call_ceiling=3000,transport_attempt_ceiling=63000,validation_calls=3000,test_calls=0)
+    if 'solver_decoding_policy' in c:
+        expected['solver_decoding_policy']=c['solver_decoding_policy']
     if payload['scope']!=expected or payload['source_identity']!=original['source_identity']:
         raise SearchContractError('VALIDATION_SCOPE_MISMATCH')
     auth=read_json(prep/'authorization.json')

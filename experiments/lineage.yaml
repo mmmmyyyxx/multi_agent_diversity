@@ -669,6 +669,18 @@ nodes:
   kind: PILOT
   era: BENCHMARK_GENERALIZATION
   method_family: unified_team_prompt_search_v2_1
+- experiment_id: math_v2_1_solver_decoding_policy_v1
+  kind: ARCHITECTURE_REFACTOR
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_1_preexecution_freeze_v5
+  kind: PREEXECUTION_FREEZE
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_1_a1_seed81_real_canary_v5
+  kind: REAL_CANARY
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_1_a1_seed81_pilot_v5
+  kind: PILOT
+  era: BENCHMARK_GENERALIZATION
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1010,7 +1022,8 @@ edges:
   to: math_v2_autonomous_accounting_preflight_v1
   relation: audit_of
   evidence: reports/math_v2_autonomous_accounting_preflight_v1_20261002/README.md
-  scope: Zero-provider, metadata-only task-budget audit; no efficacy or new execution freeze.
+  scope: Zero-provider, metadata-only task-budget audit; no efficacy or new execution
+    freeze.
 - from: math_v2_autonomous_accounting_preflight_v1
   to: math_v2_token_accounting_repair_v2
   relation: resolves_blockers_of
@@ -1043,32 +1056,38 @@ edges:
   to: math_v2_reference_parser_domain_audit_v1
   relation: audit_of
   evidence: reports/math_v2_reference_parser_domain_audit_v1_20261002/README.md
-  scope: Optimize-only reference representation audit; no scientific amendment or new real API attempt.
+  scope: Optimize-only reference representation audit; no scientific amendment or
+    new real API attempt.
 - from: math_v2_reference_parser_domain_audit_v1
   to: math_v2_answer_domain_amendment_v2
   relation: derived_from
   evidence: reports/math_v2_answer_domain_amendment_v2_20261002/README.md
-  scope: Source-grounded answer-domain amendment and fresh execution plan; no efficacy observed.
+  scope: Source-grounded answer-domain amendment and fresh execution plan; no efficacy
+    observed.
 - from: math_v2_answer_domain_amendment_v2
   to: math_v2_preexecution_freeze_v1_4
   relation: derived_from
   evidence: reports/math_v2_preexecution_freeze_v1_4_20261002/README.md
-  scope: Source-grounded answer-domain amendment and fresh execution plan; no efficacy observed.
+  scope: Source-grounded answer-domain amendment and fresh execution plan; no efficacy
+    observed.
 - from: math_v2_preexecution_freeze_v1_4
   to: math_v2_a1_seed81_real_canary_v4
   relation: derived_from
   evidence: reports/math_v2_a1_seed81_real_canary_v4_20261002/README.md
-  scope: Source-grounded answer-domain amendment and fresh execution plan; no efficacy observed.
+  scope: Source-grounded answer-domain amendment and fresh execution plan; no efficacy
+    observed.
 - from: math_v2_a1_seed81_real_canary_v4
   to: math_v2_a1_seed81_pilot_v2
   relation: derived_from
   evidence: reports/math_v2_a1_seed81_pilot_v2_20261002/README.md
-  scope: Source-grounded answer-domain amendment and fresh execution plan; no efficacy observed.
+  scope: Source-grounded answer-domain amendment and fresh execution plan; no efficacy
+    observed.
 - from: math_v2_preexecution_freeze_v1_4
   to: unified_semantic_contract_v2_1
   relation: derived_from
   evidence: reports/unified_semantic_contract_v2_1_20261002/README.md
-  scope: User-authored method semantic correction; zero-API only; prior frozen prep preserved.
+  scope: User-authored method semantic correction; zero-API only; prior frozen prep
+    preserved.
 - to: math_v2_1_answer_domain_amendment_v1
   relation: derived_from
   evidence: reports/math_v2_1_answer_domain_amendment_v1_20261002/README.md
@@ -1154,4 +1173,28 @@ edges:
   evidence: reports/math_v2_1_a1_seed81_pilot_v4_20261002/README.md
   scope: Fresh output-interface repair; no reused execution state or authorization.
   from: math_v2_1_a1_seed81_real_canary_v4
+- to: math_v2_1_solver_decoding_policy_v1
+  relation: derived_from
+  evidence: reports/math_v2_1_solver_decoding_policy_v1_20261003/README.md
+  scope: Fresh decoding identity and exact execution scope; no inherited Canary state
+    or cache.
+  from: math_v2_1_a1_seed81_real_canary_v4
+- to: math_v2_1_preexecution_freeze_v5
+  relation: derived_from
+  evidence: reports/math_v2_1_preexecution_freeze_v5_20261003/README.md
+  scope: Fresh decoding identity and exact execution scope; no inherited Canary state
+    or cache.
+  from: math_v2_1_solver_decoding_policy_v1
+- to: math_v2_1_a1_seed81_real_canary_v5
+  relation: derived_from
+  evidence: reports/math_v2_1_a1_seed81_real_canary_v5_20261003/README.md
+  scope: Fresh decoding identity and exact execution scope; no inherited Canary state
+    or cache.
+  from: math_v2_1_preexecution_freeze_v5
+- to: math_v2_1_a1_seed81_pilot_v5
+  relation: derived_from
+  evidence: reports/math_v2_1_a1_seed81_pilot_v5_20261003/README.md
+  scope: Fresh decoding identity and exact execution scope; no inherited Canary state
+    or cache.
+  from: math_v2_1_a1_seed81_real_canary_v5
 current_frontier: experiments/current_frontier.yaml

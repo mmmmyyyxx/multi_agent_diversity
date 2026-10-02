@@ -363,3 +363,22 @@ no scientific stopper or parser guard changes to absorb incomplete outputs.
 See AGENTS.md for the complete authority hierarchy; method.md is a conceptual
 overview, CURRENT_ARCHITECTURE.md a code map, and reports/ immutable evidence.
 Current implementation does not imply real-execution readiness or authorization.
+
+
+### Solver decoding policy
+
+`MATH_V2_1_EXECUTION_BINDING_V2` freezes `SOLVER_DECODING_POLICY_V1` for every
+Solver/member request, including initial profiling, GEPA local, Optimize,
+TeamProbe, Full, Shadow and both post-search Validation teams:
+enable_thinking=false, temperature=0.7, top_p=0.8, top_k=20, min_p=0,
+presence_penalty=0, frequency_penalty=0, max_output_tokens=3600.
+The Chat Completions wire maps the output cap to `max_tokens`; extension fields
+enable_thinking/top_k/min_p enter the final top-level body through extra_body.
+This exact policy enters manifests, preexecution, authorization, request and
+cache identities. Frozen older execution bindings retain their original bytes
+and request semantics. Reflection/Pattern retain the existing optimizer policy.
+No regeneration follows an invalid final marker or length termination: a
+successfully dispatched Solver policy fails closed with
+`STOP_SOLVER_DECODING_POLICY_INSUFFICIENT`. Provider rejection cannot silently
+remove any frozen field. No decoding, prompt-interface, method, data or evaluator
+adaptation follows performance or formatting outcomes.

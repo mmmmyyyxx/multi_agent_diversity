@@ -16,7 +16,7 @@ from multi_dataset_diverse_rl.local_optimizers.gepa_runtime import import_frozen
 ROOT=Path(__file__).resolve().parents[1]
 
 def contract(phase='pilot'):
-    return json.loads((ROOT/f'experiments/execution_bindings/math_v2_1_{phase}_v4.json').read_bytes())
+    return json.loads((ROOT/f'experiments/execution_bindings/math_v2_1_{phase}_v5.json').read_bytes())
 
 
 def test_output_repair_is_immutable_and_request_accounting_matches_solver():
@@ -119,6 +119,9 @@ def test_fresh_v21_binding_actual_gepa_four_arm_e2e(tmp_path,arm,monkeypatch):
     def transport(req):
         calls.append(req)
         if req['model']=='qwen3-8b':
+            from multi_dataset_diverse_rl.governance.token_accounting import serialized_request
+            body=json.loads(serialized_request(req))
+            assert {k:body[k] for k in ('temperature','top_p','top_k','min_p','presence_penalty','frequency_penalty','enable_thinking','max_tokens')} == dict(temperature=.7,top_p=.8,top_k=20,min_p=0,presence_penalty=0,frequency_penalty=0,enable_thinking=False,max_tokens=3600)
             assert req['messages'][0]['content']==adapter.output_contract
             prompt,problem=req['messages'][1]['content'].split('\n\n',1)
             from multi_dataset_diverse_rl.benchmarks.math_v21_interface import MATH_SOLVER_INTERFACE_V4_USER_SUFFIX

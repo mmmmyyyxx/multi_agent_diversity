@@ -1,0 +1,31 @@
+{
+  "current_suite": {
+    "all_historical_replay_passing_claimed": false,
+    "errors": 0,
+    "failures": 0,
+    "historical_deselected": 1468,
+    "historical_private_artifact_cases_not_run": 64,
+    "junit_sha256": "431ec7f734462ca735932a33b748734e40ef5e48f4e0d959bbc9b1d2882010c3",
+    "passed": 803,
+    "skipped": 2,
+    "tests": 805
+  },
+  "governance": true,
+  "network_attempts": 0,
+  "real_provider_calls": 0,
+  "source_gate": {
+    "active_unscorable": 0,
+    "closure_files": 191,
+    "compileall": "PASS",
+    "immutable_parent_bytes": "PASS",
+    "network_attempts": 0,
+    "real_optimizer_calls": 0,
+    "real_pattern_calls": 0,
+    "real_solver_calls": 0,
+    "reference_domain_rows": 12500,
+    "secret_scan": "PASS",
+    "source_poison_checks": 380,
+    "validation_required_reserve": 27173020
+  },
+  "status": "PASS"
+}

@@ -1,0 +1,18 @@
+{
+  "invalid_final_or_length_stop": "STOP_SOLVER_DECODING_POLICY_INSUFFICIENT",
+  "maximum_output_cap": 3600,
+  "optimizer_policy_unchanged": true,
+  "policy": {
+    "enable_thinking": false,
+    "frequency_penalty": 0,
+    "identity": "SOLVER_DECODING_POLICY_V1",
+    "max_output_tokens": 3600,
+    "min_p": 0,
+    "presence_penalty": 0,
+    "temperature": 0.7,
+    "top_k": 20,
+    "top_p": 0.8
+  },
+  "regeneration": false,
+  "scope": "all Solver/member calls"
+}
