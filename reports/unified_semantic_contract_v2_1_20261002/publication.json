@@ -1,0 +1,15 @@
+{
+  "current_governance_audit": "PASS",
+  "execution_source_sha": null,
+  "execution_status": "NOT_EXECUTED_NEW_BINDING_AND_FREEZE_REQUIRED",
+  "governance_hash_after_commit_registration": "82d4cd7618be6cbff676f67974aa480003891e2c2f7a8b4cb6e677dd3048e15a",
+  "implementation_commit": "01025f7097ca3a3e248e370347e256ae0aea9046",
+  "real_api_authorized": false,
+  "real_execution_ready": false,
+  "real_provider_calls": 0,
+  "scientific_source_changed_by_publication": false,
+  "scientific_source_hash": "ab383319c0e7580d142a12f5b862866e6c2db1ab33070764b00572d3f45634e3",
+  "test_calls": 0,
+  "validation_calls": 0,
+  "zero_api_evidence_commit": "01025f7097ca3a3e248e370347e256ae0aea9046"
+}

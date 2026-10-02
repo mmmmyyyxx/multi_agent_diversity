@@ -1750,7 +1750,7 @@
       "kind": "ARCHITECTURE",
       "experiment_id": "unified_semantic_contract_v2_1",
       "status": "IMPLEMENTED_NOT_EXECUTED",
-      "source_commit": null,
+      "source_commit": "01025f7097ca3a3e248e370347e256ae0aea9046",
       "historical_current": "historical_evidence",
       "registry_referenced": true,
       "registry_ref": "experiments/registry.yaml",

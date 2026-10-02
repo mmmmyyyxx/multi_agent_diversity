@@ -6142,9 +6142,9 @@ experiments:
   - math_v2_preexecution_freeze_v1_4
   status: IMPLEMENTED_NOT_EXECUTED
   scientific_status: SEMANTIC_CONTRACT_AMENDMENT_EFFICACY_UNVERIFIED
-  implementation_commit: null
+  implementation_commit: 01025f7097ca3a3e248e370347e256ae0aea9046
   execution_commit: null
-  result_commit: null
+  result_commit: 01025f7097ca3a3e248e370347e256ae0aea9046
   manifest: experiments/manifests/unified_semantic_contract_v2_1.yaml
   report: reports/unified_semantic_contract_v2_1_20261002
   classifier: ZERO_API_METHOD_CONFORMANCE
@@ -6158,6 +6158,4 @@ experiments:
   - Prior V2 manifests/preps/reports remain immutable and do not bind V2.1.
   - Real execution requires a fresh benchmark binding and exact frozen authorization.
   unavailable:
-    implementation_commit: Working-tree implementation; no new source SHA frozen in this task.
     execution_commit: Zero-API only.
-    result_commit: Local audit evidence; not published.
