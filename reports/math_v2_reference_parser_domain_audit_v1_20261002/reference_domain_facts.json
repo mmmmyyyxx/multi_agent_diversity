@@ -1,0 +1,14 @@
+{
+  "content_published": false,
+  "correctness_evaluations": 0,
+  "example_id": "math:train:1604:7963c82933e082a9ad725619df4220f60cf69071f61735a72f16e53d8887ccb7",
+  "input_sha256": "5b0399b74f8ebdd75afedee388c823a9aef6539079f893af0cfb40363d18dba7",
+  "new_real_calls": 0,
+  "optimize_raw_rows_read": 150,
+  "problem_requests_ordered_pair": false,
+  "reference_contains_ordered_tuple_guard_pattern": true,
+  "reference_payload_supported": false,
+  "reference_sha256": "9bed7e59fd4d1d207dc07f720f8638497d9ac847962d95795c4b53a1dd4dec5a",
+  "test_raw_rows_read": 0,
+  "validation_raw_rows_read": 0
+}

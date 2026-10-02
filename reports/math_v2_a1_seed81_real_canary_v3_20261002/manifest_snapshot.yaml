@@ -1,0 +1,69 @@
+access:
+  search_access: frozen_search
+  shadow_access: frozen_adaptive_gate
+  test_access: sealed
+  validation_access: not_authorized
+adaptive_gate_identity: winner_only_shadow_v1
+aggregation_identity: equal_equivalence_plurality_consistency_v1
+authorization:
+  attempt_id: null
+  authorization_identity: null
+  real_api_authorized: false
+  single_use: true
+benchmark_id: math
+benchmark_protocol_id: 00f3377e1a3cc1452e0cbba51a41ae25777a3c5eaa020622b45f44b9229509f3
+budget:
+  regime: saturation
+  saturation_identity: team_epoch_no_commit_v1
+  successful_provider_call_ceiling: 1690560
+  transport_attempt_ceiling: 35501760
+cache_policy:
+  frozen: true
+  identity: exact_request_role_split_cache_v1
+concurrency:
+  optimizer: 1
+  solver: 1
+dataset_manifest_identity: 7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f
+evidence_identity: variable_pattern_capable_evidence_v1
+execution_binding:
+  identity: MATH_EXECUTION_BINDING_V1_3
+  path: experiments/execution_bindings/math_v2_accounting_canary_v1_4.json
+  sha256: d4cdfcc9a9948a909de36e4f7f1898c4644e9d4e3e24a432366afff088fee0d0
+experiment_id: math_v2_a1_seed81_real_canary_v3
+feasibility_identity: variable_evidence_feasibility_v1
+global_stop_identity: team_epoch_no_commit_v1
+hash_closure:
+  benchmark_contract_hash: 9615e257cdffae199eacee0d2a5feef881e5ea085f5c3c86e654acfe6f369234
+  dataset_manifest_hash: d3c3f587bf9e08f5d9a12c8b777953c57cd30fc4c655e82e95f556b337119d81
+  governance_hash: 5d167b24851e12cd0bd35a5f12e763b5291661a49a77e7534832704de6951be8
+  scientific_source_hash: c52e94caf3df79466ea3843d7640625fcce19dbbb8fc99a2aff37c804bc30471
+lifecycle:
+  history:
+  - event: ZERO_API_BLOCKER_CLOSURE
+    status: DRAFT
+  - event: FROZEN_SOURCE_RECEIPT
+    status: PREEXECUTION_FROZEN
+  status: PREEXECUTION_FROZEN
+mechanism_config: {}
+memory_identity: null_memory_v1
+method_family: unified_team_prompt_search_v2
+method_identity: unified_team_prompt_search_v2
+models:
+  optimizer: qwen3.7-flash
+  solver: qwen3-8b
+  solver_thinking: false
+parser_identity: math_verify_no_fallback_v1
+pattern_identity: null_pattern_v1
+preregistration_identity: 86a9da002f9cf7b15728b246232b4e60fa4be80248f68575da430b44da9082f3
+provider_policy:
+  frozen: true
+  identity: lwj
+responsibility_identity: binary_plurality_raw_responsibility_v1
+schema_version: experiment_manifest_v2
+search_acceptance_identity: local_survival_team_admission_decoupled_v1
+search_engine_identity: gepa_derived_team_candidate_exposure_v2
+seed: 81
+solver_output_interface_identity: MATH_SOLVER_INTERFACE_V2
+source_sha: 9dc4768f49cae0016b09e315631e20e9076ab88a
+split_identity: 753a24c9e2ee7bb6d7531c53acc83eacf562a431292d271a8d75ef0156fed70b
+transition_identity: common_safe_v1

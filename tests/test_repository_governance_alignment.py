@@ -267,7 +267,13 @@ def test_canary_abort_does_not_unlock_formal_or_heldout():
     # A later operational preflight can close Canary readiness. Historical
     # failure evidence must not require live readiness to remain open.
     assert frontier['real_execution_ready'] in (False, 'true_for_canary_only')
-    assert frontier['next_canary_attempt_id'].startswith('math_unified_v2_A1_seed81_canary_attempt')
+    next_attempt = frontier['next_canary_attempt_id']
+    if next_attempt is None:
+        assert frontier['real_execution_ready'] is False
+        assert frontier['current_canary_status'] == 'STOP_SCIENTIFIC_CONTRACT_AMENDMENT_REQUIRED'
+        assert frontier['autonomous_authorization_status'] == 'HALTED_BY_NON_OPERATIONAL_FAILURE'
+    else:
+        assert next_attempt.startswith('math_unified_v2_A1_seed81_canary_attempt')
     assert frontier['formal_a1_ready'] is False
     assert frontier['formal_a1_authorized'] is False
     assert frontier['real_api_authorized'] is False

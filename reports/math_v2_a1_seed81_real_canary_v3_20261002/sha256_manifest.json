@@ -1,0 +1,33 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "af7922df45e21ae94a9f851b1c00a1e8cf7e05a0ee66cd92b849de5f0cb96cc4"
+    },
+    {
+      "file": "audit.json",
+      "sha256": "729ad8eb4702f319bef45b9518e53bb55edf3c1da1647d6ff56c0328759a536c"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "bfd2262529bd0dd1a715b0eab7a1647755cf963fe34e90d7ed0e606e9ec9bbb9"
+    },
+    {
+      "file": "format_facts.json",
+      "sha256": "29d242201af0077dcda9a7c37ea26cd9681c31dffe0b832ef95953d15539b5fc"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "abcd43b594c41f5d8d98c5d8843be689dd053328f3919f4309fba9a9f363ecca"
+    },
+    {
+      "file": "README.md",
+      "sha256": "258abfb61c0ac3a4762f9cb12d7a5ea660563849c9704f6ecee80f5725df22b6"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "d5985ccd108d6d843d7155c059ade07664bde3fe68a8107ace2dea8ad6ecb7cc"
+    }
+  ]
+}

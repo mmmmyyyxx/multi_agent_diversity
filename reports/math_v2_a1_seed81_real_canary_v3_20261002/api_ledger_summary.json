@@ -1,0 +1,8 @@
+{
+  "charged_total": 8303,
+  "fallback_charged_tokens": 0,
+  "physical_attempts": 16,
+  "reported_tokens": 8303,
+  "scope": "THIS_ATTEMPT",
+  "successful_provider_calls": 16
+}

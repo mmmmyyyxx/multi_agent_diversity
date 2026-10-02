@@ -1,0 +1,57 @@
+{
+  "metrics": {
+    "MeanMemberAcc": {
+      "delta": null,
+      "final": null,
+      "initial": null
+    },
+    "Member0Acc": {
+      "delta": null,
+      "final": null,
+      "initial": null
+    },
+    "Member1Acc": {
+      "delta": null,
+      "final": null,
+      "initial": null
+    },
+    "Member2Acc": {
+      "delta": null,
+      "final": null,
+      "initial": null
+    },
+    "Member3Acc": {
+      "delta": null,
+      "final": null,
+      "initial": null
+    },
+    "Member4Acc": {
+      "delta": null,
+      "final": null,
+      "initial": null
+    },
+    "MinMemberAcc": {
+      "delta": null,
+      "final": null,
+      "initial": null
+    },
+    "OracleAcc": {
+      "delta": null,
+      "final": null,
+      "initial": null
+    },
+    "VoteAcc": {
+      "delta": null,
+      "final": null,
+      "initial": null
+    }
+  },
+  "oracle_broken": null,
+  "oracle_fixed": null,
+  "oracle_net": null,
+  "reason": "CANARY_NOT_PASS_SCIENTIFIC_CONTRACT_BLOCKER",
+  "status": "NOT_RUN",
+  "vote_broken": null,
+  "vote_fixed": null,
+  "vote_net": null
+}

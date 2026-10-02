@@ -1,0 +1,32 @@
+{
+  "accepted_exported": 0,
+  "commits": 0,
+  "common_safe_attempted": 0,
+  "common_safe_pass": 0,
+  "full_attempted": 0,
+  "full_pass": 0,
+  "local_accepted": 0,
+  "local_accepted_team_rejected": 0,
+  "local_rejected": 0,
+  "local_rejected_commit": 0,
+  "local_rejected_common_safe_pass": 0,
+  "local_rejected_full_pass": 0,
+  "local_rejected_shadow_pass": 0,
+  "local_rejected_team_probe_pass": 0,
+  "opportunities": 0,
+  "proposals": 0,
+  "rejected_exported": 0,
+  "shadow_attempted": 0,
+  "shadow_pass": 0,
+  "target_concentration": null,
+  "target_counts": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "team_epochs": 0,
+  "team_probe_attempted": 0,
+  "team_probe_pass": 0
+}

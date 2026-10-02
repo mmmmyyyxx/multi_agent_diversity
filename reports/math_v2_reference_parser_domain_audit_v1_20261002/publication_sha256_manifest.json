@@ -1,0 +1,18 @@
+{
+  "algorithm": "sha256",
+  "files": {
+    "README.md": "5b57deb9fda04b0f05d808e92603d4888d27b3c3baa886deecdc2f28d06f7f4a",
+    "api_ledger_summary.json": "3380060bfe2206ec6a6c0b1749972303a727a300abda8fc14b33c1e99775a9e8",
+    "attempts.json": "36c6973c0518f9e9bc141f2a48146a064ab62da3e57a228586e771b66a7dff37",
+    "evaluation_access_summary.json": "13e2a68151e6ce37838f8f1f7d0a9453b34768b119b81fe6cc69a4d7763aad4f",
+    "pilot_telemetry.json": "4a954ce1a295c2571c316e26ff3e09544f80370fcce11624e4c3a2eeab9f20eb",
+    "publication_receipt.json": "9039fda8044ae188c8f122afa56dcc7cccb8e2c63c4e2f20574d91182ef36e49",
+    "reference_domain_facts.json": "86d53ee374319a39f27959ab037a376fde3cfa7fec0d9d1b068bbd78425599f4",
+    "sanitization_manifest.json": "d5985ccd108d6d843d7155c059ade07664bde3fe68a8107ace2dea8ad6ecb7cc",
+    "sha256_manifest.json": "a99e99c58d48aa16c7119ff667ef5c7f862a2916c5cb38e965d9de74530138e2",
+    "summary.json": "4f891bd66c30df23db5ef3279349774635e733123ab519b8275fb0c6bd0bd034",
+    "task_terminal_status.json": "7039768afafa0b6c14ecdd9c327ae544c200674ac9a939bf91cd21d4d3d9ae4e",
+    "task_terminal_status.txt": "6b0b6aa6cfc9f40e0f460092c937f5f7d16c0b45565e21852bfd835da6c70a9f",
+    "validation_metrics.json": "f877ddbb5f9c0a6f2366ef45985ac97d1abfccf1426948d064ef9e6bcc76e522"
+  }
+}

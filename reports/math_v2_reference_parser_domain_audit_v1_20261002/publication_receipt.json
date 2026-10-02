@@ -1,0 +1,29 @@
+{
+  "compileall": "PASS",
+  "current_tests": {
+    "failed": 0,
+    "network_attempts": 0,
+    "passed": 98
+  },
+  "diff_check": "PASS",
+  "forensic_manifest_sha256": "fd29d28f3946a50696c03dbfba8c16bc191c35e788d26aa92cd9d3528e1e89d3",
+  "governance": "PASS",
+  "historical_replay_claimed": false,
+  "prior_execution_source_tests": {
+    "historical_deselected": 1468,
+    "passed": 655,
+    "skipped": 2
+  },
+  "prior_reports_unchanged": true,
+  "production_and_scientific_bindings_unchanged": true,
+  "push_authorized": false,
+  "real_calls_after_scientific_blocker": 0,
+  "remaining": 29984466,
+  "report_hashes_and_staged_bytes": "PASS",
+  "reserved_inflight": 0,
+  "sanitization": "PASS",
+  "scope": "FORENSIC_REPORT_AND_GOVERNANCE_CLOSEOUT_ONLY",
+  "staged_secret_scan": "PASS",
+  "status": "PASS",
+  "total_accounting_charged": 15534
+}

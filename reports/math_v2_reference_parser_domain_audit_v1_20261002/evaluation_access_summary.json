@@ -1,0 +1,9 @@
+{
+  "accounting_prep_correctness_evaluations": 0,
+  "accounting_prep_model_calls": 0,
+  "accounting_prep_validation_raw_rows": 300,
+  "test_model_calls": 0,
+  "test_raw_reads": 0,
+  "validation_model_calls": 0,
+  "validation_used_during_search": false
+}

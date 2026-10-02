@@ -1001,6 +1001,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/math_v2_a1_seed81_real_canary_v3_20261002",
+      "document": "reports/math_v2_a1_seed81_real_canary_v3_20261002/README.md",
+      "date": "20261002",
+      "era": "BENCHMARK_GENERALIZATION",
+      "kind": "INVALID_ATTEMPT",
+      "experiment_id": "math_v2_a1_seed81_real_canary_v3",
+      "status": "INVALID",
+      "source_commit": "9dc4768f49cae0016b09e315631e20e9076ab88a",
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/math_v2_autonomous_accounting_preflight_v1_20261002",
       "document": "reports/math_v2_autonomous_accounting_preflight_v1_20261002/README.md",
       "date": "20261002",
@@ -1049,7 +1063,21 @@
       "era": "BENCHMARK_GENERALIZATION",
       "kind": "PREEXECUTION",
       "experiment_id": "math_v2_provider_error_mapping_repair_v1",
-      "status": "PREPARED_NOT_EXECUTED",
+      "status": "COMPLETED",
+      "source_commit": "9dc4768f49cae0016b09e315631e20e9076ab88a",
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
+      "path": "reports/math_v2_reference_parser_domain_audit_v1_20261002",
+      "document": "reports/math_v2_reference_parser_domain_audit_v1_20261002/README.md",
+      "date": "20261002",
+      "era": "BENCHMARK_GENERALIZATION",
+      "kind": "FORENSIC",
+      "experiment_id": "math_v2_reference_parser_domain_audit_v1",
+      "status": "COMPLETED",
       "source_commit": null,
       "historical_current": "historical_evidence",
       "registry_referenced": true,

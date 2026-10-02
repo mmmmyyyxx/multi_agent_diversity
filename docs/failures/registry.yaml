@@ -273,3 +273,28 @@ failures:
   lifecycle: MITIGATED
   lifecycle_note: ZERO_API_TRANSPORT_CONFORMANCE_ONLY; REAL_PROVIDER_ACCESS_UNVERIFIED
   resolved_by: math_v2_provider_error_mapping_repair_v1
+- failure_id: FAIL-MATH-REFERENCE-PARSER-DOMAIN-MISMATCH
+  title: Frozen nonempty MATH references exceed the scoring parser domain
+  status: DIAGNOSED
+  first_observed: math_v2_a1_seed81_real_canary_v3
+  affected_components:
+  - math_reference_admission
+  - math_parser
+  - math_equivalence
+  symptom: Final-marker compliant Solver response and its admitted Optimize reference both trigger the
+    ordered-tuple payload guard.
+  evidence:
+  - reports/math_v2_a1_seed81_real_canary_v3_20261002
+  - reports/math_v2_reference_parser_domain_audit_v1_20261002
+  evidence_level: observed
+  root_cause_status: Reference admission checks nonempty extraction; scoring requires payload_supported
+    for both operands. Nine Optimize references fail the lexical guard, six the tuple guard.
+  forbidden_inference: No mathematical correctness, answer equivalence, efficacy or generalization is
+    inferred from representation support.
+  regression_tests:
+  - tests/test_benchmark_scientific_contracts.py
+  - tests/test_repository_governance_alignment.py
+  mitigation: Stop real execution. Explicit scientific amendment and fresh freeze/authorization required;
+    do not loosen parser, reformat around tuple semantics or silently resample.
+  lifecycle: ACTIVE
+  lifecycle_note: OPEN_SCIENTIFIC_CONTRACT_AMENDMENT_REQUIRED; NO_OPERATIONAL_FIX_AUTHORIZED

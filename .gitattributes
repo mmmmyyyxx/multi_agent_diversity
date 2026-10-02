@@ -38,3 +38,6 @@ reports/math_v2_token_accounting_repair_v2_20261002/** text eol=lf
 reports/math_v2_a1_seed81_real_canary_v2_20261002/** text eol=lf
 reports/math_v2_provider_error_mapping_repair_v1_20261002/** text eol=lf
 tests/fixtures/math_canary_attempt1_format_facts.json text eol=lf
+
+reports/math_v2_a1_seed81_real_canary_v3_20261002/** text eol=lf
+reports/math_v2_reference_parser_domain_audit_v1_20261002/** text eol=lf

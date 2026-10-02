@@ -1,0 +1,29 @@
+{
+  "accounting_policy": "RESERVATION_V2",
+  "accounting_policy_status": "PASS",
+  "bound_kind": "OPERATIONAL_ACCOUNTING_BOUND_NOT_PROVIDER_BILLING_PROOF",
+  "canary_final_status": "STOP_SCIENTIFIC_CONTRACT_AMENDMENT_REQUIRED",
+  "canary_task_attempts": 2,
+  "fallback_charged_tokens": 7231,
+  "new_real_calls_after_blocker": 0,
+  "optimize_reference_correctness_evaluations": 0,
+  "pilot_attempts": 0,
+  "pilot_final_status": "INCOMPLETE",
+  "pilot_search_complete": false,
+  "pilot_signal": "NOT_AVAILABLE",
+  "pilot_validation_complete": false,
+  "reference_domain_audit": {
+    "count": 150,
+    "nonempty": 150,
+    "ordered_tuple_guard_rejected": 6,
+    "payload_guard_rejected": 9,
+    "payload_guard_supported": 141
+  },
+  "reported_tokens": 8303,
+  "scientific_semantics_changed": false,
+  "stop_category": "STOP_SCIENTIFIC_CONTRACT_AMENDMENT_REQUIRED",
+  "test_reference_audit_performed": false,
+  "total_accounting_charged": 15534,
+  "total_accounting_remaining": 29984466,
+  "validation_reference_audit_performed": false
+}

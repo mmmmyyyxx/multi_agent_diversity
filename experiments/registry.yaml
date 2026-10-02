@@ -5926,23 +5926,23 @@ experiments:
   method_family: unified_team_prompt_search_v2
   parent_ids:
   - math_v2_a1_seed81_real_canary_v2
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: ZERO_API_PREPARATION_EFFICACY_UNVERIFIED
+  status: HOLD
+  scientific_status: NOT_EXECUTED_EFFICACY_UNEVALUATED
   implementation_commit: null
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_a1_seed81_pilot_v1.yaml
   report: reports/math_v2_token_accounting_repair_v2_20261002
-  classifier: RESERVATION_V2_PREEXECUTION
-  active_for_new_work: true
+  classifier: STOP_SCIENTIFIC_CONTRACT_AMENDMENT_REQUIRED
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   baseline_commit: 039dd93b07e2d686727ab5ee0bd580557729ca41
   authorization_consumed: false
   notes:
-  - User-authorized operational reservation policy; no efficacy-based adaptation.
-  - Fresh exact single-use authorization and source freeze required before dispatch.
-  - Only A1 Seed81; Pattern and Memory OFF; Test sealed.
+  - Canary PASS prerequisite unmet; zero Pilot attempts and zero Validation calls.
+  - Original provisional prep and manifest remain immutable and are not executable authorization.
+  - A scientific contract amendment and fresh attempt authorization are required before any new execution.
   unavailable:
     implementation_commit: Exact source will be recorded in the frozen manifest.
     execution_commit: No real transport yet.
@@ -5953,49 +5953,76 @@ experiments:
   method_family: unified_team_prompt_search_v2
   parent_ids:
   - math_v2_a1_seed81_real_canary_v2
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: ZERO_API_PREPARATION_EFFICACY_UNVERIFIED
-  implementation_commit: null
+  status: COMPLETED
+  scientific_status: OPERATIONAL_TRANSPORT_OBSERVED_EFFICACY_UNVERIFIED
+  implementation_commit: 9dc4768f49cae0016b09e315631e20e9076ab88a
   execution_commit: null
-  result_commit: null
+  result_commit: 7001d9bd1287885ffdae75b3802098c4f8c6b956
   manifest: experiments/manifests/math_v2_provider_error_mapping_repair_v1.yaml
   report: reports/math_v2_provider_error_mapping_repair_v1_20261002
   classifier: HTTP_ERROR_MAPPING_OPERATIONAL_REPAIR
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   baseline_commit: f7005c0da0670c308b3d4567d6847d1c31bf473f
   authorization_consumed: false
   notes:
-  - Operational repair 1 for installed SDK error mapping; scientific payload unchanged.
-  - One previously failed physical attempt remains permanently charged 7231 tokens.
+  - Frozen transport exercised by 16 successful physical calls in fresh Canary V3.
+  - SDK authentication and exact-body path observed; original failed HTTP status remains unknown.
   unavailable:
-    implementation_commit: Exact source pending gates.
-    execution_commit: Fresh attempt not executed.
-    result_commit: No efficacy observed.
+    execution_commit: Repair freeze only; execution recorded in child Canary V3.
 - experiment_id: math_v2_a1_seed81_real_canary_v3
   kind: REAL_CANARY
   era: BENCHMARK_GENERALIZATION
   method_family: unified_team_prompt_search_v2
   parent_ids:
   - math_v2_provider_error_mapping_repair_v1
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: ZERO_API_PREPARATION_EFFICACY_UNVERIFIED
-  implementation_commit: null
-  execution_commit: null
+  status: INVALID
+  scientific_status: INVALID_INCOMPLETE_CANARY
+  implementation_commit: 9dc4768f49cae0016b09e315631e20e9076ab88a
+  execution_commit: 9dc4768f49cae0016b09e315631e20e9076ab88a
   result_commit: null
   manifest: experiments/manifests/math_v2_a1_seed81_real_canary_v3.yaml
-  report: reports/math_v2_provider_error_mapping_repair_v1_20261002
-  classifier: HTTP_ERROR_MAPPING_OPERATIONAL_REPAIR
-  active_for_new_work: true
+  report: reports/math_v2_a1_seed81_real_canary_v3_20261002
+  classifier: MATH_REFERENCE_PARSER_DOMAIN_MISMATCH
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   baseline_commit: f7005c0da0670c308b3d4567d6847d1c31bf473f
+  authorization_consumed: true
+  notes:
+  - Single-use authorization consumed; aborted during initial-state materialization.
+  - 16 successful Solver calls, 8303 provider-reported tokens; no search opportunity or held-out call.
+  - Final-marker compliant response and its frozen Optimize reference trigger unsupported tuple guard.
+  - No answer correctness or scientific efficacy conclusion; no rerun authorized under this contract.
+  unavailable:
+    result_commit: Containing local immutable evidence commit; no efficacy.
+- experiment_id: math_v2_reference_parser_domain_audit_v1
+  kind: FORENSIC_AUDIT
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2
+  parent_ids:
+  - math_v2_a1_seed81_real_canary_v3
+  status: COMPLETED
+  scientific_status: HOLD_UNRESOLVED_CONTRACT
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_reference_parser_domain_audit_v1.yaml
+  report: reports/math_v2_reference_parser_domain_audit_v1_20261002
+  classifier: STOP_SCIENTIFIC_CONTRACT_AMENDMENT_REQUIRED
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  baseline_commit: 9dc4768f49cae0016b09e315631e20e9076ab88a
   authorization_consumed: false
   notes:
-  - Operational repair 1 for installed SDK error mapping; scientific payload unchanged.
-  - One previously failed physical attempt remains permanently charged 7231 tokens.
+  - Read-only Optimize reference representation and frozen evidence audit; no efficacy observed.
+  - 'Optimize150: 150 nonempty; 9 payload-guard rejects, including 6 comma-parentheses rejects.'
+  - Lexical support only; no comprehensive evaluator validity claim for the other 141 references.
+  - 'Accounting PASS: 8303 reported + 7231 fallback = 15534 charged; zero in-flight reservations.'
+  - Scientific amendment required; no parser, membership, method or provider execution change.
   unavailable:
-    implementation_commit: Exact source pending gates.
-    execution_commit: Fresh attempt not executed.
-    result_commit: No efficacy observed.
+    implementation_commit: Forensic report and governance only; production unchanged.
+    execution_commit: Zero-API audit, not a new experiment execution.
+    result_commit: Containing local evidence commit; no efficacy.
