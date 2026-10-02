@@ -128,7 +128,8 @@ def evaluate_team(rows,prompts,solver,benchmark,stage,writer):
 
 async def execute_validation(root,prep,run_root):
     payload,c,pilot_run,receipt=validate_validation(root,prep,require_authorized=True)
-    binding=MATHDomainBinding(root,c)
+    from ..benchmarks.math_domain_binding import execution_binding
+    binding=execution_binding(root,c)
     if binding.blockers(): raise SearchContractError('VALIDATION_BINDING_NOT_READY')
     budget=TokenLedger(root/c['token_ledger_directory'],task_sha256=c['task_authorization_sha256'])
     client=None;broker=None

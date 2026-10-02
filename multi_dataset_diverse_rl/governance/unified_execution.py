@@ -26,7 +26,7 @@ def consumption_path(root, scope):
 def bound_preflight(root, manifest):
     from ..benchmarks.math_execution import MATHExecutionBinding
     ref = manifest.get("execution_binding", {})
-    if ref.get("identity") not in {versions.MATH_EXECUTION_BINDING_VERSION, versions.MATH_AUTONOMOUS_EXECUTION_BINDING_VERSION, versions.MATH_DOMAIN_EXECUTION_BINDING_VERSION}:
+    if ref.get("identity") not in {versions.MATH_EXECUTION_BINDING_VERSION, versions.MATH_AUTONOMOUS_EXECUTION_BINDING_VERSION, versions.MATH_DOMAIN_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_EXECUTION_BINDING_VERSION}:
         raise SearchContractError("UNSUPPORTED_EXECUTION_BINDING")
     errors = validate_manifest_v2(root, manifest)
     if manifest.get("lifecycle", {}).get("status") != "PREEXECUTION_FROZEN":
@@ -35,19 +35,21 @@ def bound_preflight(root, manifest):
     if not path.is_relative_to(root.resolve()) or not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != ref["sha256"]:
         errors.append("EXECUTION_BINDING_HASH_MISMATCH")
         return {"gate": "HOLD", "blockers": errors, "provider_attempts": 0}
-    if ref["identity"] in {versions.MATH_AUTONOMOUS_EXECUTION_BINDING_VERSION, versions.MATH_DOMAIN_EXECUTION_BINDING_VERSION}:
+    if ref["identity"] in {versions.MATH_AUTONOMOUS_EXECUTION_BINDING_VERSION, versions.MATH_DOMAIN_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_EXECUTION_BINDING_VERSION}:
         from ..benchmarks.math_domain_binding import execution_binding
         binding = execution_binding(root, read_json(path))
     else:
         binding = MATHExecutionBinding(root, read_json(path))
     errors.extend(binding.blockers())
     c = binding.contract
+    current = c["identity"] == versions.MATH_V2_1_EXECUTION_BINDING_VERSION
     expected = {"benchmark_id": "math", "benchmark_protocol_id": c["benchmark_protocol_sha256"],
-        "method_family": "unified_team_prompt_search_v2", "method_identity": "unified_team_prompt_search_v2",
+        "method_family": versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION if current else "unified_team_prompt_search_v2",
+        "method_identity": versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION if current else "unified_team_prompt_search_v2",
         "search_engine_identity": "gepa_derived_team_candidate_exposure_v2",
         "search_acceptance_identity": "local_survival_team_admission_decoupled_v1",
-        "evidence_identity": "variable_pattern_capable_evidence_v1", "feasibility_identity": "variable_evidence_feasibility_v1",
-        "transition_identity": "common_safe_v1", "adaptive_gate_identity": "winner_only_shadow_v1",
+        "evidence_identity": versions.UNIFIED_FOCUSED_EVIDENCE_VERSION if current else "variable_pattern_capable_evidence_v1", "feasibility_identity": "variable_evidence_feasibility_v1",
+        "transition_identity": versions.UNIFIED_COMPETENCE_TRANSITION_VERSION if current else "common_safe_v1", "adaptive_gate_identity": "winner_only_shadow_v1",
         "pattern_identity": "null_pattern_v1", "memory_identity": "null_memory_v1", "mechanism_config": {},
         "global_stop_identity": "team_epoch_no_commit_v1", "seed": 81,
         "dataset_manifest_identity": c["canonical_manifest_sha256"], "split_identity": c["split_manifest_sha256"],
@@ -62,6 +64,8 @@ def bound_preflight(root, manifest):
             successful_provider_call_ceiling=c["provider_bounds"]["successful_provider_calls"],
             transport_attempt_ceiling=c["provider_bounds"]["transport_attempts"]),
         "access": dict(search_access="frozen_search", shadow_access="frozen_adaptive_gate", validation_access="not_authorized", test_access="sealed")}
+    if current:
+        expected["initial_competence_binding"] = c["initial_competence_binding"]
     if any(manifest.get(k) != v for k, v in expected.items()):
         errors.append("MANIFEST_EXECUTION_BINDING_MISMATCH")
     if manifest.get("authorization", {}).get("real_api_authorized") is not False:
@@ -165,6 +169,8 @@ def execution_scope(manifest, contract):
             total_authorization=30_000_000, task_sha256=contract["task_authorization_sha256"],
             ledger_directory=contract["token_ledger_directory"],
             validation_metadata_sha256=contract["validation_accounting_metadata_sha256"])
+        if "continuation_authorization_sha256" in contract:
+            scope["accounting"]["continuation_authorization_sha256"] = contract["continuation_authorization_sha256"]
     return scope
 
 
@@ -276,7 +282,7 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
     from ..benchmarks.math_execution import MATHExecutionBinding
     binding_path = binding_path or versions.MATH_EXECUTION_BINDING_PATH
     contract = read_json(root / binding_path)
-    if contract["identity"] in {versions.MATH_AUTONOMOUS_EXECUTION_BINDING_VERSION, versions.MATH_DOMAIN_EXECUTION_BINDING_VERSION}:
+    if contract["identity"] in {versions.MATH_AUTONOMOUS_EXECUTION_BINDING_VERSION, versions.MATH_DOMAIN_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_EXECUTION_BINDING_VERSION}:
         from ..benchmarks.math_domain_binding import execution_binding
         b = execution_binding(root, contract)
     else:
@@ -307,6 +313,8 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
         transition_identity="transition_policy", adaptive_gate_identity="adaptive_gate_policy", pattern_identity="pattern_policy", memory_identity="memory_policy",
         search_acceptance_identity="search_acceptance_policy", evidence_identity="evidence_policy", feasibility_identity="feasibility_policy")
     manifest.update({k: getattr(method, field) for k, field in mapping.items()})
+    if "initial_competence_binding" in contract:
+        manifest["initial_competence_binding"] = contract["initial_competence_binding"]
     manifest["global_stop_identity"] = method.global_stop.identity
     manifest["preregistration_identity"] = canonical_sha256({k: v for k, v in manifest.items() if k not in {"lifecycle", "authorization"}})
     return manifest

@@ -308,6 +308,27 @@ inherited. Pattern/Memory are IMPLEMENTED_DEFAULT_OFF, efficacy unverified.
   marker failure still aborts without regeneration. Only evaluator semantics
   change; responsibility, aggregation, scheduling, GEPA and admission do not.
 
+## V2.1 MATH fresh binding
+
+`MATH_V2_1_EXECUTION_BINDING_V1` binds the V2.1 factory directly to the
+benchmark-wide `MATH_ANSWER_DOMAIN_V2` / `MATH_EQUIVALENCE_V2` amendment and
+`MATH_SCORABLE_REFERENCE_V2` eligibility. Historical V2 execution bindings
+are evidence only and are not consulted for admission. Evaluator settings,
+source bytes, generic initial prompts, equal aggregation and numeric search
+budgets remain frozen. Full-source reference preparation and any new split
+freeze precede real execution; active reference defects abort before dispatch.
+
+Initial member competence is the aggregation-independent binary correct count
+on the complete frozen Optimize150 membership, using the same V2 evaluator as
+candidate Full. Its ordered support hash, metric, evaluator and initial state
+are persisted once, survive commits, and are never rebased. Allocation traces
+include prior opportunity counts and prior responsibility-observation exposure
+counts for every member. Commit gains carry the Full support identity; only
+identical support/metric/evaluator deltas may be summed. Exposure telemetry has
+no allocation or stopping read point. Canary retains its separately declared
+first-parent-epoch/first-commit phase boundary; Pilot uses the unchanged global
+scientific stopper. Neither phase forces round-robin.
+
 ## Authority map
 
 See AGENTS.md for the complete authority hierarchy; method.md is a conceptual

@@ -74,4 +74,7 @@ class MATHDomainBinding(MATHAutonomousBinding):
 
 
 def execution_binding(root,contract):
+    if contract['identity']==versions.MATH_V2_1_EXECUTION_BINDING_VERSION:
+        from .math_v21_binding import MATHV21Binding
+        return MATHV21Binding(root,contract)
     return MATHDomainBinding(root,contract) if contract['identity']==versions.MATH_DOMAIN_EXECUTION_BINDING_VERSION else MATHAutonomousBinding(root,contract)

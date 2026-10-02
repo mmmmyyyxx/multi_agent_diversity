@@ -117,13 +117,25 @@ async def execute_search(root, prep, run_root, payload):
         broker.prompt_observer = reserve.observe
         solver = BenchmarkSolver(binding.benchmark(),broker)
         composed = binding.compose(arm="A1",seed=81,solver=solver,reflection=ReflectionProvider(broker),pattern_provider=None,run_root=run_root)
+        # A naturally empty trajectory still needs a durable hashable receipt.
+        with (run_root / "trajectory_private.jsonl").open("xb") as stream:
+            stream.flush()
+            os.fsync(stream.fileno())
         composed.execution_observer = lambda stage,data:append_jsonl(run_root / "trajectory_private.jsonl",{"stage":stage,**plain(data)})
         composed.state.initialize()
         atomic_write_json(run_root / "initial_state_private.json",plain(composed.state.snapshot()))
+        if "initial_competence_binding" in c:
+            initial = composed.state.snapshot()
+            if initial.diagnostics["evaluation_support_identity"] != c["initial_competence_binding"]["support_identity"]:
+                raise OperationalAbort("INITIAL_COMPETENCE_SUPPORT_MISMATCH")
+            atomic_write_json(run_root / "initial_competence_floor.json",dict(binding=c["initial_competence_binding"],
+                state_id=initial.team_state_id, member_scores=initial.member_scores))
         result = await composed.run(max_opportunities=c["provider_bounds"]["max_opportunities"])
         accepted = {"CANARY_PARENT_EPOCH_COMPLETE","NO_FEASIBLE_OPPORTUNITY"} if c["execution_phase"]=="canary" else {"SATURATION_REACHED","NO_FEASIBLE_OPPORTUNITY"}
         if result.stop_reason not in accepted:
             raise OperationalAbort("NONSCIENTIFIC_STOP_"+result.stop_reason)
+        if c.get("method_identity") == "unified_team_prompt_search_v2_1" and c["execution_phase"] == "canary" and not result.trace:
+            raise OperationalAbort("CANARY_NO_COMPLETE_PRODUCTION_OPPORTUNITY")
         final = composed.state.snapshot()
         atomic_write_json(run_root / "final_team_private.json",dict(prompts=final.member_prompts,state_id=final.team_state_id))
         atomic_write_json(run_root / "final_state_private.json",plain(final))

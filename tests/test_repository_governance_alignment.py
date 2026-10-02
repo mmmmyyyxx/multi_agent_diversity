@@ -271,13 +271,22 @@ def test_canary_abort_does_not_unlock_formal_or_heldout():
     if next_attempt is None:
         assert frontier['real_execution_ready'] is False
         if frontier['current_method'] == 'unified_team_prompt_search_v2_1':
-            assert frontier['current_canary_status'] == 'METHOD_SEMANTIC_CONTRACT_REFREEZE_REQUIRED'
-            assert frontier['autonomous_authorization_status'] == 'PRIOR_SCOPES_DO_NOT_AUTHORIZE_V2_1'
+            if frontier['autonomous_authorization_status'] == 'PRIOR_SCOPES_DO_NOT_AUTHORIZE_V2_1':
+                assert frontier['current_canary_status'] == 'METHOD_SEMANTIC_CONTRACT_REFREEZE_REQUIRED'
+            else:
+                assert frontier['autonomous_authorization_status'] in {
+                    'V2_1_CONTINUATION_RECEIVED_EXACT_SCOPE_PENDING', 'V2_1_CONTINUATION_EXACT_SCOPES_CLOSED'}
+                current=next(r for r in registry['experiments'] if r['experiment_id']==frontier['current_experiment'])
+                manifest=load_yaml(ROOT/current['manifest'])
+                assert manifest['method_identity']=='unified_team_prompt_search_v2_1'
+                assert manifest['execution_binding']['identity']=='MATH_V2_1_EXECUTION_BINDING_V1'
+                assert manifest['authorization']['real_api_authorized'] is False
         else:
             assert frontier['current_canary_status'] == 'STOP_SCIENTIFIC_CONTRACT_AMENDMENT_REQUIRED'
             assert frontier['autonomous_authorization_status'] == 'HALTED_BY_NON_OPERATIONAL_FAILURE'
     else:
-        assert next_attempt.startswith('math_unified_v2_A1_seed81_canary_attempt')
+        prefix='math_unified_v2_1_A1_seed81_canary_attempt' if frontier['current_method']=='unified_team_prompt_search_v2_1' else 'math_unified_v2_A1_seed81_canary_attempt'
+        assert next_attempt.startswith(prefix)
     assert frontier['formal_a1_ready'] is False
     assert frontier['formal_a1_authorized'] is False
     assert frontier['real_api_authorized'] is False

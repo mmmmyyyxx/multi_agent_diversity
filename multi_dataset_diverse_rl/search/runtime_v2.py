@@ -48,7 +48,9 @@ class V2OpportunityBuilder(OpportunityBuilder):
             search_budget={"metric_calls":self.search_metric_budget},
             evaluation_plan={"max_promoted":2, "evidence_universe":rows,
                              "evidence_audit":audit, "v2_candidate_contract":True,
-                             **({"allocation_failure_counts":{m:history.failure_counts.get(m, 0) for m in rows_by_member}}
+                             **({"allocation_failure_counts":{m:history.failure_counts.get(m, 0) for m in rows_by_member},
+                                 "prior_opportunity_counts":{m:history.target_counts.get(m, 0) for m in rows_by_member},
+                                 "prior_exposure_counts":{m:update_index for m in rows_by_member}}
                                 if self.evidence.identity == versions.UNIFIED_FOCUSED_EVIDENCE_VERSION else {})})
 
 

@@ -78,7 +78,11 @@ class BinaryTeamStateStore:
             member_scores=tuple(float(sum(o.member_success[i] for o in observations)) for i in range(5)),
             team_scores={"vote_correct_count": float(sum(s.vote_correct for s in states))},
             residuals=tuple(s.question_hash for s in states if not s.vote_correct),
-            diagnostics={**state.diagnostics, "raw_profiles": tuple(self.profiles[i] for i in range(5))})
+            diagnostics={**state.diagnostics, "raw_profiles": tuple(self.profiles[i] for i in range(5)),
+                **({"evaluation_support_identity":hashlib.sha256(json.dumps(
+                    [e.item.input_id for e in self.examples],separators=(",", ":")).encode()).hexdigest(),
+                    "member_metric":"binary_correct_count", "evaluator_identity":getattr(self.benchmark,"evaluator_identity",None)}
+                   if self.freeze_initial_competence else {})})
 
     def restore(self, snapshot):
         self.prompts = snapshot.member_prompts

@@ -12,7 +12,7 @@ method_identity: unified_team_prompt_search_v2_1
 current_method: unified_team_prompt_search_v2_1
 current_implementation: Versioned method semantic contract; benchmark-neutral production
   composition; zero-API audit
-current_experiment: unified_semantic_contract_v2_1
+current_experiment: math_v2_1_preexecution_freeze_v1
 current_benchmark_suite:
 - math
 - ifbench
@@ -35,18 +35,18 @@ last_canary_milestone: math_v2_a1_seed81_real_canary_v3
 current_canary_status: METHOD_SEMANTIC_CONTRACT_REFREEZE_REQUIRED
 formal_a1_ready: false
 formal_a1_authorized: false
-current_execution_blocker: Fresh V2.1 benchmark binding, source/preexecution freeze
-  and explicit attempt authorization required.
+current_execution_blocker: Fresh V2.1 zero-API gates and source/preexecution freeze
+  pending.
 next_canary_milestone: null
 next_canary_attempt_id: null
-last_autonomous_milestone: math_v2_answer_domain_amendment_v2
+last_autonomous_milestone: math_v2_1_answer_domain_amendment_v1
 autonomous_user_authorization_received: true
 autonomous_token_authorization: 30000000
 autonomous_tokens_consumed: 15534
 autonomous_tokens_remaining: 29984466
 token_accounting_policy: RESERVATION_V2
 prior_accounting_stop_resolution: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2
-autonomous_authorization_status: PRIOR_SCOPES_DO_NOT_AUTHORIZE_V2_1
+autonomous_authorization_status: V2_1_CONTINUATION_RECEIVED_EXACT_SCOPE_PENDING
 ```
 
 ## Experiment and engineering DAG
@@ -79,6 +79,10 @@ flowchart TD
     n198["math_v2_preexecution_freeze_v1_4<br/>PREEXECUTION_FREEZE<br/>PREPARED_NOT_EXECUTED"]
     n199["math_v2_a1_seed81_real_canary_v4<br/>REAL_CANARY<br/>PREPARED_NOT_EXECUTED"]
     n200["math_v2_a1_seed81_pilot_v2<br/>PILOT<br/>PREPARED_NOT_EXECUTED"]
+    n202["math_v2_1_answer_domain_amendment_v1<br/>BENCHMARK_MIGRATION<br/>PREPARED_NOT_EXECUTED"]
+    n203["math_v2_1_preexecution_freeze_v1<br/>PREEXECUTION_FREEZE<br/>PREPARED_NOT_EXECUTED"]
+    n204["math_v2_1_a1_seed81_real_canary_v1<br/>REAL_CANARY<br/>PREPARED_NOT_EXECUTED"]
+    n205["math_v2_1_a1_seed81_pilot_v1<br/>PILOT<br/>PREPARED_NOT_EXECUTED"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -356,6 +360,11 @@ flowchart TD
   n198 -->|derived_from| n199
   n199 -->|derived_from| n200
   n198 -->|derived_from| n201
+  n201 -->|derived_from| n202
+  n197 -->|derived_from| n202
+  n202 -->|derived_from| n203
+  n203 -->|derived_from| n204
+  n204 -->|derived_from| n205
 ```
 
 ## Archived branches and unresolved evidence

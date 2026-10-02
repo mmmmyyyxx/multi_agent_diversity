@@ -382,7 +382,8 @@
             "MATH_EXECUTION_BINDING_V1",
             "MATH_EXECUTION_BINDING_V1_2",
             "MATH_EXECUTION_BINDING_V1_3",
-            "MATH_EXECUTION_BINDING_V1_4"
+            "MATH_EXECUTION_BINDING_V1_4",
+            "MATH_V2_1_EXECUTION_BINDING_V1"
           ]
         },
         "path": {
@@ -398,6 +399,56 @@
         "identity",
         "path",
         "sha256"
+      ],
+      "additionalProperties": false
+    },
+    "initial_competence_binding": {
+      "type": "object",
+      "properties": {
+        "identity": {
+          "const": "MATH_INITIAL_COMPETENCE_OPTIMIZE_V2_1"
+        },
+        "role": {
+          "const": "optimize"
+        },
+        "count": {
+          "const": 150
+        },
+        "metric": {
+          "const": "binary_correct_count"
+        },
+        "evaluator": {
+          "const": "MATH_EQUIVALENCE_V2"
+        },
+        "aggregation_independent": {
+          "const": true
+        },
+        "split_identity": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "support_identity": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "candidate_support": {
+          "const": "same_complete_optimize"
+        },
+        "immutable": {
+          "const": true
+        }
+      },
+      "required": [
+        "identity",
+        "role",
+        "count",
+        "metric",
+        "evaluator",
+        "aggregation_independent",
+        "split_identity",
+        "support_identity",
+        "candidate_support",
+        "immutable"
       ],
       "additionalProperties": false
     }
@@ -757,6 +808,43 @@
                 "const": false
               }
             }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "execution_binding"
+        ],
+        "properties": {
+          "execution_binding": {
+            "properties": {
+              "identity": {
+                "const": "MATH_V2_1_EXECUTION_BINDING_V1"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "initial_competence_binding",
+          "solver_output_interface_identity",
+          "parser_identity"
+        ],
+        "properties": {
+          "method_identity": {
+            "const": "unified_team_prompt_search_v2_1"
+          },
+          "method_family": {
+            "const": "unified_team_prompt_search_v2_1"
+          },
+          "solver_output_interface_identity": {
+            "const": "MATH_SOLVER_INTERFACE_V2"
+          },
+          "parser_identity": {
+            "const": "MATH_PAYLOAD_PARSER_V2"
           }
         }
       }
