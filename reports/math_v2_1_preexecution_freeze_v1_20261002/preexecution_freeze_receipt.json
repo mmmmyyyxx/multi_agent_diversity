@@ -1,0 +1,76 @@
+{
+  "manifest_receipts": {
+    "math_v2_1_a1_seed81_pilot_v1": {
+      "manifest_sha256": "afa1e07aec0ad62aa4b8ca73696f7abc068d0a34c1c38316e4d55f888a1bb1b3",
+      "preflight": {
+        "benchmark_id": "math",
+        "binding_sha256": "f519ed888801dfc5f9b48f0d653daeb3a5347a39575f1b1d6f73c7e9f11203d2",
+        "blockers": [],
+        "gate": "CANARY_READY_NOT_AUTHORIZED",
+        "provider_attempts": 0,
+        "readiness_identity": "MATH_RUNTIME_READINESS_V1",
+        "ready_for_authorization": true,
+        "real_api_authorized": false,
+        "test_calls": 0,
+        "validation_calls": 0
+      },
+      "preregistration_identity": "379361263c1ae90d156b145063d39ba0d6da5046c27aee9d2fae6486192c58fc",
+      "source_sha": "c7b56c425565dd2438a51adce94add7f2eb77df6"
+    },
+    "math_v2_1_a1_seed81_real_canary_v1": {
+      "manifest_sha256": "66400d54a13f62b03ed0ec2886ef15b1033691e4fc9a58439aaf5504f6b44768",
+      "preflight": {
+        "benchmark_id": "math",
+        "binding_sha256": "c451b3d30c77bc3efab36c1bf0837afbcf0872079e0a43e394515ec510dd1d2d",
+        "blockers": [],
+        "gate": "CANARY_READY_NOT_AUTHORIZED",
+        "provider_attempts": 0,
+        "readiness_identity": "MATH_RUNTIME_READINESS_V1",
+        "ready_for_authorization": true,
+        "real_api_authorized": false,
+        "test_calls": 0,
+        "validation_calls": 0
+      },
+      "preregistration_identity": "f4acb9517c1cc3b46aa7d5559f963933b022d2b2c0a329ca9a0a64860633ac75",
+      "source_sha": "c7b56c425565dd2438a51adce94add7f2eb77df6"
+    },
+    "math_v2_1_answer_domain_amendment_v1": {
+      "manifest_sha256": "91756bc9c51b2556c5ffe02c68e11f434aa9d6dfed0318c76bb09576afdc1224",
+      "preflight": {
+        "benchmark_id": "math",
+        "binding_sha256": "c451b3d30c77bc3efab36c1bf0837afbcf0872079e0a43e394515ec510dd1d2d",
+        "blockers": [],
+        "gate": "CANARY_READY_NOT_AUTHORIZED",
+        "provider_attempts": 0,
+        "readiness_identity": "MATH_RUNTIME_READINESS_V1",
+        "ready_for_authorization": true,
+        "real_api_authorized": false,
+        "test_calls": 0,
+        "validation_calls": 0
+      },
+      "preregistration_identity": "b4e090bdcdeba23f402f9e74ffa72a4800c6b1999b5a0897e72e72acc5cdea2a",
+      "source_sha": "c7b56c425565dd2438a51adce94add7f2eb77df6"
+    },
+    "math_v2_1_preexecution_freeze_v1": {
+      "manifest_sha256": "d0d6c6c630cd18b4e96a747a55db59d85264c041ad89ff76b2759a3960b027b2",
+      "preflight": {
+        "benchmark_id": "math",
+        "binding_sha256": "c451b3d30c77bc3efab36c1bf0837afbcf0872079e0a43e394515ec510dd1d2d",
+        "blockers": [],
+        "gate": "CANARY_READY_NOT_AUTHORIZED",
+        "provider_attempts": 0,
+        "readiness_identity": "MATH_RUNTIME_READINESS_V1",
+        "ready_for_authorization": true,
+        "real_api_authorized": false,
+        "test_calls": 0,
+        "validation_calls": 0
+      },
+      "preregistration_identity": "eb1b0ebac21d8caed5e9bae9bde3a7e22c3b54da106161c12189b46968611fc8",
+      "source_sha": "c7b56c425565dd2438a51adce94add7f2eb77df6"
+    }
+  },
+  "real_api_calls": 0,
+  "scientific_efficacy_verified": false,
+  "source_sha": "c7b56c425565dd2438a51adce94add7f2eb77df6",
+  "status": "V2_1_MATH_PREEXECUTION_FROZEN"
+}
