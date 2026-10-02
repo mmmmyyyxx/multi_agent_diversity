@@ -169,19 +169,42 @@ class BenchmarkSolver:
 
     def solve(self, prompt, item, *, stage, split):
         result = self._request(prompt, item, stage=stage, split=split)
-        if not self.benchmark.parse_member_output(result["text"], item).valid:
+        if hasattr(self.benchmark,"final_payload"):
+            if self.benchmark.final_payload(result["text"]) is None:
+                self.broker.abort("SOLVER_INVALID_RESPONSE_NO_REGENERATION")
+        elif not self.benchmark.parse_member_output(result["text"], item).valid:
             self.broker.abort("SOLVER_INVALID_RESPONSE_NO_REGENERATION")
         return result["text"]
 
     def evaluate(self, prompt, example):
+        if hasattr(self.benchmark,"require_scorable"):
+            try:
+                return self._evaluate(prompt,example)
+            except Exception as exc:
+                # Pinned GEPA catches ordinary exceptions in its loop. Real
+                # accounting scopes must terminate on evaluator/runtime faults.
+                reason=str(exc) if isinstance(exc,SearchContractError) else 'MATH_LOCAL_EVALUATION_FAILURE_'+type(exc).__name__
+                self.broker.abort(reason)
+        return self._evaluate(prompt,example)
+
+    def _evaluate(self, prompt, example):
+        if hasattr(self.benchmark,"require_scorable"):
+            self.benchmark.require_scorable(example.gold)
         item = BenchmarkInput(example.example_id, example.input_payload, self.benchmark.output_contract,
             benchmark_id=self.benchmark.benchmark_id)
+        if hasattr(self.benchmark,'protocol'):
+            from ..benchmarks.protocols import protocol_input
+            item=protocol_input(self.benchmark.benchmark_id,example.example_id,{'problem':example.input_payload},
+                self.benchmark.output_contract,protocol=self.benchmark.protocol)
         result = self._request(prompt, item, stage="gepa_local", split="optimize")
         parsed = self.benchmark.parse_member_output(result["text"], item)
-        if not parsed.valid:
+        if hasattr(self.benchmark,"final_payload"):
+            if self.benchmark.final_payload(result["text"]) is None:
+                self.broker.abort("SOLVER_INVALID_RESPONSE_NO_REGENERATION")
+        elif not parsed.valid:
             self.broker.abort("SOLVER_INVALID_RESPONSE_NO_REGENERATION")
         return LocalSolverObservation(parsed.answer, result["text"], self.benchmark.score_member_output(parsed, example.gold) == 1,
-            True, input_tokens=result["input_tokens"], output_tokens=result["output_tokens"], provider_called=result["provider_called"])
+            parsed.valid, input_tokens=result["input_tokens"], output_tokens=result["output_tokens"], provider_called=result["provider_called"])
 
 
 class ReflectionProvider:

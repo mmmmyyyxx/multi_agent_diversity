@@ -207,7 +207,8 @@ class ExperimentSplitReader:
             raise SearchContractError("EXPERIMENT_MANIFEST_IDENTITY_MISMATCH")
         self.manifest = json.loads(path.read_bytes())
         from ..versions import MATH_EXPERIMENT_SPLIT_VERSION, MATH_REFERENCE_VALIDITY_VERSION, MATH_REFERENCE_EXTRACTOR_VERSION
-        if expected_protocol not in {PROTOCOL, MATH_EXPERIMENT_SPLIT_VERSION} or (expected_protocol != PROTOCOL and benchmark != "math"):
+        from ..versions import MATH_SCORABLE_SPLIT_VERSION
+        if expected_protocol not in {PROTOCOL, MATH_EXPERIMENT_SPLIT_VERSION, MATH_SCORABLE_SPLIT_VERSION} or (expected_protocol != PROTOCOL and benchmark != "math"):
             raise SearchContractError("EXPERIMENT_SPLIT_POLICY_MISMATCH")
         if (self.manifest["benchmark_id"] != benchmark or self.manifest["protocol"] != expected_protocol
                 or self.manifest["status"] != "FROZEN" or self.manifest["access_policy"] != ACCESS):
@@ -224,6 +225,14 @@ class ExperimentSplitReader:
         if self.manifest["membership_file"] != member_path.name or file_hash(member_path) != self.manifest["membership_sha256"]:
             raise SearchContractError("EXPERIMENT_MEMBERSHIP_MISMATCH")
         self.members = read_jsonl(member_path)
+        if expected_protocol == MATH_SCORABLE_SPLIT_VERSION:
+            from .math_domain_v2 import SETTINGS
+            if (self.manifest.get("reference_validity_policy") != "MATH_SCORABLE_REFERENCE_V2"
+                    or self.manifest.get("verify_settings_sha256") != digest(SETTINGS)
+                    or self.manifest.get("invalid_reference_counts_by_role") != dict.fromkeys(ROLES,0)
+                    or len(self.members) != 1050
+                    or any(r.get("reference_scorable") is not True or len(r.get("reference_sha256","")) != 64 for r in self.members)):
+                raise SearchContractError("MATH_REFERENCE_POLICY_MISMATCH")
 
     def metadata(self, role):
         if role not in ROLES:
@@ -257,6 +266,12 @@ class ExperimentSplitReader:
                         raise SearchContractError("EXPERIMENT_SOURCE_ROW_MISMATCH")
                     if self.manifest["protocol"] == MATH_EXPERIMENT_SPLIT_VERSION and not str(row.get("reference_final_answer") or "").strip():
                         raise SearchContractError("REFERENCE_INVALID_NOT_SOLVER_WRONG")
+                    if self.manifest["protocol"] == "benchmark_experiment_split_v2":
+                        reference=row.get("reference_final_answer")
+                        if not isinstance(reference,str) or hashlib.sha256(reference.encode()).hexdigest()!=expected["reference_sha256"]:
+                            raise SearchContractError("REFERENCE_UNSCORABLE")
+                        from .math_domain_v2 import require_scorable
+                        require_scorable(reference)
                     result[row["stable_example_id"]] = row
         if len(result) != len(selected) or len(selected) != self.manifest["counts"][role]:
             raise SearchContractError("EXPERIMENT_SPLIT_COUNT_MISMATCH")

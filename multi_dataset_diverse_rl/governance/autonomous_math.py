@@ -8,7 +8,7 @@ import os
 from .token_accounting import TokenLedger, OperationalAbort, serialized_request
 from .unified_execution import consumption_path, inventory
 from ..persistence.durable_io import atomic_write_json, append_jsonl, read_json
-from ..benchmarks.math_autonomous import MATHAutonomousBinding
+from ..benchmarks.math_domain_binding import execution_binding
 from ..benchmarks.math_accounting_prep import ValidationReserve
 from ..benchmarks.math import MATHBenchmarkAdapter
 from ..search.provider_runtime import RequestBroker, BenchmarkSolver, ReflectionProvider
@@ -99,7 +99,7 @@ def initial_prompts(root, contract):
 
 async def execute_search(root, prep, run_root, payload):
     c = read_json(root / payload["manifest"]["execution_binding"]["path"])
-    binding = MATHAutonomousBinding(root, c)
+    binding = execution_binding(root, c)
     if binding.blockers():
         raise SearchContractError("AUTONOMOUS_BINDING_NOT_READY")
     budget = TokenLedger(root / c["token_ledger_directory"], task_sha256=c["task_authorization_sha256"])
@@ -115,7 +115,7 @@ async def execute_search(root, prep, run_root, payload):
             reserve_reader=reserve.remaining,ledger_writer=lambda r:append_jsonl(run_root / "ledger.jsonl",r),
             raw_writer=lambda r:append_jsonl(run_root / "provider_trace_private.jsonl",r))
         broker.prompt_observer = reserve.observe
-        solver = BenchmarkSolver(MATHBenchmarkAdapter(),broker)
+        solver = BenchmarkSolver(binding.benchmark(),broker)
         composed = binding.compose(arm="A1",seed=81,solver=solver,reflection=ReflectionProvider(broker),pattern_provider=None,run_root=run_root)
         composed.execution_observer = lambda stage,data:append_jsonl(run_root / "trajectory_private.jsonl",{"stage":stage,**plain(data)})
         composed.state.initialize()

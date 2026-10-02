@@ -1,5 +1,30 @@
 schema_version: invariant_registry_v1
 invariants:
+- id: INV-MATH-ANSWER-DOMAIN-002
+  description: Versioned pinned mathematical payload parsing and directed correctness with strict marker extraction and container negative controls.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/benchmarks/math_domain_v2.py
+  - multi_dataset_diverse_rl/benchmarks/math_domain_worker.py
+  tests:
+  - tests/test_math_answer_domain_v2.py
+  failure_refs:
+  - FAIL-MATH-REFERENCE-PARSER-DOMAIN-MISMATCH
+  critical: true
+  status: ACTIVE
+- id: INV-MATH-SCORABLE-REFERENCE-002
+  description: Isolated whole-source scorability eligibility precedes unchanged stratification; unscorable references fail before provider dispatch.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/benchmarks/math_domain_prep.py
+  - multi_dataset_diverse_rl/data_preparation/math_scorable_split.py
+  - multi_dataset_diverse_rl/benchmarks/math_domain_binding.py
+  tests:
+  - tests/test_math_answer_domain_v2.py
+  failure_refs:
+  - FAIL-MATH-REFERENCE-PARSER-DOMAIN-MISMATCH
+  critical: true
+  status: ACTIVE
 - id: INV-ID-001
   description: Runtime identities and frozen constants have one authority.
   authority: docs/archive/specs/historical_current_spec.md

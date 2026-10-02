@@ -133,17 +133,17 @@ def test_memory_write_contract(event):
     assert len(json.dumps(view, sort_keys=True)) <= 1200
 
 
-def run_fake_arm(tmp_path, arm):
+def run_fake_arm(tmp_path, arm, *, adapter=None, gold="1", wrong="2"):
     c = contract()
     binding = MATHExecutionBinding(ROOT, c)
     assert not binding.blockers()
     team = json.loads((ROOT / c["initial_team_path"]).read_bytes())
     prompts = tuple(m["prompt"] for m in team["members"])
-    adapter = MATHBenchmarkAdapter()
+    adapter = adapter or MATHBenchmarkAdapter()
     examples = tuple(CorrectnessExample(BenchmarkInput(f"q{i}", f"Synthetic math fixture {i}: compute one plus zero.",
-                       adapter.output_contract, benchmark_id="math"), "1") for i in range(6))
+                       adapter.output_contract, benchmark_id="math"), gold) for i in range(6))
     shadow = tuple(CorrectnessExample(BenchmarkInput(f"gate{i}", f"Private gate synthetic fixture {i}: compute one plus zero.",
-                     adapter.output_contract, benchmark_id="math"), "1") for i in range(300))
+                     adapter.output_contract, benchmark_id="math"), gold) for i in range(300))
     public_invocations = []
     requests = []
     accounting = []
@@ -169,7 +169,7 @@ def run_fake_arm(tmp_path, arm):
                 correct = i >= 2
             else:
                 raise AssertionError("unexpected fake proposal")
-            return dict(text="Synthetic reasoning.\nFINAL_ANSWER: " + ("1" if correct else "2"), input_tokens=2, output_tokens=2)
+            return dict(text="Synthetic reasoning.\nFINAL_ANSWER: " + (gold if correct else wrong), input_tokens=2, output_tokens=2)
         if len(req["messages"]) == 2:  # Real Pattern provider projection/schema parser.
             data = json.loads(req["messages"][1]["content"])
             assert all(r["source_split"] == "optimize" for r in data["evidence_rows"])

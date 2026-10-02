@@ -1,7 +1,7 @@
 """Scientific contracts, independent of data provenance and split readiness."""
 from __future__ import annotations
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, replace
 import hashlib
 import json
 from typing import Mapping
@@ -109,10 +109,19 @@ PROTOCOLS = {
 }
 
 
+MATH_PROTOCOL_V2 = replace(PROTOCOLS["math"],
+    task_contract_id="MATH_ANSWER_DOMAIN_V2", system_contract_id="MATH_VERIFY_SETTINGS_V2",
+    parser_contract_id="MATH_PAYLOAD_PARSER_V2", member_metric_id="MATH_EQUIVALENCE_V2",
+    team_metric_id="MATH_EQUIVALENCE_V2",
+    member_success_semantics="Scorable reference required; gold-first pinned strict verify; prediction parse failure is invalid/wrong")
+
+
 def protocol_input(benchmark_id: str, input_id: str, row: Mapping[str, object],
-                   output_contract: str) -> BenchmarkInput:
+                   output_contract: str, *, protocol: BenchmarkProtocolSpec | None = None) -> BenchmarkInput:
     """Allowlist projection. Evaluator fields never reach solver/aggregator inputs."""
-    protocol = PROTOCOLS[benchmark_id]
+    protocol = protocol or PROTOCOLS[benchmark_id]
+    if protocol.benchmark_id != benchmark_id:
+        raise SearchContractError('BENCHMARK_PROTOCOL_IDENTITY_MISMATCH')
     field, = protocol.public_solver_fields
     problem = row.get(field)
     if not isinstance(problem, str) or not problem.strip():

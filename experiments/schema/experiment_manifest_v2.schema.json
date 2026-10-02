@@ -371,7 +371,7 @@
       "type": "object",
       "properties": {
         "identity": {
-          "enum": ["MATH_EXECUTION_BINDING_V1", "MATH_EXECUTION_BINDING_V1_2", "MATH_EXECUTION_BINDING_V1_3"]
+          "enum": ["MATH_EXECUTION_BINDING_V1", "MATH_EXECUTION_BINDING_V1_2", "MATH_EXECUTION_BINDING_V1_3", "MATH_EXECUTION_BINDING_V1_4"]
         },
         "path": {
           "type": "string",
@@ -422,6 +422,10 @@
   ],
   "additionalProperties": false,
   "allOf": [
+    {
+      "if": {"required": ["execution_binding"], "properties": {"execution_binding": {"properties": {"identity": {"const": "MATH_EXECUTION_BINDING_V1_4"}}}}},
+      "then": {"required": ["solver_output_interface_identity", "parser_identity"], "properties": {"solver_output_interface_identity": {"const": "MATH_SOLVER_INTERFACE_V2"}, "parser_identity": {"const": "MATH_PAYLOAD_PARSER_V2"}}}
+    },
     {
       "if": {"required": ["execution_binding"], "properties": {"execution_binding": {"properties": {"identity": {"enum": ["MATH_EXECUTION_BINDING_V1_2", "MATH_EXECUTION_BINDING_V1_3"]}}}}},
       "then": {"required": ["solver_output_interface_identity", "parser_identity"], "properties": {"solver_output_interface_identity": {"const": "MATH_SOLVER_INTERFACE_V2"}, "parser_identity": {"const": "math_verify_no_fallback_v1"}}}

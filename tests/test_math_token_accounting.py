@@ -307,14 +307,14 @@ def test_validation_accounting_metadata_is_content_free_and_search_denied():
 
 
 @pytest.mark.parametrize("phase",["canary","pilot"])
-def test_actual_public_gepa_with_accounting_and_phase_persistence(tmp_path,monkeypatch,phase):
+def test_actual_public_gepa_with_accounting_and_phase_persistence(tmp_path,monkeypatch,phase,*,binding_path=None,adapter=None):
     from multi_dataset_diverse_rl.governance import unified_execution as gov
     from multi_dataset_diverse_rl.governance import autonomous_math as execution
     from multi_dataset_diverse_rl.benchmarks.math_execution import MATHExecutionBinding
     from multi_dataset_diverse_rl.benchmarks.math import MATHBenchmarkAdapter
     from multi_dataset_diverse_rl.search.binary_runtime import CorrectnessExample
     from multi_dataset_diverse_rl.search.benchmark import BenchmarkInput
-    c=json.loads((ROOT/f'experiments/execution_bindings/math_v2_accounting_{phase}_v1_3.json').read_bytes())
+    c=json.loads((ROOT/(binding_path or f'experiments/execution_bindings/math_v2_accounting_{phase}_v1_3.json')).read_bytes())
     # Isolate every test ledger, namespace, authorization and run.
     c={**c,'token_ledger_directory':(tmp_path/'budget').relative_to(ROOT).as_posix()}
     binding=tmp_path/'binding.json'
@@ -328,7 +328,7 @@ def test_actual_public_gepa_with_accounting_and_phase_persistence(tmp_path,monke
     auth=json.loads((prep/'authorization.json').read_bytes())
     auth['explicit_user_authorized']=True
     (prep/'authorization.json').write_bytes(json.dumps(auth).encode())
-    adapter=MATHBenchmarkAdapter()
+    adapter=adapter or MATHBenchmarkAdapter()
     good="Evaluate the mathematical relationships independently. Check each step and verify the conclusion using reliable general principles."
     def examples(self,role):
         return tuple(CorrectnessExample(BenchmarkInput(f'{role}{i}',f'Synthetic {role} arithmetic {i}: one plus zero.',

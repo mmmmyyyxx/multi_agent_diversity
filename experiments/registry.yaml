@@ -6026,3 +6026,111 @@ experiments:
     implementation_commit: Forensic report and governance only; production unchanged.
     execution_commit: Zero-API audit, not a new experiment execution.
     result_commit: Containing local evidence commit; no efficacy.
+- experiment_id: math_v2_answer_domain_amendment_v2
+  kind: PROTOCOL_FREEZE
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2
+  parent_ids:
+  - math_v2_reference_parser_domain_audit_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: PRE_EFFICACY_SCIENTIFIC_AMENDMENT
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_answer_domain_amendment_v2.yaml
+  report: reports/math_v2_answer_domain_amendment_v2_20261002
+  classifier: MATH_ANSWER_DOMAIN_V2_PREPARATION
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  baseline_commit: 45631d26bdcdff4dcc4a28cce2fa24f7ca8e5210
+  authorization_consumed: false
+  notes:
+  - Explicit user-authorized evaluator-domain amendment; no efficacy-guided rule or split repair.
+  - Original budget ledger continues; 15534 previously charged; no fresh 30M.
+  - Real API requires exact fresh frozen scope and completed zero-API gates.
+  unavailable:
+    implementation_commit: Pending completed gates and source freeze.
+    execution_commit: No new real execution yet.
+    result_commit: Pending local evidence commit.
+- experiment_id: math_v2_preexecution_freeze_v1_4
+  kind: PREEXECUTION_FREEZE
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2
+  parent_ids:
+  - math_v2_answer_domain_amendment_v2
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: PRE_EFFICACY_SCIENTIFIC_AMENDMENT
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_preexecution_freeze_v1_4.yaml
+  report: reports/math_v2_preexecution_freeze_v1_4_20261002
+  classifier: MATH_ANSWER_DOMAIN_V2_PREPARATION
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  baseline_commit: 45631d26bdcdff4dcc4a28cce2fa24f7ca8e5210
+  authorization_consumed: false
+  notes:
+  - Explicit user-authorized evaluator-domain amendment; no efficacy-guided rule or split repair.
+  - Original budget ledger continues; 15534 previously charged; no fresh 30M.
+  - Real API requires exact fresh frozen scope and completed zero-API gates.
+  unavailable:
+    implementation_commit: Pending completed gates and source freeze.
+    execution_commit: No new real execution yet.
+    result_commit: Pending local evidence commit.
+- experiment_id: math_v2_a1_seed81_real_canary_v4
+  kind: REAL_CANARY
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2
+  parent_ids:
+  - math_v2_preexecution_freeze_v1_4
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: PRE_EFFICACY_SCIENTIFIC_AMENDMENT
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_a1_seed81_real_canary_v4.yaml
+  report: reports/math_v2_a1_seed81_real_canary_v4_20261002
+  classifier: MATH_ANSWER_DOMAIN_V2_PREPARATION
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  baseline_commit: 45631d26bdcdff4dcc4a28cce2fa24f7ca8e5210
+  authorization_consumed: false
+  notes:
+  - Explicit user-authorized evaluator-domain amendment; no efficacy-guided rule or split repair.
+  - Original budget ledger continues; 15534 previously charged; no fresh 30M.
+  - Real API requires exact fresh frozen scope and completed zero-API gates.
+  unavailable:
+    implementation_commit: Pending completed gates and source freeze.
+    execution_commit: No new real execution yet.
+    result_commit: Pending local evidence commit.
+- experiment_id: math_v2_a1_seed81_pilot_v2
+  kind: PILOT
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2
+  parent_ids:
+  - math_v2_a1_seed81_real_canary_v4
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: PRE_EFFICACY_SCIENTIFIC_AMENDMENT
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_a1_seed81_pilot_v2.yaml
+  report: reports/math_v2_a1_seed81_pilot_v2_20261002
+  classifier: MATH_ANSWER_DOMAIN_V2_PREPARATION
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  baseline_commit: 45631d26bdcdff4dcc4a28cce2fa24f7ca8e5210
+  authorization_consumed: false
+  notes:
+  - Explicit user-authorized evaluator-domain amendment; no efficacy-guided rule or split repair.
+  - Original budget ledger continues; 15534 previously charged; no fresh 30M.
+  - Real API requires exact fresh frozen scope and completed zero-API gates.
+  unavailable:
+    implementation_commit: Pending completed gates and source freeze.
+    execution_commit: No new real execution yet.
+    result_commit: Pending local evidence commit.

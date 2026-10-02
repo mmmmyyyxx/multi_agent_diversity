@@ -105,7 +105,8 @@ failures:
   - reports/v18_writeback_quality_diagnostic_20260824
   - reports/v18_trajectory_gain_loss_decomposition_20260824
   evidence_level: observed
-  root_cause_status: Transfer and trajectory overwrite are measured; a train-only discriminator is not established.
+  root_cause_status: Transfer and trajectory overwrite are measured; a train-only discriminator is not
+    established.
   forbidden_inference: Do not use validation outcomes inside candidate acceptance.
   regression_tests:
   - tests/test_test_split_isolation.py
@@ -141,8 +142,10 @@ failures:
   - reports/v18_safety_only_critic_pilot_20260902
   - reports/v18_teacher_critic_pipeline_ablation_20260902
   evidence_level: hypothesized
-  root_cause_status: Historical regression is low for the selected candidate gate, but broader sufficiency is unproven.
-  forbidden_inference: Do not call the deterministic gate generally safe from six passing prospective plans.
+  root_cause_status: Historical regression is low for the selected candidate gate, but broader sufficiency
+    is unproven.
+  forbidden_inference: Do not call the deterministic gate generally safe from six passing prospective
+    plans.
   regression_tests:
   - tests/test_v18_teacher_critic_pipeline.py
   mitigation: Keep conservative lexical rules and historical false-positive regression bounds.
@@ -172,7 +175,8 @@ failures:
   title: GEPA synchronous local evaluation serializes Solver batches
   status: MITIGATED
   lifecycle: MITIGATED
-  lifecycle_note: MITIGATED_IMPLEMENTATION; REAL_PERFORMANCE_UNVERIFIED. Fake equivalence and concurrency only.
+  lifecycle_note: MITIGATED_IMPLEMENTATION; REAL_PERFORMANCE_UNVERIFIED. Fake equivalence and concurrency
+    only.
   first_observed: formal_v3_attempt3_seed80_preliminary
   affected_components:
   - gepa_adapter
@@ -181,9 +185,10 @@ failures:
   evidence:
   - reports/formal_v3_attempt4_concurrent_execution_preexecution_20260930
   evidence_level: observed
-  root_cause_status: Serial batch submission replaced by ordered existing gather path; deterministic fake equivalence
-    passed.
-  forbidden_inference: Do not infer real throughput, efficacy or API authorization from fake concurrency calibration.
+  root_cause_status: Serial batch submission replaced by ordered existing gather path; deterministic fake
+    equivalence passed.
+  forbidden_inference: Do not infer real throughput, efficacy or API authorization from fake concurrency
+    calibration.
   regression_tests:
   - tests/test_formal_v3_concurrent_local_batch.py
   mitigation: Use the versioned current batch path only within separately frozen and authorized execution.
@@ -194,22 +199,20 @@ failures:
   affected_components:
   - solver_output_contract
   - math_parser
-  symptom: First qwen3-8b response contained zero FINAL_ANSWER marker lines; frozen
-    parser rejected without regeneration.
+  symptom: First qwen3-8b response contained zero FINAL_ANSWER marker lines; frozen parser rejected without
+    regeneration.
   evidence:
   - reports/math_v2_a1_seed81_real_canary_v1_20261002
   - reports/math_v2_solver_interface_repair_v1_2_20261002
   evidence_level: observed
-  root_cause_status: 'R2 proven by exact request reconstruction: system layer contained
-    one marker contract; response contained zero markers. Underlying model noncompliance
-    cause remains unproven.'
-  forbidden_inference: Do not infer mathematical correctness, search effectiveness
-    or generalization from this aborted canary.
+  root_cause_status: 'R2 proven by exact request reconstruction: system layer contained one marker contract;
+    response contained zero markers. Underlying model noncompliance cause remains unproven.'
+  forbidden_inference: Do not infer mathematical correctness, search effectiveness or generalization from
+    this aborted canary.
   regression_tests:
   - tests/test_math_preexecution.py
-  mitigation: Versioned immutable formatting interface and request/cache identity
-    under zero-API tests. Real compliance unverified; parser unchanged. No old-attempt
-    continuation.
+  mitigation: Versioned immutable formatting interface and request/cache identity under zero-API tests.
+    Real compliance unverified; parser unchanged. No old-attempt continuation.
   lifecycle: MITIGATED
   lifecycle_note: ZERO_API_INTERFACE_CONFORMANCE_ONLY; REAL_OUTPUT_ADHERENCE_UNVERIFIED
   resolved_by: math_v2_solver_interface_repair_v1_2
@@ -220,15 +223,21 @@ failures:
   affected_components:
   - provider_accounting_contract
   - cumulative_token_budget
-  symptom: Existing call-count ceilings and output request limit do not establish a reliable total billable-token bound before each transport.
+  symptom: Existing call-count ceilings and output request limit do not establish a reliable total billable-token
+    bound before each transport.
   evidence:
   - reports/math_v2_autonomous_accounting_preflight_v1_20261002
   evidence_level: observed
-  root_cause_status: Frozen lwj binding has no tokenizer identity, framing bound, alias accounting binding or failed-request accounting contract. Validation required reserve is also unresolved from metadata alone.
-  forbidden_inference: Do not infer provider billing bounds from upstream model names, successful historical usage or an arbitrary characters-per-token multiplier. No efficacy was observed.
+  root_cause_status: Frozen lwj binding has no tokenizer identity, framing bound, alias accounting binding
+    or failed-request accounting contract. Validation required reserve is also unresolved from metadata
+    alone.
+  forbidden_inference: Do not infer provider billing bounds from upstream model names, successful historical
+    usage or an arbitrary characters-per-token multiplier. No efficacy was observed.
   regression_tests:
   - tests/test_math_token_accounting.py
-  mitigation: User explicitly authorizes RESERVATION_V2 operational byte-plus-margin accounting, full fallback charge and isolated Validation length preparation. Historical STOP evidence remains immutable. New real calls require fresh source and exact attempt admission.
+  mitigation: User explicitly authorizes RESERVATION_V2 operational byte-plus-margin accounting, full
+    fallback charge and isolated Validation length preparation. Historical STOP evidence remains immutable.
+    New real calls require fresh source and exact attempt admission.
   lifecycle: MITIGATED
   lifecycle_note: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2; NOT_PROVIDER_BILLING_PROOF
   resolved_by: math_v2_token_accounting_repair_v2
@@ -261,21 +270,25 @@ failures:
   first_observed: math_v2_provider_error_mapping_repair_v1
   affected_components:
   - autonomous_math_transport
-  symptom: Installed SDK default headers exclude authentication; the old manual request copied only those headers.
+  symptom: Installed SDK default headers exclude authentication; the old manual request copied only those
+    headers.
   evidence:
   - reports/math_v2_provider_error_mapping_repair_v1_20261002
   evidence_level: observed
-  root_cause_status: Installed SDK inspection and a synthetic offline negative control prove the missing header. The original failed request HTTP status remains unknown.
-  forbidden_inference: Do not infer a historical HTTP status, credential validity, provider availability or scientific efficacy from this offline reconstruction.
+  root_cause_status: Installed SDK inspection and a synthetic offline negative control prove the missing
+    header. The original failed request HTTP status remains unknown.
+  forbidden_inference: Do not infer a historical HTTP status, credential validity, provider availability
+    or scientific efficacy from this offline reconstruction.
   regression_tests:
   - tests/test_math_token_accounting.py
-  mitigation: Build headers and URL through ordinary SDK security handling, preserve exact reserved body bytes, pin installed SDK version, and deny uncounted redirects.
+  mitigation: Build headers and URL through ordinary SDK security handling, preserve exact reserved body
+    bytes, pin installed SDK version, and deny uncounted redirects.
   lifecycle: MITIGATED
   lifecycle_note: ZERO_API_TRANSPORT_CONFORMANCE_ONLY; REAL_PROVIDER_ACCESS_UNVERIFIED
   resolved_by: math_v2_provider_error_mapping_repair_v1
 - failure_id: FAIL-MATH-REFERENCE-PARSER-DOMAIN-MISMATCH
   title: Frozen nonempty MATH references exceed the scoring parser domain
-  status: DIAGNOSED
+  status: MITIGATED
   first_observed: math_v2_a1_seed81_real_canary_v3
   affected_components:
   - math_reference_admission
@@ -286,6 +299,7 @@ failures:
   evidence:
   - reports/math_v2_a1_seed81_real_canary_v3_20261002
   - reports/math_v2_reference_parser_domain_audit_v1_20261002
+  - reports/math_v2_answer_domain_amendment_v2_20261002
   evidence_level: observed
   root_cause_status: Reference admission checks nonempty extraction; scoring requires payload_supported
     for both operands. Nine Optimize references fail the lexical guard, six the tuple guard.
@@ -294,7 +308,10 @@ failures:
   regression_tests:
   - tests/test_benchmark_scientific_contracts.py
   - tests/test_repository_governance_alignment.py
-  mitigation: Stop real execution. Explicit scientific amendment and fresh freeze/authorization required;
-    do not loosen parser, reformat around tuple semantics or silently resample.
-  lifecycle: ACTIVE
-  lifecycle_note: OPEN_SCIENTIFIC_CONTRACT_AMENDMENT_REQUIRED; NO_OPERATIONAL_FIX_AUTHORIZED
+  - tests/test_math_answer_domain_v2.py
+  mitigation: Explicit user-authorized V2 native mathematical parsing, compatible object families and
+    full-source scorable eligibility. Fresh versioned split and exact new phase freeze required; historical
+    Canary V3 remains INVALID.
+  lifecycle: MITIGATED
+  lifecycle_note: SOURCE_GROUNDED_SCIENTIFIC_AMENDMENT_ZERO_API_PASS; REAL_EXECUTION_AND_EFFICACY_UNVERIFIED
+  resolved_by: math_v2_answer_domain_amendment_v2

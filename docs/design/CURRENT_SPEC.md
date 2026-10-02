@@ -214,8 +214,10 @@ inherited. Pattern/Memory are IMPLEMENTED_DEFAULT_OFF, efficacy unverified.
   wording. Mutable prompt identity excludes that interface; effective request
   identity and exact-request cache identity include its version and wording
   hash. Reflection evolves only mutable reasoning. The strict final-line
-  parser, pinned equivalence evaluator and mutable contamination guard remain
-  unchanged. Format noncompliance aborts without regeneration; fake and real
+  marker framing and mutable contamination guard remain unchanged. Historical
+  interface-repair bindings preserve their pinned equivalence evaluator; the
+  explicitly bound answer-domain V2 amendment below versions payload scoring.
+  Format noncompliance aborts without regeneration; fake and real
   providers share this parser path. Interface repairs establish request
   conformance, never real model adherence or scientific efficacy.
 - Canary readiness is scoped to a preregistered first parent team epoch or its
@@ -251,6 +253,49 @@ inherited. Pattern/Memory are IMPLEMENTED_DEFAULT_OFF, efficacy unverified.
   rows remain sealed. Actual Validation evaluation requires separate phase
   admission after an immutable SEARCH_COMPLETE_RECEIPT and cannot resume or
   write to search.
+
+## MATH answer-domain amendment V2 (explicit binding)
+
+- **INV-MATH-ANSWER-DOMAIN-002**: New MATH execution selects
+  `MATH_EXECUTION_BINDING_V1_4`, `MATH_ANSWER_DOMAIN_V2`,
+  `MATH_PAYLOAD_PARSER_V2`, `MATH_EQUIVALENCE_V2` and the explicit
+  `MATH_VERIFY_SETTINGS_V2`. The immutable Solver interface and its exact
+  one nonempty final-marker line remain V2. Mathematical parsing receives only
+  that payload, never reasoning or a guessed last number. Historical V1
+  adapters, protocols, bindings and memberships remain replay contracts.
+  Pinned math-verify 0.6.0, latex2sympy2_extended 1.0.9 and existing dependency
+  pins remain unchanged. Correctness calls pinned verify with gold first;
+  aggregation retains its existing finite symmetric-equivalence audit.
+  Strict mode, normalization, rounding, precision and deadlines are explicit.
+  A minimal container-family boundary prevents the pinned grader's unwanted
+  interval/endpoint-set conversion and directional equation/scalar collapse.
+  Equations remain mathematical relations with strict variable identity;
+  scalar expressions remain a separate object family. No coordinate or
+  equation solving is handwritten. Converter options are bound explicitly at
+  the pinned public conversion seam; dependency files are unchanged.
+- **INV-MATH-SCORABLE-REFERENCE-002**: Full canonical train7500/test5000
+  references are prepared only in `EVALUATOR_CONTRACT_PREP_CONTEXT`. It projects
+  source-authored extracted references and representation metadata, never
+  problems, model predictions or scores to optimization components. Native
+  parse and verify probes precede wrapper admission. Bare two-component
+  parentheses are ambiguous between ordered tuples and open intervals;
+  the pinned converter changes type according to endpoint values, and the
+  source format supplies no type tag. V2 therefore marks this representation
+  unscorable after native parsing rather than inventing its intended type.
+  Unambiguous native tuples, matrices, sets, intervals, multiple values and
+  expressions use the pinned semantics with common settings. Eligibility
+  requires nonempty extraction, supported mathematical parsing and successful
+  self-equivalence. Unsupported, exception and timeout references are data
+  exclusions, never silently wrong examples. Apply eligibility over the whole
+  source before the unchanged deterministic stratified algorithm; preserve
+  existing role memberships if every existing reference is scorable, otherwise
+  version the split. Counts remain150/300/300/300 and source roles unchanged.
+  Every selected reference has a source-bound scorability receipt; actual
+  Optimize/Shadow reference checks fail before dispatch. Search never opens
+  Validation/Test for this audit. Test model calls remain forbidden.
+  A correctly framed unparseable mathematical prediction is invalid/wrong;
+  marker failure still aborts without regeneration. Only evaluator semantics
+  change; responsibility, aggregation, scheduling, GEPA and admission do not.
 
 ## Authority map
 

@@ -100,6 +100,12 @@ def preflight(manifest: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def governed_preflight(prep: Path) -> dict[str, Any]:
+    if (prep / "validation_prep.json").is_file():
+        from multi_dataset_diverse_rl.governance.math_paired_validation import validate_validation
+        value, _, _, _ = validate_validation(ROOT, prep, require_authorized=False)
+        return {"gate": "POST_SEARCH_VALIDATION_READY_NOT_AUTHORIZED", "ready_for_authorization": True,
+                "attempt_id": value["scope"]["attempt_id"], "startup_identity_sha256": value["startup_identity_sha256"],
+                "provider_attempts": 0, "test_calls": 0}
     if (prep / "prep.json").is_file():
         from multi_dataset_diverse_rl.governance.unified_execution import validate_prep
         value = validate_prep(ROOT, prep)
@@ -145,6 +151,9 @@ async def _execute(manifest: Mapping[str, Any]):
 
 
 async def execute_frozen(prep: Path, run_root: Path) -> dict[str, Any]:
+    if (prep / "validation_prep.json").is_file():
+        from multi_dataset_diverse_rl.governance.math_paired_validation import execute_validation
+        return await execute_validation(ROOT, prep, run_root)
     if (prep / "prep.json").is_file():
         from multi_dataset_diverse_rl.governance.unified_execution import execute_canary
         return await execute_canary(ROOT, prep, run_root)

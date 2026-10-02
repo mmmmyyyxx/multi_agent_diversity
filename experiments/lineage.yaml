@@ -590,6 +590,18 @@ nodes:
 - experiment_id: math_v2_reference_parser_domain_audit_v1
   kind: FORENSIC_AUDIT
   era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_answer_domain_amendment_v2
+  kind: PROTOCOL_FREEZE
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_preexecution_freeze_v1_4
+  kind: PREEXECUTION_FREEZE
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_a1_seed81_real_canary_v4
+  kind: REAL_CANARY
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_a1_seed81_pilot_v2
+  kind: PILOT
+  era: BENCHMARK_GENERALIZATION
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -965,4 +977,24 @@ edges:
   relation: audit_of
   evidence: reports/math_v2_reference_parser_domain_audit_v1_20261002/README.md
   scope: Optimize-only reference representation audit; no scientific amendment or new real API attempt.
+- from: math_v2_reference_parser_domain_audit_v1
+  to: math_v2_answer_domain_amendment_v2
+  relation: derived_from
+  evidence: reports/math_v2_answer_domain_amendment_v2_20261002/README.md
+  scope: Source-grounded answer-domain amendment and fresh execution plan; no efficacy observed.
+- from: math_v2_answer_domain_amendment_v2
+  to: math_v2_preexecution_freeze_v1_4
+  relation: derived_from
+  evidence: reports/math_v2_preexecution_freeze_v1_4_20261002/README.md
+  scope: Source-grounded answer-domain amendment and fresh execution plan; no efficacy observed.
+- from: math_v2_preexecution_freeze_v1_4
+  to: math_v2_a1_seed81_real_canary_v4
+  relation: derived_from
+  evidence: reports/math_v2_a1_seed81_real_canary_v4_20261002/README.md
+  scope: Source-grounded answer-domain amendment and fresh execution plan; no efficacy observed.
+- from: math_v2_a1_seed81_real_canary_v4
+  to: math_v2_a1_seed81_pilot_v2
+  relation: derived_from
+  evidence: reports/math_v2_a1_seed81_pilot_v2_20261002/README.md
+  scope: Source-grounded answer-domain amendment and fresh execution plan; no efficacy observed.
 current_frontier: experiments/current_frontier.yaml

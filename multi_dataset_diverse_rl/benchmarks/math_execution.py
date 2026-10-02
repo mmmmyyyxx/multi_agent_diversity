@@ -153,9 +153,16 @@ class MATHExecutionBinding:
         from ..search.binary_runtime import CorrectnessExample
         purpose = DataPurpose.ADAPTIVE_GATE if role == "shadow" else DataPurpose.EVIDENCE
         rows = self.reader().rows(role, purpose)
-        adapter = MATHBenchmarkAdapter()
-        return tuple(CorrectnessExample(protocol_input("math", r["stable_example_id"], r["content"], adapter.output_contract),
+        adapter = self.benchmark()
+        if hasattr(adapter, "require_scorable"):
+            for row in rows:
+                adapter.require_scorable(row["reference_final_answer"])
+        return tuple(CorrectnessExample(protocol_input("math", r["stable_example_id"], r["content"], adapter.output_contract,
+                                        protocol=getattr(adapter,'protocol',None)),
                                         r["reference_final_answer"]) for r in rows)
+
+    def benchmark(self):
+        return MATHBenchmarkAdapter()
 
     def compose(self, *, arm, seed, solver, reflection, pattern_provider, run_root, optimize_fn=None):
         blockers = self.blockers()
@@ -171,7 +178,7 @@ class MATHExecutionBinding:
         team = json.loads(self.path(self.contract["initial_team_path"]).read_bytes())
         optimizer = GEPATeamExposureOptimizer(evaluator=solver, reflection_lm=reflection,
             accounting_reader=reflection.accounting, run_root=run_root, optimize_fn=optimize_fn)
-        return build_binary_orchestrator(benchmark=MATHBenchmarkAdapter(), aggregation=EquivalencePluralityAggregation(),
+        return build_binary_orchestrator(benchmark=self.benchmark(), aggregation=EquivalencePluralityAggregation(),
             examples=self.examples("optimize"), prompts=tuple(m["prompt"] for m in team["members"]), solver=solver, optimizer=optimizer,
             method=self.method(arm), seed=seed, shadow_loader=lambda: self.examples("shadow"), shadow_count=self.contract["shadow_count"],
             runtime_readiness=self.blockers, pattern_provider=pattern_provider,
