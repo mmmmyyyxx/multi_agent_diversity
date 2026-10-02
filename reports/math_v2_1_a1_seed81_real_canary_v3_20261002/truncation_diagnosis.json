@@ -1,0 +1,17 @@
+{
+  "calls": 55,
+  "completed_framing_valid": 54,
+  "completed_responses": 54,
+  "finish_reasons": {
+    "length": 1,
+    "stop": 54
+  },
+  "last": {
+    "finish_reason": "length",
+    "marker_occurrences": 0,
+    "nonempty_lines": 102,
+    "output_tokens": 1800,
+    "requested_max_tokens": 1800,
+    "response_sha256": "b89af0005accf1769f9296228f356b8b6b6662dc5e955061145963883516f402"
+  }
+}

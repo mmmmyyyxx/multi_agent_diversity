@@ -1,0 +1,8 @@
+{
+  "candidates": [],
+  "counts": {},
+  "definitions": {
+    "full_pass": "complete measurement without operational failure",
+    "transition_pass": "initial floor + strict team gain + terminal invalid guard"
+  }
+}

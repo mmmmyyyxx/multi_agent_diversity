@@ -1,0 +1,9 @@
+{
+  "host_paths_or_endpoints_published": false,
+  "method": "explicit field projections; only hashes/counters/categories/metrics",
+  "raw_prompts_published": false,
+  "raw_provider_responses_published": false,
+  "raw_questions_published": false,
+  "raw_references_published": false,
+  "status": "PASS"
+}

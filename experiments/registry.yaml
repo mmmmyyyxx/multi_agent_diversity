@@ -6358,9 +6358,9 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_a1_seed81_real_canary_v2
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: OUTPUT_INTERFACE_REPAIR_EFFICACY_UNVERIFIED
-  implementation_commit: null
+  status: COMPLETED
+  scientific_status: OUTPUT_INTERFACE_ZERO_API_PASS_EFFICACY_UNVERIFIED
+  implementation_commit: 026818f1289d81c15ee8a3f41bd594c73c75c063
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_output_interface_repair_v2.yaml
@@ -6375,7 +6375,6 @@ experiments:
   - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
     fresh exact scope required.
   unavailable:
-    implementation_commit: Pending gated source freeze.
     execution_commit: Not executed.
     result_commit: Pending evidence freeze.
 - experiment_id: math_v2_1_preexecution_freeze_v3
@@ -6384,9 +6383,9 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_output_interface_repair_v2
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: OUTPUT_INTERFACE_REPAIR_EFFICACY_UNVERIFIED
-  implementation_commit: null
+  status: PREEXECUTION_FROZEN
+  scientific_status: OUTPUT_INTERFACE_ZERO_API_PASS_EFFICACY_UNVERIFIED
+  implementation_commit: 026818f1289d81c15ee8a3f41bd594c73c75c063
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_preexecution_freeze_v3.yaml
@@ -6401,7 +6400,6 @@ experiments:
   - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
     fresh exact scope required.
   unavailable:
-    implementation_commit: Pending gated source freeze.
     execution_commit: Not executed.
     result_commit: Pending evidence freeze.
 - experiment_id: math_v2_1_a1_seed81_real_canary_v3
@@ -6410,15 +6408,15 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_preexecution_freeze_v3
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: OUTPUT_INTERFACE_REPAIR_EFFICACY_UNVERIFIED
-  implementation_commit: null
-  execution_commit: null
+  status: INVALID
+  scientific_status: INVALID_OPERATIONAL_FAILURE_EFFICACY_UNOBSERVED
+  implementation_commit: 026818f1289d81c15ee8a3f41bd594c73c75c063
+  execution_commit: 2f994b3409aeb6ac826dec800f16ec801d801150
   result_commit: null
   manifest: experiments/manifests/math_v2_1_a1_seed81_real_canary_v3.yaml
   report: reports/math_v2_1_a1_seed81_real_canary_v3_20261002
   classifier: V2_1_MATH_OUTPUT_INTERFACE_REPAIR
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -6427,24 +6425,23 @@ experiments:
   - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
     fresh exact scope required.
   unavailable:
-    implementation_commit: Pending gated source freeze.
-    execution_commit: Not executed.
     result_commit: Pending evidence freeze.
+  authorization_consumed: true
 - experiment_id: math_v2_1_a1_seed81_pilot_v3
   kind: PILOT
   era: BENCHMARK_GENERALIZATION
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_a1_seed81_real_canary_v3
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: OUTPUT_INTERFACE_REPAIR_EFFICACY_UNVERIFIED
-  implementation_commit: null
+  status: SUPERSEDED
+  scientific_status: OUTPUT_INTERFACE_ZERO_API_PASS_EFFICACY_UNVERIFIED
+  implementation_commit: 026818f1289d81c15ee8a3f41bd594c73c75c063
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_a1_seed81_pilot_v3.yaml
   report: reports/math_v2_1_a1_seed81_pilot_v3_20261002
   classifier: V2_1_MATH_OUTPUT_INTERFACE_REPAIR
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -6453,6 +6450,5 @@ experiments:
   - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
     fresh exact scope required.
   unavailable:
-    implementation_commit: Pending gated source freeze.
     execution_commit: Not executed.
     result_commit: Pending evidence freeze.
