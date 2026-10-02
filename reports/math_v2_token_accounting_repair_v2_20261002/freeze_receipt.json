@@ -1,0 +1,19 @@
+{
+  "accounting_policy": "RESERVATION_V2",
+  "baseline_sha": "039dd93b07e2d686727ab5ee0bd580557729ca41",
+  "bound_kind": "OPERATIONAL_ACCOUNTING_BOUND_NOT_PROVIDER_BILLING_PROOF",
+  "canary_manifest_sha256": "1731e7417ca56b03d488c00ba0da6214f916016894d1a273e4d51c8535ca5890",
+  "charged_tokens": 0,
+  "execution_source_sha": "7754671bbc766cff2d32037ce38b00f19a520bbe",
+  "identity": "MATH_ACCOUNTING_REPAIR_V2_FREEZE",
+  "independent_preps": 2,
+  "pilot_manifest_status": "PROVISIONAL_PHASE_REQUIRES_FRESH_FREEZE_AFTER_CANARY_PASS",
+  "prep_comparison": "BYTE_IDENTICAL",
+  "real_calls": 0,
+  "scientific_search_payload": "UNCHANGED",
+  "source_closure_files": 179,
+  "startup_identity_sha256": "8ff8c149d98943e3385331627eafc1e70eb5a47ab72c7725dbe38f39a30c3162",
+  "test_model_calls": 0,
+  "test_raw_reads": 0,
+  "validation_model_calls": 0
+}

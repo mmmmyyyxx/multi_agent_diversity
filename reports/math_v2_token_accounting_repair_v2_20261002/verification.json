@@ -1,0 +1,41 @@
+{
+  "charged_tokens": 0,
+  "checked_scientific_keys": [
+    "models",
+    "budget",
+    "membership_hashes",
+    "initial_team_sha256",
+    "benchmark_protocol_sha256",
+    "evaluator",
+    "evaluator_pins",
+    "aggregation",
+    "responsibility",
+    "arms",
+    "seeds",
+    "memory_limits",
+    "decoding",
+    "solver_output_interface"
+  ],
+  "compileall": "PASS",
+  "current_suite": {
+    "errors": "0",
+    "failures": "0",
+    "skipped": "2",
+    "tests": "647",
+    "time": "595.760"
+  },
+  "denied_before_provider": true,
+  "diff_check": "PASS",
+  "governance": "PASS",
+  "historical_cases": "NOT_RUN",
+  "network_attempt_count": 0,
+  "parent_manifests_and_evidence_preserved": true,
+  "real_calls": 0,
+  "sanitization": "PASS",
+  "scientific_payload_comparison": "IDENTICAL",
+  "source_closure_file_count": 179,
+  "startup_source_poison": "PASS",
+  "targeted_and_fake_e2e": "19_PASS",
+  "test_raw_reads": 0,
+  "tested_poison_count": 179
+}
