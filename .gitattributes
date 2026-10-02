@@ -33,4 +33,6 @@ reports/math_v2_preexecution_freeze_v1_1_20261001/** text eol=lf
 reports/math_v2_a1_seed81_real_canary_v1_20261002/** text eol=lf
 reports/math_v2_solver_interface_repair_v1_2_20261002/** text eol=lf
 reports/math_v2_autonomous_accounting_preflight_v1_20261002/** text eol=lf
+experiments/accounting/** text eol=lf
+reports/math_v2_token_accounting_repair_v2_20261002/** text eol=lf
 tests/fixtures/math_canary_attempt1_format_facts.json text eol=lf

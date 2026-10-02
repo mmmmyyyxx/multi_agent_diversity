@@ -228,6 +228,30 @@ inherited. Pattern/Memory are IMPLEMENTED_DEFAULT_OFF, efficacy unverified.
   authorization. Only an exact single-use attempt authorization can construct
   the real provider. Validation remains unauthorized and Test sealed.
 
+## Operational reservation accounting (explicit opt-in)
+
+- **INV-ACCOUNTING-RESERVATION-002**: A versioned, explicitly authorized
+  accounting policy may reserve the exact serialized provider-visible UTF-8
+  request length plus its declared operational margin and transmitted output
+  cap. This is an operational accounting bound, not provider-billing proof.
+  Every physical transport, including retries, reserves durably before sending.
+  Reliable usage releases the reservation and charges reported input/output;
+  missing, invalid or untrusted usage charges the entire reservation. Charges
+  never decrease. Recovery charges unresolved reservations in full. An OS lock,
+  hash-chained journal and derived snapshot enforce single-owner accounting.
+  Budget stops and output truncation are operational failures, never scientific
+  convergence or valid outputs. Such failures cannot be swallowed by GEPA.
+- **INV-VALIDATION-ACCOUNTING-PREP-002**: An explicitly authorized isolated
+  ACCOUNTING_DATA_PREP_CONTEXT may project frozen Validation problems solely
+  to serialized-request byte metadata. It exposes no content to search, calls
+  no models, evaluates no correctness and emits no problems, gold or solutions.
+  Search readers still reject held-out raw access. Validation's initial/final
+  evaluation reserve is protected before each search transport; observed
+  candidate prompt lengths can only increase its protected envelope. Test raw
+  rows remain sealed. Actual Validation evaluation requires separate phase
+  admission after an immutable SEARCH_COMPLETE_RECEIPT and cannot resume or
+  write to search.
+
 ## Authority map
 
 See AGENTS.md for the complete authority hierarchy; method.md is a conceptual

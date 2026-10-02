@@ -215,7 +215,7 @@ failures:
   resolved_by: math_v2_solver_interface_repair_v1_2
 - failure_id: FAIL-MATH-AUTONOMOUS-TOKEN-ACCOUNTING-UNBOUND
   title: Autonomous real-token ceiling lacks a frozen provider accounting upper bound
-  status: OPEN
+  status: MITIGATED
   first_observed: math_v2_autonomous_accounting_preflight_v1
   affected_components:
   - provider_accounting_contract
@@ -226,7 +226,9 @@ failures:
   evidence_level: observed
   root_cause_status: Frozen lwj binding has no tokenizer identity, framing bound, alias accounting binding or failed-request accounting contract. Validation required reserve is also unresolved from metadata alone.
   forbidden_inference: Do not infer provider billing bounds from upstream model names, successful historical usage or an arbitrary characters-per-token multiplier. No efficacy was observed.
-  regression_tests: []
-  mitigation: Fail closed before the first transport under STOP_TOKEN_ACCOUNTING_UNRESOLVED. Preserve zero-consumption ledger and all previous attempts. Reliable provider-bound accounting evidence is required before a fresh freeze.
-  lifecycle: ACTIVE
-  lifecycle_note: PREEXECUTION_STOP; ZERO_NEW_CALLS; ZERO_HELDOUT_RAW_ACCESS
+  regression_tests:
+  - tests/test_math_token_accounting.py
+  mitigation: User explicitly authorizes RESERVATION_V2 operational byte-plus-margin accounting, full fallback charge and isolated Validation length preparation. Historical STOP evidence remains immutable. New real calls require fresh source and exact attempt admission.
+  lifecycle: MITIGATED
+  lifecycle_note: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2; NOT_PROVIDER_BILLING_PROOF
+  resolved_by: math_v2_token_accounting_repair_v2

@@ -174,5 +174,6 @@ class MATHExecutionBinding:
         return build_binary_orchestrator(benchmark=MATHBenchmarkAdapter(), aggregation=EquivalencePluralityAggregation(),
             examples=self.examples("optimize"), prompts=tuple(m["prompt"] for m in team["members"]), solver=solver, optimizer=optimizer,
             method=self.method(arm), seed=seed, shadow_loader=lambda: self.examples("shadow"), shadow_count=self.contract["shadow_count"],
-            runtime_readiness=self.blockers, pattern_provider=pattern_provider, first_parent_epoch=True,
+            runtime_readiness=self.blockers, pattern_provider=pattern_provider,
+            first_parent_epoch=self.contract.get("execution_phase", "canary") == "canary",
             provider_call_reader=lambda: solver.broker.successes)

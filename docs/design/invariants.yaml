@@ -567,3 +567,25 @@ invariants:
   - FAIL-MATH-CANARY-FINAL-MARKER
   critical: true
   status: ACTIVE
+- id: INV-ACCOUNTING-RESERVATION-002
+  description: User-bound operational per-transport reservations, monotonic full fallback charges and crash-safe single-owner accounting.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/governance/token_accounting.py
+  - multi_dataset_diverse_rl/search/provider_runtime.py
+  tests:
+  - tests/test_math_token_accounting.py
+  failure_refs:
+  - FAIL-MATH-AUTONOMOUS-TOKEN-ACCOUNTING-UNBOUND
+  critical: true
+  status: ACTIVE
+- id: INV-VALIDATION-ACCOUNTING-PREP-002
+  description: Isolated Validation byte metadata never exposes held-out content or scores to search and protects paired evaluation reserve.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py
+  tests:
+  - tests/test_math_token_accounting.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE

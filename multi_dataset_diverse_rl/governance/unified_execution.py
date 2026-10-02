@@ -26,7 +26,7 @@ def consumption_path(root, scope):
 def bound_preflight(root, manifest):
     from ..benchmarks.math_execution import MATHExecutionBinding
     ref = manifest.get("execution_binding", {})
-    if ref.get("identity") != versions.MATH_EXECUTION_BINDING_VERSION:
+    if ref.get("identity") not in {versions.MATH_EXECUTION_BINDING_VERSION, versions.MATH_AUTONOMOUS_EXECUTION_BINDING_VERSION}:
         raise SearchContractError("UNSUPPORTED_EXECUTION_BINDING")
     errors = validate_manifest_v2(root, manifest)
     if manifest.get("lifecycle", {}).get("status") != "PREEXECUTION_FROZEN":
@@ -35,7 +35,11 @@ def bound_preflight(root, manifest):
     if not path.is_relative_to(root.resolve()) or not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != ref["sha256"]:
         errors.append("EXECUTION_BINDING_HASH_MISMATCH")
         return {"gate": "HOLD", "blockers": errors, "provider_attempts": 0}
-    binding = MATHExecutionBinding(root, read_json(path))
+    if ref["identity"] == versions.MATH_AUTONOMOUS_EXECUTION_BINDING_VERSION:
+        from ..benchmarks.math_autonomous import MATHAutonomousBinding
+        binding = MATHAutonomousBinding(root, read_json(path))
+    else:
+        binding = MATHExecutionBinding(root, read_json(path))
     errors.extend(binding.blockers())
     c = binding.contract
     expected = {"benchmark_id": "math", "benchmark_protocol_id": c["benchmark_protocol_sha256"],
@@ -84,7 +88,8 @@ def execution_identity(root, contract):
     # Input metadata and all import/bootstrap dependencies are explicit. The
     # canonical raw source remains private and has its separate manifest hash.
     configs = [contract["split_directory"] + "/math.json", contract["initial_team_path"],
-               contract["pattern_prompt_path"], versions.MATH_EXECUTION_BINDING_PATH]
+               contract["pattern_prompt_path"], contract.get("binding_path", versions.MATH_EXECUTION_BINDING_PATH)]
+    configs.extend(contract[k] for k in ("parent_binding_path", "accounting_policy_path", "validation_accounting_metadata_path") if k in contract)
     identity = build_unified_source_identity(root, root / contract["canonical_root"] / "manifests/math.json", [root / p for p in configs])
     files = [root / r["path"] for s in identity["scopes"].values() for r in s["files"]]
     files.append(root / contract["split_directory"] / "math.ids.jsonl")
@@ -139,17 +144,28 @@ def prepare_canary(root, manifest, *, destination, arm="A1", seed=81):
     # commit. Every executable/config byte still has to match that source.
     verify_source_commit(root, source, identity)
     destination.mkdir(parents=True)
-    scope = dict(attempt_id=contract["canary_attempt_id"], arm=arm, seed=seed, phase="first_parent_team_epoch_or_first_commit",
-        source_sha=source, preregistration_identity=manifest["preregistration_identity"], binding_sha256=manifest["execution_binding"]["sha256"],
-        models=contract["models"], provider=contract["provider"], roles=["solver", "reflection"],
-        successful_provider_call_ceiling=contract["provider_bounds"]["successful_provider_calls"],
-        transport_attempt_ceiling=contract["provider_bounds"]["transport_attempts"], validation_calls=0, test_calls=0)
+    scope = execution_scope(manifest, contract)
     payload = dict(schema_version=PREP_SCHEMA, manifest=manifest, source_identity=identity, scope=scope)
     payload["startup_identity_sha256"] = canonical_sha256(payload)
     atomic_write_json(destination / "prep.json", payload)
     atomic_write_json(destination / "authorization.json", dict(explicit_user_authorized=False, single_use=True,
         consumed=False, scope=scope, startup_identity_sha256=payload["startup_identity_sha256"]))
     return payload
+
+
+def execution_scope(manifest, contract):
+    scope = dict(attempt_id=contract.get("execution_attempt_id", contract["canary_attempt_id"]), arm="A1", seed=81,
+        phase="team_epoch_no_commit_v1" if contract.get("execution_phase") == "pilot" else "first_parent_team_epoch_or_first_commit",
+        source_sha=manifest["source_sha"], preregistration_identity=manifest["preregistration_identity"], binding_sha256=manifest["execution_binding"]["sha256"],
+        models=contract["models"], provider=contract["provider"], roles=["solver", "reflection"],
+        successful_provider_call_ceiling=contract["provider_bounds"]["successful_provider_calls"],
+        transport_attempt_ceiling=contract["provider_bounds"]["transport_attempts"], validation_calls=0, test_calls=0)
+    if "accounting_policy_path" in contract:
+        scope["accounting"] = dict(policy_sha256=contract["accounting_policy_sha256"],
+            total_authorization=30_000_000, task_sha256=contract["task_authorization_sha256"],
+            ledger_directory=contract["token_ledger_directory"],
+            validation_metadata_sha256=contract["validation_accounting_metadata_sha256"])
+    return scope
 
 
 def validate_prep(root, prep, *, require_authorized=False):
@@ -166,12 +182,7 @@ def validate_prep(root, prep, *, require_authorized=False):
     if execution_identity(root, contract) != payload["source_identity"]:
         raise SearchContractError("STARTUP_CLOSURE_MEMBERSHIP_MISMATCH")
     scope = payload["scope"]
-    expected_scope = dict(attempt_id=contract["canary_attempt_id"], arm="A1", seed=81,
-        phase="first_parent_team_epoch_or_first_commit", source_sha=manifest["source_sha"],
-        preregistration_identity=manifest["preregistration_identity"], binding_sha256=manifest["execution_binding"]["sha256"],
-        models=contract["models"], provider=contract["provider"], roles=["solver", "reflection"],
-        successful_provider_call_ceiling=contract["provider_bounds"]["successful_provider_calls"],
-        transport_attempt_ceiling=contract["provider_bounds"]["transport_attempts"], validation_calls=0, test_calls=0)
+    expected_scope = execution_scope(manifest, contract)
     if scope != expected_scope:
         raise SearchContractError("CANARY_SCOPE_MISMATCH")
     if require_authorized:
@@ -185,6 +196,9 @@ def validate_prep(root, prep, *, require_authorized=False):
 
 async def execute_canary(root, prep, run_root):
     payload = validate_prep(root, prep, require_authorized=True)
+    if "accounting" in payload["scope"]:
+        from .autonomous_math import execute_search
+        return await execute_search(root, prep, run_root, payload)
     if run_root.exists():
         raise SearchContractError("FRESH_RUN_ROOT_REQUIRED")
     scope = payload["scope"]
@@ -258,16 +272,20 @@ def inventory(run_root):
                       for p in sorted(run_root.rglob("*")) if p.is_file() and p.name != "raw_evidence_inventory.json"]}
 
 
-def preexecution_manifest(root, *, source_sha, frozen=True):
+def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, experiment_id="math_v2_pattern_memory_v1"):
     from ..benchmarks.math_execution import MATHExecutionBinding
-    binding_path = versions.MATH_EXECUTION_BINDING_PATH
+    binding_path = binding_path or versions.MATH_EXECUTION_BINDING_PATH
     contract = read_json(root / binding_path)
-    b = MATHExecutionBinding(root, contract)
+    if contract["identity"] == versions.MATH_AUTONOMOUS_EXECUTION_BINDING_VERSION:
+        from ..benchmarks.math_autonomous import MATHAutonomousBinding
+        b = MATHAutonomousBinding(root, contract)
+    else:
+        b = MATHExecutionBinding(root, contract)
     if b.blockers():
         raise SearchContractError("MATH_BINDING_NOT_READY")
     method = b.method("A1")
     identity = execution_identity(root, contract)
-    manifest = dict(schema_version="experiment_manifest_v2", experiment_id="math_v2_pattern_memory_v1",
+    manifest = dict(schema_version="experiment_manifest_v2", experiment_id=experiment_id,
         method_family=method.method, method_identity=method.method, source_sha=source_sha,
         benchmark_id="math", benchmark_protocol_id=contract["benchmark_protocol_sha256"],
         dataset_manifest_identity=contract["canonical_manifest_sha256"], split_identity=contract["split_manifest_sha256"],

@@ -15,7 +15,8 @@ from .schemas import SearchContractError
 
 
 class RequestBroker:
-    def __init__(self, *, contract, transport, arm, seed, ledger_writer=None, raw_writer=None, usage=None, lock=None):
+    def __init__(self, *, contract, transport, arm, seed, ledger_writer=None, raw_writer=None, usage=None, lock=None,
+                 token_ledger=None, reserve_reader=None, validation_only=False):
         self.contract = contract
         self.transport = transport
         self.arm = arm
@@ -26,6 +27,10 @@ class RequestBroker:
         self.usage = usage if usage is not None else dict(attempts=0, successes=0, failures=0, input_tokens=0, output_tokens=0,
             solver=0, reflection=0, pattern=0, validation=0, test=0)
         self.lock = lock if lock is not None else threading.RLock()
+        self.token_ledger = token_ledger
+        self.reserve_reader = reserve_reader or (lambda: 0)
+        self.validation_only = validation_only
+        self.prompt_observer = None
 
     @property
     def successes(self):
@@ -33,10 +38,14 @@ class RequestBroker:
 
     def private_capability(self):
         return RequestBroker(contract=self.contract, transport=self.transport, arm=self.arm, seed=self.seed,
-            ledger_writer=self.ledger_writer, raw_writer=self.raw_writer, usage=self.usage, lock=self.lock)
+            ledger_writer=self.ledger_writer, raw_writer=self.raw_writer, usage=self.usage, lock=self.lock,
+            token_ledger=self.token_ledger, reserve_reader=self.reserve_reader, validation_only=self.validation_only)
 
     def complete(self, *, role, split, stage, messages):
-        if role not in {"solver", "reflection", "pattern"} or split not in {"optimize", "shadow"} or role != "solver" and split != "optimize":
+        legal = (role == "solver" and split == "validation") if self.validation_only else (
+            role in {"solver", "reflection", "pattern"} and split in {"optimize", "shadow"}
+            and (role == "solver" or split == "optimize"))
+        if not legal:
             raise SearchContractError("PROVIDER_ROLE_SPLIT_FORBIDDEN")
         if role == "pattern" and not self.contract["arms"][self.arm][0]:
             raise SearchContractError("PATTERN_CALL_FORBIDDEN_IN_NULL_ARM")
@@ -57,35 +66,64 @@ class RequestBroker:
                 bounds = c["provider_bounds"]
                 role_bound = bounds["solver_calls" if role == "solver" else "reflection_calls" if role == "reflection" else "pattern_calls"]
                 if self.usage["attempts"] >= bounds["transport_attempts"] or self.successes >= bounds["successful_provider_calls"] or self.usage[role] >= role_bound:
-                    raise SearchContractError("PROVIDER_CEILING_PRE_TRANSPORT")
+                    self.abort("PROVIDER_CEILING_PRE_TRANSPORT")
+                token_reservation = None
+                if self.token_ledger:
+                    token_reservation = self.token_ledger.reserve(request,
+                        attempt_id=c["execution_attempt_id"],
+                        stage=stage if self.validation_only else c["execution_phase"], role=role, model=model,
+                        protected_validation=self.reserve_reader())
                 self.usage["attempts"] += 1
                 self._write(dict(kind="ATTEMPT", role=role, split=split, stage=stage, request_sha256=key, attempt=self.usage["attempts"]))
                 try:
                     result = self.transport(request)
                 except Exception as exc:
+                    if token_reservation is not None:
+                        charge = self.token_ledger.reconcile(token_reservation, getattr(exc, "token_usage", None), outcome=type(exc).__name__)
+                        for k in ("input_tokens", "output_tokens"):
+                            self.usage[k] += charge[k]
                     self.usage["failures"] += 1
                     self._write(dict(kind="FAILURE", role=role, split=split, stage=stage, request_sha256=key, error_category=type(exc).__name__))
                     # Retry transport failures only. SDK retries are disabled.
                     from openai import APIConnectionError, APITimeoutError, RateLimitError, InternalServerError
                     if not isinstance(exc, (APIConnectionError, APITimeoutError, RateLimitError, InternalServerError)) or retry == c["decoding"]["transport_retries"]:
+                        if self.token_ledger:
+                            self.abort("PROVIDER_TERMINAL_" + type(exc).__name__)
                         raise
                     time.sleep(min(c["decoding"]["retry_sleep_seconds"] * 2**retry, c["decoding"]["retry_backoff_ceiling_seconds"]))
                     continue
+                if token_reservation is not None:
+                    charge = self.token_ledger.reconcile(token_reservation, result, outcome="RESPONSE")
+                    if isinstance(result, dict):
+                        result = {**result, "provider_reported_input_tokens":result.get("input_tokens"),
+                                  "provider_reported_output_tokens":result.get("output_tokens"), **charge}
                 if not isinstance(result, dict) or not isinstance(result.get("text"), str) or any(type(result.get(k)) is not int or result[k] < 0 for k in ("input_tokens", "output_tokens")):
                     self.usage["failures"] += 1
                     self._write(dict(kind="FAILURE", role=role, split=split, stage=stage, request_sha256=key, error_category="RESPONSE_ACCOUNTING_INVALID"))
-                    raise SearchContractError("PROVIDER_RESPONSE_ACCOUNTING_INVALID")
+                    self.abort("PROVIDER_RESPONSE_ACCOUNTING_INVALID")
                 self.usage["successes"] += 1
                 self.usage[role] += 1
+                if split == "validation":
+                    self.usage["validation"] += 1
                 for k in ("input_tokens", "output_tokens"):
                     self.usage[k] += result[k]
                 self._write(dict(kind="SUCCESS", role=role, split=split, stage=stage, request_sha256=key,
                     response_sha256=hashlib.sha256(result["text"].encode()).hexdigest(), input_tokens=result["input_tokens"], output_tokens=result["output_tokens"]))
                 if self.raw_writer:
                     self.raw_writer(dict(role=role, split=split, stage=stage, request_sha256=key, request=request, response=result))
+                if self.token_ledger and result.get("finish_reason") in {"length", "max_tokens", "max_output_tokens"}:
+                    self.abort("OPERATIONAL_OUTPUT_TRUNCATION")
+                if self.token_ledger and type(result.get("provider_reported_output_tokens")) is int and result["provider_reported_output_tokens"] > request["max_tokens"]:
+                    self.abort("OPERATIONAL_OUTPUT_CAP_NOT_ENFORCED")
                 result = {**result, "provider_called": True}
                 self.cache[key] = result
                 return result
+
+    def abort(self, reason):
+        if self.token_ledger:
+            from ..governance.token_accounting import OperationalAbort
+            raise OperationalAbort(reason)
+        raise SearchContractError(reason)
 
     def _write(self, row):
         if self.ledger_writer:
@@ -111,6 +149,8 @@ class BenchmarkSolver:
         contract = self.benchmark.solver_interface_contract()
         if self.broker.contract.get("solver_output_interface") != contract:
             raise SearchContractError("SOLVER_INTERFACE_BINDING_MISMATCH")
+        if self.broker.prompt_observer:
+            self.broker.prompt_observer(prompt)
         effective = hashlib.sha256(json.dumps(dict(solver_interface=contract,
             mutable_prompt_sha256=hashlib.sha256(prompt.encode()).hexdigest(),
             benchmark_input_sha256=hashlib.sha256(self.benchmark.format_input(item).encode()).hexdigest(),
@@ -126,7 +166,7 @@ class BenchmarkSolver:
     def solve(self, prompt, item, *, stage, split):
         result = self._request(prompt, item, stage=stage, split=split)
         if not self.benchmark.parse_member_output(result["text"], item).valid:
-            raise SearchContractError("SOLVER_INVALID_RESPONSE_NO_REGENERATION")
+            self.broker.abort("SOLVER_INVALID_RESPONSE_NO_REGENERATION")
         return result["text"]
 
     def evaluate(self, prompt, example):
@@ -135,7 +175,7 @@ class BenchmarkSolver:
         result = self._request(prompt, item, stage="gepa_local", split="optimize")
         parsed = self.benchmark.parse_member_output(result["text"], item)
         if not parsed.valid:
-            raise SearchContractError("SOLVER_INVALID_RESPONSE_NO_REGENERATION")
+            self.broker.abort("SOLVER_INVALID_RESPONSE_NO_REGENERATION")
         return LocalSolverObservation(parsed.answer, result["text"], self.benchmark.score_member_output(parsed, example.gold) == 1,
             True, input_tokens=result["input_tokens"], output_tokens=result["output_tokens"], provider_called=result["provider_called"])
 

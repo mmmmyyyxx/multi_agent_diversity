@@ -28,21 +28,22 @@ validation_access: not_authorized
 test_access: sealed
 open_questions: docs/research/OPEN_QUESTIONS.md
 last_method_milestone: unified_team_prompt_search_v2_method_refactor
-canary_manifest: experiments/manifests/math_v2_pattern_memory_v1_2.yaml
+canary_manifest: experiments/manifests/math_v2_a1_seed81_real_canary_v2.yaml
 last_preexecution_milestone: math_v2_preexecution_freeze_v1_2
 last_canary_milestone: math_v2_a1_seed81_real_canary_v1
-current_canary_status: NOT_STARTED_TOKEN_ACCOUNTING_UNRESOLVED
+current_canary_status: PREPARING_FRESH_CANARY_ACCOUNTING_V2
 formal_a1_ready: false
 formal_a1_authorized: false
-current_execution_blocker: 'STOP_TOKEN_ACCOUNTING_UNRESOLVED: reliable frozen lwj accounting upper bound
-  unavailable.'
+current_execution_blocker: Zero-API gates and exact source/preexecution freeze pending.
 next_canary_milestone: math_v2_a1_seed81_real_canary_v2
 next_canary_attempt_id: math_unified_v2_A1_seed81_canary_attempt2
-last_autonomous_milestone: math_v2_autonomous_accounting_preflight_v1
+last_autonomous_milestone: math_v2_token_accounting_repair_v2
 autonomous_user_authorization_received: true
 autonomous_token_authorization: 30000000
 autonomous_tokens_consumed: 0
 autonomous_tokens_remaining: 30000000
+token_accounting_policy: RESERVATION_V2
+prior_accounting_stop_resolution: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2
 ```
 
 ## Experiment and engineering DAG
@@ -65,6 +66,9 @@ flowchart TD
     n188["math_v2_preexecution_freeze_v1_2<br/>PREEXECUTION_FREEZE<br/>PREEXECUTION_FROZEN"]
     n189["math_v2_solver_interface_repair_v1_2<br/>PREEXECUTION_FREEZE<br/>PREEXECUTION_FROZEN"]
     n190["math_v2_autonomous_accounting_preflight_v1<br/>ZERO_API_AUDIT<br/>HOLD"]
+    n191["math_v2_token_accounting_repair_v2<br/>PREEXECUTION_FREEZE<br/>PREPARED_NOT_EXECUTED"]
+    n192["math_v2_a1_seed81_real_canary_v2<br/>REAL_CANARY<br/>PREPARED_NOT_EXECUTED"]
+    n193["math_v2_a1_seed81_pilot_v1<br/>PILOT<br/>PREPARED_NOT_EXECUTED"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -330,6 +334,9 @@ flowchart TD
   n187 -->|repairs_operational_blocker_of| n188
   n188 -->|freeze_of| n189
   n188 -->|audit_of| n190
+  n190 -->|resolves_blockers_of| n191
+  n191 -->|derived_from| n192
+  n192 -->|derived_from| n193
 ```
 
 ## Archived branches and unresolved evidence
