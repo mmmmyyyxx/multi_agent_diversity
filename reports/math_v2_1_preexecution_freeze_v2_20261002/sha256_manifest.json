@@ -1,9 +1,14 @@
 {
   "README.md": "8c34809e8df1624ad19084b6573cd279ff012738928060332bc1c0703e12ecad",
   "analysis_policy_receipt.json": "e512a89a6623bded622718c25ac1840dd17cdf8b5a794abbd27e8d2df0fd623c",
+  "canary_source_identity.json": "d2875bba2cfdb6ff2857f70bf825b22cd846e1917330cefd2c1ad351beecb164",
+  "canary_startup_receipt.json": "4a0f4e4bd92d24743129de5bf1b7ce29996e97aa531f1de148965c43e3bdb7a6",
   "fake_A1.json": "71735c649ec02b6f0d7f0986ccd6e7f275626e61f828db996e2d0d9b4787af71",
   "fake_A2.json": "971a22ca27f3946d45d409e97850be495de7ca4ee03dd2dd524cc088b945324a",
   "fake_A3.json": "fa3b7e754c8a6be90296df94294c40e3dcce727271dce07be08c224a20abb76d",
   "fake_A4.json": "8ee4c6a45c0c54f49222229f2576a83245a0c29e7b12e413d75f846ea298af11",
+  "pilot_source_identity.json": "40e23077020b06a0e0dde467b410c0fb6d3420c3f5a6dc97caa5f945b468b479",
+  "pilot_startup_receipt.json": "728c4ba827473b7722e124dd9dbf149f48c1be07f1e29c08877d3fdcbfbdd381",
+  "preexecution_freeze_receipt.json": "528780acf860a2285b8bcf7d051dcf7ffea1f98094eda087bcf33fc1809a78a4",
   "zero_api_gates.json": "3e37c1457ef6090dc64fa0b7d3f71c131b11168e5545c789b7e78689e59a0487"
 }
