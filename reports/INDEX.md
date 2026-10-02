@@ -83,7 +83,7 @@ Reports are immutable evidence, never design authority. Unresolved metadata does
 | [math_v2_1_a1_seed81_real_canary_v2_20261002](math_v2_1_a1_seed81_real_canary_v2_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | REAL_CANARY | math_v2_1_a1_seed81_real_canary_v2 | INVALID |
 | [math_v2_1_a1_seed81_real_canary_v3_20261002](math_v2_1_a1_seed81_real_canary_v3_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | INVALID_ATTEMPT | math_v2_1_a1_seed81_real_canary_v3 | INVALID |
 | [math_v2_1_a1_seed81_real_canary_v4_20261002](math_v2_1_a1_seed81_real_canary_v4_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | INVALID_ATTEMPT | math_v2_1_a1_seed81_real_canary_v4 | INVALID |
-| [math_v2_1_a1_seed81_real_canary_v5_20261003](math_v2_1_a1_seed81_real_canary_v5_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | REAL_CANARY | math_v2_1_a1_seed81_real_canary_v5 | INVALID |
+| [math_v2_1_a1_seed81_real_canary_v5_20261003](math_v2_1_a1_seed81_real_canary_v5_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | INVALID_ATTEMPT | math_v2_1_a1_seed81_real_canary_v5 | INVALID |
 | [math_v2_1_answer_domain_amendment_v1_20261002](math_v2_1_answer_domain_amendment_v1_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | MIGRATION | math_v2_1_answer_domain_amendment_v1 | COMPLETED |
 | [math_v2_1_output_interface_repair_v1_20261002](math_v2_1_output_interface_repair_v1_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | ARCHITECTURE | math_v2_1_output_interface_repair_v1 | COMPLETED |
 | [math_v2_1_output_interface_repair_v2_20261002](math_v2_1_output_interface_repair_v2_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | ARCHITECTURE | math_v2_1_output_interface_repair_v2 | COMPLETED |
