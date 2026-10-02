@@ -1,0 +1,36 @@
+{
+  "explicit_user_authorized": false,
+  "scope": {
+    "accounting": {
+      "continuation_authorization_sha256": "942fed648eb14213cbef14bfba595684025fb7965e1e18fbc4f7baa7f43b7df4",
+      "ledger_directory": "runs/math_autonomous_accounting_v2/token_ledger",
+      "policy_sha256": "47afa1a5683702183fa09ab88efe7460fa3007280d8b6a1a52364d2e236e768a",
+      "task_sha256": "3db28ade2b799d2169c6cdbdb03b82e63517ab74c46f8212905855f2fcf9cd9a",
+      "total_authorization": 30000000,
+      "validation_metadata_sha256": "6ddcb1d46e8bb4f3bfba34e394f5fb6b6b371d30e73d6c5dafcb72dd9110142a"
+    },
+    "arm": "A1",
+    "attempt_id": "math_unified_v2_1_A1_seed81_pilot_attempt4",
+    "binding_sha256": "f218b274556d2ab5812376bf0765e6a02b6a4f133b5c6ddc7bc5eb7b68348e25",
+    "models": {
+      "optimizer_reflection": "qwen3.7-flash",
+      "pattern": "qwen3.7-flash",
+      "solver": "qwen3-8b",
+      "solver_thinking": false
+    },
+    "phase": "team_epoch_no_commit_v1",
+    "preregistration_identity": "4f78691dddd7971323b0ca7b59ee16ef9181a5158d92014dd836abd7fe4cc000",
+    "provider": "lwj",
+    "roles": [
+      "solver",
+      "reflection"
+    ],
+    "seed": 81,
+    "source_sha": "dc28b6e819843b8538426f0fdf1e9e3327d79ed7",
+    "successful_provider_call_ceiling": 30000000,
+    "test_calls": 0,
+    "transport_attempt_ceiling": 30000000,
+    "validation_calls": 0
+  },
+  "startup_identity_sha256": "a270b2b0cbdd7a6e0b2250a6bc79024b775ba3a0ea019a686e6157f149a1662b"
+}

@@ -1,0 +1,76 @@
+{
+  "manifest_receipts": {
+    "math_v2_1_a1_seed81_pilot_v4": {
+      "manifest_sha256": "e330adf1ca12f0c24e8bd8d573c189a59444fa738d8fe1aae06ddf20df3ec0ad",
+      "preflight": {
+        "benchmark_id": "math",
+        "binding_sha256": "f218b274556d2ab5812376bf0765e6a02b6a4f133b5c6ddc7bc5eb7b68348e25",
+        "blockers": [],
+        "gate": "CANARY_READY_NOT_AUTHORIZED",
+        "provider_attempts": 0,
+        "readiness_identity": "MATH_RUNTIME_READINESS_V1",
+        "ready_for_authorization": true,
+        "real_api_authorized": false,
+        "test_calls": 0,
+        "validation_calls": 0
+      },
+      "preregistration_identity": "4f78691dddd7971323b0ca7b59ee16ef9181a5158d92014dd836abd7fe4cc000",
+      "source_sha": "dc28b6e819843b8538426f0fdf1e9e3327d79ed7"
+    },
+    "math_v2_1_a1_seed81_real_canary_v4": {
+      "manifest_sha256": "5d4ddc833c0dbccc235c6d1c2796031fe414e65ba4553d5fcf1704fb13f5dae1",
+      "preflight": {
+        "benchmark_id": "math",
+        "binding_sha256": "48a85475cfa21438d1c27b57787dd69970db7bcece74a49224ed95a18132fc51",
+        "blockers": [],
+        "gate": "CANARY_READY_NOT_AUTHORIZED",
+        "provider_attempts": 0,
+        "readiness_identity": "MATH_RUNTIME_READINESS_V1",
+        "ready_for_authorization": true,
+        "real_api_authorized": false,
+        "test_calls": 0,
+        "validation_calls": 0
+      },
+      "preregistration_identity": "f3cf09defc6bc0220d6a4c28b7ef06b06ae7e863267e80ae0e73273c08a3b33b",
+      "source_sha": "dc28b6e819843b8538426f0fdf1e9e3327d79ed7"
+    },
+    "math_v2_1_preexecution_freeze_v4": {
+      "manifest_sha256": "97049c4cd183012fa12e0ce878ff28a332dec62de5ff99920a7968782bbbe91e",
+      "preflight": {
+        "benchmark_id": "math",
+        "binding_sha256": "48a85475cfa21438d1c27b57787dd69970db7bcece74a49224ed95a18132fc51",
+        "blockers": [],
+        "gate": "CANARY_READY_NOT_AUTHORIZED",
+        "provider_attempts": 0,
+        "readiness_identity": "MATH_RUNTIME_READINESS_V1",
+        "ready_for_authorization": true,
+        "real_api_authorized": false,
+        "test_calls": 0,
+        "validation_calls": 0
+      },
+      "preregistration_identity": "5cc5dfd2e2ab10c17eeaa98b8c599161dd71458642fa0e265ac989d5cc622b71",
+      "source_sha": "dc28b6e819843b8538426f0fdf1e9e3327d79ed7"
+    },
+    "math_v2_1_solver_output_envelope_repair_v1": {
+      "manifest_sha256": "66ec9a09dc26fb90f59d3c5ed6dcf5e77732518e5cf191c37cfe90f9d9c83e02",
+      "preflight": {
+        "benchmark_id": "math",
+        "binding_sha256": "48a85475cfa21438d1c27b57787dd69970db7bcece74a49224ed95a18132fc51",
+        "blockers": [],
+        "gate": "CANARY_READY_NOT_AUTHORIZED",
+        "provider_attempts": 0,
+        "readiness_identity": "MATH_RUNTIME_READINESS_V1",
+        "ready_for_authorization": true,
+        "real_api_authorized": false,
+        "test_calls": 0,
+        "validation_calls": 0
+      },
+      "preregistration_identity": "89839e78bd5184c6cbba1ef2ad93d0d2bf2446e70ab6b4c7027d9d140cbaa836",
+      "source_sha": "dc28b6e819843b8538426f0fdf1e9e3327d79ed7"
+    }
+  },
+  "real_api_calls": 0,
+  "scientific_efficacy_verified": false,
+  "source_sha": "dc28b6e819843b8538426f0fdf1e9e3327d79ed7",
+  "status": "V2_1_MATH_PREEXECUTION_FROZEN"
+}
