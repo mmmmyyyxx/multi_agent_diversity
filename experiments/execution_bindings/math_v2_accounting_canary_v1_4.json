@@ -1,0 +1,135 @@
+{
+  "access": {
+    "optimize": "adaptive",
+    "shadow": "private_adaptive_gate",
+    "test": "sealed",
+    "validation": "post_freeze_read_only_not_authorized"
+  },
+  "accounting_policy_path": "experiments/accounting/math_token_accounting_v2.json",
+  "accounting_policy_sha256": "47afa1a5683702183fa09ab88efe7460fa3007280d8b6a1a52364d2e236e768a",
+  "aggregation": "equal_equivalence_plurality_consistency_v1",
+  "arms": {
+    "A1": [
+      false,
+      false
+    ],
+    "A2": [
+      true,
+      false
+    ],
+    "A3": [
+      false,
+      true
+    ],
+    "A4": [
+      true,
+      true
+    ]
+  },
+  "benchmark_id": "math",
+  "benchmark_protocol_sha256": "00f3377e1a3cc1452e0cbba51a41ae25777a3c5eaa020622b45f44b9229509f3",
+  "binding_path": "experiments/execution_bindings/math_v2_accounting_canary_v1_4.json",
+  "budget": {
+    "local_patience": 3,
+    "metric_calls": 36,
+    "promotion": 2,
+    "reflection_minibatch_size": 3,
+    "team_patience": 2
+  },
+  "cache_namespace": "math_unified_v2_A1_seed81_canary_attempt3",
+  "cache_policy": "exact_request_role_split_cache_v1",
+  "canary_attempt_id": "math_unified_v2_A1_seed81_canary_attempt2",
+  "canary_phase": "first_parent_team_epoch_or_first_commit",
+  "canonical_manifest_sha256": "7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f",
+  "canonical_root": "data/benchmark_suite_v1",
+  "concurrency": {
+    "optimizer_reflection": 1,
+    "pattern": 1,
+    "solver": 1
+  },
+  "decoding": {
+    "invalid_response_retries": 0,
+    "max_output_tokens": 1800,
+    "retry_backoff_ceiling_seconds": 60,
+    "retry_sleep_seconds": 1.5,
+    "sdk_retries": 0,
+    "temperature": 0.0,
+    "timeout_seconds": 120,
+    "transport_retries": 20
+  },
+  "evaluator": "math_verify_0.6.0_equivalence_v1",
+  "evaluator_pins": {
+    "antlr4-python3-runtime": "4.13.2",
+    "latex2sympy2_extended": "1.0.9",
+    "math-verify": "0.6.0",
+    "mpmath": "1.3.0",
+    "sympy": "1.14.0"
+  },
+  "execution_attempt_id": "math_unified_v2_A1_seed81_canary_attempt3",
+  "execution_phase": "canary",
+  "identity": "MATH_EXECUTION_BINDING_V1_3",
+  "initial_team_artifact_sha256": "a0ce805d8e88499a829b9843f790c70ad14d99ab587a6e670e657e109695456a",
+  "initial_team_path": "experiments/initial_teams/math_generic_team_seed_v1_1.json",
+  "initial_team_sha256": "4ca685adff5ca8a97e53b0aa0f5715783c7c6937433bd5bbc1308cbad9e97200",
+  "initial_team_version": "MATH_GENERIC_TEAM_SEED_V1_1",
+  "membership_hashes": {
+    "optimize": "52fd0a0253730a4392c879374d0963c46df4aa7daf042f3c0970162f87dbc947",
+    "shadow": "3f730fb428b3059d021c5b8354bad234939b16be79dc808dc41688206344ee74",
+    "test": "9cba0605a224f1c1ebe15a01c65d1263f8cbee45d8ec2cfd67d496b119a6c32d",
+    "validation": "506c2c10beff5a14ef593f90a13929ad4519e0921d4957df00a4c1b152b4cd22"
+  },
+  "memory_limits": {
+    "max_context_chars": 1200,
+    "private_storage_limit": 24,
+    "shared_storage_limit": 48,
+    "top_k_private": 3,
+    "top_k_shared": 3
+  },
+  "models": {
+    "optimizer_reflection": "qwen3.7-flash",
+    "pattern": "qwen3.7-flash",
+    "solver": "qwen3-8b",
+    "solver_thinking": false
+  },
+  "parent_binding_path": "experiments/execution_bindings/math_v2_execution_v1_2.json",
+  "parent_binding_sha256": "5460808ad5ff8e33a697ef15cb72b8c8ecdafb6c08bf1fa762a6679b405bc0f4",
+  "pattern_prompt_path": "experiments/execution_bindings/math_pattern_prompt_v1.json",
+  "pattern_prompt_sha256": "fb68a222ebf6cb6c14a0959b5d5576e03e11c181d872aa71c234035503c85046",
+  "provider": "lwj",
+  "provider_authority": "explicit model decision + historically validated executable lwj mapping",
+  "provider_bounds": {
+    "max_opportunities": 2405,
+    "max_proposals_per_opportunity": 5,
+    "pattern_calls": 2405,
+    "reflection_calls": 12025,
+    "solver_calls": 1676130,
+    "solver_per_opportunity": 696,
+    "successful_provider_calls": 1690560,
+    "transport_attempts": 35501760
+  },
+  "provider_sdk": {
+    "name": "openai",
+    "version": "2.37.0"
+  },
+  "reference_extractor": "MATH_REFERENCE_EXTRACTOR_V1",
+  "reference_validity": "MATH_REFERENCE_VALIDITY_V1",
+  "responsibility": "binary_plurality_raw_responsibility_v1",
+  "seeds": [
+    81,
+    82,
+    83
+  ],
+  "shadow_count": 300,
+  "solver_output_interface": {
+    "identity": "MATH_SOLVER_INTERFACE_V2",
+    "parser_identity": "math_verify_no_fallback_v1",
+    "sha256": "a0a37577a07c8a3d3a033c3665a718a8325f60e5e2b2297d6c10ec52024294d9"
+  },
+  "split_directory": "experiments/data_splits/benchmark_experiment_v1_1",
+  "split_manifest_sha256": "753a24c9e2ee7bb6d7531c53acc83eacf562a431292d271a8d75ef0156fed70b",
+  "split_version": "benchmark_experiment_split_v1_1",
+  "task_authorization_sha256": "3db28ade2b799d2169c6cdbdb03b82e63517ab74c46f8212905855f2fcf9cd9a",
+  "token_ledger_directory": "runs/math_autonomous_accounting_v2/token_ledger",
+  "validation_accounting_metadata_path": "experiments/accounting/math_validation_accounting_metadata_v2.json",
+  "validation_accounting_metadata_sha256": "4e8b471427fcba3d756c7f10eb5942936ab66076c6af9595689418c0bfbff0f4"
+}

@@ -50,17 +50,19 @@ def consume(root, prep, run_root, payload):
 def create_transport(contract):
     from ..provider_factory import ProviderClientFactory
     from openai import OpenAI, APIConnectionError, APITimeoutError
+    from openai._models import FinalRequestOptions
     import httpx
     client = ProviderClientFactory.from_environment(provider_profile=contract["provider"], client_type=OpenAI,
         max_retries=0, timeout=contract["decoding"]["timeout_seconds"])
 
     def transport(request):
         # Count, hash and send exactly the same UTF-8 body bytes.
-        wire = httpx.Request("POST", client.base_url.join("chat/completions"),
-            headers={k:v for k,v in client.default_headers.items() if isinstance(v,(str,bytes))},
+        options = FinalRequestOptions.construct(method="post", url="/chat/completions", security={"bearer_auth": True})
+        wire = client._client.build_request("POST", client._prepare_url("/chat/completions"),
+            headers=client._build_headers(options),
             content=serialized_request(request))
         try:
-            response = client._client.send(wire)
+            response = client._client.send(wire, follow_redirects=False)
         except httpx.TimeoutException as exc:
             raise APITimeoutError(request=wire) from exc
         except httpx.TransportError as exc:
@@ -69,16 +71,21 @@ def create_transport(contract):
             try:
                 body = response.json()
             except ValueError:
-                if response.is_error:
-                    raise client._make_status_error_from_response(body=None, response=response)
+                if response.is_error or response.is_redirect:
+                    error = client._make_status_error_from_response(response)
+                    error.provider_evidence = dict(http_status=response.status_code, response_text=response.text)
+                    raise error
                 raise
-            if response.is_error:
-                error = client._make_status_error_from_response(body=body, response=response)
-                usage = body.get("usage") or {} if isinstance(body, dict) else {}
+            if response.is_error or response.is_redirect:
+                error = client._make_status_error_from_response(response)
+                usage = body.get("usage") if isinstance(body, dict) else None
+                usage = usage if isinstance(usage, dict) else {}
                 error.token_usage = dict(input_tokens=usage.get("prompt_tokens"), output_tokens=usage.get("completion_tokens"))
+                error.provider_evidence = dict(http_status=response.status_code, response_body=body)
                 raise error
             choice = body["choices"][0]
-            usage = body.get("usage") or {}
+            usage = body.get("usage")
+            usage = usage if isinstance(usage, dict) else {}
             return dict(text=choice["message"].get("content"), finish_reason=choice.get("finish_reason"),
                 input_tokens=usage.get("prompt_tokens"), output_tokens=usage.get("completion_tokens"), response_id=body.get("id"))
         finally:

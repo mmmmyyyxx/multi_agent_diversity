@@ -84,6 +84,10 @@ class RequestBroker:
                             self.usage[k] += charge[k]
                     self.usage["failures"] += 1
                     self._write(dict(kind="FAILURE", role=role, split=split, stage=stage, request_sha256=key, error_category=type(exc).__name__))
+                    if self.raw_writer:
+                        self.raw_writer(dict(role=role, split=split, stage=stage, request_sha256=key,
+                            request=request, error_category=type(exc).__name__,
+                            provider_evidence=getattr(exc, "provider_evidence", None)))
                     # Retry transport failures only. SDK retries are disabled.
                     from openai import APIConnectionError, APITimeoutError, RateLimitError, InternalServerError
                     if not isinstance(exc, (APIConnectionError, APITimeoutError, RateLimitError, InternalServerError)) or retry == c["decoding"]["transport_retries"]:

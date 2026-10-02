@@ -581,6 +581,12 @@ nodes:
 - experiment_id: math_v2_a1_seed81_pilot_v1
   kind: PILOT
   era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_provider_error_mapping_repair_v1
+  kind: PREEXECUTION_FREEZE
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_a1_seed81_real_canary_v3
+  kind: REAL_CANARY
+  era: BENCHMARK_GENERALIZATION
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -941,4 +947,14 @@ edges:
   evidence: reports/math_v2_token_accounting_repair_v2_20261002/README.md
   scope: Operational accounting preparation and planned A1 Seed81 phase; no efficacy
     evidence.
+- from: math_v2_a1_seed81_real_canary_v2
+  to: math_v2_provider_error_mapping_repair_v1
+  relation: repairs_operational_blocker_of
+  evidence: reports/math_v2_provider_error_mapping_repair_v1_20261002/README.md
+  scope: HTTP error mapping and private failure evidence repair; no scientific changes.
+- from: math_v2_provider_error_mapping_repair_v1
+  to: math_v2_a1_seed81_real_canary_v3
+  relation: derived_from
+  evidence: reports/math_v2_provider_error_mapping_repair_v1_20261002/README.md
+  scope: HTTP error mapping and private failure evidence repair; no scientific changes.
 current_frontier: experiments/current_frontier.yaml

@@ -5876,15 +5876,15 @@ experiments:
   method_family: unified_team_prompt_search_v2
   parent_ids:
   - math_v2_autonomous_accounting_preflight_v1
-  status: PREPARED_NOT_EXECUTED
+  status: COMPLETED
   scientific_status: ZERO_API_PREPARATION_EFFICACY_UNVERIFIED
-  implementation_commit: null
+  implementation_commit: 7754671bbc766cff2d32037ce38b00f19a520bbe
   execution_commit: null
-  result_commit: null
+  result_commit: f7005c0da0670c308b3d4567d6847d1c31bf473f
   manifest: experiments/manifests/math_v2_token_accounting_repair_v2.yaml
   report: reports/math_v2_token_accounting_repair_v2_20261002
   classifier: RESERVATION_V2_PREEXECUTION
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   baseline_commit: 039dd93b07e2d686727ab5ee0bd580557729ca41
@@ -5894,35 +5894,31 @@ experiments:
   - Fresh exact single-use authorization and source freeze required before dispatch.
   - Only A1 Seed81; Pattern and Memory OFF; Test sealed.
   unavailable:
-    implementation_commit: Exact source will be recorded in the frozen manifest.
     execution_commit: No real transport yet.
-    result_commit: No efficacy observed.
 - experiment_id: math_v2_a1_seed81_real_canary_v2
   kind: REAL_CANARY
   era: BENCHMARK_GENERALIZATION
   method_family: unified_team_prompt_search_v2
   parent_ids:
   - math_v2_token_accounting_repair_v2
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: ZERO_API_PREPARATION_EFFICACY_UNVERIFIED
-  implementation_commit: null
-  execution_commit: null
+  status: INVALID
+  scientific_status: INVALID
+  implementation_commit: 7754671bbc766cff2d32037ce38b00f19a520bbe
+  execution_commit: 7754671bbc766cff2d32037ce38b00f19a520bbe
   result_commit: null
   manifest: experiments/manifests/math_v2_a1_seed81_real_canary_v2.yaml
-  report: reports/math_v2_token_accounting_repair_v2_20261002
-  classifier: RESERVATION_V2_PREEXECUTION
-  active_for_new_work: true
+  report: reports/math_v2_a1_seed81_real_canary_v2_20261002
+  classifier: SDK_STATUS_ERROR_CONSTRUCTOR_SIGNATURE_MISMATCH
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   baseline_commit: 039dd93b07e2d686727ab5ee0bd580557729ca41
-  authorization_consumed: false
+  authorization_consumed: true
   notes:
   - User-authorized operational reservation policy; no efficacy-based adaptation.
   - Fresh exact single-use authorization and source freeze required before dispatch.
   - Only A1 Seed81; Pattern and Memory OFF; Test sealed.
   unavailable:
-    implementation_commit: Exact source will be recorded in the frozen manifest.
-    execution_commit: No real transport yet.
     result_commit: No efficacy observed.
 - experiment_id: math_v2_a1_seed81_pilot_v1
   kind: PILOT
@@ -5950,4 +5946,56 @@ experiments:
   unavailable:
     implementation_commit: Exact source will be recorded in the frozen manifest.
     execution_commit: No real transport yet.
+    result_commit: No efficacy observed.
+- experiment_id: math_v2_provider_error_mapping_repair_v1
+  kind: PREEXECUTION_FREEZE
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2
+  parent_ids:
+  - math_v2_a1_seed81_real_canary_v2
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: ZERO_API_PREPARATION_EFFICACY_UNVERIFIED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_provider_error_mapping_repair_v1.yaml
+  report: reports/math_v2_provider_error_mapping_repair_v1_20261002
+  classifier: HTTP_ERROR_MAPPING_OPERATIONAL_REPAIR
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  baseline_commit: f7005c0da0670c308b3d4567d6847d1c31bf473f
+  authorization_consumed: false
+  notes:
+  - Operational repair 1 for installed SDK error mapping; scientific payload unchanged.
+  - One previously failed physical attempt remains permanently charged 7231 tokens.
+  unavailable:
+    implementation_commit: Exact source pending gates.
+    execution_commit: Fresh attempt not executed.
+    result_commit: No efficacy observed.
+- experiment_id: math_v2_a1_seed81_real_canary_v3
+  kind: REAL_CANARY
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2
+  parent_ids:
+  - math_v2_provider_error_mapping_repair_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: ZERO_API_PREPARATION_EFFICACY_UNVERIFIED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_a1_seed81_real_canary_v3.yaml
+  report: reports/math_v2_provider_error_mapping_repair_v1_20261002
+  classifier: HTTP_ERROR_MAPPING_OPERATIONAL_REPAIR
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  baseline_commit: f7005c0da0670c308b3d4567d6847d1c31bf473f
+  authorization_consumed: false
+  notes:
+  - Operational repair 1 for installed SDK error mapping; scientific payload unchanged.
+  - One previously failed physical attempt remains permanently charged 7231 tokens.
+  unavailable:
+    implementation_commit: Exact source pending gates.
+    execution_commit: Fresh attempt not executed.
     result_commit: No efficacy observed.

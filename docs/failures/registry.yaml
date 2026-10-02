@@ -232,3 +232,44 @@ failures:
   lifecycle: MITIGATED
   lifecycle_note: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2; NOT_PROVIDER_BILLING_PROOF
   resolved_by: math_v2_token_accounting_repair_v2
+- failure_id: FAIL-MATH-SDK-HTTP-ERROR-MAPPING
+  title: Installed SDK error mapping rejected an unsupported keyword
+  status: MITIGATED
+  first_observed: math_v2_a1_seed81_real_canary_v2
+  affected_components:
+  - autonomous_math_transport
+  - provider_failure_evidence
+  symptom: First HTTP error response raised TypeError before SDK status classification and response persistence.
+  evidence:
+  - reports/math_v2_a1_seed81_real_canary_v2_20261002
+  - reports/math_v2_provider_error_mapping_repair_v1_20261002
+  evidence_level: observed
+  root_cause_status: Installed SDK accepts response only; body keyword unsupported. Original HTTP status
+    is unknown.
+  forbidden_inference: No Solver output, opportunity, scientific efficacy or provider denial cause is
+    established.
+  regression_tests:
+  - tests/test_math_token_accounting.py
+  mitigation: Use the installed SDK response-only signature and persist private HTTP error evidence before
+    terminal abort or frozen retry.
+  lifecycle: MITIGATED
+  lifecycle_note: ZERO_API_ERROR_MAPPING_CONFORMANCE_ONLY; REAL_PROVIDER_ACCESS_UNVERIFIED
+  resolved_by: math_v2_provider_error_mapping_repair_v1
+- failure_id: FAIL-MATH-SDK-AUTH-HEADER-OMITTED
+  title: Manual exact-body transport omitted SDK bearer authentication
+  status: MITIGATED
+  first_observed: math_v2_provider_error_mapping_repair_v1
+  affected_components:
+  - autonomous_math_transport
+  symptom: Installed SDK default headers exclude authentication; the old manual request copied only those headers.
+  evidence:
+  - reports/math_v2_provider_error_mapping_repair_v1_20261002
+  evidence_level: observed
+  root_cause_status: Installed SDK inspection and a synthetic offline negative control prove the missing header. The original failed request HTTP status remains unknown.
+  forbidden_inference: Do not infer a historical HTTP status, credential validity, provider availability or scientific efficacy from this offline reconstruction.
+  regression_tests:
+  - tests/test_math_token_accounting.py
+  mitigation: Build headers and URL through ordinary SDK security handling, preserve exact reserved body bytes, pin installed SDK version, and deny uncounted redirects.
+  lifecycle: MITIGATED
+  lifecycle_note: ZERO_API_TRANSPORT_CONFORMANCE_ONLY; REAL_PROVIDER_ACCESS_UNVERIFIED
+  resolved_by: math_v2_provider_error_mapping_repair_v1

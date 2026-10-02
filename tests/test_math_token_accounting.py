@@ -173,6 +173,9 @@ def test_truncation_aborts_after_charge_without_regeneration(tmp_path):
 def test_opaque_transport_sends_exact_reserved_body(monkeypatch):
     captured=[]
     def handler(r):
+        assert r.headers['authorization']=='Bearer synthetic'
+        assert r.headers['content-type']=='application/json'
+        assert r.url.path=='/v1/chat/completions'
         captured.append(r.content)
         return httpx.Response(200,json={"choices":[{"message":{"content":"FINAL_ANSWER: 1"},"finish_reason":"stop"}],
                                       "usage":{"prompt_tokens":8,"completion_tokens":4}})
@@ -186,6 +189,92 @@ def test_opaque_transport_sends_exact_reserved_body(monkeypatch):
         assert result["input_tokens"]==8 and result["output_tokens"]==4
     finally:
         client.close()
+
+
+@pytest.mark.parametrize("status,payload", [(403,{"error":{"message":"synthetic denial"}}),
+    (500,{"error":{"message":"synthetic server failure"},"usage":{"prompt_tokens":7,"completion_tokens":2}}),
+    (503,"synthetic non-JSON failure")])
+def test_installed_sdk_http_error_mapping_preserves_private_evidence(monkeypatch,status,payload):
+    def handler(r):
+        return httpx.Response(status,**({"json":payload} if isinstance(payload,dict) else {"text":payload}))
+    client=OpenAI(api_key="synthetic",base_url="https://example.invalid/v1",max_retries=0,
+                  http_client=httpx.Client(transport=httpx.MockTransport(handler)))
+    monkeypatch.setattr("multi_dataset_diverse_rl.provider_factory.ProviderClientFactory.from_environment",lambda **_:client)
+    transport,client=create_transport(contract())
+    try:
+        from openai import PermissionDeniedError
+        with pytest.raises(PermissionDeniedError if status==403 else InternalServerError) as error:
+            transport(request())
+        assert error.value.provider_evidence["http_status"]==status
+        if status==500:
+            assert error.value.token_usage==dict(input_tokens=7,output_tokens=2)
+    finally:
+        client.close()
+
+
+def test_broker_persists_failed_http_evidence_and_full_charge(tmp_path):
+    raw=[]
+    def transport(r):
+        from openai import PermissionDeniedError
+        wire=httpx.Request("POST","https://example.invalid")
+        error=PermissionDeniedError("synthetic",response=httpx.Response(403,request=wire),body={})
+        error.provider_evidence={"http_status":403,"response_body":{"error":{"message":"synthetic"}}}
+        raise error
+    b,l=broker(tmp_path,transport,raw_writer=raw.append)
+    try:
+        with pytest.raises(OperationalAbort,match="PROVIDER_TERMINAL_PermissionDeniedError"):
+            complete(b)
+        assert len(raw)==1 and raw[0]["provider_evidence"]["http_status"]==403
+        assert l.view()["fallback_charged"]==reservation(raw[0]["request"])["amount"]
+    finally:
+        l.close()
+
+
+@pytest.mark.parametrize("usage",[None,"invalid",[1,2],-1])
+def test_http_success_with_invalid_usage_continues_and_charges_full(tmp_path,monkeypatch,usage):
+    client=OpenAI(api_key="synthetic",base_url="https://example.invalid/v1",max_retries=0,
+        http_client=httpx.Client(transport=httpx.MockTransport(lambda r:httpx.Response(200,json={
+            "choices":[{"message":{"content":"FINAL_ANSWER: 1"},"finish_reason":"stop"}],"usage":usage}))))
+    monkeypatch.setattr("multi_dataset_diverse_rl.provider_factory.ProviderClientFactory.from_environment",lambda **_:client)
+    transport,client=create_transport(contract())
+    b,l=broker(tmp_path,transport)
+    try:
+        result=complete(b)
+        assert result['provider_called'] and not result['usage_reliable']
+        assert l.view()['fallback_charged']==reservation(request())["amount"]
+        assert b.usage['successes']==1 and b.usage['failures']==0
+    finally:
+        client.close()
+        l.close()
+
+
+def test_sdk_security_path_and_no_implicit_physical_redirect(monkeypatch):
+    captured=[]
+    def handler(r):
+        captured.append(r)
+        assert r.headers['authorization']=='Bearer synthetic'
+        return httpx.Response(307,headers={'location':'https://example.invalid/redirect'},json={'error':{'message':'synthetic redirect'}})
+    client=OpenAI(api_key='synthetic',base_url='https://example.invalid/v1',max_retries=0,
+        http_client=httpx.Client(transport=httpx.MockTransport(handler),follow_redirects=True))
+    # Negative control captures the integration defect without credentials or network.
+    assert 'Authorization' not in client.default_headers
+    monkeypatch.setattr('multi_dataset_diverse_rl.provider_factory.ProviderClientFactory.from_environment',lambda **_:client)
+    transport,client=create_transport(contract())
+    try:
+        from openai import APIStatusError
+        with pytest.raises(APIStatusError) as error:
+            transport(request())
+        assert len(captured)==1 and error.value.provider_evidence['http_status']==307
+        assert captured[0].content==serialized_request(request())
+    finally:
+        client.close()
+
+
+def test_provider_sdk_binding_drift_denies_before_transport():
+    from multi_dataset_diverse_rl.benchmarks.math_autonomous import MATHAutonomousBinding
+    c=json.loads((ROOT/'experiments/execution_bindings/math_v2_accounting_canary_v1_4.json').read_bytes())
+    c['provider_sdk']={'name':'openai','version':'not-installed'}
+    assert MATHAutonomousBinding(ROOT,c).blockers()==('PROVIDER_SDK_IDENTITY_MISMATCH',)
 
 
 def test_validation_metadata_reserve_handles_json_escaping():

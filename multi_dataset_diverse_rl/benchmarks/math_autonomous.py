@@ -2,6 +2,7 @@
 from copy import deepcopy
 import hashlib
 import json
+import importlib.metadata
 
 from .math_execution import MATHExecutionBinding
 from ..governance.token_accounting import POLICY
@@ -18,6 +19,9 @@ class MATHAutonomousBinding(MATHExecutionBinding):
             if hashlib.sha256(parent.read_bytes()).hexdigest() != c["parent_binding_sha256"]:
                 return ("MATH_PARENT_BINDING_MISMATCH",)
             original = json.loads(parent.read_bytes())
+            if "provider_sdk" in c and c["provider_sdk"] != {
+                "name":"openai", "version":importlib.metadata.version("openai")}:
+                return ("PROVIDER_SDK_IDENTITY_MISMATCH",)
             if MATHExecutionBinding(self.root, original).blockers():
                 return ("MATH_PARENT_SCIENCE_NOT_READY",)
             policy = self.path(c["accounting_policy_path"])
@@ -52,7 +56,7 @@ class MATHAutonomousBinding(MATHExecutionBinding):
             extras = {"binding_path", "parent_binding_path", "parent_binding_sha256",
                 "accounting_policy_path", "accounting_policy_sha256", "token_ledger_directory",
                 "validation_accounting_metadata_path", "validation_accounting_metadata_sha256",
-                "execution_phase", "execution_attempt_id", "task_authorization_sha256"}
+                "execution_phase", "execution_attempt_id", "task_authorization_sha256", "provider_sdk"}
             for key in extras:
                 projected.pop(key, None)
             for key in ("identity", "cache_namespace", "canary_attempt_id", "provider_bounds"):
@@ -71,5 +75,5 @@ class MATHAutonomousBinding(MATHExecutionBinding):
             if not ledger.is_relative_to(self.root / "runs") or len(c["task_authorization_sha256"]) != 64:
                 return ("MATH_TOKEN_LEDGER_SCOPE_MISMATCH",)
             return ()
-        except (OSError, KeyError, ValueError, TypeError):
+        except (OSError, KeyError, ValueError, TypeError, importlib.metadata.PackageNotFoundError):
             return ("MATH_AUTONOMOUS_BINDING_INVALID",)
