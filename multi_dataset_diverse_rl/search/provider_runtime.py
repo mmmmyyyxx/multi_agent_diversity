@@ -44,7 +44,11 @@ class RequestBroker:
         model = c["models"]["solver" if role == "solver" else "optimizer_reflection" if role == "reflection" else "pattern"]
         request = dict(model=model, messages=messages, temperature=c["decoding"]["temperature"],
             max_tokens=c["decoding"]["max_output_tokens"], extra_body={"enable_thinking": False} if role == "solver" else {})
-        key = hashlib.sha256(json.dumps({"provider": c["provider"], "role": role, "split": split, "request": request}, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        identity = {"provider": c["provider"], "role": role, "split": split, "request": request,
+                    "cache_namespace": c["cache_namespace"]}
+        if role == "solver":
+            identity["solver_output_interface"] = c["solver_output_interface"]
+        key = hashlib.sha256(json.dumps(identity, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
         with self.lock:
             if key in self.cache:
                 self._write(dict(kind="CACHE_HIT", role=role, split=split, stage=stage, request_sha256=key))
@@ -99,8 +103,24 @@ class BenchmarkSolver:
         return BenchmarkSolver(self.benchmark, self.broker.private_capability())
 
     def _request(self, prompt, item, *, stage, split):
+        if item.benchmark_id != self.benchmark.benchmark_id:
+            raise SearchContractError("SOLVER_BENCHMARK_INTERFACE_MISMATCH")
+        # Benchmark-owned immutable formatting is authoritative even if an
+        # evolved example or caller supplies a missing/stale per-item contract.
+        interface = self.benchmark.output_contract
+        contract = self.benchmark.solver_interface_contract()
+        if self.broker.contract.get("solver_output_interface") != contract:
+            raise SearchContractError("SOLVER_INTERFACE_BINDING_MISMATCH")
+        effective = hashlib.sha256(json.dumps(dict(solver_interface=contract,
+            mutable_prompt_sha256=hashlib.sha256(prompt.encode()).hexdigest(),
+            benchmark_input_sha256=hashlib.sha256(self.benchmark.format_input(item).encode()).hexdigest(),
+            model=self.broker.contract["models"]["solver"], decoding=self.broker.contract["decoding"],
+            solver_thinking=self.broker.contract["models"]["solver_thinking"]), sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        self.broker._write(dict(kind="SOLVER_REQUEST_CONTRACT", role="solver", split=split, stage=stage,
+            solver_interface_identity=contract["identity"], mutable_prompt_sha256=hashlib.sha256(prompt.encode()).hexdigest(),
+            effective_solver_request_contract_hash=effective))
         return self.broker.complete(role="solver", split=split, stage=stage,
-            messages=[{"role": "system", "content": item.output_contract},
+            messages=[{"role": "system", "content": interface},
                       {"role": "user", "content": prompt + "\n\n" + self.benchmark.format_input(item)}])
 
     def solve(self, prompt, item, *, stage, split):

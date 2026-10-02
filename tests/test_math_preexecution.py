@@ -27,7 +27,7 @@ from multi_dataset_diverse_rl.shadow_gate import ShadowGateMetrics, evaluate_con
 from multi_dataset_diverse_rl.local_optimizers.gepa_runtime import import_frozen_gepa
 
 ROOT = Path(__file__).resolve().parents[1]
-CONTRACT_PATH = ROOT / "experiments/execution_bindings/math_v2_execution_v1.json"
+CONTRACT_PATH = ROOT / versions.MATH_EXECUTION_BINDING_PATH
 GOOD = "Evaluate the mathematical relationships independently. Check each step and verify the conclusion using reliable general principles."
 OTHER = "Consider the mathematical relationships independently. Examine the deductions carefully and verify the conclusion using general mathematical principles."
 
@@ -175,6 +175,7 @@ def run_fake_arm(tmp_path, arm):
             assert all(r["source_split"] == "optimize" for r in data["evidence_rows"])
             return dict(text=json.dumps({"patterns": [dict(pattern_id="synthetic_mechanism", failure_mechanism="Missing consistency check",
                 corrective_principle="Verify intermediate deductions", support_ids=data["residual_ids"], counterexample_ids=[], risk_ids=[], confidence=0.9)]}), input_tokens=2, output_tokens=2)
+        assert all(adapter.output_contract not in m["content"] for m in req["messages"])
         return dict(text="```" + (GOOD if len(public_invocations) == 1 else OTHER) + "```", input_tokens=2, output_tokens=2)
     broker = RequestBroker(contract=c, transport=fake_transport, arm=arm, seed=81, ledger_writer=accounting.append)
     solver = BenchmarkSolver(adapter, broker)
@@ -222,7 +223,11 @@ def run_fake_arm(tmp_path, arm):
         assert all('"pattern"' in ctx and '"failure_mechanism":"Missing consistency check"' in ctx for ctx in contexts)
     else:
         assert broker.usage["pattern"] == 0
-    return dict(arm=arm, pass_=True, budget=public_invocations[0], invocation_count=len(public_invocations),
+    evidence = dict(arm=arm, pass_=True, budget=public_invocations[0], invocation_count=len(public_invocations),
+        solver_interface_identity=c["solver_output_interface"]["identity"],
+        solver_interface_sha256=c["solver_output_interface"]["sha256"],
+        immutable_interface_present_once=all(r["messages"][0]["content"] == adapter.output_contract
+            and json.dumps(r["messages"]).count("FINAL_ANSWER:") == 1 for r in requests if r["model"] == "qwen3-8b"),
         method_identity=orchestrator.method.identity(), target=result.trace[0].target_member,
         responsibility={str(k): asdict(v) for k, v in diagnosis.responsibility.items()},
         atomic_commits=len(result.transitions), full_count=len(orchestrator.evaluation.provider.fulled),
@@ -230,6 +235,14 @@ def run_fake_arm(tmp_path, arm):
         memory_audits=[t.memory_audit for t in result.trace], ledger_counts=broker.usage,
         real_solver_calls=0, real_optimizer_calls=0, real_pattern_calls=0,
         shadow_raw_search_leakage=0, validation_raw_search_leakage=0, test_raw_search_leakage=0)
+    import os
+    destination = os.environ.get("FORMAL_V3_EVIDENCE_CAPTURE_DIR")
+    if destination:
+        path = Path(destination).resolve()
+        assert path.is_relative_to((ROOT / "runs").resolve())
+        path.mkdir(parents=True, exist_ok=True)
+        (path / f"math_v12_{arm}.json").write_text(json.dumps(evidence, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return evidence
 
 
 @pytest.mark.parametrize("arm", ["A1", "A2", "A3", "A4"])
@@ -408,3 +421,116 @@ def test_fake_canary_full_persistence(fake_frozen_prep, monkeypatch, tmp_path):
     assert json.loads((run / "raw_evidence_inventory.json").read_bytes()) == governed.inventory(run)
     with pytest.raises(SearchContractError, match="AUTHORIZATION_REQUIRED"):
         governed.validate_prep(ROOT, prep, require_authorized=True)
+
+
+@pytest.mark.parametrize("text,valid", [
+    ("FINAL_ANSWER: 4", True), (r"FINAL_ANSWER: \frac{1}{2}", True),
+    ("reasoning...\nFINAL_ANSWER: x=3", True), ("The answer is 4.", False),
+    ("FINAL_ANSWER:", False), ("FINAL_ANSWER: 4\nFINAL_ANSWER: 4", False),
+    ("FINAL_ANSWER: 4\nFINAL_ANSWER: 5", False), ("FINAL_ANSWER: 4\nMore prose", False)])
+def test_v12_strict_format_regression(text, valid):
+    item = BenchmarkInput("synthetic", "Synthetic public arithmetic fixture.", "stale item contract", benchmark_id="math")
+    assert MATHBenchmarkAdapter().parse_member_output(text, item).valid is valid
+
+
+def test_v12_request_capture_initial_and_evolved():
+    c = contract()
+    team = json.loads((ROOT / c["initial_team_path"]).read_bytes())
+    prompts = [m["prompt"] for m in team["members"]] + [GOOD, OTHER,
+        "Identify the mathematical relationships. Deduce the result and check the reasoning carefully."]
+    captured, ledger = [], []
+    def transport(request):
+        captured.append(deepcopy(request))
+        return dict(text="reasoning\nFINAL_ANSWER: 4", input_tokens=2, output_tokens=2)
+    broker = RequestBroker(contract=c, transport=transport, arm="A1", seed=81, ledger_writer=ledger.append)
+    solver = BenchmarkSolver(MATHBenchmarkAdapter(), broker)
+    # A per-item contract cannot remove or replace the authoritative interface.
+    item = BenchmarkInput("synthetic", "Unique synthetic problem slot: compute two plus two.", "stale per-item contract", benchmark_id="math")
+    for index, prompt in enumerate(prompts):
+        assert solver.solve(prompt, item, stage="initial" if index < 5 else "full", split="optimize")
+        request = captured[-1]
+        assert request["messages"] == [dict(role="system", content=solver.benchmark.output_contract),
+                                        dict(role="user", content=prompt + "\n\n" + item.problem)]
+        text = json.dumps(request["messages"])
+        assert text.count("FINAL_ANSWER:") == text.count(prompt) == text.count(item.problem) == 1
+    assert len(captured) == 8
+    contracts = [r for r in ledger if r["kind"] == "SOLVER_REQUEST_CONTRACT"]
+    assert len(contracts) == 8 and len({r["effective_solver_request_contract_hash"] for r in contracts}) == 8
+    assert [r["mutable_prompt_sha256"] for r in contracts[:5]] == [m["prompt_sha256"] for m in team["members"]]
+    from multi_dataset_diverse_rl.evaluation.mutable_prompt_contract import validate_mutable_decision_procedure
+    with pytest.raises(ValueError, match="mutable_prompt_contract_violation"):
+        validate_mutable_decision_procedure(solver.benchmark.output_contract)
+
+
+def test_v12_old_cache_and_cross_attempt_isolation():
+    import hashlib
+    facts = json.loads((ROOT / "tests/fixtures/math_canary_attempt1_format_facts.json").read_bytes())
+    c = contract()
+    calls = []
+    def transport(request):
+        calls.append(request)
+        return dict(text="FINAL_ANSWER: 4", input_tokens=2, output_tokens=2)
+    broker = RequestBroker(contract=c, transport=transport, arm="A1", seed=81)
+    broker.cache[facts["provider_request_sha256"]] = dict(text="historical-invalid", input_tokens=1, output_tokens=1)
+    messages = [dict(role="system", content=MATHBenchmarkAdapter.output_contract), dict(role="user", content="synthetic cache fixture")]
+    kwargs = dict(role="solver", split="optimize", stage="initial", messages=messages)
+    assert broker.complete(**kwargs)["provider_called"]
+    assert not broker.complete(**kwargs)["provider_called"]
+    for field, value in [("cache_namespace", "fresh-other-attempt"), ("solver_output_interface", {**c["solver_output_interface"], "identity": "OLD_INTERFACE"})]:
+        changed = deepcopy(c)
+        changed[field] = value
+        other = RequestBroker(contract=changed, transport=transport, arm="A1", seed=81)
+        other.cache.update(broker.cache)
+        assert other.complete(**kwargs)["provider_called"]
+    assert len(calls) == 3
+
+
+def test_v12_attempt1_sanitized_format_negative_control():
+    facts = json.loads((ROOT / "tests/fixtures/math_canary_attempt1_format_facts.json").read_bytes())
+    assert facts["root_cause"] == "R2" and facts["request_marker_occurrences"] == 1
+    assert facts["response_marker_lines"] == 0 and facts["parser_valid"] is False
+    # Public fixture contains format facts only. Actual private response replay
+    # is an independently hashed audit receipt, never copied into the tests.
+    raw = "\n".join("Synthetic marker-free reasoning." for _ in range(facts["response_nonempty_lines"]))
+    item = BenchmarkInput("synthetic", "Synthetic fixture.", "stale item contract", benchmark_id="math")
+    assert not MATHBenchmarkAdapter().parse_member_output(raw, item).valid
+
+
+def test_v12_invalid_fake_execution_fails_closed(fake_frozen_prep, monkeypatch, tmp_path):
+    from types import SimpleNamespace
+    from multi_dataset_diverse_rl.provider_factory import ProviderClientFactory
+    governed, prep = fake_frozen_prep
+    p = prep / "authorization.json"
+    auth = json.loads(p.read_bytes())
+    assert auth["scope"]["attempt_id"] == "math_unified_v2_A1_seed81_canary_attempt2"
+    auth["explicit_user_authorized"] = True  # Isolated synthetic permit only.
+    p.write_bytes(json.dumps(auth).encode())
+    captured = []
+    def complete(**request):
+        captured.append(request)
+        assert request["messages"][0]["content"] == MATHBenchmarkAdapter.output_contract
+        return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content="The answer is 4."))],
+                               usage=SimpleNamespace(prompt_tokens=2, completion_tokens=2))
+    client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=complete)))
+    monkeypatch.setattr(ProviderClientFactory, "from_environment", lambda **kwargs: client)
+    monkeypatch.setattr(MATHExecutionBinding, "examples", lambda self, role: (
+        CorrectnessExample(BenchmarkInput("synthetic", "Synthetic public arithmetic.", "stale item contract", benchmark_id="math"), "4"),))
+    run = tmp_path / "invalid"
+    with pytest.raises(SearchContractError, match="SOLVER_INVALID_RESPONSE_NO_REGENERATION"):
+        asyncio.run(governed.execute_canary(ROOT, prep, run))
+    assert len(captured) == 1
+    lifecycle = json.loads((run / "lifecycle.json").read_bytes())
+    assert lifecycle["status"] == "EXECUTION_ABORTED" and lifecycle["provider_usage"]["solver"] == 1
+    assert not lifecycle["provider_usage"]["reflection"] and not lifecycle["provider_usage"]["pattern"]
+    assert not (run / "execution_summary.json").exists()
+    assert not (run / "final_team_private.json").exists()
+    assert (prep / "authorization_consumed.json").exists()
+    with pytest.raises(SearchContractError, match="AUTHORIZATION_REQUIRED"):
+        governed.validate_prep(ROOT, prep, require_authorized=True)
+
+
+@pytest.mark.parametrize("field", ["solver_output_interface", "cache_namespace", "canary_attempt_id"])
+def test_v12_interface_binding_poison(field):
+    c = contract()
+    c[field] = None
+    assert MATHExecutionBinding(ROOT, c).blockers()

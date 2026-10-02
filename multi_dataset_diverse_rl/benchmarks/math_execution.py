@@ -11,6 +11,7 @@ from .access import DataPurpose
 from .data_freeze import file_hash, digest
 from .experiment_splits import ExperimentSplitReader, COUNTS, ROLES
 from .math import MATHBenchmarkAdapter
+from .math_interface import solver_interface_contract
 from .math_worker import PINS
 from .protocols import PROTOCOLS, protocol_input
 from ..search.schemas import GlobalStopConfig, SearchContractError, SearchMethodConfig
@@ -54,6 +55,10 @@ class MATHExecutionBinding:
         try:
             if c["identity"] != versions.MATH_EXECUTION_BINDING_VERSION or c["benchmark_protocol_sha256"] != PROTOCOLS["math"].identity():
                 return ("MATH_BENCHMARK_CONTRACT_MISMATCH",)
+            if c.get("solver_output_interface") != solver_interface_contract():
+                return ("MATH_SOLVER_INTERFACE_BINDING_MISMATCH",)
+            if c.get("canary_attempt_id") != "math_unified_v2_A1_seed81_canary_attempt2" or c.get("cache_namespace") != "math_v2_solver_interface_v1_2_canary_attempt2":
+                return ("MATH_FRESH_ATTEMPT_CACHE_BINDING_MISMATCH",)
             if c["split_version"] != versions.MATH_EXPERIMENT_SPLIT_VERSION or c["evaluator"] != PROTOCOLS["math"].member_metric_id:
                 return ("MATH_SPLIT_EVALUATOR_CONTRACT_MISMATCH",)
             if c["models"] != {"solver": "qwen3-8b", "optimizer_reflection": "qwen3.7-flash", "pattern": "qwen3.7-flash", "solver_thinking": False}:

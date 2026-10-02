@@ -15,17 +15,19 @@ current_dataset_migration: multibench_dataset_migration_v1
 future_experiment_plan: v2_pattern_memory_multibench_v1
 last_governance_milestone: repository_hygiene_alignment_v1
 last_scientific_contract_milestone: benchmark_scientific_contract_freeze_v1
-real_execution_ready: false
+real_execution_ready: CANARY_ONLY_AFTER_USER_AUTHORIZATION
 real_api_authorized: false
 validation_access: not_authorized
 test_access: sealed
 open_questions: docs/research/OPEN_QUESTIONS.md
 last_method_milestone: unified_team_prompt_search_v2_method_refactor
-canary_manifest: experiments/manifests/math_v2_pattern_memory_v1.yaml
-last_preexecution_milestone: math_v2_preexecution_freeze_v1_1
+canary_manifest: experiments/manifests/math_v2_pattern_memory_v1_2.yaml
+last_preexecution_milestone: math_v2_preexecution_freeze_v1_2
 last_canary_milestone: math_v2_a1_seed81_real_canary_v1
 current_canary_status: CANARY_OPERATIONAL_FAILURE
 formal_a1_ready: false
 formal_a1_authorized: false
-current_execution_blocker: First Solver response lacked the frozen FINAL_ANSWER marker;
-  single-use canary consumed and aborted.
+current_execution_blocker: Fresh V2 canary requires explicit single-use authorization;
+  real model output adherence remains unverified.
+next_canary_milestone: math_v2_a1_seed81_real_canary_v2
+next_canary_attempt_id: math_unified_v2_A1_seed81_canary_attempt2

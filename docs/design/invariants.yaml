@@ -555,3 +555,15 @@ invariants:
   failure_refs: []
   critical: true
   status: ACTIVE
+- id: INV-MATH-OUTPUT-INTERFACE-002
+  description: Versioned immutable response formatting stays outside mutable prompt evolution and inside request/cache identity.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/benchmarks/math_interface.py
+  - multi_dataset_diverse_rl/search/provider_runtime.py
+  tests:
+  - tests/test_math_preexecution.py
+  failure_refs:
+  - FAIL-MATH-CANARY-FINAL-MARKER
+  critical: true
+  status: ACTIVE

@@ -563,6 +563,12 @@ nodes:
 - experiment_id: math_v2_a1_seed81_real_canary_v1
   kind: REAL_CANARY
   era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_preexecution_freeze_v1_2
+  kind: PREEXECUTION_FREEZE
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_solver_interface_repair_v1_2
+  kind: PREEXECUTION_FREEZE
+  era: BENCHMARK_GENERALIZATION
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -882,4 +888,22 @@ edges:
   evidence: reports/math_v2_a1_seed81_real_canary_v1_20261002/README.md
   scope: Single-use execution canary aborted before search; no scientific efficacy
     evidence.
+- from: math_v2_preexecution_freeze_v1_1
+  to: math_v2_preexecution_freeze_v1_2
+  relation: repairs_operational_blocker_of
+  evidence: reports/math_v2_solver_interface_repair_v1_2_20261002/README.md
+  scope: Pre-search output-interface conformance refreeze; zero new API calls; no
+    efficacy inference.
+- from: math_v2_a1_seed81_real_canary_v1
+  to: math_v2_preexecution_freeze_v1_2
+  relation: repairs_operational_blocker_of
+  evidence: reports/math_v2_solver_interface_repair_v1_2_20261002/README.md
+  scope: Pre-search output-interface conformance refreeze; zero new API calls; no
+    efficacy inference.
+- from: math_v2_preexecution_freeze_v1_2
+  to: math_v2_solver_interface_repair_v1_2
+  relation: freeze_of
+  evidence: reports/math_v2_solver_interface_repair_v1_2_20261002/README.md
+  scope: Pre-search output-interface conformance refreeze; zero new API calls; no
+    efficacy inference.
 current_frontier: experiments/current_frontier.yaml

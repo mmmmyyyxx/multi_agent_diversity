@@ -33,7 +33,12 @@ is sealed. Data availability does not confer held-out model access.
    first-parent epoch canary aborted during initialization: its first successful
    Solver response lacked the frozen final marker. No search opportunity or
    complete epoch occurred. The authorization is consumed; Formal readiness is
-   closed. See the current frontier and canary evidence for exact identities.
+   closed. Private forensic reconstruction proves R2: the system request had
+   the output contract, but the response lacked its marker. V1.2 freezes an
+   independent immutable formatting interface, effective request identity and
+   cache isolation; the strict parser and mutable team remain unchanged.
+   Zero-API readiness covers only a fresh unauthorized canary, with real model
+   adherence unverified. See the current frontier for exact identities.
 2. IFBench: data and new split frozen; pinned checker packages, spaCy model and
    NLTK resources have a verified isolated runtime lock. Aggregation-aware
    responsibility remains RESPONSIBILITY_POLICY_NOT_FROZEN. Ambient runtimes

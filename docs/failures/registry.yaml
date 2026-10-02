@@ -189,7 +189,7 @@ failures:
   mitigation: Use the versioned current batch path only within separately frozen and authorized execution.
 - failure_id: FAIL-MATH-CANARY-FINAL-MARKER
   title: MATH canary initial Solver response omitted final marker
-  status: DIAGNOSED
+  status: MITIGATED
   first_observed: math_v2_a1_seed81_real_canary_v1
   affected_components:
   - solver_output_contract
@@ -198,15 +198,18 @@ failures:
     parser rejected without regeneration.
   evidence:
   - reports/math_v2_a1_seed81_real_canary_v1_20261002
+  - reports/math_v2_solver_interface_repair_v1_2_20261002
   evidence_level: observed
-  root_cause_status: Output-format nonconformance observed; reason the model omitted
-    the marker remains unproven.
+  root_cause_status: 'R2 proven by exact request reconstruction: system layer contained
+    one marker contract; response contained zero markers. Underlying model noncompliance
+    cause remains unproven.'
   forbidden_inference: Do not infer mathematical correctness, search effectiveness
     or generalization from this aborted canary.
   regression_tests:
   - tests/test_math_preexecution.py
-  mitigation: Preserve strict parser and original attempt. No repair/resume/rerun;
-    new attempt needs fresh freeze and explicit authorization.
-  lifecycle: ACTIVE
-  lifecycle_note: Canary operational blocker; no scientific method or parser amendment
-    performed.
+  mitigation: Versioned immutable formatting interface and request/cache identity
+    under zero-API tests. Real compliance unverified; parser unchanged. No old-attempt
+    continuation.
+  lifecycle: MITIGATED
+  lifecycle_note: ZERO_API_INTERFACE_CONFORMANCE_ONLY; REAL_OUTPUT_ADHERENCE_UNVERIFIED
+  resolved_by: math_v2_solver_interface_repair_v1_2

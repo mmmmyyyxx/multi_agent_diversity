@@ -68,7 +68,8 @@ def validate_lineage(
     indegree = {node: 0 for node in known}
     allowed = {"derived_experiment", "audit_of", "followup_of", "supersedes",
                "derived_from", "replication_of", "ablation_of", "diagnostic_of",
-               "refactor_of", "migration_of", "freeze_of", "resolves_blockers_of"}
+               "refactor_of", "migration_of", "freeze_of", "resolves_blockers_of",
+               "repairs_operational_blocker_of"}
     for row in edges:
         source, target, relation = row.get("from"), row.get("to"), row.get("relation")
         key = (source, target, relation)

@@ -365,11 +365,13 @@
     "mechanism_config": {
       "type": "object"
     },
+    "solver_output_interface_identity": {"type": "string", "minLength": 1},
+    "parser_identity": {"type": "string", "minLength": 1},
     "execution_binding": {
       "type": "object",
       "properties": {
         "identity": {
-          "const": "MATH_EXECUTION_BINDING_V1"
+          "enum": ["MATH_EXECUTION_BINDING_V1", "MATH_EXECUTION_BINDING_V1_2"]
         },
         "path": {
           "type": "string",
@@ -420,6 +422,10 @@
   ],
   "additionalProperties": false,
   "allOf": [
+    {
+      "if": {"required": ["execution_binding"], "properties": {"execution_binding": {"properties": {"identity": {"const": "MATH_EXECUTION_BINDING_V1_2"}}}}},
+      "then": {"required": ["solver_output_interface_identity", "parser_identity"], "properties": {"solver_output_interface_identity": {"const": "MATH_SOLVER_INTERFACE_V2"}, "parser_identity": {"const": "math_verify_no_fallback_v1"}}}
+    },
     {
       "if": {
         "properties": {

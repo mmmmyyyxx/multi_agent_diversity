@@ -10,6 +10,7 @@ import sys
 from ..search.benchmark import BenchmarkInput
 from ..search.schemas import BenchmarkCapabilities, ParsedOutput, SearchContractError
 from .. import versions
+from .math_interface import MATH_SOLVER_INTERFACE_V2, solver_interface_contract
 
 
 MATH_PROCESS_DEADLINE_SECONDS = versions.MATH_EVALUATOR_PROCESS_DEADLINE_SECONDS
@@ -58,7 +59,8 @@ class MATHBenchmarkAdapter:
     benchmark_id = "math"
     preferred_aggregation = "equivalence_plurality"
     capabilities = BenchmarkCapabilities(True, True, True, True, True)
-    output_contract = "Return exactly one final line: FINAL_ANSWER: <mathematical expression>. Reasoning may precede it."
+    output_contract = MATH_SOLVER_INTERFACE_V2
+    solver_interface_contract = staticmethod(solver_interface_contract)
 
     def format_input(self, item: BenchmarkInput) -> str:
         return item.problem

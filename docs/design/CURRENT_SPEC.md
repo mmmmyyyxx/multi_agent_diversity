@@ -208,6 +208,16 @@ inherited. Pattern/Memory are IMPLEMENTED_DEFAULT_OFF, efficacy unverified.
   skips cannot exhaust it before frozen patience. Metric reserves and ceilings
   remain unchanged. Initial prompts are generic mutable reasoning only; the
   immutable output interface remains separate.
+- **INV-MATH-OUTPUT-INTERFACE-002**: MATH Solver requests bind the versioned
+  benchmark-owned immutable formatting interface in the system message for
+  initial, local, candidate and committed prompts, independent of per-item
+  wording. Mutable prompt identity excludes that interface; effective request
+  identity and exact-request cache identity include its version and wording
+  hash. Reflection evolves only mutable reasoning. The strict final-line
+  parser, pinned equivalence evaluator and mutable contamination guard remain
+  unchanged. Format noncompliance aborts without regeneration; fake and real
+  providers share this parser path. Interface repairs establish request
+  conformance, never real model adherence or scientific efficacy.
 - Canary readiness is scoped to a preregistered first parent team epoch or its
   first atomic commit. This phase boundary does not redefine scientific
   saturation or patience. Its finite opportunity bound follows from integer

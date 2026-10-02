@@ -13,6 +13,7 @@ from .repository import validate_manifest_v2
 from .startup_identity import canonical_sha256
 from ..persistence.durable_io import atomic_write_json, append_jsonl, read_json
 from ..search.schemas import SearchContractError
+from .. import versions
 
 
 PREP_SCHEMA = "unified_canary_prep_v1"
@@ -25,7 +26,7 @@ def consumption_path(root, scope):
 def bound_preflight(root, manifest):
     from ..benchmarks.math_execution import MATHExecutionBinding
     ref = manifest.get("execution_binding", {})
-    if ref.get("identity") != "MATH_EXECUTION_BINDING_V1":
+    if ref.get("identity") != versions.MATH_EXECUTION_BINDING_VERSION:
         raise SearchContractError("UNSUPPORTED_EXECUTION_BINDING")
     errors = validate_manifest_v2(root, manifest)
     if manifest.get("lifecycle", {}).get("status") != "PREEXECUTION_FROZEN":
@@ -51,6 +52,8 @@ def bound_preflight(root, manifest):
         "concurrency": {"solver": 1, "optimizer": 1},
         "provider_policy": {"identity": "lwj", "frozen": True},
         "cache_policy": {"identity": c["cache_policy"], "frozen": True},
+        "solver_output_interface_identity": c["solver_output_interface"]["identity"],
+        "parser_identity": c["solver_output_interface"]["parser_identity"],
         "budget": dict(regime="saturation", saturation_identity="team_epoch_no_commit_v1",
             successful_provider_call_ceiling=c["provider_bounds"]["successful_provider_calls"],
             transport_attempt_ceiling=c["provider_bounds"]["transport_attempts"]),
@@ -81,7 +84,7 @@ def execution_identity(root, contract):
     # Input metadata and all import/bootstrap dependencies are explicit. The
     # canonical raw source remains private and has its separate manifest hash.
     configs = [contract["split_directory"] + "/math.json", contract["initial_team_path"],
-               contract["pattern_prompt_path"], "experiments/execution_bindings/math_v2_execution_v1.json"]
+               contract["pattern_prompt_path"], versions.MATH_EXECUTION_BINDING_PATH]
     identity = build_unified_source_identity(root, root / contract["canonical_root"] / "manifests/math.json", [root / p for p in configs])
     files = [root / r["path"] for s in identity["scopes"].values() for r in s["files"]]
     files.append(root / contract["split_directory"] / "math.ids.jsonl")
@@ -136,7 +139,7 @@ def prepare_canary(root, manifest, *, destination, arm="A1", seed=81):
     # commit. Every executable/config byte still has to match that source.
     verify_source_commit(root, source, identity)
     destination.mkdir(parents=True)
-    scope = dict(attempt_id="math_unified_v2_A1_seed81_canary_attempt1", arm=arm, seed=seed, phase="first_parent_team_epoch_or_first_commit",
+    scope = dict(attempt_id=contract["canary_attempt_id"], arm=arm, seed=seed, phase="first_parent_team_epoch_or_first_commit",
         source_sha=source, preregistration_identity=manifest["preregistration_identity"], binding_sha256=manifest["execution_binding"]["sha256"],
         models=contract["models"], provider=contract["provider"], roles=["solver", "reflection"],
         successful_provider_call_ceiling=contract["provider_bounds"]["successful_provider_calls"],
@@ -163,7 +166,7 @@ def validate_prep(root, prep, *, require_authorized=False):
     if execution_identity(root, contract) != payload["source_identity"]:
         raise SearchContractError("STARTUP_CLOSURE_MEMBERSHIP_MISMATCH")
     scope = payload["scope"]
-    expected_scope = dict(attempt_id="math_unified_v2_A1_seed81_canary_attempt1", arm="A1", seed=81,
+    expected_scope = dict(attempt_id=contract["canary_attempt_id"], arm="A1", seed=81,
         phase="first_parent_team_epoch_or_first_commit", source_sha=manifest["source_sha"],
         preregistration_identity=manifest["preregistration_identity"], binding_sha256=manifest["execution_binding"]["sha256"],
         models=contract["models"], provider=contract["provider"], roles=["solver", "reflection"],
@@ -257,7 +260,7 @@ def inventory(run_root):
 
 def preexecution_manifest(root, *, source_sha, frozen=True):
     from ..benchmarks.math_execution import MATHExecutionBinding
-    binding_path = "experiments/execution_bindings/math_v2_execution_v1.json"
+    binding_path = versions.MATH_EXECUTION_BINDING_PATH
     contract = read_json(root / binding_path)
     b = MATHExecutionBinding(root, contract)
     if b.blockers():
@@ -271,6 +274,8 @@ def preexecution_manifest(root, *, source_sha, frozen=True):
         seed=81, models=dict(solver="qwen3-8b", optimizer="qwen3.7-flash", solver_thinking=False),
         concurrency=dict(solver=1, optimizer=1), provider_policy=dict(identity="lwj", frozen=True),
         cache_policy=dict(identity=contract["cache_policy"], frozen=True),
+        solver_output_interface_identity=contract["solver_output_interface"]["identity"],
+        parser_identity=contract["solver_output_interface"]["parser_identity"],
         access=dict(search_access="frozen_search", shadow_access="frozen_adaptive_gate", validation_access="not_authorized", test_access="sealed"),
         budget=dict(regime="saturation", saturation_identity=method.global_stop.identity,
             successful_provider_call_ceiling=contract["provider_bounds"]["successful_provider_calls"], transport_attempt_ceiling=contract["provider_bounds"]["transport_attempts"]),
