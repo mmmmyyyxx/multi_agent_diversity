@@ -1,0 +1,459 @@
+{
+  "arms": [
+    {
+      "arm": "A1",
+      "atomic_commits": 2,
+      "budget": {
+        "metric": 36,
+        "minibatch": 3,
+        "minibatch_kwarg": null,
+        "patience": [
+          3,
+          2
+        ],
+        "promotion": 2,
+        "run_dir": null,
+        "sampler_type": "Layer2FrozenBatchSampler"
+      },
+      "full_count": 3,
+      "gate_count": 2,
+      "immutable_interface_present_once": true,
+      "invocation_count": 3,
+      "ledger_counts": {
+        "attempts": 2146,
+        "failures": 0,
+        "input_tokens": 4292,
+        "output_tokens": 4292,
+        "pattern": 0,
+        "reflection": 4,
+        "solver": 2142,
+        "successes": 2146,
+        "test": 0,
+        "validation": 0
+      },
+      "memory_audits": [
+        {},
+        {},
+        {}
+      ],
+      "method_identity": "b74c1c72635dbb92b95ce38ec489370869a00bccc86a131a89eeab35e15752fd",
+      "pass_": true,
+      "probe_count": 3,
+      "real_optimizer_calls": 0,
+      "real_pattern_calls": 0,
+      "real_solver_calls": 0,
+      "responsibility": {
+        "0": {
+          "coverage_count": 0,
+          "direct_count": 3,
+          "member_id": 0,
+          "near_margin_count": 0,
+          "primary_lane": "direct_flip"
+        },
+        "1": {
+          "coverage_count": 0,
+          "direct_count": 0,
+          "member_id": 1,
+          "near_margin_count": 0,
+          "primary_lane": "fallback"
+        },
+        "2": {
+          "coverage_count": 0,
+          "direct_count": 0,
+          "member_id": 2,
+          "near_margin_count": 0,
+          "primary_lane": "fallback"
+        },
+        "3": {
+          "coverage_count": 0,
+          "direct_count": 3,
+          "member_id": 3,
+          "near_margin_count": 0,
+          "primary_lane": "direct_flip"
+        },
+        "4": {
+          "coverage_count": 0,
+          "direct_count": 3,
+          "member_id": 4,
+          "near_margin_count": 0,
+          "primary_lane": "direct_flip"
+        }
+      },
+      "shadow_raw_search_leakage": 0,
+      "solver_interface_identity": "MATH_SOLVER_INTERFACE_V2",
+      "solver_interface_sha256": "a0a37577a07c8a3d3a033c3665a718a8325f60e5e2b2297d6c10ec52024294d9",
+      "target": 0,
+      "test_raw_search_leakage": 0,
+      "validation_raw_search_leakage": 0
+    },
+    {
+      "arm": "A2",
+      "atomic_commits": 2,
+      "budget": {
+        "metric": 36,
+        "minibatch": 3,
+        "minibatch_kwarg": null,
+        "patience": [
+          3,
+          2
+        ],
+        "promotion": 2,
+        "run_dir": null,
+        "sampler_type": "Layer2FrozenBatchSampler"
+      },
+      "full_count": 3,
+      "gate_count": 2,
+      "immutable_interface_present_once": true,
+      "invocation_count": 3,
+      "ledger_counts": {
+        "attempts": 2149,
+        "failures": 0,
+        "input_tokens": 4298,
+        "output_tokens": 4298,
+        "pattern": 3,
+        "reflection": 4,
+        "solver": 2142,
+        "successes": 2149,
+        "test": 0,
+        "validation": 0
+      },
+      "memory_audits": [
+        {},
+        {},
+        {}
+      ],
+      "method_identity": "afa978b7d22d2fedd7af5cc47fd6af7e827600b5624499577b59acc8cd38f70a",
+      "pass_": true,
+      "probe_count": 3,
+      "real_optimizer_calls": 0,
+      "real_pattern_calls": 0,
+      "real_solver_calls": 0,
+      "responsibility": {
+        "0": {
+          "coverage_count": 0,
+          "direct_count": 3,
+          "member_id": 0,
+          "near_margin_count": 0,
+          "primary_lane": "direct_flip"
+        },
+        "1": {
+          "coverage_count": 0,
+          "direct_count": 0,
+          "member_id": 1,
+          "near_margin_count": 0,
+          "primary_lane": "fallback"
+        },
+        "2": {
+          "coverage_count": 0,
+          "direct_count": 0,
+          "member_id": 2,
+          "near_margin_count": 0,
+          "primary_lane": "fallback"
+        },
+        "3": {
+          "coverage_count": 0,
+          "direct_count": 3,
+          "member_id": 3,
+          "near_margin_count": 0,
+          "primary_lane": "direct_flip"
+        },
+        "4": {
+          "coverage_count": 0,
+          "direct_count": 3,
+          "member_id": 4,
+          "near_margin_count": 0,
+          "primary_lane": "direct_flip"
+        }
+      },
+      "shadow_raw_search_leakage": 0,
+      "solver_interface_identity": "MATH_SOLVER_INTERFACE_V2",
+      "solver_interface_sha256": "a0a37577a07c8a3d3a033c3665a718a8325f60e5e2b2297d6c10ec52024294d9",
+      "target": 0,
+      "test_raw_search_leakage": 0,
+      "validation_raw_search_leakage": 0
+    },
+    {
+      "arm": "A3",
+      "atomic_commits": 2,
+      "budget": {
+        "metric": 36,
+        "minibatch": 3,
+        "minibatch_kwarg": null,
+        "patience": [
+          3,
+          2
+        ],
+        "promotion": 2,
+        "run_dir": null,
+        "sampler_type": "Layer2FrozenBatchSampler"
+      },
+      "full_count": 3,
+      "gate_count": 2,
+      "immutable_interface_present_once": true,
+      "invocation_count": 3,
+      "ledger_counts": {
+        "attempts": 2146,
+        "failures": 0,
+        "input_tokens": 4292,
+        "output_tokens": 4292,
+        "pattern": 0,
+        "reflection": 4,
+        "solver": 2142,
+        "successes": 2146,
+        "test": 0,
+        "validation": 0
+      },
+      "memory_audits": [
+        {
+          "memory_ids": [
+            "cb93a547366645f29a01aa5abe7ff2475fe3af5a04c64d94385a0471ef1f4fdc"
+          ],
+          "memory_policy_identity": "structured_agent_memory_v1",
+          "private_memory_count_by_member": {
+            "0": 1,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0
+          },
+          "read_private_count": 0,
+          "read_shared_count": 0,
+          "shared_risk_count": 0,
+          "stateful_write_count": 1
+        },
+        {
+          "memory_ids": [
+            "cb93a547366645f29a01aa5abe7ff2475fe3af5a04c64d94385a0471ef1f4fdc",
+            "3667ecf1e4bd9ef2f2f48e4040daa33b21222915f418e711446f7eb7339d5b15"
+          ],
+          "memory_policy_identity": "structured_agent_memory_v1",
+          "private_memory_count_by_member": {
+            "0": 1,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0
+          },
+          "read_private_count": 1,
+          "read_shared_count": 0,
+          "shared_risk_count": 1,
+          "stateful_write_count": 2
+        },
+        {
+          "memory_ids": [
+            "cb93a547366645f29a01aa5abe7ff2475fe3af5a04c64d94385a0471ef1f4fdc",
+            "81b3c4d22a8630d272e317da5dff0cb8cbdf3c7971700d96f67bf6fa020f72d8",
+            "3667ecf1e4bd9ef2f2f48e4040daa33b21222915f418e711446f7eb7339d5b15"
+          ],
+          "memory_policy_identity": "structured_agent_memory_v1",
+          "private_memory_count_by_member": {
+            "0": 1,
+            "1": 0,
+            "2": 0,
+            "3": 1,
+            "4": 0
+          },
+          "read_private_count": 0,
+          "read_shared_count": 1,
+          "shared_risk_count": 1,
+          "stateful_write_count": 3
+        }
+      ],
+      "method_identity": "1714ae6049c87c8455c1cf80bcaf975edde8e904c44eb2db2cf0237a84c78384",
+      "pass_": true,
+      "probe_count": 3,
+      "real_optimizer_calls": 0,
+      "real_pattern_calls": 0,
+      "real_solver_calls": 0,
+      "responsibility": {
+        "0": {
+          "coverage_count": 0,
+          "direct_count": 3,
+          "member_id": 0,
+          "near_margin_count": 0,
+          "primary_lane": "direct_flip"
+        },
+        "1": {
+          "coverage_count": 0,
+          "direct_count": 0,
+          "member_id": 1,
+          "near_margin_count": 0,
+          "primary_lane": "fallback"
+        },
+        "2": {
+          "coverage_count": 0,
+          "direct_count": 0,
+          "member_id": 2,
+          "near_margin_count": 0,
+          "primary_lane": "fallback"
+        },
+        "3": {
+          "coverage_count": 0,
+          "direct_count": 3,
+          "member_id": 3,
+          "near_margin_count": 0,
+          "primary_lane": "direct_flip"
+        },
+        "4": {
+          "coverage_count": 0,
+          "direct_count": 3,
+          "member_id": 4,
+          "near_margin_count": 0,
+          "primary_lane": "direct_flip"
+        }
+      },
+      "shadow_raw_search_leakage": 0,
+      "solver_interface_identity": "MATH_SOLVER_INTERFACE_V2",
+      "solver_interface_sha256": "a0a37577a07c8a3d3a033c3665a718a8325f60e5e2b2297d6c10ec52024294d9",
+      "target": 0,
+      "test_raw_search_leakage": 0,
+      "validation_raw_search_leakage": 0
+    },
+    {
+      "arm": "A4",
+      "atomic_commits": 2,
+      "budget": {
+        "metric": 36,
+        "minibatch": 3,
+        "minibatch_kwarg": null,
+        "patience": [
+          3,
+          2
+        ],
+        "promotion": 2,
+        "run_dir": null,
+        "sampler_type": "Layer2FrozenBatchSampler"
+      },
+      "full_count": 3,
+      "gate_count": 2,
+      "immutable_interface_present_once": true,
+      "invocation_count": 3,
+      "ledger_counts": {
+        "attempts": 2149,
+        "failures": 0,
+        "input_tokens": 4298,
+        "output_tokens": 4298,
+        "pattern": 3,
+        "reflection": 4,
+        "solver": 2142,
+        "successes": 2149,
+        "test": 0,
+        "validation": 0
+      },
+      "memory_audits": [
+        {
+          "memory_ids": [
+            "cb93a547366645f29a01aa5abe7ff2475fe3af5a04c64d94385a0471ef1f4fdc"
+          ],
+          "memory_policy_identity": "structured_agent_memory_v1",
+          "private_memory_count_by_member": {
+            "0": 1,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0
+          },
+          "read_private_count": 0,
+          "read_shared_count": 0,
+          "shared_risk_count": 0,
+          "stateful_write_count": 1
+        },
+        {
+          "memory_ids": [
+            "cb93a547366645f29a01aa5abe7ff2475fe3af5a04c64d94385a0471ef1f4fdc",
+            "3667ecf1e4bd9ef2f2f48e4040daa33b21222915f418e711446f7eb7339d5b15"
+          ],
+          "memory_policy_identity": "structured_agent_memory_v1",
+          "private_memory_count_by_member": {
+            "0": 1,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0
+          },
+          "read_private_count": 1,
+          "read_shared_count": 0,
+          "shared_risk_count": 1,
+          "stateful_write_count": 2
+        },
+        {
+          "memory_ids": [
+            "cb93a547366645f29a01aa5abe7ff2475fe3af5a04c64d94385a0471ef1f4fdc",
+            "81b3c4d22a8630d272e317da5dff0cb8cbdf3c7971700d96f67bf6fa020f72d8",
+            "3667ecf1e4bd9ef2f2f48e4040daa33b21222915f418e711446f7eb7339d5b15"
+          ],
+          "memory_policy_identity": "structured_agent_memory_v1",
+          "private_memory_count_by_member": {
+            "0": 1,
+            "1": 0,
+            "2": 0,
+            "3": 1,
+            "4": 0
+          },
+          "read_private_count": 0,
+          "read_shared_count": 1,
+          "shared_risk_count": 1,
+          "stateful_write_count": 3
+        }
+      ],
+      "method_identity": "508a2a54969214e6e55509af8db3baca9a6f9bec20be40d51ea58f18f2d357ee",
+      "pass_": true,
+      "probe_count": 3,
+      "real_optimizer_calls": 0,
+      "real_pattern_calls": 0,
+      "real_solver_calls": 0,
+      "responsibility": {
+        "0": {
+          "coverage_count": 0,
+          "direct_count": 3,
+          "member_id": 0,
+          "near_margin_count": 0,
+          "primary_lane": "direct_flip"
+        },
+        "1": {
+          "coverage_count": 0,
+          "direct_count": 0,
+          "member_id": 1,
+          "near_margin_count": 0,
+          "primary_lane": "fallback"
+        },
+        "2": {
+          "coverage_count": 0,
+          "direct_count": 0,
+          "member_id": 2,
+          "near_margin_count": 0,
+          "primary_lane": "fallback"
+        },
+        "3": {
+          "coverage_count": 0,
+          "direct_count": 3,
+          "member_id": 3,
+          "near_margin_count": 0,
+          "primary_lane": "direct_flip"
+        },
+        "4": {
+          "coverage_count": 0,
+          "direct_count": 3,
+          "member_id": 4,
+          "near_margin_count": 0,
+          "primary_lane": "direct_flip"
+        }
+      },
+      "shadow_raw_search_leakage": 0,
+      "solver_interface_identity": "MATH_SOLVER_INTERFACE_V2",
+      "solver_interface_sha256": "a0a37577a07c8a3d3a033c3665a718a8325f60e5e2b2297d6c10ec52024294d9",
+      "target": 0,
+      "test_raw_search_leakage": 0,
+      "validation_raw_search_leakage": 0
+    }
+  ],
+  "execution_type": "ACTUAL_PINNED_PUBLIC_GEPA_WITH_FAKE_TRANSPORT",
+  "negative_fake": "EXECUTION_ABORTED_AFTER_FIRST_INVALID_OUTPUT; AUTHORIZATION_CONSUMED; NO_REGENERATION",
+  "new_real_optimizer_calls": 0,
+  "new_real_pattern_calls": 0,
+  "new_real_solver_calls": 0,
+  "positive_fake": "SAME_STRICT_PARSER_THEN_SCORE_AGGREGATION_RESPONSIBILITY",
+  "status": "PASS",
+  "test_calls": 0,
+  "validation_calls": 0
+}

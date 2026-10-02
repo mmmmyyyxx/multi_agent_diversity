@@ -1,0 +1,10 @@
+{
+  "final_source_sha": "470091faecf6b0de6e8b892778d12a66892ebe49",
+  "old_preps_overwritten": false,
+  "preserved_independent_preps": 2,
+  "real_calls": 0,
+  "reason": "Readiness enum did not match existing governance contract; corrected before any authorization or call.",
+  "source_sha": "85b200f87aed09694a860a85728ffba69a23590f",
+  "startup_identity_sha256": "91f464ed642972901a926fd1c7be8371cc184460d72c2bb010828089e862609b",
+  "status": "SUPERSEDED_BEFORE_AUTHORIZATION_OR_EXECUTION"
+}

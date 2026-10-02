@@ -1,0 +1,18 @@
+{
+  "canary_attempt_id": "math_unified_v2_A1_seed81_canary_attempt2",
+  "canary_v2_authorized": false,
+  "execution_source_sha": "470091faecf6b0de6e8b892778d12a66892ebe49",
+  "formal_authorized": false,
+  "mutable_prompts_changed": false,
+  "new_real_calls": 0,
+  "parser_relaxed": false,
+  "ready_for_canary_v2_authorization": true,
+  "real_solver_output_adherence_verified": false,
+  "root_cause": "R2",
+  "scientific_efficacy_verified": false,
+  "solver_interface": "MATH_SOLVER_INTERFACE_V2",
+  "startup_identity_sha256": "b92c18fae8985840ffc1a6bb51624dfcec43d1441e45ecb0075c7a58c5b3ad36",
+  "status": "PREEXECUTION_FROZEN",
+  "test_calls": 0,
+  "validation_calls": 0
+}

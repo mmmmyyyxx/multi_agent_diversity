@@ -1,0 +1,15 @@
+{
+  "copied_solver_interface_guard_unchanged": true,
+  "effective_solver_request_contract_hash_recorded": true,
+  "immutable_interface_occurrences_per_request": 1,
+  "initial_members_checked": 5,
+  "mutable_prompt_hash_excludes_interface": true,
+  "mutable_prompt_occurrences_per_request": 1,
+  "optimizer_mutable_text_excludes_interface": true,
+  "parent_candidate_committed_and_private_gate_use_same_port": true,
+  "per_item_stale_contract_cannot_override": true,
+  "problem_slot_occurrences_per_request": 1,
+  "status": "PASS",
+  "synthetic_evolved_prompts_checked": 3,
+  "verification_test": "test_v12_request_capture_initial_and_evolved"
+}

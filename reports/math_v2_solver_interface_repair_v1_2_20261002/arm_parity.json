@@ -1,0 +1,24 @@
+{
+  "all_requests_interface_present_once": true,
+  "arms": {
+    "A1": {
+      "identity": "MATH_SOLVER_INTERFACE_V2",
+      "sha256": "a0a37577a07c8a3d3a033c3665a718a8325f60e5e2b2297d6c10ec52024294d9"
+    },
+    "A2": {
+      "identity": "MATH_SOLVER_INTERFACE_V2",
+      "sha256": "a0a37577a07c8a3d3a033c3665a718a8325f60e5e2b2297d6c10ec52024294d9"
+    },
+    "A3": {
+      "identity": "MATH_SOLVER_INTERFACE_V2",
+      "sha256": "a0a37577a07c8a3d3a033c3665a718a8325f60e5e2b2297d6c10ec52024294d9"
+    },
+    "A4": {
+      "identity": "MATH_SOLVER_INTERFACE_V2",
+      "sha256": "a0a37577a07c8a3d3a033c3665a718a8325f60e5e2b2297d6c10ec52024294d9"
+    }
+  },
+  "same_budgets": true,
+  "same_models": true,
+  "status": "PASS"
+}

@@ -1,0 +1,13 @@
+{
+  "formatting_only": true,
+  "identity": "MATH_SOLVER_INTERFACE_V2",
+  "mathematical_hint_added": false,
+  "mutable": false,
+  "old_identity": "math_final_expression_v1",
+  "old_wording_sha256": "38f3108ccb6fded2ec2c64c1a2b0186d12699270b14e5ce0cd040b947f990cde",
+  "parser_identity": "math_verify_no_fallback_v1",
+  "reasoning_strategy_added": false,
+  "role": "system",
+  "scorer": "math_verify_0.6.0_equivalence_v1",
+  "sha256": "a0a37577a07c8a3d3a033c3665a718a8325f60e5e2b2297d6c10ec52024294d9"
+}

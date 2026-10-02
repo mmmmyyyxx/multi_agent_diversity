@@ -1,0 +1,15 @@
+{
+  "arbitrary_prose_fallback": false,
+  "empty_payload": "FAIL_CLOSED",
+  "latex_fraction": "PASS",
+  "math_equivalence_is_separate": true,
+  "missing_marker": "FAIL_CLOSED",
+  "multiple_ambiguous_markers": "FAIL_CLOSED",
+  "multiple_identical_markers": "FAIL_CLOSED",
+  "nonfinal_marker": "FAIL_CLOSED",
+  "parser_changed": false,
+  "parser_identity": "math_verify_no_fallback_v1",
+  "reasoning_then_equation": "PASS",
+  "simple_integer": "PASS",
+  "status": "PASS"
+}

@@ -23,20 +23,22 @@ current_dataset_migration: multibench_dataset_migration_v1
 future_experiment_plan: v2_pattern_memory_multibench_v1
 last_governance_milestone: repository_hygiene_alignment_v1
 last_scientific_contract_milestone: benchmark_scientific_contract_freeze_v1
-real_execution_ready: false
+real_execution_ready: true_for_canary_only
 real_api_authorized: false
 validation_access: not_authorized
 test_access: sealed
 open_questions: docs/research/OPEN_QUESTIONS.md
 last_method_milestone: unified_team_prompt_search_v2_method_refactor
-canary_manifest: experiments/manifests/math_v2_pattern_memory_v1.yaml
-last_preexecution_milestone: math_v2_preexecution_freeze_v1_1
+canary_manifest: experiments/manifests/math_v2_pattern_memory_v1_2.yaml
+last_preexecution_milestone: math_v2_preexecution_freeze_v1_2
 last_canary_milestone: math_v2_a1_seed81_real_canary_v1
 current_canary_status: CANARY_OPERATIONAL_FAILURE
 formal_a1_ready: false
 formal_a1_authorized: false
-current_execution_blocker: First Solver response lacked the frozen FINAL_ANSWER marker;
-  single-use canary consumed and aborted.
+current_execution_blocker: Fresh V2 canary requires explicit single-use authorization;
+  real model output adherence remains unverified.
+next_canary_milestone: math_v2_a1_seed81_real_canary_v2
+next_canary_attempt_id: math_unified_v2_A1_seed81_canary_attempt2
 ```
 
 ## Experiment and engineering DAG
@@ -56,6 +58,8 @@ flowchart TD
     n185["math_v2_preexecution_freeze_v1_1<br/>PREEXECUTION_FREEZE<br/>PREEXECUTION_FROZEN"]
     n186["math_v2_pattern_memory_v1<br/>FORMAL_EXPERIMENT<br/>PREEXECUTION_FROZEN"]
     n187["math_v2_a1_seed81_real_canary_v1<br/>REAL_CANARY<br/>HOLD"]
+    n188["math_v2_preexecution_freeze_v1_2<br/>PREEXECUTION_FREEZE<br/>PREEXECUTION_FROZEN"]
+    n189["math_v2_solver_interface_repair_v1_2<br/>PREEXECUTION_FREEZE<br/>PREEXECUTION_FROZEN"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -317,6 +321,9 @@ flowchart TD
   n184 -->|resolves_blockers_of| n185
   n185 -->|derived_from| n186
   n185 -->|derived_from| n187
+  n185 -->|repairs_operational_blocker_of| n188
+  n187 -->|repairs_operational_blocker_of| n188
+  n188 -->|freeze_of| n189
 ```
 
 ## Archived branches and unresolved evidence

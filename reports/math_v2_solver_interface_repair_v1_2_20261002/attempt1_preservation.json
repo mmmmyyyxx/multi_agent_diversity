@@ -1,0 +1,11 @@
+{
+  "attempt_id": "math_unified_v2_A1_seed81_canary_attempt1",
+  "authorization_consumed": true,
+  "immutable_raw_file_count": 5,
+  "raw_inventory_sha256": "fc947a3f7805de09dfccfdacb7ff15b1db2deac2bb0b79070930d2dbcb7e0989",
+  "raw_modified": false,
+  "rerun": false,
+  "resumed": false,
+  "status": "PASS",
+  "status_unchanged": "CANARY_OPERATIONAL_FAILURE"
+}

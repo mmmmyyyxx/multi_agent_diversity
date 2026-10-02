@@ -1,0 +1,11 @@
+{
+  "authorization_consumed": false,
+  "canary_v2_authorized": false,
+  "consumed_attempt1_authorization_reuse": "REJECTED_PRE_PROVIDER",
+  "new_real_calls": 0,
+  "old_full_evidence_file_count": 13,
+  "original_attempt1_full_inventory_intact": true,
+  "source_closure_file_count": 172,
+  "startup_hash_poison": "REJECTED_PRE_PROVIDER",
+  "status": "PASS"
+}

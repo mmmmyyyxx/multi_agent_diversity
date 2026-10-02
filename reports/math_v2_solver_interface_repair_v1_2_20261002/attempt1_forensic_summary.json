@@ -1,0 +1,59 @@
+{
+  "FINAL_MARKER_IN_FINAL_PROVIDER_REQUEST": true,
+  "FINAL_MARKER_IN_IMMUTABLE_INTERFACE": true,
+  "FINAL_MARKER_IN_MUTABLE_PROMPT": false,
+  "FINAL_MARKER_IN_SYSTEM_LAYER": true,
+  "attempt_id": "math_unified_v2_A1_seed81_canary_attempt1",
+  "classification": "REQUEST_CONTAINED_OUTPUT_CONTRACT_BUT_MODEL_DID_NOT_FOLLOW",
+  "layer_note": "L0 is the serialized system slot containing L1; their occurrences are the same one occurrence, not additive.",
+  "layers": [
+    {
+      "characters": 97,
+      "identity": "provider_system_message",
+      "layer": "L0",
+      "marker_occurrences": 1,
+      "sha256": "38f3108ccb6fded2ec2c64c1a2b0186d12699270b14e5ce0cd040b947f990cde"
+    },
+    {
+      "characters": 97,
+      "identity": "math_final_expression_v1_unversioned_wording",
+      "layer": "L1",
+      "marker_occurrences": 1,
+      "sha256": "38f3108ccb6fded2ec2c64c1a2b0186d12699270b14e5ce0cd040b947f990cde"
+    },
+    {
+      "characters": 164,
+      "identity": "MATH_GENERIC_TEAM_SEED_V1_1_member_0",
+      "layer": "L2",
+      "marker_occurrences": 0,
+      "sha256": "57e468e68d9ab974a0018353e4bc0a15ca0e1e002c8dbd6676802d89839bc674"
+    },
+    {
+      "characters": 788,
+      "identity": "problem_only_v1",
+      "layer": "L3",
+      "marker_occurrences": 0,
+      "sha256": "27b49615ad41ae43bc17a170f20be0042ec7b92d2ba8fcf5a291c507fa2f5fe7"
+    }
+  ],
+  "model": "qwen3-8b",
+  "no_search_or_efficacy_observed": true,
+  "old_interface_identity": "math_final_expression_v1",
+  "old_interface_wording_sha256": "38f3108ccb6fded2ec2c64c1a2b0186d12699270b14e5ce0cd040b947f990cde",
+  "parser_identity": "math_verify_no_fallback_v1",
+  "parser_valid": false,
+  "provider": "lwj",
+  "provider_request_sha256": "9b81a94a838b9ddd19fa908aca6efb59d7c4a6ec588d0a7efc6355ec37f9b9c2",
+  "raw_inventory_verified": true,
+  "request_marker_occurrences": 1,
+  "request_serialization_sha256": "092a45a7cba06a3f5526a8f45bb2bd2b079b74acd5c3c64f4013addedb6c3081",
+  "response_marker_lines": 0,
+  "response_marker_occurrences": 0,
+  "response_nonempty_lines": 21,
+  "response_sha256": "dcbc712f553e085f1ebcea0ca2e2a032175628e9d2c4d3030850e385b3f3118e",
+  "root_cause": "R2",
+  "serialization_defect_proven": false,
+  "solver_thinking": false,
+  "source_reconstruction_matches": true,
+  "underlying_model_noncompliance_cause": "UNPROVEN"
+}

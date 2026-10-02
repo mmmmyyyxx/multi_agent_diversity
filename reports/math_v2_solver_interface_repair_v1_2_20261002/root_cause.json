@@ -1,0 +1,15 @@
+{
+  "R1": false,
+  "R2": true,
+  "R3": false,
+  "R4": false,
+  "R5": false,
+  "alternative_implementation_defect_proven": false,
+  "classification": "R2",
+  "intervention": "Versioned format contract and composition/cache binding; no efficacy tuning or parser relaxation.",
+  "real_new_interface_adherence_verified": false,
+  "reason": "Exact request contained immutable output contract; response contained zero markers.",
+  "request_composition_omission_proven": false,
+  "request_evidence_boundary": "Captured kwargs passed to the provider SDK transport, reconstructed against frozen source; HTTP wire and provider internal handling were not separately captured.",
+  "underlying_model_noncompliance_cause": "UNPROVEN"
+}

@@ -1,0 +1,9 @@
+{
+  "parser_changed": false,
+  "parser_identity": "math_verify_no_fallback_v1",
+  "parser_valid": false,
+  "raw_content_published": false,
+  "real_calls": 0,
+  "response_sha256": "dcbc712f553e085f1ebcea0ca2e2a032175628e9d2c4d3030850e385b3f3118e",
+  "status": "EXPECTED_FAILURE"
+}

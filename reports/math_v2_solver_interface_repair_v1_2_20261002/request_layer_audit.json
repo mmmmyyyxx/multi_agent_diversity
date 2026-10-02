@@ -1,0 +1,38 @@
+{
+  "FINAL_MARKER_IN_FINAL_PROVIDER_REQUEST": true,
+  "FINAL_MARKER_IN_IMMUTABLE_INTERFACE": true,
+  "FINAL_MARKER_IN_MUTABLE_PROMPT": false,
+  "FINAL_MARKER_IN_SYSTEM_LAYER": true,
+  "final_request_marker_occurrences": 1,
+  "layers": [
+    {
+      "characters": 97,
+      "identity": "provider_system_message",
+      "layer": "L0",
+      "marker_occurrences": 1,
+      "sha256": "38f3108ccb6fded2ec2c64c1a2b0186d12699270b14e5ce0cd040b947f990cde"
+    },
+    {
+      "characters": 97,
+      "identity": "math_final_expression_v1_unversioned_wording",
+      "layer": "L1",
+      "marker_occurrences": 1,
+      "sha256": "38f3108ccb6fded2ec2c64c1a2b0186d12699270b14e5ce0cd040b947f990cde"
+    },
+    {
+      "characters": 164,
+      "identity": "MATH_GENERIC_TEAM_SEED_V1_1_member_0",
+      "layer": "L2",
+      "marker_occurrences": 0,
+      "sha256": "57e468e68d9ab974a0018353e4bc0a15ca0e1e002c8dbd6676802d89839bc674"
+    },
+    {
+      "characters": 788,
+      "identity": "problem_only_v1",
+      "layer": "L3",
+      "marker_occurrences": 0,
+      "sha256": "27b49615ad41ae43bc17a170f20be0042ec7b92d2ba8fcf5a291c507fa2f5fe7"
+    }
+  ],
+  "note": "L0 is the serialized system slot containing L1; their occurrences are the same one occurrence, not additive."
+}

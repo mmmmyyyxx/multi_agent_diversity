@@ -1,0 +1,287 @@
+{
+  "aggregation_changed": false,
+  "binding_delta": {
+    "cache_namespace": {
+      "new": "math_v2_solver_interface_v1_2_canary_attempt2",
+      "old": null
+    },
+    "canary_attempt_id": {
+      "new": "math_unified_v2_A1_seed81_canary_attempt2",
+      "old": null
+    },
+    "identity": {
+      "new": "MATH_EXECUTION_BINDING_V1_2",
+      "old": "MATH_EXECUTION_BINDING_V1"
+    },
+    "solver_output_interface": {
+      "new": {
+        "identity": "MATH_SOLVER_INTERFACE_V2",
+        "parser_identity": "math_verify_no_fallback_v1",
+        "sha256": "a0a37577a07c8a3d3a033c3665a718a8325f60e5e2b2297d6c10ec52024294d9"
+      },
+      "old": null
+    }
+  },
+  "budget_changed": false,
+  "dataset_changed": false,
+  "memory_changed": false,
+  "models_changed": false,
+  "mutable_prompts_changed": false,
+  "parser_functions_ast_unchanged": true,
+  "pattern_changed": false,
+  "real_model_adherence_verified": false,
+  "responsibility_changed": false,
+  "scientific_efficacy_verified": false,
+  "search_algorithm_changed": false,
+  "sole_execution_delta": "Versioned immutable response formatting, authoritative outer composition and request/cache/attempt identity wiring.",
+  "split_changed": false,
+  "status": "PASS",
+  "triggered_before_search_opportunity_candidate_transition_or_efficacy": true,
+  "unchanged_artifacts": [
+    {
+      "canonical_sha256": "a0ce805d8e88499a829b9843f790c70ad14d99ab587a6e670e657e109695456a",
+      "path": "experiments/initial_teams/math_generic_team_seed_v1_1.json",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "753a24c9e2ee7bb6d7531c53acc83eacf562a431292d271a8d75ef0156fed70b",
+      "path": "experiments/data_splits/benchmark_experiment_v1_1/math.json",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "ae8938a96aaa34c9c8f39de17db40948720de274db3ad928e0388ca554b39402",
+      "path": "experiments/data_splits/benchmark_experiment_v1_1/math.ids.jsonl",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "74fe8cb09b7f42dc23188e9212085d8afd85ac8dbf4812248bf979f4d80784d7",
+      "path": "experiments/execution_bindings/math_v2_execution_v1.json",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "faf6a808f1ae388215528db51739c1013cf0c12d27ddbd09817a0a4fe2cf35cb",
+      "path": "experiments/manifests/math_v2_pattern_memory_v1.yaml",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "fb68a222ebf6cb6c14a0959b5d5576e03e11c181d872aa71c234035503c85046",
+      "path": "experiments/execution_bindings/math_pattern_prompt_v1.json",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "868521f7591b826156decbed4cc6d378abf1b260c79626b729c8c33ad7ce40dd",
+      "path": "multi_dataset_diverse_rl/search/aggregation.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "45bae80568b138afed13c5a7f6758f034a76d79b9a9da15d0ca0f2bfc8e021a9",
+      "path": "multi_dataset_diverse_rl/search/benchmark.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "dc8d50642ac707ee4bddf84562de87ba4b17cfeab917d3f9b7c423dda2ba4515",
+      "path": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "97320f743ec8d05d0aac6e598474ac13d4457dd0e996aa5613b4687c19907f44",
+      "path": "multi_dataset_diverse_rl/search/binary_responsibility.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "21b9a5fcd5c385ae075ffc5c9b745e42c2d2949747f8b8d145dd6e9f603f726a",
+      "path": "multi_dataset_diverse_rl/search/binary_runtime.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "0a8d290a0e7302f65dbcb51cc2e87a9ea088134f402e042c92936c0fb560ee7b",
+      "path": "multi_dataset_diverse_rl/search/context.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "093bb7ffc3e9874c5f9d1c3a5ef792fc91bc92415092e4ecbcd901afd35f893d",
+      "path": "multi_dataset_diverse_rl/search/current_bbh.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "731bf36f6ce4596717650d31d1140f2e4bf767b9d502c8bf3e3fcfe3f92d83db",
+      "path": "multi_dataset_diverse_rl/search/current_bbh_runtime.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "01382a442cadf3a232a18551c78d855a07afddf8b74134ddcb42be9f72491e89",
+      "path": "multi_dataset_diverse_rl/search/engines.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "6e6d1f227c4785f4beb6e712d7700a26c72843db413aa30ef770f3573ece8948",
+      "path": "multi_dataset_diverse_rl/search/evaluation.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "189887e23418909893cfb5f9b62e8c405aedec86eaef9f700b636870f209570f",
+      "path": "multi_dataset_diverse_rl/search/gepa.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "ac578869f79e63aea8f9d84b4a704ba07854fc3a92e92b12e9d13d05290afd48",
+      "path": "multi_dataset_diverse_rl/search/gepa_v2.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "ea84f3ea98b5bfc40b58548156189d9049f51d3873e34b3f82b7b33e4c826365",
+      "path": "multi_dataset_diverse_rl/search/history.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "7e5b224317a6e3e12c5389ea38e5b18e42f31c8a903de0d0473f06bed10bb485",
+      "path": "multi_dataset_diverse_rl/search/information_firewall.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "b34cfec9909c26de9c1a9229e53cc0066ead709fbc91b3a075c0ac29af07627f",
+      "path": "multi_dataset_diverse_rl/search/legacy_bbh_replay.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "b381062edaa91a6b0fa94dfe77aff23283c012a7b059b20ecd02923283741130",
+      "path": "multi_dataset_diverse_rl/search/memory.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "01438a2f8641c1cdc08dc79d8684c24a9fddc0454baa610c747bc334ac05b742",
+      "path": "multi_dataset_diverse_rl/search/official_baseline.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "c10dff9c4a05eb97bc902ceec4a95edaf6602ed5e7e11fddd09075e1f0dfa6ab",
+      "path": "multi_dataset_diverse_rl/search/orchestrator.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "7da22967ce9418694fa486e0bd1844618c803b0c52fd4a0ceb871b2b7ba92ced",
+      "path": "multi_dataset_diverse_rl/search/patterns.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "686be71980454dc0174506141e5873cb203d788655d3106698b480011e2a31ff",
+      "path": "multi_dataset_diverse_rl/search/policies.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "effffc2fc6eaa6b42e41e97d43f6bb30bae69dd39aa9b603fe21ff06b443e038",
+      "path": "multi_dataset_diverse_rl/search/private_gate.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "64f9174567f2e34369e5531e04031b813cbf3c7cd3960712f062a17c604a5764",
+      "path": "multi_dataset_diverse_rl/search/runtime_v2.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "e02178be25f2a7447c46c89f00704b64a9b3aeb60514b7b0fe61955628a919f8",
+      "path": "multi_dataset_diverse_rl/search/schemas.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "5760784f1b91a6084f75893c654afea8a31682cbd363d3bb531c01028f263894",
+      "path": "multi_dataset_diverse_rl/search/scientific_aggregation.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "55ddc714d00112e9e467e124bba7650fff877d7cd4a915487197a37a3a4e04d7",
+      "path": "multi_dataset_diverse_rl/search/transition.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "321843e224c193fbec4c3ce3d58a19149c108ad1ee24e687da3d495d41b2cb82",
+      "path": "multi_dataset_diverse_rl/search/variable_evidence.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "7f4d4325ff70328ea1303c185783cba7f88fbc6acb6df99c306a7c4dd73c0aa8",
+      "path": "multi_dataset_diverse_rl/search/__init__.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "c86dc42a8aff3f5eb443e1ec43cc857f56f78fac4361ef9fd6aa03bc2c28a072",
+      "path": "multi_dataset_diverse_rl/local_optimizers/backend_registry.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "8820fe3a5eb23f96a96a6b6b78129661915839aa8d4e79948b919190a58f3c6d",
+      "path": "multi_dataset_diverse_rl/local_optimizers/base.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "1c43a0874140d6f072c373c5ecac217503f46921bdc46afa62832f22b7fd8689",
+      "path": "multi_dataset_diverse_rl/local_optimizers/config.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "3e8190837605c85a90bae913d54a7a9b2a5554191bd835234076fba6e9c50379",
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "19851aca3cd404edd0f7ea3f7c539567ab3142c0720a6488c3819e46c71cb620",
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_callbacks.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "d78b4f21f615a9b5234b416cc5450c39788673fe73aaf375c6a252eee4e7072e",
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "58de8c2b6b89a33fddfb3c810f388c8c2a6f5e91907e77161d4b0c2276cae0e5",
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "0eb2d1a8a661ce7421352c0ba8e149839d2d1c724cd98a733f4e36241fafe401",
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_proposer_contract.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "0f6fecba9fdf01a1210265c00b713bae7ee5d11757b7125ad41e6a781c4969db",
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_runtime.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "3d9c822fa5ef6600d91206da646abb61ee4f864b6a26250ea9835c4f7ce2c0f7",
+      "path": "multi_dataset_diverse_rl/local_optimizers/legacy_tcs.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "8e676f22e9254040ec9703eb9eff4b386b6f57855072c75eb81e39acce81a449",
+      "path": "multi_dataset_diverse_rl/local_optimizers/mars_native.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "46f74c6ef0012fc575eea74dce4c83a06c1a1b61ed68e973ccab4f96b48b2a93",
+      "path": "multi_dataset_diverse_rl/local_optimizers/production_backends.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "adb88ee7b3b967633ac664c5df1e62447bf144781edfd25dcccf2c675958c0a0",
+      "path": "multi_dataset_diverse_rl/local_optimizers/proposal_telemetry.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "8c28634f2d93dfd6580ca2c87de3e3cc5b52d78c6cefdae22fb4ba6bbac54259",
+      "path": "multi_dataset_diverse_rl/local_optimizers/registry.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "99661d70ad11727301405ec23c36dc0ee02126e77d2a2f9fa8f453c1626e6696",
+      "path": "multi_dataset_diverse_rl/local_optimizers/schemas.py",
+      "unchanged": true
+    },
+    {
+      "canonical_sha256": "2b464fbe8c9be51d3f154128714ed01b23140f992d15d69c27706cec24a4578c",
+      "path": "multi_dataset_diverse_rl/local_optimizers/__init__.py",
+      "unchanged": true
+    }
+  ]
+}

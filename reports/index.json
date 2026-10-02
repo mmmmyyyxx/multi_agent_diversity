@@ -1015,6 +1015,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/math_v2_solver_interface_repair_v1_2_20261002",
+      "document": "reports/math_v2_solver_interface_repair_v1_2_20261002/README.md",
+      "date": "20261002",
+      "era": "BENCHMARK_GENERALIZATION",
+      "kind": "PREEXECUTION",
+      "experiment_id": "math_v2_preexecution_freeze_v1_2",
+      "status": "PREEXECUTION_FROZEN",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/model_headroom_screening_20260901",
       "document": "reports/model_headroom_screening_20260901/README.md",
       "date": "20260901",

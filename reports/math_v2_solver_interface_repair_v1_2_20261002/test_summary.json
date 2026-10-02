@@ -1,0 +1,25 @@
+{
+  "compileall": "PASS",
+  "credentials_removed_before_import": true,
+  "current_failed": 0,
+  "current_passed": 621,
+  "current_skipped": 2,
+  "current_suite_pending": false,
+  "historical_private_artifact_executed": false,
+  "historical_replay_executed": false,
+  "network_attempts": 0,
+  "new_real_calls": 0,
+  "new_skip_or_xfail_added": false,
+  "scope": {
+    "deselected": 1468,
+    "historical_replay_test_cases": 1404,
+    "mode": "current",
+    "private_artifact_test_cases": 64,
+    "selected": 623
+  },
+  "seconds": 538.79,
+  "status": "PASS",
+  "targeted_failed": 0,
+  "targeted_passed": 86,
+  "targeted_skipped": 0
+}

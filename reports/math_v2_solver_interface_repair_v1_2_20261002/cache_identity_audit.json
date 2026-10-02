@@ -1,0 +1,12 @@
+{
+  "cache_load_from_attempt1": false,
+  "cross_attempt_cache_hits": 0,
+  "interface_version_and_hash_in_exact_key": true,
+  "namespace": "math_v2_solver_interface_v1_2_canary_attempt2",
+  "new_initial_state": true,
+  "policy_identity": "exact_request_role_split_cache_v1",
+  "stale_cache_hits": 0,
+  "status": "PASS",
+  "unchanged_same_request_local_hit": true,
+  "verification_test": "test_v12_old_cache_and_cross_attempt_isolation"
+}
