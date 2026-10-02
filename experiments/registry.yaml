@@ -6458,15 +6458,15 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_a1_seed81_real_canary_v3
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: OUTPUT_INTERFACE_REPAIR_EFFICACY_UNVERIFIED
-  implementation_commit: null
+  status: COMPLETED
+  scientific_status: OUTPUT_INTERFACE_ZERO_API_PASS_EFFICACY_UNVERIFIED
+  implementation_commit: dc28b6e819843b8538426f0fdf1e9e3327d79ed7
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_solver_output_envelope_repair_v1.yaml
   report: reports/math_v2_1_solver_output_envelope_repair_v1_20261002
   classifier: V2_1_MATH_OUTPUT_INTERFACE_REPAIR
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -6474,8 +6474,9 @@ experiments:
     1800; strict parser unchanged.
   - Initial prompts, models, method, numeric GEPA budgets and canonical/split bytes
     unchanged; 30M total authorization preserved; fresh exact scope required.
+  - Task closure preserves frozen attempt and evidence; no fresh execution admitted
+    under STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED.
   unavailable:
-    implementation_commit: Pending gated source freeze.
     execution_commit: Not executed.
     result_commit: Pending evidence freeze.
 - experiment_id: math_v2_1_preexecution_freeze_v4
@@ -6484,15 +6485,15 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_solver_output_envelope_repair_v1
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: OUTPUT_INTERFACE_REPAIR_EFFICACY_UNVERIFIED
-  implementation_commit: null
+  status: PREEXECUTION_FROZEN
+  scientific_status: OUTPUT_INTERFACE_ZERO_API_PASS_EFFICACY_UNVERIFIED
+  implementation_commit: dc28b6e819843b8538426f0fdf1e9e3327d79ed7
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_preexecution_freeze_v4.yaml
   report: reports/math_v2_1_preexecution_freeze_v4_20261002
   classifier: V2_1_MATH_OUTPUT_INTERFACE_REPAIR
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -6500,8 +6501,9 @@ experiments:
     1800; strict parser unchanged.
   - Initial prompts, models, method, numeric GEPA budgets and canonical/split bytes
     unchanged; 30M total authorization preserved; fresh exact scope required.
+  - Task closure preserves frozen attempt and evidence; no fresh execution admitted
+    under STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED.
   unavailable:
-    implementation_commit: Pending gated source freeze.
     execution_commit: Not executed.
     result_commit: Pending evidence freeze.
 - experiment_id: math_v2_1_a1_seed81_real_canary_v4
@@ -6510,15 +6512,15 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_preexecution_freeze_v4
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: OUTPUT_INTERFACE_REPAIR_EFFICACY_UNVERIFIED
-  implementation_commit: null
-  execution_commit: null
+  status: INVALID
+  scientific_status: INVALID_OPERATIONAL_FAILURE_EFFICACY_UNOBSERVED
+  implementation_commit: dc28b6e819843b8538426f0fdf1e9e3327d79ed7
+  execution_commit: 98c657845cbbd05698dd0cbe09c043d880fdb85a
   result_commit: null
   manifest: experiments/manifests/math_v2_1_a1_seed81_real_canary_v4.yaml
   report: reports/math_v2_1_a1_seed81_real_canary_v4_20261002
-  classifier: V2_1_MATH_OUTPUT_INTERFACE_REPAIR
-  active_for_new_work: true
+  classifier: INVALID_OPERATIONAL_FAILURE
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -6526,25 +6528,26 @@ experiments:
     1800; strict parser unchanged.
   - Initial prompts, models, method, numeric GEPA budgets and canonical/split bytes
     unchanged; 30M total authorization preserved; fresh exact scope required.
+  - Task closure preserves frozen attempt and evidence; no fresh execution admitted
+    under STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED.
   unavailable:
-    implementation_commit: Pending gated source freeze.
-    execution_commit: Not executed.
     result_commit: Pending evidence freeze.
+  authorization_consumed: true
 - experiment_id: math_v2_1_a1_seed81_pilot_v4
   kind: PILOT
   era: BENCHMARK_GENERALIZATION
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_a1_seed81_real_canary_v4
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: OUTPUT_INTERFACE_REPAIR_EFFICACY_UNVERIFIED
-  implementation_commit: null
+  status: HOLD
+  scientific_status: NOT_EXECUTED_GENERATION_POLICY_REQUIRED
+  implementation_commit: dc28b6e819843b8538426f0fdf1e9e3327d79ed7
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_a1_seed81_pilot_v4.yaml
   report: reports/math_v2_1_a1_seed81_pilot_v4_20261002
-  classifier: V2_1_MATH_OUTPUT_INTERFACE_REPAIR
-  active_for_new_work: true
+  classifier: STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -6552,7 +6555,10 @@ experiments:
     1800; strict parser unchanged.
   - Initial prompts, models, method, numeric GEPA budgets and canonical/split bytes
     unchanged; 30M total authorization preserved; fresh exact scope required.
+  - Task closure preserves frozen attempt and evidence; no fresh execution admitted
+    under STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED.
   unavailable:
-    implementation_commit: Pending gated source freeze.
-    execution_commit: Not executed.
+    execution_commit: Pilot not executed; Canary failed and generation policy decision
+      required.
     result_commit: Pending evidence freeze.
+  authorization_consumed: false

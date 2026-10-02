@@ -1,0 +1,26 @@
+{
+  "authorization_reuse_permitted": false,
+  "canary_attempts": 4,
+  "pilot_scope_created": false,
+  "receipts": [
+    {
+      "attempt": 1,
+      "consumed_receipt_sha256": "aa7d2e878649304ef71e7660f812557cb2bd3bfef50315bf796a86ba1b672d45"
+    },
+    {
+      "attempt": 2,
+      "consumed_receipt_sha256": "f891b8010ee819793253a984267ac063e2a438dbd0410ea388e84134dde9fdcb"
+    },
+    {
+      "attempt": 3,
+      "consumed_receipt_sha256": "fa17c4534f463ad6841b51a56e5af9e040e828300700a6ec2dbea32889298b5c"
+    },
+    {
+      "attempt": 4,
+      "consumed_receipt_sha256": "ce4922f5754d17e227e35242818fc1a45f4d3c283c62e3834558811232eacde2"
+    }
+  ],
+  "status": "ALL_CONSUMED_CANARY_SCOPES_CLOSED",
+  "task_stop_reason": "STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED",
+  "validation_scope_created": false
+}

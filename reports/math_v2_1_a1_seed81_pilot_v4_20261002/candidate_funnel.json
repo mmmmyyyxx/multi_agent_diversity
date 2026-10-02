@@ -1,0 +1,21 @@
+{
+  "candidates": [],
+  "counts": {
+    "accepted_exported": 0,
+    "commits": 0,
+    "full_attempted": 0,
+    "full_pass": 0,
+    "local_accepted": 0,
+    "local_rejected": 0,
+    "opportunities": 0,
+    "proposals": 0,
+    "rejected_exported": 0,
+    "shadow_attempted": 0,
+    "shadow_pass": 0,
+    "team_probe_attempted": 0,
+    "team_probe_pass": 0,
+    "transition_attempted": 0,
+    "transition_pass": 0
+  },
+  "status": "NOT_EXECUTED"
+}

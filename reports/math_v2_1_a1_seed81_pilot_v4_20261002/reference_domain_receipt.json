@@ -1,0 +1,54 @@
+{
+  "active_split_unscorable_count": 0,
+  "by_source_split": {
+    "test": {
+      "exceptions": 0,
+      "extractable": 5000,
+      "parseable": 4973,
+      "scorable": 4884,
+      "self_equivalent": 4884,
+      "timeouts": 0,
+      "total": 5000,
+      "unsupported": 116
+    },
+    "train": {
+      "exceptions": 0,
+      "extractable": 7496,
+      "parseable": 7446,
+      "scorable": 7275,
+      "self_equivalent": 7275,
+      "timeouts": 0,
+      "total": 7500,
+      "unsupported": 225
+    }
+  },
+  "counts": {
+    "exceptions": 0,
+    "extractable": 12496,
+    "parseable": 12419,
+    "scorable": 12159,
+    "self_equivalent": 12159,
+    "timeouts": 0,
+    "total": 12500,
+    "unsupported": 341
+  },
+  "representations": {
+    "ambiguous_two_component_parentheses": 259,
+    "equation_relation": 74,
+    "finite_set": 52,
+    "interval": 141,
+    "matrix_like": 169,
+    "multiple_values": 103,
+    "ordered_tuple_vector_like": 71,
+    "percentage": 46,
+    "scalar_number": 10127,
+    "symbolic_expression": 1377,
+    "textual_mixed": 16,
+    "unclassified": 65
+  },
+  "same_membership_as_preexisting_domain_v2": true,
+  "source_unchanged": true,
+  "split_changed_from_original": true,
+  "split_sha256": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+  "summary_sha256": "77e7a6eb411bee083e473f36cf9cc2e19a80c484986b2dd0a860161798f746b6"
+}

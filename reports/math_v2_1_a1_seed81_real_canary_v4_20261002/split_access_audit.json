@@ -1,0 +1,9 @@
+{
+  "reference_prep_context": "EVALUATOR_CONTRACT_PREP_CONTEXT",
+  "sealed_test_content_published": false,
+  "search_optimize_only": true,
+  "shadow_private_gate": true,
+  "test_model_calls": 0,
+  "validation_feedback_to_search": 0,
+  "validation_search_calls": 0
+}

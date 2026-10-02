@@ -1,0 +1,77 @@
+{
+  "execution_source_means": "last attempted Canary source; Pilot not executed",
+  "ordered": [
+    [
+      "BASE_SHA",
+      "b0faed861b885d3964de835a4d4a729728eb2b37"
+    ],
+    [
+      "V2_1_IMPLEMENTATION_SHA",
+      "01025f7097ca3a3e248e370347e256ae0aea9046"
+    ],
+    [
+      "FINAL_EXECUTION_SOURCE_SHA",
+      "dc28b6e819843b8538426f0fdf1e9e3327d79ed7"
+    ],
+    [
+      "FINAL_PREEXECUTION_SHA",
+      "98c657845cbbd05698dd0cbe09c043d880fdb85a"
+    ],
+    [
+      "METHOD",
+      "unified_team_prompt_search_v2_1"
+    ],
+    [
+      "BENCHMARK_BINDING",
+      "MATH_V2_1_EXECUTION_BINDING_V1"
+    ],
+    [
+      "OLD_EVALUATOR",
+      "math_verify_0.6.0_equivalence_v1 / MATH_ANSWER_EQUIVALENCE_V1"
+    ],
+    [
+      "NEW_EVALUATOR",
+      "MATH_EQUIVALENCE_V2"
+    ],
+    [
+      "REFERENCE_SCORABLE_POLICY",
+      "MATH_SCORABLE_REFERENCE_V2"
+    ],
+    [
+      "CANONICAL_DATASET_SHA",
+      "7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f"
+    ],
+    [
+      "SPLIT_CHANGED",
+      "YES (from original split; unchanged from earlier domain-V2 eligibility)"
+    ],
+    [
+      "FINAL_SPLIT_SHA",
+      "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507"
+    ],
+    [
+      "INITIAL_TEAM_HASH",
+      "4ca685adff5ca8a97e53b0aa0f5715783c7c6937433bd5bbc1308cbad9e97200"
+    ],
+    [
+      "SOLVER",
+      "lwj / qwen3-8b / thinking=false"
+    ],
+    [
+      "OPTIMIZER",
+      "lwj / qwen3.7-flash"
+    ],
+    [
+      "TRANSITION",
+      "initial_competence_team_gain_v2"
+    ],
+    [
+      "OPPORTUNITY_ALLOCATION",
+      "responsibility_failure_discount_v1"
+    ],
+    [
+      "STOP",
+      "team_epoch_no_commit_v1"
+    ]
+  ]
+}

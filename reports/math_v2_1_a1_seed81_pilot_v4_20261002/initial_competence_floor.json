@@ -1,0 +1,17 @@
+{
+  "frozen_binding": {
+    "aggregation_independent": true,
+    "candidate_support": "same_complete_optimize",
+    "count": 150,
+    "evaluator": "MATH_EQUIVALENCE_V2",
+    "identity": "MATH_INITIAL_COMPETENCE_OPTIMIZE_V2_1",
+    "immutable": true,
+    "metric": "binary_correct_count",
+    "role": "optimize",
+    "split_identity": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+    "support_identity": "c2abe712782f0b673fb29a182883858c7466b79a66f2c323cae7903c976178fa"
+  },
+  "observed_member_scores": null,
+  "reason": "Pilot not started; all Canaries aborted during initialization.",
+  "status": "NOT_AVAILABLE"
+}

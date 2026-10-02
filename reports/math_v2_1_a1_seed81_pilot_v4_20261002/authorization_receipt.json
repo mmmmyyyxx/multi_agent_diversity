@@ -1,0 +1,8 @@
+{
+  "canary_pass": false,
+  "canary_pass_required": true,
+  "exact_pilot_scope_created": false,
+  "explicit_user_continuation_received": true,
+  "status": "NOT_AUTHORIZED_NOT_CONSUMED",
+  "stop_reason": "STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED"
+}

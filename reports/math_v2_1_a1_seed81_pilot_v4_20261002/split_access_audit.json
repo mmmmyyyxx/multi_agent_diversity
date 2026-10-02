@@ -1,0 +1,10 @@
+{
+  "accounting_prep_context": "ACCOUNTING_DATA_PREP_CONTEXT",
+  "reference_prep_context": "EVALUATOR_CONTRACT_PREP_CONTEXT",
+  "sealed_test_content_published": false,
+  "search_started": false,
+  "status": "PASS",
+  "test_model_calls": 0,
+  "validation_feedback_to_search": 0,
+  "validation_model_calls": 0
+}

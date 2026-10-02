@@ -1,0 +1,48 @@
+{
+  "actual_request_enable_thinking": false,
+  "attempts": [
+    {
+      "attempt": 3,
+      "last": {
+        "body_has_chat_template_kwargs": false,
+        "contains_think_tag": false,
+        "duplicate_line_count": 25,
+        "final_marker_count": 0,
+        "finish_reason": "length",
+        "nonempty_lines": 102,
+        "output_tokens": 1800,
+        "requested_cap": 1800,
+        "starts_think": false
+      },
+      "responses": 55,
+      "single_line_responses": 38,
+      "starts_think_responses": 0,
+      "think_tag_responses": 0
+    },
+    {
+      "attempt": 4,
+      "last": {
+        "body_has_chat_template_kwargs": false,
+        "contains_think_tag": false,
+        "duplicate_line_count": 214,
+        "final_marker_count": 0,
+        "finish_reason": "length",
+        "nonempty_lines": 241,
+        "output_tokens": 3600,
+        "requested_cap": 3600,
+        "starts_think": false
+      },
+      "responses": 5,
+      "single_line_responses": 2,
+      "starts_think_responses": 0,
+      "think_tag_responses": 0
+    }
+  ],
+  "content_inspection_scope": "STRUCTURAL_COUNTS_ONLY_NO_MATHEMATICAL_JUDGMENT",
+  "failed_response_regenerated": false,
+  "new_fallback_charge": 0,
+  "new_reported_charge": 5327,
+  "provider_backend_identity_verified": false,
+  "provider_root_cause": "UNKNOWN",
+  "request_serialization_mismatch_found": false
+}

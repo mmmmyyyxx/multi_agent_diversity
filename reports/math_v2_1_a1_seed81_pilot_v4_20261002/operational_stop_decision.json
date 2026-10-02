@@ -1,0 +1,18 @@
+{
+  "actual_enable_thinking": false,
+  "evaluator_revisions_during_real_execution": 0,
+  "initial_prompt_bytes_unchanged": true,
+  "known_provider_or_sdk_bug": false,
+  "next_requirement": "Explicit versioned generation/decoding policy decision or verified provider integration defect; no automatic rerun.",
+  "numerical_temperature": 0.0,
+  "observed_failure": "OPERATIONAL_OUTPUT_TRUNCATION",
+  "operational_attempt_limit_exceeded": false,
+  "output_cap_enlargement_succeeded": false,
+  "presence_penalty_sent": false,
+  "proposed_decoding_policy_change_applied": false,
+  "provider_backend_verified": false,
+  "status": "STOPPED",
+  "stop_reason": "STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED",
+  "strict_parser_preserved": true,
+  "user_task_clause": 147
+}

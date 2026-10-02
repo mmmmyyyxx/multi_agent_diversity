@@ -364,20 +364,23 @@ failures:
   first_observed: math_v2_1_a1_seed81_real_canary_v3
   affected_components:
   - math_solver_output_envelope
-  symptom: 55th Solver response reports finish_reason length and exactly 1800 output
-    tokens.
+  symptom: Length termination at cap 1800 in Canary v3 and cap 3600 in Canary v4;
+    both before completed initialization.
   evidence:
   - reports/math_v2_1_a1_seed81_real_canary_v3_20261002
+  - reports/math_v2_1_a1_seed81_real_canary_v4_20261002
+  - reports/math_v2_1_a1_seed81_pilot_v4_20261002
   evidence_level: observed
-  root_cause_status: FROZEN_SOLVER_OUTPUT_CAP_EXHAUSTED; mathematical correctness
-    and provider-side cause unobserved.
+  root_cause_status: OUTPUT_TRUNCATION_AND_REPETITIVE_STRUCTURE_OBSERVED; provider/backend
+    cause unknown; no serialization mismatch found.
   forbidden_inference: No method efficacy or performance-driven budget selection is
     established.
   regression_tests:
   - tests/test_math_v21_binding.py
   - tests/test_math_token_accounting.py
-  mitigation: Versioned Solver-only output envelope within unchanged 30M authorization;
-    recompute complete Validation reserve and fresh exact scope. Reflection cap and
-    GEPA budgets remain fixed.
+  mitigation: Preserve strict parser, failed responses, frozen initial prompts and
+    durable ledger. Cap enlargement failed. Task clause 147 stops before unapproved
+    generation policy changes.
   lifecycle: OPEN
-  lifecycle_note: FAILED_ATTEMPT_PRESERVED; ENVELOPE_REPAIR_PENDING
+  lifecycle_note: STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED; FAILED_ATTEMPTS_PRESERVED;
+    NO_PILOT_OR_VALIDATION_EXECUTION
