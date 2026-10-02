@@ -1,0 +1,88 @@
+{
+  "accounting": {
+    "authorized_total": 30000000,
+    "by_attempt": {
+      "math_unified_v2_1_A1_seed81_canary_attempt1": {
+        "charged_total": 14245,
+        "fallback_charged": 0,
+        "input_tokens": 3423,
+        "output_tokens": 10822,
+        "physical_attempts": 27,
+        "provider_reported_actual": 14245
+      },
+      "math_unified_v2_1_A1_seed81_canary_attempt2": {
+        "charged_total": 1007,
+        "fallback_charged": 0,
+        "input_tokens": 327,
+        "output_tokens": 680,
+        "physical_attempts": 2,
+        "provider_reported_actual": 1007
+      },
+      "math_unified_v2_A1_seed81_canary_attempt2": {
+        "charged_total": 7231,
+        "fallback_charged": 7231,
+        "input_tokens": 5431,
+        "output_tokens": 1800,
+        "physical_attempts": 1,
+        "provider_reported_actual": 0
+      },
+      "math_unified_v2_A1_seed81_canary_attempt3": {
+        "charged_total": 8303,
+        "fallback_charged": 0,
+        "input_tokens": 2149,
+        "output_tokens": 6154,
+        "physical_attempts": 16,
+        "provider_reported_actual": 8303
+      }
+    },
+    "by_model": {
+      "qwen3-8b": {
+        "charged_total": 30786,
+        "fallback_charged": 7231,
+        "input_tokens": 11330,
+        "output_tokens": 19456,
+        "physical_attempts": 46,
+        "provider_reported_actual": 23555
+      }
+    },
+    "by_role": {
+      "solver": {
+        "charged_total": 30786,
+        "fallback_charged": 7231,
+        "input_tokens": 11330,
+        "output_tokens": 19456,
+        "physical_attempts": 46,
+        "provider_reported_actual": 23555
+      }
+    },
+    "by_stage": {
+      "canary": {
+        "charged_total": 30786,
+        "fallback_charged": 7231,
+        "input_tokens": 11330,
+        "output_tokens": 19456,
+        "physical_attempts": 46,
+        "provider_reported_actual": 23555
+      }
+    },
+    "charged_total": 30786,
+    "fallback_charged": 7231,
+    "identity": "AUTONOMOUS_REAL_TOKEN_LEDGER_V2",
+    "input_tokens": 11330,
+    "last_event_sha256": "47bfb5952b07a2bc5a3589169654839e58a5b96c27291285c21009f78ac759c4",
+    "output_tokens": 19456,
+    "provider_reported_actual": 23555,
+    "remaining": 29969214,
+    "reserved_inflight": 0,
+    "task_sha256": "3db28ade2b799d2169c6cdbdb03b82e63517ab74c46f8212905855f2fcf9cd9a"
+  },
+  "by_kind": {
+    "ATTEMPT": 2,
+    "SOLVER_REQUEST_CONTRACT": 2,
+    "SUCCESS": 2
+  },
+  "physical_attempts": 2,
+  "real_calls": {
+    "solver": 2
+  }
+}

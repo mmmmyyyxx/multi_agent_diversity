@@ -1,0 +1,14 @@
+{
+  "A2_A3_A4_authorized": false,
+  "SOTA_verified": false,
+  "efficacy_verified": false,
+  "formal_3seed_authorized": false,
+  "incumbent_monotonicity_enforced": false,
+  "initial_floor_enforced": true,
+  "memory_reads": 0,
+  "memory_writes": 0,
+  "method": "unified_team_prompt_search_v2_1",
+  "pattern_real_calls": 0,
+  "round_robin_enforced": false,
+  "strict_team_gain_enforced": true
+}

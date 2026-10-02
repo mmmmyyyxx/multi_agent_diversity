@@ -346,6 +346,7 @@ failures:
     below the output cap.
   evidence:
   - reports/math_v2_1_a1_seed81_real_canary_v1_20261002
+  - reports/math_v2_1_a1_seed81_real_canary_v2_20261002
   evidence_level: observed
   root_cause_status: OUTPUT_FORMAT_NONCOMPLIANCE; parser correctly fails closed; provider
     cause unknown.

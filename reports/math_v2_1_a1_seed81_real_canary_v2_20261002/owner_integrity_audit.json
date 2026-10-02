@@ -1,0 +1,12 @@
+{
+  "authorization_single_use": true,
+  "initialization_incomplete": true,
+  "ledger_hash_chain_reconstructed": true,
+  "ledger_snapshot_matches_phase_end": true,
+  "new_fallback_charge": 0,
+  "new_provider_reported": 1007,
+  "source_and_inventory_verified": true,
+  "status": "PASS",
+  "test_model_calls": 0,
+  "validation_model_calls": 0
+}

@@ -1,0 +1,24 @@
+{
+  "allocation": "responsibility_failure_discount_v1",
+  "base_sha": "b0faed861b885d3964de835a4d4a729728eb2b37",
+  "binding_identity": "MATH_V2_1_EXECUTION_BINDING_V1",
+  "binding_sha256": "0b87f5809bbdf1dcf67ba4d3c6157c5aa9987330aa1e0db0620dbde7b802c010",
+  "canonical_dataset_sha256": "7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f",
+  "implementation_sha": "01025f7097ca3a3e248e370347e256ae0aea9046",
+  "initial_team_sha256": "4ca685adff5ca8a97e53b0aa0f5715783c7c6937433bd5bbc1308cbad9e97200",
+  "method": "unified_team_prompt_search_v2_1",
+  "models": {
+    "optimizer_reflection": "qwen3.7-flash",
+    "pattern": "qwen3.7-flash",
+    "solver": "qwen3-8b",
+    "solver_thinking": false
+  },
+  "preexecution_sha": "9d8ded4a163855a40cb903ce493c2751e88d33c6",
+  "protocol_identity": "5d326ef6650b7c195f9e6b1b217f73375ddbb0d9ecafd219f86140fbd8df5132",
+  "provider": "lwj",
+  "source_sha": "2e39f3b3eadc99e84c2c981c99c162b74325bc06",
+  "split_identity": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+  "startup_identity_sha256": "ef17b58208b5291efcd040ce3b9cf55eec01a8fc70b0645ceed7faa6a9459629",
+  "stop": "team_epoch_no_commit_v1",
+  "transition": "initial_competence_team_gain_v2"
+}
