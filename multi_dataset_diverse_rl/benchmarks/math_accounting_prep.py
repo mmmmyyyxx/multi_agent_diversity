@@ -45,13 +45,15 @@ def validation_rows(root, contract, *, context, search_complete_receipt=None):
 
 def solver_request(contract, prompt, problem):
     interface = MATH_SOLVER_INTERFACE
+    user_content = prompt + "\n\n" + problem
     if contract["identity"] == "MATH_V2_1_EXECUTION_BINDING_V1":
-        from .math_v21_interface import interface_for_contract
+        from .math_v21_interface import interface_for_contract, solver_user_content
         interface = interface_for_contract(contract)[0]
+        user_content = solver_user_content(contract, prompt, problem)
     return dict(model=contract["models"]["solver"], temperature=contract["decoding"]["temperature"],
         max_tokens=contract["decoding"]["max_output_tokens"], extra_body={"enable_thinking": False},
         messages=[{"role":"system", "content":interface},
-                  {"role":"user", "content":prompt + "\n\n" + problem}])
+                  {"role":"user", "content":user_content}])
 
 
 def prepare_metadata(root, contract):

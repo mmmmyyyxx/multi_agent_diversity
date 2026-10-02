@@ -339,6 +339,14 @@ mismatch fails before dispatch. Format failure still aborts with zero response
 regenerations. Every interface change requires a fresh source, attempt,
 authorization, cache namespace and process.
 
+`MATH_SOLVER_INTERFACE_V4` preserves the V3 system bytes and adds an immutable
+format-only suffix after the problem in the user message. The combined interface,
+system bytes and suffix each have frozen hashes. Solver and Validation accounting
+use the same benchmark-owned composer. Mutable member prompts remain byte-identical
+and GEPA cannot change this suffix. The suffix contains no problem, reference,
+example, solution, strategy or held-out information. V2/V3 historical request
+compositions remain reproducible; unknown identities and altered hashes fail closed.
+
 ## Authority map
 
 See AGENTS.md for the complete authority hierarchy; method.md is a conceptual

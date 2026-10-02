@@ -637,6 +637,22 @@ nodes:
   kind: PILOT
   era: BENCHMARK_GENERALIZATION
   method_family: unified_team_prompt_search_v2_1
+- experiment_id: math_v2_1_output_interface_repair_v2
+  kind: ARCHITECTURE_REFACTOR
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+- experiment_id: math_v2_1_preexecution_freeze_v3
+  kind: PREEXECUTION_FREEZE
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+- experiment_id: math_v2_1_a1_seed81_real_canary_v3
+  kind: REAL_CANARY
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+- experiment_id: math_v2_1_a1_seed81_pilot_v3
+  kind: PILOT
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1082,4 +1098,24 @@ edges:
   evidence: reports/math_v2_1_a1_seed81_pilot_v2_20261002/README.md
   scope: Fresh output-interface repair; no reused execution state or authorization.
   from: math_v2_1_a1_seed81_real_canary_v2
+- to: math_v2_1_output_interface_repair_v2
+  relation: derived_from
+  evidence: reports/math_v2_1_output_interface_repair_v2_20261002/README.md
+  scope: Fresh output-interface repair; no reused execution state or authorization.
+  from: math_v2_1_a1_seed81_real_canary_v2
+- to: math_v2_1_preexecution_freeze_v3
+  relation: derived_from
+  evidence: reports/math_v2_1_preexecution_freeze_v3_20261002/README.md
+  scope: Fresh output-interface repair; no reused execution state or authorization.
+  from: math_v2_1_output_interface_repair_v2
+- to: math_v2_1_a1_seed81_real_canary_v3
+  relation: derived_from
+  evidence: reports/math_v2_1_a1_seed81_real_canary_v3_20261002/README.md
+  scope: Fresh output-interface repair; no reused execution state or authorization.
+  from: math_v2_1_preexecution_freeze_v3
+- to: math_v2_1_a1_seed81_pilot_v3
+  relation: derived_from
+  evidence: reports/math_v2_1_a1_seed81_pilot_v3_20261002/README.md
+  scope: Fresh output-interface repair; no reused execution state or authorization.
+  from: math_v2_1_a1_seed81_real_canary_v3
 current_frontier: experiments/current_frontier.yaml

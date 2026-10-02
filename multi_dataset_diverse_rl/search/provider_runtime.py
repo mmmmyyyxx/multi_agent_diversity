@@ -155,6 +155,9 @@ class BenchmarkSolver:
             raise SearchContractError("SOLVER_INTERFACE_BINDING_MISMATCH")
         if self.broker.prompt_observer:
             self.broker.prompt_observer(prompt)
+        user_content = (self.benchmark.solver_user_content(prompt, item)
+            if hasattr(self.benchmark, "solver_user_content")
+            else prompt + "\n\n" + self.benchmark.format_input(item))
         effective = hashlib.sha256(json.dumps(dict(solver_interface=contract,
             mutable_prompt_sha256=hashlib.sha256(prompt.encode()).hexdigest(),
             benchmark_input_sha256=hashlib.sha256(self.benchmark.format_input(item).encode()).hexdigest(),
@@ -165,7 +168,7 @@ class BenchmarkSolver:
             effective_solver_request_contract_hash=effective))
         return self.broker.complete(role="solver", split=split, stage=stage,
             messages=[{"role": "system", "content": interface},
-                      {"role": "user", "content": prompt + "\n\n" + self.benchmark.format_input(item)}])
+                      {"role": "user", "content": user_content}])
 
     def solve(self, prompt, item, *, stage, split):
         result = self._request(prompt, item, stage=stage, split=split)

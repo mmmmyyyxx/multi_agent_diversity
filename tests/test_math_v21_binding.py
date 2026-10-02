@@ -16,16 +16,24 @@ from multi_dataset_diverse_rl.local_optimizers.gepa_runtime import import_frozen
 ROOT=Path(__file__).resolve().parents[1]
 
 def contract(phase='pilot'):
-    return json.loads((ROOT/f'experiments/execution_bindings/math_v2_1_{phase}_v2.json').read_bytes())
+    return json.loads((ROOT/f'experiments/execution_bindings/math_v2_1_{phase}_v3.json').read_bytes())
 
 
 def test_output_repair_is_immutable_and_request_accounting_matches_solver():
-    from multi_dataset_diverse_rl.benchmarks.math_v21_interface import interface_for_contract, v3_interface_contract
+    from multi_dataset_diverse_rl.benchmarks.math_v21_interface import interface_for_contract, v4_interface_contract, MATH_SOLVER_INTERFACE_V4_USER_SUFFIX
     from multi_dataset_diverse_rl.benchmarks.math_accounting_prep import solver_request
     from multi_dataset_diverse_rl.benchmarks.math_domain_v2 import final_payload
     c=contract();adapter=MATHV21Binding(ROOT,c).benchmark()
-    assert adapter.solver_interface_contract()==v3_interface_contract()
+    assert adapter.solver_interface_contract()==v4_interface_contract()
     assert solver_request(c,'Synthetic decision procedure.','Synthetic arithmetic.')['messages'][0]['content']==adapter.output_contract
+    request=solver_request(c,'Synthetic decision procedure.','Synthetic arithmetic.')
+    assert request['messages'][1]['content'].endswith(MATH_SOLVER_INTERFACE_V4_USER_SUFFIX)
+    assert request['messages'][1]['content'].startswith('Synthetic decision procedure.\n\nSynthetic arithmetic.')
+    captured=[]
+    broker=RequestBroker(contract=c,transport=lambda r:captured.append(r) or dict(text='FINAL_ANSWER: 1',input_tokens=1,output_tokens=1),arm='A1',seed=81,ledger_writer=lambda _:None)
+    item=protocol_input('math','synthetic',{'problem':'Synthetic arithmetic.'},adapter.output_contract,protocol=adapter.protocol)
+    BenchmarkSolver(adapter,broker).solve('Synthetic decision procedure.',item,stage='initial',split='optimize')
+    assert captured==[request]
     assert final_payload('FINAL_ANSWER: 1')=='1'
     for bad in ('1','**FINAL_ANSWER: 1**','```FINAL_ANSWER: 1```','FINAL_ANSWER: 1\ncommentary','FINAL_ANSWER: 1\nFINAL_ANSWER: 2','FINAL_ANSWER:'):
         assert final_payload(bad) is None
@@ -42,6 +50,12 @@ def test_prior_v21_interface_contract_stays_reproducible():
     assert not binding.blockers()
     assert binding.benchmark().output_contract==MATH_SOLVER_INTERFACE_V2
     assert binding.benchmark().solver_interface_contract()==solver_interface_contract()
+    from multi_dataset_diverse_rl.benchmarks.math_v21_interface import MATH_SOLVER_INTERFACE_V3, v3_interface_contract
+    c=json.loads((ROOT/'experiments/execution_bindings/math_v2_1_canary_v2.json').read_bytes());binding=MATHV21Binding(ROOT,c)
+    assert not binding.blockers()
+    assert binding.benchmark().solver_interface_contract()==v3_interface_contract()
+    item=protocol_input('math','synthetic',{'problem':'Synthetic arithmetic.'},MATH_SOLVER_INTERFACE_V3,protocol=binding.benchmark().protocol)
+    assert binding.benchmark().solver_user_content('Synthetic procedure.',item)=='Synthetic procedure.\n\nSynthetic arithmetic.'
 
 @pytest.mark.parametrize('phase',['canary','pilot'])
 def test_fresh_binding_has_no_historical_execution_authority(phase):
@@ -71,11 +85,11 @@ def test_heldout_raw_access_denied_before_file_open(role,monkeypatch):
 def test_bound_manifest_requires_same_initial_support_and_fresh_components():
     from multi_dataset_diverse_rl.governance.unified_execution import preexecution_manifest,bound_preflight
     from multi_dataset_diverse_rl.governance.repository import validate_manifest_v2
-    m=preexecution_manifest(ROOT,source_sha='a'*40,binding_path='experiments/execution_bindings/math_v2_1_canary_v2.json',frozen=False)
+    m=preexecution_manifest(ROOT,source_sha='a'*40,binding_path='experiments/execution_bindings/math_v2_1_canary_v3.json',frozen=False)
     assert not validate_manifest_v2(ROOT,m)
     del m['initial_competence_binding']
     assert validate_manifest_v2(ROOT,m)
-    m=preexecution_manifest(ROOT,source_sha='a'*40,binding_path='experiments/execution_bindings/math_v2_1_canary_v2.json',frozen=False)
+    m=preexecution_manifest(ROOT,source_sha='a'*40,binding_path='experiments/execution_bindings/math_v2_1_canary_v3.json',frozen=False)
     m['transition_identity']='common_safe_v1'
     assert 'MANIFEST_EXECUTION_BINDING_MISMATCH' in bound_preflight(ROOT,m)['blockers']
 
@@ -96,6 +110,9 @@ def test_fresh_v21_binding_actual_gepa_four_arm_e2e(tmp_path,arm,monkeypatch):
         if req['model']=='qwen3-8b':
             assert req['messages'][0]['content']==adapter.output_contract
             prompt,problem=req['messages'][1]['content'].split('\n\n',1)
+            from multi_dataset_diverse_rl.benchmarks.math_v21_interface import MATH_SOLVER_INTERFACE_V4_USER_SUFFIX
+            assert problem.endswith(MATH_SOLVER_INTERFACE_V4_USER_SUFFIX)
+            problem=problem.removesuffix(MATH_SOLVER_INTERFACE_V4_USER_SUFFIX)
             assert '"memory"' not in problem and '"pattern"' not in problem
             i=int(problem.rsplit(' ',1)[1].rstrip('.'))
             if problem.startswith('Synthetic shadow'):correct=prompt in {prompts[1],prompts[2],good,other}

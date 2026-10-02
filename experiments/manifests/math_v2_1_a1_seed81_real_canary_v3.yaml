@@ -1,0 +1,80 @@
+schema_version: experiment_manifest_v2
+experiment_id: math_v2_1_a1_seed81_real_canary_v3
+method_family: unified_team_prompt_search_v2_1
+method_identity: unified_team_prompt_search_v2_1
+source_sha: 78a4db172aeba0e5e531c3c1650087c0eef6b499
+benchmark_id: math
+benchmark_protocol_id: 5d326ef6650b7c195f9e6b1b217f73375ddbb0d9ecafd219f86140fbd8df5132
+dataset_manifest_identity: 7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f
+split_identity: 196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507
+seed: 81
+models:
+  solver: qwen3-8b
+  optimizer: qwen3.7-flash
+  solver_thinking: false
+concurrency:
+  solver: 1
+  optimizer: 1
+provider_policy:
+  identity: lwj
+  frozen: true
+cache_policy:
+  identity: exact_request_role_split_cache_v1
+  frozen: true
+solver_output_interface_identity: MATH_SOLVER_INTERFACE_V4
+parser_identity: MATH_PAYLOAD_PARSER_V2
+access:
+  search_access: frozen_search
+  shadow_access: frozen_adaptive_gate
+  validation_access: not_authorized
+  test_access: sealed
+budget:
+  regime: saturation
+  saturation_identity: team_epoch_no_commit_v1
+  successful_provider_call_ceiling: 1690560
+  transport_attempt_ceiling: 35501760
+authorization:
+  real_api_authorized: false
+  attempt_id: null
+  authorization_identity: null
+  single_use: true
+lifecycle:
+  status: DRAFT
+  history:
+  - status: DRAFT
+    event: ZERO_API_BLOCKER_CLOSURE
+  - status: DRAFT
+    event: AWAITING_SOURCE_COMMIT
+hash_closure:
+  scientific_source_hash: 0ca7f7a564d2542e0bab0f7cbb44be6a242c95bc5dc7ad38d0dc4b0597274d02
+  governance_hash: 2a48b13d91d87202114b86407041d712880c540e2fdc7d97d88d1dbd996e3b25
+  benchmark_contract_hash: dfb4cd44b18e1fdf006b5d8503833d5a58892fb849c52248f18e359505c58b28
+  dataset_manifest_hash: d3c3f587bf9e08f5d9a12c8b777953c57cd30fc4c655e82e95f556b337119d81
+execution_binding:
+  identity: MATH_V2_1_EXECUTION_BINDING_V1
+  path: experiments/execution_bindings/math_v2_1_canary_v3.json
+  sha256: d15743948b0d1c9bff5b61f8044cb1f334632fc78983caf7b5b31696db627d0e
+mechanism_config: {}
+search_engine_identity: gepa_derived_team_candidate_exposure_v2
+aggregation_identity: equal_equivalence_plurality_consistency_v1
+responsibility_identity: binary_plurality_raw_responsibility_v1
+transition_identity: initial_competence_team_gain_v2
+adaptive_gate_identity: winner_only_shadow_v1
+pattern_identity: null_pattern_v1
+memory_identity: null_memory_v1
+search_acceptance_identity: local_survival_team_admission_decoupled_v1
+evidence_identity: single_mechanism_evidence_v2
+feasibility_identity: variable_evidence_feasibility_v1
+initial_competence_binding:
+  aggregation_independent: true
+  candidate_support: same_complete_optimize
+  count: 150
+  evaluator: MATH_EQUIVALENCE_V2
+  identity: MATH_INITIAL_COMPETENCE_OPTIMIZE_V2_1
+  immutable: true
+  metric: binary_correct_count
+  role: optimize
+  split_identity: 196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507
+  support_identity: c2abe712782f0b673fb29a182883858c7466b79a66f2c323cae7903c976178fa
+global_stop_identity: team_epoch_no_commit_v1
+preregistration_identity: c07b278310a2afe20b38d30aaf411d3a1dff60937a86c8c9b168ae166fb73e93
