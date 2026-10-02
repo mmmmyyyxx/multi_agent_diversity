@@ -1,0 +1,17 @@
+{
+  "attempt_id": "math_unified_v2_A1_seed81_canary_attempt3",
+  "cumulative_charged_tokens": 7231,
+  "execution_source_sha": "9dc4768f49cae0016b09e315631e20e9076ab88a",
+  "independent_preps": 2,
+  "new_real_calls": 0,
+  "output_cap": 1800,
+  "prep_comparison": "BYTE_IDENTICAL",
+  "prior_auth_reused": false,
+  "root_cause_repair_count": 1,
+  "scientific_search_payload": "UNCHANGED",
+  "source_closure_files": 179,
+  "startup_identity_sha256": "b75d61f6b2574c79988fcfea3bf99dd2d61385a3ed6c95b34412d77abb7da832",
+  "test_model_calls": 0,
+  "test_raw_reads": 0,
+  "validation_calls": 0
+}

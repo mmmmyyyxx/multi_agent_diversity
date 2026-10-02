@@ -1,0 +1,17 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "freeze_receipt.json",
+      "sha256": "13a752ad92d0f565b21dc8d3a75c388bada811314d075547963c4482f5ca9c08"
+    },
+    {
+      "file": "README.md",
+      "sha256": "a53028c910416555c6695a40e3346db17d03b0f61df9a2d207dca5c50a84f26e"
+    },
+    {
+      "file": "verification.json",
+      "sha256": "35dd911f33c301ad756e60b6859a3fdef3cb31d079302abc71b717dedfa0f7d3"
+    }
+  ]
+}

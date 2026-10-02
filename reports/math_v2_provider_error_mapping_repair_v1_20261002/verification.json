@@ -1,0 +1,55 @@
+{
+  "accounting_and_actual_gepa_fake_e2e": {
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "30",
+    "time": "63.540"
+  },
+  "checked_scientific_keys": [
+    "models",
+    "budget",
+    "membership_hashes",
+    "initial_team_sha256",
+    "benchmark_protocol_sha256",
+    "evaluator",
+    "evaluator_pins",
+    "aggregation",
+    "responsibility",
+    "arms",
+    "seeds",
+    "memory_limits",
+    "decoding",
+    "solver_output_interface"
+  ],
+  "compileall": "PASS",
+  "cumulative_charged_tokens": 7231,
+  "current_suite": {
+    "errors": "0",
+    "failures": "0",
+    "skipped": "2",
+    "tests": "657",
+    "time": "605.702"
+  },
+  "denied_before_provider": true,
+  "diff_check": "PASS",
+  "governance": "PASS",
+  "historical_cases": "NOT_RUN",
+  "network_attempt_count": 0,
+  "new_real_calls": 0,
+  "prior_evidence_immutable": true,
+  "sanitization": "PASS",
+  "scientific_payload_comparison": "IDENTICAL",
+  "secret_scan": "PASS",
+  "startup_source_poison": "PASS",
+  "targeted": {
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "110",
+    "time": "156.766"
+  },
+  "test_model_calls": 0,
+  "test_raw_reads": 0,
+  "tested_poison_count": 179
+}
