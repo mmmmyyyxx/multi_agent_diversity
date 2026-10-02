@@ -1,0 +1,20 @@
+{
+  "baseline_sha": "4435d276280b9b990f7ca2564d29b507ee02e55e",
+  "consumed_authorization_identity": null,
+  "execution_attempt_created": false,
+  "execution_binding_sha256": "5460808ad5ff8e33a697ef15cb72b8c8ecdafb6c08bf1fa762a6679b405bc0f4",
+  "models": {
+    "optimizer_reflection": "qwen3.7-flash",
+    "pattern": "qwen3.7-flash",
+    "solver": "qwen3-8b",
+    "solver_thinking": false
+  },
+  "new_execution_source_sha": null,
+  "parent_manifest_sha256": "7b5ef107af9a62b4244482f2345f2230b72db67154d543add0dd046809684dca",
+  "preexecution_sha": null,
+  "prospective_attempt_id": "math_unified_v2_A1_seed81_canary_attempt2",
+  "source_or_scientific_runtime_patch": false,
+  "source_sha": "470091faecf6b0de6e8b892778d12a66892ebe49",
+  "source_sha_role": "Historical parent frozen source; no new execution source was frozen.",
+  "startup_identity": null
+}

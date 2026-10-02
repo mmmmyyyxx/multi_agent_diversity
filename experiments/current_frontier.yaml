@@ -2,8 +2,7 @@ schema_version: current_frontier_v1
 current_architecture: Unified Team Prompt Search
 method_identity: unified_team_prompt_search_v2
 current_method: unified_team_prompt_search_v2
-current_implementation: MATH V2 benchmark-neutral composition; mechanisms selected
-  only by versioned arms
+current_implementation: MATH V2 benchmark-neutral composition; mechanisms selected only by versioned arms
 current_experiment: math_v2_pattern_memory_v1
 current_benchmark_suite:
 - math
@@ -15,7 +14,7 @@ current_dataset_migration: multibench_dataset_migration_v1
 future_experiment_plan: v2_pattern_memory_multibench_v1
 last_governance_milestone: repository_hygiene_alignment_v1
 last_scientific_contract_milestone: benchmark_scientific_contract_freeze_v1
-real_execution_ready: true_for_canary_only
+real_execution_ready: false
 real_api_authorized: false
 validation_access: not_authorized
 test_access: sealed
@@ -24,10 +23,15 @@ last_method_milestone: unified_team_prompt_search_v2_method_refactor
 canary_manifest: experiments/manifests/math_v2_pattern_memory_v1_2.yaml
 last_preexecution_milestone: math_v2_preexecution_freeze_v1_2
 last_canary_milestone: math_v2_a1_seed81_real_canary_v1
-current_canary_status: CANARY_OPERATIONAL_FAILURE
+current_canary_status: NOT_STARTED_TOKEN_ACCOUNTING_UNRESOLVED
 formal_a1_ready: false
 formal_a1_authorized: false
-current_execution_blocker: Fresh V2 canary requires explicit single-use authorization;
-  real model output adherence remains unverified.
+current_execution_blocker: 'STOP_TOKEN_ACCOUNTING_UNRESOLVED: reliable frozen lwj accounting upper bound
+  unavailable.'
 next_canary_milestone: math_v2_a1_seed81_real_canary_v2
 next_canary_attempt_id: math_unified_v2_A1_seed81_canary_attempt2
+last_autonomous_milestone: math_v2_autonomous_accounting_preflight_v1
+autonomous_user_authorization_received: true
+autonomous_token_authorization: 30000000
+autonomous_tokens_consumed: 0
+autonomous_tokens_remaining: 30000000

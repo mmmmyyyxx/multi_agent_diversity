@@ -1,0 +1,80 @@
+{
+  "files": [
+    {
+      "bytes": 359,
+      "path": "authorization_consumption_audit.json",
+      "sha256": "f7aa43e3f96cd82ab26a36bdfb7090c8d63467b3545889fd0cebedd9924d1a65"
+    },
+    {
+      "bytes": 937,
+      "path": "authorization_receipt.json",
+      "sha256": "afd46382edafabeeb10d05b2d77b10d7d0bb4a061e35a5e461674c07b83e676c"
+    },
+    {
+      "bytes": 726,
+      "path": "autonomous_repair_ledger.json",
+      "sha256": "70ea6978c6edde95e7737a6fe30a828d4ae8c2eef952c8a282b6cb655d9d61ed"
+    },
+    {
+      "bytes": 856,
+      "path": "execution_identity.json",
+      "sha256": "e8d6541a6894a34b7ec2594f08bb4de9b3f6e6c6f684ef5ad8036538f40e0f2e"
+    },
+    {
+      "bytes": 145,
+      "path": "governance_audit.json",
+      "sha256": "451e96e34674caca8d369dd998880c31708d838a2ae9b0cd3bb3d6c62756ceb7"
+    },
+    {
+      "bytes": 634,
+      "path": "lifecycle.json",
+      "sha256": "98560049ca83ea27900d72bb39fb6acf8672cf35aaf1b4c053edf2bd4c415b5f"
+    },
+    {
+      "bytes": 2302,
+      "path": "local_evidence_inventory.json",
+      "sha256": "c5d1723bc80255b8dcc0775465dfd240b159fe2b5b2fb2826bf4a15d7a30a062"
+    },
+    {
+      "bytes": 566,
+      "path": "operational_audit.json",
+      "sha256": "aed1a2d71d51cb0410b99d6e782e2bfeb43f50454ab42138c4318f4dde040c30"
+    },
+    {
+      "bytes": 6316,
+      "path": "README.md",
+      "sha256": "3a4c907de43e15951715c853ecd8602bbb2f80ce97fea9d8d89796ec7e673ea7"
+    },
+    {
+      "bytes": 1098,
+      "path": "scope_and_final_status.json",
+      "sha256": "7aabf440e29f46aec89c7f6ca71e5bf4d560eea443c08d57792bf8156aeeef17"
+    },
+    {
+      "bytes": 113,
+      "path": "secret_scan.json",
+      "sha256": "86df30e2310babde07fe864eee98d75f6927753ad7c08e4a0e2ff6ead37ed204"
+    },
+    {
+      "bytes": 2726,
+      "path": "split_access_audit.json",
+      "sha256": "f55de1ba775f56fb01413f8d0eb87ce76c6bf8cd51b23840fcb6ec6a19cb1fd6"
+    },
+    {
+      "bytes": 3399,
+      "path": "token_accounting_audit.json",
+      "sha256": "457d61095f713f24bf65a996ddae245eb3542f49d848d7d57aed8089fb2fec5f"
+    },
+    {
+      "bytes": 2695,
+      "path": "token_budget_ledger.json",
+      "sha256": "a7a7b4ed23d6f1da4b11264793586cc5a83c3bfb3e2ecd47cddb2c0d8091d2f8"
+    },
+    {
+      "bytes": 4191,
+      "path": "verification.json",
+      "sha256": "bd87dcf3a76550a1a8e9d06fdc3c6264ca47de23f09e870b0e60e6474bb97b47"
+    }
+  ],
+  "schema_version": "sanitized_evidence_sha256_manifest_v1"
+}

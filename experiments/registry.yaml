@@ -5842,3 +5842,31 @@ experiments:
       source commit.
     execution_commit: Zero real calls; future canary not authorized.
     result_commit: No efficacy result.
+- experiment_id: math_v2_autonomous_accounting_preflight_v1
+  kind: ZERO_API_AUDIT
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2
+  parent_ids:
+  - math_v2_preexecution_freeze_v1_2
+  status: HOLD
+  scientific_status: NOT_EXECUTED_EFFICACY_UNEVALUATED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_autonomous_accounting_preflight_v1.yaml
+  report: reports/math_v2_autonomous_accounting_preflight_v1_20261002
+  classifier: STOP_TOKEN_ACCOUNTING_UNRESOLVED
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  baseline_commit: 4435d276280b9b990f7ca2564d29b507ee02e55e
+  authorization_consumed: false
+  notes:
+  - Task-wide user authorization received for bounded A1 Seed81 Canary-to-Pilot.
+  - No reliable frozen lwj accounting upper bound; no physical attempt started.
+  - All new calls and tokens zero. Validation and Test raw rows remain unread.
+  - Draft audit manifest is not an execution or authorization receipt.
+  unavailable:
+    implementation_commit: No runtime or scientific source patch.
+    execution_commit: No execution; pre-transport accounting STOP.
+    result_commit: Containing local evidence commit; not efficacy.

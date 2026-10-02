@@ -1,0 +1,19 @@
+{
+  "attempts": [],
+  "materially_distinct_repairs_for_root_cause": 0,
+  "preexecution_blockers": [
+    {
+      "category": "F_EXTERNAL_NONRECOVERABLE_WITH_CURRENT_ACCOUNTING_EVIDENCE",
+      "next_attempt_id": "math_unified_v2_A1_seed81_canary_attempt2",
+      "preexecution_sha": null,
+      "repair_patch": null,
+      "root_cause": "No frozen provider-bound accounting contract supplies a reliable pre-transport upper bound.",
+      "scientific_contract_changed": false,
+      "source_sha": "4435d276280b9b990f7ca2564d29b507ee02e55e",
+      "stage": "before_first_canary_transport",
+      "status": "STOP_TOKEN_ACCOUNTING_UNRESOLVED",
+      "tokens_spent": 0
+    }
+  ],
+  "schema_version": "autonomous_repair_ledger_v1"
+}

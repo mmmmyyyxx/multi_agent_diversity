@@ -1,0 +1,100 @@
+{
+  "authorized_total_tokens": 30000000,
+  "baseline_sha": "4435d276280b9b990f7ca2564d29b507ee02e55e",
+  "by_attempt": {},
+  "by_model": {
+    "qwen3-8b": {
+      "cache_hits": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "physical_calls": 0,
+      "total_tokens": 0,
+      "transport_attempts": 0
+    },
+    "qwen3.7-flash": {
+      "cache_hits": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "physical_calls": 0,
+      "total_tokens": 0,
+      "transport_attempts": 0
+    }
+  },
+  "by_role": {
+    "pattern": {
+      "cache_hits": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "physical_calls": 0,
+      "total_tokens": 0,
+      "transport_attempts": 0
+    },
+    "reflection": {
+      "cache_hits": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "physical_calls": 0,
+      "total_tokens": 0,
+      "transport_attempts": 0
+    },
+    "solver": {
+      "cache_hits": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "physical_calls": 0,
+      "total_tokens": 0,
+      "transport_attempts": 0
+    }
+  },
+  "by_stage": {
+    "canary": {
+      "cache_hits": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "physical_calls": 0,
+      "total_tokens": 0,
+      "transport_attempts": 0
+    },
+    "pilot_search": {
+      "cache_hits": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "physical_calls": 0,
+      "total_tokens": 0,
+      "transport_attempts": 0
+    },
+    "validation_final": {
+      "cache_hits": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "physical_calls": 0,
+      "total_tokens": 0,
+      "transport_attempts": 0
+    },
+    "validation_initial": {
+      "cache_hits": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "physical_calls": 0,
+      "total_tokens": 0,
+      "transport_attempts": 0
+    }
+  },
+  "conservative_required_validation_reserve_tokens": null,
+  "consumed_input_tokens": 0,
+  "consumed_output_tokens": 0,
+  "consumed_total_tokens": 0,
+  "exclusion_reason": "Historical calls precede this task baseline and authorization.",
+  "historical_attempt1_tokens_excluded": 560,
+  "ledger_mode": "exclusive_create_fsync_readback_no_transport_permitted",
+  "outstanding_reserved_tokens": 0,
+  "provider_accounting_contract_identity": null,
+  "recommended_floor_is_not_a_proven_upper_bound": true,
+  "recommended_validation_reserve_floor_tokens": 6000000,
+  "remaining_tokens": 30000000,
+  "schema_version": "AUTONOMOUS_REAL_TOKEN_BUDGET_V1",
+  "status": "CLOSED_NO_CALLS",
+  "stop_reason": "STOP_TOKEN_ACCOUNTING_UNRESOLVED",
+  "task_sha256": "9b112fc9f19b26a15b96e4186571d2a49508af38e31a1bed95f432833b35ec00",
+  "worst_case_next_transport_tokens": null
+}

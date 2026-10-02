@@ -1,0 +1,75 @@
+{
+  "files": [
+    {
+      "bytes": 2695,
+      "name": "AUTONOMOUS_REAL_TOKEN_BUDGET_V1.json",
+      "sha256": "a7a7b4ed23d6f1da4b11264793586cc5a83c3bfb3e2ecd47cddb2c0d8091d2f8"
+    },
+    {
+      "bytes": 937,
+      "name": "authorization_receipt.json",
+      "sha256": "afd46382edafabeeb10d05b2d77b10d7d0bb4a061e35a5e461674c07b83e676c"
+    },
+    {
+      "bytes": 146,
+      "name": "authorization_consumption_inventory.json",
+      "sha256": "cd77399dc620655ce5c4a320d9e20e9f81463d68533d8b52d4b58bce4c3a0a08"
+    },
+    {
+      "bytes": 13891,
+      "name": "freeze_preflight.py",
+      "sha256": "9402d48d4d305bfd6685880adf87f9599604108a785a06be288dcaa179a53240"
+    },
+    {
+      "bytes": 3772,
+      "name": "verify_preflight.py",
+      "sha256": "2dd1f92af3416fd30b544b67cea20a7222577d251b346afba2d74a7885068fe8"
+    },
+    {
+      "bytes": 161,
+      "name": "compile_sources.py",
+      "sha256": "1fb33e8b35db77550d919aa493322250864ab7a1a3efe30ef021dafbcf752259"
+    },
+    {
+      "bytes": 4825,
+      "name": "finalize_report.py",
+      "sha256": "32175c9d5f544bd3f4ac50ec06a1b40139cf388cda193f89acbd1cfe03063352"
+    },
+    {
+      "bytes": 2435,
+      "name": "deterministic_preflight.json",
+      "sha256": "fb973448df4f80773dbf9089c6049541265faaf6cdde948a20d5095e12de8a46"
+    },
+    {
+      "bytes": 40944,
+      "name": "governance.json",
+      "sha256": "f89792c60cb3580722fa19a23c013c9b7ee909984e84cecafa75408748702896"
+    },
+    {
+      "bytes": 40944,
+      "name": "governance_final.json",
+      "sha256": "f89792c60cb3580722fa19a23c013c9b7ee909984e84cecafa75408748702896"
+    },
+    {
+      "bytes": 2271,
+      "name": "current_suite.log",
+      "sha256": "945553fd1b0bff0e1a580217d774c7e30d4fef5c5405d34c5f7d8fa868308765"
+    },
+    {
+      "bytes": 94226,
+      "name": "current_suite.xml",
+      "sha256": "8262ee2eea66ef988bc0523a819833029752059c288e8ac2f0931747ef535ece"
+    },
+    {
+      "bytes": 795,
+      "name": "governance_regression.log",
+      "sha256": "94b9ab90085d28e7f22623e05f1b0fd5984243f1fec3cf573ed25efe814eaf9c"
+    },
+    {
+      "bytes": 6169,
+      "name": "governance_regression.xml",
+      "sha256": "7390571e9de6b9c2f9a78a6658490100a1f6b4a639672658162c6ec0313fe0dc"
+    }
+  ],
+  "scope": "Ignored control artifacts; filenames and hashes only."
+}

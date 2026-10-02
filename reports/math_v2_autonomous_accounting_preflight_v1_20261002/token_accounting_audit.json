@@ -1,0 +1,81 @@
+{
+  "baseline_sha": "4435d276280b9b990f7ca2564d29b507ee02e55e",
+  "data_metadata_only": true,
+  "execution_binding_sha256": "5460808ad5ff8e33a697ef15cb72b8c8ecdafb6c08bf1fa762a6679b405bc0f4",
+  "existing_canary_contract_preflight": {
+    "benchmark_id": "math",
+    "binding_sha256": "5460808ad5ff8e33a697ef15cb72b8c8ecdafb6c08bf1fa762a6679b405bc0f4",
+    "blockers": [],
+    "gate": "CANARY_READY_NOT_AUTHORIZED",
+    "provider_attempts": 0,
+    "readiness_identity": "MATH_RUNTIME_READINESS_V1",
+    "ready_for_authorization": true,
+    "real_api_authorized": false,
+    "test_calls": 0,
+    "validation_calls": 0
+  },
+  "failure_category": "F_EXTERNAL_NONRECOVERABLE_WITH_CURRENT_ACCOUNTING_EVIDENCE",
+  "frozen_call_count_bounds": {
+    "max_opportunities": 2405,
+    "max_proposals_per_opportunity": 5,
+    "pattern_calls": 2405,
+    "reflection_calls": 12025,
+    "solver_calls": 1676130,
+    "solver_per_opportunity": 696,
+    "successful_provider_calls": 1690560,
+    "transport_attempts": 35501760
+  },
+  "frozen_execution_source_sha": "470091faecf6b0de6e8b892778d12a66892ebe49",
+  "frozen_provider_alias_to_upstream_accounting_binding": null,
+  "frozen_provider_chat_framing_bound": null,
+  "frozen_provider_failed_request_usage_contract": null,
+  "frozen_reflection_tokenizer_identity": null,
+  "frozen_request_output_limit_tokens": 1800,
+  "frozen_solver_tokenizer_identity": null,
+  "live_provider_probes_performed": 0,
+  "membership_metadata_fields": [
+    "content_sha256",
+    "input_sha256",
+    "project_split",
+    "source_index",
+    "source_split",
+    "stable_example_id"
+  ],
+  "memory_activity": 0,
+  "next_transport_admitted": false,
+  "operational_repair_attempts": 0,
+  "output_limit_alone_bounds_total_billable_tokens": false,
+  "parent_manifest_sha256": "7b5ef107af9a62b4244482f2345f2230b72db67154d543add0dd046809684dca",
+  "pattern_calls": 0,
+  "provider": "lwj",
+  "public_upstream_references": [
+    {
+      "scope": "Public upstream model card; does not bind the lwj deployment or failed-call accounting.",
+      "url": "https://huggingface.co/Qwen/Qwen3-8B"
+    },
+    {
+      "scope": "Public Alibaba service contract; no evidence that lwj implements this accounting contract.",
+      "url": "https://docs.modelstudio.console.alibabacloud.com/en/model-studio/qwen3-7-flash"
+    }
+  ],
+  "rejected_substitutions": [
+    "Treat missing usage or transport failure as zero tokens",
+    "Apply an arbitrary characters-per-token multiplier or framing allowance",
+    "Assume model name proves the remote tokenizer, context cap or billing semantics",
+    "Treat a recommended 6M reserve as a verified complete Validation upper bound",
+    "Parse held-out rows before the search freeze to obtain lengths",
+    "Reduce outputs, split sizes, metric36 or scientific stopping to fit a guess"
+  ],
+  "root_cause": "No frozen provider-bound accounting contract supplies a reliable pre-transport upper bound.",
+  "schema_version": "autonomous_token_accounting_preflight_v1",
+  "scientific_contract_changed": false,
+  "status": "STOP_TOKEN_ACCOUNTING_UNRESOLVED",
+  "test_model_calls": 0,
+  "test_raw_reads": 0,
+  "validation_input_length_bound_available": false,
+  "validation_metadata_count": 300,
+  "validation_model_calls": 0,
+  "validation_prompt_length_bound_for_final_team_available": false,
+  "validation_raw_reads": 0,
+  "validation_required_reserve_upper_bound": null
+}

@@ -1,0 +1,17 @@
+{
+  "authorization_consumed": false,
+  "efficacy": "UNEVALUATED",
+  "governance_assertion_fix_verified": true,
+  "production_patch": false,
+  "provider_client_created": false,
+  "provider_transport_entered": false,
+  "repair_attempts": 0,
+  "scientific_contract_changed": false,
+  "scientific_validity": "NOT_EVALUABLE_NO_EXECUTION",
+  "search_initialized": false,
+  "status": "PREEXECUTION_STOP",
+  "stop_reason": "STOP_TOKEN_ACCOUNTING_UNRESOLVED",
+  "test_access_opened": false,
+  "token_reservation_guard_activated": false,
+  "validation_access_opened": false
+}

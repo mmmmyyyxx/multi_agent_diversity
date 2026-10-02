@@ -569,6 +569,9 @@ nodes:
 - experiment_id: math_v2_solver_interface_repair_v1_2
   kind: PREEXECUTION_FREEZE
   era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_autonomous_accounting_preflight_v1
+  kind: ZERO_API_AUDIT
+  era: BENCHMARK_GENERALIZATION
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -906,4 +909,9 @@ edges:
   evidence: reports/math_v2_solver_interface_repair_v1_2_20261002/README.md
   scope: Pre-search output-interface conformance refreeze; zero new API calls; no
     efficacy inference.
+- from: math_v2_preexecution_freeze_v1_2
+  to: math_v2_autonomous_accounting_preflight_v1
+  relation: audit_of
+  evidence: reports/math_v2_autonomous_accounting_preflight_v1_20261002/README.md
+  scope: Zero-provider, metadata-only task-budget audit; no efficacy or new execution freeze.
 current_frontier: experiments/current_frontier.yaml

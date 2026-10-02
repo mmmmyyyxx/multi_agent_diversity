@@ -262,7 +262,9 @@ def test_real_canary_is_execution_evidence_only(registry):
 def test_canary_abort_does_not_unlock_formal_or_heldout():
     frontier=load_yaml(ROOT/'experiments/current_frontier.yaml')
     assert frontier['last_canary_milestone']=='math_v2_a1_seed81_real_canary_v1'
-    assert frontier['real_execution_ready']=='true_for_canary_only'
+    # A later operational preflight can close Canary readiness. Historical
+    # failure evidence must not require live readiness to remain open.
+    assert frontier['real_execution_ready'] in (False, 'true_for_canary_only')
     assert frontier['next_canary_attempt_id']=='math_unified_v2_A1_seed81_canary_attempt2'
     assert frontier['formal_a1_ready'] is False
     assert frontier['formal_a1_authorized'] is False

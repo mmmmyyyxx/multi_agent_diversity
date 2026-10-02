@@ -1,0 +1,10 @@
+{
+  "attempt2_consumed": false,
+  "existing_consumption_marker_count": 1,
+  "existing_marker_hashes": {
+    "d51b38ab89bb74c0d47b0d9d2160fb590572c4ebf86977fcd3072e66feaa5ac5.json": "d10b9f746b114ebe3f1e4dc3130dad3e41605da9a9f2e4899617edda926e052f"
+  },
+  "new_marker_count": 0,
+  "original_consumption_markers_preserved": true,
+  "task_attempts_started": 0
+}

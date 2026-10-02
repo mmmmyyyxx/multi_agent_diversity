@@ -1,0 +1,24 @@
+{
+  "canary_attempt_started": false,
+  "consumed_authorizations": 0,
+  "history": [
+    {
+      "phase": "BASELINE_METADATA_AUDIT",
+      "provider_calls": 0
+    },
+    {
+      "phase": "TOKEN_ACCOUNTING_CONTRACT_AUDIT",
+      "provider_calls": 0,
+      "status": "STOP_TOKEN_ACCOUNTING_UNRESOLVED"
+    },
+    {
+      "phase": "ZERO_API_VERIFICATION_AND_EVIDENCE_FREEZE",
+      "provider_calls": 0
+    }
+  ],
+  "pilot_attempt_started": false,
+  "schema_version": "autonomous_preexecution_lifecycle_v1",
+  "search_complete_receipt_created": false,
+  "status": "PREEXECUTION_STOP",
+  "stop_reason": "STOP_TOKEN_ACCOUNTING_UNRESOLVED"
+}

@@ -1,0 +1,137 @@
+{
+  "application_network_attempts": 0,
+  "compileall": "PASS",
+  "diff_check": "PASS",
+  "full_current_invocation": {
+    "failed": 1,
+    "failure_ids": [
+      "tests.test_repository_governance_alignment.test_canary_abort_does_not_unlock_formal_or_heldout"
+    ],
+    "passed": 620,
+    "selected": 623,
+    "skipped": 2
+  },
+  "full_current_invocation_scope": {
+    "historical_private_artifact_deselected": 64,
+    "historical_replay_deselected": 1404,
+    "mode": "current",
+    "total_deselected": 1468
+  },
+  "full_historical_replay_pass_claimed": false,
+  "full_suite_clean_rerun_claimed": false,
+  "governance": "PASS",
+  "governance_lineage_edges": 76,
+  "governance_module_after_fix": {
+    "failed": 0,
+    "failure_ids": [],
+    "passed": 43,
+    "selected": 43,
+    "skipped": 0
+  },
+  "governance_registry_nodes": 191,
+  "historical_private_artifact_tests_executed": false,
+  "initial_compile_wrapper_failure_before_application_import": true,
+  "initial_compile_wrapper_invocation_error_corrected": true,
+  "metadata_and_manifest_preflight": {
+    "consumption_markers_preserved": true,
+    "durable_ledger_readback_and_copy_match": true,
+    "guarded_heldout_denial_count": 14,
+    "heldout_denials": [
+      {
+        "denied": true,
+        "purpose": "mutation",
+        "role": "validation"
+      },
+      {
+        "denied": true,
+        "purpose": "reflection",
+        "role": "validation"
+      },
+      {
+        "denied": true,
+        "purpose": "evidence",
+        "role": "validation"
+      },
+      {
+        "denied": true,
+        "purpose": "pattern",
+        "role": "validation"
+      },
+      {
+        "denied": true,
+        "purpose": "memory",
+        "role": "validation"
+      },
+      {
+        "denied": true,
+        "purpose": "search_evaluation",
+        "role": "validation"
+      },
+      {
+        "denied": true,
+        "purpose": "adaptive_gate",
+        "role": "validation"
+      },
+      {
+        "denied": true,
+        "purpose": "mutation",
+        "role": "test"
+      },
+      {
+        "denied": true,
+        "purpose": "reflection",
+        "role": "test"
+      },
+      {
+        "denied": true,
+        "purpose": "evidence",
+        "role": "test"
+      },
+      {
+        "denied": true,
+        "purpose": "pattern",
+        "role": "test"
+      },
+      {
+        "denied": true,
+        "purpose": "memory",
+        "role": "test"
+      },
+      {
+        "denied": true,
+        "purpose": "search_evaluation",
+        "role": "test"
+      },
+      {
+        "denied": true,
+        "purpose": "adaptive_gate",
+        "role": "test"
+      }
+    ],
+    "manifest_schema": "PASS_DRAFT_NON_EXECUTABLE",
+    "original_artifact_hashes": {
+      "experiments/data_splits/benchmark_experiment_v1_1/math.ids.jsonl": "ae8938a96aaa34c9c8f39de17db40948720de274db3ad928e0388ca554b39402",
+      "experiments/data_splits/benchmark_experiment_v1_1/math.json": "753a24c9e2ee7bb6d7531c53acc83eacf562a431292d271a8d75ef0156fed70b",
+      "experiments/execution_bindings/math_v2_execution_v1_2.json": "5460808ad5ff8e33a697ef15cb72b8c8ecdafb6c08bf1fa762a6679b405bc0f4",
+      "experiments/initial_teams/math_generic_team_seed_v1_1.json": "a0ce805d8e88499a829b9843f790c70ad14d99ab587a6e670e657e109695456a",
+      "experiments/manifests/math_v2_pattern_memory_v1_2.yaml": "7b5ef107af9a62b4244482f2345f2230b72db67154d543add0dd046809684dca"
+    },
+    "original_reports_preserved": true,
+    "raw_reader_successes": 0,
+    "real_provider_attempts": 0,
+    "runtime_and_scientific_source_unchanged": true,
+    "status": "PASS"
+  },
+  "network_guard_before_import": true,
+  "network_negative_control": "PASS",
+  "real_credentials_in_verification": false,
+  "real_provider_calls": 0,
+  "reason_no_full_repeat": "Only a stale live-readiness assertion changed; entire affected governance module reran successfully. Production and scientific sources are unchanged.",
+  "resolved_failure_ids": [
+    "tests.test_repository_governance_alignment.test_canary_abort_does_not_unlock_formal_or_heldout"
+  ],
+  "sanitization": "PASS",
+  "sanitization_findings": [],
+  "status": "PASS_AFTER_SCOPED_GOVERNANCE_REGRESSION",
+  "unresolved_test_failures": 0
+}
