@@ -1,0 +1,6 @@
+{
+  "corrected_description": "initial member4 row0 truncated; synthetic evolved candidate row2 truncated even with final marker",
+  "correction_scope": "description only; executed runner, evidence, hashes and results unchanged",
+  "original_receipt": "fake_invalid_candidate_command_receipt.json",
+  "real_provider_calls": 0
+}

@@ -1,0 +1,58 @@
+{
+  "explicit_user_authorized": false,
+  "scope": {
+    "accounting": {
+      "continuation_authorization_sha256": "b191b71a5021317d494a66aeb586e04592d6a13944497f7cc1776f4fa755f3ca",
+      "ledger_directory": "runs/math_autonomous_accounting_v2/token_ledger",
+      "policy_sha256": "47afa1a5683702183fa09ab88efe7460fa3007280d8b6a1a52364d2e236e768a",
+      "task_sha256": "3db28ade2b799d2169c6cdbdb03b82e63517ab74c46f8212905855f2fcf9cd9a",
+      "total_authorization": 30000000,
+      "validation_metadata_sha256": "fa573253cf2930bb9ce202efb35fa93587e2dad024f76a2d86ab31b4f64e32fe"
+    },
+    "arm": "A1",
+    "attempt_id": "math_unified_v2_1_A1_seed81_pilot_attempt6",
+    "binding_sha256": "e60b2bb6e0c2683467d6fd97ed253ea0576190f346dc200e7c3ea73780a17135",
+    "models": {
+      "optimizer_reflection": "qwen3.7-flash",
+      "pattern": "qwen3.7-flash",
+      "solver": "qwen3-8b",
+      "solver_thinking": false
+    },
+    "phase": "team_epoch_no_commit_v1",
+    "prediction_validity_policy": {
+      "denominator": "all_frozen_examples",
+      "fallback_extraction": false,
+      "identity": "MATH_PREDICTION_VALIDITY_V1",
+      "invalid_response_retries": 0,
+      "invalid_vote": "excluded_from_equivalence_classes",
+      "invalidity_telemetry": "observation_only",
+      "prediction_failure": "invalid_incorrect_continue",
+      "reference_failure": "hard_contract_failure",
+      "truncated_even_with_marker": "invalid_incorrect"
+    },
+    "preregistration_identity": "f23a250aa3fbc7c6f3863533bf8afc033661b719766b397e7aaf3318808b063a",
+    "provider": "lwj",
+    "roles": [
+      "solver",
+      "reflection"
+    ],
+    "seed": 81,
+    "solver_decoding_policy": {
+      "enable_thinking": false,
+      "frequency_penalty": 0,
+      "identity": "SOLVER_DECODING_POLICY_V1",
+      "max_output_tokens": 3600,
+      "min_p": 0,
+      "presence_penalty": 0,
+      "temperature": 0.7,
+      "top_k": 20,
+      "top_p": 0.8
+    },
+    "source_sha": "e8571e789de78a3f382e805a23fa42faa774c11f",
+    "successful_provider_call_ceiling": 30000000,
+    "test_calls": 0,
+    "transport_attempt_ceiling": 30000000,
+    "validation_calls": 0
+  },
+  "startup_identity_sha256": "6103a66ab23b8aeaf4c73c14d22b7ee5c7ecc8f85f02675a8b497f8401b801a0"
+}

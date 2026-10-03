@@ -1,6 +1,8 @@
 {
   "README.md": "0259a3b536a9150a0cbe7017e2bdab6d52184fa177a03ae7f0bb337b515e777d",
   "analysis_policy_receipt.json": "e512a89a6623bded622718c25ac1840dd17cdf8b5a794abbd27e8d2df0fd623c",
+  "canary_source_identity.json": "69508979018ccf1087a8b4cdeefe882dd70fe30de9357abd75b85e2708705057",
+  "canary_startup_receipt.json": "5eec6f3500317d2652ffadaf5d2f152fded4bec73275336c3cb7a71cedb77cc4",
   "fake_A1.json": "3b51a559e2d35b8eebde68ec70367b2817f132fdaa38176252bf6945e6cb6894",
   "fake_A2.json": "16f8c3930a0be98da3906b0be476d5d7e943026ac3215ee0644669f47cbc860e",
   "fake_A3.json": "78205b1e54e16921c1a91449dcdd2796283b59a81c7ecbf3c0ba33aa054baff1",
@@ -10,5 +12,9 @@
   "fake_invalid_candidate_A3.json": "a71f2a1f17b496b088f15e43107f542106cc349e7d92984f50a51670fd25b416",
   "fake_invalid_candidate_A4.json": "d98291cedeac9e4e9b425951c3a0299230f88ce5d006aee2f45de84b8eba7620",
   "fake_invalid_candidate_command_receipt.json": "a63d32652d1ffb11c5a4724543d0f3df87581b97a54fa67498e55b3dd1c2e8f5",
+  "fake_invalid_candidate_receipt_erratum.json": "d88b45f6bb1769bbab11558d5b4bfc8dd1e17c0352064a5922753b436fa8088c",
+  "pilot_source_identity.json": "adbcce6fa5700e804caee467912d0076ef0ba820fbe00dcb077465b91683d828",
+  "pilot_startup_receipt.json": "41e454ed531aa2c145c58f6c61de50e5564d3cd374a4217c3bc620cbe1ef0bc4",
+  "preexecution_freeze_receipt.json": "260ffc1e4536b1650fe3a3aa79db1a2535c448ea0f5d074a71cd02652d505707",
   "zero_api_gates.json": "b6dc5cf793f40d3270e64135281180520e384112dfde3bedc29ed8a29f5ad3df"
 }
