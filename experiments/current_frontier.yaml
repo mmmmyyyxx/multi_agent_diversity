@@ -36,7 +36,7 @@ autonomous_tokens_consumed: 323293
 autonomous_tokens_remaining: 39676707
 token_accounting_policy: RESERVATION_V2
 prior_accounting_stop_resolution: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2
-autonomous_authorization_status: LOW_COST_TASK_STOPPED_OPTIMIZER_POLICY_REQUIRED
+autonomous_authorization_status: LOW_COST_TASK_STOPPED_POLICY_REQUIRED
 pilot_search_complete: false
 pilot_validation_complete: false
 pilot_final_status: INCOMPLETE
