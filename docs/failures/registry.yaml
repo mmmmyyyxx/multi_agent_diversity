@@ -444,7 +444,7 @@ failures:
   lifecycle_note: STOP_NEW_SCIENTIFIC_POLICY_REQUIRED; FAILED_CANARY_IMMUTABLE; PILOT_AND_VALIDATION_NOT_EXECUTED
 - failure_id: FAIL-MATH-V21-OPTIMIZER-NONTHINKING-TELEMETRY-UNCONFIRMED
   title: Frozen nonthinking confirmation requires unavailable provider telemetry
-  status: OPEN
+  status: MITIGATED
   first_observed: math_v2_1_optimizer_truncation_root_cause_v1
   affected_components:
   - provider response metadata
@@ -462,5 +462,9 @@ failures:
   - tests/test_math_optimizer_generation.py
   mitigation: Close single-use witness authorization, preserve diagnostics and ledger, keep both generation policies
     and validators unchanged; require a human evidence-policy decision before fresh Canary.
-  lifecycle: OPEN
+  lifecycle: MITIGATED
   lifecycle_note: STOP_NEW_SCIENTIFIC_POLICY_REQUIRED; NO_CANARY_PILOT_VALIDATION_OR_TEST_DISPATCH
+
+  resolved_by: math_v2_1_autonomous_constitution_v1
+  resolution_evidence: reports/math_v2_1_autonomous_constitution_v1_20261003/equivalent_evidence_receipt.json
+  resolution_note: Current constitution permits audited Level B equivalent evidence; prior diagnostic evidence and absent token count remain unchanged.

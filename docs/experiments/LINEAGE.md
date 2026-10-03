@@ -124,9 +124,9 @@ flowchart TD
     n237["math_v2_1_preexecution_low_cost_v3<br/>PREEXECUTION_FREEZE<br/>HOLD"]
     n238["math_v2_1_a1_seed81_low_cost_canary_v3<br/>REAL_CANARY<br/>HOLD"]
     n239["math_v2_1_a1_seed81_low_cost_pilot_v3<br/>PILOT<br/>HOLD"]
-    n240["math_v2_1_autonomous_constitution_v1<br/>ZERO_API_AUDIT<br/>DRAFT"]
-    n241["math_v2_1_preexecution_low_cost_v4<br/>PREEXECUTION_FREEZE<br/>DRAFT"]
-    n242["math_v2_1_a1_seed81_low_cost_canary_v4<br/>REAL_CANARY<br/>DRAFT"]
+    n240["math_v2_1_autonomous_constitution_v1<br/>ZERO_API_AUDIT<br/>PREEXECUTION_FROZEN"]
+    n241["math_v2_1_preexecution_low_cost_v4<br/>PREEXECUTION_FREEZE<br/>PREEXECUTION_FROZEN"]
+    n242["math_v2_1_a1_seed81_low_cost_canary_v4<br/>REAL_CANARY<br/>PREEXECUTION_FROZEN"]
     n243["math_v2_1_a1_seed81_low_cost_pilot_v4<br/>PILOT<br/>DRAFT"]
   end
   subgraph era1["FORMAL_V3_V4"]

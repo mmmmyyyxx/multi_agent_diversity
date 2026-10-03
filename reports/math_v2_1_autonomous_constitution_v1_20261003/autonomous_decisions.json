@@ -29,5 +29,13 @@
     },
     "reason": "Current frontier retained prior completed task authorization status; register current pending attempt without granting live authorization",
     "scientific_semantic_delta": false
+  },
+  {
+    "classification": "OPERATIONAL",
+    "decision": "verification_command_correction",
+    "new_real_api_calls": 0,
+    "reason": "OS Temp outside governed run root; preserve failed check and use repo-local fresh test temp directories",
+    "scientific_semantic_delta": false,
+    "source_changed": false
   }
 ]

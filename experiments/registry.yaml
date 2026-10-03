@@ -7023,21 +7023,20 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_optimizer_truncation_root_cause_v1
-  status: DRAFT
+  status: PREEXECUTION_FROZEN
   scientific_status: NOT_EXECUTED
-  implementation_commit: null
+  implementation_commit: 74503e39b478f859b6e615b3f6ec3f1e705693db
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_autonomous_constitution_v1.yaml
   report: reports/math_v2_1_autonomous_constitution_v1_20261003
-  classifier: AWAITING_FRESH_SOURCE_FREEZE
-  active_for_new_work: false
+  classifier: ZERO_API_GATES_PASS_FRESH_FREEZE_PENDING
+  active_for_new_work: true
   historical_replay: false
   superseded_by: []
   notes:
   - Operational equivalent-evidence policy; generation and scientific candidate contract unchanged.
   unavailable:
-    implementation_commit: Pending source freeze.
     execution_commit: Not executed.
     result_commit: Not executed.
 - experiment_id: math_v2_1_preexecution_low_cost_v4
@@ -7046,21 +7045,20 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_autonomous_constitution_v1
-  status: DRAFT
+  status: PREEXECUTION_FROZEN
   scientific_status: NOT_EXECUTED
-  implementation_commit: null
+  implementation_commit: 74503e39b478f859b6e615b3f6ec3f1e705693db
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_preexecution_low_cost_v4.yaml
   report: reports/math_v2_1_preexecution_low_cost_v4_20261003
-  classifier: AWAITING_FRESH_SOURCE_FREEZE
-  active_for_new_work: false
+  classifier: ZERO_API_GATES_PASS_FRESH_FREEZE_PENDING
+  active_for_new_work: true
   historical_replay: false
   superseded_by: []
   notes:
   - Operational equivalent-evidence policy; generation and scientific candidate contract unchanged.
   unavailable:
-    implementation_commit: Pending source freeze.
     execution_commit: Not executed.
     result_commit: Not executed.
 - experiment_id: math_v2_1_a1_seed81_low_cost_canary_v4
@@ -7069,21 +7067,20 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_preexecution_low_cost_v4
-  status: DRAFT
+  status: PREEXECUTION_FROZEN
   scientific_status: NOT_EXECUTED
-  implementation_commit: null
+  implementation_commit: 74503e39b478f859b6e615b3f6ec3f1e705693db
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_a1_seed81_low_cost_canary_v4.yaml
   report: reports/math_v2_1_a1_seed81_low_cost_canary_v4_20261003
-  classifier: AWAITING_FRESH_SOURCE_FREEZE
-  active_for_new_work: false
+  classifier: ZERO_API_GATES_PASS_FRESH_FREEZE_PENDING
+  active_for_new_work: true
   historical_replay: false
   superseded_by: []
   notes:
   - Operational equivalent-evidence policy; generation and scientific candidate contract unchanged.
   unavailable:
-    implementation_commit: Pending source freeze.
     execution_commit: Not executed.
     result_commit: Not executed.
 - experiment_id: math_v2_1_a1_seed81_low_cost_pilot_v4
@@ -7094,18 +7091,17 @@ experiments:
   - math_v2_1_a1_seed81_low_cost_canary_v4
   status: DRAFT
   scientific_status: NOT_EXECUTED
-  implementation_commit: null
+  implementation_commit: 74503e39b478f859b6e615b3f6ec3f1e705693db
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_a1_seed81_low_cost_pilot_v4.yaml
   report: reports/math_v2_1_a1_seed81_low_cost_pilot_v4_20261003
-  classifier: AWAITING_FRESH_SOURCE_FREEZE
-  active_for_new_work: false
+  classifier: AWAITING_CANARY_PASS_FRESH_PILOT_FREEZE
+  active_for_new_work: true
   historical_replay: false
   superseded_by: []
   notes:
   - Operational equivalent-evidence policy; generation and scientific candidate contract unchanged.
   unavailable:
-    implementation_commit: Pending source freeze.
     execution_commit: Not executed.
     result_commit: Not executed.
