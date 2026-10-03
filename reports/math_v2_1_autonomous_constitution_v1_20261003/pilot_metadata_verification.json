@@ -1,0 +1,77 @@
+{
+  "artifact_sha256": {
+    "governance_E.json": "b46b0e9579215a674951ed85124d42fba8be7ae24ce3278862eaf2dd44d9710b",
+    "governance_E.log": "f2ed0133df7b3c72eba1f73bf4bec555a308ff290431a69044ef67f13c1fdc85",
+    "pilot_meta.log": "6d2519d7084058249951a090fc89428226e49944a5460d97688096f446fd2083",
+    "pilot_meta.xml": "bdb2e96cebb57096575ce2522911507db49a1bbc060c4608038e608d5b8f8dea"
+  },
+  "commands": [
+    {
+      "command": "runs/math_v2_1/runtime/Scripts/python.exe tests/formal_zero_api_runner.py tests/test_repository_governance_alignment.py --suite=current --basetemp=runs/math_v2_1/acv1_pilot_meta --junitxml=runs/math_v2_1/autonomous_constitution_v1/pilot_meta.xml",
+      "exit_code": 0,
+      "label": "pilot_meta"
+    },
+    {
+      "command": "runs/math_v2_1/runtime/Scripts/python.exe tests/formal_zero_api_runner.py --offline-command scripts/audit_repository_governance.py --check-generated --out runs/math_v2_1/autonomous_constitution_v1/governance_E.json",
+      "exit_code": 0,
+      "label": "governance_E"
+    },
+    {
+      "command": "runs/math_v2_1/runtime/Scripts/python.exe -m compileall -q multi_dataset_diverse_rl scripts",
+      "exit_code": 0,
+      "label": "compileall"
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0,
+      "label": "git_diff_check"
+    }
+  ],
+  "execution_status": "COMPLETE",
+  "governance_E": {
+    "archives_count": 9,
+    "errors": [],
+    "generated_errors": [],
+    "historical_indexed_count": 116,
+    "lineage_edge_count": 130,
+    "lineage_node_count": 244,
+    "ok": true,
+    "real_api_authorized": false,
+    "real_execution_ready": false,
+    "registry_node_count": 244,
+    "reports_indexed_count": 247
+  },
+  "network_guard": {
+    "bootstrap": "PASS",
+    "negative_control": "PASS",
+    "network_attempt_count": 0,
+    "real_credentials_present": false
+  },
+  "pilot_meta_junit": {
+    "deselected": 0,
+    "errors": 0,
+    "failed": 0,
+    "historical_private_artifact_note": "Historical private-artifact tests were not executed; full historical replay PASS is not claimed.",
+    "historical_replay_test_cases": 0,
+    "passed": 45,
+    "private_artifact_test_cases": 0,
+    "selected": 45,
+    "skipped": 0
+  },
+  "postrun_integrity": {
+    "head": "f95b0640ee3672a1a5ad8b07cbf64cf08f78d0d7",
+    "head_matches_frozen_commit": true,
+    "tracked_worktree_clean": true,
+    "untracked_entries_preserved": 12
+  },
+  "real_api_authorized": false,
+  "schema_version": "pilot_offline_facts_v1",
+  "scope": {
+    "commit_or_push": false,
+    "four_arm_rerun": false,
+    "fresh_helper_execution": false,
+    "full_current_suite_rerun": false,
+    "tracked_edits": false
+  },
+  "source_sha": "f95b0640ee3672a1a5ad8b07cbf64cf08f78d0d7"
+}

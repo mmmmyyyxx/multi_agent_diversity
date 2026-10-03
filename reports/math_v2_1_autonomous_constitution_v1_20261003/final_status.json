@@ -1,0 +1,27 @@
+{
+  "all_live_authorizations_closed": true,
+  "authorized_total": 40000000,
+  "bounded_execution_policy_changes": [],
+  "canary_status": "PASS",
+  "cumulative_charged": 840243,
+  "generalization_verified": false,
+  "new_charged": 515241,
+  "operational_changes": [
+    "explicit Level A/B nonthinking evidence and metadata preservation",
+    "fresh authority and source closure",
+    "verification filesystem and frontier metadata corrections",
+    "explicit UTF-8 for report JSONL"
+  ],
+  "other_real_arms_or_seeds_started": false,
+  "pilot_search_complete": true,
+  "pushed": false,
+  "remaining": 39159757,
+  "scientific_changes": [],
+  "scientific_efficacy_verified": false,
+  "signal": "NEUTRAL",
+  "sota_verified": false,
+  "status": "COMPLETE",
+  "task_prior_charged": 325002,
+  "test_model_calls": 0,
+  "validation100_complete": true
+}

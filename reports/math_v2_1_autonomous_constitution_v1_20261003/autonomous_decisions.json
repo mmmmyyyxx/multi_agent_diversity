@@ -45,5 +45,38 @@
     "generation_parameters_changed": false,
     "old_attempt_output_reuse": false,
     "scientific_semantic_delta": false
+  },
+  {
+    "classification": "OPERATIONAL",
+    "decision": "explicit_utf8_decoding_for_owner_report_jsonl",
+    "experiment_rerun": false,
+    "failed_log_preserved": true,
+    "new_real_api_calls": 0,
+    "reason": "Windows default GBK could not decode UTF-8 provider trace; owner audit helper now explicitly reads all JSONL as UTF-8.",
+    "scientific_semantic_delta": false,
+    "tracked_source_changed": false
+  },
+  {
+    "canary_peer_profile_flag_interpretation": "Frozen implementation capability; no actual outer candidate carry-forward was observed because exported candidates were zero.",
+    "classification": "OPERATIONAL",
+    "decision": "separate_physical_generation_and_cached_logical_observation_counts",
+    "new_real_api_calls": 0,
+    "pilot_optimizer_cache_hits": 18,
+    "pilot_physical_semantic_retries": 50,
+    "pilot_solver_cache_hits": 252,
+    "reason": "Independent journal audits distinguish physical retries/invalid outputs from mirrored paired and cached observations; finite contract rejection remains a valid zero-candidate outcome.",
+    "scientific_semantic_delta": false,
+    "tracked_source_changed": false,
+    "validation_physical_semantic_retries": 23,
+    "validation_solver_cache_hits": 500
+  },
+  {
+    "all_live_authorizations_closed": true,
+    "classification": "OPERATIONAL",
+    "decision": "complete_pilot_and_paired_validation_then_stop",
+    "evidence": "reports/math_v2_1_a1_seed81_low_cost_pilot_v4_20261003/final_status.json",
+    "push_authorized": false,
+    "reason": "Frozen natural search stopper reached; independent post-receipt Validation100 completed; no efficacy tuning or further experiments.",
+    "scientific_semantic_delta": false
   }
 ]

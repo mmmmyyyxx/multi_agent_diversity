@@ -1,7 +1,9 @@
 {
-  "README.md": "98809f7f476e6609556d18c996581e44d7781cbf7521e0f6b70ed08938fd5886",
-  "autonomous_decisions.json": "8b32725de8f2c98e639d1b779e73c8d6cdce9cb55fc3abcbf065d8495a71dcc1",
+  "README.md": "a4ab384889bf0eca4c6b2857a6ecdd054028ff85cd1679418c14450d1d9cc19f",
+  "autonomous_decisions.json": "86316438c40e9e9efd7ef1c1518b84a30be1c615b9b1a72d4ee0b4befe7403d3",
   "equivalent_evidence_receipt.json": "b458f84d81f2864ef98bd7646df1ec7d32f976edccf5b94b9a4a5ae42a41bec1",
+  "final_status.json": "89ab71357918acc7b74eed0623f5cab64b5e5160c8b0cc4e9f79517ce9966cb2",
+  "pilot_metadata_verification.json": "6265dbf37ed09e6f9063120b977e08544c9264200529cbc919007e21796a66e1",
   "test_summary.json": "1b76507fdbc5408decda0b3c5d02c9fa12e36c2177b8ccf0247fbb1a493213b5",
   "token_accounting_start.json": "3d54ed14305cf5b11f270ca6bfd7fadaefad7c3dfa65b2a76acf2529b60d8635"
 }
