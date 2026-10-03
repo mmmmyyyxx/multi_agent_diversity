@@ -1,0 +1,10 @@
+{
+  "confirmed_defect": "SAME_ATTEMPT_DURABLE_OUTPUT_REUSE_MISSING",
+  "cross_attempt_reuse": false,
+  "entry_sealed": true,
+  "existing_in_process_paths_unchanged": true,
+  "identity": "DURABLE_EXACT_OUTPUT_CACHE_V1",
+  "resolved_only": true,
+  "resume_authorized_by_cache_alone": false,
+  "same_attempt_only": true
+}

@@ -13,12 +13,12 @@ from .benchmark import BenchmarkInput
 from .patterns import PatternHypothesis
 from .schemas import SearchContractError
 from ..benchmarks.math_solver_decoding import generation_request_fields, frozen_solver_policy
-from ..benchmarks.math_prediction_validity import frozen_prediction_policy
+from ..benchmarks.math_prediction_validity import frozen_prediction_policy, frozen_recovery_policy
 
 
 class RequestBroker:
     def __init__(self, *, contract, transport, arm, seed, ledger_writer=None, raw_writer=None, usage=None, lock=None,
-                 token_ledger=None, reserve_reader=None, validation_only=False):
+                 token_ledger=None, reserve_reader=None, validation_only=False, durable_cache=None):
         self.contract = contract
         self.transport = transport
         self.arm = arm
@@ -34,6 +34,18 @@ class RequestBroker:
         self.reserve_reader = reserve_reader or (lambda: 0)
         self.validation_only = validation_only
         self.prediction_policy = frozen_prediction_policy(contract)
+        self.recovery_policy = frozen_recovery_policy(contract)
+        self.durable_cache = durable_cache
+        if durable_cache is not None and self.recovery_policy is None:
+            raise SearchContractError('DURABLE_CACHE_REQUIRES_RECOVERY_BINDING')
+        if durable_cache is not None:
+            from ..persistence.exact_output_cache import digest
+            expected=dict(execution_attempt_id=contract['execution_attempt_id'],
+                cache_namespace=contract['cache_namespace'],binding_sha256=digest(contract),
+                generation_policy_sha256=digest(frozen_solver_policy(contract)),
+                recovery_policy_sha256=digest(self.recovery_policy))
+            if any(durable_cache.context[k]!=v for k,v in expected.items()):
+                raise SearchContractError('DURABLE_CACHE_PROVIDER_BINDING_MISMATCH')
         self.prompt_observer = None
 
     @property
@@ -43,9 +55,10 @@ class RequestBroker:
     def private_capability(self):
         return RequestBroker(contract=self.contract, transport=self.transport, arm=self.arm, seed=self.seed,
             ledger_writer=self.ledger_writer, raw_writer=self.raw_writer, usage=self.usage, lock=self.lock,
-            token_ledger=self.token_ledger, reserve_reader=self.reserve_reader, validation_only=self.validation_only)
+            token_ledger=self.token_ledger, reserve_reader=self.reserve_reader, validation_only=self.validation_only,
+            durable_cache=self.durable_cache)
 
-    def complete(self, *, role, split, stage, messages):
+    def _request_identity(self, *, role, split, messages):
         legal = (role == "solver" and split == "validation") if self.validation_only else (
             role in {"solver", "reflection", "pattern"} and split in {"optimize", "shadow"}
             and (role == "solver" or split == "optimize"))
@@ -64,14 +77,67 @@ class RequestBroker:
                 identity["solver_decoding_policy"] = frozen_solver_policy(c)
             if self.prediction_policy:
                 identity["prediction_validity_policy"] = self.prediction_policy
+            if self.recovery_policy:
+                identity.update(invalid_recovery_policy=self.recovery_policy,
+                    benchmark_protocol=c['benchmark_protocol_sha256'],
+                    development_protocol=c['low_cost_protocol'],cache_policy=c['cache_policy'])
         key = hashlib.sha256(json.dumps(identity, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        return request,key
+
+    def _cache_hit(self, key, role, split, stage):
+        if self.prediction_policy and self.cache_seals.get(key) != hashlib.sha256(
+                json.dumps(self.cache[key], sort_keys=True, separators=(",", ":")).encode()).hexdigest():
+            self.abort("PROVIDER_CACHE_CORRUPTION")
+        self._write(dict(kind="CACHE_HIT", role=role, split=split, stage=stage, request_sha256=key))
+        return {**self.cache[key], "provider_called": False, "input_tokens": 0, "output_tokens": 0}
+
+    def _store_cache(self, key, result):
+        self.cache[key]=result
+        if self.prediction_policy:
+            self.cache_seals[key]=hashlib.sha256(json.dumps(result,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+
+    def complete(self, *, role, split, stage, messages):
+        if role != 'solver' or not self.recovery_policy:
+            return self._complete_one(role=role,split=split,stage=stage,messages=messages)
+        _,key=self._request_identity(role=role,split=split,messages=messages)
         with self.lock:
-            if key in self.cache:
-                if self.prediction_policy and self.cache_seals.get(key) != hashlib.sha256(
-                        json.dumps(self.cache[key], sort_keys=True, separators=(",", ":")).encode()).hexdigest():
-                    self.abort("PROVIDER_CACHE_CORRUPTION")
-                self._write(dict(kind="CACHE_HIT", role=role, split=split, stage=stage, request_sha256=key))
-                return {**self.cache[key], "provider_called": False, "input_tokens": 0, "output_tokens": 0}
+            if key not in self.cache and self.durable_cache:
+                previous=self.durable_cache.get(key)
+                if previous is not None:self._store_cache(key,previous)
+            if key in self.cache:return self._cache_hit(key,role,split,stage)
+            from ..benchmarks.math_prediction_validity import classify_prediction,resolve_predictions
+            predictions=[];realizations=[];transport_retries=0
+            for semantic_attempt_no in range(1,5):
+                try:
+                    result=self._complete_one(role=role,split=split,stage=stage,messages=messages,
+                        semantic_attempt_no=semantic_attempt_no)
+                except BaseException as exc:
+                    if semantic_attempt_no>1 and 'TOKEN_BUDGET' in str(exc):
+                        self.abort('STOP_TOKEN_BUDGET_INSUFFICIENT_FOR_INVALID_RECOVERY')
+                    raise
+                transport_retries+=result['transport_retry_attempts']
+                prediction=classify_prediction(result['text'],result.get('finish_reason'))
+                predictions.append(prediction);realizations.append(result)
+                self._write(dict(kind='SEMANTIC_ATTEMPT',role=role,split=split,stage=stage,
+                    request_sha256=key,semantic_attempt_no=semantic_attempt_no,
+                    prediction_valid=prediction.prediction_valid,invalid_reason=prediction.invalid_reason,
+                    finish_reason=prediction.finish_reason,transport_retry_attempts=result['transport_retry_attempts']))
+                if prediction.prediction_valid:break
+            resolved=resolve_predictions(predictions,transport_retries)
+            output={**result,'resolved_prediction':asdict(resolved),'original_realizations':realizations,
+                'input_tokens':sum(r['input_tokens'] for r in realizations),
+                'output_tokens':sum(r['output_tokens'] for r in realizations)}
+            if self.durable_cache:self.durable_cache.put(key,output)
+            self._store_cache(key,output)
+            return output
+
+    def _complete_one(self, *, role, split, stage, messages, semantic_attempt_no=None):
+        c=self.contract
+        request,key=self._request_identity(role=role,split=split,messages=messages)
+        model=request['model']
+        with self.lock:
+            if semantic_attempt_no is None and key in self.cache:
+                return self._cache_hit(key,role,split,stage)
             for retry in range(c["decoding"]["transport_retries"] + 1):
                 bounds = c["provider_bounds"]
                 role_bound = bounds["solver_calls" if role == "solver" else "reflection_calls" if role == "reflection" else "pattern_calls"]
@@ -84,7 +150,8 @@ class RequestBroker:
                         stage=stage if self.validation_only else c["execution_phase"], role=role, model=model,
                         protected_validation=self.reserve_reader())
                 self.usage["attempts"] += 1
-                self._write(dict(kind="ATTEMPT", role=role, split=split, stage=stage, request_sha256=key, attempt=self.usage["attempts"]))
+                self._write(dict(kind="ATTEMPT", role=role, split=split, stage=stage, request_sha256=key, attempt=self.usage["attempts"],
+                    semantic_attempt_no=semantic_attempt_no,transport_retry_no=retry))
                 try:
                     result = self.transport(request)
                 except Exception as exc:
@@ -96,6 +163,7 @@ class RequestBroker:
                     self._write(dict(kind="FAILURE", role=role, split=split, stage=stage, request_sha256=key, error_category=type(exc).__name__))
                     if self.raw_writer:
                         self.raw_writer(dict(role=role, split=split, stage=stage, request_sha256=key,
+                            semantic_attempt_no=semantic_attempt_no,physical_attempt_no=self.usage['attempts'],
                             request=request, error_category=type(exc).__name__,
                             provider_evidence=getattr(exc, "provider_evidence", None)))
                     # Retry transport failures only. SDK retries are disabled.
@@ -125,7 +193,8 @@ class RequestBroker:
                 self._write(dict(kind="SUCCESS", role=role, split=split, stage=stage, request_sha256=key,
                     response_sha256=hashlib.sha256(result["text"].encode() if result["text"] is not None else b"null").hexdigest(), input_tokens=result["input_tokens"], output_tokens=result["output_tokens"]))
                 if self.raw_writer:
-                    self.raw_writer(dict(role=role, split=split, stage=stage, request_sha256=key, request=request, response=result))
+                    self.raw_writer(dict(role=role, split=split, stage=stage, request_sha256=key, request=request, response=result,
+                        semantic_attempt_no=semantic_attempt_no,physical_attempt_no=self.usage['attempts']))
                 if (self.token_ledger or role == "solver" and frozen_solver_policy(c)) and not (role == "solver" and self.prediction_policy) and result.get("finish_reason") in {"length", "max_tokens", "max_output_tokens"}:
                     self.abort("STOP_SOLVER_DECODING_POLICY_INSUFFICIENT" if role == "solver" and frozen_solver_policy(c) else "OPERATIONAL_OUTPUT_TRUNCATION")
                 if self.token_ledger and type(result.get("provider_reported_output_tokens")) is int and result["provider_reported_output_tokens"] > request["max_tokens"]:
@@ -133,10 +202,10 @@ class RequestBroker:
                 result = {**result, "provider_called": True}
                 if self.prediction_policy:
                     result["request_sha256"] = key
-                self.cache[key] = result
-                if self.prediction_policy:
-                    self.cache_seals[key] = hashlib.sha256(json.dumps(result, sort_keys=True,
-                        separators=(",", ":")).encode()).hexdigest()
+                if semantic_attempt_no is None:
+                    self._store_cache(key,result)
+                else:
+                    result['transport_retry_attempts']=retry
                 return result
 
     def abort(self, reason):
@@ -213,7 +282,9 @@ class BenchmarkSolver:
 
     def _prediction(self, result, prompt, item, *, stage, split):
         prediction = self.benchmark.prediction_result(result)
-        self.broker._write(dict(kind="PREDICTION_VALIDITY", role="solver", stage=stage, split=split,
+        telemetry=({k:getattr(prediction,k) for k in ('semantic_attempt_count','raw_invalid_count','recovered_invalid',
+            'terminal_invalid','transport_retry_attempts')} if self.broker.recovery_policy else {})
+        self.broker._write(dict(kind="PREDICTION_VALIDITY", role="solver", stage=stage, split=split,**telemetry,
             policy_identity=self.broker.prediction_policy["identity"],
             mutable_prompt_sha256=hashlib.sha256(prompt.encode()).hexdigest(), input_id=item.input_id,
             member_id=self.member_id,

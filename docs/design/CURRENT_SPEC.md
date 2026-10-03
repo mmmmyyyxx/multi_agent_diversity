@@ -435,3 +435,28 @@ initialization, Responsibility/target and a complete production opportunity;
 no invalid-rate or efficacy gate applies. Pilot and post-search paired Validation
 require distinct fresh scopes and immutable SEARCH_COMPLETE_RECEIPT. Real A1
 keeps Pattern/Memory off; Test and all other arms/seeds remain unauthorized.
+
+### MATH terminal-invalid recovery (fresh binding only)
+
+`MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1` opts into
+`MATH_SOLVER_INVALID_RECOVERY_V1` and prediction validity V2. The frozen
+interface V5, Solver decoding V1, mathematical evaluator and reference domain
+remain unchanged. Each logical Solver evaluation receives one first attempt
+and at most three fresh semantic retries with identical request bytes.
+Successful invalid responses consume semantic attempts; transport failures
+retain their separate frozen retry budget. The first valid prediction stops
+recovery, including a mathematically wrong answer. Only four actually completed
+invalid responses constitute terminal-invalid: wrong, no valid vote, retain
+the row and continue. Insufficient retry budget stops execution without
+manufacturing a terminal prediction. Recovery does not multiply GEPA logical
+metric calls or add an invalidity-specific allocation/transition guard.
+
+Only resolved-valid or exhausted-terminal outputs enter exact caches, with
+original predictions, attempt counts, finish reasons and validity metadata.
+`DURABLE_EXACT_OUTPUT_CACHE_V1` seals private entries to the same attempt,
+namespace, source, startup, authorization, binding, decoding and recovery.
+Fresh scientific attempts, including Canary to Pilot, share no outputs.
+Stage and member identity remain telemetry; identical scientific request
+identities share the original realization. Cache hits generate no physical
+call or token charge. Durable output caching alone does not authorize a
+process resume: lifecycle, authorization and checkpoint checks still apply.

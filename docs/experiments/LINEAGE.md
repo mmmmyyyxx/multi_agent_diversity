@@ -107,6 +107,7 @@ flowchart TD
     n224["math_v2_1_a1_seed81_real_canary_v6<br/>REAL_CANARY<br/>HOLD"]
     n225["math_v2_1_a1_seed81_pilot_v6<br/>PILOT<br/>HOLD"]
     n226["math_v2_1_output_reuse_audit_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
+    n227["math_v2_1_terminal_invalid_recovery_v1<br/>PROTOCOL_FREEZE<br/>COMPLETED"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -410,6 +411,7 @@ flowchart TD
   n223 -->|derived_from| n224
   n224 -->|derived_from| n225
   n224 -->|derived_from| n226
+  n226 -->|derived_from| n227
 ```
 
 ## Archived branches and unresolved evidence

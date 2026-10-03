@@ -1,0 +1,18 @@
+{
+  "budget_fail_closed": true,
+  "durable_changed_scope_rejected": true,
+  "durable_corruption_rejected": true,
+  "four_invalid_terminal": true,
+  "historical_private_cases_not_executed": 1468,
+  "invalid_invalid_valid": true,
+  "legacy_prediction_policy_regression": true,
+  "network_attempts": 0,
+  "real_api_calls": 0,
+  "recovery_tests": 9,
+  "stage_and_member_reuse_regression": true,
+  "status": "PASS",
+  "targeted_tests": 31,
+  "transport_semantic_separation": true,
+  "unresolved_cache_rejected": true,
+  "valid_wrong_no_retry": true
+}

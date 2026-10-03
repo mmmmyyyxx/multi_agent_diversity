@@ -1,0 +1,18 @@
+{
+  "new": [
+    "terminal invalid recovery policy"
+  ],
+  "operational_repair": "same-attempt durable exact resolved-output cache",
+  "unchanged": [
+    "Solver decoding V1",
+    "immutable interface V5",
+    "MATH equivalence V2",
+    "reference domain V2",
+    "method V2.1",
+    "Responsibility",
+    "allocation",
+    "initial floor",
+    "strict team gain",
+    "GEPA numerical budgets"
+  ]
+}

@@ -1183,6 +1183,12 @@
       "classification": "CURRENT_CONTRACT",
       "required_private_artifacts": [],
       "current_suite_included": true
+    },
+    {
+      "path": "tests/test_math_terminal_recovery.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
     }
   ]
 }

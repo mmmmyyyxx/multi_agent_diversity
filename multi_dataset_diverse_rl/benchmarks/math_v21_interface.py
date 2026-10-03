@@ -77,7 +77,9 @@ class MATHV21BenchmarkAdapter(MATHBenchmarkAdapterV2):
             self.protocol = MATH_PROTOCOL_V3
 
     def prediction_result(self, result):
-        from .math_prediction_validity import classify_prediction
+        from .math_prediction_validity import classify_prediction, prediction_from_persisted
+        if 'resolved_prediction' in result:
+            return prediction_from_persisted(result['resolved_prediction'])
         return classify_prediction(result["text"], result.get("finish_reason"))
 
     def parse_member_output(self, raw, item):
