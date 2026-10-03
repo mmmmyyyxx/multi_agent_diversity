@@ -14,6 +14,7 @@ from .patterns import PatternHypothesis
 from .schemas import SearchContractError
 from ..benchmarks.math_solver_decoding import generation_request_fields, frozen_solver_policy
 from ..benchmarks.math_prediction_validity import frozen_prediction_policy, frozen_recovery_policy
+from ..benchmarks.math_optimizer_generation import frozen_optimizer_policy
 
 
 class RequestBroker:
@@ -35,6 +36,7 @@ class RequestBroker:
         self.validation_only = validation_only
         self.prediction_policy = frozen_prediction_policy(contract)
         self.recovery_policy = frozen_recovery_policy(contract)
+        self.optimizer_policy = frozen_optimizer_policy(contract)
         self.durable_cache = durable_cache
         if durable_cache is not None and self.recovery_policy is None:
             raise SearchContractError('DURABLE_CACHE_REQUIRES_RECOVERY_BINDING')
@@ -71,6 +73,8 @@ class RequestBroker:
         request = dict(model=model, messages=messages, **generation_request_fields(c, role))
         identity = {"provider": c["provider"], "role": role, "split": split, "request": request,
                     "cache_namespace": c["cache_namespace"]}
+        if role in {'reflection','pattern'} and self.optimizer_policy:
+            identity['optimizer_generation_policy'] = self.optimizer_policy
         if role == "solver":
             identity["solver_output_interface"] = c["solver_output_interface"]
             if frozen_solver_policy(c) is not None:
@@ -195,9 +199,15 @@ class RequestBroker:
                 if self.raw_writer:
                     self.raw_writer(dict(role=role, split=split, stage=stage, request_sha256=key, request=request, response=result,
                         semantic_attempt_no=semantic_attempt_no,physical_attempt_no=self.usage['attempts']))
-                if (self.token_ledger or role == "solver" and frozen_solver_policy(c)) and not (role == "solver" and self.prediction_policy) and result.get("finish_reason") in {"length", "max_tokens", "max_output_tokens"}:
+                if (self.token_ledger or role == "solver" and frozen_solver_policy(c) or role != 'solver' and self.optimizer_policy) and not (role == "solver" and self.prediction_policy) and result.get("finish_reason") in {"length", "max_tokens", "max_output_tokens"}:
                     self.abort("STOP_SOLVER_DECODING_POLICY_INSUFFICIENT" if role == "solver" and frozen_solver_policy(c) else "OPERATIONAL_OUTPUT_TRUNCATION")
-                if self.token_ledger and type(result.get("provider_reported_output_tokens")) is int and result["provider_reported_output_tokens"] > request["max_tokens"]:
+                if 'max_completion_tokens' in request:
+                    reported = result.get('provider_reported_output_tokens', result.get('output_tokens'))
+                    ceiling = self.optimizer_policy['accounting_output_ceiling']
+                else:
+                    reported = result.get('provider_reported_output_tokens')
+                    ceiling = request['max_tokens']
+                if (self.token_ledger or role != 'solver' and self.optimizer_policy) and type(reported) is int and reported > ceiling:
                     self.abort("OPERATIONAL_OUTPUT_CAP_NOT_ENFORCED")
                 result = {**result, "provider_called": True}
                 if self.prediction_policy:

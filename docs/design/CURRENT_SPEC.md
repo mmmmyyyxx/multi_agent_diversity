@@ -392,6 +392,32 @@ remove any frozen field. No decoding, prompt-interface, method, data or evaluato
 adaptation follows performance or formatting outcomes.
 
 
+### Optimizer/Reflection generation wire amendment
+
+Fresh low-cost execution binding V2 opts into
+`OPTIMIZER_REFLECTION_GENERATION_POLICY_V1` for qwen3.7-flash Reflection and
+Pattern requests. It explicitly sends `enable_thinking=true`, the frozen
+`temperature=0.0`, and `max_completion_tokens=1800`; `max_tokens` is absent.
+The 1800 requested cap covers reasoning plus answer. The documented provider
+measurement tolerance is 10 tokens, so Reservation V2 reserves the exact UTF-8
+request input bound plus 1810 and verifies reported total output against 1810.
+The 10-token tolerance is not sent as extra model generation budget.
+`finish_reason=length` remains `OPERATIONAL_OUTPUT_TRUNCATION`, including when
+reported usage fits the tolerance; output above 1810 remains
+`OPERATIONAL_OUTPUT_CAP_NOT_ENFORCED`. All output usage, including reasoning,
+is accounted; available provider usage details are retained privately.
+
+The complete optimizer policy enters binding, manifest, preexecution, request,
+cache and authorization identities. Legacy bindings retain their original wire
+and accounting semantics. Solver decoding V1, GEPA budgets, method V2.1,
+Low-Cost 12/60/40/100 memberships, terminal-invalid recovery and held-out
+firewalls remain frozen. Real A1 Pattern calls remain zero.
+
+The historical answer-only `max_tokens=1800` versus reported total 1814 is a
+client cap/usage dimension mismatch, not evidence that the provider violated
+its answer cap. Preserve the historical runtime stop and charge, with an
+append-only classification correction; the failed Canary does not become PASS.
+
 ### MATH prediction validity policy
 
 `MATH_V2_1_EXECUTION_BINDING_V3` explicitly freezes

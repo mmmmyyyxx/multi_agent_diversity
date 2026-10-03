@@ -1,0 +1,7 @@
+{
+  "canary_to_pilot_output_import": false,
+  "fresh_namespace": "math_v2_1_low_cost_A1_seed81_canary_attempt2",
+  "historical_output_import": false,
+  "optimizer_policy_enters_request_cache": true,
+  "status": "PASS"
+}

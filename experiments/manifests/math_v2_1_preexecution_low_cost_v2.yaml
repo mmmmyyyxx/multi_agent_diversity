@@ -1,0 +1,162 @@
+schema_version: experiment_manifest_v2
+experiment_id: math_v2_1_preexecution_low_cost_v2
+method_family: unified_team_prompt_search_v2_1
+method_identity: unified_team_prompt_search_v2_1
+source_sha: 06af07acb13e2e144bb668b16c5e4b1a8d7de7d2
+benchmark_id: math
+benchmark_protocol_id: 3aee274eeee86c07b7ea66a8700d925e42ecab17663a65e93e96f4ae475e1a67
+dataset_manifest_identity: 7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f
+split_identity: 196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507
+seed: 81
+models:
+  solver: qwen3-8b
+  optimizer: qwen3.7-flash
+  solver_thinking: false
+concurrency:
+  solver: 1
+  optimizer: 1
+provider_policy:
+  identity: lwj
+  frozen: true
+cache_policy:
+  identity: DURABLE_EXACT_OUTPUT_CACHE_V1
+  frozen: true
+solver_output_interface_identity: MATH_SOLVER_INTERFACE_V5
+parser_identity: MATH_PAYLOAD_PARSER_V2
+access:
+  search_access: frozen_search
+  shadow_access: frozen_adaptive_gate
+  validation_access: not_authorized
+  test_access: sealed
+budget:
+  regime: saturation
+  saturation_identity: team_epoch_no_commit_v1
+  successful_provider_call_ceiling: 1686
+  transport_attempt_ceiling: 35406
+authorization:
+  real_api_authorized: false
+  attempt_id: null
+  authorization_identity: null
+  single_use: true
+lifecycle:
+  status: DRAFT
+  history:
+  - status: DRAFT
+    event: ZERO_API_BLOCKER_CLOSURE
+  - status: DRAFT
+    event: AWAITING_SOURCE_COMMIT
+hash_closure:
+  scientific_source_hash: c43c1460e346a44dac4b6e406719f8d8f291537b333f19e98ef2265fca0b3d5b
+  governance_hash: 9500570c2b18d8a81ebc3592a5181968e74bc7b26b323e4b0d0c67d2388173ed
+  benchmark_contract_hash: 32cf92155834905453b0fb2a99cc4e47d457ee36dff5f903bcc3f85788018ee0
+  dataset_manifest_hash: d3c3f587bf9e08f5d9a12c8b777953c57cd30fc4c655e82e95f556b337119d81
+execution_binding:
+  identity: MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2
+  path: experiments/execution_bindings/math_v2_1_low_cost_canary_v2.json
+  sha256: ebbea0c18f8f7171dcc7e8ffdbacb5548c4de0819cd7dfdea548157489e3ced4
+mechanism_config: {}
+search_engine_identity: gepa_derived_team_candidate_exposure_v2
+aggregation_identity: equal_equivalence_plurality_consistency_v1
+responsibility_identity: binary_plurality_raw_responsibility_v1
+transition_identity: initial_competence_team_gain_v2
+adaptive_gate_identity: winner_only_shadow_v1
+pattern_identity: null_pattern_v1
+memory_identity: null_memory_v1
+search_acceptance_identity: local_survival_team_admission_decoupled_v1
+evidence_identity: single_mechanism_evidence_v2
+feasibility_identity: variable_evidence_feasibility_v1
+initial_competence_binding:
+  aggregation_independent: true
+  candidate_support: same_complete_optimize
+  count: 12
+  evaluator: MATH_EQUIVALENCE_V2
+  identity: MATH_INITIAL_COMPETENCE_LOW_COST_V1
+  immutable: true
+  metric: binary_correct_count
+  role: optimize
+  split_identity: 196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507
+  support_identity: 16ad84b5bb22a6aa10e23ef1e1a71ff6d54b7e8e4fcd749571808fba0b2f27ab
+solver_decoding_policy:
+  enable_thinking: false
+  frequency_penalty: 0
+  identity: SOLVER_DECODING_POLICY_V1
+  max_output_tokens: 3600
+  min_p: 0
+  presence_penalty: 0
+  temperature: 0.7
+  top_k: 20
+  top_p: 0.8
+prediction_validity_policy:
+  denominator: all_frozen_examples
+  fallback_extraction: false
+  identity: MATH_PREDICTION_VALIDITY_V2
+  invalid_response_retries: 3
+  invalid_vote: excluded_from_equivalence_classes
+  invalidity_telemetry: observation_only
+  prediction_failure: invalid_incorrect_continue
+  reference_failure: hard_contract_failure
+  truncated_even_with_marker: invalid_incorrect
+global_stop_identity: team_epoch_no_commit_v1
+invalid_recovery_policy:
+  cache: resolved_valid_or_exhausted_terminal_only
+  first_valid_stops: true
+  identity: MATH_SOLVER_INVALID_RECOVERY_V1
+  invalidity_weight: none
+  logical_evaluation_count: 1
+  max_semantic_attempts: 4
+  same_request_bytes: true
+  solver_invalid_max_retries: 3
+  terminal_invalid: incorrect_continue_no_vote
+  terminal_requires_completed_invalid_attempts: 4
+  transport_failures_consume_semantic_attempt: false
+low_cost_protocol:
+  analysis_policy:
+    classification: sign_of_final_minus_initial_VoteAcc
+    identity: MATH_V2_1_PILOT_DEVELOPMENT_ANALYSIS_V1
+    paired_resampling_unit: frozen_validation_example
+    resamples: 10000
+    scope: development_uncertainty_only_no_formal_significance_no_search_feedback
+    seed: 81
+  canary_stop: one_complete_production_opportunity_v1
+  counts:
+    canary_optimize: 12
+    pilot_optimize: 60
+    pilot_shadow: 40
+    pilot_validation: 100
+  identity: MATH_V2_1_LOW_COST_DEV_PROTOCOL_V1
+  membership_hashes:
+    canary_optimize: 16ad84b5bb22a6aa10e23ef1e1a71ff6d54b7e8e4fcd749571808fba0b2f27ab
+    pilot_optimize: f52c5f2a88337d187f5bf6fe7e9b419d92a96e6848dfeaae01b3f123f197b256
+    pilot_shadow: 9732600d0cc9d22c05fa2460738ba45804e23c82ed313ba5545ace5d42886857
+    pilot_validation: c71c48a25ed0439e886481926fcdc6195abc9ab8997c74d4bde3eae712ee3adc
+  pilot_stop: team_epoch_no_commit_v1
+  scientific_scope: development_only
+  selection_policy:
+    apportionment: integer_largest_remainder_lexical_tie
+    identity: MATH_LOW_COST_SUBJECT_LEVEL_HASH_V1
+    minimum_per_stratum: 0
+    ordering: sha256_identity_role_stable_id
+    output_order: source_superset_order
+    performance_used: false
+    strata:
+    - subject
+    - level
+  source_superset_sha256: 196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507
+  test_access: sealed
+low_cost_subsets_sha256: b6ef5a287d91baa60a329b8a55f88db9e019f83ff2329cf8a62cbae5388d8f5b
+optimizer_generation_policy:
+  accounting_output_ceiling: 1810
+  enable_thinking: true
+  identity: OPTIMIZER_REFLECTION_GENERATION_POLICY_V1
+  max_completion_tokens: 1800
+  max_tokens: NOT_SENT
+  measurement_tolerance_tokens: 10
+  model: qwen3.7-flash
+  output_token_scope: reasoning_plus_answer
+  roles:
+  - reflection
+  - pattern
+  temperature: 0.0
+  truncation: existing_operational_output_truncation
+optimizer_amendment_authorization_sha256: bec1aa5cada679f60af068b891fe063be5e288354b1aa8796319f31ccdc92573
+preregistration_identity: 5437520e5687116ee06fa480505dced9346b95051cd38908d6b96fc60153aad4

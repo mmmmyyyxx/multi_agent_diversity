@@ -6836,6 +6836,8 @@ experiments:
   - Request/cache/journal/inventory/split integrity passed. Failed Canary remains INVALID; optimizer policy decision
     required.
   authorization_consumed: true
+  corrected_failure_category: CLIENT_OUTPUT_CAP_SCOPE_MISMATCH
+  classification_correction_report: reports/math_v2_1_optimizer_wire_amendment_v1_20261003
 - experiment_id: math_v2_1_a1_seed81_low_cost_pilot_v1
   kind: PILOT
   era: BENCHMARK_GENERALIZATION
@@ -6859,3 +6861,91 @@ experiments:
   unavailable:
     execution_commit: Not executed.
   authorization_consumed: false
+- experiment_id: math_v2_1_optimizer_wire_amendment_v1
+  kind: PROTOCOL_FREEZE
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_a1_seed81_low_cost_canary_v1
+  status: DRAFT
+  scientific_status: PREEXECUTION_PENDING
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_optimizer_wire_amendment_v1.yaml
+  report: reports/math_v2_1_optimizer_wire_amendment_v1_20261003
+  classifier: APPROVED_OPTIMIZER_WIRE_AMENDMENT
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit thinking=true, total completion cap1800, accounting tolerance10; Solver and method unchanged.
+  authorization_consumed: false
+  unavailable:
+    execution_commit: Not executed.
+- experiment_id: math_v2_1_preexecution_low_cost_v2
+  kind: PREEXECUTION_FREEZE
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_optimizer_wire_amendment_v1
+  status: DRAFT
+  scientific_status: PREEXECUTION_PENDING
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_preexecution_low_cost_v2.yaml
+  report: reports/math_v2_1_preexecution_low_cost_v2_20261003
+  classifier: APPROVED_OPTIMIZER_WIRE_AMENDMENT
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit thinking=true, total completion cap1800, accounting tolerance10; Solver and method unchanged.
+  authorization_consumed: false
+  unavailable:
+    execution_commit: Not executed.
+- experiment_id: math_v2_1_a1_seed81_low_cost_canary_v2
+  kind: REAL_CANARY
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_preexecution_low_cost_v2
+  status: DRAFT
+  scientific_status: PREEXECUTION_PENDING
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_a1_seed81_low_cost_canary_v2.yaml
+  report: reports/math_v2_1_a1_seed81_low_cost_canary_v2_20261003
+  classifier: APPROVED_OPTIMIZER_WIRE_AMENDMENT
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit thinking=true, total completion cap1800, accounting tolerance10; Solver and method unchanged.
+  authorization_consumed: false
+  unavailable:
+    execution_commit: Not executed.
+- experiment_id: math_v2_1_a1_seed81_low_cost_pilot_v2
+  kind: PILOT
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_a1_seed81_low_cost_canary_v2
+  status: DRAFT
+  scientific_status: PREEXECUTION_PENDING
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_a1_seed81_low_cost_pilot_v2.yaml
+  report: reports/math_v2_1_a1_seed81_low_cost_pilot_v2_20261003
+  classifier: APPROVED_OPTIMIZER_WIRE_AMENDMENT
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit thinking=true, total completion cap1800, accounting tolerance10; Solver and method unchanged.
+  authorization_consumed: false
+  unavailable:
+    execution_commit: Not executed.

@@ -12,7 +12,7 @@ method_identity: unified_team_prompt_search_v2_1
 current_method: unified_team_prompt_search_v2_1
 current_implementation: Versioned method semantic contract; benchmark-neutral production
   composition; zero-API audit
-current_experiment: math_v2_1_a1_seed81_low_cost_pilot_v1
+current_experiment: math_v2_1_a1_seed81_low_cost_pilot_v2
 current_benchmark_suite:
 - math
 - ifbench
@@ -29,15 +29,15 @@ validation_access: not_authorized
 test_access: sealed
 open_questions: docs/research/OPEN_QUESTIONS.md
 last_method_milestone: unified_semantic_contract_v2_1
-canary_manifest: experiments/manifests/math_v2_1_a1_seed81_low_cost_canary_v1.yaml
-last_preexecution_milestone: math_v2_1_preexecution_low_cost_v1
+canary_manifest: experiments/manifests/math_v2_1_a1_seed81_low_cost_canary_v2.yaml
+last_preexecution_milestone: math_v2_1_preexecution_low_cost_v2
 last_canary_milestone: math_v2_1_a1_seed81_low_cost_canary_v1
-current_canary_status: INVALID_OPERATIONAL_OUTPUT_CAP_NOT_ENFORCED
+current_canary_status: NOT_EXECUTED
 formal_a1_ready: false
 formal_a1_authorized: false
-current_execution_blocker: OPTIMIZER_OUTPUT_POLICY_DECISION_REQUIRED
-next_canary_milestone: null
-next_canary_attempt_id: null
+current_execution_blocker: OPTIMIZER_WIRE_PREEXECUTION_PENDING
+next_canary_milestone: math_v2_1_a1_seed81_low_cost_canary_v2
+next_canary_attempt_id: math_v2_1_low_cost_A1_seed81_canary_attempt2
 last_autonomous_milestone: math_v2_1_a1_seed81_low_cost_pilot_v1
 autonomous_user_authorization_received: true
 autonomous_token_authorization: 40000000
@@ -45,11 +45,11 @@ autonomous_tokens_consumed: 293888
 autonomous_tokens_remaining: 39706112
 token_accounting_policy: RESERVATION_V2
 prior_accounting_stop_resolution: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2
-autonomous_authorization_status: LOW_COST_TASK_STOPPED_POLICY_REQUIRED
+autonomous_authorization_status: OPTIMIZER_WIRE_AMENDMENT_APPROVED_PREEXECUTION_PENDING
 pilot_search_complete: false
 pilot_validation_complete: false
 pilot_final_status: INCOMPLETE
-task_stop_reason: STOP_NEW_SCIENTIFIC_POLICY_REQUIRED
+task_stop_reason: null
 ```
 
 ## Experiment and engineering DAG
@@ -112,6 +112,10 @@ flowchart TD
     n229["math_v2_1_preexecution_low_cost_v1<br/>PREEXECUTION_FREEZE<br/>COMPLETED"]
     n230["math_v2_1_a1_seed81_low_cost_canary_v1<br/>REAL_CANARY<br/>INVALID"]
     n231["math_v2_1_a1_seed81_low_cost_pilot_v1<br/>PILOT<br/>HOLD"]
+    n232["math_v2_1_optimizer_wire_amendment_v1<br/>PROTOCOL_FREEZE<br/>DRAFT"]
+    n233["math_v2_1_preexecution_low_cost_v2<br/>PREEXECUTION_FREEZE<br/>DRAFT"]
+    n234["math_v2_1_a1_seed81_low_cost_canary_v2<br/>REAL_CANARY<br/>DRAFT"]
+    n235["math_v2_1_a1_seed81_low_cost_pilot_v2<br/>PILOT<br/>DRAFT"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -420,6 +424,10 @@ flowchart TD
   n228 -->|derived_from| n229
   n229 -->|derived_from| n230
   n230 -->|derived_from| n231
+  n230 -->|derived_from| n232
+  n232 -->|derived_from| n233
+  n233 -->|derived_from| n234
+  n234 -->|derived_from| n235
 ```
 
 ## Archived branches and unresolved evidence

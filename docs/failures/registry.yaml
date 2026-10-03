@@ -429,3 +429,6 @@ failures:
     generation/accounting policy decision before fresh freeze and execution.
   lifecycle: OPEN
   lifecycle_note: STOP_NEW_SCIENTIFIC_POLICY_REQUIRED; FAILED_CANARY_IMMUTABLE; PILOT_AND_VALIDATION_NOT_EXECUTED
+  corrected_failure_category: CLIENT_OUTPUT_CAP_SCOPE_MISMATCH
+  classification_correction_report: reports/math_v2_1_optimizer_wire_amendment_v1_20261003
+  user_approved_wire_repair: OPTIMIZER_REFLECTION_GENERATION_POLICY_V1

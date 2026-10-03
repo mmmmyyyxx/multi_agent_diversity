@@ -1,0 +1,12 @@
+{
+  "enable_thinking": true,
+  "exact_utf8_body": true,
+  "max_completion_tokens": 1800,
+  "max_tokens_sent": false,
+  "provider_acceptance": "NOT_YET_EXECUTED",
+  "sdk": {
+    "name": "openai",
+    "version": "2.37.0"
+  },
+  "status": "PASS"
+}

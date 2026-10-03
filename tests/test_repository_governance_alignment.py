@@ -279,14 +279,14 @@ def _assert_canary_does_not_unlock_formal_or_heldout(frontier,registry):
                 current=next(r for r in registry['experiments'] if r['experiment_id']==frontier['current_experiment'])
                 manifest=load_yaml(ROOT/current['manifest'])
                 assert manifest['method_identity']=='unified_team_prompt_search_v2_1'
-                assert manifest['execution_binding']['identity'] in {'MATH_V2_1_EXECUTION_BINDING_V1','MATH_V2_1_EXECUTION_BINDING_V2','MATH_V2_1_EXECUTION_BINDING_V3','MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1'}
-                if manifest['execution_binding']['identity'] in {'MATH_V2_1_EXECUTION_BINDING_V2','MATH_V2_1_EXECUTION_BINDING_V3','MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1'}:
+                assert manifest['execution_binding']['identity'] in {'MATH_V2_1_EXECUTION_BINDING_V1','MATH_V2_1_EXECUTION_BINDING_V2','MATH_V2_1_EXECUTION_BINDING_V3','MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1','MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2'}
+                if manifest['execution_binding']['identity'] in {'MATH_V2_1_EXECUTION_BINDING_V2','MATH_V2_1_EXECUTION_BINDING_V3','MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1','MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2'}:
                     from multi_dataset_diverse_rl.benchmarks.math_solver_decoding import solver_decoding_contract
                     assert manifest['solver_decoding_policy']==solver_decoding_contract()
                 if manifest['execution_binding']['identity']=='MATH_V2_1_EXECUTION_BINDING_V3':
                     from multi_dataset_diverse_rl.benchmarks.math_prediction_validity import prediction_validity_contract
                     assert manifest['prediction_validity_policy']==prediction_validity_contract()
-                if manifest['execution_binding']['identity']=='MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1':
+                if manifest['execution_binding']['identity'] in {'MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1','MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2'}:
                     from multi_dataset_diverse_rl.benchmarks.math_prediction_validity import frozen_prediction_policy,invalid_recovery_contract
                     binding=load_yaml(ROOT/manifest['execution_binding']['path'])
                     assert manifest['prediction_validity_policy']==frozen_prediction_policy(binding)

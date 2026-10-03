@@ -183,6 +183,6 @@ class MATHExecutionBinding:
             method=self.method(arm), seed=seed, shadow_loader=lambda: self.examples("shadow"), shadow_count=self.contract["shadow_count"],
             runtime_readiness=self.blockers, pattern_provider=pattern_provider,
             first_parent_epoch=self.contract.get("execution_phase", "canary") == "canary",
-            one_production_opportunity=(self.contract.get('identity')==versions.MATH_LOW_COST_EXECUTION_BINDING_VERSION
+            one_production_opportunity=(self.contract.get('identity')in versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS
                 and self.contract.get('execution_phase')=='canary'),
             provider_call_reader=lambda: solver.broker.successes)

@@ -11,7 +11,7 @@ def solver_decoding_contract():
 
 def frozen_solver_policy(contract):
     policy = contract.get("solver_decoding_policy")
-    if contract.get("identity") in {versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION, versions.MATH_LOW_COST_EXECUTION_BINDING_VERSION}:
+    if contract.get("identity") in {versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION, versions.MATH_LOW_COST_EXECUTION_BINDING_VERSION, versions.MATH_LOW_COST_OPTIMIZER_EXECUTION_BINDING_VERSION}:
         expected = solver_decoding_contract()
         if (policy != expected or any(type(policy[k]) is not type(v) for k, v in expected.items())):
             raise SearchContractError("SOLVER_DECODING_POLICY_BINDING_MISMATCH")
@@ -24,6 +24,12 @@ def frozen_solver_policy(contract):
 def generation_request_fields(contract, role):
     policy = frozen_solver_policy(contract)
     decoding = contract["decoding"]
+    from .math_optimizer_generation import frozen_optimizer_policy
+    optimizer = frozen_optimizer_policy(contract)
+    if role in {'reflection','pattern'} and optimizer is not None:
+        return dict(temperature=optimizer['temperature'],
+            max_completion_tokens=optimizer['max_completion_tokens'],
+            extra_body={'enable_thinking':optimizer['enable_thinking']})
     if role == "solver" and policy is not None:
         # Chat Completions' max_tokens is the exact wire alias for the frozen
         # max_output_tokens cap. Provider extensions are flattened by transport.

@@ -1,0 +1,33 @@
+{
+  "accounting_charged_at_approval": 293888,
+  "authority": "CURRENT_CHAT_EXPLICIT_USER_APPROVAL",
+  "continuation": "fresh Canary12; after PASS fresh A1 Seed81 Pilot60/40; after search freeze paired Validation100; stop",
+  "explicit_human_approval": true,
+  "gepa_budget_unchanged": true,
+  "low_cost_memberships_unchanged": true,
+  "method_unchanged": true,
+  "no_prior_output_import": true,
+  "original_low_cost_task_sha256": "fb10eaa9747715e25ae60b1eeead524a0c7aec1a78adfc04d7764fc1e1ed9cae",
+  "pattern_real_calls_A1": 0,
+  "policy": {
+    "accounting_output_ceiling": 1810,
+    "enable_thinking": true,
+    "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V1",
+    "max_completion_tokens": 1800,
+    "max_tokens": "NOT_SENT",
+    "measurement_tolerance_tokens": 10,
+    "model": "qwen3.7-flash",
+    "output_token_scope": "reasoning_plus_answer",
+    "roles": [
+      "reflection",
+      "pattern"
+    ],
+    "temperature": 0.0,
+    "truncation": "existing_operational_output_truncation"
+  },
+  "push_authorized": false,
+  "schema_version": "human_optimizer_wire_contract_amendment_v1",
+  "solver_policy_unchanged": true,
+  "test_model_calls": 0,
+  "total_accounting_authorization": 40000000
+}

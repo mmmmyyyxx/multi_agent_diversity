@@ -1191,6 +1191,12 @@
       "current_suite_included": true
     },
     {
+      "path": "tests/test_math_optimizer_generation.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
       "path": "tests/test_math_low_cost.py",
       "classification": "CURRENT_CONTRACT",
       "required_private_artifacts": [],

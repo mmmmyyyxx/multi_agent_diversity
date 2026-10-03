@@ -1,0 +1,15 @@
+{
+  "corrected_failure_category": "CLIENT_OUTPUT_CAP_SCOPE_MISMATCH",
+  "correction": "Reported total output1814 versus answer-only max_tokens1800 does not establish provider cap violation.",
+  "observed_reasoning_tokens": "NOT_AVAILABLE",
+  "parent_attempt": "math_v2_1_low_cost_A1_seed81_canary_attempt1",
+  "preserved_runtime_stop": "OPERATIONAL_OUTPUT_CAP_NOT_ENFORCED",
+  "prior_canary_status": "INVALID",
+  "prior_charge_preserved": true,
+  "provider_internal_cause": "UNVERIFIED",
+  "references": [
+    "https://help.aliyun.com/en/model-studio/qwen-api-via-openai-chat-completions",
+    "https://help.aliyun.com/en/model-studio/deep-thinking"
+  ],
+  "retrospective_pass": false
+}

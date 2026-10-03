@@ -50,12 +50,30 @@ def serialized_request(request):
 
 
 def reservation(request):
-    cap = request.get("max_tokens")
+    if 'max_completion_tokens' in request:
+        if 'max_tokens' in request:
+            raise OperationalAbort('AMBIGUOUS_OUTPUT_CAP_FIELDS')
+        from ..benchmarks.math_optimizer_generation import optimizer_generation_contract
+        policy = optimizer_generation_contract()
+        thinking = request.get('extra_body', {}).get('enable_thinking',request.get('enable_thinking'))
+        if (request.get('model') != policy['model']
+                or type(request['max_completion_tokens']) is not int
+                or request['max_completion_tokens'] != policy['max_completion_tokens']
+                or thinking is not True):
+            raise OperationalAbort('FROZEN_OPTIMIZER_OUTPUT_BOUND_REQUIRED')
+        cap = policy['accounting_output_ceiling']
+    else:
+        cap = request.get("max_tokens")
     if type(cap) is not int or cap <= 0:
         raise OperationalAbort("OUTPUT_HARD_CAP_REQUIRED")
     count = len(serialized_request(request))
-    return dict(serialized_request_bytes=count, input_upper_bound=count + 4096,
-                output_hard_cap=cap, amount=count + 4096 + cap)
+    result = dict(serialized_request_bytes=count, input_upper_bound=count + 4096,
+                  output_hard_cap=cap, amount=count + 4096 + cap)
+    if 'max_completion_tokens' in request:
+        result.update(requested_output_cap=request['max_completion_tokens'],
+            output_measurement_tolerance=policy['measurement_tolerance_tokens'],
+            generation_policy_identity=policy['identity'])
+    return result
 
 
 def reliable_usage(result, bound):

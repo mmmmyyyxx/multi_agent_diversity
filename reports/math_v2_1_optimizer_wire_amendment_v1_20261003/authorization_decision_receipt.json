@@ -1,0 +1,5 @@
+{
+  "current_chat_explicit_approval": true,
+  "sha256": "bec1aa5cada679f60af068b891fe063be5e288354b1aa8796319f31ccdc92573",
+  "source_decision": "experiments/protocols/math_v2_1_optimizer_wire_v1/authorization_decision.json"
+}

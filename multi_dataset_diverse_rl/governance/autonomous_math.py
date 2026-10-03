@@ -86,8 +86,13 @@ def create_transport(contract):
             choice = body["choices"][0]
             usage = body.get("usage")
             usage = usage if isinstance(usage, dict) else {}
-            return dict(text=choice["message"].get("content"), finish_reason=choice.get("finish_reason"),
+            result = dict(text=choice["message"].get("content"), finish_reason=choice.get("finish_reason"),
                 input_tokens=usage.get("prompt_tokens"), output_tokens=usage.get("completion_tokens"), response_id=body.get("id"))
+            if 'optimizer_generation_policy' in contract:
+                reasoning = choice['message'].get('reasoning_content')
+                result.update(provider_usage_details=usage,
+                    provider_reasoning_character_count=len(reasoning) if isinstance(reasoning,str) else None)
+            return result
         finally:
             response.close()
     return transport, client
@@ -99,12 +104,12 @@ def initial_prompts(root, contract):
 
 def ledger_policy(contract):
     from .. import versions
-    return POLICY_40M if contract['identity']==versions.MATH_LOW_COST_EXECUTION_BINDING_VERSION else POLICY
+    return POLICY_40M if contract['identity'] in versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS else POLICY
 
 
 def durable_output_cache(run_root,contract,payload):
     from .. import versions
-    if contract['identity']!=versions.MATH_LOW_COST_EXECUTION_BINDING_VERSION:return None
+    if contract['identity'] not in versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS:return None
     from ..persistence.exact_output_cache import DurableExactOutputCache,digest
     return DurableExactOutputCache(run_root/'resolved_output_cache',dict(
         execution_attempt_id=contract['execution_attempt_id'],cache_namespace=contract['cache_namespace'],

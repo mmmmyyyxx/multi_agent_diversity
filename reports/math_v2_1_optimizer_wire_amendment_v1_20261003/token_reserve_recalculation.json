@@ -1,0 +1,20 @@
+{
+  "authorized_total": 40000000,
+  "charged_total": 293888,
+  "optimizer_accounting_ceiling": 1810,
+  "optimizer_requested_cap": 1800,
+  "optimizer_reservation_formula": "exact serialized request bytes + 4096 + 1810",
+  "prior_journal_reset": false,
+  "remaining": 39706112,
+  "solver_reserves_unchanged": true,
+  "solver_validation_first_attempt_reserve": 9078500,
+  "synthetic_empty_message_reservation": {
+    "amount": 6015,
+    "generation_policy_identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V1",
+    "input_upper_bound": 4205,
+    "output_hard_cap": 1810,
+    "output_measurement_tolerance": 10,
+    "requested_output_cap": 1800,
+    "serialized_request_bytes": 109
+  }
+}

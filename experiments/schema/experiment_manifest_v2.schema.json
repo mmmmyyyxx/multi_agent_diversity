@@ -386,7 +386,8 @@
             "MATH_V2_1_EXECUTION_BINDING_V1",
             "MATH_V2_1_EXECUTION_BINDING_V2",
             "MATH_V2_1_EXECUTION_BINDING_V3",
-            "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1"
+            "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
+            "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2"
           ]
         },
         "path": {
@@ -566,6 +567,28 @@
     "low_cost_subsets_sha256": {
       "type": "string",
       "pattern": "^[a-f0-9]{64}$"
+    },
+    "optimizer_generation_policy": {
+      "const": {
+        "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V1",
+        "model": "qwen3.7-flash",
+        "roles": [
+          "reflection",
+          "pattern"
+        ],
+        "enable_thinking": true,
+        "temperature": 0.0,
+        "max_completion_tokens": 1800,
+        "max_tokens": "NOT_SENT",
+        "output_token_scope": "reasoning_plus_answer",
+        "measurement_tolerance_tokens": 10,
+        "accounting_output_ceiling": 1810,
+        "truncation": "existing_operational_output_truncation"
+      }
+    },
+    "optimizer_amendment_authorization_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
     }
   },
   "required": [
@@ -940,7 +963,8 @@
                   "MATH_V2_1_EXECUTION_BINDING_V1",
                   "MATH_V2_1_EXECUTION_BINDING_V2",
                   "MATH_V2_1_EXECUTION_BINDING_V3",
-                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1"
+                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
+                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2"
                 ]
               }
             }
@@ -1043,7 +1067,8 @@
               "identity": {
                 "enum": [
                   "MATH_V2_1_EXECUTION_BINDING_V3",
-                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1"
+                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
+                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2"
                 ]
               }
             }
@@ -1082,7 +1107,8 @@
             "properties": {
               "identity": {
                 "enum": [
-                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1"
+                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
+                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2"
                 ]
               }
             }
@@ -1204,6 +1230,47 @@
               "invalidity_telemetry": "observation_only"
             }
           }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "execution_binding"
+        ],
+        "properties": {
+          "execution_binding": {
+            "required": [
+              "identity"
+            ],
+            "properties": {
+              "identity": {
+                "const": "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "optimizer_generation_policy",
+          "optimizer_amendment_authorization_sha256"
+        ]
+      },
+      "else": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "optimizer_generation_policy"
+              ]
+            },
+            {
+              "required": [
+                "optimizer_amendment_authorization_sha256"
+              ]
+            }
+          ]
         }
       }
     }

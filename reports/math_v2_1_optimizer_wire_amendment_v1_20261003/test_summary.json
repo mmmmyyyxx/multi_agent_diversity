@@ -1,0 +1,17 @@
+{
+  "actual_pinned_gepa_fake": {
+    "A1": "PASS",
+    "A2": "PASS",
+    "A3": "PASS",
+    "A4": "PASS"
+  },
+  "failed": 0,
+  "frozen_entrypoint_canary": "PASS",
+  "frozen_entrypoint_pilot_and_paired_validation100": "PASS",
+  "full_current_suite": "PENDING_NEW_SOURCE_FREEZE",
+  "historical_private_not_executed": 1468,
+  "network_attempts": 0,
+  "targeted_log_sha256": "57d752e1ba4c92003497adacb2eb1599af8fabc4c5e9a5f449cb77b035fd11d7",
+  "targeted_passed": 77,
+  "targeted_xml_sha256": "ecb4919fae8a592f9115ad85f59765d3a41ad4e38485f815597c86dd819d1843"
+}
