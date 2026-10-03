@@ -11,7 +11,7 @@ def solver_decoding_contract():
 
 def frozen_solver_policy(contract):
     policy = contract.get("solver_decoding_policy")
-    if contract.get("identity") == versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION:
+    if contract.get("identity") in {versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION}:
         expected = solver_decoding_contract()
         if (policy != expected or any(type(policy[k]) is not type(v) for k, v in expected.items())):
             raise SearchContractError("SOLVER_DECODING_POLICY_BINDING_MISMATCH")

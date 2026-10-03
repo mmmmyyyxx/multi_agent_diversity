@@ -305,7 +305,7 @@ inherited. Pattern/Memory are IMPLEMENTED_DEFAULT_OFF, efficacy unverified.
   Optimize/Shadow reference checks fail before dispatch. Search never opens
   Validation/Test for this audit. Test model calls remain forbidden.
   A correctly framed unparseable mathematical prediction is invalid/wrong;
-  marker failure still aborts without regeneration. Only evaluator semantics
+  Historical bindings through V2.1 execution binding V2 still abort on marker failure without regeneration; the explicitly frozen prediction validity binding below supersedes that behavior only for fresh scopes. Only evaluator semantics
   change; responsibility, aggregation, scheduling, GEPA and admission do not.
 
 ## V2.1 MATH fresh binding
@@ -335,8 +335,8 @@ This output-only repair cannot be optimized by GEPA. The prior V2 interface
 and strict marker/payload/equivalence parsers remain unchanged. Fresh bindings
 freeze the exact interface hash; Solver, Validation and isolated accounting
 preparation resolve the same interface bytes. An unknown interface or hash
-mismatch fails before dispatch. Format failure still aborts with zero response
-regenerations. Every interface change requires a fresh source, attempt,
+mismatch fails before dispatch. Historical format failure still aborts with zero response
+regenerations; fresh prediction-validity binding V3 records it as incorrect. Every interface change requires a fresh source, attempt,
 authorization, cache namespace and process.
 
 `MATH_SOLVER_INTERFACE_V4` preserves the V3 system bytes and adds an immutable
@@ -355,8 +355,9 @@ The explicit `decoding.solver_max_output_tokens` has read points in Solver reque
 composition, isolated accounting preparation and protected Validation reservation.
 V5 requires exactly this role envelope; prior interfaces retain their original
 caps. Full initial/final Validation reservation must fit before admission and
-remain protected during search. Truncation still aborts without regeneration;
-no scientific stopper or parser guard changes to absorb incomplete outputs.
+remain protected during search. Historical bindings still abort on truncation without regeneration. Fresh
+prediction-validity binding V3 retains strict parsing and records truncation as
+incorrect; no scientific stopper changes.
 
 ## Authority map
 
@@ -377,8 +378,53 @@ enable_thinking/top_k/min_p enter the final top-level body through extra_body.
 This exact policy enters manifests, preexecution, authorization, request and
 cache identities. Frozen older execution bindings retain their original bytes
 and request semantics. Reflection/Pattern retain the existing optimizer policy.
-No regeneration follows an invalid final marker or length termination: a
-successfully dispatched Solver policy fails closed with
+In historical execution binding V2, no regeneration follows an invalid final
+marker or length termination: a successfully dispatched Solver policy fails closed with
 `STOP_SOLVER_DECODING_POLICY_INSUFFICIENT`. Provider rejection cannot silently
 remove any frozen field. No decoding, prompt-interface, method, data or evaluator
 adaptation follows performance or formatting outcomes.
+
+
+### MATH prediction validity policy
+
+`MATH_V2_1_EXECUTION_BINDING_V3` explicitly freezes
+`MATH_PREDICTION_VALIDITY_V1` and benchmark protocol V3. The method remains
+Unified V2.1. All Solver decoding fields and immutable interface V5 bytes stay
+unchanged. Reference scorable checks, payload mathematical semantics,
+`MATH_EQUIVALENCE_V2`, `MATH_SCORABLE_REFERENCE_V2`, memberships, initial
+team, Responsibility, allocation, failure discount, GEPA budgets, Pattern,
+Memory, strict team gain and immutable initial floor stay frozen.
+
+After successful transport, missing/empty/multiple final markers, other strict
+framing violations, unsupported/unparseable payloads, and length termination
+(even with an apparently valid marker) are INVALID_PREDICTION: validity false,
+binary correctness zero, execution continues. No regeneration, fallback
+extraction, output repair, dropped row or resampling occurs. Native prediction
+parse exceptions/deadlines are invalid; worker initialization, dependency,
+serialization or persistence faults remain hard operational failures.
+Reference parse/unsupported/timeout failure remains a hard contract failure.
+
+Private typed prediction results retain exact raw text and finish reason across
+cache reuse, state snapshots and durable serialization. Classification is
+benchmark-owned. Invalid predictions have no equivalence-class vote; all-invalid
+teams have incorrect Vote/Oracle. Valid classes retain the frozen equal-weight
+plurality and tie behavior. Wrongness alone enters existing Responsibility.
+Initial and candidate competence use the complete Optimize membership; both
+Validation teams retain all 300 rows per member. Invalid counts/rates/reasons
+by phase/member are observations, with no allocation, promotion, transition,
+Shadow, stopping or efficacy threshold read point. Existing score-based
+TeamProbe/Full/Shadow guards remain unchanged. Legacy invalid-response hard
+guards apply only to historical bindings; in V3 invalidity acts solely through
+incorrectness. Transition still requires candidate member >= immutable initial
+floor and candidate team > incumbent team, allowing specialization.
+
+The policy enters execution binding, manifest, preexecution, authorization,
+request/cache identities and Validation accounting metadata. Cached invalid
+responses share their original realization; they are never regenerated or
+refunded. Transport retry policy, RESERVATION_V2 ledger and full protected
+Validation reserve remain unchanged. Historical Canary1–5 remain immutable
+INVALID attempts under their original contracts. Fresh Canary requires complete
+initialization, Responsibility/target and a complete production opportunity;
+no invalid-rate or efficacy gate applies. Pilot and post-search paired Validation
+require distinct fresh scopes and immutable SEARCH_COMPLETE_RECEIPT. Real A1
+keeps Pattern/Memory off; Test and all other arms/seeds remain unauthorized.

@@ -112,6 +112,11 @@ class V2ReflectionAdapter(GEPAAdapter):
 
     def make_reflective_dataset(self, candidate, eval_batch, components_to_update):
         rows = super().make_reflective_dataset(candidate, eval_batch, components_to_update)
+        if getattr(self.evaluator, "invalid_predictions_are_incorrect", False):
+            for records in rows.values():
+                for row in records:
+                    if row["Evaluation Outcome"] == "invalid":
+                        row["Evaluation Outcome"] = "incorrect"
         tags = {t.example.example_id: t.example.tags for t in eval_batch.trajectories}
         for records in rows.values():
             for row in records:
@@ -198,7 +203,7 @@ class GEPATeamExposureOptimizer(GEPALocalPromptOptimizer):
                 {"protocol_hash": self.config.identity(), "callback_events": cb.events,
                  "proposal_diagnostics": cb.proposal_diagnostics(), "telemetry": telemetry,
                  "saturation": payload.get("saturation", {}),
-                 "operational_failure":bool(cb.invalid_response_hashes),
+                 "operational_failure":bool(cb.invalid_response_hashes) and not getattr(self.evaluator, "invalid_predictions_are_incorrect", False),
                  "token_accounting":{"solver_tokens":result.total_tokens-meta_tokens,
                                      "search_meta_tokens":meta_tokens}})
             return replace(result, candidates=candidates, optimizer_state=state)
@@ -252,6 +257,9 @@ class GEPATeamCandidateExposureEngine:
     def __init__(self, bridge): self.bridge = bridge
 
     async def search(self, opportunity, context):
+        evaluator = self.bridge.optimizer.evaluator
+        if hasattr(evaluator, "observe_member"):
+            evaluator.observe_member(opportunity.target_member)
         result = await self.bridge.optimize(self.bridge.make_task(opportunity, context))
         t = result.optimizer_state.payload["telemetry"]
         return SearchResult(tuple(SearchCandidate(r.candidate_id, r.prompt, r.local_score,

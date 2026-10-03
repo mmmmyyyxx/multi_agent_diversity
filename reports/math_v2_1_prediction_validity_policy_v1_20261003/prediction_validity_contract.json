@@ -1,0 +1,11 @@
+{
+  "denominator": "all_frozen_examples",
+  "fallback_extraction": false,
+  "identity": "MATH_PREDICTION_VALIDITY_V1",
+  "invalid_response_retries": 0,
+  "invalid_vote": "excluded_from_equivalence_classes",
+  "invalidity_telemetry": "observation_only",
+  "prediction_failure": "invalid_incorrect_continue",
+  "reference_failure": "hard_contract_failure",
+  "truncated_even_with_marker": "invalid_incorrect"
+}

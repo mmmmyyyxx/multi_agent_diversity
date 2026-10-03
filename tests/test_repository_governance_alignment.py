@@ -279,10 +279,13 @@ def test_canary_abort_does_not_unlock_formal_or_heldout():
                 current=next(r for r in registry['experiments'] if r['experiment_id']==frontier['current_experiment'])
                 manifest=load_yaml(ROOT/current['manifest'])
                 assert manifest['method_identity']=='unified_team_prompt_search_v2_1'
-                assert manifest['execution_binding']['identity'] in {'MATH_V2_1_EXECUTION_BINDING_V1','MATH_V2_1_EXECUTION_BINDING_V2'}
-                if manifest['execution_binding']['identity']=='MATH_V2_1_EXECUTION_BINDING_V2':
+                assert manifest['execution_binding']['identity'] in {'MATH_V2_1_EXECUTION_BINDING_V1','MATH_V2_1_EXECUTION_BINDING_V2','MATH_V2_1_EXECUTION_BINDING_V3'}
+                if manifest['execution_binding']['identity'] in {'MATH_V2_1_EXECUTION_BINDING_V2','MATH_V2_1_EXECUTION_BINDING_V3'}:
                     from multi_dataset_diverse_rl.benchmarks.math_solver_decoding import solver_decoding_contract
                     assert manifest['solver_decoding_policy']==solver_decoding_contract()
+                if manifest['execution_binding']['identity']=='MATH_V2_1_EXECUTION_BINDING_V3':
+                    from multi_dataset_diverse_rl.benchmarks.math_prediction_validity import prediction_validity_contract
+                    assert manifest['prediction_validity_policy']==prediction_validity_contract()
                 assert manifest['authorization']['real_api_authorized'] is False
         else:
             assert frontier['current_canary_status'] == 'STOP_SCIENTIFIC_CONTRACT_AMENDMENT_REQUIRED'

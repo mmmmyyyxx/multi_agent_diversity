@@ -48,7 +48,7 @@ def validation_rows(root, contract, *, context, search_complete_receipt=None):
 def solver_request(contract, prompt, problem):
     interface = MATH_SOLVER_INTERFACE
     user_content = prompt + "\n\n" + problem
-    if contract["identity"] in {versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION}:
+    if contract["identity"] in {versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION}:
         from .math_v21_interface import interface_for_contract, solver_user_content
         interface = interface_for_contract(contract)[0]
         user_content = solver_user_content(contract, prompt, problem)
@@ -59,7 +59,7 @@ def solver_request(contract, prompt, problem):
 
 def prepare_metadata(root, contract):
     interface = solver_interface_contract()
-    if contract["identity"] in {versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION}:
+    if contract["identity"] in {versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION}:
         from .math_v21_interface import interface_for_contract
         interface = interface_for_contract(contract)[1]
     examples = []
@@ -72,6 +72,9 @@ def prepare_metadata(root, contract):
         model_calls=0, correctness_evaluations=0, content_exposed_to_search=False, examples=examples)
     if frozen_solver_policy(contract) is not None:
         metadata["solver_decoding_policy"] = frozen_solver_policy(contract)
+    from .math_prediction_validity import frozen_prediction_policy
+    if frozen_prediction_policy(contract):
+        metadata["prediction_validity_policy"] = frozen_prediction_policy(contract)
     return metadata
 
 

@@ -1,0 +1,11 @@
+{
+  "cross_attempt_cache_hits": 0,
+  "historical_cache_hit": false,
+  "new_request_identity_sha256": "fe85c571f7d4aa782bec8e2daf9d635029d6a7d2bbde0d86d24df6ffff091e2c",
+  "old_request_identity_sha256": "cfb932e23353290e6bd5bb36b0e9b6d665fb1cbe2d00031707381267164de8ed",
+  "prediction_policy_changes_identity": true,
+  "real_provider_calls": 0,
+  "same_namespace_negative_control": true,
+  "same_wire_body": true,
+  "status": "PASS"
+}

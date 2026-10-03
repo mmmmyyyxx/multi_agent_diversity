@@ -1,0 +1,19 @@
+{
+  "all_frozen_denominators_retained": true,
+  "fallback": false,
+  "finish_reason_length_even_with_final": "invalid_incorrect",
+  "invalid_reasons": [
+    "MISSING_FINAL_MARKER",
+    "EMPTY_FINAL_PAYLOAD",
+    "MULTIPLE_FINAL_MARKERS",
+    "OUTPUT_TRUNCATED",
+    "PAYLOAD_PARSE_FAILURE",
+    "PAYLOAD_UNSUPPORTED",
+    "OTHER_PREDICTION_CONTRACT_FAILURE"
+  ],
+  "prediction_side": "invalid_incorrect_continue",
+  "reference_side": "hard_contract_failure",
+  "regeneration": false,
+  "status": "PASS",
+  "worker_initialization_and_serialization_failure": "hard_operational_failure"
+}

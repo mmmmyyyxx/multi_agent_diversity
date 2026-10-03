@@ -384,7 +384,8 @@
             "MATH_EXECUTION_BINDING_V1_3",
             "MATH_EXECUTION_BINDING_V1_4",
             "MATH_V2_1_EXECUTION_BINDING_V1",
-            "MATH_V2_1_EXECUTION_BINDING_V2"
+            "MATH_V2_1_EXECUTION_BINDING_V2",
+            "MATH_V2_1_EXECUTION_BINDING_V3"
           ]
         },
         "path": {
@@ -504,6 +505,19 @@
           "const": 3600,
           "type": "integer"
         }
+      }
+    },
+    "prediction_validity_policy": {
+      "const": {
+        "identity": "MATH_PREDICTION_VALIDITY_V1",
+        "reference_failure": "hard_contract_failure",
+        "prediction_failure": "invalid_incorrect_continue",
+        "truncated_even_with_marker": "invalid_incorrect",
+        "invalid_response_retries": 0,
+        "fallback_extraction": false,
+        "invalid_vote": "excluded_from_equivalence_classes",
+        "denominator": "all_frozen_examples",
+        "invalidity_telemetry": "observation_only"
       }
     }
   },
@@ -877,7 +891,8 @@
               "identity": {
                 "enum": [
                   "MATH_V2_1_EXECUTION_BINDING_V1",
-                  "MATH_V2_1_EXECUTION_BINDING_V2"
+                  "MATH_V2_1_EXECUTION_BINDING_V2",
+                  "MATH_V2_1_EXECUTION_BINDING_V3"
                 ]
               }
             }
@@ -962,6 +977,43 @@
         "not": {
           "required": [
             "solver_decoding_policy"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "execution_binding"
+        ],
+        "properties": {
+          "execution_binding": {
+            "required": [
+              "identity"
+            ],
+            "properties": {
+              "identity": {
+                "const": "MATH_V2_1_EXECUTION_BINDING_V3"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "solver_decoding_policy",
+          "prediction_validity_policy"
+        ],
+        "properties": {
+          "solver_output_interface_identity": {
+            "const": "MATH_SOLVER_INTERFACE_V5"
+          }
+        }
+      },
+      "else": {
+        "not": {
+          "required": [
+            "prediction_validity_policy"
           ]
         }
       }

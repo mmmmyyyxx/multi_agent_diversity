@@ -115,6 +115,10 @@ MATH_PROTOCOL_V2 = replace(PROTOCOLS["math"],
     team_metric_id="MATH_EQUIVALENCE_V2",
     member_success_semantics="Scorable reference required; gold-first pinned strict verify; prediction parse failure is invalid/wrong")
 
+MATH_PROTOCOL_V3 = replace(MATH_PROTOCOL_V2,
+    member_success_semantics="MATH_PREDICTION_VALIDITY_V1: reference parse/unsupported/timeout hard failure; successful transport with invalid framing/payload or truncated output is invalid, incorrect, and continues without regeneration or fallback; all frozen denominators retained",
+    aggregation_output_semantics="Equal-weight valid equivalence classes only; invalid members have no vote; all-invalid team is incorrect")
+
 
 def protocol_input(benchmark_id: str, input_id: str, row: Mapping[str, object],
                    output_contract: str, *, protocol: BenchmarkProtocolSpec | None = None) -> BenchmarkInput:

@@ -1,0 +1,26 @@
+{
+  "current_suite": "PASS",
+  "errors": 0,
+  "failures": 0,
+  "full_historical_pass_claimed": false,
+  "historical_cases_not_executed": 1468,
+  "junit_sha256": "0926fc47264a5371cf140f923969aec4cce1c615f1be1059b011fe71e81fc2fe",
+  "network_attempts": 0,
+  "passed": 823,
+  "real_provider_calls": 0,
+  "skipped": 2,
+  "source_gate": {
+    "active_unscorable": 0,
+    "closure_files": 193,
+    "compileall": "PASS",
+    "immutable_parent_bytes": "PASS",
+    "network_attempts": 0,
+    "real_optimizer_calls": 0,
+    "real_pattern_calls": 0,
+    "real_solver_calls": 0,
+    "reference_domain_rows": 12500,
+    "secret_scan": "PASS",
+    "source_poison_checks": 384,
+    "validation_required_reserve": 27173020
+  }
+}

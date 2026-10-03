@@ -123,7 +123,8 @@ class InitialCompetenceTransitionV2:
     """Strict ensemble gain above an immutable initial member competence floor."""
     identity = versions.UNIFIED_COMPETENCE_TRANSITION_VERSION
 
-    def __init__(self):
+    def __init__(self, *, invalid_predictions_are_incorrect=False):
+        self.invalid_predictions_are_incorrect = invalid_predictions_are_incorrect
         self.initial_scores = None
         self.initial_state_id = None
 
@@ -152,7 +153,7 @@ class InitialCompetenceTransitionV2:
         winner = max(feasible, key=lambda r: (r.full.aggregate_score,
             -r.full.aggregation_diagnostics.get("team_newly_broken_count", 0),
             r.full.aggregation_diagnostics.get("mean_soft_vote_utility", 0),
-            -r.full.aggregation_diagnostics.get("target_invalid_count", 0),
+            0 if self.invalid_predictions_are_incorrect else -r.full.aggregation_diagnostics.get("target_invalid_count", 0),
             hashlib.sha256(r.candidate.prompt.encode()).hexdigest())) if feasible else None
         return TransitionDecision(winner, "INITIAL_COMPETENCE_TEAM_GAIN" if winner else "NO_TEAM_GAIN_WINNER")
 
@@ -167,4 +168,4 @@ class InitialCompetenceTransitionV2:
             raise SearchContractError("NONFINITE_TRANSITION_MEASUREMENT")
         return (full.member_scores[target] >= self.initial_scores[target]
                 and full.aggregate_score > parent.aggregate_score
-                and full.aggregation_diagnostics["terminal_invalid_delta"] <= 0)
+                and (self.invalid_predictions_are_incorrect or full.aggregation_diagnostics["terminal_invalid_delta"] <= 0))

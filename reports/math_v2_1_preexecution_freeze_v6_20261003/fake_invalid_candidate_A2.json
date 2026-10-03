@@ -1,0 +1,135 @@
+{
+  "arm": "A2",
+  "initial_floor_immutable": true,
+  "invalid_evolved_candidate_continues": true,
+  "invalid_observations": 11,
+  "invalid_stages": [
+    "adaptive_gate",
+    "full",
+    "gepa_local",
+    "initial",
+    "team_probe"
+  ],
+  "ledger": {
+    "attempts": 1839,
+    "failures": 0,
+    "input_tokens": 3678,
+    "output_tokens": 3678,
+    "pattern": 1,
+    "reflection": 2,
+    "solver": 1836,
+    "successes": 1839,
+    "test": 0,
+    "validation": 0
+  },
+  "method": "unified_team_prompt_search_v2_1",
+  "real_calls": 0,
+  "trace": [
+    {
+      "DNC": {
+        "0": {
+          "C": 0,
+          "D": 3,
+          "N": 0
+        },
+        "1": {
+          "C": 0,
+          "D": 0,
+          "N": 0
+        },
+        "2": {
+          "C": 0,
+          "D": 0,
+          "N": 0
+        },
+        "3": {
+          "C": 0,
+          "D": 3,
+          "N": 0
+        },
+        "4": {
+          "C": 0,
+          "D": 2,
+          "N": 0
+        }
+      },
+      "child_member_scores": [
+        5.0,
+        6.0,
+        6.0,
+        0.0,
+        0.0
+      ],
+      "child_team_score": 5.0,
+      "committed": true,
+      "eligible_members": [
+        0,
+        3,
+        4
+      ],
+      "evaluation_support_identity": "dc6204f7a7fe8e9df437070a6ed6ee5152d4cb289bcbb1de9307f13cae6e019c",
+      "evaluator_identity": "MATH_EQUIVALENCE_V2",
+      "exposure_definition": "one responsibility observation per member per opportunity",
+      "failure_counts": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0
+      },
+      "feasibility_by_member": {
+        "0": true,
+        "1": false,
+        "2": false,
+        "3": true,
+        "4": true
+      },
+      "incumbent_member_scores": [
+        3.0,
+        6.0,
+        6.0,
+        0.0,
+        0.0
+      ],
+      "inference_scope": "DESCRIPTIVE_NOT_COUNTERFACTUAL_OR_COMPONENT_CAUSAL",
+      "initial_member_scores": [
+        3.0,
+        6.0,
+        6.0,
+        0.0,
+        0.0
+      ],
+      "member_metric": "binary_correct_count",
+      "parent_team_score": 3.0,
+      "prior_exposure_counts": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0
+      },
+      "prior_opportunity_counts": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0
+      },
+      "raw_values": {
+        "0": 12,
+        "1": 0,
+        "2": 0,
+        "3": 12,
+        "4": 8
+      },
+      "realized_team_gain": 2.0,
+      "target_count": 1,
+      "target_scores": {
+        "0": 12.0,
+        "3": 12.0,
+        "4": 8.0
+      }
+    }
+  ],
+  "transitions": 1
+}

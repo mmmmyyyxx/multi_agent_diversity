@@ -23,6 +23,13 @@ POLICY=dict(identity='MATH_PAIRED_VALIDATION_V2',split='validation',count=300,te
     paired_transitions=['vote_fixed','vote_broken','vote_net','oracle_fixed','oracle_broken','oracle_net'])
 
 
+def validation_policy(contract):
+    from ..benchmarks.math_prediction_validity import frozen_prediction_policy
+    policy = frozen_prediction_policy(contract)
+    return dict(POLICY, identity='MATH_PAIRED_VALIDATION_V3', prediction_validity_policy=policy,
+        invalidity_metrics='total_by_member_and_rate_observation_only') if policy else POLICY
+
+
 def search_receipt(root,prep,pilot_run):
     payload=validate_prep(root,prep,require_authorized=False)
     c=read_json(root/payload['manifest']['execution_binding']['path'])
@@ -41,7 +48,7 @@ def search_receipt(root,prep,pilot_run):
         p=(pilot_run/row['path']).resolve()
         if not p.is_relative_to(pilot_run.resolve()) or file_sha(p)!=row['sha256']:
             raise SearchContractError('SEARCH_RAW_EVIDENCE_INVENTORY_MISMATCH')
-    if c['post_search_validation_policy']!=POLICY:
+    if c['post_search_validation_policy']!=validation_policy(c):
         raise SearchContractError('VALIDATION_POLICY_MISMATCH')
     return payload,c,receipt
 
@@ -52,10 +59,12 @@ def prepare_validation(root,search_prep,pilot_run,destination):
     scope=dict(attempt_id=c['execution_attempt_id']+'_validation_attempt1',phase='POST_SEARCH_VALIDATION_ONLY',
         source_sha=receipt['source_sha'],search_receipt_sha256=file_sha(pilot_run/'SEARCH_COMPLETE_RECEIPT.json'),
         final_team_sha256=receipt['final_team_sha256'],split_identity=c['split_manifest_sha256'],
-        policy_sha256=canonical_sha256(POLICY),models=c['models'],roles=['solver'],provider='lwj',
+        policy_sha256=canonical_sha256(validation_policy(c)),models=c['models'],roles=['solver'],provider='lwj',
         successful_provider_call_ceiling=3000,transport_attempt_ceiling=63000,validation_calls=3000,test_calls=0)
     if 'solver_decoding_policy' in c:
         scope['solver_decoding_policy']=c['solver_decoding_policy']
+    if 'prediction_validity_policy' in c:
+        scope['prediction_validity_policy']=c['prediction_validity_policy']
     result=dict(schema_version=SCHEMA,source_identity=payload['source_identity'],
         search_prep=str(search_prep.relative_to(root)),pilot_run=str(pilot_run.relative_to(root)),scope=scope)
     result['startup_identity_sha256']=canonical_sha256(result)
@@ -78,10 +87,12 @@ def validate_validation(root,prep,*,require_authorized):
     expected=dict(attempt_id=c['execution_attempt_id']+'_validation_attempt1',phase='POST_SEARCH_VALIDATION_ONLY',
         source_sha=receipt['source_sha'],search_receipt_sha256=file_sha(pilot_run/'SEARCH_COMPLETE_RECEIPT.json'),
         final_team_sha256=receipt['final_team_sha256'],split_identity=c['split_manifest_sha256'],
-        policy_sha256=canonical_sha256(POLICY),models=c['models'],roles=['solver'],provider='lwj',
+        policy_sha256=canonical_sha256(validation_policy(c)),models=c['models'],roles=['solver'],provider='lwj',
         successful_provider_call_ceiling=3000,transport_attempt_ceiling=63000,validation_calls=3000,test_calls=0)
     if 'solver_decoding_policy' in c:
         expected['solver_decoding_policy']=c['solver_decoding_policy']
+    if 'prediction_validity_policy' in c:
+        expected['prediction_validity_policy']=c['prediction_validity_policy']
     if payload['scope']!=expected or payload['source_identity']!=original['source_identity']:
         raise SearchContractError('VALIDATION_SCOPE_MISMATCH')
     auth=read_json(prep/'authorization.json')
@@ -119,13 +130,19 @@ def evaluate_team(rows,prompts,solver,benchmark,stage,writer):
     for row in rows:
         item=protocol_input('math',row['stable_example_id'],{'problem':row['problem']},benchmark.output_contract,protocol=benchmark.protocol)
         benchmark.require_scorable(row['reference'])
-        raw=tuple(solver.solve(p,item,stage=stage,split='validation') for p in prompts)
+        raw=[]
+        for member,p in enumerate(prompts):
+            if hasattr(solver,'observe_member'): solver.observe_member(member)
+            raw.append(solver.solve(p,item,stage=stage,split='validation'))
+        raw=tuple(raw)
         parsed=[benchmark.parse_member_output(text,item) for text in raw]
         correctness=[benchmark.score_member_output(p,row['reference'])==1 for p in parsed]
         result=aggregation.aggregate_sync(item=item,member_outputs=raw,benchmark=benchmark)
-        evidence=dict(example_id=row['stable_example_id'],request_output_hashes=[hashlib.sha256(v.encode()).hexdigest() for v in raw],
+        evidence=dict(example_id=row['stable_example_id'],request_output_hashes=[hashlib.sha256(v.identity_bytes() if hasattr(v,'identity_bytes') else v.encode()).hexdigest() for v in raw],
             member_correct=correctness,vote_correct=benchmark.score_member_output(result.parsed_output,row['reference'])==1,
             oracle_correct=any(correctness))
+        if getattr(benchmark,'invalid_predictions_are_incorrect',False):
+            evidence.update(member_valid=[p.valid for p in parsed],invalid_reasons=[p.invalid_reason for p in raw])
         writer(dict(team=stage,**evidence));output.append(evidence)
     return output
 
@@ -157,9 +174,16 @@ async def execute_validation(root,prep,run_root):
         b=evaluate_team(rows,final,solver,benchmark,'validation_final',writer)
         if tuple(initial)==tuple(final) and a!=b: raise SearchContractError('IDENTICAL_TEAM_PAIRED_EVIDENCE_MISMATCH')
         metrics=comparison(a,b)
-        summary=dict(policy=POLICY,**metrics,ledger=broker.usage,accounting=budget.view(),
+        summary=dict(policy=validation_policy(c),**metrics,ledger=broker.usage,accounting=budget.view(),
             initial_team_sha256=canonical_sha256(initial),final_team_sha256=canonical_sha256(final),
             search_receipt_sha256=payload['scope']['search_receipt_sha256'],search_closed_forever=True,test_model_calls=0)
+        if 'prediction_validity_policy' in c:
+            def invalidity(rows):
+                by_member=[sum(not r['member_valid'][i] for r in rows) for i in range(5)]
+                return dict(denominator=len(rows)*5,total=sum(by_member),by_member=by_member,
+                    invalid_rate=sum(by_member)/(len(rows)*5),by_member_rate=[v/len(rows) for v in by_member])
+            ai,bi=invalidity(a),invalidity(b)
+            summary['prediction_invalidity']=dict(initial=ai,final=bi,delta_invalid_rate=bi['invalid_rate']-ai['invalid_rate'])
         atomic_write_json(run_root/'execution_summary.json',summary)
         if read_json(run_root/'execution_summary.json')!=summary: raise SearchContractError('VALIDATION_PERSISTENCE_MISMATCH')
         if file_sha(pilot_run/'SEARCH_COMPLETE_RECEIPT.json')!=payload['scope']['search_receipt_sha256']:

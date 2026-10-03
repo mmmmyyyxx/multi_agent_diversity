@@ -26,14 +26,16 @@ def private_binary_gate(*, benchmark, load_examples, expected_count, solver, sto
                 examples = tuple(load_examples())
                 if len(examples) != expected_count:
                     raise SearchContractError("GATE_MANIFEST_CARDINALITY_MISMATCH")
-            def profile(prompt):
+            def profile(prompt, member):
                 if prompt not in profiles:
+                    if hasattr(solver, "observe_member"):
+                        solver.observe_member(member)
                     profiles[prompt] = tuple(solver.solve(prompt, e.item, stage="adaptive_gate", split="shadow") for e in examples)
                 return profiles[prompt]
             prompts = store.snapshot().member_prompts
-            parent = tuple(profile(p) for p in prompts)
+            parent = tuple(profile(p, i) for i, p in enumerate(prompts))
             target = opportunity.target_member
-            proposed = profile(candidate.candidate.prompt)
+            proposed = profile(candidate.candidate.prompt, target)
             def table(candidate_profile):
                 aggregates = tuple(store.aggregation.aggregate_sync(item=e.item,
                     member_outputs=tuple(candidate_profile[j] if i == target else parent[i][j] for i in range(5)), benchmark=benchmark)
@@ -48,7 +50,8 @@ def private_binary_gate(*, benchmark, load_examples, expected_count, solver, sto
                     raise SearchContractError("GATE_AGGREGATION_CONFORMANCE_MISMATCH")
                 return states
             before, after = table(parent[target]), table(proposed)
-            self.operational_failure = any(not all(s.team_validity) for s in (*before, *after))
+            self.operational_failure = (not getattr(benchmark, "invalid_predictions_are_incorrect", False)
+                and any(not all(s.team_validity) for s in (*before, *after)))
             if self.operational_failure:
                 raise SearchContractError("GATE_INVALID_RESPONSE")
             metrics = ShadowGateMetrics(sum(s.vote_correct for s in before), sum(s.vote_correct for s in after),

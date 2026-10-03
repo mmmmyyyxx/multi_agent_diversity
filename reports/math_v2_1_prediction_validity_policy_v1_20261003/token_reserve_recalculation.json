@@ -1,0 +1,12 @@
+{
+  "final_initial_upper_reserve": 13599560,
+  "full_protected_reserve": 27173020,
+  "initial_reserve": 13573460,
+  "invalid_calls_refunded": false,
+  "ledger_reset": false,
+  "policy": "RESERVATION_V2",
+  "prior_charged": 92576,
+  "remaining": 29907424,
+  "search_spend_available": 2734404,
+  "total_authorized": 30000000
+}

@@ -1165,6 +1165,12 @@
       "current_suite_included": true,
       "path": "tests/test_math_solver_decoding.py",
       "required_private_artifacts": []
+    },
+    {
+      "path": "tests/test_math_prediction_validity.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "required_private_artifacts": [],
+      "current_suite_included": true
     }
   ]
 }

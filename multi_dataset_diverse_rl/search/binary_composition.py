@@ -36,6 +36,7 @@ def build_binary_orchestrator(*, benchmark, aggregation, examples, prompts, solv
         raise SearchContractError("FROZEN_GEPA_EXPOSURE_REQUIRED")
     if method.diagnosis_policy != versions.BINARY_PLURALITY_RESPONSIBILITY_VERSION:
         raise SearchContractError("BINARY_RESPONSIBILITY_IDENTITY_MISMATCH")
+    prediction_invalidity = bool(getattr(benchmark, "invalid_predictions_are_incorrect", False))
     current = method.method == versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION
     if method.method not in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION,
                              versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION}:
@@ -64,7 +65,7 @@ def build_binary_orchestrator(*, benchmark, aggregation, examples, prompts, solv
               else (StrategyExperienceMemoryV2 if current else StructuredLongTermMemoryProviderV1)(**method.mechanism_config["memory"]))
     bridge = V2GEPABridge(optimizer=optimizer, history=history, seed=seed,
         solver_contract_id=solver.solver_contract_id, output_contract_id=solver.output_contract_id)
-    transition = InitialCompetenceTransitionV2() if current else FixedPeerCommonSafe()
+    transition = InitialCompetenceTransitionV2(invalid_predictions_are_incorrect=prediction_invalidity) if current else FixedPeerCommonSafe()
     provider = FixedPeerTeamEvaluationProvider(store, transition if current else None)
     gate = private_binary_gate(benchmark=benchmark, load_examples=shadow_loader,
         expected_count=shadow_count, solver=solver.for_gate() if hasattr(solver, "for_gate") else solver, store=store)
@@ -73,7 +74,7 @@ def build_binary_orchestrator(*, benchmark, aggregation, examples, prompts, solv
         opportunities=V2OpportunityBuilder(source=BinaryEvidenceSource(store, history),
             feasibility=VariableEvidenceFeasibilityV1(), target=TargetPolicyV1(),
             evidence=(FocusedEvidencePolicyV2 if current else PatternCapableVariableEvidencePolicyV1)(), patterns=patterns),
-        engine=GEPATeamCandidateExposureEngine(bridge), evaluation=CandidateEvaluationPipeline(provider, FixedPeerPromotion()),
+        engine=GEPATeamCandidateExposureEngine(bridge), evaluation=CandidateEvaluationPipeline(provider, FixedPeerPromotion(invalid_predictions_are_incorrect=prediction_invalidity)),
         transition=transition, gate=gate, committer=TeamStateCommitter(store), history=history, memory=memory,
         stop=FirstParentEpochStop(2) if first_parent_epoch else GlobalStopPolicy(2),
         runtime_readiness=runtime_readiness, provider_call_reader=provider_call_reader)

@@ -16,7 +16,7 @@ from multi_dataset_diverse_rl.local_optimizers.gepa_runtime import import_frozen
 ROOT=Path(__file__).resolve().parents[1]
 
 def contract(phase='pilot'):
-    return json.loads((ROOT/f'experiments/execution_bindings/math_v2_1_{phase}_v5.json').read_bytes())
+    return json.loads((ROOT/f'experiments/execution_bindings/math_v2_1_{phase}_v6.json').read_bytes())
 
 
 def test_output_repair_is_immutable_and_request_accounting_matches_solver():
@@ -30,7 +30,7 @@ def test_output_repair_is_immutable_and_request_accounting_matches_solver():
     assert request['messages'][1]['content'].endswith(MATH_SOLVER_INTERFACE_V4_USER_SUFFIX)
     assert request['messages'][1]['content'].startswith('Synthetic decision procedure.\n\nSynthetic arithmetic.')
     captured=[]
-    broker=RequestBroker(contract=c,transport=lambda r:captured.append(r) or dict(text='FINAL_ANSWER: 1',input_tokens=1,output_tokens=1),arm='A1',seed=81,ledger_writer=lambda _:None)
+    broker=RequestBroker(contract=c,transport=lambda r:captured.append(r) or dict(text='FINAL_ANSWER: 1',input_tokens=1,output_tokens=1,finish_reason="stop"),arm='A1',seed=81,ledger_writer=lambda _:None)
     item=protocol_input('math','synthetic',{'problem':'Synthetic arithmetic.'},adapter.output_contract,protocol=adapter.protocol)
     BenchmarkSolver(adapter,broker).solve('Synthetic decision procedure.',item,stage='initial',split='optimize')
     assert captured==[request]
@@ -133,12 +133,14 @@ def test_fresh_v21_binding_actual_gepa_four_arm_e2e(tmp_path,arm,monkeypatch):
             elif prompt in prompts:
                 m=prompts.index(prompt);correct=m in {1,2} or m==0 and i>=3
             else:correct=i!=2 if prompt==good else i>=2
-            return dict(text='FINAL_ANSWER: '+('1' if correct else '2'),input_tokens=2,output_tokens=2)
+            if prompt == prompts[4] and i == 0:
+                return dict(text='FINAL_ANSWER: 1',input_tokens=2,output_tokens=2,finish_reason='length')
+            return dict(text='FINAL_ANSWER: '+('1' if correct else '2'),input_tokens=2,output_tokens=2,finish_reason="stop")
         if len(req['messages'])==2:
             data=json.loads(req['messages'][1]['content'])
             return dict(text=json.dumps({'patterns':[dict(pattern_id='synthetic',failure_mechanism='Missed constraints',
-                corrective_principle='Check explicit constraints',support_ids=data['residual_ids'],counterexample_ids=[],risk_ids=[],confidence=.9)]}),input_tokens=2,output_tokens=2)
-        return dict(text='```'+(good if len(contexts)==1 else other)+'```',input_tokens=2,output_tokens=2)
+                corrective_principle='Check explicit constraints',support_ids=data['residual_ids'],counterexample_ids=[],risk_ids=[],confidence=.9)]}),input_tokens=2,output_tokens=2,finish_reason="stop")
+        return dict(text='```'+(good if len(contexts)==1 else other)+'```',input_tokens=2,output_tokens=2,finish_reason="stop")
     broker=RequestBroker(contract=c,transport=transport,arm=arm,seed=81,ledger_writer=lambda _:None)
     solver=BenchmarkSolver(adapter,broker);reflection=ReflectionProvider(broker)
     pattern=PatternProvider(broker,json.loads((ROOT/c['pattern_prompt_path']).read_bytes())['prompt']) if c['arms'][arm][0] else None
@@ -148,6 +150,8 @@ def test_fresh_v21_binding_actual_gepa_four_arm_e2e(tmp_path,arm,monkeypatch):
     run=binding.compose(arm=arm,seed=81,solver=solver,reflection=reflection,pattern_provider=pattern,run_root=tmp_path,optimize_fn=official)
     run.state.initialize();initial=run.state.snapshot();result=asyncio.run(run.run(max_opportunities=3))
     assert result.transitions and run.state.initial_member_scores==initial.member_scores
+    assert not initial.member_outputs[4][0].valid
+    assert adapter.invalid_predictions_are_incorrect and not run.gate.operational_failure
     assert all(t.allocation_audit['realized_team_gain']>0 for t in result.trace if t.committed_candidate_id)
     assert all(t.allocation_audit['evaluator_identity']=='MATH_EQUIVALENCE_V2' for t in result.trace)
     assert all(t.allocation_audit['prior_exposure_counts']==dict.fromkeys(range(5),i) for i,t in enumerate(result.trace))

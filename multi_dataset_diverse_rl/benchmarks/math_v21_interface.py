@@ -69,6 +69,28 @@ class MATHV21BenchmarkAdapter(MATHBenchmarkAdapterV2):
     def __init__(self, contract):
         self._contract = contract
         self.output_contract, self._interface_contract = interface_for_contract(contract)
+        from .math_prediction_validity import frozen_prediction_policy
+        self.prediction_validity_policy = frozen_prediction_policy(contract)
+        self.invalid_predictions_are_incorrect = self.prediction_validity_policy is not None
+        if self.invalid_predictions_are_incorrect:
+            from .protocols import MATH_PROTOCOL_V3
+            self.protocol = MATH_PROTOCOL_V3
+
+    def prediction_result(self, result):
+        from .math_prediction_validity import classify_prediction
+        return classify_prediction(result["text"], result.get("finish_reason"))
+
+    def parse_member_output(self, raw, item):
+        if not self.invalid_predictions_are_incorrect:
+            return super().parse_member_output(raw, item)
+        from .math_prediction_validity import classify_prediction, prediction_from_persisted
+        from ..search.schemas import ParsedOutput
+        if item.benchmark_id != self.benchmark_id:
+            return ParsedOutput("", False)
+        result = classify_prediction(raw) if isinstance(raw, str) else prediction_from_persisted(raw)
+        return result.parsed()
+
+    parse_output = parse_member_output
 
     def solver_interface_contract(self):
         return dict(self._interface_contract)

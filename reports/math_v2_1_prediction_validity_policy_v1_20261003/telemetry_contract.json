@@ -1,0 +1,16 @@
+{
+  "logical_evaluations_and_provider_calls_separate": true,
+  "optimization_read_point": false,
+  "per_member": true,
+  "phases": [
+    "initial",
+    "gepa_local",
+    "optimize",
+    "team_probe",
+    "full",
+    "adaptive_gate",
+    "validation_initial",
+    "validation_final"
+  ],
+  "valid_and_invalid_and_reasons": true
+}

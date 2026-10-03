@@ -26,7 +26,7 @@ def consumption_path(root, scope):
 def bound_preflight(root, manifest):
     from ..benchmarks.math_execution import MATHExecutionBinding
     ref = manifest.get("execution_binding", {})
-    if ref.get("identity") not in {versions.MATH_EXECUTION_BINDING_VERSION, versions.MATH_AUTONOMOUS_EXECUTION_BINDING_VERSION, versions.MATH_DOMAIN_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION}:
+    if ref.get("identity") not in {versions.MATH_EXECUTION_BINDING_VERSION, versions.MATH_AUTONOMOUS_EXECUTION_BINDING_VERSION, versions.MATH_DOMAIN_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION}:
         raise SearchContractError("UNSUPPORTED_EXECUTION_BINDING")
     errors = validate_manifest_v2(root, manifest)
     if manifest.get("lifecycle", {}).get("status") != "PREEXECUTION_FROZEN":
@@ -35,14 +35,14 @@ def bound_preflight(root, manifest):
     if not path.is_relative_to(root.resolve()) or not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != ref["sha256"]:
         errors.append("EXECUTION_BINDING_HASH_MISMATCH")
         return {"gate": "HOLD", "blockers": errors, "provider_attempts": 0}
-    if ref["identity"] in {versions.MATH_AUTONOMOUS_EXECUTION_BINDING_VERSION, versions.MATH_DOMAIN_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION}:
+    if ref["identity"] in {versions.MATH_AUTONOMOUS_EXECUTION_BINDING_VERSION, versions.MATH_DOMAIN_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION}:
         from ..benchmarks.math_domain_binding import execution_binding
         binding = execution_binding(root, read_json(path))
     else:
         binding = MATHExecutionBinding(root, read_json(path))
     errors.extend(binding.blockers())
     c = binding.contract
-    current = c["identity"] in {versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION}
+    current = c["identity"] in {versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION}
     expected = {"benchmark_id": "math", "benchmark_protocol_id": c["benchmark_protocol_sha256"],
         "method_family": versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION if current else "unified_team_prompt_search_v2",
         "method_identity": versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION if current else "unified_team_prompt_search_v2",
@@ -68,6 +68,8 @@ def bound_preflight(root, manifest):
         expected["initial_competence_binding"] = c["initial_competence_binding"]
     if "solver_decoding_policy" in c:
         expected["solver_decoding_policy"] = c["solver_decoding_policy"]
+    if "prediction_validity_policy" in c:
+        expected["prediction_validity_policy"] = c["prediction_validity_policy"]
     if any(manifest.get(k) != v for k, v in expected.items()):
         errors.append("MANIFEST_EXECUTION_BINDING_MISMATCH")
     if manifest.get("authorization", {}).get("real_api_authorized") is not False:
@@ -168,6 +170,8 @@ def execution_scope(manifest, contract):
         transport_attempt_ceiling=contract["provider_bounds"]["transport_attempts"], validation_calls=0, test_calls=0)
     if "solver_decoding_policy" in contract:
         scope["solver_decoding_policy"] = contract["solver_decoding_policy"]
+    if "prediction_validity_policy" in contract:
+        scope["prediction_validity_policy"] = contract["prediction_validity_policy"]
     if "accounting_policy_path" in contract:
         scope["accounting"] = dict(policy_sha256=contract["accounting_policy_sha256"],
             total_authorization=30_000_000, task_sha256=contract["task_authorization_sha256"],
@@ -286,7 +290,7 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
     from ..benchmarks.math_execution import MATHExecutionBinding
     binding_path = binding_path or versions.MATH_EXECUTION_BINDING_PATH
     contract = read_json(root / binding_path)
-    if contract["identity"] in {versions.MATH_AUTONOMOUS_EXECUTION_BINDING_VERSION, versions.MATH_DOMAIN_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION}:
+    if contract["identity"] in {versions.MATH_AUTONOMOUS_EXECUTION_BINDING_VERSION, versions.MATH_DOMAIN_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION}:
         from ..benchmarks.math_domain_binding import execution_binding
         b = execution_binding(root, contract)
     else:
@@ -321,6 +325,8 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
         manifest["initial_competence_binding"] = contract["initial_competence_binding"]
     if "solver_decoding_policy" in contract:
         manifest["solver_decoding_policy"] = contract["solver_decoding_policy"]
+    if "prediction_validity_policy" in contract:
+        manifest["prediction_validity_policy"] = contract["prediction_validity_policy"]
     manifest["global_stop_identity"] = method.global_stop.identity
     manifest["preregistration_identity"] = canonical_sha256({k: v for k, v in manifest.items() if k not in {"lifecycle", "authorization"}})
     return manifest

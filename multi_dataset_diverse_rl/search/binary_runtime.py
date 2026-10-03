@@ -49,8 +49,12 @@ class BinaryTeamStateStore:
     def initialize(self):
         if self.freeze_initial_competence and self.initial_state_id is not None:
             raise SearchContractError("INITIAL_COMPETENCE_CANNOT_REBASE")
-        self.profiles = {i: tuple(self.solver.solve(p, e.item, stage="initial", split="optimize")
-                                 for e in self.examples) for i, p in enumerate(self.prompts)}
+        self.profiles = {}
+        for i, p in enumerate(self.prompts):
+            if hasattr(self.solver, "observe_member"):
+                self.solver.observe_member(i)
+            self.profiles[i] = tuple(self.solver.solve(p, e.item, stage="initial", split="optimize")
+                                     for e in self.examples)
         initial = self.snapshot()  # Parse and audit the actual complete initial state.
         if self.freeze_initial_competence:
             self.initial_member_scores = initial.member_scores
@@ -161,6 +165,7 @@ class FixedPeerTeamEvaluationProvider:
     def __init__(self, store, transition=None):
         self.store = store
         self.transition = transition
+        self.invalid_predictions_are_incorrect = bool(getattr(store.benchmark, "invalid_predictions_are_incorrect", False))
         self.probed = []
         self.fulled = []
 
@@ -182,6 +187,8 @@ class FixedPeerTeamEvaluationProvider:
         if len(selected) != len(ids):
             raise SearchContractError("EVALUATION_SCOPE_NOT_OPTIMIZE")
         target = opportunity.target_member
+        if hasattr(self.store.solver, "observe_member"):
+            self.store.solver.observe_member(target)
         profile = tuple(self.store.solver.solve(candidate.prompt, e.item, stage=stage, split="optimize") for _, e in selected)
         aggregates = tuple(self.store.aggregation.aggregate_sync(item=e.item,
             member_outputs=tuple(profile[j] if m == target else self.store.profiles[m][i] for m in range(5)), benchmark=self.store.benchmark)
@@ -215,10 +222,10 @@ class FixedPeerTeamEvaluationProvider:
             responsibility_delta=sum(not a.team_correctness[t] and b.team_correctness[t] and a.question_hash in legal
                                      for a, b in zip(before, after, strict=True)),
             broad_delta=target, invalid_delta=sum(not b.team_validity[t] for b in after)-sum(not a.team_validity[t] for a in before))
-        catastrophe = metrics.invalid_delta > 0 or metrics.vote_delta <= -2 or metrics.team_net_vote_delta <= -3
+        catastrophe = (metrics.invalid_delta > 0 and not self.invalid_predictions_are_incorrect) or metrics.vote_delta <= -2 or metrics.team_net_vote_delta <= -3
         return replace(new, aggregation_diagnostics={"team_probe_metrics": metrics,
             **({"scientific_risk_code": "TEAM_PROBE_REJECTION"} if catastrophe else {}),
-            **({"operational_failure": True} if any(not s.team_validity[t] for s in after) else {})})
+            **({"operational_failure": True} if not self.invalid_predictions_are_incorrect and any(not s.team_validity[t] for s in after) else {})})
 
     async def full(self, opportunity, candidate):
         self.fulled.append(candidate.candidate_id)
@@ -234,7 +241,7 @@ class FixedPeerTeamEvaluationProvider:
             team_newly_fixed_count=fixed, team_newly_broken_count=broken,
             mean_soft_vote_utility=sum(soft_vote_utility(s.gold_vote_count, s.plurality_margin) for s in after)/len(after),
             target_invalid_count=sum(not s.team_validity[t] for s in after),
-            **({"operational_failure": True} if any(not s.team_validity[t] for s in after) else {})))
+            **({"operational_failure": True} if not self.invalid_predictions_are_incorrect and any(not s.team_validity[t] for s in after) else {})))
         if self.transition is not None:
             safe = self.transition.allows(old, measurement, t)
             measurement = replace(measurement, aggregation_diagnostics={**measurement.aggregation_diagnostics,

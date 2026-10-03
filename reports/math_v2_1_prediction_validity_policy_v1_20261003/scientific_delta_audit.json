@@ -1,0 +1,36 @@
+{
+  "changed_binding_fields": [
+    "benchmark_protocol_sha256",
+    "binding_path",
+    "cache_namespace",
+    "canary_attempt_id",
+    "continuation_authorization_sha256",
+    "execution_attempt_id",
+    "identity",
+    "post_search_validation_policy",
+    "prediction_validity_policy",
+    "validation_accounting_metadata_path",
+    "validation_accounting_metadata_sha256"
+  ],
+  "historical_canary1_through5_immutable": true,
+  "only_scientific_change": "successful_transport_prediction_invalidity_treatment",
+  "status": "PASS",
+  "unchanged": [
+    "method",
+    "decoding",
+    "interface_bytes",
+    "reference_domain",
+    "equivalence",
+    "split",
+    "initial_team",
+    "Responsibility",
+    "allocation",
+    "failure_discount",
+    "GEPA_budget",
+    "initial_floor",
+    "strict_team_gain",
+    "valid_answer_aggregation",
+    "Pattern",
+    "Memory"
+  ]
+}

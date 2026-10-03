@@ -13,6 +13,7 @@ from ..search.schemas import SearchMethodConfig, GlobalStopConfig
 from ..governance.token_accounting import POLICY
 from .. import versions
 from .math_solver_decoding import frozen_solver_policy
+from .math_prediction_validity import frozen_prediction_policy
 from ..search.schemas import SearchContractError
 
 
@@ -53,7 +54,9 @@ class MATHV21Binding(MATHExecutionBinding):
     def blockers(self):
         c = self.contract
         try:
-            from ..governance.math_paired_validation import POLICY as VALIDATION_POLICY
+            from ..governance.math_paired_validation import validation_policy
+            prediction_policy = frozen_prediction_policy(c)
+            VALIDATION_POLICY = validation_policy(c)
             decoding=dict(temperature=0.0, max_output_tokens=1800, invalid_response_retries=0, sdk_retries=0,
                 transport_retries=20, timeout_seconds=120, retry_sleep_seconds=1.5, retry_backoff_ceiling_seconds=60)
             if c['solver_output_interface']==v5_interface_contract():
@@ -61,10 +64,10 @@ class MATHV21Binding(MATHExecutionBinding):
             policy = frozen_solver_policy(c)
             if policy and c['solver_output_interface'] != v5_interface_contract():
                 return ("SOLVER_DECODING_INTERFACE_MISMATCH",)
-            fixed = dict(identity=versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION if policy else versions.MATH_V2_1_EXECUTION_BINDING_VERSION, benchmark_id="math",
+            fixed = dict(identity=versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION if prediction_policy else versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION if policy else versions.MATH_V2_1_EXECUTION_BINDING_VERSION, benchmark_id="math",
                 method_identity=versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION,
                 method_implementation_sha="01025f7097ca3a3e248e370347e256ae0aea9046",
-                benchmark_protocol_sha256=MATH_PROTOCOL_V2.identity(),
+                benchmark_protocol_sha256=self.benchmark().protocol.identity(),
                 answer_domain=versions.MATH_ANSWER_DOMAIN_VERSION, reference_validity=versions.MATH_SCORABLE_REFERENCE_VERSION,
                 evaluator="MATH_EQUIVALENCE_V2", payload_parser_identity="MATH_PAYLOAD_PARSER_V2",
                 split_version=versions.MATH_SCORABLE_SPLIT_VERSION,
@@ -84,6 +87,8 @@ class MATHV21Binding(MATHExecutionBinding):
                 solver_output_interface=interface_for_contract(c)[1], evaluator_pins=PINS,
                 verify_settings_sha256=digest(SETTINGS), initial_competence_binding=competence_binding(c),
                 post_search_validation_policy=VALIDATION_POLICY)
+            if prediction_policy:
+                fixed["prediction_validity_policy"] = prediction_policy
             if any(c.get(k) != v for k,v in fixed.items()):
                 return ("MATH_V2_1_SCIENTIFIC_BINDING_MISMATCH",)
             if any(k in c for k in ("parent_binding_path", "amendment_parent_binding_path")):
@@ -149,6 +154,8 @@ class MATHV21Binding(MATHExecutionBinding):
                     or c["initial_team_sha256"] != "4ca685adff5ca8a97e53b0aa0f5715783c7c6937433bd5bbc1308cbad9e97200"):
                 return ("MATH_INITIAL_TEAM_HASH_MISMATCH",)
             metadata = json.loads(self.path(c["validation_accounting_metadata_path"]).read_bytes())
+            if metadata.get("prediction_validity_policy") != prediction_policy:
+                return ("VALIDATION_PREDICTION_POLICY_MISMATCH",)
             if metadata.get("solver_decoding_policy") != policy:
                 return ("VALIDATION_DECODING_POLICY_MISMATCH",)
             rows = [r for r in reader.members if r["project_split"] == "validation"]

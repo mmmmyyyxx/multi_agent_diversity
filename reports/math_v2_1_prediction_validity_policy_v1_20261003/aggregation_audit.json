@@ -1,0 +1,11 @@
+{
+  "all_invalid_oracle_correct": false,
+  "all_invalid_vote_correct": false,
+  "current_invalidity_only_affects_correctness": true,
+  "existing_tie_abstention": true,
+  "invalid_class_votes": false,
+  "invalidity_specific_weights_or_thresholds": false,
+  "legacy_invalid_guards_scoped_to_historical_bindings": true,
+  "mixed_valid_classes_keep_equal_weight": true,
+  "status": "PASS"
+}

@@ -13,6 +13,7 @@ from .benchmark import BenchmarkInput
 from .patterns import PatternHypothesis
 from .schemas import SearchContractError
 from ..benchmarks.math_solver_decoding import generation_request_fields, frozen_solver_policy
+from ..benchmarks.math_prediction_validity import frozen_prediction_policy
 
 
 class RequestBroker:
@@ -25,12 +26,14 @@ class RequestBroker:
         self.ledger_writer = ledger_writer
         self.raw_writer = raw_writer
         self.cache = {}
+        self.cache_seals = {}
         self.usage = usage if usage is not None else dict(attempts=0, successes=0, failures=0, input_tokens=0, output_tokens=0,
             solver=0, reflection=0, pattern=0, validation=0, test=0)
         self.lock = lock if lock is not None else threading.RLock()
         self.token_ledger = token_ledger
         self.reserve_reader = reserve_reader or (lambda: 0)
         self.validation_only = validation_only
+        self.prediction_policy = frozen_prediction_policy(contract)
         self.prompt_observer = None
 
     @property
@@ -59,9 +62,14 @@ class RequestBroker:
             identity["solver_output_interface"] = c["solver_output_interface"]
             if frozen_solver_policy(c) is not None:
                 identity["solver_decoding_policy"] = frozen_solver_policy(c)
+            if self.prediction_policy:
+                identity["prediction_validity_policy"] = self.prediction_policy
         key = hashlib.sha256(json.dumps(identity, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
         with self.lock:
             if key in self.cache:
+                if self.prediction_policy and self.cache_seals.get(key) != hashlib.sha256(
+                        json.dumps(self.cache[key], sort_keys=True, separators=(",", ":")).encode()).hexdigest():
+                    self.abort("PROVIDER_CACHE_CORRUPTION")
                 self._write(dict(kind="CACHE_HIT", role=role, split=split, stage=stage, request_sha256=key))
                 return {**self.cache[key], "provider_called": False, "input_tokens": 0, "output_tokens": 0}
             for retry in range(c["decoding"]["transport_retries"] + 1):
@@ -103,7 +111,8 @@ class RequestBroker:
                     if isinstance(result, dict):
                         result = {**result, "provider_reported_input_tokens":result.get("input_tokens"),
                                   "provider_reported_output_tokens":result.get("output_tokens"), **charge}
-                if not isinstance(result, dict) or not isinstance(result.get("text"), str) or any(type(result.get(k)) is not int or result[k] < 0 for k in ("input_tokens", "output_tokens")):
+                if not isinstance(result, dict) or (not isinstance(result.get("text"), str)
+                        and not (role == "solver" and self.prediction_policy and "text" in result and result["text"] is None)) or any(type(result.get(k)) is not int or result[k] < 0 for k in ("input_tokens", "output_tokens")):
                     self.usage["failures"] += 1
                     self._write(dict(kind="FAILURE", role=role, split=split, stage=stage, request_sha256=key, error_category="RESPONSE_ACCOUNTING_INVALID"))
                     self.abort("PROVIDER_RESPONSE_ACCOUNTING_INVALID")
@@ -114,15 +123,20 @@ class RequestBroker:
                 for k in ("input_tokens", "output_tokens"):
                     self.usage[k] += result[k]
                 self._write(dict(kind="SUCCESS", role=role, split=split, stage=stage, request_sha256=key,
-                    response_sha256=hashlib.sha256(result["text"].encode()).hexdigest(), input_tokens=result["input_tokens"], output_tokens=result["output_tokens"]))
+                    response_sha256=hashlib.sha256(result["text"].encode() if result["text"] is not None else b"null").hexdigest(), input_tokens=result["input_tokens"], output_tokens=result["output_tokens"]))
                 if self.raw_writer:
                     self.raw_writer(dict(role=role, split=split, stage=stage, request_sha256=key, request=request, response=result))
-                if (self.token_ledger or role == "solver" and frozen_solver_policy(c)) and result.get("finish_reason") in {"length", "max_tokens", "max_output_tokens"}:
+                if (self.token_ledger or role == "solver" and frozen_solver_policy(c)) and not (role == "solver" and self.prediction_policy) and result.get("finish_reason") in {"length", "max_tokens", "max_output_tokens"}:
                     self.abort("STOP_SOLVER_DECODING_POLICY_INSUFFICIENT" if role == "solver" and frozen_solver_policy(c) else "OPERATIONAL_OUTPUT_TRUNCATION")
                 if self.token_ledger and type(result.get("provider_reported_output_tokens")) is int and result["provider_reported_output_tokens"] > request["max_tokens"]:
                     self.abort("OPERATIONAL_OUTPUT_CAP_NOT_ENFORCED")
                 result = {**result, "provider_called": True}
+                if self.prediction_policy:
+                    result["request_sha256"] = key
                 self.cache[key] = result
+                if self.prediction_policy:
+                    self.cache_seals[key] = hashlib.sha256(json.dumps(result, sort_keys=True,
+                        separators=(",", ":")).encode()).hexdigest()
                 return result
 
     def abort(self, reason):
@@ -142,9 +156,18 @@ class BenchmarkSolver:
         self.benchmark = benchmark
         self.broker = broker
         self.output_contract_id = PROTOCOLS[benchmark.benchmark_id].output_contract_id
+        self.invalid_predictions_are_incorrect = bool(getattr(benchmark, "invalid_predictions_are_incorrect", False))
+        self.member_id = None  # Telemetry only; never enters messages or cache keys.
+        if self.invalid_predictions_are_incorrect != bool(broker.prediction_policy):
+            raise SearchContractError("SOLVER_PREDICTION_POLICY_PORT_MISMATCH")
 
     def for_gate(self):
         return BenchmarkSolver(self.benchmark, self.broker.private_capability())
+
+    def observe_member(self, member_id):
+        if type(member_id) is not int or member_id not in range(5):
+            raise SearchContractError("SOLVER_TELEMETRY_MEMBER_INVALID")
+        self.member_id = member_id
 
     def _request(self, prompt, item, *, stage, split):
         if item.benchmark_id != self.benchmark.benchmark_id:
@@ -167,6 +190,8 @@ class BenchmarkSolver:
             solver_thinking=self.broker.contract["models"]["solver_thinking"])
         if frozen_solver_policy(self.broker.contract) is not None:
             effective_contract["solver_decoding_policy"] = frozen_solver_policy(self.broker.contract)
+        if self.broker.prediction_policy:
+            effective_contract["prediction_validity_policy"] = self.broker.prediction_policy
         effective = hashlib.sha256(json.dumps(effective_contract, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
         self.broker._write(dict(kind="SOLVER_REQUEST_CONTRACT", role="solver", split=split, stage=stage,
             solver_interface_identity=contract["identity"], mutable_prompt_sha256=hashlib.sha256(prompt.encode()).hexdigest(),
@@ -177,12 +202,26 @@ class BenchmarkSolver:
 
     def solve(self, prompt, item, *, stage, split):
         result = self._request(prompt, item, stage=stage, split=split)
+        if self.invalid_predictions_are_incorrect:
+            return self._prediction(result, prompt, item, stage=stage, split=split)
         if hasattr(self.benchmark,"final_payload"):
             if self.benchmark.final_payload(result["text"]) is None:
                 self.broker.abort("STOP_SOLVER_DECODING_POLICY_INSUFFICIENT" if frozen_solver_policy(self.broker.contract) else "SOLVER_INVALID_RESPONSE_NO_REGENERATION")
         elif not self.benchmark.parse_member_output(result["text"], item).valid:
             self.broker.abort("STOP_SOLVER_DECODING_POLICY_INSUFFICIENT" if frozen_solver_policy(self.broker.contract) else "SOLVER_INVALID_RESPONSE_NO_REGENERATION")
         return result["text"]
+
+    def _prediction(self, result, prompt, item, *, stage, split):
+        prediction = self.benchmark.prediction_result(result)
+        self.broker._write(dict(kind="PREDICTION_VALIDITY", role="solver", stage=stage, split=split,
+            policy_identity=self.broker.prediction_policy["identity"],
+            mutable_prompt_sha256=hashlib.sha256(prompt.encode()).hexdigest(), input_id=item.input_id,
+            member_id=self.member_id,
+            request_sha256=result["request_sha256"],
+            prediction_sha256=hashlib.sha256(prediction.identity_bytes()).hexdigest(),
+            prediction_valid=prediction.prediction_valid, invalid_reason=prediction.invalid_reason,
+            finish_reason=prediction.finish_reason, provider_called=result["provider_called"]))
+        return prediction
 
     def evaluate(self, prompt, example):
         if hasattr(self.benchmark,"require_scorable"):
@@ -205,6 +244,13 @@ class BenchmarkSolver:
             item=protocol_input(self.benchmark.benchmark_id,example.example_id,{'problem':example.input_payload},
                 self.benchmark.output_contract,protocol=self.benchmark.protocol)
         result = self._request(prompt, item, stage="gepa_local", split="optimize")
+        if self.invalid_predictions_are_incorrect:
+            prediction = self._prediction(result, prompt, item, stage="gepa_local", split="optimize")
+            parsed = prediction.parsed()
+            return LocalSolverObservation(parsed.answer, result["text"],
+                self.benchmark.score_member_output(parsed, example.gold) == 1, parsed.valid,
+                failure_reason=prediction.invalid_reason, input_tokens=result["input_tokens"],
+                output_tokens=result["output_tokens"], provider_called=result["provider_called"])
         parsed = self.benchmark.parse_member_output(result["text"], item)
         if hasattr(self.benchmark,"final_payload"):
             if self.benchmark.final_payload(result["text"]) is None:

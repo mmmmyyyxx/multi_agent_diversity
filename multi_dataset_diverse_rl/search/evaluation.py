@@ -79,14 +79,15 @@ class PromotionPolicy(Protocol):
 
 class FixedPeerPromotion:
     """Shared frozen catastrophe thresholds, eligibility and promotion key."""
-    def __init__(self, diagnostic_key="team_probe_metrics"):
+    def __init__(self, diagnostic_key="team_probe_metrics", *, invalid_predictions_are_incorrect=False):
         self.diagnostic_key = diagnostic_key
+        self.invalid_predictions_are_incorrect = invalid_predictions_are_incorrect
 
     def select(self, rows):
         eligible = []
         for candidate, evaluation in rows:
             m = evaluation.aggregation_diagnostics[self.diagnostic_key]
-            if m.invalid_delta > 0 or m.vote_delta <= -2 or m.team_net_vote_delta <= -3:
+            if (m.invalid_delta > 0 and not self.invalid_predictions_are_incorrect) or m.vote_delta <= -2 or m.team_net_vote_delta <= -3:
                 continue
             if not any(v > 0 for v in (m.responsibility_delta, m.target_delta, m.vote_delta, m.broad_delta, m.team_net_vote_delta)):
                 continue

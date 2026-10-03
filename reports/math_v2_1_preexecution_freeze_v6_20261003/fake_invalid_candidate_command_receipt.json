@@ -1,0 +1,13 @@
+{
+  "actual_pinned_gepa": true,
+  "all_arms": [
+    "A1",
+    "A2",
+    "A3",
+    "A4"
+  ],
+  "fake_transport_amendment": "synthetic evolved candidate row0 truncated even with final marker",
+  "real_provider_calls": 0,
+  "runner_sha256": "b73894e25c4a728d901760a5843adbc078f9bb0433d52b3a8c6df2dfb2433475",
+  "source_test_sha256": "76d0265b983c0baccd4cb58191734f19983e1d863eb9d148cab670a69dcf2a55"
+}
