@@ -1,0 +1,25 @@
+{
+  "memory_reads": 0,
+  "memory_writes": 0,
+  "only_scientific_delta": "PREVIOUSLY_USER_APPROVED_EXPLICIT_THINKING_FALSE",
+  "pattern_real_calls": 0,
+  "status": "PASS",
+  "test_model_calls": 0,
+  "unchanged": [
+    "method_identity",
+    "models",
+    "solver_decoding_policy",
+    "solver_output_interface",
+    "initial_team_sha256",
+    "split_manifest_sha256",
+    "evaluator",
+    "transition_policy",
+    "allocation_policy",
+    "budget",
+    "invalid_recovery_policy",
+    "prediction_validity_policy",
+    "low_cost_protocol",
+    "low_cost_subsets_sha256"
+  ],
+  "witness_outputs_into_scientific_state": false
+}

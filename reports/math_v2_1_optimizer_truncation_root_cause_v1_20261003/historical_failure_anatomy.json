@@ -1,0 +1,15 @@
+{
+  "completion_tokens": 1800,
+  "enable_thinking": true,
+  "finish_reason": "length",
+  "historical_canary_immutable": true,
+  "input_tokens": 1323,
+  "policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V1",
+  "provider_reported_text_tokens": 1800,
+  "reasoning_content_chars": 9139,
+  "reasoning_tokens": 1800,
+  "request_serialized_sha256": "234f4a4254451bb22e0a1ae731015dc4f60eebe8a5505abbf90216b64d335612",
+  "text_token_semantics": "NOT_ASSUMED_ADDITIVE_WITH_REASONING",
+  "trace_sha256": "9cceacc6148d236e141c6400eebb6468ff67bc8f48d62121695de5f2be2a2766",
+  "visible_content_chars": 0
+}

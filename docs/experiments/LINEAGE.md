@@ -119,7 +119,7 @@ flowchart TD
     n233["math_v2_1_preexecution_low_cost_v2<br/>PREEXECUTION_FREEZE<br/>COMPLETED"]
     n234["math_v2_1_a1_seed81_low_cost_canary_v2<br/>REAL_CANARY<br/>INVALID"]
     n235["math_v2_1_a1_seed81_low_cost_pilot_v2<br/>PILOT<br/>HOLD"]
-    n236["math_v2_1_optimizer_truncation_root_cause_v1<br/>DIAGNOSTIC<br/>DRAFT"]
+    n236["math_v2_1_optimizer_truncation_root_cause_v1<br/>DIAGNOSTIC<br/>PREEXECUTION_FROZEN"]
     n237["math_v2_1_preexecution_low_cost_v3<br/>PREEXECUTION_FREEZE<br/>DRAFT"]
     n238["math_v2_1_a1_seed81_low_cost_canary_v3<br/>REAL_CANARY<br/>DRAFT"]
     n239["math_v2_1_a1_seed81_low_cost_pilot_v3<br/>PILOT<br/>DRAFT"]

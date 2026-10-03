@@ -1,0 +1,36 @@
+{
+  "candidate_max_chars": 3000,
+  "current_parent_prompt_chars": 191,
+  "per_example": [
+    {
+      "feedback_metadata_chars": 143,
+      "problem_chars": 589,
+      "reasoning_evidence_chars": 1006,
+      "record_chars": 1838
+    },
+    {
+      "feedback_metadata_chars": 143,
+      "problem_chars": 235,
+      "reasoning_evidence_chars": 42,
+      "record_chars": 520
+    },
+    {
+      "feedback_metadata_chars": 143,
+      "problem_chars": 219,
+      "reasoning_evidence_chars": 42,
+      "record_chars": 502
+    }
+  ],
+  "proposer_template_modified": false,
+  "provider_reported_input_tokens": 1323,
+  "reasoning_evidence_total_chars": 1090,
+  "reflection_minibatch": 3,
+  "reflection_template_chars": 1061,
+  "reflection_template_literal_chars": 1038,
+  "reflective_examples": 3,
+  "side_info_max_record_chars": 1838,
+  "side_info_mean_record_chars": 953.3333333333334,
+  "side_info_modified": false,
+  "side_info_total_chars": 2896,
+  "total_message_chars": 4125
+}

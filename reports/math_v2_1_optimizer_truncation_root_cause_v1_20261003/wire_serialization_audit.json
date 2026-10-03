@@ -1,0 +1,22 @@
+{
+  "exact_historical_messages_preserved": true,
+  "extra_body_flattened": true,
+  "max_tokens_absent": true,
+  "mechanism": "ACTUAL_SDK_BUILT_HTTP_REQUEST_WITH_OFFLINE_MOCK_TRANSPORT",
+  "provider_visible_fields": {
+    "enable_thinking": false,
+    "max_completion_tokens": 1800,
+    "model": "qwen3.7-flash",
+    "temperature": 0.0
+  },
+  "real_api_calls": 0,
+  "role_parity": {
+    "pattern": "PASS",
+    "reflection": "PASS"
+  },
+  "serialized_request_sha256": [
+    "6248799581671ca1c196aa63a5f91f991895a583b61c7bfc8cdaab61b7dbdc3f",
+    "6248799581671ca1c196aa63a5f91f991895a583b61c7bfc8cdaab61b7dbdc3f"
+  ],
+  "status": "PASS"
+}
