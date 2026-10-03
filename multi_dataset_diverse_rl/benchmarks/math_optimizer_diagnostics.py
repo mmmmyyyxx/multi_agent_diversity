@@ -10,6 +10,34 @@ from ..search.schemas import SearchContractError
 DIAGNOSTIC_ID = 'OPTIMIZER_NONTHINKING_WIRE_WITNESS_V1'
 
 
+def nonthinking_evidence_contract():
+    from .. import versions
+    return dict(identity=versions.MATH_OPTIMIZER_NONTHINKING_EVIDENCE_VERSION,
+        direct='dispatched_false_and_actual_zero_without_contradiction',
+        equivalent='dispatched_false_accepted_stop_no_reasoning_no_parser_loss',
+        missing_tokens='never_infer_zero',contradiction='provider_control_failure',
+        diagnostic_candidate_rejection='record_only_no_output_reuse')
+
+
+def provider_thinking_indicators(body):
+    """Retain JSON paths of positive thinking metadata, never its text."""
+    found=[]
+    def walk(value,path='$'):
+        if isinstance(value,dict):
+            for key,item in value.items():
+                child=path+'.'+str(key);name=str(key).lower()
+                watched=name in {'enable_thinking','thinking','thinking_enabled','thinking_mode','reasoning','reasoning_content','reasoning_text','reasoning_tokens','reasoning_token_count'}
+                inactive=item is None or item is False or item==0 or item=='' or item==[] or item=={}
+                if isinstance(item,str) and name in {'enable_thinking','thinking','thinking_enabled','thinking_mode'}:
+                    inactive=item.lower() in {'false','off','disabled','none','nonthinking','non-thinking'}
+                if watched and not inactive:found.append(child)
+                walk(item,child)
+        elif isinstance(value,list):
+            for i,item in enumerate(value):walk(item,path+'['+str(i)+']')
+    walk(body)
+    return sorted(set(found))
+
+
 def reflection_input_anatomy(messages):
     if len(messages) != 1 or messages[0]['role'] != 'user':
         raise SearchContractError('REFLECTION_ANATOMY_UNSUPPORTED_MESSAGES')
@@ -94,7 +122,7 @@ def generation_diagnostics(content):
         candidate_generation_contract_valid=candidate is not None and not violations)
 
 
-def optimizer_response_telemetry(request,result,policy):
+def optimizer_response_telemetry(request,result,policy,evidence_policy=None):
     from ..governance.token_accounting import serialized_request
     import json
     body=json.loads(serialized_request(request))
@@ -102,6 +130,14 @@ def optimizer_response_telemetry(request,result,policy):
     details=usage.get('completion_tokens_details') or {}
     reasoning=details.get('reasoning_tokens')
     chars=result.get('provider_reasoning_character_count')
+    present=result.get('provider_reasoning_content_present')
+    indicators=result.get('provider_thinking_indicators') or []
+    contradiction=(type(reasoning) is int and reasoning>0) or (chars or 0)>0 or bool(indicators)
+    direct=body.get('enable_thinking') is False and type(reasoning) is int and reasoning==0 and chars in (None,0) and present in (False,True) and not contradiction
+    equivalent=False
+    if evidence_policy is not None:
+        if evidence_policy!=nonthinking_evidence_contract():raise SearchContractError('OPTIMIZER_NONTHINKING_EVIDENCE_POLICY_MISMATCH')
+        equivalent=body.get('enable_thinking') is False and reasoning is None and result.get('finish_reason')=='stop' and chars in (None,0) and present in (False,True) and not contradiction and result.get('provider_metadata_loss_audited') is True and result.get('provider_response_accepted') is True
     return dict(generation_policy_identity=policy['identity'],enable_thinking=body.get('enable_thinking'),
         **{k:body.get(k) for k in ('temperature','top_p','top_k','presence_penalty','max_completion_tokens')},
         input_tokens=result.get('provider_reported_input_tokens',result.get('input_tokens')),
@@ -109,6 +145,8 @@ def optimizer_response_telemetry(request,result,policy):
         reasoning_tokens=reasoning,provider_reported_text_tokens=details.get('text_tokens'),
         reasoning_content_present=result.get('provider_reasoning_content_present'),
         reasoning_content_chars=chars,content_chars=len(result.get('text') or ''),finish_reason=result.get('finish_reason'),
-        nonthinking_wire_confirmed=body.get('enable_thinking') is False and type(reasoning) is int and reasoning==0
-            and chars in (None,0) and result.get('provider_reasoning_content_present') in (False,True),
+        nonthinking_wire_confirmed=direct or equivalent,
+        nonthinking_evidence_level='DIRECT_LEVEL_A' if direct else 'EQUIVALENT_LEVEL_B' if equivalent else 'CONTRADICTORY' if contradiction else 'UNCONFIRMED',
+        provider_thinking_indicators=indicators,
+        nonthinking_evidence_policy_identity=evidence_policy['identity'] if evidence_policy else None,
         diagnostics=generation_diagnostics(result.get('text')))

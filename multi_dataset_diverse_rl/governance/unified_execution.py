@@ -70,7 +70,7 @@ def bound_preflight(root, manifest):
         expected["solver_decoding_policy"] = c["solver_decoding_policy"]
     if "prediction_validity_policy" in c:
         expected["prediction_validity_policy"] = c["prediction_validity_policy"]
-    for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256"):
+    for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256", "optimizer_nonthinking_evidence_policy"):
         if k in c: expected[k] = c[k]
     if any(manifest.get(k) != v for k, v in expected.items()):
         errors.append("MANIFEST_EXECUTION_BINDING_MISMATCH")
@@ -182,6 +182,8 @@ def execution_scope(manifest, contract):
     if "optimizer_generation_policy" in contract:
         scope["optimizer_generation_policy"] = contract["optimizer_generation_policy"]
         scope["optimizer_amendment_authorization_sha256"] = contract["optimizer_amendment_authorization_sha256"]
+        if contract.get('optimizer_nonthinking_evidence_policy') is not None:
+            scope['optimizer_nonthinking_evidence_policy']=contract['optimizer_nonthinking_evidence_policy']
     if "accounting_policy_path" in contract:
         scope["accounting"] = dict(policy_sha256=contract["accounting_policy_sha256"],
             total_authorization=40_000_000 if contract["identity"] in versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS else 30_000_000, task_sha256=contract["task_authorization_sha256"],
@@ -338,7 +340,7 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
     if "prediction_validity_policy" in contract:
         manifest["prediction_validity_policy"] = contract["prediction_validity_policy"]
     manifest["global_stop_identity"] = method.global_stop.identity
-    for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256"):
+    for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256", "optimizer_nonthinking_evidence_policy"):
         if k in contract: manifest[k] = contract[k]
     manifest["preregistration_identity"] = canonical_sha256({k: v for k, v in manifest.items() if k not in {"lifecycle", "authorization"}})
     return manifest

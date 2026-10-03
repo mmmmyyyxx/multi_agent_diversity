@@ -598,6 +598,16 @@
         "truncation": "existing_operational_output_truncation"
       }}]
     },
+    "optimizer_nonthinking_evidence_policy": {
+      "const": {
+        "identity": "OPTIMIZER_NONTHINKING_EQUIVALENT_EVIDENCE_V1",
+        "direct": "dispatched_false_and_actual_zero_without_contradiction",
+        "equivalent": "dispatched_false_accepted_stop_no_reasoning_no_parser_loss",
+        "missing_tokens": "never_infer_zero",
+        "contradiction": "provider_control_failure",
+        "diagnostic_candidate_rejection": "record_only_no_output_reuse"
+      }
+    },
     "optimizer_amendment_authorization_sha256": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"

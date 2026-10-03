@@ -1,6 +1,7 @@
 """Exact optimizer body, total-usage tolerance and independent truncation gates."""
 from copy import deepcopy
 import json
+import hashlib
 from pathlib import Path
 import httpx
 from openai import OpenAI
@@ -273,6 +274,78 @@ def test_nonthinking_confirmation_requires_actual_provider_telemetry(reasoning,c
     result=dict(text='```Check constraints.```',finish_reason='stop',provider_usage_details={'completion_tokens_details':{'reasoning_tokens':reasoning}},
         provider_reasoning_character_count=chars,provider_reasoning_content_present=present)
     assert optimizer_response_telemetry(request,result,policy)['nonthinking_wire_confirmed'] is confirmed
+
+
+@pytest.mark.parametrize('changes,expected',[
+    ({},'EQUIVALENT_LEVEL_B'),
+    ({'finish_reason':'length'},'UNCONFIRMED'),
+    ({'provider_metadata_loss_audited':False},'UNCONFIRMED'),
+    ({'provider_response_accepted':False},'UNCONFIRMED'),
+    ({'provider_reasoning_character_count':2},'CONTRADICTORY'),
+    ({'provider_thinking_indicators':['$.thinking_enabled']},'CONTRADICTORY'),
+    ({'provider_usage_details':{'completion_tokens_details':{'reasoning_tokens':0}}},'DIRECT_LEVEL_A'),
+    ({'provider_usage_details':{'completion_tokens_details':{'reasoning_tokens':4}}},'CONTRADICTORY'),
+])
+def test_equivalent_evidence_preserves_missing_counts_and_rejects_contradictions(changes,expected):
+    from multi_dataset_diverse_rl.benchmarks.math_optimizer_diagnostics import nonthinking_evidence_contract,optimizer_response_telemetry
+    policy=optimizer_generation_contract();c=binding(policy_id=policy['identity'])
+    request=dict(model=policy['model'],messages=[],**generation_request_fields(c,'reflection'))
+    result=dict(text='```Check constraints.```',finish_reason='stop',provider_usage_details={},
+        provider_reasoning_character_count=None,provider_reasoning_content_present=False,
+        provider_response_accepted=True,provider_metadata_loss_audited=True)
+    result.update(changes)
+    t=optimizer_response_telemetry(request,result,policy,nonthinking_evidence_contract())
+    assert t['nonthinking_evidence_level']==expected
+    assert t['nonthinking_wire_confirmed']==(expected in {'DIRECT_LEVEL_A','EQUIVALENT_LEVEL_B'})
+    if 'provider_usage_details' not in changes:assert t['reasoning_tokens'] is None
+
+
+@pytest.mark.parametrize('positive',[False,True])
+def test_raw_http_optional_metadata_provenance_and_other_thinking_indicators(monkeypatch,positive):
+    import httpx
+    from openai import OpenAI
+    from multi_dataset_diverse_rl.benchmarks.math_optimizer_diagnostics import nonthinking_evidence_contract,optimizer_response_telemetry
+    body=dict(id='synthetic',choices=[dict(finish_reason='stop',message=dict(content='```Check constraints.```'))],
+        usage=dict(prompt_tokens=100,completion_tokens=20,total_tokens=120),thinking_enabled=positive)
+    client=OpenAI(api_key='synthetic-offline',base_url='https://example.invalid/v1',
+        http_client=httpx.Client(transport=httpx.MockTransport(lambda request:httpx.Response(200,json=body))),max_retries=0)
+    monkeypatch.setattr('multi_dataset_diverse_rl.provider_factory.ProviderClientFactory.from_environment',lambda **kwargs:client)
+    c=binding(policy_id=versions.MATH_OPTIMIZER_GENERATION_POLICY_VERSION)
+    c['optimizer_nonthinking_evidence_policy']=nonthinking_evidence_contract()
+    transport,_=create_transport(c)
+    try:
+        b=RequestBroker(contract=c,transport=transport,arm='A1',seed=81)
+        if positive:
+            with pytest.raises(SearchContractError,match='PROVIDER_NONTHINKING_CONTROL_NOT_HONORED'):
+                b.complete(role='reflection',split='optimize',stage='synthetic',messages=[])
+        else:
+            result=b.complete(role='reflection',split='optimize',stage='synthetic',messages=[])
+            assert result['provider_usage_details']==body['usage']
+            assert result['optimizer_generation_diagnostics']['nonthinking_evidence_level']=='EQUIVALENT_LEVEL_B'
+            assert result['optimizer_generation_diagnostics']['reasoning_tokens'] is None
+    finally:client.close()
+
+
+def test_equivalent_evidence_binding_scope_and_candidate_guard_remain_independent(tmp_path):
+    from multi_dataset_diverse_rl.benchmarks.math_optimizer_diagnostics import nonthinking_evidence_contract,generation_diagnostics
+    from multi_dataset_diverse_rl.benchmarks.math_low_cost_binding import MATHLowCostBinding
+    from multi_dataset_diverse_rl.governance.unified_execution import preexecution_manifest,execution_scope
+    c=default_binding_fixture(tmp_path,'canary');evidence=nonthinking_evidence_contract()
+    approval_path=ROOT/c['optimizer_amendment_authorization_path'];approval=json.loads(approval_path.read_bytes())
+    approval['optimizer_nonthinking_evidence_policy']=evidence;approval_path.write_text(json.dumps(approval),encoding='utf-8')
+    c.update(optimizer_nonthinking_evidence_policy=evidence,optimizer_amendment_authorization_sha256=hashlib.sha256(approval_path.read_bytes()).hexdigest())
+    (ROOT/c['binding_path']).write_text(json.dumps(c),encoding='utf-8')
+    assert not MATHLowCostBinding(ROOT,c).blockers()
+    m=preexecution_manifest(ROOT,source_sha='a'*40,binding_path=c['binding_path'],frozen=False)
+    assert m['optimizer_nonthinking_evidence_policy']==execution_scope(m,c)['optimizer_nonthinking_evidence_policy']==evidence
+    prior={k:v for k,v in c.items() if k!='optimizer_nonthinking_evidence_policy'}
+    request=dict(role='reflection',split='optimize',messages=[])
+    a=RequestBroker(contract=prior,transport=None,arm='A1',seed=81)._request_identity(**request)
+    b=RequestBroker(contract=c,transport=None,arm='A1',seed=81)._request_identity(**request)
+    assert a[0]==b[0] and a[1]!=b[1]
+    assert generation_diagnostics('```Emit FINAL_ANSWER: fixed.```')['candidate_contract_violations']
+    bad=deepcopy(c);bad['optimizer_nonthinking_evidence_policy']['missing_tokens']='infer_zero'
+    assert MATHLowCostBinding(ROOT,bad).blockers()
 
 
 def witness_fixture(tmp_path,monkeypatch):

@@ -1,0 +1,92 @@
+{
+  "autonomous_repairs": {
+    "materially_distinct_limit_per_root_cause": 5,
+    "operational": true
+  },
+  "base_sha": "ccce51e457bbef0beb11a6e2c2b682c95d894b1f",
+  "bounded_generation": {
+    "envelope": {
+      "from_tokens": 1800,
+      "max_once": true,
+      "requires": [
+        "nonthinking_confirmed",
+        "length",
+        "coherent",
+        "nonrepetitive",
+        "visible_chars_below_3000"
+      ],
+      "to_tokens": 3600
+    },
+    "sampling": {
+      "provider_documented_defaults_only": true,
+      "requires": "real_repetition_pathology",
+      "sweep": false
+    }
+  },
+  "explicit_human_approval": true,
+  "identity": "MATH_V2_1_AUTONOMOUS_CONSTITUTION_AUTHORIZATION_V1",
+  "optimizer_nonthinking_evidence_policy": {
+    "contradiction": "provider_control_failure",
+    "diagnostic_candidate_rejection": "record_only_no_output_reuse",
+    "direct": "dispatched_false_and_actual_zero_without_contradiction",
+    "equivalent": "dispatched_false_accepted_stop_no_reasoning_no_parser_loss",
+    "identity": "OPTIMIZER_NONTHINKING_EQUIVALENT_EVIDENCE_V1",
+    "missing_tokens": "never_infer_zero"
+  },
+  "pattern_real_calls_A1": 0,
+  "policy": {
+    "accounting_output_ceiling": 1810,
+    "enable_thinking": false,
+    "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V2",
+    "max_completion_tokens": 1800,
+    "max_tokens": "NOT_SENT",
+    "measurement_tolerance_tokens": 10,
+    "model": "qwen3.7-flash",
+    "output_token_scope": "reasoning_plus_answer",
+    "roles": [
+      "reflection",
+      "pattern"
+    ],
+    "temperature": 0.0,
+    "truncation": "existing_operational_output_truncation"
+  },
+  "push_authorized": false,
+  "scope": [
+    "fresh_canary12",
+    "fresh_A1_seed81_pilot60_shadow40",
+    "post_search_validation100"
+  ],
+  "specific_scientific_stops": [
+    "STOP_METHOD_SEMANTIC_POLICY_REQUIRED",
+    "STOP_MODEL_IDENTITY_POLICY_REQUIRED",
+    "STOP_DATA_PROTOCOL_POLICY_REQUIRED",
+    "STOP_REFLECTION_EVIDENCE_POLICY_REQUIRED",
+    "STOP_OPTIMIZER_OUTPUT_ENVELOPE_POLICY_REQUIRED",
+    "STOP_OPTIMIZER_MODEL_GENERATION_INSTABILITY",
+    "STOP_OUTPUT_REALIZATION_SCIENTIFIC_POLICY_REQUIRED",
+    "STOP_TOKEN_BUDGET_EXHAUSTED_OR_INSUFFICIENT",
+    "STOP_NONCONVERGENT_OPERATIONAL_FAILURE"
+  ],
+  "test_model_calls": 0,
+  "total_accounting_authorization": 40000000,
+  "unchanged": [
+    "Solver_policy",
+    "V2.1_method",
+    "Responsibility",
+    "allocation",
+    "initial_floor",
+    "strict_team_gain",
+    "GEPA36_minibatch3_promotion2_patience3_2",
+    "candidate_limit3000",
+    "evidence_contents",
+    "proposer_template",
+    "models",
+    "team_size",
+    "12_60_40_100",
+    "aggregation",
+    "A1_Pattern_Memory_OFF",
+    "Test_sealed"
+  ],
+  "user_task_sha256": "f198b62ff4f0b9c97bcbc12cbe84119233a6b89fe78ad7771d6a5aa04dd906d8",
+  "witness_output_reuse": false
+}

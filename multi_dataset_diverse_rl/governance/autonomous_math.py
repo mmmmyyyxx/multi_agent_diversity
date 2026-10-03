@@ -89,10 +89,13 @@ def create_transport(contract):
             result = dict(text=choice["message"].get("content"), finish_reason=choice.get("finish_reason"),
                 input_tokens=usage.get("prompt_tokens"), output_tokens=usage.get("completion_tokens"), response_id=body.get("id"))
             if 'optimizer_generation_policy' in contract:
+                from ..benchmarks.math_optimizer_diagnostics import provider_thinking_indicators
                 reasoning = choice['message'].get('reasoning_content')
                 result.update(provider_usage_details=usage,
                     provider_reasoning_character_count=len(reasoning) if isinstance(reasoning,str) else None,
-                    provider_reasoning_content_present='reasoning_content' in choice['message'])
+                    provider_reasoning_content_present='reasoning_content' in choice['message'],
+                    provider_response_accepted=True,provider_metadata_loss_audited=True,
+                    provider_thinking_indicators=provider_thinking_indicators(body))
             return result
         finally:
             response.close()

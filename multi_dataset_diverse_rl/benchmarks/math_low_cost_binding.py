@@ -16,7 +16,7 @@ _DEFAULT_OPTIMIZER_POLICY = object()
 def derive_contract(parent,*,phase,attempt,binding_path,subsets_path,subsets_sha256,subsets,
         parent_path,parent_sha256,accounting_path,accounting_sha256,metadata_path,metadata_sha256,
         authorization_sha256,optimizer_policy=_DEFAULT_OPTIMIZER_POLICY,optimizer_authorization_sha256=None,
-        optimizer_authorization_path=None):
+        optimizer_authorization_path=None,optimizer_nonthinking_evidence_policy=None):
     if phase not in {'canary','pilot'}:raise SearchContractError('LOW_COST_PHASE_INVALID')
     count=12 if phase=='canary' else 60
     support=subsets['membership_hashes']['canary_optimize' if phase=='canary' else 'pilot_optimize']
@@ -64,6 +64,11 @@ def derive_contract(parent,*,phase,attempt,binding_path,subsets_path,subsets_sha
             optimizer_generation_policy=optimizer_policy,
             optimizer_amendment_authorization_path=optimizer_authorization_path,
             optimizer_amendment_authorization_sha256=optimizer_authorization_sha256)
+    if optimizer_nonthinking_evidence_policy is not None:
+        from .math_optimizer_diagnostics import nonthinking_evidence_contract
+        if optimizer_policy is None or optimizer_policy['enable_thinking'] is not False or optimizer_nonthinking_evidence_policy!=nonthinking_evidence_contract():
+            raise SearchContractError('OPTIMIZER_NONTHINKING_EVIDENCE_POLICY_MISMATCH')
+        c['optimizer_nonthinking_evidence_policy']=optimizer_nonthinking_evidence_policy
     from .math_v21_interface import MATHV21BenchmarkAdapter
     c['benchmark_protocol_sha256']=MATHV21BenchmarkAdapter(c).protocol.identity()
     from ..governance.math_paired_validation import validation_policy
@@ -85,6 +90,8 @@ class MATHLowCostBinding(MATHV21Binding):
                         or approval['total_accounting_authorization']!=40000000
                         or approval['pattern_real_calls_A1']!=0 or approval['test_model_calls']!=0):
                     return ('OPTIMIZER_AMENDMENT_AUTHORITY_MISMATCH',)
+                if c.get('optimizer_nonthinking_evidence_policy') is not None and approval.get('optimizer_nonthinking_evidence_policy')!=c['optimizer_nonthinking_evidence_policy']:
+                    return ('OPTIMIZER_NONTHINKING_EVIDENCE_AUTHORITY_MISMATCH',)
             parent_path=self.path(c['amendment_parent_binding_path'])
             if file_hash(parent_path)!=c['amendment_parent_binding_sha256']:
                 return ('LOW_COST_PARENT_BINDING_HASH_MISMATCH',)
@@ -110,7 +117,8 @@ class MATHLowCostBinding(MATHV21Binding):
                 authorization_sha256=c['continuation_authorization_sha256'],
                 optimizer_policy=c.get('optimizer_generation_policy') if c['identity']==versions.MATH_LOW_COST_OPTIMIZER_EXECUTION_BINDING_VERSION else None,
                 optimizer_authorization_sha256=c.get('optimizer_amendment_authorization_sha256'),
-                optimizer_authorization_path=c.get('optimizer_amendment_authorization_path'))
+                optimizer_authorization_path=c.get('optimizer_amendment_authorization_path'),
+                optimizer_nonthinking_evidence_policy=c.get('optimizer_nonthinking_evidence_policy'))
             if c!=expected or not c['execution_attempt_id'].startswith('math_v2_1_low_cost_A1_seed81_'+c['execution_phase']+'_attempt'):
                 return ('LOW_COST_FROZEN_CONTRACT_MISMATCH',)
             p=self.path(c['validation_accounting_metadata_path']);metadata=json.loads(p.read_bytes())

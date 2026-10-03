@@ -1,0 +1,17 @@
+[
+  {
+    "classification": "OPERATIONAL",
+    "decision": "Accept missing reasoning_tokens via audited Level B evidence",
+    "evidence": "equivalent_evidence_receipt.json",
+    "generation_parameters_changed": false,
+    "reason": "Observability changes; model request, method estimand, available data and admissible candidates do not change.",
+    "semantic_delta": false
+  },
+  {
+    "classification": "OPERATIONAL",
+    "decision": "Keep V2 temperature0 completion1800",
+    "generation_parameters_changed": false,
+    "reason": "No truncation or repetition evidence meets a bounded generation-amendment trigger.",
+    "semantic_delta": false
+  }
+]

@@ -423,8 +423,17 @@ protects the complete Validation100 first-attempt reserve.
 Serialized HTTP body, actual reasoning usage/content length, fences, candidate
 length, duplicate lines and repeated 8-grams are observed without changing GEPA
 evidence, minibatch three, proposer template or accepted prompt limit3000.
-Non-thinking confirmation requires reported reasoning_tokens=0 and absent/empty
-reasoning content. Positive reasoning under explicit false fails closed as a
+Historical witness V1 used reported reasoning_tokens=0 and absent/empty
+reasoning content. Fresh bindings may explicitly select
+`OPTIMIZER_NONTHINKING_EQUIVALENT_EVIDENCE_V1`: Level A uses an actual zero;
+Level B permits an absent token field when false is dispatched, the provider
+accepts the request with stop, reasoning content is absent/empty, no retained
+provider metadata indicates thinking, and the raw-HTTP metadata preservation
+audit finds no dropped field. Absence is never relabeled zero. Missing optional
+metadata alone is not a scientific blocker. A single diagnostic candidate
+rejection is recorded and never admitted or reused, but does not gate a fresh
+Canary. Scientific candidate validators remain unchanged.
+Positive reasoning under explicit false fails closed as a
 provider-control defect, distinct from cap exhaustion. Truncation remains a hard
 failure in production; the diagnostic preserves truncated output for owner
 classification without admitting it as a candidate. Generation amendments require
