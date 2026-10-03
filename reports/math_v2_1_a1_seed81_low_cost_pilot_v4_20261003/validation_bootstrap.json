@@ -1,0 +1,111 @@
+{
+  "formal_significance_claimed": false,
+  "interval": "percentile 95%; linear interpolation",
+  "metrics": {
+    "MeanMemberAcc": {
+      "lower95": 0.0,
+      "mean_bootstrap_delta": 0.0,
+      "point_delta": 0.0,
+      "upper95": 0.0
+    },
+    "MeanSemanticAttempts": {
+      "lower95": 0.0,
+      "mean_bootstrap_delta": 0.0,
+      "point_delta": 0.0,
+      "upper95": 0.0
+    },
+    "Member0Acc": {
+      "lower95": 0.0,
+      "mean_bootstrap_delta": 0.0,
+      "point_delta": 0.0,
+      "upper95": 0.0
+    },
+    "Member0TerminalInvalidRate": {
+      "lower95": 0.0,
+      "mean_bootstrap_delta": 0.0,
+      "point_delta": 0.0,
+      "upper95": 0.0
+    },
+    "Member1Acc": {
+      "lower95": 0.0,
+      "mean_bootstrap_delta": 0.0,
+      "point_delta": 0.0,
+      "upper95": 0.0
+    },
+    "Member1TerminalInvalidRate": {
+      "lower95": 0.0,
+      "mean_bootstrap_delta": 0.0,
+      "point_delta": 0.0,
+      "upper95": 0.0
+    },
+    "Member2Acc": {
+      "lower95": 0.0,
+      "mean_bootstrap_delta": 0.0,
+      "point_delta": 0.0,
+      "upper95": 0.0
+    },
+    "Member2TerminalInvalidRate": {
+      "lower95": 0.0,
+      "mean_bootstrap_delta": 0.0,
+      "point_delta": 0.0,
+      "upper95": 0.0
+    },
+    "Member3Acc": {
+      "lower95": 0.0,
+      "mean_bootstrap_delta": 0.0,
+      "point_delta": 0.0,
+      "upper95": 0.0
+    },
+    "Member3TerminalInvalidRate": {
+      "lower95": 0.0,
+      "mean_bootstrap_delta": 0.0,
+      "point_delta": 0.0,
+      "upper95": 0.0
+    },
+    "Member4Acc": {
+      "lower95": 0.0,
+      "mean_bootstrap_delta": 0.0,
+      "point_delta": 0.0,
+      "upper95": 0.0
+    },
+    "Member4TerminalInvalidRate": {
+      "lower95": 0.0,
+      "mean_bootstrap_delta": 0.0,
+      "point_delta": 0.0,
+      "upper95": 0.0
+    },
+    "MinMemberAcc": {
+      "lower95": 0.0,
+      "mean_bootstrap_delta": 0.0,
+      "point_delta": 0.0,
+      "upper95": 0.0
+    },
+    "OracleAcc": {
+      "lower95": 0.0,
+      "mean_bootstrap_delta": 0.0,
+      "point_delta": 0.0,
+      "upper95": 0.0
+    },
+    "TerminalInvalidRate": {
+      "lower95": 0.0,
+      "mean_bootstrap_delta": 0.0,
+      "point_delta": 0.0,
+      "upper95": 0.0
+    },
+    "VoteAcc": {
+      "lower95": 0.0,
+      "mean_bootstrap_delta": 0.0,
+      "point_delta": 0.0,
+      "upper95": 0.0
+    }
+  },
+  "policy": {
+    "classification": "sign_of_final_minus_initial_VoteAcc",
+    "identity": "MATH_V2_1_PILOT_DEVELOPMENT_ANALYSIS_V1",
+    "paired_resampling_unit": "frozen_validation_example",
+    "resamples": 10000,
+    "scope": "development_uncertainty_only_no_formal_significance_no_search_feedback",
+    "seed": 81
+  },
+  "rng": "Python random.Random; paired example choices with replacement"
+}

@@ -1,0 +1,5456 @@
+{
+  "count": 100,
+  "invalidity": {
+    "by_member": [
+      1,
+      1,
+      1,
+      0,
+      2
+    ],
+    "by_member_rate": [
+      0.01,
+      0.01,
+      0.01,
+      0.0,
+      0.02
+    ],
+    "denominator": 500,
+    "invalid_rate": 0.01,
+    "total": 5
+  },
+  "metrics": {
+    "MeanMemberAcc": 0.488,
+    "MeanSemanticAttempts": 1.046,
+    "Member0Acc": 0.58,
+    "Member0TerminalInvalidRate": 0.01,
+    "Member1Acc": 0.43,
+    "Member1TerminalInvalidRate": 0.01,
+    "Member2Acc": 0.43,
+    "Member2TerminalInvalidRate": 0.01,
+    "Member3Acc": 0.45,
+    "Member3TerminalInvalidRate": 0.0,
+    "Member4Acc": 0.55,
+    "Member4TerminalInvalidRate": 0.02,
+    "MinMemberAcc": 0.43,
+    "OracleAcc": 0.68,
+    "TerminalInvalidRate": 0.01,
+    "VoteAcc": 0.47
+  },
+  "paired_evidence": [
+    {
+      "example_id": "math:train:1114:7bd0e71532dd0a00c9f8d9dd4cd85e124cb2286b5da65c5c1c1c9cc0c26bdca8",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "30f8ebdbb15a0e1b83f0b564c138ea22fe949afb65fbfe25aee85f23ee380df3",
+        "30f8ebdbb15a0e1b83f0b564c138ea22fe949afb65fbfe25aee85f23ee380df3",
+        "30f8ebdbb15a0e1b83f0b564c138ea22fe949afb65fbfe25aee85f23ee380df3",
+        "30f8ebdbb15a0e1b83f0b564c138ea22fe949afb65fbfe25aee85f23ee380df3",
+        "30f8ebdbb15a0e1b83f0b564c138ea22fe949afb65fbfe25aee85f23ee380df3"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:343:508bd30a5e73b620140bfdd89b86d0007e52411f8b006f873616c50ef0527e27",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "4a624d94f86780936afec22512533752ba5087cf771945621e2f629e7061b432",
+        "54f127c78d9af2635ac16ec7fcdb0785730cb1a57048974f941b74a309abf9e9",
+        "54f127c78d9af2635ac16ec7fcdb0785730cb1a57048974f941b74a309abf9e9",
+        "54f127c78d9af2635ac16ec7fcdb0785730cb1a57048974f941b74a309abf9e9",
+        "54f127c78d9af2635ac16ec7fcdb0785730cb1a57048974f941b74a309abf9e9"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:930:8b1faabb6024abd519f680035f3881a4b55dbc22d3c24be41c6bee3e902b5cd3",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "91a69f54f59f199953aa683641576c4766c57b081e388712bd58bdfb2e254f55",
+        "91a69f54f59f199953aa683641576c4766c57b081e388712bd58bdfb2e254f55",
+        "91a69f54f59f199953aa683641576c4766c57b081e388712bd58bdfb2e254f55",
+        "91a69f54f59f199953aa683641576c4766c57b081e388712bd58bdfb2e254f55",
+        "91a69f54f59f199953aa683641576c4766c57b081e388712bd58bdfb2e254f55"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:578:1d19ea170495adfcdd60bf839d8c2e32cc849759bcdfd417ea38f512703caa10",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        false,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "8e25c4dba1112401f7b1d8539f8f892edf3c2b1ef804c98f79c98155b44e33fb",
+        "0bffb650248e070da9565f612584c9d3d0e6d14ac73ee722d70992da4d85e2e1",
+        "872efcc7510539a6031a0f5116bec03a06eb13f5d4bd014f89fd10f81c487795",
+        "0bffb650248e070da9565f612584c9d3d0e6d14ac73ee722d70992da4d85e2e1",
+        "0bffb650248e070da9565f612584c9d3d0e6d14ac73ee722d70992da4d85e2e1"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:1000:baaee675281d6232cddb5255ee97eb8745447bb3c19e0b8a63d2d823b22ca004",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "34cd457596687d938b4f1e2451415f64aabf8b7ecde0ca2eb4cc2a4ebeb2c9cc",
+        "34cd457596687d938b4f1e2451415f64aabf8b7ecde0ca2eb4cc2a4ebeb2c9cc",
+        "34cd457596687d938b4f1e2451415f64aabf8b7ecde0ca2eb4cc2a4ebeb2c9cc",
+        "34cd457596687d938b4f1e2451415f64aabf8b7ecde0ca2eb4cc2a4ebeb2c9cc",
+        "34cd457596687d938b4f1e2451415f64aabf8b7ecde0ca2eb4cc2a4ebeb2c9cc"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:413:d1b0ef2622f7848ab382d06a21bcc65dbc987bd318f5aadbf66165777b0c3983",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "86d2b3dbdfdd4b5d732fe581ca6f1403e1fbf25e266434c29d211347aad07478",
+        "86d2b3dbdfdd4b5d732fe581ca6f1403e1fbf25e266434c29d211347aad07478",
+        "86d2b3dbdfdd4b5d732fe581ca6f1403e1fbf25e266434c29d211347aad07478",
+        "86d2b3dbdfdd4b5d732fe581ca6f1403e1fbf25e266434c29d211347aad07478",
+        "86d2b3dbdfdd4b5d732fe581ca6f1403e1fbf25e266434c29d211347aad07478"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:496:1a70ed5115fec12d419ffa697bc808a32578446457331ad25761def18054066d",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "461106eb1a114ccc7e7d61f26db28863235db86313f89b8380b8f7598550fb9c",
+        "461106eb1a114ccc7e7d61f26db28863235db86313f89b8380b8f7598550fb9c",
+        "461106eb1a114ccc7e7d61f26db28863235db86313f89b8380b8f7598550fb9c",
+        "461106eb1a114ccc7e7d61f26db28863235db86313f89b8380b8f7598550fb9c",
+        "461106eb1a114ccc7e7d61f26db28863235db86313f89b8380b8f7598550fb9c"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:1411:1a8d915b2bb8b37381153b390c94e6c54aaa6de86d285bcb5f00d97de1267ec7",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        false,
+        false,
+        false,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "1d9206884a8c3cdff6fdcb62ae3c310fc0d5034d7f6cec040b535f9d8cfb1e20",
+        "4540234b214f5c3b0d365e63d852fc738c588f2f45b17f34e90c0a5d4f16557c",
+        "4540234b214f5c3b0d365e63d852fc738c588f2f45b17f34e90c0a5d4f16557c",
+        "4540234b214f5c3b0d365e63d852fc738c588f2f45b17f34e90c0a5d4f16557c",
+        "1d9206884a8c3cdff6fdcb62ae3c310fc0d5034d7f6cec040b535f9d8cfb1e20"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:108:c5ed5b5aecf82af6b91172577ec13c1bbd45a06e787ae3f6f180014722a9e35f",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "1e418b212e3dfd0ef5c4263263dcdd41c0b0455b08083b11fd286b26d4729a2d",
+        "872efcc7510539a6031a0f5116bec03a06eb13f5d4bd014f89fd10f81c487795",
+        "4cc4bf8d230de3e91415cf37ed37951cc744b876083b98d26838351978bdfecf",
+        "872efcc7510539a6031a0f5116bec03a06eb13f5d4bd014f89fd10f81c487795",
+        "872efcc7510539a6031a0f5116bec03a06eb13f5d4bd014f89fd10f81c487795"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:264:10fb89ebee206e6b39ba7bf9065fb8c90693e8d223a16904d431dbcf5932cdaa",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        true,
+        true,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "fe0091114c2713f25ac766ee48439b481409ce0bdce4e215d0dcdb065098a6ff",
+        "fe0091114c2713f25ac766ee48439b481409ce0bdce4e215d0dcdb065098a6ff",
+        "2e80cf6e1bf55ed8ddb597984920289ed010af6cae54183fbfff77155024c845",
+        "2e80cf6e1bf55ed8ddb597984920289ed010af6cae54183fbfff77155024c845",
+        "fe0091114c2713f25ac766ee48439b481409ce0bdce4e215d0dcdb065098a6ff"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:584:1eb9cdb62bc7190e5f0e97d736bcc4b8a131cb714ab7ed365268b09fa9130d3c",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "d863eacd5c0f3c4e0d0b69c8479349e153541dc2ad81c803c6363dd5aee465f2",
+        "ee091e76502b1f495560b5d2a5f791eeecd2d1ae2eea50fbdcd454301a6b020d",
+        "83e2725eb293892f3f4801d4f440411ef5881f0905a3cb70537d3e18d87ee537",
+        "ee091e76502b1f495560b5d2a5f791eeecd2d1ae2eea50fbdcd454301a6b020d",
+        "580616cef3a6bf1977ee8c6a2b5a1fecfa58963b00a97f28ff3ddb0b65c2d48b"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:717:2dc07f9e47eb0fd3cf02748aa291f921248d5c25361f59d7f5beaccfea8be38b",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "685767201c19b226aefb8b0b58971a6018e43c57643a2717b38f5e5556d1dffe",
+        "32439002d5e68d846a75deca9024ee3efa4661a0954b7da5cd702b32dab8d299",
+        "32439002d5e68d846a75deca9024ee3efa4661a0954b7da5cd702b32dab8d299",
+        "32439002d5e68d846a75deca9024ee3efa4661a0954b7da5cd702b32dab8d299",
+        "32439002d5e68d846a75deca9024ee3efa4661a0954b7da5cd702b32dab8d299"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:1686:ae29d14ed5639ac7c985c74db606d4510d753bd79b62284c3779fc3b2fc9468f",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "003126de4aec3fcc423bac5aabbb8245b9efd61693adbf216b0643e05b088129",
+        "7524bce5f75beab931919aa84006e0024d544d6831b4bc7e909b99d2a7300348",
+        "003126de4aec3fcc423bac5aabbb8245b9efd61693adbf216b0643e05b088129",
+        "003126de4aec3fcc423bac5aabbb8245b9efd61693adbf216b0643e05b088129",
+        "003126de4aec3fcc423bac5aabbb8245b9efd61693adbf216b0643e05b088129"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:307:4ba0e8e73837793651fffc00a6d65b6f5afbf6dc00b2092f8df9e0875b13a4fd",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        false,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "faabb5a146a597f4e50412baf4406c02225251c2d58e38b471e37814c3d11674",
+        "faabb5a146a597f4e50412baf4406c02225251c2d58e38b471e37814c3d11674",
+        "34cd457596687d938b4f1e2451415f64aabf8b7ecde0ca2eb4cc2a4ebeb2c9cc",
+        "faabb5a146a597f4e50412baf4406c02225251c2d58e38b471e37814c3d11674",
+        "faabb5a146a597f4e50412baf4406c02225251c2d58e38b471e37814c3d11674"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:990:fd9a0b5fd67b3d0376da7a32866189b8b453eea625d6ce9ec2b927b940ebebca",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "e2d803f7863391d1db678dd5a3449a10266634fa11af0c27053d085eda18d903",
+        "e2d803f7863391d1db678dd5a3449a10266634fa11af0c27053d085eda18d903",
+        "e2d803f7863391d1db678dd5a3449a10266634fa11af0c27053d085eda18d903",
+        "e2d803f7863391d1db678dd5a3449a10266634fa11af0c27053d085eda18d903",
+        "e2d803f7863391d1db678dd5a3449a10266634fa11af0c27053d085eda18d903"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:1622:dc04c5976a1a82481ee9471766fca85bfb4c709776b1ca7e27e94d29ee74ed88",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "a06b6d1c36feff21ba24b2e270c6393dabfabe3e4fb7e119cd645129ec81262e",
+        "6ce7d7b4f9bdb4af7ed94a7ae4e29d23a3a6a6288dfc4a9b3f34acabd71dbc3f",
+        "792e165de3ecabcaf575c75c3d1d933d32644f26f29d420d24b8f40d6b85d0b0",
+        "a06b6d1c36feff21ba24b2e270c6393dabfabe3e4fb7e119cd645129ec81262e",
+        "0558feedd8b9a5a927e28e0b917b60bd52ceba753be59e1e8cbf732d7ab427ce"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:1053:d31203c7ceaf3938a5b10af084bf8ba936f8a54745faad382156a24232a5000d",
+      "invalid_reasons": [
+        "PAYLOAD_PARSE_FAILURE",
+        "PAYLOAD_PARSE_FAILURE",
+        "PAYLOAD_PARSE_FAILURE",
+        null,
+        "PAYLOAD_PARSE_FAILURE"
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        true,
+        false
+      ],
+      "member_valid": [
+        false,
+        false,
+        false,
+        true,
+        false
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "133d4f6bf5dda9c79737339ce1f97ee05ba3a1e908bc966bc1b1a952ce2b79a6",
+        "133d4f6bf5dda9c79737339ce1f97ee05ba3a1e908bc966bc1b1a952ce2b79a6",
+        "133d4f6bf5dda9c79737339ce1f97ee05ba3a1e908bc966bc1b1a952ce2b79a6",
+        "712b2510bd18fd25db20c38af0ec989ebce0a24ddc4dc6980bad36554ec17080",
+        "133d4f6bf5dda9c79737339ce1f97ee05ba3a1e908bc966bc1b1a952ce2b79a6"
+      ],
+      "semantic_attempt_counts": [
+        4,
+        4,
+        4,
+        1,
+        4
+      ],
+      "terminal_invalid": [
+        true,
+        true,
+        true,
+        false,
+        true
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:303:480e345debb5b78ac6e2ad74235dde19d97049d62ce920d69f369c15a627e5a9",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        false,
+        false,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "5d98b04a3317b2e9e1d6eca0ba7e53988bf2ed3315f8cc34e31a01359c4a6634",
+        "379a687374584b6c4f1974f57fb8832647feb3f9b58033d10884e038a0d79279",
+        "60e3f3b6337648852032c073fb76208c5e1bfffb825723282140d0a460d7a546",
+        "60e3f3b6337648852032c073fb76208c5e1bfffb825723282140d0a460d7a546",
+        "5779ce0df39b9b3a7f6ccc0831a94824860983c52151b698dd88bbd241dc2c44"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:1123:6de793526e76e855e350fcdbf2360ab9b02869a27f8b3a276f06b4d432d84a0d",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "8486cc8b5aa0d81173938196c28452a602500a7a78d90ee54d75e006725d0cc7",
+        "8486cc8b5aa0d81173938196c28452a602500a7a78d90ee54d75e006725d0cc7",
+        "8486cc8b5aa0d81173938196c28452a602500a7a78d90ee54d75e006725d0cc7",
+        "8486cc8b5aa0d81173938196c28452a602500a7a78d90ee54d75e006725d0cc7",
+        "8486cc8b5aa0d81173938196c28452a602500a7a78d90ee54d75e006725d0cc7"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:350:206313592df2054ec920b5bee66535362f61579450a3fec17098dd8ebc70dd78",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "ed9dc369016b9a291e0d53b80caebc0aec70371bef4630b1df34f772b1a747e9",
+        "796e0088ff210ea198ac6af59a428d66c1ec5039e8791524eda3abf9b0ee43fe",
+        "796e0088ff210ea198ac6af59a428d66c1ec5039e8791524eda3abf9b0ee43fe",
+        "796e0088ff210ea198ac6af59a428d66c1ec5039e8791524eda3abf9b0ee43fe",
+        "a1b96272e6924455609b87e0a2dee188de45d11c58d70aa32bf8e5b4b957365d"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:807:3969c7d58ce315209abeb1d7a7124ea39d686cfb39806105f4b1c1478a255b4a",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        false,
+        false,
+        false,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "c6dcb3f3684102e882c076d10b644da80ab3d6bb341e1ea7cf8d35a6369d056f",
+        "0aad1224cfb9b7a428ced374654d649c60d04890e25bb10ee0a81afc30425ac8",
+        "e9d818aa8e06d15ec18397a45b3428c3e7b98dbec10ad7f82120d26855216ad1",
+        "0aad1224cfb9b7a428ced374654d649c60d04890e25bb10ee0a81afc30425ac8",
+        "c6dcb3f3684102e882c076d10b644da80ab3d6bb341e1ea7cf8d35a6369d056f"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:487:1c5803d4812bf31e952a818da613c2f4df677825871d17fd1ad10e9029e336a5",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "e9d818aa8e06d15ec18397a45b3428c3e7b98dbec10ad7f82120d26855216ad1",
+        "e9d818aa8e06d15ec18397a45b3428c3e7b98dbec10ad7f82120d26855216ad1",
+        "e9d818aa8e06d15ec18397a45b3428c3e7b98dbec10ad7f82120d26855216ad1",
+        "e9d818aa8e06d15ec18397a45b3428c3e7b98dbec10ad7f82120d26855216ad1",
+        "e9d818aa8e06d15ec18397a45b3428c3e7b98dbec10ad7f82120d26855216ad1"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:735:d82a9d12ec10f9a37501c252fcf4ee6c2495162fb44cb42b994c3f7d701e2a9d",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "35f16fe244ab0708e215f1412fe9d4e9a742f0a6d498b9e2abbd0197fc42e63d",
+        "4cc4bf8d230de3e91415cf37ed37951cc744b876083b98d26838351978bdfecf",
+        "4cc4bf8d230de3e91415cf37ed37951cc744b876083b98d26838351978bdfecf",
+        "4cc4bf8d230de3e91415cf37ed37951cc744b876083b98d26838351978bdfecf",
+        "4cc4bf8d230de3e91415cf37ed37951cc744b876083b98d26838351978bdfecf"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:2170:39567e0a96b5533479a705580b348bc35c5a0e2e75de25eceeb7ce5203daba39",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "b8e6562c8dc01df719682dd9bbec91cb64e28a83f51bc499d6620460d8a1302e",
+        "b8e6562c8dc01df719682dd9bbec91cb64e28a83f51bc499d6620460d8a1302e",
+        "b8e6562c8dc01df719682dd9bbec91cb64e28a83f51bc499d6620460d8a1302e",
+        "b8e6562c8dc01df719682dd9bbec91cb64e28a83f51bc499d6620460d8a1302e",
+        "b8e6562c8dc01df719682dd9bbec91cb64e28a83f51bc499d6620460d8a1302e"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:1777:0ef06bf2550bc3ec0b9e9a4181f9ff8cdbd4d3ca72d71df55ea884d20d3fec30",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "9e2894fbe8ca1cfbfed9b149c6b4000baf32a44aff8e989196a52ef5cf574f1c",
+        "9e2894fbe8ca1cfbfed9b149c6b4000baf32a44aff8e989196a52ef5cf574f1c",
+        "9e2894fbe8ca1cfbfed9b149c6b4000baf32a44aff8e989196a52ef5cf574f1c",
+        "9e2894fbe8ca1cfbfed9b149c6b4000baf32a44aff8e989196a52ef5cf574f1c",
+        "9e2894fbe8ca1cfbfed9b149c6b4000baf32a44aff8e989196a52ef5cf574f1c"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:2308:aa11bf66d352915e383efc1f5f99f816b512348251543b146f25ad4fb88f8400",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "62924a76fbd70e8476d47b561dabba0c31d0d951eb3fdd67058ee8efd25c5643",
+        "62924a76fbd70e8476d47b561dabba0c31d0d951eb3fdd67058ee8efd25c5643",
+        "62924a76fbd70e8476d47b561dabba0c31d0d951eb3fdd67058ee8efd25c5643",
+        "84addb1428f89cb9e0faf80920444bad7fb7105b431be39066c0eb8b486f322b",
+        "84addb1428f89cb9e0faf80920444bad7fb7105b431be39066c0eb8b486f322b"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:2235:4dc2073d30a42a19b0ee6d32445794b1feacc778499e65c4f5e63f377de79032",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "ba8f843123f1e4359921963b2f11b5534322ae726b884cd84951c5e28e823904",
+        "ba8f843123f1e4359921963b2f11b5534322ae726b884cd84951c5e28e823904",
+        "ba8f843123f1e4359921963b2f11b5534322ae726b884cd84951c5e28e823904",
+        "ba8f843123f1e4359921963b2f11b5534322ae726b884cd84951c5e28e823904",
+        "ba8f843123f1e4359921963b2f11b5534322ae726b884cd84951c5e28e823904"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:1986:9092c0c9824402d621813682e2479c8645fa836e0e87f5c683a4fae4db927c21",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "fe0091114c2713f25ac766ee48439b481409ce0bdce4e215d0dcdb065098a6ff",
+        "fe0091114c2713f25ac766ee48439b481409ce0bdce4e215d0dcdb065098a6ff",
+        "fe0091114c2713f25ac766ee48439b481409ce0bdce4e215d0dcdb065098a6ff",
+        "fe0091114c2713f25ac766ee48439b481409ce0bdce4e215d0dcdb065098a6ff",
+        "fe0091114c2713f25ac766ee48439b481409ce0bdce4e215d0dcdb065098a6ff"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:1944:527b64c7e01b0d7e375fefc87d8c310e857366ee2f6f815cd8ba59d078ee67df",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "692b25f9fdf38413d38743ea48a1472d18112dbc6bb5924349584437c0c5cf88",
+        "692b25f9fdf38413d38743ea48a1472d18112dbc6bb5924349584437c0c5cf88",
+        "692b25f9fdf38413d38743ea48a1472d18112dbc6bb5924349584437c0c5cf88",
+        "692b25f9fdf38413d38743ea48a1472d18112dbc6bb5924349584437c0c5cf88",
+        "692b25f9fdf38413d38743ea48a1472d18112dbc6bb5924349584437c0c5cf88"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:1815:e5b63c231c90c068544a3c3e5155bb435571799f9599a2a61adbb417670d436d",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "0c189ce2b7f602166c035fb0cab047c2f021003bba1d0ae76104cf6357f050d5",
+        "0c189ce2b7f602166c035fb0cab047c2f021003bba1d0ae76104cf6357f050d5",
+        "0c189ce2b7f602166c035fb0cab047c2f021003bba1d0ae76104cf6357f050d5",
+        "0c189ce2b7f602166c035fb0cab047c2f021003bba1d0ae76104cf6357f050d5",
+        "0c189ce2b7f602166c035fb0cab047c2f021003bba1d0ae76104cf6357f050d5"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:2102:9ebc4916ffd395a74f27ce03319c4160b042c3c2655dc56ff7149e080135c937",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "cd8eb0d7b686592478c99345a23b0ab580f834884658ff91c309409105e72b5c",
+        "ed4e76ff1766377d8c9029dbf0991c48a0352951d7600ac5f6e17e5b90056326",
+        "83100bbf8a4c80fc5584f02bd8fdf5804129a244e0bc4019917fb5ec9f36e307",
+        "ed4e76ff1766377d8c9029dbf0991c48a0352951d7600ac5f6e17e5b90056326",
+        "ed4e76ff1766377d8c9029dbf0991c48a0352951d7600ac5f6e17e5b90056326"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:2075:5e4882c415f2fa0d3c5ac2ea10db9ebeaa51fe0a0e072855a33886ed86dc61e8",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "60788030dab639f6d9282366330144d9f4f8df25632cb240d810b170f07c21ba",
+        "60788030dab639f6d9282366330144d9f4f8df25632cb240d810b170f07c21ba",
+        "60788030dab639f6d9282366330144d9f4f8df25632cb240d810b170f07c21ba",
+        "653913d4e49e78358a9d016471e64c718dd58574e94a0a4cc3006637c2aa3f3a",
+        "60788030dab639f6d9282366330144d9f4f8df25632cb240d810b170f07c21ba"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:2443:6e8441680810b7e735b5f7674a79984d249057c6bb90bf8eaa2e4bd012db12b4",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "4a9acc7b267061167b4ae084ed3bf7e82b0fb0f6392efaaa098519aa6d988d65",
+        "4a9acc7b267061167b4ae084ed3bf7e82b0fb0f6392efaaa098519aa6d988d65",
+        "4a9acc7b267061167b4ae084ed3bf7e82b0fb0f6392efaaa098519aa6d988d65",
+        "4a9acc7b267061167b4ae084ed3bf7e82b0fb0f6392efaaa098519aa6d988d65",
+        "4a9acc7b267061167b4ae084ed3bf7e82b0fb0f6392efaaa098519aa6d988d65"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:2401:7a4af4c77110658a03cf0c375d4c54b06a2032497b40ed103747d5d8b61bc059",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "83ff572ecea12ff7cc27ee13dd2ace3adbc24f909879893a8035676275d114f4",
+        "83ff572ecea12ff7cc27ee13dd2ace3adbc24f909879893a8035676275d114f4",
+        "68a3b999a22819c0742a7f4b7669fe41221946c650f5218e8e5cf5a458df0369",
+        "a74e0dd060bb6ca5f1db4269c9e2a2d49ea5f019c9a412c57ec808522ab7ebca",
+        "83ff572ecea12ff7cc27ee13dd2ace3adbc24f909879893a8035676275d114f4"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:2904:3274ecc642f40c9280838be4515a7614014f7cbe76869a8189740b58b10f8077",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "30f8ebdbb15a0e1b83f0b564c138ea22fe949afb65fbfe25aee85f23ee380df3",
+        "30f8ebdbb15a0e1b83f0b564c138ea22fe949afb65fbfe25aee85f23ee380df3",
+        "30f8ebdbb15a0e1b83f0b564c138ea22fe949afb65fbfe25aee85f23ee380df3",
+        "dc771bc911cef9a1a07c4262401921595d2988fa2af9ec079d3722ab59d00e4e",
+        "30f8ebdbb15a0e1b83f0b564c138ea22fe949afb65fbfe25aee85f23ee380df3"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:2550:0d5e475665d262049eeb0766c13cd205b81ea48f49331526c6129db43f3bbdb1",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        false,
+        false,
+        false,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "1d1f16791c6c4de8c95a4603816f41b10bd3e9d79d0d942a90ce0839816360f0",
+        "b25aa3cc460954d4458f5f510f92ab53120914b7c28fdac255e37d53ffb7a4aa",
+        "b25aa3cc460954d4458f5f510f92ab53120914b7c28fdac255e37d53ffb7a4aa",
+        "b25aa3cc460954d4458f5f510f92ab53120914b7c28fdac255e37d53ffb7a4aa",
+        "8f7f560b4cbd95afbf57c606150c047f65317c2845880a6f7966abf17b2b81ed"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:3295:aab7b11a91e37105cbfe164c16a982d07b2d43e796595e1e7a00fe13554fe6aa",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        false,
+        true,
+        true,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "790035311352b45c946ee61d4cfb0b35d2c860a6bdb53c4929b5b7f8ad98d29f",
+        "3225a90b591c3e6cc9c1b1026a94bde83c359f11cc040ff3ac237f698894ef66",
+        "e6ee16d3a3d938f21af4cdb12a1db870914872af5d245b4a502560fa97b50af2",
+        "d2250c72554e20392f23ed4d18ad285f1d31870e29f151a5a249177a5cbbc4ab",
+        "7976ffe178bbcd0ae358a1930225b6aaf8842303ad3f8e0274e221943461c905"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:2780:28666c4bd3b333db9f33ff8aff6f46806d8997f0e6aec3b5624afc99bb872a37",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "5d5b2886519d5651621b8728f3c14a1fafc5e58f173afac3b0f9d9326c433ac3",
+        "2e17796990dd909145520c9ea4a3dcefb2302f4a79e4bc0f79c8b7ce432f5c90",
+        "8eb6a04a16e287eba5e97bd923f3b5552f0a3cecc86e787964f2e39bc201d441",
+        "c73cf91526c6637d23591ff28aa996428091b0ccaa5f1a2d2bfe9c39741b3bcb",
+        "8f1d0f803295f5ff79d83dd3d90a8521461f3d6921cd86b7fdefb136eff385ab"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:3280:6d3b50d2a3c5b5280e412a09f935b6ea962b920ae3e07cfe0f1b64d0a4523d0b",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "bdd500a568199740384c9cef964bee64d56645cae111a152e16e8916bf9fa488",
+        "710165ac34dcd1df1627eefc4189ddd9935f40a75c6c99f660d50cb440485cc1",
+        "450eafcadbff980acae6d2861c587c77a673eb06d0949fa5979a3e85ba751b3b",
+        "d7c676a47f4a6d3c1337e3e60d753ca2be642f6b8e9e8f65393a5b6c46297da0",
+        "dee5707bed7d641aeb704a35b89bb0ddf94a99c0d3b045ad89c99efa1e4f6aca"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:2725:c32526e2b1ba395bf67aa56fb92a1f75d2db653b6615327a6869dc8126494778",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "de38a21c681d4d6b20a4740e6f6c77c93122501514b2d2cb911df1ff8b105547",
+        "de38a21c681d4d6b20a4740e6f6c77c93122501514b2d2cb911df1ff8b105547",
+        "de38a21c681d4d6b20a4740e6f6c77c93122501514b2d2cb911df1ff8b105547",
+        "de38a21c681d4d6b20a4740e6f6c77c93122501514b2d2cb911df1ff8b105547",
+        "de38a21c681d4d6b20a4740e6f6c77c93122501514b2d2cb911df1ff8b105547"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:2710:47e401023fb3a6e7b3d319bafee9ba2c43678897a8c2b686f7ac8e010118bdee",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "75930ed95ea9cb7cc1c11556d6e48f15d3aa57342513d114a0750f6f9a38b031",
+        "75930ed95ea9cb7cc1c11556d6e48f15d3aa57342513d114a0750f6f9a38b031",
+        "75930ed95ea9cb7cc1c11556d6e48f15d3aa57342513d114a0750f6f9a38b031",
+        "75930ed95ea9cb7cc1c11556d6e48f15d3aa57342513d114a0750f6f9a38b031",
+        "75930ed95ea9cb7cc1c11556d6e48f15d3aa57342513d114a0750f6f9a38b031"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:2898:31309581563a605ee68b97b011a2fb901ab0e9502ac844c450dbcaab27ad2039",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        false,
+        true,
+        false,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "925ece98d7a3c4d41ef7eff31ea1542b519abb9a61437c3f3efb689b5043b33a",
+        "4529ca88d839ab20bb1b1c38bf5e028db28cae7c1b0adaa56b2393c608394a2b",
+        "ab7b3824f007b4f57a4f838c331dd209f610bd6aee2f9704d35f01f4662cb776",
+        "abf7a53bdb8e73d1890728d0d92fbd202a6cfab1aea6aa245a54abf47d905f64",
+        "876ca4612a80a5b279d98de0b5528f9b26c444d7a6b330437d0a8c8aad931c17"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:3234:64f40df910d47c6745b33fa27b2cf11ff515aea782eb28f4a552319f72667151",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        false,
+        false,
+        false,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "54c69508ad835bb5205a0951d65d0fc3f210d5932d1945a1ccb4edf6407d915b",
+        "4a9acc7b267061167b4ae084ed3bf7e82b0fb0f6392efaaa098519aa6d988d65",
+        "4a9acc7b267061167b4ae084ed3bf7e82b0fb0f6392efaaa098519aa6d988d65",
+        "4a9acc7b267061167b4ae084ed3bf7e82b0fb0f6392efaaa098519aa6d988d65",
+        "98fc908559736b03b8d05f8105d406111a2e3a8dbc973b13249de68943cb5ca2"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:2563:bf59af3dc6557eebb1b1a8a1a450e4267e47029e499c14e39b7dc36a371c97d4",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        false,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "35a5802966b0eb03df703c78073c04f160cc6d86e4000dd22b9d3b296da71878",
+        "d90c51cb479d8e41579dcb39a05464ede67ef6e1f0f136bc2a4c5fcba3fac579",
+        "e76fb8e0b90db745c9cfba7d0620bcaad93461f1ea9314f8c33939c29a8ca84c",
+        "3deb3923585c93796c3319e2ef9d6da5db73176fbb70e5bc5a2135d6b4b8581e",
+        "adcb88e73df7fe10e852eca817a3095f367c986d9ffe86035a22221065d7adf4"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:3281:ff85bbdf2974e16db9ca707da241b28051a4a32056961271500c5741e2839eb0",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "a42144d1547fa93d7beab7fc5c0eae5307043fe097d213cd1421650a8ba75752",
+        "a42144d1547fa93d7beab7fc5c0eae5307043fe097d213cd1421650a8ba75752",
+        "a42144d1547fa93d7beab7fc5c0eae5307043fe097d213cd1421650a8ba75752",
+        "a42144d1547fa93d7beab7fc5c0eae5307043fe097d213cd1421650a8ba75752",
+        "9d6eb42ba906c13693841c27c211328ab14a279db6d77ebbbd636c30873b6e49"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:2638:851f3745a9b4b0349f53f611303d69f19f57d685d18069d88017424cb10ebac8",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "78df14b5d797a86d2323b8a7b7578ebe8e6922a6dd917e3c3a07227cd0c8c98b",
+        "18cdb93aed098cbb57094eb9c97e7444d6eb0c5d24dbf89508e4024b8bbb19d9",
+        "57d3525c7f770e8cf5216924fb4d37ed965fc440c776c1bd8b53a05fc2de1894",
+        "18cdb93aed098cbb57094eb9c97e7444d6eb0c5d24dbf89508e4024b8bbb19d9",
+        "781340f12a28c9156b93d376f4a6f4b062579b77adc5bdfd825cdc133a71dfc9"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:4597:db5fb842c51467db7dc6dc52dc590f75376247dfb5f286780ade883da243bccb",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        false,
+        false,
+        false,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        true,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "af7b58ce4bed99921537405a214fe0eb21af96c61a7d137a85be06884a1f7066",
+        "7129c94311b3b586cd47dcddc60308aa5c8d21010d19b94c050e0669923a04e8",
+        "e3d20a36639608504267c063aefe0916e3425585aecf3dd12b61ff350ae0b402",
+        "f0f62061c612c84d9c4317966b318ffcdcb8e0150591bfda2d60235535921bbe",
+        "c1779a3aeddec18e8a6a3639355ceb5e09c0005b344ab8eae78716782da457a2"
+      ],
+      "semantic_attempt_counts": [
+        2,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:4205:4b185ff994f68cbdf6636c427b781eb7625ad53e71c97cfbcdf7a8b05f43346f",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        false,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "1520844a073f55b627105a616785db69652755da6a432da095486e8a32f5bcfc",
+        "f7d0be950690e0c105781dd729bee552ae42d42c6dd7998d30bd3724342e3314",
+        "2764d65df73985f44449b39ba0cd144faf96ed04120d7647c9d24c5f792e6aa6",
+        "7bc3433992d3fcbbaf32eec4691f76303b9ddfdc3040e0ee8d83874d874b66fb",
+        "71a977a75d2573971d8d79822f76cc66e2605b3b21cbd88791ddad919819db7f"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:4617:f765a284f5f94f7a30742baeec9f0c0b60b11dc03dfad1162036ab1040ff2a56",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        true
+      ],
+      "request_output_hashes": [
+        "bbdd17162e9d32a043011cb1f3c41b46a8e98a055aba06c13ec24e255ad539bd",
+        "461106eb1a114ccc7e7d61f26db28863235db86313f89b8380b8f7598550fb9c",
+        "461106eb1a114ccc7e7d61f26db28863235db86313f89b8380b8f7598550fb9c",
+        "461106eb1a114ccc7e7d61f26db28863235db86313f89b8380b8f7598550fb9c",
+        "c5b7125d40eda8bda9fe25908425ba37120748d5e9ff8f1bf835f80731a01540"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        2
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:3412:b60a998c01e255d43cf97587036c6f6073a5d8f8fadfc05d88fd72db459077be",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "faabb5a146a597f4e50412baf4406c02225251c2d58e38b471e37814c3d11674",
+        "faabb5a146a597f4e50412baf4406c02225251c2d58e38b471e37814c3d11674",
+        "faabb5a146a597f4e50412baf4406c02225251c2d58e38b471e37814c3d11674",
+        "faabb5a146a597f4e50412baf4406c02225251c2d58e38b471e37814c3d11674",
+        "faabb5a146a597f4e50412baf4406c02225251c2d58e38b471e37814c3d11674"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:4091:e3d2f5642f532636e6eba15e0ee4dff6514a4139bdb6850f981377f1d86012b2",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "ee8fffc8543e8cbee05b2b22cfa8865899610772885e58def3cd53038e00f46f",
+        "21ebd057f972734facb5a08fa76b2fd4ec5c81afab9184c6bc744fbeaf749c40",
+        "21ebd057f972734facb5a08fa76b2fd4ec5c81afab9184c6bc744fbeaf749c40",
+        "21ebd057f972734facb5a08fa76b2fd4ec5c81afab9184c6bc744fbeaf749c40",
+        "21ebd057f972734facb5a08fa76b2fd4ec5c81afab9184c6bc744fbeaf749c40"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:3623:70ddc9aeb235513cc3d13a62f8ea55e1a63b2b3a08a9b3c2f75979899637fd6a",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "b345494a81070d193b8aefd9a3537526ac80216284c2c95914adb8dc3b620edc",
+        "66576ca135d988c128391d48c9b3bce48b30fbe816a46e50e527cf81392e4f43",
+        "1e790e7e98d3f7fe1b28d465db46f95d83a4bdab72a599cd13ab52d545131961",
+        "f0a8c4851ecb3d3e2b54ffb7f384ec3d5fdc06e3aa9fd3a1cb5a7f2058c8022a",
+        "a8f74834bed82a7837d33bd48767c762818bb6368034362f4c1e63ec60a8bc2d"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:3814:55f0effd62ed1473929381efd835992d5653c27893869711b73517d06ba1e264",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        false,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "0dab9eb8d1e6aa9d9a7e31e6fa8788b31b82b4405f2687aab63e459830f7a7c2",
+        "7c479fd0d0587325be6dfefae6c24d28a6ebbbbecba6f93c4fe2dd2395b32922",
+        "2d86408da376925ff9341e2f7396d7e3238c8447b35e93197032998b12169624",
+        "46e8b5644c8d6128b48934b77dbdff20147ea855cff825af4bc6ed600a5b44f8",
+        "69d25022fcf5bab1d50876514fd27b8767931e03e9508bf411dceab2f7e29228"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:4242:9c047258b6b0b74a6b148b336d868654726036f0d192cd797dae47fdfc8fe150",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        true
+      ],
+      "request_output_hashes": [
+        "ca3417d58d92eadbaaf09b6640484f7c6ba74de3dc23b64dc05271362a20f15d",
+        "0468a897d409783450595291213d5cd9e107ac3677334f6ee595c8855cbc2bf5",
+        "f63cfc03134c525f19c18675fff222efbce8d56827079991e41b682cb34d1b3c",
+        "f63cfc03134c525f19c18675fff222efbce8d56827079991e41b682cb34d1b3c",
+        "1e920eb7bb28c27998d9a5561967d795edbc2eac80c75ed144116bb42e67bb3c"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        3
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:4014:a3cbe5a2b944b397f3b4cda0870df88b2e670333d85ae8b9e621a5d792bec3d5",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "df086360343db2203657a94bc7f98f5878183ece171c568ff7f07f71d0c47e8c",
+        "df086360343db2203657a94bc7f98f5878183ece171c568ff7f07f71d0c47e8c",
+        "df086360343db2203657a94bc7f98f5878183ece171c568ff7f07f71d0c47e8c",
+        "df086360343db2203657a94bc7f98f5878183ece171c568ff7f07f71d0c47e8c",
+        "df086360343db2203657a94bc7f98f5878183ece171c568ff7f07f71d0c47e8c"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:3854:65fd74e79e5e77206a085d5df49b41539eb9684235a77f961bfac59973cd1fb8",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "0aad1224cfb9b7a428ced374654d649c60d04890e25bb10ee0a81afc30425ac8",
+        "0aad1224cfb9b7a428ced374654d649c60d04890e25bb10ee0a81afc30425ac8",
+        "0aad1224cfb9b7a428ced374654d649c60d04890e25bb10ee0a81afc30425ac8",
+        "0aad1224cfb9b7a428ced374654d649c60d04890e25bb10ee0a81afc30425ac8",
+        "0aad1224cfb9b7a428ced374654d649c60d04890e25bb10ee0a81afc30425ac8"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:4669:a5e3a371d14e1428739a08cb0867b2161bd5a1d7348665d12503465c7f60cb1d",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        true,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "9335b3355165e75cedecd3caf8ca76cc4a3367c7703f7be245c42ca4fed2a167",
+        "a02903aca7162cc6780eca474c6b6175f09d30a0e17e1bd7fa844063a0faeb29",
+        "8257a791f61b30970565fda1ae62e5e2ef9a27509c89530a7ae056cbc9eaa270",
+        "fc85a0c5e4b69a7d423ffb24c03e2c58dd8568d8abe1de0ceae0567db5dd9a18",
+        "30c541b181bea20c95212dba93615b652025784896efe2923a360c3b6e8db792"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:4228:43736e58ed0556a14343433d2bfddf72f43a3cd8ec6627e5e8af27adfcea5e1a",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "b9bb5a103874d003478d6bccd668671d3a1fd3db4f06a2c7e5000d2e42267a10",
+        "872efcc7510539a6031a0f5116bec03a06eb13f5d4bd014f89fd10f81c487795",
+        "872efcc7510539a6031a0f5116bec03a06eb13f5d4bd014f89fd10f81c487795",
+        "872efcc7510539a6031a0f5116bec03a06eb13f5d4bd014f89fd10f81c487795",
+        "872efcc7510539a6031a0f5116bec03a06eb13f5d4bd014f89fd10f81c487795"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:3398:2fe40682f93aaa970d31bc63f026d4eb2b5fd35ef4af277116f9df876b5530ca",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        "OUTPUT_TRUNCATED"
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        false
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        true,
+        false
+      ],
+      "request_output_hashes": [
+        "90b469941d8db72726ed462fa37e5794460a3b4e9e6c6504fe35edad850c5bf6",
+        "96af565f3032484f231372fd0c7ecd0796ad2d3791ca687a6ac9076856c26870",
+        "0280c15e0ddff3f5cb661441defd42f480cfd50532adfc84dcece2e758b94b43",
+        "a6ea883d1275f533244494439191b762f76e30a587d8179e0ae9bbf6f3d6e68d",
+        "bae89a34b1906fad6d55df87a6ad51cd1002ce6e20ed147e87438c8b1b34eb62"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        3,
+        4
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        true
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:4571:eb7d715c46694b6889acaf0f830ad5aba8868ea631d9a278d45f94d69ac29330",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        false,
+        false,
+        false,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        true
+      ],
+      "request_output_hashes": [
+        "6b7e4032a2ccf0549daa8ed53bf6375e4bb1587697449abdcec7de6b1a20304f",
+        "f42a8b79703f25b14dde403d5dd6efdfc9c18a887a6b353c08c9794f9fff19da",
+        "f42a8b79703f25b14dde403d5dd6efdfc9c18a887a6b353c08c9794f9fff19da",
+        "f42a8b79703f25b14dde403d5dd6efdfc9c18a887a6b353c08c9794f9fff19da",
+        "8152b9e7564ea5ebd8d460bb4c23c8341f767bb1ef8393e7425cc683ba695b11"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        3
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:4320:fdaa6739dac97025d8c419ce5f84ebb166abe146786780d3bc8dd87b7ff89e41",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "faabb5a146a597f4e50412baf4406c02225251c2d58e38b471e37814c3d11674",
+        "872efcc7510539a6031a0f5116bec03a06eb13f5d4bd014f89fd10f81c487795",
+        "faabb5a146a597f4e50412baf4406c02225251c2d58e38b471e37814c3d11674",
+        "faabb5a146a597f4e50412baf4406c02225251c2d58e38b471e37814c3d11674",
+        "faabb5a146a597f4e50412baf4406c02225251c2d58e38b471e37814c3d11674"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:4674:187f376d962df592978d25a36eb42fb43e8d4ecbd521e4db4100df7a4597c7c3",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "15e9fb653875823f00a12e244618a8e4a71d5b27e8fbe5e9324605dda0cece47",
+        "15e9fb653875823f00a12e244618a8e4a71d5b27e8fbe5e9324605dda0cece47",
+        "15e9fb653875823f00a12e244618a8e4a71d5b27e8fbe5e9324605dda0cece47",
+        "15e9fb653875823f00a12e244618a8e4a71d5b27e8fbe5e9324605dda0cece47",
+        "15e9fb653875823f00a12e244618a8e4a71d5b27e8fbe5e9324605dda0cece47"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:3811:b8d15df7f17f0292e8e8104964b34df1ee6d20979861cfef741a9dd62acc94a2",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        false,
+        false,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "35b3252779c6a13d8e98a2e32e4f31a266ba4b3780722932e0c7dbbeec21cf0f",
+        "0c189ce2b7f602166c035fb0cab047c2f021003bba1d0ae76104cf6357f050d5",
+        "ae2dd6ab142fef483c71974bd584ff199b8d344147d71cb5998d45d8cd514e3c",
+        "ea7c8d54dfe9caf5ee7a471d604acf4de97af14ef1053446bf59bf8017abcdba",
+        "a045674084c6e3eb0b0a9fef943bb7dd1371b30ff47c0dab99861065aa6a4b5b"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:3468:ff5ab195fb405c34bc0792c8ba3978e1f37d6bea52497e0cd0f1a10394a6d85d",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "4755b3177a2a7eb0731113ce158833eedcb345d6772692390e1eb4c3fdaa60e3",
+        "e4de1fecee72c2fd15784e63371250cff5f9d4b89bf08aad825da7c59baf68e8",
+        "1d7de10abef1358caedd05b70dd3454f9310554ee125eb8f973c2a767ec7d839",
+        "1c35d15499d8e8da00826d4e5a63439963eafec09a6bb0b90d454db91234975b",
+        "1c35d15499d8e8da00826d4e5a63439963eafec09a6bb0b90d454db91234975b"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:5472:6097f1f0ca01f104250a6af4ac879416436cd0fac280952b3021f2ab92384cbf",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "0b6b8d97b86aedffa35290f06779e83be8491f5e538fa78be3c93316b5b8bb19",
+        "0b6b8d97b86aedffa35290f06779e83be8491f5e538fa78be3c93316b5b8bb19",
+        "faabb5a146a597f4e50412baf4406c02225251c2d58e38b471e37814c3d11674",
+        "f4b07ccfb82eb63aec097ab18256fd87134e4f79efec7bae42da3f7b296c0459",
+        "f4b07ccfb82eb63aec097ab18256fd87134e4f79efec7bae42da3f7b296c0459"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:5077:2b61b15f59dafa8db2a21f06b0819a65a4b0a1eaf7965b228e306c450869c792",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "5727f0d94ddc1d41f28cff3804a970d5fa7a8f7d9c208fab62eb816f2187fb58",
+        "380818ef4b26103b02c36ad5b5c15c318d99e10b6497ebab529fc18961d920bd",
+        "461106eb1a114ccc7e7d61f26db28863235db86313f89b8380b8f7598550fb9c",
+        "461106eb1a114ccc7e7d61f26db28863235db86313f89b8380b8f7598550fb9c",
+        "95a3c860948f7814ca9e8c7c247c26ff9ee203d4d61584071bdc3fdd1676db35"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:4789:0c964fc8e01d65f2ed265beb4ee8dad560b7d1d019e852199d8b2809f6435ff8",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "e608803ef08aa94075f03c97abbcd214e405b8db5c4282e4912077a8bbde7a82",
+        "a507be14951d888336c1b4140ff24002f686b4cbf49d0a94b616ad4fca6b2b36",
+        "e608803ef08aa94075f03c97abbcd214e405b8db5c4282e4912077a8bbde7a82",
+        "e608803ef08aa94075f03c97abbcd214e405b8db5c4282e4912077a8bbde7a82",
+        "e608803ef08aa94075f03c97abbcd214e405b8db5c4282e4912077a8bbde7a82"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:5321:a0255ef04c5ca92c86d93719a7452a187efad81b1ca14f2b90b699f2953585bf",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "f0ba8867d115413f1fea30de754c5b111f8870cd15ea6115523536d912675b3f",
+        "d6b6b29bad85c746bbcdfb275141978a337e2db6b66bcb7389fb55a9f5f950f0",
+        "cd85e152754f25ce0cda71ca42c0607ba9292471f8ee5f588ea945a4426e703e",
+        "10171fccc609db3b06a3584899b8a7eafec496f427820788ce814930b575659e",
+        "76cee357b47b39f40d76c08ac52a8c08279f0e2be4f9df66a24c8a3576c19809"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:5068:5c766afb74412850de4d58350429d94a1854308a8c62748fed10b628a623ef8c",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        false,
+        false,
+        false,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "7db10ce3aed5ff1e1a75f07cc2616f196a9fc4d2048e3dbbc1deba2031d3c38b",
+        "2abfe93e4008e80e9ac9207092fbba38595ce54de54ab6265a81dfac222f556d",
+        "2abfe93e4008e80e9ac9207092fbba38595ce54de54ab6265a81dfac222f556d",
+        "2abfe93e4008e80e9ac9207092fbba38595ce54de54ab6265a81dfac222f556d",
+        "7db10ce3aed5ff1e1a75f07cc2616f196a9fc4d2048e3dbbc1deba2031d3c38b"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:5219:ca5bf512e78a3e911dde4b03ce8296b032fe896b5a9b740c27578cc84c628f50",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "a910f17eed59045bbc866f73c37a223701f39920826ccc2aeadc3527b26439ec",
+        "a910f17eed59045bbc866f73c37a223701f39920826ccc2aeadc3527b26439ec",
+        "a910f17eed59045bbc866f73c37a223701f39920826ccc2aeadc3527b26439ec",
+        "a910f17eed59045bbc866f73c37a223701f39920826ccc2aeadc3527b26439ec",
+        "a910f17eed59045bbc866f73c37a223701f39920826ccc2aeadc3527b26439ec"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:5124:8dd382af18d90d2416e3e6bd39dc7f49d8a128242afde4920d7237898018e61a",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "6419a7f0f4c7c1038c1ca0682d89b84e2ae39a3e4fe39d4aede800e8d0fc6bbe",
+        "907135a1b5f5788525d9e36a268583a1e7ffecf92e5e3f3c19209554139271fb",
+        "6419a7f0f4c7c1038c1ca0682d89b84e2ae39a3e4fe39d4aede800e8d0fc6bbe",
+        "6419a7f0f4c7c1038c1ca0682d89b84e2ae39a3e4fe39d4aede800e8d0fc6bbe",
+        "6419a7f0f4c7c1038c1ca0682d89b84e2ae39a3e4fe39d4aede800e8d0fc6bbe"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:4987:7b19d6c961092e023cf3dbfb986822ce6794b3be2b7860d86855f67ffae4af3c",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        true,
+        false,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "60e3f3b6337648852032c073fb76208c5e1bfffb825723282140d0a460d7a546",
+        "60e3f3b6337648852032c073fb76208c5e1bfffb825723282140d0a460d7a546",
+        "7db10ce3aed5ff1e1a75f07cc2616f196a9fc4d2048e3dbbc1deba2031d3c38b",
+        "60e3f3b6337648852032c073fb76208c5e1bfffb825723282140d0a460d7a546",
+        "7db10ce3aed5ff1e1a75f07cc2616f196a9fc4d2048e3dbbc1deba2031d3c38b"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:4721:e9f081c0719368c61f839d2042c3c1b93fb62142e4c00c8fff921a29d5134058",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "71d7c5a2198d9240ecbc3f072eda365f370dd01bb05667cb9714754331d68f6e",
+        "7db10ce3aed5ff1e1a75f07cc2616f196a9fc4d2048e3dbbc1deba2031d3c38b",
+        "7db10ce3aed5ff1e1a75f07cc2616f196a9fc4d2048e3dbbc1deba2031d3c38b",
+        "7db10ce3aed5ff1e1a75f07cc2616f196a9fc4d2048e3dbbc1deba2031d3c38b",
+        "7db10ce3aed5ff1e1a75f07cc2616f196a9fc4d2048e3dbbc1deba2031d3c38b"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:5499:56ee0880040513b7a9f3ebcb97131dc9452d38f736670ae8cdb9cedb66f03768",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "9e2894fbe8ca1cfbfed9b149c6b4000baf32a44aff8e989196a52ef5cf574f1c",
+        "9e2894fbe8ca1cfbfed9b149c6b4000baf32a44aff8e989196a52ef5cf574f1c",
+        "9e2894fbe8ca1cfbfed9b149c6b4000baf32a44aff8e989196a52ef5cf574f1c",
+        "9e2894fbe8ca1cfbfed9b149c6b4000baf32a44aff8e989196a52ef5cf574f1c",
+        "9e2894fbe8ca1cfbfed9b149c6b4000baf32a44aff8e989196a52ef5cf574f1c"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:5543:1aed0f9740383dfa6df67ef5674a295facb5e760b7c22170c6cf301f507a7828",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "2abfe93e4008e80e9ac9207092fbba38595ce54de54ab6265a81dfac222f556d",
+        "2abfe93e4008e80e9ac9207092fbba38595ce54de54ab6265a81dfac222f556d",
+        "2abfe93e4008e80e9ac9207092fbba38595ce54de54ab6265a81dfac222f556d",
+        "2abfe93e4008e80e9ac9207092fbba38595ce54de54ab6265a81dfac222f556d",
+        "2abfe93e4008e80e9ac9207092fbba38595ce54de54ab6265a81dfac222f556d"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:6647:5a32353bc4176ce10676936637e85441e23f1f55f07ddb3102252c8644316692",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "b93746373b2d2ce69691b66777a41c72c9f797b3c522bbbe2b1c8f36f151ed64",
+        "b93746373b2d2ce69691b66777a41c72c9f797b3c522bbbe2b1c8f36f151ed64",
+        "b93746373b2d2ce69691b66777a41c72c9f797b3c522bbbe2b1c8f36f151ed64",
+        "b93746373b2d2ce69691b66777a41c72c9f797b3c522bbbe2b1c8f36f151ed64",
+        "b93746373b2d2ce69691b66777a41c72c9f797b3c522bbbe2b1c8f36f151ed64"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:6075:ef726bab441e7a4aef53825a61834cccc61cc9152d5c3fcd47b321edfca6c006",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "4736143bd6d44ce32556c5cdc2a62a3b5d2b0b93339f573fbf469c65f99e0bee",
+        "4736143bd6d44ce32556c5cdc2a62a3b5d2b0b93339f573fbf469c65f99e0bee",
+        "4736143bd6d44ce32556c5cdc2a62a3b5d2b0b93339f573fbf469c65f99e0bee",
+        "4736143bd6d44ce32556c5cdc2a62a3b5d2b0b93339f573fbf469c65f99e0bee",
+        "4736143bd6d44ce32556c5cdc2a62a3b5d2b0b93339f573fbf469c65f99e0bee"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:6025:df4a510139f4178e517bec7c69af32f1b96c606010f131c10c6ed4266536a399",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "9429fbc8645ed58d2b5ecd0f4630e14666dce960bf34c2610fbb2388ea39ef01",
+        "9429fbc8645ed58d2b5ecd0f4630e14666dce960bf34c2610fbb2388ea39ef01",
+        "9429fbc8645ed58d2b5ecd0f4630e14666dce960bf34c2610fbb2388ea39ef01",
+        "9429fbc8645ed58d2b5ecd0f4630e14666dce960bf34c2610fbb2388ea39ef01",
+        "9429fbc8645ed58d2b5ecd0f4630e14666dce960bf34c2610fbb2388ea39ef01"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:6192:86f719a913e90e717ad4d82f63b1b38268ee02e372c35e452f45bb289a010013",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "a8d72721c97cac7386f055501f01d66ab743e6628fd61c011f13e79d6ed16f4f",
+        "a8d72721c97cac7386f055501f01d66ab743e6628fd61c011f13e79d6ed16f4f",
+        "a8d72721c97cac7386f055501f01d66ab743e6628fd61c011f13e79d6ed16f4f",
+        "a8d72721c97cac7386f055501f01d66ab743e6628fd61c011f13e79d6ed16f4f",
+        "a8d72721c97cac7386f055501f01d66ab743e6628fd61c011f13e79d6ed16f4f"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:6629:3fda0fe5cfb4b2e623f997971afff784c61ebd686c7005fced9d1ef1d09a998d",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        false,
+        false,
+        false,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "bcc9f2d7a2b42361cf9118f751a0fb0ab4d743a8da3147a2331ba574fb875c3c",
+        "1ed8e76720f88379afac3ce2ff9938761ffc8d9e60c87e867701d66a6aff3565",
+        "1ed8e76720f88379afac3ce2ff9938761ffc8d9e60c87e867701d66a6aff3565",
+        "bb24519b9f20ffe9490c9f9f2e0b52d77b43b1a41a2259cebabc9ef6ad2f911f",
+        "a096e46d0873d8d27ffed73dfb163b9bda4834ba2f10dbc6e581f5cb4ae756a8"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:5898:9ee38308c093719a50b2476ed11dd57fe062c1eaef398991370da98e1b1e559d",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "077e62ce2ad58b60b584f2bf9c529a244cdb17a4419e4dbb15a06a9cd9d959ef",
+        "077e62ce2ad58b60b584f2bf9c529a244cdb17a4419e4dbb15a06a9cd9d959ef",
+        "077e62ce2ad58b60b584f2bf9c529a244cdb17a4419e4dbb15a06a9cd9d959ef",
+        "077e62ce2ad58b60b584f2bf9c529a244cdb17a4419e4dbb15a06a9cd9d959ef",
+        "077e62ce2ad58b60b584f2bf9c529a244cdb17a4419e4dbb15a06a9cd9d959ef"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:6071:17a947de6b8cfd5bf35e9b7d621d599aec601264a975463011e76f63ed8900f8",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "e06b9fabb4ed5453d1bb74f7adee882e0c80724bea1a3d23569af61bc03df962",
+        "c54e75a7be6694da7f3184e9b526d6df6b64cd17880ca647637b10ff0f3b0ed9",
+        "f97226ee8814878bb3c22999ef8ffe372a4c24e1e89815ed2db268d3859645e9",
+        "0f0f71fdf8556f4a51ccd7f2c126446b6caf21ab84d50ef876880850371fa86f",
+        "b80ad657c57363b1ada4514dde48a42977a59bacc909575c6d374aefca6851b9"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:6358:f48ca432d966129552732ff588f110e3530cad4466d24c6b1541bcf805fbbfe9",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "7ba3a58d2ec282c649ecb3efddc0ab2803d66243eacab55ae6c1e6231087b0d0",
+        "7ba3a58d2ec282c649ecb3efddc0ab2803d66243eacab55ae6c1e6231087b0d0",
+        "7ba3a58d2ec282c649ecb3efddc0ab2803d66243eacab55ae6c1e6231087b0d0",
+        "7ba3a58d2ec282c649ecb3efddc0ab2803d66243eacab55ae6c1e6231087b0d0",
+        "7ba3a58d2ec282c649ecb3efddc0ab2803d66243eacab55ae6c1e6231087b0d0"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:5642:8388e67eb99756ea0a1eb1f102285bce1fe9d9fdcce61f5b0d0b1a7f29bb46de",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "461106eb1a114ccc7e7d61f26db28863235db86313f89b8380b8f7598550fb9c",
+        "461106eb1a114ccc7e7d61f26db28863235db86313f89b8380b8f7598550fb9c",
+        "461106eb1a114ccc7e7d61f26db28863235db86313f89b8380b8f7598550fb9c",
+        "461106eb1a114ccc7e7d61f26db28863235db86313f89b8380b8f7598550fb9c",
+        "461106eb1a114ccc7e7d61f26db28863235db86313f89b8380b8f7598550fb9c"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:6109:1453c8b4075de362547d42958b5f0b01a617041ab6a3a4a4a038481ffdcfed64",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "f4b07ccfb82eb63aec097ab18256fd87134e4f79efec7bae42da3f7b296c0459",
+        "f4b07ccfb82eb63aec097ab18256fd87134e4f79efec7bae42da3f7b296c0459",
+        "f4b07ccfb82eb63aec097ab18256fd87134e4f79efec7bae42da3f7b296c0459",
+        "f4b07ccfb82eb63aec097ab18256fd87134e4f79efec7bae42da3f7b296c0459",
+        "f4b07ccfb82eb63aec097ab18256fd87134e4f79efec7bae42da3f7b296c0459"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:6700:8249ddee658d4f9ab52279afb69bcefad42ea83496a1f31b2f46d60ee3534c95",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "baf7574b7d4cb126d604767a9c46f711d364bf6792aba5d58d5b2d9911141312",
+        "a6a1ff8b22ab02e849fa517166fd8d30d55fae9ceadb3a3404ee490f8ba1b4e0",
+        "a6a1ff8b22ab02e849fa517166fd8d30d55fae9ceadb3a3404ee490f8ba1b4e0",
+        "a6a1ff8b22ab02e849fa517166fd8d30d55fae9ceadb3a3404ee490f8ba1b4e0",
+        "a6a1ff8b22ab02e849fa517166fd8d30d55fae9ceadb3a3404ee490f8ba1b4e0"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:5862:a5ce4c302f96fa28cd10b69589ddadacc3fc6eb3b24555e3d5749b5f8042b63e",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "046a4957e1b62cdf8c1bbde044aa9ef51a40ce3c18430a99a765ee10ad5ca52d",
+        "046a4957e1b62cdf8c1bbde044aa9ef51a40ce3c18430a99a765ee10ad5ca52d",
+        "046a4957e1b62cdf8c1bbde044aa9ef51a40ce3c18430a99a765ee10ad5ca52d",
+        "046a4957e1b62cdf8c1bbde044aa9ef51a40ce3c18430a99a765ee10ad5ca52d",
+        "046a4957e1b62cdf8c1bbde044aa9ef51a40ce3c18430a99a765ee10ad5ca52d"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:6499:fbd6e73789283e7bdbfbed36e817b2a5da34f4454953d6df6df228ac16f58ef0",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        false,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "4f8f365c1abe45c7b049e0943373eba5e1957e55d585341ecd69f6bf100a6132",
+        "7dc511c1f6bc32982d1a6fde92c8e80f24d985ffa485203dd2a18c6a050a6ef8",
+        "c45a1f46afdc5b75d3282232e992310103c77c154b0b16937496680c2ea0a77d",
+        "aa19267dc8411ffe77073d4a64815f64f02970afb26dc588631d5bb14ca62ae6",
+        "4f8f365c1abe45c7b049e0943373eba5e1957e55d585341ecd69f6bf100a6132"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:6435:150bb11dc0138096237a4460d6fe6ec73ce03c4fbe5e00c13be21a27beccf854",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "15e9fb653875823f00a12e244618a8e4a71d5b27e8fbe5e9324605dda0cece47",
+        "15e9fb653875823f00a12e244618a8e4a71d5b27e8fbe5e9324605dda0cece47",
+        "15e9fb653875823f00a12e244618a8e4a71d5b27e8fbe5e9324605dda0cece47",
+        "15e9fb653875823f00a12e244618a8e4a71d5b27e8fbe5e9324605dda0cece47",
+        "15e9fb653875823f00a12e244618a8e4a71d5b27e8fbe5e9324605dda0cece47"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:6391:f749538e6e551a604a3822201194583a0d93ede43be3f206a86cc830e7762648",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "aa5422ac60dc72975492649e19af0a0d49567f7a1aa59449c7f0e951239ed58c",
+        "28bd75097ad6f584829962b16d263c98b25220106553f44e1a7c82b5d2aefe23",
+        "28bd75097ad6f584829962b16d263c98b25220106553f44e1a7c82b5d2aefe23",
+        "28bd75097ad6f584829962b16d263c98b25220106553f44e1a7c82b5d2aefe23",
+        "28bd75097ad6f584829962b16d263c98b25220106553f44e1a7c82b5d2aefe23"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:6015:888d971d64ac7ccc1d1f87108254582f5da3d52b096aadd73a11753f38c3175b",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        true,
+        false,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "588c5c30a09cfc1f451d46b5f007f398a8b0e72252f758b42abf107b3493ffd3",
+        "6419a7f0f4c7c1038c1ca0682d89b84e2ae39a3e4fe39d4aede800e8d0fc6bbe",
+        "588c5c30a09cfc1f451d46b5f007f398a8b0e72252f758b42abf107b3493ffd3",
+        "6419a7f0f4c7c1038c1ca0682d89b84e2ae39a3e4fe39d4aede800e8d0fc6bbe",
+        "6419a7f0f4c7c1038c1ca0682d89b84e2ae39a3e4fe39d4aede800e8d0fc6bbe"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:7317:98a303a2f9e92277a1a92a846116c89fd19d0525f1bb24d0e7f51abe082283cc",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        false,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "f829aa00e42e233e6d21a3cf67e0f838d3882697ddb5509aaefa468b60c6c063",
+        "4540234b214f5c3b0d365e63d852fc738c588f2f45b17f34e90c0a5d4f16557c",
+        "45deec473230578dbb07781a0b17cd5a2f7755281d1510b2b58a2e1c762c7e77",
+        "4540234b214f5c3b0d365e63d852fc738c588f2f45b17f34e90c0a5d4f16557c",
+        "8821ca278d256826e78e9c725eb6dc7cf486cb064c992ab328e8f05ac9ad5b02"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:7018:d9d6b4ae706fdcb3e5e2aa61c16644c60e4e3633049be01b1b7ef7f7983169ba",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "fd3567fdf9a7fa10648190ff6ce301bb4266b7cbb5a74ba9509ba8d9ae9e1aa1",
+        "ab1b018336bec194278639914b5cabd719d01cdeb7ff154b1d0b4f1f19c3f4dd",
+        "ab1b018336bec194278639914b5cabd719d01cdeb7ff154b1d0b4f1f19c3f4dd",
+        "ab1b018336bec194278639914b5cabd719d01cdeb7ff154b1d0b4f1f19c3f4dd",
+        "ab1b018336bec194278639914b5cabd719d01cdeb7ff154b1d0b4f1f19c3f4dd"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:7341:5c4f047c44084447594557a761e28ebd072a83b06311a9cbc43f3533aae01495",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "6e8313a9fcfd825db7314a870e27ee8681b26bd6c3e512245c6710b3b5a778d3",
+        "4fb3791c839613f126153b8dfddf7381c6c61a7f8b59ce85436acf282c1a8b20",
+        "4fb3791c839613f126153b8dfddf7381c6c61a7f8b59ce85436acf282c1a8b20",
+        "4fb3791c839613f126153b8dfddf7381c6c61a7f8b59ce85436acf282c1a8b20",
+        "278111bf6d038d69e3c68943a4e504305181db7260420190b1677d1e8f0a11b0"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:6923:fe15277c90418cff8deeaff1500b75094837d1da3ea5324b2a8e1330c8cf4de5",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        true,
+        true,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "f3d8209228499e1f1a4da9023132e2089c4a6e1100d5f4205302ee442100241e",
+        "652cc7195e73c2eabcf9d7a6d0601c1089862bf0ca1f29be6cc5c9bd83b0190b",
+        "08f9ea06ed66c99e8cb28af65998262caeeb8aa0c41f9137f5b885049299b62e",
+        "a74a9c55bf891b900ef5e57c69a7f4948fcbaacbca5af34d4dc356e059e939f7",
+        "0ac512b3b4d127282af874ed20ef109e0f3e6409b345986e3dc189c1292f3bb7"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:6771:725e50143acd153b0ee326ffbaec6b495dc904a88224987f1ae833282d0cbc8f",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "707884f8b8553ad1db07414918c83d47fbb4559863d8345732fa5f7c3e168315",
+        "707884f8b8553ad1db07414918c83d47fbb4559863d8345732fa5f7c3e168315",
+        "707884f8b8553ad1db07414918c83d47fbb4559863d8345732fa5f7c3e168315",
+        "707884f8b8553ad1db07414918c83d47fbb4559863d8345732fa5f7c3e168315",
+        "707884f8b8553ad1db07414918c83d47fbb4559863d8345732fa5f7c3e168315"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:6802:9a5c5fd5001ad38330f17f7104851de44b5b063391cc7eebff8ed9c9fe99a204",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        true,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "e56c89845a86cc5450d6443578af82270665db3284d7d5bc776f3fe5e977ce17",
+        "b0a748e610ca070175d3f14f17190232e02746d45d21e3366579a384868e82f1",
+        "4d4e0e4d5eb4110b4405cb3e42e88d34b021ddf0dbdc5e3f934a16184215c39e",
+        "838231192bdf7d13e46e87849fd88bece7e87b39f4ace4369834176a178dae46",
+        "f6357144331c047be6a0707c318dba621ff08bbd4e8109cdaeda2d71ab719e0b"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:7295:56ccd1d30e7cbad849e29a3327dd69ec91a5a3967e18ab590c8bc04b918b50e4",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "ec18ed808628074a07ef4303897a92b884a866584d6bedacde8f91f47ed79ed3",
+        "38e8fe5f595516ad939d465210816331c8958621e18e14e82edbff4f4e61ee7a",
+        "b87105d004de14224e0c86b30d6bcc7b81e3eeb50eb15d368708b86588ba5753",
+        "b87105d004de14224e0c86b30d6bcc7b81e3eeb50eb15d368708b86588ba5753",
+        "ec18ed808628074a07ef4303897a92b884a866584d6bedacde8f91f47ed79ed3"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": true
+    },
+    {
+      "example_id": "math:train:6768:0e2b13e1970e4c4295977954d3fb40f4575b5f253065a8440a729aa6653f1aff",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        true
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": true,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "a94dd18413431ac0c3f36c7f0bf480cf6e445b6e39999a162945e4a0c165ca84",
+        "799fb22665752dd13d637ab08c38918563194e72ef9c18c4de0d90b501995b9e",
+        "799fb22665752dd13d637ab08c38918563194e72ef9c18c4de0d90b501995b9e",
+        "799fb22665752dd13d637ab08c38918563194e72ef9c18c4de0d90b501995b9e",
+        "98d5ac4664a805274b6f7a1d18884cc933aa6968d84ac3d3893e1f6c442ff461"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    },
+    {
+      "example_id": "math:train:7198:0553a52bfb62d2defcc566fc7e1042e098dfa5f0821f70efaf5b4218db5e7833",
+      "invalid_reasons": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "member_correct": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "member_valid": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "oracle_correct": false,
+      "recovered_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "request_output_hashes": [
+        "c6f47a494a2f2140600f611027da65f0bff5f087e16c4dd42722a23b8c7ba3f3",
+        "c6f47a494a2f2140600f611027da65f0bff5f087e16c4dd42722a23b8c7ba3f3",
+        "c6f47a494a2f2140600f611027da65f0bff5f087e16c4dd42722a23b8c7ba3f3",
+        "c6f47a494a2f2140600f611027da65f0bff5f087e16c4dd42722a23b8c7ba3f3",
+        "c6f47a494a2f2140600f611027da65f0bff5f087e16c4dd42722a23b8c7ba3f3"
+      ],
+      "semantic_attempt_counts": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminal_invalid": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "vote_correct": false
+    }
+  ],
+  "recovery": {
+    "logical_evaluations": 500,
+    "mean_semantic_attempts": 1.046,
+    "recovered_invalid": 5,
+    "terminal_invalid": 5
+  },
+  "usage": {
+    "accounting_tokens": 0,
+    "cache_hits": 500,
+    "logical_solver_evaluations": 500,
+    "physical_solver_attempts": 0,
+    "physical_solver_generations": 0,
+    "semantic_retry_generations": 0
+  }
+}

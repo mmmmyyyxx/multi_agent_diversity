@@ -1,12 +1,21 @@
 {
-  "cache_hits": 252,
+  "cache_hit_metric_definition": "Reused logical requests; counts guaranteed avoided first generations, without inventing uncached retry counts.",
+  "cache_hits": 752,
   "canary_to_pilot_cache_reuse": false,
-  "carried_peer_profiles_reused_without_solver_invocation": true,
+  "changed_members": 0,
   "cross_attempt_cache_hits": 0,
   "fresh_attempt": true,
-  "logical_solver_evaluations": 552,
-  "physical_calls_avoided_by_reuse": 252,
-  "physical_solver_attempts": 350,
-  "physical_solver_generations": 350,
-  "prior_attempt_outputs_imported": false
+  "logical_solver_evaluations": 1552,
+  "peer_profile_carryforward_observed_in_outer_candidate_evaluation": false,
+  "peer_profile_carryforward_supported_by_frozen_implementation": true,
+  "physical_calls_avoided_by_reuse": 752,
+  "physical_solver_attempts": 873,
+  "physical_solver_generations": 873,
+  "prior_attempt_outputs_imported": false,
+  "search_cache_hits": 252,
+  "search_logical_solver_evaluations": 552,
+  "search_physical_solver_generations": 350,
+  "validation_cache_hits": 500,
+  "validation_logical_solver_evaluations": 1000,
+  "validation_physical_solver_generations": 523
 }

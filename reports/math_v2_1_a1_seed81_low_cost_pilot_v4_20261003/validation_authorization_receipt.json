@@ -1,0 +1,105 @@
+{
+  "closed": true,
+  "consumed": true,
+  "scope": {
+    "accounting_authorized_total": 40000000,
+    "attempt_id": "math_v2_1_low_cost_A1_seed81_pilot_attempt4_validation_attempt1",
+    "final_team_sha256": "f422165eca6bc1f9f391e2ec9f27bccc3e88512187157e9443325b70767703cc",
+    "invalid_recovery_policy": {
+      "cache": "resolved_valid_or_exhausted_terminal_only",
+      "first_valid_stops": true,
+      "identity": "MATH_SOLVER_INVALID_RECOVERY_V1",
+      "invalidity_weight": "none",
+      "logical_evaluation_count": 1,
+      "max_semantic_attempts": 4,
+      "same_request_bytes": true,
+      "solver_invalid_max_retries": 3,
+      "terminal_invalid": "incorrect_continue_no_vote",
+      "terminal_requires_completed_invalid_attempts": 4,
+      "transport_failures_consume_semantic_attempt": false
+    },
+    "low_cost_protocol": {
+      "analysis_policy": {
+        "classification": "sign_of_final_minus_initial_VoteAcc",
+        "identity": "MATH_V2_1_PILOT_DEVELOPMENT_ANALYSIS_V1",
+        "paired_resampling_unit": "frozen_validation_example",
+        "resamples": 10000,
+        "scope": "development_uncertainty_only_no_formal_significance_no_search_feedback",
+        "seed": 81
+      },
+      "canary_stop": "one_complete_production_opportunity_v1",
+      "counts": {
+        "canary_optimize": 12,
+        "pilot_optimize": 60,
+        "pilot_shadow": 40,
+        "pilot_validation": 100
+      },
+      "identity": "MATH_V2_1_LOW_COST_DEV_PROTOCOL_V1",
+      "membership_hashes": {
+        "canary_optimize": "16ad84b5bb22a6aa10e23ef1e1a71ff6d54b7e8e4fcd749571808fba0b2f27ab",
+        "pilot_optimize": "f52c5f2a88337d187f5bf6fe7e9b419d92a96e6848dfeaae01b3f123f197b256",
+        "pilot_shadow": "9732600d0cc9d22c05fa2460738ba45804e23c82ed313ba5545ace5d42886857",
+        "pilot_validation": "c71c48a25ed0439e886481926fcdc6195abc9ab8997c74d4bde3eae712ee3adc"
+      },
+      "pilot_stop": "team_epoch_no_commit_v1",
+      "scientific_scope": "development_only",
+      "selection_policy": {
+        "apportionment": "integer_largest_remainder_lexical_tie",
+        "identity": "MATH_LOW_COST_SUBJECT_LEVEL_HASH_V1",
+        "minimum_per_stratum": 0,
+        "ordering": "sha256_identity_role_stable_id",
+        "output_order": "source_superset_order",
+        "performance_used": false,
+        "strata": [
+          "subject",
+          "level"
+        ]
+      },
+      "source_superset_sha256": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+      "test_access": "sealed"
+    },
+    "low_cost_subsets_sha256": "b6ef5a287d91baa60a329b8a55f88db9e019f83ff2329cf8a62cbae5388d8f5b",
+    "models": {
+      "optimizer_reflection": "qwen3.7-flash",
+      "pattern": "qwen3.7-flash",
+      "solver": "qwen3-8b",
+      "solver_thinking": false
+    },
+    "phase": "POST_SEARCH_VALIDATION_ONLY",
+    "policy_sha256": "e95977bf4a3b09c6af4ffaf84b45489c68a7b8b0de9a201aec3ceb828968ced9",
+    "prediction_validity_policy": {
+      "denominator": "all_frozen_examples",
+      "fallback_extraction": false,
+      "identity": "MATH_PREDICTION_VALIDITY_V2",
+      "invalid_response_retries": 3,
+      "invalid_vote": "excluded_from_equivalence_classes",
+      "invalidity_telemetry": "observation_only",
+      "prediction_failure": "invalid_incorrect_continue",
+      "reference_failure": "hard_contract_failure",
+      "truncated_even_with_marker": "invalid_incorrect"
+    },
+    "provider": "lwj",
+    "roles": [
+      "solver"
+    ],
+    "search_receipt_sha256": "a4f2ebabe7140d5d1b6a01b19eb0827aca48ae5d7e878e56ca6c62d2b9f1a9e3",
+    "solver_decoding_policy": {
+      "enable_thinking": false,
+      "frequency_penalty": 0,
+      "identity": "SOLVER_DECODING_POLICY_V1",
+      "max_output_tokens": 3600,
+      "min_p": 0,
+      "presence_penalty": 0,
+      "temperature": 0.7,
+      "top_k": 20,
+      "top_p": 0.8
+    },
+    "source_sha": "05c1da1ef08ebb4e3ec403380bfc033377b1e743",
+    "split_identity": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+    "successful_provider_call_ceiling": 4000,
+    "test_calls": 0,
+    "transport_attempt_ceiling": 84000,
+    "validation_calls": 1000
+  },
+  "single_use": true
+}

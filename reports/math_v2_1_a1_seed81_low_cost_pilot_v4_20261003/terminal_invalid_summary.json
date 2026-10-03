@@ -1,12 +1,37 @@
 {
-  "raw_invalid_count": 62,
-  "raw_invalid_reasons": {
-    "MISSING_FINAL_MARKER": 1,
-    "OTHER_PREDICTION_CONTRACT_FAILURE": 1,
-    "OUTPUT_TRUNCATED": 7,
-    "PAYLOAD_PARSE_FAILURE": 53
+  "final": {
+    "logical_evaluations": 500,
+    "mean_semantic_attempts": 1.046,
+    "recovered_invalid": 5,
+    "terminal_invalid": 5
   },
-  "recovered_requests": 11,
-  "semantic_retry_generations": 50,
-  "terminal_requests": 12
+  "initial": {
+    "logical_evaluations": 500,
+    "mean_semantic_attempts": 1.046,
+    "recovered_invalid": 5,
+    "terminal_invalid": 5
+  },
+  "search": {
+    "raw_invalid_count": 62,
+    "raw_invalid_reasons": {
+      "MISSING_FINAL_MARKER": 1,
+      "OTHER_PREDICTION_CONTRACT_FAILURE": 1,
+      "OUTPUT_TRUNCATED": 7,
+      "PAYLOAD_PARSE_FAILURE": 53
+    },
+    "recovered_requests": 11,
+    "semantic_retry_generations": 50,
+    "terminal_requests": 12
+  },
+  "validation": {
+    "raw_invalid_count": 28,
+    "raw_invalid_reasons": {
+      "MISSING_FINAL_MARKER": 2,
+      "OUTPUT_TRUNCATED": 10,
+      "PAYLOAD_PARSE_FAILURE": 16
+    },
+    "recovered_requests": 5,
+    "semantic_retry_generations": 23,
+    "terminal_requests": 5
+  }
 }

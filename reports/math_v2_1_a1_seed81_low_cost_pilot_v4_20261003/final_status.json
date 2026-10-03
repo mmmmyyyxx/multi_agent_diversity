@@ -10,8 +10,9 @@
   "optimizer_truncations": 0,
   "scientific_efficacy_verified": false,
   "search_complete": true,
+  "signal": "NEUTRAL",
   "solver_calls": 350,
-  "status": "SEARCH_COMPLETE_VALIDATION_PENDING",
+  "status": "COMPLETE",
   "stop_reason": "SATURATION_REACHED",
   "target_members": [
     3,
@@ -29,5 +30,6 @@
     4,
     0
   ],
-  "validation_complete": false
+  "test_model_calls": 0,
+  "validation_complete": true
 }

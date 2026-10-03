@@ -1,0 +1,125 @@
+{
+  "member_paired": [
+    {
+      "member": 0,
+      "net": 0,
+      "newly_correct": 0,
+      "newly_wrong": 0
+    },
+    {
+      "member": 1,
+      "net": 0,
+      "newly_correct": 0,
+      "newly_wrong": 0
+    },
+    {
+      "member": 2,
+      "net": 0,
+      "newly_correct": 0,
+      "newly_wrong": 0
+    },
+    {
+      "member": 3,
+      "net": 0,
+      "newly_correct": 0,
+      "newly_wrong": 0
+    },
+    {
+      "member": 4,
+      "net": 0,
+      "newly_correct": 0,
+      "newly_wrong": 0
+    }
+  ],
+  "metrics": {
+    "MeanMemberAcc": {
+      "delta": 0.0,
+      "final": 0.488,
+      "initial": 0.488
+    },
+    "MeanSemanticAttempts": {
+      "delta": 0.0,
+      "final": 1.046,
+      "initial": 1.046
+    },
+    "Member0Acc": {
+      "delta": 0.0,
+      "final": 0.58,
+      "initial": 0.58
+    },
+    "Member0TerminalInvalidRate": {
+      "delta": 0.0,
+      "final": 0.01,
+      "initial": 0.01
+    },
+    "Member1Acc": {
+      "delta": 0.0,
+      "final": 0.43,
+      "initial": 0.43
+    },
+    "Member1TerminalInvalidRate": {
+      "delta": 0.0,
+      "final": 0.01,
+      "initial": 0.01
+    },
+    "Member2Acc": {
+      "delta": 0.0,
+      "final": 0.43,
+      "initial": 0.43
+    },
+    "Member2TerminalInvalidRate": {
+      "delta": 0.0,
+      "final": 0.01,
+      "initial": 0.01
+    },
+    "Member3Acc": {
+      "delta": 0.0,
+      "final": 0.45,
+      "initial": 0.45
+    },
+    "Member3TerminalInvalidRate": {
+      "delta": 0.0,
+      "final": 0.0,
+      "initial": 0.0
+    },
+    "Member4Acc": {
+      "delta": 0.0,
+      "final": 0.55,
+      "initial": 0.55
+    },
+    "Member4TerminalInvalidRate": {
+      "delta": 0.0,
+      "final": 0.02,
+      "initial": 0.02
+    },
+    "MinMemberAcc": {
+      "delta": 0.0,
+      "final": 0.43,
+      "initial": 0.43
+    },
+    "OracleAcc": {
+      "delta": 0.0,
+      "final": 0.68,
+      "initial": 0.68
+    },
+    "TerminalInvalidRate": {
+      "delta": 0.0,
+      "final": 0.01,
+      "initial": 0.01
+    },
+    "VoteAcc": {
+      "delta": 0.0,
+      "final": 0.47,
+      "initial": 0.47
+    }
+  },
+  "paired": {
+    "oracle_broken": 0,
+    "oracle_fixed": 0,
+    "oracle_net": 0,
+    "vote_broken": 0,
+    "vote_fixed": 0,
+    "vote_net": 0
+  },
+  "signal": "NEUTRAL"
+}

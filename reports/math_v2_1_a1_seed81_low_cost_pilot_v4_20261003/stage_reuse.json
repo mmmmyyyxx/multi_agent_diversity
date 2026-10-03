@@ -22,5 +22,21 @@
     "physical_solver_attempts": 350,
     "physical_solver_generations": 350,
     "semantic_retry_generations": 50
+  },
+  "validation_final": {
+    "accounting_tokens": 0,
+    "cache_hits": 500,
+    "logical_solver_evaluations": 500,
+    "physical_solver_attempts": 0,
+    "physical_solver_generations": 0,
+    "semantic_retry_generations": 0
+  },
+  "validation_initial": {
+    "accounting_tokens": 263775,
+    "cache_hits": 0,
+    "logical_solver_evaluations": 500,
+    "physical_solver_attempts": 523,
+    "physical_solver_generations": 523,
+    "semantic_retry_generations": 23
   }
 }

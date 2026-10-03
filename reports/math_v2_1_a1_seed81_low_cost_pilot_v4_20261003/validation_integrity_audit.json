@@ -1,0 +1,28 @@
+{
+  "charged_new": 263775,
+  "logical_solver_evaluations": 1000,
+  "optimizer_physical_attempts": 0,
+  "phase": "validation",
+  "raw_invalid_count": 28,
+  "raw_invalid_reasons": {
+    "MISSING_FINAL_MARKER": 2,
+    "OUTPUT_TRUNCATED": 10,
+    "PAYLOAD_PARSE_FAILURE": 16
+  },
+  "recovered_requests": 5,
+  "resolved_cache_entries": 500,
+  "semantic_retry_generations": 23,
+  "solver_cache_hits": 500,
+  "solver_physical_attempts": 523,
+  "status": "PASS",
+  "terminal_requests": 5,
+  "test_model_calls": 0,
+  "token_charge_categories": {
+    "first_attempt": 233884,
+    "semantic_retry": 29891
+  },
+  "transport_failures": 0,
+  "validation_during_search": 0,
+  "wire_fields_dispatched": true,
+  "zero_cross_attempt_output_import": true
+}
