@@ -75,9 +75,9 @@ Reports are immutable evidence, never design authority. Unresolved metadata does
 | [local_gepa_parent_acquisition_v1](local_gepa_parent_acquisition_v1/README.md) | Unknown | GEPA_TWO_LAYER | SCIENTIFIC_RESULT | local_gepa_parent_acquisition_v1 | COMPLETED |
 | [matched_gpt4omini_seed42_20260725](matched_gpt4omini_seed42_20260725/README.md) | 20260725 | HISTORICAL_V15_V16_AND_EARLIER | SCIENTIFIC_RESULT | matched_gpt4omini_seed42_20260725 | STATUS_UNRESOLVED |
 | [math_v2_1_a1_seed81_low_cost_canary_v1_20261003](math_v2_1_a1_seed81_low_cost_canary_v1_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | REAL_CANARY | math_v2_1_a1_seed81_low_cost_canary_v1 | INVALID |
-| [math_v2_1_a1_seed81_low_cost_canary_v2_20261003](math_v2_1_a1_seed81_low_cost_canary_v2_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | REAL_CANARY | math_v2_1_a1_seed81_low_cost_canary_v2 | DRAFT |
+| [math_v2_1_a1_seed81_low_cost_canary_v2_20261003](math_v2_1_a1_seed81_low_cost_canary_v2_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | REAL_CANARY | math_v2_1_a1_seed81_low_cost_canary_v2 | INVALID |
 | [math_v2_1_a1_seed81_low_cost_pilot_v1_20261003](math_v2_1_a1_seed81_low_cost_pilot_v1_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | SCIENTIFIC_RESULT | math_v2_1_a1_seed81_low_cost_pilot_v1 | HOLD |
-| [math_v2_1_a1_seed81_low_cost_pilot_v2_20261003](math_v2_1_a1_seed81_low_cost_pilot_v2_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | SCIENTIFIC_RESULT | math_v2_1_a1_seed81_low_cost_pilot_v2 | DRAFT |
+| [math_v2_1_a1_seed81_low_cost_pilot_v2_20261003](math_v2_1_a1_seed81_low_cost_pilot_v2_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | SCIENTIFIC_RESULT | math_v2_1_a1_seed81_low_cost_pilot_v2 | HOLD |
 | [math_v2_1_a1_seed81_pilot_v1_20261002](math_v2_1_a1_seed81_pilot_v1_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | SCIENTIFIC_RESULT | math_v2_1_a1_seed81_pilot_v1 | SUPERSEDED |
 | [math_v2_1_a1_seed81_pilot_v2_20261002](math_v2_1_a1_seed81_pilot_v2_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | SCIENTIFIC_RESULT | math_v2_1_a1_seed81_pilot_v2 | SUPERSEDED |
 | [math_v2_1_a1_seed81_pilot_v3_20261002](math_v2_1_a1_seed81_pilot_v3_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | SCIENTIFIC_RESULT | math_v2_1_a1_seed81_pilot_v3 | SUPERSEDED |
@@ -92,7 +92,7 @@ Reports are immutable evidence, never design authority. Unresolved metadata does
 | [math_v2_1_a1_seed81_real_canary_v6_20261003](math_v2_1_a1_seed81_real_canary_v6_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | REAL_CANARY | math_v2_1_a1_seed81_real_canary_v6 | HOLD |
 | [math_v2_1_answer_domain_amendment_v1_20261002](math_v2_1_answer_domain_amendment_v1_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | MIGRATION | math_v2_1_answer_domain_amendment_v1 | COMPLETED |
 | [math_v2_1_low_cost_protocol_v1_20261003](math_v2_1_low_cost_protocol_v1_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | ZERO_API | math_v2_1_low_cost_protocol_v1 | COMPLETED |
-| [math_v2_1_optimizer_wire_amendment_v1_20261003](math_v2_1_optimizer_wire_amendment_v1_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | ZERO_API | math_v2_1_optimizer_wire_amendment_v1 | DRAFT |
+| [math_v2_1_optimizer_wire_amendment_v1_20261003](math_v2_1_optimizer_wire_amendment_v1_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | ZERO_API | math_v2_1_optimizer_wire_amendment_v1 | COMPLETED |
 | [math_v2_1_output_interface_repair_v1_20261002](math_v2_1_output_interface_repair_v1_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | ARCHITECTURE | math_v2_1_output_interface_repair_v1 | COMPLETED |
 | [math_v2_1_output_interface_repair_v2_20261002](math_v2_1_output_interface_repair_v2_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | ARCHITECTURE | math_v2_1_output_interface_repair_v2 | COMPLETED |
 | [math_v2_1_output_reuse_audit_v1_20261003](math_v2_1_output_reuse_audit_v1_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | ZERO_API | math_v2_1_output_reuse_audit_v1 | COMPLETED |
@@ -104,7 +104,7 @@ Reports are immutable evidence, never design authority. Unresolved metadata does
 | [math_v2_1_preexecution_freeze_v5_20261003](math_v2_1_preexecution_freeze_v5_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | PREEXECUTION | math_v2_1_preexecution_freeze_v5 | PREEXECUTION_FROZEN |
 | [math_v2_1_preexecution_freeze_v6_20261003](math_v2_1_preexecution_freeze_v6_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | PREEXECUTION | math_v2_1_preexecution_freeze_v6 | PREEXECUTION_FROZEN |
 | [math_v2_1_preexecution_low_cost_v1_20261003](math_v2_1_preexecution_low_cost_v1_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | PREEXECUTION | math_v2_1_preexecution_low_cost_v1 | COMPLETED |
-| [math_v2_1_preexecution_low_cost_v2_20261003](math_v2_1_preexecution_low_cost_v2_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | PREEXECUTION | math_v2_1_preexecution_low_cost_v2 | DRAFT |
+| [math_v2_1_preexecution_low_cost_v2_20261003](math_v2_1_preexecution_low_cost_v2_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | PREEXECUTION | math_v2_1_preexecution_low_cost_v2 | COMPLETED |
 | [math_v2_1_solver_decoding_policy_v1_20261003](math_v2_1_solver_decoding_policy_v1_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | ARCHITECTURE | math_v2_1_solver_decoding_policy_v1 | COMPLETED |
 | [math_v2_1_solver_output_envelope_repair_v1_20261002](math_v2_1_solver_output_envelope_repair_v1_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | ARCHITECTURE | math_v2_1_solver_output_envelope_repair_v1 | COMPLETED |
 | [math_v2_1_terminal_invalid_recovery_v1_20261003](math_v2_1_terminal_invalid_recovery_v1_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | ZERO_API | math_v2_1_terminal_invalid_recovery_v1 | COMPLETED |

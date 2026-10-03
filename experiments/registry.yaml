@@ -5602,11 +5602,13 @@ experiments:
   classifier: SUPERSEDED_UNEXECUTED_BBH_DRAFT
   active_for_new_work: false
   historical_replay: false
-  superseded_by: [v2_pattern_memory_multibench_v1]
+  superseded_by:
+  - v2_pattern_memory_multibench_v1
   notes:
   - Protocol revision before any efficacy observation; removes unmatched historical V1 from the factorial.
   - Proposed A1-A4 by seeds 81/82/83; twelve formal runs, none executed.
-  - Synthetic four-arm budget gate PASS; explicit user directives resolve Solver qwen3-8b, optimizer/Pattern qwen3.7-flash and provider lwj.
+  - Synthetic four-arm budget gate PASS; explicit user directives resolve Solver qwen3-8b, optimizer/Pattern qwen3.7-flash
+    and provider lwj.
   - Model correction and current initial-team hashes are recorded separately; prior STOP report remains unchanged.
   - Historical unexecuted BBH proposal; new work retired in multibench_dataset_migration_v1.
   - Creation-time model-binding audit is preserved; no real API authorization was consumed.
@@ -5615,7 +5617,8 @@ experiments:
   - reports/v2_pattern_memory_factorial_v1_1_20261001
   - reports/v2_pattern_memory_factorial_v1_1_model_binding_20261001
   unavailable:
-    implementation_commit: Solver-default correction is recorded in the containing local amendment commit; no execution source is frozen.
+    implementation_commit: Solver-default correction is recorded in the containing local amendment commit; no execution
+      source is frozen.
     execution_commit: Model selection resolved; remaining protocol/governance gates prevent execution freeze.
     result_commit: No efficacy result exists; local audit metadata commit is discoverable in Git history.
   baseline_commit: a5997898c30c4d4daad5511203657d3c687c90e5
@@ -5717,13 +5720,11 @@ experiments:
   superseded_by: []
   baseline_commit: fa718b9842fcfb50c5a651a59225d1435ebdd7e5
   notes:
-  - Zero-API follow-up resolves reference and execution/conformance blockers; no efficacy
-    observed.
-  - Historical HOLD evidence is immutable. Canary readiness does not authorize provider
-    access.
+  - Zero-API follow-up resolves reference and execution/conformance blockers; no efficacy observed.
+  - Historical HOLD evidence is immutable. Canary readiness does not authorize provider access.
   unavailable:
-    implementation_commit: Exact execution source SHA is frozen in the permanent manifest
-      and source receipt; containing report commit is not execution authority.
+    implementation_commit: Exact execution source SHA is frozen in the permanent manifest and source receipt; containing
+      report commit is not execution authority.
     execution_commit: No real canary or formal call is authorized or executed.
     result_commit: No scientific efficacy results exist.
 - experiment_id: math_v2_pattern_memory_v1
@@ -5744,11 +5745,9 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Registered actual execution identity before final preexecution freeze; no real
-    API execution or efficacy observed.
+  - Registered actual execution identity before final preexecution freeze; no real API execution or efficacy observed.
   unavailable:
-    implementation_commit: Exact execution source is frozen in the permanent manifest
-      and source receipt.
+    implementation_commit: Exact execution source is frozen in the permanent manifest and source receipt.
     execution_commit: No real canary or formal execution authorized or consumed.
     result_commit: No scientific efficacy results exist.
 - experiment_id: math_v2_a1_seed81_real_canary_v1
@@ -5769,12 +5768,9 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Single-use MATH A1 seed81 canary aborted on first successful Solver response lacking
-    the frozen final marker.
-  - No opportunity, complete epoch, Reflection, Pattern, Memory, Validation or Test
-    execution; no efficacy inference.
-  - No same-attempt resume, rerun or automatic repair. Any fresh attempt requires
-    new freeze and authorization.
+  - Single-use MATH A1 seed81 canary aborted on first successful Solver response lacking the frozen final marker.
+  - No opportunity, complete epoch, Reflection, Pattern, Memory, Validation or Test execution; no efficacy inference.
+  - No same-attempt resume, rerun or automatic repair. Any fresh attempt requires new freeze and authorization.
   unavailable:
     result_commit: Containing local result commit; not an execution authorization.
   preexecution_commit: 26386d8c87e3fe363cf13b58c343de34d25ce04c
@@ -5801,15 +5797,11 @@ experiments:
   superseded_by: []
   baseline_commit: e25a2e251a55e0e189c9c228364e4906b98d560d
   notes:
-  - 'R2: original request contained the format contract; model output did not follow.
-    No proven request omission.'
-  - Versioned immutable format binding and request/cache isolation only. No efficacy
-    or real adherence established.
-  - Fresh canary attempt2 requires a separate explicit authorization. Original attempt
-    stays aborted and consumed.
+  - 'R2: original request contained the format contract; model output did not follow. No proven request omission.'
+  - Versioned immutable format binding and request/cache isolation only. No efficacy or real adherence established.
+  - Fresh canary attempt2 requires a separate explicit authorization. Original attempt stays aborted and consumed.
   unavailable:
-    implementation_commit: Exact source receipt is in the versioned manifest after
-      source commit.
+    implementation_commit: Exact source receipt is in the versioned manifest after source commit.
     execution_commit: Zero real calls; future canary not authorized.
     result_commit: No efficacy result.
 - experiment_id: math_v2_solver_interface_repair_v1_2
@@ -5831,15 +5823,11 @@ experiments:
   superseded_by: []
   baseline_commit: e25a2e251a55e0e189c9c228364e4906b98d560d
   notes:
-  - 'R2: original request contained the format contract; model output did not follow.
-    No proven request omission.'
-  - Versioned immutable format binding and request/cache isolation only. No efficacy
-    or real adherence established.
-  - Fresh canary attempt2 requires a separate explicit authorization. Original attempt
-    stays aborted and consumed.
+  - 'R2: original request contained the format contract; model output did not follow. No proven request omission.'
+  - Versioned immutable format binding and request/cache isolation only. No efficacy or real adherence established.
+  - Fresh canary attempt2 requires a separate explicit authorization. Original attempt stays aborted and consumed.
   unavailable:
-    implementation_commit: Exact source receipt is in the versioned manifest after
-      source commit.
+    implementation_commit: Exact source receipt is in the versioned manifest after source commit.
     execution_commit: Zero real calls; future canary not authorized.
     result_commit: No efficacy result.
 - experiment_id: math_v2_autonomous_accounting_preflight_v1
@@ -6266,10 +6254,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Mandatory single literal final-answer line; strict parser and mathematical evaluator
-    unchanged.
-  - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
-    fresh exact scope required.
+  - Mandatory single literal final-answer line; strict parser and mathematical evaluator unchanged.
+  - Initial prompts, models, method, budgets and canonical/split bytes unchanged; fresh exact scope required.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_preexecution_freeze_v2
@@ -6290,10 +6276,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Mandatory single literal final-answer line; strict parser and mathematical evaluator
-    unchanged.
-  - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
-    fresh exact scope required.
+  - Mandatory single literal final-answer line; strict parser and mathematical evaluator unchanged.
+  - Initial prompts, models, method, budgets and canonical/split bytes unchanged; fresh exact scope required.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_a1_seed81_real_canary_v2
@@ -6314,10 +6298,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Mandatory single literal final-answer line; strict parser and mathematical evaluator
-    unchanged.
-  - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
-    fresh exact scope required.
+  - Mandatory single literal final-answer line; strict parser and mathematical evaluator unchanged.
+  - Initial prompts, models, method, budgets and canonical/split bytes unchanged; fresh exact scope required.
   unavailable: {}
   authorization_consumed: true
 - experiment_id: math_v2_1_a1_seed81_pilot_v2
@@ -6338,10 +6320,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Mandatory single literal final-answer line; strict parser and mathematical evaluator
-    unchanged.
-  - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
-    fresh exact scope required.
+  - Mandatory single literal final-answer line; strict parser and mathematical evaluator unchanged.
+  - Initial prompts, models, method, budgets and canonical/split bytes unchanged; fresh exact scope required.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_output_interface_repair_v2
@@ -6362,10 +6342,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Mandatory single literal final-answer line; strict parser and mathematical evaluator
-    unchanged.
-  - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
-    fresh exact scope required.
+  - Mandatory single literal final-answer line; strict parser and mathematical evaluator unchanged.
+  - Initial prompts, models, method, budgets and canonical/split bytes unchanged; fresh exact scope required.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_preexecution_freeze_v3
@@ -6386,10 +6364,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Mandatory single literal final-answer line; strict parser and mathematical evaluator
-    unchanged.
-  - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
-    fresh exact scope required.
+  - Mandatory single literal final-answer line; strict parser and mathematical evaluator unchanged.
+  - Initial prompts, models, method, budgets and canonical/split bytes unchanged; fresh exact scope required.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_a1_seed81_real_canary_v3
@@ -6410,10 +6386,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Mandatory single literal final-answer line; strict parser and mathematical evaluator
-    unchanged.
-  - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
-    fresh exact scope required.
+  - Mandatory single literal final-answer line; strict parser and mathematical evaluator unchanged.
+  - Initial prompts, models, method, budgets and canonical/split bytes unchanged; fresh exact scope required.
   unavailable: {}
   authorization_consumed: true
 - experiment_id: math_v2_1_a1_seed81_pilot_v3
@@ -6434,10 +6408,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Mandatory single literal final-answer line; strict parser and mathematical evaluator
-    unchanged.
-  - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
-    fresh exact scope required.
+  - Mandatory single literal final-answer line; strict parser and mathematical evaluator unchanged.
+  - Initial prompts, models, method, budgets and canonical/split bytes unchanged; fresh exact scope required.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_solver_output_envelope_repair_v1
@@ -6458,12 +6430,10 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Versioned Solver-only output cap 3600 after observed truncation; Reflection remains
-    1800; strict parser unchanged.
-  - Initial prompts, models, method, numeric GEPA budgets and canonical/split bytes
-    unchanged; 30M total authorization preserved; fresh exact scope required.
-  - Task closure preserves frozen attempt and evidence; no fresh execution admitted
-    under STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED.
+  - Versioned Solver-only output cap 3600 after observed truncation; Reflection remains 1800; strict parser unchanged.
+  - Initial prompts, models, method, numeric GEPA budgets and canonical/split bytes unchanged; 30M total authorization
+    preserved; fresh exact scope required.
+  - Task closure preserves frozen attempt and evidence; no fresh execution admitted under STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_preexecution_freeze_v4
@@ -6484,12 +6454,10 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Versioned Solver-only output cap 3600 after observed truncation; Reflection remains
-    1800; strict parser unchanged.
-  - Initial prompts, models, method, numeric GEPA budgets and canonical/split bytes
-    unchanged; 30M total authorization preserved; fresh exact scope required.
-  - Task closure preserves frozen attempt and evidence; no fresh execution admitted
-    under STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED.
+  - Versioned Solver-only output cap 3600 after observed truncation; Reflection remains 1800; strict parser unchanged.
+  - Initial prompts, models, method, numeric GEPA budgets and canonical/split bytes unchanged; 30M total authorization
+    preserved; fresh exact scope required.
+  - Task closure preserves frozen attempt and evidence; no fresh execution admitted under STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_a1_seed81_real_canary_v4
@@ -6510,12 +6478,10 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Versioned Solver-only output cap 3600 after observed truncation; Reflection remains
-    1800; strict parser unchanged.
-  - Initial prompts, models, method, numeric GEPA budgets and canonical/split bytes
-    unchanged; 30M total authorization preserved; fresh exact scope required.
-  - Task closure preserves frozen attempt and evidence; no fresh execution admitted
-    under STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED.
+  - Versioned Solver-only output cap 3600 after observed truncation; Reflection remains 1800; strict parser unchanged.
+  - Initial prompts, models, method, numeric GEPA budgets and canonical/split bytes unchanged; 30M total authorization
+    preserved; fresh exact scope required.
+  - Task closure preserves frozen attempt and evidence; no fresh execution admitted under STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED.
   unavailable: {}
   authorization_consumed: true
 - experiment_id: math_v2_1_a1_seed81_pilot_v4
@@ -6536,15 +6502,12 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Versioned Solver-only output cap 3600 after observed truncation; Reflection remains
-    1800; strict parser unchanged.
-  - Initial prompts, models, method, numeric GEPA budgets and canonical/split bytes
-    unchanged; 30M total authorization preserved; fresh exact scope required.
-  - Task closure preserves frozen attempt and evidence; no fresh execution admitted
-    under STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED.
+  - Versioned Solver-only output cap 3600 after observed truncation; Reflection remains 1800; strict parser unchanged.
+  - Initial prompts, models, method, numeric GEPA budgets and canonical/split bytes unchanged; 30M total authorization
+    preserved; fresh exact scope required.
+  - Task closure preserves frozen attempt and evidence; no fresh execution admitted under STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED.
   unavailable:
-    execution_commit: Pilot not executed; Canary failed and generation policy decision
-      required.
+    execution_commit: Pilot not executed; Canary failed and generation policy decision required.
   authorization_consumed: false
 - experiment_id: math_v2_1_solver_decoding_policy_v1
   kind: ARCHITECTURE_REFACTOR
@@ -6564,8 +6527,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Only Solver decoding policy changes; optimizer policy, method, data, split, initial
-    team and evaluator remain frozen.
+  - Only Solver decoding policy changes; optimizer policy, method, data, split, initial team and evaluator remain
+    frozen.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_preexecution_freeze_v5
@@ -6586,8 +6549,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Only Solver decoding policy changes; optimizer policy, method, data, split, initial
-    team and evaluator remain frozen.
+  - Only Solver decoding policy changes; optimizer policy, method, data, split, initial team and evaluator remain
+    frozen.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_a1_seed81_real_canary_v5
@@ -6608,10 +6571,10 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Only Solver decoding policy changes; optimizer policy, method, data, split, initial
-    team and evaluator remain frozen.
-  - Exact frozen fields dispatched; Canary response63 length-terminated at3600 without
-    final marker. No regeneration, tuning, Pilot or Validation admission.
+  - Only Solver decoding policy changes; optimizer policy, method, data, split, initial team and evaluator remain
+    frozen.
+  - Exact frozen fields dispatched; Canary response63 length-terminated at3600 without final marker. No regeneration,
+    tuning, Pilot or Validation admission.
   unavailable: {}
   authorization_consumed: true
 - experiment_id: math_v2_1_a1_seed81_pilot_v5
@@ -6632,10 +6595,10 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Only Solver decoding policy changes; optimizer policy, method, data, split, initial
-    team and evaluator remain frozen.
-  - Exact frozen fields dispatched; Canary response63 length-terminated at3600 without
-    final marker. No regeneration, tuning, Pilot or Validation admission.
+  - Only Solver decoding policy changes; optimizer policy, method, data, split, initial team and evaluator remain
+    frozen.
+  - Exact frozen fields dispatched; Canary response63 length-terminated at3600 without final marker. No regeneration,
+    tuning, Pilot or Validation admission.
   unavailable:
     execution_commit: Not executed.
   authorization_consumed: false
@@ -6657,8 +6620,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Only successful-transport prediction invalidity treatment changes; decoding, method,
-    split, initial team, reference and mathematical equivalence remain frozen.
+  - Only successful-transport prediction invalidity treatment changes; decoding, method, split, initial team, reference
+    and mathematical equivalence remain frozen.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_preexecution_freeze_v6
@@ -6679,8 +6642,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Only successful-transport prediction invalidity treatment changes; decoding, method,
-    split, initial team, reference and mathematical equivalence remain frozen.
+  - Only successful-transport prediction invalidity treatment changes; decoding, method, split, initial team, reference
+    and mathematical equivalence remain frozen.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_a1_seed81_real_canary_v6
@@ -6701,8 +6664,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Only successful-transport prediction invalidity treatment changes; decoding, method,
-    split, initial team, reference and mathematical equivalence remain frozen.
+  - Only successful-transport prediction invalidity treatment changes; decoding, method, split, initial team, reference
+    and mathematical equivalence remain frozen.
   unavailable: {}
   authorization_consumed: true
 - experiment_id: math_v2_1_a1_seed81_pilot_v6
@@ -6723,8 +6686,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Only successful-transport prediction invalidity treatment changes; decoding, method,
-    split, initial team, reference and mathematical equivalence remain frozen.
+  - Only successful-transport prediction invalidity treatment changes; decoding, method, split, initial team, reference
+    and mathematical equivalence remain frozen.
   unavailable:
     execution_commit: Not executed.
   authorization_consumed: false
@@ -6867,19 +6830,23 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_a1_seed81_low_cost_canary_v1
-  status: DRAFT
-  scientific_status: PREEXECUTION_PENDING
-  implementation_commit: null
+  status: COMPLETED
+  scientific_status: APPROVED_WIRE_CONTRACT_FROZEN
+  implementation_commit: ab33739562d64648237fd96aa63f7720c48adfde
   execution_commit: null
-  result_commit: null
+  result_commit: ab33739562d64648237fd96aa63f7720c48adfde
   manifest: experiments/manifests/math_v2_1_optimizer_wire_amendment_v1.yaml
   report: reports/math_v2_1_optimizer_wire_amendment_v1_20261003
-  classifier: APPROVED_OPTIMIZER_WIRE_AMENDMENT
+  classifier: OPTIMIZER_REFLECTION_GENERATION_POLICY_V1
   active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
-  - Explicit thinking=true, total completion cap1800, accounting tolerance10; Solver and method unchanged.
+  - Approved explicit thinking=true/temperature0.0/max_completion_tokens1800, no max_tokens, measurement/accounting
+    ceiling1810.
+  - Reflection and Pattern wire machinery corrected; A1 Pattern remains OFF. Historical V1 runtime stop and full
+    fallback charges are immutable.
+  - Solver, GEPA budgets, V2.1 method and low-cost data memberships remain unchanged.
   authorization_consumed: false
   unavailable:
     execution_commit: Not executed.
@@ -6889,19 +6856,20 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_optimizer_wire_amendment_v1
-  status: DRAFT
-  scientific_status: PREEXECUTION_PENDING
-  implementation_commit: null
+  status: COMPLETED
+  scientific_status: ZERO_API_PASS
+  implementation_commit: ab33739562d64648237fd96aa63f7720c48adfde
   execution_commit: null
-  result_commit: null
+  result_commit: dc51aab6a0ad5428ecf537bc05c62a793b4084e7
   manifest: experiments/manifests/math_v2_1_preexecution_low_cost_v2.yaml
   report: reports/math_v2_1_preexecution_low_cost_v2_20261003
-  classifier: APPROVED_OPTIMIZER_WIRE_AMENDMENT
+  classifier: LOW_COST_OPTIMIZER_WIRE_PREEXECUTION_FROZEN
   active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
-  - Explicit thinking=true, total completion cap1800, accounting tolerance10; Solver and method unchanged.
+  - Current suite891 passed/2 skipped;1468 historical/private cases not executed. Source, binding, manifest, transport,
+    cache, reservation and startup gates passed.
   authorization_consumed: false
   unavailable:
     execution_commit: Not executed.
@@ -6911,41 +6879,47 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_preexecution_low_cost_v2
-  status: DRAFT
-  scientific_status: PREEXECUTION_PENDING
-  implementation_commit: null
-  execution_commit: null
-  result_commit: null
+  status: INVALID
+  scientific_status: EXECUTION_ABORTED_EFFICACY_UNEVALUATED
+  implementation_commit: ab33739562d64648237fd96aa63f7720c48adfde
+  execution_commit: dc51aab6a0ad5428ecf537bc05c62a793b4084e7
+  result_commit: 070bb770b34c7a0f3e7dd4a795c152ccce156a32
   manifest: experiments/manifests/math_v2_1_a1_seed81_low_cost_canary_v2.yaml
   report: reports/math_v2_1_a1_seed81_low_cost_canary_v2_20261003
-  classifier: APPROVED_OPTIMIZER_WIRE_AMENDMENT
+  classifier: CANARY_OPTIMIZER_OUTPUT_TRUNCATION
   active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
-  - Explicit thinking=true, total completion cap1800, accounting tolerance10; Solver and method unchanged.
-  authorization_consumed: false
-  unavailable:
-    execution_commit: Not executed.
+  - 60 valid Solver generations;70 logical Solver evaluations including10 same-attempt GEPA cache hits. Responsibility
+    selected member3.
+  - First reflection dispatched approved total cap1800/thinking=true, reported1800 completion and1800 reasoning
+    tokens, empty answer and finish_reason length.
+  - Cap verification passed; existing truncation guard failed closed before proposal admission. One opportunity
+    started, zero completed, no new exported candidate or commit.
+  - Wire/cache/journal/inventory/split integrity passed. No implementation defect found; new optimizer scientific
+    policy decision required.
+  authorization_consumed: true
 - experiment_id: math_v2_1_a1_seed81_low_cost_pilot_v2
   kind: PILOT
   era: BENCHMARK_GENERALIZATION
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_a1_seed81_low_cost_canary_v2
-  status: DRAFT
-  scientific_status: PREEXECUTION_PENDING
-  implementation_commit: null
+  status: HOLD
+  scientific_status: NOT_EXECUTED_CANARY_POLICY_FAILURE
+  implementation_commit: ab33739562d64648237fd96aa63f7720c48adfde
   execution_commit: null
-  result_commit: null
+  result_commit: 070bb770b34c7a0f3e7dd4a795c152ccce156a32
   manifest: experiments/manifests/math_v2_1_a1_seed81_low_cost_pilot_v2.yaml
   report: reports/math_v2_1_a1_seed81_low_cost_pilot_v2_20261003
-  classifier: APPROVED_OPTIMIZER_WIRE_AMENDMENT
+  classifier: STOP_NEW_SCIENTIFIC_POLICY_REQUIRED
   active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
-  - Explicit thinking=true, total completion cap1800, accounting tolerance10; Solver and method unchanged.
+  - Canary failed before a complete production opportunity; Pilot, Shadow and Validation100 never dispatched.
+  - Scope closed without dispatch; no inherited outputs, no tuning/rerun, no other seeds/arms, no Test.
   authorization_consumed: false
   unavailable:
     execution_commit: Not executed.
