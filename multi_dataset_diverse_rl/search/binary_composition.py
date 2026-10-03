@@ -29,9 +29,16 @@ class FirstParentEpochStop(GlobalStopPolicy):
         return None
 
 
+class OneProductionOpportunityStop(GlobalStopPolicy):
+    """Versioned low-cost Canary boundary after one fully completed opportunity."""
+    def observe_opportunity(self, **kwargs):
+        super().observe_opportunity(**kwargs)
+        return 'CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE'
+
+
 def build_binary_orchestrator(*, benchmark, aggregation, examples, prompts, solver, optimizer,
         method, seed, shadow_loader, shadow_count, runtime_readiness, pattern_provider=None,
-        first_parent_epoch=False, provider_call_reader=None):
+        first_parent_epoch=False, provider_call_reader=None, one_production_opportunity=False):
     if not isinstance(optimizer, GEPATeamExposureOptimizer) or optimizer.config.identity() != GEPATeamExposureConfig().identity():
         raise SearchContractError("FROZEN_GEPA_EXPOSURE_REQUIRED")
     if method.diagnosis_policy != versions.BINARY_PLURALITY_RESPONSIBILITY_VERSION:
@@ -76,7 +83,7 @@ def build_binary_orchestrator(*, benchmark, aggregation, examples, prompts, solv
             evidence=(FocusedEvidencePolicyV2 if current else PatternCapableVariableEvidencePolicyV1)(), patterns=patterns),
         engine=GEPATeamCandidateExposureEngine(bridge), evaluation=CandidateEvaluationPipeline(provider, FixedPeerPromotion(invalid_predictions_are_incorrect=prediction_invalidity)),
         transition=transition, gate=gate, committer=TeamStateCommitter(store), history=history, memory=memory,
-        stop=FirstParentEpochStop(2) if first_parent_epoch else GlobalStopPolicy(2),
+        stop=OneProductionOpportunityStop(2) if one_production_opportunity else FirstParentEpochStop(2) if first_parent_epoch else GlobalStopPolicy(2),
         runtime_readiness=runtime_readiness, provider_call_reader=provider_call_reader)
     # Identity checks must finish before the caller initializes provider state.
     return composed

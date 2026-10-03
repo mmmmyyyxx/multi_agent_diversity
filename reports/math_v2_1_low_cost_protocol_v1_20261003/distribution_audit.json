@@ -1,0 +1,72 @@
+{
+  "canary_optimize": {
+    "level": {
+      "Level 1": 1,
+      "Level 2": 2,
+      "Level 3": 2,
+      "Level 4": 3,
+      "Level 5": 4
+    },
+    "subject": {
+      "algebra": 4,
+      "counting_and_probability": 2,
+      "geometry": 2,
+      "intermediate_algebra": 2,
+      "prealgebra": 2
+    }
+  },
+  "pilot_optimize": {
+    "level": {
+      "Level 1": 5,
+      "Level 2": 12,
+      "Level 3": 11,
+      "Level 4": 14,
+      "Level 5": 18
+    },
+    "subject": {
+      "algebra": 15,
+      "counting_and_probability": 7,
+      "geometry": 7,
+      "intermediate_algebra": 10,
+      "number_theory": 7,
+      "prealgebra": 9,
+      "precalculus": 5
+    }
+  },
+  "pilot_shadow": {
+    "level": {
+      "Level 1": 2,
+      "Level 2": 7,
+      "Level 3": 8,
+      "Level 4": 10,
+      "Level 5": 13
+    },
+    "subject": {
+      "algebra": 8,
+      "counting_and_probability": 5,
+      "geometry": 5,
+      "intermediate_algebra": 8,
+      "number_theory": 5,
+      "prealgebra": 6,
+      "precalculus": 3
+    }
+  },
+  "pilot_validation": {
+    "level": {
+      "Level 1": 8,
+      "Level 2": 23,
+      "Level 3": 23,
+      "Level 4": 16,
+      "Level 5": 30
+    },
+    "subject": {
+      "algebra": 23,
+      "counting_and_probability": 11,
+      "geometry": 12,
+      "intermediate_algebra": 18,
+      "number_theory": 11,
+      "prealgebra": 16,
+      "precalculus": 9
+    }
+  }
+}

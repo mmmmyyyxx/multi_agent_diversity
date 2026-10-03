@@ -1,0 +1,11 @@
+{
+  "targeted_tests": 41,
+  "status": "PASS",
+  "fake_A1": "PASS",
+  "fake_A2": "PASS",
+  "fake_A3": "PASS",
+  "fake_A4": "PASS",
+  "full_current_suite": "PENDING",
+  "historical_private_cases_not_executed": 1468,
+  "real_api_calls": 0
+}

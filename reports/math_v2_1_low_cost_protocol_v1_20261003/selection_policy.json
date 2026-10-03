@@ -1,0 +1,12 @@
+{
+  "apportionment": "integer_largest_remainder_lexical_tie",
+  "identity": "MATH_LOW_COST_SUBJECT_LEVEL_HASH_V1",
+  "minimum_per_stratum": 0,
+  "ordering": "sha256_identity_role_stable_id",
+  "output_order": "source_superset_order",
+  "performance_used": false,
+  "strata": [
+    "subject",
+    "level"
+  ]
+}

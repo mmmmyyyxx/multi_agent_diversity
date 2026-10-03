@@ -5,7 +5,7 @@ import hashlib
 import json
 import os
 
-from .token_accounting import TokenLedger, OperationalAbort, serialized_request
+from .token_accounting import TokenLedger, OperationalAbort, serialized_request, POLICY, POLICY_40M
 from .unified_execution import consumption_path, inventory
 from ..persistence.durable_io import atomic_write_json, append_jsonl, read_json
 from ..benchmarks.math_domain_binding import execution_binding
@@ -97,12 +97,29 @@ def initial_prompts(root, contract):
     return tuple(m["prompt"] for m in read_json(root / contract["initial_team_path"])["members"])
 
 
+def ledger_policy(contract):
+    from .. import versions
+    return POLICY_40M if contract['identity']==versions.MATH_LOW_COST_EXECUTION_BINDING_VERSION else POLICY
+
+
+def durable_output_cache(run_root,contract,payload):
+    from .. import versions
+    if contract['identity']!=versions.MATH_LOW_COST_EXECUTION_BINDING_VERSION:return None
+    from ..persistence.exact_output_cache import DurableExactOutputCache,digest
+    return DurableExactOutputCache(run_root/'resolved_output_cache',dict(
+        execution_attempt_id=contract['execution_attempt_id'],cache_namespace=contract['cache_namespace'],
+        startup_identity_sha256=payload['startup_identity_sha256'],source_sha=payload['scope']['source_sha'],
+        authorization_sha256=digest(read_json(run_root/'consumed_authorization.json')),
+        binding_sha256=digest(contract),generation_policy_sha256=digest(contract['solver_decoding_policy']),
+        recovery_policy_sha256=digest(contract['invalid_recovery_policy'])))
+
+
 async def execute_search(root, prep, run_root, payload):
     c = read_json(root / payload["manifest"]["execution_binding"]["path"])
     binding = execution_binding(root, c)
     if binding.blockers():
         raise SearchContractError("AUTONOMOUS_BINDING_NOT_READY")
-    budget = TokenLedger(root / c["token_ledger_directory"], task_sha256=c["task_authorization_sha256"])
+    budget = TokenLedger(root / c["token_ledger_directory"], task_sha256=c["task_authorization_sha256"],policy=ledger_policy(c))
     broker = client = None
     try:
         reserve = ValidationReserve(read_json(root / c["validation_accounting_metadata_path"]), initial_prompts(root,c))
@@ -113,7 +130,8 @@ async def execute_search(root, prep, run_root, payload):
         transport,client = create_transport(c)
         broker = RequestBroker(contract=c,transport=transport,arm="A1",seed=81,token_ledger=budget,
             reserve_reader=reserve.remaining,ledger_writer=lambda r:append_jsonl(run_root / "ledger.jsonl",r),
-            raw_writer=lambda r:append_jsonl(run_root / "provider_trace_private.jsonl",r))
+            raw_writer=lambda r:append_jsonl(run_root / "provider_trace_private.jsonl",r),
+            durable_cache=durable_output_cache(run_root,c,payload))
         broker.prompt_observer = reserve.observe
         solver = BenchmarkSolver(binding.benchmark(),broker)
         composed = binding.compose(arm="A1",seed=81,solver=solver,reflection=ReflectionProvider(broker),pattern_provider=None,run_root=run_root)
@@ -131,7 +149,7 @@ async def execute_search(root, prep, run_root, payload):
             atomic_write_json(run_root / "initial_competence_floor.json",dict(binding=c["initial_competence_binding"],
                 state_id=initial.team_state_id, member_scores=initial.member_scores))
         result = await composed.run(max_opportunities=c["provider_bounds"]["max_opportunities"])
-        accepted = {"CANARY_PARENT_EPOCH_COMPLETE","NO_FEASIBLE_OPPORTUNITY"} if c["execution_phase"]=="canary" else {"SATURATION_REACHED","NO_FEASIBLE_OPPORTUNITY"}
+        accepted = {"CANARY_PARENT_EPOCH_COMPLETE","CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE","NO_FEASIBLE_OPPORTUNITY"} if c["execution_phase"]=="canary" else {"SATURATION_REACHED","NO_FEASIBLE_OPPORTUNITY"}
         if result.stop_reason not in accepted:
             raise OperationalAbort("NONSCIENTIFIC_STOP_"+result.stop_reason)
         if c.get("method_identity") == "unified_team_prompt_search_v2_1" and c["execution_phase"] == "canary" and not result.trace:

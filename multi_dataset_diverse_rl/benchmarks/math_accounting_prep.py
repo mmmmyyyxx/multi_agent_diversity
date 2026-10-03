@@ -21,6 +21,10 @@ def validation_rows(root, contract, *, context, search_complete_receipt=None):
     selected = [r for r in reader.members if r["project_split"] == "validation"]
     if len(selected) != 300 or any(r["source_split"] != "train" for r in selected):
         raise SearchContractError("VALIDATION_SOURCE_ROLE_MISMATCH")
+    if contract['identity']==versions.MATH_LOW_COST_EXECUTION_BINDING_VERSION:
+        from .math_low_cost import read_subsets
+        ids={r['stable_example_id'] for r in read_subsets(root,contract)['memberships']['pilot_validation']}
+        selected=[r for r in selected if r['stable_example_id'] in ids]
     source = root / contract["canonical_root"] / "raw/math/train.jsonl"
     expected = next(r for r in reader.manifest["canonical_sources"] if r["name"] == "train")
     if file_hash(source) != expected["canonical_sha256"]:
@@ -40,7 +44,7 @@ def validation_rows(root, contract, *, context, search_complete_receipt=None):
             if context == "POST_SEARCH_VALIDATION_CONTEXT":
                 value["reference"] = row["reference_final_answer"]
             found[row["stable_example_id"]] = value
-    if len(found) != 300:
+    if len(found) != len(selected):
         raise SearchContractError("VALIDATION_COUNT_MISMATCH")
     return tuple(found[r["stable_example_id"]] for r in selected)
 
@@ -48,7 +52,7 @@ def validation_rows(root, contract, *, context, search_complete_receipt=None):
 def solver_request(contract, prompt, problem):
     interface = MATH_SOLVER_INTERFACE
     user_content = prompt + "\n\n" + problem
-    if contract["identity"] in {versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION}:
+    if contract["identity"] in {versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION, versions.MATH_LOW_COST_EXECUTION_BINDING_VERSION}:
         from .math_v21_interface import interface_for_contract, solver_user_content
         interface = interface_for_contract(contract)[0]
         user_content = solver_user_content(contract, prompt, problem)
@@ -59,7 +63,7 @@ def solver_request(contract, prompt, problem):
 
 def prepare_metadata(root, contract):
     interface = solver_interface_contract()
-    if contract["identity"] in {versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION}:
+    if contract["identity"] in {versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION, versions.MATH_LOW_COST_EXECUTION_BINDING_VERSION}:
         from .math_v21_interface import interface_for_contract
         interface = interface_for_contract(contract)[1]
     examples = []
@@ -68,13 +72,17 @@ def prepare_metadata(root, contract):
             blank_prompt_serialized_request_bytes=len(serialized_request(solver_request(contract, "", row["problem"])))))
     metadata = dict(identity="MATH_VALIDATION_ACCOUNTING_METADATA_V2", context="ACCOUNTING_DATA_PREP_CONTEXT",
         split_manifest_sha256=contract["split_manifest_sha256"], solver_output_interface=interface,
-        decoding=contract["decoding"], validation_raw_rows_read=300,
+        decoding=contract["decoding"], validation_raw_rows_read=len(examples),
         model_calls=0, correctness_evaluations=0, content_exposed_to_search=False, examples=examples)
     if frozen_solver_policy(contract) is not None:
         metadata["solver_decoding_policy"] = frozen_solver_policy(contract)
     from .math_prediction_validity import frozen_prediction_policy
     if frozen_prediction_policy(contract):
         metadata["prediction_validity_policy"] = frozen_prediction_policy(contract)
+    from .math_prediction_validity import frozen_recovery_policy
+    if frozen_recovery_policy(contract):
+        metadata['invalid_recovery_policy']=frozen_recovery_policy(contract)
+        metadata['low_cost_protocol']=contract['low_cost_protocol']
     return metadata
 
 

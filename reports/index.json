@@ -1323,6 +1323,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/math_v2_1_terminal_invalid_recovery_v1_20261003",
+      "document": "reports/math_v2_1_terminal_invalid_recovery_v1_20261003/README.md",
+      "date": "20261003",
+      "era": "BENCHMARK_GENERALIZATION",
+      "kind": "ZERO_API",
+      "experiment_id": "math_v2_1_terminal_invalid_recovery_v1",
+      "status": "COMPLETED",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/math_v2_a1_seed81_pilot_v2_20261002",
       "document": "reports/math_v2_a1_seed81_pilot_v2_20261002/README.md",
       "date": "20261002",

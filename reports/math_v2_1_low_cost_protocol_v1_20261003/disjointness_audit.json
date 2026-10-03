@@ -1,0 +1,38 @@
+{
+  "checks": [
+    {
+      "counts": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      },
+      "roles": [
+        "pilot_optimize",
+        "pilot_shadow"
+      ]
+    },
+    {
+      "counts": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      },
+      "roles": [
+        "pilot_optimize",
+        "pilot_validation"
+      ]
+    },
+    {
+      "counts": {
+        "content_sha256": 0,
+        "input_sha256": 0,
+        "stable_example_id": 0
+      },
+      "roles": [
+        "pilot_shadow",
+        "pilot_validation"
+      ]
+    }
+  ],
+  "status": "PASS"
+}

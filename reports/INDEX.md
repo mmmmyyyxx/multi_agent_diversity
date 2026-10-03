@@ -99,6 +99,7 @@ Reports are immutable evidence, never design authority. Unresolved metadata does
 | [math_v2_1_preexecution_freeze_v6_20261003](math_v2_1_preexecution_freeze_v6_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | PREEXECUTION | math_v2_1_preexecution_freeze_v6 | PREEXECUTION_FROZEN |
 | [math_v2_1_solver_decoding_policy_v1_20261003](math_v2_1_solver_decoding_policy_v1_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | ARCHITECTURE | math_v2_1_solver_decoding_policy_v1 | COMPLETED |
 | [math_v2_1_solver_output_envelope_repair_v1_20261002](math_v2_1_solver_output_envelope_repair_v1_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | ARCHITECTURE | math_v2_1_solver_output_envelope_repair_v1 | COMPLETED |
+| [math_v2_1_terminal_invalid_recovery_v1_20261003](math_v2_1_terminal_invalid_recovery_v1_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | ZERO_API | math_v2_1_terminal_invalid_recovery_v1 | COMPLETED |
 | [math_v2_a1_seed81_pilot_v2_20261002](math_v2_a1_seed81_pilot_v2_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | SCIENTIFIC_RESULT | math_v2_a1_seed81_pilot_v2 | PREPARED_NOT_EXECUTED |
 | [math_v2_a1_seed81_real_canary_v1_20261002](math_v2_a1_seed81_real_canary_v1_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | REAL_CANARY | math_v2_a1_seed81_real_canary_v1 | HOLD |
 | [math_v2_a1_seed81_real_canary_v2_20261002](math_v2_a1_seed81_real_canary_v2_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | INVALID_ATTEMPT | math_v2_a1_seed81_real_canary_v2 | INVALID |

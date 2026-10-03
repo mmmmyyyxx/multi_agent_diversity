@@ -40,7 +40,16 @@ class DurableExactOutputCache:
                     or digest(row['result'])!=row['response_sha256']):
                 raise ValueError('seal mismatch')
             from ..benchmarks.math_prediction_validity import prediction_from_persisted
-            prediction_from_persisted(row['result']['resolved_prediction'])
+            prediction=prediction_from_persisted(row['result']['resolved_prediction'])
+            result=row['result']
+            if (result['request_sha256']!=key or result['text']!=prediction.text
+                    or result['finish_reason']!=prediction.finish_reason
+                    or len(result['original_realizations'])!=prediction.semantic_attempt_count
+                    or any(r['text']!=p.text or r['finish_reason']!=p.finish_reason
+                        for r,p in zip(result['original_realizations'],prediction.original_predictions,strict=True))
+                    or any(result[k]!=sum(r[k] for r in result['original_realizations'])
+                        for k in ('input_tokens','output_tokens'))):
+                raise ValueError('resolved evidence mismatch')
             return row['result']
         except (ValueError,KeyError,TypeError) as exc:
             raise SearchContractError('DURABLE_CACHE_CORRUPTION') from exc

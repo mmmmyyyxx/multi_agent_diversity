@@ -1,0 +1,12 @@
+{
+  "authorized_total": 40000000,
+  "bound_kind": "OPERATIONAL_ACCOUNTING_BOUND_NOT_PROVIDER_BILLING_PROOF",
+  "concurrency": 1,
+  "crash_unresolved_reservation": "CHARGE_FULL_RESERVATION",
+  "failure_without_reliable_usage": "CHARGE_FULL_RESERVATION",
+  "identity": "MATH_TOKEN_ACCOUNTING_V2",
+  "input_margin": 4096,
+  "input_tier": "UTF8_SERIALIZED_REQUEST_PLUS_4096",
+  "ledger_identity": "AUTONOMOUS_REAL_TOKEN_LEDGER_V2",
+  "missing_invalid_untrusted_usage": "CHARGE_FULL_RESERVATION"
+}

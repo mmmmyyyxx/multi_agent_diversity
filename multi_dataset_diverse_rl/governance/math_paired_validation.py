@@ -1,7 +1,7 @@
 """Read-only post-search MATH comparison with one shared request realization."""
 import hashlib
 from pathlib import Path
-from .autonomous_math import consume,create_transport,file_sha,initial_prompts
+from .autonomous_math import consume,create_transport,file_sha,initial_prompts,ledger_policy,durable_output_cache
 from .unified_execution import validate_prep,validate_frozen_source,inventory,consumption_path
 from .startup_identity import canonical_sha256
 from .token_accounting import TokenLedger
@@ -26,6 +26,12 @@ POLICY=dict(identity='MATH_PAIRED_VALIDATION_V2',split='validation',count=300,te
 def validation_policy(contract):
     from ..benchmarks.math_prediction_validity import frozen_prediction_policy
     policy = frozen_prediction_policy(contract)
+    from .. import versions
+    if contract['identity']==versions.MATH_LOW_COST_EXECUTION_BINDING_VERSION:
+        return dict(POLICY,identity='MATH_PAIRED_VALIDATION_LOW_COST_V1',count=100,
+            logical_evaluations=1000,successful_provider_call_ceiling=4000,transport_attempt_ceiling=84000,
+            prediction_validity_policy=policy,invalid_recovery_policy=contract['invalid_recovery_policy'],
+            development_protocol=contract['low_cost_protocol'],invalidity_metrics='resolved_terminal_by_member_and_semantic_attempts')
     return dict(POLICY, identity='MATH_PAIRED_VALIDATION_V3', prediction_validity_policy=policy,
         invalidity_metrics='total_by_member_and_rate_observation_only') if policy else POLICY
 
@@ -60,7 +66,14 @@ def prepare_validation(root,search_prep,pilot_run,destination):
         source_sha=receipt['source_sha'],search_receipt_sha256=file_sha(pilot_run/'SEARCH_COMPLETE_RECEIPT.json'),
         final_team_sha256=receipt['final_team_sha256'],split_identity=c['split_manifest_sha256'],
         policy_sha256=canonical_sha256(validation_policy(c)),models=c['models'],roles=['solver'],provider='lwj',
-        successful_provider_call_ceiling=3000,transport_attempt_ceiling=63000,validation_calls=3000,test_calls=0)
+        successful_provider_call_ceiling=validation_policy(c)['successful_provider_call_ceiling'],
+        transport_attempt_ceiling=validation_policy(c)['transport_attempt_ceiling'],
+        validation_calls=validation_policy(c)['logical_evaluations'],test_calls=0)
+    if 'invalid_recovery_policy' in c:
+        scope['invalid_recovery_policy']=c['invalid_recovery_policy']
+        scope['low_cost_protocol']=c['low_cost_protocol']
+        scope['low_cost_subsets_sha256']=c['low_cost_subsets_sha256']
+        scope['accounting_authorized_total']=40000000
     if 'solver_decoding_policy' in c:
         scope['solver_decoding_policy']=c['solver_decoding_policy']
     if 'prediction_validity_policy' in c:
@@ -88,7 +101,14 @@ def validate_validation(root,prep,*,require_authorized):
         source_sha=receipt['source_sha'],search_receipt_sha256=file_sha(pilot_run/'SEARCH_COMPLETE_RECEIPT.json'),
         final_team_sha256=receipt['final_team_sha256'],split_identity=c['split_manifest_sha256'],
         policy_sha256=canonical_sha256(validation_policy(c)),models=c['models'],roles=['solver'],provider='lwj',
-        successful_provider_call_ceiling=3000,transport_attempt_ceiling=63000,validation_calls=3000,test_calls=0)
+        successful_provider_call_ceiling=validation_policy(c)['successful_provider_call_ceiling'],
+        transport_attempt_ceiling=validation_policy(c)['transport_attempt_ceiling'],
+        validation_calls=validation_policy(c)['logical_evaluations'],test_calls=0)
+    if 'invalid_recovery_policy' in c:
+        expected['invalid_recovery_policy']=c['invalid_recovery_policy']
+        expected['low_cost_protocol']=c['low_cost_protocol']
+        expected['low_cost_subsets_sha256']=c['low_cost_subsets_sha256']
+        expected['accounting_authorized_total']=40000000
     if 'solver_decoding_policy' in c:
         expected['solver_decoding_policy']=c['solver_decoding_policy']
     if 'prediction_validity_policy' in c:
@@ -125,13 +145,14 @@ def comparison(initial,final):
         paired=paired,signal='POSITIVE' if delta>0 else 'NEGATIVE' if delta<0 else 'NEUTRAL')
 
 
-def evaluate_team(rows,prompts,solver,benchmark,stage,writer):
+def evaluate_team(rows,prompts,solver,benchmark,stage,writer,reservation_progress=None):
     output=[];aggregation=EquivalencePluralityAggregation()
     for row in rows:
         item=protocol_input('math',row['stable_example_id'],{'problem':row['problem']},benchmark.output_contract,protocol=benchmark.protocol)
         benchmark.require_scorable(row['reference'])
         raw=[]
         for member,p in enumerate(prompts):
+            if reservation_progress:reservation_progress(p,row['problem'])
             if hasattr(solver,'observe_member'): solver.observe_member(member)
             raw.append(solver.solve(p,item,stage=stage,split='validation'))
         raw=tuple(raw)
@@ -143,6 +164,9 @@ def evaluate_team(rows,prompts,solver,benchmark,stage,writer):
             oracle_correct=any(correctness))
         if getattr(benchmark,'invalid_predictions_are_incorrect',False):
             evidence.update(member_valid=[p.valid for p in parsed],invalid_reasons=[p.invalid_reason for p in raw])
+        if getattr(getattr(solver,'broker',None),'recovery_policy',None):
+            evidence.update(semantic_attempt_counts=[p.semantic_attempt_count for p in raw],
+                terminal_invalid=[p.terminal_invalid for p in raw],recovered_invalid=[p.recovered_invalid for p in raw])
         writer(dict(team=stage,**evidence));output.append(evidence)
     return output
 
@@ -152,7 +176,7 @@ async def execute_validation(root,prep,run_root):
     from ..benchmarks.math_domain_binding import execution_binding
     binding=execution_binding(root,c)
     if binding.blockers(): raise SearchContractError('VALIDATION_BINDING_NOT_READY')
-    budget=TokenLedger(root/c['token_ledger_directory'],task_sha256=c['task_authorization_sha256'])
+    budget=TokenLedger(root/c['token_ledger_directory'],task_sha256=c['task_authorization_sha256'],policy=ledger_policy(c))
     client=None;broker=None
     try:
         consume(root,prep,run_root,payload)
@@ -164,14 +188,28 @@ async def execute_validation(root,prep,run_root):
         initial=initial_prompts(root,c)
         if len(initial)!=5 or len(final)!=5: raise SearchContractError('VALIDATION_TEAM_SIZE_MISMATCH')
         transport,client=create_transport(c)
+        vp=validation_policy(c)
         evaluation_contract={**c,'execution_attempt_id':payload['scope']['attempt_id'],
-            'provider_bounds':{**c['provider_bounds'],'successful_provider_calls':3000,'transport_attempts':63000}}
+            'provider_bounds':{**c['provider_bounds'],'successful_provider_calls':vp['successful_provider_call_ceiling'],
+                'solver_calls':vp['successful_provider_call_ceiling'],'transport_attempts':vp['transport_attempt_ceiling']}}
+        if 'invalid_recovery_policy' in c:evaluation_contract['cache_namespace']=payload['scope']['attempt_id']
+        reserve_reader=lambda:0
+        reservation_progress=None
+        if 'invalid_recovery_policy' in c:
+            from ..benchmarks.math_accounting_prep import solver_request
+            from .token_accounting import reservation
+            pending=[sum(reservation(solver_request(c,p,r['problem']))['amount'] for r in rows for p in (*initial,*final))]
+            reserve_reader=lambda:pending[0]
+            def reservation_progress(prompt,problem):
+                pending[0]-=reservation(solver_request(c,prompt,problem))['amount']
+                if pending[0]<0:raise SearchContractError('VALIDATION_PENDING_RESERVE_CORRUPTION')
         broker=RequestBroker(contract=evaluation_contract,transport=transport,arm='A1',seed=81,token_ledger=budget,validation_only=True,
-            ledger_writer=lambda r:append_jsonl(run_root/'ledger.jsonl',r),raw_writer=lambda r:append_jsonl(run_root/'provider_trace_private.jsonl',r))
+            ledger_writer=lambda r:append_jsonl(run_root/'ledger.jsonl',r),raw_writer=lambda r:append_jsonl(run_root/'provider_trace_private.jsonl',r),
+            reserve_reader=reserve_reader,durable_cache=durable_output_cache(run_root,evaluation_contract,payload))
         solver=BenchmarkSolver(benchmark,broker)
         writer=lambda row:append_jsonl(run_root/'paired_evidence.jsonl',row)
-        a=evaluate_team(rows,initial,solver,benchmark,'validation_initial',writer)
-        b=evaluate_team(rows,final,solver,benchmark,'validation_final',writer)
+        a=evaluate_team(rows,initial,solver,benchmark,'validation_initial',writer,reservation_progress)
+        b=evaluate_team(rows,final,solver,benchmark,'validation_final',writer,reservation_progress)
         if tuple(initial)==tuple(final) and a!=b: raise SearchContractError('IDENTICAL_TEAM_PAIRED_EVIDENCE_MISMATCH')
         metrics=comparison(a,b)
         summary=dict(policy=validation_policy(c),**metrics,ledger=broker.usage,accounting=budget.view(),
@@ -184,6 +222,13 @@ async def execute_validation(root,prep,run_root):
                     invalid_rate=sum(by_member)/(len(rows)*5),by_member_rate=[v/len(rows) for v in by_member])
             ai,bi=invalidity(a),invalidity(b)
             summary['prediction_invalidity']=dict(initial=ai,final=bi,delta_invalid_rate=bi['invalid_rate']-ai['invalid_rate'])
+        if 'invalid_recovery_policy' in c:
+            def recovery(rows):
+                counts=[v for r in rows for v in r['semantic_attempt_counts']]
+                return dict(logical_evaluations=len(counts),mean_semantic_attempts=sum(counts)/len(counts),
+                    recovered_invalid=sum(sum(r['recovered_invalid']) for r in rows),
+                    terminal_invalid=sum(sum(r['terminal_invalid']) for r in rows))
+            summary['invalid_recovery']=dict(initial=recovery(a),final=recovery(b))
         atomic_write_json(run_root/'execution_summary.json',summary)
         if read_json(run_root/'execution_summary.json')!=summary: raise SearchContractError('VALIDATION_PERSISTENCE_MISMATCH')
         if file_sha(pilot_run/'SEARCH_COMPLETE_RECEIPT.json')!=payload['scope']['search_receipt_sha256']:

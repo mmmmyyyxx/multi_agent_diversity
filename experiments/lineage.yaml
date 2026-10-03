@@ -699,6 +699,18 @@ nodes:
 - experiment_id: math_v2_1_terminal_invalid_recovery_v1
   kind: PROTOCOL_FREEZE
   era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_1_low_cost_protocol_v1
+  kind: PROTOCOL_FREEZE
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_1_preexecution_low_cost_v1
+  kind: PREEXECUTION_FREEZE
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_1_a1_seed81_low_cost_canary_v1
+  kind: REAL_CANARY
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_1_a1_seed81_low_cost_pilot_v1
+  kind: PILOT
+  era: BENCHMARK_GENERALIZATION
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1249,4 +1261,24 @@ edges:
   relation: derived_from
   evidence: reports/math_v2_1_terminal_invalid_recovery_v1_20261003/README.md
   scope: Fresh terminal-invalid recovery and confirmed same-attempt output reuse repair.
+- from: math_v2_1_terminal_invalid_recovery_v1
+  to: math_v2_1_low_cost_protocol_v1
+  relation: derived_from
+  evidence: reports/math_v2_1_low_cost_protocol_v1_20261003/README.md
+  scope: Fresh low-cost development authority; cross-attempt output reuse forbidden.
+- from: math_v2_1_low_cost_protocol_v1
+  to: math_v2_1_preexecution_low_cost_v1
+  relation: derived_from
+  evidence: reports/math_v2_1_preexecution_low_cost_v1_20261003/README.md
+  scope: Fresh low-cost development authority; cross-attempt output reuse forbidden.
+- from: math_v2_1_preexecution_low_cost_v1
+  to: math_v2_1_a1_seed81_low_cost_canary_v1
+  relation: derived_from
+  evidence: reports/math_v2_1_a1_seed81_low_cost_canary_v1_20261003/README.md
+  scope: Fresh low-cost development authority; cross-attempt output reuse forbidden.
+- from: math_v2_1_a1_seed81_low_cost_canary_v1
+  to: math_v2_1_a1_seed81_low_cost_pilot_v1
+  relation: derived_from
+  evidence: reports/math_v2_1_a1_seed81_low_cost_pilot_v1_20261003/README.md
+  scope: Fresh low-cost development authority; cross-attempt output reuse forbidden.
 current_frontier: experiments/current_frontier.yaml

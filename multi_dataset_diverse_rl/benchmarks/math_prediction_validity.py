@@ -135,7 +135,8 @@ def invalid_recovery_contract():
 def frozen_recovery_policy(contract):
     policy=contract.get('invalid_recovery_policy')
     if contract.get('identity') == versions.MATH_LOW_COST_EXECUTION_BINDING_VERSION:
-        if policy != invalid_recovery_contract():
+        expected=invalid_recovery_contract()
+        if policy != expected or any(type(policy[k]) is not type(v) for k,v in expected.items()):
             raise SearchContractError('MATH_INVALID_RECOVERY_BINDING_MISMATCH')
         return dict(policy)
     if policy is not None:

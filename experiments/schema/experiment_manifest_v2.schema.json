@@ -385,7 +385,8 @@
             "MATH_EXECUTION_BINDING_V1_4",
             "MATH_V2_1_EXECUTION_BINDING_V1",
             "MATH_V2_1_EXECUTION_BINDING_V2",
-            "MATH_V2_1_EXECUTION_BINDING_V3"
+            "MATH_V2_1_EXECUTION_BINDING_V3",
+            "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1"
           ]
         },
         "path": {
@@ -408,13 +409,20 @@
       "type": "object",
       "properties": {
         "identity": {
-          "const": "MATH_INITIAL_COMPETENCE_OPTIMIZE_V2_1"
+          "enum": [
+            "MATH_INITIAL_COMPETENCE_OPTIMIZE_V2_1",
+            "MATH_INITIAL_COMPETENCE_LOW_COST_V1"
+          ]
         },
         "role": {
           "const": "optimize"
         },
         "count": {
-          "const": 150
+          "enum": [
+            12,
+            60,
+            150
+          ]
         },
         "metric": {
           "const": "binary_correct_count"
@@ -508,17 +516,56 @@
       }
     },
     "prediction_validity_policy": {
+      "anyOf": [
+        {
+          "const": {
+            "identity": "MATH_PREDICTION_VALIDITY_V1",
+            "reference_failure": "hard_contract_failure",
+            "prediction_failure": "invalid_incorrect_continue",
+            "truncated_even_with_marker": "invalid_incorrect",
+            "invalid_response_retries": 0,
+            "fallback_extraction": false,
+            "invalid_vote": "excluded_from_equivalence_classes",
+            "denominator": "all_frozen_examples",
+            "invalidity_telemetry": "observation_only"
+          }
+        },
+        {
+          "const": {
+            "identity": "MATH_PREDICTION_VALIDITY_V2",
+            "reference_failure": "hard_contract_failure",
+            "prediction_failure": "invalid_incorrect_continue",
+            "truncated_even_with_marker": "invalid_incorrect",
+            "invalid_response_retries": 3,
+            "fallback_extraction": false,
+            "invalid_vote": "excluded_from_equivalence_classes",
+            "denominator": "all_frozen_examples",
+            "invalidity_telemetry": "observation_only"
+          }
+        }
+      ]
+    },
+    "invalid_recovery_policy": {
       "const": {
-        "identity": "MATH_PREDICTION_VALIDITY_V1",
-        "reference_failure": "hard_contract_failure",
-        "prediction_failure": "invalid_incorrect_continue",
-        "truncated_even_with_marker": "invalid_incorrect",
-        "invalid_response_retries": 0,
-        "fallback_extraction": false,
-        "invalid_vote": "excluded_from_equivalence_classes",
-        "denominator": "all_frozen_examples",
-        "invalidity_telemetry": "observation_only"
+        "identity": "MATH_SOLVER_INVALID_RECOVERY_V1",
+        "solver_invalid_max_retries": 3,
+        "max_semantic_attempts": 4,
+        "same_request_bytes": true,
+        "first_valid_stops": true,
+        "transport_failures_consume_semantic_attempt": false,
+        "terminal_requires_completed_invalid_attempts": 4,
+        "terminal_invalid": "incorrect_continue_no_vote",
+        "logical_evaluation_count": 1,
+        "cache": "resolved_valid_or_exhausted_terminal_only",
+        "invalidity_weight": "none"
       }
+    },
+    "low_cost_protocol": {
+      "type": "object"
+    },
+    "low_cost_subsets_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
     }
   },
   "required": [
@@ -892,7 +939,8 @@
                 "enum": [
                   "MATH_V2_1_EXECUTION_BINDING_V1",
                   "MATH_V2_1_EXECUTION_BINDING_V2",
-                  "MATH_V2_1_EXECUTION_BINDING_V3"
+                  "MATH_V2_1_EXECUTION_BINDING_V3",
+                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1"
                 ]
               }
             }
@@ -993,7 +1041,10 @@
             ],
             "properties": {
               "identity": {
-                "const": "MATH_V2_1_EXECUTION_BINDING_V3"
+                "enum": [
+                  "MATH_V2_1_EXECUTION_BINDING_V3",
+                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1"
+                ]
               }
             }
           }
@@ -1015,6 +1066,144 @@
           "required": [
             "prediction_validity_policy"
           ]
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "execution_binding"
+        ],
+        "properties": {
+          "execution_binding": {
+            "required": [
+              "identity"
+            ],
+            "properties": {
+              "identity": {
+                "enum": [
+                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "invalid_recovery_policy",
+          "low_cost_protocol",
+          "low_cost_subsets_sha256"
+        ],
+        "properties": {
+          "prediction_validity_policy": {
+            "const": {
+              "identity": "MATH_PREDICTION_VALIDITY_V2",
+              "reference_failure": "hard_contract_failure",
+              "prediction_failure": "invalid_incorrect_continue",
+              "truncated_even_with_marker": "invalid_incorrect",
+              "invalid_response_retries": 3,
+              "fallback_extraction": false,
+              "invalid_vote": "excluded_from_equivalence_classes",
+              "denominator": "all_frozen_examples",
+              "invalidity_telemetry": "observation_only"
+            }
+          },
+          "initial_competence_binding": {
+            "properties": {
+              "identity": {
+                "const": "MATH_INITIAL_COMPETENCE_LOW_COST_V1"
+              },
+              "count": {
+                "enum": [
+                  12,
+                  60
+                ]
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "not": {
+          "required": [
+            "invalid_recovery_policy"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "execution_binding"
+        ],
+        "properties": {
+          "execution_binding": {
+            "required": [
+              "identity"
+            ],
+            "properties": {
+              "identity": {
+                "enum": [
+                  "MATH_V2_1_EXECUTION_BINDING_V1",
+                  "MATH_V2_1_EXECUTION_BINDING_V2",
+                  "MATH_V2_1_EXECUTION_BINDING_V3"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "initial_competence_binding": {
+            "properties": {
+              "identity": {
+                "const": "MATH_INITIAL_COMPETENCE_OPTIMIZE_V2_1"
+              },
+              "count": {
+                "const": 150
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "execution_binding"
+        ],
+        "properties": {
+          "execution_binding": {
+            "required": [
+              "identity"
+            ],
+            "properties": {
+              "identity": {
+                "enum": [
+                  "MATH_V2_1_EXECUTION_BINDING_V3"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "prediction_validity_policy": {
+            "const": {
+              "identity": "MATH_PREDICTION_VALIDITY_V1",
+              "reference_failure": "hard_contract_failure",
+              "prediction_failure": "invalid_incorrect_continue",
+              "truncated_even_with_marker": "invalid_incorrect",
+              "invalid_response_retries": 0,
+              "fallback_extraction": false,
+              "invalid_vote": "excluded_from_equivalence_classes",
+              "denominator": "all_frozen_examples",
+              "invalidity_telemetry": "observation_only"
+            }
+          }
         }
       }
     }

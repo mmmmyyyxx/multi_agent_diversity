@@ -1,0 +1,16 @@
+{
+  "README.md": "318e7a0ee807193118dfca341a10dbda0a798c61b2a0fd623626cad8890a9693",
+  "canary_optimize_membership.json": "e70c8f9c12267788fa61ba8549afcda4c0e0248e543cdb9b42eefbbd029e5d92",
+  "disjointness_audit.json": "f195438c490f9ec1c02dc4eb364216b0827ef315e7b9d197a52603dd01d6dfbf",
+  "distribution_audit.json": "a48a503a4d2603f174b87587f9f379917972b9a0f64491bb869fa15cac551b0e",
+  "pilot_optimize_membership.json": "e14ec64b8c64d45f14830548b9b9c1f3c3df9b4583ea7f799351a2a2e2321856",
+  "pilot_shadow_membership.json": "7a9c9a447a067af951c5d9af6173ea4beaf24d31e1a7fb639671ef1abe761e8e",
+  "pilot_validation_membership.json": "a06df872629aa5732339a492e90f9273bb24c239017aaf816f6e8c975dad9dab",
+  "protocol.json": "e9c1d3e63bc14e916456c45b3c4c43cb85a227ee7165f98669e4a3d902ef4e4d",
+  "sanitization_audit.json": "46ece6ceb5b84ecec6a60088ee356207ff94a8b1d1806a201b0364c63fba5555",
+  "scientific_delta_audit.json": "9b5a0684ee9ade6098c047c95fe6ad4fa6262d79fe23aa88c712839b52c1dea6",
+  "selection_policy.json": "18f98af95a78e6932b96fca9f447f2997f75a07822df84a3e640469d0c1e1bc2",
+  "source_gate.json": "562fa8c96b122c3a3f9b17a5f7454442eafb168d12c6e9106233c911e3744947",
+  "test_summary.json": "7b21e417a8d8b925d5ec50f37e9705b7ebd221eaa66214f05bb54a505fd7e6b7",
+  "token_budget_recalculation.json": "4503b88fd317aa16bbc929fc3c1711ced1bc2f703ab967ad2d3bf150b946eeed"
+}

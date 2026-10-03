@@ -1,0 +1,18 @@
+{
+  "authorization": 40000000,
+  "expected_initial_physical_calls": {
+    "canary": 60,
+    "pilot": 300
+  },
+  "expected_validation_base_physical": "500 + 100 * changed members, upper 1000",
+  "hard_first_attempt_validation_reserve": 9078500,
+  "initial_first_attempt_reserve": {
+    "canary": 542561,
+    "pilot": 2710320
+  },
+  "observed_new_charge": 0,
+  "observed_new_physical_calls": 0,
+  "prior_charged": 255460,
+  "remaining": 39744540,
+  "retries_reserved_individually": true
+}

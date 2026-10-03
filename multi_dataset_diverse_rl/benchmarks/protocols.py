@@ -119,6 +119,9 @@ MATH_PROTOCOL_V3 = replace(MATH_PROTOCOL_V2,
     member_success_semantics="MATH_PREDICTION_VALIDITY_V1: reference parse/unsupported/timeout hard failure; successful transport with invalid framing/payload or truncated output is invalid, incorrect, and continues without regeneration or fallback; all frozen denominators retained",
     aggregation_output_semantics="Equal-weight valid equivalence classes only; invalid members have no vote; all-invalid team is incorrect")
 
+MATH_PROTOCOL_V4 = replace(MATH_PROTOCOL_V3,
+    member_success_semantics="MATH_SOLVER_INVALID_RECOVERY_V1: first valid of at most four identical-request successful semantic attempts; transport retries separate; four completed invalid responses resolve wrong and continue; references remain hard; all frozen denominators retained")
+
 
 def protocol_input(benchmark_id: str, input_id: str, row: Mapping[str, object],
                    output_contract: str, *, protocol: BenchmarkProtocolSpec | None = None) -> BenchmarkInput:

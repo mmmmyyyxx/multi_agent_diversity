@@ -460,3 +460,30 @@ Stage and member identity remain telemetry; identical scientific request
 identities share the original realization. Cache hits generate no physical
 call or token charge. Durable output caching alone does not authorize a
 process resume: lifecycle, authorization and checkpoint checks still apply.
+
+### Low-cost MATH development protocol
+
+`MATH_V2_1_LOW_COST_DEV_PROTOCOL_V1` derives Pilot Optimize60, Shadow40
+and Validation100 from the immutable Optimize150/Shadow300/Validation300
+supersets. Canary Optimize12 is nested in Pilot Optimize60. Subject×level
+integer largest-remainder allocation has lexical tie breaking and no minimum
+quota; stable SHA256 ordering selects within strata and preserves superset
+output order. Selection uses metadata alone, before provider execution.
+The full source split and sealed Test remain immutable. Membership hashes
+enter binding, manifest, startup, request/cache and authorization identities.
+
+Canary has its own immutable floor on 12 rows and closes immediately after
+one complete production opportunity. Fresh A1 Seed81 Pilot starts with its
+own floor on all 60 Optimize rows, uses the existing adaptive gate on 40
+Shadow rows, and stops through the unchanged team_epoch_no_commit_v1
+semantics. Responsibility, failure discount, opportunity allocation, initial
+floor, strict team gain, aggregation, team size and GEPA numerical budgets
+remain unchanged. Search never reads Validation correctness. After immutable
+SEARCH_COMPLETE_RECEIPT, paired Initial/Final Validation uses all 100 rows,
+identical Solver policy/recovery and shared exact realization caching.
+Mandatory first-attempt Validation reserve covers 1000 logical evaluations;
+the expected base physical count is at most 500+100×changed members before
+retry overhead. Retries reserve individually when needed. The 40M ceiling is
+an upper bound, with every physical transport separately charged, and never
+an expenditure target. This is development evidence only; no Test, formal
+three-seed run, other arm or other seed follows any result.
