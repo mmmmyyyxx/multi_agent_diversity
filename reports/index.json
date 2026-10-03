@@ -1001,6 +1001,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/math_v2_1_a1_seed81_low_cost_canary_v3_20261003",
+      "document": "reports/math_v2_1_a1_seed81_low_cost_canary_v3_20261003/README.md",
+      "date": "20261003",
+      "era": "BENCHMARK_GENERALIZATION",
+      "kind": "REAL_CANARY",
+      "experiment_id": "math_v2_1_a1_seed81_low_cost_canary_v3",
+      "status": "DRAFT",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/math_v2_1_a1_seed81_low_cost_pilot_v1_20261003",
       "document": "reports/math_v2_1_a1_seed81_low_cost_pilot_v1_20261003/README.md",
       "date": "20261003",
@@ -1023,6 +1037,20 @@
       "experiment_id": "math_v2_1_a1_seed81_low_cost_pilot_v2",
       "status": "HOLD",
       "source_commit": "ab33739562d64648237fd96aa63f7720c48adfde",
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
+      "path": "reports/math_v2_1_a1_seed81_low_cost_pilot_v3_20261003",
+      "document": "reports/math_v2_1_a1_seed81_low_cost_pilot_v3_20261003/README.md",
+      "date": "20261003",
+      "era": "BENCHMARK_GENERALIZATION",
+      "kind": "SCIENTIFIC_RESULT",
+      "experiment_id": "math_v2_1_a1_seed81_low_cost_pilot_v3",
+      "status": "DRAFT",
+      "source_commit": null,
       "historical_current": "historical_evidence",
       "registry_referenced": true,
       "registry_ref": "experiments/registry.yaml",
@@ -1225,6 +1253,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/math_v2_1_optimizer_truncation_root_cause_v1_20261003",
+      "document": "reports/math_v2_1_optimizer_truncation_root_cause_v1_20261003/README.md",
+      "date": "20261003",
+      "era": "BENCHMARK_GENERALIZATION",
+      "kind": "DIAGNOSTIC",
+      "experiment_id": "math_v2_1_optimizer_truncation_root_cause_v1",
+      "status": "DRAFT",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/math_v2_1_optimizer_wire_amendment_v1_20261003",
       "document": "reports/math_v2_1_optimizer_wire_amendment_v1_20261003/README.md",
       "date": "20261003",
@@ -1401,6 +1443,20 @@
       "experiment_id": "math_v2_1_preexecution_low_cost_v2",
       "status": "COMPLETED",
       "source_commit": "ab33739562d64648237fd96aa63f7720c48adfde",
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
+      "path": "reports/math_v2_1_preexecution_low_cost_v3_20261003",
+      "document": "reports/math_v2_1_preexecution_low_cost_v3_20261003/README.md",
+      "date": "20261003",
+      "era": "BENCHMARK_GENERALIZATION",
+      "kind": "PREEXECUTION",
+      "experiment_id": "math_v2_1_preexecution_low_cost_v3",
+      "status": "DRAFT",
+      "source_commit": null,
       "historical_current": "historical_evidence",
       "registry_referenced": true,
       "registry_ref": "experiments/registry.yaml",
