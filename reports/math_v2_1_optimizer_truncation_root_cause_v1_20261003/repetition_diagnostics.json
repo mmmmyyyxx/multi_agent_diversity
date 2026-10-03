@@ -1,0 +1,21 @@
+{
+  "candidate_chars": 1935,
+  "candidate_contract_violations": [
+    "forbidden_final_answer_marker"
+  ],
+  "candidate_generation_contract_valid": false,
+  "candidate_prefix_chars": 1935,
+  "complete_single_fence": true,
+  "duplicate_line_fraction": 0.041666666666666664,
+  "duplicate_lines": 1,
+  "fence_close_count": 1,
+  "fence_open_count": 1,
+  "max_identical_line_run": 1,
+  "nonempty_lines": 24,
+  "obvious_loop_fourfold": false,
+  "output_chars": 1943,
+  "output_lines": 29,
+  "repeated_8gram_fraction": 0.0,
+  "repetition_pathology": false,
+  "unique_lines": 23
+}

@@ -1,0 +1,53 @@
+{
+  "checkout_sha": "9e31c79c70a9a2124071544a07707fb11df7d43b",
+  "closed": true,
+  "consumed": true,
+  "consumed_authorization_sha256": "5eca1e83c8d42a8389789b146be7c431f7eca53c10f12326917f481c011519f2",
+  "execution_source_sha": "9c46f023de114c1f5f999db7827a17a4ceebed83",
+  "scope": {
+    "accuracy_scoring": "FORBIDDEN",
+    "attempt_id": "math_v2_1_optimizer_nonthinking_witness_attempt2",
+    "base_startup_identity_sha256": "bc87f79bdde20c33f3f575c1adca84ca6e13abf4e1266a14e613dd02d2abca14",
+    "binding_sha256": "26586f9355dac411c760fadec10f1b94d8bcb5267960e4fc9b53f1e615513575",
+    "exact_production_prompt_witness": true,
+    "expected_run_root": "runs/math_v2_1/optimizer_root_cause_v1/witness_real_v2",
+    "identity": "OPTIMIZER_NONTHINKING_WIRE_WITNESS_V1",
+    "messages_sha256": "6bf3e6d86f6da243175ec3849dd94ba3cadc17c54dd017e2d269f792fdd07b0a",
+    "model": "qwen3.7-flash",
+    "optimizer_generation_policy": {
+      "accounting_output_ceiling": 1810,
+      "enable_thinking": false,
+      "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V2",
+      "max_completion_tokens": 1800,
+      "max_tokens": "NOT_SENT",
+      "measurement_tolerance_tokens": 10,
+      "model": "qwen3.7-flash",
+      "output_token_scope": "reasoning_plus_answer",
+      "roles": [
+        "reflection",
+        "pattern"
+      ],
+      "temperature": 0.0,
+      "truncation": "existing_operational_output_truncation"
+    },
+    "output_reuse": "FORBIDDEN",
+    "pattern_calls": 0,
+    "phase": "OPERATIONAL_DIAGNOSTIC_ONLY",
+    "preregistration_identity": "7cf30ea362b3e293f821c3b4489a8308634eb83312a0659a285dbeca78e7dafd",
+    "provider": "lwj",
+    "request_file_sha256": "3ee5945677170ebc57ba933ca8701c3e7e43565159f3fff7b278637088c28f64",
+    "request_path": "runs/math_v2_1/optimizer_root_cause_v1/witness_request_private_v2.json",
+    "roles": [
+      "reflection"
+    ],
+    "serialized_request_sha256": "60b9dd1954ca0274f7b8d91f64b4cd35c1d085ea3d6e081bfddd623ea819a747",
+    "solver_calls": 0,
+    "source_sha": "9c46f023de114c1f5f999db7827a17a4ceebed83",
+    "successful_provider_call_ceiling": 1,
+    "test_calls": 0,
+    "transport_attempt_ceiling": 21,
+    "user_authorization_sha256": "0002f60839d4a411e99360b1604b92e215aff554cdc0b74aee0ada2ed1dd17cf",
+    "validation_calls": 0
+  },
+  "single_use": true
+}

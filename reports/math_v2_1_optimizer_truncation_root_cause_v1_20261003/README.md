@@ -1,3 +1,9 @@
-# Fresh non-thinking optimizer task
+# Optimizer truncation root-cause audit
 
-DRAFT; not executed. No historical outputs or authorization are reused.
+The historical thinking-enabled V1 request exhausted 1800 reported reasoning tokens and returned no visible content. An isolated witness reused the exact failed Reflection messages and changed only enable_thinking to false. The witness returned stop with 1325 input and 384 completion tokens, 1943 visible characters, a complete 1935-character fence, and no registered repetition pathology. Truncation was not reproduced in this single diagnostic.
+
+The provider omitted completion_tokens_details and reasoning_tokens from raw HTTP usage. Zero-API preservation checks confirm no metadata parser loss: absence stays absent, and a synthetic explicit zero is preserved. Task clause 16 requires an actual zero, so OPTIMIZER_NONTHINKING_WIRE_CONFIRMED remains NO and the root-cause gate is UNRESOLVED. No envelope or sampling amendment criterion is met. The existing immutable candidate validator also reports forbidden_final_answer_marker; no candidate is admitted or scored.
+
+The witness authorization is consumed and closed. Canary12, Pilot60/40 and Validation100 have not started. A new human evidence-policy decision is required before continuing. Solver, method, GEPA budgets, evidence, proposer template, candidate size, dataset sizes and held-out policy are unchanged. All witness outputs remain private and excluded from future search, cache, prompts, Memory and scoring.
+
+Current suite: 920 passed, 2 skipped; 1468 historical/private cases were not executed. Targeted: 104 passed. Pinned GEPA default-off fake A1-A4 passed. No historical full PASS is claimed. This diagnostic cost 1709 provider-reported tokens, with no new fallback charge. Total charged is 325002 of 40000000, leaving 39674998. Validation100 mandatory first-attempt reserve remains 9078500. No new Solver, Pattern, Memory, Validation or Test execution occurred. No scientific efficacy, generalization or SOTA result is established.

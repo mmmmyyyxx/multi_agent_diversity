@@ -11,7 +11,7 @@ current_architecture: Unified Team Prompt Search
 method_identity: unified_team_prompt_search_v2_1
 current_method: unified_team_prompt_search_v2_1
 current_implementation: Versioned method semantic contract; benchmark-neutral production composition; zero-API audit
-current_experiment: math_v2_1_a1_seed81_low_cost_pilot_v2
+current_experiment: math_v2_1_a1_seed81_low_cost_pilot_v3
 current_benchmark_suite:
 - math
 - ifbench
@@ -34,25 +34,26 @@ last_canary_milestone: math_v2_1_a1_seed81_low_cost_canary_v2
 current_canary_status: INVALID_OPTIMIZER_OUTPUT_TRUNCATION
 formal_a1_ready: false
 formal_a1_authorized: false
-current_execution_blocker: NONTHINKING_POLICY_FRESH_PREEXECUTION_AND_SCOPE_REQUIRED
+current_execution_blocker: NONTHINKING_CONFIRMATION_EVIDENCE_POLICY_REQUIRED
 default_optimizer_generation_policy: OPTIMIZER_REFLECTION_GENERATION_POLICY_V2
 default_optimizer_enable_thinking: false
-optimizer_policy_amendment_status: APPROVED_DEFAULT_OFF_NOT_REAL_EXECUTED
+optimizer_policy_amendment_status: DEFAULT_OFF_WIRE_DISPATCHED_DIAGNOSTIC_NONTHINKING_UNCONFIRMED
 optimizer_policy_amendment_authority: experiments/protocols/math_v2_1_optimizer_wire_v2/authorization_decision.json
 next_canary_milestone: null
 next_canary_attempt_id: null
-last_autonomous_milestone: math_v2_1_a1_seed81_low_cost_pilot_v2
+last_autonomous_milestone: math_v2_1_optimizer_truncation_root_cause_v1
 autonomous_user_authorization_received: true
 autonomous_token_authorization: 40000000
-autonomous_tokens_consumed: 323293
-autonomous_tokens_remaining: 39676707
+autonomous_tokens_consumed: 325002
+autonomous_tokens_remaining: 39674998
 token_accounting_policy: RESERVATION_V2
 prior_accounting_stop_resolution: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2
-autonomous_authorization_status: LOW_COST_TASK_STOPPED_POLICY_REQUIRED
+autonomous_authorization_status: ROOT_CAUSE_DIAGNOSTIC_COMPLETE_EVIDENCE_POLICY_REQUIRED
 pilot_search_complete: false
 pilot_validation_complete: false
 pilot_final_status: INCOMPLETE
 task_stop_reason: STOP_NEW_SCIENTIFIC_POLICY_REQUIRED
+optimizer_nonthinking_wire_confirmed: false
 ```
 
 ## Experiment and engineering DAG
@@ -119,10 +120,10 @@ flowchart TD
     n233["math_v2_1_preexecution_low_cost_v2<br/>PREEXECUTION_FREEZE<br/>COMPLETED"]
     n234["math_v2_1_a1_seed81_low_cost_canary_v2<br/>REAL_CANARY<br/>INVALID"]
     n235["math_v2_1_a1_seed81_low_cost_pilot_v2<br/>PILOT<br/>HOLD"]
-    n236["math_v2_1_optimizer_truncation_root_cause_v1<br/>DIAGNOSTIC<br/>PREEXECUTION_FROZEN"]
-    n237["math_v2_1_preexecution_low_cost_v3<br/>PREEXECUTION_FREEZE<br/>DRAFT"]
-    n238["math_v2_1_a1_seed81_low_cost_canary_v3<br/>REAL_CANARY<br/>DRAFT"]
-    n239["math_v2_1_a1_seed81_low_cost_pilot_v3<br/>PILOT<br/>DRAFT"]
+    n236["math_v2_1_optimizer_truncation_root_cause_v1<br/>DIAGNOSTIC<br/>HOLD"]
+    n237["math_v2_1_preexecution_low_cost_v3<br/>PREEXECUTION_FREEZE<br/>HOLD"]
+    n238["math_v2_1_a1_seed81_low_cost_canary_v3<br/>REAL_CANARY<br/>HOLD"]
+    n239["math_v2_1_a1_seed81_low_cost_pilot_v3<br/>PILOT<br/>HOLD"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]

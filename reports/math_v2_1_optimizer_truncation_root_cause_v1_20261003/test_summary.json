@@ -1,0 +1,67 @@
+{
+  "artifact_hashes": {
+    "current_suite_v2.log": "143690E934A83383DCDC330EBA4CE876C06D56F5F8D2B3A2BE0BAC6883208487",
+    "current_v2.xml": "1BCB26FFB7EB27E7B296DBC2876D215C8AEE10CD752734DDD528D2BE227B1C90",
+    "default_off_four_arm_smoke.log": "A72541B0EC038628BD70B39F897E830991A2AC976F634A42C94A93EF9AE3A149",
+    "default_off_four_arm_smoke.py": "C1A51E1C7F8BC7227EE1572766767C9B816296F05F0830C593FB3E1B380DE83F"
+  },
+  "four_arm_default_off_fake": {
+    "arms": {
+      "A1": "PASS",
+      "A2": "PASS",
+      "A3": "PASS",
+      "A4": "PASS"
+    },
+    "exit_code": 0,
+    "network_attempt_count": 0,
+    "network_guard_bootstrap": "PASS",
+    "network_guard_negative_control": "PASS",
+    "pattern_real_calls": 0,
+    "real_api_calls": 0,
+    "status": "PASS"
+  },
+  "full_current": {
+    "deselected": 1468,
+    "exit_code": 0,
+    "failed": 0,
+    "historical_replay_test_cases": 1404,
+    "network_attempt_count": 0,
+    "network_guard_bootstrap": "PASS",
+    "network_guard_negative_control": "PASS",
+    "passed": 920,
+    "private_artifact_test_cases": 64,
+    "real_credentials_present": false,
+    "selected": 922,
+    "skipped": 2
+  },
+  "historical_full_pass_claimed": false,
+  "historical_private_not_executed": 1468,
+  "metadata_preservation_zero_api": "PASS",
+  "previous_full_current_attempt": {
+    "deselected": 1468,
+    "failed": 1,
+    "failure": "Derived report indexes stale after newly tracked report registration; corrected, then full suite repeated successfully.",
+    "passed": 919,
+    "skipped": 2
+  },
+  "source_gate": {
+    "charged_total": 323293,
+    "closure_files": 202,
+    "compileall": "PASS",
+    "diff_check": "PASS",
+    "governance": "PASS",
+    "historical_reports_immutable": true,
+    "protected_validation_reserve": 9078500,
+    "real_api_calls": 0,
+    "sanitization": "PASS",
+    "secret_scan": "PASS",
+    "solver_data_method_unchanged": true,
+    "source_poison_checks": 402,
+    "status": "PASS"
+  },
+  "targeted": {
+    "failed": 0,
+    "passed": 104,
+    "skipped": 0
+  }
+}

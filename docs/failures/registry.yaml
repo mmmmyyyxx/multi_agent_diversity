@@ -442,3 +442,25 @@ failures:
     generation-policy decision. Do not tune, rerun, enlarge cap or disable thinking autonomously.
   lifecycle: OPEN
   lifecycle_note: STOP_NEW_SCIENTIFIC_POLICY_REQUIRED; FAILED_CANARY_IMMUTABLE; PILOT_AND_VALIDATION_NOT_EXECUTED
+- failure_id: FAIL-MATH-V21-OPTIMIZER-NONTHINKING-TELEMETRY-UNCONFIRMED
+  title: Frozen nonthinking confirmation requires unavailable provider telemetry
+  status: OPEN
+  first_observed: math_v2_1_optimizer_truncation_root_cause_v1
+  affected_components:
+  - provider response metadata
+  - optimizer diagnostic admission
+  symptom: Explicit false witness returned stop with 384 completion tokens and absent reasoning_content, but raw
+    usage omitted reasoning_tokens.
+  evidence:
+  - reports/math_v2_1_optimizer_truncation_root_cause_v1_20261003
+  evidence_level: observed
+  root_cause_status: No metadata parser loss found. Missing reasoning_tokens cannot satisfy task clause 16 actual-zero
+    evidence requirement. Truncation and repetition were not reproduced.
+  forbidden_inference: Do not infer missing counts as zero, hidden thinking as present, provider cap violation,
+    model efficacy or an admissible candidate.
+  regression_tests:
+  - tests/test_math_optimizer_generation.py
+  mitigation: Close single-use witness authorization, preserve diagnostics and ledger, keep both generation policies
+    and validators unchanged; require a human evidence-policy decision before fresh Canary.
+  lifecycle: OPEN
+  lifecycle_note: STOP_NEW_SCIENTIFIC_POLICY_REQUIRED; NO_CANARY_PILOT_VALIDATION_OR_TEST_DISPATCH

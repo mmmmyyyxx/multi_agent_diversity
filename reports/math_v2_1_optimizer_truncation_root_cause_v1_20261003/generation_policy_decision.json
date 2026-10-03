@@ -1,0 +1,37 @@
+{
+  "candidate_admissibility_not_used_as_accuracy_or_model_selection": true,
+  "current_finish_reason": "stop",
+  "current_visible_truncation_reproduced": false,
+  "envelope_amendment_criterion_met": false,
+  "final_optimizer_policy": {
+    "accounting_output_ceiling": 1810,
+    "enable_thinking": false,
+    "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V2",
+    "max_completion_tokens": 1800,
+    "max_tokens": "NOT_SENT",
+    "measurement_tolerance_tokens": 10,
+    "model": "qwen3.7-flash",
+    "output_token_scope": "reasoning_plus_answer",
+    "roles": [
+      "reflection",
+      "pattern"
+    ],
+    "temperature": 0.0,
+    "truncation": "existing_operational_output_truncation"
+  },
+  "historical_layer": "THINKING_NOT_DISABLED",
+  "historical_layer_meaning": "The failed historical V1 request explicitly enabled thinking and exhausted 1800 reasoning tokens before visible content.",
+  "immutable_candidate_validation_observation": "forbidden_final_answer_marker",
+  "new_canary_started": false,
+  "nonthinking_confirmation": "UNCONFIRMED_PROVIDER_REASONING_TOKEN_FIELD_ABSENT",
+  "optimizer_truncation_root_cause": "UNRESOLVED",
+  "pilot_started": false,
+  "precise_blocker": "TASK_CLAUSE_16_REQUIRES_ACTUAL_REASONING_TOKENS_ZERO_BUT_PROVIDER_OMITS_FIELD",
+  "proposer_or_evidence_changed": false,
+  "provider_wire_or_metadata_parsing_defect_confirmed": false,
+  "sampling_amendment_criterion_met": false,
+  "solver_policy_changed": false,
+  "status": "HOLD_NEW_SCIENTIFIC_EVIDENCE_POLICY_REQUIRED",
+  "stop_reason": "STOP_NEW_SCIENTIFIC_POLICY_REQUIRED",
+  "validation_started": false
+}

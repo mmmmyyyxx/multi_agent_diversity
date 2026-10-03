@@ -1,0 +1,10 @@
+{
+  "blocker": "NONTHINKING_CONFIRMATION_EVIDENCE_POLICY_REQUIRED",
+  "generation_policy_changed": false,
+  "heldout_model_calls": 0,
+  "optimizer_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V2",
+  "parent_diagnostic": "math_v2_1_optimizer_truncation_root_cause_v1",
+  "real_api_calls": 0,
+  "status": "HOLD_NOT_EXECUTED",
+  "test_model_calls": 0
+}

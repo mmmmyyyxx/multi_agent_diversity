@@ -1,0 +1,17 @@
+{
+  "candidate_archive_writes": 0,
+  "candidate_scoring": 0,
+  "cross_attempt_cache_hits": 0,
+  "generalization_verified": false,
+  "memory_reads": 0,
+  "memory_writes": 0,
+  "optimizer_witness_only": true,
+  "output_reuse": 0,
+  "pattern_calls": 0,
+  "scientific_efficacy_verified": false,
+  "solver_calls": 0,
+  "sota_verified": false,
+  "status": "PASS",
+  "test_calls": 0,
+  "validation_calls": 0
+}
