@@ -1,3 +1,3 @@
-# math_v2_1_a1_seed81_pilot_v6
+# MATH V2.1 A1 Seed81 Pilot v6
 
-Fresh user-authorized prediction validity policy. Source preparation only; no real execution yet. Historical Canary1–5 remain INVALID and immutable. No efficacy or SOTA claim.
+NOT_STARTED / STOP_USER_REQUESTED. The user stopped Canary before initialization completed. Pilot and Validation were not admitted. No metric or development signal is available. Source, preexecution and partial Canary evidence are preserved locally; no push.

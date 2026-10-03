@@ -1,0 +1,11 @@
+{
+  "canary_complete": false,
+  "historical_canaries_unchanged": true,
+  "new_attempts": 1,
+  "pilot_search_complete": false,
+  "pilot_validation_complete": false,
+  "scientific_validity": "NOT_EVALUABLE_USER_ABORT",
+  "source_sha": "e8571e789de78a3f382e805a23fa42faa774c11f",
+  "status": "USER_ABORTED",
+  "stop_reason": "STOP_USER_REQUESTED"
+}

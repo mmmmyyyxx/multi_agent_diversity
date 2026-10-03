@@ -1,0 +1,109 @@
+{
+  "authorized_total": 30000000,
+  "by_attempt": {
+    "math_unified_v2_1_A1_seed81_canary_attempt1": {
+      "charged_total": 14245,
+      "fallback_charged": 0,
+      "input_tokens": 3423,
+      "output_tokens": 10822,
+      "physical_attempts": 27,
+      "provider_reported_actual": 14245
+    },
+    "math_unified_v2_1_A1_seed81_canary_attempt2": {
+      "charged_total": 1007,
+      "fallback_charged": 0,
+      "input_tokens": 327,
+      "output_tokens": 680,
+      "physical_attempts": 2,
+      "provider_reported_actual": 1007
+    },
+    "math_unified_v2_1_A1_seed81_canary_attempt3": {
+      "charged_total": 21535,
+      "fallback_charged": 0,
+      "input_tokens": 13764,
+      "output_tokens": 7771,
+      "physical_attempts": 55,
+      "provider_reported_actual": 21535
+    },
+    "math_unified_v2_1_A1_seed81_canary_attempt4": {
+      "charged_total": 5327,
+      "fallback_charged": 0,
+      "input_tokens": 1090,
+      "output_tokens": 4237,
+      "physical_attempts": 5,
+      "provider_reported_actual": 5327
+    },
+    "math_unified_v2_1_A1_seed81_canary_attempt5": {
+      "charged_total": 34928,
+      "fallback_charged": 0,
+      "input_tokens": 16609,
+      "output_tokens": 18319,
+      "physical_attempts": 63,
+      "provider_reported_actual": 34928
+    },
+    "math_unified_v2_1_A1_seed81_canary_attempt6": {
+      "charged_total": 162884,
+      "fallback_charged": 9504,
+      "input_tokens": 77748,
+      "output_tokens": 85136,
+      "physical_attempts": 274,
+      "provider_reported_actual": 153380
+    },
+    "math_unified_v2_A1_seed81_canary_attempt2": {
+      "charged_total": 7231,
+      "fallback_charged": 7231,
+      "input_tokens": 5431,
+      "output_tokens": 1800,
+      "physical_attempts": 1,
+      "provider_reported_actual": 0
+    },
+    "math_unified_v2_A1_seed81_canary_attempt3": {
+      "charged_total": 8303,
+      "fallback_charged": 0,
+      "input_tokens": 2149,
+      "output_tokens": 6154,
+      "physical_attempts": 16,
+      "provider_reported_actual": 8303
+    }
+  },
+  "by_model": {
+    "qwen3-8b": {
+      "charged_total": 255460,
+      "fallback_charged": 16735,
+      "input_tokens": 120541,
+      "output_tokens": 134919,
+      "physical_attempts": 443,
+      "provider_reported_actual": 238725
+    }
+  },
+  "by_role": {
+    "solver": {
+      "charged_total": 255460,
+      "fallback_charged": 16735,
+      "input_tokens": 120541,
+      "output_tokens": 134919,
+      "physical_attempts": 443,
+      "provider_reported_actual": 238725
+    }
+  },
+  "by_stage": {
+    "canary": {
+      "charged_total": 255460,
+      "fallback_charged": 16735,
+      "input_tokens": 120541,
+      "output_tokens": 134919,
+      "physical_attempts": 443,
+      "provider_reported_actual": 238725
+    }
+  },
+  "charged_total": 255460,
+  "fallback_charged": 16735,
+  "identity": "AUTONOMOUS_REAL_TOKEN_LEDGER_V2",
+  "input_tokens": 120541,
+  "last_event_sha256": "66148494743df5ed1e853ba531c44bc5209b1675528a41581c3769bdab1a8139",
+  "output_tokens": 134919,
+  "provider_reported_actual": 238725,
+  "remaining": 29744540,
+  "reserved_inflight": 0,
+  "task_sha256": "3db28ade2b799d2169c6cdbdb03b82e63517ab74c46f8212905855f2fcf9cd9a"
+}

@@ -30,26 +30,26 @@ test_access: sealed
 open_questions: docs/research/OPEN_QUESTIONS.md
 last_method_milestone: unified_semantic_contract_v2_1
 canary_manifest: experiments/manifests/math_v2_1_a1_seed81_real_canary_v6.yaml
-last_preexecution_milestone: math_v2_1_preexecution_freeze_v5
-last_canary_milestone: math_v2_1_a1_seed81_real_canary_v5
-current_canary_status: STOP_SOLVER_DECODING_POLICY_INSUFFICIENT
+last_preexecution_milestone: math_v2_1_preexecution_freeze_v6
+last_canary_milestone: math_v2_1_a1_seed81_real_canary_v6
+current_canary_status: USER_ABORTED
 formal_a1_ready: false
 formal_a1_authorized: false
-current_execution_blocker: ZERO_API_PREDICTION_VALIDITY_FREEZE_PENDING
-next_canary_milestone: math_v2_1_a1_seed81_real_canary_v6
-next_canary_attempt_id: math_unified_v2_1_A1_seed81_canary_attempt6
+current_execution_blocker: STOP_USER_REQUESTED
+next_canary_milestone: null
+next_canary_attempt_id: null
 last_autonomous_milestone: math_v2_1_a1_seed81_pilot_v5
 autonomous_user_authorization_received: true
 autonomous_token_authorization: 30000000
-autonomous_tokens_consumed: 92576
-autonomous_tokens_remaining: 29907424
+autonomous_tokens_consumed: 255460
+autonomous_tokens_remaining: 29744540
 token_accounting_policy: RESERVATION_V2
 prior_accounting_stop_resolution: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2
-autonomous_authorization_status: V2_1_PREDICTION_VALIDITY_CONTINUATION_PENDING_EXACT_SCOPE
+autonomous_authorization_status: USER_STOPPED_ALL_SCOPES_CLOSED
 pilot_search_complete: false
 pilot_validation_complete: false
 pilot_final_status: INCOMPLETE
-task_stop_reason: null
+task_stop_reason: STOP_USER_REQUESTED
 ```
 
 ## Experiment and engineering DAG
@@ -102,10 +102,10 @@ flowchart TD
     n219["math_v2_1_preexecution_freeze_v5<br/>PREEXECUTION_FREEZE<br/>PREEXECUTION_FROZEN"]
     n220["math_v2_1_a1_seed81_real_canary_v5<br/>REAL_CANARY<br/>INVALID"]
     n221["math_v2_1_a1_seed81_pilot_v5<br/>PILOT<br/>HOLD"]
-    n222["math_v2_1_prediction_validity_policy_v1<br/>PROTOCOL_FREEZE<br/>DRAFT"]
-    n223["math_v2_1_preexecution_freeze_v6<br/>PREEXECUTION_FREEZE<br/>DRAFT"]
-    n224["math_v2_1_a1_seed81_real_canary_v6<br/>REAL_CANARY<br/>DRAFT"]
-    n225["math_v2_1_a1_seed81_pilot_v6<br/>PILOT<br/>DRAFT"]
+    n222["math_v2_1_prediction_validity_policy_v1<br/>PROTOCOL_FREEZE<br/>COMPLETED"]
+    n223["math_v2_1_preexecution_freeze_v6<br/>PREEXECUTION_FREEZE<br/>PREEXECUTION_FROZEN"]
+    n224["math_v2_1_a1_seed81_real_canary_v6<br/>REAL_CANARY<br/>HOLD"]
+    n225["math_v2_1_a1_seed81_pilot_v6<br/>PILOT<br/>HOLD"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]

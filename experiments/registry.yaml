@@ -6645,9 +6645,9 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_a1_seed81_real_canary_v5
-  status: DRAFT
-  scientific_status: PREDICTION_VALIDITY_ZERO_API_PENDING
-  implementation_commit: null
+  status: COMPLETED
+  scientific_status: PREDICTION_VALIDITY_ZERO_API_PASS
+  implementation_commit: e8571e789de78a3f382e805a23fa42faa774c11f
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_prediction_validity_policy_v1.yaml
@@ -6660,7 +6660,6 @@ experiments:
   - Only successful-transport prediction invalidity treatment changes; decoding, method,
     split, initial team, reference and mathematical equivalence remain frozen.
   unavailable:
-    implementation_commit: Awaiting source freeze.
     execution_commit: Not executed.
     result_commit: Awaiting evidence.
 - experiment_id: math_v2_1_preexecution_freeze_v6
@@ -6669,9 +6668,9 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_prediction_validity_policy_v1
-  status: DRAFT
-  scientific_status: PREDICTION_VALIDITY_ZERO_API_PENDING
-  implementation_commit: null
+  status: PREEXECUTION_FROZEN
+  scientific_status: PREDICTION_VALIDITY_ZERO_API_PASS
+  implementation_commit: e8571e789de78a3f382e805a23fa42faa774c11f
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_preexecution_freeze_v6.yaml
@@ -6684,7 +6683,6 @@ experiments:
   - Only successful-transport prediction invalidity treatment changes; decoding, method,
     split, initial team, reference and mathematical equivalence remain frozen.
   unavailable:
-    implementation_commit: Awaiting source freeze.
     execution_commit: Not executed.
     result_commit: Awaiting evidence.
 - experiment_id: math_v2_1_a1_seed81_real_canary_v6
@@ -6693,14 +6691,14 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_preexecution_freeze_v6
-  status: DRAFT
-  scientific_status: PREDICTION_VALIDITY_ZERO_API_PENDING
-  implementation_commit: null
-  execution_commit: null
+  status: HOLD
+  scientific_status: NOT_EVALUABLE_USER_ABORT
+  implementation_commit: e8571e789de78a3f382e805a23fa42faa774c11f
+  execution_commit: e7a2aea89e56c7a97632d99de2af1c93f1459acf
   result_commit: null
   manifest: experiments/manifests/math_v2_1_a1_seed81_real_canary_v6.yaml
   report: reports/math_v2_1_a1_seed81_real_canary_v6_20261003
-  classifier: V2_1_MATH_PREDICTION_VALIDITY_FREEZE
+  classifier: STOP_USER_REQUESTED
   active_for_new_work: false
   historical_replay: false
   superseded_by: []
@@ -6708,30 +6706,29 @@ experiments:
   - Only successful-transport prediction invalidity treatment changes; decoding, method,
     split, initial team, reference and mathematical equivalence remain frozen.
   unavailable:
-    implementation_commit: Awaiting source freeze.
-    execution_commit: Not executed.
     result_commit: Awaiting evidence.
+  authorization_consumed: true
 - experiment_id: math_v2_1_a1_seed81_pilot_v6
   kind: PILOT
   era: BENCHMARK_GENERALIZATION
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_a1_seed81_real_canary_v6
-  status: DRAFT
-  scientific_status: PREDICTION_VALIDITY_ZERO_API_PENDING
-  implementation_commit: null
+  status: HOLD
+  scientific_status: NOT_EVALUABLE_USER_ABORT
+  implementation_commit: e8571e789de78a3f382e805a23fa42faa774c11f
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_a1_seed81_pilot_v6.yaml
   report: reports/math_v2_1_a1_seed81_pilot_v6_20261003
-  classifier: V2_1_MATH_PREDICTION_VALIDITY_FREEZE
-  active_for_new_work: true
+  classifier: STOP_USER_REQUESTED
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
   - Only successful-transport prediction invalidity treatment changes; decoding, method,
     split, initial team, reference and mathematical equivalence remain frozen.
   unavailable:
-    implementation_commit: Awaiting source freeze.
     execution_commit: Not executed.
     result_commit: Awaiting evidence.
+  authorization_consumed: false
