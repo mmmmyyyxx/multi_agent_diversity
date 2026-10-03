@@ -1,0 +1,9 @@
+{
+  "README.md": "5df040b4b6cd50a2aee08850c81b3927cdd1653bec2b12909975dba3619bef9c",
+  "analysis_policy_receipt.json": "e512a89a6623bded622718c25ac1840dd17cdf8b5a794abbd27e8d2df0fd623c",
+  "pilot_freeze_receipt.json": "2d4af6df2a695058d6b5ec1bc7a041c8a2dae3a630e0d283b20d26420bd1ec88",
+  "pilot_source_identity.json": "d2df26cff2e194b724a7f22a84a8208c2b140d51baf5a9ebd8e20549bc4dc8a8",
+  "pilot_startup_receipt.json": "a79c88a768ead6635b060a8575cb55aed254743ee3efa233e826a06bd94400cc",
+  "source_gate.json": "eb5d9ffc7fe3b7140620a38a0e48ec4f848e954eeb6a3fba5307b41371bd90ff",
+  "test_summary.json": "1b76507fdbc5408decda0b3c5d02c9fa12e36c2177b8ccf0247fbb1a493213b5"
+}
