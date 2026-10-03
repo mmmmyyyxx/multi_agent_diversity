@@ -6738,7 +6738,7 @@ experiments:
   scientific_status: ZERO_API_REUSE_AUDIT_COMPLETE
   implementation_commit: null
   execution_commit: null
-  result_commit: null
+  result_commit: 3971852ac912c91772dbc9433577f089de37c4dd
   manifest: experiments/manifests/math_v2_1_output_reuse_audit_v1.yaml
   report: reports/math_v2_1_output_reuse_audit_v1_20261003
   classifier: CONFIRMED_MATERIAL_DEFECTS
@@ -6757,9 +6757,9 @@ experiments:
   - math_v2_1_output_reuse_audit_v1
   status: COMPLETED
   scientific_status: ZERO_API_PASS
-  implementation_commit: null
+  implementation_commit: 80bf8aa16a556297dba1c051e3dba9761cc8587f
   execution_commit: null
-  result_commit: null
+  result_commit: 80bf8aa16a556297dba1c051e3dba9761cc8587f
   manifest: experiments/manifests/math_v2_1_terminal_invalid_recovery_v1.yaml
   report: reports/math_v2_1_terminal_invalid_recovery_v1_20261003
   classifier: TERMINAL_INVALID_RECOVERY_ZERO_API_PASS
@@ -6776,11 +6776,11 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_terminal_invalid_recovery_v1
-  status: DRAFT
-  scientific_status: PREEXECUTION_PENDING
-  implementation_commit: null
+  status: COMPLETED
+  scientific_status: LOW_COST_PROTOCOL_ZERO_API_FROZEN
+  implementation_commit: 3a693a4698a1cd3da0f61579bde29099461895b0
   execution_commit: null
-  result_commit: null
+  result_commit: 3a693a4698a1cd3da0f61579bde29099461895b0
   manifest: experiments/manifests/math_v2_1_low_cost_protocol_v1.yaml
   report: reports/math_v2_1_low_cost_protocol_v1_20261003
   classifier: LOW_COST_DEVELOPMENT
@@ -6797,14 +6797,14 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_low_cost_protocol_v1
-  status: DRAFT
-  scientific_status: PREEXECUTION_PENDING
-  implementation_commit: null
+  status: COMPLETED
+  scientific_status: ZERO_API_PASS
+  implementation_commit: 3479cf23f4a8c3a2d7496f7ed4ffeaec7ba213fe
   execution_commit: null
-  result_commit: null
+  result_commit: cdf57bc4ee070da6ad23b7bf4bf97caa61cc02a2
   manifest: experiments/manifests/math_v2_1_preexecution_low_cost_v1.yaml
   report: reports/math_v2_1_preexecution_low_cost_v1_20261003
-  classifier: LOW_COST_DEVELOPMENT
+  classifier: LOW_COST_PREEXECUTION_FROZEN
   active_for_new_work: false
   historical_replay: false
   superseded_by: []
@@ -6818,39 +6818,44 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_preexecution_low_cost_v1
-  status: DRAFT
-  scientific_status: PREEXECUTION_PENDING
-  implementation_commit: null
-  execution_commit: null
-  result_commit: null
+  status: INVALID
+  scientific_status: EXECUTION_ABORTED_EFFICACY_UNEVALUATED
+  implementation_commit: 3479cf23f4a8c3a2d7496f7ed4ffeaec7ba213fe
+  execution_commit: cdf57bc4ee070da6ad23b7bf4bf97caa61cc02a2
+  result_commit: 074fb7bcc097dd75373561faed493d3025691e84
   manifest: experiments/manifests/math_v2_1_a1_seed81_low_cost_canary_v1.yaml
   report: reports/math_v2_1_a1_seed81_low_cost_canary_v1_20261003
-  classifier: LOW_COST_DEVELOPMENT
+  classifier: CANARY_OPERATIONAL_FAILURE
   active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
-  - Fresh low-cost development protocol; no inherited scientific output or state.
-  unavailable:
-    execution_commit: Not executed.
+  - Fresh initial profiling completed with 60 valid Solver generations; GEPA local reused 10 outputs.
+  - One opportunity started with member3; first optimizer response exceeded the assumed total cap. No completed
+    opportunity, exported candidate or commit.
+  - Request/cache/journal/inventory/split integrity passed. Failed Canary remains INVALID; optimizer policy decision
+    required.
+  authorization_consumed: true
 - experiment_id: math_v2_1_a1_seed81_low_cost_pilot_v1
   kind: PILOT
   era: BENCHMARK_GENERALIZATION
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_a1_seed81_low_cost_canary_v1
-  status: DRAFT
-  scientific_status: PREEXECUTION_PENDING
-  implementation_commit: null
+  status: HOLD
+  scientific_status: NOT_EXECUTED_CANARY_POLICY_FAILURE
+  implementation_commit: 3479cf23f4a8c3a2d7496f7ed4ffeaec7ba213fe
   execution_commit: null
-  result_commit: null
+  result_commit: 074fb7bcc097dd75373561faed493d3025691e84
   manifest: experiments/manifests/math_v2_1_a1_seed81_low_cost_pilot_v1.yaml
   report: reports/math_v2_1_a1_seed81_low_cost_pilot_v1_20261003
-  classifier: LOW_COST_DEVELOPMENT
+  classifier: STOP_NEW_SCIENTIFIC_POLICY_REQUIRED
   active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
-  - Fresh low-cost development protocol; no inherited scientific output or state.
+  - Canary failed before a completed production opportunity; Pilot and Validation were never dispatched.
+  - Search, held-out, Test, other arms and other seeds remain closed; no inherited scientific outputs.
   unavailable:
     execution_commit: Not executed.
+  authorization_consumed: false

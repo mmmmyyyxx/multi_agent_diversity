@@ -31,25 +31,25 @@ open_questions: docs/research/OPEN_QUESTIONS.md
 last_method_milestone: unified_semantic_contract_v2_1
 canary_manifest: experiments/manifests/math_v2_1_a1_seed81_low_cost_canary_v1.yaml
 last_preexecution_milestone: math_v2_1_preexecution_low_cost_v1
-last_canary_milestone: math_v2_1_a1_seed81_real_canary_v6
-current_canary_status: NOT_EXECUTED
+last_canary_milestone: math_v2_1_a1_seed81_low_cost_canary_v1
+current_canary_status: INVALID_OPERATIONAL_OUTPUT_CAP_NOT_ENFORCED
 formal_a1_ready: false
 formal_a1_authorized: false
-current_execution_blocker: LOW_COST_PREEXECUTION_PENDING
-next_canary_milestone: math_v2_1_a1_seed81_low_cost_canary_v1
-next_canary_attempt_id: math_v2_1_low_cost_A1_seed81_canary_attempt1
-last_autonomous_milestone: math_v2_1_a1_seed81_pilot_v5
+current_execution_blocker: OPTIMIZER_OUTPUT_POLICY_DECISION_REQUIRED
+next_canary_milestone: null
+next_canary_attempt_id: null
+last_autonomous_milestone: math_v2_1_a1_seed81_low_cost_pilot_v1
 autonomous_user_authorization_received: true
 autonomous_token_authorization: 40000000
-autonomous_tokens_consumed: 255460
-autonomous_tokens_remaining: 39744540
+autonomous_tokens_consumed: 293888
+autonomous_tokens_remaining: 39706112
 token_accounting_policy: RESERVATION_V2
 prior_accounting_stop_resolution: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2
-autonomous_authorization_status: LOW_COST_TASK_AUTHORIZED_PREEXECUTION_PENDING
+autonomous_authorization_status: LOW_COST_TASK_STOPPED_POLICY_REQUIRED
 pilot_search_complete: false
 pilot_validation_complete: false
 pilot_final_status: INCOMPLETE
-task_stop_reason: null
+task_stop_reason: STOP_NEW_SCIENTIFIC_POLICY_REQUIRED
 ```
 
 ## Experiment and engineering DAG
@@ -108,10 +108,10 @@ flowchart TD
     n225["math_v2_1_a1_seed81_pilot_v6<br/>PILOT<br/>HOLD"]
     n226["math_v2_1_output_reuse_audit_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
     n227["math_v2_1_terminal_invalid_recovery_v1<br/>PROTOCOL_FREEZE<br/>COMPLETED"]
-    n228["math_v2_1_low_cost_protocol_v1<br/>PROTOCOL_FREEZE<br/>DRAFT"]
-    n229["math_v2_1_preexecution_low_cost_v1<br/>PREEXECUTION_FREEZE<br/>DRAFT"]
-    n230["math_v2_1_a1_seed81_low_cost_canary_v1<br/>REAL_CANARY<br/>DRAFT"]
-    n231["math_v2_1_a1_seed81_low_cost_pilot_v1<br/>PILOT<br/>DRAFT"]
+    n228["math_v2_1_low_cost_protocol_v1<br/>PROTOCOL_FREEZE<br/>COMPLETED"]
+    n229["math_v2_1_preexecution_low_cost_v1<br/>PREEXECUTION_FREEZE<br/>COMPLETED"]
+    n230["math_v2_1_a1_seed81_low_cost_canary_v1<br/>REAL_CANARY<br/>INVALID"]
+    n231["math_v2_1_a1_seed81_low_cost_pilot_v1<br/>PILOT<br/>HOLD"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -611,3 +611,4 @@ flowchart TD
 | math_v2_1_a1_seed81_pilot_v3 | BENCHMARK_GENERALIZATION | SUPERSEDED | V2_1_MATH_OUTPUT_INTERFACE_REPAIR |
 | math_v2_1_a1_seed81_real_canary_v4 | BENCHMARK_GENERALIZATION | INVALID | INVALID_OPERATIONAL_FAILURE |
 | math_v2_1_a1_seed81_real_canary_v5 | BENCHMARK_GENERALIZATION | INVALID | STOP_SOLVER_DECODING_POLICY_INSUFFICIENT |
+| math_v2_1_a1_seed81_low_cost_canary_v1 | BENCHMARK_GENERALIZATION | INVALID | CANARY_OPERATIONAL_FAILURE |

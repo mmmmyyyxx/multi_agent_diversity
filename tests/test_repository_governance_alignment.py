@@ -274,7 +274,8 @@ def _assert_canary_does_not_unlock_formal_or_heldout(frontier,registry):
             else:
                 assert frontier['autonomous_authorization_status'] in {
                     'V2_1_CONTINUATION_RECEIVED_EXACT_SCOPE_PENDING', 'V2_1_CONTINUATION_EXACT_SCOPES_CLOSED',
-                    'LOW_COST_TASK_COMPLETE_SCOPES_CLOSED'}
+                    'LOW_COST_TASK_COMPLETE_SCOPES_CLOSED',
+                    'LOW_COST_TASK_STOPPED_POLICY_REQUIRED'}
                 current=next(r for r in registry['experiments'] if r['experiment_id']==frontier['current_experiment'])
                 manifest=load_yaml(ROOT/current['manifest'])
                 assert manifest['method_identity']=='unified_team_prompt_search_v2_1'

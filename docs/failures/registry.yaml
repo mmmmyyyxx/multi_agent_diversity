@@ -403,3 +403,29 @@ failures:
   mitigation: Preserve evidence and ledger; user scientific decision required.
   lifecycle: OPEN
   lifecycle_note: STOP_SOLVER_DECODING_POLICY_INSUFFICIENT
+- failure_id: FAIL-MATH-V21-OPTIMIZER-TOTAL-OUTPUT-CAP
+  title: Optimizer reported total output exceeds the frozen answer cap assumption
+  status: OPEN
+  first_observed: math_v2_1_a1_seed81_low_cost_canary_v1
+  affected_components:
+  - optimizer generation envelope
+  - provider usage accounting
+  symptom: Frozen max_tokens=1800 request returned finish_reason stop with 1814 reported output tokens;
+    first reflection aborted before proposal admission.
+  evidence:
+  - reports/math_v2_1_a1_seed81_low_cost_canary_v1_20261003
+  - reports/math_v2_1_a1_seed81_low_cost_pilot_v1_20261003
+  evidence_level: observed
+  root_cause_status: Observed cap/usage dimension mismatch. Qwen documentation distinguishes answer-only
+    max_tokens from combined max_completion_tokens. The actual provider internal cause is unverified;
+    detailed usage was not retained.
+  forbidden_inference: No backend thinking-token count, method efficacy, generalization or performance-based
+    tuning is inferred.
+  regression_tests:
+  - tests/test_math_token_accounting.py
+  - tests/test_math_solver_decoding.py
+  - tests/test_repository_governance_alignment.py
+  mitigation: Preserve failed attempt and full fallback charge, close scopes, and require explicit optimizer
+    generation/accounting policy decision before fresh freeze and execution.
+  lifecycle: OPEN
+  lifecycle_note: STOP_NEW_SCIENTIFIC_POLICY_REQUIRED; FAILED_CANARY_IMMUTABLE; PILOT_AND_VALIDATION_NOT_EXECUTED
