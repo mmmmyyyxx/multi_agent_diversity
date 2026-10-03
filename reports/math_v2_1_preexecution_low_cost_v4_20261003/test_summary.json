@@ -1,0 +1,106 @@
+{
+  "actual_pinned_gepa_fake": {
+    "arms": {
+      "A1": {
+        "enable_thinking": false,
+        "optimizer_wire_captures": 1,
+        "status": "PASS"
+      },
+      "A2": {
+        "enable_thinking": false,
+        "optimizer_wire_captures": 2,
+        "status": "PASS"
+      },
+      "A3": {
+        "enable_thinking": false,
+        "optimizer_wire_captures": 1,
+        "status": "PASS"
+      },
+      "A4": {
+        "enable_thinking": false,
+        "optimizer_wire_captures": 2,
+        "status": "PASS"
+      }
+    },
+    "gepa": {
+      "commit": "b4dbb55b7601dac448cdb836d5a401ca7d9eb920",
+      "source_sha256": "84c3c7e5f80fd272f0841357ec9327e3b0ea8ee53cd8107d1ab8d4cdb36ff1f8",
+      "version": "v0.1.1"
+    },
+    "pattern_real_calls": 0,
+    "real_api_calls": 0,
+    "source_sha": "74503e39b478f859b6e615b3f6ec3f1e705693db",
+    "status": "PASS"
+  },
+  "checks": [
+    {
+      "exit_code": 0,
+      "label": "targeted_v4",
+      "log_sha256": "ec9f2e71bcbe982fa7aaf23c09d3eab064d97813ca6baa9562298c87eca5df69"
+    },
+    {
+      "exit_code": 0,
+      "label": "current_v4",
+      "log_sha256": "2e732b19702abbc7a7bb5d9ccb9384e0bb8ac9a31748ad83635b96c1e70fcadb"
+    },
+    {
+      "exit_code": 0,
+      "label": "four_arm_v4",
+      "log_sha256": "cb6b8cc27cddef7da2c1f00370c26f8ddb2bbf9bd470f5dd351d3d7d6e1c77f3"
+    }
+  ],
+  "command_correction": "fresh_repo_local_basetemp_for_governed_filesystem_tests",
+  "counts": {
+    "current_v4": {
+      "failed": 0,
+      "passed": 931,
+      "selected": 933,
+      "skipped": 2,
+      "xml_sha256": "3667101098119fff6b4db7debc79bd47669f9b2273fe222b664686402648f2db"
+    },
+    "decoding_accounting_targeted": {
+      "failed": 0,
+      "passed": 115,
+      "production_and_test_bytes_unchanged": true,
+      "selected": 115,
+      "source_sha": "4e6f505c62a0b626c550227f29b53f7e070be951",
+      "xml_sha256": "358aaaa502bdf6b0819570bf7fa3a4aba0476dc843cfb70d0b326eaa5d345d78"
+    },
+    "targeted_v4": {
+      "failed": 0,
+      "passed": 45,
+      "selected": 45,
+      "skipped": 0,
+      "xml_sha256": "5050de6db5fc4f680cce09e2f7bc1a057ddb1942d69f56a029fc231ee8416e08"
+    }
+  },
+  "first_verification": {
+    "failed": 12,
+    "network_attempts": 0,
+    "passed": 103,
+    "preserved": true,
+    "selected": 115,
+    "status": "FAILED_COMMAND_CONFIGURATION"
+  },
+  "historical_full_pass_claimed": false,
+  "historical_private_cases_not_executed": 1468,
+  "real_api_calls": 0,
+  "source_gate": {
+    "charged_total": 325002,
+    "closure_files": 202,
+    "compileall": "PASS",
+    "diff_check": "PASS",
+    "generation_parameters_changed": false,
+    "governance": "PASS",
+    "historical_reports_immutable": true,
+    "new_real_api_calls": 0,
+    "sanitization": "PASS",
+    "scientific_semantic_delta": false,
+    "secret_scan": "PASS",
+    "solver_data_proposer_unchanged": true,
+    "source_poison_checks": 402,
+    "status": "PASS"
+  },
+  "status": "PASS",
+  "verification_source": "74503e39b478f859b6e615b3f6ec3f1e705693db"
+}

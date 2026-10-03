@@ -1,0 +1,23 @@
+{
+  "final_source": "c7bf15f216c50a0c44dc8f0114c0767376f4997a",
+  "generation_parameters_changed": false,
+  "prior_source_gate": {
+    "charged_total": 325002,
+    "closure_files": 202,
+    "compileall": "PASS",
+    "diff_check": "PASS",
+    "generation_parameters_changed": false,
+    "governance": "PASS",
+    "historical_reports_immutable": true,
+    "new_real_api_calls": 0,
+    "sanitization": "PASS",
+    "scientific_semantic_delta": false,
+    "secret_scan": "PASS",
+    "solver_data_proposer_unchanged": true,
+    "source_poison_checks": 402,
+    "status": "PASS"
+  },
+  "scientific_semantic_delta": false,
+  "source_poison_checks": 201,
+  "status": "PASS"
+}

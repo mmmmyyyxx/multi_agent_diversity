@@ -1,0 +1,9 @@
+{
+  "README.md": "5df040b4b6cd50a2aee08850c81b3927cdd1653bec2b12909975dba3619bef9c",
+  "analysis_policy_receipt.json": "e512a89a6623bded622718c25ac1840dd17cdf8b5a794abbd27e8d2df0fd623c",
+  "canary_freeze_receipt.json": "095df1959731845fc04543b5550fec83515f1edcdfddbfb43ed80d22116aaec1",
+  "canary_source_identity.json": "c10aff656d3d3ca6d9369f5b0767821b62003c1e6a615be2860da7cfdc82c8fc",
+  "canary_startup_receipt.json": "b4cfa942f9561440db7616a9a4ec7c0ce755c27ef2241b1bd8d2a1dc8432b9b5",
+  "source_gate.json": "6157462c61d0315a2b35875199a8645b5cd7ab0bb7642ce1e0bac13f102ace1c",
+  "test_summary.json": "1b76507fdbc5408decda0b3c5d02c9fa12e36c2177b8ccf0247fbb1a493213b5"
+}

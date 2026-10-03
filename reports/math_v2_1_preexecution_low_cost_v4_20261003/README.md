@@ -1,3 +1,3 @@
-# math_v2_1_preexecution_low_cost_v4
+# Fresh V4 preexecution
 
-Registered draft under the new autonomous constitution; no real calls in this task. Generation parameters, scientific method and low-cost data are unchanged. Prior diagnostic outputs are not imported.
+Exact frozen source, explicit nonthinking evidence, unchanged generation/method/data, offline current gates and real pinned GEPA A1–A4 fakes pass. 1468 historical/private cases not executed. No historical diagnostic output is imported. Pilot will receive its own fresh source/prep after Canary closure.
