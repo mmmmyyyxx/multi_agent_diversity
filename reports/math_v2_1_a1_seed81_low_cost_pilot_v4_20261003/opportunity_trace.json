@@ -1,0 +1,160 @@
+{
+  "completed": 14,
+  "stop_reason": "SATURATION_REACHED",
+  "trajectory": [
+    {
+      "child_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "committed": null,
+      "initial_floor_enforced": true,
+      "opportunity_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007:0:3",
+      "parent_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "selected": null,
+      "shadow_pass": null,
+      "strict_team_gain_enforced": true,
+      "target_member": 3
+    },
+    {
+      "child_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "committed": null,
+      "initial_floor_enforced": true,
+      "opportunity_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007:1:1",
+      "parent_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "selected": null,
+      "shadow_pass": null,
+      "strict_team_gain_enforced": true,
+      "target_member": 1
+    },
+    {
+      "child_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "committed": null,
+      "initial_floor_enforced": true,
+      "opportunity_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007:2:2",
+      "parent_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "selected": null,
+      "shadow_pass": null,
+      "strict_team_gain_enforced": true,
+      "target_member": 2
+    },
+    {
+      "child_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "committed": null,
+      "initial_floor_enforced": true,
+      "opportunity_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007:3:3",
+      "parent_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "selected": null,
+      "shadow_pass": null,
+      "strict_team_gain_enforced": true,
+      "target_member": 3
+    },
+    {
+      "child_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "committed": null,
+      "initial_floor_enforced": true,
+      "opportunity_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007:4:4",
+      "parent_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "selected": null,
+      "shadow_pass": null,
+      "strict_team_gain_enforced": true,
+      "target_member": 4
+    },
+    {
+      "child_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "committed": null,
+      "initial_floor_enforced": true,
+      "opportunity_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007:5:0",
+      "parent_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "selected": null,
+      "shadow_pass": null,
+      "strict_team_gain_enforced": true,
+      "target_member": 0
+    },
+    {
+      "child_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "committed": null,
+      "initial_floor_enforced": true,
+      "opportunity_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007:6:1",
+      "parent_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "selected": null,
+      "shadow_pass": null,
+      "strict_team_gain_enforced": true,
+      "target_member": 1
+    },
+    {
+      "child_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "committed": null,
+      "initial_floor_enforced": true,
+      "opportunity_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007:7:2",
+      "parent_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "selected": null,
+      "shadow_pass": null,
+      "strict_team_gain_enforced": true,
+      "target_member": 2
+    },
+    {
+      "child_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "committed": null,
+      "initial_floor_enforced": true,
+      "opportunity_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007:8:3",
+      "parent_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "selected": null,
+      "shadow_pass": null,
+      "strict_team_gain_enforced": true,
+      "target_member": 3
+    },
+    {
+      "child_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "committed": null,
+      "initial_floor_enforced": true,
+      "opportunity_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007:9:1",
+      "parent_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "selected": null,
+      "shadow_pass": null,
+      "strict_team_gain_enforced": true,
+      "target_member": 1
+    },
+    {
+      "child_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "committed": null,
+      "initial_floor_enforced": true,
+      "opportunity_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007:10:2",
+      "parent_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "selected": null,
+      "shadow_pass": null,
+      "strict_team_gain_enforced": true,
+      "target_member": 2
+    },
+    {
+      "child_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "committed": null,
+      "initial_floor_enforced": true,
+      "opportunity_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007:11:3",
+      "parent_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "selected": null,
+      "shadow_pass": null,
+      "strict_team_gain_enforced": true,
+      "target_member": 3
+    },
+    {
+      "child_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "committed": null,
+      "initial_floor_enforced": true,
+      "opportunity_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007:12:4",
+      "parent_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "selected": null,
+      "shadow_pass": null,
+      "strict_team_gain_enforced": true,
+      "target_member": 4
+    },
+    {
+      "child_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "committed": null,
+      "initial_floor_enforced": true,
+      "opportunity_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007:13:0",
+      "parent_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "selected": null,
+      "shadow_pass": null,
+      "strict_team_gain_enforced": true,
+      "target_member": 0
+    }
+  ]
+}

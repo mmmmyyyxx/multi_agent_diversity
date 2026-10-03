@@ -1,0 +1,12 @@
+{
+  "raw_invalid_count": 62,
+  "raw_invalid_reasons": {
+    "MISSING_FINAL_MARKER": 1,
+    "OTHER_PREDICTION_CONTRACT_FAILURE": 1,
+    "OUTPUT_TRUNCATED": 7,
+    "PAYLOAD_PARSE_FAILURE": 53
+  },
+  "raw_valid_generations": 288,
+  "successful_solver_generations": 350,
+  "terminal_invalid_continues": true
+}

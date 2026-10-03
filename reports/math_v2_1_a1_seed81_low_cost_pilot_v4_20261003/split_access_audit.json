@@ -1,0 +1,9 @@
+{
+  "optimize_count": 60,
+  "shadow_count": 40,
+  "status": "PASS",
+  "test_model_calls": 0,
+  "test_sealed": true,
+  "validation_model_calls": 0,
+  "validation_used_during_search": false
+}

@@ -1,0 +1,12 @@
+{
+  "formal_authorized": false,
+  "generalization_verified": false,
+  "memory_reads": 0,
+  "memory_writes": 0,
+  "other_arms_real_authorized": false,
+  "other_seeds_authorized": false,
+  "pattern_real_calls": 0,
+  "scientific_efficacy_verified": false,
+  "scope": "LOW_COST_PILOT_DEVELOPMENT_SIGNAL",
+  "sota_verified": false
+}

@@ -1,0 +1,139 @@
+{
+  "closed": true,
+  "consumed": true,
+  "consumed_authorization_sha256": "eca09ce771e1855d627fb7f343a7c09914d50aaff26b61da3b222e7249e4a3ad",
+  "scope": {
+    "accounting": {
+      "continuation_authorization_sha256": "f198b62ff4f0b9c97bcbc12cbe84119233a6b89fe78ad7771d6a5aa04dd906d8",
+      "ledger_directory": "runs/math_autonomous_accounting_v2/token_ledger",
+      "policy_sha256": "5f406b99f390be1b8f60d965973f93fe85e79b6f030598e12d375418e3ab6737",
+      "task_sha256": "3db28ade2b799d2169c6cdbdb03b82e63517ab74c46f8212905855f2fcf9cd9a",
+      "total_authorization": 40000000,
+      "validation_metadata_sha256": "6277e518ad691fde9cab50cb93ad9b6e2ef6a6be13db4affe0b62ac9e701698c"
+    },
+    "arm": "A1",
+    "attempt_id": "math_v2_1_low_cost_A1_seed81_pilot_attempt4",
+    "binding_sha256": "99f4d47c7b98130cf04c5d7279844b21180c12f6fd888470251ef6194a3062db",
+    "invalid_recovery_policy": {
+      "cache": "resolved_valid_or_exhausted_terminal_only",
+      "first_valid_stops": true,
+      "identity": "MATH_SOLVER_INVALID_RECOVERY_V1",
+      "invalidity_weight": "none",
+      "logical_evaluation_count": 1,
+      "max_semantic_attempts": 4,
+      "same_request_bytes": true,
+      "solver_invalid_max_retries": 3,
+      "terminal_invalid": "incorrect_continue_no_vote",
+      "terminal_requires_completed_invalid_attempts": 4,
+      "transport_failures_consume_semantic_attempt": false
+    },
+    "low_cost_protocol": {
+      "analysis_policy": {
+        "classification": "sign_of_final_minus_initial_VoteAcc",
+        "identity": "MATH_V2_1_PILOT_DEVELOPMENT_ANALYSIS_V1",
+        "paired_resampling_unit": "frozen_validation_example",
+        "resamples": 10000,
+        "scope": "development_uncertainty_only_no_formal_significance_no_search_feedback",
+        "seed": 81
+      },
+      "canary_stop": "one_complete_production_opportunity_v1",
+      "counts": {
+        "canary_optimize": 12,
+        "pilot_optimize": 60,
+        "pilot_shadow": 40,
+        "pilot_validation": 100
+      },
+      "identity": "MATH_V2_1_LOW_COST_DEV_PROTOCOL_V1",
+      "membership_hashes": {
+        "canary_optimize": "16ad84b5bb22a6aa10e23ef1e1a71ff6d54b7e8e4fcd749571808fba0b2f27ab",
+        "pilot_optimize": "f52c5f2a88337d187f5bf6fe7e9b419d92a96e6848dfeaae01b3f123f197b256",
+        "pilot_shadow": "9732600d0cc9d22c05fa2460738ba45804e23c82ed313ba5545ace5d42886857",
+        "pilot_validation": "c71c48a25ed0439e886481926fcdc6195abc9ab8997c74d4bde3eae712ee3adc"
+      },
+      "pilot_stop": "team_epoch_no_commit_v1",
+      "scientific_scope": "development_only",
+      "selection_policy": {
+        "apportionment": "integer_largest_remainder_lexical_tie",
+        "identity": "MATH_LOW_COST_SUBJECT_LEVEL_HASH_V1",
+        "minimum_per_stratum": 0,
+        "ordering": "sha256_identity_role_stable_id",
+        "output_order": "source_superset_order",
+        "performance_used": false,
+        "strata": [
+          "subject",
+          "level"
+        ]
+      },
+      "source_superset_sha256": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+      "test_access": "sealed"
+    },
+    "low_cost_subsets_sha256": "b6ef5a287d91baa60a329b8a55f88db9e019f83ff2329cf8a62cbae5388d8f5b",
+    "models": {
+      "optimizer_reflection": "qwen3.7-flash",
+      "pattern": "qwen3.7-flash",
+      "solver": "qwen3-8b",
+      "solver_thinking": false
+    },
+    "optimizer_amendment_authorization_sha256": "d4f4c64cb9ba250f50aa427f9a2b926ff5464fde50f94c66abca991f45ef98dd",
+    "optimizer_generation_policy": {
+      "accounting_output_ceiling": 1810,
+      "enable_thinking": false,
+      "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V2",
+      "max_completion_tokens": 1800,
+      "max_tokens": "NOT_SENT",
+      "measurement_tolerance_tokens": 10,
+      "model": "qwen3.7-flash",
+      "output_token_scope": "reasoning_plus_answer",
+      "roles": [
+        "reflection",
+        "pattern"
+      ],
+      "temperature": 0.0,
+      "truncation": "existing_operational_output_truncation"
+    },
+    "optimizer_nonthinking_evidence_policy": {
+      "contradiction": "provider_control_failure",
+      "diagnostic_candidate_rejection": "record_only_no_output_reuse",
+      "direct": "dispatched_false_and_actual_zero_without_contradiction",
+      "equivalent": "dispatched_false_accepted_stop_no_reasoning_no_parser_loss",
+      "identity": "OPTIMIZER_NONTHINKING_EQUIVALENT_EVIDENCE_V1",
+      "missing_tokens": "never_infer_zero"
+    },
+    "phase": "team_epoch_no_commit_v1",
+    "prediction_validity_policy": {
+      "denominator": "all_frozen_examples",
+      "fallback_extraction": false,
+      "identity": "MATH_PREDICTION_VALIDITY_V2",
+      "invalid_response_retries": 3,
+      "invalid_vote": "excluded_from_equivalence_classes",
+      "invalidity_telemetry": "observation_only",
+      "prediction_failure": "invalid_incorrect_continue",
+      "reference_failure": "hard_contract_failure",
+      "truncated_even_with_marker": "invalid_incorrect"
+    },
+    "preregistration_identity": "db793c1e3a90368d1bfb190dae8dc9d95e20bf4c078a936593a8da76e2df2abb",
+    "provider": "lwj",
+    "roles": [
+      "solver",
+      "reflection"
+    ],
+    "seed": 81,
+    "solver_decoding_policy": {
+      "enable_thinking": false,
+      "frequency_penalty": 0,
+      "identity": "SOLVER_DECODING_POLICY_V1",
+      "max_output_tokens": 3600,
+      "min_p": 0,
+      "presence_penalty": 0,
+      "temperature": 0.7,
+      "top_k": 20,
+      "top_p": 0.8
+    },
+    "source_sha": "05c1da1ef08ebb4e3ec403380bfc033377b1e743",
+    "successful_provider_call_ceiling": 121263900,
+    "test_calls": 0,
+    "transport_attempt_ceiling": 2546541900,
+    "validation_calls": 0
+  },
+  "single_use": true
+}

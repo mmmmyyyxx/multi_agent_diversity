@@ -1,0 +1,33 @@
+{
+  "candidate_count": 0,
+  "commit_count": 0,
+  "completed_opportunities": 14,
+  "opportunity_completed": true,
+  "optimizer_calls": 10,
+  "optimizer_enable_thinking": false,
+  "optimizer_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V2",
+  "optimizer_repetition_events": 0,
+  "optimizer_truncations": 0,
+  "scientific_efficacy_verified": false,
+  "search_complete": true,
+  "solver_calls": 350,
+  "status": "SEARCH_COMPLETE_VALIDATION_PENDING",
+  "stop_reason": "SATURATION_REACHED",
+  "target_members": [
+    3,
+    1,
+    2,
+    3,
+    4,
+    0,
+    1,
+    2,
+    3,
+    1,
+    2,
+    3,
+    4,
+    0
+  ],
+  "validation_complete": false
+}

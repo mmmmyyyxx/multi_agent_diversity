@@ -1,0 +1,75 @@
+{
+  "arm": "A1",
+  "attempt_id": "math_v2_1_low_cost_A1_seed81_pilot_attempt4",
+  "benchmark": "MATH",
+  "binding_identity": "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
+  "binding_sha256": "99f4d47c7b98130cf04c5d7279844b21180c12f6fd888470251ef6194a3062db",
+  "cache_namespace": "math_v2_1_low_cost_A1_seed81_pilot_attempt4",
+  "cache_policy": "DURABLE_EXACT_OUTPUT_CACHE_V1",
+  "final_team_hashes": [
+    "57e468e68d9ab974a0018353e4bc0a15ca0e1e002c8dbd6676802d89839bc674",
+    "c6e4039d562e0f1cf9e7f4ab4a0245f91c605a566947bcc31b6f1db90d1e5d23",
+    "37d8569a6e38128535bae504b4e7a4acb165d5bb8a4528a5e1e86c51a51a94d5",
+    "ade4c363f59d20e8fc2e6d743c47d4e7e8d059ce9cb8fa0c309f61bd50c9e112",
+    "6f9ee08d5b0055d8d5986c2cd55aea000074e11df4aee614241ca6b4e59b3098"
+  ],
+  "initial_team_hashes": [
+    "57e468e68d9ab974a0018353e4bc0a15ca0e1e002c8dbd6676802d89839bc674",
+    "c6e4039d562e0f1cf9e7f4ab4a0245f91c605a566947bcc31b6f1db90d1e5d23",
+    "37d8569a6e38128535bae504b4e7a4acb165d5bb8a4528a5e1e86c51a51a94d5",
+    "ade4c363f59d20e8fc2e6d743c47d4e7e8d059ce9cb8fa0c309f61bd50c9e112",
+    "6f9ee08d5b0055d8d5986c2cd55aea000074e11df4aee614241ca6b4e59b3098"
+  ],
+  "invalid_recovery_policy": {
+    "cache": "resolved_valid_or_exhausted_terminal_only",
+    "first_valid_stops": true,
+    "identity": "MATH_SOLVER_INVALID_RECOVERY_V1",
+    "invalidity_weight": "none",
+    "logical_evaluation_count": 1,
+    "max_semantic_attempts": 4,
+    "same_request_bytes": true,
+    "solver_invalid_max_retries": 3,
+    "terminal_invalid": "incorrect_continue_no_vote",
+    "terminal_requires_completed_invalid_attempts": 4,
+    "transport_failures_consume_semantic_attempt": false
+  },
+  "method": "unified_team_prompt_search_v2_1",
+  "models": {
+    "optimizer_reflection": "qwen3.7-flash",
+    "pattern": "qwen3.7-flash",
+    "solver": "qwen3-8b",
+    "solver_thinking": false
+  },
+  "optimizer_generation_policy": {
+    "accounting_output_ceiling": 1810,
+    "enable_thinking": false,
+    "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V2",
+    "max_completion_tokens": 1800,
+    "max_tokens": "NOT_SENT",
+    "measurement_tolerance_tokens": 10,
+    "model": "qwen3.7-flash",
+    "output_token_scope": "reasoning_plus_answer",
+    "roles": [
+      "reflection",
+      "pattern"
+    ],
+    "temperature": 0.0,
+    "truncation": "existing_operational_output_truncation"
+  },
+  "provider": "lwj",
+  "search_closed": true,
+  "seed": 81,
+  "solver_decoding_policy": {
+    "enable_thinking": false,
+    "frequency_penalty": 0,
+    "identity": "SOLVER_DECODING_POLICY_V1",
+    "max_output_tokens": 3600,
+    "min_p": 0,
+    "presence_penalty": 0,
+    "temperature": 0.7,
+    "top_k": 20,
+    "top_p": 0.8
+  },
+  "source_sha": "05c1da1ef08ebb4e3ec403380bfc033377b1e743",
+  "startup_identity_sha256": "e145e30cbe7b3ce09ed6a18283b5ec0c501a8aac97800ed2d77cacd9e6170b5c"
+}
