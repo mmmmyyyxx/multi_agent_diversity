@@ -13,5 +13,21 @@
     "generation_parameters_changed": false,
     "reason": "No truncation or repetition evidence meets a bounded generation-amendment trigger.",
     "semantic_delta": false
+  },
+  {
+    "classification": "OPERATIONAL",
+    "decision": "stale_frontier_repair",
+    "failed_test": "test_canary_abort_does_not_unlock_formal_or_heldout",
+    "new_real_api_calls": 0,
+    "prior_full_suite": {
+      "failed": 1,
+      "historical_not_run": 1468,
+      "network_attempts": 0,
+      "passed": 930,
+      "selected": 933,
+      "skipped": 2
+    },
+    "reason": "Current frontier retained prior completed task authorization status; register current pending attempt without granting live authorization",
+    "scientific_semantic_delta": false
   }
 ]
