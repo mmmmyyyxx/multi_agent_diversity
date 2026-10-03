@@ -1,0 +1,20 @@
+{
+  "actual_pinned_gepa_fake": {
+    "A1": "PASS",
+    "A2": "PASS",
+    "A3": "PASS",
+    "A4": "PASS"
+  },
+  "current_suite": "PASS",
+  "failed": 0,
+  "full_current_log_sha256": "6db21ac90c89568ccd6ff35e59674d74763655627687edcfac4dd76a566ed5f2",
+  "full_current_xml_sha256": "bdc707d3074e80e0047e3cdbe9d1c7122772c0b209158817bfb41af0af0617b4",
+  "governance_identity_targeted_tests": 45,
+  "historical_full_pass_claimed": false,
+  "historical_private_cases_not_executed": 1468,
+  "network_attempts": 0,
+  "passed": 869,
+  "selected": 871,
+  "skipped": 2,
+  "targeted_tests": 41
+}

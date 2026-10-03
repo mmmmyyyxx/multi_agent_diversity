@@ -1,0 +1,12 @@
+{
+  "closure_files": 199,
+  "compileall": "PASS",
+  "immutable_parent_bytes": "PASS",
+  "network_attempts": 0,
+  "real_optimizer_calls": 0,
+  "real_pattern_calls": 0,
+  "real_solver_calls": 0,
+  "sanitization": "PASS",
+  "secret_scan": "PASS",
+  "source_poison_checks": 394
+}

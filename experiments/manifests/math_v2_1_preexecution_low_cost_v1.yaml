@@ -2,7 +2,7 @@ schema_version: experiment_manifest_v2
 experiment_id: math_v2_1_preexecution_low_cost_v1
 method_family: unified_team_prompt_search_v2_1
 method_identity: unified_team_prompt_search_v2_1
-source_sha: 80bf8aa16a556297dba1c051e3dba9761cc8587f
+source_sha: 3479cf23f4a8c3a2d7496f7ed4ffeaec7ba213fe
 benchmark_id: math
 benchmark_protocol_id: 3aee274eeee86c07b7ea66a8700d925e42ecab17663a65e93e96f4ae475e1a67
 dataset_manifest_identity: 7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f
@@ -39,21 +39,21 @@ authorization:
   authorization_identity: null
   single_use: true
 lifecycle:
-  status: DRAFT
+  status: PREEXECUTION_FROZEN
   history:
   - status: DRAFT
     event: ZERO_API_BLOCKER_CLOSURE
-  - status: DRAFT
-    event: AWAITING_SOURCE_COMMIT
+  - status: PREEXECUTION_FROZEN
+    event: FROZEN_SOURCE_RECEIPT
 hash_closure:
-  scientific_source_hash: 872b0c89232ef2eb5c9386951baccda6fd500bd1774c5bc99b6e8b0a52b986ca
-  governance_hash: 13f0fe6d930d65f0627bdf45a4ef47148fd3a0d3e8d7fc8243778ef961637591
-  benchmark_contract_hash: e41e4be021b523b70d135274daa72fa115337e9b12a3ac6ba0aead68d1198a1e
+  scientific_source_hash: d70acc934a31f24e36df9a585e05e90deb0f0fe640207f0569167ac06ff85460
+  governance_hash: c3719cdf741d761999db79c9ca8751abfa7ade611400eea11ca05d5ff8a960c9
+  benchmark_contract_hash: 27229960a5222cefaa7a155df9262319985e9c7a7e1bd82ecddc73bfe69c7a46
   dataset_manifest_hash: d3c3f587bf9e08f5d9a12c8b777953c57cd30fc4c655e82e95f556b337119d81
 execution_binding:
   identity: MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1
   path: experiments/execution_bindings/math_v2_1_low_cost_canary_v1.json
-  sha256: 8ebf6c6efe1a8e47fc14d659ec4d48f01d6865fc686bb9be0389ec9f81516373
+  sha256: f328287429000dc80b2152c7635a6d4e450bc35b7e0068a11eadc5c85ae1ba34
 mechanism_config: {}
 search_engine_identity: gepa_derived_team_candidate_exposure_v2
 aggregation_identity: equal_equivalence_plurality_consistency_v1
@@ -110,6 +110,13 @@ invalid_recovery_policy:
   terminal_requires_completed_invalid_attempts: 4
   transport_failures_consume_semantic_attempt: false
 low_cost_protocol:
+  analysis_policy:
+    classification: sign_of_final_minus_initial_VoteAcc
+    identity: MATH_V2_1_PILOT_DEVELOPMENT_ANALYSIS_V1
+    paired_resampling_unit: frozen_validation_example
+    resamples: 10000
+    scope: development_uncertainty_only_no_formal_significance_no_search_feedback
+    seed: 81
   canary_stop: one_complete_production_opportunity_v1
   counts:
     canary_optimize: 12
@@ -137,4 +144,4 @@ low_cost_protocol:
   source_superset_sha256: 196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507
   test_access: sealed
 low_cost_subsets_sha256: b6ef5a287d91baa60a329b8a55f88db9e019f83ff2329cf8a62cbae5388d8f5b
-preregistration_identity: fa9e2b1b1adf90e928bfa2682710be03910636fe5671f888c2c03a810e9ca54b
+preregistration_identity: 46830d5b26e2bd762d63bf20e8ac90811967036fe0d5f19d69705cf4986c861b
