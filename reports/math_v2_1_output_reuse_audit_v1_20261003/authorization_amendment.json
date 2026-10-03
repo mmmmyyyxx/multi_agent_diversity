@@ -1,0 +1,12 @@
+{
+  "amendment_authorization_sha256": "fb10eaa9747715e25ae60b1eeead524a0c7aec1a78adfc04d7764fc1e1ed9cae",
+  "charged_after": 255460,
+  "charged_before": 255460,
+  "effective_ceiling": 40000000,
+  "last_event_sha256": "dfc1498d06da9c1bb206ef4a7b24686f9046a6e8ab8fe262399d104b59b6ef09",
+  "original_authorization_sha256": "3db28ade2b799d2169c6cdbdb03b82e63517ab74c46f8212905855f2fcf9cd9a",
+  "original_ceiling": 30000000,
+  "original_journal_prefix_preserved": true,
+  "prior_journal_sha256": "e6273386068b0b7388cfe62a62b37385f19b06331efadde11d62678f962144c3",
+  "remaining": 39744540
+}

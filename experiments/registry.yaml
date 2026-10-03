@@ -6728,3 +6728,24 @@ experiments:
   unavailable:
     execution_commit: Not executed.
   authorization_consumed: false
+- experiment_id: math_v2_1_output_reuse_audit_v1
+  kind: ZERO_API_AUDIT
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_a1_seed81_real_canary_v6
+  status: COMPLETED
+  scientific_status: ZERO_API_REUSE_AUDIT_COMPLETE
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_output_reuse_audit_v1.yaml
+  report: reports/math_v2_1_output_reuse_audit_v1_20261003
+  classifier: CONFIRMED_MATERIAL_DEFECTS
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Existing in-process reuse passes; missing same-attempt durable resolved-output cache confirmed.
+  unavailable:
+    execution_commit: Not executed.

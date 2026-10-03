@@ -1,0 +1,8 @@
+{
+  "cache_hit_charge": 0,
+  "expected_calls": "exact reuse excludes unchanged prompts",
+  "hard_reserve": "mandatory first attempts conservatively reserved",
+  "initial": "5N logical; distinct exact requests physical",
+  "observed_calls": "count ATTEMPT journal independently from logical evaluation",
+  "paired_validation": "10N logical; (5+U)N maximum base physical before retries"
+}

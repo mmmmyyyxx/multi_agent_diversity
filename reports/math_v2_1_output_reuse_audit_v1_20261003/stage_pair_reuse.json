@@ -1,0 +1,11 @@
+{
+  "candidate_local_probe_full_physical": 3,
+  "commit_physical": 0,
+  "evidence_physical": 0,
+  "fake_initial_physical": 15,
+  "paired_cache_hits": 12,
+  "paired_logical": 30,
+  "paired_physical": 18,
+  "responsibility_physical": 0,
+  "unchanged_peers_physical": 0
+}

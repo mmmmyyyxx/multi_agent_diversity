@@ -40,12 +40,12 @@ next_canary_milestone: null
 next_canary_attempt_id: null
 last_autonomous_milestone: math_v2_1_a1_seed81_pilot_v5
 autonomous_user_authorization_received: true
-autonomous_token_authorization: 30000000
+autonomous_token_authorization: 40000000
 autonomous_tokens_consumed: 255460
-autonomous_tokens_remaining: 29744540
+autonomous_tokens_remaining: 39744540
 token_accounting_policy: RESERVATION_V2
 prior_accounting_stop_resolution: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2
-autonomous_authorization_status: USER_STOPPED_ALL_SCOPES_CLOSED
+autonomous_authorization_status: LOW_COST_TASK_AUTHORIZED_PREEXECUTION_PENDING
 pilot_search_complete: false
 pilot_validation_complete: false
 pilot_final_status: INCOMPLETE
@@ -106,6 +106,7 @@ flowchart TD
     n223["math_v2_1_preexecution_freeze_v6<br/>PREEXECUTION_FREEZE<br/>PREEXECUTION_FROZEN"]
     n224["math_v2_1_a1_seed81_real_canary_v6<br/>REAL_CANARY<br/>HOLD"]
     n225["math_v2_1_a1_seed81_pilot_v6<br/>PILOT<br/>HOLD"]
+    n226["math_v2_1_output_reuse_audit_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -408,6 +409,7 @@ flowchart TD
   n222 -->|derived_from| n223
   n223 -->|derived_from| n224
   n224 -->|derived_from| n225
+  n224 -->|derived_from| n226
 ```
 
 ## Archived branches and unresolved evidence

@@ -1,0 +1,8 @@
+{
+  "canary_to_pilot": false,
+  "failed_to_fresh": false,
+  "heldout_capability_isolation": true,
+  "member_id_telemetry": true,
+  "same_attempt_verified_resume_only": true,
+  "seed_to_seed": false
+}

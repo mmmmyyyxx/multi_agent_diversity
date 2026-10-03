@@ -27,6 +27,10 @@ POLICY = {
     "concurrency": 1,
 }
 
+# Reservation physics remain V2. The enlarged authorization is an explicit
+# opt-in extension of an existing journal, never a replacement ledger.
+POLICY_40M = {**POLICY, "authorized_total": 40_000_000}
+
 
 class OperationalAbort(BaseException):
     """Cannot be swallowed by optimizer code handling ordinary exceptions."""
@@ -68,7 +72,7 @@ def _digest(value):
 
 class TokenLedger:
     def __init__(self, directory: Path, *, task_sha256: str, policy=POLICY):
-        if policy != POLICY or len(task_sha256) != 64:
+        if policy not in (POLICY, POLICY_40M) or len(task_sha256) != 64:
             raise OperationalAbort("TOKEN_ACCOUNTING_POLICY_IDENTITY_MISMATCH")
         self.directory = Path(directory)
         self.directory.mkdir(parents=True, exist_ok=True)
@@ -92,6 +96,9 @@ class TokenLedger:
             self.owner.close()
             raise OperationalAbort("TOKEN_LEDGER_ALREADY_OWNED") from exc
         self.task_sha256 = task_sha256
+        self.policy = dict(policy)
+        self.authorized_total = POLICY["authorized_total"]
+        self.authorization_amendments = []
         self.events = []
         self.inflight = {}
         self.totals = dict(charged_total=0, provider_reported_actual=0,
@@ -110,9 +117,13 @@ class TokenLedger:
                 if not self.events or self.events[0]["task_sha256"] != task_sha256:
                     raise OperationalAbort("TOKEN_LEDGER_AUTHORIZATION_MISMATCH")
             else:
+                if policy != POLICY:
+                    raise OperationalAbort("TOKEN_LEDGER_EXTENSION_REQUIRES_ORIGINAL_JOURNAL")
                 self._append(dict(kind="AUTHORIZE", task_sha256=task_sha256, policy=policy))
             for key in tuple(self.inflight):
                 self.reconcile(key, None, outcome="CRASH_RECOVERY_FULL_CHARGE")
+            if self.authorized_total != self.policy["authorized_total"]:
+                raise OperationalAbort("TOKEN_LEDGER_AUTHORIZATION_AMENDMENT_REQUIRED")
             self._snapshot()
         except BaseException:
             self.close()
@@ -127,6 +138,18 @@ class TokenLedger:
         if row["kind"] == "AUTHORIZE":
             if self.events or row["policy"] != POLICY:
                 raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
+        elif row["kind"] == "AUTHORIZATION_AMENDMENT":
+            if (self.inflight or self.authorization_amendments
+                    or self.policy != POLICY_40M
+                    or row.get("prior_authorized_total") != self.authorized_total
+                    or row.get("authorized_total") != 40_000_000
+                    or row.get("prior_charged_total") != self.totals["charged_total"]
+                    or row.get("original_task_sha256") != self.task_sha256
+                    or not isinstance(row.get("authorization_sha256"), str)
+                    or len(row["authorization_sha256"]) != 64):
+                raise OperationalAbort("TOKEN_LEDGER_AUTHORIZATION_AMENDMENT_MISMATCH")
+            self.authorized_total = row["authorized_total"]
+            self.authorization_amendments.append(row)
         elif row["kind"] == "RESERVE":
             if row["reservation_id"] in self.inflight or row["bound"]["amount"] <= 0:
                 raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
@@ -152,7 +175,7 @@ class TokenLedger:
         else:
             raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
         self.events.append(row)
-        if self.totals["charged_total"] + self.reserved > POLICY["authorized_total"]:
+        if self.totals["charged_total"] + self.reserved > self.authorized_total:
             raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
 
     def _append(self, payload):
@@ -169,13 +192,32 @@ class TokenLedger:
 
     @property
     def remaining(self):
-        return POLICY["authorized_total"] - self.totals["charged_total"] - self.reserved
+        return self.authorized_total - self.totals["charged_total"] - self.reserved
 
     def view(self):
         return dict(identity=POLICY["ledger_identity"], task_sha256=self.task_sha256,
-                    authorized_total=POLICY["authorized_total"], **self.totals,
+                    authorized_total=self.authorized_total, **self.totals,
                     reserved_inflight=self.reserved, remaining=self.remaining,
-                    **self.groups, last_event_sha256=self.events[-1]["event_sha256"])
+                    **self.groups, last_event_sha256=self.events[-1]["event_sha256"],
+                    authorization_amendments=[dict(authorization_sha256=r["authorization_sha256"],
+                        authorized_total=r["authorized_total"], event_sha256=r["event_sha256"])
+                        for r in self.authorization_amendments])
+
+    def amend_authorization_40m(self, *, authorization_sha256, expected_charged_total):
+        """Append the human-authorized ceiling extension without altering charges."""
+        with self.mutex:
+            if (self.policy != POLICY or self.authorization_amendments or self.inflight
+                    or self.totals["charged_total"] != expected_charged_total
+                    or not isinstance(authorization_sha256, str)
+                    or len(authorization_sha256) != 64):
+                raise OperationalAbort("TOKEN_LEDGER_AUTHORIZATION_AMENDMENT_MISMATCH")
+            self.policy = dict(POLICY_40M)
+            self._append(dict(kind="AUTHORIZATION_AMENDMENT",
+                authorization_sha256=authorization_sha256,
+                original_task_sha256=self.task_sha256,
+                prior_authorized_total=self.authorized_total,
+                authorized_total=40_000_000,
+                prior_charged_total=expected_charged_total))
 
     def _snapshot(self):
         atomic_write_json(self.snapshot, self.view())

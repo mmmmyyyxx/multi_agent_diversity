@@ -1,0 +1,12 @@
+{
+  "defects": [
+    {
+      "identity": "SAME_ATTEMPT_DURABLE_OUTPUT_REUSE_MISSING",
+      "proof": "Fresh broker with same frozen attempt makes a second physical call.",
+      "scope": "durable exact resolved Solver output cache; existing in-process reuse retained"
+    }
+  ],
+  "existing_in_process_reuse_defects": 0,
+  "prior_trace_within_attempt_misses": 0,
+  "result": "CONFIRMED_MATERIAL_DEFECTS"
+}

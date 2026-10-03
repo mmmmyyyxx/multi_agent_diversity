@@ -365,6 +365,13 @@ See AGENTS.md for the complete authority hierarchy; method.md is a conceptual
 overview, CURRENT_ARCHITECTURE.md a code map, and reports/ immutable evidence.
 Current implementation does not imply real-execution readiness or authorization.
 
+An explicit human authorization amendment may extend an existing
+RESERVATION_V2 journal from 30M to 40M. The original authorization, hash chain
+and every prior charge remain immutable. The extension is a new journal event;
+new bindings opt into the effective ceiling, and historical bindings cannot
+silently consume the enlarged authorization. No fresh replacement ledger is
+permitted. Reservation physics and missing-usage charge rules remain V2.
+
 
 ### Solver decoding policy
 

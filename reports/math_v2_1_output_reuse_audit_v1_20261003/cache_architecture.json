@@ -1,0 +1,25 @@
+{
+  "canonical_key_fields": [
+    "provider",
+    "role",
+    "split",
+    "request",
+    "cache_namespace",
+    "solver_output_interface",
+    "solver_decoding_policy",
+    "prediction_validity_policy"
+  ],
+  "durable_same_attempt_cache": false,
+  "in_memory": true,
+  "member_authority": "AGENTS.md section7 identical identities share realization",
+  "member_in_key": false,
+  "protocol_bound_by_attempt_namespace": true,
+  "request_contains": [
+    "model",
+    "messages",
+    "generation_fields"
+  ],
+  "restart_same_attempt_repeats_physical_request": true,
+  "shadow_private_capability": true,
+  "stage_in_key": false
+}

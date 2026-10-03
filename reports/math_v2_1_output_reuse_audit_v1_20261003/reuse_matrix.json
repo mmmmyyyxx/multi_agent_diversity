@@ -1,0 +1,59 @@
+{
+  "boundaries": [
+    {
+      "boundary": "initial_responsibility",
+      "mechanism": "stored complete member profiles",
+      "physical_calls": 0
+    },
+    {
+      "boundary": "initial_evidence",
+      "mechanism": "stored parsed member profiles",
+      "physical_calls": 0
+    },
+    {
+      "boundary": "parent_baseline",
+      "mechanism": "stored complete team state",
+      "physical_calls": 0
+    },
+    {
+      "boundary": "fixed_peers_team_probe",
+      "mechanism": "unchanged parent profiles",
+      "physical_calls": 0
+    },
+    {
+      "boundary": "gepa_local_team_probe",
+      "mechanism": "stage-independent exact request cache",
+      "physical_calls": "candidate nonoverlap only"
+    },
+    {
+      "boundary": "team_probe_full",
+      "mechanism": "stage-independent exact request cache",
+      "physical_calls": "candidate nonoverlap only"
+    },
+    {
+      "boundary": "full_commit",
+      "mechanism": "stored full candidate profile",
+      "physical_calls": 0
+    },
+    {
+      "boundary": "commit_unchanged_peers",
+      "mechanism": "carried profiles",
+      "physical_calls": 0
+    },
+    {
+      "boundary": "shadow_incumbent",
+      "mechanism": "private prompt profile dictionary",
+      "physical_calls": "once per distinct prompt"
+    },
+    {
+      "boundary": "shadow_candidate",
+      "mechanism": "private prompt profile dictionary",
+      "physical_calls": "once per distinct prompt"
+    },
+    {
+      "boundary": "validation_initial_final",
+      "mechanism": "one shared broker, member and stage telemetry only",
+      "physical_calls": "N times changed distinct prompts"
+    }
+  ]
+}

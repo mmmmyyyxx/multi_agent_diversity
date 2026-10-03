@@ -1,0 +1,68 @@
+{
+  "attempts": [
+    {
+      "categories": {
+        "EXPECTED_NEW_REALIZATION": 27
+      },
+      "evidence_index": 1,
+      "ledger_sha256": "815eb3f9fab4d5e4915931bd979afb0f374a71cfebc8bb7c1db1f5a607c52f5d",
+      "physical_attempts": 27,
+      "successful_rows": 27,
+      "trace_sha256": "f96338fb2a4bdd2e661b5a39ebbf6f86326c3c5af46756559c5641f9d0a4acc6"
+    },
+    {
+      "categories": {
+        "EXPECTED_NEW_REALIZATION": 63
+      },
+      "evidence_index": 2,
+      "ledger_sha256": "9f4c24276de45b4dbf227f3676b3c211231d11e90a1ecd0cfff482ecbe07e120",
+      "physical_attempts": 63,
+      "successful_rows": 63,
+      "trace_sha256": "b549a8d467cbf9ace7e7a9f1d33c5c8698274c9c3693c4ee35e3a1b92ca16b2f"
+    },
+    {
+      "categories": {
+        "EXPECTED_NEW_REALIZATION": 273
+      },
+      "evidence_index": 3,
+      "ledger_sha256": "479f7a254806b0364362db354224d01cca2abb0129f5d676ce5877c64678d06e",
+      "physical_attempts": 274,
+      "successful_rows": 273,
+      "trace_sha256": "47dabdbb801cbcc9afdb84c97a134708293cc74de37d5f7663c34802c9cef60f"
+    },
+    {
+      "categories": {
+        "EXPECTED_NEW_REALIZATION": 2
+      },
+      "evidence_index": 4,
+      "ledger_sha256": "28f644961c42ed3d815bcf1f1d04f91869e623befde324d6992125dbcd7fc4dc",
+      "physical_attempts": 2,
+      "successful_rows": 2,
+      "trace_sha256": "630341ca5f0b3b80d39cfeb11a6cce2052d2dcf28c6adfc58e4c676fc60e0603"
+    },
+    {
+      "categories": {
+        "EXPECTED_NEW_REALIZATION": 55
+      },
+      "evidence_index": 5,
+      "ledger_sha256": "640f9bf860474c5a7b3ffcfcf465cb2979645b41067b035d03642e3cac7ac200",
+      "physical_attempts": 55,
+      "successful_rows": 55,
+      "trace_sha256": "3647b1e9023cf967b4f177ef16456029c451965fdd6b8ba76f714a29c6856c0e"
+    },
+    {
+      "categories": {
+        "EXPECTED_NEW_REALIZATION": 5
+      },
+      "evidence_index": 6,
+      "ledger_sha256": "31374c3122a55cd2133d8f94ac4ada4e90ad21a3e2a6ee47c47a331dcb18ba55",
+      "physical_attempts": 5,
+      "successful_rows": 5,
+      "trace_sha256": "5a4099bbeaab02079f479c696668f2f78c9475ecfd2cf0927b883bc9623e99cc"
+    }
+  ],
+  "cross_attempt_category": "SCIENTIFICALLY_SEPARATE_ATTEMPT",
+  "historical_outputs_imported": 0,
+  "limitation": "Interrupted physical attempt may have no raw response; journal remains charged.",
+  "repeated_wire_realizations_across_scientific_attempts": 63
+}
