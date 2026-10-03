@@ -11,10 +11,11 @@ from ..governance.token_accounting import POLICY_40M
 from ..search.schemas import SearchContractError
 from .. import versions
 
+_DEFAULT_OPTIMIZER_POLICY = object()
 
 def derive_contract(parent,*,phase,attempt,binding_path,subsets_path,subsets_sha256,subsets,
         parent_path,parent_sha256,accounting_path,accounting_sha256,metadata_path,metadata_sha256,
-        authorization_sha256,optimizer_policy=None,optimizer_authorization_sha256=None,
+        authorization_sha256,optimizer_policy=_DEFAULT_OPTIMIZER_POLICY,optimizer_authorization_sha256=None,
         optimizer_authorization_path=None):
     if phase not in {'canary','pilot'}:raise SearchContractError('LOW_COST_PHASE_INVALID')
     count=12 if phase=='canary' else 60
@@ -49,9 +50,13 @@ def derive_contract(parent,*,phase,attempt,binding_path,subsets_path,subsets_sha
         initial_competence_binding=dict(parent['initial_competence_binding'],
             identity='MATH_INITIAL_COMPETENCE_LOW_COST_V1',count=count,support_identity=support))
     c['decoding']=dict(parent['decoding'],invalid_response_retries=3)
+    if optimizer_policy is _DEFAULT_OPTIMIZER_POLICY:
+        from .math_optimizer_generation import optimizer_generation_contract
+        optimizer_policy=optimizer_generation_contract()
     if optimizer_policy is not None:
         from .math_optimizer_generation import optimizer_generation_contract
-        if (optimizer_policy != optimizer_generation_contract()
+        if (not isinstance(optimizer_policy,dict)
+                or optimizer_policy != optimizer_generation_contract(optimizer_policy.get('identity'))
                 or not isinstance(optimizer_authorization_sha256,str)
                 or len(optimizer_authorization_sha256)!=64 or not isinstance(optimizer_authorization_path,str)):
             raise SearchContractError('OPTIMIZER_AMENDMENT_AUTHORITY_REQUIRED')

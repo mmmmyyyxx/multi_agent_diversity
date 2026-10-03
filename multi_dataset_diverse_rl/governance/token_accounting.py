@@ -54,12 +54,15 @@ def reservation(request):
         if 'max_tokens' in request:
             raise OperationalAbort('AMBIGUOUS_OUTPUT_CAP_FIELDS')
         from ..benchmarks.math_optimizer_generation import optimizer_generation_contract
-        policy = optimizer_generation_contract()
+        from .. import versions
         thinking = request.get('extra_body', {}).get('enable_thinking',request.get('enable_thinking'))
+        if type(thinking) is not bool:
+            raise OperationalAbort('FROZEN_OPTIMIZER_OUTPUT_BOUND_REQUIRED')
+        policy = optimizer_generation_contract(versions.MATH_OPTIMIZER_GENERATION_POLICY_V1_VERSION
+            if thinking else versions.MATH_OPTIMIZER_GENERATION_POLICY_VERSION)
         if (request.get('model') != policy['model']
                 or type(request['max_completion_tokens']) is not int
-                or request['max_completion_tokens'] != policy['max_completion_tokens']
-                or thinking is not True):
+                or request['max_completion_tokens'] != policy['max_completion_tokens']):
             raise OperationalAbort('FROZEN_OPTIMIZER_OUTPUT_BOUND_REQUIRED')
         cap = policy['accounting_output_ceiling']
     else:

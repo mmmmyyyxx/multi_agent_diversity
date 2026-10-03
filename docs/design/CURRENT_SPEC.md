@@ -392,9 +392,27 @@ remove any frozen field. No decoding, prompt-interface, method, data or evaluato
 adaptation follows performance or formatting outcomes.
 
 
-### Optimizer/Reflection generation wire amendment
+### Default Optimizer/Reflection thinking policy
 
-Fresh low-cost execution binding V2 opts into
+The user-approved `OPTIMIZER_REFLECTION_GENERATION_POLICY_V2` is the default
+for newly constructed qwen3.7-flash Reflection/Optimizer and Pattern contracts.
+It explicitly sends `enable_thinking=false`, `temperature=0.0`, and
+`max_completion_tokens=1800`; `max_tokens` remains absent. The requested cap,
+1810 accounting/verification ceiling, 10-token measurement tolerance and
+fail-closed truncation semantics are unchanged. Solver decoding V1 already
+disables thinking and remains unchanged.
+
+New low-cost contract construction uses V2 by default and requires explicit
+amendment authority. A frozen contract selects its own policy by versioned
+identity; historical V1 continues to send `enable_thinking=true` and retains
+its original reservation metadata. Disabling thinking without changing the
+policy identity is rejected. The policy remains part of manifest, request,
+cache and authorization identity. Historical bindings and reports are not
+rewritten; a real continuation requires fresh preexecution and authorization.
+
+### Historical Optimizer/Reflection generation wire amendment V1
+
+Historical frozen low-cost execution binding V2 opts into
 `OPTIMIZER_REFLECTION_GENERATION_POLICY_V1` for qwen3.7-flash Reflection and
 Pattern requests. It explicitly sends `enable_thinking=true`, the frozen
 `temperature=0.0`, and `max_completion_tokens=1800`; `max_tokens` is absent.

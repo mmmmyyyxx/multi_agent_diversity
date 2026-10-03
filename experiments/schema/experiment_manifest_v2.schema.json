@@ -569,7 +569,7 @@
       "pattern": "^[a-f0-9]{64}$"
     },
     "optimizer_generation_policy": {
-      "const": {
+      "anyOf": [{"const": {
         "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V1",
         "model": "qwen3.7-flash",
         "roles": [
@@ -584,7 +584,19 @@
         "measurement_tolerance_tokens": 10,
         "accounting_output_ceiling": 1810,
         "truncation": "existing_operational_output_truncation"
-      }
+      }}, {"const": {
+        "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V2",
+        "model": "qwen3.7-flash",
+        "roles": ["reflection", "pattern"],
+        "enable_thinking": false,
+        "temperature": 0.0,
+        "max_completion_tokens": 1800,
+        "max_tokens": "NOT_SENT",
+        "output_token_scope": "reasoning_plus_answer",
+        "measurement_tolerance_tokens": 10,
+        "accounting_output_ceiling": 1810,
+        "truncation": "existing_operational_output_truncation"
+      }}]
     },
     "optimizer_amendment_authorization_sha256": {
       "type": "string",

@@ -1,0 +1,27 @@
+{
+  "identity": "MATH_OPTIMIZER_THINKING_DEFAULT_OFF_AMENDMENT_V1",
+  "explicit_human_approval": true,
+  "user_instruction": "关闭thinking设置，默认关闭",
+  "scope": "VERSIONED_DEFAULT_POLICY_CHANGE_ONLY",
+  "policy": {
+    "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V2",
+    "model": "qwen3.7-flash",
+    "roles": ["reflection", "pattern"],
+    "enable_thinking": false,
+    "temperature": 0.0,
+    "max_completion_tokens": 1800,
+    "max_tokens": "NOT_SENT",
+    "output_token_scope": "reasoning_plus_answer",
+    "measurement_tolerance_tokens": 10,
+    "accounting_output_ceiling": 1810,
+    "truncation": "existing_operational_output_truncation"
+  },
+  "total_accounting_authorization": 40000000,
+  "charged_total_at_amendment": 323293,
+  "pattern_real_calls_A1": 0,
+  "test_model_calls": 0,
+  "real_api_authorized": false,
+  "fresh_preexecution_and_execution_scope_required": true,
+  "historical_contracts_immutable": true,
+  "solver_policy_unchanged": true
+}
