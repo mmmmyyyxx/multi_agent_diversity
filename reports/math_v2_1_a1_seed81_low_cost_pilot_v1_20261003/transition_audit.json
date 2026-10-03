@@ -1,0 +1,7 @@
+{
+  "incumbent_monotonicity_enforced": false,
+  "initial_competence_floor_enforced": true,
+  "round_robin_enforced": false,
+  "status": "NOT_REACHED",
+  "strict_team_gain_enforced": true
+}

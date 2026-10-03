@@ -1,0 +1,14 @@
+{
+  "decoding_adapted": false,
+  "formal_authorized": false,
+  "generalization_verified": false,
+  "memory_reads": 0,
+  "memory_writes": 0,
+  "optimizer_policy_adapted": false,
+  "other_arms_real_authorized": false,
+  "pattern_real_calls": 0,
+  "protocol_adapted": false,
+  "scientific_efficacy_verified": false,
+  "sota_verified": false,
+  "status": "NOT_EVALUABLE"
+}

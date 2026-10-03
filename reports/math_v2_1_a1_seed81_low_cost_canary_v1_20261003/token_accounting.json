@@ -1,0 +1,117 @@
+{
+  "authorized_total": 40000000,
+  "budget_recalculation": {
+    "authorization": 40000000,
+    "expected_initial_physical_calls": {
+      "canary": 60,
+      "pilot": 300
+    },
+    "expected_validation_base_physical": "500 + 100 * changed members, upper 1000",
+    "hard_first_attempt_validation_reserve": 9078500,
+    "initial_first_attempt_reserve": {
+      "canary": 542561,
+      "pilot": 2710320
+    },
+    "observed_new_charge": 0,
+    "observed_new_physical_calls": 0,
+    "prior_charged": 255460,
+    "remaining": 39744540,
+    "retries_reserved_individually": true
+  },
+  "cumulative": {
+    "authorized_total": 40000000,
+    "charged_total": 293888,
+    "fallback_charged": 27027,
+    "last_event_sha256": "c53847f3cffd8ea54d6a1f569f550fef6a8fa84945cdb0e0bfa30247ec082ff4",
+    "provider_reported_actual": 266861,
+    "remaining": 39706112,
+    "reserved_inflight": 0
+  },
+  "disjoint_cost_breakdown": [
+    {
+      "accounting_tokens": 28136,
+      "cache_hits": 0,
+      "logical_solver_evaluations": 60,
+      "physical_solver_generations": 60,
+      "stage": "Canary Initial"
+    },
+    {
+      "accounting_tokens": 0,
+      "cache_hits": 10,
+      "logical_solver_evaluations": 10,
+      "physical_solver_generations": 0,
+      "stage": "Canary Search"
+    },
+    {
+      "accounting_tokens": 0,
+      "cache_hits": 0,
+      "logical_solver_evaluations": 0,
+      "physical_solver_generations": 0,
+      "stage": "Pilot Initial"
+    },
+    {
+      "accounting_tokens": 0,
+      "cache_hits": 0,
+      "logical_solver_evaluations": 0,
+      "physical_solver_generations": 0,
+      "stage": "Pilot Search"
+    },
+    {
+      "accounting_tokens": 0,
+      "cache_hits": 0,
+      "logical_solver_evaluations": 0,
+      "physical_solver_generations": 0,
+      "stage": "Shadow"
+    },
+    {
+      "accounting_tokens": 0,
+      "cache_hits": 0,
+      "logical_solver_evaluations": 0,
+      "physical_solver_generations": 0,
+      "stage": "Validation Initial"
+    },
+    {
+      "accounting_tokens": 0,
+      "cache_hits": 0,
+      "logical_solver_evaluations": 0,
+      "physical_solver_generations": 0,
+      "stage": "Validation Final"
+    },
+    {
+      "accounting_tokens": 0,
+      "cache_hits": 0,
+      "logical_solver_evaluations": 0,
+      "physical_solver_generations": 0,
+      "stage": "Semantic Retries"
+    },
+    {
+      "accounting_tokens": 0,
+      "cache_hits": 0,
+      "logical_solver_evaluations": 0,
+      "physical_solver_generations": 0,
+      "stage": "Transport Retries"
+    },
+    {
+      "accounting_tokens": 10292,
+      "cache_hits": 0,
+      "logical_solver_evaluations": 0,
+      "optimizer_calls": 1,
+      "physical_solver_generations": 0,
+      "stage": "Optimizer"
+    },
+    {
+      "accounting_tokens": 38428,
+      "cache_hits": 10,
+      "logical_solver_evaluations": 70,
+      "optimizer_calls": 1,
+      "physical_solver_generations": 60,
+      "stage": "TOTAL"
+    }
+  ],
+  "new_fallback_charged": 10292,
+  "new_reliable_provider_tokens": 28136,
+  "new_total": 38428,
+  "original_authorization_and_amendment_preserved": true,
+  "prior_accounting_charged": 255460,
+  "validation_first_attempt_reserve": 9078500
+}

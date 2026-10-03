@@ -1,0 +1,9 @@
+{
+  "fallback_charged_tokens": 10292,
+  "integrity_audit": "INTEGRITY_PASS_FAILED_ATTEMPT",
+  "optimizer_calls": 1,
+  "physical_provider_attempts": 61,
+  "physical_solver_generations": 60,
+  "reliable_provider_tokens": 28136,
+  "transport_failures": 0
+}

@@ -1,0 +1,18 @@
+{
+  "candidate_exported": 0,
+  "commit_count": 0,
+  "execution_status": "EXECUTION_ABORTED",
+  "opportunity_completed": 0,
+  "opportunity_started": 1,
+  "optimizer_calls": 1,
+  "reuse_integrity_pass": true,
+  "runtime_stop": "OPERATIONAL_OUTPUT_CAP_NOT_ENFORCED",
+  "scientific_status": "NOT_EVALUABLE_OPTIMIZER_POLICY_REQUIRED",
+  "search_complete": false,
+  "selected_member": 3,
+  "solver_calls": 60,
+  "status": "INVALID",
+  "task_stop": "STOP_NEW_SCIENTIFIC_POLICY_REQUIRED",
+  "token_ledger_integrity_pass": true,
+  "validation_complete": false
+}

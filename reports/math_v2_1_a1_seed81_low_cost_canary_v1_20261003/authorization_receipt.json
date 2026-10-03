@@ -1,0 +1,7 @@
+{
+  "closed": true,
+  "consumed": true,
+  "consumed_authorization_sha256": "6b1e2332226e70150f4de8353313d79bb74d31e557e10bbb4ee50317c83c2d9f",
+  "single_use": true,
+  "status": "CONSUMED_FAILED_ATTEMPT_CLOSED"
+}

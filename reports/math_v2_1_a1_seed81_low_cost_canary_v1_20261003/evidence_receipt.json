@@ -1,0 +1,11 @@
+{
+  "count_definition": "70 logical Solver evaluations = 60 initial + 10 GEPA-local cache hits. Physical generations = 60.",
+  "inventory_integrity": "PASS",
+  "journal_last_event_sha256": "c53847f3cffd8ea54d6a1f569f550fef6a8fa84945cdb0e0bfa30247ec082ff4",
+  "lifecycle_sha256": "bef1684f5d259b68895a619fae796f0a3b99f7016fe90685e4c2d3d97c855e47",
+  "luna_facts_sha256": "36de4837393f15ab51020cdafc7d193d6622ad7c034118fb56c735cd91e72c42",
+  "owner_audit_sha256": "7ba1798497b188397b54915fdcfd5a34471c3d07d99a694a5afb4fbd1f788f4e",
+  "owner_log_sha256": "1aeb5613b8f63739d5d4ea1725d2ff4450d990101036bf6b660b866ebedc4e12",
+  "private_trace_sha256": "3af2cd5fb47ddfed6eb5f944671b3b36d55938fb7d4e07fda535cf406f09ca20",
+  "run_inventory_sha256": "9c1b11ca45f071985e49dec5f84eb5b43c6e5c39fa72b206e0d6f979144b6d6f"
+}

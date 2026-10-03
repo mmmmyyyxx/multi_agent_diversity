@@ -1,0 +1,60 @@
+{
+  "members": [
+    {
+      "commit_rate": null,
+      "commits": 0,
+      "completed_opportunities": 0,
+      "member": 0,
+      "opportunity_share": null,
+      "proposals": 0,
+      "realized_gain_events": 0,
+      "specialization_events": 0,
+      "started_opportunities": 0
+    },
+    {
+      "commit_rate": null,
+      "commits": 0,
+      "completed_opportunities": 0,
+      "member": 1,
+      "opportunity_share": null,
+      "proposals": 0,
+      "realized_gain_events": 0,
+      "specialization_events": 0,
+      "started_opportunities": 0
+    },
+    {
+      "commit_rate": null,
+      "commits": 0,
+      "completed_opportunities": 0,
+      "member": 2,
+      "opportunity_share": null,
+      "proposals": 0,
+      "realized_gain_events": 0,
+      "specialization_events": 0,
+      "started_opportunities": 0
+    },
+    {
+      "commit_rate": null,
+      "commits": 0,
+      "completed_opportunities": 0,
+      "member": 3,
+      "opportunity_share": null,
+      "proposals": 0,
+      "realized_gain_events": 0,
+      "specialization_events": 0,
+      "started_opportunities": 0
+    },
+    {
+      "commit_rate": null,
+      "commits": 0,
+      "completed_opportunities": 0,
+      "member": 4,
+      "opportunity_share": null,
+      "proposals": 0,
+      "realized_gain_events": 0,
+      "specialization_events": 0,
+      "started_opportunities": 0
+    }
+  ],
+  "status": "NOT_EXECUTED"
+}

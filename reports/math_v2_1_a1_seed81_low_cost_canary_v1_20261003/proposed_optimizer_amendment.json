@@ -1,0 +1,36 @@
+{
+  "applies_to": "qwen3.7-flash reflection; A1 Pattern remains OFF",
+  "canary_outputs_ineligible_for_new_attempt": true,
+  "dispatched": false,
+  "documented_cap_variation_margin": 10,
+  "malformed_or_missing_total_usage": "FULL_RESERVATION_CHARGE_AND_FAIL_CLOSED_IF_OUTPUT_BOUND_CANNOT_BE_VERIFIED",
+  "proposed_identity": "MATH_OPTIMIZER_TOTAL_OUTPUT_POLICY_V1",
+  "request": {
+    "extra_body": {},
+    "max_completion_tokens": 1800,
+    "temperature": 0.0
+  },
+  "required_if_approved": [
+    "normative amendment and runtime identity",
+    "preserve historical requests and failed evidence",
+    "capture full usage categories privately",
+    "zero-API tests and all required gates",
+    "fresh source/preexecution/authorization/attempt/cache/process"
+  ],
+  "reservation_delta": "Reserve 10 additional output tokens per optimizer physical attempt; reconcile all trustworthy reported usage, including thought tokens.",
+  "scientific_delta": "The requested 1800 limit would apply to thinking plus answer instead of answer-only.",
+  "status": "PROPOSED_ONLY_REQUIRES_USER_SCIENTIFIC_DECISION",
+  "thinking": "Retain the current provider default; no new enable_thinking override.",
+  "total_output_accounting_bound": 1810,
+  "unchanged": [
+    "Solver decoding V1",
+    "models and provider",
+    "GEPA numerical budgets",
+    "method and transition",
+    "initial team",
+    "frozen full split and low-cost subsets",
+    "terminal-invalid recovery",
+    "cache scientific boundaries"
+  ],
+  "unsupported_parameter": "FAIL_CLOSED_NO_OMISSION_OR_SUBSTITUTION"
+}

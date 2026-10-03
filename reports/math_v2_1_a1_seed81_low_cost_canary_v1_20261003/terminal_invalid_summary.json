@@ -1,0 +1,7 @@
+{
+  "observation_scope": "60 physical Solver generations; no invalid responses.",
+  "raw_invalid": 0,
+  "recovered_invalid": 0,
+  "semantic_retry_generations": 0,
+  "terminal_invalid": 0
+}

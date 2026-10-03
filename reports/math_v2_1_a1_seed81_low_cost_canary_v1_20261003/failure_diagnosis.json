@@ -1,0 +1,29 @@
+{
+  "complete_response_usage_breakdown_preserved": false,
+  "documented_semantics": {
+    "max_completion_tokens": "combined thought and answer limit; different semantics",
+    "max_tokens": "answer-only limit for Qwen, excluding chain of thought",
+    "source": "https://help.aliyun.com/en/model-studio/qwen-api-via-openai-chat-completions",
+    "total_cap_possible_variation_tokens": 10
+  },
+  "inference": "Current reservation and guard treat max_tokens as a hard cap on total reported output. The documented Qwen cap semantics do not establish that bound. The actual 1814-token cause is unverified because detailed usage was not retained.",
+  "observed": {
+    "dispatch_request_sha256": "126b5b9f1b134f8ce39382fd3cdd187de0518d80c0f5607157faab313114df36",
+    "fallback_charge": 10292,
+    "finish_reason": "stop",
+    "optimizer_model": "qwen3.7-flash",
+    "provider_reported_input_tokens": 1323,
+    "provider_reported_output_tokens": 1814,
+    "request_extensions": {},
+    "request_max_tokens": 1800,
+    "request_temperature": 0.0,
+    "visible_response_character_count": 944
+  },
+  "operational_repairs_attempted": 0,
+  "provider_internal_cause": "UNVERIFIED",
+  "repair_boundary": "Changing total output envelope or optimizer thinking alters frozen generation policy; do not relabel a different cap semantic as an equivalent serialization mapping.",
+  "runtime_stop": "OPERATIONAL_OUTPUT_CAP_NOT_ENFORCED",
+  "serialization_mismatch_found": false,
+  "status": "STOP_NEW_SCIENTIFIC_POLICY_REQUIRED",
+  "unauthorized_adaptation": false
+}

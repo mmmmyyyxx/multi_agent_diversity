@@ -1,0 +1,7 @@
+{
+  "observation_scope": "No Pilot predictions exist.",
+  "raw_invalid": 0,
+  "recovered_invalid": 0,
+  "semantic_retry_generations": 0,
+  "terminal_invalid": 0
+}

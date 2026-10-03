@@ -1,0 +1,22 @@
+{
+  "all_solver_fields_dispatched": true,
+  "optimizer_isolated": true,
+  "optimizer_request": {
+    "extra_body": {},
+    "max_tokens": 1800,
+    "model": "qwen3.7-flash",
+    "temperature": 0.0
+  },
+  "solver_policy": {
+    "enable_thinking": false,
+    "frequency_penalty": 0,
+    "identity": "SOLVER_DECODING_POLICY_V1",
+    "max_output_tokens": 3600,
+    "min_p": 0,
+    "presence_penalty": 0,
+    "temperature": 0.7,
+    "top_k": 20,
+    "top_p": 0.8
+  },
+  "status": "REQUEST_POLICY_DISPATCHED"
+}

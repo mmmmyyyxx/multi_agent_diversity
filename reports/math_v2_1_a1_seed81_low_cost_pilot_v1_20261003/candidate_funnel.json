@@ -1,0 +1,10 @@
+{
+  "committed": 0,
+  "explanation": "Optimizer response triggered abort before GEPA proposal processing; visible text is not an admitted candidate.",
+  "exported_candidates": 0,
+  "local_accepted": null,
+  "local_rejected": null,
+  "status": "NOT_EXECUTED",
+  "team_evaluated": 0,
+  "transitioned": 0
+}

@@ -1,0 +1,5 @@
+{
+  "metrics": null,
+  "reason": "Canary did not pass; Pilot was never dispatched.",
+  "status": "NOT_EXECUTED"
+}

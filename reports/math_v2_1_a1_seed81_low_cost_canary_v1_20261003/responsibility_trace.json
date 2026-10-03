@@ -1,0 +1,69 @@
+{
+  "eligible_members": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "formula": "max(4D,2N,C)/(1+f)",
+  "members": [
+    {
+      "C": 4,
+      "D": 0,
+      "N": 0,
+      "V": 4,
+      "f": 0,
+      "member": 0,
+      "prior_exposure": 0,
+      "prior_opportunities": 0,
+      "target_score": 4.0
+    },
+    {
+      "C": 4,
+      "D": 1,
+      "N": 1,
+      "V": 4,
+      "f": 0,
+      "member": 1,
+      "prior_exposure": 0,
+      "prior_opportunities": 0,
+      "target_score": 4.0
+    },
+    {
+      "C": 4,
+      "D": 0,
+      "N": 1,
+      "V": 4,
+      "f": 0,
+      "member": 2,
+      "prior_exposure": 0,
+      "prior_opportunities": 0,
+      "target_score": 4.0
+    },
+    {
+      "C": 5,
+      "D": 1,
+      "N": 1,
+      "V": 5,
+      "f": 0,
+      "member": 3,
+      "prior_exposure": 0,
+      "prior_opportunities": 0,
+      "target_score": 5.0
+    },
+    {
+      "C": 4,
+      "D": 0,
+      "N": 1,
+      "V": 4,
+      "f": 0,
+      "member": 4,
+      "prior_exposure": 0,
+      "prior_opportunities": 0,
+      "target_score": 4.0
+    }
+  ],
+  "opportunity_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007:0:3",
+  "selected_member": 3
+}

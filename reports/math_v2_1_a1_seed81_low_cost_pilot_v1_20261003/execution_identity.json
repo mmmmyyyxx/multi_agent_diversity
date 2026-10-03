@@ -1,0 +1,55 @@
+{
+  "arm": "A1",
+  "attempt_id": "math_v2_1_low_cost_A1_seed81_pilot_attempt1",
+  "benchmark": "MATH",
+  "binding_sha256": "2cc7bda3a14fe8ea7862b4199af30e009d2b78a1bb763b5b031a0b8ebbf097fb",
+  "cache_namespace": "math_v2_1_low_cost_A1_seed81_pilot_attempt1",
+  "cache_policy": "DURABLE_EXACT_OUTPUT_CACHE_V1",
+  "dispatched": false,
+  "invalid_recovery_policy": {
+    "cache": "resolved_valid_or_exhausted_terminal_only",
+    "first_valid_stops": true,
+    "identity": "MATH_SOLVER_INVALID_RECOVERY_V1",
+    "invalidity_weight": "none",
+    "logical_evaluation_count": 1,
+    "max_semantic_attempts": 4,
+    "same_request_bytes": true,
+    "solver_invalid_max_retries": 3,
+    "terminal_invalid": "incorrect_continue_no_vote",
+    "terminal_requires_completed_invalid_attempts": 4,
+    "transport_failures_consume_semantic_attempt": false
+  },
+  "method": "unified_team_prompt_search_v2_1",
+  "models": {
+    "optimizer_reflection": "qwen3.7-flash",
+    "pattern": "qwen3.7-flash",
+    "solver": "qwen3-8b",
+    "solver_thinking": false
+  },
+  "optimizer_generation_policy": {
+    "invalid_response_retries": 3,
+    "max_output_tokens": 1800,
+    "retry_backoff_ceiling_seconds": 60,
+    "retry_sleep_seconds": 1.5,
+    "sdk_retries": 0,
+    "solver_max_output_tokens": 3600,
+    "temperature": 0.0,
+    "timeout_seconds": 120,
+    "transport_retries": 20
+  },
+  "provider": "lwj",
+  "seed": 81,
+  "solver_decoding_policy": {
+    "enable_thinking": false,
+    "frequency_penalty": 0,
+    "identity": "SOLVER_DECODING_POLICY_V1",
+    "max_output_tokens": 3600,
+    "min_p": 0,
+    "presence_penalty": 0,
+    "temperature": 0.7,
+    "top_k": 20,
+    "top_p": 0.8
+  },
+  "source_sha": "3479cf23f4a8c3a2d7496f7ed4ffeaec7ba213fe",
+  "startup_identity_sha256": "d13f439e6e47b629283f0cf3719b86aa880ce841b4efd84a0a9e387ffbcdc45b"
+}
