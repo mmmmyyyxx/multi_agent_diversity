@@ -196,9 +196,19 @@ class RequestBroker:
                     self.usage[k] += result[k]
                 self._write(dict(kind="SUCCESS", role=role, split=split, stage=stage, request_sha256=key,
                     response_sha256=hashlib.sha256(result["text"].encode() if result["text"] is not None else b"null").hexdigest(), input_tokens=result["input_tokens"], output_tokens=result["output_tokens"]))
+                if role in {'reflection','pattern'} and self.optimizer_policy:
+                    from ..benchmarks.math_optimizer_diagnostics import optimizer_response_telemetry
+                    telemetry=optimizer_response_telemetry(request,result,self.optimizer_policy)
+                    result={**result,'optimizer_generation_diagnostics':telemetry}
+                    self._write(dict(kind='OPTIMIZER_GENERATION_DIAGNOSTICS',role=role,split=split,stage=stage,
+                        request_sha256=key,**telemetry))
                 if self.raw_writer:
                     self.raw_writer(dict(role=role, split=split, stage=stage, request_sha256=key, request=request, response=result,
                         semantic_attempt_no=semantic_attempt_no,physical_attempt_no=self.usage['attempts']))
+                if role in {'reflection','pattern'} and self.optimizer_policy and self.optimizer_policy['enable_thinking'] is False:
+                    reasoning=telemetry['reasoning_tokens']
+                    if (type(reasoning) is int and reasoning>0) or (telemetry['reasoning_content_chars'] or 0)>0:
+                        self.abort('PROVIDER_NONTHINKING_CONTROL_NOT_HONORED')
                 if (self.token_ledger or role == "solver" and frozen_solver_policy(c) or role != 'solver' and self.optimizer_policy) and not (role == "solver" and self.prediction_policy) and result.get("finish_reason") in {"length", "max_tokens", "max_output_tokens"}:
                     self.abort("STOP_SOLVER_DECODING_POLICY_INSUFFICIENT" if role == "solver" and frozen_solver_policy(c) else "OPERATIONAL_OUTPUT_TRUNCATION")
                 if 'max_completion_tokens' in request:

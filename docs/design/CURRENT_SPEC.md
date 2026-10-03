@@ -410,7 +410,28 @@ policy identity is rejected. The policy remains part of manifest, request,
 cache and authorization identity. Historical bindings and reports are not
 rewritten; a real continuation requires fresh preexecution and authorization.
 
-### Historical Optimizer/Reflection generation wire amendment V1
+### Optimizer non-thinking root-cause diagnostic
+
+`OPTIMIZER_NONTHINKING_WIRE_WITNESS_V1` is an explicitly authorized, single-use,
+optimizer-only operational diagnostic before a fresh low-cost Canary. It sends
+one successful Reflection request using the exact recovered historical messages
+and current explicit non-thinking policy. Only frozen transport failures may
+retry. It never scores, archives, evolves, or reuses the resulting text in
+Canary/Pilot/cache/Memory. It uses the original cumulative 40M journal and
+protects the complete Validation100 first-attempt reserve.
+
+Serialized HTTP body, actual reasoning usage/content length, fences, candidate
+length, duplicate lines and repeated 8-grams are observed without changing GEPA
+evidence, minibatch three, proposer template or accepted prompt limit3000.
+Non-thinking confirmation requires reported reasoning_tokens=0 and absent/empty
+reasoning content. Positive reasoning under explicit false fails closed as a
+provider-control defect, distinct from cap exhaustion. Truncation remains a hard
+failure in production; the diagnostic preserves truncated output for owner
+classification without admitting it as a candidate. Generation amendments require
+the user-authorized evidence criteria, a new policy/source/attempt and fresh
+freeze; no Pilot may change its frozen policy after its first request.
+
+### Historical Optimizer/Reflection generation wire amendment V1 (contract)
 
 Historical frozen low-cost execution binding V2 opts into
 `OPTIMIZER_REFLECTION_GENERATION_POLICY_V1` for qwen3.7-flash Reflection and

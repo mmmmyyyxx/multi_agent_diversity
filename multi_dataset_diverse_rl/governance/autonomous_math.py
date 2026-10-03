@@ -91,7 +91,8 @@ def create_transport(contract):
             if 'optimizer_generation_policy' in contract:
                 reasoning = choice['message'].get('reasoning_content')
                 result.update(provider_usage_details=usage,
-                    provider_reasoning_character_count=len(reasoning) if isinstance(reasoning,str) else None)
+                    provider_reasoning_character_count=len(reasoning) if isinstance(reasoning,str) else None,
+                    provider_reasoning_content_present='reasoning_content' in choice['message'])
             return result
         finally:
             response.close()

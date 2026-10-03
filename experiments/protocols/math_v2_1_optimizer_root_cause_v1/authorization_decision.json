@@ -1,0 +1,67 @@
+{
+  "base_sha": "1ae6b0b4078aa229ded055bfb16a8dec89cca8cf",
+  "envelope_amendment": {
+    "from_tokens": 1800,
+    "max_once": true,
+    "required": {
+      "coherent_proposer_task": true,
+      "finish_reason": "length",
+      "nonthinking_confirmed": true,
+      "repetition_pathology": false,
+      "visible_output_chars_lt": 3000
+    },
+    "to_tokens": 3600
+  },
+  "explicit_human_approval": true,
+  "identity": "MATH_OPTIMIZER_ROOT_CAUSE_TASK_AUTHORIZATION_V1",
+  "pattern_real_calls_A1": 0,
+  "phase_scope": [
+    "zero_API_audit",
+    "optimizer_only_witness",
+    "fresh_canary12",
+    "fresh_A1_seed81_pilot60_shadow40",
+    "post_search_validation100"
+  ],
+  "policy": {
+    "accounting_output_ceiling": 1810,
+    "enable_thinking": false,
+    "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V2",
+    "max_completion_tokens": 1800,
+    "max_tokens": "NOT_SENT",
+    "measurement_tolerance_tokens": 10,
+    "model": "qwen3.7-flash",
+    "output_token_scope": "reasoning_plus_answer",
+    "roles": [
+      "reflection",
+      "pattern"
+    ],
+    "temperature": 0.0,
+    "truncation": "existing_operational_output_truncation"
+  },
+  "sampling_amendment": {
+    "parameter_sweep": false,
+    "provider_documented_defaults_only": true,
+    "required_repetition_pathology": true
+  },
+  "test_model_calls": 0,
+  "total_accounting_authorization": 40000000,
+  "unchanged": [
+    "Solver",
+    "method",
+    "GEPA_budget",
+    "minibatch3",
+    "candidate_max_chars3000",
+    "reflection_evidence",
+    "template",
+    "models",
+    "12_60_40_100",
+    "Test_sealed"
+  ],
+  "user_task_sha256": "0002f60839d4a411e99360b1604b92e215aff554cdc0b74aee0ada2ed1dd17cf",
+  "witness": {
+    "accuracy_scoring": false,
+    "exact_old_messages_preferred": true,
+    "output_reuse": false,
+    "successful_optimizer_calls": 1
+  }
+}

@@ -105,6 +105,11 @@ def preflight(manifest: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def governed_preflight(prep: Path) -> dict[str, Any]:
+    if (prep / 'optimizer_witness_prep.json').is_file():
+        from multi_dataset_diverse_rl.governance.math_optimizer_witness import validate_witness
+        value,_,_=validate_witness(ROOT,prep)
+        return dict(gate='OPTIMIZER_WITNESS_READY_NOT_AUTHORIZED',ready_for_authorization=True,
+            attempt_id=value['scope']['attempt_id'],provider_attempts=0,solver_calls=0,validation_calls=0,test_calls=0)
     if (prep / "validation_prep.json").is_file():
         from multi_dataset_diverse_rl.governance.math_paired_validation import validate_validation
         value, _, _, _ = validate_validation(ROOT, prep, require_authorized=False)
@@ -156,6 +161,9 @@ async def _execute(manifest: Mapping[str, Any]):
 
 
 async def execute_frozen(prep: Path, run_root: Path) -> dict[str, Any]:
+    if (prep / 'optimizer_witness_prep.json').is_file():
+        from multi_dataset_diverse_rl.governance.math_optimizer_witness import execute_witness
+        return await execute_witness(ROOT,prep,run_root)
     if (prep / "validation_prep.json").is_file():
         from multi_dataset_diverse_rl.governance.math_paired_validation import execute_validation
         return await execute_validation(ROOT, prep, run_root)

@@ -6923,3 +6923,95 @@ experiments:
   authorization_consumed: false
   unavailable:
     execution_commit: Not executed.
+- experiment_id: math_v2_1_optimizer_truncation_root_cause_v1
+  kind: DIAGNOSTIC
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_a1_seed81_low_cost_canary_v2
+  status: DRAFT
+  scientific_status: NOT_EXECUTED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_optimizer_truncation_root_cause_v1.yaml
+  report: reports/math_v2_1_optimizer_truncation_root_cause_v1_20261003
+  classifier: AWAITING_FRESH_FREEZE
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit non-thinking policy V2; diagnostic outputs excluded from scientific execution.
+  unavailable:
+    implementation_commit: Pending source freeze.
+    execution_commit: Not executed.
+    result_commit: Not executed.
+- experiment_id: math_v2_1_preexecution_low_cost_v3
+  kind: PREEXECUTION_FREEZE
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_optimizer_truncation_root_cause_v1
+  status: DRAFT
+  scientific_status: NOT_EXECUTED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_preexecution_low_cost_v3.yaml
+  report: reports/math_v2_1_preexecution_low_cost_v3_20261003
+  classifier: AWAITING_FRESH_FREEZE
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit non-thinking policy V2; diagnostic outputs excluded from scientific execution.
+  unavailable:
+    implementation_commit: Pending source freeze.
+    execution_commit: Not executed.
+    result_commit: Not executed.
+- experiment_id: math_v2_1_a1_seed81_low_cost_canary_v3
+  kind: REAL_CANARY
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_preexecution_low_cost_v3
+  status: DRAFT
+  scientific_status: NOT_EXECUTED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_a1_seed81_low_cost_canary_v3.yaml
+  report: reports/math_v2_1_a1_seed81_low_cost_canary_v3_20261003
+  classifier: AWAITING_FRESH_FREEZE
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit non-thinking policy V2; diagnostic outputs excluded from scientific execution.
+  unavailable:
+    implementation_commit: Pending source freeze.
+    execution_commit: Not executed.
+    result_commit: Not executed.
+- experiment_id: math_v2_1_a1_seed81_low_cost_pilot_v3
+  kind: PILOT
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_a1_seed81_low_cost_canary_v3
+  status: DRAFT
+  scientific_status: NOT_EXECUTED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_a1_seed81_low_cost_pilot_v3.yaml
+  report: reports/math_v2_1_a1_seed81_low_cost_pilot_v3_20261003
+  classifier: AWAITING_FRESH_FREEZE
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit non-thinking policy V2; diagnostic outputs excluded from scientific execution.
+  unavailable:
+    implementation_commit: Pending source freeze.
+    execution_commit: Not executed.
+    result_commit: Not executed.

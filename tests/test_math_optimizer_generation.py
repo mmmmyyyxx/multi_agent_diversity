@@ -229,3 +229,107 @@ def test_default_off_frozen_entrypoint_keeps_solver_and_heldout_rules(tmp_path,m
     c=default_binding_fixture(tmp_path/'default_contract','canary')
     monkeypatch.setattr(original,'contract',lambda phase='canary':c)
     original.test_frozen_entrypoint_recovery_durable_floor_and_receipt(tmp_path/'execution',monkeypatch,'canary')
+
+
+@pytest.mark.parametrize('text,repetitive,fenced,chars',[
+    ('```Check constraints and verify the result.```',False,True,40),
+    ('```\n'+'x'*3000+'\n```',False,True,3000),
+    ('```\n'+'x'*3001+'\n```',False,True,3001),
+    ('```unfinished',False,False,None),
+    ('Repeated identical line\n'*8,True,False,None),
+    ('one two three four five six seven eight '*4,True,False,None),
+    ('prefix ```complete``` suffix',False,False,None),
+])
+def test_optimizer_diagnostics_boundary_repetition_and_complete_fence(text,repetitive,fenced,chars):
+    from multi_dataset_diverse_rl.benchmarks.math_optimizer_diagnostics import generation_diagnostics
+    d=generation_diagnostics(text)
+    assert d['repetition_pathology'] is repetitive
+    assert d['complete_single_fence'] is fenced and d['candidate_chars']==chars
+    assert d['candidate_generation_contract_valid'] is (fenced and chars<=3000)
+    assert text not in json.dumps(d)
+
+
+def synthetic_reflection_messages():
+    from multi_dataset_diverse_rl.local_optimizers.gepa_proposer_contract import DECISION_PROCEDURE_REFLECTION_TEMPLATE
+    side='\n\n'.join(f'# Example {i+1}\n## Problem\nSynthetic arithmetic.\n\n## Reasoning Evidence\nVerify constraints.\n\n## Evaluation Outcome\nincorrect\n\n## Reasoning Focus\ngeneral\n\n## example_id\nsynthetic{i}\n\n' for i in range(3))
+    return [{'role':'user','content':DECISION_PROCEDURE_REFLECTION_TEMPLATE.replace('<curr_param>','Check constraints.').replace('<side_info>',side)}]
+
+
+def test_reflection_anatomy_returns_only_counts():
+    from multi_dataset_diverse_rl.benchmarks.math_optimizer_diagnostics import reflection_input_anatomy
+    d=reflection_input_anatomy(synthetic_reflection_messages())
+    assert d['reflective_examples']==3 and d['current_parent_prompt_chars']==18
+    assert d['reasoning_evidence_total_chars']==3*19
+    assert 'Synthetic arithmetic.' not in json.dumps(d)
+    with pytest.raises(SearchContractError,match='TEMPLATE'):
+        reflection_input_anatomy([dict(role='user',content='wrong template')])
+
+
+@pytest.mark.parametrize('reasoning,chars,present,confirmed',[(0,0,False,True),(0,0,True,True),(None,None,False,False),(1,0,False,False),(0,12,True,False)])
+def test_nonthinking_confirmation_requires_actual_provider_telemetry(reasoning,chars,present,confirmed):
+    from multi_dataset_diverse_rl.benchmarks.math_optimizer_diagnostics import optimizer_response_telemetry
+    policy=optimizer_generation_contract()
+    request=dict(model=policy['model'],messages=[],**generation_request_fields(binding(policy_id=policy['identity']),'reflection'))
+    result=dict(text='```Check constraints.```',finish_reason='stop',provider_usage_details={'completion_tokens_details':{'reasoning_tokens':reasoning}},
+        provider_reasoning_character_count=chars,provider_reasoning_content_present=present)
+    assert optimizer_response_telemetry(request,result,policy)['nonthinking_wire_confirmed'] is confirmed
+
+
+def witness_fixture(tmp_path,monkeypatch):
+    from multi_dataset_diverse_rl.governance import unified_execution as gov,math_optimizer_witness as w
+    c=default_binding_fixture(tmp_path/'contract','canary')
+    monkeypatch.setattr(gov,'verify_source_commit',lambda *_:None)
+    m=gov.preexecution_manifest(ROOT,source_sha='a'*40,binding_path=c['binding_path'],experiment_id='synthetic_optimizer_witness')
+    prep=tmp_path/'prep';gov.prepare_canary(ROOT,m,destination=prep)
+    run=tmp_path/'run'
+    payload=w.prepare_witness(ROOT,prep,messages=synthetic_reflection_messages(),attempt_id='synthetic_witness_attempt1',
+        request_path=(tmp_path/'request_private.json').relative_to(ROOT).as_posix(),
+        expected_run_root=run.relative_to(ROOT).as_posix(),exact_production_input=False)
+    return w,c,prep,run,payload
+
+
+def test_witness_denies_unapproved_and_mutated_input_before_provider(tmp_path,monkeypatch):
+    w,c,prep,run,payload=witness_fixture(tmp_path,monkeypatch)
+    assert w.validate_witness(ROOT,prep)[0]==payload
+    with pytest.raises(SearchContractError,match='AUTHORIZATION'):
+        w.validate_witness(ROOT,prep,require_authorized=True)
+    request_path=ROOT/payload['scope']['request_path']
+    request=json.loads(request_path.read_bytes());request['messages'][0]['content']+='changed'
+    request_path.write_text(json.dumps(request),encoding='utf-8')
+    with pytest.raises(SearchContractError,match='REQUEST_FILE'):
+        w.validate_witness(ROOT,prep)
+
+
+@pytest.mark.parametrize('finish',['stop','length'])
+def test_witness_single_call_accounts_and_never_enters_search_or_cache(tmp_path,monkeypatch,finish):
+    import asyncio
+    from multi_dataset_diverse_rl.persistence.durable_io import atomic_write_json
+    from multi_dataset_diverse_rl.governance import autonomous_math as execution
+    w,c,prep,run,payload=witness_fixture(tmp_path,monkeypatch)
+    isolated=tmp_path/'budget'
+    with TokenLedger(isolated,task_sha256=c['task_authorization_sha256']) as ledger:
+        ledger.amend_authorization_40m(authorization_sha256=c['continuation_authorization_sha256'],expected_charged_total=0)
+    monkeypatch.setattr(w,'TokenLedger',lambda _,**kw:TokenLedger(isolated,**kw))
+    marker=tmp_path/'consumed.json'
+    monkeypatch.setattr(execution,'consumption_path',lambda *_:marker)
+    monkeypatch.setattr(w,'consumption_path',lambda *_:marker)
+    auth=json.loads((prep/'authorization.json').read_bytes());auth['explicit_user_authorized']=True
+    atomic_write_json(prep/'authorization.json',auth)
+    calls=[]
+    class Client:
+        def close(self):pass
+    def transport(request):
+        calls.append(request)
+        return dict(text='```Check constraints.```',input_tokens=1323,output_tokens=1800,finish_reason=finish,
+            provider_usage_details={'completion_tokens_details':{'reasoning_tokens':0}},
+            provider_reasoning_character_count=0,provider_reasoning_content_present=False)
+    monkeypatch.setattr(w,'create_transport',lambda _: (transport,Client()))
+    result=asyncio.run(w.execute_witness(ROOT,prep,run))
+    assert len(calls)==1 and result['provider_calls']==1
+    assert result['diagnostics']['finish_reason']==finish
+    assert result['solver_calls']==result['validation_calls']==result['test_calls']==0
+    assert not (run/'resolved_output_cache').exists() and not (run/'initial_state_private.json').exists()
+    budget=json.loads((run/'accounting_end.json').read_bytes())
+    assert budget['charged_total']==3123 and budget['reserved_inflight']==0
+    with pytest.raises(SearchContractError,match='AUTHORIZATION'):
+        asyncio.run(w.execute_witness(ROOT,prep,run))
