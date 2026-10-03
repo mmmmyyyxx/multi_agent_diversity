@@ -34,7 +34,7 @@ last_canary_milestone: math_v2_1_a1_seed81_low_cost_canary_v4
 current_canary_status: PASS
 formal_a1_ready: false
 formal_a1_authorized: false
-current_execution_blocker: FRESH_PILOT_FREEZE_PENDING
+current_execution_blocker: null
 default_optimizer_generation_policy: OPTIMIZER_REFLECTION_GENERATION_POLICY_V2
 default_optimizer_enable_thinking: false
 optimizer_policy_amendment_status: DEFAULT_OFF_EQUIVALENT_EVIDENCE_CONFIRMED
@@ -44,15 +44,15 @@ next_canary_attempt_id: null
 last_autonomous_milestone: math_v2_1_autonomous_constitution_v1
 autonomous_user_authorization_received: true
 autonomous_token_authorization: 40000000
-autonomous_tokens_consumed: 357830
-autonomous_tokens_remaining: 39642170
+autonomous_tokens_consumed: 840243
+autonomous_tokens_remaining: 39159757
 token_accounting_policy: RESERVATION_V2
 prior_accounting_stop_resolution: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2
-autonomous_authorization_status: V2_1_CONTINUATION_RECEIVED_EXACT_SCOPE_PENDING
-pilot_search_complete: false
-pilot_validation_complete: false
-pilot_final_status: INCOMPLETE
-task_stop_reason: null
+autonomous_authorization_status: LOW_COST_TASK_COMPLETE_SCOPES_CLOSED
+pilot_search_complete: true
+pilot_validation_complete: true
+pilot_final_status: COMPLETE
+task_stop_reason: PILOT_COMPLETE
 optimizer_nonthinking_wire_confirmed: YES_EQUIVALENT_EVIDENCE
 ```
 
@@ -127,7 +127,7 @@ flowchart TD
     n240["math_v2_1_autonomous_constitution_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
     n241["math_v2_1_preexecution_low_cost_v4<br/>PREEXECUTION_FREEZE<br/>COMPLETED"]
     n242["math_v2_1_a1_seed81_low_cost_canary_v4<br/>REAL_CANARY<br/>COMPLETED"]
-    n243["math_v2_1_a1_seed81_low_cost_pilot_v4<br/>PILOT<br/>DRAFT"]
+    n243["math_v2_1_a1_seed81_low_cost_pilot_v4<br/>PILOT<br/>COMPLETED"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]

@@ -7027,7 +7027,7 @@ experiments:
   scientific_status: ZERO_API_VALID
   implementation_commit: c7bf15f216c50a0c44dc8f0114c0767376f4997a
   execution_commit: null
-  result_commit: 010c4c02821e15b8e5537539e5264bb00120ce18
+  result_commit: 95dd134cf4160b50a42bc372050bf1f53ea4b651
   manifest: experiments/manifests/math_v2_1_autonomous_constitution_v1.yaml
   report: reports/math_v2_1_autonomous_constitution_v1_20261003
   classifier: OFFLINE_GATES_AND_FRESH_FREEZE_PASS
@@ -7086,19 +7086,18 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_a1_seed81_low_cost_canary_v4
-  status: DRAFT
-  scientific_status: NOT_EXECUTED
-  implementation_commit: c7bf15f216c50a0c44dc8f0114c0767376f4997a
-  execution_commit: null
-  result_commit: null
+  status: COMPLETED
+  scientific_status: VALID_LOW_COST_DEVELOPMENT_ONLY
+  implementation_commit: 05c1da1ef08ebb4e3ec403380bfc033377b1e743
+  execution_commit: f95b0640ee3672a1a5ad8b07cbf64cf08f78d0d7
+  result_commit: 15f6e1e45ace5cd2edce10aab4f6f5831ea46b0b
   manifest: experiments/manifests/math_v2_1_a1_seed81_low_cost_pilot_v4.yaml
   report: reports/math_v2_1_a1_seed81_low_cost_pilot_v4_20261003
-  classifier: CANARY_PASS_FRESH_PILOT_FREEZE_PENDING
-  active_for_new_work: true
+  classifier: NEUTRAL
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
   - Operational equivalent-evidence policy; generation and scientific candidate contract unchanged.
-  unavailable:
-    execution_commit: Not executed.
-    result_commit: Not executed.
+  unavailable: {}
+  authorization_consumed: true

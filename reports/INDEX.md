@@ -81,7 +81,7 @@ Reports are immutable evidence, never design authority. Unresolved metadata does
 | [math_v2_1_a1_seed81_low_cost_pilot_v1_20261003](math_v2_1_a1_seed81_low_cost_pilot_v1_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | SCIENTIFIC_RESULT | math_v2_1_a1_seed81_low_cost_pilot_v1 | HOLD |
 | [math_v2_1_a1_seed81_low_cost_pilot_v2_20261003](math_v2_1_a1_seed81_low_cost_pilot_v2_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | SCIENTIFIC_RESULT | math_v2_1_a1_seed81_low_cost_pilot_v2 | HOLD |
 | [math_v2_1_a1_seed81_low_cost_pilot_v3_20261003](math_v2_1_a1_seed81_low_cost_pilot_v3_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | SCIENTIFIC_RESULT | math_v2_1_a1_seed81_low_cost_pilot_v3 | HOLD |
-| [math_v2_1_a1_seed81_low_cost_pilot_v4_20261003](math_v2_1_a1_seed81_low_cost_pilot_v4_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | SCIENTIFIC_RESULT | math_v2_1_a1_seed81_low_cost_pilot_v4 | DRAFT |
+| [math_v2_1_a1_seed81_low_cost_pilot_v4_20261003](math_v2_1_a1_seed81_low_cost_pilot_v4_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | SCIENTIFIC_RESULT | math_v2_1_a1_seed81_low_cost_pilot_v4 | COMPLETED |
 | [math_v2_1_a1_seed81_pilot_v1_20261002](math_v2_1_a1_seed81_pilot_v1_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | SCIENTIFIC_RESULT | math_v2_1_a1_seed81_pilot_v1 | SUPERSEDED |
 | [math_v2_1_a1_seed81_pilot_v2_20261002](math_v2_1_a1_seed81_pilot_v2_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | SCIENTIFIC_RESULT | math_v2_1_a1_seed81_pilot_v2 | SUPERSEDED |
 | [math_v2_1_a1_seed81_pilot_v3_20261002](math_v2_1_a1_seed81_pilot_v3_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | SCIENTIFIC_RESULT | math_v2_1_a1_seed81_pilot_v3 | SUPERSEDED |
