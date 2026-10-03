@@ -1,0 +1,46 @@
+{
+  "gepa_or_method_change_required": false,
+  "implementation_defect_found": false,
+  "observed": {
+    "accounting_charge": 3123,
+    "cap_contract_respected": true,
+    "dispatch_request_sha256": "71f9d58d8e2c94ad296567daf7b7471e5e5719a132d9ebe1602b68f80cf1f079",
+    "enable_thinking": true,
+    "finish_reason": "length",
+    "max_completion_tokens": 1800,
+    "max_tokens_sent": false,
+    "model": "qwen3.7-flash",
+    "output_verification_ceiling": 1810,
+    "provider_reasoning_character_count": 9139,
+    "provider_reported_input_tokens": 1323,
+    "provider_reported_output_tokens": 1800,
+    "provider_usage_details": {
+      "completion_tokens": 1800,
+      "completion_tokens_details": {
+        "reasoning_tokens": 1800,
+        "text_tokens": 1800
+      },
+      "prompt_tokens": 1323,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "text_tokens": 1323
+      },
+      "total_tokens": 3123
+    },
+    "temperature": 0.0,
+    "usage_reliable": true,
+    "visible_answer_character_count": 0
+  },
+  "operational_repairs_attempted": 0,
+  "policy_requiring_new_decision": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V1 generation envelope: explicit thinking=true with total completion cap1800",
+  "provider_detail_counts_are_not_summed": true,
+  "reason": "The first reflection consumed its complete completion budget and returned no answer. Existing optimizer truncation semantics require fail-closed termination. Measurement tolerance does not authorize truncated generations.",
+  "runtime_stop": "OPERATIONAL_OUTPUT_TRUNCATION",
+  "serialization_mismatch_found": false,
+  "solver_policy_change_required": false,
+  "status": "STOP_NEW_SCIENTIFIC_POLICY_REQUIRED",
+  "unauthorized_adaptation": false,
+  "unsupported_or_over_cap": false,
+  "user_decision_required_before_new_attempt": true,
+  "wire_contract_correctly_dispatched": true
+}

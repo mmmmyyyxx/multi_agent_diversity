@@ -1,0 +1,97 @@
+{
+  "authorized_total": 40000000,
+  "cumulative": {
+    "authorized_total": 40000000,
+    "charged_total": 323293,
+    "fallback_charged": 27027,
+    "last_event_sha256": "2f11b6992bc5d00015e1bf4a267cea308b78644dc46f64ab76d81a5015040688",
+    "provider_reported_actual": 296266,
+    "remaining": 39676707,
+    "reserved_inflight": 0
+  },
+  "disjoint_cost_breakdown": [
+    {
+      "accounting_tokens": 26282,
+      "cache_hits": 0,
+      "logical_solver_evaluations": 60,
+      "physical_solver_generations": 60,
+      "stage": "Canary Initial"
+    },
+    {
+      "accounting_tokens": 0,
+      "cache_hits": 10,
+      "logical_solver_evaluations": 10,
+      "physical_solver_generations": 0,
+      "stage": "Canary Search"
+    },
+    {
+      "accounting_tokens": 3123,
+      "optimizer_calls": 1,
+      "stage": "Optimizer"
+    },
+    {
+      "accounting_tokens": 0,
+      "cache_hits": 0,
+      "logical_solver_evaluations": 0,
+      "physical_solver_generations": 0,
+      "stage": "Pilot Initial"
+    },
+    {
+      "accounting_tokens": 0,
+      "cache_hits": 0,
+      "logical_solver_evaluations": 0,
+      "physical_solver_generations": 0,
+      "stage": "Pilot Search"
+    },
+    {
+      "accounting_tokens": 0,
+      "cache_hits": 0,
+      "logical_solver_evaluations": 0,
+      "physical_solver_generations": 0,
+      "stage": "Shadow"
+    },
+    {
+      "accounting_tokens": 0,
+      "cache_hits": 0,
+      "logical_solver_evaluations": 0,
+      "physical_solver_generations": 0,
+      "stage": "Validation Initial"
+    },
+    {
+      "accounting_tokens": 0,
+      "cache_hits": 0,
+      "logical_solver_evaluations": 0,
+      "physical_solver_generations": 0,
+      "stage": "Validation Final"
+    },
+    {
+      "accounting_tokens": 0,
+      "cache_hits": 0,
+      "logical_solver_evaluations": 0,
+      "physical_solver_generations": 0,
+      "stage": "Semantic Retries"
+    },
+    {
+      "accounting_tokens": 0,
+      "cache_hits": 0,
+      "logical_solver_evaluations": 0,
+      "physical_solver_generations": 0,
+      "stage": "Transport Retries"
+    },
+    {
+      "accounting_tokens": 29405,
+      "cache_hits": 10,
+      "logical_solver_evaluations": 70,
+      "optimizer_calls": 1,
+      "physical_solver_generations": 60,
+      "stage": "TOTAL"
+    }
+  ],
+  "new_fallback_charged": 0,
+  "new_reliable_provider_tokens": 29405,
+  "optimizer_amendment_prior_charged": 293888,
+  "original_authorization_and_amendment_preserved": true,
+  "original_task_prior_accounting_charged": 255460,
+  "phase_charge": 29405,
+  "validation_first_attempt_reserve": 9078500
+}

@@ -1,0 +1,11 @@
+{
+  "cache_hits": 0,
+  "canary_to_pilot_cache_reuse": false,
+  "cross_attempt_cache_hits": 0,
+  "durable_cache_implemented": true,
+  "full_orchestrator_resume_implemented": false,
+  "logical_solver_evaluations": 0,
+  "physical_calls_avoided_by_reuse": 0,
+  "physical_solver_generations": 0,
+  "prior_attempt_outputs_imported": false
+}

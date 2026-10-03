@@ -1,0 +1,24 @@
+{
+  "charged_new": 29405,
+  "logical_solver_evaluations": 70,
+  "optimizer_physical_attempts": 1,
+  "phase": "canary",
+  "raw_invalid_count": 0,
+  "raw_invalid_reasons": {},
+  "recovered_requests": 0,
+  "resolved_cache_entries": 60,
+  "semantic_retry_generations": 0,
+  "solver_cache_hits": 10,
+  "solver_physical_attempts": 60,
+  "status": "INTEGRITY_PASS_FAILED_ATTEMPT",
+  "terminal_requests": 0,
+  "test_model_calls": 0,
+  "token_charge_categories": {
+    "first_attempt": 26282,
+    "optimizer": 3123
+  },
+  "transport_failures": 0,
+  "validation_during_search": 0,
+  "wire_fields_dispatched": true,
+  "zero_cross_attempt_output_import": true
+}

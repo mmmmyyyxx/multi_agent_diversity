@@ -1,0 +1,10 @@
+{
+  "committed": 0,
+  "explanation": "Truncation occurred before optimizer proposal admission. A preregistered seed candidate is not a new generated or exported proposal.",
+  "exported_candidates": 0,
+  "local_accepted": null,
+  "local_rejected": null,
+  "status": "NOT_EXECUTED",
+  "team_evaluated": 0,
+  "transitioned": 0
+}

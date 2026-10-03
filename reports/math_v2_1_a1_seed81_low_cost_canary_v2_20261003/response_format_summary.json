@@ -1,0 +1,8 @@
+{
+  "missing_marker": 0,
+  "optimizer_truncated": 1,
+  "raw_valid": 60,
+  "solver_generations": 60,
+  "solver_truncated": 0,
+  "terminal_invalid": 0
+}

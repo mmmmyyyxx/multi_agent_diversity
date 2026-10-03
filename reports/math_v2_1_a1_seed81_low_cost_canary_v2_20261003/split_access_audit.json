@@ -1,0 +1,9 @@
+{
+  "optimize_examples_observed": 12,
+  "shadow_model_calls": 0,
+  "status": "PASS",
+  "test_model_calls": 0,
+  "test_sealed": true,
+  "validation_model_calls": 0,
+  "validation_used_during_search": false
+}

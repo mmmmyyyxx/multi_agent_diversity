@@ -1,0 +1,13 @@
+{
+  "formal_authorized": false,
+  "generalization_verified": false,
+  "memory_reads": 0,
+  "memory_writes": 0,
+  "operational_repairs_attempted": 0,
+  "other_arms_real_authorized": false,
+  "pattern_real_calls": 0,
+  "policy_tuned": false,
+  "scientific_efficacy_verified": false,
+  "sota_verified": false,
+  "status": "NOT_EVALUABLE"
+}

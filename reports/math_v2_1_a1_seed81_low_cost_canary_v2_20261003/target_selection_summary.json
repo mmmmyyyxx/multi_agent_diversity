@@ -1,0 +1,13 @@
+{
+  "completed_opportunities": 0,
+  "eligible_members": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "reached": true,
+  "selected_member": 3,
+  "started_opportunities": 1
+}

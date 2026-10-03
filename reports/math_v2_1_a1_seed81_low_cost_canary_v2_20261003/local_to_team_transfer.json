@@ -1,0 +1,10 @@
+{
+  "local_rejected_committed": 0,
+  "local_rejected_exported": 0,
+  "local_rejected_full_pass": 0,
+  "local_rejected_shadow_pass": 0,
+  "local_rejected_team_evaluated": 0,
+  "local_rejected_team_probe_pass": 0,
+  "local_rejected_transition_pass": 0,
+  "status": "NOT_REACHED"
+}

@@ -1,0 +1,60 @@
+{
+  "arm": "A1",
+  "attempt_id": "math_v2_1_low_cost_A1_seed81_canary_attempt2",
+  "benchmark": "MATH",
+  "binding_sha256": "ebbea0c18f8f7171dcc7e8ffdbacb5548c4de0819cd7dfdea548157489e3ced4",
+  "cache_namespace": "math_v2_1_low_cost_A1_seed81_canary_attempt2",
+  "cache_policy": "DURABLE_EXACT_OUTPUT_CACHE_V1",
+  "dispatched": true,
+  "invalid_recovery_policy": {
+    "cache": "resolved_valid_or_exhausted_terminal_only",
+    "first_valid_stops": true,
+    "identity": "MATH_SOLVER_INVALID_RECOVERY_V1",
+    "invalidity_weight": "none",
+    "logical_evaluation_count": 1,
+    "max_semantic_attempts": 4,
+    "same_request_bytes": true,
+    "solver_invalid_max_retries": 3,
+    "terminal_invalid": "incorrect_continue_no_vote",
+    "terminal_requires_completed_invalid_attempts": 4,
+    "transport_failures_consume_semantic_attempt": false
+  },
+  "method": "unified_team_prompt_search_v2_1",
+  "models": {
+    "optimizer_reflection": "qwen3.7-flash",
+    "pattern": "qwen3.7-flash",
+    "solver": "qwen3-8b",
+    "solver_thinking": false
+  },
+  "optimizer_generation_policy": {
+    "accounting_output_ceiling": 1810,
+    "enable_thinking": true,
+    "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V1",
+    "max_completion_tokens": 1800,
+    "max_tokens": "NOT_SENT",
+    "measurement_tolerance_tokens": 10,
+    "model": "qwen3.7-flash",
+    "output_token_scope": "reasoning_plus_answer",
+    "roles": [
+      "reflection",
+      "pattern"
+    ],
+    "temperature": 0.0,
+    "truncation": "existing_operational_output_truncation"
+  },
+  "provider": "lwj",
+  "seed": 81,
+  "solver_decoding_policy": {
+    "enable_thinking": false,
+    "frequency_penalty": 0,
+    "identity": "SOLVER_DECODING_POLICY_V1",
+    "max_output_tokens": 3600,
+    "min_p": 0,
+    "presence_penalty": 0,
+    "temperature": 0.7,
+    "top_k": 20,
+    "top_p": 0.8
+  },
+  "source_sha": "ab33739562d64648237fd96aa63f7720c48adfde",
+  "startup_identity_sha256": "c2a1b9ee6b393ae4de07daa6635ba07caef2ed2a354daf8c94bfdcdf1c636fcc"
+}
