@@ -1,0 +1,13 @@
+{
+  "README.md": "408d5340c226a2729d775819c765ca5c7d515fb0424c92065c21df7833528c89",
+  "analysis_policy_receipt.json": "e512a89a6623bded622718c25ac1840dd17cdf8b5a794abbd27e8d2df0fd623c",
+  "canary_source_identity.json": "6011bacab00212fc1d8cda6d425017f3058c2a10baab372cdf9259749d987acd",
+  "canary_startup_receipt.json": "a2dfe8ee299a9169e5426ed8a92a250cb1b7f0c56b253c7434925231a259f212",
+  "governance_gate.json": "6aa8751613cda31c77975c85a7ff72e2498cb892f8ee648a2c14bfd6dce8b7ea",
+  "pilot_source_identity.json": "29316a0f45b57f71021bb0d36b8ac4498a5bc3801f217b88fb0d8ab877f7b95c",
+  "pilot_startup_receipt.json": "80f0de9b8d0d598092ebcfa77bc64ac01a27c1acdd64f21ff38ff87008d3fcf9",
+  "preexecution_freeze_receipt.json": "fbed18e9e2270c6fc849155ce0a7f273eac6a1f43ce34a54e07a0805ac984e1c",
+  "sanitization_audit.json": "ff9c9fad82662fc12754bd8f6714c7d329754d5a483e2aaa948566861f333170",
+  "source_gate.json": "ecffd64229f8ba91fdff4ae3a7dfa5735f50bf8f53b08aa8adf4b73c3c9d1cd3",
+  "test_summary.json": "92209c2581e295b4c2a7ec8a7870ca5051a857d2aa7de68575b17090f5c0f72e"
+}
