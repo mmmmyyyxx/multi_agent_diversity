@@ -1,0 +1,22 @@
+{
+  "binding": {
+    "aggregation_independent": true,
+    "candidate_support": "same_complete_optimize",
+    "count": 12,
+    "evaluator": "MATH_EQUIVALENCE_V2",
+    "identity": "MATH_INITIAL_COMPETENCE_LOW_COST_V1",
+    "immutable": true,
+    "metric": "binary_correct_count",
+    "role": "optimize",
+    "split_identity": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+    "support_identity": "16ad84b5bb22a6aa10e23ef1e1a71ff6d54b7e8e4fcd749571808fba0b2f27ab"
+  },
+  "member_scores": [
+    7.0,
+    5.0,
+    5.0,
+    5.0,
+    7.0
+  ],
+  "state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007"
+}

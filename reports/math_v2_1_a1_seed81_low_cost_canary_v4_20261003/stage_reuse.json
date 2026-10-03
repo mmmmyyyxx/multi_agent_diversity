@@ -1,0 +1,26 @@
+{
+  "gepa_local": {
+    "accounting_tokens": 0,
+    "cache_hits": 17,
+    "logical_solver_evaluations": 17,
+    "physical_solver_attempts": 0,
+    "physical_solver_generations": 0,
+    "semantic_retry_generations": 0
+  },
+  "gepa_reflection": {
+    "accounting_tokens": 0,
+    "cache_hits": 0,
+    "logical_solver_evaluations": 0,
+    "physical_solver_attempts": 0,
+    "physical_solver_generations": 0,
+    "semantic_retry_generations": 0
+  },
+  "initial": {
+    "accounting_tokens": 26442,
+    "cache_hits": 0,
+    "logical_solver_evaluations": 60,
+    "physical_solver_attempts": 60,
+    "physical_solver_generations": 60,
+    "semantic_retry_generations": 0
+  }
+}

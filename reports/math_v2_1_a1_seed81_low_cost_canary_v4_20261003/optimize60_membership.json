@@ -1,0 +1,602 @@
+[
+  {
+    "content_sha256": "15f5432638f38c89308d15012a4b9eab964dd6e9654e41d74a4e6c260dcd8094",
+    "input_sha256": "b53294b8138b5686f944c15d4720a239e83f2c8af6629e0b9b7abd22430ac3a8",
+    "level": "Level 3",
+    "project_split": "optimize",
+    "source_index": 1192,
+    "source_split": "train",
+    "stable_example_id": "math:train:1192:15f5432638f38c89308d15012a4b9eab964dd6e9654e41d74a4e6c260dcd8094",
+    "subject": "algebra"
+  },
+  {
+    "content_sha256": "cfd6a1caab308b0e1243996f53bbc19b936a43d7a4194f46f48a28c17de0ad32",
+    "input_sha256": "dfbb36330918bbc36e79875521fb03b6e284fdf1ce21aa538991c423ec5c4b56",
+    "level": "Level 1",
+    "project_split": "optimize",
+    "source_index": 1024,
+    "source_split": "train",
+    "stable_example_id": "math:train:1024:cfd6a1caab308b0e1243996f53bbc19b936a43d7a4194f46f48a28c17de0ad32",
+    "subject": "algebra"
+  },
+  {
+    "content_sha256": "71b32d51f81b021c96b95b1a9c96564f8ced1562042ac8d7a76274555a333ffd",
+    "input_sha256": "32e3cc17122b147f733b5caeaf1ce3fa4970276beab603f3ae5ddcf720e21d94",
+    "level": "Level 5",
+    "project_split": "optimize",
+    "source_index": 174,
+    "source_split": "train",
+    "stable_example_id": "math:train:174:71b32d51f81b021c96b95b1a9c96564f8ced1562042ac8d7a76274555a333ffd",
+    "subject": "algebra"
+  },
+  {
+    "content_sha256": "bf1f1300de999cc0cf4db0e76b76ae613eeb521021cbb7410e4ba7b3f798d801",
+    "input_sha256": "d46ba080f743c17eb1f72845ffeb282b9dbdddbe70e967a86e67f97d208114a4",
+    "level": "Level 1",
+    "project_split": "optimize",
+    "source_index": 1425,
+    "source_split": "train",
+    "stable_example_id": "math:train:1425:bf1f1300de999cc0cf4db0e76b76ae613eeb521021cbb7410e4ba7b3f798d801",
+    "subject": "algebra"
+  },
+  {
+    "content_sha256": "6f2ae36518a84be38c94e869a5ff3830fa7d77dd66119c6613c79c48ceecac46",
+    "input_sha256": "20cb60ee6c0f09ce54e4ab1a8eea69d443df386b4bfbefee8e295e308e515d41",
+    "level": "Level 3",
+    "project_split": "optimize",
+    "source_index": 1679,
+    "source_split": "train",
+    "stable_example_id": "math:train:1679:6f2ae36518a84be38c94e869a5ff3830fa7d77dd66119c6613c79c48ceecac46",
+    "subject": "algebra"
+  },
+  {
+    "content_sha256": "7963c82933e082a9ad725619df4220f60cf69071f61735a72f16e53d8887ccb7",
+    "input_sha256": "5b0399b74f8ebdd75afedee388c823a9aef6539079f893af0cfb40363d18dba7",
+    "level": "Level 5",
+    "project_split": "optimize",
+    "source_index": 1604,
+    "source_split": "train",
+    "stable_example_id": "math:train:1604:7963c82933e082a9ad725619df4220f60cf69071f61735a72f16e53d8887ccb7",
+    "subject": "algebra"
+  },
+  {
+    "content_sha256": "22d86a3cb832b5cf39630bbe59835227b4c2037d8ff0736634522c6ce35e115e",
+    "input_sha256": "4a520245cf7093f8845bd51bc20f3b67d2b272493158f668826b3b9aec2670a5",
+    "level": "Level 2",
+    "project_split": "optimize",
+    "source_index": 13,
+    "source_split": "train",
+    "stable_example_id": "math:train:13:22d86a3cb832b5cf39630bbe59835227b4c2037d8ff0736634522c6ce35e115e",
+    "subject": "algebra"
+  },
+  {
+    "content_sha256": "75f82f70f76b077f8caa5f58c03b5a46c69133ff64c49f1998af734720aa9c53",
+    "input_sha256": "dfa5721f709b9934f23eae3a24587f86a635cb1a68333cf93dc056c6971e9589",
+    "level": "Level 3",
+    "project_split": "optimize",
+    "source_index": 123,
+    "source_split": "train",
+    "stable_example_id": "math:train:123:75f82f70f76b077f8caa5f58c03b5a46c69133ff64c49f1998af734720aa9c53",
+    "subject": "algebra"
+  },
+  {
+    "content_sha256": "4cb7bd870af9dbc725300e5ad9b6b3d254b65bbb19308a55250efca53b9b41e5",
+    "input_sha256": "3724226c8c21180fa7c226f4526b1aa11405ba112480fa7525df56aa03f38c83",
+    "level": "Level 2",
+    "project_split": "optimize",
+    "source_index": 836,
+    "source_split": "train",
+    "stable_example_id": "math:train:836:4cb7bd870af9dbc725300e5ad9b6b3d254b65bbb19308a55250efca53b9b41e5",
+    "subject": "algebra"
+  },
+  {
+    "content_sha256": "7cb736b20ea681926c4e6f8becf50bf1ff2333d6030fea871900eef9cb9d89b1",
+    "input_sha256": "5ef0159b70adf39f25b8261ee8ed35f1b2a57dede3177436b5931efd6053d6cb",
+    "level": "Level 1",
+    "project_split": "optimize",
+    "source_index": 297,
+    "source_split": "train",
+    "stable_example_id": "math:train:297:7cb736b20ea681926c4e6f8becf50bf1ff2333d6030fea871900eef9cb9d89b1",
+    "subject": "algebra"
+  },
+  {
+    "content_sha256": "92945489fd2b4e8b3de9087a067b6e7e25539982163d556ab90513fc2a3eeaa3",
+    "input_sha256": "4cad09b88ad145e0ec3ebcc2447efca46af931338ba19faa635fa3d71bb0e3a0",
+    "level": "Level 5",
+    "project_split": "optimize",
+    "source_index": 1017,
+    "source_split": "train",
+    "stable_example_id": "math:train:1017:92945489fd2b4e8b3de9087a067b6e7e25539982163d556ab90513fc2a3eeaa3",
+    "subject": "algebra"
+  },
+  {
+    "content_sha256": "b57beb71863aad0593585fcecc755da872a46bc67319afa0e06fd98a72c3e149",
+    "input_sha256": "bfe272567b7a38cf047a92657e6e53c8e93df782d9734e4c9ba98a4529dad53b",
+    "level": "Level 3",
+    "project_split": "optimize",
+    "source_index": 262,
+    "source_split": "train",
+    "stable_example_id": "math:train:262:b57beb71863aad0593585fcecc755da872a46bc67319afa0e06fd98a72c3e149",
+    "subject": "algebra"
+  },
+  {
+    "content_sha256": "64f86ffaaf5e23f440c4676c213857d3211a924935f25f4c74b02d7ead5b38f6",
+    "input_sha256": "177a393a160282bc2c00fc3c50af857eb8923810b76616d937e4938601129611",
+    "level": "Level 3",
+    "project_split": "optimize",
+    "source_index": 192,
+    "source_split": "train",
+    "stable_example_id": "math:train:192:64f86ffaaf5e23f440c4676c213857d3211a924935f25f4c74b02d7ead5b38f6",
+    "subject": "algebra"
+  },
+  {
+    "content_sha256": "b9d8a7fd1706440ca2a271aa51c4459209f7243ac7646d7ef76daacd59ec49e5",
+    "input_sha256": "11eaabb950fc03315844720591eb63c54bfa75570bf163e256e38ba74c13be99",
+    "level": "Level 4",
+    "project_split": "optimize",
+    "source_index": 1618,
+    "source_split": "train",
+    "stable_example_id": "math:train:1618:b9d8a7fd1706440ca2a271aa51c4459209f7243ac7646d7ef76daacd59ec49e5",
+    "subject": "algebra"
+  },
+  {
+    "content_sha256": "f6cf0deee937845b81d62eb9eef4f6b2240a69d11ba70767618acf9f5d9eeeeb",
+    "input_sha256": "2e0e38aa9c030208b313c2ddb5cf0cb0c96ad49823aa83e6805ad6031b4239df",
+    "level": "Level 2",
+    "project_split": "optimize",
+    "source_index": 187,
+    "source_split": "train",
+    "stable_example_id": "math:train:187:f6cf0deee937845b81d62eb9eef4f6b2240a69d11ba70767618acf9f5d9eeeeb",
+    "subject": "algebra"
+  },
+  {
+    "content_sha256": "8f02dfcd4e227b412c30da8b7c2dcd5acdf79e81dc3eb53c409d535e1a5befde",
+    "input_sha256": "4323fc1dc2063284fbfbcb93cf2b9060892a7b838b7175a81c18192f718ad63d",
+    "level": "Level 1",
+    "project_split": "optimize",
+    "source_index": 2316,
+    "source_split": "train",
+    "stable_example_id": "math:train:2316:8f02dfcd4e227b412c30da8b7c2dcd5acdf79e81dc3eb53c409d535e1a5befde",
+    "subject": "counting_and_probability"
+  },
+  {
+    "content_sha256": "827d117cbf8986d0b692fb09e248c32c84b0a5911c1f0114482ce5208a1de4f5",
+    "input_sha256": "9c29608fb22039265c8d24eca29b46165c71ac263102095aa35451fca6d03417",
+    "level": "Level 5",
+    "project_split": "optimize",
+    "source_index": 2048,
+    "source_split": "train",
+    "stable_example_id": "math:train:2048:827d117cbf8986d0b692fb09e248c32c84b0a5911c1f0114482ce5208a1de4f5",
+    "subject": "counting_and_probability"
+  },
+  {
+    "content_sha256": "d6f5d696c9dce880f882c2034b7e8f2158f7e462b5b65e67a7333604c87b6f8d",
+    "input_sha256": "32eb584a0367df7bb7ef4dc11b0eee74253efc9d4d70467257e82ec9b0eb6c6b",
+    "level": "Level 2",
+    "project_split": "optimize",
+    "source_index": 2446,
+    "source_split": "train",
+    "stable_example_id": "math:train:2446:d6f5d696c9dce880f882c2034b7e8f2158f7e462b5b65e67a7333604c87b6f8d",
+    "subject": "counting_and_probability"
+  },
+  {
+    "content_sha256": "837394580b95ffbc8bd51a01318700edc64f7925fa4421aedcd8977e86a5f1d2",
+    "input_sha256": "d98a33970e4dd127a947cec051a70205aec71f69c6cf8e65f507bc58a9d2818c",
+    "level": "Level 4",
+    "project_split": "optimize",
+    "source_index": 1990,
+    "source_split": "train",
+    "stable_example_id": "math:train:1990:837394580b95ffbc8bd51a01318700edc64f7925fa4421aedcd8977e86a5f1d2",
+    "subject": "counting_and_probability"
+  },
+  {
+    "content_sha256": "90b8257bd7146deea91ac2b09dc85a8986b55e0c0278e8ca50db3e273a0885f0",
+    "input_sha256": "ba8df098f877e0394d64837ba4593ff094dbc365282833a13769d1789da1b175",
+    "level": "Level 4",
+    "project_split": "optimize",
+    "source_index": 1829,
+    "source_split": "train",
+    "stable_example_id": "math:train:1829:90b8257bd7146deea91ac2b09dc85a8986b55e0c0278e8ca50db3e273a0885f0",
+    "subject": "counting_and_probability"
+  },
+  {
+    "content_sha256": "d414920856a2269af4f61ef5443333461d9818285a4820daa98bbf996a338437",
+    "input_sha256": "613fa2694d57e4d6fff0a1cabfbb69907cf6d5294f0b99c7a280adfe31a1eef6",
+    "level": "Level 5",
+    "project_split": "optimize",
+    "source_index": 1851,
+    "source_split": "train",
+    "stable_example_id": "math:train:1851:d414920856a2269af4f61ef5443333461d9818285a4820daa98bbf996a338437",
+    "subject": "counting_and_probability"
+  },
+  {
+    "content_sha256": "24717ef3858e56bd408038f63e9e9feae771497d663f6c1fa11fc1791fe1a9cc",
+    "input_sha256": "8591ca32eba40cfce21f78cd4541be91d94044bc0b90520e829257d6e4410e6b",
+    "level": "Level 5",
+    "project_split": "optimize",
+    "source_index": 2035,
+    "source_split": "train",
+    "stable_example_id": "math:train:2035:24717ef3858e56bd408038f63e9e9feae771497d663f6c1fa11fc1791fe1a9cc",
+    "subject": "counting_and_probability"
+  },
+  {
+    "content_sha256": "d746a8db4aa770b8191ca191c314e85d5f60db8963e50f4ea04d6f93c1e2f56d",
+    "input_sha256": "54d36c9a00a3df27c325acf9fd2063e27322b8e5210d9c810db58708c275889c",
+    "level": "Level 5",
+    "project_split": "optimize",
+    "source_index": 3098,
+    "source_split": "train",
+    "stable_example_id": "math:train:3098:d746a8db4aa770b8191ca191c314e85d5f60db8963e50f4ea04d6f93c1e2f56d",
+    "subject": "geometry"
+  },
+  {
+    "content_sha256": "b193195905c07c0aca81c6b6cce1cf06e9f06429fae8f789986022158c2ba350",
+    "input_sha256": "d6d87e84e76e76abd6e3ab916371538d0cd67ed45a787fd996b742af6656fcb2",
+    "level": "Level 4",
+    "project_split": "optimize",
+    "source_index": 2817,
+    "source_split": "train",
+    "stable_example_id": "math:train:2817:b193195905c07c0aca81c6b6cce1cf06e9f06429fae8f789986022158c2ba350",
+    "subject": "geometry"
+  },
+  {
+    "content_sha256": "cd6333a9832f06d6d8400523236a3db9b631f6711245a4a67f82e1393b42ebb4",
+    "input_sha256": "ed76289f1d9f72db4bee6b4d72ecfd6610203d971ae6ca2d5b32a9213ef60370",
+    "level": "Level 5",
+    "project_split": "optimize",
+    "source_index": 2948,
+    "source_split": "train",
+    "stable_example_id": "math:train:2948:cd6333a9832f06d6d8400523236a3db9b631f6711245a4a67f82e1393b42ebb4",
+    "subject": "geometry"
+  },
+  {
+    "content_sha256": "4cfef27732b40aeb33e12d58485c46f05c7259752215dc74483772d96fdd3f70",
+    "input_sha256": "135ef4e5686bc9fe6531dc6fc4827448f834eece555293d49538da494fc2ad79",
+    "level": "Level 2",
+    "project_split": "optimize",
+    "source_index": 2536,
+    "source_split": "train",
+    "stable_example_id": "math:train:2536:4cfef27732b40aeb33e12d58485c46f05c7259752215dc74483772d96fdd3f70",
+    "subject": "geometry"
+  },
+  {
+    "content_sha256": "8cfa3787070ee88e765d9d82f29c55fd3a43d2df6d1290acbc51780c286e1b10",
+    "input_sha256": "d2048850bd5d01c98cd037c51f1e01d1fada430e3a4a251fdc2da4131ccdf365",
+    "level": "Level 5",
+    "project_split": "optimize",
+    "source_index": 3027,
+    "source_split": "train",
+    "stable_example_id": "math:train:3027:8cfa3787070ee88e765d9d82f29c55fd3a43d2df6d1290acbc51780c286e1b10",
+    "subject": "geometry"
+  },
+  {
+    "content_sha256": "c85c56dd9aaaf2bfe55c16aad03a8f38d94781b62d48f85035e199674ac3f06c",
+    "input_sha256": "a9554fac229dc96d61dbe0b206994fbfa997ca37a2e122968d13386f2f2e2cca",
+    "level": "Level 5",
+    "project_split": "optimize",
+    "source_index": 2682,
+    "source_split": "train",
+    "stable_example_id": "math:train:2682:c85c56dd9aaaf2bfe55c16aad03a8f38d94781b62d48f85035e199674ac3f06c",
+    "subject": "geometry"
+  },
+  {
+    "content_sha256": "f946ed91ef758e5d35a404d333a70e02c3f88e1bb5c1cb51683640619060fb73",
+    "input_sha256": "96257624c9a0d569e4ec491f2b1327be839c6613f3d9ff9a89531b5a64660e06",
+    "level": "Level 4",
+    "project_split": "optimize",
+    "source_index": 3334,
+    "source_split": "train",
+    "stable_example_id": "math:train:3334:f946ed91ef758e5d35a404d333a70e02c3f88e1bb5c1cb51683640619060fb73",
+    "subject": "geometry"
+  },
+  {
+    "content_sha256": "e1c8e71e3313d3a240688e0e68926215febda99611f8d3871474a00f49ce944d",
+    "input_sha256": "4d9425a1c4aebec9f4cca71e447fbb754fade0dd1a84e8a989552c476cc28632",
+    "level": "Level 5",
+    "project_split": "optimize",
+    "source_index": 4619,
+    "source_split": "train",
+    "stable_example_id": "math:train:4619:e1c8e71e3313d3a240688e0e68926215febda99611f8d3871474a00f49ce944d",
+    "subject": "intermediate_algebra"
+  },
+  {
+    "content_sha256": "f868957e5404f1cacecf1a26c1444f5f1a7ab12f88e1b3eef4343ac4d03a2185",
+    "input_sha256": "8e09c77e91eef24d15ba62a9e0fa69b85c2c8a36e1acbea008980ebd4c7d388c",
+    "level": "Level 4",
+    "project_split": "optimize",
+    "source_index": 4526,
+    "source_split": "train",
+    "stable_example_id": "math:train:4526:f868957e5404f1cacecf1a26c1444f5f1a7ab12f88e1b3eef4343ac4d03a2185",
+    "subject": "intermediate_algebra"
+  },
+  {
+    "content_sha256": "8d29867cc125580fb3ab2f0ef68d747b856a661d06c545875d4aa95f6303b4f0",
+    "input_sha256": "0a39057702a446d4a6c800101d1bed86f0058ce37a54511547f4e848af09145d",
+    "level": "Level 5",
+    "project_split": "optimize",
+    "source_index": 4382,
+    "source_split": "train",
+    "stable_example_id": "math:train:4382:8d29867cc125580fb3ab2f0ef68d747b856a661d06c545875d4aa95f6303b4f0",
+    "subject": "intermediate_algebra"
+  },
+  {
+    "content_sha256": "3ddae89d3542758951f608439ba3dddbb0ec7af4c17474e9e528ed8a55a84b68",
+    "input_sha256": "1a3d304108dcd8bec5fc9423b67593942883f0fd5f668b71d3465d78a6b54e80",
+    "level": "Level 4",
+    "project_split": "optimize",
+    "source_index": 3769,
+    "source_split": "train",
+    "stable_example_id": "math:train:3769:3ddae89d3542758951f608439ba3dddbb0ec7af4c17474e9e528ed8a55a84b68",
+    "subject": "intermediate_algebra"
+  },
+  {
+    "content_sha256": "2a536ef261ff4d9a3ec2e147b3d31e048b75bfc21238f9b63397e96be8006728",
+    "input_sha256": "d49f85c906d40d8f6df721eda148661aeb2ea5565e92d7bb4d3c59402088393b",
+    "level": "Level 4",
+    "project_split": "optimize",
+    "source_index": 3414,
+    "source_split": "train",
+    "stable_example_id": "math:train:3414:2a536ef261ff4d9a3ec2e147b3d31e048b75bfc21238f9b63397e96be8006728",
+    "subject": "intermediate_algebra"
+  },
+  {
+    "content_sha256": "d6697fab9794f6c1b6682189a5deb63cf4f655bceea15f9beb830d9410163af8",
+    "input_sha256": "cf635caa034c456154e04d0529077c5600114bb7b6c2edbc77793114179379ac",
+    "level": "Level 3",
+    "project_split": "optimize",
+    "source_index": 4427,
+    "source_split": "train",
+    "stable_example_id": "math:train:4427:d6697fab9794f6c1b6682189a5deb63cf4f655bceea15f9beb830d9410163af8",
+    "subject": "intermediate_algebra"
+  },
+  {
+    "content_sha256": "2699d85ecabccd5e4f62db1de520f5f56b1c069574e4033cf42578c7df76200c",
+    "input_sha256": "a7218ab58b1f29a223e35cdf4e2387f5879fba7db7ccdfc3ad590401d54a5237",
+    "level": "Level 2",
+    "project_split": "optimize",
+    "source_index": 3427,
+    "source_split": "train",
+    "stable_example_id": "math:train:3427:2699d85ecabccd5e4f62db1de520f5f56b1c069574e4033cf42578c7df76200c",
+    "subject": "intermediate_algebra"
+  },
+  {
+    "content_sha256": "1d70f16f897f93518aeaa184565458fe6a0988fe9f0eed0f31f5b52517c4672c",
+    "input_sha256": "c3306daf78d0a9a4cc73258668591411add271d3203d99d691505ab2a678571b",
+    "level": "Level 5",
+    "project_split": "optimize",
+    "source_index": 3841,
+    "source_split": "train",
+    "stable_example_id": "math:train:3841:1d70f16f897f93518aeaa184565458fe6a0988fe9f0eed0f31f5b52517c4672c",
+    "subject": "intermediate_algebra"
+  },
+  {
+    "content_sha256": "0330cc0bdb004de659c59aaee4ab236d9bfae9f21894ec08ca1c930b78eef2c8",
+    "input_sha256": "6d897848c676f90a728904bd1854b217181675357f592d81e997ff04f4ed101b",
+    "level": "Level 2",
+    "project_split": "optimize",
+    "source_index": 4600,
+    "source_split": "train",
+    "stable_example_id": "math:train:4600:0330cc0bdb004de659c59aaee4ab236d9bfae9f21894ec08ca1c930b78eef2c8",
+    "subject": "intermediate_algebra"
+  },
+  {
+    "content_sha256": "6af2000137db35339d8f834ebc58c6e8f0c31e019d01f97dd69efd3e841f1353",
+    "input_sha256": "61e6d96c5b66d864989fa4ffc549fbdf8b431aa54c7e859e6f48778897477601",
+    "level": "Level 1",
+    "project_split": "optimize",
+    "source_index": 3597,
+    "source_split": "train",
+    "stable_example_id": "math:train:3597:6af2000137db35339d8f834ebc58c6e8f0c31e019d01f97dd69efd3e841f1353",
+    "subject": "intermediate_algebra"
+  },
+  {
+    "content_sha256": "c7dff78774667dc82930bec3943ad5b53bc68325bd89930f15bd2f010d463478",
+    "input_sha256": "a5b409ca8aba80a6b1a9ef327e6db186e8e8b6df73e60dfde46aa79b5780d23c",
+    "level": "Level 5",
+    "project_split": "optimize",
+    "source_index": 5522,
+    "source_split": "train",
+    "stable_example_id": "math:train:5522:c7dff78774667dc82930bec3943ad5b53bc68325bd89930f15bd2f010d463478",
+    "subject": "number_theory"
+  },
+  {
+    "content_sha256": "fdd83b0ef8126ca15935b3220371a94ee3057316c5888de9c935c3c3445e9c85",
+    "input_sha256": "c573c16619459cab2e471c29a28a8ebd1726be6c4679b36875dcc80b24ae3ff0",
+    "level": "Level 3",
+    "project_split": "optimize",
+    "source_index": 5542,
+    "source_split": "train",
+    "stable_example_id": "math:train:5542:fdd83b0ef8126ca15935b3220371a94ee3057316c5888de9c935c3c3445e9c85",
+    "subject": "number_theory"
+  },
+  {
+    "content_sha256": "bded3d3a0ea49750f088e7dd910607f29fc43aaea7d57b30064d07df94fa5679",
+    "input_sha256": "dff708567f3679b5dddce6e980771b03aa7e29b9683a8b87891bac34e4bf16d0",
+    "level": "Level 5",
+    "project_split": "optimize",
+    "source_index": 4974,
+    "source_split": "train",
+    "stable_example_id": "math:train:4974:bded3d3a0ea49750f088e7dd910607f29fc43aaea7d57b30064d07df94fa5679",
+    "subject": "number_theory"
+  },
+  {
+    "content_sha256": "06e2000eade01eed37979a2dda196ece46b5956d710d4baa471cfc43c242c804",
+    "input_sha256": "c8b3d8f0457565eb27341e693234a0f28158e8646f7d1406b514ed4de7fb7b00",
+    "level": "Level 2",
+    "project_split": "optimize",
+    "source_index": 5029,
+    "source_split": "train",
+    "stable_example_id": "math:train:5029:06e2000eade01eed37979a2dda196ece46b5956d710d4baa471cfc43c242c804",
+    "subject": "number_theory"
+  },
+  {
+    "content_sha256": "a0c412412c51797cdda0308a5ecfcfa2b50b9e70925f9ac67024d9792db0cee6",
+    "input_sha256": "84609f62adb1dbd5b7da0298bc4724e2ba9094445b463cda4831a551c2f2a169",
+    "level": "Level 2",
+    "project_split": "optimize",
+    "source_index": 4812,
+    "source_split": "train",
+    "stable_example_id": "math:train:4812:a0c412412c51797cdda0308a5ecfcfa2b50b9e70925f9ac67024d9792db0cee6",
+    "subject": "number_theory"
+  },
+  {
+    "content_sha256": "e6797e295f97f0fa6bb0c38121501d3d75aef2f7628ca1cc5072fece2556a1ac",
+    "input_sha256": "58f27cf5c50adb979386d8059dd3dac9f8bc43ebf2cc1110534afaae208486f6",
+    "level": "Level 4",
+    "project_split": "optimize",
+    "source_index": 5478,
+    "source_split": "train",
+    "stable_example_id": "math:train:5478:e6797e295f97f0fa6bb0c38121501d3d75aef2f7628ca1cc5072fece2556a1ac",
+    "subject": "number_theory"
+  },
+  {
+    "content_sha256": "ae08da5062e2e144f4329de28d0cf043fffc9cea983ab1b8b3588759c1a6b75a",
+    "input_sha256": "eedbeeb99fde23091935b208e9431d7b31af095c77f06829df0ba5c747384c22",
+    "level": "Level 4",
+    "project_split": "optimize",
+    "source_index": 5416,
+    "source_split": "train",
+    "stable_example_id": "math:train:5416:ae08da5062e2e144f4329de28d0cf043fffc9cea983ab1b8b3588759c1a6b75a",
+    "subject": "number_theory"
+  },
+  {
+    "content_sha256": "3750f02eb257498918e9cd4f66e3a6e07fc9c4557f63a297660d24e3763dbedc",
+    "input_sha256": "ecd1f2758677f87eb27f718b8044db30d39f02794f68fb17d8144f4ad9e7bff0",
+    "level": "Level 5",
+    "project_split": "optimize",
+    "source_index": 5576,
+    "source_split": "train",
+    "stable_example_id": "math:train:5576:3750f02eb257498918e9cd4f66e3a6e07fc9c4557f63a297660d24e3763dbedc",
+    "subject": "prealgebra"
+  },
+  {
+    "content_sha256": "f8afa3e9e350b0159eeac3b5b5e5302ac7c95163d1136df72354f8613830d6d9",
+    "input_sha256": "d7a5a35adad3d24039d4cd8a754527be4c5f9f8eb0e8587766fe58924dadbce1",
+    "level": "Level 2",
+    "project_split": "optimize",
+    "source_index": 6507,
+    "source_split": "train",
+    "stable_example_id": "math:train:6507:f8afa3e9e350b0159eeac3b5b5e5302ac7c95163d1136df72354f8613830d6d9",
+    "subject": "prealgebra"
+  },
+  {
+    "content_sha256": "7efbd4fa47a606b13baa91434b41090219e0bc909d3104e8f5a1f48c6383839d",
+    "input_sha256": "0d797653298bac649049a04f53bc6895ed7d7767f03413adb3db668e1e120078",
+    "level": "Level 2",
+    "project_split": "optimize",
+    "source_index": 5799,
+    "source_split": "train",
+    "stable_example_id": "math:train:5799:7efbd4fa47a606b13baa91434b41090219e0bc909d3104e8f5a1f48c6383839d",
+    "subject": "prealgebra"
+  },
+  {
+    "content_sha256": "ad68d03db558dd34b71dd5684637e7fe3c473a426448c8b068d3a25c06837a3b",
+    "input_sha256": "db70f03c888a4762e9ddddf625f90bfe69e619ee07c3f1f910dac2132a156894",
+    "level": "Level 4",
+    "project_split": "optimize",
+    "source_index": 6401,
+    "source_split": "train",
+    "stable_example_id": "math:train:6401:ad68d03db558dd34b71dd5684637e7fe3c473a426448c8b068d3a25c06837a3b",
+    "subject": "prealgebra"
+  },
+  {
+    "content_sha256": "9116945a2c365f331582363f00dba4a02ebd4ad3d7c875f1034444e4e10ed71c",
+    "input_sha256": "4fb2dc8d6b0b265f2d9a35cc30ba64bd9ae6ee981bc1b69dc764f7827ff1fa05",
+    "level": "Level 3",
+    "project_split": "optimize",
+    "source_index": 5972,
+    "source_split": "train",
+    "stable_example_id": "math:train:5972:9116945a2c365f331582363f00dba4a02ebd4ad3d7c875f1034444e4e10ed71c",
+    "subject": "prealgebra"
+  },
+  {
+    "content_sha256": "3d070cce83018e3fb0b623cea8a28f2e63891dead0d3055bf584782687924c26",
+    "input_sha256": "25282bc929154305440cb20bfb3926df1e8de8efd8934388da37499a44ae6332",
+    "level": "Level 4",
+    "project_split": "optimize",
+    "source_index": 6103,
+    "source_split": "train",
+    "stable_example_id": "math:train:6103:3d070cce83018e3fb0b623cea8a28f2e63891dead0d3055bf584782687924c26",
+    "subject": "prealgebra"
+  },
+  {
+    "content_sha256": "82e22bd23250622f4d7b4b0766dbe3f520728b725a5925e4724f67004b8bd757",
+    "input_sha256": "aa021f18caae4787da9e79589264fbeaa11e76755aec052c67d5d05fc4fa9957",
+    "level": "Level 3",
+    "project_split": "optimize",
+    "source_index": 5949,
+    "source_split": "train",
+    "stable_example_id": "math:train:5949:82e22bd23250622f4d7b4b0766dbe3f520728b725a5925e4724f67004b8bd757",
+    "subject": "prealgebra"
+  },
+  {
+    "content_sha256": "d48051bb356de9463d8faf1d117121143771fae7d4cc641d575b28528e0ea426",
+    "input_sha256": "4cc2b0617e5e8809f2d3401bf10e81bf88a4bcf0799368834707c8cfc38284e3",
+    "level": "Level 2",
+    "project_split": "optimize",
+    "source_index": 5612,
+    "source_split": "train",
+    "stable_example_id": "math:train:5612:d48051bb356de9463d8faf1d117121143771fae7d4cc641d575b28528e0ea426",
+    "subject": "prealgebra"
+  },
+  {
+    "content_sha256": "cee443a2ec5dcf73afd6cc10b2c6c21aa533193c3000d2a9adc1d68eca1b4059",
+    "input_sha256": "0bb00689b056f20a489e5563da9e0ff475ed7280a27027c42dc2df314fec3471",
+    "level": "Level 3",
+    "project_split": "optimize",
+    "source_index": 5714,
+    "source_split": "train",
+    "stable_example_id": "math:train:5714:cee443a2ec5dcf73afd6cc10b2c6c21aa533193c3000d2a9adc1d68eca1b4059",
+    "subject": "prealgebra"
+  },
+  {
+    "content_sha256": "b44388268811cb7398f0caeaed32f99efff122f6a9450f60285376a7b1af213e",
+    "input_sha256": "36c427ccca7906a50654981a74d902f46c94fc556111e2b1ca82a616caec7467",
+    "level": "Level 4",
+    "project_split": "optimize",
+    "source_index": 7414,
+    "source_split": "train",
+    "stable_example_id": "math:train:7414:b44388268811cb7398f0caeaed32f99efff122f6a9450f60285376a7b1af213e",
+    "subject": "precalculus"
+  },
+  {
+    "content_sha256": "cea5c49069025a8dcb59321864a37ef9c774c458ce0b46b20baa79ed4f34fb01",
+    "input_sha256": "c4db7ea840375d0cf491336bcb96668190909fc0a0c879e273eeb9b7fe2687fe",
+    "level": "Level 3",
+    "project_split": "optimize",
+    "source_index": 6963,
+    "source_split": "train",
+    "stable_example_id": "math:train:6963:cea5c49069025a8dcb59321864a37ef9c774c458ce0b46b20baa79ed4f34fb01",
+    "subject": "precalculus"
+  },
+  {
+    "content_sha256": "935eaffcdc99c8002c9eb93c534f4435fd40576206c7dc4add972a417b512ac5",
+    "input_sha256": "1ea38828df96dd2c0a9ad48bdb0616e0aade1bb33cb8a00035ebfca472240536",
+    "level": "Level 4",
+    "project_split": "optimize",
+    "source_index": 6796,
+    "source_split": "train",
+    "stable_example_id": "math:train:6796:935eaffcdc99c8002c9eb93c534f4435fd40576206c7dc4add972a417b512ac5",
+    "subject": "precalculus"
+  },
+  {
+    "content_sha256": "51f2429033a3a8adb492c6b8e18ff882235987e6fd098e30ad718136080218ef",
+    "input_sha256": "a2d53dc664424a32fc52f1526dbef5200c5c5bcbea47f0d016526248f806a494",
+    "level": "Level 5",
+    "project_split": "optimize",
+    "source_index": 6828,
+    "source_split": "train",
+    "stable_example_id": "math:train:6828:51f2429033a3a8adb492c6b8e18ff882235987e6fd098e30ad718136080218ef",
+    "subject": "precalculus"
+  },
+  {
+    "content_sha256": "527c15374aa682d3e6b5c05fe2ccab55cf6d756d38c172a9e826e4a4e66347c3",
+    "input_sha256": "171ff0780ced51f91d45d9ba5a90e3e0943b39933192916c57a41ce794f83edc",
+    "level": "Level 5",
+    "project_split": "optimize",
+    "source_index": 7438,
+    "source_split": "train",
+    "stable_example_id": "math:train:7438:527c15374aa682d3e6b5c05fe2ccab55cf6d756d38c172a9e826e4a4e66347c3",
+    "subject": "precalculus"
+  }
+]

@@ -1,0 +1,7 @@
+{
+  "raw_invalid_count": 0,
+  "raw_invalid_reasons": {},
+  "raw_valid_generations": 60,
+  "successful_solver_generations": 60,
+  "terminal_invalid_continues": true
+}

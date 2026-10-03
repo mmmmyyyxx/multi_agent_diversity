@@ -1,0 +1,347 @@
+{
+  "authorized_total": 40000000,
+  "charge_categories": {
+    "first_attempt": 26442,
+    "optimizer": 6386
+  },
+  "constitution_prior_charged": 325002,
+  "phase_charge": 32828,
+  "phase_end": {
+    "authorization_amendments": [
+      {
+        "authorization_sha256": "fb10eaa9747715e25ae60b1eeead524a0c7aec1a78adfc04d7764fc1e1ed9cae",
+        "authorized_total": 40000000,
+        "event_sha256": "dfc1498d06da9c1bb206ef4a7b24686f9046a6e8ab8fe262399d104b59b6ef09"
+      }
+    ],
+    "authorized_total": 40000000,
+    "by_attempt": {
+      "math_unified_v2_1_A1_seed81_canary_attempt1": {
+        "charged_total": 14245,
+        "fallback_charged": 0,
+        "input_tokens": 3423,
+        "output_tokens": 10822,
+        "physical_attempts": 27,
+        "provider_reported_actual": 14245
+      },
+      "math_unified_v2_1_A1_seed81_canary_attempt2": {
+        "charged_total": 1007,
+        "fallback_charged": 0,
+        "input_tokens": 327,
+        "output_tokens": 680,
+        "physical_attempts": 2,
+        "provider_reported_actual": 1007
+      },
+      "math_unified_v2_1_A1_seed81_canary_attempt3": {
+        "charged_total": 21535,
+        "fallback_charged": 0,
+        "input_tokens": 13764,
+        "output_tokens": 7771,
+        "physical_attempts": 55,
+        "provider_reported_actual": 21535
+      },
+      "math_unified_v2_1_A1_seed81_canary_attempt4": {
+        "charged_total": 5327,
+        "fallback_charged": 0,
+        "input_tokens": 1090,
+        "output_tokens": 4237,
+        "physical_attempts": 5,
+        "provider_reported_actual": 5327
+      },
+      "math_unified_v2_1_A1_seed81_canary_attempt5": {
+        "charged_total": 34928,
+        "fallback_charged": 0,
+        "input_tokens": 16609,
+        "output_tokens": 18319,
+        "physical_attempts": 63,
+        "provider_reported_actual": 34928
+      },
+      "math_unified_v2_1_A1_seed81_canary_attempt6": {
+        "charged_total": 162884,
+        "fallback_charged": 9504,
+        "input_tokens": 77748,
+        "output_tokens": 85136,
+        "physical_attempts": 274,
+        "provider_reported_actual": 153380
+      },
+      "math_unified_v2_A1_seed81_canary_attempt2": {
+        "charged_total": 7231,
+        "fallback_charged": 7231,
+        "input_tokens": 5431,
+        "output_tokens": 1800,
+        "physical_attempts": 1,
+        "provider_reported_actual": 0
+      },
+      "math_unified_v2_A1_seed81_canary_attempt3": {
+        "charged_total": 8303,
+        "fallback_charged": 0,
+        "input_tokens": 2149,
+        "output_tokens": 6154,
+        "physical_attempts": 16,
+        "provider_reported_actual": 8303
+      },
+      "math_v2_1_low_cost_A1_seed81_canary_attempt1": {
+        "charged_total": 38428,
+        "fallback_charged": 10292,
+        "input_tokens": 24117,
+        "output_tokens": 14311,
+        "physical_attempts": 61,
+        "provider_reported_actual": 28136
+      },
+      "math_v2_1_low_cost_A1_seed81_canary_attempt2": {
+        "charged_total": 29405,
+        "fallback_charged": 0,
+        "input_tokens": 16948,
+        "output_tokens": 12457,
+        "physical_attempts": 61,
+        "provider_reported_actual": 29405
+      },
+      "math_v2_1_low_cost_A1_seed81_canary_attempt4": {
+        "charged_total": 32828,
+        "fallback_charged": 0,
+        "input_tokens": 20360,
+        "output_tokens": 12468,
+        "physical_attempts": 64,
+        "provider_reported_actual": 32828
+      },
+      "math_v2_1_optimizer_nonthinking_witness_attempt2": {
+        "charged_total": 1709,
+        "fallback_charged": 0,
+        "input_tokens": 1325,
+        "output_tokens": 384,
+        "physical_attempts": 1,
+        "provider_reported_actual": 1709
+      }
+    },
+    "by_model": {
+      "qwen3-8b": {
+        "charged_total": 336320,
+        "fallback_charged": 16735,
+        "input_tokens": 167416,
+        "output_tokens": 168904,
+        "physical_attempts": 623,
+        "provider_reported_actual": 319585
+      },
+      "qwen3.7-flash": {
+        "charged_total": 21510,
+        "fallback_charged": 10292,
+        "input_tokens": 15875,
+        "output_tokens": 5635,
+        "physical_attempts": 7,
+        "provider_reported_actual": 11218
+      }
+    },
+    "by_role": {
+      "reflection": {
+        "charged_total": 21510,
+        "fallback_charged": 10292,
+        "input_tokens": 15875,
+        "output_tokens": 5635,
+        "physical_attempts": 7,
+        "provider_reported_actual": 11218
+      },
+      "solver": {
+        "charged_total": 336320,
+        "fallback_charged": 16735,
+        "input_tokens": 167416,
+        "output_tokens": 168904,
+        "physical_attempts": 623,
+        "provider_reported_actual": 319585
+      }
+    },
+    "by_stage": {
+      "canary": {
+        "charged_total": 356121,
+        "fallback_charged": 27027,
+        "input_tokens": 181966,
+        "output_tokens": 174155,
+        "physical_attempts": 629,
+        "provider_reported_actual": 329094
+      },
+      "optimizer_witness": {
+        "charged_total": 1709,
+        "fallback_charged": 0,
+        "input_tokens": 1325,
+        "output_tokens": 384,
+        "physical_attempts": 1,
+        "provider_reported_actual": 1709
+      }
+    },
+    "charged_total": 357830,
+    "fallback_charged": 27027,
+    "identity": "AUTONOMOUS_REAL_TOKEN_LEDGER_V2",
+    "input_tokens": 183291,
+    "last_event_sha256": "35b3cb0a15d4225845166d176e1990ca60211b2f555ef252943b5fb8dbf224be",
+    "output_tokens": 174539,
+    "provider_reported_actual": 330803,
+    "remaining": 39642170,
+    "reserved_inflight": 0,
+    "task_sha256": "3db28ade2b799d2169c6cdbdb03b82e63517ab74c46f8212905855f2fcf9cd9a"
+  },
+  "phase_start": {
+    "authorization_amendments": [
+      {
+        "authorization_sha256": "fb10eaa9747715e25ae60b1eeead524a0c7aec1a78adfc04d7764fc1e1ed9cae",
+        "authorized_total": 40000000,
+        "event_sha256": "dfc1498d06da9c1bb206ef4a7b24686f9046a6e8ab8fe262399d104b59b6ef09"
+      }
+    ],
+    "authorized_total": 40000000,
+    "by_attempt": {
+      "math_unified_v2_1_A1_seed81_canary_attempt1": {
+        "charged_total": 14245,
+        "fallback_charged": 0,
+        "input_tokens": 3423,
+        "output_tokens": 10822,
+        "physical_attempts": 27,
+        "provider_reported_actual": 14245
+      },
+      "math_unified_v2_1_A1_seed81_canary_attempt2": {
+        "charged_total": 1007,
+        "fallback_charged": 0,
+        "input_tokens": 327,
+        "output_tokens": 680,
+        "physical_attempts": 2,
+        "provider_reported_actual": 1007
+      },
+      "math_unified_v2_1_A1_seed81_canary_attempt3": {
+        "charged_total": 21535,
+        "fallback_charged": 0,
+        "input_tokens": 13764,
+        "output_tokens": 7771,
+        "physical_attempts": 55,
+        "provider_reported_actual": 21535
+      },
+      "math_unified_v2_1_A1_seed81_canary_attempt4": {
+        "charged_total": 5327,
+        "fallback_charged": 0,
+        "input_tokens": 1090,
+        "output_tokens": 4237,
+        "physical_attempts": 5,
+        "provider_reported_actual": 5327
+      },
+      "math_unified_v2_1_A1_seed81_canary_attempt5": {
+        "charged_total": 34928,
+        "fallback_charged": 0,
+        "input_tokens": 16609,
+        "output_tokens": 18319,
+        "physical_attempts": 63,
+        "provider_reported_actual": 34928
+      },
+      "math_unified_v2_1_A1_seed81_canary_attempt6": {
+        "charged_total": 162884,
+        "fallback_charged": 9504,
+        "input_tokens": 77748,
+        "output_tokens": 85136,
+        "physical_attempts": 274,
+        "provider_reported_actual": 153380
+      },
+      "math_unified_v2_A1_seed81_canary_attempt2": {
+        "charged_total": 7231,
+        "fallback_charged": 7231,
+        "input_tokens": 5431,
+        "output_tokens": 1800,
+        "physical_attempts": 1,
+        "provider_reported_actual": 0
+      },
+      "math_unified_v2_A1_seed81_canary_attempt3": {
+        "charged_total": 8303,
+        "fallback_charged": 0,
+        "input_tokens": 2149,
+        "output_tokens": 6154,
+        "physical_attempts": 16,
+        "provider_reported_actual": 8303
+      },
+      "math_v2_1_low_cost_A1_seed81_canary_attempt1": {
+        "charged_total": 38428,
+        "fallback_charged": 10292,
+        "input_tokens": 24117,
+        "output_tokens": 14311,
+        "physical_attempts": 61,
+        "provider_reported_actual": 28136
+      },
+      "math_v2_1_low_cost_A1_seed81_canary_attempt2": {
+        "charged_total": 29405,
+        "fallback_charged": 0,
+        "input_tokens": 16948,
+        "output_tokens": 12457,
+        "physical_attempts": 61,
+        "provider_reported_actual": 29405
+      },
+      "math_v2_1_optimizer_nonthinking_witness_attempt2": {
+        "charged_total": 1709,
+        "fallback_charged": 0,
+        "input_tokens": 1325,
+        "output_tokens": 384,
+        "physical_attempts": 1,
+        "provider_reported_actual": 1709
+      }
+    },
+    "by_model": {
+      "qwen3-8b": {
+        "charged_total": 309878,
+        "fallback_charged": 16735,
+        "input_tokens": 151791,
+        "output_tokens": 158087,
+        "physical_attempts": 563,
+        "provider_reported_actual": 293143
+      },
+      "qwen3.7-flash": {
+        "charged_total": 15124,
+        "fallback_charged": 10292,
+        "input_tokens": 11140,
+        "output_tokens": 3984,
+        "physical_attempts": 3,
+        "provider_reported_actual": 4832
+      }
+    },
+    "by_role": {
+      "reflection": {
+        "charged_total": 15124,
+        "fallback_charged": 10292,
+        "input_tokens": 11140,
+        "output_tokens": 3984,
+        "physical_attempts": 3,
+        "provider_reported_actual": 4832
+      },
+      "solver": {
+        "charged_total": 309878,
+        "fallback_charged": 16735,
+        "input_tokens": 151791,
+        "output_tokens": 158087,
+        "physical_attempts": 563,
+        "provider_reported_actual": 293143
+      }
+    },
+    "by_stage": {
+      "canary": {
+        "charged_total": 323293,
+        "fallback_charged": 27027,
+        "input_tokens": 161606,
+        "output_tokens": 161687,
+        "physical_attempts": 565,
+        "provider_reported_actual": 296266
+      },
+      "optimizer_witness": {
+        "charged_total": 1709,
+        "fallback_charged": 0,
+        "input_tokens": 1325,
+        "output_tokens": 384,
+        "physical_attempts": 1,
+        "provider_reported_actual": 1709
+      }
+    },
+    "charged_total": 325002,
+    "fallback_charged": 27027,
+    "identity": "AUTONOMOUS_REAL_TOKEN_LEDGER_V2",
+    "input_tokens": 162931,
+    "last_event_sha256": "62c098eaa2dd42097ec1f3c0c04f07b248386614413b95e7d9a00adddd05b5fa",
+    "output_tokens": 162071,
+    "provider_reported_actual": 297975,
+    "remaining": 39674998,
+    "reserved_inflight": 0,
+    "task_sha256": "3db28ade2b799d2169c6cdbdb03b82e63517ab74c46f8212905855f2fcf9cd9a"
+  },
+  "prior_accounting_charged": 325002,
+  "protected_validation_reserve": 9078500
+}

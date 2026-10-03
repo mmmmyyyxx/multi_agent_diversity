@@ -1,0 +1,7 @@
+{
+  "raw_invalid_count": 0,
+  "raw_invalid_reasons": {},
+  "recovered_requests": 0,
+  "semantic_retry_generations": 0,
+  "terminal_requests": 0
+}

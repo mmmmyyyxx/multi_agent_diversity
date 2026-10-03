@@ -1,0 +1,62 @@
+[
+  {
+    "commit_rate": null,
+    "commits": 0,
+    "exposures": 1,
+    "member": 0,
+    "opportunities": 0,
+    "opportunity_share": 0.0,
+    "proposals": 0,
+    "realized_gain_events": 0,
+    "responsibility_observations": 1,
+    "specialization_events": 0
+  },
+  {
+    "commit_rate": 0.0,
+    "commits": 0,
+    "exposures": 1,
+    "member": 1,
+    "opportunities": 1,
+    "opportunity_share": 1.0,
+    "proposals": 4,
+    "realized_gain_events": 0,
+    "responsibility_observations": 1,
+    "specialization_events": 0
+  },
+  {
+    "commit_rate": null,
+    "commits": 0,
+    "exposures": 1,
+    "member": 2,
+    "opportunities": 0,
+    "opportunity_share": 0.0,
+    "proposals": 0,
+    "realized_gain_events": 0,
+    "responsibility_observations": 1,
+    "specialization_events": 0
+  },
+  {
+    "commit_rate": null,
+    "commits": 0,
+    "exposures": 1,
+    "member": 3,
+    "opportunities": 0,
+    "opportunity_share": 0.0,
+    "proposals": 0,
+    "realized_gain_events": 0,
+    "responsibility_observations": 1,
+    "specialization_events": 0
+  },
+  {
+    "commit_rate": null,
+    "commits": 0,
+    "exposures": 1,
+    "member": 4,
+    "opportunities": 0,
+    "opportunity_share": 0.0,
+    "proposals": 0,
+    "realized_gain_events": 0,
+    "responsibility_observations": 1,
+    "specialization_events": 0
+  }
+]

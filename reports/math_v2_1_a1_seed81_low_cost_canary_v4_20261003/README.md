@@ -1,3 +1,3 @@
-# math_v2_1_a1_seed81_low_cost_canary_v4
+# Low-cost canary
 
-Registered draft under the new autonomous constitution; no real calls in this task. Generation parameters, scientific method and low-cost data are unchanged. Prior diagnostic outputs are not imported.
+Fresh A1 Seed81 canary completed 1 production opportunities with 0 commits. Frozen decoding and terminal-invalid recovery were dispatched; exact within-attempt reuse and cumulative accounting passed independent audits. No prior-attempt outputs were imported. Pattern, Memory, held-out search feedback and Test calls were zero. Evidence is sanitized and development-only. Canary PASS.

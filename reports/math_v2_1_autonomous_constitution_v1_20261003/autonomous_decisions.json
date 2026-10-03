@@ -37,5 +37,13 @@
     "reason": "OS Temp outside governed run root; preserve failed check and use repo-local fresh test temp directories",
     "scientific_semantic_delta": false,
     "source_changed": false
+  },
+  {
+    "classification": "OPERATIONAL",
+    "decision": "close_passed_canary_and_admit_independent_fresh_pilot",
+    "evidence": "reports/math_v2_1_a1_seed81_low_cost_canary_v4_20261003/final_status.json",
+    "generation_parameters_changed": false,
+    "old_attempt_output_reuse": false,
+    "scientific_semantic_delta": false
   }
 ]
