@@ -6649,7 +6649,7 @@ experiments:
   scientific_status: PREDICTION_VALIDITY_ZERO_API_PASS
   implementation_commit: e8571e789de78a3f382e805a23fa42faa774c11f
   execution_commit: null
-  result_commit: null
+  result_commit: e8571e789de78a3f382e805a23fa42faa774c11f
   manifest: experiments/manifests/math_v2_1_prediction_validity_policy_v1.yaml
   report: reports/math_v2_1_prediction_validity_policy_v1_20261003
   classifier: V2_1_MATH_PREDICTION_VALIDITY_FREEZE
@@ -6661,7 +6661,6 @@ experiments:
     split, initial team, reference and mathematical equivalence remain frozen.
   unavailable:
     execution_commit: Not executed.
-    result_commit: Awaiting evidence.
 - experiment_id: math_v2_1_preexecution_freeze_v6
   kind: PREEXECUTION_FREEZE
   era: BENCHMARK_GENERALIZATION
@@ -6672,7 +6671,7 @@ experiments:
   scientific_status: PREDICTION_VALIDITY_ZERO_API_PASS
   implementation_commit: e8571e789de78a3f382e805a23fa42faa774c11f
   execution_commit: null
-  result_commit: null
+  result_commit: e7a2aea89e56c7a97632d99de2af1c93f1459acf
   manifest: experiments/manifests/math_v2_1_preexecution_freeze_v6.yaml
   report: reports/math_v2_1_preexecution_freeze_v6_20261003
   classifier: V2_1_MATH_PREDICTION_VALIDITY_FREEZE
@@ -6684,7 +6683,6 @@ experiments:
     split, initial team, reference and mathematical equivalence remain frozen.
   unavailable:
     execution_commit: Not executed.
-    result_commit: Awaiting evidence.
 - experiment_id: math_v2_1_a1_seed81_real_canary_v6
   kind: REAL_CANARY
   era: BENCHMARK_GENERALIZATION
@@ -6695,7 +6693,7 @@ experiments:
   scientific_status: NOT_EVALUABLE_USER_ABORT
   implementation_commit: e8571e789de78a3f382e805a23fa42faa774c11f
   execution_commit: e7a2aea89e56c7a97632d99de2af1c93f1459acf
-  result_commit: null
+  result_commit: 1961fad3e6756ef8ced222a8195e8c0a219b7e47
   manifest: experiments/manifests/math_v2_1_a1_seed81_real_canary_v6.yaml
   report: reports/math_v2_1_a1_seed81_real_canary_v6_20261003
   classifier: STOP_USER_REQUESTED
@@ -6705,8 +6703,7 @@ experiments:
   notes:
   - Only successful-transport prediction invalidity treatment changes; decoding, method,
     split, initial team, reference and mathematical equivalence remain frozen.
-  unavailable:
-    result_commit: Awaiting evidence.
+  unavailable: {}
   authorization_consumed: true
 - experiment_id: math_v2_1_a1_seed81_pilot_v6
   kind: PILOT
@@ -6718,7 +6715,7 @@ experiments:
   scientific_status: NOT_EVALUABLE_USER_ABORT
   implementation_commit: e8571e789de78a3f382e805a23fa42faa774c11f
   execution_commit: null
-  result_commit: null
+  result_commit: 1961fad3e6756ef8ced222a8195e8c0a219b7e47
   manifest: experiments/manifests/math_v2_1_a1_seed81_pilot_v6.yaml
   report: reports/math_v2_1_a1_seed81_pilot_v6_20261003
   classifier: STOP_USER_REQUESTED
@@ -6730,5 +6727,4 @@ experiments:
     split, initial team, reference and mathematical equivalence remain frozen.
   unavailable:
     execution_commit: Not executed.
-    result_commit: Awaiting evidence.
   authorization_consumed: false
