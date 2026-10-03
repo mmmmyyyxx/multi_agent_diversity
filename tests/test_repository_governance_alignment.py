@@ -259,9 +259,7 @@ def test_real_canary_is_execution_evidence_only(registry):
     assert row['active_for_new_work'] is False
 
 
-def test_canary_abort_does_not_unlock_formal_or_heldout():
-    frontier=load_yaml(ROOT/'experiments/current_frontier.yaml')
-    registry=load_yaml(ROOT/'experiments/registry.yaml')
+def _assert_canary_does_not_unlock_formal_or_heldout(frontier,registry):
     previous=next(r for r in registry['experiments'] if r['experiment_id']==frontier['last_canary_milestone'])
     assert previous['kind']=='REAL_CANARY' and previous['authorization_consumed'] is True
     # A later operational preflight can close Canary readiness. Historical
@@ -275,26 +273,56 @@ def test_canary_abort_does_not_unlock_formal_or_heldout():
                 assert frontier['current_canary_status'] == 'METHOD_SEMANTIC_CONTRACT_REFREEZE_REQUIRED'
             else:
                 assert frontier['autonomous_authorization_status'] in {
-                    'V2_1_CONTINUATION_RECEIVED_EXACT_SCOPE_PENDING', 'V2_1_CONTINUATION_EXACT_SCOPES_CLOSED'}
+                    'V2_1_CONTINUATION_RECEIVED_EXACT_SCOPE_PENDING', 'V2_1_CONTINUATION_EXACT_SCOPES_CLOSED',
+                    'LOW_COST_TASK_COMPLETE_SCOPES_CLOSED'}
                 current=next(r for r in registry['experiments'] if r['experiment_id']==frontier['current_experiment'])
                 manifest=load_yaml(ROOT/current['manifest'])
                 assert manifest['method_identity']=='unified_team_prompt_search_v2_1'
-                assert manifest['execution_binding']['identity'] in {'MATH_V2_1_EXECUTION_BINDING_V1','MATH_V2_1_EXECUTION_BINDING_V2','MATH_V2_1_EXECUTION_BINDING_V3'}
-                if manifest['execution_binding']['identity'] in {'MATH_V2_1_EXECUTION_BINDING_V2','MATH_V2_1_EXECUTION_BINDING_V3'}:
+                assert manifest['execution_binding']['identity'] in {'MATH_V2_1_EXECUTION_BINDING_V1','MATH_V2_1_EXECUTION_BINDING_V2','MATH_V2_1_EXECUTION_BINDING_V3','MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1'}
+                if manifest['execution_binding']['identity'] in {'MATH_V2_1_EXECUTION_BINDING_V2','MATH_V2_1_EXECUTION_BINDING_V3','MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1'}:
                     from multi_dataset_diverse_rl.benchmarks.math_solver_decoding import solver_decoding_contract
                     assert manifest['solver_decoding_policy']==solver_decoding_contract()
                 if manifest['execution_binding']['identity']=='MATH_V2_1_EXECUTION_BINDING_V3':
                     from multi_dataset_diverse_rl.benchmarks.math_prediction_validity import prediction_validity_contract
                     assert manifest['prediction_validity_policy']==prediction_validity_contract()
+                if manifest['execution_binding']['identity']=='MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1':
+                    from multi_dataset_diverse_rl.benchmarks.math_prediction_validity import frozen_prediction_policy,invalid_recovery_contract
+                    binding=load_yaml(ROOT/manifest['execution_binding']['path'])
+                    assert manifest['prediction_validity_policy']==frozen_prediction_policy(binding)
+                    assert manifest['invalid_recovery_policy']==invalid_recovery_contract()
                 assert manifest['authorization']['real_api_authorized'] is False
         else:
             assert frontier['current_canary_status'] == 'STOP_SCIENTIFIC_CONTRACT_AMENDMENT_REQUIRED'
             assert frontier['autonomous_authorization_status'] == 'HALTED_BY_NON_OPERATIONAL_FAILURE'
     else:
-        prefix='math_unified_v2_1_A1_seed81_canary_attempt' if frontier['current_method']=='unified_team_prompt_search_v2_1' else 'math_unified_v2_A1_seed81_canary_attempt'
-        assert next_attempt.startswith(prefix)
+        # Attempt identity belongs to the registered execution binding. A
+        # historical naming prefix cannot govern a new preregistered protocol.
+        next_node=next(r for r in registry['experiments'] if r['experiment_id']==frontier['next_canary_milestone'])
+        assert next_node['kind']=='REAL_CANARY'
+        manifest=load_yaml(ROOT/next_node['manifest'])
+        binding=load_yaml(ROOT/manifest['execution_binding']['path'])
+        assert manifest['method_identity']==frontier['current_method']
+        assert binding['execution_phase']=='canary'
+        assert next_attempt==binding['execution_attempt_id']==binding['canary_attempt_id']==binding['cache_namespace']
+        assert manifest['authorization']['real_api_authorized'] is False
     assert frontier['formal_a1_ready'] is False
     assert frontier['formal_a1_authorized'] is False
     assert frontier['real_api_authorized'] is False
     assert frontier['validation_access']=='not_authorized'
     assert frontier['test_access']=='sealed'
+
+
+def test_canary_abort_does_not_unlock_formal_or_heldout():
+    _assert_canary_does_not_unlock_formal_or_heldout(
+        load_yaml(ROOT/'experiments/current_frontier.yaml'),load_yaml(ROOT/'experiments/registry.yaml'))
+
+
+@pytest.mark.parametrize('field,value',[('next_canary_attempt_id','unregistered_attempt'),
+    ('next_canary_milestone','math_v2_1_a1_seed81_low_cost_pilot_v1')])
+def test_pending_canary_identity_mismatch_fails_closed(field,value):
+    frontier=load_yaml(ROOT/'experiments/current_frontier.yaml')
+    frontier['next_canary_milestone']='math_v2_1_a1_seed81_low_cost_canary_v1'
+    frontier['next_canary_attempt_id']='math_v2_1_low_cost_A1_seed81_canary_attempt1'
+    frontier[field]=value
+    with pytest.raises(AssertionError):
+        _assert_canary_does_not_unlock_formal_or_heldout(frontier,load_yaml(ROOT/'experiments/registry.yaml'))
