@@ -11,7 +11,7 @@ current_architecture: Unified Team Prompt Search
 method_identity: unified_team_prompt_search_v2_1
 current_method: unified_team_prompt_search_v2_1
 current_implementation: Versioned method semantic contract; benchmark-neutral production composition; zero-API audit
-current_experiment: math_v2_1_a1_seed81_low_cost_canary_v6
+current_experiment: math_v2_1_a3_seed81_low_cost_canary_v1
 current_benchmark_suite:
 - math
 - ifbench
@@ -28,19 +28,19 @@ validation_access: not_authorized
 test_access: sealed
 open_questions: docs/research/OPEN_QUESTIONS.md
 last_method_milestone: unified_semantic_contract_v2_1
-canary_manifest: experiments/manifests/math_v2_1_a1_seed81_low_cost_canary_v6.yaml
+canary_manifest: experiments/manifests/math_v2_1_a3_seed81_low_cost_canary_v1.yaml
 last_preexecution_milestone: math_v2_1_preexecution_low_cost_v6
 last_canary_milestone: math_v2_1_a1_seed81_low_cost_canary_v6
-current_canary_status: PASS
+current_canary_status: DRAFT
 formal_a1_ready: false
 formal_a1_authorized: false
-current_execution_blocker: USER_STOP_AFTER_CANARY
+current_execution_blocker: AWAITING_FRESH_MEMORY_CANARY_GATES
 default_optimizer_generation_policy: OPTIMIZER_REFLECTION_GENERATION_POLICY_V3
 default_optimizer_enable_thinking: false
 optimizer_policy_amendment_status: LAYER1_GENERATION_V3_FROZEN_AND_DISPATCHED
 optimizer_policy_amendment_authority: experiments/protocols/math_v2_1_layer1_redesign_v1/canary_only_authorization_decision.json
-next_canary_milestone: null
-next_canary_attempt_id: null
+next_canary_milestone: math_v2_1_a3_seed81_low_cost_canary_v1
+next_canary_attempt_id: math_v2_1_memory_A3_seed81_canary_attempt1
 last_autonomous_milestone: math_v2_1_layer1_preexecution_repair_v1
 autonomous_user_authorization_received: true
 autonomous_token_authorization: 40000000
@@ -48,17 +48,17 @@ autonomous_tokens_consumed: 1104556
 autonomous_tokens_remaining: 38895444
 token_accounting_policy: RESERVATION_V2
 prior_accounting_stop_resolution: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2
-autonomous_authorization_status: CANARY_COMPLETE_SCOPE_CLOSED
+autonomous_authorization_status: FRESH_MEMORY_CANARY_PENDING_FREEZE
 pilot_search_complete: false
 pilot_validation_complete: false
 pilot_final_status: NOT_RUN_USER_DEFERRED
-task_stop_reason: CANARY_COMPLETE_USER_REQUESTED_STOP
+task_stop_reason: STOP_AFTER_FRESH_CANARY
 optimizer_nonthinking_wire_confirmed: YES_EQUIVALENT_EVIDENCE
 last_candidate_contract_audit: math_v2_1_proposal_semantic_postmortem_v1
 pilot_scientific_interpretation: NOT_ESTIMATED
 candidate_contract_audit_status: COMPLETED_ZERO_API
 next_search_contract_alignment: VERIFIED_FRESH_CANARY_PASS
-current_layer1_backend: LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1
+current_layer1_backend: LAYER1_BOUNDED_MEMORY_SEARCH_V2
 next_pilot_authorized: false
 next_validation_authorized: false
 last_completed_pilot_milestone: math_v2_1_a1_seed81_low_cost_pilot_v4
@@ -70,6 +70,10 @@ historical_pilot_status:
 new_pilot_search_complete: false
 new_pilot_validation_complete: false
 new_pilot_final_status: NOT_RUN_USER_DEFERRED
+current_memory_policy: structured_action_failure_memory_v3
+current_configuration_arm: A3
+current_pattern_enabled: false
+current_memory_enabled: true
 ```
 
 ## Experiment and engineering DAG
@@ -154,6 +158,9 @@ flowchart TD
     n251["math_v2_1_preexecution_low_cost_v6<br/>PREEXECUTION_FREEZE<br/>COMPLETED"]
     n252["math_v2_1_a1_seed81_low_cost_canary_v6<br/>REAL_CANARY<br/>COMPLETED"]
     n253["math_v2_1_layer1_panel_feedback_audit_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
+    n254["math_v2_1_layer1_memory_amendment_v1<br/>PROTOCOL_FREEZE<br/>DRAFT"]
+    n255["math_v2_1_memory_preexecution_v1<br/>PREEXECUTION_FREEZE<br/>DRAFT"]
+    n256["math_v2_1_a3_seed81_low_cost_canary_v1<br/>REAL_CANARY<br/>DRAFT"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -484,6 +491,9 @@ flowchart TD
   n250 -->|derived_from| n251
   n251 -->|derived_from| n252
   n252 -->|audit_of| n253
+  n253 -->|derived_from| n254
+  n254 -->|derived_from| n255
+  n255 -->|derived_from| n256
 ```
 
 ## Archived branches and unresolved evidence

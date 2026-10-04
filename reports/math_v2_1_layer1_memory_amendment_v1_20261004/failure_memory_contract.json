@@ -1,0 +1,27 @@
+{
+  "action_source": "closed vocabulary deterministically grounded in actual procedure edits",
+  "controller_fields_visible": false,
+  "eviction": "current_lane_then_newest_then_stable_identity",
+  "invalid_duplicate_and_neutral_automatic_writes": false,
+  "limits": {
+    "max_context_chars": 1200,
+    "max_failure_entries_per_member": 5,
+    "private_storage_limit": 24,
+    "shared_storage_limit": 48,
+    "top_k_private": 3,
+    "top_k_shared": 3
+  },
+  "proposal_summary_limit": 240,
+  "representation": [
+    "Situation",
+    "Action",
+    "Outcome",
+    "Lesson"
+  ],
+  "retrieval_priority": [
+    "same-member same-lane failure",
+    "same-member success",
+    "shared structural risk"
+  ],
+  "summary_failure": "candidate continues; deterministic action or skipped semantic write"
+}

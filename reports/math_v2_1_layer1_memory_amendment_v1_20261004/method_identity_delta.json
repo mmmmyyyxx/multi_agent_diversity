@@ -1,0 +1,41 @@
+{
+  "execution_binding": "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1",
+  "memory_enabled": true,
+  "memory_policy": "structured_action_failure_memory_v3",
+  "new_arm": "A3",
+  "new_config_hash": "efcfc92b17aa521b54f9d1388b8b98f2ffb36952dab42d1ce1d2a697332dbc03",
+  "optimizer_input_schema": "LAYER1_CURRENT_EVIDENCE_MEMORY_INPUT_V2",
+  "outer_method": "unified_team_prompt_search_v2_1",
+  "panel_evidence_policy": "single_mechanism_preservation_anchor_v3",
+  "parent_config_hash": "91c50733c9623a76e4e632e5f65107a9cb48d949ac8a84f94d631882138bd934",
+  "pattern_enabled": false,
+  "search_policy": {
+    "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+    "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
+    "k_local_return": 4,
+    "max_generations": 6,
+    "max_prompt_chars": 3000,
+    "metric_limit": 36,
+    "official_gepa_fidelity": false,
+    "optimizer_input_schema": "LAYER1_CURRENT_EVIDENCE_MEMORY_INPUT_V2",
+    "panel_policy": "single_mechanism_preservation_anchor_v3",
+    "panel_size": 6
+  },
+  "unchanged": [
+    "Responsibility",
+    "target allocation",
+    "feasibility",
+    "team size",
+    "equal plurality",
+    "initial competence floor",
+    "strict team gain",
+    "fixed peers",
+    "Shadow",
+    "models",
+    "generation policies",
+    "memberships",
+    "recovery",
+    "local metric cap",
+    "Test seal"
+  ]
+}

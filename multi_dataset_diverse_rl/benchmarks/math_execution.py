@@ -176,10 +176,12 @@ class MATHExecutionBinding:
         from ..search.scientific_aggregation import EquivalencePluralityAggregation
         from ..search.gepa_v2 import GEPATeamExposureOptimizer
         team = json.loads(self.path(self.contract["initial_team_path"]).read_bytes())
-        if self.contract['identity']==versions.MATH_LAYER1_EXECUTION_BINDING_VERSION:
+        if self.contract['identity'] in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION}:
             if optimize_fn is not None:raise SearchContractError('LAYER1_OFFICIAL_GEPA_OVERRIDE_FORBIDDEN')
             from ..search.layer1_responsibility import ResponsibilityConditionedOptimizer
-            optimizer=ResponsibilityConditionedOptimizer(evaluator=solver,reflection_lm=reflection,
+            from ..search.layer1_memory import MemoryConditionedOptimizer
+            factory=(MemoryConditionedOptimizer if self.contract['identity']==versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION else ResponsibilityConditionedOptimizer)
+            optimizer=factory(evaluator=solver,reflection_lm=reflection,
                 accounting_reader=reflection.accounting,run_root=run_root)
         else:
             optimizer = GEPATeamExposureOptimizer(evaluator=solver, reflection_lm=reflection,

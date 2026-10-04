@@ -1,0 +1,49 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "budget_closure.json",
+      "sha256": "ce32e78a5c7198b5b78bd2cbabc3eb8feb135276ac65bc4a9841c36e87b370d1"
+    },
+    {
+      "file": "cache_contract.json",
+      "sha256": "98f8058f0107b23a2a2c260d643c7ba9295430ebe4234fab378975f792f41339"
+    },
+    {
+      "file": "failure_memory_contract.json",
+      "sha256": "5893be34aeb91c2350e3bacbb7732e7d8bea2c70330c2afc75eed286b2abc95b"
+    },
+    {
+      "file": "input_growth_test.json",
+      "sha256": "b189e194893b77ddf6db2566b2b5a17ce96bca8076d3bdaa3a61ac49ca189b73"
+    },
+    {
+      "file": "memory_semantics.json",
+      "sha256": "e0d3add29f44ace1c359b78729d1a7b95db03e2eac5903c77b5ce81abc124d70"
+    },
+    {
+      "file": "method_identity_delta.json",
+      "sha256": "3214864d50370c6c08de93f1557e7670a2bf5ee50e2add5ce040b829fa88f57e"
+    },
+    {
+      "file": "optimizer_context_before_after.json",
+      "sha256": "a4b082d724dfe72f21e6098955f979c3e98b5156ed91f9b5dbd14b984bab9b2f"
+    },
+    {
+      "file": "panel_anchor_contract.json",
+      "sha256": "3f1a7b03ceb0415de114846c4e269109d1b1550d418e291a004e8c68bf1008dc"
+    },
+    {
+      "file": "README.md",
+      "sha256": "bf5c2438d77e42a9fb9339eaf95d492968d0fad5cfaace33c5697a353e4f0055"
+    },
+    {
+      "file": "request_body_capture.json",
+      "sha256": "f166e33f1a05dd39bc966da04991dd6e153f4ab75a5a219846de04b91c6e4ade"
+    },
+    {
+      "file": "test_summary.json",
+      "sha256": "cd88b192735eb0186ecf944ffc445843c196728a5b87f1c5260bbd0ed9d04eb1"
+    }
+  ]
+}

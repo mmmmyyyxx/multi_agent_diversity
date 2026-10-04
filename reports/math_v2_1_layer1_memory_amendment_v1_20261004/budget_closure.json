@@ -1,0 +1,25 @@
+{
+  "inflight": 0,
+  "input_bounds": "actual serialized request bytes plus frozen overhead",
+  "local_metric_limit": 36,
+  "optimizer_accounting_ceiling": 1810,
+  "optimizer_requested_cap": 1800,
+  "pilot_authorized": false,
+  "policy": "RESERVATION_V2",
+  "prior_charged": 1104556,
+  "provider_bounds": {
+    "max_opportunities": 1,
+    "max_proposals_per_opportunity": 6,
+    "pattern_calls": 0,
+    "reflection_calls": 6,
+    "solver_calls": 1632,
+    "solver_per_opportunity": 148,
+    "successful_provider_calls": 1638,
+    "transport_attempts": 34398
+  },
+  "remaining": 38895444,
+  "total_authorized": 40000000,
+  "validation_ascii3000_protected": 10483000,
+  "validation_authorized": false,
+  "validation_baseline_protected": 9078500
+}

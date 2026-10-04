@@ -39,7 +39,7 @@ class RequestBroker:
         self.recovery_policy = frozen_recovery_policy(contract)
         self.optimizer_policy = frozen_optimizer_policy(contract)
         self.member_lane_policy = contract.get('cache_policy') == versions.SOLVER_MEMBER_LANE_CACHE_VERSION
-        if self.member_lane_policy != (contract.get('identity') == versions.MATH_LAYER1_EXECUTION_BINDING_VERSION):
+        if self.member_lane_policy != (contract.get('identity') in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION}):
             raise SearchContractError('SOLVER_MEMBER_LANE_POLICY_BINDING_MISMATCH')
         self.durable_cache = durable_cache
         if durable_cache is not None and self.recovery_policy is None:
@@ -77,6 +77,8 @@ class RequestBroker:
         request = dict(model=model, messages=messages, **generation_request_fields(c, role))
         identity = {"provider": c["provider"], "role": role, "split": split, "request": request,
                     "cache_namespace": c["cache_namespace"]}
+        if c.get('identity')==versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION:
+            identity['memory_treatment']={k:c[k] for k in ('memory_policy_identity','memory_limits','layer1_search_policy','optimizer_input_schema','panel_evidence_policy')}
         if role in {'reflection','pattern'} and self.optimizer_policy:
             identity['optimizer_generation_policy'] = self.optimizer_policy
             if c.get('optimizer_nonthinking_evidence_policy'):

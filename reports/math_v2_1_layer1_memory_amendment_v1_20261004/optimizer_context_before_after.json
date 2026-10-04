@@ -1,0 +1,23 @@
+{
+  "after": [
+    "instruction",
+    "current best parent",
+    "semantic repair objective",
+    "current fixed-panel observations",
+    "bounded memory"
+  ],
+  "before": [
+    "current parent",
+    "root observations",
+    "recent observations",
+    "full archive",
+    "controller bookkeeping"
+  ],
+  "current_evidence_primary": true,
+  "full_archive_visible": false,
+  "historical_lineage_retained": true,
+  "max_memory_chars": 1200,
+  "max_procedure_chars": 3000,
+  "memory_auxiliary": true,
+  "summary_in_solver": false
+}

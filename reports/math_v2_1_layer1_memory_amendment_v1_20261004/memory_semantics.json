@@ -1,0 +1,18 @@
+{
+  "attempt_starts_empty": true,
+  "failure": "changed admissible Solver-evaluated parent-relative negative",
+  "identity": "structured_action_failure_memory_v3",
+  "memory_llm_calls": 0,
+  "raw_heldout_in_memory": false,
+  "read_after_target_and_evidence": true,
+  "shared": "closed aggregate safeguard categories",
+  "success": "committed deployment only",
+  "test_reads_writes": false,
+  "types": [
+    "member_private_success",
+    "member_private_failure",
+    "shared_structural_risk"
+  ],
+  "validation_writes": false,
+  "who_effect": false
+}

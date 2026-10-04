@@ -44,14 +44,14 @@ class V2OpportunityBuilder(OpportunityBuilder):
              "eligible_members":target.eligible_members,
              **({"target_scores":dict(target.target_scores),
                  "feasibility_by_member":{m:m in feasible for m in rows_by_member}}
-                if self.evidence.identity == versions.UNIFIED_FOCUSED_EVIDENCE_VERSION else {})}, diagnosis, view, pattern_context=pattern,
+                if self.evidence.identity in {versions.UNIFIED_FOCUSED_EVIDENCE_VERSION,versions.LAYER1_ANCHOR_EVIDENCE_VERSION} else {})}, diagnosis, view, pattern_context=pattern,
             search_budget={"metric_calls":self.search_metric_budget},
             evaluation_plan={"max_promoted":2, "evidence_universe":rows,
                              "evidence_audit":audit, "v2_candidate_contract":True,
                              **({"allocation_failure_counts":{m:history.failure_counts.get(m, 0) for m in rows_by_member},
                                  "prior_opportunity_counts":{m:history.target_counts.get(m, 0) for m in rows_by_member},
                                  "prior_exposure_counts":{m:update_index for m in rows_by_member}}
-                                if self.evidence.identity == versions.UNIFIED_FOCUSED_EVIDENCE_VERSION else {})})
+                                if self.evidence.identity in {versions.UNIFIED_FOCUSED_EVIDENCE_VERSION,versions.LAYER1_ANCHOR_EVIDENCE_VERSION} else {})})
 
 
 def build_v2_bbh_orchestrator(*, system, benchmark, optimizer, evaluator, committer,

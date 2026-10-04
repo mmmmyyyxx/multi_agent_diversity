@@ -1,0 +1,65 @@
+{
+  "attachment_sha256": "e07b8174c9a7529c82a83c2004891debb9d1ba9d6616b77b6def090d2bf8dee9",
+  "canary_only": true,
+  "explicit_human_approval": true,
+  "initial_memory_entries": 0,
+  "latest_scope": "modify_and_complete_fresh_canary_then_stop",
+  "layer1_search_policy": {
+    "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+    "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
+    "k_local_return": 4,
+    "max_generations": 6,
+    "max_prompt_chars": 3000,
+    "metric_limit": 36,
+    "official_gepa_fidelity": false,
+    "optimizer_input_schema": "LAYER1_CURRENT_EVIDENCE_MEMORY_INPUT_V2",
+    "panel_policy": "single_mechanism_preservation_anchor_v3",
+    "panel_size": 6
+  },
+  "memory_limits": {
+    "max_context_chars": 1200,
+    "max_failure_entries_per_member": 5,
+    "private_storage_limit": 24,
+    "shared_storage_limit": 48,
+    "top_k_private": 3,
+    "top_k_shared": 3
+  },
+  "memory_policy_identity": "structured_action_failure_memory_v3",
+  "optimizer_generation_policy": {
+    "accounting_output_ceiling": 1810,
+    "enable_thinking": false,
+    "frequency_penalty": 0,
+    "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+    "max_completion_tokens": 1800,
+    "max_tokens": "NOT_SENT",
+    "measurement_tolerance_tokens": 10,
+    "model": "qwen3.7-flash",
+    "output_token_scope": "reasoning_plus_answer",
+    "presence_penalty": 1.5,
+    "roles": [
+      "reflection",
+      "pattern"
+    ],
+    "temperature": 0.7,
+    "top_k": 20,
+    "top_p": 0.8,
+    "truncation": "existing_operational_output_truncation"
+  },
+  "pattern_real_calls": 0,
+  "pilot_authorized": false,
+  "push_authorized": true,
+  "solver_decoding_policy": {
+    "enable_thinking": false,
+    "frequency_penalty": 0,
+    "identity": "SOLVER_DECODING_POLICY_V2",
+    "max_output_tokens": 3600,
+    "min_p": 0,
+    "presence_penalty": 0,
+    "temperature": 0.2,
+    "top_k": 20,
+    "top_p": 0.8
+  },
+  "test_model_calls": 0,
+  "total_accounting_authorization": 40000000,
+  "validation_authorized": false
+}

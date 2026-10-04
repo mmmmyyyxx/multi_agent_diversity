@@ -777,6 +777,15 @@ nodes:
 - experiment_id: math_v2_1_layer1_panel_feedback_audit_v1
   kind: ZERO_API_AUDIT
   era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_1_layer1_memory_amendment_v1
+  kind: PROTOCOL_FREEZE
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_1_memory_preexecution_v1
+  kind: PREEXECUTION_FREEZE
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_1_a3_seed81_low_cost_canary_v1
+  kind: REAL_CANARY
+  era: BENCHMARK_GENERALIZATION
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1431,4 +1440,19 @@ edges:
   evidence: reports/math_v2_1_layer1_panel_feedback_audit_v1_20261004/README.md
   scope: Retrospective zero-API panel and actual rejected-action feedback audit; no policy or held-out efficacy
     change.
+- from: math_v2_1_layer1_panel_feedback_audit_v1
+  to: math_v2_1_layer1_memory_amendment_v1
+  relation: derived_from
+  evidence: reports/math_v2_1_layer1_memory_amendment_v1_20261004/README.md
+  scope: Fresh Memory-ON Canary-only amendment; immutable prior evidence.
+- from: math_v2_1_layer1_memory_amendment_v1
+  to: math_v2_1_memory_preexecution_v1
+  relation: derived_from
+  evidence: reports/math_v2_1_memory_preexecution_v1_20261004/README.md
+  scope: Fresh Memory-ON Canary-only amendment; immutable prior evidence.
+- from: math_v2_1_memory_preexecution_v1
+  to: math_v2_1_a3_seed81_low_cost_canary_v1
+  relation: derived_from
+  evidence: reports/math_v2_1_a3_seed81_low_cost_canary_v1_20261004/README.md
+  scope: Fresh Memory-ON Canary-only amendment; immutable prior evidence.
 current_frontier: experiments/current_frontier.yaml

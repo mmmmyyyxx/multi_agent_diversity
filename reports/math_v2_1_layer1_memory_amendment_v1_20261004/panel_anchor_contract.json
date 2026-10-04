@@ -1,0 +1,28 @@
+{
+  "condition": "legal parent-correct preservation exists => at least one included",
+  "dynamic_capacity": {
+    "panel5": {
+      "root": 5,
+      "six_candidates": 30,
+      "total": 35
+    },
+    "panel6": {
+      "five_candidates": 30,
+      "root": 6,
+      "total": 36
+    }
+  },
+  "fixed_root_candidate_panel": true,
+  "identity": "single_mechanism_preservation_anchor_v3",
+  "legal_universe": "target Optimize only",
+  "maximum_panel_size": 6,
+  "minimum_anchor_quota_when_available": 1,
+  "no_filling_quota": true,
+  "order": [
+    "mutation sensitive first",
+    "higher team disagreement",
+    "lower team margin",
+    "stable example identity"
+  ],
+  "root_correct_required_for_measurable_broken": true
+}

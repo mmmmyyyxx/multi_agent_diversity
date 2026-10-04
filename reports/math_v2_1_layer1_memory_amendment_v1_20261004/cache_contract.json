@@ -1,0 +1,23 @@
+{
+  "attempt_private": true,
+  "canary_imports": 0,
+  "generative_output_reuse": false,
+  "identity": "SOLVER_MEMBER_LANE_EXACT_CACHE_V2",
+  "member_private_realization": true,
+  "new_memory_state": true,
+  "new_namespace": true,
+  "solver_only": true,
+  "unchanged_recovery": {
+    "cache": "resolved_valid_or_exhausted_terminal_only",
+    "first_valid_stops": true,
+    "identity": "MATH_SOLVER_INVALID_RECOVERY_V1",
+    "invalidity_weight": "none",
+    "logical_evaluation_count": 1,
+    "max_semantic_attempts": 4,
+    "same_request_bytes": true,
+    "solver_invalid_max_retries": 3,
+    "terminal_invalid": "incorrect_continue_no_vote",
+    "terminal_requires_completed_invalid_attempts": 4,
+    "transport_failures_consume_semantic_attempt": false
+  }
+}

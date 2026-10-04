@@ -1,0 +1,7 @@
+# Bounded Layer1 feedback and actionable Memory amendment V1
+
+This fresh configuration enables Memory with Pattern OFF. Current Optimize observations and the current best procedure remain the reflection signal. Complete candidate history and controller identifiers stay in private audit storage. A legal target-correct preservation anchor is observable when available; a fixed panel stays under 36 logical evaluations.
+
+Successes are member-private and require committed deployment. Negative evaluated edits form a private queue of at most five per member. Shared experience contains aggregate structural safeguards only. The full retrieved Memory view stays within 1200 characters and makes no model calls. Grounded deterministic action abstraction prevents proposal summaries or example material from leaking into Memory or Solver prompts.
+
+The targeted 59-case guarded suite passes, including the complete Memory-ON production graph, old four-arm Layer1 fake graphs, isolation and growth checks. Full classified current gates and fresh source freeze remain required before execution. Historical/private 1468 cases are not run. Generation policies and Layer2 semantics remain frozen. Latest user scope authorizes fresh Canary only, followed by stopping and sanitized publication; Pilot and Validation are deferred. No new real API calls at this amendment audit.

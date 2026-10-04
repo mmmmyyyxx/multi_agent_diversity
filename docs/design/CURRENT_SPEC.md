@@ -614,3 +614,57 @@ NOT_ESTIMATED signal, NO_INTERVENTION outcome and no bootstrap/numeric delta.
 Changed teams receive only post-search Validation100. Historical identity
 comparisons retain their original classifiers. Optimize12/60, Shadow40 and
 Validation100 memberships, cumulative 40M accounting and sealed Test remain.
+
+## Bounded actionable Memory mainline amendment (fresh binding only)
+
+`MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1` freezes a new explicit
+Pattern-OFF/Memory-ON configuration of the V2.1 outer method. Historical A1
+and null-memory configurations retain their identities and evidence. This
+attempt is Canary-only: the latest user scope closes after one complete
+production opportunity and authorizes neither Pilot nor Validation.
+
+`LAYER1_BOUNDED_MEMORY_SEARCH_V2` preserves the 36 logical local metric cap,
+six generation upper bound and four-candidate export bound. Its fixed panel
+has at most six examples. After WHO selection, a legal target-correct
+preservation row from the supplied Optimize universe must be included if
+one exists: prefer mutation-sensitive rows, then higher team disagreement,
+lower margin and stable example identity. The panel is not filled to a quota.
+Root and every candidate use exactly that panel. Root-correct observations
+make preservation loss measurable; absent root correctness, broken=0 is not
+evidence of no collateral loss. Five rows allow root plus six evaluations;
+six rows allow root plus five. No Layer2 allocation or guard changes.
+
+`LAYER1_CURRENT_EVIDENCE_MEMORY_INPUT_V2` contains only proposer instruction,
+current best complete procedure, semantic repair objective, current fixed-panel
+observations and bounded retrieved experience. Full candidate archives and
+controller/lineage identifiers remain private audit material. Same-call
+`change_summary` metadata never enters Solver procedures. Missing/malformed
+metadata does not veto admissible candidates. Readable actions are distilled
+deterministically from the actual procedure edit into a closed generic action
+vocabulary, including a clearly identified revision of recognized instructions;
+no questions, answers or provider summary prose enter long-term memory. Edits
+outside the vocabulary skip semantic writes rather than inventing lessons.
+
+`structured_action_failure_memory_v3` starts empty per scientific attempt.
+Memory retrieval occurs only after Responsibility, target and evidence.
+Member-private success requires committed team deployment. A changed,
+contract-valid, Solver-evaluated edit with negative parent-relative local
+correctness may write member-private failure immediately and be read by the
+next generation or a later same-member opportunity. Neutral/positive local
+outcomes and invalid/duplicate generations are not semantic failures. Each
+member stores at most five failures; eviction keeps current-lane entries
+before unrelated lanes, then newer entries with stable ties. Retrieval favors
+same-member, same-lane failures, then private successes, then structural risk.
+The complete canonical serialized view is at most 1200 characters; drop
+lowest-priority complete entries to fit. Private successes retain the existing
+24/member storage bound and shared risks retain 48 total.
+
+Shared entries contain closed aggregate TeamProbe/Common-Safe/Shadow risk
+categories and structural safeguards, never another member's strategy or
+held-out examples/predictions/labels. Validation and Test cannot read/write
+this search memory. Memory makes no provider calls, cannot change WHO,
+feasibility, Responsibility or Solver/aggregation inputs, and cannot establish
+causal efficacy in a single development run. Solver V2, optimizer V3,
+member-lane cache V2, recovery, memberships and all Layer2 semantics remain
+frozen. Every new policy and limit enters execution binding, configuration,
+manifest, startup, request/cache and exact authorization identities.

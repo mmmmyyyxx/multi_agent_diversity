@@ -74,6 +74,9 @@ class MATHDomainBinding(MATHAutonomousBinding):
 
 
 def execution_binding(root,contract):
+    if contract['identity']==versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION:
+        from .math_memory_binding import MATHMemoryBinding
+        return MATHMemoryBinding(root,contract)
     if contract['identity']==versions.MATH_LAYER1_EXECUTION_BINDING_VERSION:
         from .math_layer1_binding import MATHLayer1Binding
         return MATHLayer1Binding(root,contract)

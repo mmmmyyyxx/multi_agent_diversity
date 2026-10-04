@@ -137,13 +137,17 @@ async def execute_search(root, prep, run_root, payload):
         consume(root,prep,run_root,payload)
         atomic_write_json(run_root / "accounting_start.json",budget.view())
         transport,client = create_transport(c)
-        broker = RequestBroker(contract=c,transport=transport,arm="A1",seed=81,token_ledger=budget,
+        arm=c.get('execution_arm','A1')
+        broker = RequestBroker(contract=c,transport=transport,arm=arm,seed=81,token_ledger=budget,
             reserve_reader=reserve.remaining,ledger_writer=lambda r:append_jsonl(run_root / "ledger.jsonl",r),
             raw_writer=lambda r:append_jsonl(run_root / "provider_trace_private.jsonl",r),
             durable_cache=durable_output_cache(run_root,c,payload))
         broker.prompt_observer = reserve.observe
         solver = BenchmarkSolver(binding.benchmark(),broker)
-        composed = binding.compose(arm="A1",seed=81,solver=solver,reflection=ReflectionProvider(broker),pattern_provider=None,run_root=run_root)
+        composed = binding.compose(arm=arm,seed=81,solver=solver,reflection=ReflectionProvider(broker),pattern_provider=None,run_root=run_root)
+        if c.get('memory_policy_identity'):
+            if any(composed.memory.audit()[k] for k in ('success_writes','failure_writes','shared_writes')):
+                raise OperationalAbort('FRESH_MEMORY_STATE_REQUIRED')
         # A naturally empty trajectory still needs a durable hashable receipt.
         with (run_root / "trajectory_private.jsonl").open("xb") as stream:
             stream.flush()
@@ -164,14 +168,17 @@ async def execute_search(root, prep, run_root, payload):
         if c.get("method_identity") == "unified_team_prompt_search_v2_1" and c["execution_phase"] == "canary" and not result.trace:
             raise OperationalAbort("CANARY_NO_COMPLETE_PRODUCTION_OPPORTUNITY")
         from .. import versions
-        if c['identity']==versions.MATH_LAYER1_EXECUTION_BINDING_VERSION and c['execution_phase']=='canary' and not any(t.candidate_ids for t in result.trace):
+        if c['identity'] in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION} and c['execution_phase']=='canary' and not any(t.candidate_ids for t in result.trace):
             raise OperationalAbort('STOP_LAYER1_ZERO_THROUGHPUT')
         final = composed.state.snapshot()
         atomic_write_json(run_root / "final_team_private.json",dict(prompts=final.member_prompts,state_id=final.team_state_id))
         atomic_write_json(run_root / "final_state_private.json",plain(final))
         summary = dict(result=plain(result),ledger=broker.usage,accounting=budget.view(),validation_reserve=reserve.remaining(),
             validation_search_raw_reads=0,validation_calls=0,test_raw_reads=0,test_calls=0,pattern_calls=0,memory_activity=0)
-        if c['identity']==versions.MATH_LAYER1_EXECUTION_BINDING_VERSION:
+        if c.get('memory_policy_identity'):
+            summary['memory_activity']=composed.memory.audit()['stateful_write_count']
+            summary['memory_audit']=composed.memory.audit()
+        if c['identity'] in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION}:
             from .math_paired_validation import team_change_receipt
             summary['deployed_team_change']=team_change_receipt(initial_prompts(root,c),final.member_prompts)
             if c['execution_phase']=='pilot' and not summary['deployed_team_change']['team_changed']:

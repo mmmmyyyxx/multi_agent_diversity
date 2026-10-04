@@ -388,7 +388,8 @@
             "MATH_V2_1_EXECUTION_BINDING_V3",
             "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
             "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
-            "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3"
+            "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
+            "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1"
           ]
         },
         "path": {
@@ -663,16 +664,34 @@
       "pattern": "^[0-9a-f]{64}$"
     },
     "layer1_search_policy": {
-      "const": {
-        "identity_version": "LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1",
-        "metric_limit": 36,
-        "panel_size": 6,
-        "max_generations": 6,
-        "k_local_return": 4,
-        "max_prompt_chars": 3000,
-        "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
-        "official_gepa_fidelity": false
-      }
+      "anyOf": [
+        {
+          "const": {
+            "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+            "identity_version": "LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1",
+            "k_local_return": 4,
+            "max_generations": 6,
+            "max_prompt_chars": 3000,
+            "metric_limit": 36,
+            "official_gepa_fidelity": false,
+            "panel_size": 6
+          }
+        },
+        {
+          "const": {
+            "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+            "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
+            "k_local_return": 4,
+            "max_generations": 6,
+            "max_prompt_chars": 3000,
+            "metric_limit": 36,
+            "official_gepa_fidelity": false,
+            "optimizer_input_schema": "LAYER1_CURRENT_EVIDENCE_MEMORY_INPUT_V2",
+            "panel_policy": "single_mechanism_preservation_anchor_v3",
+            "panel_size": 6
+          }
+        }
+      ]
     },
     "candidate_contract_identity": {
       "const": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2"
@@ -1000,7 +1019,8 @@
           "search_engine_identity": {
             "enum": [
               "gepa_derived_team_candidate_exposure_v2",
-              "LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1"
+              "LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1",
+              "LAYER1_BOUNDED_MEMORY_SEARCH_V2"
             ]
           },
           "search_acceptance_identity": {
@@ -1010,7 +1030,10 @@
             ]
           },
           "evidence_identity": {
-            "const": "single_mechanism_evidence_v2"
+            "enum": [
+              "single_mechanism_evidence_v2",
+              "single_mechanism_preservation_anchor_v3"
+            ]
           },
           "feasibility_identity": {
             "const": "variable_evidence_feasibility_v1"
@@ -1027,7 +1050,8 @@
           "memory_identity": {
             "enum": [
               "null_memory_v1",
-              "strategy_experience_memory_v2"
+              "strategy_experience_memory_v2",
+              "structured_action_failure_memory_v3"
             ]
           },
           "models": {
@@ -1061,7 +1085,8 @@
                   "MATH_V2_1_EXECUTION_BINDING_V3",
                   "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
                   "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
-                  "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3"
+                  "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
+                  "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1"
                 ]
               }
             }
@@ -1166,7 +1191,8 @@
                   "MATH_V2_1_EXECUTION_BINDING_V3",
                   "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
                   "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
-                  "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3"
+                  "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
+                  "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1"
                 ]
               }
             }
@@ -1207,7 +1233,8 @@
                 "enum": [
                   "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
                   "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
-                  "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3"
+                  "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
+                  "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1"
                 ]
               }
             }
@@ -1346,7 +1373,8 @@
               "identity": {
                 "enum": [
                   "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
-                  "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3"
+                  "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
+                  "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1"
                 ]
               }
             }
@@ -1388,7 +1416,10 @@
             ],
             "properties": {
               "identity": {
-                "const": "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3"
+                "enum": [
+                  "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
+                  "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1"
+                ]
               }
             }
           }
@@ -1404,7 +1435,10 @@
         ],
         "properties": {
           "search_engine_identity": {
-            "const": "LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1"
+            "enum": [
+              "LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1",
+              "LAYER1_BOUNDED_MEMORY_SEARCH_V2"
+            ]
           },
           "search_acceptance_identity": {
             "const": "layer1_local_guidance_team_admission_v1"
@@ -1549,6 +1583,107 @@
             }
           }
         ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "execution_binding": {
+            "properties": {
+              "identity": {
+                "const": "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1"
+              }
+            },
+            "required": [
+              "identity"
+            ]
+          }
+        },
+        "required": [
+          "execution_binding"
+        ]
+      },
+      "then": {
+        "properties": {
+          "evidence_identity": {
+            "const": "single_mechanism_preservation_anchor_v3"
+          },
+          "layer1_search_policy": {
+            "const": {
+              "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+              "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
+              "k_local_return": 4,
+              "max_generations": 6,
+              "max_prompt_chars": 3000,
+              "metric_limit": 36,
+              "official_gepa_fidelity": false,
+              "optimizer_input_schema": "LAYER1_CURRENT_EVIDENCE_MEMORY_INPUT_V2",
+              "panel_policy": "single_mechanism_preservation_anchor_v3",
+              "panel_size": 6
+            }
+          },
+          "mechanism_config": {
+            "const": {
+              "memory": {
+                "max_context_chars": 1200,
+                "max_failure_entries_per_member": 5,
+                "private_storage_limit": 24,
+                "shared_storage_limit": 48,
+                "top_k_private": 3,
+                "top_k_shared": 3
+              },
+              "optimizer_input_schema": "LAYER1_CURRENT_EVIDENCE_MEMORY_INPUT_V2",
+              "panel_policy": "single_mechanism_preservation_anchor_v3"
+            }
+          },
+          "memory_identity": {
+            "const": "structured_action_failure_memory_v3"
+          },
+          "pattern_identity": {
+            "const": "null_pattern_v1"
+          },
+          "search_engine_identity": {
+            "const": "LAYER1_BOUNDED_MEMORY_SEARCH_V2"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "execution_binding": {
+            "properties": {
+              "identity": {
+                "const": "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3"
+              }
+            },
+            "required": [
+              "identity"
+            ]
+          }
+        },
+        "required": [
+          "execution_binding"
+        ]
+      },
+      "then": {
+        "properties": {
+          "layer1_search_policy": {
+            "const": {
+              "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+              "identity_version": "LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1",
+              "k_local_return": 4,
+              "max_generations": 6,
+              "max_prompt_chars": 3000,
+              "metric_limit": 36,
+              "official_gepa_fidelity": false,
+              "panel_size": 6
+            }
+          },
+          "search_engine_identity": {
+            "const": "LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1"
+          }
+        }
       }
     }
   ]

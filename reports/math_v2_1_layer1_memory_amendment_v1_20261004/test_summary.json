@@ -1,0 +1,13 @@
+{
+  "current_full_suite": "PENDING",
+  "historical_private": "NOT RUN",
+  "historical_private_cases": 1468,
+  "network_attempts": 0,
+  "real_calls": 0,
+  "targeted": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 59
+  }
+}

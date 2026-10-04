@@ -1,0 +1,31 @@
+{
+  "archive_in_provider": false,
+  "input_chars": [
+    1943,
+    2183,
+    2404,
+    2625,
+    2846,
+    3067
+  ],
+  "max_memory_chars": 1126,
+  "memory_chars": [
+    2,
+    242,
+    463,
+    684,
+    905,
+    1126
+  ],
+  "physical_real_calls": 0,
+  "plateau_test": "12 further deterministic failures retain fixed serialized context size",
+  "queue_peak": [
+    0,
+    5,
+    0,
+    0,
+    0
+  ],
+  "status": "PASS",
+  "synthetic_generations": 6
+}

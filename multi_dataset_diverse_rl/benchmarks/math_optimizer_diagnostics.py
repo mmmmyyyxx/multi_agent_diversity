@@ -67,7 +67,7 @@ def reflection_input_anatomy(messages):
         reasoning_evidence_total_chars=sum(r['reasoning_evidence_chars'] for r in summaries))
 
 
-def generation_diagnostics(content, candidate_contract=None):
+def generation_diagnostics(content, candidate_contract=None, input_schema=None):
     """Exact stripped nonempty lines; 8-grams are casefolded whitespace words.
 
     A loop witness is four identical contiguous blocks of at least 40 characters
@@ -110,7 +110,9 @@ def generation_diagnostics(content, candidate_contract=None):
             raise SearchContractError('OPTIMIZER_DIAGNOSTIC_CONTRACT_MISMATCH')
         try:
             obj=json.loads(text)
-            candidate=obj['decision_procedure'] if isinstance(obj,dict) and set(obj)=={'decision_procedure'} and isinstance(obj['decision_procedure'],str) else None
+            valid_envelope=(isinstance(obj,dict) and 'decision_procedure' in obj and
+                not set(obj)-{'decision_procedure','change_summary'}) if input_schema==versions.LAYER1_INPUT_SCHEMA_VERSION else isinstance(obj,dict) and set(obj)=={'decision_procedure'}
+            candidate=obj['decision_procedure'] if valid_envelope and isinstance(obj['decision_procedure'],str) else None
         except (ValueError,TypeError):candidate=None
     delimiters=text.count('```')
     first=text.find('```')
@@ -124,7 +126,7 @@ def generation_diagnostics(content, candidate_contract=None):
         violations=list(mutable_prompt_violation_reasons(candidate)) if candidate is not None else []
     if candidate is not None and len(candidate)>3000:violations.append('over_length')
     if candidate is not None and not candidate:violations.append('empty')
-    return dict(**({'candidate_contract_identity':candidate_contract,'candidate_envelope':'json_decision_procedure_v1',
+    return dict(**({'candidate_contract_identity':candidate_contract,'candidate_envelope':'json_procedure_optional_summary_v2' if input_schema==versions.LAYER1_INPUT_SCHEMA_VERSION else 'json_decision_procedure_v1',
             'diagnostic_scope':'structure_semantics_length_only; full admission belongs to Layer1'} if candidate_contract else {}),
         output_chars=len(text),output_lines=len(text.splitlines()),nonempty_lines=len(lines),
         unique_lines=len(counts),duplicate_lines=duplicates,duplicate_line_fraction=fraction,
@@ -144,6 +146,10 @@ def optimizer_response_telemetry(request,result,policy,evidence_policy=None):
     from .. import versions
     candidate_contract=(versions.SEMANTIC_MUTABLE_CONTRACT_VERSION
         if policy['identity']==versions.MATH_OPTIMIZER_GENERATION_POLICY_V3_VERSION and len(body['messages'])==1 else None)
+    input_schema=None
+    if candidate_contract:
+        try:input_schema=json.loads(body['messages'][0]['content'].rsplit('\n',1)[-1]).get('schema')
+        except (ValueError,TypeError,AttributeError):pass
     usage=result.get('provider_usage_details') or {}
     details=usage.get('completion_tokens_details') or {}
     reasoning=details.get('reasoning_tokens')
@@ -167,4 +173,4 @@ def optimizer_response_telemetry(request,result,policy,evidence_policy=None):
         nonthinking_evidence_level='DIRECT_LEVEL_A' if direct else 'EQUIVALENT_LEVEL_B' if equivalent else 'CONTRADICTORY' if contradiction else 'UNCONFIRMED',
         provider_thinking_indicators=indicators,
         nonthinking_evidence_policy_identity=evidence_policy['identity'] if evidence_policy else None,
-        diagnostics=generation_diagnostics(result.get('text'),candidate_contract))
+        diagnostics=generation_diagnostics(result.get('text'),candidate_contract,input_schema))

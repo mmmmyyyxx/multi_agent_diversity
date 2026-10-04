@@ -27,7 +27,7 @@ def validation_policy(contract):
     from ..benchmarks.math_prediction_validity import frozen_prediction_policy
     policy = frozen_prediction_policy(contract)
     from .. import versions
-    if contract['identity']==versions.MATH_LAYER1_EXECUTION_BINDING_VERSION:
+    if contract['identity'] in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION}:
         return dict(POLICY,identity='MATH_PAIRED_VALIDATION_INTERVENTION_V2',count=100,
             logical_evaluations=1000,successful_provider_call_ceiling=4000,transport_attempt_ceiling=84000,
             prediction_validity_policy=policy,invalid_recovery_policy=contract['invalid_recovery_policy'],
