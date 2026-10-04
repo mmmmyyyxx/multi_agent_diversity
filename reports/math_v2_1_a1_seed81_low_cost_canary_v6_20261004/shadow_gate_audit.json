@@ -1,0 +1,36 @@
+{
+  "audit": "RECOMPUTE_FROM_FROZEN_RESOLVED_REALIZATIONS",
+  "classification": "ADMISSIBLE_TEAM_EVALUATED_CANDIDATE_REJECTED_BY_FROZEN_SHADOW_GATE",
+  "decision": {
+    "catastrophic_target_loss_count": 2,
+    "gate_version": "winner_only_shadow_gate_v1",
+    "metrics": {
+      "candidate_target_correct": 6,
+      "candidate_vote_correct": 13,
+      "incumbent_target_correct": 15,
+      "incumbent_vote_correct": 16,
+      "row_count": 40,
+      "target_delta": -9,
+      "vote_delta": -3
+    },
+    "passed": false,
+    "reasons": [
+      "shadow_vote_regression",
+      "catastrophic_target_member_regression"
+    ]
+  },
+  "initial_target_floor": 5.0,
+  "new_model_calls": 0,
+  "new_provider_calls": 0,
+  "no_post_canary_search": true,
+  "optimize_target_candidate": 5.0,
+  "optimize_team_before": 5.0,
+  "optimize_team_candidate": 6.0,
+  "raw_shadow_rows_published": false,
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "selected_candidate_id": "layer1:4:6144e5a9d7ce",
+  "shadow_feedback_used_for_redesign": false,
+  "source": "CURRENT_CANARY_FROZEN_ADAPTIVE_GATE_ONLY",
+  "status": "PASS",
+  "target_member": 1
+}

@@ -1,0 +1,17 @@
+{
+  "completed": 1,
+  "stop_reason": "CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE",
+  "trajectory": [
+    {
+      "child_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "committed": null,
+      "initial_floor_enforced": true,
+      "opportunity_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007:0:1",
+      "parent_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+      "selected": "layer1:4:6144e5a9d7ce",
+      "shadow_pass": false,
+      "strict_team_gain_enforced": true,
+      "target_member": 1
+    }
+  ]
+}

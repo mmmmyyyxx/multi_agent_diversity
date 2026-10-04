@@ -6,6 +6,10 @@
       "sha256": "f56df71d966f5c629fa08f4d3498d5c6961f9fab877dc8fdf5819034f260a7b0"
     },
     {
+      "file": "canary_result_and_scope_closure.json",
+      "sha256": "d44425f3627ee5ec6da99219087c7cb6a200e0430cd66bcc21a9fd15b8c3a2c7"
+    },
+    {
       "file": "gepa_semantics_retained_removed.json",
       "sha256": "f2e22e96707dfeb72791e278c91747e27a31488544c8c14121d57e9e4215b2f6"
     },

@@ -1,0 +1,50 @@
+{
+  "adaptive_gate": {
+    "accounting_tokens": 168472,
+    "cache_hits": 0,
+    "logical_solver_evaluations": 240,
+    "physical_solver_attempts": 264,
+    "physical_solver_generations": 264,
+    "semantic_retry_generations": 24
+  },
+  "full": {
+    "accounting_tokens": 12315,
+    "cache_hits": 8,
+    "logical_solver_evaluations": 24,
+    "physical_solver_attempts": 16,
+    "physical_solver_generations": 16,
+    "semantic_retry_generations": 0
+  },
+  "gepa_local": {
+    "accounting_tokens": 18550,
+    "cache_hits": 4,
+    "logical_solver_evaluations": 28,
+    "physical_solver_attempts": 24,
+    "physical_solver_generations": 24,
+    "semantic_retry_generations": 0
+  },
+  "gepa_reflection": {
+    "accounting_tokens": 0,
+    "cache_hits": 0,
+    "logical_solver_evaluations": 0,
+    "physical_solver_attempts": 0,
+    "physical_solver_generations": 0,
+    "semantic_retry_generations": 0
+  },
+  "initial": {
+    "accounting_tokens": 29986,
+    "cache_hits": 0,
+    "logical_solver_evaluations": 60,
+    "physical_solver_attempts": 61,
+    "physical_solver_generations": 61,
+    "semantic_retry_generations": 1
+  },
+  "team_probe": {
+    "accounting_tokens": 0,
+    "cache_hits": 16,
+    "logical_solver_evaluations": 16,
+    "physical_solver_attempts": 0,
+    "physical_solver_generations": 0,
+    "semantic_retry_generations": 0
+  }
+}

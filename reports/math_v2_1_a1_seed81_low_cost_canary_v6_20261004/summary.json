@@ -1,0 +1,36 @@
+{
+  "candidate_count": 4,
+  "commit_count": 0,
+  "completed_opportunities": 1,
+  "layer1": {
+    "contract_rejects": 0,
+    "local_metric_evaluations": 28,
+    "local_negative": 4,
+    "local_neutral": 1,
+    "local_positive": 1,
+    "local_solver_reached": 6,
+    "metric_limit": 36,
+    "physical_proposal_generations": 6,
+    "proposal_count": 6,
+    "strict_rejected_exported_count": 3,
+    "team_candidate_count": 4,
+    "unique_candidates": 6
+  },
+  "opportunity_completed": true,
+  "optimizer_calls": 6,
+  "optimizer_enable_thinking": false,
+  "optimizer_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+  "optimizer_repetition_events": 0,
+  "optimizer_truncations": 0,
+  "pilot_status": "NOT_RUN_USER_DEFERRED",
+  "scientific_efficacy_verified": false,
+  "search_complete": false,
+  "solver_calls": 365,
+  "status": "PASS",
+  "stop_reason": "CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE",
+  "target_members": [
+    1
+  ],
+  "validation_complete": false,
+  "validation_status": "NOT_RUN_USER_DEFERRED"
+}

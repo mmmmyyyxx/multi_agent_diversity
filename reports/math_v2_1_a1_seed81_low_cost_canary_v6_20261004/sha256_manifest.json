@@ -2,8 +2,192 @@
   "algorithm": "sha256",
   "files": [
     {
+      "file": "api_ledger_summary.json",
+      "sha256": "9f07ce4eead4dbb8aa0146fa633952ec5f86b065bd000a43720dc0de953bcffc"
+    },
+    {
+      "file": "authorization_receipt.json",
+      "sha256": "c580dd3cdc7cda36f8945994f82369f093b70f95e2b368cca9e16a9ad728ca5e"
+    },
+    {
+      "file": "cache_semantics_audit.json",
+      "sha256": "65041ad398cc08cb0fdabcb2f6d6ff6e082504d16a52ec6b21f74cb125a26f98"
+    },
+    {
+      "file": "canary12_membership.json",
+      "sha256": "62db13d955dc24828cda84cdaba0b536663c4dcfe2cc7f9eed509d63deb8f62f"
+    },
+    {
+      "file": "candidate_funnel.json",
+      "sha256": "c7175a4a9733f0a226321d60fbf0ec15eaa1f17da57e12a1eac7f07f4bb234f6"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "b1617d35c3f111356b15c53278db26d58d53495cba13da7e2ee357fe15b4962a"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "04a8c4eb8f207118852414862ff806bf96441a0bd5a54a8b0cf6ad0095edaead"
+    },
+    {
+      "file": "execution_identity.json",
+      "sha256": "108a0ed603b9d5b8c8563304fe62be92ef2b0a5b837a1dcad197982855cf480c"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "2ca999e0b20154b108bd1560a739e397ae97a72423ec9e841a15fb6c7300d564"
+    },
+    {
+      "file": "final_status.json",
+      "sha256": "d5f89b7c8b7998090c8988d403cd22c7873e6dc064ce419185355c0cd0cb4d6e"
+    },
+    {
+      "file": "git_publication_hash_audit.json",
+      "sha256": "7295369606767887592f5e22e654aa83632a3fde2a2f15f248d5f8a58968c53c"
+    },
+    {
+      "file": "initial_competence_floor.json",
+      "sha256": "6b0d5d744aa9c01f30729f6ba3654cb35ff394cca1c7a1dc2e66cb9a0cab0aaf"
+    },
+    {
+      "file": "initial_team.json",
+      "sha256": "98b5b72a9a9a8621850d59cbec09aea04b32e78b0b82f96d0dd8fb2f19a36b49"
+    },
+    {
+      "file": "initialization_summary.json",
+      "sha256": "b3283f3ce9e1a2e9d793c8871aefbc2e0b42fd5fdc70954be40f40f8515a8f38"
+    },
+    {
+      "file": "integrity_audit.json",
+      "sha256": "34c992412a84e3ddf1f40977248e4adc38dec30243a2b0b17f3be29115ecb873"
+    },
+    {
+      "file": "layer1_search_audit.json",
+      "sha256": "1aa060606b2397c0ddd1b8cad72bb3d8ce612380c6d6537651bd99395cdfad2e"
+    },
+    {
+      "file": "local_to_team_transfer.json",
+      "sha256": "85d7e08ab26e91d463a53a4da480fb0a54a2eccc264aa3a59921e0ccaa64df42"
+    },
+    {
+      "file": "low_cost_protocol.json",
+      "sha256": "5339d7c35a12c003d1933c9acf2599c180b99fa295d993477904f99c09ff8b9f"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "ae439b00475bb3ddc9e5e43a5d8ae0f206462595e52083a0404a271aa91757dd"
+    },
+    {
+      "file": "opportunity_allocation.json",
+      "sha256": "35528224ba2cd9534a8eb22209b62574ab3810169a398c47c394b48cbd448e8b"
+    },
+    {
+      "file": "opportunity_trace.json",
+      "sha256": "ac381d83a1c5d3468911233ae85c27993f34b2744f81bddcedcef9c6c588fce5"
+    },
+    {
+      "file": "optimize60_membership.json",
+      "sha256": "5ee44e26c2784f76ca29a6300ae770fde4fc56043ba0bfbcd667449c8370c252"
+    },
+    {
+      "file": "optimizer_generation_summary.json",
+      "sha256": "555b17dfafcd69d773c959f026009e3b8ac372eba208232475d554b5d062d286"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "9b6781deec1a76e9b00ddb17c99fc94b155a715fe7d70114df272c7f9fc39caf"
+    },
+    {
+      "file": "provider_accounting.json",
+      "sha256": "06fc17b4cd75356ff4c9092b656a8c3a0aed3a3b24c032ae9552eb10b869ad93"
+    },
+    {
       "file": "README.md",
-      "sha256": "f6ba054126fae66eebca409860b6360f81385fc8cb2551001860a0684b735c87"
+      "sha256": "3c7fff0036c58e9bf0e6205b74d9400ecee1513181daa86c45eae31f8b5fa4b1"
+    },
+    {
+      "file": "realized_team_gain.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "file": "request_policy_receipt.json",
+      "sha256": "b587920305472a54b1825a691f89376735c37b6162ededad36af8075450ff611"
+    },
+    {
+      "file": "response_format_summary.json",
+      "sha256": "75fbc13afe869ccc8133f4a5df4cbc7ca5ff2d7a0dc55470ed60d3b2bfbb734b"
+    },
+    {
+      "file": "responsibility_trace.json",
+      "sha256": "33f29e1d86f3f00d449e860c15462daf2c5d1f5b18cccaffdd5150721985a951"
+    },
+    {
+      "file": "reuse_summary.json",
+      "sha256": "3e8a22bea7cc5b1ca13114f48be6a8c4990ae389b9681235e769a53e19740edc"
+    },
+    {
+      "file": "sanitization_audit.json",
+      "sha256": "ff9c9fad82662fc12754bd8f6714c7d329754d5a483e2aaa948566861f333170"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "cfad339b651169ba48959fb0d20a081fe26933f2769e90043ca59ae083d5fd62"
+    },
+    {
+      "file": "scientific_scope_audit.json",
+      "sha256": "8e4e07968831f6c19048a0d483828bf9591a7f0069b98f6603982449695fa4e2"
+    },
+    {
+      "file": "scope_closure_receipt.json",
+      "sha256": "81d87bab25f2f47ad23e253c0adc5622f7b569cdd53f6cde62a6328a62269db2"
+    },
+    {
+      "file": "semantic_retry_diversity.json",
+      "sha256": "8737f18ca2abb3791d2d94264969623422870c89b6bfe111aac4bda287ce83e9"
+    },
+    {
+      "file": "shadow40_membership.json",
+      "sha256": "6148136d3fe9906ada1d2d7f82d8aad976d5c2dec653f14d0d94a304ca979412"
+    },
+    {
+      "file": "shadow_gate_audit.json",
+      "sha256": "805cf572ae668eafd33d690cb7d58f9162bbc29016f779b9114bced0a9e10bfb"
+    },
+    {
+      "file": "specialization_events.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "file": "split_access_audit.json",
+      "sha256": "24c148eaaf821ca2340343f62bbd8650c5035fa361fcd37e90898f0b60241f4b"
+    },
+    {
+      "file": "stage_reuse.json",
+      "sha256": "9010be4c59ccd84d1138a8427ab959e44c7d1bd50bd07e62e583ddfcf208d6a8"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "4f5db6cfd2cf506f4a3ddaeae0a319cf710bccc1882b44cf320ab538bd22be84"
+    },
+    {
+      "file": "terminal_invalid_summary.json",
+      "sha256": "36cc92b544d8639815d3d2064eb1e3219982b9031e1f51453a29caa26257c76e"
+    },
+    {
+      "file": "token_accounting.json",
+      "sha256": "9f07ce4eead4dbb8aa0146fa633952ec5f86b065bd000a43720dc0de953bcffc"
+    },
+    {
+      "file": "transition_audit.json",
+      "sha256": "e71259919f2450678d07ade6174abff80ef83d5d3a7e4f1e5d8877870e4fca40"
+    },
+    {
+      "file": "transition_trace.json",
+      "sha256": "5dcfd35ef1989bcb59c700425b2f09362fb6bf552ae403fe10ced83c4d2f8b96"
+    },
+    {
+      "file": "validation100_membership.json",
+      "sha256": "bab90616c897041587a83e3ee36959df8509e5c6f246b6f914966640146bbe9d"
     }
   ]
 }

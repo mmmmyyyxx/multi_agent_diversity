@@ -7223,7 +7223,7 @@ experiments:
   - math_v2_1_a1_seed81_low_cost_canary_v5
   status: HOLD
   scientific_status: NOT_EXECUTED
-  implementation_commit: null
+  implementation_commit: 628ec441085cae2db87ce242c62d80f7f24c51ae
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_a1_seed81_low_cost_pilot_v5.yaml
@@ -7237,8 +7237,7 @@ experiments:
   - Generation V2/V3, semantic candidate V2, member-lane Solver-only cache V2, intervention-gated Validation.
   - 'Latest user instruction: finish Canary, stop and push; subsequent experiments deferred.'
   unavailable:
-    implementation_commit: Awaiting source freeze.
-    execution_commit: User limited current task to Canary; no Pilot or Validation dispatch.
+    execution_commit: Latest user directive stops after Canary; no Pilot authorization.
     result_commit: Not executed.
 - experiment_id: math_v2_1_layer1_preexecution_repair_v1
   kind: PROTOCOL_FREEZE
@@ -7246,14 +7245,14 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_preexecution_low_cost_v5
-  status: READY
-  scientific_status: NOT_EXECUTED
-  implementation_commit: fb76733cd9167f5cafb2db58d95305dc67e90d9b
+  status: COMPLETED
+  scientific_status: ZERO_API_VALID
+  implementation_commit: 628ec441085cae2db87ce242c62d80f7f24c51ae
   execution_commit: null
-  result_commit: null
+  result_commit: b0b4761b660f6108dd72a045f569cc2b3d574e73
   manifest: experiments/manifests/math_v2_1_layer1_preexecution_repair_v1.yaml
   report: reports/math_v2_1_layer1_preexecution_repair_v1_20261004
-  classifier: SOURCE_GATE_PENDING_FRESH_PREFREEZE_METADATA
+  classifier: OFFLINE_GATES_AND_FRESH_FREEZE_PASS
   active_for_new_work: false
   historical_replay: false
   superseded_by: []
@@ -7262,22 +7261,21 @@ experiments:
     unchanged.
   - Latest scope is Canary only, then stop and push.
   unavailable:
-    execution_commit: No real API calls yet.
-    result_commit: Awaiting frozen evidence.
+    execution_commit: Zero-API source and preexecution freeze.
 - experiment_id: math_v2_1_preexecution_low_cost_v6
   kind: PREEXECUTION_FREEZE
   era: BENCHMARK_GENERALIZATION
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_layer1_preexecution_repair_v1
-  status: READY
-  scientific_status: NOT_EXECUTED
-  implementation_commit: fb76733cd9167f5cafb2db58d95305dc67e90d9b
+  status: COMPLETED
+  scientific_status: ZERO_API_VALID
+  implementation_commit: 628ec441085cae2db87ce242c62d80f7f24c51ae
   execution_commit: null
-  result_commit: null
+  result_commit: b0b4761b660f6108dd72a045f569cc2b3d574e73
   manifest: experiments/manifests/math_v2_1_preexecution_low_cost_v6.yaml
   report: reports/math_v2_1_preexecution_low_cost_v6_20261004
-  classifier: SOURCE_GATE_PENDING_FRESH_PREFREEZE_METADATA
+  classifier: OFFLINE_GATES_AND_FRESH_FREEZE_PASS
   active_for_new_work: false
   historical_replay: false
   superseded_by: []
@@ -7286,22 +7284,21 @@ experiments:
     unchanged.
   - Latest scope is Canary only, then stop and push.
   unavailable:
-    execution_commit: No real API calls yet.
-    result_commit: Awaiting frozen evidence.
+    execution_commit: Zero-API source and preexecution freeze.
 - experiment_id: math_v2_1_a1_seed81_low_cost_canary_v6
   kind: REAL_CANARY
   era: BENCHMARK_GENERALIZATION
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_preexecution_low_cost_v6
-  status: READY
-  scientific_status: NOT_EXECUTED
-  implementation_commit: fb76733cd9167f5cafb2db58d95305dc67e90d9b
-  execution_commit: null
+  status: COMPLETED
+  scientific_status: VALID_OPERATIONAL_THROUGHPUT_CANARY
+  implementation_commit: 628ec441085cae2db87ce242c62d80f7f24c51ae
+  execution_commit: b0b4761b660f6108dd72a045f569cc2b3d574e73
   result_commit: null
   manifest: experiments/manifests/math_v2_1_a1_seed81_low_cost_canary_v6.yaml
   report: reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004
-  classifier: SOURCE_GATE_PENDING_FRESH_PREFREEZE_METADATA
+  classifier: FRESH_LAYER1_CANARY_PASS
   active_for_new_work: false
   historical_replay: false
   superseded_by: []
@@ -7310,5 +7307,5 @@ experiments:
     unchanged.
   - Latest scope is Canary only, then stop and push.
   unavailable:
-    execution_commit: No real API calls yet.
-    result_commit: Awaiting frozen evidence.
+    result_commit: Awaiting sanitized result commit.
+  authorization_consumed: true

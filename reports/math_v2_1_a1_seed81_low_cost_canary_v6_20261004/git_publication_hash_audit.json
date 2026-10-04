@@ -1,0 +1,390 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_layer1_preexecution_repair_v1_20261004/canary_freeze_receipt.json",
+      "git_blob_sha256": "f56df71d966f5c629fa08f4d3498d5c6961f9fab877dc8fdf5819034f260a7b0",
+      "original_file_sha256": "f56df71d966f5c629fa08f4d3498d5c6961f9fab877dc8fdf5819034f260a7b0"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_layer1_preexecution_repair_v1_20261004/canary_result_and_scope_closure.json",
+      "git_blob_sha256": "d44425f3627ee5ec6da99219087c7cb6a200e0430cd66bcc21a9fd15b8c3a2c7",
+      "original_file_sha256": "d44425f3627ee5ec6da99219087c7cb6a200e0430cd66bcc21a9fd15b8c3a2c7"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_layer1_preexecution_repair_v1_20261004/gepa_semantics_retained_removed.json",
+      "git_blob_sha256": "f2e22e96707dfeb72791e278c91747e27a31488544c8c14121d57e9e4215b2f6",
+      "original_file_sha256": "f2e22e96707dfeb72791e278c91747e27a31488544c8c14121d57e9e4215b2f6"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_layer1_preexecution_repair_v1_20261004/layer1_change_log.json",
+      "git_blob_sha256": "dbaefaff1e857fbb6015341a547eda0288643b7d7b78973fba3b1e600129381f",
+      "original_file_sha256": "dbaefaff1e857fbb6015341a547eda0288643b7d7b78973fba3b1e600129381f"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_layer1_preexecution_repair_v1_20261004/operational_repair.json",
+      "git_blob_sha256": "d9e8a63b24cbf1cc0ca23bb85d7618424aa36090ccc3c7fd6c46358616da6ad3",
+      "original_file_sha256": "d9e8a63b24cbf1cc0ca23bb85d7618424aa36090ccc3c7fd6c46358616da6ad3"
+    },
+    {
+      "byte_relation": "CRLF_TO_LF_ONLY",
+      "file": "reports/math_v2_1_layer1_preexecution_repair_v1_20261004/README.md",
+      "git_blob_sha256": "443161f7ed05a64090acabdf0be280e02485030dfae684757ef91baae3dec5c8",
+      "original_file_sha256": "daa50112e3fad96fbe04d8e937a3d747971f00cfb62b202ae5bc7453f85be368"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_layer1_preexecution_repair_v1_20261004/source_gate.json",
+      "git_blob_sha256": "ed747ab621e5981eb80b292eef0ba053f62110270e712c07d310fe25c3db4170",
+      "original_file_sha256": "ed747ab621e5981eb80b292eef0ba053f62110270e712c07d310fe25c3db4170"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_layer1_preexecution_repair_v1_20261004/test_summary.json",
+      "git_blob_sha256": "442581ff0af78b106374f145eb8320d9bc67d88755cc0382e283f6e0ac40edc7",
+      "original_file_sha256": "442581ff0af78b106374f145eb8320d9bc67d88755cc0382e283f6e0ac40edc7"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_preexecution_low_cost_v6_20261004/canary_freeze_receipt.json",
+      "git_blob_sha256": "f56df71d966f5c629fa08f4d3498d5c6961f9fab877dc8fdf5819034f260a7b0",
+      "original_file_sha256": "f56df71d966f5c629fa08f4d3498d5c6961f9fab877dc8fdf5819034f260a7b0"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_preexecution_low_cost_v6_20261004/canary_source_identity.json",
+      "git_blob_sha256": "6ee1742352a1fc0b902fa529860b0daea9e7192d0f3804d4aa4c8c2155a28295",
+      "original_file_sha256": "6ee1742352a1fc0b902fa529860b0daea9e7192d0f3804d4aa4c8c2155a28295"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_preexecution_low_cost_v6_20261004/canary_startup_receipt.json",
+      "git_blob_sha256": "c53af92c1e25daa8df02bed70913a81c870530d0493c68a211d63d9765dc97a5",
+      "original_file_sha256": "c53af92c1e25daa8df02bed70913a81c870530d0493c68a211d63d9765dc97a5"
+    },
+    {
+      "byte_relation": "CRLF_TO_LF_ONLY",
+      "file": "reports/math_v2_1_preexecution_low_cost_v6_20261004/README.md",
+      "git_blob_sha256": "71cb727d2df7b91f1d68b30edacbd573a723104f1aaa92f8232fdca1e9d85a1c",
+      "original_file_sha256": "e1c4f9976a9cc56bea531b070a682afb24d0626b7e3894c40243491915dd7fc6"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_preexecution_low_cost_v6_20261004/source_gate.json",
+      "git_blob_sha256": "ed747ab621e5981eb80b292eef0ba053f62110270e712c07d310fe25c3db4170",
+      "original_file_sha256": "ed747ab621e5981eb80b292eef0ba053f62110270e712c07d310fe25c3db4170"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_preexecution_low_cost_v6_20261004/test_summary.json",
+      "git_blob_sha256": "442581ff0af78b106374f145eb8320d9bc67d88755cc0382e283f6e0ac40edc7",
+      "original_file_sha256": "442581ff0af78b106374f145eb8320d9bc67d88755cc0382e283f6e0ac40edc7"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/api_ledger_summary.json",
+      "git_blob_sha256": "9f07ce4eead4dbb8aa0146fa633952ec5f86b065bd000a43720dc0de953bcffc",
+      "original_file_sha256": "9f07ce4eead4dbb8aa0146fa633952ec5f86b065bd000a43720dc0de953bcffc"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/authorization_receipt.json",
+      "git_blob_sha256": "c580dd3cdc7cda36f8945994f82369f093b70f95e2b368cca9e16a9ad728ca5e",
+      "original_file_sha256": "c580dd3cdc7cda36f8945994f82369f093b70f95e2b368cca9e16a9ad728ca5e"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/cache_semantics_audit.json",
+      "git_blob_sha256": "65041ad398cc08cb0fdabcb2f6d6ff6e082504d16a52ec6b21f74cb125a26f98",
+      "original_file_sha256": "65041ad398cc08cb0fdabcb2f6d6ff6e082504d16a52ec6b21f74cb125a26f98"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/canary12_membership.json",
+      "git_blob_sha256": "62db13d955dc24828cda84cdaba0b536663c4dcfe2cc7f9eed509d63deb8f62f",
+      "original_file_sha256": "62db13d955dc24828cda84cdaba0b536663c4dcfe2cc7f9eed509d63deb8f62f"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/candidate_funnel.json",
+      "git_blob_sha256": "c7175a4a9733f0a226321d60fbf0ec15eaa1f17da57e12a1eac7f07f4bb234f6",
+      "original_file_sha256": "c7175a4a9733f0a226321d60fbf0ec15eaa1f17da57e12a1eac7f07f4bb234f6"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/classifier.json",
+      "git_blob_sha256": "b1617d35c3f111356b15c53278db26d58d53495cba13da7e2ee357fe15b4962a",
+      "original_file_sha256": "b1617d35c3f111356b15c53278db26d58d53495cba13da7e2ee357fe15b4962a"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/evaluation_access_summary.json",
+      "git_blob_sha256": "04a8c4eb8f207118852414862ff806bf96441a0bd5a54a8b0cf6ad0095edaead",
+      "original_file_sha256": "04a8c4eb8f207118852414862ff806bf96441a0bd5a54a8b0cf6ad0095edaead"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/execution_identity.json",
+      "git_blob_sha256": "108a0ed603b9d5b8c8563304fe62be92ef2b0a5b837a1dcad197982855cf480c",
+      "original_file_sha256": "108a0ed603b9d5b8c8563304fe62be92ef2b0a5b837a1dcad197982855cf480c"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/fact_assertions.json",
+      "git_blob_sha256": "2ca999e0b20154b108bd1560a739e397ae97a72423ec9e841a15fb6c7300d564",
+      "original_file_sha256": "2ca999e0b20154b108bd1560a739e397ae97a72423ec9e841a15fb6c7300d564"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/final_status.json",
+      "git_blob_sha256": "d5f89b7c8b7998090c8988d403cd22c7873e6dc064ce419185355c0cd0cb4d6e",
+      "original_file_sha256": "d5f89b7c8b7998090c8988d403cd22c7873e6dc064ce419185355c0cd0cb4d6e"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/initial_competence_floor.json",
+      "git_blob_sha256": "6b0d5d744aa9c01f30729f6ba3654cb35ff394cca1c7a1dc2e66cb9a0cab0aaf",
+      "original_file_sha256": "6b0d5d744aa9c01f30729f6ba3654cb35ff394cca1c7a1dc2e66cb9a0cab0aaf"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/initial_team.json",
+      "git_blob_sha256": "98b5b72a9a9a8621850d59cbec09aea04b32e78b0b82f96d0dd8fb2f19a36b49",
+      "original_file_sha256": "98b5b72a9a9a8621850d59cbec09aea04b32e78b0b82f96d0dd8fb2f19a36b49"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/initialization_summary.json",
+      "git_blob_sha256": "b3283f3ce9e1a2e9d793c8871aefbc2e0b42fd5fdc70954be40f40f8515a8f38",
+      "original_file_sha256": "b3283f3ce9e1a2e9d793c8871aefbc2e0b42fd5fdc70954be40f40f8515a8f38"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/integrity_audit.json",
+      "git_blob_sha256": "34c992412a84e3ddf1f40977248e4adc38dec30243a2b0b17f3be29115ecb873",
+      "original_file_sha256": "34c992412a84e3ddf1f40977248e4adc38dec30243a2b0b17f3be29115ecb873"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/layer1_search_audit.json",
+      "git_blob_sha256": "1aa060606b2397c0ddd1b8cad72bb3d8ce612380c6d6537651bd99395cdfad2e",
+      "original_file_sha256": "1aa060606b2397c0ddd1b8cad72bb3d8ce612380c6d6537651bd99395cdfad2e"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/local_to_team_transfer.json",
+      "git_blob_sha256": "85d7e08ab26e91d463a53a4da480fb0a54a2eccc264aa3a59921e0ccaa64df42",
+      "original_file_sha256": "85d7e08ab26e91d463a53a4da480fb0a54a2eccc264aa3a59921e0ccaa64df42"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/low_cost_protocol.json",
+      "git_blob_sha256": "5339d7c35a12c003d1933c9acf2599c180b99fa295d993477904f99c09ff8b9f",
+      "original_file_sha256": "5339d7c35a12c003d1933c9acf2599c180b99fa295d993477904f99c09ff8b9f"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/manifest_snapshot.yaml",
+      "git_blob_sha256": "ae439b00475bb3ddc9e5e43a5d8ae0f206462595e52083a0404a271aa91757dd",
+      "original_file_sha256": "ae439b00475bb3ddc9e5e43a5d8ae0f206462595e52083a0404a271aa91757dd"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/opportunity_allocation.json",
+      "git_blob_sha256": "35528224ba2cd9534a8eb22209b62574ab3810169a398c47c394b48cbd448e8b",
+      "original_file_sha256": "35528224ba2cd9534a8eb22209b62574ab3810169a398c47c394b48cbd448e8b"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/opportunity_trace.json",
+      "git_blob_sha256": "ac381d83a1c5d3468911233ae85c27993f34b2744f81bddcedcef9c6c588fce5",
+      "original_file_sha256": "ac381d83a1c5d3468911233ae85c27993f34b2744f81bddcedcef9c6c588fce5"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/optimize60_membership.json",
+      "git_blob_sha256": "5ee44e26c2784f76ca29a6300ae770fde4fc56043ba0bfbcd667449c8370c252",
+      "original_file_sha256": "5ee44e26c2784f76ca29a6300ae770fde4fc56043ba0bfbcd667449c8370c252"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/optimizer_generation_summary.json",
+      "git_blob_sha256": "555b17dfafcd69d773c959f026009e3b8ac372eba208232475d554b5d062d286",
+      "original_file_sha256": "555b17dfafcd69d773c959f026009e3b8ac372eba208232475d554b5d062d286"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/provenance.json",
+      "git_blob_sha256": "9b6781deec1a76e9b00ddb17c99fc94b155a715fe7d70114df272c7f9fc39caf",
+      "original_file_sha256": "9b6781deec1a76e9b00ddb17c99fc94b155a715fe7d70114df272c7f9fc39caf"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/provider_accounting.json",
+      "git_blob_sha256": "06fc17b4cd75356ff4c9092b656a8c3a0aed3a3b24c032ae9552eb10b869ad93",
+      "original_file_sha256": "06fc17b4cd75356ff4c9092b656a8c3a0aed3a3b24c032ae9552eb10b869ad93"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/README.md",
+      "git_blob_sha256": "3c7fff0036c58e9bf0e6205b74d9400ecee1513181daa86c45eae31f8b5fa4b1",
+      "original_file_sha256": "3c7fff0036c58e9bf0e6205b74d9400ecee1513181daa86c45eae31f8b5fa4b1"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/realized_team_gain.json",
+      "git_blob_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "original_file_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/request_policy_receipt.json",
+      "git_blob_sha256": "b587920305472a54b1825a691f89376735c37b6162ededad36af8075450ff611",
+      "original_file_sha256": "b587920305472a54b1825a691f89376735c37b6162ededad36af8075450ff611"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/response_format_summary.json",
+      "git_blob_sha256": "75fbc13afe869ccc8133f4a5df4cbc7ca5ff2d7a0dc55470ed60d3b2bfbb734b",
+      "original_file_sha256": "75fbc13afe869ccc8133f4a5df4cbc7ca5ff2d7a0dc55470ed60d3b2bfbb734b"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/responsibility_trace.json",
+      "git_blob_sha256": "33f29e1d86f3f00d449e860c15462daf2c5d1f5b18cccaffdd5150721985a951",
+      "original_file_sha256": "33f29e1d86f3f00d449e860c15462daf2c5d1f5b18cccaffdd5150721985a951"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/reuse_summary.json",
+      "git_blob_sha256": "3e8a22bea7cc5b1ca13114f48be6a8c4990ae389b9681235e769a53e19740edc",
+      "original_file_sha256": "3e8a22bea7cc5b1ca13114f48be6a8c4990ae389b9681235e769a53e19740edc"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/sanitization_audit.json",
+      "git_blob_sha256": "ff9c9fad82662fc12754bd8f6714c7d329754d5a483e2aaa948566861f333170",
+      "original_file_sha256": "ff9c9fad82662fc12754bd8f6714c7d329754d5a483e2aaa948566861f333170"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/sanitization_manifest.json",
+      "git_blob_sha256": "cfad339b651169ba48959fb0d20a081fe26933f2769e90043ca59ae083d5fd62",
+      "original_file_sha256": "cfad339b651169ba48959fb0d20a081fe26933f2769e90043ca59ae083d5fd62"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/scientific_scope_audit.json",
+      "git_blob_sha256": "8e4e07968831f6c19048a0d483828bf9591a7f0069b98f6603982449695fa4e2",
+      "original_file_sha256": "8e4e07968831f6c19048a0d483828bf9591a7f0069b98f6603982449695fa4e2"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/scope_closure_receipt.json",
+      "git_blob_sha256": "81d87bab25f2f47ad23e253c0adc5622f7b569cdd53f6cde62a6328a62269db2",
+      "original_file_sha256": "81d87bab25f2f47ad23e253c0adc5622f7b569cdd53f6cde62a6328a62269db2"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/semantic_retry_diversity.json",
+      "git_blob_sha256": "8737f18ca2abb3791d2d94264969623422870c89b6bfe111aac4bda287ce83e9",
+      "original_file_sha256": "8737f18ca2abb3791d2d94264969623422870c89b6bfe111aac4bda287ce83e9"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/shadow40_membership.json",
+      "git_blob_sha256": "6148136d3fe9906ada1d2d7f82d8aad976d5c2dec653f14d0d94a304ca979412",
+      "original_file_sha256": "6148136d3fe9906ada1d2d7f82d8aad976d5c2dec653f14d0d94a304ca979412"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/shadow_gate_audit.json",
+      "git_blob_sha256": "805cf572ae668eafd33d690cb7d58f9162bbc29016f779b9114bced0a9e10bfb",
+      "original_file_sha256": "805cf572ae668eafd33d690cb7d58f9162bbc29016f779b9114bced0a9e10bfb"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/specialization_events.json",
+      "git_blob_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "original_file_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/split_access_audit.json",
+      "git_blob_sha256": "24c148eaaf821ca2340343f62bbd8650c5035fa361fcd37e90898f0b60241f4b",
+      "original_file_sha256": "24c148eaaf821ca2340343f62bbd8650c5035fa361fcd37e90898f0b60241f4b"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/stage_reuse.json",
+      "git_blob_sha256": "9010be4c59ccd84d1138a8427ab959e44c7d1bd50bd07e62e583ddfcf208d6a8",
+      "original_file_sha256": "9010be4c59ccd84d1138a8427ab959e44c7d1bd50bd07e62e583ddfcf208d6a8"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/summary.json",
+      "git_blob_sha256": "4f5db6cfd2cf506f4a3ddaeae0a319cf710bccc1882b44cf320ab538bd22be84",
+      "original_file_sha256": "4f5db6cfd2cf506f4a3ddaeae0a319cf710bccc1882b44cf320ab538bd22be84"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/terminal_invalid_summary.json",
+      "git_blob_sha256": "36cc92b544d8639815d3d2064eb1e3219982b9031e1f51453a29caa26257c76e",
+      "original_file_sha256": "36cc92b544d8639815d3d2064eb1e3219982b9031e1f51453a29caa26257c76e"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/token_accounting.json",
+      "git_blob_sha256": "9f07ce4eead4dbb8aa0146fa633952ec5f86b065bd000a43720dc0de953bcffc",
+      "original_file_sha256": "9f07ce4eead4dbb8aa0146fa633952ec5f86b065bd000a43720dc0de953bcffc"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/transition_audit.json",
+      "git_blob_sha256": "e71259919f2450678d07ade6174abff80ef83d5d3a7e4f1e5d8877870e4fca40",
+      "original_file_sha256": "e71259919f2450678d07ade6174abff80ef83d5d3a7e4f1e5d8877870e4fca40"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/transition_trace.json",
+      "git_blob_sha256": "5dcfd35ef1989bcb59c700425b2f09362fb6bf552ae403fe10ced83c4d2f8b96",
+      "original_file_sha256": "5dcfd35ef1989bcb59c700425b2f09362fb6bf552ae403fe10ced83c4d2f8b96"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/validation100_membership.json",
+      "git_blob_sha256": "bab90616c897041587a83e3ee36959df8509e5c6f246b6f914966640146bbe9d",
+      "original_file_sha256": "bab90616c897041587a83e3ee36959df8509e5c6f246b6f914966640146bbe9d"
+    },
+    {
+      "byte_relation": "CRLF_TO_LF_ONLY",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_pilot_v5_20261004/execution_scope_update.json",
+      "git_blob_sha256": "395c861ac1649fb6d16200027df762e6eec299d4b3bcd573634a7022018a9c4a",
+      "original_file_sha256": "579525170b01074de269a768064b3267fbfedbf42b3e5bd3516f47b77b4e6dbc"
+    },
+    {
+      "byte_relation": "IDENTICAL",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_pilot_v5_20261004/final_status.json",
+      "git_blob_sha256": "50101fc6ce31ae5931cc14a5272d2e721e9f708e373a26250000dc8b16609ea2",
+      "original_file_sha256": "50101fc6ce31ae5931cc14a5272d2e721e9f708e373a26250000dc8b16609ea2"
+    },
+    {
+      "byte_relation": "CRLF_TO_LF_ONLY",
+      "file": "reports/math_v2_1_a1_seed81_low_cost_pilot_v5_20261004/README.md",
+      "git_blob_sha256": "45dd9fefac820f6b4789604e2939b3b7ff2052291d4566253e1bff5ed7c1aada",
+      "original_file_sha256": "77fa0abe8cfec6aed2e4136eb42372b699b9c5857c60dfec3cac45350b4a4a03"
+    }
+  ],
+  "new_api_calls": 0,
+  "original_byte_domain": "LOCAL_PREPUBLICATION_FILES",
+  "publication_byte_domain": "GIT_INDEX_BLOBS",
+  "scientific_content_changed": false,
+  "sha_manifests_excluded_to_avoid_recursive_hashes": true,
+  "status": "PASS",
+  "this_audit_file_covered_by_canary_sha_manifest": true
+}

@@ -1,0 +1,11 @@
+{
+  "canary_status": "PASS",
+  "new_real_charge": 264313,
+  "no_other_seeds_arms_or_test": true,
+  "pilot_status": "NOT_RUN_USER_DEFERRED",
+  "push_authorized": true,
+  "report": "reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004",
+  "total_charged": 1104556,
+  "total_remaining": 38895444,
+  "validation_status": "NOT_RUN_USER_DEFERRED"
+}

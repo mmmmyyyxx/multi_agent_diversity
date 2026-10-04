@@ -1,0 +1,39 @@
+{
+  "accounting_unchanged_since_run_close": true,
+  "authorization": "CLOSED",
+  "canary": "PASS",
+  "inflight_reservation": 0,
+  "new_fallback_charged": 0,
+  "new_provider_reported": 264313,
+  "next_experiment_authorized": false,
+  "pilot": "NOT_RUN_USER_DEFERRED",
+  "prior_charged": 840243,
+  "push_authorized": true,
+  "rerun_authorized": false,
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "selected_candidate_shadow_decision": {
+    "catastrophic_target_loss_count": 2,
+    "gate_version": "winner_only_shadow_gate_v1",
+    "metrics": {
+      "candidate_target_correct": 6,
+      "candidate_vote_correct": 13,
+      "incumbent_target_correct": 15,
+      "incumbent_vote_correct": 16,
+      "row_count": 40,
+      "target_delta": -9,
+      "vote_delta": -3
+    },
+    "passed": false,
+    "reasons": [
+      "shadow_vote_regression",
+      "catastrophic_target_member_regression"
+    ]
+  },
+  "source_sha": "628ec441085cae2db87ce242c62d80f7f24c51ae",
+  "status": "CANARY_COMPLETE_USER_REQUESTED_STOP",
+  "test_model_calls": 0,
+  "total_authorized": 40000000,
+  "total_charged": 1104556,
+  "total_remaining": 38895444,
+  "validation": "NOT_RUN_USER_DEFERRED"
+}

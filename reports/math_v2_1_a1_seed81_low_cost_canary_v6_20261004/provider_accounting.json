@@ -1,0 +1,15 @@
+{
+  "integrity_status": "PASS",
+  "usage": {
+    "attempts": 371,
+    "failures": 0,
+    "input_tokens": 167442,
+    "output_tokens": 96871,
+    "pattern": 0,
+    "reflection": 6,
+    "solver": 365,
+    "successes": 371,
+    "test": 0,
+    "validation": 0
+  }
+}

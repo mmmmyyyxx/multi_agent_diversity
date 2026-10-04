@@ -1,0 +1,12 @@
+{
+  "cache_hits": 28,
+  "canary_to_pilot_cache_reuse": false,
+  "carried_peer_profiles_reused_without_solver_invocation": true,
+  "cross_attempt_cache_hits": 0,
+  "fresh_attempt": true,
+  "logical_solver_evaluations": 368,
+  "physical_calls_avoided_by_reuse": 28,
+  "physical_solver_attempts": 365,
+  "physical_solver_generations": 365,
+  "prior_attempt_outputs_imported": false
+}

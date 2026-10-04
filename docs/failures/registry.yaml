@@ -470,7 +470,7 @@ failures:
   resolution_note: Current constitution permits audited Level B equivalent evidence; prior diagnostic evidence and absent token count remain unchanged.
 - failure_id: FAIL-MATH-V21-PROPOSER-MUTABLE-GUARD-MISMATCH
   title: Complete optimizer proposals do not reach admissible mutable candidates
-  status: OPEN
+  status: MITIGATED
   first_observed: math_v2_1_a1_seed81_low_cost_pilot_v4
   affected_components:
   - decision_procedure_proposer
@@ -488,6 +488,20 @@ failures:
   - tests/test_math_proposal_postmortem.py
   required_resolution: Versioned proposer/validator semantic alignment, including mathematical representation boundary; preserve
     output-interface isolation, replacement and example-copying checks.
-  lifecycle: OPEN
-  lifecycle_note: Read-only audit complete; production policy and closed historical search unchanged; fresh real execution
+  lifecycle: MITIGATED
+  prior_lifecycle: OPEN
+  prior_lifecycle_note: Read-only audit complete; production policy and closed historical search unchanged; fresh real execution
     not authorized.
+  lifecycle_note: Versioned semantic boundary and Layer1 repairs passed offline regression and a fresh real Canary;
+    six admissible proposals reached local Solver scoring and four reached team evaluation. One complete production
+    opportunity ended without commit because its selected candidate failed the frozen Shadow gate. Historical
+    Pilot invalid-proposal evidence remains immutable; scientific efficacy is not estimated.
+  mitigated_by: math_v2_1_a1_seed81_low_cost_canary_v6
+  resolution_evidence:
+  - reports/math_v2_1_layer1_gepa_flow_audit_v1_20261004
+  - reports/math_v2_1_preexecution_low_cost_v6_20261004
+  - reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/layer1_search_audit.json
+  - reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/candidate_funnel.json
+  - reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/shadow_gate_audit.json
+  resolution_limits: Throughput and contract conformance only; no population false-positive-rate estimate,
+    component-level causal attribution or scientific efficacy claim.

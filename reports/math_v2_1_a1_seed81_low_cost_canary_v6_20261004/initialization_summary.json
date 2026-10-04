@@ -1,0 +1,13 @@
+{
+  "count": 12,
+  "immutable_floor": true,
+  "initial_member_scores": [
+    8.0,
+    5.0,
+    5.0,
+    4.0,
+    6.0
+  ],
+  "initial_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+  "team_size": 5
+}

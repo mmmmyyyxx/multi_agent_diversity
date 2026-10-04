@@ -1,0 +1,8 @@
+{
+  "attachment_sha256": "76630550500117515c4eb999362e0c7ce0b70a6ca6d1d01ea7dfb7ce48a6dc68",
+  "attempt_id": "math_v2_1_layer1_A1_seed81_canary_attempt2",
+  "experiment_id": "math_v2_1_a1_seed81_low_cost_canary_v6",
+  "preexecution_sha": "b0b4761b660f6108dd72a045f569cc2b3d574e73",
+  "source_sha": "628ec441085cae2db87ce242c62d80f7f24c51ae",
+  "startup_identity_sha256": "1d36bd960589c0a3673b64691bd28ddacf72e1b9185f0c90dc5c4860d14a3f23"
+}

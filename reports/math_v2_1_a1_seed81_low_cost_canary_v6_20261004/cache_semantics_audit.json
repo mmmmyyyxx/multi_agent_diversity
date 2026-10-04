@@ -1,0 +1,10 @@
+{
+  "cross_attempt_cache_hits": 0,
+  "cross_member_cache_hits": 0,
+  "generative_cache_hits": 0,
+  "identity": "SOLVER_MEMBER_LANE_EXACT_CACHE_V2",
+  "member_lane_bound": true,
+  "solver_cache_hits": 28,
+  "solver_only": true,
+  "status": "PASS"
+}

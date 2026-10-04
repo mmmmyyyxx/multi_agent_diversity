@@ -1,0 +1,8 @@
+{
+  "authorization_created": false,
+  "pilot_signal": "NOT_ESTIMATED",
+  "provider_calls": 0,
+  "search_complete": false,
+  "status": "NOT_RUN_USER_DEFERRED",
+  "validation_complete": false
+}

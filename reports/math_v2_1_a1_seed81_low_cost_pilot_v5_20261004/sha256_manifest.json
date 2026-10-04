@@ -6,8 +6,12 @@
       "sha256": "579525170b01074de269a768064b3267fbfedbf42b3e5bd3516f47b77b4e6dbc"
     },
     {
+      "file": "final_status.json",
+      "sha256": "50101fc6ce31ae5931cc14a5272d2e721e9f708e373a26250000dc8b16609ea2"
+    },
+    {
       "file": "README.md",
-      "sha256": "b5f546956637750036d00f970e3b3be6335201fcacc9018ce4be4233c33a5e3a"
+      "sha256": "77fa0abe8cfec6aed2e4136eb42372b699b9c5857c60dfec3cac45350b4a4a03"
     }
   ]
 }
