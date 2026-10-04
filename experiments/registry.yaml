@@ -7316,7 +7316,7 @@ experiments:
   scientific_status: VALID_RETROSPECTIVE_ZERO_API_STRUCTURAL_AUDIT
   implementation_commit: 2c471d583ba379cbec4cdef3cd057e8a81b74fce
   execution_commit: 2c471d583ba379cbec4cdef3cd057e8a81b74fce
-  result_commit: null
+  result_commit: c9baac1d5f0cca144d6703566045f25f81907d7d
   manifest: experiments/manifests/math_v2_1_layer1_panel_feedback_audit_v1.yaml
   report: reports/math_v2_1_layer1_panel_feedback_audit_v1_20261004
   classifier: PANEL_AND_REJECTED_ACTION_GAPS_CONFIRMED
@@ -7327,5 +7327,4 @@ experiments:
   - Retrospective Optimize-only structure audit; no efficacy inference, policy changes or Pilot/Validation/Test
     calls.
   - Initial inspection informed audit questions; not a prospective efficacy preregistration.
-  unavailable:
-    result_commit: Sanitized report not yet committed.
+  unavailable: {}
