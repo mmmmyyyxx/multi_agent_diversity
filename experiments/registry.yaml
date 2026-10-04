@@ -7306,3 +7306,26 @@ experiments:
   - Latest scope is Canary only, then stop and push.
   unavailable: {}
   authorization_consumed: true
+- experiment_id: math_v2_1_layer1_panel_feedback_audit_v1
+  kind: ZERO_API_AUDIT
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_a1_seed81_low_cost_canary_v6
+  status: COMPLETED
+  scientific_status: VALID_RETROSPECTIVE_ZERO_API_STRUCTURAL_AUDIT
+  implementation_commit: 2c471d583ba379cbec4cdef3cd057e8a81b74fce
+  execution_commit: 2c471d583ba379cbec4cdef3cd057e8a81b74fce
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_layer1_panel_feedback_audit_v1.yaml
+  report: reports/math_v2_1_layer1_panel_feedback_audit_v1_20261004
+  classifier: PANEL_AND_REJECTED_ACTION_GAPS_CONFIRMED
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Retrospective Optimize-only structure audit; no efficacy inference, policy changes or Pilot/Validation/Test
+    calls.
+  - Initial inspection informed audit questions; not a prospective efficacy preregistration.
+  unavailable:
+    result_commit: Sanitized report not yet committed.

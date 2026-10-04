@@ -1,0 +1,8 @@
+{
+  "content": "hashes_counters_categories_metrics_only",
+  "findings": [],
+  "line_endings_only_normalized": [],
+  "original_private_evidence_bytes_preserved": true,
+  "publication_byte_policy": "canonical_LF_UTF8_text",
+  "status": "PASS"
+}

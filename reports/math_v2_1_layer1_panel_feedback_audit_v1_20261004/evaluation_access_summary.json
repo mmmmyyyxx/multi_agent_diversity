@@ -1,0 +1,8 @@
+{
+  "Optimize": "completed_Canary_only",
+  "new_model_calls": 0,
+  "pilot_calls": 0,
+  "policy_changes": 0,
+  "test_calls": 0,
+  "validation_calls": 0
+}

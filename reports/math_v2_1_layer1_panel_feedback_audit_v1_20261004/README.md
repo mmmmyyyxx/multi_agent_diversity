@@ -1,0 +1,20 @@
+# Layer1 panel and rejected-action feedback audit
+
+Both structural concerns are confirmed by a retrospective zero-API audit of the completed Canary. No policy was changed and no Pilot, Validation or Test was run. The original Canary remains PASS; this audit makes no efficacy or causal claim.
+
+| Evidence scope | Repair | Non-repair TEAM_HARD | Preservation | Parent-correct preservation |
+|---|---:|---:|---:|---:|
+| Full Optimize12 universe | 6 | 1 | 5 | 5 |
+| Selected local panel | 3 | 1 | 0 | 0 |
+
+The upstream variable-evidence policy selects priority ranks below five and backfills only to the technical minimum of three. The five available parent-correct preservation rows were non-pivotal (`mutation_sensitive=false`), with no prior transition anchor, so their rank was five and they were excluded. Four rows survived upstream. Mutation and search-validation views use those same four IDs; deduplication yields four, not eight. Layer1 interleaves repair with non-repair evidence and caps the supplied union at six. It does not load or fill from the complete Optimize universe. The fourth row is an incorrect TEAM_HARD case, not a correct preservation anchor. This is upstream selection, not a shortage of data or truncation at the panel cap.
+
+Root correctness is 0/4, so every candidate's root-relative `local_newly_broken` is necessarily zero. Parent-relative `local_parent_newly_broken` can still record loss after a locally improved procedure becomes the current parent; it does not restore measurement against excluded initial-correct examples. Full's immutable initial competence floor and the Shadow guard still apply. One observed opportunity establishes this occurrence and a policy gap, not a population frequency or the cause of the Shadow regression. The current contract requires at most six rows and does not guarantee a parent-correct anchor, so this observation is not an implementation violation.
+
+Four candidates were locally negative; three had a subsequent generation. In all three next inputs, Outcome and identifying hashes were present, while the rejected complete procedure and semantic edit diff were absent. `recent_candidate_observations` carries per-example results, and `candidate_archive` carries hashes, generic mutation shape and score diagnostics. `current_parent` carries only the best locally accepted procedure. The positive first proposal is visible there; rejected proposals are not. Hashes and a generic `replacement` label do not give the model a readable Action. Decoded JSON fields, exact generation-input reconstruction and a positive current-parent control confirm the gap without a sampling call.
+
+Recommended for a separately frozen future amendment: include legal parent-correct preservation anchors when available and explicitly flag an unmeasurable preservation metric when none exist. Keep one fixed panel for root and candidates, Optimize-only access and the 36-call budget. Expanding the panel changes how many proposals fit: a six-row panel allows root plus five candidate evaluations within 36, whereas a five-row panel can fit root plus six. Do not silently force a six-row quota or alter the budget.
+
+For rejected feedback, bind candidate and parent identities to a bounded readable procedure/edit description together with Outcome. This is opportunity-local optimizer history, not activation of LLM Memory; it must remain outside Solver inputs. Context bounds, request identity and conservative input reservations would need an explicit amendment and fresh freeze. These recommendations have not been implemented.
+
+The scoped GPT-5.6 Luna verification passed under an offline network guard with zero network attempts. Original evidence and the token ledger stayed byte-identical. No provider tokens were charged: cumulative charge remains 1,104,556 of 40,000,000, with 38,895,444 remaining. The current classified suite was not rerun because production source was unchanged; 1,468 historical/private cases were not executed. Published artifacts contain only sanitized hashes, counters, categories and metrics.

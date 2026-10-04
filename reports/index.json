@@ -1337,6 +1337,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/math_v2_1_layer1_panel_feedback_audit_v1_20261004",
+      "document": "reports/math_v2_1_layer1_panel_feedback_audit_v1_20261004/README.md",
+      "date": "20261004",
+      "era": "BENCHMARK_GENERALIZATION",
+      "kind": "ZERO_API",
+      "experiment_id": "math_v2_1_layer1_panel_feedback_audit_v1",
+      "status": "COMPLETED",
+      "source_commit": "2c471d583ba379cbec4cdef3cd057e8a81b74fce",
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/math_v2_1_layer1_preexecution_repair_v1_20261004",
       "document": "reports/math_v2_1_layer1_preexecution_repair_v1_20261004/README.md",
       "date": "20261004",

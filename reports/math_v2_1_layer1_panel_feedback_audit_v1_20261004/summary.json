@@ -1,0 +1,13 @@
+{
+  "available_parent_correct_preservation": 5,
+  "changes_implemented": false,
+  "negative_action_visible": 0,
+  "negative_feedback_opportunities": 3,
+  "negative_outcome_visible": 3,
+  "panel": "0/4",
+  "panel_nonrepair_team_hard": 1,
+  "panel_preservation": 0,
+  "panel_repair": 3,
+  "parent_correct_anchors": 0,
+  "status": "ZERO_API_STRUCTURAL_AUDIT_COMPLETE"
+}

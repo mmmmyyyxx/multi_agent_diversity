@@ -1,0 +1,63 @@
+{
+  "verification": "EXECUTION_COMPLETE",
+  "expected": {
+    "git_commit": "2c471d583ba379cbec4cdef3cd057e8a81b74fce",
+    "audit_script_sha256": "641447ab3c96b9703f39a0f67c1e9ad5c73d65d1b8d0f9f09fb62e1aab4dbb25"
+  },
+  "observed": {
+    "git_commit": "2c471d583ba379cbec4cdef3cd057e8a81b74fce",
+    "audit_script_sha256": "641447ab3c96b9703f39a0f67c1e9ad5c73d65d1b8d0f9f09fb62e1aab4dbb25",
+    "command": "& 'runs/math_v2_1/runtime/Scripts/python.exe' tests/formal_zero_api_runner.py --offline-command runs/math_v2_1/layer1_structure_audit_v1/audit.py",
+    "command_exit_code": 0,
+    "network_guard_active_before_application_import": true,
+    "network_attempt_count": 0,
+    "new_api_calls": 0,
+    "ledger_byte_identical": true,
+    "experiment_state_unchanged": true,
+    "source_changes": 0,
+    "pilot_calls": 0,
+    "validation_calls": 0,
+    "test_calls": 0,
+    "new_provider_tokens": 0
+  },
+  "raw_run_invariants": {
+    "raw_evidence_files_verified": 355,
+    "ledger_byte_identical": true,
+    "experiment_state_unchanged": true
+  },
+  "panel_counters": {
+    "panel": "0/4",
+    "panel_actual": 4,
+    "panel_maximum": 6,
+    "panel_repair": 3,
+    "panel_preservation": 0,
+    "panel_nonrepair_team_hard": 1,
+    "parent_correct_anchors": 0,
+    "available_parent_correct_preservation": 5,
+    "opportunities_observed": 1
+  },
+  "feedback_counters": {
+    "physical_generations": 6,
+    "negative_candidates": 4,
+    "negative_candidates_with_next_generation": 3,
+    "negative_outcome_and_hash_visible_next": 3,
+    "negative_action_complete_procedure_visible_next": 0,
+    "negative_action_explicit_diff_or_structure_visible_next": 0,
+    "memory_reads": 0,
+    "memory_writes": 0
+  },
+  "decoded_procedure_visibility": {
+    "generation_1_positive_current_parent_procedure_visible_in_next_input": true,
+    "generation_2_negative_procedure_or_diff_visible_in_next_input": false,
+    "generation_3_negative_procedure_or_diff_visible_in_next_input": false,
+    "generation_5_negative_procedure_or_diff_visible_in_next_input": false
+  },
+  "output_artifact_sha256": {
+    "action_feedback_audit.json": "ea0bb88d8d5621d6b8c47bd41750b878ecf414a5de1a984b89a6506c05aca52f",
+    "panel_audit.json": "bf5d1b89763fd36cc389787d83b5898337f4eaeef6ed6c29184d742f56168f6c",
+    "provenance.json": "765975e8447b033cd772087c199824026b9e4eed7227495d96c43bfddd3d313a",
+    "scope_audit.json": "7c8b46b05082c2bfec3782d58983f4553d1acd014d6c8d80ebf68afbd75b90f4",
+    "sha256_manifest.json": "615574a702b52920e73c1a26d7267efdebfecb945a7d6e33b996b024e14ddcfb",
+    "summary.json": "8be4f7a529a7a639aca10cab64d3b5960d8c99e3e293e76eebedd2baeb99cad3"
+  }
+}

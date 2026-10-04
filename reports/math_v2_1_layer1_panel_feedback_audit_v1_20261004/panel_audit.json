@@ -1,0 +1,203 @@
+{
+  "anchor_minimum_guaranteed_by_current_policy": false,
+  "excluded_parent_correct_preservation_count": 5,
+  "existing_contract_violation": false,
+  "generic_backfill_count": 0,
+  "interpretation": "Available parent-correct preservation rows were filtered upstream; not data absence or panel truncation.",
+  "opportunities_observed": 1,
+  "panel_actual": 4,
+  "panel_maximum": 6,
+  "panel_nonrepair_team_hard_count": 1,
+  "panel_parent_correct_anchors": 0,
+  "panel_preservation_count": 0,
+  "panel_repair_count": 3,
+  "panel_safety_boundary_count": 0,
+  "policy_minimum": 3,
+  "population_frequency": "NOT_ESTIMATED_ONE_OPPORTUNITY",
+  "root_newly_broken_identifiability": "DEGENERATE_ZERO_ON_THIS_PANEL",
+  "root_score": "0/4",
+  "selected_role_counts": {
+    "MUTATION": 4,
+    "REPAIR": 3,
+    "TEAM_HARD": 4,
+    "coverage": 1,
+    "direct_flip": 1,
+    "near_margin": 1,
+    "vote_wrong": 1
+  },
+  "selection_rule": "No Pattern: priority_rank<5; backfill only to minimum=3; no ordinary-row capacity filling.",
+  "status": "CONFIRMED",
+  "target_member": 1,
+  "universe_count": 12,
+  "universe_parent_correct_preservation_count": 5,
+  "universe_preservation_count": 5,
+  "universe_records": [
+    {
+      "example_id_sha256": "9ec23575d5a250a9cc09f0a6e784a4409901589e58d21aeb95cb269c39448ac2",
+      "lane": "preservation",
+      "mutation_sensitive": false,
+      "parent_correct": true,
+      "priority_rank": 5,
+      "roles": [
+        "PRESERVATION",
+        "target_correct"
+      ],
+      "selected": false,
+      "team_disagreement": 1
+    },
+    {
+      "example_id_sha256": "3dbf527d6b18933f6d00f8154526a70742fc11afb0c9e9f29264f4b6fbda5c01",
+      "lane": "preservation",
+      "mutation_sensitive": false,
+      "parent_correct": true,
+      "priority_rank": 5,
+      "roles": [
+        "PRESERVATION",
+        "target_correct"
+      ],
+      "selected": false,
+      "team_disagreement": 1
+    },
+    {
+      "example_id_sha256": "7d9e8d7237b8beecbae032cd7131b3ba073fb9861ff0424da03dcbc892ea6b5e",
+      "lane": "preservation",
+      "mutation_sensitive": false,
+      "parent_correct": true,
+      "priority_rank": 5,
+      "roles": [
+        "PRESERVATION",
+        "target_correct"
+      ],
+      "selected": false,
+      "team_disagreement": 1
+    },
+    {
+      "example_id_sha256": "e5b31f749755045d8c64d63b4e6a781d79a330a161c180e9062a4254908259a7",
+      "lane": "preservation",
+      "mutation_sensitive": false,
+      "parent_correct": true,
+      "priority_rank": 5,
+      "roles": [
+        "PRESERVATION",
+        "target_correct"
+      ],
+      "selected": false,
+      "team_disagreement": 1
+    },
+    {
+      "example_id_sha256": "ada848d3be33231756edaacdcd7ec744fbfb36eea0d5ec843c7b4603a07729c4",
+      "lane": "coverage",
+      "mutation_sensitive": false,
+      "parent_correct": false,
+      "priority_rank": 5,
+      "roles": [
+        "REPAIR",
+        "TEAM_HARD",
+        "coverage"
+      ],
+      "selected": false,
+      "team_disagreement": 1
+    },
+    {
+      "example_id_sha256": "9986b0f78cecb02703ea81f662fd848769b10be8ec2d1348c16b362e755e3293",
+      "lane": "coverage",
+      "mutation_sensitive": false,
+      "parent_correct": false,
+      "priority_rank": 5,
+      "roles": [
+        "REPAIR",
+        "TEAM_HARD",
+        "coverage"
+      ],
+      "selected": false,
+      "team_disagreement": 1
+    },
+    {
+      "example_id_sha256": "d9d6be19ea1405cadf7c6054f9b6e0fa74c3b6e9de7405c8401ec2c4af7de994",
+      "lane": "team_hard",
+      "mutation_sensitive": false,
+      "parent_correct": false,
+      "priority_rank": 4,
+      "roles": [
+        "TEAM_HARD",
+        "vote_wrong"
+      ],
+      "selected": true,
+      "team_disagreement": 3
+    },
+    {
+      "example_id_sha256": "b47be6dbf973002b6635bd795d946179dd5e5f27e58ed622c66b4d131617e099",
+      "lane": "direct_flip",
+      "mutation_sensitive": false,
+      "parent_correct": false,
+      "priority_rank": 0,
+      "roles": [
+        "REPAIR",
+        "TEAM_HARD",
+        "direct_flip"
+      ],
+      "selected": true,
+      "team_disagreement": 3
+    },
+    {
+      "example_id_sha256": "c5f08afe390655e6abb19c74b191fbd57c02f3bb26552c41dff0793d4c145cf7",
+      "lane": "coverage",
+      "mutation_sensitive": false,
+      "parent_correct": false,
+      "priority_rank": 4,
+      "roles": [
+        "REPAIR",
+        "TEAM_HARD",
+        "coverage"
+      ],
+      "selected": true,
+      "team_disagreement": 3
+    },
+    {
+      "example_id_sha256": "2ba014128ca16fff2ede90fb87bbc4dd995245db889115b18b1b78232bd4aa35",
+      "lane": "preservation",
+      "mutation_sensitive": false,
+      "parent_correct": true,
+      "priority_rank": 5,
+      "roles": [
+        "PRESERVATION",
+        "target_correct"
+      ],
+      "selected": false,
+      "team_disagreement": 2
+    },
+    {
+      "example_id_sha256": "62c46e0670a2b2d6ec1a9d292b45cb41aa78aba903d397939f839481b106d132",
+      "lane": "coverage",
+      "mutation_sensitive": false,
+      "parent_correct": false,
+      "priority_rank": 5,
+      "roles": [
+        "REPAIR",
+        "TEAM_HARD",
+        "coverage"
+      ],
+      "selected": false,
+      "team_disagreement": 1
+    },
+    {
+      "example_id_sha256": "34ce8da32719874e6df94fca8bce1157f02e09756cdffde899be3c2c5c0939bd",
+      "lane": "near_margin",
+      "mutation_sensitive": false,
+      "parent_correct": false,
+      "priority_rank": 4,
+      "roles": [
+        "REPAIR",
+        "TEAM_HARD",
+        "near_margin"
+      ],
+      "selected": true,
+      "team_disagreement": 3
+    }
+  ],
+  "universe_repair_count": 6,
+  "upstream_capacity": 12,
+  "upstream_mutation_count": 4,
+  "upstream_unique_union_count": 4,
+  "upstream_validation_count": 4
+}

@@ -1,0 +1,11 @@
+{
+  "audit_positive_control": "PASS",
+  "full_current_suite_rerun": false,
+  "historical_private_cases_executed": 0,
+  "historical_private_cases_not_executed": 1468,
+  "independent_luna_verification": "PASS",
+  "network_attempts": 0,
+  "raw_evidence_inventory": "PASS",
+  "reason": "Production source and scientific policies unchanged; report/registry-only publication.",
+  "scoped_zero_api_audit": "PASS"
+}

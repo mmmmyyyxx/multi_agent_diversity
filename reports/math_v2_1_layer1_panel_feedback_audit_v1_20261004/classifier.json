@@ -1,0 +1,10 @@
+{
+  "causal_effect_on_Shadow": "NOT_IDENTIFIED",
+  "classification": "VALID_RETROSPECTIVE_ZERO_API_STRUCTURAL_AUDIT",
+  "contract_conformance": "CURRENT_FROZEN_POLICY_CONFORMS",
+  "feedback_finding": "REJECTED_ACTION_CONTENT_NOT_SERIALIZED",
+  "panel_finding": "AVAILABLE_PARENT_CORRECT_PRESERVATION_EXCLUDED",
+  "population_frequency": "NOT_ESTIMATED",
+  "recommended_amendment": "NOT_IMPLEMENTED",
+  "scientific_efficacy": "NOT_ESTIMATED"
+}

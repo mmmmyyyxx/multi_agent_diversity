@@ -1,0 +1,12 @@
+{
+  "correction": "Inspect decoded JSON string fields; serialized literal lookup can miss escaped line breaks.",
+  "experiment_source_changed": false,
+  "negative_action_findings_unchanged": true,
+  "new_api_calls": 0,
+  "original_private_audit_and_receipt_preserved": true,
+  "original_script_sha256": "b267ca5d2dbea81f3be639cb4fc188bee7cf39f217ba86ba122079266d2dda56",
+  "positive_current_parent_control": true,
+  "revised_script_sha256": "641447ab3c96b9703f39a0f67c1e9ad5c73d65d1b8d0f9f09fb62e1aab4dbb25",
+  "scientific_policy_changed": false,
+  "scope": "AUDIT_ONLY"
+}

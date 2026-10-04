@@ -1,0 +1,9 @@
+{
+  "actual_provider_input_reconstruction_equal": true,
+  "decoded_field_check_pass": true,
+  "ledger_byte_identical": true,
+  "panel_reproduced_from_current_frozen_source": true,
+  "positive_action_visibility_control_pass": true,
+  "previous_Canary_classification_unchanged": true,
+  "raw_run_byte_identical": true
+}

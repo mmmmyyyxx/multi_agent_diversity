@@ -774,6 +774,9 @@ nodes:
 - experiment_id: math_v2_1_a1_seed81_low_cost_canary_v6
   kind: REAL_CANARY
   era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_1_layer1_panel_feedback_audit_v1
+  kind: ZERO_API_AUDIT
+  era: BENCHMARK_GENERALIZATION
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1422,4 +1425,10 @@ edges:
   relation: derived_from
   evidence: reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/README.md
   scope: Zero-API preexecution source-order correction; scientific runtime unchanged.
+- from: math_v2_1_a1_seed81_low_cost_canary_v6
+  to: math_v2_1_layer1_panel_feedback_audit_v1
+  relation: audit_of
+  evidence: reports/math_v2_1_layer1_panel_feedback_audit_v1_20261004/README.md
+  scope: Retrospective zero-API panel and actual rejected-action feedback audit; no policy or held-out efficacy
+    change.
 current_frontier: experiments/current_frontier.yaml
