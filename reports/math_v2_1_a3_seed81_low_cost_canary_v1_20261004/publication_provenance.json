@@ -1,0 +1,8 @@
+{
+  "audited_result_commit": "4601872463728e4e95804ecb6ee0a53041cd108d",
+  "pilot_executed": false,
+  "preexecution_commit": "d4cf07179e45d4bd989c1e70ff117f62f11116c6",
+  "publication_scope": "SANITIZED_CANARY_ONLY_USER_SCOPE_COMPLETE",
+  "source_commit": "f231301972c65e3b7c25fe1d7146cd902642e94d",
+  "validation_executed": false
+}

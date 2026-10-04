@@ -7338,7 +7338,7 @@ experiments:
   scientific_status: VALID_ZERO_API_FREEZE
   implementation_commit: f231301972c65e3b7c25fe1d7146cd902642e94d
   execution_commit: f231301972c65e3b7c25fe1d7146cd902642e94d
-  result_commit: null
+  result_commit: 4601872463728e4e95804ecb6ee0a53041cd108d
   manifest: experiments/manifests/math_v2_1_layer1_memory_amendment_v1.yaml
   report: reports/math_v2_1_layer1_memory_amendment_v1_20261004
   classifier: ALL_REQUIRED_ZERO_API_GATES_PASS
@@ -7349,8 +7349,7 @@ experiments:
   - Bounded action memory, current-evidence reflection and mandatory legal preservation anchor.
   - Memory ON, Pattern OFF; latest user scope stops after fresh Canary.
   - 1007 current cases passed, 2 skipped, 1468 historical/private cases NOT RUN; zero API.
-  unavailable:
-    result_commit: Recorded by the following publication provenance commit.
+  unavailable: {}
 - experiment_id: math_v2_1_memory_preexecution_v1
   kind: PREEXECUTION_FREEZE
   era: BENCHMARK_GENERALIZATION
@@ -7361,7 +7360,7 @@ experiments:
   scientific_status: VALID_ZERO_API_FREEZE
   implementation_commit: f231301972c65e3b7c25fe1d7146cd902642e94d
   execution_commit: d4cf07179e45d4bd989c1e70ff117f62f11116c6
-  result_commit: null
+  result_commit: 4601872463728e4e95804ecb6ee0a53041cd108d
   manifest: experiments/manifests/math_v2_1_memory_preexecution_v1.yaml
   report: reports/math_v2_1_memory_preexecution_v1_20261004
   classifier: ALL_REQUIRED_ZERO_API_GATES_PASS
@@ -7372,8 +7371,7 @@ experiments:
   - Bounded action memory, current-evidence reflection and mandatory legal preservation anchor.
   - Memory ON, Pattern OFF; latest user scope stops after fresh Canary.
   - 1007 current cases passed, 2 skipped, 1468 historical/private cases NOT RUN; zero API.
-  unavailable:
-    result_commit: Recorded by the following publication provenance commit.
+  unavailable: {}
 - experiment_id: math_v2_1_a3_seed81_low_cost_canary_v1
   kind: REAL_CANARY
   era: BENCHMARK_GENERALIZATION
@@ -7384,7 +7382,7 @@ experiments:
   scientific_status: VALID_OPERATIONAL_CANARY_NO_EFFICACY
   implementation_commit: f231301972c65e3b7c25fe1d7146cd902642e94d
   execution_commit: d4cf07179e45d4bd989c1e70ff117f62f11116c6
-  result_commit: null
+  result_commit: 4601872463728e4e95804ecb6ee0a53041cd108d
   manifest: experiments/manifests/math_v2_1_a3_seed81_low_cost_canary_v1.yaml
   report: reports/math_v2_1_a3_seed81_low_cost_canary_v1_20261004
   classifier: BOUNDED_MEMORY_AND_PRESERVATION_ANCHOR_CANARY_PASS
@@ -7395,5 +7393,4 @@ experiments:
   - Bounded action memory, current-evidence reflection and mandatory legal preservation anchor.
   - Memory ON, Pattern OFF; latest user scope stops after fresh Canary.
   - Audited fresh single opportunity; latest user directive closes task before Pilot/Validation.
-  unavailable:
-    result_commit: Recorded by the following publication provenance commit.
+  unavailable: {}

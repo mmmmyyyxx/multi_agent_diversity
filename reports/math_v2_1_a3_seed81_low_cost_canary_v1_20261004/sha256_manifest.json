@@ -86,6 +86,10 @@
       "sha256": "7a2e4f8dd19caab6d5e4ab3fb0346698b86fa771985078d3ca301831281600ca"
     },
     {
+      "file": "publication_provenance.json",
+      "sha256": "49c60f1c31c11556bc0f5ed964e7df65b11b7517de294c6113c8225d0d60bdb8"
+    },
+    {
       "file": "README.md",
       "sha256": "60ce57703dd8e8c77e092fc9ba5369bfdf48f33896935da5aeea2137d6983476"
     },
