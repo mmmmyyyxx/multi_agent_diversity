@@ -25,6 +25,7 @@ def memory():return StructuredRollingRiskMemoryV4(**LIMITS,risk_policy=copy.deep
 
 def details(prompt=ROOT+' Check signs.',fixed=0,broken=1,preservation=True):
     return dict(changed=True,contract_valid=True,solver_evaluated=True,
+        local_invalid_count=0,
         local_parent_correct_delta=fixed-broken,local_parent_newly_fixed=fixed,
         local_parent_newly_broken=broken,local_newly_broken=broken if preservation else 0,
         preservation_locally_measurable=preservation,memory_action=edit_action(ROOT,prompt))
@@ -104,6 +105,8 @@ def test_case_mechanism_preservation_and_unmeasured_loss_are_distinct():
     {'memory_action':'Change FINAL_ANSWER formatting'},
     {'memory_action':'Fix invalid-output instability'},
     {'local_parent_newly_broken':-1},
+    {'local_invalid_count':1},{'local_invalid_count':True},
+    {'operational_failure':True},{'duplicate':True},
 ])
 def test_operational_or_unclassified_failures_never_promote(bad):
     m=memory();d={**details(),**bad}
@@ -112,6 +115,11 @@ def test_operational_or_unclassified_failures_never_promote(bad):
         m.observe_local_failure(member=member,lane='direct_flip',parent=ROOT,prompt=ROOT+' Check signs.',details=d,opportunity_id='synthetic')
         commit(m,member)
     assert not m.shared
+
+
+def test_missing_solver_validity_evidence_cannot_promote():
+    d=details();d.pop('local_invalid_count')
+    assert failure_signature(d,'direct_flip') is None
 
 
 def test_shared_view_and_storage_have_no_raw_private_material():

@@ -40,6 +40,11 @@ def failure_signature(details, lane):
     """Exact closed semantic concepts, not hashes, raw prose or equal deltas."""
     if lane not in LANES or any(details.get(k) is not True for k in ('changed','contract_valid','solver_evaluated')):
         return None
+    # Procedure conformance is distinct from Solver response validity. Terminal
+    # parser/format failures must not become a reasoning-risk family.
+    if (type(details.get('local_invalid_count')) is not int or details['local_invalid_count']!=0
+            or details.get('operational_failure') is True or details.get('duplicate') is True):
+        return None
     fixed,broken,delta=(details.get(k) for k in ('local_parent_newly_fixed','local_parent_newly_broken','local_parent_correct_delta'))
     if any(type(x) is not int for x in (fixed,broken,delta)) or min(fixed,broken)<0 or delta>=0 or fixed-broken!=delta:
         return None

@@ -12,6 +12,11 @@ or deltas cannot establish a family. Recognized Responsibility lanes are
 applicability metadata, not a reason to split equivalent mechanisms. Unchanged,
 contract-invalid, unevaluated, operational and unclassified edits cannot
 support promotion. Categories describe observed associations, not proved causes.
+Zero local Solver invalid responses must be explicitly observed: procedure
+conformance alone does not establish parser/response validity. Missing validity
+counts, terminal parser failures or duplicated/operational outcomes cannot
+support a repeated-private reasoning family. Existing direct structural-source
+categories retain their original separate admission contract.
 
 Immediate negative feedback stays private. At a completed opportunity's memory
 transaction, a family supported by at least two distinct members in the recent
