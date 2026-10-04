@@ -7,5 +7,7 @@
   "targeted_handoff_sha256": "9594da7a052e4032c9d657dc1d3f95f100c1b1e963b7770f7f1dd780f3ab71bb",
   "full_handoff_sha256": "cc966d0481da05ef1430222e1ee880f9442e713c5eb10c3f8c63745d45d6e66c",
   "real_execution": false,
-  "pushed": false
+  "pushed": false,
+  "result_commit": "0eb2b087878e0588129c318d5edaa3c12acc06b7",
+  "publication_scope": "LOCAL_ONLY_NO_PUSH"
 }
