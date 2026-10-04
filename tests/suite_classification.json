@@ -1225,6 +1225,12 @@
       "current_suite_included": true,
       "path": "tests/test_layer1_action_memory.py",
       "required_private_artifacts": []
+    },
+    {
+      "path": "tests/test_rolling_risk_memory.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
     }
   ]
 }

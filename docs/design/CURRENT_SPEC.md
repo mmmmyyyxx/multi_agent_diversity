@@ -668,3 +668,14 @@ causal efficacy in a single development run. Solver V2, optimizer V3,
 member-lane cache V2, recovery, memberships and all Layer2 semantics remain
 frozen. Every new policy and limit enters execution binding, configuration,
 manifest, startup, request/cache and exact authorization identities.
+
+## Cross-member rolling risk memory V4 (explicit opt-in)
+
+`structured_cross_member_rolling_risk_memory_v4` implements the normative
+[cross-member promotion and rolling retention contract](SHARED_RISK_MEMORY_V4.md).
+Only repeated closed semantic failures across at least two distinct members
+can promote private evidence at an opportunity transaction. Same-member
+recurrence stays private. Direct measured structural rejections remain sources.
+The new signature and retention policy enter mechanism identity explicitly.
+V3, its real execution binding and historical evidence remain immutable.
+This offline amendment grants no API or held-out execution authorization.

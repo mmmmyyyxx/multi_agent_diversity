@@ -7394,3 +7394,24 @@ experiments:
   - Memory ON, Pattern OFF; latest user scope stops after fresh Canary.
   - Audited fresh single opportunity; latest user directive closes task before Pilot/Validation.
   unavailable: {}
+- experiment_id: math_v2_1_shared_risk_memory_amendment_v1
+  kind: PROTOCOL_FREEZE
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_layer1_memory_amendment_v1
+  status: DRAFT
+  scientific_status: PENDING_ZERO_API_VERIFICATION
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_shared_risk_memory_amendment_v1.yaml
+  report: reports/math_v2_1_shared_risk_memory_amendment_v1_20261004
+  classifier: PENDING_ZERO_API_GATES
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Separate opt-in Memory V4; V3 binding and completed Canary immutable.
+  - No real API, Canary, Pilot, Validation, Test or push authorized.
+  unavailable: {}

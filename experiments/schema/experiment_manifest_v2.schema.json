@@ -1051,7 +1051,8 @@
             "enum": [
               "null_memory_v1",
               "strategy_experience_memory_v2",
-              "structured_action_failure_memory_v3"
+              "structured_action_failure_memory_v3",
+              "structured_cross_member_rolling_risk_memory_v4"
             ]
           },
           "models": {
@@ -1177,27 +1178,41 @@
     },
     {
       "if": {
-        "required": [
-          "execution_binding"
-        ],
-        "properties": {
-          "execution_binding": {
+        "anyOf": [
+          {
             "required": [
-              "identity"
+              "execution_binding"
             ],
             "properties": {
-              "identity": {
-                "enum": [
-                  "MATH_V2_1_EXECUTION_BINDING_V3",
-                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
-                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
-                  "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
-                  "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1"
-                ]
+              "execution_binding": {
+                "required": [
+                  "identity"
+                ],
+                "properties": {
+                  "identity": {
+                    "enum": [
+                      "MATH_V2_1_EXECUTION_BINDING_V3",
+                      "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
+                      "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
+                      "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
+                      "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "required": [
+              "memory_identity"
+            ],
+            "properties": {
+              "memory_identity": {
+                "const": "structured_cross_member_rolling_risk_memory_v4"
               }
             }
           }
-        }
+        ]
       },
       "then": {
         "required": [
@@ -1220,26 +1235,40 @@
     },
     {
       "if": {
-        "required": [
-          "execution_binding"
-        ],
-        "properties": {
-          "execution_binding": {
+        "anyOf": [
+          {
             "required": [
-              "identity"
+              "execution_binding"
             ],
             "properties": {
-              "identity": {
-                "enum": [
-                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
-                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
-                  "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
-                  "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1"
-                ]
+              "execution_binding": {
+                "required": [
+                  "identity"
+                ],
+                "properties": {
+                  "identity": {
+                    "enum": [
+                      "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
+                      "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
+                      "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
+                      "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "required": [
+              "memory_identity"
+            ],
+            "properties": {
+              "memory_identity": {
+                "const": "structured_cross_member_rolling_risk_memory_v4"
               }
             }
           }
-        }
+        ]
       },
       "then": {
         "required": [
@@ -1361,25 +1390,39 @@
     },
     {
       "if": {
-        "required": [
-          "execution_binding"
-        ],
-        "properties": {
-          "execution_binding": {
+        "anyOf": [
+          {
             "required": [
-              "identity"
+              "execution_binding"
             ],
             "properties": {
-              "identity": {
-                "enum": [
-                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
-                  "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
-                  "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1"
-                ]
+              "execution_binding": {
+                "required": [
+                  "identity"
+                ],
+                "properties": {
+                  "identity": {
+                    "enum": [
+                      "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
+                      "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
+                      "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "required": [
+              "memory_identity"
+            ],
+            "properties": {
+              "memory_identity": {
+                "const": "structured_cross_member_rolling_risk_memory_v4"
               }
             }
           }
-        }
+        ]
       },
       "then": {
         "required": [
@@ -1406,24 +1449,38 @@
     },
     {
       "if": {
-        "required": [
-          "execution_binding"
-        ],
-        "properties": {
-          "execution_binding": {
+        "anyOf": [
+          {
             "required": [
-              "identity"
+              "execution_binding"
             ],
             "properties": {
-              "identity": {
-                "enum": [
-                  "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
-                  "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1"
-                ]
+              "execution_binding": {
+                "required": [
+                  "identity"
+                ],
+                "properties": {
+                  "identity": {
+                    "enum": [
+                      "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
+                      "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "required": [
+              "memory_identity"
+            ],
+            "properties": {
+              "memory_identity": {
+                "const": "structured_cross_member_rolling_risk_memory_v4"
               }
             }
           }
-        }
+        ]
       },
       "then": {
         "required": [
@@ -1684,6 +1741,96 @@
             "const": "LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1"
           }
         }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "memory_identity"
+        ],
+        "properties": {
+          "memory_identity": {
+            "const": "structured_cross_member_rolling_risk_memory_v4"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "mechanism_config"
+        ],
+        "properties": {
+          "method_identity": {
+            "const": "unified_team_prompt_search_v2_1"
+          },
+          "search_engine_identity": {
+            "const": "LAYER1_BOUNDED_MEMORY_SEARCH_V2"
+          },
+          "pattern_identity": {
+            "const": "null_pattern_v1"
+          },
+          "evidence_identity": {
+            "const": "single_mechanism_preservation_anchor_v3"
+          },
+          "mechanism_config": {
+            "const": {
+              "memory": {
+                "top_k_private": 3,
+                "top_k_shared": 3,
+                "max_context_chars": 1200,
+                "private_storage_limit": 24,
+                "shared_storage_limit": 48,
+                "max_failure_entries_per_member": 5
+              },
+              "optimizer_input_schema": "LAYER1_CURRENT_EVIDENCE_MEMORY_INPUT_V2",
+              "panel_policy": "single_mechanism_preservation_anchor_v3",
+              "shared_risk_policy": {
+                "signature": "closed_action_outcome_failure_signature_v1",
+                "retention": "recent_opportunity_recurrence_retention_v1",
+                "minimum_distinct_members": 2,
+                "recent_opportunity_window": 48,
+                "failure_evidence_capacity": 240,
+                "shared_event_capacity": 48,
+                "promotion_timing": "opportunity_commit",
+                "retention_order": [
+                  "recent_recurrence",
+                  "recent_distinct_members",
+                  "same_lane",
+                  "last_seen",
+                  "semantic_key"
+                ],
+                "retrieval_order": [
+                  "same_lane",
+                  "compatible_family",
+                  "last_seen",
+                  "recent_recurrence",
+                  "semantic_key"
+                ]
+              }
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "not": {
+                "required": [
+                  "execution_binding"
+                ]
+              }
+            },
+            "then": {
+              "properties": {
+                "authorization": {
+                  "properties": {
+                    "real_api_authorized": {
+                      "const": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
       }
     }
   ]

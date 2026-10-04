@@ -20,6 +20,7 @@ from dataclasses import replace
 from .layer1_responsibility import ResponsibilityConditionedOptimizer, ResponsibilityConditionedEngine, Layer1Config
 from .layer1_memory import MemoryConditionedOptimizer, MemoryConditionedEngine, MemoryLayer1Config, PreservationAnchorEvidenceV3
 from .action_memory import StructuredActionMemoryV3, LIMITS as ACTION_MEMORY_LIMITS
+from .rolling_risk_memory import StructuredRollingRiskMemoryV4, POLICY as SHARED_RISK_POLICY
 
 
 class FirstParentEpochStop(GlobalStopPolicy):
@@ -58,7 +59,10 @@ def build_binary_orchestrator(*, benchmark, aggregation, examples, prompts, solv
         raise SearchContractError("UNSUPPORTED_BINARY_METHOD")
     pattern_id = versions.UNIFIED_FOCUSED_PATTERN_VERSION if current else versions.UNIFIED_PATTERN_DIAGNOSTIC_VERSION
     memory_id = versions.UNIFIED_EXPERIENCE_MEMORY_VERSION if current else versions.UNIFIED_STRUCTURED_MEMORY_VERSION
-    if action_memory:memory_id=versions.STRUCTURED_ACTION_MEMORY_VERSION
+    if action_memory:
+        memory_id=method.memory_policy
+        if memory_id not in {versions.STRUCTURED_ACTION_MEMORY_VERSION,versions.STRUCTURED_ROLLING_RISK_MEMORY_VERSION}:
+            raise SearchContractError('MEMORY_MAINLINE_MECHANISMS_MISMATCH')
     from .schemas import SearchMethodConfig
     expected = (SearchMethodConfig.v2_1 if current else SearchMethodConfig.v2)(
         diagnosis_policy=versions.BINARY_PLURALITY_RESPONSIBILITY_VERSION,
@@ -74,9 +78,12 @@ def build_binary_orchestrator(*, benchmark, aggregation, examples, prompts, solv
                 evidence_policy=versions.LAYER1_ANCHOR_EVIDENCE_VERSION)
             if method.memory_policy!=memory_id or method.pattern_policy!=versions.UNIFIED_NULL_PATTERN_VERSION:
                 raise SearchContractError('MEMORY_MAINLINE_MECHANISMS_MISMATCH')
-            if method.mechanism_config!={'memory':ACTION_MEMORY_LIMITS,
+            mechanism_config={'memory':ACTION_MEMORY_LIMITS,
                     'optimizer_input_schema':versions.LAYER1_INPUT_SCHEMA_VERSION,
-                    'panel_policy':versions.LAYER1_ANCHOR_EVIDENCE_VERSION}:
+                    'panel_policy':versions.LAYER1_ANCHOR_EVIDENCE_VERSION}
+            if memory_id==versions.STRUCTURED_ROLLING_RISK_MEMORY_VERSION:
+                mechanism_config['shared_risk_policy']=SHARED_RISK_POLICY
+            if method.mechanism_config!=mechanism_config:
                 raise SearchContractError('MEMORY_CONTEXT_POLICIES_NOT_BOUND')
     if current and method.identity() != expected.identity():
         raise SearchContractError("BINARY_COMPONENT_IDENTITIES_NOT_BOUND")
@@ -90,8 +97,11 @@ def build_binary_orchestrator(*, benchmark, aggregation, examples, prompts, solv
                                 aggregation=aggregation, freeze_initial_competence=current)
     patterns = (NullPatternAnalyzer() if method.pattern_policy == versions.UNIFIED_NULL_PATTERN_VERSION
                 else (FocusedPatternDiagnosticV2 if current else PatternDiagnosticV1)(pattern_provider))
-    memory = (NullMemoryProvider() if method.memory_policy == versions.UNIFIED_NULL_MEMORY_VERSION
-              else (StructuredActionMemoryV3 if action_memory else StrategyExperienceMemoryV2 if current else StructuredLongTermMemoryProviderV1)(**method.mechanism_config["memory"]))
+    if action_memory and memory_id==versions.STRUCTURED_ROLLING_RISK_MEMORY_VERSION:
+        memory=StructuredRollingRiskMemoryV4(risk_policy=method.mechanism_config['shared_risk_policy'],**method.mechanism_config['memory'])
+    else:
+        memory = (NullMemoryProvider() if method.memory_policy == versions.UNIFIED_NULL_MEMORY_VERSION
+                  else (StructuredActionMemoryV3 if action_memory else StrategyExperienceMemoryV2 if current else StructuredLongTermMemoryProviderV1)(**method.mechanism_config["memory"]))
     if action_memory:optimizer.memory=memory
     bridge = None if layer1 else V2GEPABridge(optimizer=optimizer, history=history, seed=seed,
         solver_contract_id=solver.solver_contract_id, output_contract_id=solver.output_contract_id)

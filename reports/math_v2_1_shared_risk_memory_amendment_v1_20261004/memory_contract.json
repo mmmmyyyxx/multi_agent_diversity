@@ -1,0 +1,54 @@
+{
+  "schema_version": "shared_risk_memory_contract_v1",
+  "memory_identity": "structured_cross_member_rolling_risk_memory_v4",
+  "mechanism_config": {
+    "memory": {
+      "top_k_private": 3,
+      "top_k_shared": 3,
+      "max_context_chars": 1200,
+      "private_storage_limit": 24,
+      "shared_storage_limit": 48,
+      "max_failure_entries_per_member": 5
+    },
+    "optimizer_input_schema": "LAYER1_CURRENT_EVIDENCE_MEMORY_INPUT_V2",
+    "panel_policy": "single_mechanism_preservation_anchor_v3",
+    "shared_risk_policy": {
+      "signature": "closed_action_outcome_failure_signature_v1",
+      "retention": "recent_opportunity_recurrence_retention_v1",
+      "minimum_distinct_members": 2,
+      "recent_opportunity_window": 48,
+      "failure_evidence_capacity": 240,
+      "shared_event_capacity": 48,
+      "promotion_timing": "opportunity_commit",
+      "retention_order": [
+        "recent_recurrence",
+        "recent_distinct_members",
+        "same_lane",
+        "last_seen",
+        "semantic_key"
+      ],
+      "retrieval_order": [
+        "same_lane",
+        "compatible_family",
+        "last_seen",
+        "recent_recurrence",
+        "semantic_key"
+      ]
+    }
+  },
+  "normative_contract": "docs/design/SHARED_RISK_MEMORY_V4.md",
+  "unchanged": [
+    "Layer1",
+    "Layer2",
+    "Solver",
+    "optimizer_generation",
+    "models",
+    "split",
+    "initial_team",
+    "evaluator",
+    "WHO",
+    "heldout_firewall"
+  ],
+  "future_execution": "requires_new_versioned_binding_manifest_and_handoff",
+  "no_real_execution": true
+}

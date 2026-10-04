@@ -1,0 +1,17 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "memory_contract.json",
+      "sha256": "51c8e37bd834eaf53009db501bdd5eb8fb033c1dcf8c9fe1712a1987b2c88d5b"
+    },
+    {
+      "file": "README.md",
+      "sha256": "a8d87b099542085a892aa252f6d929902c06bb5be88479e585de3915591ddf2e"
+    },
+    {
+      "file": "test_summary.json",
+      "sha256": "50faff7e1332ca8234fd2a42f58c4f4571908f107edccb5d3cde29af60a76b2e"
+    }
+  ]
+}
