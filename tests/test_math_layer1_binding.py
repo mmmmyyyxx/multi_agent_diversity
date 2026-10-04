@@ -22,6 +22,24 @@ def test_new_binding_manifest_enters_current_governed_preflight():
     assert result['provider_attempts']==0
 
 
+def test_generation_receipts_match_v3_wire_and_json_envelope():
+    from multi_dataset_diverse_rl.governance.token_accounting import reservation
+    from multi_dataset_diverse_rl.benchmarks.math_optimizer_diagnostics import optimizer_response_telemetry
+    from multi_dataset_diverse_rl.benchmarks.math_solver_decoding import generation_request_fields
+    c=json.loads((ROOT/'experiments/execution_bindings/math_v2_1_layer1_canary_v1.json').read_bytes())
+    req=dict(model='qwen3.7-flash',messages=[dict(role='user',content='synthetic')],**generation_request_fields(c,'reflection'))
+    bound=reservation(req)
+    assert bound['generation_policy_identity']==versions.MATH_OPTIMIZER_GENERATION_POLICY_V3_VERSION
+    assert bound['requested_output_cap']==1800 and bound['output_hard_cap']==1810
+    diag=optimizer_response_telemetry(req,dict(text=json.dumps({'decision_procedure':'Verify the final answer with substitution.'}),finish_reason='stop'),c['optimizer_generation_policy'])['diagnostics']
+    assert diag['candidate_generation_contract_valid']
+    assert diag['candidate_contract_identity']==versions.SEMANTIC_MUTABLE_CONTRACT_VERSION
+    from multi_dataset_diverse_rl.benchmarks.math_optimizer_generation import optimizer_generation_contract
+    legacy=json.loads((ROOT/c['layer1_parent_binding_path']).read_bytes())
+    old=dict(model='qwen3.7-flash',messages=req['messages'],**generation_request_fields(legacy,'reflection'))
+    assert reservation(old)['generation_policy_identity']==versions.MATH_OPTIMIZER_GENERATION_POLICY_VERSION
+
+
 @pytest.mark.parametrize('arm',['A1','A2','A3','A4'])
 def test_frozen_layer1_four_arm_production_graph(tmp_path,arm,monkeypatch):
     c=json.loads((ROOT/'experiments/execution_bindings/math_v2_1_layer1_canary_v1.json').read_bytes())

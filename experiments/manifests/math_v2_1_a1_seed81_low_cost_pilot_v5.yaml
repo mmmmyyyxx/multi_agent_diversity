@@ -2,7 +2,7 @@ schema_version: experiment_manifest_v2
 experiment_id: math_v2_1_a1_seed81_low_cost_pilot_v5
 method_family: unified_team_prompt_search_v2_1
 method_identity: unified_team_prompt_search_v2_1
-source_sha: b5cce6e56c24284f6068a5c095b4baa0a20c7bbc
+source_sha: 3e9b1ce5e3e8674a90251d33363f79573e94bcc9
 benchmark_id: math
 benchmark_protocol_id: 3aee274eeee86c07b7ea66a8700d925e42ecab17663a65e93e96f4ae475e1a67
 dataset_manifest_identity: 7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f
@@ -47,8 +47,8 @@ lifecycle:
     event: AWAITING_SOURCE_COMMIT
 hash_closure:
   scientific_source_hash: e80e8f2059cdf9bb23cc415ba6a2b25659347386c0c7c5a54af4c244f3b102d1
-  governance_hash: f562f4d89c9126dff8389964125ca925d4a5c9264dcef48e4e302cf44868ae99
-  benchmark_contract_hash: be4d7cd8f91a05db753b766c8d58be9864a8a19d91ad4dad1229887a6fa4726c
+  governance_hash: d1f9141d32228c203cff6f115dc9886118d0fe6f412d8e14c34678e2ca008b7b
+  benchmark_contract_hash: 8e7ec5c11480f07131485b815ce27728010d91e44ca72c728f35e4b48f3a7a2b
   dataset_manifest_hash: d3c3f587bf9e08f5d9a12c8b777953c57cd30fc4c655e82e95f556b337119d81
 execution_binding:
   identity: MATH_V2_1_LAYER1_EXECUTION_BINDING_V3
@@ -276,4 +276,4 @@ post_search_validation_policy:
   unchanged_outcome: NO_INTERVENTION
   unchanged_signal: NOT_ESTIMATED
   unchanged_status: SKIPPED_NO_TEAM_CHANGE
-preregistration_identity: 3ed1fdbe7a6191b98780241692b8d1273e2e45ccd797c0c733f13dcb8e6df887
+preregistration_identity: 1ea4af2845dc77e97fb43a7cddb1d7efaa612b3c61cc999faf5e8e2dae04d99d

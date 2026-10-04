@@ -58,8 +58,17 @@ def reservation(request):
         thinking = request.get('extra_body', {}).get('enable_thinking',request.get('enable_thinking'))
         if type(thinking) is not bool:
             raise OperationalAbort('FROZEN_OPTIMIZER_OUTPUT_BOUND_REQUIRED')
-        policy = optimizer_generation_contract(versions.MATH_OPTIMIZER_GENERATION_POLICY_V1_VERSION
+        identity = (versions.MATH_OPTIMIZER_GENERATION_POLICY_V1_VERSION
             if thinking else versions.MATH_OPTIMIZER_GENERATION_POLICY_VERSION)
+        # The completion ceiling is shared, but the accounting receipt must
+        # name the generation contract that actually constructed this body.
+        if not thinking:
+            v3 = optimizer_generation_contract(versions.MATH_OPTIMIZER_GENERATION_POLICY_V3_VERSION)
+            wire = json.loads(serialized_request(request))
+            if all(wire.get(k) == v3[k] for k in ('temperature','top_p','top_k',
+                    'presence_penalty','frequency_penalty','enable_thinking')):
+                identity = versions.MATH_OPTIMIZER_GENERATION_POLICY_V3_VERSION
+        policy = optimizer_generation_contract(identity)
         if (request.get('model') != policy['model']
                 or type(request['max_completion_tokens']) is not int
                 or request['max_completion_tokens'] != policy['max_completion_tokens']):

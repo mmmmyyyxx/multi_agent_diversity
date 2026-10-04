@@ -1,0 +1,16 @@
+{
+  "classification": "OPERATIONAL_METADATA_CORRECTION",
+  "scientific_policy_changed": false,
+  "numerical_reservation_changed": false,
+  "corrections": [
+    "Reservation receipt names optimizer V3 when that exact wire policy is sent.",
+    "New JSON proposal diagnostics use semantic V2; legacy fence diagnostics remain unchanged."
+  ],
+  "prior_offline_verification": {
+    "source_sha": "3e9b1ce5e3e8674a90251d33363f79573e94bcc9",
+    "status": "EXECUTION_ABORTED_OWNER_REPAIR_REQUIRED",
+    "suite_completion_fraction": 0.29,
+    "partial_log_sha256": "81030268b15ca58c6da864d93f6e4e1c3495ee46fe5f7937cf20205496d61e22"
+  },
+  "new_real_api_calls": 0
+}

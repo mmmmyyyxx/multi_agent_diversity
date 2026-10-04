@@ -10,6 +10,10 @@
       "sha256": "9b36071d23f90da53e3cfb0c449b9abf1803dd0d2c00fa3104abc46c597ee73e"
     },
     {
+      "file": "operational_receipt_corrections.json",
+      "sha256": "dd5323bfc0101520a30968aa15f51abb7e892bc1786c5db764c2cdedc22fe107"
+    },
+    {
       "file": "README.md",
       "sha256": "5036824f097128490c7a4a4fd0b950c8815e1c855837ea50b5d4140cedff9613"
     },
