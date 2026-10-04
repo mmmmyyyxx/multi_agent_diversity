@@ -7134,7 +7134,7 @@ experiments:
   scientific_status: VALID_FORENSIC_ZERO_API
   implementation_commit: 08bf349e07d4517c5a9c73c6d4abe78cdd6cc892
   execution_commit: 08bf349e07d4517c5a9c73c6d4abe78cdd6cc892
-  result_commit: null
+  result_commit: b5cce6e56c24284f6068a5c095b4baa0a20c7bbc
   manifest: experiments/manifests/math_v2_1_layer1_gepa_flow_audit_v1.yaml
   report: reports/math_v2_1_layer1_gepa_flow_audit_v1_20261004
   classifier: LAYER1_BOUNDARY_AND_EFFECTIVE_BUDGET_AUDITED
@@ -7144,8 +7144,7 @@ experiments:
   notes:
   - Audit completed before redesign; all source and historical evidence refer to baseline.
   - No Validation outcomes were used to redesign Layer1.
-  unavailable:
-    result_commit: Pending local result commit.
+  unavailable: {}
 - experiment_id: math_v2_1_layer1_redesign_v1
   kind: PROTOCOL_FREEZE
   era: BENCHMARK_GENERALIZATION
@@ -7156,7 +7155,7 @@ experiments:
   scientific_status: ZERO_API_VALID
   implementation_commit: fb76733cd9167f5cafb2db58d95305dc67e90d9b
   execution_commit: null
-  result_commit: null
+  result_commit: b0b4761b660f6108dd72a045f569cc2b3d574e73
   manifest: experiments/manifests/math_v2_1_layer1_redesign_v1.yaml
   report: reports/math_v2_1_layer1_redesign_v1_20261004
   classifier: OFFLINE_GATES_AND_FRESH_FREEZE_PASS
@@ -7168,7 +7167,6 @@ experiments:
   - Generation V2/V3, semantic candidate V2, member-lane Solver-only cache V2, intervention-gated Validation.
   unavailable:
     execution_commit: Not executed.
-    result_commit: Not executed.
 - experiment_id: math_v2_1_preexecution_low_cost_v5
   kind: PREEXECUTION_FREEZE
   era: BENCHMARK_GENERALIZATION
@@ -7295,7 +7293,7 @@ experiments:
   scientific_status: VALID_OPERATIONAL_THROUGHPUT_CANARY
   implementation_commit: 628ec441085cae2db87ce242c62d80f7f24c51ae
   execution_commit: b0b4761b660f6108dd72a045f569cc2b3d574e73
-  result_commit: null
+  result_commit: 48e742d68078d16f8e2edbbc8bbb12813fad8182
   manifest: experiments/manifests/math_v2_1_a1_seed81_low_cost_canary_v6.yaml
   report: reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004
   classifier: FRESH_LAYER1_CANARY_PASS
@@ -7306,6 +7304,5 @@ experiments:
   - Preexecution metadata now precedes source commit and startup capture. Runtime, scientific policies and data
     unchanged.
   - Latest scope is Canary only, then stop and push.
-  unavailable:
-    result_commit: Awaiting sanitized result commit.
+  unavailable: {}
   authorization_consumed: true
