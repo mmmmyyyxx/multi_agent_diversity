@@ -1,0 +1,62 @@
+{
+  "cache_replays": 18,
+  "candidate_admission_changed": false,
+  "candidate_exported": 0,
+  "candidate_team_evaluated": 0,
+  "distinct_parent_states": 1,
+  "downstream_efficacy": "NOT_IDENTIFIED",
+  "identity": "MATH_PROPOSAL_SEMANTIC_POSTMORTEM_V1",
+  "interpretation": "ZERO_INTERVENTION_NO_ADMISSIBLE_CANDIDATE",
+  "logical_failed_check_counts": {
+    "append_only": 12,
+    "copied_solver_interface": 8,
+    "forbidden_final_answer_marker": 28
+  },
+  "logical_proposals": 28,
+  "opportunities": 14,
+  "opportunity_counts_by_member": [
+    2,
+    3,
+    3,
+    4,
+    2
+  ],
+  "phrase_mask_accepts_owner_semantic_invalid": 2,
+  "phrase_mask_boundary_accepts": 3,
+  "physical_failed_check_counts": {
+    "append_only": 5,
+    "copied_solver_interface": 3,
+    "forbidden_final_answer_marker": 10
+  },
+  "physical_proposals": 10,
+  "provider_calls": 0,
+  "scope": {
+    "new_provider_calls": 0,
+    "new_provider_tokens": 0,
+    "optimize_examples_read": 60,
+    "runtime_policies_changed": false,
+    "test_model_calls": 0,
+    "test_raw_reads": 0,
+    "validation_raw_content_read": false,
+    "validation_score_rows_read": 200
+  },
+  "semantic_class_counts": {
+    "ANSWER_REPRESENTATION_GUIDANCE": 3,
+    "BENIGN_REASONING": 1,
+    "OUTPUT_PRESENTATION_CONTROL": 6
+  },
+  "semantic_labels_source": "OWNER_ANNOTATION_NOT_INDEPENDENT_GROUND_TRUTH",
+  "strict_proposer_semantic_counterfactual_admissible": 1,
+  "zero_intervention": {
+    "baseline_coverage_scope": "DESCRIPTIVE_POST_SEARCH_NO_METHOD_DESIGN_FEEDBACK",
+    "changed_members": 0,
+    "historical_signal": "NEUTRAL",
+    "initial_final_state_bytes_equal": true,
+    "oracle_correct": 68,
+    "oracle_correct_vote_wrong": 21,
+    "paired_realizations_equal": true,
+    "search_restart_authorized": false,
+    "validation_final_new_physical": 0,
+    "vote_correct": 47
+  }
+}

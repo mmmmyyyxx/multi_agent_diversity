@@ -1,0 +1,12 @@
+{
+  "all_28_logical_proposals_replay_full_guards": true,
+  "all_physical_proposals_join_callbacks": true,
+  "cache_replays_follow_recorded_success": true,
+  "historical_evidence_unchanged": true,
+  "missing_reasoning_metadata_preserved_null": true,
+  "owner_annotations_hash_bound": true,
+  "production_candidate_admission_unchanged": true,
+  "provider_and_token_budget_zero": true,
+  "test_sealed": true,
+  "zero_intervention_confirmed": true
+}

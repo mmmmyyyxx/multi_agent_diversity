@@ -1,0 +1,77 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "f07881f2d748a4765d6c57253cba682a7dc70b34d5dece5bbf27f789e5ba0c37"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "04d1b84553e5f6dc98a19204e63a17844c22a0fadd3b7665b1169d37ca03c740"
+    },
+    {
+      "file": "counterfactual_audit.json",
+      "sha256": "d1d20f64baadcfcd1f5c456175a448cf0f2f19f56fc807904f050524adbd6896"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "43c0fba17e01838f8075cee54692f15b00e7a4165a4db2219b0f90d573e051ec"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "7b91f293fcced7e4b07c7bd126f1c487e2518a8c62f08f1eab265178cdbcfe82"
+    },
+    {
+      "file": "logical_proposal_reconciliation.json",
+      "sha256": "eb37f3802e85d4afdd076d1bb1d5e61554b7f63e8d46546386dcd56ac66be1db"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "bc00731739be6a32d87bf75e65c34d705c120fbdba127fdd7d9c77ed8843c605"
+    },
+    {
+      "file": "operational_repair_receipt.json",
+      "sha256": "4265a57d5604bc545bd8b23be9a6214f9659b68c94799eb1197eac52f67335ef"
+    },
+    {
+      "file": "proposal_analysis.json",
+      "sha256": "817ef98ac9532938a2d074ba7ae436e6f6aadaa4f365702a1e255abf09e3254a"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "5f5e8de164625f0f21a6bf2226e2d3d595da37b129e996f3db04d73db5ac1edc"
+    },
+    {
+      "file": "README.md",
+      "sha256": "d60b65823588ce5c28c4378f0b93573aff56ab715d1f84d550c8df1c7ac09702"
+    },
+    {
+      "file": "responsibility_cache_audit.json",
+      "sha256": "a763939f9424ea14142009d6ba58c1b24ce658f3e23441da5eb8d8e5954e0ab1"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "3df994a7341e20f0919a1646e47d8e6868bb540fe6c31f7d19e202fa88de8702"
+    },
+    {
+      "file": "scientific_delta_audit.json",
+      "sha256": "d37e111198b9e2ed507096b26deda09bb8ea957148b84306b7283216bdf9d74b"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "81be9f599e0a94024a9658fa32b0f1090f22b708099c3d85f7337edd96064fba"
+    },
+    {
+      "file": "test_summary.json",
+      "sha256": "02eda8279d0168924325b7f99833c5e906a2b9bb53a800b393287c919c249b66"
+    },
+    {
+      "file": "token_accounting.json",
+      "sha256": "e4413ab9e42f4954d60de716ad09d0dd64b9b53744973bda9ffcd4fc6dc8a827"
+    },
+    {
+      "file": "zero_intervention_audit.json",
+      "sha256": "dd141f3230d8b7ba5894b099a39bf1ef10735e6f56059c992b538ba024f3a106"
+    }
+  ]
+}

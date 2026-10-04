@@ -54,6 +54,10 @@ pilot_validation_complete: true
 pilot_final_status: COMPLETE
 task_stop_reason: PILOT_COMPLETE
 optimizer_nonthinking_wire_confirmed: YES_EQUIVALENT_EVIDENCE
+last_candidate_contract_audit: math_v2_1_proposal_semantic_postmortem_v1
+pilot_scientific_interpretation: ZERO_INTERVENTION_NO_ADMISSIBLE_CANDIDATE
+candidate_contract_audit_status: COMPLETED_ZERO_API
+next_search_contract_alignment: REQUIRED_BEFORE_FRESH_AUTHORIZATION
 ```
 
 ## Experiment and engineering DAG
@@ -128,7 +132,7 @@ flowchart TD
     n241["math_v2_1_preexecution_low_cost_v4<br/>PREEXECUTION_FREEZE<br/>COMPLETED"]
     n242["math_v2_1_a1_seed81_low_cost_canary_v4<br/>REAL_CANARY<br/>COMPLETED"]
     n243["math_v2_1_a1_seed81_low_cost_pilot_v4<br/>PILOT<br/>COMPLETED"]
-    n244["math_v2_1_proposal_semantic_postmortem_v1<br/>ZERO_API_AUDIT<br/>PREEXECUTION_FROZEN"]
+    n244["math_v2_1_proposal_semantic_postmortem_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]

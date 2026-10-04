@@ -1,0 +1,11 @@
+{
+  "future_real_run": "NOT_AUTHORIZED",
+  "historical_pilot_signal": "NEUTRAL",
+  "interpretation": "ZERO_INTERVENTION_NO_ADMISSIBLE_CANDIDATE",
+  "pipeline_execution": "COMPLETED",
+  "principal_cause": "LAYER1_PROPOSER_MUTABLE_GUARD_MISMATCH",
+  "runtime_change": "NONE",
+  "scientific_efficacy": "NOT_IDENTIFIED",
+  "scientific_status": "VALID_FORENSIC_ZERO_API",
+  "semantic_false_positive_observed": 1
+}

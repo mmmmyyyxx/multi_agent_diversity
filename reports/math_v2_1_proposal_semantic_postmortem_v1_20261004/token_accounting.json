@@ -1,0 +1,10 @@
+{
+  "ledger_sha256": "c735cd11b98216d4c3231edaf2afc114633e0a48985d5b212f95ed7e158513dd",
+  "new_fallback_charged": 0,
+  "new_provider_reported": 0,
+  "prior_charged": 840243,
+  "reserved_inflight": 0,
+  "total_authorized": 40000000,
+  "total_charged": 840243,
+  "total_remaining": 39159757
+}

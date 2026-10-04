@@ -1,0 +1,22 @@
+{
+  "changes": "Read existing validation_initial/validation_final stage labels; reject duplicates/changed scores; retain old failed evidence.",
+  "corrected_source_commit": "7c43a15d172e61caf059907da920e0c513a9f7ef",
+  "failed_command_status": "EXECUTION_ABORTED",
+  "failed_facts_sha256": "17af9084b166ddbb6489d9a3e08e88fdaeedaec64ef45f720809cfe0689775fe",
+  "failed_log_sha256": "b40865af78173123aa6091addce6d695995979045b568587e7f20c86768ff0da",
+  "failed_source_commit": "79e990774ff172bde9f343d5dbb2c971aa9ff4f1",
+  "failure": "AUDITOR_PERSISTED_VALIDATION_STAGE_MAPPING",
+  "prior_evidence_unchanged": true,
+  "provider_calls": 0,
+  "scientific_policy_changes": 0,
+  "verification_command_repair": {
+    "corrected_scope": "EXPLICIT_TESTS_DIRECTORY",
+    "failed_facts_sha256": "3ffdc250348096887898b2b6d50120491c24390d72a6690ea80ee3a978ff51a3",
+    "failed_log_sha256": "76601abe8f746a9a82940a6d7b152677e4a03a60e18663cf865a4ef088e19ba7",
+    "failed_source_commit": "7c43a15d172e61caf059907da920e0c513a9f7ef",
+    "failure": "PYTEST_COLLECTION_INCLUDED_IGNORED_HISTORICAL_CLONE",
+    "historical_test_bodies_executed": false,
+    "prior_proposal_audit_reused": true,
+    "source_changed": false
+  }
+}

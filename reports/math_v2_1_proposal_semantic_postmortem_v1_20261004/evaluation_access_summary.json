@@ -1,0 +1,10 @@
+{
+  "new_provider_calls": 0,
+  "new_provider_tokens": 0,
+  "optimize_examples_read": 60,
+  "runtime_policies_changed": false,
+  "test_model_calls": 0,
+  "test_raw_reads": 0,
+  "validation_raw_content_read": false,
+  "validation_score_rows_read": 200
+}

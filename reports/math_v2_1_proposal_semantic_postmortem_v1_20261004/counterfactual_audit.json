@@ -1,0 +1,15 @@
+{
+  "actual_candidate_scoring_calls": 0,
+  "current_boundary_admissible": 0,
+  "downstream_team_gain": "NOT_IDENTIFIED",
+  "phrase_mask_boundary_admissible": 3,
+  "phrase_mask_semantically_invalid_admitted": 2,
+  "production_admission_changed": false,
+  "representation_guidance_boundary": "Explicit proposer bans answer-format guidance. Treating mathematical representation as reasoning would be a different rubric; this audit does not decide that scientific amendment.",
+  "semantic_label_counts": {
+    "ANSWER_REPRESENTATION_GUIDANCE": 3,
+    "BENIGN_REASONING": 1,
+    "OUTPUT_PRESENTATION_CONTROL": 6
+  },
+  "strict_component_semantic_admissible": 1
+}

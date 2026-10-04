@@ -1,0 +1,23 @@
+{
+  "Validation_VoteAcc_final": 0.47,
+  "Validation_VoteAcc_initial": 0.47,
+  "Validation_delta": 0,
+  "baseline_coverage_scope": "DESCRIPTIVE_POST_SEARCH_NO_METHOD_DESIGN_FEEDBACK",
+  "bootstrap_interpretation": "IDENTITY_OF_SAME_TEAM_AND_PROVIDER_REALIZATIONS_NOT_A_PRECISE_TREATMENT_EFFECT_ESTIMATE",
+  "changed_members": 0,
+  "historical_signal": "NEUTRAL",
+  "initial_final_state_bytes_equal": true,
+  "initial_floor_and_strict_gain": "ENABLED_BUT_NO_CANDIDATE_REACHED_GATE",
+  "oracle_correct": 68,
+  "oracle_correct_vote_wrong": 21,
+  "paired_bootstrap_CI": [
+    0,
+    0
+  ],
+  "paired_bootstrap_resamples": 10000,
+  "paired_realizations_equal": true,
+  "search_restart_authorized": false,
+  "specialization_and_local_to_team_transfer": "NOT_OBSERVED_NOT_DISPROVED",
+  "validation_final_new_physical": 0,
+  "vote_correct": 47
+}

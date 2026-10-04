@@ -1,0 +1,38 @@
+{
+  "audit_executable_source_scope": "SEPARATELY_FROZEN_SCOPED_HANDOFF_7c43a15",
+  "audit_source_commit": "7c43a15d172e61caf059907da920e0c513a9f7ef",
+  "dependency_hashes": {
+    "adapter": "086d166c441d32b1e96c08a041e6667216b4bfa8494c6f5f4961235691ec47e3",
+    "audit_cli": "62696ae37cd70d1c56ac6b7a955bae9aa93f2f481a836ebc8887f4fd9b5841d8",
+    "audit_module": "ce42da53ef12cdf22f237156270cd7021b6088d4446d889d238eb287a378be8e",
+    "owner_annotations": "a04098340be027eadfc94c2019d3d2bf028fcd6e492d24cdc6453913c7c9b2c4",
+    "parent_binding": "99f4d47c7b98130cf04c5d7279844b21180c12f6fd888470251ef6194a3062db",
+    "proposer_template": "6752a35be463af75307d7317dda25c339ba078d5c26f332385a068dbcf82ee26",
+    "validator": "60859f603cc4c012fc0cdf82d3e3a1efc9df97bb48e38cde830bdcdd4a4f3761"
+  },
+  "execution_facts_sha256": "9021650054d95109de8306b47fe8535911eb7cf72dad1a0b7f8733b3a1da9ac6",
+  "handoff_sha256": "9f2f86e92e058625bc1db80d2515340c89cc1f55b096034ccbb80e94287543de",
+  "initial_audit_source_commit": "79e990774ff172bde9f343d5dbb2c971aa9ff4f1",
+  "initial_protocol_sha256": "10ebce01397e12d63964a3947e69867b3dd75ccbaec6f8ffcb14a6cff2d683e9",
+  "input_hashes": {
+    "final_state": "7920acb1b98d3ca845968e4d7c680515497b5d755cf683ac89b0bf21937188db",
+    "global_token_ledger": "c735cd11b98216d4c3231edaf2afc114633e0a48985d5b212f95ed7e158513dd",
+    "initial_state": "7920acb1b98d3ca845968e4d7c680515497b5d755cf683ac89b0bf21937188db",
+    "paired_scores": "1396535163ccdb13c3d81527f8c308985fd310b2a2b94b72f1eb92de392a5774",
+    "provider_trace": "d95980ee08d1745cdad78753f5447365ed77d4daf2f4cbb6c461f45d54822249",
+    "search_ledger": "ecc8f189bad07f1d6be460a99fd586b702e036faeb010ffddc0364fcc203a265",
+    "search_receipt": "a4f2ebabe7140d5d1b6a01b19eb0827aca48ae5d7e878e56ca6c62d2b9f1a9e3",
+    "trajectory": "fc2aae29b1f3642143109012fab4b10c6ce4d1e2f82dc2ccf3dc032c0864865e",
+    "validation_ledger": "910acbc0729d12740a1d219523cedaeb66a583c43ad8762e2adc724c7deba02a",
+    "validation_summary": "d1a934f9d5bfd190c0f291b5e78ff3e542b12549bf41fce0ac668bbdd06b23fa"
+  },
+  "manifest_baseline_commit": "3ddabb004a796b8ce1b78f035731c4a319af9414",
+  "manifest_source_scope": "BASELINE_AUDITED_PRODUCTION_BINDING",
+  "owner_annotations_sha256": "a04098340be027eadfc94c2019d3d2bf028fcd6e492d24cdc6453913c7c9b2c4",
+  "parent_id": "math_v2_1_a1_seed81_low_cost_pilot_v4",
+  "parent_result_commit": "15f6e1e45ace5cd2edce10aab4f6f5831ea46b0b",
+  "production_parent_source_commit": "05c1da1ef08ebb4e3ec403380bfc033377b1e743",
+  "protocol_sha256": "19d7afa1f76096526b8227522f6eda08e769c9a24dd2f687445e8d585b3f46ad",
+  "raw_audit_result_sha256": "39b4c8860350fbb125727cce328b8125d8096fc4ebcbaf60fce3c2b917231636",
+  "user_request_sha256": "c840e3b98031717fbeff1d2f1efb59b3618db76a0d28c828a0bc12282aa3cf75"
+}

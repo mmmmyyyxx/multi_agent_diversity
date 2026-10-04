@@ -1,0 +1,20 @@
+{
+  "actual_public_gepa_A1_A4_fake_gates": "PASS_WITHIN_CURRENT_SUITE",
+  "compileall": "PASS",
+  "current_classified_suite": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 2,
+    "tests": 944
+  },
+  "current_suite_log_sha256": "35795d86d011cd47817e1688372a850dbe7be9c846005b59d743284d6614e3e6",
+  "diff_check": "PASS",
+  "governance": "PASS",
+  "historical_full_suite": "NOT_EXECUTED",
+  "historical_private_cases_deselected": 1468,
+  "junit_sha256": "5d21590f91103339bad814d087486563fadd5a588338841ecc215d77c9cd5964",
+  "passed": 942,
+  "selected": 944,
+  "targeted_passed": 11,
+  "zero_network": "PASS"
+}

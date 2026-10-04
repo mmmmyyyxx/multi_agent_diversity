@@ -468,3 +468,26 @@ failures:
   resolved_by: math_v2_1_autonomous_constitution_v1
   resolution_evidence: reports/math_v2_1_autonomous_constitution_v1_20261003/equivalent_evidence_receipt.json
   resolution_note: Current constitution permits audited Level B equivalent evidence; prior diagnostic evidence and absent token count remain unchanged.
+- failure_id: FAIL-MATH-V21-PROPOSER-MUTABLE-GUARD-MISMATCH
+  title: Complete optimizer proposals do not reach admissible mutable candidates
+  status: OPEN
+  first_observed: math_v2_1_a1_seed81_low_cost_pilot_v4
+  affected_components:
+  - decision_procedure_proposer
+  - mutable_prompt_contract
+  - candidate_throughput
+  symptom: 10 physical proposals become 28 contract-invalid logical proposals; zero export/team evaluation/commit.
+  evidence:
+  - reports/math_v2_1_proposal_semantic_postmortem_v1_20261004
+  evidence_level: hash_bound_private_replay_and_synthetic_zero_api_controls
+  root_cause_status: Six output-control, three answer-representation and one benign proposal under owner semantic rubric;
+    lexical overreach coexists with real proposer violations and five append-only failures.
+  forbidden_inference: Neutral identity comparison does not identify efficacy; one finite owner annotation is not a population
+    false-positive rate; phrase masking is not a safe admission repair.
+  regression_tests:
+  - tests/test_math_proposal_postmortem.py
+  required_resolution: Versioned proposer/validator semantic alignment, including mathematical representation boundary; preserve
+    output-interface isolation, replacement and example-copying checks.
+  lifecycle: OPEN
+  lifecycle_note: Read-only audit complete; production policy and closed historical search unchanged; fresh real execution
+    not authorized.
