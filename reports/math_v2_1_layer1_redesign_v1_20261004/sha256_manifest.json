@@ -2,12 +2,24 @@
   "algorithm": "sha256",
   "files": [
     {
+      "file": "canary_freeze_receipt.json",
+      "sha256": "fe1ab132481b25add094b2e3b796f3281ee1be003ab955517bf7b92b5940caa5"
+    },
+    {
       "file": "execution_scope_update.json",
       "sha256": "579525170b01074de269a768064b3267fbfedbf42b3e5bd3516f47b77b4e6dbc"
     },
     {
+      "file": "gepa_semantics_retained_removed.json",
+      "sha256": "f2e22e96707dfeb72791e278c91747e27a31488544c8c14121d57e9e4215b2f6"
+    },
+    {
       "file": "historical_proposal_semantic_replay.json",
       "sha256": "9b36071d23f90da53e3cfb0c449b9abf1803dd0d2c00fa3104abc46c597ee73e"
+    },
+    {
+      "file": "layer1_change_log.json",
+      "sha256": "dbaefaff1e857fbb6015341a547eda0288643b7d7b78973fba3b1e600129381f"
     },
     {
       "file": "operational_receipt_corrections.json",
@@ -15,7 +27,7 @@
     },
     {
       "file": "README.md",
-      "sha256": "5036824f097128490c7a4a4fd0b950c8815e1c855837ea50b5d4140cedff9613"
+      "sha256": "91f40faba56004fba7fad64727713a217898e39d2e2d7f159f2ff90e314e634a"
     },
     {
       "file": "redesign_disposition.json",
@@ -32,6 +44,14 @@
     {
       "file": "scientific_delta_audit.json",
       "sha256": "41252d694fc2152d1aff40a05d29e252dd9390a65acb5d31eccd129cd26b3a70"
+    },
+    {
+      "file": "source_gate.json",
+      "sha256": "5499068a2aa25ff8f599b1bf88399210c2bfffcfd6b6625024230cf32c873b40"
+    },
+    {
+      "file": "test_summary.json",
+      "sha256": "8ffdd826e73bcd1d4c0104037701e9f15e7a36b25f1d05a44d1d917e3dab8c15"
     }
   ]
 }

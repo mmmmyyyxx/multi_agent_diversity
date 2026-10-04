@@ -2,12 +2,32 @@
   "algorithm": "sha256",
   "files": [
     {
+      "file": "canary_freeze_receipt.json",
+      "sha256": "fe1ab132481b25add094b2e3b796f3281ee1be003ab955517bf7b92b5940caa5"
+    },
+    {
+      "file": "canary_source_identity.json",
+      "sha256": "7920d21700ca0a74729865015303e167342ca029b2bac2cf3d40ece564cd799b"
+    },
+    {
+      "file": "canary_startup_receipt.json",
+      "sha256": "ce0c95774957ebc43fdffeb19bec7068580aba94a89bce86ca7717dbc9ea96d8"
+    },
+    {
       "file": "execution_scope_update.json",
       "sha256": "579525170b01074de269a768064b3267fbfedbf42b3e5bd3516f47b77b4e6dbc"
     },
     {
       "file": "README.md",
-      "sha256": "fb4754694c99334dbe83b394fc4f51c3657e3082eb8df95b067be0b5a56f68ee"
+      "sha256": "0b63a04fbaebb236f6b52c62040aa9e89f853f2287136a59299556cb72dec532"
+    },
+    {
+      "file": "source_gate.json",
+      "sha256": "5499068a2aa25ff8f599b1bf88399210c2bfffcfd6b6625024230cf32c873b40"
+    },
+    {
+      "file": "test_summary.json",
+      "sha256": "8ffdd826e73bcd1d4c0104037701e9f15e7a36b25f1d05a44d1d917e3dab8c15"
     }
   ]
 }

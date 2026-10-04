@@ -1,3 +1,3 @@
 # math_v2_1_layer1_redesign_v1
 
-Fresh responsibility-conditioned Layer1 and seven repairs; official GEPA fidelity is not claimed. Layer2 and Low-Cost memberships remain frozen. Latest user scope permits one fresh Canary, then stop and push. Pilot and Validation are deferred and have no API authorization. Test and other real arms/seeds remain sealed. Source freeze and full offline gates are still required; no new real API calls.
+Frozen fresh responsibility-conditioned Layer1 Canary with seven repairs. All classified current tests, old pinned GEPA and new A1–A4 fake production graphs, transport captures, compileall, governance, hash poison and sanitization pass. 1468 historical/private cases were not executed. Layer2 and memberships remain frozen; official GEPA fidelity is not claimed. Canary is the only real phase authorized by the latest user directive; Pilot and Validation are deferred. No new real API calls at freeze.

@@ -2,7 +2,7 @@ schema_version: experiment_manifest_v2
 experiment_id: math_v2_1_preexecution_low_cost_v5
 method_family: unified_team_prompt_search_v2_1
 method_identity: unified_team_prompt_search_v2_1
-source_sha: 3e9b1ce5e3e8674a90251d33363f79573e94bcc9
+source_sha: fb76733cd9167f5cafb2db58d95305dc67e90d9b
 benchmark_id: math
 benchmark_protocol_id: 3aee274eeee86c07b7ea66a8700d925e42ecab17663a65e93e96f4ae475e1a67
 dataset_manifest_identity: 7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f
@@ -39,12 +39,12 @@ authorization:
   authorization_identity: null
   single_use: true
 lifecycle:
-  status: DRAFT
+  status: PREEXECUTION_FROZEN
   history:
   - status: DRAFT
     event: ZERO_API_BLOCKER_CLOSURE
-  - status: DRAFT
-    event: AWAITING_SOURCE_COMMIT
+  - status: PREEXECUTION_FROZEN
+    event: FROZEN_SOURCE_RECEIPT
 hash_closure:
   scientific_source_hash: 76c1acf5e3c8b6eb79a386f7685f62509ad2e2394ca02e5764dd20f6c70d62f2
   governance_hash: d1f9141d32228c203cff6f115dc9886118d0fe6f412d8e14c34678e2ca008b7b
@@ -276,4 +276,4 @@ post_search_validation_policy:
   unchanged_outcome: NO_INTERVENTION
   unchanged_signal: NOT_ESTIMATED
   unchanged_status: SKIPPED_NO_TEAM_CHANGE
-preregistration_identity: 1d6235565a8a8d81723a0969d77762ce21cff7848297b08fdfbba5b202b103b1
+preregistration_identity: 867bfdafdff3abad4e8a58629043f9c7978a5891ae3525117e2556fb7e3562c5

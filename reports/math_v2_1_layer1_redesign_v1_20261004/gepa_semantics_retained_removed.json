@@ -1,0 +1,14 @@
+{
+  "Pareto_instance_archive": "REMOVED",
+  "candidate_archive": "MODIFIED",
+  "candidate_frontier": "REMOVED",
+  "lineage_tracking": "RETAINED",
+  "local_acceptance": "MODIFIED_GUIDANCE_ONLY",
+  "official_batch_sampler": "REMOVED",
+  "official_gepa_fidelity": false,
+  "official_parent_selection": "REMOVED",
+  "official_proposer": "REMOVED",
+  "official_reflection_dataset": "REMOVED",
+  "reflective_search_idea": "RETAINED",
+  "strict_local_survival_admission": "REMOVED"
+}
