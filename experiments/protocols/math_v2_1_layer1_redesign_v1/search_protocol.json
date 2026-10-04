@@ -1,0 +1,28 @@
+{
+  "cache": "SOLVER_MEMBER_LANE_EXACT_CACHE_V2",
+  "canary_pass": "complete_opportunity_and_admissible_changed_solver_scored_export",
+  "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+  "gepa_fidelity": false,
+  "identity": "LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1",
+  "layer1": {
+    "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+    "identity_version": "LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1",
+    "k_local_return": 4,
+    "max_generations": 6,
+    "max_prompt_chars": 3000,
+    "metric_limit": 36,
+    "official_gepa_fidelity": false,
+    "panel_size": 6
+  },
+  "layer2_delta": false,
+  "pilot_stop": "team_epoch_no_commit_v1",
+  "real_arms": [
+    "A1"
+  ],
+  "real_seeds": [
+    81
+  ],
+  "test_calls": 0,
+  "total_authorized": 40000000,
+  "validation": "changed_ordered_deployed_hashes_only_after_search_closed"
+}

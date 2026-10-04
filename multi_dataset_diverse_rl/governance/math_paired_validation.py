@@ -27,6 +27,13 @@ def validation_policy(contract):
     from ..benchmarks.math_prediction_validity import frozen_prediction_policy
     policy = frozen_prediction_policy(contract)
     from .. import versions
+    if contract['identity']==versions.MATH_LAYER1_EXECUTION_BINDING_VERSION:
+        return dict(POLICY,identity='MATH_PAIRED_VALIDATION_INTERVENTION_V2',count=100,
+            logical_evaluations=1000,successful_provider_call_ceiling=4000,transport_attempt_ceiling=84000,
+            prediction_validity_policy=policy,invalid_recovery_policy=contract['invalid_recovery_policy'],
+            development_protocol=contract['low_cost_protocol'],invalidity_metrics='resolved_terminal_by_member_and_semantic_attempts',
+            cache=versions.SOLVER_MEMBER_LANE_CACHE_VERSION,require_deployed_team_change=True,
+            unchanged_status='SKIPPED_NO_TEAM_CHANGE',unchanged_signal='NOT_ESTIMATED',unchanged_outcome='NO_INTERVENTION')
     if contract['identity']in versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS:
         return dict(POLICY,identity='MATH_PAIRED_VALIDATION_LOW_COST_V1',count=100,
             logical_evaluations=1000,successful_provider_call_ceiling=4000,transport_attempt_ceiling=84000,
@@ -34,6 +41,27 @@ def validation_policy(contract):
             development_protocol=contract['low_cost_protocol'],invalidity_metrics='resolved_terminal_by_member_and_semantic_attempts')
     return dict(POLICY, identity='MATH_PAIRED_VALIDATION_V3', prediction_validity_policy=policy,
         invalidity_metrics='total_by_member_and_rate_observation_only') if policy else POLICY
+
+
+def team_change_receipt(initial,final):
+    if len(initial)!=5 or len(final)!=5 or any(not isinstance(p,str) for p in (*initial,*final)):
+        raise SearchContractError('DEPLOYED_TEAM_CHANGE_IDENTITY_INVALID')
+    a=[hashlib.sha256(p.encode()).hexdigest() for p in initial]
+    b=[hashlib.sha256(p.encode()).hexdigest() for p in final]
+    changed=[i for i in range(5) if a[i]!=b[i]]
+    return dict(ordered_initial_prompt_hashes=a,ordered_final_prompt_hashes=b,
+        changed_members=changed,changed_member_count=len(changed),team_changed=bool(changed),
+        validation_status='REQUIRES_POST_SEARCH_VALIDATION' if changed else 'SKIPPED_NO_TEAM_CHANGE',
+        pilot_signal='PENDING_VALIDATION' if changed else 'NOT_ESTIMATED',
+        search_outcome='INTERVENTION' if changed else 'NO_INTERVENTION')
+
+
+def require_validation_intervention(root,c,pilot_run,receipt):
+    if validation_policy(c).get('require_deployed_team_change'):
+        actual=team_change_receipt(initial_prompts(root,c),read_json(pilot_run/'final_team_private.json')['prompts'])
+        if actual!=receipt.get('deployed_team_change'):
+            raise SearchContractError('DEPLOYED_TEAM_CHANGE_RECEIPT_MISMATCH')
+        if not actual['team_changed']:raise SearchContractError('VALIDATION_SKIPPED_NO_TEAM_CHANGE')
 
 
 def search_receipt(root,prep,pilot_run):
@@ -61,6 +89,7 @@ def search_receipt(root,prep,pilot_run):
 
 def prepare_validation(root,search_prep,pilot_run,destination):
     payload,c,receipt=search_receipt(root,search_prep,pilot_run)
+    require_validation_intervention(root,c,pilot_run,receipt)
     if destination.exists(): raise SearchContractError('FRESH_PREP_DESTINATION_REQUIRED')
     scope=dict(attempt_id=c['execution_attempt_id']+'_validation_attempt1',phase='POST_SEARCH_VALIDATION_ONLY',
         source_sha=receipt['source_sha'],search_receipt_sha256=file_sha(pilot_run/'SEARCH_COMPLETE_RECEIPT.json'),
@@ -97,6 +126,7 @@ def validate_validation(root,prep,*,require_authorized):
     if not search_prep.is_relative_to(root/'runs') or not pilot_run.is_relative_to(root/'runs'):
         raise SearchContractError('LOCAL_SEARCH_RECEIPT_REQUIRED')
     original,c,receipt=search_receipt(root,search_prep,pilot_run)
+    require_validation_intervention(root,c,pilot_run,receipt)
     expected=dict(attempt_id=c['execution_attempt_id']+'_validation_attempt1',phase='POST_SEARCH_VALIDATION_ONLY',
         source_sha=receipt['source_sha'],search_receipt_sha256=file_sha(pilot_run/'SEARCH_COMPLETE_RECEIPT.json'),
         final_team_sha256=receipt['final_team_sha256'],split_identity=c['split_manifest_sha256'],

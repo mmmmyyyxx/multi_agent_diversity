@@ -16,6 +16,8 @@ from .schemas import SearchContractError, GlobalStopConfig
 from .semantic_contract import FocusedPatternDiagnosticV2, FocusedEvidencePolicyV2, InitialCompetenceTransitionV2
 from .experience import StrategyExperienceMemoryV2
 from .. import versions
+from dataclasses import replace
+from .layer1_responsibility import ResponsibilityConditionedOptimizer, ResponsibilityConditionedEngine, Layer1Config
 
 
 class FirstParentEpochStop(GlobalStopPolicy):
@@ -39,8 +41,11 @@ class OneProductionOpportunityStop(GlobalStopPolicy):
 def build_binary_orchestrator(*, benchmark, aggregation, examples, prompts, solver, optimizer,
         method, seed, shadow_loader, shadow_count, runtime_readiness, pattern_provider=None,
         first_parent_epoch=False, provider_call_reader=None, one_production_opportunity=False):
-    if not isinstance(optimizer, GEPATeamExposureOptimizer) or optimizer.config.identity() != GEPATeamExposureConfig().identity():
+    layer1=isinstance(optimizer,ResponsibilityConditionedOptimizer)
+    if not layer1 and (not isinstance(optimizer, GEPATeamExposureOptimizer) or optimizer.config.identity() != GEPATeamExposureConfig().identity()):
         raise SearchContractError("FROZEN_GEPA_EXPOSURE_REQUIRED")
+    if layer1 and optimizer.config.identity()!=Layer1Config().identity():
+        raise SearchContractError('FROZEN_LAYER1_SEARCH_REQUIRED')
     if method.diagnosis_policy != versions.BINARY_PLURALITY_RESPONSIBILITY_VERSION:
         raise SearchContractError("BINARY_RESPONSIBILITY_IDENTITY_MISMATCH")
     prediction_invalidity = bool(getattr(benchmark, "invalid_predictions_are_incorrect", False))
@@ -56,6 +61,10 @@ def build_binary_orchestrator(*, benchmark, aggregation, examples, prompts, solv
         aggregation_policy=aggregation.identity, pattern_policy=method.pattern_policy,
         memory_policy=method.memory_policy, mechanism_config=method.mechanism_config,
         global_stop=GlobalStopConfig(emergency_max_provider_calls=method.global_stop.emergency_max_provider_calls))
+    if layer1:
+        if not current:raise SearchContractError('LAYER1_REQUIRES_V2_1')
+        expected=replace(expected,search_engine=versions.LAYER1_RESPONSIBILITY_SEARCH_VERSION,
+            search_acceptance_policy='layer1_local_guidance_team_admission_v1')
     if current and method.identity() != expected.identity():
         raise SearchContractError("BINARY_COMPONENT_IDENTITIES_NOT_BOUND")
     if method.pattern_policy not in {versions.UNIFIED_NULL_PATTERN_VERSION, pattern_id} or method.memory_policy not in {versions.UNIFIED_NULL_MEMORY_VERSION, memory_id}:
@@ -70,7 +79,7 @@ def build_binary_orchestrator(*, benchmark, aggregation, examples, prompts, solv
                 else (FocusedPatternDiagnosticV2 if current else PatternDiagnosticV1)(pattern_provider))
     memory = (NullMemoryProvider() if method.memory_policy == versions.UNIFIED_NULL_MEMORY_VERSION
               else (StrategyExperienceMemoryV2 if current else StructuredLongTermMemoryProviderV1)(**method.mechanism_config["memory"]))
-    bridge = V2GEPABridge(optimizer=optimizer, history=history, seed=seed,
+    bridge = None if layer1 else V2GEPABridge(optimizer=optimizer, history=history, seed=seed,
         solver_contract_id=solver.solver_contract_id, output_contract_id=solver.output_contract_id)
     transition = InitialCompetenceTransitionV2(invalid_predictions_are_incorrect=prediction_invalidity) if current else FixedPeerCommonSafe()
     provider = FixedPeerTeamEvaluationProvider(store, transition if current else None)
@@ -81,7 +90,7 @@ def build_binary_orchestrator(*, benchmark, aggregation, examples, prompts, solv
         opportunities=V2OpportunityBuilder(source=BinaryEvidenceSource(store, history),
             feasibility=VariableEvidenceFeasibilityV1(), target=TargetPolicyV1(),
             evidence=(FocusedEvidencePolicyV2 if current else PatternCapableVariableEvidencePolicyV1)(), patterns=patterns),
-        engine=GEPATeamCandidateExposureEngine(bridge), evaluation=CandidateEvaluationPipeline(provider, FixedPeerPromotion(invalid_predictions_are_incorrect=prediction_invalidity)),
+        engine=ResponsibilityConditionedEngine(optimizer,seed) if layer1 else GEPATeamCandidateExposureEngine(bridge), evaluation=CandidateEvaluationPipeline(provider, FixedPeerPromotion(invalid_predictions_are_incorrect=prediction_invalidity)),
         transition=transition, gate=gate, committer=TeamStateCommitter(store), history=history, memory=memory,
         stop=OneProductionOpportunityStop(2) if one_production_opportunity else FirstParentEpochStop(2) if first_parent_epoch else GlobalStopPolicy(2),
         runtime_readiness=runtime_readiness, provider_call_reader=provider_call_reader)

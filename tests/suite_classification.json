@@ -1207,6 +1207,18 @@
       "classification": "CURRENT_CONTRACT",
       "current_suite_included": true,
       "required_private_artifacts": []
+    },
+    {
+      "path": "tests/test_layer1_responsibility_search.py",
+      "classification": "CURRENT_CONTRACT",
+      "current_suite_included": true,
+      "required_private_artifacts": []
+    },
+    {
+      "path": "tests/test_math_layer1_binding.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "current_suite_included": true,
+      "required_private_artifacts": []
     }
   ]
 }

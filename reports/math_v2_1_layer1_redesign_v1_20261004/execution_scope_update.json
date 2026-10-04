@@ -1,0 +1,7 @@
+{
+  "canary_only": true,
+  "latest_directive_sha256": "fe119e101634de7606f564323de5fea3c6b2f5d9825dc9604f7143441064dacd",
+  "pilot_authorized": false,
+  "push_after_canary_authorized": true,
+  "validation_authorized": false
+}

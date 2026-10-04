@@ -1,0 +1,57 @@
+{
+  "attachment_sha256": "76630550500117515c4eb999362e0c7ce0b70a6ca6d1d01ea7dfb7ce48a6dc68",
+  "endpoint": "FRESH_CANARY_TERMINAL_RESULT_THEN_STOP_AND_PUSH",
+  "explicit_human_approval": true,
+  "fresh_canary_authorized": true,
+  "fresh_canary_then_pilot_authorized": false,
+  "latest_user_directive_sha256": "fe119e101634de7606f564323de5fea3c6b2f5d9825dc9604f7143441064dacd",
+  "layer1_search_policy": {
+    "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+    "identity_version": "LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1",
+    "k_local_return": 4,
+    "max_generations": 6,
+    "max_prompt_chars": 3000,
+    "metric_limit": 36,
+    "official_gepa_fidelity": false,
+    "panel_size": 6
+  },
+  "pattern_real_calls_A1": 0,
+  "pilot_authorized": false,
+  "policy": {
+    "accounting_output_ceiling": 1810,
+    "enable_thinking": false,
+    "frequency_penalty": 0,
+    "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+    "max_completion_tokens": 1800,
+    "max_tokens": "NOT_SENT",
+    "measurement_tolerance_tokens": 10,
+    "model": "qwen3.7-flash",
+    "output_token_scope": "reasoning_plus_answer",
+    "presence_penalty": 1.5,
+    "roles": [
+      "reflection",
+      "pattern"
+    ],
+    "temperature": 0.7,
+    "top_k": 20,
+    "top_p": 0.8,
+    "truncation": "existing_operational_output_truncation"
+  },
+  "post_search_validation_only_if_deployed_team_changed": true,
+  "push_authorized": true,
+  "solver_decoding_policy": {
+    "enable_thinking": false,
+    "frequency_penalty": 0,
+    "identity": "SOLVER_DECODING_POLICY_V2",
+    "max_output_tokens": 3600,
+    "min_p": 0,
+    "presence_penalty": 0,
+    "temperature": 0.2,
+    "top_k": 20,
+    "top_p": 0.8
+  },
+  "supersedes_authorization_sha256": "69ae700048680a7abd04a8b0eb86cbcfbcfd55a875ee962db6b76e34fbeb9a33",
+  "test_model_calls": 0,
+  "total_accounting_authorization": 40000000,
+  "validation_authorized": false
+}

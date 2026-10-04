@@ -1,0 +1,26 @@
+{
+  "counts_changed": false,
+  "evaluator_changed": false,
+  "full_promotions": 2,
+  "generation_changes": {
+    "non_solver_presence_penalty": 1.5,
+    "non_solver_temperature": 0.7,
+    "solver_temperature": 0.2
+  },
+  "global_stopper_changed": false,
+  "initial_team_changed": false,
+  "layer1_replaced": true,
+  "layer2_changed": false,
+  "local_export_limit": 4,
+  "local_max_generations": 6,
+  "local_metric_limit": 36,
+  "memory_semantics_changed": false,
+  "models_changed": false,
+  "official_gepa_fidelity": false,
+  "pattern_semantics_changed": false,
+  "provider_changed": false,
+  "required_repairs": 7,
+  "responsibility_changed": false,
+  "split_changed": false,
+  "transition_changed": false
+}

@@ -15,6 +15,7 @@ from .schemas import SearchContractError
 from ..benchmarks.math_solver_decoding import generation_request_fields, frozen_solver_policy
 from ..benchmarks.math_prediction_validity import frozen_prediction_policy, frozen_recovery_policy
 from ..benchmarks.math_optimizer_generation import frozen_optimizer_policy
+from .. import versions
 
 
 class RequestBroker:
@@ -37,6 +38,9 @@ class RequestBroker:
         self.prediction_policy = frozen_prediction_policy(contract)
         self.recovery_policy = frozen_recovery_policy(contract)
         self.optimizer_policy = frozen_optimizer_policy(contract)
+        self.member_lane_policy = contract.get('cache_policy') == versions.SOLVER_MEMBER_LANE_CACHE_VERSION
+        if self.member_lane_policy != (contract.get('identity') == versions.MATH_LAYER1_EXECUTION_BINDING_VERSION):
+            raise SearchContractError('SOLVER_MEMBER_LANE_POLICY_BINDING_MISMATCH')
         self.durable_cache = durable_cache
         if durable_cache is not None and self.recovery_policy is None:
             raise SearchContractError('DURABLE_CACHE_REQUIRES_RECOVERY_BINDING')
@@ -60,7 +64,7 @@ class RequestBroker:
             token_ledger=self.token_ledger, reserve_reader=self.reserve_reader, validation_only=self.validation_only,
             durable_cache=self.durable_cache)
 
-    def _request_identity(self, *, role, split, messages):
+    def _request_identity(self, *, role, split, messages, member_slot=None):
         legal = (role == "solver" and split == "validation") if self.validation_only else (
             role in {"solver", "reflection", "pattern"} and split in {"optimize", "shadow"}
             and (role == "solver" or split == "optimize"))
@@ -78,6 +82,11 @@ class RequestBroker:
             if c.get('optimizer_nonthinking_evidence_policy'):
                 identity['optimizer_nonthinking_evidence_policy']=c['optimizer_nonthinking_evidence_policy']
         if role == "solver":
+            if self.member_lane_policy:
+                if type(member_slot) is not int or member_slot not in range(5):
+                    raise SearchContractError('SOLVER_MEMBER_REALIZATION_LANE_REQUIRED')
+                identity['member_realization_lane']=member_slot
+                identity['scientific_attempt']=c['execution_attempt_id']
             identity["solver_output_interface"] = c["solver_output_interface"]
             if frozen_solver_policy(c) is not None:
                 identity["solver_decoding_policy"] = frozen_solver_policy(c)
@@ -102,10 +111,10 @@ class RequestBroker:
         if self.prediction_policy:
             self.cache_seals[key]=hashlib.sha256(json.dumps(result,sort_keys=True,separators=(',',':')).encode()).hexdigest()
 
-    def complete(self, *, role, split, stage, messages):
+    def complete(self, *, role, split, stage, messages, member_slot=None):
         if role != 'solver' or not self.recovery_policy:
-            return self._complete_one(role=role,split=split,stage=stage,messages=messages)
-        _,key=self._request_identity(role=role,split=split,messages=messages)
+            return self._complete_one(role=role,split=split,stage=stage,messages=messages,member_slot=member_slot)
+        _,key=self._request_identity(role=role,split=split,messages=messages,member_slot=member_slot)
         with self.lock:
             if key not in self.cache and self.durable_cache:
                 previous=self.durable_cache.get(key)
@@ -116,7 +125,7 @@ class RequestBroker:
             for semantic_attempt_no in range(1,5):
                 try:
                     result=self._complete_one(role=role,split=split,stage=stage,messages=messages,
-                        semantic_attempt_no=semantic_attempt_no)
+                        semantic_attempt_no=semantic_attempt_no,member_slot=member_slot)
                 except BaseException as exc:
                     if semantic_attempt_no>1 and 'TOKEN_BUDGET' in str(exc):
                         self.abort('STOP_TOKEN_BUDGET_INSUFFICIENT_FOR_INVALID_RECOVERY')
@@ -133,16 +142,28 @@ class RequestBroker:
             output={**result,'resolved_prediction':asdict(resolved),'original_realizations':realizations,
                 'input_tokens':sum(r['input_tokens'] for r in realizations),
                 'output_tokens':sum(r['output_tokens'] for r in realizations)}
+            if self.member_lane_policy:
+                hashes=[hashlib.sha256((r['text'] or '').encode()).hexdigest() for r in realizations]
+                retries=hashes[1:]
+                diversity=dict(raw_invalid_attempts=sum(not p.prediction_valid for p in predictions),
+                    recovered_logical_requests=int(resolved.recovered_invalid),terminal_invalids=int(resolved.terminal_invalid),
+                    identical_retry_response_count=sum(h in hashes[:i] for i,h in enumerate(hashes) if i>0),
+                    unique_retry_response_rate=len(set(retries))/len(retries) if retries else None,
+                    same_invalid_repeated_all_retries=resolved.terminal_invalid and len(set(hashes))==1)
+                output['retry_diversity']=diversity
+                self._write(dict(kind='SEMANTIC_RETRY_DIVERSITY',role=role,split=split,stage=stage,
+                    request_sha256=key,member_slot=member_slot,**diversity))
             if self.durable_cache:self.durable_cache.put(key,output)
             self._store_cache(key,output)
             return output
 
-    def _complete_one(self, *, role, split, stage, messages, semantic_attempt_no=None):
+    def _complete_one(self, *, role, split, stage, messages, semantic_attempt_no=None, member_slot=None):
         c=self.contract
-        request,key=self._request_identity(role=role,split=split,messages=messages)
+        request,key=self._request_identity(role=role,split=split,messages=messages,member_slot=member_slot)
         model=request['model']
+        cacheable=not self.member_lane_policy or role=='solver'
         with self.lock:
-            if semantic_attempt_no is None and key in self.cache:
+            if cacheable and semantic_attempt_no is None and key in self.cache:
                 return self._cache_hit(key,role,split,stage)
             for retry in range(c["decoding"]["transport_retries"] + 1):
                 bounds = c["provider_bounds"]
@@ -157,7 +178,8 @@ class RequestBroker:
                         protected_validation=self.reserve_reader())
                 self.usage["attempts"] += 1
                 self._write(dict(kind="ATTEMPT", role=role, split=split, stage=stage, request_sha256=key, attempt=self.usage["attempts"],
-                    semantic_attempt_no=semantic_attempt_no,transport_retry_no=retry))
+                    semantic_attempt_no=semantic_attempt_no,transport_retry_no=retry,
+                    **({'member_realization_lane':member_slot} if self.member_lane_policy and role=='solver' else {})))
                 try:
                     result = self.transport(request)
                 except Exception as exc:
@@ -224,9 +246,9 @@ class RequestBroker:
                 result = {**result, "provider_called": True}
                 if self.prediction_policy:
                     result["request_sha256"] = key
-                if semantic_attempt_no is None:
+                if semantic_attempt_no is None and cacheable:
                     self._store_cache(key,result)
-                else:
+                if semantic_attempt_no is not None:
                     result['transport_retry_attempts']=retry
                 return result
 
@@ -248,7 +270,7 @@ class BenchmarkSolver:
         self.broker = broker
         self.output_contract_id = PROTOCOLS[benchmark.benchmark_id].output_contract_id
         self.invalid_predictions_are_incorrect = bool(getattr(benchmark, "invalid_predictions_are_incorrect", False))
-        self.member_id = None  # Telemetry only; never enters messages or cache keys.
+        self.member_id = None  # New lane policy binds this slot to identity, never model messages.
         if self.invalid_predictions_are_incorrect != bool(broker.prediction_policy):
             raise SearchContractError("SOLVER_PREDICTION_POLICY_PORT_MISMATCH")
 
@@ -283,13 +305,16 @@ class BenchmarkSolver:
             effective_contract["solver_decoding_policy"] = frozen_solver_policy(self.broker.contract)
         if self.broker.prediction_policy:
             effective_contract["prediction_validity_policy"] = self.broker.prediction_policy
+        if self.broker.member_lane_policy:
+            effective_contract['member_realization_lane']=self.member_id
+            effective_contract['cache_policy']=self.broker.contract['cache_policy']
         effective = hashlib.sha256(json.dumps(effective_contract, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
         self.broker._write(dict(kind="SOLVER_REQUEST_CONTRACT", role="solver", split=split, stage=stage,
             solver_interface_identity=contract["identity"], mutable_prompt_sha256=hashlib.sha256(prompt.encode()).hexdigest(),
             effective_solver_request_contract_hash=effective))
         return self.broker.complete(role="solver", split=split, stage=stage,
             messages=[{"role": "system", "content": interface},
-                      {"role": "user", "content": user_content}])
+                      {"role": "user", "content": user_content}],member_slot=self.member_id)
 
     def solve(self, prompt, item, *, stage, split):
         result = self._request(prompt, item, stage=stage, split=split)

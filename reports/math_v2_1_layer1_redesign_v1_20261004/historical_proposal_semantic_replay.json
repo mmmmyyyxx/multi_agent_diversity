@@ -1,0 +1,147 @@
+{
+  "caution": "Historical owner categories used a broader presentation rubric. A generic conclusion plus problem-requested mathematical form is now admissible unless it controls the external interface.",
+  "historical_report_unchanged": true,
+  "old_guards_versioned_and_unchanged": true,
+  "rows": [
+    {
+      "historical_owner_category": "OUTPUT_PRESENTATION_CONTROL",
+      "mutation_shape": "append_only",
+      "new_decision": "REJECT",
+      "new_failed_checks": [
+        "external_output_interface_mutation"
+      ],
+      "old_decision": "REJECT",
+      "old_failed_checks": [
+        "forbidden_final_answer_marker",
+        "append_only"
+      ],
+      "prompt_sha256": "5520956dcdb86db84d60e18ae0def6cf6bfbb3df44ad9dfe20bd5ee4679b441d",
+      "reason": "explicit_external_presentation_control"
+    },
+    {
+      "historical_owner_category": "OUTPUT_PRESENTATION_CONTROL",
+      "mutation_shape": "replacement",
+      "new_decision": "REJECT",
+      "new_failed_checks": [
+        "external_output_interface_mutation"
+      ],
+      "old_decision": "REJECT",
+      "old_failed_checks": [
+        "forbidden_final_answer_marker"
+      ],
+      "prompt_sha256": "282c003780bd496d844002de09742ff359b3e189422f7587643ae643f4e4d906",
+      "reason": "explicit_external_presentation_control"
+    },
+    {
+      "historical_owner_category": "OUTPUT_PRESENTATION_CONTROL",
+      "mutation_shape": "replacement",
+      "new_decision": "REJECT",
+      "new_failed_checks": [
+        "external_output_interface_mutation"
+      ],
+      "old_decision": "REJECT",
+      "old_failed_checks": [
+        "forbidden_final_answer_marker",
+        "copied_solver_interface"
+      ],
+      "prompt_sha256": "3cff2cc09ebb0464761c047b057b449194a20a2aa3f0a2fbc47a2a1f37d487cd",
+      "reason": "explicit_external_presentation_control"
+    },
+    {
+      "historical_owner_category": "OUTPUT_PRESENTATION_CONTROL",
+      "mutation_shape": "replacement",
+      "new_decision": "ALLOW",
+      "new_failed_checks": [],
+      "old_decision": "REJECT",
+      "old_failed_checks": [
+        "forbidden_final_answer_marker"
+      ],
+      "prompt_sha256": "21ecccf6886f0671fa20dbdbc14fb308c095f7a99350d0556ed57ddec6cccc7a",
+      "reason": "mathematical_form_or_generic_reasoning_without_external_protocol_control"
+    },
+    {
+      "historical_owner_category": "BENIGN_REASONING",
+      "mutation_shape": "replacement",
+      "new_decision": "ALLOW",
+      "new_failed_checks": [],
+      "old_decision": "REJECT",
+      "old_failed_checks": [
+        "forbidden_final_answer_marker"
+      ],
+      "prompt_sha256": "bec175f1cefa24389a3f9d64ef716e4a52a433a974f51814e964a99ec39a4f43",
+      "reason": "mathematical_form_or_generic_reasoning_without_external_protocol_control"
+    },
+    {
+      "historical_owner_category": "ANSWER_REPRESENTATION_GUIDANCE",
+      "mutation_shape": "replacement",
+      "new_decision": "ALLOW",
+      "new_failed_checks": [],
+      "old_decision": "REJECT",
+      "old_failed_checks": [
+        "forbidden_final_answer_marker",
+        "copied_solver_interface"
+      ],
+      "prompt_sha256": "162bbeb399a2547fe1bf578335876d65cd9a46b03d04d3c8b2b85916e73a62f8",
+      "reason": "mathematical_form_or_generic_reasoning_without_external_protocol_control"
+    },
+    {
+      "historical_owner_category": "ANSWER_REPRESENTATION_GUIDANCE",
+      "mutation_shape": "append_only",
+      "new_decision": "ALLOW",
+      "new_failed_checks": [],
+      "old_decision": "REJECT",
+      "old_failed_checks": [
+        "forbidden_final_answer_marker",
+        "append_only"
+      ],
+      "prompt_sha256": "13b0d233f95a214631d1e8eeed5f22120ce36158119794a3372874de73c96617",
+      "reason": "mathematical_form_or_generic_reasoning_without_external_protocol_control"
+    },
+    {
+      "historical_owner_category": "ANSWER_REPRESENTATION_GUIDANCE",
+      "mutation_shape": "append_only",
+      "new_decision": "ALLOW",
+      "new_failed_checks": [],
+      "old_decision": "REJECT",
+      "old_failed_checks": [
+        "forbidden_final_answer_marker",
+        "copied_solver_interface",
+        "append_only"
+      ],
+      "prompt_sha256": "1358e6a7a96d49b0dd0449a3658a82b6cdb3402df7aac4f35587eb864e61ba02",
+      "reason": "mathematical_form_or_generic_reasoning_without_external_protocol_control"
+    },
+    {
+      "historical_owner_category": "OUTPUT_PRESENTATION_CONTROL",
+      "mutation_shape": "append_only",
+      "new_decision": "REJECT",
+      "new_failed_checks": [
+        "external_output_interface_mutation"
+      ],
+      "old_decision": "REJECT",
+      "old_failed_checks": [
+        "forbidden_final_answer_marker",
+        "append_only"
+      ],
+      "prompt_sha256": "06fb77927332254bbbd36e51cbfb38e0c1e89c68fdf1ed9ec4a3e538ada4ec7c",
+      "reason": "explicit_external_presentation_control"
+    },
+    {
+      "historical_owner_category": "OUTPUT_PRESENTATION_CONTROL",
+      "mutation_shape": "append_only",
+      "new_decision": "REJECT",
+      "new_failed_checks": [
+        "external_output_interface_mutation"
+      ],
+      "old_decision": "REJECT",
+      "old_failed_checks": [
+        "forbidden_final_answer_marker",
+        "append_only"
+      ],
+      "prompt_sha256": "cf0f06b46999bbe6cb8a778b9e63093d9c40a7c294925a06f838e25a0dbae0f3",
+      "reason": "explicit_external_presentation_control"
+    }
+  ],
+  "rule": "Decisions follow explicit output-protocol vs mathematical-reasoning boundary; no admission quota.",
+  "status": "PASS"
+}

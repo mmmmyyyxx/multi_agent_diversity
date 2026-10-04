@@ -1,0 +1,9 @@
+{
+  "combined_critic_proposer_role": "reflection",
+  "initial_members": 5,
+  "pattern_real_calls": 0,
+  "reflection_and_pattern_same_generation_policy": true,
+  "solver_fields_equal_all_stages": true,
+  "status": "PASS",
+  "synthetic_evolved": 3
+}

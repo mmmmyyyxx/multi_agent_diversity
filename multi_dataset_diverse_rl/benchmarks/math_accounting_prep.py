@@ -52,7 +52,7 @@ def validation_rows(root, contract, *, context, search_complete_receipt=None):
 def solver_request(contract, prompt, problem):
     interface = MATH_SOLVER_INTERFACE
     user_content = prompt + "\n\n" + problem
-    if contract["identity"] in {versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION, versions.MATH_LOW_COST_EXECUTION_BINDING_VERSION, versions.MATH_LOW_COST_OPTIMIZER_EXECUTION_BINDING_VERSION}:
+    if contract["identity"] in {versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION, *versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS}:
         from .math_v21_interface import interface_for_contract, solver_user_content
         interface = interface_for_contract(contract)[0]
         user_content = solver_user_content(contract, prompt, problem)
@@ -63,7 +63,7 @@ def solver_request(contract, prompt, problem):
 
 def prepare_metadata(root, contract):
     interface = solver_interface_contract()
-    if contract["identity"] in {versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION, versions.MATH_LOW_COST_EXECUTION_BINDING_VERSION, versions.MATH_LOW_COST_OPTIMIZER_EXECUTION_BINDING_VERSION}:
+    if contract["identity"] in {versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION, *versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS}:
         from .math_v21_interface import interface_for_contract
         interface = interface_for_contract(contract)[1]
     examples = []

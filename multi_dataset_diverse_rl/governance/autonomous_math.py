@@ -163,11 +163,21 @@ async def execute_search(root, prep, run_root, payload):
             raise OperationalAbort("NONSCIENTIFIC_STOP_"+result.stop_reason)
         if c.get("method_identity") == "unified_team_prompt_search_v2_1" and c["execution_phase"] == "canary" and not result.trace:
             raise OperationalAbort("CANARY_NO_COMPLETE_PRODUCTION_OPPORTUNITY")
+        from .. import versions
+        if c['identity']==versions.MATH_LAYER1_EXECUTION_BINDING_VERSION and c['execution_phase']=='canary' and not any(t.candidate_ids for t in result.trace):
+            raise OperationalAbort('STOP_LAYER1_ZERO_THROUGHPUT')
         final = composed.state.snapshot()
         atomic_write_json(run_root / "final_team_private.json",dict(prompts=final.member_prompts,state_id=final.team_state_id))
         atomic_write_json(run_root / "final_state_private.json",plain(final))
         summary = dict(result=plain(result),ledger=broker.usage,accounting=budget.view(),validation_reserve=reserve.remaining(),
             validation_search_raw_reads=0,validation_calls=0,test_raw_reads=0,test_calls=0,pattern_calls=0,memory_activity=0)
+        if c['identity']==versions.MATH_LAYER1_EXECUTION_BINDING_VERSION:
+            from .math_paired_validation import team_change_receipt
+            summary['deployed_team_change']=team_change_receipt(initial_prompts(root,c),final.member_prompts)
+            if c['execution_phase']=='pilot' and not summary['deployed_team_change']['team_changed']:
+                atomic_write_json(run_root/'VALIDATION_DISPOSITION.json',dict(
+                    **summary['deployed_team_change'],validation_model_calls=0,validation_provider_calls=0,
+                    VoteAccDelta='NOT_AVAILABLE',OracleAccDelta='NOT_AVAILABLE',bootstrap='NOT_RUN'))
         atomic_write_json(run_root / "execution_summary.json",summary)
         if read_json(run_root / "execution_summary.json")!=summary:
             raise OperationalAbort("EXECUTION_PERSISTENCE_MISMATCH")
@@ -180,7 +190,8 @@ async def execute_search(root, prep, run_root, payload):
                 final_team_sha256=file_sha(run_root / "final_team_private.json"),
                 trajectory_sha256=file_sha(run_root / "trajectory_private.jsonl") if (run_root / "trajectory_private.jsonl").exists() else None,
                 raw_inventory_sha256=file_sha(run_root / "raw_evidence_inventory.json"),execution_summary_sha256=file_sha(run_root / "execution_summary.json"),
-                stop_reason=result.stop_reason,search_closed_forever=True,validation_search_raw_reads=0,validation_model_calls=0,test_raw_reads=0,test_model_calls=0))
+                stop_reason=result.stop_reason,search_closed_forever=True,validation_search_raw_reads=0,validation_model_calls=0,test_raw_reads=0,test_model_calls=0,
+                **({'deployed_team_change':summary['deployed_team_change']} if c['identity']==versions.MATH_LAYER1_EXECUTION_BINDING_VERSION else {})))
         return summary
     except BaseException as exc:
         for key in tuple(budget.inflight):

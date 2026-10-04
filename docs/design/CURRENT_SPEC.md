@@ -19,7 +19,7 @@ design authority. Historical specifications and invariant IDs are preserved in
   opportunity and context to explore candidates. Team transition policy alone
   selects a candidate for write-back. This is a modularity boundary, not a
   restriction that team evidence can never enter future search research.
-- **INV-GEPA-DERIVED-001**: V2 uses pinned GEPA public adapter, callback,
+- **INV-GEPA-DERIVED-001**: Historical V2 and GEPA-bound V2.1 use pinned GEPA public adapter, callback,
   logger and stopper seams. Its strict local improvement, Pareto/frontier,
   parent selection and search lineage remain owned by the untouched GEPA core.
   V1 migration and historical official/Formal baselines retain their identities.
@@ -60,7 +60,7 @@ track exposure of the feasible set for stopping, not a once-per-member schedule.
 Positive integer V with failure discount gives eventual exposure in a stationary
 no-commit parent; after sufficient exposure, allocation may remain concentrated.
 
-GEPA strict local survival, progressive TeamProbe/Full, promotion ceiling two,
+Historical GEPA bindings retain strict local survival. Progressive TeamProbe/Full, promotion ceiling two,
 winner-only Shadow, atomic single-member commit and parent-scoped epochs remain.
 Reflection minibatch three, local metric budget36, local no-update patience three
 and team no-commit patience two are unchanged. A successful commit resets team
@@ -225,7 +225,9 @@ inherited. Pattern/Memory are IMPLEMENTED_DEFAULT_OFF, efficacy unverified.
   wording. Mutable prompt identity excludes that interface; effective request
   identity and exact-request cache identity include its version and wording
   hash. Reflection evolves only mutable reasoning. The strict final-line
-  marker framing and mutable contamination guard remain unchanged. Historical
+  marker framing remains unchanged. Historical mutable guards retain their
+  versioned semantics; the new Layer1 amendment below selects a semantic
+  reasoning boundary. Historical
   interface-repair bindings preserve their pinned equivalence evaluator; the
   explicitly bound answer-domain V2 amendment below versions payload scoring.
   Format noncompliance aborts without regeneration; fake and real
@@ -561,3 +563,54 @@ retry overhead. Retries reserve individually when needed. The 40M ceiling is
 an upper bound, with every physical transport separately charged, and never
 an expenditure target. This is development evidence only; no Test, formal
 three-seed run, other arm or other seed follows any result.
+
+## Responsibility-conditioned Layer1 amendment (fresh binding V3)
+
+`MATH_V2_1_LAYER1_EXECUTION_BINDING_V3` opts into the user-authorized
+[Layer1 search specification](LAYER1_SEARCH_SEMANTICS_VNEXT.md).
+`LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1` is a bounded feedback-informed
+backend and explicitly does not claim official GEPA fidelity. The Layer2
+Responsibility formula/discount/allocation, target-first control, evidence roles,
+one-focus Pattern, Memory ports, five members, equal-weight plurality,
+initial competence floor, strict team gain, fixed-peer progressive evaluation,
+winner-only Shadow and team_epoch_no_commit_v1 stopping remain unchanged.
+
+The local backend receives only supplied Optimize evidence and explicit target
+Responsibility context. It uses SolverObservation records, including prediction,
+reference correctness, validity/invalid reason, role/lane and preservation
+feedback. Visible Solver reasoning is not required. At most six generative calls
+and 36 logical Solver metrics form a fresh local archive. All changed admissible
+unique scored procedures enter the export pool, including locally rejected and
+non-frontier procedures; ranking limits export to four and never grants
+deployment. Recent rejected candidate outcomes inform subsequent proposals.
+
+`SEMANTIC_MUTABLE_REASONING_CONTRACT_V2` allows benign final-answer wording,
+mathematical representation guidance and changed append-only procedures.
+Actual external output-interface changes, fixed answers, supplied-example
+copying, empty/overlength procedures and normalization-equivalent no-ops remain
+hard rejections. The benchmark-owned Solver shell and parser are unchanged.
+Historical lexical/append-only guards and all prior reports remain reproducible.
+
+`SOLVER_DECODING_POLICY_V2` freezes temperature0.2 and all other V1 Solver fields
+unchanged. `OPTIMIZER_REFLECTION_GENERATION_POLICY_V3` explicitly freezes
+thinking=false, temperature0.7, top_p0.8, top_k20, presence_penalty1.5,
+frequency_penalty0 and max_completion_tokens1800; max_tokens remains absent,
+with the existing 1810 accounting ceiling and truncation guard. Every relevant
+wire field and policy enters binding, manifest, request and authorization.
+
+`SOLVER_MEMBER_LANE_EXACT_CACHE_V2` permits only resolved Solver reuse. Member
+slot and scientific attempt enter realization identity without entering model
+messages. Identical requests within the same member lane may reuse across
+stages; different members and attempts never share realizations. Non-Solver
+generative roles always dispatch fresh draws. Solver invalid recovery remains
+one initial plus at most three same-request semantic retries. Retry response
+diversity is telemetry, with no adaptive recovery changes.
+
+The new Canary requires a changed admissible Solver-scored candidate and a
+complete production opportunity; zero throughput stops before Pilot. After
+search closes permanently, ordered deployed prompt hashes determine team change.
+An unchanged team skips Validation with zero model/provider calls,
+NOT_ESTIMATED signal, NO_INTERVENTION outcome and no bootstrap/numeric delta.
+Changed teams receive only post-search Validation100. Historical identity
+comparisons retain their original classifiers. Optimize12/60, Shadow40 and
+Validation100 memberships, cumulative 40M accounting and sealed Test remain.

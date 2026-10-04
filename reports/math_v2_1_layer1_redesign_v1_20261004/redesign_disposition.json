@@ -1,0 +1,34 @@
+{
+  "config": {
+    "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+    "identity_version": "LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1",
+    "k_local_return": 4,
+    "max_generations": 6,
+    "max_prompt_chars": 3000,
+    "metric_limit": 36,
+    "official_gepa_fidelity": false,
+    "panel_size": 6
+  },
+  "layer2_contract_impact": "None; local scores remain search guidance only",
+  "modified": [
+    "fixed panel scheduling",
+    "SolverObservation feedback",
+    "archive parent choice",
+    "whole-pool export ranking"
+  ],
+  "removed": [
+    "official optimize",
+    "strict-local survival gate",
+    "instance Pareto frontier",
+    "official parent selector",
+    "perfect-score skip",
+    "reasoning-dependent reflection dataset"
+  ],
+  "retained": [
+    "reflection concept",
+    "candidate archive",
+    "lineage",
+    "bounded local evaluation",
+    "role-bearing evidence"
+  ]
+}

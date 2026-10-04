@@ -1,0 +1,33 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "execution_scope_update.json",
+      "sha256": "579525170b01074de269a768064b3267fbfedbf42b3e5bd3516f47b77b4e6dbc"
+    },
+    {
+      "file": "historical_proposal_semantic_replay.json",
+      "sha256": "9b36071d23f90da53e3cfb0c449b9abf1803dd0d2c00fa3104abc46c597ee73e"
+    },
+    {
+      "file": "README.md",
+      "sha256": "5036824f097128490c7a4a4fd0b950c8815e1c855837ea50b5d4140cedff9613"
+    },
+    {
+      "file": "redesign_disposition.json",
+      "sha256": "ae700815221c9ccd021944a0b2bff2112196900f01963489ad1c121b4b0bb885"
+    },
+    {
+      "file": "request_body_capture.json",
+      "sha256": "4b682f0551644806160b956bb2d3a9d875c91be2c09234197662f34b12f75789"
+    },
+    {
+      "file": "role_parity.json",
+      "sha256": "ff33c00cf6c7349909621bef04b8178239911885b3b0668cb7f9758f53cfaf46"
+    },
+    {
+      "file": "scientific_delta_audit.json",
+      "sha256": "41252d694fc2152d1aff40a05d29e252dd9390a65acb5d31eccd129cd26b3a70"
+    }
+  ]
+}

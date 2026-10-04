@@ -195,7 +195,9 @@ class UnifiedSearchOrchestrator:
             raise SearchContractError("aggregation implementation/method identity mismatch")
         current_semantics = self.method.method == versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION
         if self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION}:
-            if self.method.search_acceptance_policy != versions.UNIFIED_DECOUPLED_ACCEPTANCE_VERSION:
+            expected_acceptance=('layer1_local_guidance_team_admission_v1' if current_semantics and
+                self.method.search_engine==versions.LAYER1_RESPONSIBILITY_SEARCH_VERSION else versions.UNIFIED_DECOUPLED_ACCEPTANCE_VERSION)
+            if self.method.search_acceptance_policy != expected_acceptance:
                 raise SearchContractError("V2 requires decoupled team candidate admission")
             if (self.opportunities.search_metric_budget != 36 or
                     self.opportunities.evidence.metric_budget != 36 or

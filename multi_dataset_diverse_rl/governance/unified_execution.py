@@ -26,7 +26,7 @@ def consumption_path(root, scope):
 def bound_preflight(root, manifest):
     from ..benchmarks.math_execution import MATHExecutionBinding
     ref = manifest.get("execution_binding", {})
-    if ref.get("identity") not in {versions.MATH_EXECUTION_BINDING_VERSION, versions.MATH_AUTONOMOUS_EXECUTION_BINDING_VERSION, versions.MATH_DOMAIN_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION, versions.MATH_LOW_COST_EXECUTION_BINDING_VERSION, versions.MATH_LOW_COST_OPTIMIZER_EXECUTION_BINDING_VERSION}:
+    if ref.get("identity") not in {versions.MATH_EXECUTION_BINDING_VERSION, versions.MATH_AUTONOMOUS_EXECUTION_BINDING_VERSION, versions.MATH_DOMAIN_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION, *versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS}:
         raise SearchContractError("UNSUPPORTED_EXECUTION_BINDING")
     errors = validate_manifest_v2(root, manifest)
     if manifest.get("lifecycle", {}).get("status") != "PREEXECUTION_FROZEN":
@@ -35,19 +35,19 @@ def bound_preflight(root, manifest):
     if not path.is_relative_to(root.resolve()) or not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != ref["sha256"]:
         errors.append("EXECUTION_BINDING_HASH_MISMATCH")
         return {"gate": "HOLD", "blockers": errors, "provider_attempts": 0}
-    if ref["identity"] in {versions.MATH_AUTONOMOUS_EXECUTION_BINDING_VERSION, versions.MATH_DOMAIN_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION, versions.MATH_LOW_COST_EXECUTION_BINDING_VERSION, versions.MATH_LOW_COST_OPTIMIZER_EXECUTION_BINDING_VERSION}:
+    if ref["identity"] in {versions.MATH_AUTONOMOUS_EXECUTION_BINDING_VERSION, versions.MATH_DOMAIN_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION, *versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS}:
         from ..benchmarks.math_domain_binding import execution_binding
         binding = execution_binding(root, read_json(path))
     else:
         binding = MATHExecutionBinding(root, read_json(path))
     errors.extend(binding.blockers())
     c = binding.contract
-    current = c["identity"] in {versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION, versions.MATH_LOW_COST_EXECUTION_BINDING_VERSION, versions.MATH_LOW_COST_OPTIMIZER_EXECUTION_BINDING_VERSION}
+    current = c["identity"] in {versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION, *versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS}
     expected = {"benchmark_id": "math", "benchmark_protocol_id": c["benchmark_protocol_sha256"],
         "method_family": versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION if current else "unified_team_prompt_search_v2",
         "method_identity": versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION if current else "unified_team_prompt_search_v2",
-        "search_engine_identity": "gepa_derived_team_candidate_exposure_v2",
-        "search_acceptance_identity": "local_survival_team_admission_decoupled_v1",
+        "search_engine_identity": binding.method('A1').search_engine,
+        "search_acceptance_identity": binding.method('A1').search_acceptance_policy,
         "evidence_identity": versions.UNIFIED_FOCUSED_EVIDENCE_VERSION if current else "variable_pattern_capable_evidence_v1", "feasibility_identity": "variable_evidence_feasibility_v1",
         "transition_identity": versions.UNIFIED_COMPETENCE_TRANSITION_VERSION if current else "common_safe_v1", "adaptive_gate_identity": "winner_only_shadow_v1",
         "pattern_identity": "null_pattern_v1", "memory_identity": "null_memory_v1", "mechanism_config": {},
@@ -70,8 +70,8 @@ def bound_preflight(root, manifest):
         expected["solver_decoding_policy"] = c["solver_decoding_policy"]
     if "prediction_validity_policy" in c:
         expected["prediction_validity_policy"] = c["prediction_validity_policy"]
-    for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256", "optimizer_nonthinking_evidence_policy"):
-        if k in c: expected[k] = c[k]
+    for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256", "optimizer_nonthinking_evidence_policy", "layer1_search_policy", "candidate_contract_identity", "post_search_validation_policy"):
+        if k in c and (k not in {'layer1_search_policy','candidate_contract_identity','post_search_validation_policy'} or c['identity']==versions.MATH_LAYER1_EXECUTION_BINDING_VERSION): expected[k] = c[k]
     if any(manifest.get(k) != v for k, v in expected.items()):
         errors.append("MANIFEST_EXECUTION_BINDING_MISMATCH")
     if manifest.get("authorization", {}).get("real_api_authorized") is not False:
@@ -99,7 +99,7 @@ def execution_identity(root, contract):
     # canonical raw source remains private and has its separate manifest hash.
     configs = [contract["split_directory"] + "/math.json", contract["initial_team_path"],
                contract["pattern_prompt_path"], contract.get("binding_path", versions.MATH_EXECUTION_BINDING_PATH)]
-    configs.extend(contract[k] for k in ("parent_binding_path", "accounting_policy_path", "validation_accounting_metadata_path", "verify_settings_path", "amendment_parent_binding_path", "low_cost_subsets_path", "optimizer_amendment_authorization_path") if k in contract)
+    configs.extend(contract[k] for k in ("parent_binding_path", "accounting_policy_path", "validation_accounting_metadata_path", "verify_settings_path", "amendment_parent_binding_path", "low_cost_subsets_path", "optimizer_amendment_authorization_path", "layer1_parent_binding_path", "layer1_amendment_authorization_path") if k in contract)
     identity = build_unified_source_identity(root, root / contract["canonical_root"] / "manifests/math.json", [root / p for p in configs])
     files = [root / r["path"] for s in identity["scopes"].values() for r in s["files"]]
     files.append(root / contract["split_directory"] / "math.ids.jsonl")
@@ -184,6 +184,10 @@ def execution_scope(manifest, contract):
         scope["optimizer_amendment_authorization_sha256"] = contract["optimizer_amendment_authorization_sha256"]
         if contract.get('optimizer_nonthinking_evidence_policy') is not None:
             scope['optimizer_nonthinking_evidence_policy']=contract['optimizer_nonthinking_evidence_policy']
+    if contract.get('identity')==versions.MATH_LAYER1_EXECUTION_BINDING_VERSION:
+        scope.update(layer1_search_policy=contract['layer1_search_policy'],candidate_contract_identity=contract['candidate_contract_identity'],
+            cache_policy=contract['cache_policy'],post_search_validation_policy=contract['post_search_validation_policy'],
+            layer1_amendment_authorization_sha256=contract['layer1_amendment_authorization_sha256'])
     if "accounting_policy_path" in contract:
         scope["accounting"] = dict(policy_sha256=contract["accounting_policy_sha256"],
             total_authorization=40_000_000 if contract["identity"] in versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS else 30_000_000, task_sha256=contract["task_authorization_sha256"],
@@ -302,7 +306,7 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
     from ..benchmarks.math_execution import MATHExecutionBinding
     binding_path = binding_path or versions.MATH_EXECUTION_BINDING_PATH
     contract = read_json(root / binding_path)
-    if contract["identity"] in {versions.MATH_AUTONOMOUS_EXECUTION_BINDING_VERSION, versions.MATH_DOMAIN_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION, versions.MATH_LOW_COST_EXECUTION_BINDING_VERSION, versions.MATH_LOW_COST_OPTIMIZER_EXECUTION_BINDING_VERSION}:
+    if contract["identity"] in {versions.MATH_AUTONOMOUS_EXECUTION_BINDING_VERSION, versions.MATH_DOMAIN_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION, *versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS}:
         from ..benchmarks.math_domain_binding import execution_binding
         b = execution_binding(root, contract)
     else:
@@ -340,7 +344,7 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
     if "prediction_validity_policy" in contract:
         manifest["prediction_validity_policy"] = contract["prediction_validity_policy"]
     manifest["global_stop_identity"] = method.global_stop.identity
-    for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256", "optimizer_nonthinking_evidence_policy"):
-        if k in contract: manifest[k] = contract[k]
+    for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256", "optimizer_nonthinking_evidence_policy", "layer1_search_policy", "candidate_contract_identity", "post_search_validation_policy"):
+        if k in contract and (k not in {'layer1_search_policy','candidate_contract_identity','post_search_validation_policy'} or contract['identity']==versions.MATH_LAYER1_EXECUTION_BINDING_VERSION): manifest[k] = contract[k]
     manifest["preregistration_identity"] = canonical_sha256({k: v for k, v in manifest.items() if k not in {"lifecycle", "authorization"}})
     return manifest

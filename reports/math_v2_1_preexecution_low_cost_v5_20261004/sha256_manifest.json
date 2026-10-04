@@ -1,0 +1,13 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "execution_scope_update.json",
+      "sha256": "579525170b01074de269a768064b3267fbfedbf42b3e5bd3516f47b77b4e6dbc"
+    },
+    {
+      "file": "README.md",
+      "sha256": "fb4754694c99334dbe83b394fc4f51c3657e3082eb8df95b067be0b5a56f68ee"
+    }
+  ]
+}

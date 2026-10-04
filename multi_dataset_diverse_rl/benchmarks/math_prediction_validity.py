@@ -21,7 +21,7 @@ def prediction_validity_contract():
 def frozen_prediction_policy(contract):
     policy = contract.get("prediction_validity_policy")
     if contract.get("identity") in {versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION,
-                                   versions.MATH_LOW_COST_EXECUTION_BINDING_VERSION, versions.MATH_LOW_COST_OPTIMIZER_EXECUTION_BINDING_VERSION}:
+                                   *versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS}:
         expected = prediction_validity_contract()
         if contract['identity'] in versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS:
             expected.update(identity=versions.MATH_RECOVERY_PREDICTION_VERSION, invalid_response_retries=3)

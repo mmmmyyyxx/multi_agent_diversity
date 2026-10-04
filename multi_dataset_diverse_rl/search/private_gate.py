@@ -27,11 +27,12 @@ def private_binary_gate(*, benchmark, load_examples, expected_count, solver, sto
                 if len(examples) != expected_count:
                     raise SearchContractError("GATE_MANIFEST_CARDINALITY_MISMATCH")
             def profile(prompt, member):
-                if prompt not in profiles:
+                lane_key=(member,prompt) if getattr(getattr(solver,'broker',None),'member_lane_policy',False) else prompt
+                if lane_key not in profiles:
                     if hasattr(solver, "observe_member"):
                         solver.observe_member(member)
-                    profiles[prompt] = tuple(solver.solve(prompt, e.item, stage="adaptive_gate", split="shadow") for e in examples)
-                return profiles[prompt]
+                    profiles[lane_key] = tuple(solver.solve(prompt, e.item, stage="adaptive_gate", split="shadow") for e in examples)
+                return profiles[lane_key]
             prompts = store.snapshot().member_prompts
             parent = tuple(profile(p, i) for i, p in enumerate(prompts))
             target = opportunity.target_member

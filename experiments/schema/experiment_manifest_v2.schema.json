@@ -387,7 +387,8 @@
             "MATH_V2_1_EXECUTION_BINDING_V2",
             "MATH_V2_1_EXECUTION_BINDING_V3",
             "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
-            "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2"
+            "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
+            "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3"
           ]
         },
         "path": {
@@ -464,57 +465,74 @@
       "additionalProperties": false
     },
     "solver_decoding_policy": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "identity",
-        "enable_thinking",
-        "temperature",
-        "top_p",
-        "top_k",
-        "min_p",
-        "presence_penalty",
-        "frequency_penalty",
-        "max_output_tokens"
-      ],
-      "properties": {
-        "identity": {
-          "const": "SOLVER_DECODING_POLICY_V1",
-          "type": "string"
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "identity",
+            "enable_thinking",
+            "temperature",
+            "top_p",
+            "top_k",
+            "min_p",
+            "presence_penalty",
+            "frequency_penalty",
+            "max_output_tokens"
+          ],
+          "properties": {
+            "identity": {
+              "const": "SOLVER_DECODING_POLICY_V1",
+              "type": "string"
+            },
+            "enable_thinking": {
+              "const": false,
+              "type": "boolean"
+            },
+            "temperature": {
+              "const": 0.7,
+              "type": "number"
+            },
+            "top_p": {
+              "const": 0.8,
+              "type": "number"
+            },
+            "top_k": {
+              "const": 20,
+              "type": "integer"
+            },
+            "min_p": {
+              "const": 0,
+              "type": "integer"
+            },
+            "presence_penalty": {
+              "const": 0,
+              "type": "integer"
+            },
+            "frequency_penalty": {
+              "const": 0,
+              "type": "integer"
+            },
+            "max_output_tokens": {
+              "const": 3600,
+              "type": "integer"
+            }
+          }
         },
-        "enable_thinking": {
-          "const": false,
-          "type": "boolean"
-        },
-        "temperature": {
-          "const": 0.7,
-          "type": "number"
-        },
-        "top_p": {
-          "const": 0.8,
-          "type": "number"
-        },
-        "top_k": {
-          "const": 20,
-          "type": "integer"
-        },
-        "min_p": {
-          "const": 0,
-          "type": "integer"
-        },
-        "presence_penalty": {
-          "const": 0,
-          "type": "integer"
-        },
-        "frequency_penalty": {
-          "const": 0,
-          "type": "integer"
-        },
-        "max_output_tokens": {
-          "const": 3600,
-          "type": "integer"
+        {
+          "const": {
+            "identity": "SOLVER_DECODING_POLICY_V2",
+            "enable_thinking": false,
+            "temperature": 0.2,
+            "top_p": 0.8,
+            "top_k": 20,
+            "min_p": 0,
+            "presence_penalty": 0,
+            "frequency_penalty": 0,
+            "max_output_tokens": 3600
+          }
         }
-      }
+      ]
     },
     "prediction_validity_policy": {
       "anyOf": [
@@ -569,34 +587,66 @@
       "pattern": "^[a-f0-9]{64}$"
     },
     "optimizer_generation_policy": {
-      "anyOf": [{"const": {
-        "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V1",
-        "model": "qwen3.7-flash",
-        "roles": [
-          "reflection",
-          "pattern"
-        ],
-        "enable_thinking": true,
-        "temperature": 0.0,
-        "max_completion_tokens": 1800,
-        "max_tokens": "NOT_SENT",
-        "output_token_scope": "reasoning_plus_answer",
-        "measurement_tolerance_tokens": 10,
-        "accounting_output_ceiling": 1810,
-        "truncation": "existing_operational_output_truncation"
-      }}, {"const": {
-        "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V2",
-        "model": "qwen3.7-flash",
-        "roles": ["reflection", "pattern"],
-        "enable_thinking": false,
-        "temperature": 0.0,
-        "max_completion_tokens": 1800,
-        "max_tokens": "NOT_SENT",
-        "output_token_scope": "reasoning_plus_answer",
-        "measurement_tolerance_tokens": 10,
-        "accounting_output_ceiling": 1810,
-        "truncation": "existing_operational_output_truncation"
-      }}]
+      "anyOf": [
+        {
+          "const": {
+            "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V1",
+            "model": "qwen3.7-flash",
+            "roles": [
+              "reflection",
+              "pattern"
+            ],
+            "enable_thinking": true,
+            "temperature": 0.0,
+            "max_completion_tokens": 1800,
+            "max_tokens": "NOT_SENT",
+            "output_token_scope": "reasoning_plus_answer",
+            "measurement_tolerance_tokens": 10,
+            "accounting_output_ceiling": 1810,
+            "truncation": "existing_operational_output_truncation"
+          }
+        },
+        {
+          "const": {
+            "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V2",
+            "model": "qwen3.7-flash",
+            "roles": [
+              "reflection",
+              "pattern"
+            ],
+            "enable_thinking": false,
+            "temperature": 0.0,
+            "max_completion_tokens": 1800,
+            "max_tokens": "NOT_SENT",
+            "output_token_scope": "reasoning_plus_answer",
+            "measurement_tolerance_tokens": 10,
+            "accounting_output_ceiling": 1810,
+            "truncation": "existing_operational_output_truncation"
+          }
+        },
+        {
+          "const": {
+            "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+            "model": "qwen3.7-flash",
+            "roles": [
+              "reflection",
+              "pattern"
+            ],
+            "enable_thinking": false,
+            "temperature": 0.7,
+            "max_completion_tokens": 1800,
+            "max_tokens": "NOT_SENT",
+            "output_token_scope": "reasoning_plus_answer",
+            "measurement_tolerance_tokens": 10,
+            "accounting_output_ceiling": 1810,
+            "truncation": "existing_operational_output_truncation",
+            "top_p": 0.8,
+            "top_k": 20,
+            "presence_penalty": 1.5,
+            "frequency_penalty": 0
+          }
+        }
+      ]
     },
     "optimizer_nonthinking_evidence_policy": {
       "const": {
@@ -611,6 +661,24 @@
     "optimizer_amendment_authorization_sha256": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
+    },
+    "layer1_search_policy": {
+      "const": {
+        "identity_version": "LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1",
+        "metric_limit": 36,
+        "panel_size": 6,
+        "max_generations": 6,
+        "k_local_return": 4,
+        "max_prompt_chars": 3000,
+        "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+        "official_gepa_fidelity": false
+      }
+    },
+    "candidate_contract_identity": {
+      "const": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2"
+    },
+    "post_search_validation_policy": {
+      "type": "object"
     }
   },
   "required": [
@@ -930,10 +998,16 @@
             "const": "unified_team_prompt_search_v2_1"
           },
           "search_engine_identity": {
-            "const": "gepa_derived_team_candidate_exposure_v2"
+            "enum": [
+              "gepa_derived_team_candidate_exposure_v2",
+              "LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1"
+            ]
           },
           "search_acceptance_identity": {
-            "const": "local_survival_team_admission_decoupled_v1"
+            "enum": [
+              "local_survival_team_admission_decoupled_v1",
+              "layer1_local_guidance_team_admission_v1"
+            ]
           },
           "evidence_identity": {
             "const": "single_mechanism_evidence_v2"
@@ -986,7 +1060,8 @@
                   "MATH_V2_1_EXECUTION_BINDING_V2",
                   "MATH_V2_1_EXECUTION_BINDING_V3",
                   "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
-                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2"
+                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
+                  "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3"
                 ]
               }
             }
@@ -1090,7 +1165,8 @@
                 "enum": [
                   "MATH_V2_1_EXECUTION_BINDING_V3",
                   "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
-                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2"
+                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
+                  "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3"
                 ]
               }
             }
@@ -1130,7 +1206,8 @@
               "identity": {
                 "enum": [
                   "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
-                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2"
+                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
+                  "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3"
                 ]
               }
             }
@@ -1267,7 +1344,10 @@
             ],
             "properties": {
               "identity": {
-                "const": "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2"
+                "enum": [
+                  "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
+                  "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3"
+                ]
               }
             }
           }
@@ -1294,6 +1374,181 @@
             }
           ]
         }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "execution_binding"
+        ],
+        "properties": {
+          "execution_binding": {
+            "required": [
+              "identity"
+            ],
+            "properties": {
+              "identity": {
+                "const": "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "layer1_search_policy",
+          "candidate_contract_identity",
+          "post_search_validation_policy",
+          "solver_decoding_policy",
+          "optimizer_generation_policy"
+        ],
+        "properties": {
+          "search_engine_identity": {
+            "const": "LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1"
+          },
+          "search_acceptance_identity": {
+            "const": "layer1_local_guidance_team_admission_v1"
+          },
+          "cache_policy": {
+            "properties": {
+              "identity": {
+                "const": "SOLVER_MEMBER_LANE_EXACT_CACHE_V2"
+              }
+            }
+          },
+          "solver_decoding_policy": {
+            "const": {
+              "identity": "SOLVER_DECODING_POLICY_V2",
+              "enable_thinking": false,
+              "temperature": 0.2,
+              "top_p": 0.8,
+              "top_k": 20,
+              "min_p": 0,
+              "presence_penalty": 0,
+              "frequency_penalty": 0,
+              "max_output_tokens": 3600
+            }
+          },
+          "optimizer_generation_policy": {
+            "const": {
+              "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+              "model": "qwen3.7-flash",
+              "roles": [
+                "reflection",
+                "pattern"
+              ],
+              "enable_thinking": false,
+              "temperature": 0.7,
+              "max_completion_tokens": 1800,
+              "max_tokens": "NOT_SENT",
+              "output_token_scope": "reasoning_plus_answer",
+              "measurement_tolerance_tokens": 10,
+              "accounting_output_ceiling": 1810,
+              "truncation": "existing_operational_output_truncation",
+              "top_p": 0.8,
+              "top_k": 20,
+              "presence_penalty": 1.5,
+              "frequency_penalty": 0
+            }
+          }
+        }
+      },
+      "else": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "layer1_search_policy"
+              ]
+            },
+            {
+              "required": [
+                "candidate_contract_identity"
+              ]
+            },
+            {
+              "required": [
+                "post_search_validation_policy"
+              ]
+            }
+          ]
+        },
+        "properties": {
+          "solver_decoding_policy": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "identity",
+              "enable_thinking",
+              "temperature",
+              "top_p",
+              "top_k",
+              "min_p",
+              "presence_penalty",
+              "frequency_penalty",
+              "max_output_tokens"
+            ],
+            "properties": {
+              "identity": {
+                "const": "SOLVER_DECODING_POLICY_V1",
+                "type": "string"
+              },
+              "enable_thinking": {
+                "const": false,
+                "type": "boolean"
+              },
+              "temperature": {
+                "const": 0.7,
+                "type": "number"
+              },
+              "top_p": {
+                "const": 0.8,
+                "type": "number"
+              },
+              "top_k": {
+                "const": 20,
+                "type": "integer"
+              },
+              "min_p": {
+                "const": 0,
+                "type": "integer"
+              },
+              "presence_penalty": {
+                "const": 0,
+                "type": "integer"
+              },
+              "frequency_penalty": {
+                "const": 0,
+                "type": "integer"
+              },
+              "max_output_tokens": {
+                "const": 3600,
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "method_family": {
+                  "const": "unified_team_prompt_search_v2_1"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "search_engine_identity": {
+                  "const": "gepa_derived_team_candidate_exposure_v2"
+                },
+                "search_acceptance_identity": {
+                  "const": "local_survival_team_admission_decoupled_v1"
+                }
+              }
+            }
+          }
+        ]
       }
     }
   ]
