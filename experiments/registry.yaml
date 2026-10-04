@@ -7393,6 +7393,9 @@ experiments:
   - Bounded action memory, current-evidence reflection and mandatory legal preservation anchor.
   - Memory ON, Pattern OFF; latest user scope stops after fresh Canary.
   - Audited fresh single opportunity; latest user directive closes task before Pilot/Validation.
+  authorization_consumed: true
+  authorization_closed: true
+  authorization_closure_evidence: reports/math_v2_1_a3_seed81_low_cost_canary_v1_20261004/scope_closure.json
   unavailable: {}
 - experiment_id: math_v2_1_shared_risk_memory_amendment_v1
   kind: PROTOCOL_FREEZE
