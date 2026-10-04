@@ -7175,14 +7175,14 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_layer1_redesign_v1
-  status: COMPLETED
-  scientific_status: ZERO_API_VALID
+  status: INVALID
+  scientific_status: INVALID_ZERO_API_PREEXECUTION
   implementation_commit: fb76733cd9167f5cafb2db58d95305dc67e90d9b
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_preexecution_low_cost_v5.yaml
   report: reports/math_v2_1_preexecution_low_cost_v5_20261004
-  classifier: OFFLINE_GATES_AND_FRESH_FREEZE_PASS
+  classifier: REGISTRY_MUTATED_AFTER_FREEZE_NO_REAL_CALLS
   active_for_new_work: false
   historical_replay: false
   superseded_by: []
@@ -7198,14 +7198,14 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_preexecution_low_cost_v5
-  status: READY
+  status: HOLD
   scientific_status: NOT_EXECUTED
   implementation_commit: fb76733cd9167f5cafb2db58d95305dc67e90d9b
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_a1_seed81_low_cost_canary_v5.yaml
   report: reports/math_v2_1_a1_seed81_low_cost_canary_v5_20261004
-  classifier: FRESH_CANARY_FROZEN_NOT_EXECUTED
+  classifier: NOT_STARTED_PREEXECUTION_IDENTITY_MISMATCH
   active_for_new_work: false
   historical_replay: false
   superseded_by: []
@@ -7240,3 +7240,75 @@ experiments:
     implementation_commit: Awaiting source freeze.
     execution_commit: User limited current task to Canary; no Pilot or Validation dispatch.
     result_commit: Not executed.
+- experiment_id: math_v2_1_layer1_preexecution_repair_v1
+  kind: PROTOCOL_FREEZE
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_preexecution_low_cost_v5
+  status: READY
+  scientific_status: NOT_EXECUTED
+  implementation_commit: fb76733cd9167f5cafb2db58d95305dc67e90d9b
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_layer1_preexecution_repair_v1.yaml
+  report: reports/math_v2_1_layer1_preexecution_repair_v1_20261004
+  classifier: SOURCE_GATE_PENDING_FRESH_PREFREEZE_METADATA
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Preexecution metadata now precedes source commit and startup capture. Runtime, scientific policies and data
+    unchanged.
+  - Latest scope is Canary only, then stop and push.
+  unavailable:
+    execution_commit: No real API calls yet.
+    result_commit: Awaiting frozen evidence.
+- experiment_id: math_v2_1_preexecution_low_cost_v6
+  kind: PREEXECUTION_FREEZE
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_layer1_preexecution_repair_v1
+  status: READY
+  scientific_status: NOT_EXECUTED
+  implementation_commit: fb76733cd9167f5cafb2db58d95305dc67e90d9b
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_preexecution_low_cost_v6.yaml
+  report: reports/math_v2_1_preexecution_low_cost_v6_20261004
+  classifier: SOURCE_GATE_PENDING_FRESH_PREFREEZE_METADATA
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Preexecution metadata now precedes source commit and startup capture. Runtime, scientific policies and data
+    unchanged.
+  - Latest scope is Canary only, then stop and push.
+  unavailable:
+    execution_commit: No real API calls yet.
+    result_commit: Awaiting frozen evidence.
+- experiment_id: math_v2_1_a1_seed81_low_cost_canary_v6
+  kind: REAL_CANARY
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_preexecution_low_cost_v6
+  status: READY
+  scientific_status: NOT_EXECUTED
+  implementation_commit: fb76733cd9167f5cafb2db58d95305dc67e90d9b
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_a1_seed81_low_cost_canary_v6.yaml
+  report: reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004
+  classifier: SOURCE_GATE_PENDING_FRESH_PREFREEZE_METADATA
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Preexecution metadata now precedes source commit and startup capture. Runtime, scientific policies and data
+    unchanged.
+  - Latest scope is Canary only, then stop and push.
+  unavailable:
+    execution_commit: No real API calls yet.
+    result_commit: Awaiting frozen evidence.

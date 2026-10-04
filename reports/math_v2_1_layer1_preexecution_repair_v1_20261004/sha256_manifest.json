@@ -1,0 +1,13 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "operational_repair.json",
+      "sha256": "d9e8a63b24cbf1cc0ca23bb85d7618424aa36090ccc3c7fd6c46358616da6ad3"
+    },
+    {
+      "file": "README.md",
+      "sha256": "b9592ab7bf1818f45deed930653aef9e525470bf2a19993da30b6032bbf1fcd7"
+    }
+  ]
+}

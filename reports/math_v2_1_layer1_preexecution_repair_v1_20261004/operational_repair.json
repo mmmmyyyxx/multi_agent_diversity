@@ -1,0 +1,14 @@
+{
+  "budget_charged_unchanged": 840243,
+  "failed_path_category": "registry",
+  "failure": "SOURCE_IDENTITY_MISMATCH",
+  "new_attempt": "math_v2_1_layer1_A1_seed81_canary_attempt2",
+  "old_authorization_consumed": false,
+  "old_canary": "math_v2_1_a1_seed81_low_cost_canary_v5",
+  "old_canary_real_calls": 0,
+  "old_preexecution": "math_v2_1_preexecution_low_cost_v5",
+  "repair": "Complete registration and all execution-closure metadata before committing source; freeze reports/manifests and prep afterward without mutating closure files.",
+  "root_cause": "Source closure includes registry, lineage and frontier; registry mutation after prepare invalidated startup.",
+  "runtime_code_changed": false,
+  "scientific_policy_changed": false
+}

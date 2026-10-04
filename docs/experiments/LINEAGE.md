@@ -10,8 +10,7 @@ schema_version: current_frontier_v1
 current_architecture: Unified Team Prompt Search
 method_identity: unified_team_prompt_search_v2_1
 current_method: unified_team_prompt_search_v2_1
-current_implementation: Versioned method semantic contract; benchmark-neutral production
-  composition; zero-API audit
+current_implementation: Versioned method semantic contract; benchmark-neutral production composition; zero-API audit
 current_experiment: math_v2_1_a1_seed81_low_cost_pilot_v4
 current_benchmark_suite:
 - math
@@ -35,13 +34,13 @@ last_canary_milestone: math_v2_1_a1_seed81_low_cost_canary_v4
 current_canary_status: PASS
 formal_a1_ready: false
 formal_a1_authorized: false
-current_execution_blocker: FRESH_LAYER1_OFFLINE_GATES_AND_CANARY_REQUIRED
+current_execution_blocker: FRESH_PREFREEZE_METADATA_SOURCE_GATE_REQUIRED
 default_optimizer_generation_policy: OPTIMIZER_REFLECTION_GENERATION_POLICY_V3
 default_optimizer_enable_thinking: false
 optimizer_policy_amendment_status: DEFAULT_OFF_EQUIVALENT_EVIDENCE_CONFIRMED
 optimizer_policy_amendment_authority: experiments/protocols/math_v2_1_autonomous_constitution_v1/authorization_decision.json
-next_canary_milestone: math_v2_1_a1_seed81_low_cost_canary_v5
-next_canary_attempt_id: math_v2_1_layer1_A1_seed81_canary_attempt1
+next_canary_milestone: math_v2_1_a1_seed81_low_cost_canary_v6
+next_canary_attempt_id: math_v2_1_layer1_A1_seed81_canary_attempt2
 last_autonomous_milestone: math_v2_1_autonomous_constitution_v1
 autonomous_user_authorization_received: true
 autonomous_token_authorization: 40000000
@@ -139,9 +138,12 @@ flowchart TD
     n244["math_v2_1_proposal_semantic_postmortem_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
     n245["math_v2_1_layer1_gepa_flow_audit_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
     n246["math_v2_1_layer1_redesign_v1<br/>PROTOCOL_FREEZE<br/>COMPLETED"]
-    n247["math_v2_1_preexecution_low_cost_v5<br/>PREEXECUTION_FREEZE<br/>COMPLETED"]
-    n248["math_v2_1_a1_seed81_low_cost_canary_v5<br/>REAL_CANARY<br/>READY"]
+    n247["math_v2_1_preexecution_low_cost_v5<br/>PREEXECUTION_FREEZE<br/>INVALID"]
+    n248["math_v2_1_a1_seed81_low_cost_canary_v5<br/>REAL_CANARY<br/>HOLD"]
     n249["math_v2_1_a1_seed81_low_cost_pilot_v5<br/>PILOT<br/>HOLD"]
+    n250["math_v2_1_layer1_preexecution_repair_v1<br/>PROTOCOL_FREEZE<br/>READY"]
+    n251["math_v2_1_preexecution_low_cost_v6<br/>PREEXECUTION_FREEZE<br/>READY"]
+    n252["math_v2_1_a1_seed81_low_cost_canary_v6<br/>REAL_CANARY<br/>READY"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -468,6 +470,9 @@ flowchart TD
   n246 -->|derived_from| n247
   n247 -->|derived_from| n248
   n248 -->|derived_from| n249
+  n247 -->|derived_from| n250
+  n250 -->|derived_from| n251
+  n251 -->|derived_from| n252
 ```
 
 ## Archived branches and unresolved evidence
@@ -661,3 +666,4 @@ flowchart TD
 | math_v2_1_a1_seed81_real_canary_v5 | BENCHMARK_GENERALIZATION | INVALID | STOP_SOLVER_DECODING_POLICY_INSUFFICIENT |
 | math_v2_1_a1_seed81_low_cost_canary_v1 | BENCHMARK_GENERALIZATION | INVALID | CANARY_OPERATIONAL_FAILURE |
 | math_v2_1_a1_seed81_low_cost_canary_v2 | BENCHMARK_GENERALIZATION | INVALID | CANARY_OPTIMIZER_OUTPUT_TRUNCATION |
+| math_v2_1_preexecution_low_cost_v5 | BENCHMARK_GENERALIZATION | INVALID | REGISTRY_MUTATED_AFTER_FREEZE_NO_REAL_CALLS |
