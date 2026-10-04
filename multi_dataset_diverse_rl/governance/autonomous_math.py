@@ -211,9 +211,11 @@ async def execute_search(root, prep, run_root, payload):
         for key in tuple(budget.inflight):
             budget.reconcile(key,None,outcome="ABORT_UNKNOWN_FULL_CHARGE")
         if run_root.exists():
+            pattern_failure=(c['identity']==versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION and
+                isinstance(exc,SearchContractError) and str(exc).startswith(('PATTERN_','STOP_PATTERN_','FOCUSED_')))
             atomic_write_json(run_root / "accounting_end.json",budget.view())
             atomic_write_json(run_root / "lifecycle.json",dict(status="EXECUTION_ABORTED",attempt_id=c["execution_attempt_id"],
-                error_category=type(exc).__name__,stop_category=str(exc) if isinstance(exc,OperationalAbort) else type(exc).__name__,provider_usage=broker.usage if broker else {"attempts":0}))
+                error_category=type(exc).__name__,stop_category=str(exc) if isinstance(exc,OperationalAbort) or pattern_failure else type(exc).__name__,provider_usage=broker.usage if broker else {"attempts":0}))
             atomic_write_json(run_root / "raw_evidence_inventory.json",inventory(run_root))
         raise
     finally:

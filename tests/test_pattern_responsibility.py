@@ -144,6 +144,7 @@ def test_narrow_selected_only_preservation_and_independent_transition():
     assert op.pattern_context['selected_pattern_responsibility']==8
     assert all(p['responsibility']['coverage_count']<=3 for p in op.pattern_context['patterns'])
     assert op.evaluation_plan['evidence_audit']['nonfocus_repair_count']==0
+    assert any('TRANSITION_FOCUS' in r.roles for r in op.evidence.mutation_evidence)
 
 
 def test_memory_after_selected_pattern_and_no_WHO_effect(tmp_path):
@@ -200,6 +201,18 @@ def test_set_level_context_stop_and_fresh_non_solver_no_cache():
     rows=list(wrong_universe(evidence()));rows[0]=replace(rows[0],signals={**rows[0].signals,'input_payload':'x'*POLICY['input_limit_tokens']})
     with pytest.raises(SearchContractError,match='CONTEXT_LIMIT'):p.diagnose(discovery_payload(rows))
     assert b.calls==1
+
+
+def test_duplicate_scientific_discovery_fails_before_provider():
+    class Provider:
+        def __init__(self):self.calls=0
+        def diagnose(self,payload):self.calls+=1;return whole(wrong_universe(evidence()))
+    p=Provider();analyzer=ResponsibilityPatternDiscoveryV3(p);history=HistoryState()
+    state=NS(team_state_id='synthetic');diagnosis=NS()
+    analyzer.analyze(state,diagnosis,0,evidence(),history)
+    with pytest.raises(SearchContractError,match='ONE_SUCCESS'):analyzer.analyze(state,diagnosis,0,evidence(),history)
+    assert p.calls==1
+    history.target_counts[0]=1;analyzer.analyze(state,diagnosis,0,evidence(),history);assert p.calls==2
 
 
 def test_pattern_memory_full_fake_production_graph(tmp_path,monkeypatch):

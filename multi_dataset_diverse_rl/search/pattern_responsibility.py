@@ -160,10 +160,15 @@ class ResponsibilityPatternDiscoveryV3:
     def __init__(self,provider):
         if provider is None:raise SearchContractError('PATTERN_PROVIDER_NOT_BOUND')
         self.provider=provider
+        self.attempted_opportunities=set()
 
     def analyze(self,state,diagnosis,target_member,evidence_rows,history):
+        key=(state.team_state_id,target_member,history.target_counts.get(target_member,0))
+        if key in self.attempted_opportunities:
+            raise SearchContractError('PATTERN_ONE_SUCCESS_PER_OPPORTUNITY')
         rows=wrong_universe(evidence_rows)
         if not rows:raise SearchContractError('PATTERN_DISCOVERY_NOT_ACTIONABLE')
+        self.attempted_opportunities.add(key)
         return score_partition(self.provider.diagnose(discovery_payload(rows)),rows)
 
 
@@ -198,7 +203,7 @@ class PatternConditionedEvidenceV4(PatternCapableVariableEvidencePolicyV1):
         support=set(focus['support_ids']); byid={r.example_id:r for r in rows}
         if not support or not support<=set(byid):raise SearchContractError('PATTERN_SUPPORT_MAPPING_INVALID')
         ordered=sorted((byid[x] for x in support),key=lambda r:(-responsibility_value(*(int(k in sample_labels(r)) for k in ('direct_flip','near_margin','coverage'))),r.example_id))
-        repairs=[replace(r,roles=frozenset({'REPAIR','FOCUS_REPAIR'}|set(sample_labels(r))),
+        repairs=[replace(r,roles=frozenset({'REPAIR','FOCUS_REPAIR'}|set(sample_labels(r))|({'TRANSITION_FOCUS','TRANSITION_ANCHOR'}&r.roles)),
             signals={**r.signals,'legacy_tags':('repair','focus_repair_v2'),
                 'feedback':'Repair only the selected semantic mechanism.'}) for r in ordered]
         safety=[r for r in rows if r.example_id not in support and
@@ -207,10 +212,16 @@ class PatternConditionedEvidenceV4(PatternCapableVariableEvidencePolicyV1):
             not bool(r.signals.get('mutation_sensitive')),-r.signals.get('team_disagreement',0),r.signals.get('team_margin',0),r.example_id))
         safety=[replace(r,roles=(r.roles-{'REPAIR','TEAM_HARD','direct_flip','near_margin','coverage','pure_coverage'})|{'SAFETY_BOUNDARY'},
             signals={**r.signals,'legacy_tags':('safety_boundary_v2',),'feedback':'Safety only: preserve competence; no second repair objective.'}) for r in safety]
-        # Bounded representatives, without filling to six or importing other repairs.
-        chosen=repairs[:3]+safety[:2]
+        # The preservation anchor and recent transition safeguards have distinct
+        # slots. Extra correct examples cannot displace transition context.
+        chosen=repairs[:3]
+        preservation=next((r for r in safety if r.signals.get('target_member_correct')),None)
+        if preservation is not None:chosen.append(preservation)
+        for role in ('TRANSITION_FOCUS','TRANSITION_ANCHOR'):
+            boundary=next((r for r in safety if role in r.roles),None)
+            if boundary is not None and boundary.example_id not in {r.example_id for r in chosen}:chosen.append(boundary)
         if len(chosen)<self.minimum:
-            chosen+=(repairs[3:]+safety[2:])[:self.minimum-len(chosen)]
+            chosen+=[r for r in repairs[3:]+safety if r.example_id not in {x.example_id for x in chosen}][:self.minimum-len(chosen)]
         if len(chosen)<self.minimum:
             raise SearchContractError('FOCUSED_BACKEND_MINIMUM_WITHOUT_LEGAL_BOUNDARIES')
         chosen=tuple(chosen[:6])
