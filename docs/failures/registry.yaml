@@ -505,3 +505,22 @@ failures:
   - reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/shadow_gate_audit.json
   resolution_limits: Throughput and contract conformance only; no population false-positive-rate estimate,
     component-level causal attribution or scientific efficacy claim.
+- failure_id: FAIL-MATH-PATTERN-LONG-SUPPORT-ID-COPY
+  title: Pattern support identifier loses characters on the provider wire
+  status: OPEN
+  first_observed: math_v2_1_a4_seed81_pattern_canary_v1
+  affected_components:
+  - pattern_support_id_transport
+  symptom: One of seven supplied eighty-character IDs was returned with two characters omitted;
+    strict membership validation rejected the unknown ID and missing original.
+  evidence:
+  - reports/math_v2_1_a4_seed81_pattern_canary_v1_20261004/pattern_membership_failure.json
+  - reports/math_v2_1_a4_seed81_pattern_canary_v1_20261004/WHO_and_wide_universe_audit.json
+  evidence_level: hash_bound_private_wire_and_exact_cached_state_replay
+  root_cause_status: Provider identifier copy loss; original universe and client parser were correct.
+  forbidden_inference: No fuzzy ID repair, semantic reassignment, parser loosening or efficacy inference.
+  regression_tests:
+  - tests/test_pattern_responsibility.py
+  required_resolution: Explicit opt-in lossless support-ID alias transport, strict exact decoding,
+    fresh identity/source/preexecution/authorization and fresh Canary under user attachment section 102.
+  lifecycle: OPEN

@@ -74,7 +74,7 @@ def bound_preflight(root, manifest):
         expected["solver_decoding_policy"] = c["solver_decoding_policy"]
     if "prediction_validity_policy" in c:
         expected["prediction_validity_policy"] = c["prediction_validity_policy"]
-    for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256", "optimizer_nonthinking_evidence_policy", "layer1_search_policy", "candidate_contract_identity", "post_search_validation_policy"):
+    for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256", "optimizer_nonthinking_evidence_policy", "layer1_search_policy", "candidate_contract_identity", "post_search_validation_policy", "pattern_support_id_transport"):
         if k in c and (k not in {'layer1_search_policy','candidate_contract_identity','post_search_validation_policy'} or c['identity'] in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION}): expected[k] = c[k]
     if any(manifest.get(k) != v for k, v in expected.items()):
         errors.append("MANIFEST_EXECUTION_BINDING_MISMATCH")
@@ -199,6 +199,8 @@ def execution_scope(manifest, contract):
             memory_amendment_authorization_sha256=contract['memory_amendment_authorization_sha256'],initial_memory_entries=0)
     if contract.get('identity')==versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION:
         scope.update(roles=['solver','reflection','pattern'],pattern_policy=contract['pattern_policy'],shared_risk_policy=contract['shared_risk_policy'],pattern_amendment_authorization_sha256=contract['pattern_amendment_authorization_sha256'])
+        if 'pattern_support_id_transport' in contract:
+            scope['pattern_support_id_transport']=contract['pattern_support_id_transport']
     if "accounting_policy_path" in contract:
         scope["accounting"] = dict(policy_sha256=contract["accounting_policy_sha256"],
             total_authorization=40_000_000 if contract["identity"] in versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS else 30_000_000, task_sha256=contract["task_authorization_sha256"],
@@ -355,7 +357,7 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
     if "prediction_validity_policy" in contract:
         manifest["prediction_validity_policy"] = contract["prediction_validity_policy"]
     manifest["global_stop_identity"] = method.global_stop.identity
-    for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256", "optimizer_nonthinking_evidence_policy", "layer1_search_policy", "candidate_contract_identity", "post_search_validation_policy"):
+    for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256", "optimizer_nonthinking_evidence_policy", "layer1_search_policy", "candidate_contract_identity", "post_search_validation_policy", "pattern_support_id_transport"):
         if k in contract and (k not in {'layer1_search_policy','candidate_contract_identity','post_search_validation_policy'} or contract['identity'] in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION}): manifest[k] = contract[k]
     manifest["preregistration_identity"] = canonical_sha256({k: v for k, v in manifest.items() if k not in {"lifecycle", "authorization"}})
     return manifest

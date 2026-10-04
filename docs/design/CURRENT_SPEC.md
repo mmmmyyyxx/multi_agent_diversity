@@ -691,3 +691,9 @@ selected representatives, preservation, transition safety and bounded rolling
 Memory retrieved after selection. Layer2 decides deployment. Old focus ranking
 is retained only for its historical identities. Fresh Pattern+Memory Canary
 authorization is separate from readiness and closes without Pilot/Validation/Test.
+
+The optional `PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1` changes only the provider
+wire representation of support identifiers through an exact bijection. It
+preserves the original wrong universe, semantic prompt, all responsibility and
+membership rules, call count and generation policies. Absence retains the old
+transport; unknown, duplicate, overlapping and missing aliases remain terminal.

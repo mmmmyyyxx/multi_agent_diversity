@@ -713,6 +713,9 @@
     },
     "post_search_validation_policy": {
       "type": "object"
+    },
+    "pattern_support_id_transport": {
+      "const": "PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1"
     }
   },
   "required": [
@@ -1971,6 +1974,9 @@
                   "shared_event_capacity": 48,
                   "signature": "closed_action_outcome_failure_signature_v1"
                 }
+              },
+              "pattern_support_id_transport": {
+                "const": "PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1"
               }
             },
             "required": [
@@ -1995,6 +2001,29 @@
           "mechanism_config",
           "layer1_search_policy"
         ]
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "pattern_support_id_transport"
+        ]
+      },
+      "then": {
+        "properties": {
+          "execution_binding": {
+            "properties": {
+              "identity": {
+                "const": "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1"
+              }
+            }
+          },
+          "mechanism_config": {
+            "required": [
+              "pattern_support_id_transport"
+            ]
+          }
+        }
       }
     }
   ]

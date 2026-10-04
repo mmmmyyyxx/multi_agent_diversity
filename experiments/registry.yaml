@@ -7428,7 +7428,7 @@ experiments:
   scientific_status: VALID_ZERO_API_FREEZE
   implementation_commit: db199da7a511e05291538473cf4670ac1ca890bf
   execution_commit: null
-  result_commit: null
+  result_commit: 404e251bbab23e305d61999dac68aa6b96e474b4
   manifest: experiments/manifests/math_v2_1_pattern_aware_refactor_v1.yaml
   report: reports/math_v2_1_pattern_aware_refactor_v1_20261004
   classifier: ALL_REQUIRED_ZERO_API_GATES_PASS
@@ -7439,7 +7439,6 @@ experiments:
   - Target-first set-level wrong-evidence discovery; shared raw responsibility selects WHAT.
   - Canary-only Pattern ON and rolling Memory ON; stop after Canary.
   unavailable:
-    result_commit: Following failure publication provenance commit.
     execution_commit: Zero API freeze.
 - experiment_id: math_v2_1_pattern_preexecution_v1
   kind: PREEXECUTION_FREEZE
@@ -7451,7 +7450,7 @@ experiments:
   scientific_status: VALID_ZERO_API_FREEZE
   implementation_commit: db199da7a511e05291538473cf4670ac1ca890bf
   execution_commit: null
-  result_commit: null
+  result_commit: 404e251bbab23e305d61999dac68aa6b96e474b4
   manifest: experiments/manifests/math_v2_1_pattern_preexecution_v1.yaml
   report: reports/math_v2_1_pattern_preexecution_v1_20261004
   classifier: ALL_REQUIRED_ZERO_API_GATES_PASS
@@ -7462,7 +7461,6 @@ experiments:
   - Target-first set-level wrong-evidence discovery; shared raw responsibility selects WHAT.
   - Canary-only Pattern ON and rolling Memory ON; stop after Canary.
   unavailable:
-    result_commit: Following failure publication provenance commit.
     execution_commit: Zero API freeze.
 - experiment_id: math_v2_1_a4_seed81_pattern_canary_v1
   kind: REAL_CANARY
@@ -7474,7 +7472,7 @@ experiments:
   scientific_status: INVALID_OPERATIONAL_CANARY_FAILURE
   implementation_commit: db199da7a511e05291538473cf4670ac1ca890bf
   execution_commit: 6ef2bfc022866e5a9636e42c301fbd8f8511f41f
-  result_commit: null
+  result_commit: 404e251bbab23e305d61999dac68aa6b96e474b4
   manifest: experiments/manifests/math_v2_1_a4_seed81_pattern_canary_v1.yaml
   report: reports/math_v2_1_a4_seed81_pattern_canary_v1_20261004
   classifier: PATTERN_INVALID_MEMBERSHIP_FAIL_CLOSED
@@ -7484,8 +7482,79 @@ experiments:
   notes:
   - Target-first set-level wrong-evidence discovery; shared raw responsibility selects WHAT.
   - Canary-only Pattern ON and rolling Memory ON; stop after Canary.
-  unavailable:
-    result_commit: Following failure publication provenance commit.
+  unavailable: {}
   authorization_consumed: true
   authorization_closed: true
   authorization_closure_evidence: reports/math_v2_1_a4_seed81_pattern_canary_v1_20261004/scope_closure.json
+- experiment_id: math_v2_1_pattern_support_id_transport_v1
+  kind: PROTOCOL_FREEZE
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_a4_seed81_pattern_canary_v1
+  status: DRAFT
+  scientific_status: NOT_EXECUTED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_pattern_support_id_transport_v1.yaml
+  report: reports/math_v2_1_pattern_support_id_transport_v1_20261004
+  classifier: AWAITING_FRESH_PATTERN_ID_TRANSPORT_CANARY
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Attachment section 102 lossless support-ID transport repair; strict membership unchanged.
+  - Fresh A4 Seed81 Canary only, no cross-attempt reuse; stop before Pilot/Validation/Test.
+  unavailable:
+    implementation_commit: Awaiting source freeze.
+    execution_commit: Not executed.
+    result_commit: Not executed.
+- experiment_id: math_v2_1_pattern_preexecution_v2
+  kind: PREEXECUTION_FREEZE
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_pattern_support_id_transport_v1
+  status: DRAFT
+  scientific_status: NOT_EXECUTED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_pattern_preexecution_v2.yaml
+  report: reports/math_v2_1_pattern_preexecution_v2_20261004
+  classifier: AWAITING_FRESH_PATTERN_ID_TRANSPORT_CANARY
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Attachment section 102 lossless support-ID transport repair; strict membership unchanged.
+  - Fresh A4 Seed81 Canary only, no cross-attempt reuse; stop before Pilot/Validation/Test.
+  unavailable:
+    implementation_commit: Awaiting source freeze.
+    execution_commit: Not executed.
+    result_commit: Not executed.
+- experiment_id: math_v2_1_a4_seed81_pattern_canary_v2
+  kind: REAL_CANARY
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_pattern_preexecution_v2
+  status: DRAFT
+  scientific_status: NOT_EXECUTED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_a4_seed81_pattern_canary_v2.yaml
+  report: reports/math_v2_1_a4_seed81_pattern_canary_v2_20261004
+  classifier: AWAITING_FRESH_PATTERN_ID_TRANSPORT_CANARY
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Attachment section 102 lossless support-ID transport repair; strict membership unchanged.
+  - Fresh A4 Seed81 Canary only, no cross-attempt reuse; stop before Pilot/Validation/Test.
+  unavailable:
+    implementation_commit: Awaiting source freeze.
+    execution_commit: Not executed.
+    result_commit: Not executed.

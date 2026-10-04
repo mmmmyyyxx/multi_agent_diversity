@@ -146,7 +146,9 @@ async def execute_search(root, prep, run_root, payload):
         broker.prompt_observer = reserve.observe
         solver = BenchmarkSolver(binding.benchmark(),broker)
         from ..search.pattern_responsibility import SetLevelPatternProvider
-        pattern_provider=(SetLevelPatternProvider(broker,read_json(root/c['pattern_prompt_path'])['prompt']) if c['identity']==versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION else None)
+        from ..search.pattern_id_transport import AliasSetLevelPatternProvider
+        pattern_factory=AliasSetLevelPatternProvider if c.get('pattern_support_id_transport')==versions.PATTERN_SUPPORT_ID_ALIAS_VERSION else SetLevelPatternProvider
+        pattern_provider=(pattern_factory(broker,read_json(root/c['pattern_prompt_path'])['prompt']) if c['identity']==versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION else None)
         composed = binding.compose(arm=arm,seed=81,solver=solver,reflection=ReflectionProvider(broker),pattern_provider=pattern_provider,run_root=run_root)
         if c.get('memory_policy_identity'):
             if any(composed.memory.audit()[k] for k in ('success_writes','failure_writes','shared_writes')):

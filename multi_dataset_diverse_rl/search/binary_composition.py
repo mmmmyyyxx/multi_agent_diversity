@@ -93,6 +93,11 @@ def build_binary_orchestrator(*, benchmark, aggregation, examples, prompts, solv
                     panel_policy=versions.PATTERN_CONDITIONED_EVIDENCE_VERSION,pattern_policy=PATTERN_POLICY,
                     pattern_provider_binding=method.mechanism_config.get('pattern_provider_binding'))
                 if not mechanism_config['pattern_provider_binding']:raise SearchContractError('PATTERN_PROVIDER_NOT_BOUND')
+                transport=method.mechanism_config.get('pattern_support_id_transport')
+                if transport is not None:
+                    if transport!=versions.PATTERN_SUPPORT_ID_ALIAS_VERSION or getattr(pattern_provider,'support_id_transport',None)!=transport:
+                        raise SearchContractError('PATTERN_ID_TRANSPORT_NOT_BOUND')
+                    mechanism_config['pattern_support_id_transport']=transport
             if method.mechanism_config!=mechanism_config:
                 raise SearchContractError('MEMORY_CONTEXT_POLICIES_NOT_BOUND')
     if current and method.identity() != expected.identity():

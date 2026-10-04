@@ -215,14 +215,15 @@ def test_duplicate_scientific_discovery_fails_before_provider():
     history.target_counts[0]=1;analyzer.analyze(state,diagnosis,0,evidence(),history);assert p.calls==2
 
 
-def test_pattern_memory_full_fake_production_graph(tmp_path,monkeypatch):
+@pytest.mark.parametrize('alias_transport',[False,True])
+def test_pattern_memory_full_fake_production_graph(tmp_path,monkeypatch,alias_transport):
     from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
     from multi_dataset_diverse_rl.benchmarks.protocols import protocol_input
     from multi_dataset_diverse_rl.search.binary_runtime import CorrectnessExample
     from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker,BenchmarkSolver,ReflectionProvider
     from multi_dataset_diverse_rl.governance.token_accounting import serialized_request
     root=Path(__file__).resolve().parents[1]
-    c=json.loads((root/'experiments/execution_bindings/math_v2_1_pattern_canary_v1.json').read_bytes());binding=execution_binding(root,c)
+    c=json.loads((root/f'experiments/execution_bindings/math_v2_1_pattern_canary_v{2 if alias_transport else 1}.json').read_bytes());binding=execution_binding(root,c)
     adapter=binding.benchmark();prompts=tuple(x['prompt'] for x in json.loads((root/c['initial_team_path']).read_bytes())['members'])
     def examples(role):
         return tuple(CorrectnessExample(protocol_input('math',f'{role}{i}',{'problem':f'Synthetic {role} arithmetic {i}.'},adapter.output_contract,protocol=adapter.protocol),'1') for i in range(12 if role=='optimize' else 40))
@@ -246,7 +247,8 @@ def test_pattern_memory_full_fake_production_graph(tmp_path,monkeypatch):
             provider_metadata_loss_audited=True,provider_reasoning_content_present=False,provider_reasoning_character_count=None,
             provider_usage_details={},provider_thinking_indicators=[])
     broker=RequestBroker(contract=c,transport=transport,arm='A4',seed=81,ledger_writer=ledger.append)
-    provider=SetLevelPatternProvider(broker)
+    from multi_dataset_diverse_rl.search.pattern_id_transport import AliasSetLevelPatternProvider
+    provider=(AliasSetLevelPatternProvider if alias_transport else SetLevelPatternProvider)(broker)
     run=binding.compose(arm='A4',seed=81,solver=BenchmarkSolver(adapter,broker),reflection=ReflectionProvider(broker),pattern_provider=provider,run_root=tmp_path)
     assert run.memory.audit()['stateful_write_count']==0
     run.state.initialize();initial=run.state.snapshot();result=asyncio.run(run.run(max_opportunities=1))
@@ -259,3 +261,35 @@ def test_pattern_memory_full_fake_production_graph(tmp_path,monkeypatch):
     assert all('selected_pattern' not in text and 'retrieved_memory' not in text for text in solver_inputs)
     assert run.state.initial_member_scores==initial.member_scores and run.memory.audit()['memory_context_chars']['max']<=1200
     assert broker.usage['test']==broker.usage['validation']==0
+
+
+def test_lossless_alias_wire_preserves_support_counts_and_all_other_fields(monkeypatch):
+    from multi_dataset_diverse_rl.search.pattern_id_transport import AliasSetLevelPatternProvider
+    rows=tuple(replace(r,example_id='x'*78+f'{i:02}') for i,r in enumerate(wrong_universe(evidence())))
+    from copy import deepcopy
+    payload=discovery_payload(rows);original=deepcopy(payload);seen=[]
+    def response(self,value):
+        seen.append(value)
+        return partition(('Missing domain check','Verify feasible domain',['e1','e3']),
+            ('Missing substitution check','Verify substituted constraints',['e2','e4','e5','e6','e7']))
+    monkeypatch.setattr(SetLevelPatternProvider,'diagnose',response)
+    decoded=AliasSetLevelPatternProvider(None).diagnose(payload)
+    assert payload==original and len(seen)==1
+    for index,(wire,actual) in enumerate(zip(seen[0]['examples'],payload['examples'],strict=True),1):
+        assert wire['example_id']==f'e{index}'
+        assert {k:v for k,v in wire.items() if k!='example_id'}=={k:v for k,v in actual.items() if k!='example_id'}
+    expected=partition(('Missing domain check','Verify feasible domain',[rows[0].example_id,rows[2].example_id]),
+        ('Missing substitution check','Verify substituted constraints',[rows[i].example_id for i in (1,3,4,5,6)]))
+    assert score_partition(decoded,rows)==score_partition(expected,rows)
+
+
+@pytest.mark.parametrize('aliases,unassigned',[(['e01'],[]),(['e8'],[]),(['e1','e1'],[]),(['e1'],['e1']),(['e1'],[])])
+def test_alias_transport_does_not_repair_invalid_membership(monkeypatch,aliases,unassigned):
+    from multi_dataset_diverse_rl.search.pattern_id_transport import AliasSetLevelPatternProvider
+    rows=wrong_universe(evidence());calls=[]
+    def response(self,value):
+        calls.append(value);return partition(('Missing domain check','Verify constraints',aliases),unassigned=unassigned)
+    monkeypatch.setattr(SetLevelPatternProvider,'diagnose',response)
+    with pytest.raises(SearchContractError,match='PATTERN_DISCOVERY_INVALID_MEMBERSHIP'):
+        decoded=AliasSetLevelPatternProvider(None).diagnose(discovery_payload(rows));score_partition(decoded,rows)
+    assert len(calls)==1

@@ -798,6 +798,15 @@ nodes:
 - experiment_id: math_v2_1_a4_seed81_pattern_canary_v1
   kind: REAL_CANARY
   era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_1_pattern_support_id_transport_v1
+  kind: PROTOCOL_FREEZE
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_1_pattern_preexecution_v2
+  kind: PREEXECUTION_FREEZE
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_1_a4_seed81_pattern_canary_v2
+  kind: REAL_CANARY
+  era: BENCHMARK_GENERALIZATION
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1487,4 +1496,19 @@ edges:
   relation: derived_from
   evidence: reports/math_v2_1_a4_seed81_pattern_canary_v1_20261004/README.md
   scope: Fresh Pattern-aware responsibility Canary-only amendment
+- from: math_v2_1_a4_seed81_pattern_canary_v1
+  to: math_v2_1_pattern_support_id_transport_v1
+  relation: derived_from
+  evidence: reports/math_v2_1_pattern_support_id_transport_v1_20261004/README.md
+  scope: Lossless wire repair; fresh Canary-only identity
+- from: math_v2_1_pattern_support_id_transport_v1
+  to: math_v2_1_pattern_preexecution_v2
+  relation: derived_from
+  evidence: reports/math_v2_1_pattern_preexecution_v2_20261004/README.md
+  scope: Lossless wire repair; fresh Canary-only identity
+- from: math_v2_1_pattern_preexecution_v2
+  to: math_v2_1_a4_seed81_pattern_canary_v2
+  relation: derived_from
+  evidence: reports/math_v2_1_a4_seed81_pattern_canary_v2_20261004/README.md
+  scope: Lossless wire repair; fresh Canary-only identity
 current_frontier: experiments/current_frontier.yaml

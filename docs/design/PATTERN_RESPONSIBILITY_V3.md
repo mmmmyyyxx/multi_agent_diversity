@@ -11,3 +11,15 @@ The LLM describes generic mechanisms and corrective directions only. It cannot r
 `PATTERN_CURRENT_EVIDENCE_MEMORY_INPUT_V3` adds only the selected mechanism, direction, identity and responsibility to current parent, fixed-panel observations and bounded retrieved Memory. Memory is read after pattern selection. The explicitly bound rolling Memory V4 limits, promotion rule and retention remain identical. Candidate archives, controller bookkeeping and unselected patterns remain private. Solver/Optimizer/Pattern generation policies and Solver member-lane cache remain unchanged. Pattern and Reflection output caching remain forbidden.
 
 The new MATH binding is Canary-only Pattern ON + Memory ON Seed81. Every attempt starts with empty Memory, fresh realizations and authorization. A changed admissible local candidate must reach TeamProbe; team gain and commit are not Canary requirements. Stop after Canary: no Pilot, Validation or Test. Historical FocusedPatternDiagnosticV2 and all prior bindings remain replayable.
+# Opt-in support identifier transport V1
+
+`PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1` is an operational, lossless wire
+representation authorized by the Pattern task's support-ID mapping repair scope.
+It replaces only provider-visible example IDs with opportunity-local `e1`, `e2`,
+etc., in the existing frozen wrong-universe order. An exact bijection decodes
+support and unassigned IDs before the unchanged strict partition validator and
+raw responsibility computation. Unknown aliases, duplicates, overlaps and
+omissions fail closed. No approximate matching, assignment repair, regeneration,
+sampling, prompt change or additional Pattern call is permitted. The transport
+identity enters binding, method/provider/request/cache, manifest, startup and
+authorization identity. Its absence retains the frozen original transport.
