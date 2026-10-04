@@ -78,6 +78,24 @@ def replay_boundary(prompt: str, parent: str, examples: Sequence[LocalEvidenceEx
             "phrase_mask_boundary_accepts": not masked_checks}
 
 
+def paired_identity_audit(paired: Sequence[Mapping], expected_count: int) -> dict:
+    """Read the persisted validation stage names; never reopen held-out inputs."""
+    if any(r["team"] not in {"validation_initial", "validation_final"} for r in paired):
+        raise ValueError("unknown paired score stage")
+    initial = {r["example_id"]: r for r in paired if r["team"] == "validation_initial"}
+    final = {r["example_id"]: r for r in paired if r["team"] == "validation_final"}
+    if (len(paired) != 2 * expected_count or len(initial) != expected_count
+            or set(initial) != set(final)):
+        raise ValueError("paired score inventory mismatch")
+    fields = ("member_correct", "member_valid", "oracle_correct", "vote_correct", "request_output_hashes")
+    if any(any(initial[k][f] != final[k][f] for f in fields) for k in initial):
+        raise ValueError("identical-team paired realizations differ")
+    return {"paired_realizations_equal": True,
+            "vote_correct": sum(r["vote_correct"] for r in initial.values()),
+            "oracle_correct": sum(r["oracle_correct"] for r in initial.values()),
+            "oracle_correct_vote_wrong": sum(r["oracle_correct"] and not r["vote_correct"] for r in initial.values())}
+
+
 def audit_proposals(
     trace: Sequence[Mapping], trajectory: Sequence[Mapping], ledger: Sequence[Mapping],
     examples_by_id: Mapping[str, LocalEvidenceExample], annotations: Sequence[Mapping],

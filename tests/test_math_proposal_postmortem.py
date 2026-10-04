@@ -5,7 +5,7 @@ import json
 import pytest
 
 from multi_dataset_diverse_rl.evaluation.proposal_contract_audit import (
-    audit_proposals, extract_proposal, replay_boundary, text_hash, verify_annotation,
+    audit_proposals, extract_proposal, paired_identity_audit, replay_boundary, text_hash, verify_annotation,
 )
 
 
@@ -82,3 +82,17 @@ def test_pinned_extractor_and_annotation_unicode_coordinates():
     annotation["evidence_spans"][0]["end"] = 100
     with pytest.raises(ValueError, match="out of bounds"):
         verify_annotation(prompt, annotation)
+
+
+def test_persisted_validation_stage_names_and_duplicate_or_changed_scores():
+    initial = dict(team="validation_initial", example_id="synthetic-id", member_correct=[True],
+                   member_valid=[True], oracle_correct=True, vote_correct=False, request_output_hashes=["hash"])
+    final = {**initial, "team": "validation_final"}
+    rows = [initial, final]
+    assert paired_identity_audit(rows, 1)["oracle_correct_vote_wrong"] == 1
+    with pytest.raises(ValueError, match="inventory"):
+        paired_identity_audit(rows + [initial], 1)
+    with pytest.raises(ValueError, match="differ"):
+        paired_identity_audit([initial, {**final, "vote_correct": True}], 1)
+    with pytest.raises(ValueError, match="unknown"):
+        paired_identity_audit([initial, {**final, "team": "final"}], 1)

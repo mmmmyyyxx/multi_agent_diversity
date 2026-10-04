@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
-from multi_dataset_diverse_rl.evaluation.proposal_contract_audit import audit_proposals
+from multi_dataset_diverse_rl.evaluation.proposal_contract_audit import audit_proposals, paired_identity_audit
 from multi_dataset_diverse_rl.local_optimizers.schemas import LocalEvidenceExample
 from multi_dataset_diverse_rl.persistence.durable_io import atomic_write_json
 from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker
@@ -72,19 +72,10 @@ def main():
             or digest(files["initial_state"]) != digest(files["final_state"])):
         raise ValueError("closed search or unchanged-team evidence mismatch")
     paired = read_jsonl(files["paired_scores"])
-    initial = {r["example_id"]: r for r in paired if r["team"] == "initial"}
-    final = {r["example_id"]: r for r in paired if r["team"] == "final"}
-    if len(initial) != 100 or set(initial) != set(final):
-        raise ValueError("paired score inventory mismatch")
-    fields = ("member_correct", "member_valid", "oracle_correct", "vote_correct", "request_output_hashes")
-    if any(any(initial[k][f] != final[k][f] for f in fields) for k in initial):
-        raise ValueError("identical-team paired realizations differ")
+    paired_identity = paired_identity_audit(paired, 100)
     validation = read_json(files["validation_summary"])
     result["zero_intervention"] = {
-        "initial_final_state_bytes_equal": True, "paired_realizations_equal": True,
-        "changed_members": 0, "vote_correct": sum(r["vote_correct"] for r in initial.values()),
-        "oracle_correct": sum(r["oracle_correct"] for r in initial.values()),
-        "oracle_correct_vote_wrong": sum(r["oracle_correct"] and not r["vote_correct"] for r in initial.values()),
+        "initial_final_state_bytes_equal": True, "changed_members": 0, **paired_identity,
         "validation_final_new_physical": sum(r["kind"] == "SUCCESS" and r["stage"] == "validation_final"
                                              for r in read_jsonl(files["validation_ledger"])),
         "historical_signal": validation["signal"], "search_restart_authorized": False,

@@ -1,0 +1,113 @@
+{
+  "analysis_type": "RETROSPECTIVE_FORENSIC_OBSERVATION",
+  "api_token_budget": 0,
+  "baseline_commit": "3ddabb004a796b8ce1b78f035731c4a319af9414",
+  "candidate_admission_changed": false,
+  "counterfactuals": [
+    "full production failed-check replay",
+    "lexical phrase masking with every other production guard retained",
+    "owner semantic annotation plus remaining production checks"
+  ],
+  "experiment_id": "math_v2_1_proposal_semantic_postmortem_v1",
+  "identity": "MATH_PROPOSAL_SEMANTIC_POSTMORTEM_V1",
+  "inputs": [
+    {
+      "name": "provider_trace",
+      "relative_path": "math_v2_1/autonomous_constitution_v1/pilot_real/provider_trace_private.jsonl",
+      "sha256": "d95980ee08d1745cdad78753f5447365ed77d4daf2f4cbb6c461f45d54822249"
+    },
+    {
+      "name": "trajectory",
+      "relative_path": "math_v2_1/autonomous_constitution_v1/pilot_real/trajectory_private.jsonl",
+      "sha256": "fc2aae29b1f3642143109012fab4b10c6ce4d1e2f82dc2ccf3dc032c0864865e"
+    },
+    {
+      "name": "search_ledger",
+      "relative_path": "math_v2_1/autonomous_constitution_v1/pilot_real/ledger.jsonl",
+      "sha256": "ecc8f189bad07f1d6be460a99fd586b702e036faeb010ffddc0364fcc203a265"
+    },
+    {
+      "name": "initial_state",
+      "relative_path": "math_v2_1/autonomous_constitution_v1/pilot_real/initial_state_private.json",
+      "sha256": "7920acb1b98d3ca845968e4d7c680515497b5d755cf683ac89b0bf21937188db"
+    },
+    {
+      "name": "final_state",
+      "relative_path": "math_v2_1/autonomous_constitution_v1/pilot_real/final_state_private.json",
+      "sha256": "7920acb1b98d3ca845968e4d7c680515497b5d755cf683ac89b0bf21937188db"
+    },
+    {
+      "name": "search_receipt",
+      "relative_path": "math_v2_1/autonomous_constitution_v1/pilot_real/SEARCH_COMPLETE_RECEIPT.json",
+      "sha256": "a4f2ebabe7140d5d1b6a01b19eb0827aca48ae5d7e878e56ca6c62d2b9f1a9e3"
+    },
+    {
+      "name": "paired_scores",
+      "relative_path": "math_v2_1/autonomous_constitution_v1/validation_real/paired_evidence.jsonl",
+      "sha256": "1396535163ccdb13c3d81527f8c308985fd310b2a2b94b72f1eb92de392a5774"
+    },
+    {
+      "name": "validation_summary",
+      "relative_path": "math_v2_1/autonomous_constitution_v1/validation_real/execution_summary.json",
+      "sha256": "d1a934f9d5bfd190c0f291b5e78ff3e542b12549bf41fce0ac668bbdd06b23fa"
+    },
+    {
+      "name": "validation_ledger",
+      "relative_path": "math_v2_1/autonomous_constitution_v1/validation_real/ledger.jsonl",
+      "sha256": "910acbc0729d12740a1d219523cedaeb66a583c43ad8762e2adc724c7deba02a"
+    },
+    {
+      "name": "global_token_ledger",
+      "relative_path": "math_autonomous_accounting_v2/token_ledger/AUTONOMOUS_REAL_TOKEN_LEDGER_V2.json",
+      "sha256": "c735cd11b98216d4c3231edaf2afc114633e0a48985d5b212f95ed7e158513dd"
+    }
+  ],
+  "operational_repair": "AUDITOR_PERSISTED_VALIDATION_STAGE_MAPPING",
+  "owner_labels": "HASH_BOUND_SINGLE_REVIEWER_NOT_BLIND",
+  "parent_id": "math_v2_1_a1_seed81_low_cost_pilot_v4",
+  "parent_source_sha": "05c1da1ef08ebb4e3ec403380bfc033377b1e743",
+  "prior_scientific_inputs_and_labels_unchanged": true,
+  "provider_call_budget": 0,
+  "real_api_authorized": false,
+  "repair_of_protocol_sha256": "10ebce01397e12d63964a3947e69867b3dd75ccbaec6f8ffcb14a6cff2d683e9",
+  "scientific_policy_changes": [],
+  "semantic_rubric": {
+    "ANSWER_REPRESENTATION_GUIDANCE": "Mathematical representation or requested form; explicit proposer bans answer-format instructions, but boundary is interpretive.",
+    "BENIGN_REASONING": "Reasoning, verification or goal checking without answer formatting or output-control instructions.",
+    "OUTPUT_PRESENTATION_CONTROL": "Response layout, output sections or omission/inclusion of response content."
+  },
+  "stop": "all frozen proposals reconciled or integrity mismatch",
+  "test": "sealed zero reads zero model calls",
+  "tracked_inputs": {
+    "adapter": {
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py",
+      "sha256": "086d166c441d32b1e96c08a041e6667216b4bfa8494c6f5f4961235691ec47e3"
+    },
+    "audit_cli": {
+      "path": "scripts/audit_math_proposal_postmortem.py",
+      "sha256": "62696ae37cd70d1c56ac6b7a955bae9aa93f2f481a836ebc8887f4fd9b5841d8"
+    },
+    "audit_module": {
+      "path": "multi_dataset_diverse_rl/evaluation/proposal_contract_audit.py",
+      "sha256": "ce42da53ef12cdf22f237156270cd7021b6088d4446d889d238eb287a378be8e"
+    },
+    "owner_annotations": {
+      "path": "experiments/protocols/math_v2_1_proposal_semantic_postmortem_v1/owner_annotations.json",
+      "sha256": "a04098340be027eadfc94c2019d3d2bf028fcd6e492d24cdc6453913c7c9b2c4"
+    },
+    "parent_binding": {
+      "path": "experiments/execution_bindings/math_v2_1_low_cost_pilot_v4.json",
+      "sha256": "99f4d47c7b98130cf04c5d7279844b21180c12f6fd888470251ef6194a3062db"
+    },
+    "proposer_template": {
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_proposer_contract.py",
+      "sha256": "6752a35be463af75307d7317dda25c339ba078d5c26f332385a068dbcf82ee26"
+    },
+    "validator": {
+      "path": "multi_dataset_diverse_rl/evaluation/mutable_prompt_contract.py",
+      "sha256": "60859f603cc4c012fc0cdf82d3e3a1efc9df97bb48e38cde830bdcdd4a4f3761"
+    }
+  },
+  "user_request_sha256": "c840e3b98031717fbeff1d2f1efb59b3618db76a0d28c828a0bc12282aa3cf75",
+  "validation": "existing score-only evidence; no held-out content or model execution; no design feedback"
+}
