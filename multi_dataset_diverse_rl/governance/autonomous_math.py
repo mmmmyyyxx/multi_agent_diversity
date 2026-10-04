@@ -4,6 +4,7 @@ from dataclasses import fields, is_dataclass
 import hashlib
 import json
 import os
+from .. import versions
 
 from .token_accounting import TokenLedger, OperationalAbort, serialized_request, POLICY, POLICY_40M
 from .unified_execution import consumption_path, inventory
@@ -144,7 +145,6 @@ async def execute_search(root, prep, run_root, payload):
             durable_cache=durable_output_cache(run_root,c,payload))
         broker.prompt_observer = reserve.observe
         solver = BenchmarkSolver(binding.benchmark(),broker)
-        from .. import versions
         from ..search.pattern_responsibility import SetLevelPatternProvider
         pattern_provider=(SetLevelPatternProvider(broker,read_json(root/c['pattern_prompt_path'])['prompt']) if c['identity']==versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION else None)
         composed = binding.compose(arm=arm,seed=81,solver=solver,reflection=ReflectionProvider(broker),pattern_provider=pattern_provider,run_root=run_root)
@@ -170,7 +170,6 @@ async def execute_search(root, prep, run_root, payload):
             raise OperationalAbort("NONSCIENTIFIC_STOP_"+result.stop_reason)
         if c.get("method_identity") == "unified_team_prompt_search_v2_1" and c["execution_phase"] == "canary" and not result.trace:
             raise OperationalAbort("CANARY_NO_COMPLETE_PRODUCTION_OPPORTUNITY")
-        from .. import versions
         if c['identity'] in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION} and c['execution_phase']=='canary' and not any(t.candidate_ids for t in result.trace):
             raise OperationalAbort('STOP_LAYER1_ZERO_THROUGHPUT')
         final = composed.state.snapshot()
