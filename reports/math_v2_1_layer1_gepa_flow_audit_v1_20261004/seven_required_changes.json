@@ -1,0 +1,33 @@
+{
+  "authorization_sha256": "76630550500117515c4eb999362e0c7ce0b70a6ca6d1d01ea7dfb7ce48a6dc68",
+  "changes": [
+    {
+      "description": "ordered deployed hashes gate Validation",
+      "repair": 1
+    },
+    {
+      "description": "semantic output protocol boundary",
+      "repair": 2
+    },
+    {
+      "description": "Solver-only exact caching",
+      "repair": 3
+    },
+    {
+      "description": "Optimize-only observation feedback without CoT dependency",
+      "repair": 4
+    },
+    {
+      "description": "append-only shape telemetry",
+      "repair": 5
+    },
+    {
+      "description": "mathematical representation reasoning allowed",
+      "repair": 6
+    },
+    {
+      "description": "member realization lane Solver identity",
+      "repair": 7
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "optimize_private_evidence_read": true,
+  "shadow_read": false,
+  "test_read": false,
+  "validation_outcomes_used": false,
+  "validation_raw_read": false
+}

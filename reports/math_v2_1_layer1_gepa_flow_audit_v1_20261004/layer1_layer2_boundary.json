@@ -1,0 +1,29 @@
+{
+  "frozen_layer2": [
+    "five members",
+    "equal plurality",
+    "V=max(4D,2N,C)",
+    "V/(1+f)",
+    "target before local search",
+    "fixed peers",
+    "initial competence floor",
+    "strict team gain",
+    "TeamMiniBatch then Full then winner-only Shadow",
+    "atomic commit"
+  ],
+  "layer1_allowed_inputs": [
+    "Optimize mutation and local validation evidence",
+    "target objective and responsibility context",
+    "parent procedure",
+    "preservation anchors",
+    "bounded local feedback"
+  ],
+  "layer1_forbidden": [
+    "raw Shadow",
+    "Validation",
+    "Test",
+    "target reselection",
+    "peer mutation",
+    "deployment selection"
+  ]
+}

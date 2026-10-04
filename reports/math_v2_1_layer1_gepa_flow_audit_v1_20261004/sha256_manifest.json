@@ -1,0 +1,77 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "246c97c4b8f24d2c66fbc5e2ddd4e3b54024d3e5a6b7a18066327312dafb1551"
+    },
+    {
+      "file": "cache_semantics_audit.json",
+      "sha256": "7ef2efc926d82021731df9d70cfccafb14611965a863b2510e60ca54ff7da30d"
+    },
+    {
+      "file": "candidate_funnel_audit.json",
+      "sha256": "5748c1cd9e7d50ad5bd812bf3306ed4c5eaf08934b16ed8b6b15d356146370ed"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "3e3250151a8d8bbb71c0725b6d8ef8ac4f04cd57e4cee9bc92e481030f3e09da"
+    },
+    {
+      "file": "current_gepa_semantics.json",
+      "sha256": "93b9a820cd2d6c052a68656e6d1c93a23ce086884b6a4bfb025bdc236fb0ae04"
+    },
+    {
+      "file": "current_layer1_flow.json",
+      "sha256": "313b6591dafc8ee5223a94b1adae544cebd236d4fcf697907e061bea5a280820"
+    },
+    {
+      "file": "design_problems.json",
+      "sha256": "16a9f46e19d36380a3afb91beb1e3e2d6a37f7ff5bed7a686bd2524675e2e799"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "06ea39a129e2e283505867a2653b30a5e148adfd13adfae30c4847427b52426b"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "582dd470661f093b60a3ab8f34e44696e998711b5ffb6e8b091516579f616602"
+    },
+    {
+      "file": "layer1_layer2_boundary.json",
+      "sha256": "bda78fd857cfa9c152bbe31e49f20b913a5ecb689e93afb87d8334e935bd5a3a"
+    },
+    {
+      "file": "local_reject_export_audit.json",
+      "sha256": "0fc20d8d0fd8c00620e0eddcf3c6648ded0a0e6357861b6292a2b8569e1cf7c7"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "e2e3f6ef3b81910449292eb8d4590231047f86a846b51243811cd93e1f4609fd"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "c482347f63fddd4c2dff1e8f6b5b4ca6cb9c62f629c3d92a7766bb7a1ccdb3c3"
+    },
+    {
+      "file": "README.md",
+      "sha256": "6192bf7354f90c1ca2130d8a2efb0c3ee68b12e1101462d108e94e21e66016c8"
+    },
+    {
+      "file": "reflection_evidence_audit.json",
+      "sha256": "5fb63d59a600906c4e68f6a5fdf1330a638af3eb19093f490e87f9d967615fdc"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "5e749d7947dbd79bfbc1fb531d1db9d01cfa550e0b1651b892b07a5d72c7f70c"
+    },
+    {
+      "file": "seven_required_changes.json",
+      "sha256": "157d51901dbfb58f30eafd62126f34a99643d35719514a0de8fe358f150e8df2"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "106dad9db57eaa1922397ceb34d57973c14e5cafabd5a635a85aeb29fc04e4a9"
+    }
+  ]
+}

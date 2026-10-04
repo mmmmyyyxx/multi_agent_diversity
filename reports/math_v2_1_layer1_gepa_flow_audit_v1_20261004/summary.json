@@ -1,0 +1,9 @@
+{
+  "optimizer_reuse": 18,
+  "physical_proposals": 10,
+  "reflection_fallback": 23,
+  "reflection_records": 30,
+  "source_sha": "08bf349e07d4517c5a9c73c6d4abe78cdd6cc892",
+  "status": "COMPLETED_ZERO_API",
+  "team_intervention": false
+}

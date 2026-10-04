@@ -1,0 +1,8 @@
+{
+  "accepted_first_ordering": true,
+  "actual_export_cap": "metric-derived capacity, not k=4 truncation in V2 callback",
+  "defect_confirmed": false,
+  "replacement_requirement": "Explicit archive of every admissible scored proposal before bounded export ranking; test negative and non-frontier exposure",
+  "runtime_evidence": "No admissible scored proposal occurred; static design intent cannot establish real rejected-proposal handoff",
+  "static_export_pool": "all changed contract-valid unique callback proposals with scored outcomes, including locally rejected and non-frontier"
+}

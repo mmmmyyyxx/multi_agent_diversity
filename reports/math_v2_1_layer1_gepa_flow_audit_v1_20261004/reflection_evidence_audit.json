@@ -1,0 +1,51 @@
+{
+  "conclusion": "The answer-only shell removes traces on many records; some provider outputs still retain visible reasoning. Existing reflection cannot depend on reasoning availability.",
+  "empty_or_placeholder_rate": 0.7666666666666667,
+  "fallback_count": 23,
+  "fallback_rate": 0.7666666666666667,
+  "groups": {
+    "incorrect": {
+      "count": 30,
+      "fallback_count": 23,
+      "fallback_rate": 0.7666666666666667
+    }
+  },
+  "historical_logical_proposals": 28,
+  "logical_reflection_records": 84,
+  "missing_information": [
+    "parsed prediction",
+    "reference outcome detail",
+    "invalid reason",
+    "full target objective",
+    "recent rejected candidate feedback"
+  ],
+  "physical_reflection_requests": 10,
+  "physical_request_records": 30,
+  "retained_chars_mean": 572,
+  "retained_chars_median": 0.0,
+  "schema_fields": [
+    "Problem",
+    "Reasoning Evidence",
+    "Evaluation Outcome",
+    "Reasoning Focus"
+  ],
+  "scope": "Ten physical request payloads, not 84 independent observations",
+  "typed_prediction_groups": {
+    "terminal_invalid": {
+      "count": 3,
+      "fallback_count": 3,
+      "fallback_rate": 1.0
+    },
+    "valid_correct": {
+      "count": 0,
+      "fallback_count": 0,
+      "fallback_rate": null
+    },
+    "valid_wrong": {
+      "count": 27,
+      "fallback_count": 20,
+      "fallback_rate": 0.7407407407407407
+    }
+  },
+  "visible_CoT_required": false
+}

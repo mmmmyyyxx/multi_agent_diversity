@@ -1,0 +1,22 @@
+{
+  "candidate_selection": "pareto",
+  "export_override": "callback exports rejected and non-frontier evaluated proposals",
+  "frontier": "instance",
+  "local_patience": 3,
+  "metric_limit": 36,
+  "official_core_pinned": true,
+  "potential_waste": [
+    "full seed validation and repeated minibatch baseline evaluations",
+    "conservative next-full reserve suppresses exploration",
+    "perfect-score skip and local survival can hide feedback without affecting deployment authority"
+  ],
+  "proposer": "official fenced instruction proposer; project template",
+  "sampler": "frozen role-bearing replay schedule through public batch seam",
+  "strict_local_improvement": "new_sum > old_sum",
+  "unnecessary_for_layer2": [
+    "Pareto survival",
+    "strict local acceptance",
+    "official parent selection",
+    "reasoning-dependent reflection schema"
+  ]
+}

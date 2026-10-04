@@ -96,6 +96,7 @@ Reports are immutable evidence, never design authority. Unresolved metadata does
 | [math_v2_1_a1_seed81_real_canary_v6_20261003](math_v2_1_a1_seed81_real_canary_v6_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | REAL_CANARY | math_v2_1_a1_seed81_real_canary_v6 | HOLD |
 | [math_v2_1_answer_domain_amendment_v1_20261002](math_v2_1_answer_domain_amendment_v1_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | MIGRATION | math_v2_1_answer_domain_amendment_v1 | COMPLETED |
 | [math_v2_1_autonomous_constitution_v1_20261003](math_v2_1_autonomous_constitution_v1_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | ZERO_API | math_v2_1_autonomous_constitution_v1 | COMPLETED |
+| [math_v2_1_layer1_gepa_flow_audit_v1_20261004](math_v2_1_layer1_gepa_flow_audit_v1_20261004/README.md) | 20261004 | BENCHMARK_GENERALIZATION | ZERO_API | math_v2_1_layer1_gepa_flow_audit_v1 | COMPLETED |
 | [math_v2_1_low_cost_protocol_v1_20261003](math_v2_1_low_cost_protocol_v1_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | ZERO_API | math_v2_1_low_cost_protocol_v1 | COMPLETED |
 | [math_v2_1_optimizer_truncation_root_cause_v1_20261003](math_v2_1_optimizer_truncation_root_cause_v1_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | DIAGNOSTIC | math_v2_1_optimizer_truncation_root_cause_v1 | HOLD |
 | [math_v2_1_optimizer_wire_amendment_v1_20261003](math_v2_1_optimizer_wire_amendment_v1_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | ZERO_API | math_v2_1_optimizer_wire_amendment_v1 | COMPLETED |

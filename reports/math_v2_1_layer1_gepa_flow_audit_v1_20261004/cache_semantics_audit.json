@@ -1,0 +1,11 @@
+{
+  "all_roles_exact_cache": true,
+  "cross_member_same_body": "shares realization in old binding",
+  "member_identity": "telemetry only",
+  "optimizer_cache_hits": 18,
+  "optimizer_logical": 28,
+  "optimizer_physical": 10,
+  "required": "Only Solver exact reuse; member lane identity; no fresh generative role output reuse; historical semantics preserved by version",
+  "shadow_profile_cache_key": "prompt only",
+  "solver_cache_hits": 252
+}

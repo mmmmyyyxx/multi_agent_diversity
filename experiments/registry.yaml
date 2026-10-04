@@ -18,8 +18,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/v17_formal_5arm_3seed_20260813
@@ -55,8 +55,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/v17_failure_decomposition_20260820
@@ -93,8 +93,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/v17_module1_2x2_causal_isolation_20260820
@@ -131,8 +131,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/v17_hybrid_target_allocation_pilot_20260821
@@ -168,8 +168,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/v18_hybrid_online_accumulation_pilot_20260822
@@ -205,8 +205,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/v18_writeback_quality_diagnostic_20260824
@@ -241,8 +241,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/v18_m2f_trigger_extension_pilot_20260824
@@ -277,8 +277,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/gepa_candidate_breadth_audit_20260831
@@ -313,8 +313,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/gepa_critic_gate_failure_audit_20260831
@@ -349,8 +349,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/v18_critic_safety_only_counterfactual_audit_20260902
@@ -387,8 +387,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/v18_safety_only_critic_pilot_20260902
@@ -425,8 +425,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/v18_historical_teacher_safety_failure_audit_20260902
@@ -462,8 +462,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/v18_shadow_raw_critic_pilot_20260902
@@ -500,11 +500,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
-  - Selection milestone has a published result and registered completed online descendant; original C classifier
-    retained.
+  - Selection milestone has a published result and registered completed online descendant;
+    original C classifier retained.
   reports:
   - reports/v18_teacher_critic_pipeline_ablation_20260902
   unavailable:
@@ -539,8 +539,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/v18_no_semantic_critic_online_trajectory_20260903
@@ -577,8 +577,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/v18_no_semantic_critic_online_seed69_70_extension_20260903
@@ -615,8 +615,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/v18_no_semantic_critic_transfer_decomposition_20260903
@@ -654,8 +654,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/v18_no_semantic_critic_candidate_ranking_audit_20260903
@@ -693,8 +693,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/v18_qwen3_8b_no_semantic_critic_light_replication_20260903
@@ -731,8 +731,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/diversity_matrix_d0_d5_combined_validation175_20260904
@@ -766,8 +766,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/diversity_matrix_split_balance_audit_20260904
@@ -803,10 +803,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
-  - README explicitly states Phase B has not run / PHASE_B_RUN=false; original classifier retained.
+  - README explicitly states Phase B has not run / PHASE_B_RUN=false; original classifier
+    retained.
   reports:
   - reports/anti_overfitting_shadow_gate_v1
   unavailable:
@@ -840,8 +841,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/vote_aligned_generic_shadow_pilot_v1
@@ -877,8 +878,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/vote_aligned_seed75_static_control_20260905
@@ -915,8 +916,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/vote_aligned_confirmatory_seed76_77_v1
@@ -952,8 +953,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   - Report context is immutable evidence, not active method authority.
   - Report states IMPLEMENTED_NOT_RUN / execution not frozen; no run is inferred.
@@ -993,10 +994,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
-  - Prep READY_TO_RUN=false is not runtime evidence; later report identities are not assumed identical.
+  - Prep READY_TO_RUN=false is not runtime evidence; later report identities are not
+    assumed identical.
   reports:
   - reports/sequential_symmetry_breaking_online_pilot_v1_prep_20260921
   unavailable:
@@ -1032,8 +1034,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/accepted_local_mutation_team_transfer_v1_prep_20260919
@@ -1062,8 +1064,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   - Report context is immutable evidence, not active method authority.
   reports:
@@ -1092,8 +1094,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/accepted_mutation_compositional_state_graph_v1_20260920
@@ -1120,8 +1122,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/accepted_mutation_exact_state_graph_v2_20260920
@@ -1148,8 +1150,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports: []
   unavailable:
@@ -1177,8 +1179,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports: []
   unavailable:
@@ -1192,8 +1194,8 @@ experiments:
   unregistered_parent_references:
     values:
     - common_solver_contract_v1
-    reason: Immutable manifest references source commits or identities not established as registry nodes; retained
-      without inventing experiments.
+    reason: Immutable manifest references source commits or identities not established
+      as registry nodes; retained without inventing experiments.
 - experiment_id: gepa_layer2_real_canary_v2
   kind: PILOT
   era: GEPA_TWO_LAYER
@@ -1211,8 +1213,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports: []
   unavailable:
@@ -1227,8 +1229,8 @@ experiments:
   unregistered_parent_references:
     values:
     - 80442264a8086f3fe407e1551ae2ecc8448f8676
-    reason: Immutable manifest references source commits or identities not established as registry nodes; retained
-      without inventing experiments.
+    reason: Immutable manifest references source commits or identities not established
+      as registry nodes; retained without inventing experiments.
 - experiment_id: gepa_saturation_comparison_v2
   kind: FORMAL_EXPERIMENT
   era: GEPA_TWO_LAYER
@@ -1247,8 +1249,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports: []
   unavailable:
@@ -1263,8 +1265,8 @@ experiments:
   unregistered_parent_references:
     values:
     - 80442264a8086f3fe407e1551ae2ecc8448f8676
-    reason: Immutable manifest references source commits or identities not established as registry nodes; retained
-      without inventing experiments.
+    reason: Immutable manifest references source commits or identities not established
+      as registry nodes; retained without inventing experiments.
 - experiment_id: level_b_gepa_local_acceptance_rate_pilot_v1
   kind: PILOT
   era: GEPA_TWO_LAYER
@@ -1283,8 +1285,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports: []
   unavailable:
@@ -1313,8 +1315,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/level_b_gepa_real_canary_v1_authorized3
@@ -1328,8 +1330,8 @@ experiments:
   unregistered_parent_references:
     values:
     - two_layer_rg_gepa_v1
-    reason: Immutable manifest references source commits or identities not established as registry nodes; retained
-      without inventing experiments.
+    reason: Immutable manifest references source commits or identities not established
+      as registry nodes; retained without inventing experiments.
 - experiment_id: level_b_gepa_real_canary_v2
   kind: PILOT
   era: GEPA_TWO_LAYER
@@ -1349,8 +1351,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   - Report context is immutable evidence, not active method authority.
   reports:
@@ -1382,8 +1384,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   - Report context is immutable evidence, not active method authority.
   reports:
@@ -1414,8 +1416,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/local_gepa_acceptance_rate_pilot_v1_prep_20260918
@@ -1444,8 +1446,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/local_gepa_parent_acquisition_v1
@@ -1474,8 +1476,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports:
   - reports/seed78_primary_responsibility_ab_v1
@@ -1487,8 +1489,8 @@ experiments:
   unregistered_parent_references:
     values:
     - two_layer_rg_gepa_v1
-    reason: Immutable manifest references source commits or identities not established as registry nodes; retained
-      without inventing experiments.
+    reason: Immutable manifest references source commits or identities not established
+      as registry nodes; retained without inventing experiments.
 - experiment_id: sequential_symmetry_breaking_online_pilot_v2
   kind: PILOT
   era: GEPA_TWO_LAYER
@@ -1506,8 +1508,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Frozen manifest unchanged; historical lifecycle is not live process evidence.
   reports: []
   unavailable:
@@ -1522,8 +1524,8 @@ experiments:
   unregistered_parent_references:
     values:
     - 80442264a8086f3fe407e1551ae2ecc8448f8676
-    reason: Immutable manifest references source commits or identities not established as registry nodes; retained
-      without inventing experiments.
+    reason: Immutable manifest references source commits or identities not established
+      as registry nodes; retained without inventing experiments.
 - experiment_id: anti_overfitting_split_v1
   kind: PILOT
   era: V17_V18_MEMBER_AWARE
@@ -1541,8 +1543,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   reports: []
   unavailable:
     manifest: Not established by indexed evidence; no value fabricated.
@@ -1570,8 +1572,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   reports: []
   unavailable:
     report: Not established by indexed evidence; no value fabricated.
@@ -1598,8 +1600,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   reports: []
   unavailable:
     manifest: Not established by indexed evidence; no value fabricated.
@@ -1627,8 +1629,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   reports: []
   unavailable:
     manifest: Not established by indexed evidence; no value fabricated.
@@ -1656,8 +1658,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
   reports:
   - reports/gepa_layer2_local_to_team_transfer_diagnostic_v1_prep
@@ -1686,8 +1688,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
   reports:
   - reports/gepa_layer2_local_to_team_transfer_diagnostic_v2_prep
@@ -1716,8 +1718,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   reports: []
   unavailable:
     manifest: Not established by indexed evidence; no value fabricated.
@@ -1745,8 +1747,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   reports: []
   unavailable:
     manifest: Not established by indexed evidence; no value fabricated.
@@ -1775,8 +1777,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   reports: []
   unavailable:
     manifest: Not established by indexed evidence; no value fabricated.
@@ -1804,8 +1806,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
   reports:
   - reports/model_headroom_screening_20260901
@@ -1834,8 +1836,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   reports: []
   unavailable:
     manifest: Not established by indexed evidence; no value fabricated.
@@ -1863,8 +1865,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   reports: []
   unavailable:
     manifest: Not established by indexed evidence; no value fabricated.
@@ -1892,8 +1894,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   reports: []
   unavailable:
     manifest: Not established by indexed evidence; no value fabricated.
@@ -1921,8 +1923,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
   reports:
   - reports/v16_m2f_feedback_necessity_fixed_candidate_20260813
@@ -1951,8 +1953,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
   reports:
   - reports/v16_m2f_online_mechanism_pilot_seed52_20260813
@@ -1981,8 +1983,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   reports: []
   unavailable:
     report: Not established by indexed evidence; no value fabricated.
@@ -2009,8 +2011,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
   reports:
   - reports/v16_module2_compute_matched_efficacy_20260813
@@ -2039,8 +2041,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
   reports:
   - reports/v18_revision_parity_semantics_audit_20260824
@@ -2069,8 +2071,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   reports: []
   unavailable:
     report: Not established by indexed evidence; no value fabricated.
@@ -2095,8 +2097,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   reports: []
   unavailable:
     report: Not established by indexed evidence; no value fabricated.
@@ -2121,8 +2123,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   reports: []
   unavailable:
     report: Not established by indexed evidence; no value fabricated.
@@ -2147,8 +2149,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   reports: []
   unavailable:
     report: Not established by indexed evidence; no value fabricated.
@@ -2173,8 +2175,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   reports: []
   unavailable:
     report: Not established by indexed evidence; no value fabricated.
@@ -2199,8 +2201,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   reports: []
   unavailable:
     report: Not established by indexed evidence; no value fabricated.
@@ -2225,8 +2227,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   reports: []
   unavailable:
     report: Not established by indexed evidence; no value fabricated.
@@ -2251,8 +2253,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   reports: []
   unavailable:
     report: Not established by indexed evidence; no value fabricated.
@@ -2277,8 +2279,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   reports: []
   unavailable:
     report: Not established by indexed evidence; no value fabricated.
@@ -2303,11 +2305,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/backend_branch_consolidation
   unavailable:
@@ -2333,11 +2335,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/common_contract_seed77_sensitivity_20260907
   unavailable:
@@ -2363,11 +2365,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/common_solver_contract_v1_prep_20260906
   unavailable:
@@ -2393,11 +2395,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/common_solver_contract_v1_replay_20260906
   unavailable:
@@ -2423,11 +2425,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/common_solver_contract_v1_seed77_prep_20260907
   unavailable:
@@ -2453,11 +2455,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/common_solver_contract_v1_seed77_replay_20260907
   unavailable:
@@ -2483,11 +2485,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/contract_adapted_rg_gepa_fixed_parent_pilot_v1
   - reports/contract_adapted_rg_gepa_fixed_parent_pilot_v1_execution_retry1_hold
@@ -2515,11 +2517,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/contract_adapted_rg_gepa_fixed_parent_pilot_v2
   unavailable:
@@ -2545,11 +2547,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/cross_method_cost_accounting_20260907
   unavailable:
@@ -2575,11 +2577,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/cross_repo_p0_parity_audit_20260906
   unavailable:
@@ -2605,11 +2607,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/diversity_writeback_cost_mechanism_audit_20260908
   unavailable:
@@ -2635,11 +2637,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/execution_harness_refreeze_20260922
   unavailable:
@@ -2665,11 +2667,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/final_layer2_semantic_closure
   unavailable:
@@ -2695,11 +2697,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/final_method_agent_clustering_20260803
   unavailable:
@@ -2725,11 +2727,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/final_method_code_audit_20260731
   unavailable:
@@ -2755,11 +2757,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/final_method_complete_20260803
   unavailable:
@@ -2785,11 +2787,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/final_pre_experiment_freeze_20260922
   unavailable:
@@ -2815,11 +2817,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/formal_saturation_v3_attempt2_preexecution_20260928
   unavailable:
@@ -2845,11 +2847,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/formal_saturation_v3_attempt2_validation50_refreeze_20260928
   unavailable:
@@ -2875,11 +2877,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/formal_saturation_v3_preexecution_closure_20260928
   unavailable:
@@ -2905,11 +2907,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/formal_saturation_v3_zero_api_incident_20260927
   unavailable:
@@ -2935,11 +2937,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/formal_v3_attempt3_json_repair_preexecution_20260929
   unavailable:
@@ -2965,11 +2967,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/formal_v3_attempt3_last_mile_hardening_20260929
   unavailable:
@@ -2995,11 +2997,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/formal_v3_attempt3_seed80_preliminary_20260930
   unavailable:
@@ -3025,11 +3027,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/formal_v3_attempt4_concurrent_execution_preexecution_20260930
   unavailable:
@@ -3055,11 +3057,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/gate_runs/gate1_invalid_recovery_ad3ba73_20260725_124426
   - reports/gate_runs/gate2_one_update_v3_5728037_20260725_141328
@@ -3090,11 +3092,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/gepa_canary_runtime_compatibility_fix_20260922
   unavailable:
@@ -3120,11 +3122,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/gepa_layer2_real_canary_post_refactor_v2_20260924
   unavailable:
@@ -3150,11 +3152,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/gepa_layer2_transfer_v2_engineering_abort_20260924
   unavailable:
@@ -3180,11 +3182,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/gepa_post_refactor_proposal_contract_audit_20260923
   unavailable:
@@ -3210,11 +3212,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/layer2_pre_pilot_repository_audit_20260921
   unavailable:
@@ -3240,11 +3242,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/layer2_raw_legal_responsibility_correction_20260925
   unavailable:
@@ -3270,11 +3272,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/level_b_gepa_adapter_closure_20260914
   unavailable:
@@ -3300,11 +3302,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/level_b_gepa_reflection_input_attribution_20260914
   unavailable:
@@ -3330,11 +3332,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/level_b_gepa_v2_precanary_closure_20260914
   unavailable:
@@ -3360,11 +3362,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/matched_gpt4omini_seed42_20260725
   unavailable:
@@ -3390,11 +3392,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/post_refactor_readiness_20260923
   unavailable:
@@ -3420,11 +3422,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/pre_authorization_startup_identity_audit_20260922
   unavailable:
@@ -3450,11 +3452,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/pre_run_full_stack_hardening_20260924
   unavailable:
@@ -3480,11 +3482,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/qwen37_flash_qualification_20260805
   unavailable:
@@ -3510,11 +3512,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/responsibility_guided_gepa_fixed_parent_pilot_v1
   - reports/responsibility_guided_gepa_fixed_parent_pilot_v1_execution_retry4
@@ -3546,11 +3548,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/responsibility_mechanism_history_audit
   unavailable:
@@ -3576,11 +3578,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/rg_gepa_durable_ledger_repair_20260909
   unavailable:
@@ -3606,11 +3608,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/rg_gepa_execution_smoke_20260909
   unavailable:
@@ -3636,11 +3638,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/rg_gepa_hypothesis_interface_v2_qualification
   - reports/rg_gepa_hypothesis_interface_v2_qualification_execution
@@ -3667,11 +3669,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/saturation_mode_refactor_20260922
   unavailable:
@@ -3697,11 +3699,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/seed78_gepa_differential_audit_20260914
   unavailable:
@@ -3727,11 +3729,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/seed78_gepa_teamminibatch_postmortem_20260913
   unavailable:
@@ -3757,11 +3759,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/seed78_precanary_interface_closure_20260914
   unavailable:
@@ -3787,11 +3789,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/solver_stage_attribution_closure_20260915
   unavailable:
@@ -3817,11 +3819,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/stage0_formal_v3_telemetry_preflight_20260928
   unavailable:
@@ -3847,11 +3849,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/static_checkpoint_restore_repair_20260901
   unavailable:
@@ -3877,11 +3879,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/strict_v2_disambiguation_s345_20260803
   unavailable:
@@ -3907,11 +3909,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/strict_v2_s345_20260803/stage_a_v2_static_audit
   - reports/strict_v2_s345_20260803/stage_c_live_witness
@@ -3941,11 +3943,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/two_layer_gepa_grounded_refactor_20260910
   unavailable:
@@ -3971,11 +3973,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v11_full_seed43_32updates_20260727
   - reports/v11_full_seed43_32updates_20260727_owner_alignment_audit
@@ -4002,11 +4004,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v12_pilot_seed46_20260806
   unavailable:
@@ -4032,11 +4034,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v14_formal_seed44_20260809
   unavailable:
@@ -4062,11 +4064,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v14_pilot_seed46_20260808
   unavailable:
@@ -4092,11 +4094,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v14_qwen3_14b_seed46_20260809
   unavailable:
@@ -4122,11 +4124,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v15_three_seed_development_formal_20260811
   unavailable:
@@ -4152,11 +4154,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v17_conversion_aware_hybrid_5parent_pilot_20260822
   unavailable:
@@ -4182,11 +4184,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v17_conversion_aware_hybrid_pilot_20260822
   unavailable:
@@ -4212,11 +4214,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v17_conversion_priority_hybrid_three_arm_pilot_20260822
   unavailable:
@@ -4242,11 +4244,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v17_conversion_target2_differentiation_audit_20260822
   unavailable:
@@ -4272,11 +4274,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v17_hybrid_recovered_update_conversion_audit_20260822
   unavailable:
@@ -4302,11 +4304,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v17_w1_target_allocation_mechanism_audit_20260820
   unavailable:
@@ -4332,11 +4334,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v18_harmful_commit_m2f_repair_pilot_20260824
   unavailable:
@@ -4362,11 +4364,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v18_trajectory_gain_loss_decomposition_20260824
   unavailable:
@@ -4392,11 +4394,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v3_preexecution_fault_campaign_20260927
   unavailable:
@@ -4422,11 +4424,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v3_scientific_blocker_decision_closure_20260927
   unavailable:
@@ -4452,11 +4454,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v4_baseline_full_seed42_20260726
   unavailable:
@@ -4482,11 +4484,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v4_current_source_attempt2_preexecution_20260928
   unavailable:
@@ -4512,11 +4514,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v4_full_highfreq_seed42_20260726
   - reports/v4_full_highfreq_seed42_20260726_offline_audit
@@ -4543,11 +4545,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v4_gpt4omini_seed44_32updates_20260727/shared_baseline_seed44
   - reports/v4_gpt4omini_seed44_32updates_20260727/shared_member_aware_full_seed44
@@ -4575,11 +4577,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v4_gpt4omini_seed45_32updates_20260728/shared_baseline_seed45
   - reports/v4_gpt4omini_seed45_32updates_20260728/shared_member_aware_full_seed45
@@ -4607,11 +4609,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v4_independent_seed42_20260726
   unavailable:
@@ -4637,11 +4639,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v4_preexecution_closure_20260927
   unavailable:
@@ -4667,11 +4669,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v4_seed81_attempt2_execution_20260928
   unavailable:
@@ -4696,11 +4698,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v4_v5_gpt4omini_seed45_matched_pair_20260728
   unavailable:
@@ -4726,11 +4728,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v5_gpt4omini_seed44_32updates_20260727/shared_baseline_seed44
   - reports/v5_gpt4omini_seed44_32updates_20260727/shared_member_aware_full_seed44
@@ -4758,11 +4760,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v5_gpt4omini_seed44_final7_rejection_audit_20260727
   unavailable:
@@ -4788,11 +4790,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v5_gpt4omini_seed45_32updates_20260728/shared_baseline_seed45
   - reports/v5_gpt4omini_seed45_32updates_20260728/shared_member_aware_full_seed45
@@ -4820,11 +4822,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v6_seed44_control_32updates_20260729/shared_member_aware_full_seed44
   - reports/v6_seed44_control_32updates_20260729
@@ -4851,11 +4853,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v6_seed44_memory_32updates_20260729/shared_member_aware_full_seed44
   - reports/v6_seed44_memory_32updates_20260729
@@ -4882,11 +4884,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v6_seed45_control_32updates_20260729/shared_member_aware_full_seed45
   - reports/v6_seed45_control_32updates_20260729
@@ -4913,11 +4915,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v6_seed45_memory_32updates_20260729/shared_member_aware_full_seed45
   - reports/v6_seed45_memory_32updates_20260729
@@ -4944,11 +4946,11 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence. No scientific result
-    inferred.
+  - Indexed existing artifact identity; lifecycle unknown unless stated by cited evidence.
+    No scientific result inferred.
   - Report context is immutable evidence, not active method authority.
-  - 'Report-container node: identifier comes from existing directory, not an invented execution attempt; STATUS_UNRESOLVED
-    is intentional.'
+  - 'Report-container node: identifier comes from existing directory, not an invented
+    execution attempt; STATUS_UNRESOLVED is intentional.'
   reports:
   - reports/v7_frontier_seed46_stage1_20260730
   unavailable:
@@ -5084,7 +5086,8 @@ experiments:
   superseded_by: []
   notes:
   - Engineering milestone; success/readiness stated by its report, no efficacy inference.
-  - Offline verification passed; local publication only; real execution remains unready and unauthorized.
+  - Offline verification passed; local publication only; real execution remains unready
+    and unauthorized.
   reports:
   - reports/repository_hygiene_alignment_v1_20261001
   unavailable:
@@ -5092,8 +5095,8 @@ experiments:
     execution_commit: Not established by indexed evidence; no value fabricated.
     result_commit: Not established by indexed evidence; no value fabricated.
     classifier: Not established by indexed evidence; no value fabricated.
-    implementation_commit: Record is part of its enclosing local implementation commit; use Git history after commit.
-      Baseline is not the implementation commit.
+    implementation_commit: Record is part of its enclosing local implementation commit;
+      use Git history after commit. Baseline is not the implementation commit.
   baseline_commit: ec993b13a252699f19b93348b01570ffd9bea879
 - experiment_id: common_contract_seed77_p1_e2e_prep_20260907
   kind: PREEXECUTION_FREEZE
@@ -5112,7 +5115,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Existing report container/attempt identity, indexed without inventing scientific results.
+  - Existing report container/attempt identity, indexed without inventing scientific
+    results.
   reports:
   - reports/common_contract_seed77_p1_e2e_prep_20260907
   unavailable:
@@ -5138,7 +5142,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Existing report container/attempt identity, indexed without inventing scientific results.
+  - Existing report container/attempt identity, indexed without inventing scientific
+    results.
   reports:
   - reports/final_layer2_semantic_refactor
   unavailable:
@@ -5164,7 +5169,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Existing report container/attempt identity, indexed without inventing scientific results.
+  - Existing report container/attempt identity, indexed without inventing scientific
+    results.
   reports:
   - reports/formal_v3_attempt2_seed80_native_abort_20260929
   unavailable:
@@ -5189,7 +5195,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Existing report container/attempt identity, indexed without inventing scientific results.
+  - Existing report container/attempt identity, indexed without inventing scientific
+    results.
   reports:
   - reports/layer2_semantic_alignment_audit
   unavailable:
@@ -5215,7 +5222,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Existing report container/attempt identity, indexed without inventing scientific results.
+  - Existing report container/attempt identity, indexed without inventing scientific
+    results.
   reports:
   - reports/production_architecture_refactor
   unavailable:
@@ -5241,7 +5249,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Existing report container/attempt identity, indexed without inventing scientific results.
+  - Existing report container/attempt identity, indexed without inventing scientific
+    results.
   reports:
   - reports/saturation_mode_prep
   unavailable:
@@ -5267,7 +5276,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Existing report container/attempt identity, indexed without inventing scientific results.
+  - Existing report container/attempt identity, indexed without inventing scientific
+    results.
   reports:
   - reports/unified_execution_governance_binding_20260923
   unavailable:
@@ -5293,7 +5303,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Existing report container/attempt identity, indexed without inventing scientific results.
+  - Existing report container/attempt identity, indexed without inventing scientific
+    results.
   reports:
   - reports/v4_seed81_attempt2_forensics_20260928
   unavailable:
@@ -5319,7 +5330,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Existing report container/attempt identity, indexed without inventing scientific results.
+  - Existing report container/attempt identity, indexed without inventing scientific
+    results.
   reports:
   - reports/v4_seed81_attempt3_execution_20260928
   unavailable:
@@ -5344,7 +5356,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Existing report container/attempt identity, indexed without inventing scientific results.
+  - Existing report container/attempt identity, indexed without inventing scientific
+    results.
   reports:
   - reports/v6_seed44_control_memory_pair_20260729
   unavailable:
@@ -5370,7 +5383,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Existing report container/attempt identity, indexed without inventing scientific results.
+  - Existing report container/attempt identity, indexed without inventing scientific
+    results.
   reports:
   - reports/v6_seed45_control_memory_pair_20260729
   unavailable:
@@ -5397,7 +5411,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Existing report container/attempt identity, indexed without inventing scientific results.
+  - Existing report container/attempt identity, indexed without inventing scientific
+    results.
   reports:
   - reports/formal_v3_attempt2_seed80_native_abort_20260929
   unavailable:
@@ -5427,7 +5442,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Existing report container/attempt identity, indexed without inventing scientific results.
+  - Existing report container/attempt identity, indexed without inventing scientific
+    results.
   reports:
   - reports/formal_v3_attempt3_seed80_preliminary_20260930
   unavailable:
@@ -5457,7 +5473,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Existing report container/attempt identity, indexed without inventing scientific results.
+  - Existing report container/attempt identity, indexed without inventing scientific
+    results.
   reports:
   - reports/formal_v3_attempt3_seed80_preliminary_20260930
   unavailable:
@@ -5487,7 +5504,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Existing report container/attempt identity, indexed without inventing scientific results.
+  - Existing report container/attempt identity, indexed without inventing scientific
+    results.
   reports:
   - reports/v4_seed81_attempt2_execution_20260928
   unavailable:
@@ -5517,7 +5535,8 @@ experiments:
   historical_replay: true
   superseded_by: []
   notes:
-  - Existing report container/attempt identity, indexed without inventing scientific results.
+  - Existing report container/attempt identity, indexed without inventing scientific
+    results.
   reports:
   - reports/v4_seed81_attempt3_execution_20260928
   unavailable:
@@ -5547,13 +5566,17 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Versioned method milestone; synthetic correctness only, no efficacy claim or API authorization.
-  - V1 replay and benchmark blockers retained; Pattern/Memory implemented default off.
+  - Versioned method milestone; synthetic correctness only, no efficacy claim or API
+    authorization.
+  - V1 replay and benchmark blockers retained; Pattern/Memory implemented default
+    off.
   reports:
   - reports/unified_team_prompt_search_v2_20261001
   unavailable:
-    manifest: Engineering method milestone; no real experiment preregistration or attempt is created.
-    implementation_commit: Containing local commit in Git history; not the baseline or execution SHA.
+    manifest: Engineering method milestone; no real experiment preregistration or
+      attempt is created.
+    implementation_commit: Containing local commit in Git history; not the baseline
+      or execution SHA.
     execution_commit: No real execution authorized or performed.
     result_commit: No formal result exists.
   baseline_commit: bad63e9577573a3bea7d004f3a6e333778c967ad
@@ -5575,15 +5598,18 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Zero-API audit of the proposed factorial experiment; A0/A1 search budget equivalence fails.
-  - No execution freeze, canary, real API call, or efficacy observation; publication does not authorize execution.
+  - Zero-API audit of the proposed factorial experiment; A0/A1 search budget equivalence
+    fails.
+  - No execution freeze, canary, real API call, or efficacy observation; publication
+    does not authorize execution.
   reports:
   - reports/v2_pattern_memory_factorial_v1_20261001
   unavailable:
     manifest: STOP gate failed before preregistration and execution freeze.
     implementation_commit: No source changes were made by this audit.
     execution_commit: No execution source was frozen and no real experiment ran.
-    result_commit: Audit publication is recorded by its containing Git commit; no scientific result exists.
+    result_commit: Audit publication is recorded by its containing Git commit; no
+      scientific result exists.
   baseline_commit: 0da8bf96e957ae227fdbf988ad6e3d67cd190ef7
 - experiment_id: v2_pattern_memory_factorial_v1_1
   kind: FORMAL_EXPERIMENT
@@ -5605,22 +5631,28 @@ experiments:
   superseded_by:
   - v2_pattern_memory_multibench_v1
   notes:
-  - Protocol revision before any efficacy observation; removes unmatched historical V1 from the factorial.
+  - Protocol revision before any efficacy observation; removes unmatched historical
+    V1 from the factorial.
   - Proposed A1-A4 by seeds 81/82/83; twelve formal runs, none executed.
-  - Synthetic four-arm budget gate PASS; explicit user directives resolve Solver qwen3-8b, optimizer/Pattern qwen3.7-flash
-    and provider lwj.
-  - Model correction and current initial-team hashes are recorded separately; prior STOP report remains unchanged.
+  - Synthetic four-arm budget gate PASS; explicit user directives resolve Solver qwen3-8b,
+    optimizer/Pattern qwen3.7-flash and provider lwj.
+  - Model correction and current initial-team hashes are recorded separately; prior
+    STOP report remains unchanged.
   - Historical unexecuted BBH proposal; new work retired in multibench_dataset_migration_v1.
-  - Creation-time model-binding audit is preserved; no real API authorization was consumed.
-  - Registered DRAFT only; no preexecution freeze or authorization consumed, Test sealed.
+  - Creation-time model-binding audit is preserved; no real API authorization was
+    consumed.
+  - Registered DRAFT only; no preexecution freeze or authorization consumed, Test
+    sealed.
   reports:
   - reports/v2_pattern_memory_factorial_v1_1_20261001
   - reports/v2_pattern_memory_factorial_v1_1_model_binding_20261001
   unavailable:
-    implementation_commit: Solver-default correction is recorded in the containing local amendment commit; no execution
-      source is frozen.
-    execution_commit: Model selection resolved; remaining protocol/governance gates prevent execution freeze.
-    result_commit: No efficacy result exists; local audit metadata commit is discoverable in Git history.
+    implementation_commit: Solver-default correction is recorded in the containing
+      local amendment commit; no execution source is frozen.
+    execution_commit: Model selection resolved; remaining protocol/governance gates
+      prevent execution freeze.
+    result_commit: No efficacy result exists; local audit metadata commit is discoverable
+      in Git history.
   baseline_commit: a5997898c30c4d4daad5511203657d3c687c90e5
 - experiment_id: multibench_dataset_migration_v1
   kind: DATASET_FREEZE_AND_PROTOCOL_MIGRATION
@@ -5694,13 +5726,16 @@ experiments:
   baseline_commit: 0356365b8e1e667b1c694417adee77d0531e189a
   notes:
   - Zero-API hard stop; frozen Optimize150 contains one empty reference_final_answer.
-  - No gold fallback, sample removal, split replacement, method amendment or real API execution.
-  - Initial generic team is a draft input; no formal preexecution manifest or commit was frozen.
+  - No gold fallback, sample removal, split replacement, method amendment or real
+    API execution.
+  - Initial generic team is a draft input; no formal preexecution manifest or commit
+    was frozen.
   unavailable:
     manifest: Hard stop before formal preexecution freeze; no frozen manifest exists.
     implementation_commit: No implementation change or preexecution commit was made.
     execution_commit: No canary or formal execution is ready or authorized.
-    result_commit: No scientific efficacy result exists; audit changes remain local for review.
+    result_commit: No scientific efficacy result exists; audit changes remain local
+      for review.
 - experiment_id: math_v2_preexecution_freeze_v1_1
   kind: PREEXECUTION_FREEZE
   era: BENCHMARK_GENERALIZATION
@@ -5720,11 +5755,13 @@ experiments:
   superseded_by: []
   baseline_commit: fa718b9842fcfb50c5a651a59225d1435ebdd7e5
   notes:
-  - Zero-API follow-up resolves reference and execution/conformance blockers; no efficacy observed.
-  - Historical HOLD evidence is immutable. Canary readiness does not authorize provider access.
+  - Zero-API follow-up resolves reference and execution/conformance blockers; no efficacy
+    observed.
+  - Historical HOLD evidence is immutable. Canary readiness does not authorize provider
+    access.
   unavailable:
-    implementation_commit: Exact execution source SHA is frozen in the permanent manifest and source receipt; containing
-      report commit is not execution authority.
+    implementation_commit: Exact execution source SHA is frozen in the permanent manifest
+      and source receipt; containing report commit is not execution authority.
     execution_commit: No real canary or formal call is authorized or executed.
     result_commit: No scientific efficacy results exist.
 - experiment_id: math_v2_pattern_memory_v1
@@ -5745,9 +5782,11 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Registered actual execution identity before final preexecution freeze; no real API execution or efficacy observed.
+  - Registered actual execution identity before final preexecution freeze; no real
+    API execution or efficacy observed.
   unavailable:
-    implementation_commit: Exact execution source is frozen in the permanent manifest and source receipt.
+    implementation_commit: Exact execution source is frozen in the permanent manifest
+      and source receipt.
     execution_commit: No real canary or formal execution authorized or consumed.
     result_commit: No scientific efficacy results exist.
 - experiment_id: math_v2_a1_seed81_real_canary_v1
@@ -5768,9 +5807,12 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Single-use MATH A1 seed81 canary aborted on first successful Solver response lacking the frozen final marker.
-  - No opportunity, complete epoch, Reflection, Pattern, Memory, Validation or Test execution; no efficacy inference.
-  - No same-attempt resume, rerun or automatic repair. Any fresh attempt requires new freeze and authorization.
+  - Single-use MATH A1 seed81 canary aborted on first successful Solver response lacking
+    the frozen final marker.
+  - No opportunity, complete epoch, Reflection, Pattern, Memory, Validation or Test
+    execution; no efficacy inference.
+  - No same-attempt resume, rerun or automatic repair. Any fresh attempt requires
+    new freeze and authorization.
   unavailable:
     result_commit: Containing local result commit; not an execution authorization.
   preexecution_commit: 26386d8c87e3fe363cf13b58c343de34d25ce04c
@@ -5797,11 +5839,15 @@ experiments:
   superseded_by: []
   baseline_commit: e25a2e251a55e0e189c9c228364e4906b98d560d
   notes:
-  - 'R2: original request contained the format contract; model output did not follow. No proven request omission.'
-  - Versioned immutable format binding and request/cache isolation only. No efficacy or real adherence established.
-  - Fresh canary attempt2 requires a separate explicit authorization. Original attempt stays aborted and consumed.
+  - 'R2: original request contained the format contract; model output did not follow.
+    No proven request omission.'
+  - Versioned immutable format binding and request/cache isolation only. No efficacy
+    or real adherence established.
+  - Fresh canary attempt2 requires a separate explicit authorization. Original attempt
+    stays aborted and consumed.
   unavailable:
-    implementation_commit: Exact source receipt is in the versioned manifest after source commit.
+    implementation_commit: Exact source receipt is in the versioned manifest after
+      source commit.
     execution_commit: Zero real calls; future canary not authorized.
     result_commit: No efficacy result.
 - experiment_id: math_v2_solver_interface_repair_v1_2
@@ -5823,11 +5869,15 @@ experiments:
   superseded_by: []
   baseline_commit: e25a2e251a55e0e189c9c228364e4906b98d560d
   notes:
-  - 'R2: original request contained the format contract; model output did not follow. No proven request omission.'
-  - Versioned immutable format binding and request/cache isolation only. No efficacy or real adherence established.
-  - Fresh canary attempt2 requires a separate explicit authorization. Original attempt stays aborted and consumed.
+  - 'R2: original request contained the format contract; model output did not follow.
+    No proven request omission.'
+  - Versioned immutable format binding and request/cache isolation only. No efficacy
+    or real adherence established.
+  - Fresh canary attempt2 requires a separate explicit authorization. Original attempt
+    stays aborted and consumed.
   unavailable:
-    implementation_commit: Exact source receipt is in the versioned manifest after source commit.
+    implementation_commit: Exact source receipt is in the versioned manifest after
+      source commit.
     execution_commit: Zero real calls; future canary not authorized.
     result_commit: No efficacy result.
 - experiment_id: math_v2_autonomous_accounting_preflight_v1
@@ -5929,8 +5979,10 @@ experiments:
   authorization_consumed: false
   notes:
   - Canary PASS prerequisite unmet; zero Pilot attempts and zero Validation calls.
-  - Original provisional prep and manifest remain immutable and are not executable authorization.
-  - A scientific contract amendment and fresh attempt authorization are required before any new execution.
+  - Original provisional prep and manifest remain immutable and are not executable
+    authorization.
+  - A scientific contract amendment and fresh attempt authorization are required before
+    any new execution.
   unavailable:
     implementation_commit: Exact source will be recorded in the frozen manifest.
     execution_commit: No real transport yet.
@@ -5956,7 +6008,8 @@ experiments:
   authorization_consumed: false
   notes:
   - Frozen transport exercised by 16 successful physical calls in fresh Canary V3.
-  - SDK authentication and exact-body path observed; original failed HTTP status remains unknown.
+  - SDK authentication and exact-body path observed; original failed HTTP status remains
+    unknown.
   unavailable:
     execution_commit: Repair freeze only; execution recorded in child Canary V3.
 - experiment_id: math_v2_a1_seed81_real_canary_v3
@@ -5980,9 +6033,12 @@ experiments:
   authorization_consumed: true
   notes:
   - Single-use authorization consumed; aborted during initial-state materialization.
-  - 16 successful Solver calls, 8303 provider-reported tokens; no search opportunity or held-out call.
-  - Final-marker compliant response and its frozen Optimize reference trigger unsupported tuple guard.
-  - No answer correctness or scientific efficacy conclusion; no rerun authorized under this contract.
+  - 16 successful Solver calls, 8303 provider-reported tokens; no search opportunity
+    or held-out call.
+  - Final-marker compliant response and its frozen Optimize reference trigger unsupported
+    tuple guard.
+  - No answer correctness or scientific efficacy conclusion; no rerun authorized under
+    this contract.
   unavailable:
     result_commit: Containing local immutable evidence commit; no efficacy.
 - experiment_id: math_v2_reference_parser_domain_audit_v1
@@ -6005,11 +6061,16 @@ experiments:
   baseline_commit: 9dc4768f49cae0016b09e315631e20e9076ab88a
   authorization_consumed: false
   notes:
-  - Read-only Optimize reference representation and frozen evidence audit; no efficacy observed.
-  - 'Optimize150: 150 nonempty; 9 payload-guard rejects, including 6 comma-parentheses rejects.'
-  - Lexical support only; no comprehensive evaluator validity claim for the other 141 references.
-  - 'Accounting PASS: 8303 reported + 7231 fallback = 15534 charged; zero in-flight reservations.'
-  - Scientific amendment required; no parser, membership, method or provider execution change.
+  - Read-only Optimize reference representation and frozen evidence audit; no efficacy
+    observed.
+  - 'Optimize150: 150 nonempty; 9 payload-guard rejects, including 6 comma-parentheses
+    rejects.'
+  - Lexical support only; no comprehensive evaluator validity claim for the other
+    141 references.
+  - 'Accounting PASS: 8303 reported + 7231 fallback = 15534 charged; zero in-flight
+    reservations.'
+  - Scientific amendment required; no parser, membership, method or provider execution
+    change.
   unavailable:
     implementation_commit: Forensic report and governance only; production unchanged.
     execution_commit: Zero-API audit, not a new experiment execution.
@@ -6034,7 +6095,8 @@ experiments:
   baseline_commit: 45631d26bdcdff4dcc4a28cce2fa24f7ca8e5210
   authorization_consumed: false
   notes:
-  - Explicit user-authorized evaluator-domain amendment; no efficacy-guided rule or split repair.
+  - Explicit user-authorized evaluator-domain amendment; no efficacy-guided rule or
+    split repair.
   - Original budget ledger continues; 15534 previously charged; no fresh 30M.
   - Real API requires exact fresh frozen scope and completed zero-API gates.
   unavailable:
@@ -6061,7 +6123,8 @@ experiments:
   baseline_commit: 45631d26bdcdff4dcc4a28cce2fa24f7ca8e5210
   authorization_consumed: false
   notes:
-  - Explicit user-authorized evaluator-domain amendment; no efficacy-guided rule or split repair.
+  - Explicit user-authorized evaluator-domain amendment; no efficacy-guided rule or
+    split repair.
   - Original budget ledger continues; 15534 previously charged; no fresh 30M.
   - Real API requires exact fresh frozen scope and completed zero-API gates.
   unavailable:
@@ -6088,7 +6151,8 @@ experiments:
   baseline_commit: 45631d26bdcdff4dcc4a28cce2fa24f7ca8e5210
   authorization_consumed: false
   notes:
-  - Explicit user-authorized evaluator-domain amendment; no efficacy-guided rule or split repair.
+  - Explicit user-authorized evaluator-domain amendment; no efficacy-guided rule or
+    split repair.
   - Original budget ledger continues; 15534 previously charged; no fresh 30M.
   - Real API requires exact fresh frozen scope and completed zero-API gates.
   unavailable:
@@ -6115,7 +6179,8 @@ experiments:
   baseline_commit: 45631d26bdcdff4dcc4a28cce2fa24f7ca8e5210
   authorization_consumed: false
   notes:
-  - Explicit user-authorized evaluator-domain amendment; no efficacy-guided rule or split repair.
+  - Explicit user-authorized evaluator-domain amendment; no efficacy-guided rule or
+    split repair.
   - Original budget ledger continues; 15534 previously charged; no fresh 30M.
   - Real API requires exact fresh frozen scope and completed zero-API gates.
   unavailable:
@@ -6254,8 +6319,10 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Mandatory single literal final-answer line; strict parser and mathematical evaluator unchanged.
-  - Initial prompts, models, method, budgets and canonical/split bytes unchanged; fresh exact scope required.
+  - Mandatory single literal final-answer line; strict parser and mathematical evaluator
+    unchanged.
+  - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
+    fresh exact scope required.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_preexecution_freeze_v2
@@ -6276,8 +6343,10 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Mandatory single literal final-answer line; strict parser and mathematical evaluator unchanged.
-  - Initial prompts, models, method, budgets and canonical/split bytes unchanged; fresh exact scope required.
+  - Mandatory single literal final-answer line; strict parser and mathematical evaluator
+    unchanged.
+  - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
+    fresh exact scope required.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_a1_seed81_real_canary_v2
@@ -6298,8 +6367,10 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Mandatory single literal final-answer line; strict parser and mathematical evaluator unchanged.
-  - Initial prompts, models, method, budgets and canonical/split bytes unchanged; fresh exact scope required.
+  - Mandatory single literal final-answer line; strict parser and mathematical evaluator
+    unchanged.
+  - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
+    fresh exact scope required.
   unavailable: {}
   authorization_consumed: true
 - experiment_id: math_v2_1_a1_seed81_pilot_v2
@@ -6320,8 +6391,10 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Mandatory single literal final-answer line; strict parser and mathematical evaluator unchanged.
-  - Initial prompts, models, method, budgets and canonical/split bytes unchanged; fresh exact scope required.
+  - Mandatory single literal final-answer line; strict parser and mathematical evaluator
+    unchanged.
+  - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
+    fresh exact scope required.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_output_interface_repair_v2
@@ -6342,8 +6415,10 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Mandatory single literal final-answer line; strict parser and mathematical evaluator unchanged.
-  - Initial prompts, models, method, budgets and canonical/split bytes unchanged; fresh exact scope required.
+  - Mandatory single literal final-answer line; strict parser and mathematical evaluator
+    unchanged.
+  - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
+    fresh exact scope required.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_preexecution_freeze_v3
@@ -6364,8 +6439,10 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Mandatory single literal final-answer line; strict parser and mathematical evaluator unchanged.
-  - Initial prompts, models, method, budgets and canonical/split bytes unchanged; fresh exact scope required.
+  - Mandatory single literal final-answer line; strict parser and mathematical evaluator
+    unchanged.
+  - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
+    fresh exact scope required.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_a1_seed81_real_canary_v3
@@ -6386,8 +6463,10 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Mandatory single literal final-answer line; strict parser and mathematical evaluator unchanged.
-  - Initial prompts, models, method, budgets and canonical/split bytes unchanged; fresh exact scope required.
+  - Mandatory single literal final-answer line; strict parser and mathematical evaluator
+    unchanged.
+  - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
+    fresh exact scope required.
   unavailable: {}
   authorization_consumed: true
 - experiment_id: math_v2_1_a1_seed81_pilot_v3
@@ -6408,8 +6487,10 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Mandatory single literal final-answer line; strict parser and mathematical evaluator unchanged.
-  - Initial prompts, models, method, budgets and canonical/split bytes unchanged; fresh exact scope required.
+  - Mandatory single literal final-answer line; strict parser and mathematical evaluator
+    unchanged.
+  - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
+    fresh exact scope required.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_solver_output_envelope_repair_v1
@@ -6430,10 +6511,12 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Versioned Solver-only output cap 3600 after observed truncation; Reflection remains 1800; strict parser unchanged.
-  - Initial prompts, models, method, numeric GEPA budgets and canonical/split bytes unchanged; 30M total authorization
-    preserved; fresh exact scope required.
-  - Task closure preserves frozen attempt and evidence; no fresh execution admitted under STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED.
+  - Versioned Solver-only output cap 3600 after observed truncation; Reflection remains
+    1800; strict parser unchanged.
+  - Initial prompts, models, method, numeric GEPA budgets and canonical/split bytes
+    unchanged; 30M total authorization preserved; fresh exact scope required.
+  - Task closure preserves frozen attempt and evidence; no fresh execution admitted
+    under STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_preexecution_freeze_v4
@@ -6454,10 +6537,12 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Versioned Solver-only output cap 3600 after observed truncation; Reflection remains 1800; strict parser unchanged.
-  - Initial prompts, models, method, numeric GEPA budgets and canonical/split bytes unchanged; 30M total authorization
-    preserved; fresh exact scope required.
-  - Task closure preserves frozen attempt and evidence; no fresh execution admitted under STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED.
+  - Versioned Solver-only output cap 3600 after observed truncation; Reflection remains
+    1800; strict parser unchanged.
+  - Initial prompts, models, method, numeric GEPA budgets and canonical/split bytes
+    unchanged; 30M total authorization preserved; fresh exact scope required.
+  - Task closure preserves frozen attempt and evidence; no fresh execution admitted
+    under STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_a1_seed81_real_canary_v4
@@ -6478,10 +6563,12 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Versioned Solver-only output cap 3600 after observed truncation; Reflection remains 1800; strict parser unchanged.
-  - Initial prompts, models, method, numeric GEPA budgets and canonical/split bytes unchanged; 30M total authorization
-    preserved; fresh exact scope required.
-  - Task closure preserves frozen attempt and evidence; no fresh execution admitted under STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED.
+  - Versioned Solver-only output cap 3600 after observed truncation; Reflection remains
+    1800; strict parser unchanged.
+  - Initial prompts, models, method, numeric GEPA budgets and canonical/split bytes
+    unchanged; 30M total authorization preserved; fresh exact scope required.
+  - Task closure preserves frozen attempt and evidence; no fresh execution admitted
+    under STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED.
   unavailable: {}
   authorization_consumed: true
 - experiment_id: math_v2_1_a1_seed81_pilot_v4
@@ -6502,12 +6589,15 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Versioned Solver-only output cap 3600 after observed truncation; Reflection remains 1800; strict parser unchanged.
-  - Initial prompts, models, method, numeric GEPA budgets and canonical/split bytes unchanged; 30M total authorization
-    preserved; fresh exact scope required.
-  - Task closure preserves frozen attempt and evidence; no fresh execution admitted under STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED.
+  - Versioned Solver-only output cap 3600 after observed truncation; Reflection remains
+    1800; strict parser unchanged.
+  - Initial prompts, models, method, numeric GEPA budgets and canonical/split bytes
+    unchanged; 30M total authorization preserved; fresh exact scope required.
+  - Task closure preserves frozen attempt and evidence; no fresh execution admitted
+    under STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED.
   unavailable:
-    execution_commit: Pilot not executed; Canary failed and generation policy decision required.
+    execution_commit: Pilot not executed; Canary failed and generation policy decision
+      required.
   authorization_consumed: false
 - experiment_id: math_v2_1_solver_decoding_policy_v1
   kind: ARCHITECTURE_REFACTOR
@@ -6527,8 +6617,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Only Solver decoding policy changes; optimizer policy, method, data, split, initial team and evaluator remain
-    frozen.
+  - Only Solver decoding policy changes; optimizer policy, method, data, split, initial
+    team and evaluator remain frozen.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_preexecution_freeze_v5
@@ -6549,8 +6639,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Only Solver decoding policy changes; optimizer policy, method, data, split, initial team and evaluator remain
-    frozen.
+  - Only Solver decoding policy changes; optimizer policy, method, data, split, initial
+    team and evaluator remain frozen.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_a1_seed81_real_canary_v5
@@ -6571,10 +6661,10 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Only Solver decoding policy changes; optimizer policy, method, data, split, initial team and evaluator remain
-    frozen.
-  - Exact frozen fields dispatched; Canary response63 length-terminated at3600 without final marker. No regeneration,
-    tuning, Pilot or Validation admission.
+  - Only Solver decoding policy changes; optimizer policy, method, data, split, initial
+    team and evaluator remain frozen.
+  - Exact frozen fields dispatched; Canary response63 length-terminated at3600 without
+    final marker. No regeneration, tuning, Pilot or Validation admission.
   unavailable: {}
   authorization_consumed: true
 - experiment_id: math_v2_1_a1_seed81_pilot_v5
@@ -6595,10 +6685,10 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Only Solver decoding policy changes; optimizer policy, method, data, split, initial team and evaluator remain
-    frozen.
-  - Exact frozen fields dispatched; Canary response63 length-terminated at3600 without final marker. No regeneration,
-    tuning, Pilot or Validation admission.
+  - Only Solver decoding policy changes; optimizer policy, method, data, split, initial
+    team and evaluator remain frozen.
+  - Exact frozen fields dispatched; Canary response63 length-terminated at3600 without
+    final marker. No regeneration, tuning, Pilot or Validation admission.
   unavailable:
     execution_commit: Not executed.
   authorization_consumed: false
@@ -6620,8 +6710,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Only successful-transport prediction invalidity treatment changes; decoding, method, split, initial team, reference
-    and mathematical equivalence remain frozen.
+  - Only successful-transport prediction invalidity treatment changes; decoding, method,
+    split, initial team, reference and mathematical equivalence remain frozen.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_preexecution_freeze_v6
@@ -6642,8 +6732,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Only successful-transport prediction invalidity treatment changes; decoding, method, split, initial team, reference
-    and mathematical equivalence remain frozen.
+  - Only successful-transport prediction invalidity treatment changes; decoding, method,
+    split, initial team, reference and mathematical equivalence remain frozen.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_a1_seed81_real_canary_v6
@@ -6664,8 +6754,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Only successful-transport prediction invalidity treatment changes; decoding, method, split, initial team, reference
-    and mathematical equivalence remain frozen.
+  - Only successful-transport prediction invalidity treatment changes; decoding, method,
+    split, initial team, reference and mathematical equivalence remain frozen.
   unavailable: {}
   authorization_consumed: true
 - experiment_id: math_v2_1_a1_seed81_pilot_v6
@@ -6686,8 +6776,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Only successful-transport prediction invalidity treatment changes; decoding, method, split, initial team, reference
-    and mathematical equivalence remain frozen.
+  - Only successful-transport prediction invalidity treatment changes; decoding, method,
+    split, initial team, reference and mathematical equivalence remain frozen.
   unavailable:
     execution_commit: Not executed.
   authorization_consumed: false
@@ -6709,7 +6799,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Existing in-process reuse passes; missing same-attempt durable resolved-output cache confirmed.
+  - Existing in-process reuse passes; missing same-attempt durable resolved-output
+    cache confirmed.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_terminal_invalid_recovery_v1
@@ -6793,11 +6884,12 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Fresh initial profiling completed with 60 valid Solver generations; GEPA local reused 10 outputs.
-  - One opportunity started with member3; first optimizer response exceeded the assumed total cap. No completed
-    opportunity, exported candidate or commit.
-  - Request/cache/journal/inventory/split integrity passed. Failed Canary remains INVALID; optimizer policy decision
-    required.
+  - Fresh initial profiling completed with 60 valid Solver generations; GEPA local
+    reused 10 outputs.
+  - One opportunity started with member3; first optimizer response exceeded the assumed
+    total cap. No completed opportunity, exported candidate or commit.
+  - Request/cache/journal/inventory/split integrity passed. Failed Canary remains
+    INVALID; optimizer policy decision required.
   authorization_consumed: true
   corrected_failure_category: CLIENT_OUTPUT_CAP_SCOPE_MISMATCH
   classification_correction_report: reports/math_v2_1_optimizer_wire_amendment_v1_20261003
@@ -6819,8 +6911,10 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Canary failed before a completed production opportunity; Pilot and Validation were never dispatched.
-  - Search, held-out, Test, other arms and other seeds remain closed; no inherited scientific outputs.
+  - Canary failed before a completed production opportunity; Pilot and Validation
+    were never dispatched.
+  - Search, held-out, Test, other arms and other seeds remain closed; no inherited
+    scientific outputs.
   unavailable:
     execution_commit: Not executed.
   authorization_consumed: false
@@ -6842,10 +6936,10 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Approved explicit thinking=true/temperature0.0/max_completion_tokens1800, no max_tokens, measurement/accounting
-    ceiling1810.
-  - Reflection and Pattern wire machinery corrected; A1 Pattern remains OFF. Historical V1 runtime stop and full
-    fallback charges are immutable.
+  - Approved explicit thinking=true/temperature0.0/max_completion_tokens1800, no max_tokens,
+    measurement/accounting ceiling1810.
+  - Reflection and Pattern wire machinery corrected; A1 Pattern remains OFF. Historical
+    V1 runtime stop and full fallback charges are immutable.
   - Solver, GEPA budgets, V2.1 method and low-cost data memberships remain unchanged.
   authorization_consumed: false
   unavailable:
@@ -6868,8 +6962,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Current suite891 passed/2 skipped;1468 historical/private cases not executed. Source, binding, manifest, transport,
-    cache, reservation and startup gates passed.
+  - Current suite891 passed/2 skipped;1468 historical/private cases not executed.
+    Source, binding, manifest, transport, cache, reservation and startup gates passed.
   authorization_consumed: false
   unavailable:
     execution_commit: Not executed.
@@ -6891,14 +6985,15 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - 60 valid Solver generations;70 logical Solver evaluations including10 same-attempt GEPA cache hits. Responsibility
-    selected member3.
-  - First reflection dispatched approved total cap1800/thinking=true, reported1800 completion and1800 reasoning
-    tokens, empty answer and finish_reason length.
-  - Cap verification passed; existing truncation guard failed closed before proposal admission. One opportunity
-    started, zero completed, no new exported candidate or commit.
-  - Wire/cache/journal/inventory/split integrity passed. No implementation defect found; new optimizer scientific
-    policy decision required.
+  - 60 valid Solver generations;70 logical Solver evaluations including10 same-attempt
+    GEPA cache hits. Responsibility selected member3.
+  - First reflection dispatched approved total cap1800/thinking=true, reported1800
+    completion and1800 reasoning tokens, empty answer and finish_reason length.
+  - Cap verification passed; existing truncation guard failed closed before proposal
+    admission. One opportunity started, zero completed, no new exported candidate
+    or commit.
+  - Wire/cache/journal/inventory/split integrity passed. No implementation defect
+    found; new optimizer scientific policy decision required.
   authorization_consumed: true
 - experiment_id: math_v2_1_a1_seed81_low_cost_pilot_v2
   kind: PILOT
@@ -6918,8 +7013,10 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Canary failed before a complete production opportunity; Pilot, Shadow and Validation100 never dispatched.
-  - Scope closed without dispatch; no inherited outputs, no tuning/rerun, no other seeds/arms, no Test.
+  - Canary failed before a complete production opportunity; Pilot, Shadow and Validation100
+    never dispatched.
+  - Scope closed without dispatch; no inherited outputs, no tuning/rerun, no other
+    seeds/arms, no Test.
   authorization_consumed: false
   unavailable:
     execution_commit: Not executed.
@@ -6943,7 +7040,8 @@ experiments:
   notes:
   - Explicit non-thinking policy V2; diagnostic outputs excluded from scientific execution.
   unavailable:
-    result_commit: Sanitized diagnostic result is frozen in the current owner report commit.
+    result_commit: Sanitized diagnostic result is frozen in the current owner report
+      commit.
   authorization_consumed: true
 - experiment_id: math_v2_1_preexecution_low_cost_v3
   kind: PREEXECUTION_FREEZE
@@ -6964,7 +7062,8 @@ experiments:
   superseded_by: []
   notes:
   - Explicit non-thinking policy V2; diagnostic outputs excluded from scientific execution.
-  - 'Not started: task clause 16 requires explicit provider reasoning_tokens zero; witness omits the field.'
+  - 'Not started: task clause 16 requires explicit provider reasoning_tokens zero;
+    witness omits the field.'
   unavailable:
     implementation_commit: Pending source freeze.
     execution_commit: Not executed.
@@ -6988,7 +7087,8 @@ experiments:
   superseded_by: []
   notes:
   - Explicit non-thinking policy V2; diagnostic outputs excluded from scientific execution.
-  - 'Not started: task clause 16 requires explicit provider reasoning_tokens zero; witness omits the field.'
+  - 'Not started: task clause 16 requires explicit provider reasoning_tokens zero;
+    witness omits the field.'
   unavailable:
     implementation_commit: Pending source freeze.
     execution_commit: Not executed.
@@ -7012,7 +7112,8 @@ experiments:
   superseded_by: []
   notes:
   - Explicit non-thinking policy V2; diagnostic outputs excluded from scientific execution.
-  - 'Not started: task clause 16 requires explicit provider reasoning_tokens zero; witness omits the field.'
+  - 'Not started: task clause 16 requires explicit provider reasoning_tokens zero;
+    witness omits the field.'
   unavailable:
     implementation_commit: Pending source freeze.
     execution_commit: Not executed.
@@ -7035,7 +7136,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Operational equivalent-evidence policy; generation and scientific candidate contract unchanged.
+  - Operational equivalent-evidence policy; generation and scientific candidate contract
+    unchanged.
   unavailable:
     execution_commit: Zero-API authority and freeze; no provider execution.
 - experiment_id: math_v2_1_preexecution_low_cost_v4
@@ -7056,7 +7158,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Operational equivalent-evidence policy; generation and scientific candidate contract unchanged.
+  - Operational equivalent-evidence policy; generation and scientific candidate contract
+    unchanged.
   unavailable:
     execution_commit: Zero-API authority and freeze; no provider execution.
 - experiment_id: math_v2_1_a1_seed81_low_cost_canary_v4
@@ -7077,7 +7180,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Operational equivalent-evidence policy; generation and scientific candidate contract unchanged.
+  - Operational equivalent-evidence policy; generation and scientific candidate contract
+    unchanged.
   unavailable: {}
   authorization_consumed: true
 - experiment_id: math_v2_1_a1_seed81_low_cost_pilot_v4
@@ -7098,7 +7202,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Operational equivalent-evidence policy; generation and scientific candidate contract unchanged.
+  - Operational equivalent-evidence policy; generation and scientific candidate contract
+    unchanged.
   unavailable: {}
   authorization_consumed: true
 - experiment_id: math_v2_1_proposal_semantic_postmortem_v1
@@ -7119,8 +7224,34 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Ten unique physical proposals and twenty-eight logical replays reconciled; no runtime admission changes.
-  - Six output-control, three answer-representation and one benign-reasoning proposal under hash-bound owner rubric.
-  - Five unique append-only failures; phrase-only masking admits two semantic-invalid proposals.
-  - Historical Pilot NEUTRAL retained; efficacy not identified because no intervention occurred.
+  - Ten unique physical proposals and twenty-eight logical replays reconciled; no
+    runtime admission changes.
+  - Six output-control, three answer-representation and one benign-reasoning proposal
+    under hash-bound owner rubric.
+  - Five unique append-only failures; phrase-only masking admits two semantic-invalid
+    proposals.
+  - Historical Pilot NEUTRAL retained; efficacy not identified because no intervention
+    occurred.
   unavailable: {}
+- experiment_id: math_v2_1_layer1_gepa_flow_audit_v1
+  kind: ZERO_API_AUDIT
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_proposal_semantic_postmortem_v1
+  status: COMPLETED
+  scientific_status: VALID_FORENSIC_ZERO_API
+  implementation_commit: 08bf349e07d4517c5a9c73c6d4abe78cdd6cc892
+  execution_commit: 08bf349e07d4517c5a9c73c6d4abe78cdd6cc892
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_layer1_gepa_flow_audit_v1.yaml
+  report: reports/math_v2_1_layer1_gepa_flow_audit_v1_20261004
+  classifier: LAYER1_BOUNDARY_AND_EFFECTIVE_BUDGET_AUDITED
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Audit completed before redesign; all source and historical evidence refer to baseline.
+  - No Validation outcomes were used to redesign Layer1.
+  unavailable:
+    result_commit: Pending local result commit.

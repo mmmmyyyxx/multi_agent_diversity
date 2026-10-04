@@ -1,0 +1,9 @@
+{
+  "authorization_sha256": "76630550500117515c4eb999362e0c7ce0b70a6ca6d1d01ea7dfb7ce48a6dc68",
+  "design_uses": "Optimize only",
+  "private_inputs_sha256": {
+    "initial_state_private.json": "7920acb1b98d3ca845968e4d7c680515497b5d755cf683ac89b0bf21937188db",
+    "provider_trace_private.jsonl": "d95980ee08d1745cdad78753f5447365ed77d4daf2f4cbb6c461f45d54822249"
+  },
+  "source_sha": "08bf349e07d4517c5a9c73c6d4abe78cdd6cc892"
+}

@@ -1,0 +1,15 @@
+{
+  "Full": 0,
+  "Shadow": 0,
+  "TeamMiniBatch": 0,
+  "commits": 0,
+  "contract_valid": 0,
+  "exported": 0,
+  "local_solver_scored_candidates": 0,
+  "logical_proposals": 28,
+  "optimizer_cache_hits": 18,
+  "physical_proposals": 10,
+  "source_report_sha256": "817ef98ac9532938a2d074ba7ae436e6f6aadaa4f365702a1e255abf09e3254a",
+  "synthetic_contract_failure_scores_not_solver_evaluation": true,
+  "unique_prompts": 10
+}
