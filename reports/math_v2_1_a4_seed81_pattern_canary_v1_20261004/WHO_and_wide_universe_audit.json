@@ -1,0 +1,84 @@
+{
+  "WHO": [
+    {
+      "C": 3,
+      "D": 0,
+      "F": 3,
+      "N": 0,
+      "eligible": true,
+      "f": 0,
+      "member": 0,
+      "score": 3.0
+    },
+    {
+      "C": 4,
+      "D": 1,
+      "F": 4,
+      "N": 0,
+      "eligible": true,
+      "f": 0,
+      "member": 1,
+      "score": 4.0
+    },
+    {
+      "C": 4,
+      "D": 1,
+      "F": 4,
+      "N": 1,
+      "eligible": true,
+      "f": 0,
+      "member": 2,
+      "score": 4.0
+    },
+    {
+      "C": 4,
+      "D": 1,
+      "F": 4,
+      "N": 1,
+      "eligible": true,
+      "f": 0,
+      "member": 3,
+      "score": 4.0
+    },
+    {
+      "C": 3,
+      "D": 1,
+      "F": 4,
+      "N": 1,
+      "eligible": true,
+      "f": 0,
+      "member": 4,
+      "score": 4.0
+    }
+  ],
+  "WHO_recomputed": true,
+  "client_parser_defect": false,
+  "duplicate_support_ids": 0,
+  "failure": "PROVIDER_IDENTIFIER_COPY_LOSS_ON_LONG_IDENTIFIER_WIRE",
+  "immutable_inventory_files": 70,
+  "immutable_inventory_sha256": "924b57c67226a7c88ff346e07204733aeb1df8cba38fec2710f261ea4e818b4d",
+  "initial_state_recomputed": true,
+  "lost_identifier_characters": 2,
+  "missing_inputs": 1,
+  "model_regeneration": false,
+  "new_provider_calls": 0,
+  "no_fuzzy_repair": true,
+  "opportunity_completed": false,
+  "optimize_size": 12,
+  "optimizer_calls": 0,
+  "provider_visible_payload_exact": true,
+  "selected_member": 1,
+  "status": "PASS",
+  "strict_partition_rejection_recomputed": true,
+  "unknown_id_length": 78,
+  "unknown_support_ids": 1,
+  "wide_wrong_size": 7,
+  "wire_id_length": 80,
+  "wrong_by_lane": {
+    "coverage": 4,
+    "direct_flip": 1,
+    "near_margin": 0
+  },
+  "wrong_universe_wiring_exact": true,
+  "zero_responsibility_wrong": 2
+}

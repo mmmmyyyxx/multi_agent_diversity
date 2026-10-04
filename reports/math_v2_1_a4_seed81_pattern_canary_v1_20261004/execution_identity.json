@@ -1,0 +1,23 @@
+{
+  "arm": "A4",
+  "attempt_id": "math_v2_1_pattern_A4_seed81_canary_attempt1",
+  "memory": "structured_cross_member_rolling_risk_memory_v4",
+  "method": "unified_team_prompt_search_v2_1",
+  "pattern": {
+    "calls_per_opportunity": 1,
+    "context_limit_tokens": 1000000,
+    "context_source": "https://help.aliyun.com/zh/model-studio/qwen3-7-flash",
+    "correctness": "target_member_correctness_validity_v1",
+    "discovery": "set_level_wrong_pattern_discovery_v3",
+    "input_estimate": "serialized_utf8_bytes_plus_1024",
+    "input_limit_tokens": 991808,
+    "raw_value": "raw_responsibility_max_4D_2N_C_v1",
+    "responsibility": "same_raw_pattern_responsibility_v1",
+    "schema": "SET_LEVEL_PATTERN_PARTITION_V1",
+    "selection": "raw_responsibility_then_canonical_identity",
+    "universe": "all_selected_member_wrong_optimize"
+  },
+  "preexecution_sha": "6ef2bfc022866e5a9636e42c301fbd8f8511f41f",
+  "seed": 81,
+  "source_sha": "db199da7a511e05291538473cf4670ac1ca890bf"
+}

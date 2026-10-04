@@ -1,0 +1,82 @@
+{
+  "assigned_total": 6,
+  "assigned_unassigned_overlap": 0,
+  "assigned_unique": 6,
+  "duplicate_assignments": 0,
+  "finish_reason": "stop",
+  "input_examples": 7,
+  "input_tokens": 1672,
+  "missing_count": 1,
+  "output_patterns": 6,
+  "output_tokens": 939,
+  "patterns": [
+    {
+      "keys": [
+        "failure_mechanism",
+        "support_ids",
+        "update_direction"
+      ],
+      "support_count": 1,
+      "unique_support_count": 1,
+      "unknown_count": 0
+    },
+    {
+      "keys": [
+        "failure_mechanism",
+        "support_ids",
+        "update_direction"
+      ],
+      "support_count": 1,
+      "unique_support_count": 1,
+      "unknown_count": 1
+    },
+    {
+      "keys": [
+        "failure_mechanism",
+        "support_ids",
+        "update_direction"
+      ],
+      "support_count": 1,
+      "unique_support_count": 1,
+      "unknown_count": 0
+    },
+    {
+      "keys": [
+        "failure_mechanism",
+        "support_ids",
+        "update_direction"
+      ],
+      "support_count": 1,
+      "unique_support_count": 1,
+      "unknown_count": 0
+    },
+    {
+      "keys": [
+        "failure_mechanism",
+        "support_ids",
+        "update_direction"
+      ],
+      "support_count": 1,
+      "unique_support_count": 1,
+      "unknown_count": 0
+    },
+    {
+      "keys": [
+        "failure_mechanism",
+        "support_ids",
+        "update_direction"
+      ],
+      "support_count": 1,
+      "unique_support_count": 1,
+      "unknown_count": 0
+    }
+  ],
+  "top_keys": [
+    "patterns",
+    "unassigned_ids"
+  ],
+  "unassigned": 1,
+  "unassigned_duplicates": 0,
+  "unknown_assigned": 1,
+  "unknown_unassigned": 0
+}

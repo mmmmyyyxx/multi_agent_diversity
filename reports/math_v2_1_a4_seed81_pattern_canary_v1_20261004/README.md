@@ -1,3 +1,7 @@
-# math_v2_1_a4_seed81_pattern_canary_v1
+# Pattern-aware Canary V1: INVALID, frozen failure
 
-Fresh Pattern ON / Memory ON Canary12 Seed81. Zero-API gates and freeze pending. No Pilot, Validation or Test.
+Fresh A4 Seed81 Canary12 completed initial profiling and WHO selection, then stopped before Layer1. There were 62 physical Solver generations (60 valid resolved predictions, two truncations recovered under the existing bounded policy), one Pattern generation, no Optimizer calls and no cache hits. The single set-level Pattern request contained exactly all seven selected-member wrong Optimize rows.
+
+The Pattern response was valid JSON, normal stop, six mechanisms and one unassigned ID. One support identifier lost two characters from the supplied eighty-character identifier. The result contained one unknown support ID and omitted one input. Strict disjoint/subset/complete-membership validation correctly rejected it with PATTERN_DISCOVERY_INVALID_MEMBERSHIP. No approximate ID matching, manual reassignment, regeneration or continuation occurred. WHO, original evidence and client payload were independently replayed from the sealed cache; wire, cumulative accounting, recovery, cache and immutable runtime inventory audits passed. This is a terminal Pattern wire/output-contract failure, not a scoring or WHO defect and not an efficacy result.
+
+New charge: 35693 tokens, all provider reported (Solver 33082; Pattern 2611). Prior 1167499, cumulative 1203192, remaining 38796808 of 40000000; inflight zero and Validation reserve protected. No Pilot, Validation, Shadow or Test was executed. Authorization is consumed and closed. This failed attempt remains immutable. User attachment section 102 permits an independently frozen support-ID transport repair and a fresh Canary; no historical cache, Pattern output or Memory state may be reused.

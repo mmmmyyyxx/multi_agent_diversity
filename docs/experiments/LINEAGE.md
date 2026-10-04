@@ -11,7 +11,7 @@ current_architecture: Unified Team Prompt Search
 method_identity: unified_team_prompt_search_v2_1
 current_method: unified_team_prompt_search_v2_1
 current_implementation: Versioned method semantic contract; benchmark-neutral production composition; zero-API audit
-current_experiment: math_v2_1_a3_seed81_low_cost_canary_v1
+current_experiment: math_v2_1_a4_seed81_pattern_canary_v1
 current_benchmark_suite:
 - math
 - ifbench
@@ -27,14 +27,14 @@ real_api_authorized: false
 validation_access: not_authorized
 test_access: sealed
 open_questions: docs/research/OPEN_QUESTIONS.md
-last_method_milestone: math_v2_1_layer1_memory_amendment_v1
-canary_manifest: experiments/manifests/math_v2_1_a3_seed81_low_cost_canary_v1.yaml
-last_preexecution_milestone: math_v2_1_memory_preexecution_v1
-last_canary_milestone: math_v2_1_a3_seed81_low_cost_canary_v1
-current_canary_status: PASS
+last_method_milestone: math_v2_1_pattern_aware_refactor_v1
+canary_manifest: experiments/manifests/math_v2_1_a4_seed81_pattern_canary_v1.yaml
+last_preexecution_milestone: math_v2_1_pattern_preexecution_v1
+last_canary_milestone: math_v2_1_a4_seed81_pattern_canary_v1
+current_canary_status: INVALID
 formal_a1_ready: false
 formal_a1_authorized: false
-current_execution_blocker: null
+current_execution_blocker: PATTERN_DISCOVERY_INVALID_MEMBERSHIP
 default_optimizer_generation_policy: OPTIMIZER_REFLECTION_GENERATION_POLICY_V3
 default_optimizer_enable_thinking: false
 optimizer_policy_amendment_status: LAYER1_GENERATION_V3_FROZEN_AND_DISPATCHED
@@ -44,11 +44,11 @@ next_canary_attempt_id: math_v2_1_memory_A3_seed81_canary_attempt1
 last_autonomous_milestone: math_v2_1_layer1_preexecution_repair_v1
 autonomous_user_authorization_received: true
 autonomous_token_authorization: 40000000
-autonomous_tokens_consumed: 1167499
-autonomous_tokens_remaining: 38832501
+autonomous_tokens_consumed: 1203192
+autonomous_tokens_remaining: 38796808
 token_accounting_policy: RESERVATION_V2
 prior_accounting_stop_resolution: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2
-autonomous_authorization_status: CANARY_CONSUMED_CLOSED_USER_SCOPE_COMPLETE
+autonomous_authorization_status: PATTERN_ATTEMPT1_CONSUMED_CLOSED_TRANSPORT_REPAIR_PENDING
 pilot_search_complete: false
 pilot_validation_complete: false
 pilot_final_status: NOT_RUN_USER_DEFERRED
@@ -70,9 +70,9 @@ historical_pilot_status:
 new_pilot_search_complete: false
 new_pilot_validation_complete: false
 new_pilot_final_status: NOT_RUN_USER_DEFERRED
-current_memory_policy: structured_action_failure_memory_v3
-current_configuration_arm: A3
-current_pattern_enabled: false
+current_memory_policy: structured_cross_member_rolling_risk_memory_v4
+current_configuration_arm: A4
+current_pattern_enabled: true
 current_memory_enabled: true
 memory_policy_amendment: math_v2_1_shared_risk_memory_amendment_v1
 memory_policy_amendment_status: FROZEN_ZERO_API
@@ -166,9 +166,9 @@ flowchart TD
     n255["math_v2_1_memory_preexecution_v1<br/>PREEXECUTION_FREEZE<br/>COMPLETED"]
     n256["math_v2_1_a3_seed81_low_cost_canary_v1<br/>REAL_CANARY<br/>COMPLETED"]
     n257["math_v2_1_shared_risk_memory_amendment_v1<br/>PROTOCOL_FREEZE<br/>COMPLETED"]
-    n258["math_v2_1_pattern_aware_refactor_v1<br/>PROTOCOL_FREEZE<br/>DRAFT"]
-    n259["math_v2_1_pattern_preexecution_v1<br/>PREEXECUTION_FREEZE<br/>DRAFT"]
-    n260["math_v2_1_a4_seed81_pattern_canary_v1<br/>REAL_CANARY<br/>DRAFT"]
+    n258["math_v2_1_pattern_aware_refactor_v1<br/>PROTOCOL_FREEZE<br/>COMPLETED"]
+    n259["math_v2_1_pattern_preexecution_v1<br/>PREEXECUTION_FREEZE<br/>COMPLETED"]
+    n260["math_v2_1_a4_seed81_pattern_canary_v1<br/>REAL_CANARY<br/>COMPLETED"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]

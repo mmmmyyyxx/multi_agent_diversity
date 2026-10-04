@@ -7424,14 +7424,14 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_shared_risk_memory_amendment_v1
-  status: DRAFT
-  scientific_status: NOT_EXECUTED
-  implementation_commit: null
+  status: COMPLETED
+  scientific_status: VALID_ZERO_API_FREEZE
+  implementation_commit: db199da7a511e05291538473cf4670ac1ca890bf
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_pattern_aware_refactor_v1.yaml
   report: reports/math_v2_1_pattern_aware_refactor_v1_20261004
-  classifier: AWAITING_FRESH_PATTERN_CANARY
+  classifier: ALL_REQUIRED_ZERO_API_GATES_PASS
   active_for_new_work: false
   historical_replay: false
   superseded_by: []
@@ -7439,23 +7439,22 @@ experiments:
   - Target-first set-level wrong-evidence discovery; shared raw responsibility selects WHAT.
   - Canary-only Pattern ON and rolling Memory ON; stop after Canary.
   unavailable:
-    implementation_commit: Awaiting source freeze.
-    execution_commit: Not executed.
-    result_commit: Not executed.
+    result_commit: Following failure publication provenance commit.
+    execution_commit: Zero API freeze.
 - experiment_id: math_v2_1_pattern_preexecution_v1
   kind: PREEXECUTION_FREEZE
   era: BENCHMARK_GENERALIZATION
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_pattern_aware_refactor_v1
-  status: DRAFT
-  scientific_status: NOT_EXECUTED
-  implementation_commit: null
+  status: COMPLETED
+  scientific_status: VALID_ZERO_API_FREEZE
+  implementation_commit: db199da7a511e05291538473cf4670ac1ca890bf
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_pattern_preexecution_v1.yaml
   report: reports/math_v2_1_pattern_preexecution_v1_20261004
-  classifier: AWAITING_FRESH_PATTERN_CANARY
+  classifier: ALL_REQUIRED_ZERO_API_GATES_PASS
   active_for_new_work: false
   historical_replay: false
   superseded_by: []
@@ -7463,23 +7462,22 @@ experiments:
   - Target-first set-level wrong-evidence discovery; shared raw responsibility selects WHAT.
   - Canary-only Pattern ON and rolling Memory ON; stop after Canary.
   unavailable:
-    implementation_commit: Awaiting source freeze.
-    execution_commit: Not executed.
-    result_commit: Not executed.
+    result_commit: Following failure publication provenance commit.
+    execution_commit: Zero API freeze.
 - experiment_id: math_v2_1_a4_seed81_pattern_canary_v1
   kind: REAL_CANARY
   era: BENCHMARK_GENERALIZATION
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_pattern_preexecution_v1
-  status: DRAFT
-  scientific_status: NOT_EXECUTED
-  implementation_commit: null
-  execution_commit: null
+  status: COMPLETED
+  scientific_status: INVALID_OPERATIONAL_CANARY_FAILURE
+  implementation_commit: db199da7a511e05291538473cf4670ac1ca890bf
+  execution_commit: 6ef2bfc022866e5a9636e42c301fbd8f8511f41f
   result_commit: null
   manifest: experiments/manifests/math_v2_1_a4_seed81_pattern_canary_v1.yaml
   report: reports/math_v2_1_a4_seed81_pattern_canary_v1_20261004
-  classifier: AWAITING_FRESH_PATTERN_CANARY
+  classifier: PATTERN_INVALID_MEMBERSHIP_FAIL_CLOSED
   active_for_new_work: false
   historical_replay: false
   superseded_by: []
@@ -7487,6 +7485,7 @@ experiments:
   - Target-first set-level wrong-evidence discovery; shared raw responsibility selects WHAT.
   - Canary-only Pattern ON and rolling Memory ON; stop after Canary.
   unavailable:
-    implementation_commit: Awaiting source freeze.
-    execution_commit: Not executed.
-    result_commit: Not executed.
+    result_commit: Following failure publication provenance commit.
+  authorization_consumed: true
+  authorization_closed: true
+  authorization_closure_evidence: reports/math_v2_1_a4_seed81_pattern_canary_v1_20261004/scope_closure.json

@@ -1,0 +1,12 @@
+{
+  "optimizer_calls": 0,
+  "pattern_finish_reason": "stop",
+  "pattern_json_valid": true,
+  "pattern_partition_valid": false,
+  "raw_truncated": 2,
+  "recovered": 2,
+  "solver_logical_predictions": 60,
+  "solver_physical_generations": 62,
+  "terminal_invalid": 0,
+  "valid_logical_predictions": 60
+}

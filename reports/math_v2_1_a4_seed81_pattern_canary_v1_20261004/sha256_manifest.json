@@ -2,8 +2,44 @@
   "algorithm": "sha256",
   "files": [
     {
+      "file": "execution_identity.json",
+      "sha256": "9cfae477880c363dd01e174f17b9f293991b4dc126c7e268dabf6d9e89454032"
+    },
+    {
+      "file": "final_status.json",
+      "sha256": "f36385f5caff385a978b3d0b368130d68de49d38f7c61d76c2f79ffb6cd11b42"
+    },
+    {
+      "file": "pattern_membership_failure.json",
+      "sha256": "498a499a4b8b85511f4a03f1cb91d693b715f78a2fe52db1b42d9d496ccde2c0"
+    },
+    {
+      "file": "provider_accounting.json",
+      "sha256": "50e96c0ae3c7cde8698f6013d17032debbb87c3a61fd8f89722c14336db997cc"
+    },
+    {
       "file": "README.md",
-      "sha256": "a14fbbdd89069e9a7de5bcda87b6e64d5876a20c1413aff81d788fce15efd4d9"
+      "sha256": "5784da17f31637109fd5ba9b6dba428c0e33c468b82b6369d3d8b3f6d930d5d1"
+    },
+    {
+      "file": "request_policy_receipt.json",
+      "sha256": "ac7cdcd78dd80a5e40482cfb61b8f85f45d4ff0ad8be5b1c55ee34403cb77269"
+    },
+    {
+      "file": "response_format_summary.json",
+      "sha256": "fdf776ee4b7e2c3a2e64b2016ab76f9c11ac0e0579cb9686f5abf1c887cd9858"
+    },
+    {
+      "file": "sanitization_audit.json",
+      "sha256": "7a5a55c6861260372dd22a5a18cd493296d4a0c5656336f2fe86006c32a83c62"
+    },
+    {
+      "file": "scope_closure.json",
+      "sha256": "2a9d258cfafc04f53ed9d1f089d019e6cade21b63f170949afd69ae0a631ee30"
+    },
+    {
+      "file": "WHO_and_wide_universe_audit.json",
+      "sha256": "9e8b4be8a96b939ccfd551bcca27f5c6b4f70028b9e44f1be23cd772efce7202"
     }
   ]
 }
