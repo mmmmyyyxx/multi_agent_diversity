@@ -1,0 +1,54 @@
+{
+  "layer1_policy": {
+    "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+    "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
+    "k_local_return": 4,
+    "max_generations": 6,
+    "max_prompt_chars": 3000,
+    "metric_limit": 36,
+    "official_gepa_fidelity": false,
+    "optimizer_input_schema": "PATTERN_CURRENT_EVIDENCE_MEMORY_INPUT_V3",
+    "panel_policy": "pattern_representatives_preservation_transition_v4",
+    "panel_size": 6
+  },
+  "memory_policy": "structured_cross_member_rolling_risk_memory_v4",
+  "method": "unified_team_prompt_search_v2_1",
+  "method_configuration_sha256": "a6a2841c200a3e2fdbbee068fafcae55209c5548860c0b990a8b2235bfae3407",
+  "pattern_policy": {
+    "calls_per_opportunity": 1,
+    "context_limit_tokens": 1000000,
+    "context_source": "https://help.aliyun.com/zh/model-studio/qwen3-7-flash",
+    "correctness": "target_member_correctness_validity_v1",
+    "discovery": "set_level_wrong_pattern_discovery_v3",
+    "input_estimate": "serialized_utf8_bytes_plus_1024",
+    "input_limit_tokens": 991808,
+    "raw_value": "raw_responsibility_max_4D_2N_C_v1",
+    "responsibility": "same_raw_pattern_responsibility_v1",
+    "schema": "SET_LEVEL_PATTERN_PARTITION_V1",
+    "selection": "raw_responsibility_then_canonical_identity",
+    "universe": "all_selected_member_wrong_optimize"
+  },
+  "shared_risk_policy": {
+    "failure_evidence_capacity": 240,
+    "minimum_distinct_members": 2,
+    "promotion_timing": "opportunity_commit",
+    "recent_opportunity_window": 48,
+    "retention": "recent_opportunity_recurrence_retention_v1",
+    "retention_order": [
+      "recent_recurrence",
+      "recent_distinct_members",
+      "same_lane",
+      "last_seen",
+      "semantic_key"
+    ],
+    "retrieval_order": [
+      "same_lane",
+      "compatible_family",
+      "last_seen",
+      "recent_recurrence",
+      "semantic_key"
+    ],
+    "shared_event_capacity": 48,
+    "signature": "closed_action_outcome_failure_signature_v1"
+  }
+}

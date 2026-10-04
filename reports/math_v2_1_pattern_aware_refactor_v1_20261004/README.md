@@ -6,4 +6,4 @@ The production V2 opportunity builder freezes feasibility and member target befo
 
 The new treatment will discover semantic partitions in one fresh set-level request over all explicitly incorrect selected-member Optimize rows. The same versioned raw responsibility function used by members will select the pattern. Only its representatives provide repair; preservation and transition evidence provide safety. Memory follows selection. Historical Pattern, Memory and experiment evidence remain immutable.
 
-Implementation, offline gates, fresh Pattern+Memory Canary and final sanitized publication are pending. Pilot, Validation and Test are outside this task.
+Implementation and all offline gates now pass. Fresh Pattern+Memory Canary and final sanitized publication remain pending. Pilot, Validation and Test are outside this task.

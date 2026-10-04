@@ -1,0 +1,60 @@
+{
+  "manifest_receipts": {
+    "math_v2_1_a4_seed81_pattern_canary_v1": {
+      "manifest_sha256": "3715e8024dac0708cb9a093e70deaa51687664f02e231fe517fa8e3c44de3394",
+      "preflight": {
+        "benchmark_id": "math",
+        "binding_sha256": "df907ec37f2fe2f748a495f18fd68b996a1b8af75f0a7248e6d21a7ad2ea5dc1",
+        "blockers": [],
+        "gate": "CANARY_READY_NOT_AUTHORIZED",
+        "provider_attempts": 0,
+        "readiness_identity": "MATH_RUNTIME_READINESS_V1",
+        "ready_for_authorization": true,
+        "real_api_authorized": false,
+        "test_calls": 0,
+        "validation_calls": 0
+      },
+      "preregistration_identity": "1bad4a4482635cea61c3ab013c235ba17b875572b03275ad8165f108ce969856",
+      "source_sha": "db199da7a511e05291538473cf4670ac1ca890bf"
+    },
+    "math_v2_1_pattern_aware_refactor_v1": {
+      "manifest_sha256": "e35f05f8f1c9aaf304ff4dd1241c13c51f873efa5ae5682fcd77e4e6240b5d52",
+      "preflight": {
+        "benchmark_id": "math",
+        "binding_sha256": "df907ec37f2fe2f748a495f18fd68b996a1b8af75f0a7248e6d21a7ad2ea5dc1",
+        "blockers": [],
+        "gate": "CANARY_READY_NOT_AUTHORIZED",
+        "provider_attempts": 0,
+        "readiness_identity": "MATH_RUNTIME_READINESS_V1",
+        "ready_for_authorization": true,
+        "real_api_authorized": false,
+        "test_calls": 0,
+        "validation_calls": 0
+      },
+      "preregistration_identity": "489bbb21bcb430b9821c8769f625ab6cc0a2cf567a9d8b08e542dcbc0c52febf",
+      "source_sha": "db199da7a511e05291538473cf4670ac1ca890bf"
+    },
+    "math_v2_1_pattern_preexecution_v1": {
+      "manifest_sha256": "c32f288967426ec4d64a7b9cd6a78fedc3e6e92694e8ad8cd09a9005c09caa2d",
+      "preflight": {
+        "benchmark_id": "math",
+        "binding_sha256": "df907ec37f2fe2f748a495f18fd68b996a1b8af75f0a7248e6d21a7ad2ea5dc1",
+        "blockers": [],
+        "gate": "CANARY_READY_NOT_AUTHORIZED",
+        "provider_attempts": 0,
+        "readiness_identity": "MATH_RUNTIME_READINESS_V1",
+        "ready_for_authorization": true,
+        "real_api_authorized": false,
+        "test_calls": 0,
+        "validation_calls": 0
+      },
+      "preregistration_identity": "8fb3011f37ee10d1475768a22fb885ac3ac7efdbc826fdf1c26722a17537adf6",
+      "source_sha": "db199da7a511e05291538473cf4670ac1ca890bf"
+    }
+  },
+  "new_real_calls": 0,
+  "pilot_authorized": false,
+  "source_sha": "db199da7a511e05291538473cf4670ac1ca890bf",
+  "status": "PREEXECUTION_FROZEN",
+  "validation_authorized": false
+}

@@ -1,0 +1,110 @@
+{
+  "authorized_total": 40000000,
+  "captures": [
+    {
+      "fields": {
+        "enable_thinking": false,
+        "frequency_penalty": 0,
+        "max_tokens": 3600,
+        "min_p": 0,
+        "model": "qwen3-8b",
+        "presence_penalty": 0,
+        "temperature": 0.2,
+        "top_k": 20,
+        "top_p": 0.8
+      },
+      "request_identity_sha256": "6f0181420745f2263938a6b31e3063ef1cefd7800431cadcdbbc402635918f00",
+      "reservation": {
+        "amount": 7912,
+        "input_upper_bound": 4312,
+        "output_hard_cap": 3600,
+        "serialized_request_bytes": 216
+      },
+      "role": "solver",
+      "split": "optimize"
+    },
+    {
+      "fields": {
+        "enable_thinking": false,
+        "frequency_penalty": 0,
+        "max_tokens": 3600,
+        "min_p": 0,
+        "model": "qwen3-8b",
+        "presence_penalty": 0,
+        "temperature": 0.2,
+        "top_k": 20,
+        "top_p": 0.8
+      },
+      "request_identity_sha256": "bfba2f69f202b45d51c02d5f296744cf0d36f54b5271ab683ba684a7e10868fc",
+      "reservation": {
+        "amount": 7912,
+        "input_upper_bound": 4312,
+        "output_hard_cap": 3600,
+        "serialized_request_bytes": 216
+      },
+      "role": "solver",
+      "split": "shadow"
+    },
+    {
+      "fields": {
+        "enable_thinking": false,
+        "frequency_penalty": 0,
+        "max_completion_tokens": 1800,
+        "model": "qwen3.7-flash",
+        "presence_penalty": 1.5,
+        "temperature": 0.7,
+        "top_k": 20,
+        "top_p": 0.8
+      },
+      "request_identity_sha256": "a3c32c36488fac85ad0005b40ee398926e746ec31454a2b07173c84f27083980",
+      "reservation": {
+        "amount": 6130,
+        "generation_policy_identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+        "input_upper_bound": 4320,
+        "output_hard_cap": 1810,
+        "output_measurement_tolerance": 10,
+        "requested_output_cap": 1800,
+        "serialized_request_bytes": 224
+      },
+      "role": "reflection",
+      "split": "optimize"
+    },
+    {
+      "fields": {
+        "enable_thinking": false,
+        "frequency_penalty": 0,
+        "max_completion_tokens": 1800,
+        "model": "qwen3.7-flash",
+        "presence_penalty": 1.5,
+        "temperature": 0.7,
+        "top_k": 20,
+        "top_p": 0.8
+      },
+      "request_identity_sha256": "e7023ea266218c0de9cc6a21e5618ef0ac3ece2dafa5536e5b5ac9ec49ac6f02",
+      "reservation": {
+        "amount": 6130,
+        "generation_policy_identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+        "input_upper_bound": 4320,
+        "output_hard_cap": 1810,
+        "output_measurement_tolerance": 10,
+        "requested_output_cap": 1800,
+        "serialized_request_bytes": 224
+      },
+      "role": "pattern",
+      "split": "optimize"
+    }
+  ],
+  "prior_charged": 1167499,
+  "provider_bounds": {
+    "max_opportunities": 1,
+    "max_proposals_per_opportunity": 6,
+    "pattern_calls": 1,
+    "reflection_calls": 6,
+    "solver_calls": 1632,
+    "solver_per_opportunity": 148,
+    "successful_provider_calls": 1639,
+    "transport_attempts": 34419
+  },
+  "real_calls": 0,
+  "validation_protected_reserve": 9078500
+}

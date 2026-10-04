@@ -1,0 +1,40 @@
+{
+  "compileall": "PASS",
+  "diff_check": "PASS",
+  "first_draft_verification": "OWNER_INTERRUPTED_NOT_A_PASS",
+  "full_current_counts": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 2,
+    "tests": 1081
+  },
+  "full_current_exit_code": 0,
+  "full_current_log_sha256": "28434370438d2f0d067a3d684cdc0237250d5e70c9a6022a435942e90b3050f8",
+  "full_current_reuse": "Unchanged source; verifier locale failure followed completed passing tests",
+  "full_current_verified_source": "db199da7a511e05291538473cf4670ac1ca890bf",
+  "governance": "PASS",
+  "historical_private": "NOT RUN",
+  "historical_private_cases": 1468,
+  "ledger_unchanged": true,
+  "legacy_A1_A4_fake_graphs": "PASS",
+  "new_real_calls": 0,
+  "pattern_memory_fake_graph": "PASS",
+  "pinned_public_GEPA_fakes": "PASS",
+  "sanitization": "PASS",
+  "secret_scan": "PASS",
+  "source_closure_files": 220,
+  "source_poison_checks": 220,
+  "source_sha": "db199da7a511e05291538473cf4670ac1ca890bf",
+  "status": "PASS",
+  "targeted_counts": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 211
+  },
+  "targeted_exit_code": 0,
+  "targeted_log_sha256": "c792d6e2239dca6a785d8bc4348ad385c7b8a0d11bfd3559353718dce3ae7878",
+  "targeted_reuse": "Identical tested code; only generated report indexes changed",
+  "targeted_verified_source": "9193ba070022c3a6b7632d73ce0dd89a74855603",
+  "tracked_worktree_clean": true
+}
