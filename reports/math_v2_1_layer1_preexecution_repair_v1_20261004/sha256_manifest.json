@@ -2,12 +2,32 @@
   "algorithm": "sha256",
   "files": [
     {
+      "file": "canary_freeze_receipt.json",
+      "sha256": "f56df71d966f5c629fa08f4d3498d5c6961f9fab877dc8fdf5819034f260a7b0"
+    },
+    {
+      "file": "gepa_semantics_retained_removed.json",
+      "sha256": "f2e22e96707dfeb72791e278c91747e27a31488544c8c14121d57e9e4215b2f6"
+    },
+    {
+      "file": "layer1_change_log.json",
+      "sha256": "dbaefaff1e857fbb6015341a547eda0288643b7d7b78973fba3b1e600129381f"
+    },
+    {
       "file": "operational_repair.json",
       "sha256": "d9e8a63b24cbf1cc0ca23bb85d7618424aa36090ccc3c7fd6c46358616da6ad3"
     },
     {
       "file": "README.md",
-      "sha256": "b9592ab7bf1818f45deed930653aef9e525470bf2a19993da30b6032bbf1fcd7"
+      "sha256": "daa50112e3fad96fbe04d8e937a3d747971f00cfb62b202ae5bc7453f85be368"
+    },
+    {
+      "file": "source_gate.json",
+      "sha256": "ed747ab621e5981eb80b292eef0ba053f62110270e712c07d310fe25c3db4170"
+    },
+    {
+      "file": "test_summary.json",
+      "sha256": "442581ff0af78b106374f145eb8320d9bc67d88755cc0382e283f6e0ac40edc7"
     }
   ]
 }
