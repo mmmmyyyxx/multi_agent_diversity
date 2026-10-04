@@ -74,9 +74,10 @@ current_memory_policy: structured_action_failure_memory_v3
 current_configuration_arm: A3
 current_pattern_enabled: false
 current_memory_enabled: true
-pending_memory_policy: structured_cross_member_rolling_risk_memory_v4
 memory_policy_amendment: math_v2_1_shared_risk_memory_amendment_v1
-memory_policy_amendment_status: PENDING_ZERO_API_GATES
+memory_policy_amendment_status: FROZEN_ZERO_API
+available_opt_in_memory_policy: structured_cross_member_rolling_risk_memory_v4
+memory_policy_real_execution_authorized: false
 ```
 
 ## Experiment and engineering DAG
@@ -164,7 +165,7 @@ flowchart TD
     n254["math_v2_1_layer1_memory_amendment_v1<br/>PROTOCOL_FREEZE<br/>COMPLETED"]
     n255["math_v2_1_memory_preexecution_v1<br/>PREEXECUTION_FREEZE<br/>COMPLETED"]
     n256["math_v2_1_a3_seed81_low_cost_canary_v1<br/>REAL_CANARY<br/>COMPLETED"]
-    n257["math_v2_1_shared_risk_memory_amendment_v1<br/>PROTOCOL_FREEZE<br/>DRAFT"]
+    n257["math_v2_1_shared_risk_memory_amendment_v1<br/>PROTOCOL_FREEZE<br/>COMPLETED"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]

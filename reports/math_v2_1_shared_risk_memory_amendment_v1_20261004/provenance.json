@@ -1,0 +1,11 @@
+{
+  "baseline": "28ab5677184e2f1199e877b1a5ebc43e54caa469",
+  "initial_source_commit": "93951d005ab964c89b8e67d2661400d48c569da5",
+  "verified_source_commit": "ce8bd431fa2faa71d0430c4b30ecebe6d85308ed",
+  "owner_guard_repair": "exclude_invalid_solver_response_or_missing_validity_evidence",
+  "governance_repair": "index_existing_consumed_closed_authorization",
+  "targeted_handoff_sha256": "9594da7a052e4032c9d657dc1d3f95f100c1b1e963b7770f7f1dd780f3ab71bb",
+  "full_handoff_sha256": "cc966d0481da05ef1430222e1ee880f9442e713c5eb10c3f8c63745d45d6e66c",
+  "real_execution": false,
+  "pushed": false
+}

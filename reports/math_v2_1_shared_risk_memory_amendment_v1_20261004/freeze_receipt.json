@@ -1,0 +1,11 @@
+{
+  "status": "POLICY_IDENTITY_FROZEN_ZERO_API",
+  "source_sha": "ce8bd431fa2faa71d0430c4b30ecebe6d85308ed",
+  "manifest_sha256": "4ce0f2e78d4514702128de6dbf10096ad39bc96a454902f064d0f7463769df5d",
+  "memory_policy": "structured_cross_member_rolling_risk_memory_v4",
+  "preregistration_identity": "51c8e37bd834eaf53009db501bdd5eb8fb033c1dcf8c9fe1712a1987b2c88d5b",
+  "execution_binding_created": false,
+  "real_execution_ready": false,
+  "real_api_authorized": false,
+  "future_execution_requires_fresh_binding_manifest_and_handoff": true
+}

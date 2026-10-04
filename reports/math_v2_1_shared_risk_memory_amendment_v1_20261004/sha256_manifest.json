@@ -2,16 +2,56 @@
   "algorithm": "sha256",
   "files": [
     {
+      "file": "draft_registration/memory_contract.json",
+      "sha256": "51c8e37bd834eaf53009db501bdd5eb8fb033c1dcf8c9fe1712a1987b2c88d5b"
+    },
+    {
+      "file": "draft_registration/README.md",
+      "sha256": "a8d87b099542085a892aa252f6d929902c06bb5be88479e585de3915591ddf2e"
+    },
+    {
+      "file": "draft_registration/sha256_manifest.json",
+      "sha256": "f407022108c81cfa01ac4ed26190965b44f53da1ca6239449bfcb3d6795b1718"
+    },
+    {
+      "file": "draft_registration/test_summary.json",
+      "sha256": "50faff7e1332ca8234fd2a42f58c4f4571908f107edccb5d3cde29af60a76b2e"
+    },
+    {
+      "file": "freeze_receipt.json",
+      "sha256": "6190aa1771b88ed3408c894c28ee9c8e0db68bd73eacc88b1706c8c8457468a1"
+    },
+    {
       "file": "memory_contract.json",
       "sha256": "51c8e37bd834eaf53009db501bdd5eb8fb033c1dcf8c9fe1712a1987b2c88d5b"
     },
     {
+      "file": "provenance.json",
+      "sha256": "bde4c9f6b1d1f34ff06870a70107309541bb1592464aa905238861ccae360ea8"
+    },
+    {
       "file": "README.md",
-      "sha256": "a8d87b099542085a892aa252f6d929902c06bb5be88479e585de3915591ddf2e"
+      "sha256": "aee909e16e2d8596bec3e1f15dd07aeb2e48ebcc25ba85a7776323e08ecf5538"
+    },
+    {
+      "file": "scope_accounting_audit.json",
+      "sha256": "6b4fdd0bb81db17957a8b8fa7198a1b02c60392a6a69c8c5f0a1cf9793e8b875"
+    },
+    {
+      "file": "semantic_delta_audit.json",
+      "sha256": "afd84019436eb1fe026515fc20ddc32c1231a6cf306b42b389d0d7b5c14e53d4"
+    },
+    {
+      "file": "source_identity.json",
+      "sha256": "6370425952cd5907f7d7d70f34b4cfa797c8b3f8e28ba1e6e4fcf40e5c8dd510"
+    },
+    {
+      "file": "synthetic_growth_audit.json",
+      "sha256": "dbe769fb51995f11b4a81825f49c41cd0d0a7d600de7b8c452bb0109e96785ba"
     },
     {
       "file": "test_summary.json",
-      "sha256": "50faff7e1332ca8234fd2a42f58c4f4571908f107edccb5d3cde29af60a76b2e"
+      "sha256": "7216f0f1684cb16bd066e002c2743c611b4353e3532004e0672c38ce912fc719"
     }
   ]
 }

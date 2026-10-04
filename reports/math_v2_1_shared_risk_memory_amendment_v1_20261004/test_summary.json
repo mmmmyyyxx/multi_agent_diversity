@@ -1,5 +1,45 @@
 {
-  "status": "NOT_RUN",
+  "status": "PASS",
+  "source_sha": "ce8bd431fa2faa71d0430c4b30ecebe6d85308ed",
+  "targeted_tests": {
+    "tests": 145,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "full_classified_current_suite": {
+    "tests": 1051,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 2
+  },
+  "full_passed": 1049,
   "historical_private_tests": "NOT_RUN",
-  "new_real_calls": 0
+  "historical_private_cases": 1468,
+  "required_fake_A1_A4_graphs": "PASS",
+  "public_pinned_GEPA_fakes": "PASS",
+  "V3_and_opt_in_V4_fake_graphs": "PASS",
+  "compileall": "PASS",
+  "governance": "PASS",
+  "sanitization": "PASS",
+  "secret_scan": "PASS",
+  "diff_check": "PASS",
+  "source_poison_checks": 117,
+  "source_commit_closure_files": 214,
+  "real_credentials_present": false,
+  "network_attempts": 0,
+  "new_real_calls": 0,
+  "targeted_facts_sha256": "6c1acf5ed5c3fc9c57c888e8ad38119606d5d248be0b831069d870cc4a2b53cc",
+  "full_facts_sha256": "7308950d30bd031583393ec2a940e112344b959be1d7c4ccb64aa14043966253",
+  "obsolete_full_v1_status": "ABORTED_OWNER_REVIEW_BEFORE_VALIDITY_GUARD_FIX",
+  "full_v2_status": "FAILED_INDEX_METADATA_OMISSION",
+  "full_v2_facts_sha256": "975a9cccdd940f77e6dd519c7f48d21ea2d6dded15d31ad7e8cb1760f5348302",
+  "skipped_cases": {
+    "count": 2,
+    "reason": "USER_DEFERRED_DOWNLOAD",
+    "benchmark_ids": [
+      "hover",
+      "pupa"
+    ]
+  }
 }

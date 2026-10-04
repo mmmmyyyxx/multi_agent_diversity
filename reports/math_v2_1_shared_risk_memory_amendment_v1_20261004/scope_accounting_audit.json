@@ -1,0 +1,18 @@
+{
+  "authorized_total": 40000000,
+  "charged_total": 1167499,
+  "remaining": 38832501,
+  "reserved_inflight": 0,
+  "ledger_sha256": "176adc396fbee30f96ee7f46d8f0b3247271b1e897546ef3e940a0e804ca6e55",
+  "new_provider_calls": 0,
+  "new_api_tokens": 0,
+  "memory_provider_calls": 0,
+  "canary_calls": 0,
+  "pilot_calls": 0,
+  "validation_model_calls": 0,
+  "test_model_calls": 0,
+  "push_authorized": false,
+  "old_V3_identity_and_binding_immutable": true,
+  "old_canary_not_repeated": true,
+  "other_methods_models_data_and_budgets_unchanged": true
+}
