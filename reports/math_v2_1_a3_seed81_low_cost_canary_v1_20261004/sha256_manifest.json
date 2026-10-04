@@ -2,8 +2,164 @@
   "algorithm": "sha256",
   "files": [
     {
+      "file": "authorization_receipt.json",
+      "sha256": "431cd3fa79c911083053e431cdb968c0ac93811f984ca7e989ee064a046c21c1"
+    },
+    {
+      "file": "canary12_membership.json",
+      "sha256": "62db13d955dc24828cda84cdaba0b536663c4dcfe2cc7f9eed509d63deb8f62f"
+    },
+    {
+      "file": "candidate_funnel.json",
+      "sha256": "cc2df786bf865773a9b1bed3160c6d35bb24c4ea0bb1f3590b6069cfff682941"
+    },
+    {
+      "file": "execution_identity.json",
+      "sha256": "7b18ef9896c451e5e98c1564a17e82a02870401ad2e837ee103c88ac0ac944ab"
+    },
+    {
+      "file": "final_status.json",
+      "sha256": "29063c17db6fda42c5ebf7948df8eb950d5d6354cd2741c7f3eb02f8ccc6096a"
+    },
+    {
+      "file": "immutable_evidence_audit.json",
+      "sha256": "3d21e804addc10d0767c42edb491c7d6989c7cbb176a7217ce9c766eba7b797f"
+    },
+    {
+      "file": "initial_competence_floor.json",
+      "sha256": "6b0d5d744aa9c01f30729f6ba3654cb35ff394cca1c7a1dc2e66cb9a0cab0aaf"
+    },
+    {
+      "file": "initial_team.json",
+      "sha256": "98b5b72a9a9a8621850d59cbec09aea04b32e78b0b82f96d0dd8fb2f19a36b49"
+    },
+    {
+      "file": "initialization_summary.json",
+      "sha256": "b3283f3ce9e1a2e9d793c8871aefbc2e0b42fd5fdc70954be40f40f8515a8f38"
+    },
+    {
+      "file": "layer1_search_audit.json",
+      "sha256": "91719dcf508e80ee0b406812b69d365e7816077d609ff072f2a1f43905b6efe7"
+    },
+    {
+      "file": "local_to_team_transfer.json",
+      "sha256": "a48754001337381782deafbd0ad9c67b0e27c47ac2879f3276b74f4d74f3f2a3"
+    },
+    {
+      "file": "low_cost_protocol.json",
+      "sha256": "5339d7c35a12c003d1933c9acf2599c180b99fa295d993477904f99c09ff8b9f"
+    },
+    {
+      "file": "memory_semantics_integrity_audit.json",
+      "sha256": "d69a8b5388374db3ebb2d24e346e5e7015451aea603579a000bb5eab577345c1"
+    },
+    {
+      "file": "memory_statistics.json",
+      "sha256": "b9d7d404d9316953e957a0e458bff28dbf4bfd5571d291f67c8e5ffb844ad423"
+    },
+    {
+      "file": "observed_canary_readout.json",
+      "sha256": "7434710ea6f0ab5de93421e63a09b6f7ecdb3972f35c4935d1d2caeed5b70d15"
+    },
+    {
+      "file": "opportunity_allocation.json",
+      "sha256": "35528224ba2cd9534a8eb22209b62574ab3810169a398c47c394b48cbd448e8b"
+    },
+    {
+      "file": "opportunity_trace.json",
+      "sha256": "c08c1e420873903433c3461408e785d55c8b890ec12acddfa3c1a6e2efaa7313"
+    },
+    {
+      "file": "optimize60_membership.json",
+      "sha256": "5ee44e26c2784f76ca29a6300ae770fde4fc56043ba0bfbcd667449c8370c252"
+    },
+    {
+      "file": "optimizer_context_anatomy.json",
+      "sha256": "28d9e0a76eb7303014f6a2f15822cd224fda884f33a0fe272c65eb092d962ab4"
+    },
+    {
+      "file": "panel_anchor_audit.json",
+      "sha256": "9c1e48448ac4d2b516e0e7e8191fc8293848dab5a0649595194df8f8ed3ac7a4"
+    },
+    {
+      "file": "provider_accounting.json",
+      "sha256": "7a2e4f8dd19caab6d5e4ab3fb0346698b86fa771985078d3ca301831281600ca"
+    },
+    {
       "file": "README.md",
-      "sha256": "1807b6cb3a3420a8f507e2799f9766534d23c75ef8efb23835c5e5ca3c332962"
+      "sha256": "60ce57703dd8e8c77e092fc9ba5369bfdf48f33896935da5aeea2137d6983476"
+    },
+    {
+      "file": "realized_team_gain.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "file": "request_policy_receipt.json",
+      "sha256": "71c9bfb336a33e236c1e8091e40b5863e25a9bf13f16fceba9533947ca0c2b08"
+    },
+    {
+      "file": "response_format_summary.json",
+      "sha256": "7c12c889a7f4c65f92c8698bbc9f45fb1a5061ea637c5158e3c26233aa6a25d0"
+    },
+    {
+      "file": "responsibility_trace.json",
+      "sha256": "64e80a0a0e77f46fb9bb54010940eaa8014e2e9c89ad979498bd68d3f059af32"
+    },
+    {
+      "file": "reuse_summary.json",
+      "sha256": "b7e4f589179406fcb955a39d999dc5782884dc81a5ce84c01564db257238e6b4"
+    },
+    {
+      "file": "sanitization_audit.json",
+      "sha256": "ff9c9fad82662fc12754bd8f6714c7d329754d5a483e2aaa948566861f333170"
+    },
+    {
+      "file": "scientific_scope_audit.json",
+      "sha256": "1e4b937f4e643eb000841904516ce6ae033a29551e1112629e86a7b8a2010644"
+    },
+    {
+      "file": "scope_closure.json",
+      "sha256": "2c0eca70831c1d4abaf7234b13e1ace164d7a660a57a494fc67264a79b10ffdf"
+    },
+    {
+      "file": "shadow40_membership.json",
+      "sha256": "6148136d3fe9906ada1d2d7f82d8aad976d5c2dec653f14d0d94a304ca979412"
+    },
+    {
+      "file": "specialization_events.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "file": "split_access_audit.json",
+      "sha256": "9d7facbaf538d612d0bb7ecf7703feffa18102c1044509ef8b9804d6840ac0b7"
+    },
+    {
+      "file": "stage_reuse.json",
+      "sha256": "270b3c252ce1e10ea0a4e1d87afa41036bab8482c319d82249fb5886b4067ec1"
+    },
+    {
+      "file": "task_final_status.json",
+      "sha256": "b3147035b40378178310a0e3da38846c55bd82c59a5297a8a629aca90083e1d6"
+    },
+    {
+      "file": "terminal_invalid_summary.json",
+      "sha256": "31817e8a597f0c5b300ad2966b37cad3d492e21394e81051fa1961b32bbe5e62"
+    },
+    {
+      "file": "token_accounting.json",
+      "sha256": "88b76bf3c3a4aa50862b2d56c92034a108ce83deeae5076bf7c60b26cc222efb"
+    },
+    {
+      "file": "transition_audit.json",
+      "sha256": "e71259919f2450678d07ade6174abff80ef83d5d3a7e4f1e5d8877870e4fca40"
+    },
+    {
+      "file": "transition_trace.json",
+      "sha256": "65c1073b04425a4dda3d7830e8c93745e720d5b03d5a097db2a59621f42f5096"
+    },
+    {
+      "file": "validation100_membership.json",
+      "sha256": "bab90616c897041587a83e3ee36959df8509e5c6f246b6f914966640146bbe9d"
     }
   ]
 }

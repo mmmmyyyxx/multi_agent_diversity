@@ -1,0 +1,277 @@
+{
+  "scope": {
+    "accounting": {
+      "continuation_authorization_sha256": "008c18471d68497bf49f5f52d6cf5f708c2c982969e371b72107d0d0f5683d58",
+      "ledger_directory": "runs/math_autonomous_accounting_v2/token_ledger",
+      "policy_sha256": "5f406b99f390be1b8f60d965973f93fe85e79b6f030598e12d375418e3ab6737",
+      "task_sha256": "3db28ade2b799d2169c6cdbdb03b82e63517ab74c46f8212905855f2fcf9cd9a",
+      "total_authorization": 40000000,
+      "validation_metadata_sha256": "5790bcbc0497aa4d45bd454f1a896f47c72aab98166e8d984d85ce171567beaa"
+    },
+    "arm": "A3",
+    "attempt_id": "math_v2_1_memory_A3_seed81_canary_attempt1",
+    "binding_sha256": "daaad518e92c00036c3d6d9a69ccf5a0015eac28aa83989e0fa4a04178b049d1",
+    "cache_policy": "SOLVER_MEMBER_LANE_EXACT_CACHE_V2",
+    "candidate_contract_identity": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+    "initial_memory_entries": 0,
+    "invalid_recovery_policy": {
+      "cache": "resolved_valid_or_exhausted_terminal_only",
+      "first_valid_stops": true,
+      "identity": "MATH_SOLVER_INVALID_RECOVERY_V1",
+      "invalidity_weight": "none",
+      "logical_evaluation_count": 1,
+      "max_semantic_attempts": 4,
+      "same_request_bytes": true,
+      "solver_invalid_max_retries": 3,
+      "terminal_invalid": "incorrect_continue_no_vote",
+      "terminal_requires_completed_invalid_attempts": 4,
+      "transport_failures_consume_semantic_attempt": false
+    },
+    "layer1_amendment_authorization_sha256": "76c1ee39f31c2155437b192897265357f89dbb7a6ed53e49a434e209e0cd1e0a",
+    "layer1_search_policy": {
+      "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+      "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
+      "k_local_return": 4,
+      "max_generations": 6,
+      "max_prompt_chars": 3000,
+      "metric_limit": 36,
+      "official_gepa_fidelity": false,
+      "optimizer_input_schema": "LAYER1_CURRENT_EVIDENCE_MEMORY_INPUT_V2",
+      "panel_policy": "single_mechanism_preservation_anchor_v3",
+      "panel_size": 6
+    },
+    "low_cost_protocol": {
+      "analysis_policy": {
+        "classification": "sign_of_final_minus_initial_VoteAcc",
+        "identity": "MATH_V2_1_PILOT_DEVELOPMENT_ANALYSIS_V1",
+        "paired_resampling_unit": "frozen_validation_example",
+        "resamples": 10000,
+        "scope": "development_uncertainty_only_no_formal_significance_no_search_feedback",
+        "seed": 81
+      },
+      "canary_stop": "one_complete_production_opportunity_v1",
+      "counts": {
+        "canary_optimize": 12,
+        "pilot_optimize": 60,
+        "pilot_shadow": 40,
+        "pilot_validation": 100
+      },
+      "identity": "MATH_V2_1_LOW_COST_DEV_PROTOCOL_V1",
+      "membership_hashes": {
+        "canary_optimize": "16ad84b5bb22a6aa10e23ef1e1a71ff6d54b7e8e4fcd749571808fba0b2f27ab",
+        "pilot_optimize": "f52c5f2a88337d187f5bf6fe7e9b419d92a96e6848dfeaae01b3f123f197b256",
+        "pilot_shadow": "9732600d0cc9d22c05fa2460738ba45804e23c82ed313ba5545ace5d42886857",
+        "pilot_validation": "c71c48a25ed0439e886481926fcdc6195abc9ab8997c74d4bde3eae712ee3adc"
+      },
+      "pilot_stop": "team_epoch_no_commit_v1",
+      "scientific_scope": "development_only",
+      "selection_policy": {
+        "apportionment": "integer_largest_remainder_lexical_tie",
+        "identity": "MATH_LOW_COST_SUBJECT_LEVEL_HASH_V1",
+        "minimum_per_stratum": 0,
+        "ordering": "sha256_identity_role_stable_id",
+        "output_order": "source_superset_order",
+        "performance_used": false,
+        "strata": [
+          "subject",
+          "level"
+        ]
+      },
+      "source_superset_sha256": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+      "test_access": "sealed"
+    },
+    "low_cost_subsets_sha256": "b6ef5a287d91baa60a329b8a55f88db9e019f83ff2329cf8a62cbae5388d8f5b",
+    "memory_amendment_authorization_sha256": "008c18471d68497bf49f5f52d6cf5f708c2c982969e371b72107d0d0f5683d58",
+    "memory_limits": {
+      "max_context_chars": 1200,
+      "max_failure_entries_per_member": 5,
+      "private_storage_limit": 24,
+      "shared_storage_limit": 48,
+      "top_k_private": 3,
+      "top_k_shared": 3
+    },
+    "memory_policy_identity": "structured_action_failure_memory_v3",
+    "models": {
+      "optimizer_reflection": "qwen3.7-flash",
+      "pattern": "qwen3.7-flash",
+      "solver": "qwen3-8b",
+      "solver_thinking": false
+    },
+    "optimizer_amendment_authorization_sha256": "76c1ee39f31c2155437b192897265357f89dbb7a6ed53e49a434e209e0cd1e0a",
+    "optimizer_generation_policy": {
+      "accounting_output_ceiling": 1810,
+      "enable_thinking": false,
+      "frequency_penalty": 0,
+      "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+      "max_completion_tokens": 1800,
+      "max_tokens": "NOT_SENT",
+      "measurement_tolerance_tokens": 10,
+      "model": "qwen3.7-flash",
+      "output_token_scope": "reasoning_plus_answer",
+      "presence_penalty": 1.5,
+      "roles": [
+        "reflection",
+        "pattern"
+      ],
+      "temperature": 0.7,
+      "top_k": 20,
+      "top_p": 0.8,
+      "truncation": "existing_operational_output_truncation"
+    },
+    "optimizer_input_schema": "LAYER1_CURRENT_EVIDENCE_MEMORY_INPUT_V2",
+    "optimizer_nonthinking_evidence_policy": {
+      "contradiction": "provider_control_failure",
+      "diagnostic_candidate_rejection": "record_only_no_output_reuse",
+      "direct": "dispatched_false_and_actual_zero_without_contradiction",
+      "equivalent": "dispatched_false_accepted_stop_no_reasoning_no_parser_loss",
+      "identity": "OPTIMIZER_NONTHINKING_EQUIVALENT_EVIDENCE_V1",
+      "missing_tokens": "never_infer_zero"
+    },
+    "panel_evidence_policy": "single_mechanism_preservation_anchor_v3",
+    "phase": "one_complete_production_opportunity_v1",
+    "post_search_validation_policy": {
+      "cache": "SOLVER_MEMBER_LANE_EXACT_CACHE_V2",
+      "count": 100,
+      "development_protocol": {
+        "analysis_policy": {
+          "classification": "sign_of_final_minus_initial_VoteAcc",
+          "identity": "MATH_V2_1_PILOT_DEVELOPMENT_ANALYSIS_V1",
+          "paired_resampling_unit": "frozen_validation_example",
+          "resamples": 10000,
+          "scope": "development_uncertainty_only_no_formal_significance_no_search_feedback",
+          "seed": 81
+        },
+        "canary_stop": "one_complete_production_opportunity_v1",
+        "counts": {
+          "canary_optimize": 12,
+          "pilot_optimize": 60,
+          "pilot_shadow": 40,
+          "pilot_validation": 100
+        },
+        "identity": "MATH_V2_1_LOW_COST_DEV_PROTOCOL_V1",
+        "membership_hashes": {
+          "canary_optimize": "16ad84b5bb22a6aa10e23ef1e1a71ff6d54b7e8e4fcd749571808fba0b2f27ab",
+          "pilot_optimize": "f52c5f2a88337d187f5bf6fe7e9b419d92a96e6848dfeaae01b3f123f197b256",
+          "pilot_shadow": "9732600d0cc9d22c05fa2460738ba45804e23c82ed313ba5545ace5d42886857",
+          "pilot_validation": "c71c48a25ed0439e886481926fcdc6195abc9ab8997c74d4bde3eae712ee3adc"
+        },
+        "pilot_stop": "team_epoch_no_commit_v1",
+        "scientific_scope": "development_only",
+        "selection_policy": {
+          "apportionment": "integer_largest_remainder_lexical_tie",
+          "identity": "MATH_LOW_COST_SUBJECT_LEVEL_HASH_V1",
+          "minimum_per_stratum": 0,
+          "ordering": "sha256_identity_role_stable_id",
+          "output_order": "source_superset_order",
+          "performance_used": false,
+          "strata": [
+            "subject",
+            "level"
+          ]
+        },
+        "source_superset_sha256": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+        "test_access": "sealed"
+      },
+      "evaluator": "MATH_EQUIVALENCE_V2",
+      "identity": "MATH_PAIRED_VALIDATION_INTERVENTION_V2",
+      "initial_team": "MATH_GENERIC_TEAM_SEED_V1_1",
+      "invalid_recovery_policy": {
+        "cache": "resolved_valid_or_exhausted_terminal_only",
+        "first_valid_stops": true,
+        "identity": "MATH_SOLVER_INVALID_RECOVERY_V1",
+        "invalidity_weight": "none",
+        "logical_evaluation_count": 1,
+        "max_semantic_attempts": 4,
+        "same_request_bytes": true,
+        "solver_invalid_max_retries": 3,
+        "terminal_invalid": "incorrect_continue_no_vote",
+        "terminal_requires_completed_invalid_attempts": 4,
+        "transport_failures_consume_semantic_attempt": false
+      },
+      "invalidity_metrics": "resolved_terminal_by_member_and_semantic_attempts",
+      "logical_evaluations": 1000,
+      "memory": false,
+      "metrics": [
+        "VoteAcc",
+        "Member0Acc",
+        "Member1Acc",
+        "Member2Acc",
+        "Member3Acc",
+        "Member4Acc",
+        "MeanMemberAcc",
+        "MinMemberAcc",
+        "OracleAcc"
+      ],
+      "paired_transitions": [
+        "vote_fixed",
+        "vote_broken",
+        "vote_net",
+        "oracle_fixed",
+        "oracle_broken",
+        "oracle_net"
+      ],
+      "pattern": false,
+      "prediction_validity_policy": {
+        "denominator": "all_frozen_examples",
+        "fallback_extraction": false,
+        "identity": "MATH_PREDICTION_VALIDITY_V2",
+        "invalid_response_retries": 3,
+        "invalid_vote": "excluded_from_equivalence_classes",
+        "invalidity_telemetry": "observation_only",
+        "prediction_failure": "invalid_incorrect_continue",
+        "reference_failure": "hard_contract_failure",
+        "truncated_even_with_marker": "invalid_incorrect"
+      },
+      "provider": "lwj",
+      "require_deployed_team_change": true,
+      "search_feedback": false,
+      "solver": "qwen3-8b",
+      "split": "validation",
+      "successful_provider_call_ceiling": 4000,
+      "team_size": 5,
+      "test_model_calls": 0,
+      "thinking": false,
+      "transport_attempt_ceiling": 84000,
+      "unchanged_outcome": "NO_INTERVENTION",
+      "unchanged_signal": "NOT_ESTIMATED",
+      "unchanged_status": "SKIPPED_NO_TEAM_CHANGE"
+    },
+    "prediction_validity_policy": {
+      "denominator": "all_frozen_examples",
+      "fallback_extraction": false,
+      "identity": "MATH_PREDICTION_VALIDITY_V2",
+      "invalid_response_retries": 3,
+      "invalid_vote": "excluded_from_equivalence_classes",
+      "invalidity_telemetry": "observation_only",
+      "prediction_failure": "invalid_incorrect_continue",
+      "reference_failure": "hard_contract_failure",
+      "truncated_even_with_marker": "invalid_incorrect"
+    },
+    "preregistration_identity": "8dd92d87ae052cfbff0fa63f77d417820cf59ab1e43c0d9689ac2af10954a2f6",
+    "provider": "lwj",
+    "roles": [
+      "solver",
+      "reflection"
+    ],
+    "seed": 81,
+    "solver_decoding_policy": {
+      "enable_thinking": false,
+      "frequency_penalty": 0,
+      "identity": "SOLVER_DECODING_POLICY_V2",
+      "max_output_tokens": 3600,
+      "min_p": 0,
+      "presence_penalty": 0,
+      "temperature": 0.2,
+      "top_k": 20,
+      "top_p": 0.8
+    },
+    "source_sha": "f231301972c65e3b7c25fe1d7146cd902642e94d",
+    "successful_provider_call_ceiling": 1638,
+    "test_calls": 0,
+    "transport_attempt_ceiling": 34398,
+    "validation_calls": 0
+  },
+  "source_sha": "f231301972c65e3b7c25fe1d7146cd902642e94d",
+  "startup_identity_sha256": "735f1d9f09731f50194426cb18a2d2f287567959ae4ffbb56a5bcb2af19af0e9",
+  "status": "CONSUMED_AND_CLOSED"
+}

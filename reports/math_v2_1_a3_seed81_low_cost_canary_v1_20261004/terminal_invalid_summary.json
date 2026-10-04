@@ -1,0 +1,9 @@
+{
+  "raw_invalid_count": 2,
+  "raw_invalid_reasons": {
+    "OUTPUT_TRUNCATED": 2
+  },
+  "recovered_requests": 1,
+  "semantic_retry_generations": 2,
+  "terminal_requests": 0
+}

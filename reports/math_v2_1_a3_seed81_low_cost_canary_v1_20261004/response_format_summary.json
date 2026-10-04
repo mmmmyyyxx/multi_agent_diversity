@@ -1,0 +1,9 @@
+{
+  "raw_invalid_count": 2,
+  "raw_invalid_reasons": {
+    "OUTPUT_TRUNCATED": 2
+  },
+  "raw_valid_generations": 99,
+  "successful_solver_generations": 101,
+  "terminal_invalid_continues": true
+}

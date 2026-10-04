@@ -1,0 +1,45 @@
+{
+  "actual_failure_memory_reads": 12,
+  "actual_failure_memory_writes": 5,
+  "changed_candidates_locally_scored": 5,
+  "commit_count": 0,
+  "contract_rejects": 1,
+  "cross_opportunity_real_exercised": false,
+  "each_scored_candidate_broke_one_observed_preservation_anchor": true,
+  "full_candidates": [
+    {
+      "initial_floor_pass": false,
+      "member_candidate": 4.0,
+      "member_initial": 5.0,
+      "proposal_iteration": 4,
+      "rejected_guards": [
+        "INITIAL_COMPETENCE_FLOOR"
+      ],
+      "strict_team_gain_pass": true,
+      "team_before": 5.0,
+      "team_candidate": 6.0
+    },
+    {
+      "initial_floor_pass": false,
+      "member_candidate": 3.0,
+      "member_initial": 5.0,
+      "proposal_iteration": 5,
+      "rejected_guards": [
+        "INITIAL_COMPETENCE_FLOOR"
+      ],
+      "strict_team_gain_pass": true,
+      "team_before": 5.0,
+      "team_candidate": 6.0
+    }
+  ],
+  "local_negative": 5,
+  "local_rejected_exported": 4,
+  "memory_intervention_observed": true,
+  "pilot_executed": false,
+  "private_success_real_exercised": false,
+  "scientific_efficacy_verified": false,
+  "scope": "ONE_OPTIMIZE_ONLY_OPPORTUNITY_NO_EFFICACY_INFERENCE",
+  "shared_memory_retrieval_real_exercised": false,
+  "status": "VALID_OPERATIONAL_CANARY",
+  "validation_executed": false
+}

@@ -1,0 +1,29 @@
+{
+  "candidate_count": 4,
+  "commit_count": 0,
+  "completed_opportunities": 1,
+  "initial_memory_entries": 0,
+  "layer1_policy": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
+  "memory_enabled": true,
+  "memory_policy": "structured_action_failure_memory_v3",
+  "method_identity": "efcfc92b17aa521b54f9d1388b8b98f2ffb36952dab42d1ce1d2a697332dbc03",
+  "opportunity_completed": true,
+  "optimizer_calls": 6,
+  "optimizer_enable_thinking": false,
+  "optimizer_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+  "optimizer_repetition_events": 0,
+  "optimizer_truncations": 0,
+  "pattern_enabled": false,
+  "pilot_search_complete": false,
+  "scientific_efficacy_verified": false,
+  "search_complete": false,
+  "solver_calls": 101,
+  "status": "PASS",
+  "stop_reason": "CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE",
+  "target_members": [
+    1
+  ],
+  "test_model_calls": 0,
+  "validation_complete": false,
+  "validation_status": "NOT_RUN_USER_DEFERRED"
+}

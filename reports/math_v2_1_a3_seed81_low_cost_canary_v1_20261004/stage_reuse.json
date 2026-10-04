@@ -1,0 +1,42 @@
+{
+  "full": {
+    "accounting_tokens": 6405,
+    "cache_hits": 10,
+    "logical_solver_evaluations": 24,
+    "physical_solver_attempts": 14,
+    "physical_solver_generations": 14,
+    "semantic_retry_generations": 0
+  },
+  "gepa_local": {
+    "accounting_tokens": 13061,
+    "cache_hits": 5,
+    "logical_solver_evaluations": 30,
+    "physical_solver_attempts": 25,
+    "physical_solver_generations": 25,
+    "semantic_retry_generations": 0
+  },
+  "gepa_reflection": {
+    "accounting_tokens": 0,
+    "cache_hits": 0,
+    "logical_solver_evaluations": 0,
+    "physical_solver_attempts": 0,
+    "physical_solver_generations": 0,
+    "semantic_retry_generations": 0
+  },
+  "initial": {
+    "accounting_tokens": 33609,
+    "cache_hits": 0,
+    "logical_solver_evaluations": 60,
+    "physical_solver_attempts": 62,
+    "physical_solver_generations": 62,
+    "semantic_retry_generations": 2
+  },
+  "team_probe": {
+    "accounting_tokens": 0,
+    "cache_hits": 16,
+    "logical_solver_evaluations": 16,
+    "physical_solver_attempts": 0,
+    "physical_solver_generations": 0,
+    "semantic_retry_generations": 0
+  }
+}

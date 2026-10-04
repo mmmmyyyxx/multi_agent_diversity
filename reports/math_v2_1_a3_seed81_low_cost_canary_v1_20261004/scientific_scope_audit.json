@@ -1,0 +1,60 @@
+{
+  "formal_authorized": false,
+  "generalization_verified": false,
+  "memory_audit": {
+    "failure_memory_evictions": 0,
+    "failure_memory_peak_by_member": [
+      0,
+      5,
+      0,
+      0,
+      0
+    ],
+    "failure_reads": 12,
+    "failure_writes": 5,
+    "initial_memory_entries": 0,
+    "memory_context_chars": {
+      "max": 1150,
+      "mean": 504.0,
+      "min": 2
+    },
+    "memory_ids": [
+      "b25fd454e210abd805d16b3559aca0aca7d604131aab9db9c5b8c774c630bc2f",
+      "41f1aa0f0da441e6987ff56c11e4f25d3bfe5c032373901737c67cf8c5c6be4b",
+      "b44ce0c335233e469543024baa98e0822aa3dd45487bde604fdae94d918d3634",
+      "ab1d831fa5b05bea8bf27812aa28390ec50a8b3a4dabb38f893329a0005661d3",
+      "f994eab9a8a99bad383259d98d1fbbf09c1bda5a2d809c4651de0ed1a43c1d61",
+      "f895dd7a3528b5a9691a3091580693065e28808a1b42267b411a55abfd9cd10a",
+      "20cb862ff293e896c7b4444bec8c3c190f8bd3af54a8d0760239216f2fa39ead"
+    ],
+    "memory_llm_calls": 0,
+    "memory_policy_identity": "structured_action_failure_memory_v3",
+    "private_failure_count_by_member": [
+      0,
+      5,
+      0,
+      0,
+      0
+    ],
+    "private_success_count_by_member": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "shared_reads": 0,
+    "shared_risk_count": 2,
+    "shared_writes": 2,
+    "stateful_write_count": 6,
+    "success_reads": 0,
+    "success_writes": 0
+  },
+  "memory_enabled": true,
+  "other_arms_real_authorized": false,
+  "other_seeds_authorized": false,
+  "pattern_real_calls": 0,
+  "scientific_efficacy_verified": false,
+  "scope": "MEMORY_ON_CANARY_OPERATIONAL_THROUGHPUT_ONLY",
+  "sota_verified": false
+}

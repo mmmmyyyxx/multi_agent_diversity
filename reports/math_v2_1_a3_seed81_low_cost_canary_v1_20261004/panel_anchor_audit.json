@@ -1,0 +1,9 @@
+{
+  "legal_anchor_available": 5,
+  "local_metric_calls": 30,
+  "panel_size": 5,
+  "preservation_anchor_count": 1,
+  "preservation_locally_measurable": true,
+  "repair_count": 3,
+  "root_score": 1
+}

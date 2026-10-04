@@ -1,0 +1,12 @@
+{
+  "authorization_closed": true,
+  "canary_only": true,
+  "future_experiments_require_fresh_freeze_and_authorization": true,
+  "pattern_real_calls": 0,
+  "pilot_executed": false,
+  "run_state_ineligible_for_continuation": true,
+  "scientific_efficacy_verified": false,
+  "status": "CLOSED",
+  "test_model_calls": 0,
+  "validation_executed": false
+}

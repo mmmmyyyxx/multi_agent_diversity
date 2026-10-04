@@ -1,0 +1,110 @@
+{
+  "actual_read_entries": 12,
+  "candidate_archive_in_provider_input": false,
+  "cross_opportunity_real_exercised": false,
+  "full_memory_state_replay_exact": true,
+  "initial_memory_entries": 0,
+  "legal_anchor_available": 5,
+  "local_evaluations": 5,
+  "local_metric_calls": 30,
+  "local_scores_recomputed": true,
+  "memory_audit": {
+    "failure_memory_evictions": 0,
+    "failure_memory_peak_by_member": [
+      0,
+      5,
+      0,
+      0,
+      0
+    ],
+    "failure_reads": 12,
+    "failure_writes": 5,
+    "initial_memory_entries": 0,
+    "memory_context_chars": {
+      "max": 1150,
+      "mean": 504.0,
+      "min": 2
+    },
+    "memory_ids": [
+      "b25fd454e210abd805d16b3559aca0aca7d604131aab9db9c5b8c774c630bc2f",
+      "41f1aa0f0da441e6987ff56c11e4f25d3bfe5c032373901737c67cf8c5c6be4b",
+      "b44ce0c335233e469543024baa98e0822aa3dd45487bde604fdae94d918d3634",
+      "ab1d831fa5b05bea8bf27812aa28390ec50a8b3a4dabb38f893329a0005661d3",
+      "f994eab9a8a99bad383259d98d1fbbf09c1bda5a2d809c4651de0ed1a43c1d61",
+      "f895dd7a3528b5a9691a3091580693065e28808a1b42267b411a55abfd9cd10a",
+      "20cb862ff293e896c7b4444bec8c3c190f8bd3af54a8d0760239216f2fa39ead"
+    ],
+    "memory_llm_calls": 0,
+    "memory_policy_identity": "structured_action_failure_memory_v3",
+    "private_failure_count_by_member": [
+      0,
+      5,
+      0,
+      0,
+      0
+    ],
+    "private_success_count_by_member": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "shared_reads": 0,
+    "shared_risk_count": 2,
+    "shared_writes": 2,
+    "stateful_write_count": 6,
+    "success_reads": 0,
+    "success_writes": 0
+  },
+  "memory_input_by_generation": [
+    {
+      "generation": 1,
+      "input_tokens": 1138,
+      "memory_chars": 2,
+      "read_entries": 0
+    },
+    {
+      "generation": 2,
+      "input_tokens": 1200,
+      "memory_chars": 318,
+      "read_entries": 1
+    },
+    {
+      "generation": 3,
+      "input_tokens": 1256,
+      "memory_chars": 603,
+      "read_entries": 2
+    },
+    {
+      "generation": 4,
+      "input_tokens": 1256,
+      "memory_chars": 603,
+      "read_entries": 2
+    },
+    {
+      "generation": 5,
+      "input_tokens": 1305,
+      "memory_chars": 850,
+      "read_entries": 3
+    },
+    {
+      "generation": 6,
+      "input_tokens": 1364,
+      "memory_chars": 1150,
+      "read_entries": 4
+    }
+  ],
+  "memory_llm_calls": 0,
+  "panel_size": 5,
+  "physical_generations": 6,
+  "preservation_anchor_count": 1,
+  "preservation_locally_measurable": true,
+  "raw_heldout_in_memory": false,
+  "repair_count": 3,
+  "root_score": 1,
+  "same_member_same_attempt": true,
+  "scientific_efficacy_verified": false,
+  "semantic_failure_writes": 5,
+  "status": "PASS"
+}
