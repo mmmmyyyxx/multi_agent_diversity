@@ -7111,7 +7111,7 @@ experiments:
   scientific_status: VALID_FORENSIC_ZERO_API
   implementation_commit: 7c43a15d172e61caf059907da920e0c513a9f7ef
   execution_commit: 7c43a15d172e61caf059907da920e0c513a9f7ef
-  result_commit: null
+  result_commit: ab9b9c3fb0a167601649b377fc0c5fc8d8334a1f
   manifest: experiments/manifests/math_v2_1_proposal_semantic_postmortem_v1.yaml
   report: reports/math_v2_1_proposal_semantic_postmortem_v1_20261004
   classifier: ZERO_INTERVENTION_PROPOSER_GUARD_MISMATCH
@@ -7123,5 +7123,4 @@ experiments:
   - Six output-control, three answer-representation and one benign-reasoning proposal under hash-bound owner rubric.
   - Five unique append-only failures; phrase-only masking admits two semantic-invalid proposals.
   - Historical Pilot NEUTRAL retained; efficacy not identified because no intervention occurred.
-  unavailable:
-    result_commit: Sanitized result commit recorded after publication.
+  unavailable: {}
