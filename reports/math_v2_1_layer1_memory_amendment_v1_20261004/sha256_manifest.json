@@ -10,6 +10,10 @@
       "sha256": "98f8058f0107b23a2a2c260d643c7ba9295430ebe4234fab378975f792f41339"
     },
     {
+      "file": "canary_freeze_receipt.json",
+      "sha256": "15fb9b7ed13af8d8a46c4b8fa7df4da8307d5370a3e4b6645b2488bf1c3993fb"
+    },
+    {
       "file": "failure_memory_contract.json",
       "sha256": "5893be34aeb91c2350e3bacbb7732e7d8bea2c70330c2afc75eed286b2abc95b"
     },
@@ -35,15 +39,19 @@
     },
     {
       "file": "README.md",
-      "sha256": "bf5c2438d77e42a9fb9339eaf95d492968d0fad5cfaace33c5697a353e4f0055"
+      "sha256": "8c108a61d2279f46bbcc9ec02cdf2d14c343195b3c0580939c56e95f36aed0b2"
     },
     {
       "file": "request_body_capture.json",
       "sha256": "f166e33f1a05dd39bc966da04991dd6e153f4ab75a5a219846de04b91c6e4ade"
     },
     {
+      "file": "source_gate.json",
+      "sha256": "4b136b9babe0491009c7b00b3a47982b4b2636a0510cc5eb18c0d984c54023d5"
+    },
+    {
       "file": "test_summary.json",
-      "sha256": "cd88b192735eb0186ecf944ffc445843c196728a5b87f1c5260bbd0ed9d04eb1"
+      "sha256": "6be7f576e9816dd74870baf4d872914e602aa45a1b7783e5e766fc3de54fe61d"
     }
   ]
 }

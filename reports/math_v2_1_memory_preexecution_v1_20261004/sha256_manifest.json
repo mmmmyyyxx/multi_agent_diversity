@@ -2,8 +2,28 @@
   "algorithm": "sha256",
   "files": [
     {
+      "file": "canary_freeze_receipt.json",
+      "sha256": "15fb9b7ed13af8d8a46c4b8fa7df4da8307d5370a3e4b6645b2488bf1c3993fb"
+    },
+    {
+      "file": "canary_source_identity.json",
+      "sha256": "dda71784d67b18a01afed8501d972c547e89d27e9459699d7486ae2ccdb8dcb7"
+    },
+    {
+      "file": "canary_startup_receipt.json",
+      "sha256": "14f931b299cade572df068e4f516955d3d9ee963e6bbff607ee7c3e5326ce90e"
+    },
+    {
       "file": "README.md",
-      "sha256": "af025b4f0f46e3128ffef1b4ca7d4cc1a63ee37a2c6542895ecfbfe687612061"
+      "sha256": "374d044debe975d9fd18363a4da99930ef6297886d1846bc346e157743cb3e10"
+    },
+    {
+      "file": "source_gate.json",
+      "sha256": "4b136b9babe0491009c7b00b3a47982b4b2636a0510cc5eb18c0d984c54023d5"
+    },
+    {
+      "file": "test_summary.json",
+      "sha256": "6be7f576e9816dd74870baf4d872914e602aa45a1b7783e5e766fc3de54fe61d"
     }
   ]
 }
