@@ -389,7 +389,8 @@
             "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
             "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
             "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
-            "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1"
+            "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1",
+            "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1"
           ]
         },
         "path": {
@@ -688,6 +689,20 @@
             "official_gepa_fidelity": false,
             "optimizer_input_schema": "LAYER1_CURRENT_EVIDENCE_MEMORY_INPUT_V2",
             "panel_policy": "single_mechanism_preservation_anchor_v3",
+            "panel_size": 6
+          }
+        },
+        {
+          "const": {
+            "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+            "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
+            "k_local_return": 4,
+            "max_generations": 6,
+            "max_prompt_chars": 3000,
+            "metric_limit": 36,
+            "official_gepa_fidelity": false,
+            "optimizer_input_schema": "PATTERN_CURRENT_EVIDENCE_MEMORY_INPUT_V3",
+            "panel_policy": "pattern_representatives_preservation_transition_v4",
             "panel_size": 6
           }
         }
@@ -1032,7 +1047,8 @@
           "evidence_identity": {
             "enum": [
               "single_mechanism_evidence_v2",
-              "single_mechanism_preservation_anchor_v3"
+              "single_mechanism_preservation_anchor_v3",
+              "pattern_representatives_preservation_transition_v4"
             ]
           },
           "feasibility_identity": {
@@ -1044,7 +1060,8 @@
           "pattern_identity": {
             "enum": [
               "null_pattern_v1",
-              "focused_pattern_diagnostic_v2"
+              "focused_pattern_diagnostic_v2",
+              "set_level_wrong_pattern_discovery_v3"
             ]
           },
           "memory_identity": {
@@ -1087,7 +1104,8 @@
                   "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
                   "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
                   "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
-                  "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1"
+                  "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1",
+                  "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1"
                 ]
               }
             }
@@ -1195,7 +1213,8 @@
                       "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
                       "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
                       "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
-                      "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1"
+                      "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1",
+                      "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1"
                     ]
                   }
                 }
@@ -1251,7 +1270,8 @@
                       "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
                       "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
                       "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
-                      "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1"
+                      "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1",
+                      "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1"
                     ]
                   }
                 }
@@ -1405,7 +1425,8 @@
                     "enum": [
                       "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
                       "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
-                      "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1"
+                      "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1",
+                      "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1"
                     ]
                   }
                 }
@@ -1463,7 +1484,8 @@
                   "identity": {
                     "enum": [
                       "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
-                      "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1"
+                      "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1",
+                      "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1"
                     ]
                   }
                 }
@@ -1745,14 +1767,30 @@
     },
     {
       "if": {
-        "required": [
-          "memory_identity"
-        ],
-        "properties": {
-          "memory_identity": {
-            "const": "structured_cross_member_rolling_risk_memory_v4"
+        "allOf": [
+          {
+            "properties": {
+              "memory_identity": {
+                "const": "structured_cross_member_rolling_risk_memory_v4"
+              }
+            },
+            "required": [
+              "memory_identity"
+            ]
+          },
+          {
+            "not": {
+              "properties": {
+                "pattern_identity": {
+                  "const": "set_level_wrong_pattern_discovery_v3"
+                }
+              },
+              "required": [
+                "pattern_identity"
+              ]
+            }
           }
-        }
+        ]
       },
       "then": {
         "required": [
@@ -1830,6 +1868,132 @@
               }
             }
           }
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "pattern_identity": {
+            "const": "set_level_wrong_pattern_discovery_v3"
+          }
+        },
+        "required": [
+          "pattern_identity"
+        ]
+      },
+      "then": {
+        "properties": {
+          "evidence_identity": {
+            "const": "pattern_representatives_preservation_transition_v4"
+          },
+          "execution_binding": {
+            "properties": {
+              "identity": {
+                "const": "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1"
+              }
+            }
+          },
+          "layer1_search_policy": {
+            "const": {
+              "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+              "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
+              "k_local_return": 4,
+              "max_generations": 6,
+              "max_prompt_chars": 3000,
+              "metric_limit": 36,
+              "official_gepa_fidelity": false,
+              "optimizer_input_schema": "PATTERN_CURRENT_EVIDENCE_MEMORY_INPUT_V3",
+              "panel_policy": "pattern_representatives_preservation_transition_v4",
+              "panel_size": 6
+            }
+          },
+          "mechanism_config": {
+            "additionalProperties": false,
+            "properties": {
+              "memory": {
+                "const": {
+                  "max_context_chars": 1200,
+                  "max_failure_entries_per_member": 5,
+                  "private_storage_limit": 24,
+                  "shared_storage_limit": 48,
+                  "top_k_private": 3,
+                  "top_k_shared": 3
+                }
+              },
+              "optimizer_input_schema": {
+                "const": "PATTERN_CURRENT_EVIDENCE_MEMORY_INPUT_V3"
+              },
+              "panel_policy": {
+                "const": "pattern_representatives_preservation_transition_v4"
+              },
+              "pattern_policy": {
+                "const": {
+                  "calls_per_opportunity": 1,
+                  "context_limit_tokens": 1000000,
+                  "context_source": "https://help.aliyun.com/zh/model-studio/qwen3-7-flash",
+                  "correctness": "target_member_correctness_validity_v1",
+                  "discovery": "set_level_wrong_pattern_discovery_v3",
+                  "input_estimate": "serialized_utf8_bytes_plus_1024",
+                  "input_limit_tokens": 991808,
+                  "raw_value": "raw_responsibility_max_4D_2N_C_v1",
+                  "responsibility": "same_raw_pattern_responsibility_v1",
+                  "schema": "SET_LEVEL_PATTERN_PARTITION_V1",
+                  "selection": "raw_responsibility_then_canonical_identity",
+                  "universe": "all_selected_member_wrong_optimize"
+                }
+              },
+              "pattern_provider_binding": {
+                "pattern": "^[a-f0-9]{64}$",
+                "type": "string"
+              },
+              "shared_risk_policy": {
+                "const": {
+                  "failure_evidence_capacity": 240,
+                  "minimum_distinct_members": 2,
+                  "promotion_timing": "opportunity_commit",
+                  "recent_opportunity_window": 48,
+                  "retention": "recent_opportunity_recurrence_retention_v1",
+                  "retention_order": [
+                    "recent_recurrence",
+                    "recent_distinct_members",
+                    "same_lane",
+                    "last_seen",
+                    "semantic_key"
+                  ],
+                  "retrieval_order": [
+                    "same_lane",
+                    "compatible_family",
+                    "last_seen",
+                    "recent_recurrence",
+                    "semantic_key"
+                  ],
+                  "shared_event_capacity": 48,
+                  "signature": "closed_action_outcome_failure_signature_v1"
+                }
+              }
+            },
+            "required": [
+              "memory",
+              "shared_risk_policy",
+              "optimizer_input_schema",
+              "panel_policy",
+              "pattern_policy",
+              "pattern_provider_binding"
+            ],
+            "type": "object"
+          },
+          "memory_identity": {
+            "const": "structured_cross_member_rolling_risk_memory_v4"
+          },
+          "search_engine_identity": {
+            "const": "LAYER1_BOUNDED_MEMORY_SEARCH_V2"
+          }
+        },
+        "required": [
+          "execution_binding",
+          "mechanism_config",
+          "layer1_search_policy"
         ]
       }
     }

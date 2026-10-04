@@ -789,6 +789,15 @@ nodes:
 - experiment_id: math_v2_1_shared_risk_memory_amendment_v1
   kind: PROTOCOL_FREEZE
   era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_1_pattern_aware_refactor_v1
+  kind: PROTOCOL_FREEZE
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_1_pattern_preexecution_v1
+  kind: PREEXECUTION_FREEZE
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_1_a4_seed81_pattern_canary_v1
+  kind: REAL_CANARY
+  era: BENCHMARK_GENERALIZATION
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1463,4 +1472,19 @@ edges:
   relation: derived_from
   evidence: reports/math_v2_1_shared_risk_memory_amendment_v1_20261004/README.md
   scope: Zero-API opt-in cross-member promotion and rolling retention; no execution or prior evidence changes.
+- from: math_v2_1_shared_risk_memory_amendment_v1
+  to: math_v2_1_pattern_aware_refactor_v1
+  relation: derived_from
+  evidence: reports/math_v2_1_pattern_aware_refactor_v1_20261004/README.md
+  scope: Fresh Pattern-aware responsibility Canary-only amendment
+- from: math_v2_1_pattern_aware_refactor_v1
+  to: math_v2_1_pattern_preexecution_v1
+  relation: derived_from
+  evidence: reports/math_v2_1_pattern_preexecution_v1_20261004/README.md
+  scope: Fresh Pattern-aware responsibility Canary-only amendment
+- from: math_v2_1_pattern_preexecution_v1
+  to: math_v2_1_a4_seed81_pattern_canary_v1
+  relation: derived_from
+  evidence: reports/math_v2_1_a4_seed81_pattern_canary_v1_20261004/README.md
+  scope: Fresh Pattern-aware responsibility Canary-only amendment
 current_frontier: experiments/current_frontier.yaml

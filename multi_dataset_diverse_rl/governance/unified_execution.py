@@ -66,16 +66,16 @@ def bound_preflight(root, manifest):
         "access": dict(search_access="frozen_search", shadow_access="frozen_adaptive_gate", validation_access="not_authorized", test_access="sealed")}
     if current:
         expected["initial_competence_binding"] = c["initial_competence_binding"]
-    if c['identity']==versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION:
+    if c['identity'] in {versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION}:
         method=binding.method(c['execution_arm'])
-        expected.update(memory_identity=method.memory_policy,evidence_identity=method.evidence_policy,
+        expected.update(pattern_identity=method.pattern_policy,memory_identity=method.memory_policy,evidence_identity=method.evidence_policy,
             mechanism_config=method.mechanism_config)
     if "solver_decoding_policy" in c:
         expected["solver_decoding_policy"] = c["solver_decoding_policy"]
     if "prediction_validity_policy" in c:
         expected["prediction_validity_policy"] = c["prediction_validity_policy"]
     for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256", "optimizer_nonthinking_evidence_policy", "layer1_search_policy", "candidate_contract_identity", "post_search_validation_policy"):
-        if k in c and (k not in {'layer1_search_policy','candidate_contract_identity','post_search_validation_policy'} or c['identity'] in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION}): expected[k] = c[k]
+        if k in c and (k not in {'layer1_search_policy','candidate_contract_identity','post_search_validation_policy'} or c['identity'] in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION}): expected[k] = c[k]
     if any(manifest.get(k) != v for k, v in expected.items()):
         errors.append("MANIFEST_EXECUTION_BINDING_MISMATCH")
     if manifest.get("authorization", {}).get("real_api_authorized") is not False:
@@ -103,7 +103,7 @@ def execution_identity(root, contract):
     # canonical raw source remains private and has its separate manifest hash.
     configs = [contract["split_directory"] + "/math.json", contract["initial_team_path"],
                contract["pattern_prompt_path"], contract.get("binding_path", versions.MATH_EXECUTION_BINDING_PATH)]
-    configs.extend(contract[k] for k in ("parent_binding_path", "accounting_policy_path", "validation_accounting_metadata_path", "verify_settings_path", "amendment_parent_binding_path", "low_cost_subsets_path", "optimizer_amendment_authorization_path", "layer1_parent_binding_path", "layer1_amendment_authorization_path", "memory_parent_binding_path", "memory_amendment_authorization_path") if k in contract)
+    configs.extend(contract[k] for k in ("parent_binding_path", "accounting_policy_path", "validation_accounting_metadata_path", "verify_settings_path", "amendment_parent_binding_path", "low_cost_subsets_path", "optimizer_amendment_authorization_path", "layer1_parent_binding_path", "layer1_amendment_authorization_path", "memory_parent_binding_path", "memory_amendment_authorization_path", "pattern_parent_binding_path", "pattern_amendment_authorization_path", "rolling_memory_freeze_path") if k in contract)
     identity = build_unified_source_identity(root, root / contract["canonical_root"] / "manifests/math.json", [root / p for p in configs])
     files = [root / r["path"] for s in identity["scopes"].values() for r in s["files"]]
     files.append(root / contract["split_directory"] / "math.ids.jsonl")
@@ -189,14 +189,16 @@ def execution_scope(manifest, contract):
         scope["optimizer_amendment_authorization_sha256"] = contract["optimizer_amendment_authorization_sha256"]
         if contract.get('optimizer_nonthinking_evidence_policy') is not None:
             scope['optimizer_nonthinking_evidence_policy']=contract['optimizer_nonthinking_evidence_policy']
-    if contract.get('identity') in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION}:
+    if contract.get('identity') in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION}:
         scope.update(layer1_search_policy=contract['layer1_search_policy'],candidate_contract_identity=contract['candidate_contract_identity'],
             cache_policy=contract['cache_policy'],post_search_validation_policy=contract['post_search_validation_policy'],
             layer1_amendment_authorization_sha256=contract['layer1_amendment_authorization_sha256'])
-    if contract.get('identity')==versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION:
+    if contract.get('identity') in {versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION}:
         scope.update(memory_policy_identity=contract['memory_policy_identity'],memory_limits=contract['memory_limits'],
             optimizer_input_schema=contract['optimizer_input_schema'],panel_evidence_policy=contract['panel_evidence_policy'],
             memory_amendment_authorization_sha256=contract['memory_amendment_authorization_sha256'],initial_memory_entries=0)
+    if contract.get('identity')==versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION:
+        scope.update(roles=['solver','reflection','pattern'],pattern_policy=contract['pattern_policy'],shared_risk_policy=contract['shared_risk_policy'],pattern_amendment_authorization_sha256=contract['pattern_amendment_authorization_sha256'])
     if "accounting_policy_path" in contract:
         scope["accounting"] = dict(policy_sha256=contract["accounting_policy_sha256"],
             total_authorization=40_000_000 if contract["identity"] in versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS else 30_000_000, task_sha256=contract["task_authorization_sha256"],
@@ -354,6 +356,6 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
         manifest["prediction_validity_policy"] = contract["prediction_validity_policy"]
     manifest["global_stop_identity"] = method.global_stop.identity
     for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256", "optimizer_nonthinking_evidence_policy", "layer1_search_policy", "candidate_contract_identity", "post_search_validation_policy"):
-        if k in contract and (k not in {'layer1_search_policy','candidate_contract_identity','post_search_validation_policy'} or contract['identity'] in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION}): manifest[k] = contract[k]
+        if k in contract and (k not in {'layer1_search_policy','candidate_contract_identity','post_search_validation_policy'} or contract['identity'] in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION}): manifest[k] = contract[k]
     manifest["preregistration_identity"] = canonical_sha256({k: v for k, v in manifest.items() if k not in {"lifecycle", "authorization"}})
     return manifest

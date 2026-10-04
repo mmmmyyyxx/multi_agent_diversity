@@ -88,7 +88,7 @@ guard; the competence floor is measured on the complete Optimize scope.
   `FOCUSED_BACKEND_MINIMUM_WITHOUT_LEGAL_BOUNDARIES`; no mixed-repair fallback.
 - **INV-PATTERN-DIAGNOSTIC-001**: Diagnosis follows target selection. Pattern
   never chooses WHO or changes raw responsibility/failure discount. Every valid
-  non-null diagnosis selects one focus by primary-lane overlap, support,
+  historical non-null diagnosis selects one focus by primary-lane overlap, support,
   confidence and stable structural identity, independent of concentration.
   Empty support partitions fail conformance, without generic fallback. Report
   `DPR_all=focus/all legal residuals`, `ConditionalDPR=focus/assigned residuals`,
@@ -679,3 +679,15 @@ recurrence stays private. Direct measured structural rejections remain sources.
 The new signature and retention policy enter mechanism identity explicitly.
 V3, its real execution binding and historical evidence remain immutable.
 This offline amendment grants no API or held-out execution authorization.
+
+## Pattern-aware Responsibility V3 (explicit opt-in)
+
+The [Pattern-aware contract](PATTERN_RESPONSIBILITY_V3.md) adds the versioned
+target-first Who → What → How path. WHO remains the unchanged member controller.
+One fresh set-level analysis covers all selected-member wrong Optimize evidence;
+the shared raw `max(4D,2N,C)` implementation selects WHAT by pattern support
+responsibility, with semantic identity ties only. The optimizer edits HOW using
+selected representatives, preservation, transition safety and bounded rolling
+Memory retrieved after selection. Layer2 decides deployment. Old focus ranking
+is retained only for its historical identities. Fresh Pattern+Memory Canary
+authorization is separate from readiness and closes without Pilot/Validation/Test.

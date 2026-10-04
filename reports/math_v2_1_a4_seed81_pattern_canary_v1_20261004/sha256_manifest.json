@@ -1,0 +1,9 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "README.md",
+      "sha256": "a14fbbdd89069e9a7de5bcda87b6e64d5876a20c1413aff81d788fce15efd4d9"
+    }
+  ]
+}

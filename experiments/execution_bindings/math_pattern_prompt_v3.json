@@ -1,0 +1,18 @@
+{
+  "identity": "SET_LEVEL_PATTERN_PARTITION_V1",
+  "policy": {
+    "calls_per_opportunity": 1,
+    "context_limit_tokens": 1000000,
+    "context_source": "https://help.aliyun.com/zh/model-studio/qwen3-7-flash",
+    "correctness": "target_member_correctness_validity_v1",
+    "discovery": "set_level_wrong_pattern_discovery_v3",
+    "input_estimate": "serialized_utf8_bytes_plus_1024",
+    "input_limit_tokens": 991808,
+    "raw_value": "raw_responsibility_max_4D_2N_C_v1",
+    "responsibility": "same_raw_pattern_responsibility_v1",
+    "schema": "SET_LEVEL_PATTERN_PARTITION_V1",
+    "selection": "raw_responsibility_then_canonical_identity",
+    "universe": "all_selected_member_wrong_optimize"
+  },
+  "prompt": "Discover generalizable recurring mathematical failure mechanisms in the ENTIRE\nsupplied set of incorrect selected-member Optimize examples, across all responsibility lanes.\nReturn one JSON object: {\"patterns\":[{\"failure_mechanism\":\"generic mechanism\",\n\"update_direction\":\"generic corrective reasoning principle\",\"support_ids\":[\"supplied id\"]}],\n\"unassigned_ids\":[\"remaining supplied id\"]}. Supports must be nonempty and disjoint. All supplied\nIDs must occur exactly once, as support or unassigned. A singleton mechanism is allowed when\njustified; leave unsupported abstractions unassigned. Do not rank patterns or members, assign\nimportance, choose a focus or budget, rewrite a complete procedure, specify a response interface,\ncopy example facts, named entities, numeric constants or answers. No confidence is required.\nDiscovery describes structure only; the controller computes responsibility and selects a focus."
+}

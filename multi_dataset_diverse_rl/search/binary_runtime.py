@@ -6,6 +6,7 @@ The orchestrator, variable evidence, GEPA, Pattern and Memory remain shared.
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
+from .. import versions
 import hashlib
 import json
 
@@ -153,6 +154,10 @@ class BinaryEvidenceSource:
             output = state.member_outputs[member_id][index]
             result.append(EvidenceItem(example.item.input_id, "optimize", frozenset(roles),
                 dict(input_payload=example.item.problem, gold=example.reference,
+                     correctness_signal_identity=versions.TARGET_CORRECTNESS_SIGNAL_VERSION,
+                     target_member_correct=bool(row.team_correctness[member_id]),
+                     target_member_valid=bool(output.valid),
+                     responsibility_labels=tuple(name for name in ('direct_flip','near_margin','coverage') if name in roles),
                      target_output=output.answer if output.valid else None, feedback=feedback,
                      legacy_group="repair" if "REPAIR" in roles else "preservation" if "PRESERVATION" in roles else "team_hard",
                      legacy_tags=tags, lane=lane, team_disagreement=len({a for a, v in zip(row.team_answers, row.team_validity) if v}),

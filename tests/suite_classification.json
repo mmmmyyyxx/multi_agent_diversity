@@ -1,6 +1,6 @@
 {
-  "schema_version": "suite_classification_v1",
   "current_suite_policy": "Current Unified, benchmark, governance, production and source-identity compatibility contracts. Historical replay and eight private-artifact modules are explicitly deselected and reported; full historical suite is separately available.",
+  "schema_version": "suite_classification_v1",
   "tests": [
     {
       "path": "tests/test_unified_semantic_contract.py",
@@ -1231,6 +1231,12 @@
       "classification": "CURRENT_CONTRACT",
       "required_private_artifacts": [],
       "current_suite_included": true
+    },
+    {
+      "classification": "CURRENT_CONTRACT",
+      "current_suite_included": true,
+      "path": "tests/test_pattern_responsibility.py",
+      "required_private_artifacts": []
     }
   ]
 }

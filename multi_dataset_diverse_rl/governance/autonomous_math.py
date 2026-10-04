@@ -144,7 +144,10 @@ async def execute_search(root, prep, run_root, payload):
             durable_cache=durable_output_cache(run_root,c,payload))
         broker.prompt_observer = reserve.observe
         solver = BenchmarkSolver(binding.benchmark(),broker)
-        composed = binding.compose(arm=arm,seed=81,solver=solver,reflection=ReflectionProvider(broker),pattern_provider=None,run_root=run_root)
+        from .. import versions
+        from ..search.pattern_responsibility import SetLevelPatternProvider
+        pattern_provider=(SetLevelPatternProvider(broker,read_json(root/c['pattern_prompt_path'])['prompt']) if c['identity']==versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION else None)
+        composed = binding.compose(arm=arm,seed=81,solver=solver,reflection=ReflectionProvider(broker),pattern_provider=pattern_provider,run_root=run_root)
         if c.get('memory_policy_identity'):
             if any(composed.memory.audit()[k] for k in ('success_writes','failure_writes','shared_writes')):
                 raise OperationalAbort('FRESH_MEMORY_STATE_REQUIRED')
@@ -168,17 +171,21 @@ async def execute_search(root, prep, run_root, payload):
         if c.get("method_identity") == "unified_team_prompt_search_v2_1" and c["execution_phase"] == "canary" and not result.trace:
             raise OperationalAbort("CANARY_NO_COMPLETE_PRODUCTION_OPPORTUNITY")
         from .. import versions
-        if c['identity'] in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION} and c['execution_phase']=='canary' and not any(t.candidate_ids for t in result.trace):
+        if c['identity'] in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION} and c['execution_phase']=='canary' and not any(t.candidate_ids for t in result.trace):
             raise OperationalAbort('STOP_LAYER1_ZERO_THROUGHPUT')
         final = composed.state.snapshot()
         atomic_write_json(run_root / "final_team_private.json",dict(prompts=final.member_prompts,state_id=final.team_state_id))
         atomic_write_json(run_root / "final_state_private.json",plain(final))
         summary = dict(result=plain(result),ledger=broker.usage,accounting=budget.view(),validation_reserve=reserve.remaining(),
-            validation_search_raw_reads=0,validation_calls=0,test_raw_reads=0,test_calls=0,pattern_calls=0,memory_activity=0)
+            validation_search_raw_reads=0,validation_calls=0,test_raw_reads=0,test_calls=0,pattern_calls=broker.usage['pattern'],memory_activity=0)
+        if pattern_provider is not None:
+            summary['pattern_input_audit']=pattern_provider.input_audit
+            if pattern_provider.calls!=1 or not composed.evaluation.provider.probed:
+                raise OperationalAbort('PATTERN_CANARY_FLOW_INCOMPLETE')
         if c.get('memory_policy_identity'):
             summary['memory_activity']=composed.memory.audit()['stateful_write_count']
             summary['memory_audit']=composed.memory.audit()
-        if c['identity'] in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION}:
+        if c['identity'] in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION}:
             from .math_paired_validation import team_change_receipt
             summary['deployed_team_change']=team_change_receipt(initial_prompts(root,c),final.member_prompts)
             if c['execution_phase']=='pilot' and not summary['deployed_team_change']['team_changed']:

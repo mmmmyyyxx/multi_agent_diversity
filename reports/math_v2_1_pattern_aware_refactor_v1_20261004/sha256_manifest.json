@@ -1,0 +1,13 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "current_flow_audit.json",
+      "sha256": "a76463470fc5a5d56da5d50dba7523b74d9d2c21e02d6baa123bd2b5f7e8551b"
+    },
+    {
+      "file": "README.md",
+      "sha256": "4e80391fa3a6cc55eff825aa92f26b0e26ea94aa6cfc0c0f23ae2509280d6f27"
+    }
+  ]
+}

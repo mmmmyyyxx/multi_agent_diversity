@@ -21,6 +21,8 @@ from .layer1_responsibility import ResponsibilityConditionedOptimizer, Responsib
 from .layer1_memory import MemoryConditionedOptimizer, MemoryConditionedEngine, MemoryLayer1Config, PreservationAnchorEvidenceV3
 from .action_memory import StructuredActionMemoryV3, LIMITS as ACTION_MEMORY_LIMITS
 from .rolling_risk_memory import StructuredRollingRiskMemoryV4, POLICY as SHARED_RISK_POLICY
+from .pattern_responsibility import ResponsibilityPatternDiscoveryV3, PatternConditionedEvidenceV4, POLICY as PATTERN_POLICY
+from .pattern_layer1 import PatternMemoryOptimizer, PatternMemoryEngine, PatternLayer1Config
 
 
 class FirstParentEpochStop(GlobalStopPolicy):
@@ -46,9 +48,10 @@ def build_binary_orchestrator(*, benchmark, aggregation, examples, prompts, solv
         first_parent_epoch=False, provider_call_reader=None, one_production_opportunity=False):
     layer1=isinstance(optimizer,ResponsibilityConditionedOptimizer)
     action_memory=isinstance(optimizer,MemoryConditionedOptimizer)
+    pattern_aware=isinstance(optimizer,PatternMemoryOptimizer)
     if not layer1 and (not isinstance(optimizer, GEPATeamExposureOptimizer) or optimizer.config.identity() != GEPATeamExposureConfig().identity()):
         raise SearchContractError("FROZEN_GEPA_EXPOSURE_REQUIRED")
-    if layer1 and optimizer.config.identity()!=(MemoryLayer1Config() if action_memory else Layer1Config()).identity():
+    if layer1 and optimizer.config.identity()!=(PatternLayer1Config() if pattern_aware else MemoryLayer1Config() if action_memory else Layer1Config()).identity():
         raise SearchContractError('FROZEN_LAYER1_SEARCH_REQUIRED')
     if method.diagnosis_policy != versions.BINARY_PLURALITY_RESPONSIBILITY_VERSION:
         raise SearchContractError("BINARY_RESPONSIBILITY_IDENTITY_MISMATCH")
@@ -58,6 +61,7 @@ def build_binary_orchestrator(*, benchmark, aggregation, examples, prompts, solv
                              versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION}:
         raise SearchContractError("UNSUPPORTED_BINARY_METHOD")
     pattern_id = versions.UNIFIED_FOCUSED_PATTERN_VERSION if current else versions.UNIFIED_PATTERN_DIAGNOSTIC_VERSION
+    if pattern_aware:pattern_id=versions.PATTERN_AWARE_DISCOVERY_VERSION
     memory_id = versions.UNIFIED_EXPERIENCE_MEMORY_VERSION if current else versions.UNIFIED_STRUCTURED_MEMORY_VERSION
     if action_memory:
         memory_id=method.memory_policy
@@ -75,14 +79,20 @@ def build_binary_orchestrator(*, benchmark, aggregation, examples, prompts, solv
             search_acceptance_policy='layer1_local_guidance_team_admission_v1')
         if action_memory:
             expected=replace(expected,search_engine=versions.LAYER1_FEEDBACK_SEARCH_VERSION,
-                evidence_policy=versions.LAYER1_ANCHOR_EVIDENCE_VERSION)
-            if method.memory_policy!=memory_id or method.pattern_policy!=versions.UNIFIED_NULL_PATTERN_VERSION:
+                evidence_policy=versions.PATTERN_CONDITIONED_EVIDENCE_VERSION if pattern_aware else versions.LAYER1_ANCHOR_EVIDENCE_VERSION)
+            if method.memory_policy!=memory_id or method.pattern_policy!=(pattern_id if pattern_aware else versions.UNIFIED_NULL_PATTERN_VERSION):
                 raise SearchContractError('MEMORY_MAINLINE_MECHANISMS_MISMATCH')
             mechanism_config={'memory':ACTION_MEMORY_LIMITS,
                     'optimizer_input_schema':versions.LAYER1_INPUT_SCHEMA_VERSION,
                     'panel_policy':versions.LAYER1_ANCHOR_EVIDENCE_VERSION}
             if memory_id==versions.STRUCTURED_ROLLING_RISK_MEMORY_VERSION:
                 mechanism_config['shared_risk_policy']=SHARED_RISK_POLICY
+            if pattern_aware:
+                if memory_id!=versions.STRUCTURED_ROLLING_RISK_MEMORY_VERSION:raise SearchContractError('PATTERN_REQUIRES_FROZEN_ROLLING_MEMORY')
+                mechanism_config.update(optimizer_input_schema=versions.PATTERN_OPTIMIZER_INPUT_VERSION,
+                    panel_policy=versions.PATTERN_CONDITIONED_EVIDENCE_VERSION,pattern_policy=PATTERN_POLICY,
+                    pattern_provider_binding=method.mechanism_config.get('pattern_provider_binding'))
+                if not mechanism_config['pattern_provider_binding']:raise SearchContractError('PATTERN_PROVIDER_NOT_BOUND')
             if method.mechanism_config!=mechanism_config:
                 raise SearchContractError('MEMORY_CONTEXT_POLICIES_NOT_BOUND')
     if current and method.identity() != expected.identity():
@@ -96,7 +106,7 @@ def build_binary_orchestrator(*, benchmark, aggregation, examples, prompts, solv
     store = BinaryTeamStateStore(benchmark=benchmark, examples=examples, prompts=prompts, solver=solver,
                                 aggregation=aggregation, freeze_initial_competence=current)
     patterns = (NullPatternAnalyzer() if method.pattern_policy == versions.UNIFIED_NULL_PATTERN_VERSION
-                else (FocusedPatternDiagnosticV2 if current else PatternDiagnosticV1)(pattern_provider))
+                else (ResponsibilityPatternDiscoveryV3 if pattern_aware else FocusedPatternDiagnosticV2 if current else PatternDiagnosticV1)(pattern_provider))
     if action_memory and memory_id==versions.STRUCTURED_ROLLING_RISK_MEMORY_VERSION:
         memory=StructuredRollingRiskMemoryV4(risk_policy=method.mechanism_config['shared_risk_policy'],**method.mechanism_config['memory'])
     else:
@@ -113,8 +123,8 @@ def build_binary_orchestrator(*, benchmark, aggregation, examples, prompts, solv
         analyzer=StateAnalyzer(BinaryPluralityResponsibilityAnalyzer(benchmark.capabilities)),
         opportunities=V2OpportunityBuilder(source=BinaryEvidenceSource(store, history),
             feasibility=VariableEvidenceFeasibilityV1(), target=TargetPolicyV1(),
-            evidence=(PreservationAnchorEvidenceV3 if action_memory else FocusedEvidencePolicyV2 if current else PatternCapableVariableEvidencePolicyV1)(), patterns=patterns),
-        engine=(MemoryConditionedEngine if action_memory else ResponsibilityConditionedEngine)(optimizer,seed) if layer1 else GEPATeamCandidateExposureEngine(bridge), evaluation=CandidateEvaluationPipeline(provider, FixedPeerPromotion(invalid_predictions_are_incorrect=prediction_invalidity)),
+            evidence=(PatternConditionedEvidenceV4 if pattern_aware else PreservationAnchorEvidenceV3 if action_memory else FocusedEvidencePolicyV2 if current else PatternCapableVariableEvidencePolicyV1)(), patterns=patterns),
+        engine=(PatternMemoryEngine if pattern_aware else MemoryConditionedEngine if action_memory else ResponsibilityConditionedEngine)(optimizer,seed) if layer1 else GEPATeamCandidateExposureEngine(bridge), evaluation=CandidateEvaluationPipeline(provider, FixedPeerPromotion(invalid_predictions_are_incorrect=prediction_invalidity)),
         transition=transition, gate=gate, committer=TeamStateCommitter(store), history=history, memory=memory,
         stop=OneProductionOpportunityStop(2) if one_production_opportunity else FirstParentEpochStop(2) if first_parent_epoch else GlobalStopPolicy(2),
         runtime_readiness=runtime_readiness, provider_call_reader=provider_call_reader)

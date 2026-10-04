@@ -111,7 +111,7 @@ def generation_diagnostics(content, candidate_contract=None, input_schema=None):
         try:
             obj=json.loads(text)
             valid_envelope=(isinstance(obj,dict) and 'decision_procedure' in obj and
-                not set(obj)-{'decision_procedure','change_summary'}) if input_schema==versions.LAYER1_INPUT_SCHEMA_VERSION else isinstance(obj,dict) and set(obj)=={'decision_procedure'}
+                not set(obj)-{'decision_procedure','change_summary'}) if input_schema in {versions.LAYER1_INPUT_SCHEMA_VERSION,versions.PATTERN_OPTIMIZER_INPUT_VERSION} else isinstance(obj,dict) and set(obj)=={'decision_procedure'}
             candidate=obj['decision_procedure'] if valid_envelope and isinstance(obj['decision_procedure'],str) else None
         except (ValueError,TypeError):candidate=None
     delimiters=text.count('```')
@@ -126,7 +126,7 @@ def generation_diagnostics(content, candidate_contract=None, input_schema=None):
         violations=list(mutable_prompt_violation_reasons(candidate)) if candidate is not None else []
     if candidate is not None and len(candidate)>3000:violations.append('over_length')
     if candidate is not None and not candidate:violations.append('empty')
-    return dict(**({'candidate_contract_identity':candidate_contract,'candidate_envelope':'json_procedure_optional_summary_v2' if input_schema==versions.LAYER1_INPUT_SCHEMA_VERSION else 'json_decision_procedure_v1',
+    return dict(**({'candidate_contract_identity':candidate_contract,'candidate_envelope':'json_procedure_optional_summary_v2' if input_schema in {versions.LAYER1_INPUT_SCHEMA_VERSION,versions.PATTERN_OPTIMIZER_INPUT_VERSION} else 'json_decision_procedure_v1',
             'diagnostic_scope':'structure_semantics_length_only; full admission belongs to Layer1'} if candidate_contract else {}),
         output_chars=len(text),output_lines=len(text.splitlines()),nonempty_lines=len(lines),
         unique_lines=len(counts),duplicate_lines=duplicates,duplicate_line_fraction=fraction,

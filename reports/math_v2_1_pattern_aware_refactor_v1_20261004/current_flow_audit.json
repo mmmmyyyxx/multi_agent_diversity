@@ -1,0 +1,24 @@
+{
+  "base_sha": "fc6d374213ccdd053fc2a9344db39e38a20b2944",
+  "phase": "PRE_IMPLEMENTATION_ZERO_API_AUDIT",
+  "pattern_residuals_REPAIR_only": true,
+  "focus_primary_lane_overlap": true,
+  "focus_support_count": true,
+  "focus_confidence": true,
+  "discovery_same_as_mutation_packet": false,
+  "discovery_input": "entire selected-member Optimize evidence universe; REPAIR defines residual support eligibility",
+  "memory_before_pattern_selection": false,
+  "nonfocus_REPAIR_leaks": false,
+  "independent_wrong_TEAM_HARD_boundary_possible": true,
+  "explicit_target_correctness_and_validity_signals": false,
+  "latest_memory_mainline_pattern_activation": "FORBIDDEN_REQUIRES_NEW_BINDING",
+  "evidence": [
+    "multi_dataset_diverse_rl/search/runtime_v2.py:V2OpportunityBuilder.build",
+    "multi_dataset_diverse_rl/search/patterns.py:PatternDiagnosticV1.analyze",
+    "multi_dataset_diverse_rl/search/semantic_contract.py:FocusedPatternDiagnosticV2.analyze",
+    "multi_dataset_diverse_rl/search/semantic_contract.py:FocusedEvidencePolicyV2.compose",
+    "multi_dataset_diverse_rl/search/orchestrator.py:UnifiedSearchOrchestrator.run",
+    "multi_dataset_diverse_rl/search/binary_composition.py:build_binary_orchestrator"
+  ],
+  "new_real_api_calls": 0
+}

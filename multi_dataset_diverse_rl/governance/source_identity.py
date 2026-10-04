@@ -84,6 +84,9 @@ def current_scientific_files(root: Path, *, execution_closure: bool = False) -> 
     risk_contract = root/'docs/design/SHARED_RISK_MEMORY_V4.md'
     if risk_contract.is_file():
         result.append(risk_contract)
+    pattern_contract = root/'docs/design/PATTERN_RESPONSIBILITY_V3.md'
+    if pattern_contract.is_file():
+        result.append(pattern_contract)
     return sorted(result, key=lambda p:p.relative_to(root).as_posix())
 
 

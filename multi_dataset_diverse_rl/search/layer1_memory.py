@@ -97,8 +97,11 @@ class MemoryConditionedEngine(ResponsibilityConditionedEngine):
 
 
 class MemoryConditionedOptimizer(ResponsibilityConditionedOptimizer):
+    config_factory=MemoryLayer1Config
+    prompt_builder=staticmethod(bounded_input)
+
     def __init__(self, **kwargs):
-        super().__init__(config=MemoryLayer1Config(),**kwargs)
+        super().__init__(config=self.config_factory(),**kwargs)
         self.memory=None
 
     # search_task is the independently versioned V2 implementation below.
@@ -142,7 +145,7 @@ class MemoryConditionedOptimizer(ResponsibilityConditionedOptimizer):
             if metric+len(panel)>task.budget.max_metric_calls:
                 stop='LAYER1_METRIC_BOUND_REACHED';break
             memory=self.memory.read_for_member(task.target_member,task.responsibility_lane)
-            prompt=bounded_input(task,selected_parent,current_records,memory)
+            prompt=self.prompt_builder(task,selected_parent,current_records,memory)
             generation_before=dict(self.accounting_reader())
             packet_hash=hashlib.sha256(prompt.encode()).hexdigest()
             raw=self.reflection_lm(prompt)

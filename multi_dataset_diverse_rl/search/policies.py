@@ -7,6 +7,7 @@ import hashlib
 from typing import Mapping, Protocol, Sequence
 
 from .history import HistoryState
+from .responsibility_value import responsibility_value
 from .schemas import (
     Diagnosis, EvidenceItem, EvidenceView, SearchContractError, TeamStateSnapshot,
 )
@@ -22,8 +23,8 @@ class ResponsibilitySignal:
 
     @property
     def raw_value(self) -> int:
-        return max(4 * self.direct_count, 2 * self.near_margin_count,
-                   self.coverage_count)
+        return responsibility_value(self.direct_count, self.near_margin_count,
+                                    self.coverage_count)
 
 
 class ResponsibilityAnalyzer(Protocol):
