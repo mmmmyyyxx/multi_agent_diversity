@@ -7101,3 +7101,27 @@ experiments:
   - Operational equivalent-evidence policy; generation and scientific candidate contract unchanged.
   unavailable: {}
   authorization_consumed: true
+- experiment_id: math_v2_1_proposal_semantic_postmortem_v1
+  kind: ZERO_API_AUDIT
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_a1_seed81_low_cost_pilot_v4
+  status: PREEXECUTION_FROZEN
+  scientific_status: NOT_EVALUATED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_proposal_semantic_postmortem_v1.yaml
+  report: reports/math_v2_1_proposal_semantic_postmortem_v1_20261004
+  classifier: null
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Retrospective zero-API semantic audit; no candidate admission or runtime policy
+    changes.
+  unavailable:
+    implementation_commit: Frozen audit source commit recorded after owner review.
+    execution_commit: Pending scoped offline verification.
+    result_commit: Pending owner integrity and semantic audit.

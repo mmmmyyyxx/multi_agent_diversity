@@ -1,0 +1,194 @@
+{
+  "identity": "OWNER_SEMANTIC_ANNOTATION_V1",
+  "independent_ground_truth": false,
+  "review_type": "RETROSPECTIVE_SINGLE_REVIEWER",
+  "reviewer": "primary_scientific_owner",
+  "rows": [
+    {
+      "evidence_spans": [
+        {
+          "category": "OUTPUT_PRESENTATION_CONTROL",
+          "end": 1821,
+          "span_sha256": "53ae58310ddbdc024036dfe9403033cbbbf0c32c50d461dfc8afd6e2f1e925ca",
+          "start": 1587
+        },
+        {
+          "category": "OUTPUT_PRESENTATION_CONTROL",
+          "end": 1585,
+          "span_sha256": "1b8617ebdb3672ae34155a13fe969069f92f0a85fa4c3a9fde9d8595d0699c37",
+          "start": 1398
+        }
+      ],
+      "literal_wire_copy": false,
+      "physical_index": 1,
+      "proposal_sha256": "5520956dcdb86db84d60e18ae0def6cf6bfbb3df44ad9dfe20bd5ee4679b441d",
+      "representation_boundary_ambiguous": false,
+      "semantic_class": "OUTPUT_PRESENTATION_CONTROL"
+    },
+    {
+      "evidence_spans": [
+        {
+          "category": "OUTPUT_PRESENTATION_CONTROL",
+          "end": 2125,
+          "span_sha256": "607216aea369c4da2274187796db14fd2d9d2a401be76e5bc68bb77b863ec171",
+          "start": 1788
+        }
+      ],
+      "literal_wire_copy": false,
+      "physical_index": 2,
+      "proposal_sha256": "282c003780bd496d844002de09742ff359b3e189422f7587643ae643f4e4d906",
+      "representation_boundary_ambiguous": false,
+      "semantic_class": "OUTPUT_PRESENTATION_CONTROL"
+    },
+    {
+      "evidence_spans": [
+        {
+          "category": "OUTPUT_PRESENTATION_CONTROL",
+          "end": 538,
+          "span_sha256": "ad396c8dfaef5547fd19708c2647518297553dbd4b3fbb313a2da44fab1db6fd",
+          "start": 444
+        },
+        {
+          "category": "OUTPUT_PRESENTATION_CONTROL",
+          "end": 2083,
+          "span_sha256": "8350f3e2a27139046b90e9f6c6ec173e09e6d71004c87f0e9f447c4c0c7a2911",
+          "start": 1815
+        }
+      ],
+      "literal_wire_copy": false,
+      "physical_index": 3,
+      "proposal_sha256": "3cff2cc09ebb0464761c047b057b449194a20a2aa3f0a2fbc47a2a1f37d487cd",
+      "representation_boundary_ambiguous": false,
+      "semantic_class": "OUTPUT_PRESENTATION_CONTROL"
+    },
+    {
+      "evidence_spans": [
+        {
+          "category": "OUTPUT_PRESENTATION_CONTROL",
+          "end": 1630,
+          "span_sha256": "375316d3e8a6b9b081b6f769a18a39ea3357c6b2606050306512e20a2c68b400",
+          "start": 1423
+        }
+      ],
+      "literal_wire_copy": false,
+      "physical_index": 4,
+      "proposal_sha256": "21ecccf6886f0671fa20dbdbc14fb308c095f7a99350d0556ed57ddec6cccc7a",
+      "representation_boundary_ambiguous": false,
+      "semantic_class": "OUTPUT_PRESENTATION_CONTROL"
+    },
+    {
+      "evidence_spans": [
+        {
+          "category": "BENIGN_REASONING",
+          "end": 1683,
+          "span_sha256": "05cd91c449a37140f7284999ad70a4e97355f74cf0aec6c226ea7a3dfd34a409",
+          "start": 1417
+        }
+      ],
+      "literal_wire_copy": false,
+      "physical_index": 5,
+      "proposal_sha256": "bec175f1cefa24389a3f9d64ef716e4a52a433a974f51814e964a99ec39a4f43",
+      "representation_boundary_ambiguous": false,
+      "semantic_class": "BENIGN_REASONING"
+    },
+    {
+      "evidence_spans": [
+        {
+          "category": "ANSWER_REPRESENTATION_GUIDANCE",
+          "end": 1301,
+          "span_sha256": "7a18d818f1604d2f4f431027ba1a27b92e90a3f3fc36abc9de986c6c9456b123",
+          "start": 1188
+        },
+        {
+          "category": "ANSWER_REPRESENTATION_GUIDANCE",
+          "end": 1534,
+          "span_sha256": "0398dad4a1be05a5731209d1276b1083a2ee1067542a1015acfc80904188a6ed",
+          "start": 1303
+        }
+      ],
+      "literal_wire_copy": false,
+      "physical_index": 6,
+      "proposal_sha256": "162bbeb399a2547fe1bf578335876d65cd9a46b03d04d3c8b2b85916e73a62f8",
+      "representation_boundary_ambiguous": true,
+      "semantic_class": "ANSWER_REPRESENTATION_GUIDANCE"
+    },
+    {
+      "evidence_spans": [
+        {
+          "category": "ANSWER_REPRESENTATION_GUIDANCE",
+          "end": 1885,
+          "span_sha256": "b3806432d0260707b8ca5978d0ac56cb9fe841862d49dab0e7066caa400e7c80",
+          "start": 1598
+        }
+      ],
+      "literal_wire_copy": false,
+      "physical_index": 7,
+      "proposal_sha256": "13b0d233f95a214631d1e8eeed5f22120ce36158119794a3372874de73c96617",
+      "representation_boundary_ambiguous": true,
+      "semantic_class": "ANSWER_REPRESENTATION_GUIDANCE"
+    },
+    {
+      "evidence_spans": [
+        {
+          "category": "ANSWER_REPRESENTATION_GUIDANCE",
+          "end": 517,
+          "span_sha256": "7fa5f0f5fc8f8b6a3927e0f130d7a04875524878ede5503f8536e73d65c16fb7",
+          "start": 421
+        },
+        {
+          "category": "ANSWER_REPRESENTATION_GUIDANCE",
+          "end": 1872,
+          "span_sha256": "c9758be00a4de0b38250829c9cf11e7f4ad88762758b1681b9ac4870dd06dd97",
+          "start": 1805
+        },
+        {
+          "category": "ANSWER_REPRESENTATION_GUIDANCE",
+          "end": 2064,
+          "span_sha256": "b389af7e5973db4d84d42f5a05225e81b87e04ec282748cee4dab8c0374c3861",
+          "start": 1874
+        }
+      ],
+      "literal_wire_copy": false,
+      "physical_index": 8,
+      "proposal_sha256": "1358e6a7a96d49b0dd0449a3658a82b6cdb3402df7aac4f35587eb864e61ba02",
+      "representation_boundary_ambiguous": true,
+      "semantic_class": "ANSWER_REPRESENTATION_GUIDANCE"
+    },
+    {
+      "evidence_spans": [
+        {
+          "category": "OUTPUT_PRESENTATION_CONTROL",
+          "end": 1343,
+          "span_sha256": "c1572b5d79f51f3d0ce7f7f860cbccbcd3be180aefb08efedc2fbd12811648dc",
+          "start": 1235
+        },
+        {
+          "category": "OUTPUT_PRESENTATION_CONTROL",
+          "end": 1621,
+          "span_sha256": "f93be41d9684eef268cf5dd89a24d47ba7da1e276cbd6b90c47f8717d1097895",
+          "start": 1345
+        }
+      ],
+      "literal_wire_copy": false,
+      "physical_index": 9,
+      "proposal_sha256": "06fb77927332254bbbd36e51cbfb38e0c1e89c68fdf1ed9ec4a3e538ada4ec7c",
+      "representation_boundary_ambiguous": false,
+      "semantic_class": "OUTPUT_PRESENTATION_CONTROL"
+    },
+    {
+      "evidence_spans": [
+        {
+          "category": "OUTPUT_PRESENTATION_CONTROL",
+          "end": 2276,
+          "span_sha256": "e175aa0384d29ce300bf8f9b82deb94193c20d28b17433cd35f1ce53324bb680",
+          "start": 2026
+        }
+      ],
+      "literal_wire_copy": false,
+      "physical_index": 10,
+      "proposal_sha256": "cf0f06b46999bbe6cb8a778b9e63093d9c40a7c294925a06f838e25a0dbae0f3",
+      "representation_boundary_ambiguous": false,
+      "semantic_class": "OUTPUT_PRESENTATION_CONTROL"
+    }
+  ]
+}
