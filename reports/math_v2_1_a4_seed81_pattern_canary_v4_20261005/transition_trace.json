@@ -1,0 +1,13 @@
+[
+  {
+    "child_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+    "committed": null,
+    "initial_floor_enforced": true,
+    "opportunity_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007:0:1",
+    "parent_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+    "selected": "layer1:4:458e501440a1",
+    "shadow_pass": false,
+    "strict_team_gain_enforced": true,
+    "target_member": 1
+  }
+]

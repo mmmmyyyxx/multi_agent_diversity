@@ -1,0 +1,14 @@
+{
+  "actual_provider_splits": [
+    "optimize",
+    "shadow"
+  ],
+  "frozen_optimize_membership_count": 12,
+  "frozen_shadow_membership_count": 40,
+  "shadow_model_calls": 262,
+  "status": "PASS",
+  "test_model_calls": 0,
+  "test_sealed": true,
+  "validation_model_calls": 0,
+  "validation_used_during_search": false
+}

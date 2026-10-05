@@ -1,0 +1,15 @@
+{
+  "attempt_id": "math_v2_1_pattern_A4_seed81_canary_attempt4",
+  "authority": "current_turn_explicit_user_reply",
+  "pilot_authorized": false,
+  "private_receipt_sha256": "c661c3029068fe6de395a2d654c58dc4d9c361fa8f81d949194cf6e885bc3868",
+  "repository_commit": "bbee178b2882c5e1b922cdb3c761d17bacc76084",
+  "scope_sha256": "d0ac620a9d6d1372f51f6f81ca1ff1e64c86528cc89bf3501af426e0b14f820b",
+  "single_use": true,
+  "source_sha": "011b41d37f6954d128764d3af439a4ff3ce954f8",
+  "startup_identity_sha256": "d7ceb02b52cdffe1851b7fc3983599f6465ec5ab2eb06ab92bdf5faa143abb3d",
+  "status": "CONSUMED_AND_CLOSED",
+  "test_authorized": false,
+  "user_reply": "授权这一次冻结 Canary",
+  "validation_authorized": false
+}

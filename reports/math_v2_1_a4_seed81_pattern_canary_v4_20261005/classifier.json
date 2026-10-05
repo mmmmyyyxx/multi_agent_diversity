@@ -1,0 +1,12 @@
+{
+  "authority": "primary_owner_after_integrity_split_funnel_pattern_memory_and_metric_audits",
+  "bounded_guard_limits": [
+    "bare_names_without_supported_context",
+    "paraphrased_specific_facts",
+    "undelimited_expressions"
+  ],
+  "efficacy": "NOT_ESTIMATED",
+  "generalization": "NOT_ESTIMATED",
+  "integrity": "PASS",
+  "validity": "VALID_OPERATIONAL_CANARY"
+}

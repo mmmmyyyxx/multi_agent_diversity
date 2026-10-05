@@ -1,0 +1,10 @@
+{
+  "authorization_receipt_sha256": "c661c3029068fe6de395a2d654c58dc4d9c361fa8f81d949194cf6e885bc3868",
+  "exact_authorization_consumed": true,
+  "immutable_runtime_inventory_sha256": "d4f8576126d33f28cf699123cab914d7e1f506688292e9bf42a770f9d3e798e8",
+  "inventory_files": 347,
+  "real_calls_during_audit": 0,
+  "status": "PASS",
+  "tracked_source_clean": true,
+  "unexpected_runtime_files": 0
+}

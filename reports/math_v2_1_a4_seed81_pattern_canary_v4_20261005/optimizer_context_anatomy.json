@@ -1,0 +1,44 @@
+{
+  "candidate_archive_in_provider_input": false,
+  "full_memory_state_replay_exact": true,
+  "initial_memory_entries": 0,
+  "input_by_generation": [
+    {
+      "generation": 1,
+      "input_tokens": 702,
+      "memory_chars": 2,
+      "read_entries": 0
+    },
+    {
+      "generation": 2,
+      "input_tokens": 766,
+      "memory_chars": 329,
+      "read_entries": 1
+    },
+    {
+      "generation": 3,
+      "input_tokens": 819,
+      "memory_chars": 585,
+      "read_entries": 2
+    },
+    {
+      "generation": 4,
+      "input_tokens": 819,
+      "memory_chars": 585,
+      "read_entries": 2
+    },
+    {
+      "generation": 5,
+      "input_tokens": 819,
+      "memory_chars": 585,
+      "read_entries": 2
+    },
+    {
+      "generation": 6,
+      "input_tokens": 872,
+      "memory_chars": 841,
+      "read_entries": 3
+    }
+  ],
+  "memory_llm_calls": 0
+}

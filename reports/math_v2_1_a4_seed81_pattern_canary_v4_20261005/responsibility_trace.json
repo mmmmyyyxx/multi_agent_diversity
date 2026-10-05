@@ -1,0 +1,113 @@
+[
+  {
+    "DNC": {
+      "0": {
+        "C": 3,
+        "D": 0,
+        "N": 0
+      },
+      "1": {
+        "C": 4,
+        "D": 1,
+        "N": 1
+      },
+      "2": {
+        "C": 4,
+        "D": 0,
+        "N": 2
+      },
+      "3": {
+        "C": 4,
+        "D": 1,
+        "N": 2
+      },
+      "4": {
+        "C": 3,
+        "D": 0,
+        "N": 2
+      }
+    },
+    "child_member_scores": [
+      8.0,
+      5.0,
+      5.0,
+      4.0,
+      6.0
+    ],
+    "child_team_score": 5.0,
+    "committed": false,
+    "eligible_members": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "evaluation_support_identity": "16ad84b5bb22a6aa10e23ef1e1a71ff6d54b7e8e4fcd749571808fba0b2f27ab",
+    "evaluator_identity": "MATH_EQUIVALENCE_V2",
+    "exposure_definition": "one responsibility observation per member per opportunity",
+    "failure_counts": {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0
+    },
+    "feasibility_by_member": {
+      "0": true,
+      "1": true,
+      "2": true,
+      "3": true,
+      "4": true
+    },
+    "incumbent_member_scores": [
+      8.0,
+      5.0,
+      5.0,
+      4.0,
+      6.0
+    ],
+    "inference_scope": "DESCRIPTIVE_NOT_COUNTERFACTUAL_OR_COMPONENT_CAUSAL",
+    "initial_member_scores": [
+      8.0,
+      5.0,
+      5.0,
+      4.0,
+      6.0
+    ],
+    "member_metric": "binary_correct_count",
+    "opportunity_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007:0:1",
+    "parent_team_score": 5.0,
+    "prior_exposure_counts": {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0
+    },
+    "prior_opportunity_counts": {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0
+    },
+    "raw_values": {
+      "0": 3,
+      "1": 4,
+      "2": 4,
+      "3": 4,
+      "4": 4
+    },
+    "realized_team_gain": 0.0,
+    "selected_member": 1,
+    "target_count": 1,
+    "target_scores": {
+      "0": 3.0,
+      "1": 4.0,
+      "2": 4.0,
+      "3": 4.0,
+      "4": 4.0
+    }
+  }
+]

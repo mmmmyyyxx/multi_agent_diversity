@@ -1,0 +1,60 @@
+{
+  "failure_evidence_events": 4,
+  "failure_family_count": 3,
+  "failure_family_repeated_count": 1,
+  "failure_memory_evictions": 0,
+  "failure_memory_peak_by_member": [
+    0,
+    4,
+    0,
+    0,
+    0
+  ],
+  "failure_reads": 10,
+  "failure_to_shared_promotions": 0,
+  "failure_writes": 4,
+  "initial_memory_entries": 0,
+  "memory_context_chars": {
+    "max": 841,
+    "mean": 418.42857142857144,
+    "min": 2
+  },
+  "memory_ids": [
+    "ac0f6a8f48cd806d230f6004098d73f61cb305dad3e403ac06a34127a304732b",
+    "6432e45874727db2064ce68583a223bfdd733f8b9290a683f1d68ec066726862",
+    "285bc964246d62625b21a37b42619cd556a641688426d489273e356f1d29d4a1",
+    "183ac9aad41605fc924eb2b11da6e0c979abbcc2cefeb5f6a106e896c62d5a9b",
+    "d77130b8ee83ca3014c1d7400f77783797a0d27732ac0a6aa62fe427eef27adb",
+    "d66df3f50bf70a53393284f6e7e1c2c390e7c0c44241d26051670609a7527ac3"
+  ],
+  "memory_llm_calls": 0,
+  "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+  "private_failure_count_by_member": [
+    0,
+    4,
+    0,
+    0,
+    0
+  ],
+  "private_success_count_by_member": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "promoted_families": [],
+  "risk_clock": 1,
+  "shared_reads": 0,
+  "shared_risk_count": 2,
+  "shared_risk_created": 2,
+  "shared_risk_evicted": 0,
+  "shared_risk_reads": 0,
+  "shared_risk_storage_final": 2,
+  "shared_risk_storage_peak": 2,
+  "shared_risk_updated": 0,
+  "shared_writes": 2,
+  "stateful_write_count": 5,
+  "success_reads": 0,
+  "success_writes": 0
+}

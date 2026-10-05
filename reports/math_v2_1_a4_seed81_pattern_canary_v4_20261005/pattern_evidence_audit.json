@@ -1,0 +1,13 @@
+{
+  "focus_pattern_id": "2c55ef447249fb52913a7342dd857d8bc7c04840c05a1062047dd381089d349a",
+  "generic_backfill_count": 0,
+  "mutation_count": 3,
+  "nonfocus_repair_count": 0,
+  "pattern_enabled": true,
+  "pattern_selection_authority": "raw_responsibility_max_4D_2N_C_v1",
+  "preservation_anchor_count": 2,
+  "representative_pattern_examples": 1,
+  "search_validation_count": 3,
+  "team_probe_count": 3,
+  "transition_evidence_count": 0
+}

@@ -1,0 +1,13 @@
+{
+  "attempt_id": "math_v2_1_pattern_A4_seed81_canary_attempt4",
+  "authorization_received_in_current_turn": true,
+  "closed": true,
+  "execution_status": "EXECUTION_COMPLETE",
+  "future_real_execution_requires_new_exact_user_authorization": true,
+  "pilot_authorized": false,
+  "push_authorized": false,
+  "scientific_reruns_authorized": 0,
+  "single_use_consumed": true,
+  "test_authorized": false,
+  "validation_authorized": false
+}

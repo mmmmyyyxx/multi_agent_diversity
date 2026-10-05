@@ -1,0 +1,217 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "6f22a029176840d62ebebcde3cb108b75724761a31cc628436dd49f4a6939607"
+    },
+    {
+      "file": "authorization_receipt.json",
+      "sha256": "12d2ce427b82cdc3693baf634bbafecf54e587807c8e2be6b3b2c66916ec1c86"
+    },
+    {
+      "file": "canary12_membership.json",
+      "sha256": "62db13d955dc24828cda84cdaba0b536663c4dcfe2cc7f9eed509d63deb8f62f"
+    },
+    {
+      "file": "candidate_funnel.json",
+      "sha256": "635b97463e17dc60f026024d8a8f963ef81b8ad59f05e1c978314b27bc531681"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "6c0ff7fa3d99cc2f904f17cfcfeef0aec165b93da7f10d5ec1e2a6385047b6a8"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "2524f1d1d8ac44c08c1dd454b61c507efd8c23502c9389a12445c009037d6160"
+    },
+    {
+      "file": "execution_identity.json",
+      "sha256": "5a27ae5460493f2d0a92f4981cc5b6d68b1d308ddb56e6f59b48d0f2cbd05d76"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "734c5d6adaeceb7c6dce1bec301b267cdbc95fbd7627310ed11c1338163ff626"
+    },
+    {
+      "file": "final_status.json",
+      "sha256": "d590ceff3b259474717adcc1f1f55d3ccb9ee7d6ac68ec0521178dc3531c8f1e"
+    },
+    {
+      "file": "funnel_summary.json",
+      "sha256": "0f1d93cb1f51703022ad450e916af856f85c4ca94fae506e066157fa57ee6dbd"
+    },
+    {
+      "file": "immutable_evidence_audit.json",
+      "sha256": "1b674176b51ce9b7d986bad94d5c1430c2a593338608ac94cf2908f002b70a80"
+    },
+    {
+      "file": "initial_competence_floor.json",
+      "sha256": "6b0d5d744aa9c01f30729f6ba3654cb35ff394cca1c7a1dc2e66cb9a0cab0aaf"
+    },
+    {
+      "file": "initial_team.json",
+      "sha256": "98b5b72a9a9a8621850d59cbec09aea04b32e78b0b82f96d0dd8fb2f19a36b49"
+    },
+    {
+      "file": "initialization_summary.json",
+      "sha256": "b3283f3ce9e1a2e9d793c8871aefbc2e0b42fd5fdc70954be40f40f8515a8f38"
+    },
+    {
+      "file": "layer1_search_audit.json",
+      "sha256": "8d0e2b9c12ccb95579b2b28be96064dc54795c66de4e1e460a1858d1ec73c6b2"
+    },
+    {
+      "file": "local_to_team_transfer.json",
+      "sha256": "a275adc5065d4145ce4440ac7a7716ad068a85f636c299c02c6bf11dd5e31566"
+    },
+    {
+      "file": "low_cost_protocol.json",
+      "sha256": "5339d7c35a12c003d1933c9acf2599c180b99fa295d993477904f99c09ff8b9f"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "61820016913965a2a3031412988aadd7a2392eb8e71bee0f6622a410a1b5ee3b"
+    },
+    {
+      "file": "memory_semantics_integrity_audit.json",
+      "sha256": "f0ef903316751ab82d7a558c53cf316d1b5dd492b37577edc921540af93e7082"
+    },
+    {
+      "file": "memory_statistics.json",
+      "sha256": "d2dc8057ac3dab0bbba89181c7a3f889154e931f2fc35681ff8cb69c7c735e40"
+    },
+    {
+      "file": "opportunity_allocation.json",
+      "sha256": "35528224ba2cd9534a8eb22209b62574ab3810169a398c47c394b48cbd448e8b"
+    },
+    {
+      "file": "opportunity_trace.json",
+      "sha256": "55440eac1e0ddc6134799afa8bb23d659a510fa33a8d75ddd24ce3542a094200"
+    },
+    {
+      "file": "optimizer_context_anatomy.json",
+      "sha256": "eeabf79fa31ce7fc65acf011b693ed704230dea56d3b8ef715a994948b757d59"
+    },
+    {
+      "file": "panel_anchor_audit.json",
+      "sha256": "117e83b098e272edff76b447ff883d0e72c6997813b5eb885ca4e6d0e85c9f2d"
+    },
+    {
+      "file": "pattern_calls.json",
+      "sha256": "cd555a5d54ee3e9208bc8b6c0d961811896d7b0eb3d3f800cd3d61c72998c9e5"
+    },
+    {
+      "file": "pattern_evidence_audit.json",
+      "sha256": "0e95e90aa50183c17d642124ad3d1e6844ebe18af05d486e161160e4538ee1a8"
+    },
+    {
+      "file": "pattern_responsibility.json",
+      "sha256": "d5f3aee9e6e62d70bfd16f899367bedbe878c5040497ece76ceda33df022c7ea"
+    },
+    {
+      "file": "pattern_semantics_integrity_audit.json",
+      "sha256": "4968a0ffa561d1d08d851a309f9aa1f7c7a652c98615e5c06c243f954b3560a6"
+    },
+    {
+      "file": "postexecution_governance_audit.json",
+      "sha256": "3142aebfda5a4ab1cc4879674840559fd83dec60499bff8f807b89969f21f703"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "3a5dedde66b0bb0823e82fc6615f4dc70d1bfc3b794fe310e38d84d5b3a0c68b"
+    },
+    {
+      "file": "provider_accounting.json",
+      "sha256": "fe89267f3bd176128647aa7fdc64a5c33f5517d6bf357e2112aac610d57662f6"
+    },
+    {
+      "file": "README.md",
+      "sha256": "02ce886150e01c1d55dc7533ba40a64352905e9a870011d92c172ef7af1832b1"
+    },
+    {
+      "file": "realized_team_gain.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "file": "request_policy_receipt.json",
+      "sha256": "40c76d64a7cf67d03284a87f8dc5962157e398042d5af9e294780f5c3d7c4fc1"
+    },
+    {
+      "file": "response_format_summary.json",
+      "sha256": "64f8074c24be717dc05d5a69bb219dca4959647a137cef674725ba3e15af9f6c"
+    },
+    {
+      "file": "responsibility_trace.json",
+      "sha256": "33f29e1d86f3f00d449e860c15462daf2c5d1f5b18cccaffdd5150721985a951"
+    },
+    {
+      "file": "reuse_summary.json",
+      "sha256": "ff14302d02396a26a54ac0d9c5bbd0cd40173ee22595b3e801d063c66feac9e9"
+    },
+    {
+      "file": "sanitization_audit.json",
+      "sha256": "ff9c9fad82662fc12754bd8f6714c7d329754d5a483e2aaa948566861f333170"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "98c09dbe11c94a7519dec3cf98fb2a04e9614cb7437f12cf3528aa025f1a0fcd"
+    },
+    {
+      "file": "scientific_scope_audit.json",
+      "sha256": "54fd1c4c406c679981cb250c3de677f9050627616de849e047a67c8ff037cc23"
+    },
+    {
+      "file": "scope_closure.json",
+      "sha256": "1485afca0dea5b1eff373c580f6ad1d7da75a27802b1c16592c472a7322711cd"
+    },
+    {
+      "file": "semantic_authority_audit.json",
+      "sha256": "03294e7e265923684e74f10c15e24fc1d7e90b84c5b7893c82e227d30e5a9685"
+    },
+    {
+      "file": "shadow40_membership.json",
+      "sha256": "6148136d3fe9906ada1d2d7f82d8aad976d5c2dec653f14d0d94a304ca979412"
+    },
+    {
+      "file": "specialization_events.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "file": "split_access_audit.json",
+      "sha256": "2524f1d1d8ac44c08c1dd454b61c507efd8c23502c9389a12445c009037d6160"
+    },
+    {
+      "file": "stage_reuse.json",
+      "sha256": "e099c69628d6b5afbc83bcee24aea2f5d8d661ebf5f8762235461e0f24f08cf9"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "458d05aab0b5449357cdcf3a4f3c4f75a502d319dd04aa7bff45e0e81fd97006"
+    },
+    {
+      "file": "team_metrics_integrity_audit.json",
+      "sha256": "fbf601471c57edad035999905d70f85afc76908feaf33b8a33205120f1464cdd"
+    },
+    {
+      "file": "terminal_invalid_summary.json",
+      "sha256": "bd92a324f064c882b857847fc821b8a42483b5c97994760463adde593a3bc1e1"
+    },
+    {
+      "file": "token_accounting.json",
+      "sha256": "e1ef090758ab78ba51564648bb5d608794820465940d9dff4edc173c4dcd0c8f"
+    },
+    {
+      "file": "transition_audit.json",
+      "sha256": "e71259919f2450678d07ade6174abff80ef83d5d3a7e4f1e5d8877870e4fca40"
+    },
+    {
+      "file": "transition_trace.json",
+      "sha256": "93062dcaa4911a1607b5152546c6de8a8768bf7ba4ec42f3b062e6517ca4b7fa"
+    },
+    {
+      "file": "verification_summary.json",
+      "sha256": "2b9b93daa54282a8a8176946f9c876d281ef96cc05b33e5d2f87f697e2407606"
+    }
+  ]
+}

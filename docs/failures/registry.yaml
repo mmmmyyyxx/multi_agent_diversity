@@ -526,7 +526,7 @@ failures:
   lifecycle: OPEN
 - failure_id: FAIL-MATH-PATTERN-GENERIC-COMMAND-NAME-GUARD
   title: Generic mathematical imperative misclassified as example-specific proper name
-  status: OPEN
+  status: MITIGATED
   first_observed: math_v2_1_a4_seed81_pattern_canary_v2
   affected_components:
   - pattern_abstraction_guard
@@ -540,16 +540,20 @@ failures:
   required_resolution: Opt-in versioned generic mathematical-command classification; new freeze, authorization and
     fresh Canary.
   lifecycle: OPEN
-  resolution_progress: Opt-in V2 fixes confirmed generic imperative; fresh attempt3 confirms a remaining generic-noun
-    false positive. User stopped before further repair.
+  resolution_progress: Opt-in V2 repaired the imperative case but retained a noun false positive. V3 replaces capitalized-token
+    admission with bounded specific-content checks; current offline regressions and one complete fresh real Canary
+    pass.
   additional_evidence:
   - reports/math_v2_1_a4_seed81_pattern_canary_v3_20261005/STOP_REPORT.md
   prior_task_status: STOPPED_BY_USER
-  current_task_status: ZERO_API_REPAIR_AUTHORIZED_REAL_EXECUTION_CLOSED
+  current_task_status: GUARD_V3_SINGLE_CANARY_COMPLETE_AUDITED_CLOSED
   further_real_execution_authorized: false
   latest_repair: math_v2_1_pattern_specific_content_guard_v3
-  latest_repair_scope: Current user request authorizes zero-API guard repair; historical attempts stay closed.
-  latest_repair_status: ZERO_API_PASS_REAL_EXECUTION_UNVERIFIED
+  latest_repair_scope: Guard V3 zero-API repair followed by exact user-authorized attempt4 only; all attempt scopes
+    now closed.
+  latest_repair_status: VALID_ONE_COMPLETE_PRODUCTION_OPPORTUNITY_CANARY
   latest_repair_evidence:
   - reports/math_v2_1_pattern_specific_content_guard_v3_20261005
-  latest_repair_limits: Contextual literal detector is bounded; no general semantic coverage or real execution claim.
+  - reports/math_v2_1_a4_seed81_pattern_canary_v4_20261005
+  latest_repair_limits: Bounded contextual literal detector; single-canary operation verified, general semantic
+    coverage and scientific efficacy not established.

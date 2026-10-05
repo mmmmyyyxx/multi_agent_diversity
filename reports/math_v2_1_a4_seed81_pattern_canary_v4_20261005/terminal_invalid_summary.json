@@ -1,0 +1,10 @@
+{
+  "raw_invalid_count": 29,
+  "raw_invalid_reasons": {
+    "OUTPUT_TRUNCATED": 8,
+    "PAYLOAD_PARSE_FAILURE": 21
+  },
+  "recovered_requests": 1,
+  "semantic_retry_generations": 22,
+  "terminal_requests": 7
+}

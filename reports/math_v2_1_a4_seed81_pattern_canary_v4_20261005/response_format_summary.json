@@ -1,0 +1,10 @@
+{
+  "raw_invalid_count": 29,
+  "raw_invalid_reasons": {
+    "OUTPUT_TRUNCATED": 8,
+    "PAYLOAD_PARSE_FAILURE": 21
+  },
+  "raw_valid_generations": 326,
+  "successful_solver_generations": 355,
+  "terminal_invalid_continues": true
+}

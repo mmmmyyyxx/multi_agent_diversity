@@ -1,0 +1,19 @@
+{
+  "WHO_and_F_recomputed": true,
+  "evidence_panel_and_local_scores_recomputed": true,
+  "exact_frozen_source_verified": true,
+  "exact_single_use_scope_consumed": true,
+  "frozen_model_policies_verified": true,
+  "immutable_artifacts_verified": true,
+  "memory_replay_exact": true,
+  "no_cross_attempt_output_import": true,
+  "no_efficacy_inference": true,
+  "no_scientific_rerun": true,
+  "one_complete_opportunity": true,
+  "strict_alias_decode_verified": true,
+  "strict_pattern_partition_verified": true,
+  "team_metrics_and_shadow_gate_recomputed": true,
+  "token_journal_reconciled": true,
+  "zero_test_calls": true,
+  "zero_validation_calls": true
+}

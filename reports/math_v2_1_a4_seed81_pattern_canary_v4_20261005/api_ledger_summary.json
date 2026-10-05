@@ -1,0 +1,21 @@
+{
+  "charged_tokens": 234925,
+  "cumulative_ceiling": 40000000,
+  "cumulative_remaining": 38488351,
+  "journal_integrity": "PASS",
+  "reserved_inflight": 0,
+  "successful_call_ceiling": 1639,
+  "transport_attempt_ceiling": 34419,
+  "usage": {
+    "attempts": 362,
+    "failures": 0,
+    "input_tokens": 144395,
+    "output_tokens": 90530,
+    "pattern": 1,
+    "reflection": 6,
+    "solver": 355,
+    "successes": 362,
+    "test": 0,
+    "validation": 0
+  }
+}

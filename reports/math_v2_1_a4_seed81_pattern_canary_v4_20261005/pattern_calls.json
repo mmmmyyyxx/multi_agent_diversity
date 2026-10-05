@@ -1,0 +1,9 @@
+{
+  "estimated_input_tokens": 5635,
+  "pattern_cache_hits": 0,
+  "pattern_input_tokens": 1219,
+  "pattern_logical_calls": 1,
+  "pattern_output_tokens": 490,
+  "pattern_physical_calls": 1,
+  "provider_input_limit": 991808
+}

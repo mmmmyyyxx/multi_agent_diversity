@@ -1,0 +1,20 @@
+{
+  "committed": false,
+  "final_state_replayed": true,
+  "final_team_correct": 5.0,
+  "full_metrics_recomputed": 2,
+  "immutable_inventory_unchanged": true,
+  "initial_state_replayed": true,
+  "initial_team_correct": 5.0,
+  "journal_unchanged": true,
+  "new_provider_calls": 0,
+  "optimize_count": 12,
+  "promotion_recomputed": true,
+  "scientific_efficacy_verified": false,
+  "selected_winner_recomputed": true,
+  "shadow_count": 40,
+  "shadow_gate_passed": false,
+  "shadow_gate_recomputed": true,
+  "status": "PASS",
+  "team_probe_metrics_recomputed": 4
+}

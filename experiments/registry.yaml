@@ -7631,9 +7631,9 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_a4_seed81_pattern_canary_v3
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: ZERO_API_CONFORMANCE_ONLY_REAL_EXECUTION_UNVERIFIED
-  implementation_commit: null
+  status: COMPLETED
+  scientific_status: ZERO_API_CONFORMANCE_COMPLETED_VALID_CANARY_FOLLOWUP
+  implementation_commit: 011b41d37f6954d128764d3af439a4ff3ce954f8
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_pattern_specific_content_guard_v3.yaml
@@ -7644,33 +7644,37 @@ experiments:
   superseded_by: []
   notes:
   - Specific-content guard V3 only; all other treatment settings preserved.
-  - Fresh API authorization required; prior attempts closed.
+  - One freshly authorized A4 Seed81 production opportunity completed and independently audited; historical attempts
+    remain closed.
+  - Operational verification only; guard coverage limits remain explicit.
   unavailable:
-    implementation_commit: Execution source SHA is recorded by the frozen manifest and preexecution evidence.
-    execution_commit: No real execution.
-    result_commit: Not committed.
+    execution_commit: Protocol milestone; execution belongs to the registered attempt4 Canary.
+    result_commit: The result commit is identified in git history; no self-referential commit hash is embedded.
+  followup_canary_evidence: reports/math_v2_1_a4_seed81_pattern_canary_v4_20261005
 - experiment_id: math_v2_1_a4_seed81_pattern_canary_v4
   kind: REAL_CANARY
   era: BENCHMARK_GENERALIZATION
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_pattern_specific_content_guard_v3
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: ZERO_API_CONFORMANCE_ONLY_REAL_EXECUTION_UNVERIFIED
-  implementation_commit: null
-  execution_commit: null
+  status: COMPLETED
+  scientific_status: VALID_OPERATIONAL_CANARY
+  implementation_commit: 011b41d37f6954d128764d3af439a4ff3ce954f8
+  execution_commit: bbee178b2882c5e1b922cdb3c761d17bacc76084
   result_commit: null
   manifest: experiments/manifests/math_v2_1_a4_seed81_pattern_canary_v4.yaml
-  report: null
-  classifier: NOT_EXECUTED_NOT_AUTHORIZED
-  active_for_new_work: true
+  report: reports/math_v2_1_a4_seed81_pattern_canary_v4_20261005
+  classifier: ONE_COMPLETE_PRODUCTION_OPPORTUNITY_ALL_OWNER_AUDITS_PASS
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
-  - Specific-content guard V3 only; all other treatment settings preserved.
-  - Fresh API authorization required; prior attempts closed.
+  - Explicit user reply authorized this exact frozen attempt only.
+  - A4 Seed81; one complete production opportunity; strict Pattern, Memory, cache, ledger and team metrics audits
+    pass.
+  - No Pilot, Validation, Test, efficacy inference or scientific rerun; subsequent real execution requires new authorization.
   unavailable:
-    implementation_commit: Execution source SHA is recorded by the frozen manifest and preexecution evidence.
-    execution_commit: No real execution.
-    result_commit: Not committed.
-    report: No real execution evidence exists.
+    result_commit: The result commit is identified in git history; no self-referential commit hash is embedded.
+  authorization_consumed: true
+  authorization_closed: true
+  authorization_closure_evidence: reports/math_v2_1_a4_seed81_pattern_canary_v4_20261005/scope_closure.json

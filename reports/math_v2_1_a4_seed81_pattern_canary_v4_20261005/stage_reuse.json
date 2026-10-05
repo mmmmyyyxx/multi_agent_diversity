@@ -1,0 +1,58 @@
+{
+  "adaptive_gate": {
+    "accounting_tokens": 166277,
+    "cache_hits": 0,
+    "logical_solver_evaluations": 240,
+    "physical_solver_attempts": 262,
+    "physical_solver_generations": 262,
+    "semantic_retry_generations": 22
+  },
+  "full": {
+    "accounting_tokens": 19230,
+    "cache_hits": 6,
+    "logical_solver_evaluations": 24,
+    "physical_solver_attempts": 18,
+    "physical_solver_generations": 18,
+    "semantic_retry_generations": 0
+  },
+  "gepa_local": {
+    "accounting_tokens": 13001,
+    "cache_hits": 3,
+    "logical_solver_evaluations": 18,
+    "physical_solver_attempts": 15,
+    "physical_solver_generations": 15,
+    "semantic_retry_generations": 0
+  },
+  "gepa_reflection": {
+    "accounting_tokens": 0,
+    "cache_hits": 0,
+    "logical_solver_evaluations": 0,
+    "physical_solver_attempts": 0,
+    "physical_solver_generations": 0,
+    "semantic_retry_generations": 0
+  },
+  "initial": {
+    "accounting_tokens": 26053,
+    "cache_hits": 0,
+    "logical_solver_evaluations": 60,
+    "physical_solver_attempts": 60,
+    "physical_solver_generations": 60,
+    "semantic_retry_generations": 0
+  },
+  "set_level_pattern_discovery": {
+    "accounting_tokens": 0,
+    "cache_hits": 0,
+    "logical_solver_evaluations": 0,
+    "physical_solver_attempts": 0,
+    "physical_solver_generations": 0,
+    "semantic_retry_generations": 0
+  },
+  "team_probe": {
+    "accounting_tokens": 0,
+    "cache_hits": 12,
+    "logical_solver_evaluations": 12,
+    "physical_solver_attempts": 0,
+    "physical_solver_generations": 0,
+    "semantic_retry_generations": 0
+  }
+}

@@ -47,3 +47,6 @@ reports/math_v2_answer_domain_amendment_v2_20261002/** text eol=lf
 reports/math_v2_preexecution_freeze_v1_4_20261002/** text eol=lf
 reports/math_v2_a1_seed81_real_canary_v4_20261002/** text eol=lf
 reports/math_v2_a1_seed81_pilot_v2_20261002/** text eol=lf
+
+# Preserve exact-byte receipts for the newly audited single-attempt Canary.
+reports/math_v2_1_a4_seed81_pattern_canary_v4_20261005/** text eol=lf

@@ -1,0 +1,89 @@
+{
+  "excluded_correct": 5,
+  "invalid_wrong": 0,
+  "patterns": [
+    {
+      "coverage_count": 0,
+      "direct_count": 1,
+      "identity": "same_raw_pattern_responsibility_v1",
+      "near_margin_count": 0,
+      "pattern_id": "2c55ef447249fb52913a7342dd857d8bc7c04840c05a1062047dd381089d349a",
+      "raw_value": 4,
+      "selected": true,
+      "support_count": 1
+    },
+    {
+      "coverage_count": 1,
+      "direct_count": 0,
+      "identity": "same_raw_pattern_responsibility_v1",
+      "near_margin_count": 0,
+      "pattern_id": "82eacb57d809c431f95f2e5ca87e26600cc3717ad781d120d2aa355f0bb8e6e5",
+      "raw_value": 1,
+      "selected": false,
+      "support_count": 1
+    },
+    {
+      "coverage_count": 0,
+      "direct_count": 0,
+      "identity": "same_raw_pattern_responsibility_v1",
+      "near_margin_count": 1,
+      "pattern_id": "93d2a3b1d3d430b15cf3ccf7cf798a4a0d6791f75f2e3e4dfc624a5db0cd02f4",
+      "raw_value": 2,
+      "selected": false,
+      "support_count": 1
+    },
+    {
+      "coverage_count": 0,
+      "direct_count": 0,
+      "identity": "same_raw_pattern_responsibility_v1",
+      "near_margin_count": 0,
+      "pattern_id": "add7fe7c54b5fcb9f63446c8f07c179d428054cdd6ef9a046e921bb842b8a205",
+      "raw_value": 0,
+      "selected": false,
+      "support_count": 1
+    },
+    {
+      "coverage_count": 1,
+      "direct_count": 0,
+      "identity": "same_raw_pattern_responsibility_v1",
+      "near_margin_count": 0,
+      "pattern_id": "c76b94e3a2767d527b2a2e4035cc79e1758a4bdde7a3564b2ea5fe9fb1ed030e",
+      "raw_value": 1,
+      "selected": false,
+      "support_count": 1
+    },
+    {
+      "coverage_count": 1,
+      "direct_count": 0,
+      "identity": "same_raw_pattern_responsibility_v1",
+      "near_margin_count": 0,
+      "pattern_id": "cb94cbc45cbc8d97f50237e8d5793d4a3481a4fb6e56bf62fa966e55ab6384cf",
+      "raw_value": 1,
+      "selected": false,
+      "support_count": 1
+    },
+    {
+      "coverage_count": 1,
+      "direct_count": 0,
+      "identity": "same_raw_pattern_responsibility_v1",
+      "near_margin_count": 0,
+      "pattern_id": "d361f57b284d0a9ca5ec947d7499c4503591b8aad4bae32b62142e022c24a117",
+      "raw_value": 1,
+      "selected": false,
+      "support_count": 1
+    }
+  ],
+  "selected_pattern_F": 4,
+  "selected_pattern_id": "2c55ef447249fb52913a7342dd857d8bc7c04840c05a1062047dd381089d349a",
+  "tie_break": "canonical_semantic_identity",
+  "tie_count": 1,
+  "unassigned_count": 0,
+  "valid_wrong": 7,
+  "wide_wrong_size": 7,
+  "wrong_by_lane": {
+    "coverage": 4,
+    "direct_flip": 1,
+    "near_margin": 1
+  },
+  "wrong_no_responsibility": 1
+}
