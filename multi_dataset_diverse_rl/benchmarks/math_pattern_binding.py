@@ -15,7 +15,7 @@ from .math_memory_binding import MATHMemoryBinding
 
 
 def derive_pattern_contract(parent,*,attempt,binding_path,parent_path,parent_sha256,
-        approval_path,approval_sha256,prompt_path,prompt_sha256,memory_freeze_path,memory_freeze_sha256,support_id_transport=None):
+        approval_path,approval_sha256,prompt_path,prompt_sha256,memory_freeze_path,memory_freeze_sha256,support_id_transport=None,abstraction_guard=None):
     if parent['identity']!=versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION:
         raise SearchContractError('PATTERN_PARENT_BINDING_INVALID')
     c=deepcopy(parent)
@@ -35,6 +35,9 @@ def derive_pattern_contract(parent,*,attempt,binding_path,parent_path,parent_sha
     if support_id_transport is not None:
         if support_id_transport!=versions.PATTERN_SUPPORT_ID_ALIAS_VERSION:raise SearchContractError('PATTERN_ID_TRANSPORT_INVALID')
         c['pattern_support_id_transport']=support_id_transport
+    if abstraction_guard is not None:
+        if abstraction_guard!=versions.PATTERN_ABSTRACTION_GUARD_VERSION:raise SearchContractError('PATTERN_ABSTRACTION_GUARD_NOT_BOUND')
+        c['pattern_abstraction_guard']=abstraction_guard
     return c
 
 
@@ -51,6 +54,9 @@ class MATHPatternBinding(MATHMemoryBinding):
         if 'pattern_support_id_transport' in c:
             transport={'pattern_support_id_transport':c['pattern_support_id_transport']}
             provider_identity.update(transport)
+        if 'pattern_abstraction_guard' in c:
+            transport['pattern_abstraction_guard']=c['pattern_abstraction_guard']
+            provider_identity['pattern_abstraction_guard']=c['pattern_abstraction_guard']
         provider_binding=hashlib.sha256(json.dumps(provider_identity,
             sort_keys=True,separators=(',',':')).encode()).hexdigest()
         return replace(base,pattern_policy=versions.PATTERN_AWARE_DISCOVERY_VERSION,
@@ -73,6 +79,8 @@ class MATHPatternBinding(MATHMemoryBinding):
             approval=json.loads(self.path(c['pattern_amendment_authorization_path']).read_bytes())
             if approval.get('pattern_support_id_transport')!=c.get('pattern_support_id_transport'):
                 return ('PATTERN_ID_TRANSPORT_AUTHORITY_MISMATCH',)
+            if approval.get('pattern_abstraction_guard')!=c.get('pattern_abstraction_guard'):
+                return ('PATTERN_ABSTRACTION_GUARD_AUTHORITY_MISMATCH',)
             freeze=json.loads(self.path(c['rolling_memory_freeze_path']).read_bytes())
             if (approval.get('explicit_human_approval') is not True or approval.get('canary_only') is not True
                     or approval.get('total_accounting_authorization')!=40000000
@@ -88,7 +96,7 @@ class MATHPatternBinding(MATHMemoryBinding):
                 parent_path=c['pattern_parent_binding_path'],parent_sha256=c['pattern_parent_binding_sha256'],
                 approval_path=c['pattern_amendment_authorization_path'],approval_sha256=c['pattern_amendment_authorization_sha256'],
                 prompt_path=c['pattern_prompt_path'],prompt_sha256=c['pattern_prompt_sha256'],
-                memory_freeze_path=c['rolling_memory_freeze_path'],memory_freeze_sha256=c['rolling_memory_freeze_sha256'],support_id_transport=c.get('pattern_support_id_transport'))
+                memory_freeze_path=c['rolling_memory_freeze_path'],memory_freeze_sha256=c['rolling_memory_freeze_sha256'],support_id_transport=c.get('pattern_support_id_transport'),abstraction_guard=c.get('pattern_abstraction_guard'))
             if c!=expected or not c['execution_attempt_id'].startswith('math_v2_1_pattern_A4_seed81_canary_attempt'):
                 return ('PATTERN_FROZEN_CONTRACT_MISMATCH',)
             return ()

@@ -716,6 +716,9 @@
     },
     "pattern_support_id_transport": {
       "const": "PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1"
+    },
+    "pattern_abstraction_guard": {
+      "const": "PATTERN_ABSTRACTION_MATH_COMMAND_GUARD_V2"
     }
   },
   "required": [
@@ -1977,6 +1980,9 @@
               },
               "pattern_support_id_transport": {
                 "const": "PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1"
+              },
+              "pattern_abstraction_guard": {
+                "const": "PATTERN_ABSTRACTION_MATH_COMMAND_GUARD_V2"
               }
             },
             "required": [
@@ -2021,6 +2027,29 @@
           "mechanism_config": {
             "required": [
               "pattern_support_id_transport"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "pattern_abstraction_guard"
+        ]
+      },
+      "then": {
+        "properties": {
+          "execution_binding": {
+            "properties": {
+              "identity": {
+                "const": "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1"
+              }
+            }
+          },
+          "mechanism_config": {
+            "required": [
+              "pattern_abstraction_guard"
             ]
           }
         }

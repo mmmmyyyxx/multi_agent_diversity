@@ -83,6 +83,8 @@ class RequestBroker:
             identity['pattern_treatment']={k:c[k] for k in ('pattern_policy','shared_risk_policy','pattern_amendment_authorization_sha256')}
             if 'pattern_support_id_transport' in c:
                 identity['pattern_treatment']['pattern_support_id_transport']=c['pattern_support_id_transport']
+            if 'pattern_abstraction_guard' in c:
+                identity['pattern_treatment']['pattern_abstraction_guard']=c['pattern_abstraction_guard']
         if role in {'reflection','pattern'} and self.optimizer_policy:
             identity['optimizer_generation_policy'] = self.optimizer_policy
             if c.get('optimizer_nonthinking_evidence_policy'):

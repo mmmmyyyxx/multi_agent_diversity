@@ -464,10 +464,10 @@ failures:
     and validators unchanged; require a human evidence-policy decision before fresh Canary.
   lifecycle: MITIGATED
   lifecycle_note: STOP_NEW_SCIENTIFIC_POLICY_REQUIRED; NO_CANARY_PILOT_VALIDATION_OR_TEST_DISPATCH
-
   resolved_by: math_v2_1_autonomous_constitution_v1
   resolution_evidence: reports/math_v2_1_autonomous_constitution_v1_20261003/equivalent_evidence_receipt.json
-  resolution_note: Current constitution permits audited Level B equivalent evidence; prior diagnostic evidence and absent token count remain unchanged.
+  resolution_note: Current constitution permits audited Level B equivalent evidence; prior diagnostic evidence and
+    absent token count remain unchanged.
 - failure_id: FAIL-MATH-V21-PROPOSER-MUTABLE-GUARD-MISMATCH
   title: Complete optimizer proposals do not reach admissible mutable candidates
   status: MITIGATED
@@ -480,22 +480,22 @@ failures:
   evidence:
   - reports/math_v2_1_proposal_semantic_postmortem_v1_20261004
   evidence_level: hash_bound_private_replay_and_synthetic_zero_api_controls
-  root_cause_status: Six output-control, three answer-representation and one benign proposal under owner semantic rubric;
-    lexical overreach coexists with real proposer violations and five append-only failures.
-  forbidden_inference: Neutral identity comparison does not identify efficacy; one finite owner annotation is not a population
-    false-positive rate; phrase masking is not a safe admission repair.
+  root_cause_status: Six output-control, three answer-representation and one benign proposal under owner semantic
+    rubric; lexical overreach coexists with real proposer violations and five append-only failures.
+  forbidden_inference: Neutral identity comparison does not identify efficacy; one finite owner annotation is not
+    a population false-positive rate; phrase masking is not a safe admission repair.
   regression_tests:
   - tests/test_math_proposal_postmortem.py
-  required_resolution: Versioned proposer/validator semantic alignment, including mathematical representation boundary; preserve
-    output-interface isolation, replacement and example-copying checks.
+  required_resolution: Versioned proposer/validator semantic alignment, including mathematical representation boundary;
+    preserve output-interface isolation, replacement and example-copying checks.
   lifecycle: MITIGATED
   prior_lifecycle: OPEN
-  prior_lifecycle_note: Read-only audit complete; production policy and closed historical search unchanged; fresh real execution
-    not authorized.
+  prior_lifecycle_note: Read-only audit complete; production policy and closed historical search unchanged; fresh
+    real execution not authorized.
   lifecycle_note: Versioned semantic boundary and Layer1 repairs passed offline regression and a fresh real Canary;
     six admissible proposals reached local Solver scoring and four reached team evaluation. One complete production
-    opportunity ended without commit because its selected candidate failed the frozen Shadow gate. Historical
-    Pilot invalid-proposal evidence remains immutable; scientific efficacy is not estimated.
+    opportunity ended without commit because its selected candidate failed the frozen Shadow gate. Historical Pilot
+    invalid-proposal evidence remains immutable; scientific efficacy is not estimated.
   mitigated_by: math_v2_1_a1_seed81_low_cost_canary_v6
   resolution_evidence:
   - reports/math_v2_1_layer1_gepa_flow_audit_v1_20261004
@@ -503,16 +503,16 @@ failures:
   - reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/layer1_search_audit.json
   - reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/candidate_funnel.json
   - reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/shadow_gate_audit.json
-  resolution_limits: Throughput and contract conformance only; no population false-positive-rate estimate,
-    component-level causal attribution or scientific efficacy claim.
+  resolution_limits: Throughput and contract conformance only; no population false-positive-rate estimate, component-level
+    causal attribution or scientific efficacy claim.
 - failure_id: FAIL-MATH-PATTERN-LONG-SUPPORT-ID-COPY
   title: Pattern support identifier loses characters on the provider wire
   status: OPEN
   first_observed: math_v2_1_a4_seed81_pattern_canary_v1
   affected_components:
   - pattern_support_id_transport
-  symptom: One of seven supplied eighty-character IDs was returned with two characters omitted;
-    strict membership validation rejected the unknown ID and missing original.
+  symptom: One of seven supplied eighty-character IDs was returned with two characters omitted; strict membership
+    validation rejected the unknown ID and missing original.
   evidence:
   - reports/math_v2_1_a4_seed81_pattern_canary_v1_20261004/pattern_membership_failure.json
   - reports/math_v2_1_a4_seed81_pattern_canary_v1_20261004/WHO_and_wide_universe_audit.json
@@ -521,6 +521,22 @@ failures:
   forbidden_inference: No fuzzy ID repair, semantic reassignment, parser loosening or efficacy inference.
   regression_tests:
   - tests/test_pattern_responsibility.py
-  required_resolution: Explicit opt-in lossless support-ID alias transport, strict exact decoding,
-    fresh identity/source/preexecution/authorization and fresh Canary under user attachment section 102.
+  required_resolution: Explicit opt-in lossless support-ID alias transport, strict exact decoding, fresh identity/source/preexecution/authorization
+    and fresh Canary under user attachment section 102.
+  lifecycle: OPEN
+- failure_id: FAIL-MATH-PATTERN-GENERIC-COMMAND-NAME-GUARD
+  title: Generic mathematical imperative misclassified as example-specific proper name
+  status: OPEN
+  first_observed: math_v2_1_a4_seed81_pattern_canary_v2
+  affected_components:
+  - pattern_abstraction_guard
+  evidence:
+  - reports/math_v2_1_a4_seed81_pattern_canary_v2_20261004/WHO_and_wide_universe_audit.json
+  root_cause_status: CONFIRMED_IMPLEMENTATION_FALSE_POSITIVE
+  forbidden_inference: Do not loosen example copying, answer, numeric, interface or proper-name guards; do not tune
+    Pattern prompt or sampling.
+  regression_tests:
+  - tests/test_pattern_responsibility.py
+  required_resolution: Opt-in versioned generic mathematical-command classification; new freeze, authorization and
+    fresh Canary.
   lifecycle: OPEN

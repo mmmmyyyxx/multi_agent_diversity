@@ -697,3 +697,9 @@ wire representation of support identifiers through an exact bijection. It
 preserves the original wrong universe, semantic prompt, all responsibility and
 membership rules, call count and generation policies. Absence retains the old
 transport; unknown, duplicate, overlapping and missing aliases remain terminal.
+
+The optional `PATTERN_ABSTRACTION_MATH_COMMAND_GUARD_V2` corrects the
+capitalized `Simplify` mathematical imperative being misclassified as a proper
+name. Example copying, answers, numeric and response-interface guards remain
+unchanged. This versioned parser repair does not change discovery, selection,
+generation or budget policies; its absence preserves the original guard.

@@ -111,11 +111,31 @@ def test_unassigned_positive_responsibility_failure_no_generic_fallback():
     with pytest.raises(SearchContractError,match='NOT_ACTIONABLE'):score_partition(partition(unassigned=[r.example_id for r in rows]),rows)
 
 
+@pytest.mark.parametrize('guard',[None,v.PATTERN_ABSTRACTION_GUARD_VERSION])
 @pytest.mark.parametrize('text',['Return FINAL_ANSWER only','Always return 2','Use constant 123','Alice has a shortcut'])
-def test_abstraction_leakage_and_interface_guard(text):
+def test_abstraction_leakage_and_interface_guard(text,guard):
     rows=list(wrong_universe(evidence()));rows[0]=replace(rows[0],signals={**rows[0].signals,'input_payload':'Alice calculates an expression.'})
     obj=whole(rows);obj['patterns'][0]['update_direction']=text
-    with pytest.raises(SearchContractError,match='INVALID_ABSTRACTION|EXAMPLE_LEAKAGE'):score_partition(obj,rows)
+    with pytest.raises(SearchContractError,match='INVALID_ABSTRACTION|EXAMPLE_LEAKAGE'):score_partition(obj,rows,abstraction_guard_version=guard)
+
+
+def test_math_imperative_is_generic_only_under_explicit_guard_identity():
+    rows=list(wrong_universe(evidence()))
+    rows[0]=replace(rows[0],signals={**rows[0].signals,'input_payload':'Simplify a symbolic rational expression.'})
+    obj=whole(rows);obj['patterns'][0]['update_direction']='Simplify intermediate terms before checking equivalence.'
+    with pytest.raises(SearchContractError,match='EXAMPLE_LEAKAGE'):score_partition(obj,rows)
+    result=score_partition(obj,rows,abstraction_guard_version=v.PATTERN_ABSTRACTION_GUARD_VERSION)
+    assert result['selected_pattern_responsibility']==8 and result['assigned_residual_count']==7
+    with pytest.raises(SearchContractError,match='GUARD_NOT_BOUND'):score_partition(obj,rows,abstraction_guard_version='unknown')
+
+
+def test_generic_command_exception_does_not_allow_copied_example_or_answer():
+    from multi_dataset_diverse_rl.search.pattern_responsibility import guard_abstraction
+    rows=list(wrong_universe(evidence()))
+    rows[0]=replace(rows[0],signals={**rows[0].signals,'input_payload':'Simplify the symbolic expression involving nested radical factors.','gold':'specialvalue'})
+    for text in ('Simplify the symbolic expression involving nested radical factors.','Simplify by returning specialvalue'):
+        with pytest.raises(SearchContractError,match='EXAMPLE_LEAKAGE'):
+            guard_abstraction(text,rows,abstraction_guard_version=v.PATTERN_ABSTRACTION_GUARD_VERSION)
 
 
 def setup_op(events=None,obj=None,rows=None):
@@ -168,19 +188,23 @@ def test_memory_after_selected_pattern_and_no_WHO_effect(tmp_path):
     assert json.loads(full[len(INSTRUCTION)+1:])['selected_pattern']==value['selected_pattern']
 
 
-def test_new_binding_scope_hashes_and_generation_policy():
+@pytest.mark.parametrize('binding_version',[1,2,3])
+def test_new_binding_scope_hashes_and_generation_policy(binding_version):
     from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
     from multi_dataset_diverse_rl.governance.unified_execution import preexecution_manifest,execution_scope
     from multi_dataset_diverse_rl.governance.repository import validate_manifest_v2
     from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker
     from multi_dataset_diverse_rl.governance.token_accounting import serialized_request
-    root=Path(__file__).resolve().parents[1];bp='experiments/execution_bindings/math_v2_1_pattern_canary_v1.json'
+    root=Path(__file__).resolve().parents[1];bp=f'experiments/execution_bindings/math_v2_1_pattern_canary_v{binding_version}.json'
     c=json.loads((root/bp).read_bytes());b=execution_binding(root,c);assert not b.blockers()
     m=preexecution_manifest(root,source_sha='0'*40,frozen=False,binding_path=bp,experiment_id='synthetic_pattern')
     assert not validate_manifest_v2(root,m)
     scope=execution_scope(m,c)
     assert scope['roles']==['solver','reflection','pattern'] and scope['initial_memory_entries']==0
     assert m['pattern_identity']==v.PATTERN_AWARE_DISCOVERY_VERSION and m['memory_identity']==v.STRUCTURED_ROLLING_RISK_MEMORY_VERSION
+    if binding_version==3:
+        assert m['pattern_abstraction_guard']==scope['pattern_abstraction_guard']==v.PATTERN_ABSTRACTION_GUARD_VERSION
+        assert b.method('A4').mechanism_config['pattern_abstraction_guard']==v.PATTERN_ABSTRACTION_GUARD_VERSION
     broker=RequestBroker(contract=c,transport=lambda _:None,arm='A4',seed=81)
     for role in ['solver','reflection','pattern']:
         req,_=broker._request_identity(role=role,split='optimize',member_slot=0 if role=='solver' else None,messages=[])
@@ -189,6 +213,12 @@ def test_new_binding_scope_hashes_and_generation_policy():
         assert body['max_tokens']==3600 if role=='solver' else body['max_completion_tokens']==1800 and 'max_tokens' not in body
     bad=replace(b.method('A4'),mechanism_config={**b.method('A4').mechanism_config,'pattern_policy':{}})
     assert bad.identity()!=b.method('A4').identity()
+    if binding_version==3:
+        old_guard={k:value for k,value in c.items() if k!='pattern_abstraction_guard'}
+        other=RequestBroker(contract=old_guard,transport=lambda _:None,arm='A4',seed=81)
+        req,key=broker._request_identity(role='pattern',split='optimize',messages=[])
+        legacy,legacy_key=other._request_identity(role='pattern',split='optimize',messages=[])
+        assert req==legacy and key!=legacy_key
 
 
 def test_set_level_context_stop_and_fresh_non_solver_no_cache():
@@ -215,15 +245,16 @@ def test_duplicate_scientific_discovery_fails_before_provider():
     history.target_counts[0]=1;analyzer.analyze(state,diagnosis,0,evidence(),history);assert p.calls==2
 
 
-@pytest.mark.parametrize('alias_transport',[False,True])
-def test_pattern_memory_full_fake_production_graph(tmp_path,monkeypatch,alias_transport):
+@pytest.mark.parametrize('binding_version',[1,2,3])
+def test_pattern_memory_full_fake_production_graph(tmp_path,monkeypatch,binding_version):
     from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
     from multi_dataset_diverse_rl.benchmarks.protocols import protocol_input
     from multi_dataset_diverse_rl.search.binary_runtime import CorrectnessExample
     from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker,BenchmarkSolver,ReflectionProvider
     from multi_dataset_diverse_rl.governance.token_accounting import serialized_request
     root=Path(__file__).resolve().parents[1]
-    c=json.loads((root/f'experiments/execution_bindings/math_v2_1_pattern_canary_v{2 if alias_transport else 1}.json').read_bytes());binding=execution_binding(root,c)
+    alias_transport=binding_version>=2
+    c=json.loads((root/f'experiments/execution_bindings/math_v2_1_pattern_canary_v{binding_version}.json').read_bytes());binding=execution_binding(root,c)
     adapter=binding.benchmark();prompts=tuple(x['prompt'] for x in json.loads((root/c['initial_team_path']).read_bytes())['members'])
     def examples(role):
         return tuple(CorrectnessExample(protocol_input('math',f'{role}{i}',{'problem':f'Synthetic {role} arithmetic {i}.'},adapter.output_contract,protocol=adapter.protocol),'1') for i in range(12 if role=='optimize' else 40))

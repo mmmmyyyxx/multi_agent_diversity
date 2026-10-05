@@ -173,6 +173,9 @@ flowchart TD
     n261["math_v2_1_pattern_support_id_transport_v1<br/>PROTOCOL_FREEZE<br/>COMPLETED"]
     n262["math_v2_1_pattern_preexecution_v2<br/>PREEXECUTION_FREEZE<br/>COMPLETED"]
     n263["math_v2_1_a4_seed81_pattern_canary_v2<br/>REAL_CANARY<br/>COMPLETED"]
+    n264["math_v2_1_pattern_abstraction_guard_v2<br/>PROTOCOL_FREEZE<br/>DRAFT"]
+    n265["math_v2_1_pattern_preexecution_v3<br/>PREEXECUTION_FREEZE<br/>DRAFT"]
+    n266["math_v2_1_a4_seed81_pattern_canary_v3<br/>REAL_CANARY<br/>DRAFT"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -513,6 +516,9 @@ flowchart TD
   n260 -->|derived_from| n261
   n261 -->|derived_from| n262
   n262 -->|derived_from| n263
+  n263 -->|derived_from| n264
+  n264 -->|derived_from| n265
+  n265 -->|derived_from| n266
 ```
 
 ## Archived branches and unresolved evidence

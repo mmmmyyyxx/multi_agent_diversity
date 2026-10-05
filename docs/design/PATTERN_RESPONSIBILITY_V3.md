@@ -23,3 +23,12 @@ omissions fail closed. No approximate matching, assignment repair, regeneration,
 sampling, prompt change or additional Pattern call is permitted. The transport
 identity enters binding, method/provider/request/cache, manifest, startup and
 authorization identity. Its absence retains the frozen original transport.
+
+The optional `PATTERN_ABSTRACTION_MATH_COMMAND_GUARD_V2` corrects one parser
+classification defect: the ordinary mathematical imperative `Simplify` is
+generic even when capitalized in an example. It does not establish an
+example-specific proper name. Numeric constants, answers, supplied example
+text, response interfaces and other copied names remain rejected. No Pattern
+prompt, sampling, membership, F, representative selection or budget changes.
+The correction is explicit in binding, method, request/cache, manifest and
+authorization identity. Absence retains the original guard for replay.

@@ -82,7 +82,9 @@ def discovery_payload(rows):
         team_disagreement=r.signals.get('team_disagreement')) for r in rows])
 
 
-def guard_abstraction(text, rows):
+def guard_abstraction(text, rows, *, abstraction_guard_version=None):
+    if abstraction_guard_version not in (None,versions.PATTERN_ABSTRACTION_GUARD_VERSION):
+        raise SearchContractError('PATTERN_ABSTRACTION_GUARD_NOT_BOUND')
     if (not isinstance(text,str) or not text.strip() or len(text)>600
             or re.search(r'\d',text) or semantic_violation_reasons(text)):
         raise SearchContractError('PATTERN_DISCOVERY_INVALID_ABSTRACTION')
@@ -97,11 +99,15 @@ def guard_abstraction(text, rows):
             raise SearchContractError('PATTERN_DISCOVERY_EXAMPLE_LEAKAGE')
         names=re.findall(r'(?<!\w)[A-Z][a-z]{2,}(?!\w)',str(r.signals['input_payload']))
         generic={'Find','Compute','Determine','Let','Suppose','Given','What','How','The','For','When','If','Math'}
+        if abstraction_guard_version==versions.PATTERN_ABSTRACTION_GUARD_VERSION:
+            # A mathematical imperative remains generic when capitalized at
+            # the beginning of an example. Do not classify it as a proper name.
+            generic.add('Simplify')
         if any(name not in generic and re.search(r'\b'+re.escape(name.casefold())+r'\b',normalized) for name in names):
             raise SearchContractError('PATTERN_DISCOVERY_EXAMPLE_LEAKAGE')
 
 
-def score_partition(value, rows):
+def score_partition(value, rows, *, abstraction_guard_version=None):
     universe={r.example_id:r for r in rows}
     if (not isinstance(value,dict) or set(value)!={'patterns','unassigned_ids'}
             or not isinstance(value['patterns'],list) or not isinstance(value['unassigned_ids'],list)):
@@ -117,7 +123,7 @@ def score_partition(value, rows):
         if len(support)!=len(p['support_ids']) or not support<=set(universe) or used & support:
             raise SearchContractError('PATTERN_DISCOVERY_INVALID_MEMBERSHIP')
         used.update(support)
-        for key in ('failure_mechanism','update_direction'):guard_abstraction(p[key],rows)
+        for key in ('failure_mechanism','update_direction'):guard_abstraction(p[key],rows,abstraction_guard_version=abstraction_guard_version)
         mid=mechanism_identity(p['failure_mechanism'],p['update_direction'])
         if mid not in grouped:
             grouped[mid]=dict(pattern_id=mid,failure_mechanism=p['failure_mechanism'].strip(),
@@ -157,9 +163,12 @@ def score_partition(value, rows):
 class ResponsibilityPatternDiscoveryV3:
     identity=versions.PATTERN_AWARE_DISCOVERY_VERSION
 
-    def __init__(self,provider):
+    def __init__(self,provider,*,abstraction_guard_version=None):
         if provider is None:raise SearchContractError('PATTERN_PROVIDER_NOT_BOUND')
+        if abstraction_guard_version not in (None,versions.PATTERN_ABSTRACTION_GUARD_VERSION):
+            raise SearchContractError('PATTERN_ABSTRACTION_GUARD_NOT_BOUND')
         self.provider=provider
+        self.abstraction_guard_version=abstraction_guard_version
         self.attempted_opportunities=set()
 
     def analyze(self,state,diagnosis,target_member,evidence_rows,history):
@@ -169,7 +178,7 @@ class ResponsibilityPatternDiscoveryV3:
         rows=wrong_universe(evidence_rows)
         if not rows:raise SearchContractError('PATTERN_DISCOVERY_NOT_ACTIONABLE')
         self.attempted_opportunities.add(key)
-        return score_partition(self.provider.diagnose(discovery_payload(rows)),rows)
+        return score_partition(self.provider.diagnose(discovery_payload(rows)),rows,abstraction_guard_version=self.abstraction_guard_version)
 
 
 class SetLevelPatternProvider:

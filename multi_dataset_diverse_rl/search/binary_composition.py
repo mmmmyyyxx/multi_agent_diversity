@@ -98,6 +98,11 @@ def build_binary_orchestrator(*, benchmark, aggregation, examples, prompts, solv
                     if transport!=versions.PATTERN_SUPPORT_ID_ALIAS_VERSION or getattr(pattern_provider,'support_id_transport',None)!=transport:
                         raise SearchContractError('PATTERN_ID_TRANSPORT_NOT_BOUND')
                     mechanism_config['pattern_support_id_transport']=transport
+                guard=method.mechanism_config.get('pattern_abstraction_guard')
+                if guard is not None:
+                    if guard!=versions.PATTERN_ABSTRACTION_GUARD_VERSION:
+                        raise SearchContractError('PATTERN_ABSTRACTION_GUARD_NOT_BOUND')
+                    mechanism_config['pattern_abstraction_guard']=guard
             if method.mechanism_config!=mechanism_config:
                 raise SearchContractError('MEMORY_CONTEXT_POLICIES_NOT_BOUND')
     if current and method.identity() != expected.identity():
@@ -112,6 +117,8 @@ def build_binary_orchestrator(*, benchmark, aggregation, examples, prompts, solv
                                 aggregation=aggregation, freeze_initial_competence=current)
     patterns = (NullPatternAnalyzer() if method.pattern_policy == versions.UNIFIED_NULL_PATTERN_VERSION
                 else (ResponsibilityPatternDiscoveryV3 if pattern_aware else FocusedPatternDiagnosticV2 if current else PatternDiagnosticV1)(pattern_provider))
+    if pattern_aware:
+        patterns=ResponsibilityPatternDiscoveryV3(pattern_provider,abstraction_guard_version=method.mechanism_config.get('pattern_abstraction_guard'))
     if action_memory and memory_id==versions.STRUCTURED_ROLLING_RISK_MEMORY_VERSION:
         memory=StructuredRollingRiskMemoryV4(risk_policy=method.mechanism_config['shared_risk_policy'],**method.mechanism_config['memory'])
     else:
