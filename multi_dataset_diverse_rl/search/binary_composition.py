@@ -100,7 +100,7 @@ def build_binary_orchestrator(*, benchmark, aggregation, examples, prompts, solv
                     mechanism_config['pattern_support_id_transport']=transport
                 guard=method.mechanism_config.get('pattern_abstraction_guard')
                 if guard is not None:
-                    if guard!=versions.PATTERN_ABSTRACTION_GUARD_VERSION:
+                    if guard not in (versions.PATTERN_ABSTRACTION_GUARD_VERSION, versions.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION):
                         raise SearchContractError('PATTERN_ABSTRACTION_GUARD_NOT_BOUND')
                     mechanism_config['pattern_abstraction_guard']=guard
             if method.mechanism_config!=mechanism_config:

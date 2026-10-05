@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "source_closure_files": 223,
+  "source_poison_checks": 223,
+  "new_guard_in_execution_closure": true,
+  "parent_amendment_in_execution_closure": true,
+  "scientific_source_hash": "777187f89b60cfad18527a14b88f84115fd3ff4b147a1ef1be69b73f209e7c69",
+  "governance_hash": "375bc6b1810ac751dfb823df4b9f6589bc38ae273ee3a4eb7e137e86b9bdc771",
+  "benchmark_contract_hash": "e68ccd7ebf03cbfb534de75dc0d46be0a1f3d070a46d866fc7e5c727678a42ac",
+  "real_api_calls": 0,
+  "validation_calls": 0,
+  "test_calls": 0
+}

@@ -816,6 +816,12 @@ nodes:
 - experiment_id: math_v2_1_a4_seed81_pattern_canary_v3
   kind: REAL_CANARY
   era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_1_pattern_specific_content_guard_v3
+  kind: PROTOCOL_FREEZE
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_1_a4_seed81_pattern_canary_v4
+  kind: REAL_CANARY
+  era: BENCHMARK_GENERALIZATION
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1535,4 +1541,14 @@ edges:
   relation: derived_from
   evidence: reports/math_v2_1_a4_seed81_pattern_canary_v3_20261005/README.md
   scope: Narrow parser repair; fresh Canary-only identity
+- from: math_v2_1_a4_seed81_pattern_canary_v3
+  to: math_v2_1_pattern_specific_content_guard_v3
+  relation: repairs_operational_blocker_of
+  evidence: reports/math_v2_1_pattern_specific_content_guard_v3_20261005/README.md
+  note: Zero-API code amendment and fresh unauthorized Canary draft.
+- from: math_v2_1_pattern_specific_content_guard_v3
+  to: math_v2_1_a4_seed81_pattern_canary_v4
+  relation: followup_of
+  evidence: reports/math_v2_1_pattern_specific_content_guard_v3_20261005/README.md
+  note: Zero-API code amendment and fresh unauthorized Canary draft.
 current_frontier: experiments/current_frontier.yaml

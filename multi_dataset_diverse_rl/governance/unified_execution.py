@@ -104,6 +104,9 @@ def execution_identity(root, contract):
     configs = [contract["split_directory"] + "/math.json", contract["initial_team_path"],
                contract["pattern_prompt_path"], contract.get("binding_path", versions.MATH_EXECUTION_BINDING_PATH)]
     configs.extend(contract[k] for k in ("parent_binding_path", "accounting_policy_path", "validation_accounting_metadata_path", "verify_settings_path", "amendment_parent_binding_path", "low_cost_subsets_path", "optimizer_amendment_authorization_path", "layer1_parent_binding_path", "layer1_amendment_authorization_path", "memory_parent_binding_path", "memory_amendment_authorization_path", "pattern_parent_binding_path", "pattern_amendment_authorization_path", "rolling_memory_freeze_path") if k in contract)
+    if contract.get('pattern_abstraction_guard') == versions.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION:
+        approval = read_json(root / contract['pattern_amendment_authorization_path'])
+        configs.append(approval['guard_amendment']['parent_authority_path'])
     identity = build_unified_source_identity(root, root / contract["canonical_root"] / "manifests/math.json", [root / p for p in configs])
     files = [root / r["path"] for s in identity["scopes"].values() for r in s["files"]]
     files.append(root / contract["split_directory"] / "math.ids.jsonl")

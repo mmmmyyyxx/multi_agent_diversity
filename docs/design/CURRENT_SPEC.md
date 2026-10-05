@@ -703,3 +703,15 @@ capitalized `Simplify` mathematical imperative being misclassified as a proper
 name. Example copying, answers, numeric and response-interface guards remain
 unchanged. This versioned parser repair does not change discovery, selection,
 generation or budget policies; its absence preserves the original guard.
+
+The optional `PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V3` replaces the
+capitalized-word overlap classifier with provenance-based literal checks as
+defined in [the Pattern contract](PATTERN_RESPONSIBILITY_V3.md). Ordinary
+vocabulary overlap alone is admissible. Explicit naming/actor contexts,
+quoted distinctive phrases, mathematical expressions and complete answer
+literals remain protected, alongside the existing long-copy, numeric and
+external-interface guards. This bounded deterministic detector makes no claim
+to comprehensive semantic entity recognition or scientific efficacy. V2 and
+the absent-guard path remain unchanged. The new identity enters every binding,
+method, provider/request/cache, manifest and authorization scope. The code
+amendment inherits frozen treatment settings but grants no fresh API authority.

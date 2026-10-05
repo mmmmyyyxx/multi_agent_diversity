@@ -12,6 +12,7 @@ from .responsibility_value import responsibility_value
 from .schemas import EvidenceView, SearchContractError
 from .semantic_contract import mechanism_identity
 from .variable_evidence import PatternCapableVariableEvidencePolicyV1
+from .abstraction_content import specific_content_leaked
 
 
 PROMPT = '''Discover generalizable recurring mathematical failure mechanisms in the ENTIRE
@@ -34,6 +35,9 @@ POLICY = dict(discovery=versions.PATTERN_AWARE_DISCOVERY_VERSION,
     selection='raw_responsibility_then_canonical_identity', input_limit_tokens=991808,
     context_limit_tokens=1000000, input_estimate='serialized_utf8_bytes_plus_1024',
     context_source='https://help.aliyun.com/zh/model-studio/qwen3-7-flash')
+
+ABSTRACTION_GUARD_VERSIONS = (None, versions.PATTERN_ABSTRACTION_GUARD_VERSION,
+    versions.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION)
 
 
 @dataclass(frozen=True)
@@ -83,7 +87,7 @@ def discovery_payload(rows):
 
 
 def guard_abstraction(text, rows, *, abstraction_guard_version=None):
-    if abstraction_guard_version not in (None,versions.PATTERN_ABSTRACTION_GUARD_VERSION):
+    if abstraction_guard_version not in ABSTRACTION_GUARD_VERSIONS:
         raise SearchContractError('PATTERN_ABSTRACTION_GUARD_NOT_BOUND')
     if (not isinstance(text,str) or not text.strip() or len(text)>600
             or re.search(r'\d',text) or semantic_violation_reasons(text)):
@@ -91,6 +95,10 @@ def guard_abstraction(text, rows, *, abstraction_guard_version=None):
     examples=tuple(LocalEvidenceExample(r.example_id,r.signals['input_payload'],r.signals['gold']) for r in rows)
     if contains_supplied_example_text(text,examples):
         raise SearchContractError('PATTERN_DISCOVERY_EXAMPLE_LEAKAGE')
+    if abstraction_guard_version == versions.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION:
+        if specific_content_leaked(text, rows):
+            raise SearchContractError('PATTERN_DISCOVERY_EXAMPLE_LEAKAGE')
+        return
     # Reject copied multi-character answers and example-specific proper names.
     normalized=' '.join(text.casefold().split())
     for r in rows:
@@ -165,7 +173,7 @@ class ResponsibilityPatternDiscoveryV3:
 
     def __init__(self,provider,*,abstraction_guard_version=None):
         if provider is None:raise SearchContractError('PATTERN_PROVIDER_NOT_BOUND')
-        if abstraction_guard_version not in (None,versions.PATTERN_ABSTRACTION_GUARD_VERSION):
+        if abstraction_guard_version not in ABSTRACTION_GUARD_VERSIONS:
             raise SearchContractError('PATTERN_ABSTRACTION_GUARD_NOT_BOUND')
         self.provider=provider
         self.abstraction_guard_version=abstraction_guard_version

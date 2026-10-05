@@ -111,7 +111,7 @@ def test_unassigned_positive_responsibility_failure_no_generic_fallback():
     with pytest.raises(SearchContractError,match='NOT_ACTIONABLE'):score_partition(partition(unassigned=[r.example_id for r in rows]),rows)
 
 
-@pytest.mark.parametrize('guard',[None,v.PATTERN_ABSTRACTION_GUARD_VERSION])
+@pytest.mark.parametrize('guard',[None,v.PATTERN_ABSTRACTION_GUARD_VERSION,v.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION])
 @pytest.mark.parametrize('text',['Return FINAL_ANSWER only','Always return 2','Use constant 123','Alice has a shortcut'])
 def test_abstraction_leakage_and_interface_guard(text,guard):
     rows=list(wrong_universe(evidence()));rows[0]=replace(rows[0],signals={**rows[0].signals,'input_payload':'Alice calculates an expression.'})
@@ -137,6 +137,65 @@ def test_generic_command_exception_does_not_allow_copied_example_or_answer():
     for text in (copied,'Simplify by returning specialvalue'):
         with pytest.raises(SearchContractError,match='EXAMPLE_LEAKAGE'):
             guard_abstraction(text,rows,abstraction_guard_version=v.PATTERN_ABSTRACTION_GUARD_VERSION)
+
+
+@pytest.mark.parametrize('word', ['Simplify','Problem','Equation','Triangle','Function',
+    'Polynomial','Solution','Integer','Expression','Constraint','Representation'])
+@pytest.mark.parametrize('source', ['{word}: examine symbolic constraints.',
+    'Find the {word} satisfying the stated conditions.'])
+def test_specific_content_guard_accepts_generic_vocabulary_without_word_allowlist(word,source):
+    rows=list(wrong_universe(evidence()))
+    rows[0]=replace(rows[0],signals={**rows[0].signals,'input_payload':source.format(word=word)})
+    obj=whole(rows);obj['patterns'][0]['failure_mechanism']=word+' reasoning omitted a domain check.'
+    result=score_partition(obj,rows,abstraction_guard_version=v.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION)
+    assert result['assigned_residual_count']==7 and result['selected_pattern_responsibility']==8
+    if word!='Simplify':
+        with pytest.raises(SearchContractError,match='EXAMPLE_LEAKAGE'):
+            score_partition(obj,rows,abstraction_guard_version=v.PATTERN_ABSTRACTION_GUARD_VERSION)
+
+
+@pytest.mark.parametrize('source,text', [
+    ('Alice calculates an expression.', 'alice needs a domain check'),
+    ('A student named Zorabel studies algebra.', 'Check Zorabel before substitution'),
+    ('Dr. Whitmore studies algebra.', 'whitmore omits verification'),
+    ('Alice and Bob each buy a book.', 'Bob omits a sign check'),
+    ('The puzzle is called "silver orchard crossing".', 'Recheck the silver orchard crossing'),
+    ('Simplify $x+y=z$ before solving.', 'Recheck x+y=z before substitution'),
+    ('A symbolic example.', 'Check specialvalue'),
+])
+def test_specific_content_guard_rejects_provenance_backed_literals(source,text):
+    from multi_dataset_diverse_rl.search.pattern_responsibility import guard_abstraction
+    rows=list(wrong_universe(evidence()))
+    rows[0]=replace(rows[0],signals={**rows[0].signals,'input_payload':source,'gold':'specialvalue'})
+    with pytest.raises(SearchContractError,match='EXAMPLE_LEAKAGE'):
+        guard_abstraction(text,rows,abstraction_guard_version=v.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION)
+
+
+def test_specific_content_answer_matching_uses_complete_literals_and_preserves_short_answer_guard():
+    from multi_dataset_diverse_rl.search.pattern_responsibility import guard_abstraction
+    row=replace(evidence()[0],signals={**evidence()[0].signals,'gold':'sin'})
+    guard_abstraction('Use a single independent verification.',[row],abstraction_guard_version=v.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION)
+    with pytest.raises(SearchContractError,match='EXAMPLE_LEAKAGE'):
+        guard_abstraction('Return sin',[row],abstraction_guard_version=v.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION)
+    row=replace(row,signals={**row.signals,'gold':'x'})
+    with pytest.raises(SearchContractError,match='EXAMPLE_LEAKAGE|INVALID_ABSTRACTION'):
+        guard_abstraction('The answer is x',[row],abstraction_guard_version=v.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION)
+
+
+@pytest.mark.parametrize('text', ['Use constant 123','Use 2D geometry','Return FINAL_ANSWER only',
+    'Output exactly one line', 'Always return 2'])
+def test_specific_content_keeps_numeric_and_interface_guards(text):
+    from multi_dataset_diverse_rl.search.pattern_responsibility import guard_abstraction
+    with pytest.raises(SearchContractError,match='INVALID_ABSTRACTION'):
+        guard_abstraction(text,wrong_universe(evidence()),abstraction_guard_version=v.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION)
+
+
+def test_specific_content_keeps_long_example_copy_guard():
+    from multi_dataset_diverse_rl.search.pattern_responsibility import guard_abstraction
+    source='Simplify the symbolic expression involving nested radical factors with a symbolic numerator and denominator.'
+    row=replace(evidence()[0],signals={**evidence()[0].signals,'input_payload':source})
+    with pytest.raises(SearchContractError,match='EXAMPLE_LEAKAGE'):
+        guard_abstraction(source,[row],abstraction_guard_version=v.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION)
 
 
 def setup_op(events=None,obj=None,rows=None):
@@ -189,7 +248,7 @@ def test_memory_after_selected_pattern_and_no_WHO_effect(tmp_path):
     assert json.loads(full[len(INSTRUCTION)+1:])['selected_pattern']==value['selected_pattern']
 
 
-@pytest.mark.parametrize('binding_version',[1,2,3])
+@pytest.mark.parametrize('binding_version',[1,2,3,4])
 def test_new_binding_scope_hashes_and_generation_policy(binding_version):
     from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
     from multi_dataset_diverse_rl.governance.unified_execution import preexecution_manifest,execution_scope
@@ -203,9 +262,10 @@ def test_new_binding_scope_hashes_and_generation_policy(binding_version):
     scope=execution_scope(m,c)
     assert scope['roles']==['solver','reflection','pattern'] and scope['initial_memory_entries']==0
     assert m['pattern_identity']==v.PATTERN_AWARE_DISCOVERY_VERSION and m['memory_identity']==v.STRUCTURED_ROLLING_RISK_MEMORY_VERSION
-    if binding_version==3:
-        assert m['pattern_abstraction_guard']==scope['pattern_abstraction_guard']==v.PATTERN_ABSTRACTION_GUARD_VERSION
-        assert b.method('A4').mechanism_config['pattern_abstraction_guard']==v.PATTERN_ABSTRACTION_GUARD_VERSION
+    if binding_version>=3:
+        guard=v.PATTERN_ABSTRACTION_GUARD_VERSION if binding_version==3 else v.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION
+        assert m['pattern_abstraction_guard']==scope['pattern_abstraction_guard']==guard
+        assert b.method('A4').mechanism_config['pattern_abstraction_guard']==guard
     broker=RequestBroker(contract=c,transport=lambda _:None,arm='A4',seed=81)
     for role in ['solver','reflection','pattern']:
         req,_=broker._request_identity(role=role,split='optimize',member_slot=0 if role=='solver' else None,messages=[])
@@ -214,7 +274,7 @@ def test_new_binding_scope_hashes_and_generation_policy(binding_version):
         assert body['max_tokens']==3600 if role=='solver' else body['max_completion_tokens']==1800 and 'max_tokens' not in body
     bad=replace(b.method('A4'),mechanism_config={**b.method('A4').mechanism_config,'pattern_policy':{}})
     assert bad.identity()!=b.method('A4').identity()
-    if binding_version==3:
+    if binding_version>=3:
         old_guard={k:value for k,value in c.items() if k!='pattern_abstraction_guard'}
         other=RequestBroker(contract=old_guard,transport=lambda _:None,arm='A4',seed=81)
         req,key=broker._request_identity(role='pattern',split='optimize',messages=[])
@@ -246,7 +306,7 @@ def test_duplicate_scientific_discovery_fails_before_provider():
     history.target_counts[0]=1;analyzer.analyze(state,diagnosis,0,evidence(),history);assert p.calls==2
 
 
-@pytest.mark.parametrize('binding_version',[1,2,3])
+@pytest.mark.parametrize('binding_version',[1,2,3,4])
 def test_pattern_memory_full_fake_production_graph(tmp_path,monkeypatch,binding_version):
     from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
     from multi_dataset_diverse_rl.benchmarks.protocols import protocol_input
@@ -258,7 +318,8 @@ def test_pattern_memory_full_fake_production_graph(tmp_path,monkeypatch,binding_
     c=json.loads((root/f'experiments/execution_bindings/math_v2_1_pattern_canary_v{binding_version}.json').read_bytes());binding=execution_binding(root,c)
     adapter=binding.benchmark();prompts=tuple(x['prompt'] for x in json.loads((root/c['initial_team_path']).read_bytes())['members'])
     def examples(role):
-        return tuple(CorrectnessExample(protocol_input('math',f'{role}{i}',{'problem':f'Synthetic {role} arithmetic {i}.'},adapter.output_contract,protocol=adapter.protocol),'1') for i in range(12 if role=='optimize' else 40))
+        prefix='Problem: synthetic' if binding_version==4 else 'Synthetic'
+        return tuple(CorrectnessExample(protocol_input('math',f'{role}{i}',{'problem':f'{prefix} {role} arithmetic {i}.'},adapter.output_contract,protocol=adapter.protocol),'1') for i in range(12 if role=='optimize' else 40))
     monkeypatch.setattr(binding,'examples',examples)
     pattern_inputs=[];optimizer_inputs=[];solver_inputs=[];ledger=[]
     def transport(req):
@@ -271,7 +332,8 @@ def test_pattern_memory_full_fake_production_graph(tmp_path,monkeypatch,binding_
             text='FINAL_ANSWER: '+('1' if correct else '2')
         elif len(req['messages'])==2:
             data=json.loads(req['messages'][1]['content']);pattern_inputs.append(data)
-            text=json.dumps(partition(('Missing verification','Verify algebra',[r['example_id'] for r in data['examples']])))
+            mechanism='Problem verification omits a check' if binding_version==4 else 'Missing verification'
+            text=json.dumps(partition((mechanism,'Verify algebra',[r['example_id'] for r in data['examples']])))
         else:
             data=json.loads(req['messages'][0]['content'].rsplit('\n',1)[1]);optimizer_inputs.append(data)
             text=json.dumps(dict(decision_procedure=f'Inspect constraints and check signs with {len(optimizer_inputs)} independent verifications.',change_summary='Add sign checks.'))

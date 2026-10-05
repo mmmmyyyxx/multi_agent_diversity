@@ -6,7 +6,7 @@ import json
 
 from .. import versions
 from ..search.pattern_layer1 import PatternLayer1Config
-from ..search.pattern_responsibility import POLICY
+from ..search.pattern_responsibility import POLICY, ABSTRACTION_GUARD_VERSIONS
 from ..search.rolling_risk_memory import POLICY as MEMORY_POLICY
 from ..search.action_memory import LIMITS
 from ..search.schemas import SearchContractError
@@ -36,9 +36,25 @@ def derive_pattern_contract(parent,*,attempt,binding_path,parent_path,parent_sha
         if support_id_transport!=versions.PATTERN_SUPPORT_ID_ALIAS_VERSION:raise SearchContractError('PATTERN_ID_TRANSPORT_INVALID')
         c['pattern_support_id_transport']=support_id_transport
     if abstraction_guard is not None:
-        if abstraction_guard!=versions.PATTERN_ABSTRACTION_GUARD_VERSION:raise SearchContractError('PATTERN_ABSTRACTION_GUARD_NOT_BOUND')
+        if abstraction_guard not in ABSTRACTION_GUARD_VERSIONS:raise SearchContractError('PATTERN_ABSTRACTION_GUARD_NOT_BOUND')
         c['pattern_abstraction_guard']=abstraction_guard
     return c
+
+
+def derive_specific_content_approval(parent, *, parent_path, parent_sha256, request_sha256):
+    """Version the code amendment; this receipt grants no real API scope."""
+    if parent.get('pattern_abstraction_guard') != versions.PATTERN_ABSTRACTION_GUARD_VERSION:
+        raise SearchContractError('PATTERN_GUARD_PARENT_AUTHORITY_INVALID')
+    approval = deepcopy(parent)
+    approval['pattern_abstraction_guard'] = versions.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION
+    approval['push_authorized'] = False
+    approval['real_api_authorized'] = False
+    approval['operational_repair_authority'] = 'CURRENT_USER_SPECIFIC_CONTENT_GUARD_REQUEST'
+    approval['guard_amendment'] = dict(schema_version='pattern_specific_content_amendment_v1',
+        parent_authority_path=parent_path, parent_authority_sha256=parent_sha256,
+        user_request_sha256=request_sha256, code_change_authorized=True,
+        real_api_authorized=False, validation_authorized=False, test_authorized=False)
+    return approval
 
 
 class MATHPatternBinding(MATHMemoryBinding):
@@ -77,6 +93,22 @@ class MATHPatternBinding(MATHMemoryBinding):
             parent=json.loads(self.path(c['pattern_parent_binding_path']).read_bytes())
             if MATHMemoryBinding(self.root,parent).blockers():return ('PATTERN_PARENT_NOT_CONFORMANT',)
             approval=json.loads(self.path(c['pattern_amendment_authorization_path']).read_bytes())
+            if c.get('pattern_abstraction_guard') == versions.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION:
+                amendment = approval.get('guard_amendment', {})
+                authority_path = self.path(amendment['parent_authority_path'])
+                if file_hash(authority_path) != amendment['parent_authority_sha256']:
+                    return ('PATTERN_GUARD_PARENT_AUTHORITY_HASH_MISMATCH',)
+                request_hash = amendment['user_request_sha256']
+                if (not isinstance(request_hash, str) or len(request_hash) != 64
+                        or any(x not in '0123456789abcdef' for x in request_hash)):
+                    return ('PATTERN_GUARD_AMENDMENT_AUTHORITY_MISMATCH',)
+                expected_approval = derive_specific_content_approval(json.loads(authority_path.read_bytes()),
+                    parent_path=amendment['parent_authority_path'],
+                    parent_sha256=amendment['parent_authority_sha256'], request_sha256=request_hash)
+                if approval != expected_approval:
+                    return ('PATTERN_GUARD_AMENDMENT_AUTHORITY_MISMATCH',)
+            elif 'guard_amendment' in approval:
+                return ('PATTERN_GUARD_AMENDMENT_AUTHORITY_MISMATCH',)
             if approval.get('pattern_support_id_transport')!=c.get('pattern_support_id_transport'):
                 return ('PATTERN_ID_TRANSPORT_AUTHORITY_MISMATCH',)
             if approval.get('pattern_abstraction_guard')!=c.get('pattern_abstraction_guard'):

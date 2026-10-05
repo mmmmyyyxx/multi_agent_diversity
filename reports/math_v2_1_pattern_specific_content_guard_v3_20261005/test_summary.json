@@ -1,0 +1,34 @@
+{
+  "status": "PASS",
+  "pattern": {
+    "tests": 84,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "current": {
+    "tests": 1141,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 2
+  },
+  "compileall": "PASS",
+  "historical_private_artifacts": "NOT_RUN_CURRENT_SUITE_EXCLUDES",
+  "real_api_calls": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "suite_scope": {
+    "deselected": 1468,
+    "historical_replay_test_cases": 1404,
+    "mode": "current",
+    "private_artifact_test_cases": 64,
+    "selected": 1141
+  },
+  "current_log_sha256": "66bec01e022913b222e5492377b63cd65631c4ac71bff2f1957e606e1f091caa",
+  "pattern_log_sha256": "f10cd60a710958ad907178c1fb9c3376923c7c67da9de816b174ce5bfe628864",
+  "verification_corrections": [
+    "Ambient Python failed the frozen dependency lock; final checks use the bound runtime.",
+    "Guard schema updated before final suite.",
+    "An intermediate campaign detected changing governance bytes; final suite ran with stable source and governance."
+  ]
+}

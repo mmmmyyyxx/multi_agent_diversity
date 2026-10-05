@@ -1,0 +1,10 @@
+{
+  "READY_TO_RUN": false,
+  "attempt_id": "math_v2_1_pattern_A4_seed81_canary_attempt4",
+  "binding_sha256": "535092f7a94020255f757ce1f1210d4ed1abb193fd61b38ffb30195846add0e2",
+  "real_api_calls": 0,
+  "source_freeze_pending": true,
+  "status": "DRAFT_NOT_AUTHORIZED",
+  "test_calls": 0,
+  "validation_calls": 0
+}

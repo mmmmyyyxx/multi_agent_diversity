@@ -1,0 +1,15 @@
+{
+  "binding_sha256": "535092f7a94020255f757ce1f1210d4ed1abb193fd61b38ffb30195846add0e2",
+  "changed_fields": [
+    "binding_path",
+    "cache_namespace",
+    "canary_attempt_id",
+    "continuation_authorization_sha256",
+    "execution_attempt_id",
+    "pattern_abstraction_guard",
+    "pattern_amendment_authorization_path",
+    "pattern_amendment_authorization_sha256"
+  ],
+  "parent_binding_sha256": "81664a13f1a9bd1583f894dccbbce769882eecc27c74bf39b563af2cf16c982e",
+  "real_api_authorized": false
+}

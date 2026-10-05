@@ -32,3 +32,34 @@ text, response interfaces and other copied names remain rejected. No Pattern
 prompt, sampling, membership, F, representative selection or budget changes.
 The correction is explicit in binding, method, request/cache, manifest and
 authorization identity. Absence retains the original guard for replay.
+
+## Specific-content abstraction admission V3 (explicit opt-in)
+
+`PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V3` admits generic mathematical
+mechanisms even when their ordinary vocabulary also occurs capitalized in a
+problem or title. It uses no expanding word allowlist. Case or single ordinary
+word overlap alone cannot establish a sample-specific proper name.
+
+The deterministic provenance checks reject entity literals supported by explicit
+named/called, honorific, human-role, actor-action or coordinated-actor contexts;
+copied quoted phrases of at least three words; and supplied delimited mathematical
+expressions of at least five characters containing an operator. Entity matches
+are case-insensitive complete literals. Full normalized gold equality and
+multi-character answer literals remain prohibited; a short symbolic answer is
+also prohibited in an explicit answer directive. Whole-literal matching avoids
+confusing an answer with a substring of an ordinary word. Existing ten/twelve-word
+copy checks, the 600-character/nonempty boundary and external output-interface
+checks remain. The digit prohibition remains conservative, including generic
+dimension/step notation: this amendment does not change the numeric contract.
+
+These checks detect specific forms of copying; they do not prove all admitted
+prose generalizes. Bare entities with no supported context, paraphrased facts
+and undelimited symbolic expressions are outside this detector's guaranteed
+coverage. Human scientific audits remain required. No extra model call, NLP
+resource download, response repair, retry or fallback is introduced.
+
+WHO, partition membership, responsibility F, representative selection, Pattern
+prompt/generation policy, Layer1, Memory V4 and all numeric budgets remain frozen.
+The new guard alone changes treatment identity. The amendment receipt binds the
+current request hash and immutable parent authority, explicitly denies new API
+and push authority, and cannot reuse a historical execution authorization.

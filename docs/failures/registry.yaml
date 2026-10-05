@@ -544,5 +544,12 @@ failures:
     false positive. User stopped before further repair.
   additional_evidence:
   - reports/math_v2_1_a4_seed81_pattern_canary_v3_20261005/STOP_REPORT.md
-  current_task_status: STOPPED_BY_USER
+  prior_task_status: STOPPED_BY_USER
+  current_task_status: ZERO_API_REPAIR_AUTHORIZED_REAL_EXECUTION_CLOSED
   further_real_execution_authorized: false
+  latest_repair: math_v2_1_pattern_specific_content_guard_v3
+  latest_repair_scope: Current user request authorizes zero-API guard repair; historical attempts stay closed.
+  latest_repair_status: ZERO_API_PASS_REAL_EXECUTION_UNVERIFIED
+  latest_repair_evidence:
+  - reports/math_v2_1_pattern_specific_content_guard_v3_20261005
+  latest_repair_limits: Contextual literal detector is bounded; no general semantic coverage or real execution claim.

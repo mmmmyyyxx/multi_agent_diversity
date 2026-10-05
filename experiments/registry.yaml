@@ -7625,3 +7625,52 @@ experiments:
   authorization_consumed: true
   authorization_closed: true
   authorization_closure_evidence: reports/math_v2_1_a4_seed81_pattern_canary_v3_20261005/scope_closure.json
+- experiment_id: math_v2_1_pattern_specific_content_guard_v3
+  kind: PROTOCOL_FREEZE
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_a4_seed81_pattern_canary_v3
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: ZERO_API_CONFORMANCE_ONLY_REAL_EXECUTION_UNVERIFIED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_pattern_specific_content_guard_v3.yaml
+  report: reports/math_v2_1_pattern_specific_content_guard_v3_20261005
+  classifier: ALL_REQUIRED_ZERO_API_GATES_PASS
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Specific-content guard V3 only; all other treatment settings preserved.
+  - Fresh API authorization required; prior attempts closed.
+  unavailable:
+    implementation_commit: Execution source SHA is recorded by the frozen manifest and preexecution evidence.
+    execution_commit: No real execution.
+    result_commit: Not committed.
+- experiment_id: math_v2_1_a4_seed81_pattern_canary_v4
+  kind: REAL_CANARY
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_pattern_specific_content_guard_v3
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: ZERO_API_CONFORMANCE_ONLY_REAL_EXECUTION_UNVERIFIED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_a4_seed81_pattern_canary_v4.yaml
+  report: null
+  classifier: NOT_EXECUTED_NOT_AUTHORIZED
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Specific-content guard V3 only; all other treatment settings preserved.
+  - Fresh API authorization required; prior attempts closed.
+  unavailable:
+    implementation_commit: Execution source SHA is recorded by the frozen manifest and preexecution evidence.
+    execution_commit: No real execution.
+    result_commit: Not committed.
+    report: No real execution evidence exists.

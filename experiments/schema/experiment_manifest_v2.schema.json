@@ -718,7 +718,7 @@
       "const": "PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1"
     },
     "pattern_abstraction_guard": {
-      "const": "PATTERN_ABSTRACTION_MATH_COMMAND_GUARD_V2"
+      "enum": ["PATTERN_ABSTRACTION_MATH_COMMAND_GUARD_V2", "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V3"]
     }
   },
   "required": [
@@ -1982,7 +1982,7 @@
                 "const": "PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1"
               },
               "pattern_abstraction_guard": {
-                "const": "PATTERN_ABSTRACTION_MATH_COMMAND_GUARD_V2"
+                "enum": ["PATTERN_ABSTRACTION_MATH_COMMAND_GUARD_V2", "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V3"]
               }
             },
             "required": [
