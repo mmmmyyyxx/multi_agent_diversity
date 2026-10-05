@@ -2,8 +2,28 @@
   "algorithm": "sha256",
   "files": [
     {
+      "file": "budget_wire_audit.json",
+      "sha256": "3c168759628e2575bb4a662c9ba6cd2c89d7f1ba5b820dd3e7f66a10344b49db"
+    },
+    {
+      "file": "freeze_receipt.json",
+      "sha256": "c9e80d39331492025c36d3e3f3d99ca818c086f461a5031460fed1e516dc03a3"
+    },
+    {
+      "file": "policy_identity.json",
+      "sha256": "d2b5a49b50879b6ab7b84713f9936faec09f109e1849a902ebf2e22ef4c73ef3"
+    },
+    {
       "file": "README.md",
-      "sha256": "d44f8dc045929959dc87dd7eb7f659443a5692d4ad019d59bd138a014b30670d"
+      "sha256": "f236967fe061adcfa55801ba4740846fd7ed767f1c36cf01ee7dc23346aa9d70"
+    },
+    {
+      "file": "semantic_delta_audit.json",
+      "sha256": "187591da4359b4819d8d4970bf78702ac50084cd8ab3b592206988d63fbbd86e"
+    },
+    {
+      "file": "test_summary.json",
+      "sha256": "53e75bedce89bcdafac4d3b0da50edaef3163dd66bc5bb497040ee8e3ef5e162"
     }
   ]
 }

@@ -1,0 +1,36 @@
+{
+  "compileall": "PASS",
+  "diff_check": "PASS",
+  "first_draft_verification": "OWNER_INTERRUPTED_NOT_A_PASS",
+  "full_current_counts": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 2,
+    "tests": 1089
+  },
+  "full_current_exit_code": 0,
+  "full_current_log_sha256": "b6ce9812e4cd9b61eb199ab7507d98a557870cdb8738f6d70b1777de2ed0e883",
+  "governance": "PASS",
+  "historical_private": "NOT RUN",
+  "historical_private_cases": 1468,
+  "ledger_unchanged": true,
+  "legacy_A1_A4_fake_graphs": "PASS",
+  "new_real_calls": 0,
+  "pattern_memory_fake_graph": "PASS",
+  "pinned_public_GEPA_fakes": "PASS",
+  "sanitization": "PASS",
+  "secret_scan": "PASS",
+  "source_closure_files": 221,
+  "source_poison_checks": 221,
+  "source_sha": "13878cbc5dec833327f497ced582c1c228f2c4dc",
+  "status": "PASS",
+  "targeted_counts": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 218
+  },
+  "targeted_exit_code": 0,
+  "targeted_log_sha256": "a36fc536de407c75fbc124f6cd268037861330f1dc6f69b0d390201d3458777a",
+  "tracked_worktree_clean": true
+}

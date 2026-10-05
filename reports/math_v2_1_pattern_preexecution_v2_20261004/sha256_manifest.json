@@ -2,8 +2,32 @@
   "algorithm": "sha256",
   "files": [
     {
+      "file": "budget_wire_audit.json",
+      "sha256": "3c168759628e2575bb4a662c9ba6cd2c89d7f1ba5b820dd3e7f66a10344b49db"
+    },
+    {
+      "file": "freeze_receipt.json",
+      "sha256": "c9e80d39331492025c36d3e3f3d99ca818c086f461a5031460fed1e516dc03a3"
+    },
+    {
+      "file": "policy_identity.json",
+      "sha256": "d2b5a49b50879b6ab7b84713f9936faec09f109e1849a902ebf2e22ef4c73ef3"
+    },
+    {
       "file": "README.md",
-      "sha256": "6f2fe79795add848a28877f678bd885454b036ca28eec4cbb3456808b6a59953"
+      "sha256": "8817477065b8a25ceb612e914a8e3cdd453dd7a0a7e6f05397ec1e9d5599a4c9"
+    },
+    {
+      "file": "source_identity.json",
+      "sha256": "e9aa70f39a45534cd088c8c6709edbc1cb9f5c54dd179982b5f94cffeb4c8a76"
+    },
+    {
+      "file": "startup_receipt.json",
+      "sha256": "8c3776d8298fbea9923a3f07a25e92b77e5817959ead7ee2dc67984c641b0f0c"
+    },
+    {
+      "file": "test_summary.json",
+      "sha256": "53e75bedce89bcdafac4d3b0da50edaef3163dd66bc5bb497040ee8e3ef5e162"
     }
   ]
 }
