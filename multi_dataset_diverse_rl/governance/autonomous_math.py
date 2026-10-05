@@ -4,7 +4,6 @@ from dataclasses import fields, is_dataclass
 import hashlib
 import json
 import os
-from .. import versions
 
 from .token_accounting import TokenLedger, OperationalAbort, serialized_request, POLICY, POLICY_40M
 from .unified_execution import consumption_path, inventory
@@ -108,13 +107,10 @@ def initial_prompts(root, contract):
 
 
 def ledger_policy(contract):
-    from .. import versions
-    return POLICY_40M if contract['identity'] in versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS else POLICY
+    return POLICY_40M
 
 
 def durable_output_cache(run_root,contract,payload):
-    from .. import versions
-    if contract['identity'] not in versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS:return None
     from ..persistence.exact_output_cache import DurableExactOutputCache,digest
     return DurableExactOutputCache(run_root/'resolved_output_cache',dict(
         execution_attempt_id=contract['execution_attempt_id'],cache_namespace=contract['cache_namespace'],
@@ -145,19 +141,12 @@ async def execute_search(root, prep, run_root, payload):
             durable_cache=durable_output_cache(run_root,c,payload))
         broker.prompt_observer = reserve.observe
         solver = BenchmarkSolver(binding.benchmark(),broker)
-        from ..search.pattern_responsibility import SetLevelPatternProvider
-        from ..search.pattern_id_transport import AliasSetLevelPatternProvider
-        pattern_factory=AliasSetLevelPatternProvider if c.get('pattern_support_id_transport')==versions.PATTERN_SUPPORT_ID_ALIAS_VERSION else SetLevelPatternProvider
-        pattern_provider=(pattern_factory(broker,read_json(root/c['pattern_prompt_path'])['prompt']) if c['identity']==versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION else None)
-        gradient_pattern=c.get('pattern_policy',{}).get('discovery')==versions.GRADIENT_PATTERN_DISCOVERY_VERSION
-        if gradient_pattern:
-            from ..search.textual_gradients import PerExampleGradientProvider, GradientClusterProvider
-            pattern_provider=GradientClusterProvider(broker,read_json(root/c['pattern_prompt_path'])['prompt'],
-                gradient_provider=PerExampleGradientProvider(broker,read_json(root/c['gradient_prompt_path'])['prompt']))
+        from ..search.textual_gradients import PerExampleGradientProvider, GradientClusterProvider
+        pattern_provider=GradientClusterProvider(broker,read_json(root/c['pattern_prompt_path'])['prompt'],
+            gradient_provider=PerExampleGradientProvider(broker,read_json(root/c['gradient_prompt_path'])['prompt']))
         composed = binding.compose(arm=arm,seed=81,solver=solver,reflection=ReflectionProvider(broker),pattern_provider=pattern_provider,run_root=run_root)
-        if c.get('memory_policy_identity'):
-            if any(composed.memory.audit()[k] for k in ('success_writes','failure_writes','shared_writes')):
-                raise OperationalAbort('FRESH_MEMORY_STATE_REQUIRED')
+        if any(composed.memory.audit()[k] for k in ('success_writes','failure_writes','shared_writes')):
+            raise OperationalAbort('FRESH_MEMORY_STATE_REQUIRED')
         # A naturally empty trajectory still needs a durable hashable receipt.
         with (run_root / "trajectory_private.jsonl").open("xb") as stream:
             stream.flush()
@@ -177,35 +166,31 @@ async def execute_search(root, prep, run_root, payload):
             raise OperationalAbort("NONSCIENTIFIC_STOP_"+result.stop_reason)
         if c.get("method_identity") == "unified_team_prompt_search_v2_1" and c["execution_phase"] == "canary" and not result.trace:
             raise OperationalAbort("CANARY_NO_COMPLETE_PRODUCTION_OPPORTUNITY")
-        if c['identity'] in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION} and c['execution_phase']=='canary' and not any(t.candidate_ids for t in result.trace):
+        if c['execution_phase']=='canary' and not any(t.candidate_ids for t in result.trace):
             raise OperationalAbort('STOP_LAYER1_ZERO_THROUGHPUT')
         final = composed.state.snapshot()
         atomic_write_json(run_root / "final_team_private.json",dict(prompts=final.member_prompts,state_id=final.team_state_id))
         atomic_write_json(run_root / "final_state_private.json",plain(final))
         summary = dict(result=plain(result),ledger=broker.usage,accounting=budget.view(),validation_reserve=reserve.remaining(),
             validation_search_raw_reads=0,validation_calls=0,test_raw_reads=0,test_calls=0,pattern_calls=broker.usage['pattern'],memory_activity=0)
-        if pattern_provider is not None:
-            summary['pattern_input_audit']=pattern_provider.input_audit
-            if gradient_pattern:
-                gradients=pattern_provider.gradient_provider
-                summary.update(pattern_gradient_calls=broker.usage['pattern_gradient'],
-                    pattern_cluster_calls=broker.usage['pattern_cluster'],gradient_input_audit=gradients.input_audit)
-                if (gradients.calls!=broker.usage['pattern_gradient'] or pattern_provider.calls!=broker.usage['pattern_cluster']
-                        or broker.usage['pattern']!=gradients.calls+pattern_provider.calls
-                        or not 1<=gradients.calls<=c['initial_competence_binding']['count']):
-                    raise OperationalAbort('PATTERN_GRADIENT_CANARY_ACCOUNTING_INCOMPLETE')
-            if pattern_provider.calls!=1 or not composed.evaluation.provider.probed:
-                raise OperationalAbort('PATTERN_CANARY_FLOW_INCOMPLETE')
-        if c.get('memory_policy_identity'):
-            summary['memory_activity']=composed.memory.audit()['stateful_write_count']
-            summary['memory_audit']=composed.memory.audit()
-        if c['identity'] in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION}:
-            from .math_paired_validation import team_change_receipt
-            summary['deployed_team_change']=team_change_receipt(initial_prompts(root,c),final.member_prompts)
-            if c['execution_phase']=='pilot' and not summary['deployed_team_change']['team_changed']:
-                atomic_write_json(run_root/'VALIDATION_DISPOSITION.json',dict(
-                    **summary['deployed_team_change'],validation_model_calls=0,validation_provider_calls=0,
-                    VoteAccDelta='NOT_AVAILABLE',OracleAccDelta='NOT_AVAILABLE',bootstrap='NOT_RUN'))
+        summary['pattern_input_audit']=pattern_provider.input_audit
+        gradients=pattern_provider.gradient_provider
+        summary.update(pattern_gradient_calls=broker.usage['pattern_gradient'],
+            pattern_cluster_calls=broker.usage['pattern_cluster'],gradient_input_audit=gradients.input_audit)
+        if (gradients.calls!=broker.usage['pattern_gradient'] or pattern_provider.calls!=broker.usage['pattern_cluster']
+                or broker.usage['pattern']!=gradients.calls+pattern_provider.calls
+                or not 1<=gradients.calls<=c['initial_competence_binding']['count']):
+            raise OperationalAbort('PATTERN_GRADIENT_CANARY_ACCOUNTING_INCOMPLETE')
+        if pattern_provider.calls!=1 or not composed.evaluation.provider.probed:
+            raise OperationalAbort('PATTERN_CANARY_FLOW_INCOMPLETE')
+        summary['memory_activity']=composed.memory.audit()['stateful_write_count']
+        summary['memory_audit']=composed.memory.audit()
+        from .team_change import team_change_receipt
+        summary['deployed_team_change']=team_change_receipt(initial_prompts(root,c),final.member_prompts)
+        if c['execution_phase']=='pilot' and not summary['deployed_team_change']['team_changed']:
+            atomic_write_json(run_root/'VALIDATION_DISPOSITION.json',dict(
+                **summary['deployed_team_change'],validation_model_calls=0,validation_provider_calls=0,
+                VoteAccDelta='NOT_AVAILABLE',OracleAccDelta='NOT_AVAILABLE',bootstrap='NOT_RUN'))
         atomic_write_json(run_root / "execution_summary.json",summary)
         if read_json(run_root / "execution_summary.json")!=summary:
             raise OperationalAbort("EXECUTION_PERSISTENCE_MISMATCH")
@@ -218,15 +203,13 @@ async def execute_search(root, prep, run_root, payload):
                 final_team_sha256=file_sha(run_root / "final_team_private.json"),
                 trajectory_sha256=file_sha(run_root / "trajectory_private.jsonl") if (run_root / "trajectory_private.jsonl").exists() else None,
                 raw_inventory_sha256=file_sha(run_root / "raw_evidence_inventory.json"),execution_summary_sha256=file_sha(run_root / "execution_summary.json"),
-                stop_reason=result.stop_reason,search_closed_forever=True,validation_search_raw_reads=0,validation_model_calls=0,test_raw_reads=0,test_model_calls=0,
-                **({'deployed_team_change':summary['deployed_team_change']} if c['identity']==versions.MATH_LAYER1_EXECUTION_BINDING_VERSION else {})))
+                stop_reason=result.stop_reason,search_closed_forever=True,validation_search_raw_reads=0,validation_model_calls=0,test_raw_reads=0,test_model_calls=0))
         return summary
     except BaseException as exc:
         for key in tuple(budget.inflight):
             budget.reconcile(key,None,outcome="ABORT_UNKNOWN_FULL_CHARGE")
         if run_root.exists():
-            pattern_failure=(c['identity']==versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION and
-                isinstance(exc,SearchContractError) and str(exc).startswith(('PATTERN_','STOP_PATTERN_','FOCUSED_')))
+            pattern_failure=(isinstance(exc,SearchContractError) and str(exc).startswith(('PATTERN_','STOP_PATTERN_','FOCUSED_')))
             atomic_write_json(run_root / "accounting_end.json",budget.view())
             atomic_write_json(run_root / "lifecycle.json",dict(status="EXECUTION_ABORTED",attempt_id=c["execution_attempt_id"],
                 error_category=type(exc).__name__,stop_category=str(exc) if isinstance(exc,OperationalAbort) or pattern_failure else type(exc).__name__,provider_usage=broker.usage if broker else {"attempts":0}))

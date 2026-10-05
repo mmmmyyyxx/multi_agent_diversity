@@ -3,7 +3,7 @@ import re
 import unicodedata
 
 from .mutable_prompt_contract import _FIXED_ANSWER_PAYLOAD
-from ..local_optimizers.gepa_adapter import contains_supplied_example_text
+from ..local_optimizers.example_text import contains_supplied_example_text
 
 IDENTITY = 'SEMANTIC_MUTABLE_REASONING_CONTRACT_V2'
 

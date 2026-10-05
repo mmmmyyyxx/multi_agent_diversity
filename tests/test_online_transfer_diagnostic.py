@@ -372,7 +372,7 @@ def test_parent_changes_iff_ordinary_commit_not_diagnostic_full():
 def test_emergency_ceiling_marks_incomplete_attempt_aborted(
     tmp_path, monkeypatch, phase, experiment_id,
 ):
-    from scripts import run_experiment as entry
+    from scripts import replay_experiment as entry
 
     run_root = tmp_path / "formal"
     run_root.mkdir()

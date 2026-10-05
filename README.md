@@ -35,6 +35,11 @@ The sole current execution entrypoint is scripts/run_experiment.py. Real executi
 requires a governed frozen prep and explicit attempt-specific authorization.
 Test commands use fake providers and a pre-import network guard.
 
+New experiments compose only through the complete current policy bundle and
+`build_current_team_prompt_search`. See
+[current runtime composition](docs/design/CURRENT_RUNTIME_COMPOSITION.md).
+Older implementations use explicit `legacy` replay tooling.
+
 ## Governance and evidence
 
 [Registry](experiments/registry.yaml) records metadata; [lineage authority](experiments/lineage.yaml)

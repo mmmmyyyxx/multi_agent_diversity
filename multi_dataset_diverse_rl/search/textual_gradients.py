@@ -11,9 +11,10 @@ import math
 import re
 import unicodedata
 
-from .. import versions
-from .pattern_responsibility import (guard_abstraction, wrong_universe, sample_labels,
-    discovery_payload, PatternResponsibilitySignal, PatternConditionedEvidenceV4)
+from .. import current_contract as versions
+from .pattern_primitives import (guard_abstraction, wrong_universe, sample_labels,
+    single_failure_example, PatternResponsibilitySignal)
+from .selected_evidence import compose_selected_evidence
 from .schemas import SearchContractError
 
 
@@ -165,7 +166,7 @@ class GradientExtractor:
             raise SearchContractError('PATTERN_GRADIENT_WRONG_UNIVERSE_REQUIRED')
         gradients=[]
         for row in rows:
-            example=discovery_payload((row,))['examples'][0]
+            example=single_failure_example(row)
             value=self.provider.extract(dict(schema=GRADIENT_POLICY['schema'],current_member_procedure=procedure,example=example))
             if not isinstance(value,dict) or set(value)!={'gradient'}:
                 raise SearchContractError('PATTERN_GRADIENT_EXTRACTION_INVALID')
@@ -255,10 +256,12 @@ class GradientPatternDiscovery:
         return score_gradient_partition(value,rows,gradients)
 
 
-class GradientPatternConditionedEvidence(PatternConditionedEvidenceV4):
+class GradientPatternConditionedEvidence:
     identity=versions.GRADIENT_CONDITIONED_EVIDENCE_VERSION
+    def __init__(self, *, metric_budget=36, reflection_minibatch_size=3):
+        self.metric_budget=metric_budget;self.minimum=reflection_minibatch_size
     def compose(self,state,diagnosis,member_id,rows,pattern_context=None):
-        context=pattern_context or {};view,audit=super().compose(state,diagnosis,member_id,rows,context)
+        context=pattern_context or {};view,audit=compose_selected_evidence(rows,context,self.minimum)
         byid={g['example_id']:g['gradient'] for g in context.get('per_example_gradients',())}
         def enrich(row):
             if 'REPAIR' not in row.roles:return row

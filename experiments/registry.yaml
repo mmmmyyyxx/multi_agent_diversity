@@ -7697,19 +7697,16 @@ experiments:
   superseded_by: []
   notes:
   - Audit of one completed Canary; no runtime or prompt changes and zero model APIs.
-  - Initial private packet inspection preceded rubric freeze; retrospective and unblinded,
-    not preregistered causal inference.
+  - Initial private packet inspection preceded rubric freeze; retrospective and unblinded, not preregistered causal
+    inference.
   - All 21 owner pairs reviewed; broad overlap exists, actionable duplicate not established.
-  - Seven singleton memberships originated in provider response; guard did not split;
-    exact identity retains unequal description pairs.
-  - Six raw initial Solver responses are final-only; Pattern receives no process trace
-    for any of seven.
-  - Unchanged A4 development Pilot preparation recommended conditionally; no fresh
-    API or heldout authorization.
+  - Seven singleton memberships originated in provider response; guard did not split; exact identity retains unequal
+    description pairs.
+  - Six raw initial Solver responses are final-only; Pattern receives no process trace for any of seven.
+  - Unchanged A4 development Pilot preparation recommended conditionally; no fresh API or heldout authorization.
   unavailable:
     execution_commit: No real experiment dispatch; local read-only audit.
-    result_commit: Result commit is identified in git history; no self-referential
-      hash is embedded.
+    result_commit: Result commit is identified in git history; no self-referential hash is embedded.
   audit_scope:
     identity: MATH_PATTERN_SEMANTIC_PARTITION_AUDIT_V1
     analysis_type: retrospective_single_owner_not_blind
@@ -7741,10 +7738,8 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Per-example gradients then gradients-only semantic aggregation; unchanged WHO, shared F, Memory and
-    Layer2.
-  - Modification and synthetic verification only; no real API, Canary, Pilot, Validation, Test or push
-    authority.
+  - Per-example gradients then gradients-only semantic aggregation; unchanged WHO, shared F, Memory and Layer2.
+  - Modification and synthetic verification only; no real API, Canary, Pilot, Validation, Test or push authority.
   unavailable:
     execution_commit: No real experiment execution.
     result_commit: Local result commit is identified by git history; no self-referential hash.
@@ -7754,4 +7749,34 @@ experiments:
     api_token_budget: 0
     raw_data_read_scope: SYNTHETIC_GRADIENT_TESTS_AND_EXISTING_READ_ONLY_CURRENT_CONTRACT_FIXTURES
     implementation_source: a21761a6c33871130a37e082b82afa0ccaa21086
+    execution_profile_scope: OFFLINE_CONFORMANCE_ONLY_NEVER_DISPATCHED
+- experiment_id: math_v2_1_current_runtime_consolidation_v1
+  kind: ARCHITECTURE_REFACTOR
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_gradient_pattern_refactor_v1
+  status: IN_PROGRESS
+  scientific_status: ZERO_API_CONFORMANCE_PENDING_FINAL_SOURCE_SUITE
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_current_runtime_consolidation_v1.yaml
+  report: reports/math_v2_1_current_runtime_consolidation_v1_20261005
+  classifier: SEMANTIC_PRESERVING_CURRENT_RUNTIME_ISOLATION
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - One fixed current Gradient Pattern and Rolling Risk Memory graph; historical replay is explicit.
+  - 'Engineering only: scientific identities, request bytes, budgets and data access remain unchanged.'
+  - Zero API; no Canary, Pilot, Validation, Test or push authority.
+  unavailable:
+    implementation_commit: Awaiting final runtime source commit.
+    execution_commit: No real experiment dispatch.
+    result_commit: Recorded by git history; no self-reference.
+  audit_scope:
+    identity: CURRENT_RUNTIME_COMPOSITION_V1
+    provider_call_budget: 0
+    api_token_budget: 0
     execution_profile_scope: OFFLINE_CONFORMANCE_ONLY_NEVER_DISPATCHED

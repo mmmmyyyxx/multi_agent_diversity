@@ -16,7 +16,7 @@ from multi_dataset_diverse_rl.persistence.durable_io import (
     atomic_write_json, canonical_json_payload, read_json,
 )
 from multi_dataset_diverse_rl.team_search.execution_runtime import ledger_summary
-from scripts import run_experiment as runner
+from scripts import replay_experiment as runner
 from scripts.derive_formal_trajectory_trace import derive
 from scripts.freeze_formal_v3_execution import freeze
 from scripts.freeze_formal_v3_execution import verify_freeze

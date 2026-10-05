@@ -22,7 +22,8 @@ Use the narrowest authority for each fact:
 |---|---|
 | AGENTS.md | Stable engineering, agent workflow and safety |
 | docs/design/CURRENT_SPEC.md | Active scientific method |
-| multi_dataset_diverse_rl/versions.py | Runtime identities and constants |
+| multi_dataset_diverse_rl/current_contract.py | Closed current identity imports |
+| multi_dataset_diverse_rl/versions.py | Preserved current and historical identities |
 | multi_dataset_diverse_rl/benchmarks/ | Benchmark scientific and data contracts |
 | experiments/registry.yaml | Experiment metadata |
 | experiments/lineage.yaml | Experiment lineage |
@@ -35,12 +36,16 @@ active or canonical refer to the report's creation context.
 ## 3. Current project direction
 
 The sole active research architecture is Unified Team Prompt Search.
-`UnifiedSearchOrchestrator` owns the production graph. GEPA is the current
-replaceable SearchEngine; aggregation is a benchmark-selected policy.
-Pattern and Memory default to null and require a versioned experiment to
-activate. Structured optimizer history is separate from LLM memory.
+`UnifiedSearchOrchestrator` owns the production graph. The current composition
+binds Gradient Pattern, Rolling Risk Memory and bounded Layer1 search through
+one complete current policy bundle. Aggregation remains benchmark-selected.
+Structured optimizer history is separate from LLM memory.
 New experiments use `scripts/run_experiment.py`, the sole current composition
-entrypoint. Domain logic belongs in production modules, not scripts.
+entrypoint and must compose through `build_current_team_prompt_search`.
+Do not import legacy classes into current runtime. Older Pattern, Memory and
+search implementations may only be used by explicit historical replay tooling.
+Historical manifest parsing does not grant current execution eligibility.
+Domain logic belongs in production modules, not scripts.
 Local search acceptance cannot silently gate outer team candidate admission.
 Pattern and Memory require explicit non-null policy identities and provider/limit
 bindings; optimizer-only context must never enter Solver or aggregator inputs.

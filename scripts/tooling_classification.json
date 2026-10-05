@@ -2,6 +2,12 @@
   "schema_version": "tooling_classification_v1",
   "scripts": [
     {
+      "path": "scripts/replay_experiment.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Explicit historical production execution; current CLI cannot select these semantics."
+    },
+    {
       "path": "scripts/admit_v18_hybrid_online_scientific_analysis.py",
       "classification": "ONE_OFF_AUDIT",
       "move": false,

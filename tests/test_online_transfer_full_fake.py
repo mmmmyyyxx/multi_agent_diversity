@@ -202,11 +202,11 @@ def rehearse(
     monkeypatch.setattr(ProviderClientFactory, "from_environment", lambda *a, **kw: fake)
     monkeypatch.setattr(ProviderClientFactory, "create", lambda *a, **kw: fake)
     if through_cli:
-        import scripts.run_experiment as entry
+        import scripts.replay_experiment as entry
 
         monkeypatch.setattr(entry, "validate_execution", lambda **_: permit)
         monkeypatch.setattr(sys, "argv", [
-            "scripts/run_experiment.py", "--prep", str(prep),
+            "scripts/replay_experiment.py", "--prep", str(prep),
             "--run-root", str(run_root), "--execute",
         ])
         if scenario in {"transport_failure", "postprocess_failure"}:

@@ -37,7 +37,7 @@ from multi_dataset_diverse_rl.experiment import (
     RuntimeContext, UnifiedExperimentInputs, UnifiedExperimentServices,
     run_experiment,
 )
-from scripts.run_experiment import preflight
+from scripts.replay_experiment import preflight
 
 
 class FakeBenchmark:

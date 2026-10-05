@@ -9,8 +9,9 @@ The current five-member prompt team and its evaluated predictions become an
 immutable team-state snapshot. Diagnosis computes responsibility and feasibility;
 the opportunity builder selects a member and freezes role-bearing evidence.
 
-The replaceable SearchEngine explores prompts within that opportunity. Current
-derived GEPA retains its versioned strict local improvement policy. Candidate
+The current bounded Layer1 SearchEngine explores prompts within that opportunity.
+All admissible scored edits remain eligible for team evaluation, including local
+rejections, under the unchanged six-generation/36-metric/four-export ceilings. Candidate
 exploration and deployable team transition are separate decisions.
 
 The candidate pipeline evaluates a proposed single-member replacement with fixed
@@ -19,7 +20,9 @@ Transition policy applies its frozen safety/ranking rules; only its selected
 winner enters the adaptive gate. An accepted winner commits atomically.
 
 Structured history records failures, commits, latest transitions and epochs.
-Pattern and LLM memory ports default to null. Global stopping uses the frozen
+The current bundle binds Gradient Pattern V4 and Rolling Risk Memory. Older
+Pattern/Memory/search combinations require explicit historical replay.
+Global stopping uses the frozen
 team-epoch rule; emergency ceilings are operational failure conditions.
 Post-freeze Validation and sealed Test do not feed back into optimization.
 

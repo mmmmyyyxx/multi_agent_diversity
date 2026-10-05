@@ -10,7 +10,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
+from multi_dataset_diverse_rl.benchmarks.legacy.math_domain_binding import execution_binding
 from multi_dataset_diverse_rl.evaluation.proposal_contract_audit import audit_proposals, paired_identity_audit
 from multi_dataset_diverse_rl.local_optimizers.schemas import LocalEvidenceExample
 from multi_dataset_diverse_rl.persistence.durable_io import atomic_write_json

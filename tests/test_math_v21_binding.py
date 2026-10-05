@@ -6,9 +6,10 @@ from pathlib import Path
 import os
 import pytest
 from multi_dataset_diverse_rl.benchmarks.math_v21_binding import MATHV21Binding
-from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
+from multi_dataset_diverse_rl.benchmarks.legacy.math_domain_binding import execution_binding
 from multi_dataset_diverse_rl.benchmarks.access import DataPurpose
-from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker, BenchmarkSolver, ReflectionProvider, PatternProvider
+from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker,BenchmarkSolver,ReflectionProvider
+from multi_dataset_diverse_rl.search.legacy.pattern_provider import PatternProvider
 from multi_dataset_diverse_rl.search.binary_runtime import CorrectnessExample
 from multi_dataset_diverse_rl.benchmarks.protocols import protocol_input
 from multi_dataset_diverse_rl.local_optimizers.gepa_runtime import import_frozen_gepa
@@ -94,7 +95,7 @@ def test_heldout_raw_access_denied_before_file_open(role,monkeypatch):
         reader.rows(role,DataPurpose.EVIDENCE)
 
 def test_bound_manifest_requires_same_initial_support_and_fresh_components():
-    from multi_dataset_diverse_rl.governance.unified_execution import preexecution_manifest,bound_preflight
+    from multi_dataset_diverse_rl.governance.legacy.unified_execution import preexecution_manifest,bound_preflight
     from multi_dataset_diverse_rl.governance.repository import validate_manifest_v2
     m=preexecution_manifest(ROOT,source_sha='a'*40,binding_path='experiments/execution_bindings/math_v2_1_canary_v4.json',frozen=False)
     assert not validate_manifest_v2(ROOT,m)
@@ -168,7 +169,7 @@ def test_fresh_v21_binding_actual_gepa_four_arm_e2e(tmp_path,arm,monkeypatch):
 
 @pytest.mark.parametrize('phase',['canary','pilot'])
 def test_fresh_frozen_phase_fake_accounting_and_same_support_floor(tmp_path,monkeypatch,phase):
-    from multi_dataset_diverse_rl.governance import unified_execution as gov,autonomous_math as execution
+    from multi_dataset_diverse_rl.governance.legacy import unified_execution as gov,autonomous_math as execution
     c=contract(phase)
     c['token_ledger_directory']=(tmp_path/'budget').relative_to(ROOT).as_posix()
     c['binding_path']=(tmp_path/'binding.json').relative_to(ROOT).as_posix()

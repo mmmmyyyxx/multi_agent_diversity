@@ -27,7 +27,7 @@ from multi_dataset_diverse_rl.search.schemas import SearchMethodConfig
 from multi_dataset_diverse_rl.evaluation.mutable_prompt_contract import (
     validate_mutable_decision_procedure,
 )
-from scripts.run_experiment import preflight
+from scripts.replay_experiment import preflight
 
 
 def _item(benchmark_id="hotpotqa"):

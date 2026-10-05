@@ -108,7 +108,7 @@ def test_initial_floor_binds_all_rows_and_candidate_invalidity_is_just_wrong():
 
 def test_prediction_policy_is_exact_and_rejects_legacy_injection():
     from multi_dataset_diverse_rl.benchmarks.math_prediction_validity import frozen_prediction_policy
-    from multi_dataset_diverse_rl.governance.unified_execution import execution_scope
+    from multi_dataset_diverse_rl.governance.legacy.unified_execution import execution_scope
     from multi_dataset_diverse_rl.search.schemas import TeamEvaluation
     from multi_dataset_diverse_rl.search.semantic_contract import InitialCompetenceTransitionV2
     b,broker,_,_=ports(lambda _:None);c=broker.contract

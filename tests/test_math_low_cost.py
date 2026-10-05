@@ -5,7 +5,8 @@ from copy import deepcopy
 import pytest
 from multi_dataset_diverse_rl.benchmarks.math_low_cost_binding import MATHLowCostBinding
 from multi_dataset_diverse_rl.benchmarks.math_low_cost import read_subsets,build_subsets,choose
-from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker,BenchmarkSolver,ReflectionProvider,PatternProvider
+from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker,BenchmarkSolver,ReflectionProvider
+from multi_dataset_diverse_rl.search.legacy.pattern_provider import PatternProvider
 from multi_dataset_diverse_rl.search.binary_runtime import CorrectnessExample
 from multi_dataset_diverse_rl.benchmarks.protocols import protocol_input
 from multi_dataset_diverse_rl.local_optimizers.gepa_runtime import import_frozen_gepa
@@ -29,7 +30,7 @@ def test_subsets_exact_deterministic_nested_and_disjoint():
 @pytest.mark.parametrize('phase',['canary','pilot'])
 def test_binding_manifest_authorization_and_budget(phase):
     c=contract(phase);assert not MATHLowCostBinding(ROOT,c).blockers()
-    from multi_dataset_diverse_rl.governance.unified_execution import preexecution_manifest,execution_scope
+    from multi_dataset_diverse_rl.governance.legacy.unified_execution import preexecution_manifest,execution_scope
     from multi_dataset_diverse_rl.governance.repository import validate_manifest_v2
     m=preexecution_manifest(ROOT,source_sha='a'*40,binding_path=c['binding_path'],frozen=False)
     assert not validate_manifest_v2(ROOT,m)
@@ -56,7 +57,7 @@ def test_scientific_poison_denied(field):
 
 @pytest.mark.parametrize('phase',['canary','pilot'])
 def test_frozen_entrypoint_recovery_durable_floor_and_receipt(tmp_path,monkeypatch,phase):
-    from multi_dataset_diverse_rl.governance import unified_execution as gov,autonomous_math as execution
+    from multi_dataset_diverse_rl.governance.legacy import unified_execution as gov,autonomous_math as execution
     from multi_dataset_diverse_rl.governance.token_accounting import TokenLedger
     from multi_dataset_diverse_rl.benchmarks.math_low_cost import read_subsets
     c=contract(phase);b=MATHLowCostBinding(ROOT,c);adapter=b.benchmark()
@@ -112,7 +113,7 @@ def test_frozen_entrypoint_recovery_durable_floor_and_receipt(tmp_path,monkeypat
     else:
         assert summary['result']['stop_reason'] in {'SATURATION_REACHED','NO_FEASIBLE_OPPORTUNITY'}
         assert json.loads((run_root/'SEARCH_COMPLETE_RECEIPT.json').read_bytes())['search_closed_forever']
-        from multi_dataset_diverse_rl.governance import math_paired_validation as paired
+        from multi_dataset_diverse_rl.governance.legacy import math_paired_validation as paired
         validation_prep=tmp_path/'validation_prep'
         paired.prepare_validation(ROOT,prep,run_root,validation_prep)
         auth=json.loads((validation_prep/'authorization.json').read_bytes());auth['explicit_user_authorized']=True

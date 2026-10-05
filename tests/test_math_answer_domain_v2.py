@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 import pytest
 from multi_dataset_diverse_rl.benchmarks.math_domain_v2 import MATHBenchmarkAdapterV2,domain_matrix,require_scorable,final_payload
-from multi_dataset_diverse_rl.benchmarks.math_domain_binding import MATHDomainBinding
+from multi_dataset_diverse_rl.benchmarks.legacy.math_domain_binding import MATHDomainBinding
 from multi_dataset_diverse_rl.search.benchmark import BenchmarkInput
 from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker,BenchmarkSolver
 from multi_dataset_diverse_rl.search.schemas import SearchContractError

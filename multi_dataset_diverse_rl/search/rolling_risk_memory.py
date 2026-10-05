@@ -1,6 +1,6 @@
 """Opt-in cross-member risk promotion; no raw private strategies are shared.
 
-V3 remains unchanged. A bounded bank of generic observations supports promotion
+A bounded bank of generic observations supports promotion
 at the opportunity transaction boundary. Retention uses recent evidence, never
 permanent occurrence totals or future outcomes, and makes no provider calls.
 """
@@ -9,9 +9,9 @@ from dataclasses import dataclass, replace
 from hashlib import sha256
 import json
 
-from .. import versions
-from .action_memory import StructuredActionMemoryV3, ActionExperience, LABELS, LIMITS
-from .memory import MemoryDelta, RISK_CODES
+from .. import current_contract as versions
+from .private_action_memory import PrivateActionMemory, ActionExperience, LABELS, LIMITS
+from .memory_records import MemoryDelta, RISK_CODES
 from .schemas import SearchContractError
 
 
@@ -119,7 +119,7 @@ class RollingMemoryDelta(MemoryDelta):
     risk_counts: tuple[tuple[str,int],...]
 
 
-class StructuredRollingRiskMemoryV4(StructuredActionMemoryV3):
+class StructuredRollingRiskMemoryV4(PrivateActionMemory):
     identity=versions.STRUCTURED_ROLLING_RISK_MEMORY_VERSION
 
     def __init__(self, *, risk_policy, **limits):
@@ -182,8 +182,8 @@ class StructuredRollingRiskMemoryV4(StructuredActionMemoryV3):
         for row in outcome.evaluated:
             cid=row.candidate.candidate_id
             if outcome.committed and cid==outcome.selected_candidate_id:
-                # Unchanged V3 private committed-success contract.
-                from .action_memory import edit_action
+                # Private committed-success contract.
+                from .private_action_memory import edit_action
                 action=edit_action(op.parent_prompt,row.candidate.prompt)
                 if action:
                     d=row.diagnostics

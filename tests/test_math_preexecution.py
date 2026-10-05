@@ -19,7 +19,8 @@ from multi_dataset_diverse_rl.search.benchmark import BenchmarkInput
 from multi_dataset_diverse_rl.search.binary_composition import build_binary_orchestrator
 from multi_dataset_diverse_rl.search.binary_runtime import CorrectnessExample, FixedPeerPromotion, FixedPeerCommonSafe
 from multi_dataset_diverse_rl.search.gepa_v2 import GEPATeamExposureOptimizer
-from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker, BenchmarkSolver, ReflectionProvider, PatternProvider
+from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker,BenchmarkSolver,ReflectionProvider
+from multi_dataset_diverse_rl.search.legacy.pattern_provider import PatternProvider
 from multi_dataset_diverse_rl.search.scientific_aggregation import EquivalencePluralityAggregation
 from multi_dataset_diverse_rl.search.memory import StructuredLongTermMemoryProviderV1, OpportunityOutcome
 from multi_dataset_diverse_rl.search.schemas import SearchContractError, EvaluatedCandidate, SearchCandidate
@@ -263,7 +264,7 @@ def test_bound_derivation_and_empty_reference_rejection():
 
 def test_all_source_files_poison_before_provider(tmp_path):
     import shutil
-    from multi_dataset_diverse_rl.governance.unified_execution import execution_identity, validate_frozen_source
+    from multi_dataset_diverse_rl.governance.legacy.unified_execution import execution_identity, validate_frozen_source
     receipt = execution_identity(ROOT, contract())
     for row in receipt["execution_closure"]["files"]:
         target = tmp_path / row["path"]
@@ -282,7 +283,7 @@ def test_all_source_files_poison_before_provider(tmp_path):
 
 @pytest.fixture
 def fake_frozen_prep(tmp_path, monkeypatch):
-    from multi_dataset_diverse_rl.governance import unified_execution as governed
+    from multi_dataset_diverse_rl.governance.legacy import unified_execution as governed
     # Fake commit IO only for these authorization unit tests. The separate
     # source poison test uses every actual execution byte, and final freeze
     # verification checks the real Git source commit without this test seam.
@@ -295,7 +296,7 @@ def fake_frozen_prep(tmp_path, monkeypatch):
 
 
 def test_preflight_draft_cannot_be_ready():
-    from multi_dataset_diverse_rl.governance.unified_execution import preexecution_manifest, bound_preflight
+    from multi_dataset_diverse_rl.governance.legacy.unified_execution import preexecution_manifest, bound_preflight
     manifest = preexecution_manifest(ROOT, source_sha=None, frozen=False)
     status = bound_preflight(ROOT, manifest)
     assert status["gate"] == "HOLD" and "PREEXECUTION_NOT_FROZEN" in status["blockers"]

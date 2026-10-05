@@ -9,12 +9,12 @@ Scientific authority: [CURRENT_SPEC](design/CURRENT_SPEC.md).
 | BenchmarkAdapter | Public input, parser, scorer and capability declaration |
 | TeamStateSnapshot | Immutable prompts, predictions and evaluated state |
 | ResponsibilityAnalyzer / OpportunityBuilder | Diagnosis, feasibility, target and evidence |
-| SearchEngine | Candidate exploration; current replaceable derived GEPA |
+| SearchEngine | Current bounded Gradient Layer1 candidate exploration |
 | AggregationPolicy | Benchmark-selected aggregation and request firewall |
 | CandidateEvaluationPipeline | Progressive TeamProbe and Full evidence |
 | TransitionPolicy / AdaptiveValidationGate | Winner selection and gate |
 | TeamStateCommitter | Atomic deployment |
-| HistoryState / MemoryProvider | Structured history; memory defaults to null |
+| HistoryState / MemoryProvider | Separate history and bounded Rolling Risk Memory |
 | GlobalStopPolicy | Frozen scientific stopping and operational ceilings |
 
 Implementation lives in `multi_dataset_diverse_rl/search/`, with benchmark
@@ -29,12 +29,12 @@ See [repository map](REPOSITORY_MAP.md) for current/historical classifications,
 ## Current V2.1 method state
 
 The active opt-in method is `unified_team_prompt_search_v2_1`.
-Use `SearchMethodConfig.v2_1()` and the shared binary production composition.
+Use the complete `CurrentPolicyBundle` and `build_current_team_prompt_search`.
 Pattern selects one mechanism after WHO, with explicit all-residual coverage
 metrics. The current opt-in [Pattern path](design/PATTERN_GRADIENT_DISCOVERY_V4.md)
 extracts one textual gradient per wrong example and clusters gradients only, then
 selects a generalized correction by the unchanged F. Deployment requires strict team gain above an immutable initial member
-competence floor. Memory stores grounded strategy experience, default disabled.
+competence floor. Memory retains bounded private outcomes and recurrent shared risks.
 V1/V2 factories and frozen bindings remain replay identities; current experiments
 need a fresh V2.1 binding, preexecution freeze and explicit authorization.
 See CURRENT_SPEC for precise rules; fake conformance does not establish efficacy.
@@ -42,8 +42,9 @@ Current research benchmarks are MATH, IFBench and HotpotQA. BBH composition
 is retained for historical development/replay and structural tests. Canonical
 data freeze and experiment-facing split readers are separate benchmark modules;
 their access policies precede raw-row resolution. MATH composition uses the
-shared `binary_composition.py` graph and benchmark-owned `math_execution.py`
-binding. `private_gate.py` owns gate content and `unified_execution.py` owns
+`current_composition.py` graph and flat `math_gradient_pattern_binding.py`
+binding. Older builders are explicit legacy replay. `private_gate.py` owns
+gate content and `unified_execution.py` owns
 source/startup identity, canary phase and single-use authorization. Reference
 eligibility preparation is isolated in `data_preparation/`, outside runtime.
 Readiness is checked from the permanent versioned manifest; real calls require

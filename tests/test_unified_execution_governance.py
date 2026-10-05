@@ -283,7 +283,7 @@ def test_v4_freeze_inventory_contains_all_active_dependencies() -> None:
 
 def test_entry_import_graph_is_current_and_historical_runner_free() -> None:
     root = Path(__file__).resolve().parents[1]
-    entry = (root / "scripts/run_experiment.py").read_text(encoding="utf-8")
+    entry = (root / "scripts/replay_experiment.py").read_text(encoding="utf-8")
     canary = (root / "multi_dataset_diverse_rl/production_canary.py").read_text(encoding="utf-8")
     for source in (entry, canary):
         assert "run_level_b_gepa_real_canary" not in source
@@ -326,7 +326,7 @@ def test_fresh_process_reaches_admission_then_fails_before_provider(
 import asyncio, json, sys
 from pathlib import Path
 from unittest.mock import patch
-import scripts.run_experiment as entry
+import scripts.replay_experiment as entry
 from multi_dataset_diverse_rl.governance import production_execution as gov
 root, prep, run = (Path(value) for value in sys.argv[1:4])
 async def poison_provider(permit, *, root):

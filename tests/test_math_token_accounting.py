@@ -10,7 +10,7 @@ import pytest
 from multi_dataset_diverse_rl.governance.token_accounting import (
     TokenLedger, OperationalAbort, serialized_request, reservation,
 )
-from multi_dataset_diverse_rl.governance.autonomous_math import create_transport
+from multi_dataset_diverse_rl.governance.legacy.autonomous_math import create_transport
 from multi_dataset_diverse_rl.benchmarks.math_accounting_prep import (
     ValidationReserve, escaped_prompt_bytes, solver_request,
 )
@@ -308,8 +308,8 @@ def test_validation_accounting_metadata_is_content_free_and_search_denied():
 
 @pytest.mark.parametrize("phase",["canary","pilot"])
 def test_actual_public_gepa_with_accounting_and_phase_persistence(tmp_path,monkeypatch,phase,*,binding_path=None,adapter=None):
-    from multi_dataset_diverse_rl.governance import unified_execution as gov
-    from multi_dataset_diverse_rl.governance import autonomous_math as execution
+    from multi_dataset_diverse_rl.governance.legacy import unified_execution as gov
+    from multi_dataset_diverse_rl.governance.legacy import autonomous_math as execution
     from multi_dataset_diverse_rl.benchmarks.math_execution import MATHExecutionBinding
     from multi_dataset_diverse_rl.benchmarks.math import MATHBenchmarkAdapter
     from multi_dataset_diverse_rl.search.binary_runtime import CorrectnessExample

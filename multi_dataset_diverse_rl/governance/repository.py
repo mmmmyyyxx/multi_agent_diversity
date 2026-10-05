@@ -190,12 +190,20 @@ def import_guard(root: Path) -> list[str]:
     errors=[]
     for area in ('search','benchmarks'):
         for path in (root/'multi_dataset_diverse_rl'/area).rglob('*.py'):
-            if path.name=='legacy_bbh_replay.py':continue
+            if path.name=='legacy_bbh_replay.py' or 'legacy' in path.relative_to(root).parts:continue
+            from .source_identity import is_legacy_forwarder
+            if is_legacy_forwarder(root,path):
+                continue
             for node in ast.walk(ast.parse(path.read_text(encoding='utf-8-sig'))):
                 names=[a.name for a in node.names] if isinstance(node,ast.Import) else ([node.module or ''] if isinstance(node,ast.ImportFrom) else [])
                 for name in names:
                     if name in {'scripts','reports'} or name.startswith(('scripts.','reports.')) or any(s in name for s in ('mars','team_search.controller','sequential_controller','production_formal_saturation')):
                         errors.append(f'{path.relative_to(root).as_posix()}: forbidden current import {name}')
+    if (root/'multi_dataset_diverse_rl/search/current_composition.py').is_file():
+        from .current_dependencies import current_dependency_graph
+        graph=current_dependency_graph(root)
+        errors.extend('current execution reaches legacy namespace '+path for path in graph['legacy_namespace_dependencies'])
+        errors.extend('current execution reaches legacy treatment '+row['name'] for row in graph['legacy_class_definitions'])
     return errors
 
 

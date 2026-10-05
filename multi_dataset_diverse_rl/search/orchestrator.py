@@ -7,7 +7,7 @@ from typing import Any, Callable, Mapping, Protocol, Sequence
 
 from .. import versions
 from .benchmark import BenchmarkAdapter
-from .engines import SearchEngine
+from .search_ports import SearchEngine
 from .evaluation import AdaptiveValidationGate, CandidateEvaluationPipeline
 from .history import HistoryState, MemoryProvider, NullMemoryProvider, NullPatternAnalyzer, PatternAnalyzer
 from .policies import (
@@ -260,7 +260,7 @@ class UnifiedSearchOrchestrator:
             v2 = self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION}
             memory_delta = None
             if v2:
-                from .memory import OpportunityOutcome
+                from .memory_records import OpportunityOutcome
                 memory_delta = self.memory.prepare_outcome(OpportunityOutcome(
                     opportunity, tuple(evaluated), selected,
                     bool(decision.candidate is not None and gate_passed), gate_passed, index,

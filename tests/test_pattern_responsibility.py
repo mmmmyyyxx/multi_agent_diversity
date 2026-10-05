@@ -250,8 +250,8 @@ def test_memory_after_selected_pattern_and_no_WHO_effect(tmp_path):
 
 @pytest.mark.parametrize('binding_version',[1,2,3,4])
 def test_new_binding_scope_hashes_and_generation_policy(binding_version):
-    from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
-    from multi_dataset_diverse_rl.governance.unified_execution import preexecution_manifest,execution_scope
+    from multi_dataset_diverse_rl.benchmarks.legacy.math_domain_binding import execution_binding
+    from multi_dataset_diverse_rl.governance.legacy.unified_execution import preexecution_manifest,execution_scope
     from multi_dataset_diverse_rl.governance.repository import validate_manifest_v2
     from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker
     from multi_dataset_diverse_rl.governance.token_accounting import serialized_request
@@ -308,7 +308,7 @@ def test_duplicate_scientific_discovery_fails_before_provider():
 
 @pytest.mark.parametrize('binding_version',[1,2,3,4])
 def test_pattern_memory_full_fake_production_graph(tmp_path,monkeypatch,binding_version):
-    from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
+    from multi_dataset_diverse_rl.benchmarks.legacy.math_domain_binding import execution_binding
     from multi_dataset_diverse_rl.benchmarks.protocols import protocol_input
     from multi_dataset_diverse_rl.search.binary_runtime import CorrectnessExample
     from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker,BenchmarkSolver,ReflectionProvider

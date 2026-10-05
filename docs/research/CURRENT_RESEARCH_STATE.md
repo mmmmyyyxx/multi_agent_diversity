@@ -6,7 +6,8 @@ The sole active research architecture is Unified Team Prompt Search.
 - CURRENT_BENCHMARK_SUITE: MATH, IFBench, HotpotQA.
 - CURRENT_EXPERIMENT: unified_semantic_contract_v2_1 zero-API implementation audit.
 - Execution readiness and authorization come from experiments/current_frontier.yaml.
-- Pattern = IMPLEMENTED_DEFAULT_OFF; Memory = IMPLEMENTED_DEFAULT_OFF.
+- CURRENT_RUNTIME: one complete Gradient Pattern / Rolling Memory / bounded Layer1 bundle.
+- Older Pattern/Memory/search combinations: EXPLICIT_HISTORICAL_REPLAY_ONLY.
 - SCIENTIFIC_EFFICACY_VERIFIED = NO; SOTA_VERIFIED = NO.
 
 The current explicit opt-in [Pattern contract](../design/PATTERN_GRADIENT_DISCOVERY_V4.md)

@@ -8,14 +8,15 @@ from multi_dataset_diverse_rl import versions
 from multi_dataset_diverse_rl.benchmarks.math_layer1_binding import MATHLayer1Binding
 from multi_dataset_diverse_rl.benchmarks.protocols import protocol_input
 from multi_dataset_diverse_rl.search.binary_runtime import CorrectnessExample
-from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker,BenchmarkSolver,ReflectionProvider,PatternProvider
+from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker,BenchmarkSolver,ReflectionProvider
+from multi_dataset_diverse_rl.search.legacy.pattern_provider import PatternProvider
 from multi_dataset_diverse_rl.governance.token_accounting import serialized_request
 
 ROOT=Path(__file__).resolve().parents[1]
 
 
 def test_new_binding_manifest_enters_current_governed_preflight():
-    from multi_dataset_diverse_rl.governance.unified_execution import preexecution_manifest,bound_preflight
+    from multi_dataset_diverse_rl.governance.legacy.unified_execution import preexecution_manifest,bound_preflight
     m=preexecution_manifest(ROOT,source_sha='0'*40,binding_path='experiments/execution_bindings/math_v2_1_layer1_canary_v1.json',experiment_id='synthetic_layer1_preflight',frozen=False)
     result=bound_preflight(ROOT,m)
     assert result['blockers']==['PREEXECUTION_NOT_FROZEN'],result

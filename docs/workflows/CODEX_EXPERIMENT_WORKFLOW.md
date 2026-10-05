@@ -24,6 +24,11 @@ frozen behavior, and failure IDs at risk.
 
 ## Phase 3 — Implement [Sol]
 
+New experiments MUST compose through `build_current_team_prompt_search` and the
+complete current policy bundle. Do not import legacy treatment classes into the
+current execution graph. Historical implementations require explicit replay
+tooling; historical schema compatibility never grants current execution access.
+
 Implement only the preregistered delta. Preserve historical artifacts. Freeze
 the manifest and its preregistration hash before any API call.
 

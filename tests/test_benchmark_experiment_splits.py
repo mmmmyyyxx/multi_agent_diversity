@@ -160,7 +160,7 @@ def test_current_suite_and_bbh_history_only():
     if frontier["real_execution_ready"] == "true_for_canary_only":
         # Versioned preexecution readiness supersedes the migration-time HOLD;
         # independent authorization and held-out locks remain closed.
-        from multi_dataset_diverse_rl.governance.unified_execution import bound_preflight
+        from multi_dataset_diverse_rl.governance.legacy.unified_execution import bound_preflight
         assert frontier["validation_access"] == "not_authorized" and frontier["test_access"] == "sealed"
         manifest = load_yaml(root / frontier["canary_manifest"])
         assert manifest["lifecycle"]["status"] == "PREEXECUTION_FROZEN"

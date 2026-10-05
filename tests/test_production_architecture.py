@@ -31,7 +31,7 @@ from multi_dataset_diverse_rl.team_search.task_builder import (
     NativeFeedRequestBuilder,
 )
 from scripts import capture_production_golden_traces as baseline
-from scripts.run_experiment import _execute, preflight
+from scripts.replay_experiment import _execute, preflight
 
 
 ROOT = Path(__file__).parents[1]
@@ -225,7 +225,7 @@ def _imports(path: Path) -> set[str]:
 def test_production_dependency_direction_and_historical_isolation() -> None:
     core = ROOT / "multi_dataset_diverse_rl/experiment.py"
     backends = ROOT / "multi_dataset_diverse_rl/local_optimizers/production_backends.py"
-    entrypoint = ROOT / "scripts/run_experiment.py"
+    entrypoint = ROOT / "scripts/replay_experiment.py"
     assert not any(name == "scripts" or name.startswith("scripts.") for name in _imports(core))
     assert "multi_dataset_diverse_rl.config" not in _imports(core)
     assert "multi_dataset_diverse_rl.config" not in _imports(backends)

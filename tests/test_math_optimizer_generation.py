@@ -10,7 +10,7 @@ import pytest
 from multi_dataset_diverse_rl import versions
 from multi_dataset_diverse_rl.benchmarks.math_optimizer_generation import optimizer_generation_contract
 from multi_dataset_diverse_rl.benchmarks.math_solver_decoding import generation_request_fields
-from multi_dataset_diverse_rl.governance.autonomous_math import create_transport
+from multi_dataset_diverse_rl.governance.legacy.autonomous_math import create_transport
 from multi_dataset_diverse_rl.governance.token_accounting import TokenLedger,OperationalAbort,reservation,serialized_request
 from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker
 from multi_dataset_diverse_rl.search.schemas import SearchContractError
@@ -142,7 +142,7 @@ def fresh_binding(phase='canary'):
 @pytest.mark.parametrize('phase',['canary','pilot'])
 def test_complete_policy_enters_manifest_scope_and_binding(phase):
     from multi_dataset_diverse_rl.benchmarks.math_low_cost_binding import MATHLowCostBinding
-    from multi_dataset_diverse_rl.governance.unified_execution import preexecution_manifest,execution_scope
+    from multi_dataset_diverse_rl.governance.legacy.unified_execution import preexecution_manifest,execution_scope
     from multi_dataset_diverse_rl.governance.repository import validate_manifest_v2
     c=fresh_binding(phase);assert not MATHLowCostBinding(ROOT,c).blockers()
     m=preexecution_manifest(ROOT,source_sha='a'*40,binding_path=c['binding_path'],frozen=False)
@@ -214,7 +214,7 @@ def default_binding_fixture(tmp_path,phase):
 @pytest.mark.parametrize('phase',['canary','pilot'])
 def test_default_off_binding_has_authority_and_full_identity(tmp_path,phase):
     from multi_dataset_diverse_rl.benchmarks.math_low_cost_binding import MATHLowCostBinding
-    from multi_dataset_diverse_rl.governance.unified_execution import preexecution_manifest,execution_scope
+    from multi_dataset_diverse_rl.governance.legacy.unified_execution import preexecution_manifest,execution_scope
     from multi_dataset_diverse_rl.governance.repository import validate_manifest_v2
     c=default_binding_fixture(tmp_path,phase)
     assert c['optimizer_generation_policy']==optimizer_generation_contract()
@@ -329,7 +329,7 @@ def test_raw_http_optional_metadata_provenance_and_other_thinking_indicators(mon
 def test_equivalent_evidence_binding_scope_and_candidate_guard_remain_independent(tmp_path):
     from multi_dataset_diverse_rl.benchmarks.math_optimizer_diagnostics import nonthinking_evidence_contract,generation_diagnostics
     from multi_dataset_diverse_rl.benchmarks.math_low_cost_binding import MATHLowCostBinding
-    from multi_dataset_diverse_rl.governance.unified_execution import preexecution_manifest,execution_scope
+    from multi_dataset_diverse_rl.governance.legacy.unified_execution import preexecution_manifest,execution_scope
     c=default_binding_fixture(tmp_path,'canary');evidence=nonthinking_evidence_contract()
     approval_path=ROOT/c['optimizer_amendment_authorization_path'];approval=json.loads(approval_path.read_bytes())
     approval['optimizer_nonthinking_evidence_policy']=evidence;approval_path.write_text(json.dumps(approval),encoding='utf-8')
@@ -349,7 +349,7 @@ def test_equivalent_evidence_binding_scope_and_candidate_guard_remain_independen
 
 
 def witness_fixture(tmp_path,monkeypatch):
-    from multi_dataset_diverse_rl.governance import unified_execution as gov,math_optimizer_witness as w
+    from multi_dataset_diverse_rl.governance.legacy import unified_execution as gov,math_optimizer_witness as w
     c=default_binding_fixture(tmp_path/'contract','canary')
     monkeypatch.setattr(gov,'verify_source_commit',lambda *_:None)
     m=gov.preexecution_manifest(ROOT,source_sha='a'*40,binding_path=c['binding_path'],experiment_id='synthetic_optimizer_witness')
@@ -377,7 +377,7 @@ def test_witness_denies_unapproved_and_mutated_input_before_provider(tmp_path,mo
 def test_witness_single_call_accounts_and_never_enters_search_or_cache(tmp_path,monkeypatch,finish):
     import asyncio
     from multi_dataset_diverse_rl.persistence.durable_io import atomic_write_json
-    from multi_dataset_diverse_rl.governance import autonomous_math as execution
+    from multi_dataset_diverse_rl.governance.legacy import autonomous_math as execution
     w,c,prep,run,payload=witness_fixture(tmp_path,monkeypatch)
     isolated=tmp_path/'budget'
     with TokenLedger(isolated,task_sha256=c['task_authorization_sha256']) as ledger:

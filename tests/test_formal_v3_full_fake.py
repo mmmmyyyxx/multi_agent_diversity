@@ -32,7 +32,7 @@ from multi_dataset_diverse_rl.versions import LAYER2_TEAM_SEARCH_PROTOCOL_V4_VER
 from multi_dataset_diverse_rl.governance.production_execution import formal_v3_contract
 from scripts.prepare_gepa_saturation_comparison_v3 import frozen_payload
 from scripts.prepare_post_refactor_gepa_canary import _private_splits
-from scripts import run_experiment as formal_runner
+from scripts import replay_experiment as formal_runner
 from scripts.freeze_formal_v3_execution import freeze as freeze_formal, verify_freeze
 from scripts.derive_formal_trajectory_trace import derive as derive_formal
 

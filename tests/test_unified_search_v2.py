@@ -620,7 +620,7 @@ def test_memory_two_successive_opportunities_follow_committed_parent(tmp_path):
 
 
 def test_v2_cli_default_is_hold_without_optional_mechanisms():
-    from scripts.run_experiment import preflight
+    from scripts.replay_experiment import preflight
     manifest={"scientific":{"method":"unified_team_prompt_search_v2"},"runtime":{
         "seed":81,"provider_profile":"fake","solver_model":"solver","optimizer_model":"optimizer",
         "evaluator_model":"optimizer","run_identity_sha256":"fake","authorization_identity":"none",

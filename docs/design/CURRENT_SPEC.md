@@ -2,13 +2,22 @@
 
 The sole active research architecture is Unified Team Prompt Search.
 This document is the normative active scientific method specification.
-Runtime identities come from `multi_dataset_diverse_rl/versions.py`; benchmark
+Current identities are exposed by `multi_dataset_diverse_rl/current_contract.py`;
+`versions.py` preserves the compatibility registry. Benchmark
 contracts come from `multi_dataset_diverse_rl/benchmarks/`; experiment access
 and authorization come from the frozen manifest. Reports are evidence, never
 design authority. Historical specifications and invariant IDs are preserved in
 `docs/archive/specs/historical_current_spec.md` and its invariant index.
 
 ## Active Unified Team Prompt Search V2.1 (opt-in)
+
+Only the complete Gradient Pattern V4 + Rolling Risk Memory + bounded Layer1
+bundle is eligible for new execution. The current graph is defined in
+[Current Runtime Composition](CURRENT_RUNTIME_COMPOSITION.md). Existing null,
+factorial-arm and older component constructors remain schema/replay compatibility;
+they cannot select a current execution path. This engineering consolidation
+changes no scientific identity, prompt, responsibility, evidence, Memory,
+search, deployment, generation policy or data membership.
 
 - **INV-UNIFIED-FLOW-001**: One orchestrator owns snapshot, state analysis,
   opportunity construction, candidate search, progressive team evaluation,
@@ -40,7 +49,9 @@ design authority. Historical specifications and invariant IDs are preserved in
   parsed again by the benchmark adapter before scoring.
 - **INV-HISTORY-MEMORY-001**: Target/failure/commit counts, latest transition
   and lineage are structured optimizer history. Pattern and LLM memory ports
-  default to null behavior. No held-out evaluation updates either.
+  remain separate. The current bundle requires Gradient Pattern and bounded
+  Rolling Risk Memory; null constructors are historical compatibility.
+  No held-out evaluation updates either.
 - **INV-REPLAY-001**: The previous two-layer implementation remains available
   for historical reproduction and deterministic migration comparison. It is
   not the new method's ownership graph.
@@ -49,8 +60,9 @@ design authority. Historical specifications and invariant IDs are preserved in
 
 The user-authored [method semantic contract](UNIFIED_METHOD_SEMANTIC_CONTRACT.md)
 defines the research meaning and claim boundaries. `SearchMethodConfig.v2_1()`
-implements it with fresh component identities. V1 and V2 factories retain their
-replay behavior; prior frozen MATH bindings remain V2 and confer no V2.1 access.
+preserves its identity serialization for compatibility. New execution uses the
+complete current bundle and current-only builder. V1/V2 and earlier V2.1
+component factories retain replay behavior and confer no current access.
 
 Responsibility remains resource allocation: raw overlapping D/N/C,
 `V=max(4D,2N,C)` and target score `V/(1+f)` are unchanged. Target selection

@@ -213,7 +213,7 @@ def test_memory_on_governed_binding_full_fake_production_graph(tmp_path,monkeypa
     from multi_dataset_diverse_rl.search.binary_runtime import CorrectnessExample
     from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker,BenchmarkSolver,ReflectionProvider
     from multi_dataset_diverse_rl.governance.token_accounting import serialized_request
-    from multi_dataset_diverse_rl.governance.unified_execution import preexecution_manifest,bound_preflight,execution_scope
+    from multi_dataset_diverse_rl.governance.legacy.unified_execution import preexecution_manifest,bound_preflight,execution_scope
     root=Path(__file__).resolve().parents[1]
     binding_path='experiments/execution_bindings/math_v2_1_memory_canary_v1.json'
     c=json.loads((root/binding_path).read_bytes());binding=MATHMemoryBinding(root,c)

@@ -1,8 +1,9 @@
 """Offline Unified identities with separate scientific, governance and data scopes.
 
 Historical source-identity v5 remains in its original tool for replay. This
-closure conservatively includes static local imports and package initializers,
-including compatibility dependencies. It never imports provider code.
+closure conservatively includes current static local imports and package
+initializers. Explicit replay implementations and compatibility shims do not
+determine new experiment identity. It never imports provider code.
 """
 from __future__ import annotations
 
@@ -52,8 +53,13 @@ HISTORICAL_CONTROL_PATHS = {
 
 
 def current_scientific_files(root: Path, *, execution_closure: bool = False) -> list[Path]:
-    roots = [p for p in (root/'multi_dataset_diverse_rl/search').rglob('*.py')
-             if '__pycache__' not in p.parts and p.name != 'legacy_bbh_replay.py']
+    composition=root/'multi_dataset_diverse_rl/search/current_composition.py'
+    if composition.is_file():
+        roots=[composition,root/'multi_dataset_diverse_rl/current_contract.py']
+        if execution_closure:roots.append(root/'scripts/run_experiment.py')
+    else:
+        roots=[p for p in (root/'multi_dataset_diverse_rl/search').rglob('*.py')
+            if '__pycache__' not in p.parts and 'legacy' not in p.parts and p.name!='legacy_bbh_replay.py']
     roots.append(root/'multi_dataset_diverse_rl/versions.py')
     pending = list(roots)
     if execution_closure:
@@ -84,7 +90,7 @@ def current_scientific_files(root: Path, *, execution_closure: bool = False) -> 
     risk_contract = root/'docs/design/SHARED_RISK_MEMORY_V4.md'
     if risk_contract.is_file():
         result.append(risk_contract)
-    pattern_contract = root/'docs/design/PATTERN_RESPONSIBILITY_V3.md'
+    pattern_contract = root/'docs/design/PATTERN_GRADIENT_DISCOVERY_V4.md'
     if pattern_contract.is_file():
         result.append(pattern_contract)
     return sorted(result, key=lambda p:p.relative_to(root).as_posix())
@@ -101,6 +107,30 @@ def hash_scope(root: Path, files: Iterable[Path]) -> dict:
     canonical=[{'path':r['path'],'sha256':r['sha256']} for r in entries]
     encoded = json.dumps(canonical, sort_keys=True, separators=(',', ':')).encode()
     return {'sha256':hashlib.sha256(encoded).hexdigest(), 'files':entries}
+
+
+def is_legacy_forwarder(root: Path, path: Path) -> bool:
+    """Recognize a forwarding module, never hide a substantive current import."""
+    tree=ast.parse(path.read_text(encoding='utf-8-sig'))
+    statements=[node for node in tree.body if not (isinstance(node,ast.Expr) and isinstance(node.value,ast.Constant) and isinstance(node.value.value,str))]
+    return bool(statements) and all(isinstance(node,ast.ImportFrom) for node in statements) and any(
+        'legacy' in target.relative_to(root).parts for target in local_imports(root,path,initializers=False))
+
+
+def current_authority_files(root: Path, area: str) -> list[Path]:
+    """Keep current contracts; exclude explicit replay and forwarding shims."""
+    result=[]
+    for path in (root/'multi_dataset_diverse_rl'/area).rglob('*'):
+        if not path.is_file() or '__pycache__' in path.parts or 'legacy' in path.parts:
+            continue
+        if path.suffix not in {'.py','.json','.md','.txt'}:
+            continue
+        if path.name=='legacy_bbh_replay.py':
+            continue
+        if path.suffix=='.py' and is_legacy_forwarder(root,path):
+            continue
+        result.append(path)
+    return result
 
 
 def build_unified_source_identity(workspace: Path, dataset_manifest: Path | None = None,
@@ -126,10 +156,9 @@ def build_unified_source_identity(workspace: Path, dataset_manifest: Path | None
         root/'experiments/current_frontier.yaml', root/'experiments/manifest_schema_index.json',
         root/'docs/design/invariants.yaml', root/'docs/failures/registry.yaml',
         *list((root/'docs/workflows').rglob('*.md')),
-        *list((root/'multi_dataset_diverse_rl/governance').rglob('*.py')),
+        *current_authority_files(root,'governance'),
         *list((root/'experiments/schema').rglob('*.json')), *bootstrap_files])
-    benchmark = hash_scope(root, [*[p for p in (root/'multi_dataset_diverse_rl/benchmarks').rglob('*')
-        if p.is_file() and '__pycache__' not in p.parts and p.suffix in {'.py','.json','.md','.txt'}],
+    benchmark = hash_scope(root, [*current_authority_files(root,'benchmarks'),
         root/'requirements-benchmark-evaluators.txt',
         root/'requirements-ifbench-evaluators.txt'])
     data = hash_scope(root, [dataset] if dataset is not None else [])
@@ -143,6 +172,6 @@ def build_unified_source_identity(workspace: Path, dataset_manifest: Path | None
             'scopes':{'scientific':scientific,'governance':governance,
                       'benchmark':benchmark,'dataset_manifest':data},
             'operational_bootstrap_paths':[p.relative_to(root).as_posix() for p in sorted(bootstrap_files)],
-            'closure_policy':'active graph static dependencies are scientific; package bootstrap and historical controller imports are governed operational dependencies, included in governance_hash; benchmark dependencies hashed separately; dynamic imports require freeze-specific review',
+            'closure_policy':'current graph static dependencies are scientific; current package bootstrap is governed operational scope; benchmark contracts are hashed separately; explicit legacy namespaces and historical forwarding shims are excluded; dynamic imports require freeze-specific review',
             'content_hash_policy':'canonical LF text for portable scope hashes; raw_sha256 receipts preserve execution-byte evidence separately',
             'ready_to_run':False}

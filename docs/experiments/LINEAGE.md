@@ -10,8 +10,7 @@ schema_version: current_frontier_v1
 current_architecture: Unified Team Prompt Search
 method_identity: unified_team_prompt_search_v2_1
 current_method: unified_team_prompt_search_v2_1
-current_implementation: Versioned method semantic contract; benchmark-neutral production
-  composition; zero-API audit
+current_implementation: One closed current policy bundle; current-only composition; explicit legacy replay
 current_experiment: math_v2_1_a4_seed81_pattern_canary_v4
 current_benchmark_suite:
 - math
@@ -101,6 +100,13 @@ available_opt_in_pattern_policy: gradient_cluster_pattern_discovery_v4
 available_opt_in_gradient_policy: PER_EXAMPLE_TEXTUAL_GRADIENT_V1
 pattern_gradient_amendment_status: COMPLETED_ZERO_API
 pattern_gradient_amendment_report: reports/math_v2_1_gradient_pattern_refactor_v1_20261005
+current_runtime_composition: CURRENT_RUNTIME_COMPOSITION_V1
+current_runtime_builder: build_current_team_prompt_search
+current_execution_entrypoint: scripts/run_experiment.py
+historical_replay_entrypoint: scripts/replay_experiment.py
+last_runtime_consolidation_milestone: math_v2_1_current_runtime_consolidation_v1
+runtime_consolidation_status: FINAL_SOURCE_SUITE_PENDING
+current_execution_eligibility: GRADIENT_PATTERN_V4_ROLLING_MEMORY_FIXED_BUNDLE_ONLY
 ```
 
 ## Experiment and engineering DAG
@@ -202,6 +208,7 @@ flowchart TD
     n268["math_v2_1_a4_seed81_pattern_canary_v4<br/>REAL_CANARY<br/>COMPLETED"]
     n269["math_v2_1_pattern_semantic_partition_audit_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
     n270["math_v2_1_gradient_pattern_refactor_v1<br/>ARCHITECTURE_REFACTOR<br/>COMPLETED"]
+    n271["math_v2_1_current_runtime_consolidation_v1<br/>ARCHITECTURE_REFACTOR<br/>IN_PROGRESS"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -549,6 +556,7 @@ flowchart TD
   n267 -->|followup_of| n268
   n268 -->|audit_of| n269
   n269 -->|derived_from| n270
+  n270 -->|derived_from| n271
 ```
 
 ## Archived branches and unresolved evidence

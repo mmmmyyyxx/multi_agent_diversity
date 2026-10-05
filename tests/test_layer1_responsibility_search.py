@@ -170,7 +170,7 @@ def test_final_provider_body_dispatch_has_no_dropped_extensions(monkeypatch):
     import httpx
     from openai import OpenAI
     from multi_dataset_diverse_rl.provider_factory import ProviderClientFactory
-    from multi_dataset_diverse_rl.governance.autonomous_math import create_transport
+    from multi_dataset_diverse_rl.governance.legacy.autonomous_math import create_transport
     captured=[]
     def handler(request):
         captured.append(json.loads(request.content))

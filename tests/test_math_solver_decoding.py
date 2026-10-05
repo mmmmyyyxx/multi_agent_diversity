@@ -13,7 +13,7 @@ from multi_dataset_diverse_rl.benchmarks.math_solver_decoding import solver_deco
 from multi_dataset_diverse_rl.benchmarks.math_v21_binding import MATHV21Binding
 from multi_dataset_diverse_rl.benchmarks.math_accounting_prep import solver_request, ValidationReserve
 from multi_dataset_diverse_rl.benchmarks.protocols import protocol_input
-from multi_dataset_diverse_rl.governance.autonomous_math import create_transport
+from multi_dataset_diverse_rl.governance.legacy.autonomous_math import create_transport
 from multi_dataset_diverse_rl.governance.token_accounting import serialized_request, reservation
 from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker, BenchmarkSolver
 from multi_dataset_diverse_rl.search.schemas import SearchContractError
@@ -131,7 +131,7 @@ def test_policy_bound_reserve_equals_exact_serialized_request_reservations():
 
 
 def test_manifest_and_authorization_bind_exact_solver_policy():
-    from multi_dataset_diverse_rl.governance.unified_execution import preexecution_manifest,execution_scope
+    from multi_dataset_diverse_rl.governance.legacy.unified_execution import preexecution_manifest,execution_scope
     from multi_dataset_diverse_rl.governance.repository import validate_manifest_v2
     c=contract();m=preexecution_manifest(ROOT,source_sha='a'*40,binding_path=c['binding_path'],frozen=False)
     assert not validate_manifest_v2(ROOT,m)

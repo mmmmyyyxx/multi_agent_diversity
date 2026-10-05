@@ -56,7 +56,7 @@ def test_readiness_rehearses_and_cleans_without_consuming(tmp_path: Path) -> Non
 def test_finalization_fault_never_publishes_complete_without_summary(
     tmp_path: Path, monkeypatch, fault: str,
 ) -> None:
-    import scripts.run_experiment as entry
+    import scripts.replay_experiment as entry
     import multi_dataset_diverse_rl.governance.production_execution as governance
     import multi_dataset_diverse_rl.persistence.durable_io as filesystem
 
@@ -164,7 +164,7 @@ def test_legacy_environment_poison_rejected_by_real_cli_fresh_process(
     env = os.environ.copy()
     env[legacy] = "poisoned-frozen-source"
     process = subprocess.run(
-        [sys.executable, str(root / "scripts/run_experiment.py"),
+        [sys.executable, str(root / "scripts/replay_experiment.py"),
          "--prep", str(tmp_path / "absent-prep"), "--preflight"],
         cwd=cwd, env=env, text=True, capture_output=True, timeout=30,
     )

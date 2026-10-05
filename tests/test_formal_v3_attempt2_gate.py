@@ -16,7 +16,7 @@ from multi_dataset_diverse_rl.governance.startup_identity import (
 )
 from scripts.prepare_gepa_saturation_comparison_v3 import frozen_payload
 from scripts.prepare_post_refactor_gepa_canary import _private_splits
-from scripts.run_experiment import governed_preflight
+from scripts.replay_experiment import governed_preflight
 
 ROOT = Path(__file__).resolve().parents[1]
 

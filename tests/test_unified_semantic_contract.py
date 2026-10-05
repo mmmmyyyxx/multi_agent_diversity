@@ -255,7 +255,7 @@ def test_bounded_memory_context_contains_real_experience_not_just_identifiers():
 def test_current_manifest_rejects_old_transition_pattern_and_unbound_memory():
     import yaml
     from multi_dataset_diverse_rl.governance.repository import validate_manifest_v2
-    from scripts.run_experiment import preflight
+    from scripts.replay_experiment import preflight
     draft = yaml.safe_load((ROOT / "experiments/templates/unified_experiment_v2_1.yaml").read_text(encoding="utf-8"))
     assert validate_manifest_v2(ROOT, draft) == []
     assert preflight(draft)["gate"] == "HOLD"
@@ -313,7 +313,7 @@ def test_four_current_arms_on_single_orchestrator_local_rejected_team_good_commi
 
 
 def test_new_identity_and_cli_are_closed_until_new_freeze():
-    from scripts.run_experiment import preflight
+    from scripts.replay_experiment import preflight
     assert SearchMethodConfig.v2_1().identity() != SearchMethodConfig.v2().identity()
     assert SearchMethodConfig.from_mapping({"method": versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION}) == SearchMethodConfig.v2_1()
     result = preflight({"scientific": {"method": versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION}, "runtime": {
@@ -330,7 +330,8 @@ def test_current_binary_production_composition_actual_pinned_gepa_four_arms(tmp_
     import test_math_preexecution as fixtures
     from multi_dataset_diverse_rl.search.binary_composition import build_binary_orchestrator
     from multi_dataset_diverse_rl.search.gepa_v2 import GEPATeamExposureOptimizer
-    from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker, BenchmarkSolver, ReflectionProvider, PatternProvider
+    from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker,BenchmarkSolver,ReflectionProvider
+    from multi_dataset_diverse_rl.search.legacy.pattern_provider import PatternProvider
     c = fixtures.contract()
     binding = fixtures.MATHExecutionBinding(ROOT, c)
     old = binding.method(arm)

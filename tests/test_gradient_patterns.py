@@ -12,16 +12,16 @@ from multi_dataset_diverse_rl.search.textual_gradients import (
     GradientExtractor, GradientPatternDiscovery, GradientPatternConditionedEvidence,
     PerExampleGradientProvider, GradientClusterProvider, score_gradient_partition,
     validate_gradient, gradient_identity, POLICY)
-from multi_dataset_diverse_rl.search.pattern_responsibility import wrong_universe
+from multi_dataset_diverse_rl.search.pattern_primitives import wrong_universe
 from multi_dataset_diverse_rl.search.schemas import EvidenceItem,Diagnosis,SearchContractError
 from multi_dataset_diverse_rl.search.policies import ResponsibilitySignal,TargetPolicyV1
 from multi_dataset_diverse_rl.search.history import HistoryState
-from multi_dataset_diverse_rl.search.runtime_v2 import V2OpportunityBuilder
+from multi_dataset_diverse_rl.search.current_opportunity import CurrentOpportunityBuilder as V2OpportunityBuilder
 from multi_dataset_diverse_rl.search.variable_evidence import VariableEvidenceFeasibilityV1
-from multi_dataset_diverse_rl.search.pattern_layer1 import (
+from multi_dataset_diverse_rl.search.current_layer1 import (
     GradientPatternMemoryOptimizer,GradientPatternMemoryEngine,gradient_pattern_input,INSTRUCTION)
 from multi_dataset_diverse_rl.search.rolling_risk_memory import StructuredRollingRiskMemoryV4,POLICY as RISK
-from multi_dataset_diverse_rl.search.action_memory import LIMITS
+from multi_dataset_diverse_rl.search.private_action_memory import LIMITS
 
 ROOT=Path(__file__).resolve().parents[1]
 BP='experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v1.json'
@@ -274,9 +274,10 @@ def test_offline_profile_is_not_ready_and_old_authorization_scope_is_incompatibl
     result=bound_preflight(ROOT,m)
     assert result['gate']=='HOLD' and 'PREEXECUTION_NOT_FROZEN' in result['blockers'] and result['provider_attempts']==0
     old=json.loads((ROOT/'experiments/execution_bindings/math_v2_1_pattern_canary_v4.json').read_bytes())
-    old_manifest=preexecution_manifest(ROOT,source_sha='0'*40,frozen=False,
+    from multi_dataset_diverse_rl.governance.legacy.unified_execution import preexecution_manifest as legacy_manifest, execution_scope as legacy_scope
+    old_manifest=legacy_manifest(ROOT,source_sha='0'*40,frozen=False,
         binding_path=old['binding_path'],experiment_id='synthetic_old')
-    assert canonical_sha256(execution_scope(m,c))!=canonical_sha256(execution_scope(old_manifest,old))
+    assert canonical_sha256(execution_scope(m,c))!=canonical_sha256(legacy_scope(old_manifest,old))
     assert m['authorization']['real_api_authorized'] is False
 
 
