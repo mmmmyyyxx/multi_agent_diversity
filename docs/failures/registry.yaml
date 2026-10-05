@@ -540,3 +540,9 @@ failures:
   required_resolution: Opt-in versioned generic mathematical-command classification; new freeze, authorization and
     fresh Canary.
   lifecycle: OPEN
+  resolution_progress: Opt-in V2 fixes confirmed generic imperative; fresh attempt3 confirms a remaining generic-noun
+    false positive. User stopped before further repair.
+  additional_evidence:
+  - reports/math_v2_1_a4_seed81_pattern_canary_v3_20261005/STOP_REPORT.md
+  current_task_status: STOPPED_BY_USER
+  further_real_execution_authorized: false

@@ -1,0 +1,12 @@
+{
+  "all_offline_gates": "PASS",
+  "current_passed": 1096,
+  "current_skipped": 2,
+  "failed_short_copy_fixture_preserved": true,
+  "historical_private": "NOT RUN",
+  "historical_private_cases": 1468,
+  "new_api_calls_during_publication": 0,
+  "source_poison_checks": 221,
+  "source_sha": "160d3d5c6ba8f4118e26f79140247aac986a3f4b",
+  "targeted_passed": 227
+}

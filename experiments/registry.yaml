@@ -7564,7 +7564,7 @@ experiments:
   scientific_status: VALID_ZERO_API_FREEZE
   implementation_commit: 160d3d5c6ba8f4118e26f79140247aac986a3f4b
   execution_commit: null
-  result_commit: null
+  result_commit: 796dcca148c1af2275c8c6b387db6f6ad67589cc
   manifest: experiments/manifests/math_v2_1_pattern_abstraction_guard_v2.yaml
   report: reports/math_v2_1_pattern_abstraction_guard_v2_20261005
   classifier: ALL_REQUIRED_ZERO_API_GATES_PASS
@@ -7574,8 +7574,8 @@ experiments:
   notes:
   - Attachment section 102 parser classification repair; strict membership and actual leakage guards unchanged.
   - Fresh A4 Seed81 Canary only, no cross-attempt reuse; stop before Pilot/Validation/Test.
+  - 'User STOP: administrative report/push only; no further real execution or repair authorized.'
   unavailable:
-    result_commit: Following failure publication provenance commit.
     execution_commit: Zero API freeze.
 - experiment_id: math_v2_1_pattern_preexecution_v3
   kind: PREEXECUTION_FREEZE
@@ -7587,7 +7587,7 @@ experiments:
   scientific_status: VALID_ZERO_API_FREEZE
   implementation_commit: 160d3d5c6ba8f4118e26f79140247aac986a3f4b
   execution_commit: null
-  result_commit: null
+  result_commit: 796dcca148c1af2275c8c6b387db6f6ad67589cc
   manifest: experiments/manifests/math_v2_1_pattern_preexecution_v3.yaml
   report: reports/math_v2_1_pattern_preexecution_v3_20261005
   classifier: ALL_REQUIRED_ZERO_API_GATES_PASS
@@ -7597,8 +7597,8 @@ experiments:
   notes:
   - Attachment section 102 parser classification repair; strict membership and actual leakage guards unchanged.
   - Fresh A4 Seed81 Canary only, no cross-attempt reuse; stop before Pilot/Validation/Test.
+  - 'User STOP: administrative report/push only; no further real execution or repair authorized.'
   unavailable:
-    result_commit: Following failure publication provenance commit.
     execution_commit: Zero API freeze.
 - experiment_id: math_v2_1_a4_seed81_pattern_canary_v3
   kind: REAL_CANARY
@@ -7610,7 +7610,7 @@ experiments:
   scientific_status: INVALID_OPERATIONAL_CANARY_FAILURE
   implementation_commit: 160d3d5c6ba8f4118e26f79140247aac986a3f4b
   execution_commit: ca0a75f774a55881a0e5349807d8e1a6b782b083
-  result_commit: null
+  result_commit: 796dcca148c1af2275c8c6b387db6f6ad67589cc
   manifest: experiments/manifests/math_v2_1_a4_seed81_pattern_canary_v3.yaml
   report: reports/math_v2_1_a4_seed81_pattern_canary_v3_20261005
   classifier: PATTERN_ABSTRACTION_GUARD_FALSE_POSITIVE
@@ -7620,8 +7620,8 @@ experiments:
   notes:
   - Attachment section 102 parser classification repair; strict membership and actual leakage guards unchanged.
   - Fresh A4 Seed81 Canary only, no cross-attempt reuse; stop before Pilot/Validation/Test.
-  unavailable:
-    result_commit: Following failure publication provenance commit.
+  - 'User STOP: administrative report/push only; no further real execution or repair authorized.'
+  unavailable: {}
   authorization_consumed: true
   authorization_closed: true
   authorization_closure_evidence: reports/math_v2_1_a4_seed81_pattern_canary_v3_20261005/scope_closure.json

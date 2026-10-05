@@ -2,20 +2,12 @@
   "algorithm": "sha256",
   "files": [
     {
-      "file": "all_attempts_summary.json",
-      "sha256": "c445c7cf8dafe085d37d02111f99fbe92702e8fc82c9594736d3100c1125bb12"
-    },
-    {
       "file": "execution_identity.json",
       "sha256": "e07a8b1fb7fc7f01111249acef04ff3925fc19b24b310516a9b3dcf0ca54adcf"
     },
     {
       "file": "final_status.json",
       "sha256": "7315ae22984bc2db9cd34a55a57f71ae6e84a54e52351de26d7288589644010f"
-    },
-    {
-      "file": "owner_stop_postmortem.json",
-      "sha256": "6c7efe84fed9b4cc786208910d2e5765f47e3998ad91b6ca66b78d961b14f34c"
     },
     {
       "file": "provider_accounting.json",
@@ -40,22 +32,6 @@
     {
       "file": "scope_closure.json",
       "sha256": "5352d67730ade970bdf679ed88c4ffb3f1116c0824bd5b79d9b55174d8191227"
-    },
-    {
-      "file": "sha256_manifest_pre_user_stop.json",
-      "sha256": "d547141269f1c7801e1b08d9065eb9bcfe49f95c865b5491038aea6b5163871f"
-    },
-    {
-      "file": "STOP_REPORT.md",
-      "sha256": "3b16a1accb14102552a4ced4bad0a98194a3a7f9d3eeda8a6c1f1edefe73286e"
-    },
-    {
-      "file": "task_verification_summary.json",
-      "sha256": "706d15be1ba5284522375c436da826ba7bdaec44f2e65438981286694d048fa1"
-    },
-    {
-      "file": "user_stop_status.json",
-      "sha256": "5ee3561c3b271e360383ee7e0ba2a4b6e54637741c14a8c0a691c7a4ec015c23"
     },
     {
       "file": "WHO_and_wide_universe_audit.json",

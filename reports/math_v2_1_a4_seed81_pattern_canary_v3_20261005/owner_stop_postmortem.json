@@ -1,0 +1,27 @@
+{
+  "HOW_not_reached": true,
+  "Pattern_outputs_normal_stop_and_valid_json": true,
+  "WHAT_pipeline_incomplete": true,
+  "WHO_reached": true,
+  "abstraction_guard_defective": true,
+  "abstraction_guard_v2_bound_on_attempt3": true,
+  "candidates": 0,
+  "commits": 0,
+  "frozen_scientific_semantics_preserved": true,
+  "generation_policy_changes": false,
+  "identifier_transport_correct_on_attempts": [
+    2,
+    3
+  ],
+  "implemented_repair": "Explicit opt-in guard V2 recognizes Simplify; no further repair after user STOP",
+  "known_generic_trigger_tokens": [
+    "Simplify",
+    "Problem"
+  ],
+  "no_performance_tuning": true,
+  "prior_client_parser_defect_field_scope": "ID/schema parser only; does not assert abstraction-name classification is correct",
+  "remaining_defect": "Capitalization plus incomplete generic-token allowlist misclassifies an ordinary mathematical noun as an example-specific name",
+  "schema_membership_parser_correct": true,
+  "scientific_efficacy_not_evaluated": true,
+  "status": "AUDITED_STOPPED_BY_USER"
+}

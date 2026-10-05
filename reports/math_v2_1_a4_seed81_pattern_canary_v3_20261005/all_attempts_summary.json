@@ -1,0 +1,61 @@
+{
+  "attempts": [
+    {
+      "WHO_completed": true,
+      "authorization_closed": true,
+      "charged": 35693,
+      "confirmed_cause": "LONG_IDENTIFIER_COPY_LOSS",
+      "immutable_runtime_inventory_verified": true,
+      "opportunity_completed": false,
+      "optimizer_calls": 0,
+      "pattern_calls": 1,
+      "raw_truncated": 2,
+      "recovered_requests": 2,
+      "solver_calls": 62,
+      "status": "INVALID",
+      "stop_reason": "PATTERN_DISCOVERY_INVALID_MEMBERSHIP",
+      "terminal_invalid": 0,
+      "version": 1,
+      "wide_wrong_size": 7
+    },
+    {
+      "WHO_completed": true,
+      "authorization_closed": true,
+      "charged": 39335,
+      "confirmed_cause": "GENERIC_MATH_IMPERATIVE_NAME_FALSE_POSITIVE",
+      "immutable_runtime_inventory_verified": true,
+      "opportunity_completed": false,
+      "optimizer_calls": 0,
+      "pattern_calls": 1,
+      "raw_truncated": 3,
+      "recovered_requests": 1,
+      "solver_calls": 63,
+      "status": "INVALID",
+      "stop_reason": "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE",
+      "terminal_invalid": 0,
+      "version": 2,
+      "wide_wrong_size": 7
+    },
+    {
+      "WHO_completed": true,
+      "authorization_closed": true,
+      "charged": 34197,
+      "confirmed_cause": "GENERIC_MATH_NOUN_NAME_FALSE_POSITIVE",
+      "immutable_runtime_inventory_verified": true,
+      "opportunity_completed": false,
+      "optimizer_calls": 0,
+      "pattern_calls": 1,
+      "raw_truncated": 1,
+      "recovered_requests": 1,
+      "solver_calls": 61,
+      "status": "INVALID",
+      "stop_reason": "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE",
+      "terminal_invalid": 0,
+      "version": 3,
+      "wide_wrong_size": 7
+    }
+  ],
+  "new_calls_after_stop": 0,
+  "old_attempts_immutable": true,
+  "total_new_charged": 109225
+}
