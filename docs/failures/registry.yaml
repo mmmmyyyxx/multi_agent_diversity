@@ -13,7 +13,7 @@ failures:
     contradict the current semantic contract.
   evidence:
   - reports/unified_semantic_contract_v2_1_20261002
-  evidence_level: deterministic_zero_api
+  evidence_level: observed
   root_cause_status: Historical policy definitions were narrower or different than the user-authored current research
     contract.
   forbidden_inference: Fake conformance does not prove real efficacy, memory transfer benefit, counterfactual allocation
@@ -25,6 +25,7 @@ failures:
   lifecycle: MITIGATED
   lifecycle_note: ZERO_API_CONFORMANCE_ONLY; REAL_EXECUTION_AND_EFFICACY_UNVERIFIED
   resolved_by: unified_semantic_contract_v2_1
+  evidence_format: deterministic_zero_api
 - failure_id: FAIL-TARGET-CONCENTRATION
   title: Target allocation concentration
   status: DIAGNOSED
@@ -479,7 +480,7 @@ failures:
   symptom: 10 physical proposals become 28 contract-invalid logical proposals; zero export/team evaluation/commit.
   evidence:
   - reports/math_v2_1_proposal_semantic_postmortem_v1_20261004
-  evidence_level: hash_bound_private_replay_and_synthetic_zero_api_controls
+  evidence_level: observed
   root_cause_status: Six output-control, three answer-representation and one benign proposal under owner semantic
     rubric; lexical overreach coexists with real proposer violations and five append-only failures.
   forbidden_inference: Neutral identity comparison does not identify efficacy; one finite owner annotation is not
@@ -505,6 +506,9 @@ failures:
   - reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/shadow_gate_audit.json
   resolution_limits: Throughput and contract conformance only; no population false-positive-rate estimate, component-level
     causal attribution or scientific efficacy claim.
+  evidence_format: hash_bound_private_replay_and_synthetic_zero_api_controls
+  mitigation: Versioned proposer/validator semantic alignment, including mathematical representation boundary; preserve
+    output-interface isolation, replacement and example-copying checks.
 - failure_id: FAIL-MATH-PATTERN-LONG-SUPPORT-ID-COPY
   title: Pattern support identifier loses characters on the provider wire
   status: OPEN
@@ -516,7 +520,7 @@ failures:
   evidence:
   - reports/math_v2_1_a4_seed81_pattern_canary_v1_20261004/pattern_membership_failure.json
   - reports/math_v2_1_a4_seed81_pattern_canary_v1_20261004/WHO_and_wide_universe_audit.json
-  evidence_level: hash_bound_private_wire_and_exact_cached_state_replay
+  evidence_level: observed
   root_cause_status: Provider identifier copy loss; original universe and client parser were correct.
   forbidden_inference: No fuzzy ID repair, semantic reassignment, parser loosening or efficacy inference.
   regression_tests:
@@ -524,6 +528,9 @@ failures:
   required_resolution: Explicit opt-in lossless support-ID alias transport, strict exact decoding, fresh identity/source/preexecution/authorization
     and fresh Canary under user attachment section 102.
   lifecycle: OPEN
+  evidence_format: hash_bound_private_wire_and_exact_cached_state_replay
+  mitigation: Explicit opt-in lossless support-ID alias transport, strict exact decoding, fresh identity/source/preexecution/authorization
+    and fresh Canary under user attachment section 102.
 - failure_id: FAIL-MATH-PATTERN-GENERIC-COMMAND-NAME-GUARD
   title: Generic mathematical imperative misclassified as example-specific proper name
   status: MITIGATED
@@ -557,3 +564,9 @@ failures:
   - reports/math_v2_1_a4_seed81_pattern_canary_v4_20261005
   latest_repair_limits: Bounded contextual literal detector; single-canary operation verified, general semantic
     coverage and scientific efficacy not established.
+  evidence_format: hash_bound_private_wire_and_synthetic_zero_api_regressions
+  evidence_level: observed
+  mitigation: Opt-in versioned generic mathematical-command classification; new freeze, authorization and fresh
+    Canary.
+  symptom: Generic mathematical command tokens were treated as example-specific proper names and rejected by the
+    abstraction guard.

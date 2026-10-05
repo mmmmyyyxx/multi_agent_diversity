@@ -17,6 +17,7 @@ from .experiment_splits import ExperimentSplitReader
 from .access import DataPurpose
 from .protocols import protocol_input, PROTOCOLS
 from .math_v21_interface import MATHV21BenchmarkAdapter
+from .current_math_dependencies import validate_effective_math_dependencies
 
 
 class MATHGradientPatternBinding:
@@ -118,8 +119,9 @@ class MATHGradientPatternBinding:
             if (c!=expected or not c['execution_attempt_id'].startswith('math_v2_1_gradient_pattern_A4_seed81_')
                     or c['execution_attempt_id']==parent['execution_attempt_id'] or c['cache_namespace']==parent['cache_namespace']):
                 return ('GRADIENT_PATTERN_FROZEN_CONTRACT_MISMATCH',)
+            validate_effective_math_dependencies(self)
             return ()
         except SearchContractError as error:
-            if str(error)=='CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN':return (str(error),)
+            if str(error)=='CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN' or str(error).startswith('CURRENT_DATA_'):return (str(error),)
             return ('GRADIENT_PATTERN_BINDING_INVALID',)
         except (KeyError,TypeError,ValueError,OSError):return ('GRADIENT_PATTERN_BINDING_INVALID',)

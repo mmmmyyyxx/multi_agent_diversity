@@ -139,3 +139,28 @@ def test_flat_current_authorization_scope_matches_frozen_gradient_scope():
     from multi_dataset_diverse_rl.governance.legacy.unified_execution import execution_scope as previous_scope
     manifest=dict(source_sha='0'*40,preregistration_identity='0'*64,execution_binding={'sha256':'0'*64})
     assert execution_scope(manifest,contract())==previous_scope(manifest,contract())
+
+
+@pytest.mark.parametrize('package',['openai','math-verify'])
+def test_current_binding_checks_installed_pins_before_provider(monkeypatch,package):
+    from multi_dataset_diverse_rl.benchmarks import current_math_dependencies as dependencies
+    version=dependencies.importlib.metadata.version
+    monkeypatch.setattr(dependencies.importlib.metadata,'version',lambda name:'changed' if name==package else version(name))
+    assert execution_binding(ROOT,contract()).blockers()[0].startswith('CURRENT_DATA_')
+
+
+def test_current_binding_checks_canonical_bytes_before_provider(monkeypatch):
+    from multi_dataset_diverse_rl.benchmarks import current_math_dependencies as dependencies
+    canonical=ROOT/contract()['canonical_root']/'manifests/math.json'
+    original=dependencies.file_hash
+    monkeypatch.setattr(dependencies,'file_hash',lambda path:'0'*64 if path==canonical else original(path))
+    assert execution_binding(ROOT,contract()).blockers()==('CURRENT_DATA_CANONICAL_MANIFEST_IDENTITY_MISMATCH',)
+
+
+def test_current_binding_checks_subset_metadata_before_provider(monkeypatch):
+    from copy import deepcopy
+    from multi_dataset_diverse_rl.benchmarks import current_math_dependencies as dependencies
+    subsets=deepcopy(dependencies.read_subsets(ROOT,contract()))
+    subsets['metadata_universe'][0]['source_index']+=1
+    monkeypatch.setattr(dependencies,'read_subsets',lambda *_:subsets)
+    assert execution_binding(ROOT,contract()).blockers()==('CURRENT_DATA_LOW_COST_SUPERSET_MEMBERSHIP_MISMATCH',)

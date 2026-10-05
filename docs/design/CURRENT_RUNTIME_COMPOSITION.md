@@ -39,6 +39,12 @@ retains the existing generation policies, memberships, candidate rules and n+1
 Pattern accounting. Missing Gradient or Memory dependencies fail before provider
 dispatch. Current configuration never falls back to raw Pattern or null treatment.
 
+`current_math_dependencies` preserves the canonical source hashes, source pins,
+split cardinality and disjointness, Low-Cost metadata membership, evaluator and SDK
+pins, initial-team contract, accounting metadata and ledger containment checks.
+These checks use metadata and byte hashes; held-out records are never projected
+into search. They do not instantiate a historical binding or load a GEPA engine.
+
 Older implementations live in `search/legacy/`, `benchmarks/legacy/` and
 `governance/legacy/`. Compatibility imports preserve existing public replay paths;
 current dependency closure must contain neither these namespaces nor historical

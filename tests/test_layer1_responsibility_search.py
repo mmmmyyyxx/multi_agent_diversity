@@ -17,7 +17,8 @@ from multi_dataset_diverse_rl.local_optimizers.schemas import LocalEvidenceExamp
 from multi_dataset_diverse_rl.search.layer1_responsibility import ResponsibilityConditionedOptimizer,generation_input,observation_record
 from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker
 from multi_dataset_diverse_rl.search.schemas import SearchContractError
-from multi_dataset_diverse_rl.governance.math_paired_validation import team_change_receipt,require_validation_intervention
+from multi_dataset_diverse_rl.governance.team_change import team_change_receipt
+from multi_dataset_diverse_rl.governance.legacy.math_paired_validation import require_validation_intervention
 
 
 @pytest.mark.parametrize('text',[
@@ -204,7 +205,7 @@ def test_deployed_hash_gate_uses_ordered_prompts():
 
 
 def test_validation_preparation_blocks_unchanged_team_before_calls(tmp_path,monkeypatch):
-    from multi_dataset_diverse_rl.governance import math_paired_validation as validation
+    from multi_dataset_diverse_rl.governance.legacy import math_paired_validation as validation
     c=contract();initial=['procedure '+str(i) for i in range(5)]
     p=tmp_path/c['initial_team_path'];p.parent.mkdir(parents=True)
     p.write_text(json.dumps({'members':[{'prompt':x} for x in initial]}),encoding='utf-8')
