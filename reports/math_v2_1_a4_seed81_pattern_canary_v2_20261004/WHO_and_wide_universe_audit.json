@@ -1,0 +1,84 @@
+{
+  "WHO": [
+    {
+      "C": 3,
+      "D": 0,
+      "F": 3,
+      "N": 0,
+      "eligible": true,
+      "f": 0,
+      "member": 0,
+      "score": 3.0
+    },
+    {
+      "C": 4,
+      "D": 2,
+      "F": 8,
+      "N": 0,
+      "eligible": true,
+      "f": 0,
+      "member": 1,
+      "score": 8.0
+    },
+    {
+      "C": 4,
+      "D": 0,
+      "F": 4,
+      "N": 0,
+      "eligible": true,
+      "f": 0,
+      "member": 2,
+      "score": 4.0
+    },
+    {
+      "C": 4,
+      "D": 2,
+      "F": 8,
+      "N": 0,
+      "eligible": true,
+      "f": 0,
+      "member": 3,
+      "score": 8.0
+    },
+    {
+      "C": 3,
+      "D": 0,
+      "F": 3,
+      "N": 0,
+      "eligible": true,
+      "f": 0,
+      "member": 4,
+      "score": 3.0
+    }
+  ],
+  "WHO_recomputed": true,
+  "abstraction_guard_false_positive": true,
+  "client_parser_defect": false,
+  "copy_or_answer_leakage_found": false,
+  "failure": "GENERIC_MATHEMATICAL_IMPERATIVE_MISCLASSIFIED_AS_PROPER_NAME",
+  "immutable_inventory_files": 70,
+  "immutable_inventory_sha256": "67b629835260cee64234eba04a09aa24209f2dba6bbdcb7accfac4214db75103",
+  "initial_state_recomputed": true,
+  "model_regeneration": false,
+  "new_provider_calls": 0,
+  "no_fuzzy_repair": true,
+  "observed_trigger_count": 1,
+  "opportunity_completed": false,
+  "optimize_size": 12,
+  "optimizer_calls": 0,
+  "parser_root_cause": "CAPITALIZED_GENERIC_COMMAND_NOT_IN_GENERIC_TOKEN_ALLOWLIST",
+  "provider_visible_payload_exact": true,
+  "selected_member": 1,
+  "status": "PASS",
+  "strict_membership_valid": true,
+  "strict_partition_rejection_recomputed": true,
+  "support_alias_decode_exact": true,
+  "wide_wrong_size": 7,
+  "wrong_by_lane": {
+    "coverage": 5,
+    "direct_flip": 2,
+    "near_margin": 0
+  },
+  "wrong_universe_wiring_exact": true,
+  "zero_responsibility_wrong": 0
+}

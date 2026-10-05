@@ -1,0 +1,13 @@
+{
+  "authorization_closed": true,
+  "authorization_consumed": true,
+  "failed_attempt_immutable": true,
+  "future_repair_requires_new_freeze_attempt_and_handoff": true,
+  "no_hot_patch": true,
+  "pilot_started": false,
+  "repair_authority": "USER_ATTACHMENT_SECTION_102",
+  "run_state_ineligible_for_continuation": true,
+  "status": "CLOSED",
+  "test_model_calls": 0,
+  "validation_started": false
+}
