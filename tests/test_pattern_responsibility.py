@@ -132,8 +132,9 @@ def test_math_imperative_is_generic_only_under_explicit_guard_identity():
 def test_generic_command_exception_does_not_allow_copied_example_or_answer():
     from multi_dataset_diverse_rl.search.pattern_responsibility import guard_abstraction
     rows=list(wrong_universe(evidence()))
-    rows[0]=replace(rows[0],signals={**rows[0].signals,'input_payload':'Simplify the symbolic expression involving nested radical factors.','gold':'specialvalue'})
-    for text in ('Simplify the symbolic expression involving nested radical factors.','Simplify by returning specialvalue'):
+    copied='Simplify the symbolic expression involving nested radical factors with a symbolic numerator and denominator.'
+    rows[0]=replace(rows[0],signals={**rows[0].signals,'input_payload':copied,'gold':'specialvalue'})
+    for text in (copied,'Simplify by returning specialvalue'):
         with pytest.raises(SearchContractError,match='EXAMPLE_LEAKAGE'):
             guard_abstraction(text,rows,abstraction_guard_version=v.PATTERN_ABSTRACTION_GUARD_VERSION)
 
