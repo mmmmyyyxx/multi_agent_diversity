@@ -53,7 +53,8 @@ class MATHGradientPatternBinding(MATHPatternBinding):
             'pattern_provider_binding':binding,'optimizer_input_schema':versions.GRADIENT_OPTIMIZER_INPUT_VERSION,
             'panel_policy':versions.GRADIENT_CONDITIONED_EVIDENCE_VERSION}
         return replace(base,pattern_policy=versions.GRADIENT_PATTERN_DISCOVERY_VERSION,
-            evidence_policy=versions.GRADIENT_CONDITIONED_EVIDENCE_VERSION,mechanism_config=config)
+            evidence_policy=versions.GRADIENT_CONDITIONED_EVIDENCE_VERSION,mechanism_config=config,
+            global_stop=replace(base.global_stop,emergency_max_provider_calls=c['provider_bounds']['successful_provider_calls']))
 
     def blockers(self):
         c=self.contract

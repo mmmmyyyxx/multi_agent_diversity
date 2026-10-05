@@ -280,6 +280,17 @@ def test_offline_profile_is_not_ready_and_old_authorization_scope_is_incompatibl
     assert m['authorization']['real_api_authorized'] is False
 
 
+def test_method_emergency_limit_includes_gradient_and_cluster_costs():
+    from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
+    from multi_dataset_diverse_rl.search.orchestrator import UnifiedSearchOrchestrator
+    c=json.loads((ROOT/BP).read_bytes());method=execution_binding(ROOT,c).method('A4')
+    assert method.global_stop.emergency_max_provider_calls==c['provider_bounds']['successful_provider_calls']==1651
+    assert method.global_stop.no_commit_patience==2
+    for count,expected in ((1638,False),(1650,False),(1651,True)):
+        probe=NS(method=method,provider_call_reader=lambda:count)
+        assert UnifiedSearchOrchestrator._emergency_provider_limit_reached(probe) is expected
+
+
 def test_durable_ledger_has_separate_roles_and_same_frozen_generation_reservation(tmp_path):
     from multi_dataset_diverse_rl.governance.token_accounting import TokenLedger
     from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker
