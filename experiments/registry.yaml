@@ -7678,3 +7678,48 @@ experiments:
   authorization_consumed: true
   authorization_closed: true
   authorization_closure_evidence: reports/math_v2_1_a4_seed81_pattern_canary_v4_20261005/scope_closure.json
+- experiment_id: math_v2_1_pattern_semantic_partition_audit_v1
+  kind: ZERO_API_AUDIT
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_a4_seed81_pattern_canary_v4
+  status: COMPLETED
+  scientific_status: VALID_FORENSIC_ZERO_API
+  implementation_commit: a52abd27fd66451ee99eec45fb74a4697aea1220
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_pattern_semantic_partition_audit_v1.yaml
+  report: reports/math_v2_1_pattern_semantic_partition_audit_v1_20261005
+  classifier: PROVIDER_SINGLETONS_NO_ESTABLISHED_DUPLICATE_CAUSES_UNDERIDENTIFIED
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Audit of one completed Canary; no runtime or prompt changes and zero model APIs.
+  - Initial private packet inspection preceded rubric freeze; retrospective and unblinded,
+    not preregistered causal inference.
+  - All 21 owner pairs reviewed; broad overlap exists, actionable duplicate not established.
+  - Seven singleton memberships originated in provider response; guard did not split;
+    exact identity retains unequal description pairs.
+  - Six raw initial Solver responses are final-only; Pattern receives no process trace
+    for any of seven.
+  - Unchanged A4 development Pilot preparation recommended conditionally; no fresh
+    API or heldout authorization.
+  unavailable:
+    execution_commit: No real experiment dispatch; local read-only audit.
+    result_commit: Result commit is identified in git history; no self-referential
+      hash is embedded.
+  audit_scope:
+    identity: MATH_PATTERN_SEMANTIC_PARTITION_AUDIT_V1
+    analysis_type: retrospective_single_owner_not_blind
+    subject_manifest: experiments/manifests/math_v2_1_a4_seed81_pattern_canary_v4.yaml
+    source_scope: AUDITED_SUBJECT_PRODUCTION_SOURCE_AND_HASH_CLOSURE
+    audit_start_commit: a52abd27fd66451ee99eec45fb74a4697aea1220
+    provider_call_budget: 0
+    api_token_budget: 0
+    execution_binding_scope: SUBJECT_IDENTITY_ONLY_NEVER_DISPATCHED
+    protocol_path: experiments/protocols/math_v2_1_pattern_semantic_partition_audit_v1/protocol.json
+    runtime_policy_changes: []
+    read_scope: consumed_attempt4_selected_member_optimize_only
+    protocol_sha256: 042139dc89e531af7e27dc87f69fd7fada1c5a092be437bc0c188ef3c9bc6e80

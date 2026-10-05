@@ -1,0 +1,62 @@
+{
+  "allowed_outputs": "sanitized_hashes_counts_categories_owner_findings_and_readiness_recommendation",
+  "analysis_type": "RETROSPECTIVE_FORENSIC_OBSERVATION",
+  "api_token_budget": 0,
+  "audit_labels": "A01_TO_A07_IN_PROVIDER_INPUT_ORDER_ONLY_NOT_RUNTIME_PATTERN_ORDER",
+  "audit_start_commit": "a52abd27fd66451ee99eec45fb74a4697aea1220",
+  "budget_field_note": "V2 common manifest ceilings are null; the audit-specific call and token budgets are exactly zero. Parent binding is evidence only.",
+  "causal_limit": "Final answer discrepancies do not identify missing internal reasoning steps.",
+  "content_read_scope": "selected_member_initial_optimize_wrong_examples_and_one_pattern_exchange",
+  "experiment_id": "math_v2_1_pattern_semantic_partition_audit_v1",
+  "forbidden_actions": [
+    "provider_dispatch",
+    "prompt_edit",
+    "guard_edit",
+    "identity_edit",
+    "partition_reassignment",
+    "similarity_merge",
+    "minimum_cluster_size",
+    "cluster_count_cap",
+    "cluster_size_preference",
+    "efficacy_driven_rerun"
+  ],
+  "freeze_timing": "AFTER_INITIAL_PRIVATE_INSPECTION_BEFORE_FULL_PAIR_ANNOTATION_AND_REPLAY",
+  "identity": "MATH_PATTERN_SEMANTIC_PARTITION_AUDIT_V1",
+  "inputs": {
+    "global_ledger_sha256": "9f69fc1bf808c6455f3f295233352367d6ff2cc1574181d8ecd6b4b1aa9f87f9",
+    "packet_private_sha256": "6916ffe66efa5070f664d7f9582d7e10c3402573febca2119210baf49d52da45",
+    "pattern_request_sha256": "05386c68bd25109443a94f92100174ddfd37d6835bf46bf69fa31a3c296f081d",
+    "pattern_response_sha256": "5ea5f69ad6e3038fab321be99aadce668115fcb30c6ca332d0fa913d283dd45a",
+    "prompt_file_sha256": "cc2df6ad33252dcd9f112cb095ebc62430e47d1c9c993e31780a9440b6db6a6c",
+    "runtime_inventory_sha256": "d4f8576126d33f28cf699123cab914d7e1f506688292e9bf42a770f9d3e798e8",
+    "trace_file_sha256": "03393904cc6eaf23346df4931c5504e3b70051ad7597569c12bd04674dd3f8f3",
+    "user_request_sha256": "b36dbfe8484416afb6d484e380b4e44c72afb3dbe3ac0ad89c0ea1e129dbc179"
+  },
+  "integrity_access_scope": "opaque_byte_hashes_of_consumed_attempt_inventory_only",
+  "owner": "primary_agent",
+  "pair_scope": "all_21_unordered_pairs_of_7_provider_patterns",
+  "parent_id": "math_v2_1_a4_seed81_pattern_canary_v4",
+  "provider_call_budget": 0,
+  "questions": [
+    "content_heterogeneity",
+    "description_semantic_overlap",
+    "identity_and_guard_effect",
+    "singleton_incentive_in_prompt",
+    "manual_actionable_failure_family"
+  ],
+  "real_api_authorized": false,
+  "reviewer_design": "single_owner_not_blind_no_interrater_estimate",
+  "rubric": {
+    "BROAD_FAMILY_ONLY": "Shared mathematical domain or procedure family does not establish the same deficiency.",
+    "ESTABLISHED_ACTIONABLE_DUPLICATE": "Equivalent deficiency and correction supported by observed process or distinctive observable evidence; domain or shared answer mismatch alone insufficient.",
+    "GENERIC_VERIFICATION_ONLY": "A check-your-work or check-constraints umbrella is too nondiscriminating to justify merging.",
+    "NO_ACTIONABLE_EQUIVALENCE_ESTABLISHED": "No supported common repair identified; does not prove distinct latent causes.",
+    "SHARED_SUBROUTINE_DISTINCT_REPAIRS": "A reusable mathematical operation overlaps, but necessary correction differs and no common failed step is observed."
+  },
+  "scientific_policy_changes": [],
+  "shadow_content_access": false,
+  "stop": "complete_all_frozen_items_or_fail_closed_on_integrity_or_access_mismatch",
+  "subject_source_sha": "011b41d37f6954d128764d3af439a4ff3ce954f8",
+  "test_content_access": false,
+  "validation_content_access": false
+}

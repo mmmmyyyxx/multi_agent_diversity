@@ -1,0 +1,38 @@
+{
+  "audit_start_commit": "a52abd27fd66451ee99eec45fb74a4697aea1220",
+  "audited_production_source_commit": "011b41d37f6954d128764d3af439a4ff3ce954f8",
+  "dependency_hashes": {
+    "multi_dataset_diverse_rl/search/abstraction_content.py": "59aea793d84f5c65546771a759d1d2bc2f8958594c144f64929c51d442f51191",
+    "multi_dataset_diverse_rl/search/pattern_responsibility.py": "636fdf4f2853356d1ef1c2a71951f6079fbdfe58d91d92539c9462849ae6cc70",
+    "multi_dataset_diverse_rl/search/semantic_contract.py": "a598cb6bcd55400bc917a1ad3ba515152c5fe0b5cde8c23983a3e42dc9d97098"
+  },
+  "experiment_id": "math_v2_1_pattern_semantic_partition_audit_v1",
+  "initial_inspection_preceded_rubric_freeze": true,
+  "input_hashes": {
+    "global_ledger_sha256": "9f69fc1bf808c6455f3f295233352367d6ff2cc1574181d8ecd6b4b1aa9f87f9",
+    "packet_private_sha256": "6916ffe66efa5070f664d7f9582d7e10c3402573febca2119210baf49d52da45",
+    "pattern_request_sha256": "05386c68bd25109443a94f92100174ddfd37d6835bf46bf69fa31a3c296f081d",
+    "pattern_response_sha256": "5ea5f69ad6e3038fab321be99aadce668115fcb30c6ca332d0fa913d283dd45a",
+    "prompt_file_sha256": "cc2df6ad33252dcd9f112cb095ebc62430e47d1c9c993e31780a9440b6db6a6c",
+    "runtime_inventory_sha256": "d4f8576126d33f28cf699123cab914d7e1f506688292e9bf42a770f9d3e798e8",
+    "trace_file_sha256": "03393904cc6eaf23346df4931c5504e3b70051ad7597569c12bd04674dd3f8f3",
+    "user_request_sha256": "b36dbfe8484416afb6d484e380b4e44c72afb3dbe3ac0ad89c0ea1e129dbc179"
+  },
+  "local_audit_executable_hashes": {
+    "inspect_private.py": "fab95be443446b48877b76e51cc17b7850b69935d45684c55a4a576bedc67c78",
+    "inspect_solver_private.py": "6b70f4d851835ff67d586d9fb28f98fd6a2df9671d888d3dd1de6dde7ea46c18",
+    "verify_partition.py": "aa87fe31986481a1d80e8cc5eaae620f37df06a5b2e4c50b7777e64af32b12e4"
+  },
+  "manifest_sha256": "7f1a4666e7e40592dc4c641c811621eb9a9a31007c5f80e8754537c0cc6c9d7d",
+  "manifest_source_scope": "AUDITED_SUBJECT_PRODUCTION_IDENTITY_NOT_A_NEW_RUNTIME_DISPATCH",
+  "new_provider_calls": 0,
+  "owner_annotations_sha256": "5bb1abdcbda809802b804d18727680c47e035bbc8688c7ca938ed5c681977415",
+  "owner_annotations_snapshot_sha256": "5bb1abdcbda809802b804d18727680c47e035bbc8688c7ca938ed5c681977415",
+  "parent_id": "math_v2_1_a4_seed81_pattern_canary_v4",
+  "parent_report": "reports/math_v2_1_a4_seed81_pattern_canary_v4_20261005",
+  "parent_result_commit": "a52abd27fd66451ee99eec45fb74a4697aea1220",
+  "protocol_sha256": "042139dc89e531af7e27dc87f69fd7fada1c5a092be437bc0c188ef3c9bc6e80",
+  "protocol_snapshot_sha256": "042139dc89e531af7e27dc87f69fd7fada1c5a092be437bc0c188ef3c9bc6e80",
+  "reviewer_design": "SINGLE_OWNER_RETROSPECTIVE_NOT_BLIND",
+  "solver_packet_private_sha256": "3e94c14e849448b822bdb67607551e9fb328b3e2f1db7bc7d378119aad47646d"
+}

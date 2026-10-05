@@ -1,0 +1,28 @@
+{
+  "capacity_limit": "Equivalent paraphrases can retain different identities by design; no such equivalence established here.",
+  "causal_conclusion": "Provider emitted the singleton memberships; guard accepts without splitting. Identity preserves all seven unequal description pairs.",
+  "distinct_normalized_directions": 7,
+  "distinct_normalized_mechanisms": 7,
+  "distinct_pair_identities": 7,
+  "guard_checks_passed": 14,
+  "guard_identity": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V3",
+  "losslessly_decoded_cluster_count": 7,
+  "mechanism_identity_components": [
+    "failure_mechanism",
+    "update_direction"
+  ],
+  "mechanism_only_identity_would_reduce_actual_cluster_count": false,
+  "normalization": [
+    "NFKC",
+    "casefold",
+    "whitespace_collapse"
+  ],
+  "pair_digest": "SHA256_CANONICAL_JSON",
+  "post_admission_cluster_count": 7,
+  "provider_cluster_count": 7,
+  "retry_or_regeneration": false,
+  "same_normalized_pair_merges": true,
+  "semantic_paraphrase_merge": false,
+  "support_split": false,
+  "text_rewritten": false
+}

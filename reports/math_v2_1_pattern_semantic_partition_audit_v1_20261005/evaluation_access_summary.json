@@ -1,0 +1,16 @@
+{
+  "heldout_outcomes_used": false,
+  "integrity_scope": "Opaque byte hashing of parent inventory including existing cache; no heldout outcome interpretation.",
+  "mixed_trace_processing": "role_and_stage_filter_only",
+  "new_pattern_generations": 0,
+  "new_solver_evaluations": 0,
+  "reviewed_initial_solver_responses": 7,
+  "reviewed_optimize_wrong_examples": 7,
+  "reviewed_pattern_generations": 1,
+  "selected_member": 1,
+  "shadow_records_selected_for_semantic_review": 0,
+  "test_calls": 0,
+  "test_records_selected_for_semantic_review": 0,
+  "validation_calls": 0,
+  "validation_records_selected_for_semantic_review": 0
+}

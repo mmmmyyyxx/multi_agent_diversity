@@ -50,3 +50,8 @@ reports/math_v2_a1_seed81_pilot_v2_20261002/** text eol=lf
 
 # Preserve exact-byte receipts for the newly audited single-attempt Canary.
 reports/math_v2_1_a4_seed81_pattern_canary_v4_20261005/** text eol=lf
+
+# Exact-byte receipts for the retrospective Pattern partition audit.
+reports/math_v2_1_pattern_semantic_partition_audit_v1_20261005/** text eol=lf
+experiments/protocols/math_v2_1_pattern_semantic_partition_audit_v1/** text eol=lf
+experiments/manifests/math_v2_1_pattern_semantic_partition_audit_v1.yaml text eol=lf

@@ -1,0 +1,41 @@
+{
+  "review_type": "RETROSPECTIVE_SINGLE_OWNER_NOT_BLIND",
+  "audit_labels": "A01_TO_A07_IN_PROVIDER_INPUT_ORDER",
+  "annotation_scope": "Observed task structure, emitted descriptions and available initial Solver process evidence; no latent-cause claims from final values alone.",
+  "items": [
+    {"label": "A01", "family": "CONSTRAINED_FINITE_SET_COUNTING", "repair_operation": "EXPLICIT_LEGAL_CASE_OR_COMPLEMENT_COUNT", "description_grounding": "PLAUSIBLE_NUMERICAL_FINGERPRINT_PROCESS_UNOBSERVED", "raw_process_available": false},
+    {"label": "A02", "family": "FINITE_POPULATION_JOINT_EVENT_PROBABILITY", "repair_operation": "CONDITION_WITHIN_SAMPLING_COMPONENTS", "description_grounding": "HYPOTHESIS_ONLY_FINAL_DISCREPANCY", "direction_quality_flag": "INDEPENDENCE_SCOPE_AMBIGUOUS", "raw_process_available": false},
+    {"label": "A03", "family": "LATTICE_GEOMETRY_COUNTING", "repair_operation": "DETERMINANT_INTEGRALITY_AND_DISTINCT_PAIR_COUNT", "description_grounding": "BROAD_TASK_SPECIFIC_HYPOTHESIS_PROCESS_UNOBSERVED", "raw_process_available": false},
+    {"label": "A04", "family": "COORDINATE_AREA_COMPUTATION", "repair_operation": "DETERMINANT_VALUE_AND_SIGN_VERIFICATION", "description_grounding": "ARITHMETIC_CAUSE_NOT_IDENTIFIED", "raw_process_available": false, "runtime_selected": true},
+    {"label": "A05", "family": "CONSTRAINED_CONTINUOUS_OPTIMIZATION", "repair_operation": "STRUCTURAL_REPARAMETERIZATION_AND_GLOBAL_BOUND", "description_grounding": "BROAD_TASK_SPECIFIC_HYPOTHESIS_PROCESS_UNOBSERVED", "raw_process_available": false},
+    {"label": "A06", "family": "SYMBOLIC_EVALUATION", "repair_operation": "CANCELLATION_AND_SUBSTITUTION_CONSISTENCY", "description_grounding": "ORDER_OF_ERROR_NOT_IDENTIFIED", "raw_process_available": false},
+    {"label": "A07", "family": "DIAGRAM_REGION_REPRESENTATION", "repair_operation": "LABEL_TO_LENGTH_AND_REGION_MAPPING", "description_grounding": "OBSERVED_IN_RAW_SOLVER_PROCESS_NOT_PRESENT_IN_PATTERN_INPUT", "raw_process_available": true}
+  ],
+  "pairs": [
+    {"left":"A01","right":"A02","category":"BROAD_FAMILY_ONLY","reason":"Counting and conditioning overlap; legal-case exclusion and dependent event construction need different repairs."},
+    {"left":"A01","right":"A03","category":"BROAD_FAMILY_ONLY","reason":"Both enumerate constrained discrete objects; legality, integrality and pair counting differ."},
+    {"left":"A01","right":"A04","category":"NO_ACTIONABLE_EQUIVALENCE_ESTABLISHED","reason":"Counting constraints and determinant evaluation provide no observed common failed step."},
+    {"left":"A01","right":"A05","category":"GENERIC_VERIFICATION_ONLY","reason":"Checking constraints is an umbrella; discrete counting and continuous minimization differ."},
+    {"left":"A01","right":"A06","category":"NO_ACTIONABLE_EQUIVALENCE_ESTABLISHED","reason":"No supported common correction across finite counting and symbolic evaluation."},
+    {"left":"A01","right":"A07","category":"NO_ACTIONABLE_EQUIVALENCE_ESTABLISHED","reason":"Set-count legality and diagram representation differ; decomposition alone is too broad."},
+    {"left":"A02","right":"A03","category":"BROAD_FAMILY_ONLY","reason":"Finite enumeration overlaps at a broad level; conditional sampling and area integrality differ."},
+    {"left":"A02","right":"A04","category":"NO_ACTIONABLE_EQUIVALENCE_ESTABLISHED","reason":"No observed common failure between probability conditioning and coordinate arithmetic."},
+    {"left":"A02","right":"A05","category":"NO_ACTIONABLE_EQUIVALENCE_ESTABLISHED","reason":"Joint-event probability and constrained minimization need different mathematical operations."},
+    {"left":"A02","right":"A06","category":"NO_ACTIONABLE_EQUIVALENCE_ESTABLISHED","reason":"No supported shared deficiency beyond a final answer discrepancy."},
+    {"left":"A02","right":"A07","category":"NO_ACTIONABLE_EQUIVALENCE_ESTABLISHED","reason":"Sampling dependency and diagram mapping differ."},
+    {"left":"A03","right":"A04","category":"SHARED_SUBROUTINE_DISTINCT_REPAIRS","reason":"Coordinate-area determinants overlap; integrality and pair enumeration differ from single-area arithmetic. Common failed step is unobserved."},
+    {"left":"A03","right":"A05","category":"GENERIC_VERIFICATION_ONLY","reason":"Constraint checking alone does not identify a shared repair for discrete geometry and optimization."},
+    {"left":"A03","right":"A06","category":"NO_ACTIONABLE_EQUIVALENCE_ESTABLISHED","reason":"No supported equivalence between integer-area counting and symbolic substitution."},
+    {"left":"A03","right":"A07","category":"BROAD_FAMILY_ONLY","reason":"Geometric area is the shared goal; lattice integrality and diagram-region representation differ."},
+    {"left":"A04","right":"A05","category":"NO_ACTIONABLE_EQUIVALENCE_ESTABLISHED","reason":"Area arithmetic and constrained global optimization do not identify one correction."},
+    {"left":"A04","right":"A06","category":"GENERIC_VERIFICATION_ONLY","reason":"Numerical checking is plausible for both; the failed arithmetic or algebraic step is not observed."},
+    {"left":"A04","right":"A07","category":"BROAD_FAMILY_ONLY","reason":"Area problems overlap; coordinate determinant evaluation and diagram interpretation differ."},
+    {"left":"A05","right":"A06","category":"BROAD_FAMILY_ONLY","reason":"Algebraic manipulation overlaps; optimization structure and expression cancellation differ."},
+    {"left":"A05","right":"A07","category":"NO_ACTIONABLE_EQUIVALENCE_ESTABLISHED","reason":"No supported shared correction for continuous optimization and diagram mapping."},
+    {"left":"A06","right":"A07","category":"NO_ACTIONABLE_EQUIVALENCE_ESTABLISHED","reason":"Symbolic simplification and visual-region representation differ."}
+  ],
+  "established_actionable_duplicate_pairs": 0,
+  "proved_distinct_latent_mechanisms": 0,
+  "manual_runtime_reassignment": false,
+  "principal_uncertainty": "Descriptions mostly infer causes from final-answer discrepancies; absence of an established duplicate does not establish seven distinct latent causes."
+}

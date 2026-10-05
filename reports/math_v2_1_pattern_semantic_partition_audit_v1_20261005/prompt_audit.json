@@ -1,0 +1,18 @@
+{
+  "examplewise_independent_diagnosis_requested": false,
+  "explicit_compare_before_group_procedure": false,
+  "explicit_shared_correction_grouping_criterion": false,
+  "explicit_singleton_justification_field": false,
+  "intent_recurring_mechanisms": true,
+  "one_mechanism_per_example_required": false,
+  "output_skeleton_one_support_id": true,
+  "possible_output_shape_anchoring": "HYPOTHESIS_ONLY_SINGLE_GENERATION_NO_COUNTERFACTUAL",
+  "prompt_artifact_sha256": "cc2df6ad33252dcd9f112cb095ebc62430e47d1c9c993e31780a9440b6db6a6c",
+  "prompt_edit_performed": false,
+  "prompt_root_cause_of_singletons": "NOT_IDENTIFIED",
+  "scope_across_responsibility_lanes": true,
+  "scope_entire_wrong_set": true,
+  "singleton_permission_conditional": true,
+  "unsupported_abstractions_may_be_unassigned": true,
+  "wire_matches_frozen_prompt": true
+}

@@ -1,0 +1,73 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "a659ea9b528574e9c13d40ce2f37aaa608b083970b0878f8796674834bad7314"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "215e2347676879b9ecb971d05e5b5c9801f23c8c937f14e2786691b02760d967"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "ed39ce1797565fd16d4dda29371e1408a6b2dd6e1d77b06537ab86ec328c35d6"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "be5e22035b5ec90ef2c7cb72ed422020ea574106687eaf394127116cd80671ea"
+    },
+    {
+      "file": "governance_audit.json",
+      "sha256": "e31eebb53b25d5b2bd9c9c4ae93da6567c7aae9d0c0a55f0b0b9918bcaea02c8"
+    },
+    {
+      "file": "identity_and_guard_audit.json",
+      "sha256": "27b4ed30e867a955de2610f4da6895cb1f1c75a394103ac9ed32284855d742cb"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "7f1a4666e7e40592dc4c641c811621eb9a9a31007c5f80e8754537c0cc6c9d7d"
+    },
+    {
+      "file": "owner_annotations.json",
+      "sha256": "5bb1abdcbda809802b804d18727680c47e035bbc8688c7ca938ed5c681977415"
+    },
+    {
+      "file": "partition_replay_audit.json",
+      "sha256": "11bc706110f882fa21d88bad54095bb3a94037f4f98f1d5cdad9897aa2a1b3f5"
+    },
+    {
+      "file": "prompt_audit.json",
+      "sha256": "64ec80dae42c39fe0cc61e08f89baf8307c887b7a3af74095c15e7717d87ae42"
+    },
+    {
+      "file": "protocol_snapshot.json",
+      "sha256": "042139dc89e531af7e27dc87f69fd7fada1c5a092be437bc0c188ef3c9bc6e80"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "164cf4462e0a5146b78f0f1a835a5b1567025492955b9e509e48550fcfd32e46"
+    },
+    {
+      "file": "README.md",
+      "sha256": "bf431656b3d13d29c91678e75d17589c02e50a7e8acaff794dfe9285ef98caea"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "15146b0aa47cbd7aa6317da6fdd73c4900e595b734c86e73f73ce1f0cefe72d3"
+    },
+    {
+      "file": "scientific_findings.json",
+      "sha256": "c701d50b3f711ea539bb0eeb558d66b468c5e65d5de4dd7f00626df2ff705ea7"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "fa0de451553470293248cf1e00446eda7a7d893f860fd8eb82d5a992678dd2a9"
+    },
+    {
+      "file": "verification_summary.json",
+      "sha256": "b9b3a8ef790caf7c541ba9462d73f2bc7217b383abc23a3566b4874c34164681"
+    }
+  ]
+}

@@ -88,6 +88,13 @@ next_canary_manifest: null
 prior_autonomous_authorization_status: USER_STOPPED_PATTERN_TASK_ALL_ATTEMPTS_CLOSED
 prior_task_stop_reason: USER_STOP_PATTERN_TASK
 current_canary_report: reports/math_v2_1_a4_seed81_pattern_canary_v4_20261005
+last_pattern_semantic_partition_audit: math_v2_1_pattern_semantic_partition_audit_v1
+pattern_semantic_partition_audit_report: reports/math_v2_1_pattern_semantic_partition_audit_v1_20261005
+pattern_semantic_partition_audit_status: VALID_FORENSIC_ZERO_API
+pattern_recurring_support_observed: false
+pattern_overfragmentation_established: false
+pattern_diagnosis_causal_grounding: UNDERIDENTIFIED_FINAL_ONLY_EVIDENCE
+next_pilot_scientific_recommendation: CONDITIONAL_UNCHANGED_A4_PREPARATION_FRESH_FREEZE_AND_AUTHORIZATION_REQUIRED
 ```
 
 ## Experiment and engineering DAG
@@ -187,6 +194,7 @@ flowchart TD
     n266["math_v2_1_a4_seed81_pattern_canary_v3<br/>REAL_CANARY<br/>COMPLETED"]
     n267["math_v2_1_pattern_specific_content_guard_v3<br/>PROTOCOL_FREEZE<br/>COMPLETED"]
     n268["math_v2_1_a4_seed81_pattern_canary_v4<br/>REAL_CANARY<br/>COMPLETED"]
+    n269["math_v2_1_pattern_semantic_partition_audit_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -532,6 +540,7 @@ flowchart TD
   n265 -->|derived_from| n266
   n266 -->|repairs_operational_blocker_of| n267
   n267 -->|followup_of| n268
+  n268 -->|audit_of| n269
 ```
 
 ## Archived branches and unresolved evidence

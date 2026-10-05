@@ -1,0 +1,9 @@
+{
+  "absolute_host_paths_published": false,
+  "endpoints_or_secrets_published": false,
+  "generic_owner_category_labels_only": true,
+  "original_diagnosis_text_published": false,
+  "policy": "HASHES_COUNTERS_CATEGORIES_AND_METRICS_ONLY",
+  "private_input_artifacts_ignored": true,
+  "raw_content_published": false
+}

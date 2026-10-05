@@ -1,0 +1,54 @@
+{
+  "all_owner_pairs_reconciled": 21,
+  "compileall": "PASS",
+  "exact_partition_replay": "PASS",
+  "final_unresolved_checks": 0,
+  "final_verified_unique_cases": 297,
+  "full_current_suite_repeated_this_audit": false,
+  "full_historical_replay": "NOT_RUN_NOT_CLAIMED",
+  "generated_views": "PASS",
+  "global_token_ledger_unchanged": true,
+  "historical_private_artifact_tests": "NOT_RUN_THIS_AUDIT",
+  "initial_failure_categories": [
+    "DERIVED_LINEAGE_VIEW_STALE_BEFORE_FINAL_GENERATION",
+    "LEGACY_TEST_STATUS_ALLOWLIST_MISSING_SUCCESSFUL_CLOSED_CANARY"
+  ],
+  "initial_failures": 2,
+  "initial_passed": 287,
+  "initial_selected_cases": 289,
+  "initial_skipped": 0,
+  "local_helper_corrections": "Preparatory extraction/schema compatibility fixes before successful audit; original runtime evidence untouched.",
+  "lossless_alias_replay": "PASS",
+  "manifest_schema": "PASS",
+  "network_attempt_count": 0,
+  "new_negative_scope_cases": 8,
+  "new_provider_calls": 0,
+  "parent_public_files_unchanged": 54,
+  "parent_raw_inventory_hashes_verified": 347,
+  "post_correction_checked_cases": 12,
+  "prior_source_suite_context": {
+    "evidence": "reports/math_v2_1_pattern_specific_content_guard_v3_20261005/test_summary.json",
+    "passed": 1139,
+    "skipped": 2,
+    "source_sha": "011b41d37f6954d128764d3af439a4ff3ce954f8",
+    "used_as_context_only": true
+  },
+  "provider_and_solver_trace_reconciliation": "PASS",
+  "pytest_modules": [
+    "tests/governance/test_governance.py",
+    "tests/test_repository_governance_alignment.py",
+    "tests/test_agent_governance_docs.py",
+    "tests/test_unified_execution_governance.py"
+  ],
+  "pytest_scope": "CURRENT_GOVERNANCE_AND_EXECUTION_CONTRACT_MODULES",
+  "repository_governance": "PASS",
+  "resolved_check_names": [
+    "test_complete_governance_audit",
+    "test_canary_abort_does_not_unlock_formal_or_heldout"
+  ],
+  "resolved_checks_passed": 2,
+  "runtime_and_prompt_changes": 0,
+  "staged_blob_hashes_checked_separately": true,
+  "status": "PASS",
+  "tracked_test_change": "Accept completed consumed-and-closed Canary only with exact closure evidence and all followup scopes disabled; eight negative scope cases added."
+}

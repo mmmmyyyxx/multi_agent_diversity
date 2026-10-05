@@ -1,0 +1,63 @@
+{
+  "content_heterogeneity": {
+    "answer": "Multiple domains and representations, with shared mathematical families; not seven wholly unrelated tasks.",
+    "closest_overlap": [
+      "A03",
+      "A04"
+    ],
+    "coarse_area_family": [
+      "A03",
+      "A04",
+      "A07"
+    ],
+    "coarse_discrete_family": [
+      "A01",
+      "A02",
+      "A03"
+    ]
+  },
+  "diagnosis_grounding": {
+    "arithmetic_or_constraint_error_assertions": "HYPOTHESES_UNLESS_DISTINCTIVE_PROCESS_EVIDENCE",
+    "direction_flag_scope": "Independent sampling components can be separated; within-component fixed-population events require conditional handling. Wording alone does not establish an incorrect recommendation.",
+    "direction_review_flag": "INDEPENDENCE_SCOPE_AMBIGUOUS",
+    "initial_raw_responses_with_process": 1,
+    "pattern_inputs_with_process_trace": 0,
+    "selected_pattern_cause": "NOT_IDENTIFIED_FROM_FINAL_VALUE_ONLY"
+  },
+  "identity_guard_effect": {
+    "answer": "Seven singleton memberships originate in the provider response; guard does not create or split supports. Exact normalized description identity does not merge paraphrases.",
+    "normalized_direction_count": 7,
+    "normalized_mechanism_count": 7
+  },
+  "manual_grouping": {
+    "answer": "Natural coarse groups exist, especially coordinate-area operations; current evidence does not justify runtime merging.",
+    "common_latent_cause_proven": false,
+    "manual_reassignment": false
+  },
+  "next_step": {
+    "component_causality": "A4 outcome alone cannot isolate Pattern contribution.",
+    "diagnostics_scope": "Observation only if prospectively frozen; no gate, preference, adaptation, rerun or efficacy-based stop.",
+    "prepare_or_execute_performed": false,
+    "prospective_diagnostics": [
+      "support_size_distribution",
+      "singleton_fraction",
+      "unassigned_fraction",
+      "description_grounding_categories"
+    ],
+    "reason": "No verified duplicate requiring an amendment; larger Optimize sets and multiple opportunities can observe whether recurrence actually appears.",
+    "recommendation": "Prepare unchanged A4 development Pilot, with fresh full preregistration and separately scoped API/access authorization."
+  },
+  "prompt_incentive": {
+    "answer": "Recurring intent is explicit; singleton permission and a minimal singleton-shaped schema may leave grouping guidance weak. Causal effect untested."
+  },
+  "semantic_description_overlap": {
+    "all_pairs_reviewed": 21,
+    "answer": "Some reusable operations and broad diagnostic umbrellas overlap; no established equivalent deficiency-plus-correction pair.",
+    "pair_categories": {
+      "BROAD_FAMILY_ONLY": 6,
+      "GENERIC_VERIFICATION_ONLY": 3,
+      "NO_ACTIONABLE_EQUIVALENCE_ESTABLISHED": 11,
+      "SHARED_SUBROUTINE_DISTINCT_REPAIRS": 1
+    }
+  }
+}

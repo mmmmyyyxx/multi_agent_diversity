@@ -1,0 +1,17 @@
+{
+  "all_pattern_inputs_exclude_process_trace": true,
+  "all_twenty_one_owner_pairs_annotated": true,
+  "fourteen_guard_checks_passed_without_split": true,
+  "frozen_pattern_context_exactly_replayed": true,
+  "global_token_ledger_unchanged": true,
+  "lossless_alias_decode_matches_original": true,
+  "no_duplicate_established_does_not_mean_distinct_causes_proved": true,
+  "no_heldout_outcome_used": true,
+  "no_provider_calls_or_new_authorization": true,
+  "parent_public_report_unchanged": true,
+  "parent_raw_inventory_unchanged": true,
+  "provider_already_emitted_seven_singletons": true,
+  "runtime_source_and_prompt_unchanged": true,
+  "seven_normalized_description_pairs_are_distinct": true,
+  "six_raw_solver_outputs_are_final_only": true
+}

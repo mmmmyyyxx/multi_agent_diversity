@@ -269,7 +269,27 @@ def _assert_canary_does_not_unlock_formal_or_heldout(frontier,registry):
     if next_attempt is None:
         assert frontier['real_execution_ready'] is False
         if frontier['current_method'] == 'unified_team_prompt_search_v2_1':
-            if frontier['autonomous_authorization_status'] == 'PRIOR_SCOPES_DO_NOT_AUTHORIZE_V2_1':
+            if frontier['current_canary_status'] == 'VALID_OPERATIONAL_CANARY':
+                assert previous['status'] == 'COMPLETED'
+                assert previous['scientific_status'] == 'VALID_OPERATIONAL_CANARY'
+                assert previous['authorization_closed'] is True
+                assert previous['active_for_new_work'] is False
+                assert frontier['current_experiment'] == previous['experiment_id']
+                assert frontier['current_execution_blocker'] == 'NO_AUTHORIZED_FOLLOWUP_SCOPE'
+                assert frontier['next_canary_authorized'] is False
+                assert frontier['next_pilot_authorized'] is False
+                assert frontier['next_validation_authorized'] is False
+                current_manifest = load_yaml(ROOT / previous['manifest'])
+                binding = load_yaml(ROOT / current_manifest['execution_binding']['path'])
+                closure = load_yaml(ROOT / previous['authorization_closure_evidence'])
+                assert current_manifest['authorization']['real_api_authorized'] is False
+                assert closure['attempt_id'] == binding['execution_attempt_id']
+                assert closure['closed'] is True and closure['single_use_consumed'] is True
+                assert closure['future_real_execution_requires_new_exact_user_authorization'] is True
+                assert closure['scientific_reruns_authorized'] == 0
+                for role in ('pilot', 'validation', 'test'):
+                    assert closure[role + '_authorized'] is False
+            elif frontier['autonomous_authorization_status'] == 'PRIOR_SCOPES_DO_NOT_AUTHORIZE_V2_1':
                 assert frontier['current_canary_status'] == 'METHOD_SEMANTIC_CONTRACT_REFREEZE_REQUIRED'
             else:
                 assert frontier['autonomous_authorization_status'] in {
@@ -316,6 +336,30 @@ def _assert_canary_does_not_unlock_formal_or_heldout(frontier,registry):
 def test_canary_abort_does_not_unlock_formal_or_heldout():
     _assert_canary_does_not_unlock_formal_or_heldout(
         load_yaml(ROOT/'experiments/current_frontier.yaml'),load_yaml(ROOT/'experiments/registry.yaml'))
+
+
+@pytest.mark.parametrize('location,field,value', [
+    ('frontier', 'next_canary_authorized', True),
+    ('frontier', 'next_pilot_authorized', True),
+    ('frontier', 'next_validation_authorized', True),
+    ('frontier', 'current_experiment', 'unregistered_followup'),
+    ('frontier', 'current_execution_blocker', 'FOLLOWUP_READY'),
+    ('registry', 'authorization_closed', False),
+    ('registry', 'authorization_consumed', False),
+    ('registry', 'active_for_new_work', True),
+])
+def test_completed_canary_scope_cannot_authorize_followup(location, field, value):
+    frontier = deepcopy(load_yaml(ROOT / 'experiments/current_frontier.yaml'))
+    registry = deepcopy(load_yaml(ROOT / 'experiments/registry.yaml'))
+    assert frontier['current_canary_status'] == 'VALID_OPERATIONAL_CANARY'
+    if location == 'frontier':
+        frontier[field] = value
+    else:
+        previous = next(row for row in registry['experiments']
+                        if row['experiment_id'] == frontier['last_canary_milestone'])
+        previous[field] = value
+    with pytest.raises(AssertionError):
+        _assert_canary_does_not_unlock_formal_or_heldout(frontier, registry)
 
 
 @pytest.mark.parametrize('field,value',[('next_canary_attempt_id','unregistered_attempt'),
