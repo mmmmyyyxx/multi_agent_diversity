@@ -1237,6 +1237,12 @@
       "current_suite_included": true,
       "path": "tests/test_pattern_responsibility.py",
       "required_private_artifacts": []
+    },
+    {
+      "path": "tests/test_gradient_patterns.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
     }
   ]
 }

@@ -63,3 +63,8 @@ prompt/generation policy, Layer1, Memory V4 and all numeric budgets remain froze
 The new guard alone changes treatment identity. The amendment receipt binds the
 current request hash and immutable parent authority, explicitly denies new API
 and push authority, and cannot reuse a historical execution authorization.
+
+## Frozen replay contract
+
+New explicit opt-in Pattern work uses [gradient discovery V4](PATTERN_GRADIENT_DISCOVERY_V4.md).
+This document retains the V3 raw-failure discovery semantics for historical identities.

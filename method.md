@@ -68,7 +68,9 @@ force. V2 mechanism correctness has zero-API proofs; efficacy is unverified.
 
 Responsibility allocates resources without opportunity equality. Pattern selects
 one repair mechanism after the target; low concentration is diagnostic, never
-an intervention gate. Other mechanisms do not fill repair evidence. Deployment
+an intervention gate. The current explicit opt-in path uses per-example textual
+gradients followed by gradients-only semantic aggregation and the same support F;
+see [the V4 contract](docs/design/PATTERN_GRADIENT_DISCOVERY_V4.md). Other mechanisms do not fill repair evidence. Deployment
 permits incumbent member decline only above initial competence and with strict
 team gain. Memory distills actual edit strategies into private success and shared
 failure experience; unclassified edits produce no fabricated lesson. All claims

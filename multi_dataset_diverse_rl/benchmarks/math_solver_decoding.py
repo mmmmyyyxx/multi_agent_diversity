@@ -28,7 +28,7 @@ def generation_request_fields(contract, role):
     decoding = contract["decoding"]
     from .math_optimizer_generation import frozen_optimizer_policy
     optimizer = frozen_optimizer_policy(contract)
-    if role in {'reflection','pattern'} and optimizer is not None:
+    if role in {'reflection','pattern','pattern_gradient','pattern_cluster'} and optimizer is not None:
         fields=dict(temperature=optimizer['temperature'],
             max_completion_tokens=optimizer['max_completion_tokens'],
             extra_body={'enable_thinking':optimizer['enable_thinking']})

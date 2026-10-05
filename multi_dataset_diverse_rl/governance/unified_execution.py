@@ -104,7 +104,13 @@ def execution_identity(root, contract):
     configs = [contract["split_directory"] + "/math.json", contract["initial_team_path"],
                contract["pattern_prompt_path"], contract.get("binding_path", versions.MATH_EXECUTION_BINDING_PATH)]
     configs.extend(contract[k] for k in ("parent_binding_path", "accounting_policy_path", "validation_accounting_metadata_path", "verify_settings_path", "amendment_parent_binding_path", "low_cost_subsets_path", "optimizer_amendment_authorization_path", "layer1_parent_binding_path", "layer1_amendment_authorization_path", "memory_parent_binding_path", "memory_amendment_authorization_path", "pattern_parent_binding_path", "pattern_amendment_authorization_path", "rolling_memory_freeze_path") if k in contract)
-    if contract.get('pattern_abstraction_guard') == versions.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION:
+    configs.extend(contract[k] for k in ('gradient_prompt_path','gradient_parent_binding_path') if k in contract)
+    if 'gradient_parent_binding_path' in contract:
+        parent=read_json(root/contract['gradient_parent_binding_path'])
+        configs.extend(parent[k] for k in ('pattern_amendment_authorization_path','pattern_prompt_path'))
+        approval=read_json(root/parent['pattern_amendment_authorization_path'])
+        configs.append(approval['guard_amendment']['parent_authority_path'])
+    if contract.get('pattern_abstraction_guard') == versions.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION and 'gradient_parent_binding_path' not in contract:
         approval = read_json(root / contract['pattern_amendment_authorization_path'])
         configs.append(approval['guard_amendment']['parent_authority_path'])
     identity = build_unified_source_identity(root, root / contract["canonical_root"] / "manifests/math.json", [root / p for p in configs])
@@ -206,6 +212,11 @@ def execution_scope(manifest, contract):
             scope['pattern_support_id_transport']=contract['pattern_support_id_transport']
         if 'pattern_abstraction_guard' in contract:
             scope['pattern_abstraction_guard']=contract['pattern_abstraction_guard']
+        if contract.get('pattern_policy',{}).get('discovery')==versions.GRADIENT_PATTERN_DISCOVERY_VERSION:
+            scope.update(roles=['solver','reflection','pattern_gradient','pattern_cluster'],
+                gradient_prompt_sha256=contract['gradient_prompt_sha256'],cluster_prompt_sha256=contract['pattern_prompt_sha256'],
+                pattern_gradient_call_ceiling=contract['provider_bounds']['pattern_gradient_calls'],
+                pattern_cluster_call_ceiling=contract['provider_bounds']['pattern_cluster_calls'])
     if "accounting_policy_path" in contract:
         scope["accounting"] = dict(policy_sha256=contract["accounting_policy_sha256"],
             total_authorization=40_000_000 if contract["identity"] in versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS else 30_000_000, task_sha256=contract["task_authorization_sha256"],

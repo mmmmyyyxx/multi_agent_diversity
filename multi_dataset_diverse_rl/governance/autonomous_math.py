@@ -149,6 +149,11 @@ async def execute_search(root, prep, run_root, payload):
         from ..search.pattern_id_transport import AliasSetLevelPatternProvider
         pattern_factory=AliasSetLevelPatternProvider if c.get('pattern_support_id_transport')==versions.PATTERN_SUPPORT_ID_ALIAS_VERSION else SetLevelPatternProvider
         pattern_provider=(pattern_factory(broker,read_json(root/c['pattern_prompt_path'])['prompt']) if c['identity']==versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION else None)
+        gradient_pattern=c.get('pattern_policy',{}).get('discovery')==versions.GRADIENT_PATTERN_DISCOVERY_VERSION
+        if gradient_pattern:
+            from ..search.textual_gradients import PerExampleGradientProvider, GradientClusterProvider
+            pattern_provider=GradientClusterProvider(broker,read_json(root/c['pattern_prompt_path'])['prompt'],
+                gradient_provider=PerExampleGradientProvider(broker,read_json(root/c['gradient_prompt_path'])['prompt']))
         composed = binding.compose(arm=arm,seed=81,solver=solver,reflection=ReflectionProvider(broker),pattern_provider=pattern_provider,run_root=run_root)
         if c.get('memory_policy_identity'):
             if any(composed.memory.audit()[k] for k in ('success_writes','failure_writes','shared_writes')):
@@ -181,6 +186,14 @@ async def execute_search(root, prep, run_root, payload):
             validation_search_raw_reads=0,validation_calls=0,test_raw_reads=0,test_calls=0,pattern_calls=broker.usage['pattern'],memory_activity=0)
         if pattern_provider is not None:
             summary['pattern_input_audit']=pattern_provider.input_audit
+            if gradient_pattern:
+                gradients=pattern_provider.gradient_provider
+                summary.update(pattern_gradient_calls=broker.usage['pattern_gradient'],
+                    pattern_cluster_calls=broker.usage['pattern_cluster'],gradient_input_audit=gradients.input_audit)
+                if (gradients.calls!=broker.usage['pattern_gradient'] or pattern_provider.calls!=broker.usage['pattern_cluster']
+                        or broker.usage['pattern']!=gradients.calls+pattern_provider.calls
+                        or not 1<=gradients.calls<=c['initial_competence_binding']['count']):
+                    raise OperationalAbort('PATTERN_GRADIENT_CANARY_ACCOUNTING_INCOMPLETE')
             if pattern_provider.calls!=1 or not composed.evaluation.provider.probed:
                 raise OperationalAbort('PATTERN_CANARY_FLOW_INCOMPLETE')
         if c.get('memory_policy_identity'):

@@ -31,7 +31,9 @@ See [repository map](REPOSITORY_MAP.md) for current/historical classifications,
 The active opt-in method is `unified_team_prompt_search_v2_1`.
 Use `SearchMethodConfig.v2_1()` and the shared binary production composition.
 Pattern selects one mechanism after WHO, with explicit all-residual coverage
-metrics. Deployment requires strict team gain above an immutable initial member
+metrics. The current opt-in [Pattern path](design/PATTERN_GRADIENT_DISCOVERY_V4.md)
+extracts one textual gradient per wrong example and clusters gradients only, then
+selects a generalized correction by the unchanged F. Deployment requires strict team gain above an immutable initial member
 competence floor. Memory stores grounded strategy experience, default disabled.
 V1/V2 factories and frozen bindings remain replay identities; current experiments
 need a fresh V2.1 binding, preexecution freeze and explicit authorization.

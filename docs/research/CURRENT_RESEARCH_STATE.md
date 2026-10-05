@@ -9,6 +9,12 @@ The sole active research architecture is Unified Team Prompt Search.
 - Pattern = IMPLEMENTED_DEFAULT_OFF; Memory = IMPLEMENTED_DEFAULT_OFF.
 - SCIENTIFIC_EFFICACY_VERIFIED = NO; SOTA_VERIFIED = NO.
 
+The current explicit opt-in [Pattern contract](../design/PATTERN_GRADIENT_DISCOVERY_V4.md)
+uses per-example textual gradients, gradients-only clustering and unchanged support
+Responsibility. WHO and bounded rolling Memory retain their existing rules. Code
+conformance has no efficacy or latent-cause interpretation. Execution status and
+the need for fresh freeze/authorization remain governed by the frontier.
+
 ## Dataset and experiment split layers
 
 Canonical datasets are frozen independently of experiment-facing memberships.

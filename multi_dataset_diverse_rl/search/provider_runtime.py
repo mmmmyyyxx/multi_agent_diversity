@@ -38,6 +38,15 @@ class RequestBroker:
         self.prediction_policy = frozen_prediction_policy(contract)
         self.recovery_policy = frozen_recovery_policy(contract)
         self.optimizer_policy = frozen_optimizer_policy(contract)
+        self.gradient_pattern = contract.get('pattern_policy',{}).get('discovery') == versions.GRADIENT_PATTERN_DISCOVERY_VERSION
+        if self.gradient_pattern:
+            from .textual_gradients import POLICY
+            if (contract.get('identity')!=versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION
+                    or contract['pattern_policy']!=POLICY
+                    or contract.get('pattern_abstraction_guard')!=versions.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION
+                    or not contract.get('gradient_prompt_sha256')):
+                raise SearchContractError('GRADIENT_PATTERN_PROVIDER_BINDING_MISMATCH')
+            for role in ('pattern_gradient','pattern_cluster'):self.usage.setdefault(role,0)
         self.member_lane_policy = contract.get('cache_policy') == versions.SOLVER_MEMBER_LANE_CACHE_VERSION
         if self.member_lane_policy != (contract.get('identity') in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION}):
             raise SearchContractError('SOLVER_MEMBER_LANE_POLICY_BINDING_MISMATCH')
@@ -65,12 +74,13 @@ class RequestBroker:
             durable_cache=self.durable_cache)
 
     def _request_identity(self, *, role, split, messages, member_slot=None):
+        pattern_roles={'pattern_gradient','pattern_cluster'} if self.gradient_pattern else {'pattern'}
         legal = (role == "solver" and split == "validation") if self.validation_only else (
-            role in {"solver", "reflection", "pattern"} and split in {"optimize", "shadow"}
+            role in {"solver", "reflection", *pattern_roles} and split in {"optimize", "shadow"}
             and (role == "solver" or split == "optimize"))
         if not legal:
             raise SearchContractError("PROVIDER_ROLE_SPLIT_FORBIDDEN")
-        if role == "pattern" and not self.contract["arms"][self.arm][0]:
+        if role in pattern_roles and not self.contract["arms"][self.arm][0]:
             raise SearchContractError("PATTERN_CALL_FORBIDDEN_IN_NULL_ARM")
         c = self.contract
         model = c["models"]["solver" if role == "solver" else "optimizer_reflection" if role == "reflection" else "pattern"]
@@ -85,7 +95,10 @@ class RequestBroker:
                 identity['pattern_treatment']['pattern_support_id_transport']=c['pattern_support_id_transport']
             if 'pattern_abstraction_guard' in c:
                 identity['pattern_treatment']['pattern_abstraction_guard']=c['pattern_abstraction_guard']
-        if role in {'reflection','pattern'} and self.optimizer_policy:
+            if self.gradient_pattern:
+                identity['pattern_treatment'].update(gradient_prompt_sha256=c['gradient_prompt_sha256'],
+                    cluster_prompt_sha256=c['pattern_prompt_sha256'])
+        if role in {'reflection','pattern','pattern_gradient','pattern_cluster'} and self.optimizer_policy:
             identity['optimizer_generation_policy'] = self.optimizer_policy
             if c.get('optimizer_nonthinking_evidence_policy'):
                 identity['optimizer_nonthinking_evidence_policy']=c['optimizer_nonthinking_evidence_policy']
@@ -169,14 +182,15 @@ class RequestBroker:
         c=self.contract
         request,key=self._request_identity(role=role,split=split,messages=messages,member_slot=member_slot)
         model=request['model']
-        cacheable=not self.member_lane_policy or role=='solver'
+        cacheable=(not self.member_lane_policy or role=='solver') and role not in {'pattern_gradient','pattern_cluster'}
         with self.lock:
             if cacheable and semantic_attempt_no is None and key in self.cache:
                 return self._cache_hit(key,role,split,stage)
             for retry in range(c["decoding"]["transport_retries"] + 1):
                 bounds = c["provider_bounds"]
-                role_bound = bounds["solver_calls" if role == "solver" else "reflection_calls" if role == "reflection" else "pattern_calls"]
-                if self.usage["attempts"] >= bounds["transport_attempts"] or self.successes >= bounds["successful_provider_calls"] or self.usage[role] >= role_bound:
+                role_bound = bounds[role+'_calls']
+                if (self.usage["attempts"] >= bounds["transport_attempts"] or self.successes >= bounds["successful_provider_calls"]
+                        or self.usage[role] >= role_bound or role in {'pattern_gradient','pattern_cluster'} and self.usage['pattern']>=bounds['pattern_calls']):
                     self.abort("PROVIDER_CEILING_PRE_TRANSPORT")
                 token_reservation = None
                 if self.token_ledger:
@@ -222,13 +236,14 @@ class RequestBroker:
                     self.abort("PROVIDER_RESPONSE_ACCOUNTING_INVALID")
                 self.usage["successes"] += 1
                 self.usage[role] += 1
+                if role in {'pattern_gradient','pattern_cluster'}:self.usage['pattern']+=1
                 if split == "validation":
                     self.usage["validation"] += 1
                 for k in ("input_tokens", "output_tokens"):
                     self.usage[k] += result[k]
                 self._write(dict(kind="SUCCESS", role=role, split=split, stage=stage, request_sha256=key,
                     response_sha256=hashlib.sha256(result["text"].encode() if result["text"] is not None else b"null").hexdigest(), input_tokens=result["input_tokens"], output_tokens=result["output_tokens"]))
-                if role in {'reflection','pattern'} and self.optimizer_policy:
+                if role in {'reflection','pattern','pattern_gradient','pattern_cluster'} and self.optimizer_policy:
                     from ..benchmarks.math_optimizer_diagnostics import optimizer_response_telemetry
                     telemetry=optimizer_response_telemetry(request,result,self.optimizer_policy,c.get('optimizer_nonthinking_evidence_policy'))
                     result={**result,'optimizer_generation_diagnostics':telemetry}
@@ -237,7 +252,7 @@ class RequestBroker:
                 if self.raw_writer:
                     self.raw_writer(dict(role=role, split=split, stage=stage, request_sha256=key, request=request, response=result,
                         semantic_attempt_no=semantic_attempt_no,physical_attempt_no=self.usage['attempts']))
-                if role in {'reflection','pattern'} and self.optimizer_policy and self.optimizer_policy['enable_thinking'] is False:
+                if role in {'reflection','pattern','pattern_gradient','pattern_cluster'} and self.optimizer_policy and self.optimizer_policy['enable_thinking'] is False:
                     reasoning=telemetry['reasoning_tokens']
                     if telemetry['nonthinking_evidence_level']=='CONTRADICTORY':
                         self.abort('PROVIDER_NONTHINKING_CONTROL_NOT_HONORED')

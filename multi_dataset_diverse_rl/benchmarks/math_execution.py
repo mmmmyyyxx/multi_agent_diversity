@@ -182,6 +182,9 @@ class MATHExecutionBinding:
             from ..search.layer1_memory import MemoryConditionedOptimizer
             from ..search.pattern_layer1 import PatternMemoryOptimizer
             factory=(PatternMemoryOptimizer if self.contract['identity']==versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION else MemoryConditionedOptimizer if self.contract['identity']==versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION else ResponsibilityConditionedOptimizer)
+            if self.contract.get('pattern_policy',{}).get('discovery')==versions.GRADIENT_PATTERN_DISCOVERY_VERSION:
+                from ..search.pattern_layer1 import GradientPatternMemoryOptimizer
+                factory=GradientPatternMemoryOptimizer
             optimizer=factory(evaluator=solver,reflection_lm=reflection,
                 accounting_reader=reflection.accounting,run_root=run_root)
         else:

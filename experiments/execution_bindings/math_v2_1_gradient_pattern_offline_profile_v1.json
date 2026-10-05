@@ -1,0 +1,470 @@
+{
+  "access": {
+    "optimize": "adaptive",
+    "shadow": "private_adaptive_gate",
+    "test": "sealed",
+    "validation": "post_freeze_read_only_not_authorized"
+  },
+  "accounting_policy_path": "experiments/accounting/math_token_accounting_v2_40m.json",
+  "accounting_policy_sha256": "5f406b99f390be1b8f60d965973f93fe85e79b6f030598e12d375418e3ab6737",
+  "aggregation": "equal_equivalence_plurality_consistency_v1",
+  "allocation_policy": "responsibility_failure_discount_v1",
+  "amendment_parent_binding_path": "experiments/execution_bindings/math_v2_1_canary_v6.json",
+  "amendment_parent_binding_sha256": "a5f540b46640b3342005e98e29350f843d077f66bc518a4f4cd1ea5bde48b12a",
+  "answer_domain": "MATH_ANSWER_DOMAIN_V2",
+  "arms": {
+    "A1": [
+      false,
+      false
+    ],
+    "A2": [
+      true,
+      false
+    ],
+    "A3": [
+      false,
+      true
+    ],
+    "A4": [
+      true,
+      true
+    ]
+  },
+  "benchmark_id": "math",
+  "benchmark_protocol_sha256": "3aee274eeee86c07b7ea66a8700d925e42ecab17663a65e93e96f4ae475e1a67",
+  "binding_path": "experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v1.json",
+  "budget": {
+    "local_patience": 3,
+    "metric_calls": 36,
+    "promotion": 2,
+    "reflection_minibatch_size": 3,
+    "team_patience": 2
+  },
+  "cache_namespace": "math_v2_1_gradient_pattern_A4_seed81_offline_profile_v1",
+  "cache_policy": "SOLVER_MEMBER_LANE_EXACT_CACHE_V2",
+  "canary_attempt_id": "math_v2_1_gradient_pattern_A4_seed81_offline_profile_v1",
+  "canary_phase": "one_complete_production_opportunity_v1",
+  "candidate_contract_identity": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+  "canonical_manifest_sha256": "7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f",
+  "canonical_root": "data/benchmark_suite_v1",
+  "concurrency": {
+    "optimizer_reflection": 1,
+    "pattern": 1,
+    "solver": 1
+  },
+  "continuation_authorization_sha256": "38ca7f2fec4a6bccea6600e02898552aadc9f06d7b041aac333d43d7d9603493",
+  "decoding": {
+    "invalid_response_retries": 3,
+    "max_output_tokens": 1800,
+    "retry_backoff_ceiling_seconds": 60,
+    "retry_sleep_seconds": 1.5,
+    "sdk_retries": 0,
+    "solver_max_output_tokens": 3600,
+    "temperature": 0.0,
+    "timeout_seconds": 120,
+    "transport_retries": 20
+  },
+  "evaluator": "MATH_EQUIVALENCE_V2",
+  "evaluator_pins": {
+    "antlr4-python3-runtime": "4.13.2",
+    "latex2sympy2_extended": "1.0.9",
+    "math-verify": "0.6.0",
+    "mpmath": "1.3.0",
+    "sympy": "1.14.0"
+  },
+  "execution_arm": "A4",
+  "execution_attempt_id": "math_v2_1_gradient_pattern_A4_seed81_offline_profile_v1",
+  "execution_phase": "canary",
+  "gradient_parent_binding_path": "experiments/execution_bindings/math_v2_1_pattern_canary_v4.json",
+  "gradient_parent_binding_sha256": "535092f7a94020255f757ce1f1210d4ed1abb193fd61b38ffb30195846add0e2",
+  "gradient_prompt_path": "experiments/protocols/math_v2_1_gradient_pattern_refactor_v1/per_example_gradient_prompt_v1.json",
+  "gradient_prompt_sha256": "1799255401b0f57fef05179d1c00fea949e08a270ff27051f38d700b62f381ea",
+  "identity": "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1",
+  "initial_competence_binding": {
+    "aggregation_independent": true,
+    "candidate_support": "same_complete_optimize",
+    "count": 12,
+    "evaluator": "MATH_EQUIVALENCE_V2",
+    "identity": "MATH_INITIAL_COMPETENCE_LOW_COST_V1",
+    "immutable": true,
+    "metric": "binary_correct_count",
+    "role": "optimize",
+    "split_identity": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+    "support_identity": "16ad84b5bb22a6aa10e23ef1e1a71ff6d54b7e8e4fcd749571808fba0b2f27ab"
+  },
+  "initial_team_artifact_sha256": "a0ce805d8e88499a829b9843f790c70ad14d99ab587a6e670e657e109695456a",
+  "initial_team_path": "experiments/initial_teams/math_generic_team_seed_v1_1.json",
+  "initial_team_sha256": "4ca685adff5ca8a97e53b0aa0f5715783c7c6937433bd5bbc1308cbad9e97200",
+  "initial_team_version": "MATH_GENERIC_TEAM_SEED_V1_1",
+  "invalid_recovery_policy": {
+    "cache": "resolved_valid_or_exhausted_terminal_only",
+    "first_valid_stops": true,
+    "identity": "MATH_SOLVER_INVALID_RECOVERY_V1",
+    "invalidity_weight": "none",
+    "logical_evaluation_count": 1,
+    "max_semantic_attempts": 4,
+    "same_request_bytes": true,
+    "solver_invalid_max_retries": 3,
+    "terminal_invalid": "incorrect_continue_no_vote",
+    "terminal_requires_completed_invalid_attempts": 4,
+    "transport_failures_consume_semantic_attempt": false
+  },
+  "layer1_amendment_authorization_path": "experiments/protocols/math_v2_1_layer1_redesign_v1/canary_only_authorization_decision.json",
+  "layer1_amendment_authorization_sha256": "76c1ee39f31c2155437b192897265357f89dbb7a6ed53e49a434e209e0cd1e0a",
+  "layer1_parent_binding_path": "experiments/execution_bindings/math_v2_1_low_cost_pilot_v4.json",
+  "layer1_parent_binding_sha256": "99f4d47c7b98130cf04c5d7279844b21180c12f6fd888470251ef6194a3062db",
+  "layer1_search_policy": {
+    "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+    "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
+    "k_local_return": 4,
+    "max_generations": 6,
+    "max_prompt_chars": 3000,
+    "metric_limit": 36,
+    "official_gepa_fidelity": false,
+    "optimizer_input_schema": "PATTERN_GRADIENT_TRAJECTORIES_MEMORY_INPUT_V4",
+    "panel_policy": "pattern_gradient_representatives_preservation_transition_v5",
+    "panel_size": 6
+  },
+  "low_cost_protocol": {
+    "analysis_policy": {
+      "classification": "sign_of_final_minus_initial_VoteAcc",
+      "identity": "MATH_V2_1_PILOT_DEVELOPMENT_ANALYSIS_V1",
+      "paired_resampling_unit": "frozen_validation_example",
+      "resamples": 10000,
+      "scope": "development_uncertainty_only_no_formal_significance_no_search_feedback",
+      "seed": 81
+    },
+    "canary_stop": "one_complete_production_opportunity_v1",
+    "counts": {
+      "canary_optimize": 12,
+      "pilot_optimize": 60,
+      "pilot_shadow": 40,
+      "pilot_validation": 100
+    },
+    "identity": "MATH_V2_1_LOW_COST_DEV_PROTOCOL_V1",
+    "membership_hashes": {
+      "canary_optimize": "16ad84b5bb22a6aa10e23ef1e1a71ff6d54b7e8e4fcd749571808fba0b2f27ab",
+      "pilot_optimize": "f52c5f2a88337d187f5bf6fe7e9b419d92a96e6848dfeaae01b3f123f197b256",
+      "pilot_shadow": "9732600d0cc9d22c05fa2460738ba45804e23c82ed313ba5545ace5d42886857",
+      "pilot_validation": "c71c48a25ed0439e886481926fcdc6195abc9ab8997c74d4bde3eae712ee3adc"
+    },
+    "pilot_stop": "team_epoch_no_commit_v1",
+    "scientific_scope": "development_only",
+    "selection_policy": {
+      "apportionment": "integer_largest_remainder_lexical_tie",
+      "identity": "MATH_LOW_COST_SUBJECT_LEVEL_HASH_V1",
+      "minimum_per_stratum": 0,
+      "ordering": "sha256_identity_role_stable_id",
+      "output_order": "source_superset_order",
+      "performance_used": false,
+      "strata": [
+        "subject",
+        "level"
+      ]
+    },
+    "source_superset_sha256": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+    "test_access": "sealed"
+  },
+  "low_cost_subsets_path": "experiments/protocols/math_v2_1_low_cost_v1/subsets.json",
+  "low_cost_subsets_sha256": "b6ef5a287d91baa60a329b8a55f88db9e019f83ff2329cf8a62cbae5388d8f5b",
+  "membership_hashes": {
+    "optimize": "c2abe712782f0b673fb29a182883858c7466b79a66f2c323cae7903c976178fa",
+    "shadow": "4068cbda1117fdf70fdd37ed1ca5343992665f842c361699e2e580e02cd7dca4",
+    "test": "3d8af2d055316da986934025bcc4c6e2f3f39d1c25838a5f23e709b9b5da3c44",
+    "validation": "7112d452f99665e8a43b9e8a3b681c76aaff5b574103ed7663951a7f17570376"
+  },
+  "memory_amendment_authorization_path": "experiments/protocols/math_v2_1_layer1_memory_amendment_v1/authorization_decision.json",
+  "memory_amendment_authorization_sha256": "008c18471d68497bf49f5f52d6cf5f708c2c982969e371b72107d0d0f5683d58",
+  "memory_limits": {
+    "max_context_chars": 1200,
+    "max_failure_entries_per_member": 5,
+    "private_storage_limit": 24,
+    "shared_storage_limit": 48,
+    "top_k_private": 3,
+    "top_k_shared": 3
+  },
+  "memory_parent_binding_path": "experiments/execution_bindings/math_v2_1_layer1_canary_v2.json",
+  "memory_parent_binding_sha256": "1be508eaf874874846a84f7c3ae9a58cbf0d3b8caff393373f91c31520f4fbac",
+  "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+  "method_identity": "unified_team_prompt_search_v2_1",
+  "method_implementation_sha": "01025f7097ca3a3e248e370347e256ae0aea9046",
+  "models": {
+    "optimizer_reflection": "qwen3.7-flash",
+    "pattern": "qwen3.7-flash",
+    "solver": "qwen3-8b",
+    "solver_thinking": false
+  },
+  "optimizer_amendment_authorization_path": "experiments/protocols/math_v2_1_layer1_redesign_v1/canary_only_authorization_decision.json",
+  "optimizer_amendment_authorization_sha256": "76c1ee39f31c2155437b192897265357f89dbb7a6ed53e49a434e209e0cd1e0a",
+  "optimizer_generation_policy": {
+    "accounting_output_ceiling": 1810,
+    "enable_thinking": false,
+    "frequency_penalty": 0,
+    "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+    "max_completion_tokens": 1800,
+    "max_tokens": "NOT_SENT",
+    "measurement_tolerance_tokens": 10,
+    "model": "qwen3.7-flash",
+    "output_token_scope": "reasoning_plus_answer",
+    "presence_penalty": 1.5,
+    "roles": [
+      "reflection",
+      "pattern"
+    ],
+    "temperature": 0.7,
+    "top_k": 20,
+    "top_p": 0.8,
+    "truncation": "existing_operational_output_truncation"
+  },
+  "optimizer_input_schema": "PATTERN_GRADIENT_TRAJECTORIES_MEMORY_INPUT_V4",
+  "optimizer_nonthinking_evidence_policy": {
+    "contradiction": "provider_control_failure",
+    "diagnostic_candidate_rejection": "record_only_no_output_reuse",
+    "direct": "dispatched_false_and_actual_zero_without_contradiction",
+    "equivalent": "dispatched_false_accepted_stop_no_reasoning_no_parser_loss",
+    "identity": "OPTIMIZER_NONTHINKING_EQUIVALENT_EVIDENCE_V1",
+    "missing_tokens": "never_infer_zero"
+  },
+  "panel_evidence_policy": "pattern_gradient_representatives_preservation_transition_v5",
+  "pattern_abstraction_guard": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V3",
+  "pattern_amendment_authorization_path": "experiments/protocols/math_v2_1_gradient_pattern_refactor_v1/code_amendment.json",
+  "pattern_amendment_authorization_sha256": "38ca7f2fec4a6bccea6600e02898552aadc9f06d7b041aac333d43d7d9603493",
+  "pattern_parent_binding_path": "experiments/execution_bindings/math_v2_1_memory_canary_v1.json",
+  "pattern_parent_binding_sha256": "daaad518e92c00036c3d6d9a69ccf5a0015eac28aa83989e0fa4a04178b049d1",
+  "pattern_policy": {
+    "accounting": "wrong_universe_ceiling_plus_one_cluster_per_opportunity_v1",
+    "cluster_calls_per_opportunity": 1,
+    "context_limit_tokens": 1000000,
+    "correctness": "target_member_correctness_validity_v1",
+    "discovery": "gradient_cluster_pattern_discovery_v4",
+    "generalized_gradient_max_characters": 600,
+    "generation_contract_role": "pattern",
+    "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+    "gradient_policy": {
+      "abstraction_guard": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V3",
+      "generation_contract_role": "pattern",
+      "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+      "identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_V1",
+      "logical_calls_per_wrong": 1,
+      "max_characters": 400,
+      "output_cache": false,
+      "provider_role": "pattern_gradient",
+      "schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V1",
+      "semantic_regeneration": false,
+      "successful_generations_per_wrong": 1,
+      "universe": "all_selected_member_wrong_optimize"
+    },
+    "identity": "GENERALIZED_CORRECTIVE_GRADIENT_IDENTITY_V1",
+    "input_estimate": "serialized_utf8_bytes_plus_1024",
+    "input_limit_tokens": 991808,
+    "output_cache": false,
+    "provider_role": "pattern_cluster",
+    "raw_value": "raw_responsibility_max_4D_2N_C_v1",
+    "responsibility": "same_raw_pattern_responsibility_v1",
+    "schema": "GRADIENT_PATTERN_PARTITION_V2",
+    "selection": "raw_responsibility_then_canonical_identity",
+    "universe": "all_selected_member_wrong_optimize"
+  },
+  "pattern_prompt_path": "experiments/protocols/math_v2_1_gradient_pattern_refactor_v1/gradient_cluster_prompt_v4.json",
+  "pattern_prompt_sha256": "1154e313e60b599b51dab2eee0c5a209e03a6178ccbe19df0241fa397f5e7173",
+  "pattern_support_id_transport": "PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1",
+  "payload_parser_identity": "MATH_PAYLOAD_PARSER_V2",
+  "post_search_validation_policy": {
+    "cache": "SOLVER_MEMBER_LANE_EXACT_CACHE_V2",
+    "count": 100,
+    "development_protocol": {
+      "analysis_policy": {
+        "classification": "sign_of_final_minus_initial_VoteAcc",
+        "identity": "MATH_V2_1_PILOT_DEVELOPMENT_ANALYSIS_V1",
+        "paired_resampling_unit": "frozen_validation_example",
+        "resamples": 10000,
+        "scope": "development_uncertainty_only_no_formal_significance_no_search_feedback",
+        "seed": 81
+      },
+      "canary_stop": "one_complete_production_opportunity_v1",
+      "counts": {
+        "canary_optimize": 12,
+        "pilot_optimize": 60,
+        "pilot_shadow": 40,
+        "pilot_validation": 100
+      },
+      "identity": "MATH_V2_1_LOW_COST_DEV_PROTOCOL_V1",
+      "membership_hashes": {
+        "canary_optimize": "16ad84b5bb22a6aa10e23ef1e1a71ff6d54b7e8e4fcd749571808fba0b2f27ab",
+        "pilot_optimize": "f52c5f2a88337d187f5bf6fe7e9b419d92a96e6848dfeaae01b3f123f197b256",
+        "pilot_shadow": "9732600d0cc9d22c05fa2460738ba45804e23c82ed313ba5545ace5d42886857",
+        "pilot_validation": "c71c48a25ed0439e886481926fcdc6195abc9ab8997c74d4bde3eae712ee3adc"
+      },
+      "pilot_stop": "team_epoch_no_commit_v1",
+      "scientific_scope": "development_only",
+      "selection_policy": {
+        "apportionment": "integer_largest_remainder_lexical_tie",
+        "identity": "MATH_LOW_COST_SUBJECT_LEVEL_HASH_V1",
+        "minimum_per_stratum": 0,
+        "ordering": "sha256_identity_role_stable_id",
+        "output_order": "source_superset_order",
+        "performance_used": false,
+        "strata": [
+          "subject",
+          "level"
+        ]
+      },
+      "source_superset_sha256": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+      "test_access": "sealed"
+    },
+    "evaluator": "MATH_EQUIVALENCE_V2",
+    "identity": "MATH_PAIRED_VALIDATION_INTERVENTION_V2",
+    "initial_team": "MATH_GENERIC_TEAM_SEED_V1_1",
+    "invalid_recovery_policy": {
+      "cache": "resolved_valid_or_exhausted_terminal_only",
+      "first_valid_stops": true,
+      "identity": "MATH_SOLVER_INVALID_RECOVERY_V1",
+      "invalidity_weight": "none",
+      "logical_evaluation_count": 1,
+      "max_semantic_attempts": 4,
+      "same_request_bytes": true,
+      "solver_invalid_max_retries": 3,
+      "terminal_invalid": "incorrect_continue_no_vote",
+      "terminal_requires_completed_invalid_attempts": 4,
+      "transport_failures_consume_semantic_attempt": false
+    },
+    "invalidity_metrics": "resolved_terminal_by_member_and_semantic_attempts",
+    "logical_evaluations": 1000,
+    "memory": false,
+    "metrics": [
+      "VoteAcc",
+      "Member0Acc",
+      "Member1Acc",
+      "Member2Acc",
+      "Member3Acc",
+      "Member4Acc",
+      "MeanMemberAcc",
+      "MinMemberAcc",
+      "OracleAcc"
+    ],
+    "paired_transitions": [
+      "vote_fixed",
+      "vote_broken",
+      "vote_net",
+      "oracle_fixed",
+      "oracle_broken",
+      "oracle_net"
+    ],
+    "pattern": false,
+    "prediction_validity_policy": {
+      "denominator": "all_frozen_examples",
+      "fallback_extraction": false,
+      "identity": "MATH_PREDICTION_VALIDITY_V2",
+      "invalid_response_retries": 3,
+      "invalid_vote": "excluded_from_equivalence_classes",
+      "invalidity_telemetry": "observation_only",
+      "prediction_failure": "invalid_incorrect_continue",
+      "reference_failure": "hard_contract_failure",
+      "truncated_even_with_marker": "invalid_incorrect"
+    },
+    "provider": "lwj",
+    "require_deployed_team_change": true,
+    "search_feedback": false,
+    "solver": "qwen3-8b",
+    "split": "validation",
+    "successful_provider_call_ceiling": 4000,
+    "team_size": 5,
+    "test_model_calls": 0,
+    "thinking": false,
+    "transport_attempt_ceiling": 84000,
+    "unchanged_outcome": "NO_INTERVENTION",
+    "unchanged_signal": "NOT_ESTIMATED",
+    "unchanged_status": "SKIPPED_NO_TEAM_CHANGE"
+  },
+  "prediction_validity_policy": {
+    "denominator": "all_frozen_examples",
+    "fallback_extraction": false,
+    "identity": "MATH_PREDICTION_VALIDITY_V2",
+    "invalid_response_retries": 3,
+    "invalid_vote": "excluded_from_equivalence_classes",
+    "invalidity_telemetry": "observation_only",
+    "prediction_failure": "invalid_incorrect_continue",
+    "reference_failure": "hard_contract_failure",
+    "truncated_even_with_marker": "invalid_incorrect"
+  },
+  "provider": "lwj",
+  "provider_bounds": {
+    "max_opportunities": 1,
+    "max_proposals_per_opportunity": 6,
+    "pattern_calls": 13,
+    "pattern_cluster_calls": 1,
+    "pattern_gradient_calls": 12,
+    "reflection_calls": 6,
+    "solver_calls": 1632,
+    "solver_per_opportunity": 148,
+    "successful_provider_calls": 1651,
+    "transport_attempts": 34671
+  },
+  "provider_sdk": {
+    "name": "openai",
+    "version": "2.37.0"
+  },
+  "reference_extractor": "MATH_REFERENCE_EXTRACTOR_V1",
+  "reference_validity": "MATH_SCORABLE_REFERENCE_V2",
+  "responsibility": "binary_plurality_raw_responsibility_v1",
+  "rolling_memory_freeze_path": "experiments/protocols/math_v2_1_shared_risk_memory_amendment_v1/memory_contract.json",
+  "rolling_memory_freeze_sha256": "51c8e37bd834eaf53009db501bdd5eb8fb033c1dcf8c9fe1712a1987b2c88d5b",
+  "seeds": [
+    81
+  ],
+  "shadow_count": 40,
+  "shared_risk_policy": {
+    "failure_evidence_capacity": 240,
+    "minimum_distinct_members": 2,
+    "promotion_timing": "opportunity_commit",
+    "recent_opportunity_window": 48,
+    "retention": "recent_opportunity_recurrence_retention_v1",
+    "retention_order": [
+      "recent_recurrence",
+      "recent_distinct_members",
+      "same_lane",
+      "last_seen",
+      "semantic_key"
+    ],
+    "retrieval_order": [
+      "same_lane",
+      "compatible_family",
+      "last_seen",
+      "recent_recurrence",
+      "semantic_key"
+    ],
+    "shared_event_capacity": 48,
+    "signature": "closed_action_outcome_failure_signature_v1"
+  },
+  "solver_decoding_policy": {
+    "enable_thinking": false,
+    "frequency_penalty": 0,
+    "identity": "SOLVER_DECODING_POLICY_V2",
+    "max_output_tokens": 3600,
+    "min_p": 0,
+    "presence_penalty": 0,
+    "temperature": 0.2,
+    "top_k": 20,
+    "top_p": 0.8
+  },
+  "solver_output_interface": {
+    "identity": "MATH_SOLVER_INTERFACE_V5",
+    "parser_identity": "math_verify_no_fallback_v1",
+    "reflection_max_output_tokens": 1800,
+    "sha256": "6ff187ad4f0e6ffc7360c84263c1c2c8b18d59bded4bbfeb550db6fc818b7c06",
+    "solver_max_output_tokens": 3600,
+    "system_sha256": "655fa13b3e52c42903722b7418d164ef7adbde289fe925b52d2ab4ec72107376",
+    "user_suffix_sha256": "2d889a53f47fb5763bcc70579302a2289cd8d718811a1b3caf68c4134b59fdd4"
+  },
+  "split_directory": "experiments/data_splits/math_v2_1_scorable_v1",
+  "split_manifest_sha256": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+  "split_version": "benchmark_experiment_split_v2",
+  "stop_policy": "team_epoch_no_commit_v1",
+  "task_authorization_sha256": "3db28ade2b799d2169c6cdbdb03b82e63517ab74c46f8212905855f2fcf9cd9a",
+  "token_ledger_directory": "runs/math_autonomous_accounting_v2/token_ledger",
+  "transition_policy": "initial_competence_team_gain_v2",
+  "validation_accounting_metadata_path": "experiments/protocols/math_v2_1_layer1_redesign_v1/validation100_accounting_metadata.json",
+  "validation_accounting_metadata_sha256": "5790bcbc0497aa4d45bd454f1a896f47c72aab98166e8d984d85ce171567beaa",
+  "verify_settings_path": "experiments/evaluators/math_verify_settings_v2_final.json",
+  "verify_settings_sha256": "4abc7cf513d2df5ea05018f3f7f24f164226c468ebcc1ddec13283165eacaad7"
+}

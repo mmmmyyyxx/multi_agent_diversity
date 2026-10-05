@@ -680,7 +680,7 @@ The new signature and retention policy enter mechanism identity explicitly.
 V3, its real execution binding and historical evidence remain immutable.
 This offline amendment grants no API or held-out execution authorization.
 
-## Pattern-aware Responsibility V3 (explicit opt-in)
+## Pattern-aware Responsibility V3 (frozen replay)
 
 The [Pattern-aware contract](PATTERN_RESPONSIBILITY_V3.md) adds the versioned
 target-first Who → What → How path. WHO remains the unchanged member controller.
@@ -715,3 +715,16 @@ to comprehensive semantic entity recognition or scientific efficacy. V2 and
 the absent-guard path remain unchanged. The new identity enters every binding,
 method, provider/request/cache, manifest and authorization scope. The code
 amendment inherits frozen treatment settings but grants no fresh API authority.
+
+## Gradient Pattern discovery V4 (current explicit opt-in)
+
+The [gradient discovery contract](PATTERN_GRADIENT_DISCOVERY_V4.md) replaces the
+internal raw-failure analysis with one fresh textual gradient per wrong selected
+member Optimize example, then one gradients-only set-level clustering call.
+WHO remains unchanged. Generalized gradients define Pattern identity; original
+support labels retain the exact shared F and canonical identity tie. The selected
+gradient and at most three observable failure trajectories enter Layer1 alongside
+preservation, transition safety and existing bounded Memory. This amendment
+changes discovery, input identities and Pattern meta accounting only. Null remains
+the default; V3 artifacts retain their frozen semantics. No experiment or held-out
+execution is authorized by this modification.

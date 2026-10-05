@@ -55,8 +55,63 @@ class PatternMemoryEngine(MemoryConditionedEngine):
                 local=LocalEvidenceExample(anchor.example_id,s['input_payload'],s['gold'],s.get('target_output'),
                     'Preserve correct reasoning; no additional repair objective.',('preservation','target_correct','preservation_anchor'))
         p=next(p for p in context.pattern_view['patterns'] if p['pattern_id']==context.pattern_view['focus_mechanism_id'])
-        visible={k:p[k] for k in ('pattern_id','failure_mechanism','corrective_principle')}
+        visible=self.pattern_projection(p)
         visible['responsibility_value']=p['responsibility']['raw_value']
         lane=opportunity.diagnosis.responsibility[opportunity.target_member].primary_lane
         return PatternLocalTask(**{**base.__dict__,'optimization_context':lane},anchor_example=local,
             responsibility_lane=lane,selected_pattern=json.dumps(visible,sort_keys=True,separators=(',',':')))
+
+    @staticmethod
+    def pattern_projection(pattern):
+        return {k:pattern[k] for k in ('pattern_id','failure_mechanism','corrective_principle')}
+
+
+@dataclass(frozen=True)
+class GradientPatternLayer1Config(PatternLayer1Config):
+    optimizer_input_schema: str = versions.GRADIENT_OPTIMIZER_INPUT_VERSION
+    panel_policy: str = versions.GRADIENT_CONDITIONED_EVIDENCE_VERSION
+
+    def __post_init__(self):
+        expected={**asdict(MemoryLayer1Config()),'optimizer_input_schema':versions.GRADIENT_OPTIMIZER_INPUT_VERSION,
+            'panel_policy':versions.GRADIENT_CONDITIONED_EVIDENCE_VERSION}
+        if asdict(self)!=expected:raise SearchContractError('PATTERN_GRADIENT_LAYER1_FROZEN_CONFIG_MISMATCH')
+
+
+@dataclass(frozen=True)
+class GradientPatternLocalTask(PatternLocalTask):
+    failure_trajectories: str = '[]'
+
+
+def gradient_pattern_input(task,parent,observations,memory):
+    value=json.loads(bounded_input(task,parent,observations,memory)[len(INSTRUCTION)+1:])
+    selected=json.loads(task.selected_pattern)
+    if set(selected)!={'pattern_id','generalized_gradient','responsibility_value'}:
+        raise SearchContractError('PATTERN_GRADIENT_OPTIMIZER_CONTEXT_INVALID')
+    trajectories=json.loads(task.failure_trajectories)
+    if not 1<=len(trajectories)<=3:raise SearchContractError('PATTERN_GRADIENT_REPRESENTATIVE_CAPACITY')
+    value.update(schema=versions.GRADIENT_OPTIMIZER_INPUT_VERSION,selected_pattern=selected,
+        repair_objective='Only the selected generalized corrective gradient',
+        representative_failure_trajectories=trajectories)
+    return INSTRUCTION+'\n'+json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=True)
+
+
+class GradientPatternMemoryOptimizer(PatternMemoryOptimizer):
+    config_factory=GradientPatternLayer1Config
+    prompt_builder=staticmethod(gradient_pattern_input)
+
+
+class GradientPatternMemoryEngine(PatternMemoryEngine):
+    @staticmethod
+    def pattern_projection(pattern):
+        return {k:pattern[k] for k in ('pattern_id','generalized_gradient')}
+
+    def make_task(self,opportunity,context):
+        base=super().make_task(opportunity,context)
+        focus=next(p for p in context.pattern_view['patterns']
+            if p['pattern_id']==context.pattern_view['focus_mechanism_id'])
+        repairs=[r for r in opportunity.evidence.mutation_evidence if 'REPAIR' in r.roles]
+        if not 1<=len(repairs)<=3 or any(r.example_id not in focus['support_ids'] for r in repairs):
+            raise SearchContractError('PATTERN_GRADIENT_REPRESENTATIVE_CAPACITY')
+        trajectories=[r.signals['failure_trajectory'] for r in repairs]
+        return GradientPatternLocalTask(**base.__dict__,
+            failure_trajectories=json.dumps(trajectories,sort_keys=True,separators=(',',':')))
