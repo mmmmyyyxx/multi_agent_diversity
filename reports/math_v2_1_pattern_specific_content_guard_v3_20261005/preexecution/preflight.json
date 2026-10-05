@@ -1,0 +1,12 @@
+{
+  "benchmark_id": "math",
+  "binding_sha256": "535092f7a94020255f757ce1f1210d4ed1abb193fd61b38ffb30195846add0e2",
+  "blockers": [],
+  "gate": "CANARY_READY_NOT_AUTHORIZED",
+  "provider_attempts": 0,
+  "readiness_identity": "MATH_RUNTIME_READINESS_V1",
+  "ready_for_authorization": true,
+  "real_api_authorized": false,
+  "test_calls": 0,
+  "validation_calls": 0
+}
