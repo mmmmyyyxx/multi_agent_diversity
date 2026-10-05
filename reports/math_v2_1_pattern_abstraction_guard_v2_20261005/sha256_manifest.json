@@ -2,8 +2,36 @@
   "algorithm": "sha256",
   "files": [
     {
+      "file": "budget_wire_audit.json",
+      "sha256": "db01b3acfaab70f7e62c551955ca303d27049d544494111bdfeb2734f8d63862"
+    },
+    {
+      "file": "confirmed_parser_regression.json",
+      "sha256": "52f6bdebb0188ff6f73483a3c36edba4c2fbe8411d64e07ed182d672bb73b6be"
+    },
+    {
+      "file": "freeze_receipt.json",
+      "sha256": "2824cf904e8e96dd0d45f33412cab912cb3ea16a65c3c4e425efb6d6aec8e2e5"
+    },
+    {
+      "file": "policy_identity.json",
+      "sha256": "50257ac8edc8661490ee7204625dc51777e962eadf39518af178bcb069a656d4"
+    },
+    {
+      "file": "prior_offline_failure.json",
+      "sha256": "66924f7557e54dbebba1ef8e7228b027d2772306efb26687c6b7c4bbd5d18bf5"
+    },
+    {
       "file": "README.md",
-      "sha256": "3dd18dd92045c3d68b8cccae72bd85eb2ee662facf115cd084e3fd588ceb1118"
+      "sha256": "ac8dcfe640f2ea16c096aaa0239f403ffb6e5abf9c369d540b07e9bf8329b9ff"
+    },
+    {
+      "file": "semantic_delta_audit.json",
+      "sha256": "5e46c653282cba5814b46b51bef44ce9fb65823c0091fdb0f362f53767f7ae56"
+    },
+    {
+      "file": "test_summary.json",
+      "sha256": "7e6bb179fc90db85a0d9d2cffd44c6cb6993366e7b03ce47ef142af9b5c106aa"
     }
   ]
 }

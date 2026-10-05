@@ -1,0 +1,35 @@
+{
+  "compileall": "PASS",
+  "diff_check": "PASS",
+  "full_current_counts": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 2,
+    "tests": 1098
+  },
+  "full_current_exit_code": 0,
+  "full_current_log_sha256": "d2739794e0558d4b460ecd93a9260f95f63b376e3629b38ac79a80636f69514d",
+  "governance": "PASS",
+  "historical_private": "NOT RUN",
+  "historical_private_cases": 1468,
+  "ledger_unchanged": true,
+  "legacy_A1_A4_fake_graphs": "PASS",
+  "new_real_calls": 0,
+  "pattern_memory_fake_graph": "PASS",
+  "pinned_public_GEPA_fakes": "PASS",
+  "sanitization": "PASS",
+  "secret_scan": "PASS",
+  "source_closure_files": 221,
+  "source_poison_checks": 221,
+  "source_sha": "160d3d5c6ba8f4118e26f79140247aac986a3f4b",
+  "status": "PASS",
+  "targeted_counts": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 227
+  },
+  "targeted_exit_code": 0,
+  "targeted_log_sha256": "13159c2d32fb7eb319e9dbb4bf4b91133cd1562b0fe12c6313d19e7dcace2ad9",
+  "tracked_worktree_clean": true
+}

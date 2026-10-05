@@ -1,0 +1,8 @@
+{
+  "new_api_calls": 0,
+  "reason": "Synthetic example-copy fixture shorter than frozen matching span; fixture corrected without production threshold change",
+  "source_sha": "3f2e6f7447470bd0a8380fc85688926e4396cf9a",
+  "status": "FAILED_FIXTURE_PRESERVED",
+  "targeted_failed": 1,
+  "targeted_passed": 226
+}

@@ -1,0 +1,16 @@
+{
+  "closed_attempt": "math_v2_1_pattern_A4_seed81_canary_attempt2",
+  "failed_attempt_still_invalid": true,
+  "fresh_canary_still_required": true,
+  "ledger_unchanged": true,
+  "membership_counts_unchanged": true,
+  "new_guard": "PATTERN_ABSTRACTION_MATH_COMMAND_GUARD_V2",
+  "new_guard_accepts_generic_math_command": true,
+  "new_provider_calls": 0,
+  "old_guard_rejection_recomputed": true,
+  "provider_response_sha256": "4a99d922e31a6ddf78b476ee314117bffc3e807fbcb9a1065c68848f7a0c2695",
+  "selected_raw_F": 4,
+  "semantic_pattern_count": 7,
+  "status": "CONFIRMED_PARSER_REGRESSION_PASS",
+  "wide_wrong_size": 7
+}

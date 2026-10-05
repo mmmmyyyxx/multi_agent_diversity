@@ -1,0 +1,23 @@
+{
+  "abstraction_guard": "PATTERN_ABSTRACTION_MATH_COMMAND_GUARD_V2",
+  "base_sha": "9023706e02a2b017c6c9784287dd49f29a2bde07",
+  "only_change": "Correct generic mathematical-imperative classification; prior bijective support-ID aliases unchanged",
+  "parser_only": true,
+  "scientific_policy_changes": false,
+  "semantic_prompt_byte_identical": true,
+  "support_id_transport": "PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1",
+  "unchanged": [
+    "WHO",
+    "wrong universe and order",
+    "responsibility labels and raw F",
+    "canonical semantic ties",
+    "strict partition membership",
+    "one Pattern call",
+    "models/generation",
+    "Layer1 budgets",
+    "Memory V4",
+    "evaluator/split/team",
+    "Layer2 guards",
+    "Shadow"
+  ]
+}

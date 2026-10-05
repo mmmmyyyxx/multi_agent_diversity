@@ -1,0 +1,117 @@
+{
+  "abstraction_guard": "PATTERN_ABSTRACTION_MATH_COMMAND_GUARD_V2",
+  "authorized_total": 40000000,
+  "capture_message_count": 0,
+  "captures": [
+    {
+      "fields": {
+        "enable_thinking": false,
+        "frequency_penalty": 0,
+        "max_tokens": 3600,
+        "min_p": 0,
+        "model": "qwen3-8b",
+        "presence_penalty": 0,
+        "temperature": 0.2,
+        "top_k": 20,
+        "top_p": 0.8
+      },
+      "request_identity_sha256": "90df6b832e740afb1e432a7eb74a791dc0d1a98c7142b108fbd9be3d1ed1e4f6",
+      "reservation": {
+        "amount": 7866,
+        "input_upper_bound": 4266,
+        "output_hard_cap": 3600,
+        "serialized_request_bytes": 170
+      },
+      "role": "solver",
+      "split": "optimize"
+    },
+    {
+      "fields": {
+        "enable_thinking": false,
+        "frequency_penalty": 0,
+        "max_tokens": 3600,
+        "min_p": 0,
+        "model": "qwen3-8b",
+        "presence_penalty": 0,
+        "temperature": 0.2,
+        "top_k": 20,
+        "top_p": 0.8
+      },
+      "request_identity_sha256": "cbfa2288c4263043c409851e21aa55ac6fe5269fe13ee5926a387e2f770325f2",
+      "reservation": {
+        "amount": 7866,
+        "input_upper_bound": 4266,
+        "output_hard_cap": 3600,
+        "serialized_request_bytes": 170
+      },
+      "role": "solver",
+      "split": "shadow"
+    },
+    {
+      "fields": {
+        "enable_thinking": false,
+        "frequency_penalty": 0,
+        "max_completion_tokens": 1800,
+        "model": "qwen3.7-flash",
+        "presence_penalty": 1.5,
+        "temperature": 0.7,
+        "top_k": 20,
+        "top_p": 0.8
+      },
+      "request_identity_sha256": "acc251932ea87a76e27101506ed5dd9d97f5b563d64e3666ce03e544f8d56651",
+      "reservation": {
+        "amount": 6084,
+        "generation_policy_identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+        "input_upper_bound": 4274,
+        "output_hard_cap": 1810,
+        "output_measurement_tolerance": 10,
+        "requested_output_cap": 1800,
+        "serialized_request_bytes": 178
+      },
+      "role": "reflection",
+      "split": "optimize"
+    },
+    {
+      "fields": {
+        "enable_thinking": false,
+        "frequency_penalty": 0,
+        "max_completion_tokens": 1800,
+        "model": "qwen3.7-flash",
+        "presence_penalty": 1.5,
+        "temperature": 0.7,
+        "top_k": 20,
+        "top_p": 0.8
+      },
+      "request_identity_sha256": "9af4f14d0c0046371e94d5b207c208fb3d70fe97a1b93d923e1e76c071a3a2f9",
+      "reservation": {
+        "amount": 6084,
+        "generation_policy_identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+        "input_upper_bound": 4274,
+        "output_hard_cap": 1810,
+        "output_measurement_tolerance": 10,
+        "requested_output_cap": 1800,
+        "serialized_request_bytes": 178
+      },
+      "role": "pattern",
+      "split": "optimize"
+    }
+  ],
+  "generation_fields_and_reservation_policy_unchanged": true,
+  "original_task_prior_charged": 1167499,
+  "prior_charged": 1242527,
+  "provider_bounds": {
+    "max_opportunities": 1,
+    "max_proposals_per_opportunity": 6,
+    "pattern_calls": 1,
+    "reflection_calls": 6,
+    "solver_calls": 1632,
+    "solver_per_opportunity": 148,
+    "successful_provider_calls": 1639,
+    "transport_attempts": 34419
+  },
+  "real_calls": 0,
+  "remaining": 38757473,
+  "request_identity_fresh": true,
+  "support_id_transport": "PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1",
+  "validation_protected_reserve": 9078500
+}

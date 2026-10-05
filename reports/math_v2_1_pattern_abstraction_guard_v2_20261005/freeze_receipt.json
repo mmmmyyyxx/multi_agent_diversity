@@ -1,0 +1,60 @@
+{
+  "manifest_receipts": {
+    "math_v2_1_a4_seed81_pattern_canary_v3": {
+      "manifest_sha256": "3fafc21d453b48ba17585baeb538bcdbfa0ab36bc63e218005e2c5a3f514163f",
+      "preflight": {
+        "benchmark_id": "math",
+        "binding_sha256": "81664a13f1a9bd1583f894dccbbce769882eecc27c74bf39b563af2cf16c982e",
+        "blockers": [],
+        "gate": "CANARY_READY_NOT_AUTHORIZED",
+        "provider_attempts": 0,
+        "readiness_identity": "MATH_RUNTIME_READINESS_V1",
+        "ready_for_authorization": true,
+        "real_api_authorized": false,
+        "test_calls": 0,
+        "validation_calls": 0
+      },
+      "preregistration_identity": "44ba641ce903f3b6b594a573fa82cf13b6fe8573667afb76c58a03e4e86d0456",
+      "source_sha": "160d3d5c6ba8f4118e26f79140247aac986a3f4b"
+    },
+    "math_v2_1_pattern_abstraction_guard_v2": {
+      "manifest_sha256": "ec40e5ecaadb4e33406abbddd3e1a2be94045eca4e13f53fd3bfb8428c09d4a0",
+      "preflight": {
+        "benchmark_id": "math",
+        "binding_sha256": "81664a13f1a9bd1583f894dccbbce769882eecc27c74bf39b563af2cf16c982e",
+        "blockers": [],
+        "gate": "CANARY_READY_NOT_AUTHORIZED",
+        "provider_attempts": 0,
+        "readiness_identity": "MATH_RUNTIME_READINESS_V1",
+        "ready_for_authorization": true,
+        "real_api_authorized": false,
+        "test_calls": 0,
+        "validation_calls": 0
+      },
+      "preregistration_identity": "e30cf3086b2b6658fcaef630b568878e90bbfe527610552bb6db9c20b07a2dee",
+      "source_sha": "160d3d5c6ba8f4118e26f79140247aac986a3f4b"
+    },
+    "math_v2_1_pattern_preexecution_v3": {
+      "manifest_sha256": "efa98b5a29064861a9d526bfec35969b04187e9b41cc3e03d1d87bbaba721cc9",
+      "preflight": {
+        "benchmark_id": "math",
+        "binding_sha256": "81664a13f1a9bd1583f894dccbbce769882eecc27c74bf39b563af2cf16c982e",
+        "blockers": [],
+        "gate": "CANARY_READY_NOT_AUTHORIZED",
+        "provider_attempts": 0,
+        "readiness_identity": "MATH_RUNTIME_READINESS_V1",
+        "ready_for_authorization": true,
+        "real_api_authorized": false,
+        "test_calls": 0,
+        "validation_calls": 0
+      },
+      "preregistration_identity": "28353afdacabc51ae5facbe97ac2a6ecf8abfd43b80bd239c5daf5f4f797ab89",
+      "source_sha": "160d3d5c6ba8f4118e26f79140247aac986a3f4b"
+    }
+  },
+  "new_real_calls": 0,
+  "pilot_authorized": false,
+  "source_sha": "160d3d5c6ba8f4118e26f79140247aac986a3f4b",
+  "status": "PREEXECUTION_FROZEN",
+  "validation_authorized": false
+}
