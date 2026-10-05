@@ -105,8 +105,10 @@ current_runtime_builder: build_current_team_prompt_search
 current_execution_entrypoint: scripts/run_experiment.py
 historical_replay_entrypoint: scripts/replay_experiment.py
 last_runtime_consolidation_milestone: math_v2_1_current_runtime_consolidation_v1
-runtime_consolidation_status: FINAL_SOURCE_SUITE_PENDING
+runtime_consolidation_status: COMPLETED_ZERO_API_EQUIVALENCE
 current_execution_eligibility: GRADIENT_PATTERN_V4_ROLLING_MEMORY_FIXED_BUNDLE_ONLY
+runtime_consolidation_report: reports/math_v2_1_current_runtime_consolidation_v1_20261005
+current_runtime_source: f99e4d46759232eecd566fa840852a18dfe1d54d
 ```
 
 ## Experiment and engineering DAG
@@ -208,7 +210,7 @@ flowchart TD
     n268["math_v2_1_a4_seed81_pattern_canary_v4<br/>REAL_CANARY<br/>COMPLETED"]
     n269["math_v2_1_pattern_semantic_partition_audit_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
     n270["math_v2_1_gradient_pattern_refactor_v1<br/>ARCHITECTURE_REFACTOR<br/>COMPLETED"]
-    n271["math_v2_1_current_runtime_consolidation_v1<br/>ARCHITECTURE_REFACTOR<br/>IN_PROGRESS"]
+    n271["math_v2_1_current_runtime_consolidation_v1<br/>ARCHITECTURE_REFACTOR<br/>COMPLETED"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]

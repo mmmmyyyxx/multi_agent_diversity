@@ -1,0 +1,82 @@
+{
+  "after_sha256": "fde1b5b302ff58a71ee7f67bf3e85107eb0fa2790374957ff3f8a530dd448dea",
+  "before_sha256": "fde1b5b302ff58a71ee7f67bf3e85107eb0fa2790374957ff3f8a530dd448dea",
+  "coverage": [
+    "IMMEDIATE_PRIVATE_FAILURE",
+    "PRIVATE_FAILURE_CAP_5",
+    "SAME_MEMBER_NO_PROMOTION",
+    "CROSS_MEMBER_SHARED_RISK_PROMOTION",
+    "ROLLING_EXPIRY",
+    "PRIVATE_SUCCESS_ON_COMMIT",
+    "RETRIEVAL_ORDER",
+    "CONTEXT_BYTES",
+    "REVISION_SEQUENCE_AND_TRANSACTION_TIMING"
+  ],
+  "final_audit_counters": {
+    "failure_evidence_events": 0,
+    "failure_family_count": 0,
+    "failure_family_repeated_count": 0,
+    "failure_memory_evictions": 3,
+    "failure_memory_peak_by_member": [
+      5,
+      0,
+      0,
+      1,
+      0
+    ],
+    "failure_reads": 284,
+    "failure_to_shared_promotions": 1,
+    "failure_writes": 9,
+    "initial_memory_entries": 0,
+    "memory_context_chars": {
+      "max": 1097,
+      "mean": 980.2380952380952,
+      "min": 2
+    },
+    "memory_ids": [
+      "c0f3b38f8f484d5584dd7ae0f2e3dfe05c1c95663bce4c17e356f111559019e8",
+      "eea1654cddf643178878958b614d02c5101a8a188cd90fa6499a3e8d8bcafdd9",
+      "5fbe11214681abe7da7e514f3224ca3d26b84b9019494bcafa88e5b8e31c04ae",
+      "19cd51285f99da7a142d374c62498e2889f4116263fb07bc80f57ebc31d61022",
+      "52d6d6c5700b873da97250c0814fa6a8dadfbec52a9a86d9a6aa53481e519ce4",
+      "bdd749d967cf6ba7903ed29ba450d6eae02dadaa69743863b2dc1e7976896b9e",
+      "51125a4cba6b034d492842ba4f5fb7fd9f5212008149ba894816436dbb347275"
+    ],
+    "memory_llm_calls": 0,
+    "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+    "private_failure_count_by_member": [
+      5,
+      0,
+      0,
+      1,
+      0
+    ],
+    "private_success_count_by_member": [
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    "promoted_families": [],
+    "risk_clock": 53,
+    "shared_reads": 5,
+    "shared_risk_count": 0,
+    "shared_risk_created": 1,
+    "shared_risk_evicted": 1,
+    "shared_risk_reads": 5,
+    "shared_risk_storage_final": 0,
+    "shared_risk_storage_peak": 1,
+    "shared_risk_updated": 3,
+    "shared_writes": 1,
+    "stateful_write_count": 62,
+    "success_reads": 0,
+    "success_writes": 1
+  },
+  "final_failure_count": 6,
+  "final_private_success_count": 1,
+  "golden_transactions": 64,
+  "independent_oracle_states": 63,
+  "oracle_reference_source": "08c632eb581b25699da0c4aa480b986e0de61e02",
+  "status": "EXACT_EQUIVALENT"
+}

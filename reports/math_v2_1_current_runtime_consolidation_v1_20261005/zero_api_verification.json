@@ -1,0 +1,29 @@
+{
+  "BASE_HEAD": "08c632eb581b25699da0c4aa480b986e0de61e02",
+  "FINAL_RUNTIME_SOURCE": "f99e4d46759232eecd566fa840852a18dfe1d54d",
+  "FULL_CURRENT_SUITE_RESULT": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 2,
+    "tests": 1217
+  },
+  "FULL_CURRENT_SUITE_SOURCE": "f99e4d46759232eecd566fa840852a18dfe1d54d",
+  "FULL_CURRENT_SUITE_SOURCE_EQUALS_FINAL_RUNTIME_SOURCE": true,
+  "actual_network_connections": 0,
+  "canary_started": false,
+  "full_current_junit_sha256": "a8bf42d13e37770a74bbed01286867a17c8aa78d1f082dfdb3f718586dc6e201",
+  "historical_guard_rejected_attempts": 12,
+  "historical_replay_receipt": "historical_replay_verification.json",
+  "historical_replay_status": "NOT_PASS_PREEXISTING_FAILURES_AND_BLOCKED_NETWORK_ATTEMPTS",
+  "network_attempt_count": 0,
+  "network_guard": "Pre-application sitecustomize in a fresh credential-free child; negative controls pass.",
+  "pilot_started": false,
+  "private_artifact_cases": 64,
+  "private_artifact_status": "NOT_RUN",
+  "pushed": false,
+  "real_provider_calls": 0,
+  "status": "PASS",
+  "test_model_calls": 0,
+  "test_selection": "Explicit --suite=current; classification retained public compatibility tests.",
+  "validation_started": false
+}

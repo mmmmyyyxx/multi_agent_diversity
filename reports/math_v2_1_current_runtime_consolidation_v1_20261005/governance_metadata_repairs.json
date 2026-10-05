@@ -1,0 +1,16 @@
+{
+  "affected_failure_ids": [
+    "FAIL-UNIFIED-METHOD-SEMANTIC-DRIFT",
+    "FAIL-MATH-V21-PROPOSER-MUTABLE-GUARD-MISMATCH",
+    "FAIL-MATH-PATTERN-LONG-SUPPORT-ID-COPY",
+    "FAIL-MATH-PATTERN-GENERIC-COMMAND-NAME-GUARD"
+  ],
+  "changes": [
+    "Preserve detailed prior evidence-level strings in evidence_format; use the existing observed enum.",
+    "Copy existing required_resolution into missing mitigation fields.",
+    "Complete the missing generic command-guard symptom from the existing registry evidence."
+  ],
+  "historical_report_changes": [],
+  "runtime_policy_changes": [],
+  "scope": "Failure registry schema normalization only"
+}

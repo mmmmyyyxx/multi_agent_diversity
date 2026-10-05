@@ -1,0 +1,250 @@
+{
+  "active_LOC_after": 28070,
+  "active_LOC_before": 48874,
+  "active_classes_after": 375,
+  "active_classes_before": 518,
+  "active_modules_after": 137,
+  "active_modules_before": 177,
+  "baseline_namespace_note": "BASE had no explicit legacy directories; compare old implementation edges and definitions, not directory spelling.",
+  "branch_definition": "If/IfExp selecting treatment flags or Pattern/Memory policy in the production builder; pure raising guards and phase stop checks excluded.",
+  "branch_receipts_after": [],
+  "branch_receipts_before": [
+    {
+      "condition_sha256": "5c71a0afbab80388fc22cf787bac6a3e8dac54432a7be4e2206dcb1ec3b68114",
+      "line": 57,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "04a66817203ccc03c6baac4fecdfdfd6704e986563cdd9d6c777859e335a5568",
+      "line": 57,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "2b6c76a51de0efd4f8a067d95d28ca3d391bbfd709a4047d0de850704fc305a8",
+      "line": 57,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "21b954ba079db9b64a30d4775a398283f750967733ee68bf46fd134c2adfd8e2",
+      "line": 66,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "04a66817203ccc03c6baac4fecdfdfd6704e986563cdd9d6c777859e335a5568",
+      "line": 67,
+      "node": "If"
+    },
+    {
+      "condition_sha256": "5c71a0afbab80388fc22cf787bac6a3e8dac54432a7be4e2206dcb1ec3b68114",
+      "line": 68,
+      "node": "If"
+    },
+    {
+      "condition_sha256": "21b954ba079db9b64a30d4775a398283f750967733ee68bf46fd134c2adfd8e2",
+      "line": 69,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "2b6c76a51de0efd4f8a067d95d28ca3d391bbfd709a4047d0de850704fc305a8",
+      "line": 70,
+      "node": "If"
+    },
+    {
+      "condition_sha256": "21b954ba079db9b64a30d4775a398283f750967733ee68bf46fd134c2adfd8e2",
+      "line": 75,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "a3a010573626cd804597ba8b1f292b91e744fd5abff8f9da8b4213e727dc5177",
+      "line": 80,
+      "node": "If"
+    },
+    {
+      "condition_sha256": "2b6c76a51de0efd4f8a067d95d28ca3d391bbfd709a4047d0de850704fc305a8",
+      "line": 84,
+      "node": "If"
+    },
+    {
+      "condition_sha256": "5c71a0afbab80388fc22cf787bac6a3e8dac54432a7be4e2206dcb1ec3b68114",
+      "line": 86,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "04a66817203ccc03c6baac4fecdfdfd6704e986563cdd9d6c777859e335a5568",
+      "line": 86,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "04a66817203ccc03c6baac4fecdfdfd6704e986563cdd9d6c777859e335a5568",
+      "line": 87,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "10be2ee24727fdf8b268208dc9a7a84f803f2f4bb7913fe844932fe40d40005d",
+      "line": 92,
+      "node": "If"
+    },
+    {
+      "condition_sha256": "04a66817203ccc03c6baac4fecdfdfd6704e986563cdd9d6c777859e335a5568",
+      "line": 94,
+      "node": "If"
+    },
+    {
+      "condition_sha256": "5c71a0afbab80388fc22cf787bac6a3e8dac54432a7be4e2206dcb1ec3b68114",
+      "line": 96,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "5c71a0afbab80388fc22cf787bac6a3e8dac54432a7be4e2206dcb1ec3b68114",
+      "line": 97,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "5c71a0afbab80388fc22cf787bac6a3e8dac54432a7be4e2206dcb1ec3b68114",
+      "line": 98,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "39f91838984b0c496edb51655740c45fbfab7e5b818dd73cf677c4ccdcd29f8f",
+      "line": 123,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "04a66817203ccc03c6baac4fecdfdfd6704e986563cdd9d6c777859e335a5568",
+      "line": 124,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "21b954ba079db9b64a30d4775a398283f750967733ee68bf46fd134c2adfd8e2",
+      "line": 124,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "04a66817203ccc03c6baac4fecdfdfd6704e986563cdd9d6c777859e335a5568",
+      "line": 125,
+      "node": "If"
+    },
+    {
+      "condition_sha256": "5c71a0afbab80388fc22cf787bac6a3e8dac54432a7be4e2206dcb1ec3b68114",
+      "line": 127,
+      "node": "If"
+    },
+    {
+      "condition_sha256": "8dfd240f5a05723abc6cdc17d0c40d14f3314eb9914e53d7224b74402c3c2c36",
+      "line": 132,
+      "node": "If"
+    },
+    {
+      "condition_sha256": "52261de051d2a14e452e8195d852dd4fe28b628d4985d0430011ac929de6c9b6",
+      "line": 135,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "2b6c76a51de0efd4f8a067d95d28ca3d391bbfd709a4047d0de850704fc305a8",
+      "line": 136,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "21b954ba079db9b64a30d4775a398283f750967733ee68bf46fd134c2adfd8e2",
+      "line": 136,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "2b6c76a51de0efd4f8a067d95d28ca3d391bbfd709a4047d0de850704fc305a8",
+      "line": 137,
+      "node": "If"
+    },
+    {
+      "condition_sha256": "a3a010573626cd804597ba8b1f292b91e744fd5abff8f9da8b4213e727dc5177",
+      "line": 138,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "21b954ba079db9b64a30d4775a398283f750967733ee68bf46fd134c2adfd8e2",
+      "line": 140,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "21b954ba079db9b64a30d4775a398283f750967733ee68bf46fd134c2adfd8e2",
+      "line": 141,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "5c71a0afbab80388fc22cf787bac6a3e8dac54432a7be4e2206dcb1ec3b68114",
+      "line": 148,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "04a66817203ccc03c6baac4fecdfdfd6704e986563cdd9d6c777859e335a5568",
+      "line": 148,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "2b6c76a51de0efd4f8a067d95d28ca3d391bbfd709a4047d0de850704fc305a8",
+      "line": 148,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "21b954ba079db9b64a30d4775a398283f750967733ee68bf46fd134c2adfd8e2",
+      "line": 148,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "a3a010573626cd804597ba8b1f292b91e744fd5abff8f9da8b4213e727dc5177",
+      "line": 149,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "5c71a0afbab80388fc22cf787bac6a3e8dac54432a7be4e2206dcb1ec3b68114",
+      "line": 149,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "04a66817203ccc03c6baac4fecdfdfd6704e986563cdd9d6c777859e335a5568",
+      "line": 149,
+      "node": "IfExp"
+    },
+    {
+      "condition_sha256": "2b6c76a51de0efd4f8a067d95d28ca3d391bbfd709a4047d0de850704fc305a8",
+      "line": 149,
+      "node": "IfExp"
+    }
+  ],
+  "legacy_implementation_import_edges_after": 0,
+  "legacy_implementation_import_edges_before": 32,
+  "legacy_namespace_import_edges_after": 0,
+  "legacy_namespace_import_edges_before": 0,
+  "legacy_treatment_definitions_after": 0,
+  "legacy_treatment_definitions_before": 13,
+  "loc_kpi": false,
+  "runtime_dispatch_policy_ids_after": [],
+  "runtime_dispatch_policy_ids_before": [
+    "BINARY_PLURALITY_RESPONSIBILITY_VERSION",
+    "GRADIENT_CONDITIONED_EVIDENCE_VERSION",
+    "GRADIENT_OPTIMIZER_INPUT_VERSION",
+    "GRADIENT_PATTERN_DISCOVERY_VERSION",
+    "LAYER1_ANCHOR_EVIDENCE_VERSION",
+    "LAYER1_FEEDBACK_SEARCH_VERSION",
+    "LAYER1_INPUT_SCHEMA_VERSION",
+    "LAYER1_RESPONSIBILITY_SEARCH_VERSION",
+    "PATTERN_ABSTRACTION_GUARD_VERSION",
+    "PATTERN_AWARE_DISCOVERY_VERSION",
+    "PATTERN_CONDITIONED_EVIDENCE_VERSION",
+    "PATTERN_OPTIMIZER_INPUT_VERSION",
+    "PATTERN_SPECIFIC_CONTENT_GUARD_VERSION",
+    "PATTERN_SUPPORT_ID_ALIAS_VERSION",
+    "STRUCTURED_ACTION_MEMORY_VERSION",
+    "STRUCTURED_ROLLING_RISK_MEMORY_VERSION",
+    "UNIFIED_EXPERIENCE_MEMORY_VERSION",
+    "UNIFIED_FOCUSED_PATTERN_VERSION",
+    "UNIFIED_NULL_MEMORY_VERSION",
+    "UNIFIED_NULL_PATTERN_VERSION",
+    "UNIFIED_PATTERN_DIAGNOSTIC_VERSION",
+    "UNIFIED_STRUCTURED_MEMORY_VERSION",
+    "UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION",
+    "UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION"
+  ],
+  "runtime_semantic_branches_after": 0,
+  "runtime_semantic_branches_before": 40,
+  "scope": "Current CLI + effective binding + composition AST closure with package initializers"
+}

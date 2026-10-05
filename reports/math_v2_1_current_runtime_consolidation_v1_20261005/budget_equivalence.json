@@ -1,0 +1,36 @@
+{
+  "accounting_sha256_after": "e033537d8fbcf37c4adc270876e6f436cbac5eff2cae144713d25586f7a4430f",
+  "accounting_sha256_before": "e033537d8fbcf37c4adc270876e6f436cbac5eff2cae144713d25586f7a4430f",
+  "after": {
+    "max_opportunities": 1,
+    "max_proposals_per_opportunity": 6,
+    "pattern_calls": 13,
+    "pattern_cluster_calls": 1,
+    "pattern_gradient_calls": 12,
+    "reflection_calls": 6,
+    "solver_calls": 1632,
+    "solver_per_opportunity": 148,
+    "successful_provider_calls": 1651,
+    "transport_attempts": 34671
+  },
+  "before": {
+    "max_opportunities": 1,
+    "max_proposals_per_opportunity": 6,
+    "pattern_calls": 13,
+    "pattern_cluster_calls": 1,
+    "pattern_gradient_calls": 12,
+    "reflection_calls": 6,
+    "solver_calls": 1632,
+    "solver_per_opportunity": 148,
+    "successful_provider_calls": 1651,
+    "transport_attempts": 34671
+  },
+  "cluster_call_ceiling": 1,
+  "k_local_return": 4,
+  "layer1_metric_limit": 36,
+  "max_generations": 6,
+  "status": "EXACT_EQUIVALENT",
+  "team_evaluation_sha256_after": "23dc3b027f234a60a952c8b06acb6998fa0f976d09a7a9b87690749917a2a22c",
+  "team_evaluation_sha256_before": "23dc3b027f234a60a952c8b06acb6998fa0f976d09a7a9b87690749917a2a22c",
+  "wrong_example_ceiling": 12
+}

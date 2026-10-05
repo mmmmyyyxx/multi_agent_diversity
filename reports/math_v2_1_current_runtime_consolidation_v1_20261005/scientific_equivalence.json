@@ -1,0 +1,30 @@
+{
+  "CLUSTER_SEMANTICS_CHANGED": "NO",
+  "DATA_ACCESS_CHANGED": "NO",
+  "EVIDENCE_CHANGED": "NO",
+  "GRADIENT_SEMANTICS_CHANGED": "NO",
+  "LAYER1_SEARCH_CHANGED": "NO",
+  "MEMORY_CHANGED": "NO",
+  "PATTERN_F_CHANGED": "NO",
+  "PATTERN_SELECTION_CHANGED": "NO",
+  "PROVIDER_GENERATION_POLICY_CHANGED": "NO",
+  "SCIENTIFIC_DIFF": "EMPTY",
+  "TEAM_ADMISSION_CHANGED": "NO",
+  "WHO_CHANGED": "NO",
+  "baseline_source": "08c632eb581b25699da0c4aa480b986e0de61e02",
+  "boundaries": "Engineering equivalence only; no new scientific efficacy result.",
+  "changed_fields": [],
+  "compared_fields": 31,
+  "current_policy_bundle": {
+    "clustering": "gradient_cluster_pattern_discovery_v4",
+    "evidence": "pattern_gradient_representatives_preservation_transition_v5",
+    "gradient": "PER_EXAMPLE_TEXTUAL_GRADIENT_V1",
+    "layer1": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
+    "memory": "structured_cross_member_rolling_risk_memory_v4",
+    "pattern_responsibility": "same_raw_pattern_responsibility_v1",
+    "responsibility": "binary_plurality_raw_responsibility_v1",
+    "transition": "initial_competence_team_gain_v2"
+  },
+  "final_runtime_source": "f99e4d46759232eecd566fa840852a18dfe1d54d",
+  "status": "PASS"
+}

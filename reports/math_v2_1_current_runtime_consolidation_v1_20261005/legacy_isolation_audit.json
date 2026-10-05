@@ -1,0 +1,25 @@
+{
+  "current_entrypoint": "scripts/run_experiment.py",
+  "current_execution_eligibility": "ONLY_CURRENT_POLICY_BUNDLE",
+  "current_layer1_compositions": 1,
+  "current_memory_pipelines": 1,
+  "current_pattern_pipelines": 1,
+  "current_to_legacy_imports": 0,
+  "dynamic_fresh_process_legacy_imports": 0,
+  "gepa_exposure_runtime_references": 0,
+  "historical_entrypoint": "scripts/replay_experiment.py",
+  "historical_schema_compatibility": true,
+  "legacy_class_definitions": 0,
+  "legacy_namespace_dependencies": [],
+  "missing_gradient_provider": "HOLD_PRE_PROVIDER",
+  "missing_memory_provider": "HOLD_PRE_PROVIDER",
+  "old_memory_implementation_references": 0,
+  "old_pattern_v3_references": 0,
+  "silent_fallback": false,
+  "static_roots": [
+    "scripts/run_experiment.py",
+    "multi_dataset_diverse_rl/benchmarks/math_gradient_pattern_binding.py",
+    "multi_dataset_diverse_rl/search/current_composition.py"
+  ],
+  "status": "PASS"
+}

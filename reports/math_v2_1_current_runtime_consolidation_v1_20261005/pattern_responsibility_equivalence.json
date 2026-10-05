@@ -1,0 +1,9 @@
+{
+  "after_sha256": "3304a9670db7e59a9e74e2aec8d8ee09a18348020da8cf772229b2171ffeaff7",
+  "authority": "shared responsibility_value(D,N,C)",
+  "before_sha256": "3304a9670db7e59a9e74e2aec8d8ee09a18348020da8cf772229b2171ffeaff7",
+  "cases": 343,
+  "equivalent_cases": 343,
+  "pattern_selection_sha256": "c656ba507dab7b4a58db5e0eaad451a232e0266e103e1d707f12163119d7d1fb",
+  "status": "EXACT_EQUIVALENT"
+}

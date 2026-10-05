@@ -1,0 +1,47 @@
+{
+  "binding_mro": [
+    "MATHGradientPatternBinding",
+    "object"
+  ],
+  "builder": "build_current_team_prompt_search",
+  "bundle": {
+    "clustering": "gradient_cluster_pattern_discovery_v4",
+    "evidence": "pattern_gradient_representatives_preservation_transition_v5",
+    "gradient": "PER_EXAMPLE_TEXTUAL_GRADIENT_V1",
+    "layer1": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
+    "memory": "structured_cross_member_rolling_risk_memory_v4",
+    "pattern_responsibility": "same_raw_pattern_responsibility_v1",
+    "responsibility": "binary_plurality_raw_responsibility_v1",
+    "transition": "initial_competence_team_gain_v2"
+  },
+  "current_entrypoint": "scripts/run_experiment.py",
+  "engine_mro": [
+    "GradientPatternMemoryEngine",
+    "LocalTaskEngine",
+    "object"
+  ],
+  "engineering_identity": "CURRENT_RUNTIME_COMPOSITION_V1",
+  "layer1_config": {
+    "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+    "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
+    "k_local_return": 4,
+    "max_generations": 6,
+    "max_prompt_chars": 3000,
+    "metric_limit": 36,
+    "official_gepa_fidelity": false,
+    "optimizer_input_schema": "PATTERN_GRADIENT_TRAJECTORIES_MEMORY_INPUT_V4",
+    "panel_policy": "pattern_gradient_representatives_preservation_transition_v5",
+    "panel_size": 6
+  },
+  "memory_mro": [
+    "StructuredRollingRiskMemoryV4",
+    "PrivateActionMemory",
+    "MemoryState",
+    "object"
+  ],
+  "optimizer_mro": [
+    "GradientPatternMemoryOptimizer",
+    "BoundedMemoryOptimizer",
+    "object"
+  ]
+}

@@ -1,0 +1,258 @@
+{
+  "deletion_policy": "No module deletion: replay/test requirements justified isolation. Static unreachability alone never authorized deletion.",
+  "moved_to_legacy": [
+    {
+      "original_path": "multi_dataset_diverse_rl/benchmarks/math_autonomous.py",
+      "path": "multi_dataset_diverse_rl/benchmarks/legacy/math_autonomous.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py",
+      "path": "multi_dataset_diverse_rl/benchmarks/legacy/math_domain_binding.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "path": "multi_dataset_diverse_rl/benchmarks/legacy/math_execution.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/benchmarks/math_layer1_binding.py",
+      "path": "multi_dataset_diverse_rl/benchmarks/legacy/math_layer1_binding.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py",
+      "path": "multi_dataset_diverse_rl/benchmarks/legacy/math_low_cost_binding.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/benchmarks/math_memory_binding.py",
+      "path": "multi_dataset_diverse_rl/benchmarks/legacy/math_memory_binding.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/benchmarks/math_pattern_binding.py",
+      "path": "multi_dataset_diverse_rl/benchmarks/legacy/math_pattern_binding.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+      "path": "multi_dataset_diverse_rl/benchmarks/legacy/math_v21_binding.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "path": "multi_dataset_diverse_rl/governance/legacy/autonomous_math.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/governance/math_optimizer_witness.py",
+      "path": "multi_dataset_diverse_rl/governance/legacy/math_optimizer_witness.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/governance/math_paired_validation.py",
+      "path": "multi_dataset_diverse_rl/governance/legacy/math_paired_validation.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/governance/unified_execution.py",
+      "path": "multi_dataset_diverse_rl/governance/legacy/unified_execution.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/action_memory.py",
+      "path": "multi_dataset_diverse_rl/search/legacy/action_memory.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "path": "multi_dataset_diverse_rl/search/legacy/binary_composition.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/experience.py",
+      "path": "multi_dataset_diverse_rl/search/legacy/experience.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/gepa_v2.py",
+      "path": "multi_dataset_diverse_rl/search/legacy/gepa_v2.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/layer1_memory.py",
+      "path": "multi_dataset_diverse_rl/search/legacy/layer1_memory.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/layer1_responsibility.py",
+      "path": "multi_dataset_diverse_rl/search/legacy/layer1_responsibility.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/memory.py",
+      "path": "multi_dataset_diverse_rl/search/legacy/memory.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/pattern_layer1.py",
+      "path": "multi_dataset_diverse_rl/search/legacy/pattern_layer1.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": null,
+      "path": "multi_dataset_diverse_rl/search/legacy/pattern_provider.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": null,
+      "path": "multi_dataset_diverse_rl/search/legacy/pattern_records.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/pattern_responsibility.py",
+      "path": "multi_dataset_diverse_rl/search/legacy/pattern_responsibility.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/patterns.py",
+      "path": "multi_dataset_diverse_rl/search/legacy/patterns.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/runtime_v2.py",
+      "path": "multi_dataset_diverse_rl/search/legacy/runtime_v2.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/semantic_contract.py",
+      "path": "multi_dataset_diverse_rl/search/legacy/semantic_contract.py",
+      "reason": "Required explicit historical replay or public zero-API compatibility tests."
+    }
+  ],
+  "obsolete_current_dispatch_removed": true,
+  "removed_classes": [],
+  "removed_from_current_graph": [
+    {
+      "name": "StructuredActionMemoryV3",
+      "path": "multi_dataset_diverse_rl/search/action_memory.py"
+    },
+    {
+      "name": "StrategyExperienceMemoryV2",
+      "path": "multi_dataset_diverse_rl/search/experience.py"
+    },
+    {
+      "name": "GEPATeamExposureOptimizer",
+      "path": "multi_dataset_diverse_rl/search/gepa_v2.py"
+    },
+    {
+      "name": "V2GEPABridge",
+      "path": "multi_dataset_diverse_rl/search/gepa_v2.py"
+    },
+    {
+      "name": "GEPATeamCandidateExposureEngine",
+      "path": "multi_dataset_diverse_rl/search/gepa_v2.py"
+    },
+    {
+      "name": "StructuredLongTermMemoryProviderV1",
+      "path": "multi_dataset_diverse_rl/search/memory.py"
+    },
+    {
+      "name": "PatternLayer1Config",
+      "path": "multi_dataset_diverse_rl/search/pattern_layer1.py"
+    },
+    {
+      "name": "PatternMemoryOptimizer",
+      "path": "multi_dataset_diverse_rl/search/pattern_layer1.py"
+    },
+    {
+      "name": "PatternMemoryEngine",
+      "path": "multi_dataset_diverse_rl/search/pattern_layer1.py"
+    },
+    {
+      "name": "ResponsibilityPatternDiscoveryV3",
+      "path": "multi_dataset_diverse_rl/search/pattern_responsibility.py"
+    },
+    {
+      "name": "PatternConditionedEvidenceV4",
+      "path": "multi_dataset_diverse_rl/search/pattern_responsibility.py"
+    },
+    {
+      "name": "PatternDiagnosticV1",
+      "path": "multi_dataset_diverse_rl/search/patterns.py"
+    },
+    {
+      "name": "FocusedPatternDiagnosticV2",
+      "path": "multi_dataset_diverse_rl/search/semantic_contract.py"
+    }
+  ],
+  "removed_modules": [],
+  "retained_shared_primitives": [
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/example_text.py",
+      "reason": "Shared low-level contract, data, transport, bounded search or state operation."
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/schemas.py",
+      "reason": "Shared low-level contract, data, transport, bounded search or state operation."
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/action_vocabulary.py",
+      "reason": "Shared low-level contract, data, transport, bounded search or state operation."
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/binary_runtime.py",
+      "reason": "Shared low-level contract, data, transport, bounded search or state operation."
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/bounded_layer1.py",
+      "reason": "Shared low-level contract, data, transport, bounded search or state operation."
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/initial_competence_transition.py",
+      "reason": "Shared low-level contract, data, transport, bounded search or state operation."
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/memory_records.py",
+      "reason": "Shared low-level contract, data, transport, bounded search or state operation."
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/memory_state.py",
+      "reason": "Shared low-level contract, data, transport, bounded search or state operation."
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/pattern_primitives.py",
+      "reason": "Shared low-level contract, data, transport, bounded search or state operation."
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/private_action_memory.py",
+      "reason": "Shared low-level contract, data, transport, bounded search or state operation."
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/provider_runtime.py",
+      "reason": "Shared low-level contract, data, transport, bounded search or state operation."
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/responsibility_value.py",
+      "reason": "Shared low-level contract, data, transport, bounded search or state operation."
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/schemas.py",
+      "reason": "Shared low-level contract, data, transport, bounded search or state operation."
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/scientific_aggregation.py",
+      "reason": "Shared low-level contract, data, transport, bounded search or state operation."
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/selected_evidence.py",
+      "reason": "Shared low-level contract, data, transport, bounded search or state operation."
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/schemas.py",
+      "reason": "Shared low-level contract, data, transport, bounded search or state operation."
+    }
+  ]
+}

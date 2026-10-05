@@ -1,0 +1,4883 @@
+{
+  "analysis": "CONSERVATIVE_AST_ALL_LOCAL_IMPORTS_WITH_INITIALIZERS",
+  "class_count": 518,
+  "edges": [
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/__init__.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/__init__.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/__init__.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/access.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/__init__.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/blocked.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/__init__.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/hotpotqa.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/__init__.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/registry.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_util.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/offline.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_ifeval.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_ifeval.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_ifeval.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_ifeval.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_ifeval.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_util_ifeval.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_registry.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_registry.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_registry.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_registry.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_registry.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_registry.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_registry_ifeval.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_registry_ifeval.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_registry_ifeval.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_registry_ifeval.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_registry_ifeval.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_registry_ifeval.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_ifeval.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_util.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_util.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_util.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_util.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_util.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/offline.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_util_ifeval.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_util_ifeval.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_util_ifeval.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_util_ifeval.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_util_ifeval.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/offline.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/access.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/access.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/access.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/data_freeze.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/access.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/access.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/blocked.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/blocked.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/blocked.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/hover.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/blocked.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/ifbench.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/blocked.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/blocked.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/pupa.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/evaluator_resources.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/evaluator_resources.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/evaluator_resources.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/evaluator_resources.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/evaluator_resources.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/offline.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/evaluator_resources.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/data_freeze.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/evaluator_resources.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/evaluator_resources.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/experiment_splits.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/experiment_splits.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/experiment_splits.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/access.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/experiment_splits.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/data_freeze.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/experiment_splits.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_domain_v2.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/experiment_splits.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/registry.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/experiment_splits.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/experiment_splits.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/experiment_splits.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/hotpotqa.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/hotpotqa.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/hotpotqa.py",
+      "target": "multi_dataset_diverse_rl/search/benchmark.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/hotpotqa.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/hover.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/hover.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/hover.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/hotpotqa.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/hover.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/hover.py",
+      "target": "multi_dataset_diverse_rl/search/benchmark.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/hover.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/ifbench.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/ifbench.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/ifbench.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/ifbench_checkers.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/ifbench.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/ifbench.py",
+      "target": "multi_dataset_diverse_rl/search/benchmark.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/ifbench.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/ifbench_checkers.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/ifbench_checkers.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/ifbench_checkers.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/ifbench_checkers.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/ifbench_checkers.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_registry.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/ifbench_checkers.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/evaluator_resources.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_interface.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math.py",
+      "target": "multi_dataset_diverse_rl/search/benchmark.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/data_freeze.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/experiment_splits.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_interface.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_low_cost.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_solver_decoding.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_v21_interface.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py",
+      "target": "multi_dataset_diverse_rl/governance/token_accounting.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_autonomous.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_autonomous.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_autonomous.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_execution.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_autonomous.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_autonomous.py",
+      "target": "multi_dataset_diverse_rl/governance/token_accounting.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_autonomous.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/data_freeze.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/experiment_splits.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_autonomous.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_domain_v2.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_gradient_pattern_binding.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_layer1_binding.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_memory_binding.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_pattern_binding.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/protocols.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py",
+      "target": "multi_dataset_diverse_rl/governance/math_paired_validation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_domain_v2.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_domain_v2.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_domain_v2.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_domain_v2.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/protocols.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_domain_v2.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_domain_v2.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/access.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/data_freeze.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/experiment_splits.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_interface.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_worker.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/protocols.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/evaluation/mutable_prompt_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/search/binary_composition.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/search/binary_runtime.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/search/gepa_v2.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/search/layer1_memory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/search/layer1_responsibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/search/pattern_layer1.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/search/scientific_aggregation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_gradient_pattern_binding.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_gradient_pattern_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_gradient_pattern_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/data_freeze.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_gradient_pattern_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_pattern_binding.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_gradient_pattern_binding.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_gradient_pattern_binding.py",
+      "target": "multi_dataset_diverse_rl/search/pattern_layer1.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_gradient_pattern_binding.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_gradient_pattern_binding.py",
+      "target": "multi_dataset_diverse_rl/search/textual_gradients.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_gradient_pattern_binding.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_interface.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_interface.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_layer1_binding.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_layer1_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_layer1_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/data_freeze.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_layer1_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_layer1_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_execution.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_layer1_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_layer1_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_optimizer_generation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_layer1_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_solver_decoding.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_layer1_binding.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_layer1_binding.py",
+      "target": "multi_dataset_diverse_rl/governance/math_paired_validation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_layer1_binding.py",
+      "target": "multi_dataset_diverse_rl/governance/token_accounting.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_layer1_binding.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_layer1_binding.py",
+      "target": "multi_dataset_diverse_rl/search/layer1_responsibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_layer1_binding.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_layer1_binding.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/data_freeze.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/experiment_splits.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/access.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/data_freeze.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_execution.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_low_cost.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_optimizer_diagnostics.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_optimizer_generation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_v21_interface.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/protocols.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py",
+      "target": "multi_dataset_diverse_rl/governance/math_paired_validation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py",
+      "target": "multi_dataset_diverse_rl/governance/token_accounting.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py",
+      "target": "multi_dataset_diverse_rl/search/binary_runtime.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_memory_binding.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_memory_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_memory_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/data_freeze.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_memory_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_layer1_binding.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_memory_binding.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_memory_binding.py",
+      "target": "multi_dataset_diverse_rl/search/action_memory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_memory_binding.py",
+      "target": "multi_dataset_diverse_rl/search/layer1_memory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_memory_binding.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_memory_binding.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_optimizer_diagnostics.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_optimizer_diagnostics.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_optimizer_diagnostics.py",
+      "target": "multi_dataset_diverse_rl/evaluation/mutable_prompt_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_optimizer_diagnostics.py",
+      "target": "multi_dataset_diverse_rl/evaluation/semantic_mutable_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_optimizer_diagnostics.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_optimizer_diagnostics.py",
+      "target": "multi_dataset_diverse_rl/governance/token_accounting.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_optimizer_diagnostics.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_optimizer_diagnostics.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_proposer_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_optimizer_diagnostics.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_optimizer_diagnostics.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_optimizer_diagnostics.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_optimizer_generation.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_optimizer_generation.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_optimizer_generation.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_optimizer_generation.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_pattern_binding.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_pattern_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_pattern_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/data_freeze.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_pattern_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_memory_binding.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_pattern_binding.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_pattern_binding.py",
+      "target": "multi_dataset_diverse_rl/search/action_memory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_pattern_binding.py",
+      "target": "multi_dataset_diverse_rl/search/pattern_layer1.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_pattern_binding.py",
+      "target": "multi_dataset_diverse_rl/search/pattern_responsibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_pattern_binding.py",
+      "target": "multi_dataset_diverse_rl/search/rolling_risk_memory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_pattern_binding.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_pattern_binding.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_domain_v2.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_solver_decoding.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_solver_decoding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_solver_decoding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_optimizer_generation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_solver_decoding.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_solver_decoding.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_solver_decoding.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/data_freeze.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/experiment_splits.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_domain_v2.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_execution.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_solver_decoding.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_v21_interface.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_worker.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/protocols.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+      "target": "multi_dataset_diverse_rl/evaluation/mutable_prompt_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+      "target": "multi_dataset_diverse_rl/governance/math_paired_validation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+      "target": "multi_dataset_diverse_rl/governance/token_accounting.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_interface.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_interface.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_interface.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_domain_v2.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_interface.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_interface.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_interface.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_interface.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/protocols.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_interface.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_interface.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_v21_interface.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_worker.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_worker.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/protocols.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/protocols.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/protocols.py",
+      "target": "multi_dataset_diverse_rl/search/benchmark.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/protocols.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/protocols.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/pupa.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/pupa.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/pupa.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/scorer_contracts.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/pupa.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/pupa.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/registry.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/registry.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/registry.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/evaluator_resources.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/registry.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_worker.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/registry.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/protocols.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/registry.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/registry.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/candidate_selection.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/candidate_selection.py",
+      "target": "multi_dataset_diverse_rl/member_objectives.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/candidate_selection.py",
+      "target": "multi_dataset_diverse_rl/responsibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/candidate_selection.py",
+      "target": "multi_dataset_diverse_rl/responsibility_contribution.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/compatibility_repair.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/compatibility_repair.py",
+      "target": "multi_dataset_diverse_rl/utils.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/config.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/config.py",
+      "target": "multi_dataset_diverse_rl/provider_credentials.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/config.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/diagnosis_aggregation.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/diagnosis_aggregation.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/diagnosis_aggregation.py",
+      "target": "multi_dataset_diverse_rl/evaluation/fixed_probe.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/diagnosis_aggregation.py",
+      "target": "multi_dataset_diverse_rl/peer_state.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/diagnosis_aggregation.py",
+      "target": "multi_dataset_diverse_rl/responsibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/categorical_profiles.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/categorical_profiles.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/categorical_profiles.py",
+      "target": "multi_dataset_diverse_rl/evaluation/endpoint_identifiability.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/categorical_profiles.py",
+      "target": "multi_dataset_diverse_rl/evaluation/fixed_probe.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/categorical_profiles.py",
+      "target": "multi_dataset_diverse_rl/evaluation/prompt_question.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/endpoint_identifiability.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/endpoint_identifiability.py",
+      "target": "multi_dataset_diverse_rl/utils.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/fixed_probe.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/fixed_probe.py",
+      "target": "multi_dataset_diverse_rl/candidate_selection.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/fixed_probe.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/fixed_probe.py",
+      "target": "multi_dataset_diverse_rl/evaluation/prompt_question.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/fixed_probe.py",
+      "target": "multi_dataset_diverse_rl/member_objectives.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/fixed_probe.py",
+      "target": "multi_dataset_diverse_rl/peer_state.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/fixed_probe.py",
+      "target": "multi_dataset_diverse_rl/responsibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/output_contract.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/output_contract.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/output_contract.py",
+      "target": "multi_dataset_diverse_rl/evaluation/mutable_prompt_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/persistent_solver_cache.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/persistent_solver_cache.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/persistent_solver_cache.py",
+      "target": "multi_dataset_diverse_rl/evaluation/prompt_question.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/semantic_mutable_contract.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/semantic_mutable_contract.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/semantic_mutable_contract.py",
+      "target": "multi_dataset_diverse_rl/evaluation/mutable_prompt_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/semantic_mutable_contract.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/semantic_mutable_contract.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/solver_output.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/solver_output.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/solver_output.py",
+      "target": "multi_dataset_diverse_rl/evaluation/prompt_question.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/solver_output.py",
+      "target": "multi_dataset_diverse_rl/tasks.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/validation.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/validation.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/validation.py",
+      "target": "multi_dataset_diverse_rl/evaluation/fixed_probe.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/validation.py",
+      "target": "multi_dataset_diverse_rl/evaluation/prompt_question.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/experiment.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/experiment.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/experiment.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/base.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/experiment.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/experiment.py",
+      "target": "multi_dataset_diverse_rl/native_feed.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/experiment.py",
+      "target": "multi_dataset_diverse_rl/saturation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/experiment.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/experiment.py",
+      "target": "multi_dataset_diverse_rl/search/orchestrator.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/experiment.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/experiment.py",
+      "target": "multi_dataset_diverse_rl/team_search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/experiment.py",
+      "target": "multi_dataset_diverse_rl/team_search/controller.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/experiment.py",
+      "target": "multi_dataset_diverse_rl/team_search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/experiment.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/formal_final_team.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/formal_final_team.py",
+      "target": "multi_dataset_diverse_rl/persistence/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/formal_final_team.py",
+      "target": "multi_dataset_diverse_rl/persistence/durable_io.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/formal_final_team.py",
+      "target": "multi_dataset_diverse_rl/utils.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/formal_validation_policy.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/formal_validation_policy.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/formal_validation_policy.py",
+      "target": "multi_dataset_diverse_rl/governance/freeze_hash.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/formal_validation_policy.py",
+      "target": "multi_dataset_diverse_rl/governance/startup_identity.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/__init__.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/__init__.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/__init__.py",
+      "target": "multi_dataset_diverse_rl/governance/artifacts.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/__init__.py",
+      "target": "multi_dataset_diverse_rl/governance/authorization.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/__init__.py",
+      "target": "multi_dataset_diverse_rl/governance/manifest.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/__init__.py",
+      "target": "multi_dataset_diverse_rl/governance/provenance.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/__init__.py",
+      "target": "multi_dataset_diverse_rl/governance/telemetry.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/authorization.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/authorization.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/authorization.py",
+      "target": "multi_dataset_diverse_rl/governance/manifest.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_optimizer_diagnostics.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "target": "multi_dataset_diverse_rl/governance/math_paired_validation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "target": "multi_dataset_diverse_rl/governance/token_accounting.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "target": "multi_dataset_diverse_rl/governance/unified_execution.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "target": "multi_dataset_diverse_rl/persistence/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "target": "multi_dataset_diverse_rl/persistence/durable_io.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "target": "multi_dataset_diverse_rl/persistence/exact_output_cache.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "target": "multi_dataset_diverse_rl/provider_factory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "target": "multi_dataset_diverse_rl/search/pattern_id_transport.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "target": "multi_dataset_diverse_rl/search/pattern_responsibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "target": "multi_dataset_diverse_rl/search/provider_runtime.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "target": "multi_dataset_diverse_rl/search/textual_gradients.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/execution_harness_v2.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/execution_harness_v2.py",
+      "target": "multi_dataset_diverse_rl/config.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/execution_harness_v2.py",
+      "target": "multi_dataset_diverse_rl/provider_credentials.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/execution_harness_v2.py",
+      "target": "multi_dataset_diverse_rl/provider_factory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/manifest.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/manifest.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_optimizer_witness.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_optimizer_witness.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_optimizer_witness.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_optimizer_witness.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_optimizer_diagnostics.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_optimizer_witness.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_optimizer_witness.py",
+      "target": "multi_dataset_diverse_rl/governance/autonomous_math.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_optimizer_witness.py",
+      "target": "multi_dataset_diverse_rl/governance/startup_identity.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_optimizer_witness.py",
+      "target": "multi_dataset_diverse_rl/governance/token_accounting.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_optimizer_witness.py",
+      "target": "multi_dataset_diverse_rl/governance/unified_execution.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_optimizer_witness.py",
+      "target": "multi_dataset_diverse_rl/persistence/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_optimizer_witness.py",
+      "target": "multi_dataset_diverse_rl/persistence/durable_io.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_optimizer_witness.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_optimizer_witness.py",
+      "target": "multi_dataset_diverse_rl/search/provider_runtime.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_optimizer_witness.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_paired_validation.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_paired_validation.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_paired_validation.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_paired_validation.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_paired_validation.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_paired_validation.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/protocols.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_paired_validation.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_paired_validation.py",
+      "target": "multi_dataset_diverse_rl/governance/autonomous_math.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_paired_validation.py",
+      "target": "multi_dataset_diverse_rl/governance/startup_identity.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_paired_validation.py",
+      "target": "multi_dataset_diverse_rl/governance/token_accounting.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_paired_validation.py",
+      "target": "multi_dataset_diverse_rl/governance/unified_execution.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_paired_validation.py",
+      "target": "multi_dataset_diverse_rl/persistence/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_paired_validation.py",
+      "target": "multi_dataset_diverse_rl/persistence/durable_io.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_paired_validation.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_paired_validation.py",
+      "target": "multi_dataset_diverse_rl/search/provider_runtime.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_paired_validation.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_paired_validation.py",
+      "target": "multi_dataset_diverse_rl/search/scientific_aggregation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/math_paired_validation.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/production_execution.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/production_execution.py",
+      "target": "multi_dataset_diverse_rl/experiment.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/production_execution.py",
+      "target": "multi_dataset_diverse_rl/formal_validation_policy.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/production_execution.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/production_execution.py",
+      "target": "multi_dataset_diverse_rl/governance/execution_harness_v2.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/production_execution.py",
+      "target": "multi_dataset_diverse_rl/governance/freeze_hash.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/production_execution.py",
+      "target": "multi_dataset_diverse_rl/governance/startup_identity.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/production_execution.py",
+      "target": "multi_dataset_diverse_rl/governance/v4_attempt3_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/production_execution.py",
+      "target": "multi_dataset_diverse_rl/governance/v4_source_closure.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/production_execution.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/production_execution.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_callbacks.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/production_execution.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_runtime.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/production_execution.py",
+      "target": "multi_dataset_diverse_rl/persistence/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/production_execution.py",
+      "target": "multi_dataset_diverse_rl/persistence/artifacts.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/production_execution.py",
+      "target": "multi_dataset_diverse_rl/persistence/durable_io.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/production_execution.py",
+      "target": "multi_dataset_diverse_rl/provider_credentials.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/production_execution.py",
+      "target": "multi_dataset_diverse_rl/team_search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/production_execution.py",
+      "target": "multi_dataset_diverse_rl/team_search/execution_runtime.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/production_execution.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/provenance.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/provenance.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/provenance.py",
+      "target": "multi_dataset_diverse_rl/governance/manifest.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/provenance.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/registries.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/registries.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/registries.py",
+      "target": "multi_dataset_diverse_rl/governance/manifest.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/registries.py",
+      "target": "multi_dataset_diverse_rl/governance/repository.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/repository.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/repository.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/repository.py",
+      "target": "multi_dataset_diverse_rl/governance/manifest.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/repository.py",
+      "target": "multi_dataset_diverse_rl/governance/registries.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/repository.py",
+      "target": "multi_dataset_diverse_rl/governance/source_identity.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/repository.py",
+      "target": "multi_dataset_diverse_rl/governance/unified_execution.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/token_accounting.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/token_accounting.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/token_accounting.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_optimizer_generation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/token_accounting.py",
+      "target": "multi_dataset_diverse_rl/persistence/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/token_accounting.py",
+      "target": "multi_dataset_diverse_rl/persistence/durable_io.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/token_accounting.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/unified_execution.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/unified_execution.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/unified_execution.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/unified_execution.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/unified_execution.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_execution.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/unified_execution.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/unified_execution.py",
+      "target": "multi_dataset_diverse_rl/governance/autonomous_math.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/unified_execution.py",
+      "target": "multi_dataset_diverse_rl/governance/repository.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/unified_execution.py",
+      "target": "multi_dataset_diverse_rl/governance/source_identity.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/unified_execution.py",
+      "target": "multi_dataset_diverse_rl/governance/startup_identity.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/unified_execution.py",
+      "target": "multi_dataset_diverse_rl/persistence/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/unified_execution.py",
+      "target": "multi_dataset_diverse_rl/persistence/durable_io.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/unified_execution.py",
+      "target": "multi_dataset_diverse_rl/provider_factory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/unified_execution.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/unified_execution.py",
+      "target": "multi_dataset_diverse_rl/search/provider_runtime.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/unified_execution.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/governance/unified_execution.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/llm_client.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/llm_client.py",
+      "target": "multi_dataset_diverse_rl/config.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/llm_client.py",
+      "target": "multi_dataset_diverse_rl/provider_credentials.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/llm_client.py",
+      "target": "multi_dataset_diverse_rl/provider_factory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/__init__.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/__init__.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/__init__.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/backend_registry.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/__init__.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/base.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/__init__.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/__init__.py",
+      "target": "multi_dataset_diverse_rl/saturation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/backend_registry.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/backend_registry.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/backend_registry.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/base.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/backend_registry.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/backend_registry.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/mars_native.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/backend_registry.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/backend_registry.py",
+      "target": "multi_dataset_diverse_rl/native_feed.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/base.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/base.py",
+      "target": "multi_dataset_diverse_rl/experiment.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/base.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/base.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/base.py",
+      "target": "multi_dataset_diverse_rl/native_feed.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py",
+      "target": "multi_dataset_diverse_rl/evaluation/mutable_prompt_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py",
+      "target": "multi_dataset_diverse_rl/evaluation/solver_output.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/base.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_runtime.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_callbacks.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_callbacks.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_callbacks.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_callbacks.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_callbacks.py",
+      "target": "multi_dataset_diverse_rl/persistence/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_callbacks.py",
+      "target": "multi_dataset_diverse_rl/persistence/durable_io.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_runtime.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py",
+      "target": "multi_dataset_diverse_rl/native_feed.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py",
+      "target": "multi_dataset_diverse_rl/saturation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_callbacks.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_proposer_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_runtime.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py",
+      "target": "multi_dataset_diverse_rl/persistence/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py",
+      "target": "multi_dataset_diverse_rl/persistence/durable_io.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py",
+      "target": "multi_dataset_diverse_rl/saturation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_proposer_contract.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/gepa_proposer_contract.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/mars_native.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/mars_native.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/mars_native.py",
+      "target": "multi_dataset_diverse_rl/evaluation/mutable_prompt_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/mars_native.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/mars_native.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/base.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/mars_native.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/mars_native.py",
+      "target": "multi_dataset_diverse_rl/native_feed.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/mars_native.py",
+      "target": "multi_dataset_diverse_rl/saturation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/mars_native.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/production_backends.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/production_backends.py",
+      "target": "multi_dataset_diverse_rl/experiment.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/production_backends.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/production_backends.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/base.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/production_backends.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/production_backends.py",
+      "target": "multi_dataset_diverse_rl/native_feed.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/module2_context.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/module2_context.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/module2_context.py",
+      "target": "multi_dataset_diverse_rl/evaluation/fixed_probe.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/module2_context.py",
+      "target": "multi_dataset_diverse_rl/peer_state.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/module2_context.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/native_feed.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/native_feed.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/peer_state.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/peer_state.py",
+      "target": "multi_dataset_diverse_rl/utils.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/persistence/artifacts.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/persistence/artifacts.py",
+      "target": "multi_dataset_diverse_rl/persistence/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/persistence/artifacts.py",
+      "target": "multi_dataset_diverse_rl/persistence/durable_io.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/persistence/exact_output_cache.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/persistence/exact_output_cache.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/persistence/exact_output_cache.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/persistence/exact_output_cache.py",
+      "target": "multi_dataset_diverse_rl/persistence/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/persistence/exact_output_cache.py",
+      "target": "multi_dataset_diverse_rl/persistence/durable_io.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/persistence/exact_output_cache.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/persistence/exact_output_cache.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/persistence/identity.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/persistence/identity.py",
+      "target": "multi_dataset_diverse_rl/compatibility_repair.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/persistence/identity.py",
+      "target": "multi_dataset_diverse_rl/config.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/persistence/identity.py",
+      "target": "multi_dataset_diverse_rl/diagnosis_aggregation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/persistence/identity.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/persistence/identity.py",
+      "target": "multi_dataset_diverse_rl/evaluation/output_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/persistence/identity.py",
+      "target": "multi_dataset_diverse_rl/protocol.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/persistence/identity.py",
+      "target": "multi_dataset_diverse_rl/provider_credentials.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/persistence/identity.py",
+      "target": "multi_dataset_diverse_rl/tcs.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/persistence/identity.py",
+      "target": "multi_dataset_diverse_rl/utils.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/persistence/identity.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/config.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/evaluation/output_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/experiment.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/governance/freeze_hash.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/governance/production_execution.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/production_backends.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/native_feed.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/persistence/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/persistence/identity.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/team_search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/team_search/candidate_selector.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/team_search/controller.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/team_search/execution_runtime.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/team_search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/team_search/system_runtime.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_canary.py",
+      "target": "multi_dataset_diverse_rl/team_search/task_builder.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/config.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/evaluation/output_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/experiment.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/formal_final_team.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/governance/freeze_hash.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/governance/production_execution.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/production_backends.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/native_feed.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/persistence/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/persistence/identity.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/production_canary.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/saturation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/team_search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/team_search/candidate_selector.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/team_search/controller.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/team_search/execution_runtime.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/team_search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/team_search/system_runtime.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/team_search/task_builder.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/team_search/v4_opportunity.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_formal_saturation.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/config.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/evaluation/output_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/experiment.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/governance/freeze_hash.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/governance/production_execution.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/governance/v4_attempt3_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/production_backends.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/persistence/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/persistence/durable_io.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/persistence/identity.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/production_canary.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/team_search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/team_search/candidate_selector.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/team_search/controller.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/team_search/execution_runtime.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/team_search/feasibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/team_search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/team_search/system_runtime.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/team_search/task_builder.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/team_search/v4_opportunity.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/protocol.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/protocol.py",
+      "target": "multi_dataset_diverse_rl/module2_context.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/provider_factory.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/provider_factory.py",
+      "target": "multi_dataset_diverse_rl/provider_credentials.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/responsibility.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/responsibility.py",
+      "target": "multi_dataset_diverse_rl/peer_state.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/responsibility.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/responsibility_contribution.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/responsibility_contribution.py",
+      "target": "multi_dataset_diverse_rl/peer_state.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/responsibility_contribution.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/saturation.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/saturation.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/__init__.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/__init__.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/__init__.py",
+      "target": "multi_dataset_diverse_rl/search/orchestrator.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/__init__.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/action_memory.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/action_memory.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/action_memory.py",
+      "target": "multi_dataset_diverse_rl/search/experience.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/action_memory.py",
+      "target": "multi_dataset_diverse_rl/search/memory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/action_memory.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/action_memory.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/aggregation.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/aggregation.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/aggregation.py",
+      "target": "multi_dataset_diverse_rl/search/benchmark.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/aggregation.py",
+      "target": "multi_dataset_diverse_rl/search/information_firewall.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/aggregation.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/aggregation.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/benchmark.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/benchmark.py",
+      "target": "multi_dataset_diverse_rl/answer_formats.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/benchmark.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/benchmark.py",
+      "target": "multi_dataset_diverse_rl/evaluation/solver_output.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/benchmark.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/benchmark.py",
+      "target": "multi_dataset_diverse_rl/search/information_firewall.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/benchmark.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/action_memory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/binary_responsibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/binary_runtime.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/evaluation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/experience.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/gepa_v2.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/history.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/layer1_memory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/layer1_responsibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/memory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/orchestrator.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/pattern_layer1.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/pattern_responsibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/patterns.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/policies.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/private_gate.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/rolling_risk_memory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/runtime_v2.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/semantic_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/textual_gradients.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/transition.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/search/variable_evidence.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_composition.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_responsibility.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_responsibility.py",
+      "target": "multi_dataset_diverse_rl/peer_state.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_responsibility.py",
+      "target": "multi_dataset_diverse_rl/responsibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_responsibility.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_responsibility.py",
+      "target": "multi_dataset_diverse_rl/search/policies.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_responsibility.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_responsibility.py",
+      "target": "multi_dataset_diverse_rl/search/scientific_aggregation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_responsibility.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_responsibility.py",
+      "target": "multi_dataset_diverse_rl/vote_aligned_scheduler.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_runtime.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_runtime.py",
+      "target": "multi_dataset_diverse_rl/candidate_selection.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_runtime.py",
+      "target": "multi_dataset_diverse_rl/peer_state.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_runtime.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_runtime.py",
+      "target": "multi_dataset_diverse_rl/search/binary_responsibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_runtime.py",
+      "target": "multi_dataset_diverse_rl/search/evaluation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_runtime.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_runtime.py",
+      "target": "multi_dataset_diverse_rl/team_search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_runtime.py",
+      "target": "multi_dataset_diverse_rl/team_search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_runtime.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/binary_runtime.py",
+      "target": "multi_dataset_diverse_rl/vote_aligned_scheduler.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh.py",
+      "target": "multi_dataset_diverse_rl/peer_state.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh.py",
+      "target": "multi_dataset_diverse_rl/search/binary_responsibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh.py",
+      "target": "multi_dataset_diverse_rl/search/history.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh.py",
+      "target": "multi_dataset_diverse_rl/vote_aligned_scheduler.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh_runtime.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh_runtime.py",
+      "target": "multi_dataset_diverse_rl/candidate_selection.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh_runtime.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh_runtime.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh_runtime.py",
+      "target": "multi_dataset_diverse_rl/native_feed.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh_runtime.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh_runtime.py",
+      "target": "multi_dataset_diverse_rl/search/aggregation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh_runtime.py",
+      "target": "multi_dataset_diverse_rl/search/current_bbh.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh_runtime.py",
+      "target": "multi_dataset_diverse_rl/search/engines.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh_runtime.py",
+      "target": "multi_dataset_diverse_rl/search/evaluation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh_runtime.py",
+      "target": "multi_dataset_diverse_rl/search/gepa.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh_runtime.py",
+      "target": "multi_dataset_diverse_rl/search/history.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh_runtime.py",
+      "target": "multi_dataset_diverse_rl/search/orchestrator.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh_runtime.py",
+      "target": "multi_dataset_diverse_rl/search/policies.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh_runtime.py",
+      "target": "multi_dataset_diverse_rl/search/runtime_v2.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh_runtime.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh_runtime.py",
+      "target": "multi_dataset_diverse_rl/team_search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/current_bbh_runtime.py",
+      "target": "multi_dataset_diverse_rl/team_search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/engines.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/engines.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/engines.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/evaluation.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/evaluation.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/evaluation.py",
+      "target": "multi_dataset_diverse_rl/search/aggregation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/evaluation.py",
+      "target": "multi_dataset_diverse_rl/search/benchmark.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/evaluation.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/experience.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/experience.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/experience.py",
+      "target": "multi_dataset_diverse_rl/search/memory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/experience.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/experience.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa.py",
+      "target": "multi_dataset_diverse_rl/native_feed.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa.py",
+      "target": "multi_dataset_diverse_rl/search/history.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa_v2.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa_v2.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa_v2.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa_v2.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_callbacks.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa_v2.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa_v2.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa_v2.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_runtime.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa_v2.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa_v2.py",
+      "target": "multi_dataset_diverse_rl/saturation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa_v2.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa_v2.py",
+      "target": "multi_dataset_diverse_rl/search/context.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa_v2.py",
+      "target": "multi_dataset_diverse_rl/search/gepa.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa_v2.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa_v2.py",
+      "target": "multi_dataset_diverse_rl/search/variable_evidence.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/gepa_v2.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/history.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/history.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/history.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/information_firewall.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/information_firewall.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/information_firewall.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_memory.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_memory.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_memory.py",
+      "target": "multi_dataset_diverse_rl/evaluation/semantic_mutable_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_memory.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_memory.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_memory.py",
+      "target": "multi_dataset_diverse_rl/persistence/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_memory.py",
+      "target": "multi_dataset_diverse_rl/persistence/durable_io.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_memory.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_memory.py",
+      "target": "multi_dataset_diverse_rl/search/action_memory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_memory.py",
+      "target": "multi_dataset_diverse_rl/search/layer1_responsibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_memory.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_memory.py",
+      "target": "multi_dataset_diverse_rl/search/semantic_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_memory.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_responsibility.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_responsibility.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_responsibility.py",
+      "target": "multi_dataset_diverse_rl/evaluation/semantic_mutable_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_responsibility.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_responsibility.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_responsibility.py",
+      "target": "multi_dataset_diverse_rl/persistence/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_responsibility.py",
+      "target": "multi_dataset_diverse_rl/persistence/durable_io.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_responsibility.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_responsibility.py",
+      "target": "multi_dataset_diverse_rl/search/context.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_responsibility.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/layer1_responsibility.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/memory.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/memory.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/memory.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/memory.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/orchestrator.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/orchestrator.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/orchestrator.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/registry.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/orchestrator.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/orchestrator.py",
+      "target": "multi_dataset_diverse_rl/search/benchmark.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/orchestrator.py",
+      "target": "multi_dataset_diverse_rl/search/engines.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/orchestrator.py",
+      "target": "multi_dataset_diverse_rl/search/evaluation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/orchestrator.py",
+      "target": "multi_dataset_diverse_rl/search/history.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/orchestrator.py",
+      "target": "multi_dataset_diverse_rl/search/memory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/orchestrator.py",
+      "target": "multi_dataset_diverse_rl/search/policies.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/orchestrator.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/orchestrator.py",
+      "target": "multi_dataset_diverse_rl/search/transition.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/orchestrator.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_id_transport.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_id_transport.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_id_transport.py",
+      "target": "multi_dataset_diverse_rl/search/pattern_responsibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_id_transport.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_id_transport.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_layer1.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_layer1.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_layer1.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_layer1.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_layer1.py",
+      "target": "multi_dataset_diverse_rl/search/layer1_memory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_layer1.py",
+      "target": "multi_dataset_diverse_rl/search/layer1_responsibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_layer1.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_layer1.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_responsibility.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_responsibility.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_responsibility.py",
+      "target": "multi_dataset_diverse_rl/evaluation/semantic_mutable_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_responsibility.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_responsibility.py",
+      "target": "multi_dataset_diverse_rl/governance/token_accounting.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_responsibility.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_responsibility.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_responsibility.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_responsibility.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_responsibility.py",
+      "target": "multi_dataset_diverse_rl/search/abstraction_content.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_responsibility.py",
+      "target": "multi_dataset_diverse_rl/search/responsibility_value.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_responsibility.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_responsibility.py",
+      "target": "multi_dataset_diverse_rl/search/semantic_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_responsibility.py",
+      "target": "multi_dataset_diverse_rl/search/variable_evidence.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/pattern_responsibility.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/patterns.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/patterns.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/patterns.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/patterns.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/policies.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/policies.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/policies.py",
+      "target": "multi_dataset_diverse_rl/search/history.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/policies.py",
+      "target": "multi_dataset_diverse_rl/search/responsibility_value.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/policies.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/private_gate.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/private_gate.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/private_gate.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/access.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/private_gate.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/private_gate.py",
+      "target": "multi_dataset_diverse_rl/search/binary_responsibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/private_gate.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/private_gate.py",
+      "target": "multi_dataset_diverse_rl/shadow_gate.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/provider_runtime.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/provider_runtime.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/provider_runtime.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_optimizer_diagnostics.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/provider_runtime.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_optimizer_generation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/provider_runtime.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/provider_runtime.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/math_solver_decoding.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/provider_runtime.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/protocols.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/provider_runtime.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/provider_runtime.py",
+      "target": "multi_dataset_diverse_rl/governance/token_accounting.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/provider_runtime.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/provider_runtime.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/base.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/provider_runtime.py",
+      "target": "multi_dataset_diverse_rl/persistence/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/provider_runtime.py",
+      "target": "multi_dataset_diverse_rl/persistence/exact_output_cache.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/provider_runtime.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/provider_runtime.py",
+      "target": "multi_dataset_diverse_rl/search/benchmark.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/provider_runtime.py",
+      "target": "multi_dataset_diverse_rl/search/patterns.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/provider_runtime.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/provider_runtime.py",
+      "target": "multi_dataset_diverse_rl/search/textual_gradients.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/provider_runtime.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/responsibility_value.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/responsibility_value.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/rolling_risk_memory.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/rolling_risk_memory.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/rolling_risk_memory.py",
+      "target": "multi_dataset_diverse_rl/search/action_memory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/rolling_risk_memory.py",
+      "target": "multi_dataset_diverse_rl/search/memory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/rolling_risk_memory.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/rolling_risk_memory.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/runtime_v2.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/runtime_v2.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/runtime_v2.py",
+      "target": "multi_dataset_diverse_rl/search/aggregation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/runtime_v2.py",
+      "target": "multi_dataset_diverse_rl/search/current_bbh.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/runtime_v2.py",
+      "target": "multi_dataset_diverse_rl/search/current_bbh_runtime.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/runtime_v2.py",
+      "target": "multi_dataset_diverse_rl/search/evaluation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/runtime_v2.py",
+      "target": "multi_dataset_diverse_rl/search/gepa_v2.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/runtime_v2.py",
+      "target": "multi_dataset_diverse_rl/search/history.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/runtime_v2.py",
+      "target": "multi_dataset_diverse_rl/search/memory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/runtime_v2.py",
+      "target": "multi_dataset_diverse_rl/search/orchestrator.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/runtime_v2.py",
+      "target": "multi_dataset_diverse_rl/search/patterns.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/runtime_v2.py",
+      "target": "multi_dataset_diverse_rl/search/policies.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/runtime_v2.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/runtime_v2.py",
+      "target": "multi_dataset_diverse_rl/search/variable_evidence.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/runtime_v2.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/schemas.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/schemas.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/scientific_aggregation.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/scientific_aggregation.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/scientific_aggregation.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/hover.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/scientific_aggregation.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/scientific_aggregation.py",
+      "target": "multi_dataset_diverse_rl/search/aggregation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/scientific_aggregation.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/scientific_aggregation.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/semantic_contract.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/semantic_contract.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/semantic_contract.py",
+      "target": "multi_dataset_diverse_rl/search/patterns.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/semantic_contract.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/semantic_contract.py",
+      "target": "multi_dataset_diverse_rl/search/variable_evidence.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/semantic_contract.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/textual_gradients.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/textual_gradients.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/textual_gradients.py",
+      "target": "multi_dataset_diverse_rl/governance/token_accounting.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/textual_gradients.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/textual_gradients.py",
+      "target": "multi_dataset_diverse_rl/search/pattern_responsibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/textual_gradients.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/textual_gradients.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/transition.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/transition.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/transition.py",
+      "target": "multi_dataset_diverse_rl/search/history.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/transition.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/variable_evidence.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/variable_evidence.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/variable_evidence.py",
+      "target": "multi_dataset_diverse_rl/search/policies.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/variable_evidence.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/variable_evidence.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/candidate_selection.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/compatibility_repair.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/config.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/diagnosis_aggregation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/evaluation/categorical_profiles.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/evaluation/fixed_probe.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/evaluation/mutable_prompt_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/evaluation/output_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/evaluation/persistent_solver_cache.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/evaluation/prompt_question.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/evaluation/solver_output.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/evaluation/validation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/llm_client.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/member_objectives.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/module2_context.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/peer_state.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/persistence/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/persistence/artifacts.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/persistence/identity.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/proposal_memory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/protocol.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/responsibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/responsibility_contribution.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/tasks.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/tcs.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/team_differentiation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/termination.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/utils.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/system.py",
+      "target": "multi_dataset_diverse_rl/vote_aligned_scheduler.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/tcs.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/tcs.py",
+      "target": "multi_dataset_diverse_rl/diagnosis_aggregation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/tcs.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/tcs.py",
+      "target": "multi_dataset_diverse_rl/evaluation/mutable_prompt_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/tcs.py",
+      "target": "multi_dataset_diverse_rl/evaluation/output_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/tcs.py",
+      "target": "multi_dataset_diverse_rl/llm_client.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/tcs.py",
+      "target": "multi_dataset_diverse_rl/module2_context.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/tcs.py",
+      "target": "multi_dataset_diverse_rl/proposal_memory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/tcs.py",
+      "target": "multi_dataset_diverse_rl/utils.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/tcs.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_differentiation.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_differentiation.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_differentiation.py",
+      "target": "multi_dataset_diverse_rl/evaluation/fixed_probe.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_differentiation.py",
+      "target": "multi_dataset_diverse_rl/peer_state.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/__init__.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/__init__.py",
+      "target": "multi_dataset_diverse_rl/saturation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/__init__.py",
+      "target": "multi_dataset_diverse_rl/team_search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/__init__.py",
+      "target": "multi_dataset_diverse_rl/team_search/controller.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/__init__.py",
+      "target": "multi_dataset_diverse_rl/team_search/primary_responsibility_binding.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/__init__.py",
+      "target": "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/__init__.py",
+      "target": "multi_dataset_diverse_rl/team_search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/candidate_evaluator.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/candidate_evaluator.py",
+      "target": "multi_dataset_diverse_rl/candidate_selection.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/candidate_evaluator.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/candidate_evaluator.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/candidate_evaluator.py",
+      "target": "multi_dataset_diverse_rl/shadow_gate.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/candidate_evaluator.py",
+      "target": "multi_dataset_diverse_rl/team_search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/candidate_evaluator.py",
+      "target": "multi_dataset_diverse_rl/team_search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/candidate_selector.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/candidate_selector.py",
+      "target": "multi_dataset_diverse_rl/candidate_selection.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/candidate_selector.py",
+      "target": "multi_dataset_diverse_rl/team_search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/candidate_selector.py",
+      "target": "multi_dataset_diverse_rl/team_search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/controller.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/controller.py",
+      "target": "multi_dataset_diverse_rl/candidate_selection.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/controller.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/controller.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/backend_registry.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/controller.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/base.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/controller.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/controller.py",
+      "target": "multi_dataset_diverse_rl/native_feed.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/controller.py",
+      "target": "multi_dataset_diverse_rl/saturation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/controller.py",
+      "target": "multi_dataset_diverse_rl/team_search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/controller.py",
+      "target": "multi_dataset_diverse_rl/team_search/candidate_evaluator.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/controller.py",
+      "target": "multi_dataset_diverse_rl/team_search/candidate_selector.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/controller.py",
+      "target": "multi_dataset_diverse_rl/team_search/progressive_evaluation.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/controller.py",
+      "target": "multi_dataset_diverse_rl/team_search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/controller.py",
+      "target": "multi_dataset_diverse_rl/team_search/task_builder.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/execution_runtime.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/execution_runtime.py",
+      "target": "multi_dataset_diverse_rl/config.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/execution_runtime.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/execution_runtime.py",
+      "target": "multi_dataset_diverse_rl/evaluation/prompt_question.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/execution_runtime.py",
+      "target": "multi_dataset_diverse_rl/evaluation/solver_stage.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/execution_runtime.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/execution_runtime.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/base.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/execution_runtime.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/execution_runtime.py",
+      "target": "multi_dataset_diverse_rl/persistence/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/execution_runtime.py",
+      "target": "multi_dataset_diverse_rl/persistence/durable_io.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/execution_runtime.py",
+      "target": "multi_dataset_diverse_rl/provider_factory.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/execution_runtime.py",
+      "target": "multi_dataset_diverse_rl/system.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/primary_responsibility_binding.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/primary_responsibility_binding.py",
+      "target": "multi_dataset_diverse_rl/responsibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/primary_responsibility_binding.py",
+      "target": "multi_dataset_diverse_rl/team_search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/primary_responsibility_binding.py",
+      "target": "multi_dataset_diverse_rl/team_search/controller.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/primary_responsibility_binding.py",
+      "target": "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/primary_responsibility_binding.py",
+      "target": "multi_dataset_diverse_rl/team_search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py",
+      "target": "multi_dataset_diverse_rl/responsibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py",
+      "target": "multi_dataset_diverse_rl/vote_aligned_scheduler.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/progressive_evaluation.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/progressive_evaluation.py",
+      "target": "multi_dataset_diverse_rl/team_search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/progressive_evaluation.py",
+      "target": "multi_dataset_diverse_rl/team_search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/schemas.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/schemas.py",
+      "target": "multi_dataset_diverse_rl/candidate_selection.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/schemas.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/schemas.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/schemas.py",
+      "target": "multi_dataset_diverse_rl/native_feed.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/candidate_selection.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/evaluation/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/evaluation/fixed_probe.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/evaluation/mutable_prompt_contract.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/evaluation/solver_stage.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/base.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/native_feed.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/peer_state.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/responsibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/shadow_gate.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/system.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/team_search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/team_search/candidate_evaluator.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/team_search/execution_runtime.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/team_search/feasibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/team_search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/team_search/task_builder.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "target": "multi_dataset_diverse_rl/vote_aligned_scheduler.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/task_builder.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/task_builder.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/task_builder.py",
+      "target": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/task_builder.py",
+      "target": "multi_dataset_diverse_rl/native_feed.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/task_builder.py",
+      "target": "multi_dataset_diverse_rl/team_search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/task_builder.py",
+      "target": "multi_dataset_diverse_rl/team_search/feasibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/task_builder.py",
+      "target": "multi_dataset_diverse_rl/team_search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/task_builder.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/v4_opportunity.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/v4_opportunity.py",
+      "target": "multi_dataset_diverse_rl/team_search/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/v4_opportunity.py",
+      "target": "multi_dataset_diverse_rl/team_search/feasibility.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/v4_opportunity.py",
+      "target": "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/v4_opportunity.py",
+      "target": "multi_dataset_diverse_rl/team_search/schemas.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/v4_opportunity.py",
+      "target": "multi_dataset_diverse_rl/team_search/system_runtime.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/v4_opportunity.py",
+      "target": "multi_dataset_diverse_rl/team_search/task_builder.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/team_search/v4_opportunity.py",
+      "target": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/vote_aligned_scheduler.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/vote_aligned_scheduler.py",
+      "target": "multi_dataset_diverse_rl/responsibility.py"
+    },
+    {
+      "source": "scripts/run_experiment.py",
+      "target": "multi_dataset_diverse_rl/__init__.py"
+    },
+    {
+      "source": "scripts/run_experiment.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/__init__.py"
+    },
+    {
+      "source": "scripts/run_experiment.py",
+      "target": "multi_dataset_diverse_rl/benchmarks/registry.py"
+    },
+    {
+      "source": "scripts/run_experiment.py",
+      "target": "multi_dataset_diverse_rl/experiment.py"
+    },
+    {
+      "source": "scripts/run_experiment.py",
+      "target": "multi_dataset_diverse_rl/governance/__init__.py"
+    },
+    {
+      "source": "scripts/run_experiment.py",
+      "target": "multi_dataset_diverse_rl/governance/math_optimizer_witness.py"
+    },
+    {
+      "source": "scripts/run_experiment.py",
+      "target": "multi_dataset_diverse_rl/governance/math_paired_validation.py"
+    },
+    {
+      "source": "scripts/run_experiment.py",
+      "target": "multi_dataset_diverse_rl/governance/production_execution.py"
+    },
+    {
+      "source": "scripts/run_experiment.py",
+      "target": "multi_dataset_diverse_rl/governance/repository.py"
+    },
+    {
+      "source": "scripts/run_experiment.py",
+      "target": "multi_dataset_diverse_rl/governance/unified_execution.py"
+    },
+    {
+      "source": "scripts/run_experiment.py",
+      "target": "multi_dataset_diverse_rl/persistence/__init__.py"
+    },
+    {
+      "source": "scripts/run_experiment.py",
+      "target": "multi_dataset_diverse_rl/persistence/durable_io.py"
+    },
+    {
+      "source": "scripts/run_experiment.py",
+      "target": "multi_dataset_diverse_rl/production_canary.py"
+    },
+    {
+      "source": "scripts/run_experiment.py",
+      "target": "multi_dataset_diverse_rl/production_formal_saturation.py"
+    },
+    {
+      "source": "scripts/run_experiment.py",
+      "target": "multi_dataset_diverse_rl/production_transfer_diagnostic.py"
+    },
+    {
+      "source": "scripts/run_experiment.py",
+      "target": "multi_dataset_diverse_rl/search/__init__.py"
+    },
+    {
+      "source": "scripts/run_experiment.py",
+      "target": "multi_dataset_diverse_rl/search/schemas.py"
+    },
+    {
+      "source": "scripts/run_experiment.py",
+      "target": "multi_dataset_diverse_rl/team_search/__init__.py"
+    },
+    {
+      "source": "scripts/run_experiment.py",
+      "target": "multi_dataset_diverse_rl/team_search/execution_runtime.py"
+    }
+  ],
+  "legacy_class_definitions": [
+    {
+      "name": "StructuredActionMemoryV3",
+      "path": "multi_dataset_diverse_rl/search/action_memory.py"
+    },
+    {
+      "name": "StrategyExperienceMemoryV2",
+      "path": "multi_dataset_diverse_rl/search/experience.py"
+    },
+    {
+      "name": "GEPATeamExposureOptimizer",
+      "path": "multi_dataset_diverse_rl/search/gepa_v2.py"
+    },
+    {
+      "name": "V2GEPABridge",
+      "path": "multi_dataset_diverse_rl/search/gepa_v2.py"
+    },
+    {
+      "name": "GEPATeamCandidateExposureEngine",
+      "path": "multi_dataset_diverse_rl/search/gepa_v2.py"
+    },
+    {
+      "name": "StructuredLongTermMemoryProviderV1",
+      "path": "multi_dataset_diverse_rl/search/memory.py"
+    },
+    {
+      "name": "PatternLayer1Config",
+      "path": "multi_dataset_diverse_rl/search/pattern_layer1.py"
+    },
+    {
+      "name": "PatternMemoryOptimizer",
+      "path": "multi_dataset_diverse_rl/search/pattern_layer1.py"
+    },
+    {
+      "name": "PatternMemoryEngine",
+      "path": "multi_dataset_diverse_rl/search/pattern_layer1.py"
+    },
+    {
+      "name": "ResponsibilityPatternDiscoveryV3",
+      "path": "multi_dataset_diverse_rl/search/pattern_responsibility.py"
+    },
+    {
+      "name": "PatternConditionedEvidenceV4",
+      "path": "multi_dataset_diverse_rl/search/pattern_responsibility.py"
+    },
+    {
+      "name": "PatternDiagnosticV1",
+      "path": "multi_dataset_diverse_rl/search/patterns.py"
+    },
+    {
+      "name": "FocusedPatternDiagnosticV2",
+      "path": "multi_dataset_diverse_rl/search/semantic_contract.py"
+    }
+  ],
+  "legacy_namespace_dependencies": [],
+  "loc": 48874,
+  "modules": [
+    "multi_dataset_diverse_rl/__init__.py",
+    "multi_dataset_diverse_rl/answer_formats.py",
+    "multi_dataset_diverse_rl/benchmarks/__init__.py",
+    "multi_dataset_diverse_rl/benchmarks/_vendor/__init__.py",
+    "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/__init__.py",
+    "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions.py",
+    "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_ifeval.py",
+    "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_registry.py",
+    "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_registry_ifeval.py",
+    "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_util.py",
+    "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_util_ifeval.py",
+    "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/offline.py",
+    "multi_dataset_diverse_rl/benchmarks/access.py",
+    "multi_dataset_diverse_rl/benchmarks/blocked.py",
+    "multi_dataset_diverse_rl/benchmarks/data_freeze.py",
+    "multi_dataset_diverse_rl/benchmarks/evaluator_resources.py",
+    "multi_dataset_diverse_rl/benchmarks/experiment_splits.py",
+    "multi_dataset_diverse_rl/benchmarks/hotpotqa.py",
+    "multi_dataset_diverse_rl/benchmarks/hover.py",
+    "multi_dataset_diverse_rl/benchmarks/ifbench.py",
+    "multi_dataset_diverse_rl/benchmarks/ifbench_checkers.py",
+    "multi_dataset_diverse_rl/benchmarks/math.py",
+    "multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py",
+    "multi_dataset_diverse_rl/benchmarks/math_autonomous.py",
+    "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py",
+    "multi_dataset_diverse_rl/benchmarks/math_domain_v2.py",
+    "multi_dataset_diverse_rl/benchmarks/math_execution.py",
+    "multi_dataset_diverse_rl/benchmarks/math_gradient_pattern_binding.py",
+    "multi_dataset_diverse_rl/benchmarks/math_interface.py",
+    "multi_dataset_diverse_rl/benchmarks/math_layer1_binding.py",
+    "multi_dataset_diverse_rl/benchmarks/math_low_cost.py",
+    "multi_dataset_diverse_rl/benchmarks/math_low_cost_binding.py",
+    "multi_dataset_diverse_rl/benchmarks/math_memory_binding.py",
+    "multi_dataset_diverse_rl/benchmarks/math_optimizer_diagnostics.py",
+    "multi_dataset_diverse_rl/benchmarks/math_optimizer_generation.py",
+    "multi_dataset_diverse_rl/benchmarks/math_pattern_binding.py",
+    "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+    "multi_dataset_diverse_rl/benchmarks/math_solver_decoding.py",
+    "multi_dataset_diverse_rl/benchmarks/math_v21_binding.py",
+    "multi_dataset_diverse_rl/benchmarks/math_v21_interface.py",
+    "multi_dataset_diverse_rl/benchmarks/math_worker.py",
+    "multi_dataset_diverse_rl/benchmarks/protocols.py",
+    "multi_dataset_diverse_rl/benchmarks/pupa.py",
+    "multi_dataset_diverse_rl/benchmarks/registry.py",
+    "multi_dataset_diverse_rl/benchmarks/scorer_contracts.py",
+    "multi_dataset_diverse_rl/candidate_selection.py",
+    "multi_dataset_diverse_rl/compatibility_repair.py",
+    "multi_dataset_diverse_rl/config.py",
+    "multi_dataset_diverse_rl/diagnosis_aggregation.py",
+    "multi_dataset_diverse_rl/evaluation/__init__.py",
+    "multi_dataset_diverse_rl/evaluation/categorical_profiles.py",
+    "multi_dataset_diverse_rl/evaluation/endpoint_identifiability.py",
+    "multi_dataset_diverse_rl/evaluation/fixed_probe.py",
+    "multi_dataset_diverse_rl/evaluation/mutable_prompt_contract.py",
+    "multi_dataset_diverse_rl/evaluation/output_contract.py",
+    "multi_dataset_diverse_rl/evaluation/persistent_solver_cache.py",
+    "multi_dataset_diverse_rl/evaluation/prompt_question.py",
+    "multi_dataset_diverse_rl/evaluation/semantic_mutable_contract.py",
+    "multi_dataset_diverse_rl/evaluation/solver_output.py",
+    "multi_dataset_diverse_rl/evaluation/solver_stage.py",
+    "multi_dataset_diverse_rl/evaluation/validation.py",
+    "multi_dataset_diverse_rl/experiment.py",
+    "multi_dataset_diverse_rl/formal_final_team.py",
+    "multi_dataset_diverse_rl/formal_validation_policy.py",
+    "multi_dataset_diverse_rl/governance/__init__.py",
+    "multi_dataset_diverse_rl/governance/artifacts.py",
+    "multi_dataset_diverse_rl/governance/authorization.py",
+    "multi_dataset_diverse_rl/governance/autonomous_math.py",
+    "multi_dataset_diverse_rl/governance/execution_harness_v2.py",
+    "multi_dataset_diverse_rl/governance/freeze_hash.py",
+    "multi_dataset_diverse_rl/governance/manifest.py",
+    "multi_dataset_diverse_rl/governance/math_optimizer_witness.py",
+    "multi_dataset_diverse_rl/governance/math_paired_validation.py",
+    "multi_dataset_diverse_rl/governance/production_execution.py",
+    "multi_dataset_diverse_rl/governance/provenance.py",
+    "multi_dataset_diverse_rl/governance/registries.py",
+    "multi_dataset_diverse_rl/governance/repository.py",
+    "multi_dataset_diverse_rl/governance/source_identity.py",
+    "multi_dataset_diverse_rl/governance/startup_identity.py",
+    "multi_dataset_diverse_rl/governance/telemetry.py",
+    "multi_dataset_diverse_rl/governance/token_accounting.py",
+    "multi_dataset_diverse_rl/governance/unified_execution.py",
+    "multi_dataset_diverse_rl/governance/v4_attempt3_contract.py",
+    "multi_dataset_diverse_rl/governance/v4_source_closure.py",
+    "multi_dataset_diverse_rl/llm_client.py",
+    "multi_dataset_diverse_rl/local_optimizers/__init__.py",
+    "multi_dataset_diverse_rl/local_optimizers/backend_registry.py",
+    "multi_dataset_diverse_rl/local_optimizers/base.py",
+    "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py",
+    "multi_dataset_diverse_rl/local_optimizers/gepa_callbacks.py",
+    "multi_dataset_diverse_rl/local_optimizers/gepa_native.py",
+    "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py",
+    "multi_dataset_diverse_rl/local_optimizers/gepa_proposer_contract.py",
+    "multi_dataset_diverse_rl/local_optimizers/gepa_runtime.py",
+    "multi_dataset_diverse_rl/local_optimizers/mars_native.py",
+    "multi_dataset_diverse_rl/local_optimizers/production_backends.py",
+    "multi_dataset_diverse_rl/local_optimizers/schemas.py",
+    "multi_dataset_diverse_rl/member_objectives.py",
+    "multi_dataset_diverse_rl/module2_context.py",
+    "multi_dataset_diverse_rl/native_feed.py",
+    "multi_dataset_diverse_rl/peer_state.py",
+    "multi_dataset_diverse_rl/persistence/__init__.py",
+    "multi_dataset_diverse_rl/persistence/artifacts.py",
+    "multi_dataset_diverse_rl/persistence/durable_io.py",
+    "multi_dataset_diverse_rl/persistence/exact_output_cache.py",
+    "multi_dataset_diverse_rl/persistence/identity.py",
+    "multi_dataset_diverse_rl/production_canary.py",
+    "multi_dataset_diverse_rl/production_formal_saturation.py",
+    "multi_dataset_diverse_rl/production_transfer_diagnostic.py",
+    "multi_dataset_diverse_rl/proposal_memory.py",
+    "multi_dataset_diverse_rl/protocol.py",
+    "multi_dataset_diverse_rl/provider_credentials.py",
+    "multi_dataset_diverse_rl/provider_factory.py",
+    "multi_dataset_diverse_rl/responsibility.py",
+    "multi_dataset_diverse_rl/responsibility_contribution.py",
+    "multi_dataset_diverse_rl/saturation.py",
+    "multi_dataset_diverse_rl/search/__init__.py",
+    "multi_dataset_diverse_rl/search/abstraction_content.py",
+    "multi_dataset_diverse_rl/search/action_memory.py",
+    "multi_dataset_diverse_rl/search/aggregation.py",
+    "multi_dataset_diverse_rl/search/benchmark.py",
+    "multi_dataset_diverse_rl/search/binary_composition.py",
+    "multi_dataset_diverse_rl/search/binary_responsibility.py",
+    "multi_dataset_diverse_rl/search/binary_runtime.py",
+    "multi_dataset_diverse_rl/search/context.py",
+    "multi_dataset_diverse_rl/search/current_bbh.py",
+    "multi_dataset_diverse_rl/search/current_bbh_runtime.py",
+    "multi_dataset_diverse_rl/search/engines.py",
+    "multi_dataset_diverse_rl/search/evaluation.py",
+    "multi_dataset_diverse_rl/search/experience.py",
+    "multi_dataset_diverse_rl/search/gepa.py",
+    "multi_dataset_diverse_rl/search/gepa_v2.py",
+    "multi_dataset_diverse_rl/search/history.py",
+    "multi_dataset_diverse_rl/search/information_firewall.py",
+    "multi_dataset_diverse_rl/search/layer1_memory.py",
+    "multi_dataset_diverse_rl/search/layer1_responsibility.py",
+    "multi_dataset_diverse_rl/search/memory.py",
+    "multi_dataset_diverse_rl/search/orchestrator.py",
+    "multi_dataset_diverse_rl/search/pattern_id_transport.py",
+    "multi_dataset_diverse_rl/search/pattern_layer1.py",
+    "multi_dataset_diverse_rl/search/pattern_responsibility.py",
+    "multi_dataset_diverse_rl/search/patterns.py",
+    "multi_dataset_diverse_rl/search/policies.py",
+    "multi_dataset_diverse_rl/search/private_gate.py",
+    "multi_dataset_diverse_rl/search/provider_runtime.py",
+    "multi_dataset_diverse_rl/search/responsibility_value.py",
+    "multi_dataset_diverse_rl/search/rolling_risk_memory.py",
+    "multi_dataset_diverse_rl/search/runtime_v2.py",
+    "multi_dataset_diverse_rl/search/schemas.py",
+    "multi_dataset_diverse_rl/search/scientific_aggregation.py",
+    "multi_dataset_diverse_rl/search/semantic_contract.py",
+    "multi_dataset_diverse_rl/search/textual_gradients.py",
+    "multi_dataset_diverse_rl/search/transition.py",
+    "multi_dataset_diverse_rl/search/variable_evidence.py",
+    "multi_dataset_diverse_rl/shadow_gate.py",
+    "multi_dataset_diverse_rl/system.py",
+    "multi_dataset_diverse_rl/tasks.py",
+    "multi_dataset_diverse_rl/tcs.py",
+    "multi_dataset_diverse_rl/team_differentiation.py",
+    "multi_dataset_diverse_rl/team_search/__init__.py",
+    "multi_dataset_diverse_rl/team_search/candidate_evaluator.py",
+    "multi_dataset_diverse_rl/team_search/candidate_selector.py",
+    "multi_dataset_diverse_rl/team_search/controller.py",
+    "multi_dataset_diverse_rl/team_search/execution_runtime.py",
+    "multi_dataset_diverse_rl/team_search/feasibility.py",
+    "multi_dataset_diverse_rl/team_search/primary_responsibility_binding.py",
+    "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py",
+    "multi_dataset_diverse_rl/team_search/progressive_evaluation.py",
+    "multi_dataset_diverse_rl/team_search/schemas.py",
+    "multi_dataset_diverse_rl/team_search/system_runtime.py",
+    "multi_dataset_diverse_rl/team_search/task_builder.py",
+    "multi_dataset_diverse_rl/team_search/v4_opportunity.py",
+    "multi_dataset_diverse_rl/termination.py",
+    "multi_dataset_diverse_rl/utils.py",
+    "multi_dataset_diverse_rl/versions.py",
+    "multi_dataset_diverse_rl/vote_aligned_scheduler.py",
+    "scripts/run_experiment.py"
+  ],
+  "roots": [
+    "scripts/run_experiment.py",
+    "multi_dataset_diverse_rl/benchmarks/math_gradient_pattern_binding.py",
+    "multi_dataset_diverse_rl/search/binary_composition.py"
+  ],
+  "source_commit": "08c632eb581b25699da0c4aa480b986e0de61e02"
+}

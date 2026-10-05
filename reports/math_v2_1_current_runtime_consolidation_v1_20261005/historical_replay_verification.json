@@ -1,0 +1,51 @@
+{
+  "baseline_confirmation_junit_sha256": "2f883a6055e2c77c2833ec8bf85d1dba6ff7b2037e2cd1db5e8a8e115ff18008",
+  "baseline_same_six_failure_nodes": true,
+  "baseline_source": "08c632eb581b25699da0c4aa480b986e0de61e02",
+  "blocked_network_attempts": 12,
+  "cases": 1404,
+  "failed": 6,
+  "failure_categories": {
+    "missing_historical_private_fixture": 4,
+    "stale_error_message_assertion": 1,
+    "stale_model_default_assertion": 1
+  },
+  "failures": [
+    {
+      "module": "tests.test_matched_gpt4omini_pilot_script",
+      "test": "test_matched_gpt4omini_script_freezes_only_the_requested_pilot"
+    },
+    {
+      "module": "tests.test_sequential_symmetry_breaking_online_pilot_v1",
+      "test": "test_preflight_freezes_zero_api_scope"
+    },
+    {
+      "module": "tests.test_sequential_symmetry_breaking_online_pilot_v1",
+      "test": "test_frozen_baseline_materialization_makes_no_provider_call"
+    },
+    {
+      "module": "tests.test_shadow_gated_evolution",
+      "test": "test_shadow_gate_vote_and_catastrophic_member_rules"
+    },
+    {
+      "module": "tests.test_v16_fixed_parent_generation_probe",
+      "test": "test_registry_is_fixed_parent_balanced_and_outcome_blind"
+    },
+    {
+      "module": "tests.test_v16_fixed_parent_generation_probe",
+      "test": "test_offline_preflight_reconstructs_all_cells_without_api"
+    }
+  ],
+  "full_historical_replay_pass_claimed": false,
+  "junit_sha256": "95875700f7d565d6734d369bf1cf3e339d8f5a2b67043cf5bd5cd3a73cda6eb4",
+  "passed": 1394,
+  "private_artifact_cases": 64,
+  "private_artifact_modules": 8,
+  "private_artifact_status": "NOT_RUN",
+  "real_network_connections": 0,
+  "real_provider_calls": 0,
+  "selection": "All 163 modules explicitly classified HISTORICAL_REPLAY; current and private-artifact modules excluded.",
+  "skipped": 4,
+  "source_commit": "5eb4f6de9a1a0ccf1c09ecbabb717a12cf52f1ac",
+  "status": "NOT_PASS_PREEXISTING_FAILURES_AND_BLOCKED_NETWORK_ATTEMPTS"
+}

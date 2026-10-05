@@ -7756,14 +7756,14 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_gradient_pattern_refactor_v1
-  status: IN_PROGRESS
-  scientific_status: ZERO_API_CONFORMANCE_PENDING_FINAL_SOURCE_SUITE
-  implementation_commit: null
+  status: COMPLETED
+  scientific_status: VALID_ZERO_API_ENGINEERING_EQUIVALENCE
+  implementation_commit: f99e4d46759232eecd566fa840852a18dfe1d54d
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_current_runtime_consolidation_v1.yaml
   report: reports/math_v2_1_current_runtime_consolidation_v1_20261005
-  classifier: SEMANTIC_PRESERVING_CURRENT_RUNTIME_ISOLATION
+  classifier: EXACT_SCIENTIFIC_GOLDEN_CURRENT_ISOLATION_FINAL_SOURCE_SUITE_PASS
   active_for_new_work: true
   historical_replay: false
   superseded_by: []
@@ -7771,8 +7771,9 @@ experiments:
   - One fixed current Gradient Pattern and Rolling Risk Memory graph; historical replay is explicit.
   - 'Engineering only: scientific identities, request bytes, budgets and data access remain unchanged.'
   - Zero API; no Canary, Pilot, Validation, Test or push authority.
+  - 'Public historical replay: six preexisting failures reproduced on BASE; four skips; private-artifact suite not
+    run.'
   unavailable:
-    implementation_commit: Awaiting final runtime source commit.
     execution_commit: No real experiment dispatch.
     result_commit: Recorded by git history; no self-reference.
   audit_scope:
@@ -7780,3 +7781,5 @@ experiments:
     provider_call_budget: 0
     api_token_budget: 0
     execution_profile_scope: OFFLINE_CONFORMANCE_ONLY_NEVER_DISPATCHED
+    implementation_source: f99e4d46759232eecd566fa840852a18dfe1d54d
+    full_current_suite_source: f99e4d46759232eecd566fa840852a18dfe1d54d
