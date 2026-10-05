@@ -1,0 +1,23 @@
+{
+  "WHO_reached": true,
+  "candidates": 0,
+  "commits": 0,
+  "confirmed_defect": "GENERIC_MATH_NOUN_CLASSIFIED_AS_PROPER_NAME",
+  "new_charged": 34197,
+  "opportunity_completed": false,
+  "optimizer_calls": 0,
+  "pattern_cache_hits": 0,
+  "pattern_calls": 1,
+  "pilot_started": false,
+  "prior_charged": 1242527,
+  "remaining": 38723276,
+  "scientific_efficacy_verified": false,
+  "solver_calls": 61,
+  "status": "INVALID",
+  "stop_reason": "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE",
+  "target_selected": true,
+  "test_model_calls": 0,
+  "total_charged": 1276724,
+  "validation_started": false,
+  "wide_wrong_size": 7
+}

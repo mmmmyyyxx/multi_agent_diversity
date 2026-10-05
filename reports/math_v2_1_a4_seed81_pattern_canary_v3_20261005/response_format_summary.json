@@ -1,0 +1,12 @@
+{
+  "abstraction_guard_false_positive": true,
+  "optimizer_calls": 0,
+  "pattern_finish_reason": "stop",
+  "pattern_json_and_membership_valid": true,
+  "raw_truncated": 1,
+  "recovered_logical_requests": 1,
+  "solver_logical_predictions": 60,
+  "solver_physical_generations": 61,
+  "terminal_invalid": 0,
+  "valid_logical_predictions": 60
+}

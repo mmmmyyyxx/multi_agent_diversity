@@ -1,0 +1,9 @@
+{
+  "arm": "A4",
+  "attempt_id": "math_v2_1_pattern_A4_seed81_canary_attempt3",
+  "method": "unified_team_prompt_search_v2_1",
+  "preexecution_sha": "ca0a75f774a55881a0e5349807d8e1a6b782b083",
+  "seed": 81,
+  "source_sha": "160d3d5c6ba8f4118e26f79140247aac986a3f4b",
+  "support_id_transport": "PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1"
+}

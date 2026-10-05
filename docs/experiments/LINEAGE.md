@@ -11,7 +11,7 @@ current_architecture: Unified Team Prompt Search
 method_identity: unified_team_prompt_search_v2_1
 current_method: unified_team_prompt_search_v2_1
 current_implementation: Versioned method semantic contract; benchmark-neutral production composition; zero-API audit
-current_experiment: math_v2_1_a4_seed81_pattern_canary_v2
+current_experiment: math_v2_1_a4_seed81_pattern_canary_v3
 current_benchmark_suite:
 - math
 - ifbench
@@ -27,10 +27,10 @@ real_api_authorized: false
 validation_access: not_authorized
 test_access: sealed
 open_questions: docs/research/OPEN_QUESTIONS.md
-last_method_milestone: math_v2_1_pattern_support_id_transport_v1
-canary_manifest: experiments/manifests/math_v2_1_a4_seed81_pattern_canary_v2.yaml
-last_preexecution_milestone: math_v2_1_pattern_preexecution_v2
-last_canary_milestone: math_v2_1_a4_seed81_pattern_canary_v2
+last_method_milestone: math_v2_1_pattern_abstraction_guard_v2
+canary_manifest: experiments/manifests/math_v2_1_a4_seed81_pattern_canary_v3.yaml
+last_preexecution_milestone: math_v2_1_pattern_preexecution_v3
+last_canary_milestone: math_v2_1_a4_seed81_pattern_canary_v3
 current_canary_status: INVALID
 formal_a1_ready: false
 formal_a1_authorized: false
@@ -44,11 +44,11 @@ next_canary_attempt_id: math_v2_1_memory_A3_seed81_canary_attempt1
 last_autonomous_milestone: math_v2_1_layer1_preexecution_repair_v1
 autonomous_user_authorization_received: true
 autonomous_token_authorization: 40000000
-autonomous_tokens_consumed: 1242527
-autonomous_tokens_remaining: 38757473
+autonomous_tokens_consumed: 1276724
+autonomous_tokens_remaining: 38723276
 token_accounting_policy: RESERVATION_V2
 prior_accounting_stop_resolution: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2
-autonomous_authorization_status: PATTERN_ATTEMPT2_CONSUMED_CLOSED_PARSER_REPAIR_PENDING
+autonomous_authorization_status: PATTERN_ATTEMPT3_CONSUMED_CLOSED_PARSER_REPAIR_PENDING
 pilot_search_complete: false
 pilot_validation_complete: false
 pilot_final_status: NOT_RUN_USER_DEFERRED
@@ -173,9 +173,9 @@ flowchart TD
     n261["math_v2_1_pattern_support_id_transport_v1<br/>PROTOCOL_FREEZE<br/>COMPLETED"]
     n262["math_v2_1_pattern_preexecution_v2<br/>PREEXECUTION_FREEZE<br/>COMPLETED"]
     n263["math_v2_1_a4_seed81_pattern_canary_v2<br/>REAL_CANARY<br/>COMPLETED"]
-    n264["math_v2_1_pattern_abstraction_guard_v2<br/>PROTOCOL_FREEZE<br/>DRAFT"]
-    n265["math_v2_1_pattern_preexecution_v3<br/>PREEXECUTION_FREEZE<br/>DRAFT"]
-    n266["math_v2_1_a4_seed81_pattern_canary_v3<br/>REAL_CANARY<br/>DRAFT"]
+    n264["math_v2_1_pattern_abstraction_guard_v2<br/>PROTOCOL_FREEZE<br/>COMPLETED"]
+    n265["math_v2_1_pattern_preexecution_v3<br/>PREEXECUTION_FREEZE<br/>COMPLETED"]
+    n266["math_v2_1_a4_seed81_pattern_canary_v3<br/>REAL_CANARY<br/>COMPLETED"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]

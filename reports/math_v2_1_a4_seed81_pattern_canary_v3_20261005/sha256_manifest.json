@@ -2,8 +2,40 @@
   "algorithm": "sha256",
   "files": [
     {
+      "file": "execution_identity.json",
+      "sha256": "e07a8b1fb7fc7f01111249acef04ff3925fc19b24b310516a9b3dcf0ca54adcf"
+    },
+    {
+      "file": "final_status.json",
+      "sha256": "7315ae22984bc2db9cd34a55a57f71ae6e84a54e52351de26d7288589644010f"
+    },
+    {
+      "file": "provider_accounting.json",
+      "sha256": "dc550df9bc7c10556ef228a599026313d85e0aef00e9cc32904e9067dfc2985b"
+    },
+    {
       "file": "README.md",
-      "sha256": "fe73fd3cc1cc73b7414d2fc6122601259cc4a5a74b59b7b2569f9aa5c4638de5"
+      "sha256": "bef05d895bba1bfe32c94dde1c7bd6c50b9054f7f0eb039455b717b290c9e615"
+    },
+    {
+      "file": "request_policy_receipt.json",
+      "sha256": "26714d77675660c077a6d209c89bd8da9f890ac6151a2c38753bce019211d8d9"
+    },
+    {
+      "file": "response_format_summary.json",
+      "sha256": "658ae4ab5e4c173459fa033985d2afd576bd16532377bcb98920a9a9a01c10a6"
+    },
+    {
+      "file": "sanitization_audit.json",
+      "sha256": "7a5a55c6861260372dd22a5a18cd493296d4a0c5656336f2fe86006c32a83c62"
+    },
+    {
+      "file": "scope_closure.json",
+      "sha256": "5352d67730ade970bdf679ed88c4ffb3f1116c0824bd5b79d9b55174d8191227"
+    },
+    {
+      "file": "WHO_and_wide_universe_audit.json",
+      "sha256": "ec5732a7354c652cc799f836d0158cf4750ecb9dc01f26250b93485b96b52679"
     }
   ]
 }
