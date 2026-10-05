@@ -1,0 +1,18 @@
+{
+  "base_head": "4dedb474dee64b5c15184b5bb8b27f37a497031b",
+  "code_receipt_sha256": "38ca7f2fec4a6bccea6600e02898552aadc9f06d7b041aac333d43d7d9603493",
+  "execution_source_freeze": false,
+  "experiment_id": "math_v2_1_gradient_pattern_refactor_v1",
+  "implementation_source": "a21761a6c33871130a37e082b82afa0ccaa21086",
+  "manifest_sha256": "5f4ec762e6ff949edd56d43ad83905ac8adb474e59626f5c75badd898a217f70",
+  "origin_main_at_start": "4dedb474dee64b5c15184b5bb8b27f37a497031b",
+  "parent_ids": [
+    "math_v2_1_pattern_semantic_partition_audit_v1"
+  ],
+  "preflight_executable_sha256": "9aa3a0bf389dcc353daec1578614d6cc8f8fac786e1b38ae2c3d4b296b3070cb",
+  "pushed": false,
+  "report_builder_sha256": "1c2edff312dfbf8c157cc4b25b4767596fb669e6edd1b4d721b4cc72d46381f5",
+  "request_sha256": "b6f376d90525e047b50a6eb0606d527cbc9d20f4f09c460efc858aad464d1804",
+  "source_scope": "LOCAL_IMPLEMENTATION_COMMIT_WITH_UNFROZEN_GOVERNANCE_METADATA",
+  "startup_commit_conformance_for_draft": "NOT_CLAIMED"
+}

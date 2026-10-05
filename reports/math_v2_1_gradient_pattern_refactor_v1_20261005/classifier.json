@@ -1,0 +1,6 @@
+{
+  "causal_effect": "NOT_ESTIMATED",
+  "classifier": "VALID_ZERO_API_CONFORMANCE",
+  "provider_clustering_quality": "NOT_ESTIMATED",
+  "validity_scope": "CODE_SYNTHETIC_AND_GOVERNANCE_CONFORMANCE"
+}

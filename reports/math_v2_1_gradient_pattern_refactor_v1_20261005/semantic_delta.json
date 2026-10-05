@@ -1,0 +1,31 @@
+{
+  "changed": [
+    "discovery_internal_flow",
+    "pattern_schema",
+    "generalized_gradient_identity",
+    "representative_trajectory_projection",
+    "role_accounting_and_ceilings"
+  ],
+  "new_flow": [
+    "selected_member_wrong_examples",
+    "one_textual_gradient_per_example",
+    "gradients_only_set_level_clustering",
+    "generalized_gradient_patterns"
+  ],
+  "old_flow": [
+    "wrong_examples",
+    "raw_set_level_diagnosis",
+    "mechanism_patterns"
+  ],
+  "preserved": [
+    "WHO",
+    "shared_F",
+    "failure_discount",
+    "feasibility",
+    "aggregation",
+    "Solver",
+    "Memory",
+    "Layer1_budgets",
+    "Layer2"
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "7322ba9d377e6801113c742231c77035db3b4967c6e77a5d47ef9d6da258811f"
+    },
+    {
+      "file": "call_accounting_preflight.json",
+      "sha256": "917882a46869c1fdedd16525290ded46ffcd1ea66f93284b96a71af61fc6ebc9"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "4f45e8c06fc00e53b822281bfed8d34529b3d70e94c7ec46749a9bb8a6f79723"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "421f05c4f5d2c2c7d69a43b4383728e8bc6c8a6c21bd3e8d5f9382fbc65b6484"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "f3984fa4bce7a37ac7e7140dcf924aff009ba69ffaa4a8b408aa7c3e4365d107"
+    },
+    {
+      "file": "governance_audit.json",
+      "sha256": "24d260b9040c09801a7bea4deb25d9285a993c53e2a5edca79ba376ed1e0001f"
+    },
+    {
+      "file": "gradient_cluster_contract.json",
+      "sha256": "bb001949bc18b16cf0be8c625781fe44462135343fc604ea0452f906a6f53d85"
+    },
+    {
+      "file": "gradient_contract.json",
+      "sha256": "d0b325e859734719332e03f0de2c39513a77a3af406e15a62fee2c74b25a29cc"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "5f4ec762e6ff949edd56d43ad83905ac8adb474e59626f5c75badd898a217f70"
+    },
+    {
+      "file": "memory_timing_audit.json",
+      "sha256": "fe0e1e7da9fd235da716bc1aaaa77cb5af61aa9f8d3b24f6b330af3fe524a7c4"
+    },
+    {
+      "file": "pattern_responsibility_equivalence.json",
+      "sha256": "8635044cd4b72a9c580b0993586fca604ea316c42e49c9379ccb5d262effe10b"
+    },
+    {
+      "file": "policy_identity.json",
+      "sha256": "f041b8f08b2de1b151f1bff041b1d059fb03ce41c08b531133abd65460c9483a"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "401320f1e3723993f6ad96cc5d042073c7b5af678c0624b4874f09b782645564"
+    },
+    {
+      "file": "provider_input_anatomy.json",
+      "sha256": "94b26173b931c740900db339bed2d132a6c94d3dcc1a76adf46d24b6b7ccf850"
+    },
+    {
+      "file": "README.md",
+      "sha256": "457b709c1b98211b59bd38ed736cd1ccecc6bd77614c5aef0609f6b7febff517"
+    },
+    {
+      "file": "representative_trajectory_contract.json",
+      "sha256": "eac2b45ca20e942603036e07a77a18f2bd9e2185c359c6100deca078364c2c65"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "e35cab610e88b43c0b3f681eaeaa6f97d9ee7b2ef39211edb75fd8c72a4df31b"
+    },
+    {
+      "file": "semantic_delta.json",
+      "sha256": "b1c0590137604f64b5a0286174ada4d743bfe188d1474046a203c7cba47d5077"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "fc0e6c3197271d49c15b63d15896f7632f499504092ef5667a1d1ea4df54fabf"
+    },
+    {
+      "file": "zero_api_verification.json",
+      "sha256": "ecd2b535d9151f68c8c15d55dcedf18572fe75717c829936836fe526a8731d9b"
+    }
+  ]
+}

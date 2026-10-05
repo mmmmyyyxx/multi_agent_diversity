@@ -1393,6 +1393,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/math_v2_1_gradient_pattern_refactor_v1_20261005",
+      "document": "reports/math_v2_1_gradient_pattern_refactor_v1_20261005/README.md",
+      "date": "20261005",
+      "era": "BENCHMARK_GENERALIZATION",
+      "kind": "ARCHITECTURE",
+      "experiment_id": "math_v2_1_gradient_pattern_refactor_v1",
+      "status": "COMPLETED",
+      "source_commit": "a21761a6c33871130a37e082b82afa0ccaa21086",
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/math_v2_1_layer1_gepa_flow_audit_v1_20261004",
       "document": "reports/math_v2_1_layer1_gepa_flow_audit_v1_20261004/README.md",
       "date": "20261004",

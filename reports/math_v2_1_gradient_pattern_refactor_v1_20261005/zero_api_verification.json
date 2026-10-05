@@ -1,0 +1,70 @@
+{
+  "actual_guarded_process_network_attempts": 0,
+  "compileall": "PASS",
+  "current_suite": {
+    "cases": 1200,
+    "errors": 0,
+    "failures": 0,
+    "implementation_source": "17ed7f2cc5d52488f4d1d1d60791d2f770e93c59",
+    "note": "Full current suite before isolated new-method emergency ceiling alignment; final source has the separate required regression below.",
+    "omitted_historical_replay_cases": 1404,
+    "omitted_private_artifact_cases": 64,
+    "seconds": 1117.647,
+    "skipped": 2,
+    "xml_sha256": "63149e50ef0ca40696deb5c7186791f9322437385f7b89c87bcb84a24b75e7f5"
+  },
+  "deterministic_preflight": {
+    "compileall_pass": true,
+    "frozen_treatment_settings_unchanged": true,
+    "global_real_token_ledger_unchanged": true,
+    "ledger_sha256": "9f69fc1bf808c6455f3f295233352367d6ff2cc1574181d8ecd6b4b1aa9f87f9",
+    "network_attempt_count": 0,
+    "old_runtime_file_count": 347,
+    "old_runtime_inventory_sha256": "d4f8576126d33f28cf699123cab914d7e1f506688292e9bf42a770f9d3e798e8",
+    "protected_evidence_unchanged": true,
+    "provider_bounds": {
+      "max_opportunities": 1,
+      "max_proposals_per_opportunity": 6,
+      "pattern_calls": 13,
+      "pattern_cluster_calls": 1,
+      "pattern_gradient_calls": 12,
+      "reflection_calls": 6,
+      "solver_calls": 1632,
+      "solver_per_opportunity": 148,
+      "successful_provider_calls": 1651,
+      "transport_attempts": 34671
+    },
+    "real_canary_started": false,
+    "real_pilot_started": false,
+    "real_provider_calls": 0,
+    "shared_F_cases": 343,
+    "shared_F_equivalence": true,
+    "test_calls": 0,
+    "unchanged_protected_file_count": 4005,
+    "validation_calls": 0
+  },
+  "historical_replay": "NOT_RUN",
+  "omitted_scope": "Classified historical replay and eight private-artifact modules; no full historical PASS claimed.",
+  "post_current_alignment": "NEW_METHOD_EMERGENCY_LIMIT_MATCHES_N_PLUS_ONE_ACCOUNTING",
+  "private_artifact_modules": "NOT_RUN",
+  "real_credentials_present": false,
+  "real_provider_calls": 0,
+  "required_regression": {
+    "cases": 375,
+    "errors": 0,
+    "failures": 0,
+    "seconds": 216.851,
+    "skipped": 0,
+    "xml_sha256": "325e235e58d18b5a154b14143931f0f296aff8e785c6a4e369df9d27fde43daf"
+  },
+  "required_regression_source": "a21761a6c33871130a37e082b82afa0ccaa21086",
+  "targeted": {
+    "cases": 50,
+    "errors": 0,
+    "failures": 0,
+    "implementation_source": "a21761a6c33871130a37e082b82afa0ccaa21086",
+    "scope": "tests/test_gradient_patterns.py within required regression",
+    "skipped": 0,
+    "xml_sha256": "325e235e58d18b5a154b14143931f0f296aff8e785c6a4e369df9d27fde43daf"
+  }
+}

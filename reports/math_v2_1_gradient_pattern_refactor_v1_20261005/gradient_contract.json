@@ -1,0 +1,26 @@
+{
+  "causal_status": "HYPOTHETICAL_CORRECTIVE_SIGNAL",
+  "correct_examples_excluded": true,
+  "full_universe_before_clustering": true,
+  "invalid_fourth_test": "PASS",
+  "invalid_output_terminal": "PATTERN_GRADIENT_EXTRACTION_INVALID",
+  "invalid_wrong_included": true,
+  "policy": {
+    "abstraction_guard": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V3",
+    "generation_contract_role": "pattern",
+    "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+    "identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_V1",
+    "logical_calls_per_wrong": 1,
+    "max_characters": 400,
+    "output_cache": false,
+    "provider_role": "pattern_gradient",
+    "schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V1",
+    "semantic_regeneration": false,
+    "successful_generations_per_wrong": 1,
+    "universe": "all_selected_member_wrong_optimize"
+  },
+  "strict_output_fields": [
+    "gradient"
+  ],
+  "zero_responsibility_wrong_included": true
+}

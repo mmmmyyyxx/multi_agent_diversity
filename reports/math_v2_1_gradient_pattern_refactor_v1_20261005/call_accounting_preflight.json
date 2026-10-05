@@ -1,0 +1,45 @@
+{
+  "api_token_budget": 0,
+  "cluster_cache_hits": 0,
+  "current_optimize_ceiling": 12,
+  "durable_roles": [
+    "solver",
+    "reflection",
+    "pattern_gradient",
+    "pattern_cluster"
+  ],
+  "generation_controls": "FROZEN_OPTIMIZER_V3_UNCHANGED",
+  "gradient_cache_hits": 0,
+  "historical_parent_bounds": {
+    "max_opportunities": 1,
+    "max_proposals_per_opportunity": 6,
+    "pattern_calls": 1,
+    "reflection_calls": 6,
+    "solver_calls": 1632,
+    "solver_per_opportunity": 148,
+    "successful_provider_calls": 1639,
+    "transport_attempts": 34419
+  },
+  "method_ceiling_boundary_test": "PASS",
+  "method_emergency_limit": 1651,
+  "new_profile_bounds": {
+    "max_opportunities": 1,
+    "max_proposals_per_opportunity": 6,
+    "pattern_calls": 13,
+    "pattern_cluster_calls": 1,
+    "pattern_gradient_calls": 12,
+    "reflection_calls": 6,
+    "solver_calls": 1632,
+    "solver_per_opportunity": 148,
+    "successful_provider_calls": 1651,
+    "transport_attempts": 34671
+  },
+  "profile_dispatch_authorized": false,
+  "real_api_budget": 0,
+  "semantic_regeneration": false,
+  "successful_opportunity_formula": "n_wrong_plus_one",
+  "synthetic_cluster_calls": 1,
+  "synthetic_gradient_calls": 7,
+  "synthetic_pattern_total": 8,
+  "synthetic_wrong_examples": 7
+}

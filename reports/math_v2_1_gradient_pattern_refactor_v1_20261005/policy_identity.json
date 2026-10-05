@@ -1,0 +1,29 @@
+{
+  "Layer1": {
+    "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+    "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
+    "k_local_return": 4,
+    "max_generations": 6,
+    "max_prompt_chars": 3000,
+    "metric_limit": 36,
+    "official_gepa_fidelity": false,
+    "optimizer_input_schema": "PATTERN_GRADIENT_TRAJECTORIES_MEMORY_INPUT_V4",
+    "panel_policy": "pattern_gradient_representatives_preservation_transition_v5",
+    "panel_size": 6
+  },
+  "clustering": "gradient_cluster_pattern_discovery_v4",
+  "code_receipt_sha256": "38ca7f2fec4a6bccea6600e02898552aadc9f06d7b041aac333d43d7d9603493",
+  "evidence": "pattern_gradient_representatives_preservation_transition_v5",
+  "gradient": "PER_EXAMPLE_TEXTUAL_GRADIENT_V1",
+  "memory": "structured_cross_member_rolling_risk_memory_v4",
+  "optimizer_input": "PATTERN_GRADIENT_TRAJECTORIES_MEMORY_INPUT_V4",
+  "pattern_identity": "GENERALIZED_CORRECTIVE_GRADIENT_IDENTITY_V1",
+  "pattern_responsibility": "same_raw_pattern_responsibility_v1",
+  "pattern_schema": "GRADIENT_PATTERN_PARTITION_V2",
+  "profile_sha256": "f5ff21b13a1198cf5c5af1efdd91d69f122fb561be4ac9bc2c1b23f1a6ad3f7f",
+  "prompt_template_hashes": {
+    "clustering": "1154e313e60b599b51dab2eee0c5a209e03a6178ccbe19df0241fa397f5e7173",
+    "gradient": "1799255401b0f57fef05179d1c00fea949e08a270ff27051f38d700b62f381ea"
+  },
+  "raw_F": "raw_responsibility_max_4D_2N_C_v1"
+}

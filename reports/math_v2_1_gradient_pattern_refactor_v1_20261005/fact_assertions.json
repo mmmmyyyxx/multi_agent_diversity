@@ -1,0 +1,16 @@
+{
+  "all_wrong_get_one_gradient": true,
+  "correct_excluded": true,
+  "gradients_only_cluster": true,
+  "heldout_not_accessed": true,
+  "memory_semantics_unchanged": true,
+  "no_push": true,
+  "no_semantic_retry": true,
+  "nonselected_repair_isolated": true,
+  "old_evidence_unchanged": true,
+  "preservation_retained": true,
+  "real_api_calls_zero": true,
+  "representatives_bounded": true,
+  "same_shared_F": true,
+  "separate_durable_roles": true
+}

@@ -1,0 +1,18 @@
+{
+  "execution_readiness_gate": "HOLD",
+  "full_startup_freeze_claimed": false,
+  "global_token_ledger_unchanged": true,
+  "implementation_commit": "a21761a6c33871130a37e082b82afa0ccaa21086",
+  "lineage_edges": 157,
+  "manifest_status": "DRAFT",
+  "ok": true,
+  "old_evidence_unchanged": true,
+  "real_api_authorized": false,
+  "real_execution_ready": false,
+  "real_provider_calls": 0,
+  "registry_nodes": 271,
+  "reports_indexed": 276,
+  "sanitization": "PASS",
+  "source_scope": "IMPLEMENTATION_COMMIT_AND_UNFROZEN_CODE_AUDIT_METADATA",
+  "staged_task_files_only": true
+}

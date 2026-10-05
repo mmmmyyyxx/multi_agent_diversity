@@ -1,0 +1,11 @@
+{
+  "canary": "NO",
+  "classification": "VALID_ZERO_API_CONFORMANCE",
+  "pilot": "NO",
+  "pushed": "NO",
+  "real_provider_calls": 0,
+  "semantic_efficacy": "NOT_ESTIMATED",
+  "status": "COMPLETED",
+  "test": "NO",
+  "validation": "NO"
+}

@@ -1,0 +1,11 @@
+{
+  "WHO_protected_source_unchanged": true,
+  "direct_plus_coverage_vs_two_near": "F_EQUALS_FOUR_IDENTITY_TIE_ONLY",
+  "equivalence_pass": true,
+  "exhaustive_synthetic_cases": 343,
+  "identity": "same_raw_pattern_responsibility_v1",
+  "raw_identity": "raw_responsibility_max_4D_2N_C_v1",
+  "same_fixed_gradients_label_change_cluster_request_bytes": "IDENTICAL",
+  "shared_primitive": "responsibility_value",
+  "size_confidence_similarity_or_lane_selection": false
+}

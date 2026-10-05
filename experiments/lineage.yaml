@@ -825,6 +825,9 @@ nodes:
 - experiment_id: math_v2_1_pattern_semantic_partition_audit_v1
   kind: ZERO_API_AUDIT
   era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_1_gradient_pattern_refactor_v1
+  kind: ARCHITECTURE_REFACTOR
+  era: BENCHMARK_GENERALIZATION
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1559,4 +1562,9 @@ edges:
   relation: audit_of
   evidence: reports/math_v2_1_pattern_semantic_partition_audit_v1_20261005/README.md
   scope: Retrospective Optimize-only semantic review; operational validity retained.
+- from: math_v2_1_pattern_semantic_partition_audit_v1
+  to: math_v2_1_gradient_pattern_refactor_v1
+  relation: derived_from
+  evidence: reports/math_v2_1_gradient_pattern_refactor_v1_20261005/README.md
+  scope: Versioned code-only discovery amendment, no efficacy inference or real rerun.
 current_frontier: experiments/current_frontier.yaml

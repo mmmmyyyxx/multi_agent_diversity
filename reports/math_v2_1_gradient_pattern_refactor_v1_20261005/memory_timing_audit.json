@@ -1,0 +1,17 @@
+{
+  "automatic_gradient_memory_writes": 0,
+  "automatic_pattern_memory_writes": 0,
+  "limits_unchanged": true,
+  "optimizer_archive_visibility": false,
+  "order": [
+    "target.select",
+    "gradient.extract_x_n",
+    "gradient.cluster",
+    "pattern.score",
+    "pattern.select",
+    "memory.read",
+    "layer1.search"
+  ],
+  "order_test": "PASS",
+  "signature_promotion_retention_retrieval_and_write_timing_unchanged": true
+}

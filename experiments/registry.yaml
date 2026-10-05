@@ -7723,3 +7723,35 @@ experiments:
     runtime_policy_changes: []
     read_scope: consumed_attempt4_selected_member_optimize_only
     protocol_sha256: 042139dc89e531af7e27dc87f69fd7fada1c5a092be437bc0c188ef3c9bc6e80
+- experiment_id: math_v2_1_gradient_pattern_refactor_v1
+  kind: ARCHITECTURE_REFACTOR
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_pattern_semantic_partition_audit_v1
+  status: COMPLETED
+  scientific_status: VALID_ZERO_API_CONFORMANCE
+  implementation_commit: a21761a6c33871130a37e082b82afa0ccaa21086
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_gradient_pattern_refactor_v1.yaml
+  report: reports/math_v2_1_gradient_pattern_refactor_v1_20261005
+  classifier: ZERO_API_CONFORMANCE
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Per-example gradients then gradients-only semantic aggregation; unchanged WHO, shared F, Memory and
+    Layer2.
+  - Modification and synthetic verification only; no real API, Canary, Pilot, Validation, Test or push
+    authority.
+  unavailable:
+    execution_commit: No real experiment execution.
+    result_commit: Local result commit is identified by git history; no self-referential hash.
+  audit_scope:
+    identity: MATH_GRADIENT_PATTERN_REFACTOR_ZERO_API_V1
+    provider_call_budget: 0
+    api_token_budget: 0
+    raw_data_read_scope: SYNTHETIC_GRADIENT_TESTS_AND_EXISTING_READ_ONLY_CURRENT_CONTRACT_FIXTURES
+    implementation_source: a21761a6c33871130a37e082b82afa0ccaa21086
+    execution_profile_scope: OFFLINE_CONFORMANCE_ONLY_NEVER_DISPATCHED

@@ -1,0 +1,14 @@
+{
+  "existing_current_suite_optimize_fixture_access": "READ_ONLY_CONTRACT_CHECK_NOT_OPTIMIZATION",
+  "gradient_pipeline_examples": "SYNTHETIC_ONLY",
+  "new_gradient_pipeline_tests_synthetic": true,
+  "opaque_historical_inventory_checks_only": true,
+  "provider_tests_fake_transport_only": true,
+  "real_canary_executed": false,
+  "real_pilot_executed": false,
+  "shadow_content_reads": 0,
+  "test_calls": 0,
+  "test_content_reads": 0,
+  "validation_calls": 0,
+  "validation_content_reads": 0
+}

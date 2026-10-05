@@ -1,0 +1,21 @@
+{
+  "full_reasoning_trace": false,
+  "identity": "pattern_gradient_representatives_preservation_transition_v5",
+  "maximum_representatives": 3,
+  "nonselected_repair_objectives": 0,
+  "ordering": [
+    "descending_sample_F",
+    "stable_example_id"
+  ],
+  "preservation_anchor_retained": true,
+  "selected_support_only": true,
+  "singleton_preservation_locally_measurable_test": "PASS",
+  "trajectory_fields": [
+    "problem",
+    "prediction",
+    "reference",
+    "per_example_gradient",
+    "responsibility_labels"
+  ],
+  "transition_safety_retained": true
+}

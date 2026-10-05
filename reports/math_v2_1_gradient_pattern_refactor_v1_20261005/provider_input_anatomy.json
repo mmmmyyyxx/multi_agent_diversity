@@ -1,0 +1,24 @@
+{
+  "cluster_fields": [
+    "gradients.example_id",
+    "gradients.gradient"
+  ],
+  "cluster_label_fields": 0,
+  "cluster_memory_fields": 0,
+  "cluster_other_member_procedures": 0,
+  "cluster_raw_example_fields": 0,
+  "gradient_fields": [
+    "current_member_procedure",
+    "one_example_problem_reference_prediction_validity_labels_margin_disagreement"
+  ],
+  "heldout_fields": 0,
+  "optimizer_fields": [
+    "selected_generalized_gradient",
+    "at_most_three_selected_observable_failure_trajectories",
+    "existing_current_panel",
+    "bounded_retrieved_memory"
+  ],
+  "original_ids_recoverable_exact_aliases": true,
+  "solver_pattern_or_memory_fields": 0,
+  "unbounded_gradient_history_fields": 0
+}

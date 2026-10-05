@@ -1,0 +1,52 @@
+{
+  "algorithm_similarity_merge": false,
+  "exact_normalized_identity_merge": true,
+  "fixed_K": null,
+  "full_disjoint_partition": true,
+  "minimum_support": null,
+  "policy": {
+    "accounting": "wrong_universe_ceiling_plus_one_cluster_per_opportunity_v1",
+    "cluster_calls_per_opportunity": 1,
+    "context_limit_tokens": 1000000,
+    "correctness": "target_member_correctness_validity_v1",
+    "discovery": "gradient_cluster_pattern_discovery_v4",
+    "generalized_gradient_max_characters": 600,
+    "generation_contract_role": "pattern",
+    "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+    "gradient_policy": {
+      "abstraction_guard": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V3",
+      "generation_contract_role": "pattern",
+      "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+      "identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_V1",
+      "logical_calls_per_wrong": 1,
+      "max_characters": 400,
+      "output_cache": false,
+      "provider_role": "pattern_gradient",
+      "schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V1",
+      "semantic_regeneration": false,
+      "successful_generations_per_wrong": 1,
+      "universe": "all_selected_member_wrong_optimize"
+    },
+    "identity": "GENERALIZED_CORRECTIVE_GRADIENT_IDENTITY_V1",
+    "input_estimate": "serialized_utf8_bytes_plus_1024",
+    "input_limit_tokens": 991808,
+    "output_cache": false,
+    "provider_role": "pattern_cluster",
+    "raw_value": "raw_responsibility_max_4D_2N_C_v1",
+    "responsibility": "same_raw_pattern_responsibility_v1",
+    "schema": "GRADIENT_PATTERN_PARTITION_V2",
+    "selection": "raw_responsibility_then_canonical_identity",
+    "universe": "all_selected_member_wrong_optimize"
+  },
+  "provider_semantic_merge_authority": true,
+  "semantic_provider_efficacy": "NOT_ESTIMATED",
+  "singletons_legal": true,
+  "strict_pattern_fields": [
+    "generalized_gradient",
+    "support_ids"
+  ],
+  "strict_top_fields": [
+    "patterns",
+    "unassigned_ids"
+  ]
+}
