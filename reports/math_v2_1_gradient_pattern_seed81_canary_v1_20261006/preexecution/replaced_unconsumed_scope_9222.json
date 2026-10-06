@@ -288,7 +288,7 @@
       "reference_failure": "hard_contract_failure",
       "truncated_even_with_marker": "invalid_incorrect"
     },
-    "preregistration_identity": "fa89f50b64658e0665d0ab14e83ddd43f638241f16363e01f05e8c90fe43c75d",
+    "preregistration_identity": "cadb4573d536b11d908450cca011fed5097666bca36ff3791234704850945439",
     "provider": "lwj",
     "roles": [
       "solver",
@@ -331,7 +331,7 @@
       "top_k": 20,
       "top_p": 0.8
     },
-    "source_sha": "59703562590acdc6cf454ede3e84d3fab2b7e3a9",
+    "source_sha": "5b2c3ded620c45a06b6f0fa4ce7e4abb0c0c22ef",
     "successful_provider_call_ceiling": 1651,
     "test_calls": 0,
     "transport_attempt_ceiling": 34671,
@@ -341,7 +341,7 @@
   "canary_started": false,
   "diagnostic_scope": {
     "active_attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt1",
-    "active_startup_identity_sha256": "af36243a4b7fff0f8ad10196e2165fde277f365cb3d7715c193e110364b94030",
+    "active_startup_identity_sha256": "3d38f3e9a560d3f683dad9758c97e86ec7e95769bab7d13ba835c89811c5d255",
     "binding_path": "experiments/execution_bindings/math_v2_1_gradient_pattern_canary_v1.json",
     "binding_sha256": "dd5b00fae389c18a643d75f020ac5f2fa85f909d1acde679dc835bf2055ff72d",
     "cache_hits": 0,
@@ -376,7 +376,7 @@
     "protocol_sha256": "715e50e9f54567157bef4723d4b19522d43788558eb0315a98d5a0a8bd9ba366",
     "raw_partition_schema": "SET_LEVEL_PATTERN_PARTITION_V1",
     "role": "diagnostic_raw_pattern",
-    "source_sha": "59703562590acdc6cf454ede3e84d3fab2b7e3a9",
+    "source_sha": "5b2c3ded620c45a06b6f0fa4ce7e4abb0c0c22ef",
     "test_calls": 0,
     "user_request_sha256": "6327a703b9b337e81b52b67cd136d98c469eb372dc5aa82862101bdc8d6811e2",
     "validation_calls": 0
@@ -385,8 +385,8 @@
   "pilot_started": false,
   "protocol_sha256": "715e50e9f54567157bef4723d4b19522d43788558eb0315a98d5a0a8bd9ba366",
   "real_provider_calls": 0,
-  "source": "59703562590acdc6cf454ede3e84d3fab2b7e3a9",
-  "startup_identity_sha256": "af36243a4b7fff0f8ad10196e2165fde277f365cb3d7715c193e110364b94030",
+  "source": "5b2c3ded620c45a06b6f0fa4ce7e4abb0c0c22ef",
+  "startup_identity_sha256": "3d38f3e9a560d3f683dad9758c97e86ec7e95769bab7d13ba835c89811c5d255",
   "test_model_calls": 0,
   "user_request_sha256": "6327a703b9b337e81b52b67cd136d98c469eb372dc5aa82862101bdc8d6811e2",
   "validation_started": false
