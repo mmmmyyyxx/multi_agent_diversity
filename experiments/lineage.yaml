@@ -842,6 +842,8 @@ nodes:
 - experiment_id: math_identical_initial_condition_v1
   kind: ZERO_API_AUDIT
   era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_1_gradient_pattern_seed81_pilot_v2
+  kind: PILOT
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1615,4 +1617,14 @@ edges:
   relation: derived_from
   evidence: reports/math_identical_initial_condition_v1_20261006/README.md
   scope: Initial-condition correction only; frozen historical evidence and method remain unchanged.
+- from: math_v2_1_gradient_pattern_seed81_pilot_v1
+  to: math_v2_1_gradient_pattern_seed81_pilot_v2
+  relation: followup_of
+  evidence: experiments/protocols/math_numeric_admissibility_v1/amendment.json
+  scope: Fresh Pilot after numeric admissibility amendment; historical runs and initialization correction preserved.
+- from: math_identical_initial_condition_v1
+  to: math_v2_1_gradient_pattern_seed81_pilot_v2
+  relation: followup_of
+  evidence: experiments/protocols/math_numeric_admissibility_v1/amendment.json
+  scope: Fresh Pilot after numeric admissibility amendment; historical runs and initialization correction preserved.
 current_frontier: experiments/current_frontier.yaml

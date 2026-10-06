@@ -93,6 +93,9 @@ def current_scientific_files(root: Path, *, execution_closure: bool = False) -> 
     pattern_contract = root/'docs/design/PATTERN_GRADIENT_DISCOVERY_V4.md'
     if pattern_contract.is_file():
         result.append(pattern_contract)
+    numeric_contract = root/'docs/design/NUMERIC_PROVENANCE_GUARD_V5.md'
+    if numeric_contract.is_file():
+        result.append(numeric_contract)
     return sorted(result, key=lambda p:p.relative_to(root).as_posix())
 
 

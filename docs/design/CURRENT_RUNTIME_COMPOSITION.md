@@ -5,7 +5,7 @@ This is an engineering consolidation of the existing scientific treatment.
 `CURRENT_RUNTIME_COMPOSITION_V1` names the composition boundary; all scientific
 identity values and provider-visible prompt bytes were unchanged by that
 consolidation. Subsequent versioned amendments are defined in CURRENT_SPEC.md;
-the current offline binding is the Gradient profile V3, with identical minimal
+the current offline binding is the Gradient profile V4, with identical minimal
 V1_2 initialization. Its Pilot offline counterpart preserves the closed Pilot's
 method, phase and resource ceilings; neither profile has execution authority.
 
@@ -67,6 +67,15 @@ for replay. New scopes include initial-team identity and never reuse old Pilot
 authorization; fresh runs start with empty Memory and independent member lanes.
 Historical MATH compatibility tests use an explicit isolated V1_1 artifact
 workspace; this test fixture changes no legacy runtime or historical evidence.
+
+The current numeric-admissibility amendment derives Guard V5 / Gradient prompt
+V3 from a hash-pinned V1_2 parent as data-only provenance. It changes only those
+two treatment fields and fresh attempt/cache/scope metadata. The parent policy,
+budgets, initialization, memberships and all remaining method fields must match
+the exact derivation. The runtime verifies every parent receipt and archives the
+old initial-team reference explicitly; it never composes an old policy. Current
+offline conformance uses profile V4 and Pilot offline profile V3. These profiles
+grant no dispatch; fresh Pilot execution needs its own frozen single-use scope.
 
 Current tests are selected by `tests/suite_classification.json`; new entrypoint
 and dependency tests live in `tests/current/`. Public compatibility tests remain

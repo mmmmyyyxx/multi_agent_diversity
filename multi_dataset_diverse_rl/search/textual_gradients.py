@@ -24,8 +24,10 @@ Prefer one or two short sentences totaling at most 250-300 characters.
 Infer one hypothetical, actionable prompt-level correction from this single observable
 failure and the current member procedure. State one reasoning behavior to strengthen,
 change, add or avoid, directly usable as a reasoning instruction on other problems.
-Use abstract roles and operations. Do not repeat problem entities or names, numbers,
-answers, formula constants, quoted conditions, question fragments or example details.
+Use abstract roles and operations. Do not copy problem-specific numeric constants,
+answers, quantities, entities, formula fragments, or other example-specific details.
+Generic mathematical constants or structural quantities are allowed only when
+necessary to state a reusable reasoning rule.
 Do not explain this particular example or claim proof of its hidden causal error.
 If the root cause is uncertain, state a conservative generalizable corrective behavior.
 Before output, ensure the string is short, abstract and actionable; omit example details.

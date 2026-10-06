@@ -1,0 +1,40 @@
+{
+  "admissibility_changed": true,
+  "compileall": "PASS",
+  "core_method_changed": false,
+  "current_modules": 142,
+  "focused_suite": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 177
+  },
+  "full_current_suite": "PENDING_FINAL_SOURCE_INVOCATION",
+  "full_historical_replay_pass": false,
+  "hard_character_limit": 400,
+  "historical_files_changed": 0,
+  "historical_private_tests": "NOT_RUN",
+  "immutable_historical_files": 4703,
+  "legacy_dependencies": 0,
+  "network_attempt_count": 0,
+  "provider_calls": 0,
+  "status": "PASS",
+  "unchanged_core_files": [
+    "multi_dataset_diverse_rl/search/current_composition.py",
+    "multi_dataset_diverse_rl/search/current_policy.py",
+    "multi_dataset_diverse_rl/search/current_opportunity.py",
+    "multi_dataset_diverse_rl/search/current_layer1.py",
+    "multi_dataset_diverse_rl/search/bounded_layer1.py",
+    "multi_dataset_diverse_rl/search/initial_competence_transition.py",
+    "multi_dataset_diverse_rl/search/rolling_risk_memory.py",
+    "multi_dataset_diverse_rl/search/private_action_memory.py",
+    "multi_dataset_diverse_rl/search/evaluation.py",
+    "multi_dataset_diverse_rl/search/private_gate.py",
+    "multi_dataset_diverse_rl/search/provider_runtime.py",
+    "multi_dataset_diverse_rl/governance/token_accounting.py",
+    "multi_dataset_diverse_rl/search/policies.py",
+    "multi_dataset_diverse_rl/search/history.py",
+    "multi_dataset_diverse_rl/benchmarks/gradient_pilot_contract.py",
+    "scripts/run_experiment.py"
+  ]
+}

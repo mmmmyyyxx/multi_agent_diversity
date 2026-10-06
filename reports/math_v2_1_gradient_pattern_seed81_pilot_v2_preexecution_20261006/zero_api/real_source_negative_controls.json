@@ -1,0 +1,8 @@
+{
+  "checks": {
+    "real_problem_numeric_copy": 11,
+    "real_reference_copy": 11
+  },
+  "provider_calls": 0,
+  "status": "PASS"
+}

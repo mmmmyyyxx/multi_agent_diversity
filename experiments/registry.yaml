@@ -7959,3 +7959,28 @@ experiments:
     test_authorized: false
     push_authorized: false
     execution_profile_scope: OFFLINE_CONFORMANCE_ONLY_NEVER_DISPATCHED
+- experiment_id: math_v2_1_gradient_pattern_seed81_pilot_v2
+  kind: PILOT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_gradient_pattern_seed81_pilot_v1
+  - math_identical_initial_condition_v1
+  status: DRAFT
+  scientific_status: NOT_EXECUTED_EFFICACY_NOT_ESTIMATED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v2.yaml
+  report: reports/math_v2_1_gradient_pattern_seed81_pilot_v2_preexecution_20261006
+  classifier: NUMERIC_ADMISSIBILITY_AMENDMENT_FRESH_PILOT
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User-selected bounded numeric provenance amendment and minimal prompt clarification; no core method change.
+  - Fresh V1_2 symmetric initialization, empty Memory, new namespace. Search only; no new Canary or retry.
+  unavailable:
+    implementation_commit: Pending source freeze
+    execution_commit: Not executed
+    result_commit: Not executed

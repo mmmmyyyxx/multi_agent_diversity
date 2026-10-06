@@ -747,9 +747,14 @@ the default; V3 artifacts retain their frozen semantics. No experiment or held-o
 execution is authorized by this modification.
 
 The current Gradient bundle uses prompt clarification
-`PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V2` and implementation repair
-`PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V4`, specified in the same Gradient
-contract. The 400-character hard limit, one generation per wrong example,
+`PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3` and the versioned admissibility amendment
+`PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5`. It forbids example-specific
+numeric leakage, rather than numeric characters. Necessary generic mathematical
+constants and structural quantities may state a reusable reasoning rule. The
+[numeric provenance contract](NUMERIC_PROVENANCE_GUARD_V5.md) specifies the bounded
+deterministic heuristic and its limits. V4 and prompt V2 retain their historical
+absolute digit rule; their frozen results are not reclassified. The
+400-character hard limit, one generation per wrong example,
 gradients-only clustering, same-F selection and all search/Memory semantics
 remain unchanged. A fresh experiment and exact authorization are required.
 

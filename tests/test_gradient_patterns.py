@@ -24,7 +24,7 @@ from multi_dataset_diverse_rl.search.rolling_risk_memory import StructuredRollin
 from multi_dataset_diverse_rl.search.private_action_memory import LIMITS
 
 ROOT=Path(__file__).resolve().parents[1]
-BP='experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v3.json'
+BP='experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v4.json'
 CHECK='Check constraints before transforming intermediate expressions.'
 VERIFY='Verify substitution against the original conditions.'
 
@@ -92,7 +92,7 @@ def test_seven_wrong_five_correct_exactly_one_single_example_including_zero_inva
 @pytest.mark.parametrize('text',['Always return 2','Use constant 123','Return FINAL_ANSWER only','you are a math solver',
     'Replace the entire procedure','Solve every mathematical problem','Check Alice before substitution','x'*401,'',None])
 def test_gradient_guard_rejects_specific_content_interface_full_procedure(text):
-    r=evidence()[0];r=replace(r,signals={**r.signals,'input_payload':'Alice calculates a symbolic equation.'})
+    r=evidence()[0];r=replace(r,signals={**r.signals,'input_payload':'Alice calculates a symbolic equation with given constant 123.'})
     with pytest.raises(SearchContractError,match='GRADIENT_EXTRACTION_INVALID'):validate_gradient(text,(r,))
 
 
@@ -145,7 +145,7 @@ def test_prompt_amendment_changes_current_binding_and_rejects_historical_authori
     prior=json.loads((ROOT/'experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v1.json').read_bytes())
     assert current['gradient_prompt_sha256']!=prior['gradient_prompt_sha256']
     assert current['pattern_prompt_sha256']==prior['pattern_prompt_sha256']
-    assert current['pattern_policy']['gradient_policy']['prompt_identity']=='PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V2'
+    assert current['pattern_policy']['gradient_policy']['prompt_identity']=='PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3'
     assert current['pattern_policy']['gradient_policy']['identity']==prior['pattern_policy']['gradient_policy']['identity']
     with pytest.raises(SearchContractError,match='CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN'):
         execution_binding(ROOT,prior)
@@ -400,7 +400,7 @@ def test_invalid_json_is_one_successful_generation_then_terminal_not_retried():
 def test_binding_rejects_stale_single_call_ceilings(key):
     from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
     c=json.loads((ROOT/BP).read_bytes());c['provider_bounds'][key]=1 if key!='pattern_cluster_calls' else 2
-    assert execution_binding(ROOT,c).blockers()==('CURRENT_INITIAL_CONDITION_FROZEN_CONTRACT_MISMATCH',)
+    assert execution_binding(ROOT,c).blockers()==('CURRENT_NUMERIC_ADMISSIBILITY_FROZEN_CONTRACT_MISMATCH',)
 
 
 def test_full_fake_production_opportunity_preserves_who_memory_layer2(tmp_path,monkeypatch):

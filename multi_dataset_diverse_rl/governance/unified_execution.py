@@ -67,7 +67,14 @@ def execution_identity(root, contract):
     configs.extend(contract[k] for k in ("parent_binding_path", "accounting_policy_path", "validation_accounting_metadata_path", "verify_settings_path", "amendment_parent_binding_path", "low_cost_subsets_path", "optimizer_amendment_authorization_path", "layer1_parent_binding_path", "layer1_amendment_authorization_path", "memory_parent_binding_path", "memory_amendment_authorization_path", "pattern_parent_binding_path", "pattern_amendment_authorization_path", "rolling_memory_freeze_path") if k in contract)
     configs.extend(contract[k] for k in ('gradient_prompt_path','gradient_parent_binding_path') if k in contract)
     configs.extend(contract[k] for k in ('pilot_parent_binding_path','pilot_execution_authorization_path') if k in contract)
-    if 'initial_condition_amendment_path' in contract:
+    if 'numeric_admissibility_amendment_path' in contract:
+        from ..benchmarks.numeric_admissibility_contract import validate_numeric_admissibility
+        from ..benchmarks.math_gradient_pattern_binding import MATHGradientPatternBinding
+        from .provenance_receipts import verify_receipt_dependencies
+        historical=validate_numeric_admissibility(MATHGradientPatternBinding(root,contract))
+        configs.extend(contract[k] for k in ('numeric_admissibility_amendment_path','numeric_parent_binding_path','numeric_user_scope_path') if k in contract)
+        configs.extend(verify_receipt_dependencies(root,contract,historical_initial_team=historical))
+    elif 'initial_condition_amendment_path' in contract:
         from ..benchmarks.initial_condition_contract import initial_condition_provenance
         from ..benchmarks.math_domain_binding import execution_binding
         from .provenance_receipts import verify_receipt_dependencies
@@ -168,7 +175,7 @@ def execution_scope(manifest, contract):
         validation_metadata_sha256=contract['validation_accounting_metadata_sha256'],
         continuation_authorization_sha256=contract['continuation_authorization_sha256'])
     if contract['execution_phase']=='pilot':
-        scope.update(execution_phase='pilot',user_scope_sha256=contract.get('initial_condition_amendment_sha256',contract.get('pilot_execution_authorization_sha256')),
+        scope.update(execution_phase='pilot',user_scope_sha256=contract.get('numeric_user_scope_sha256',contract.get('initial_condition_amendment_sha256',contract.get('pilot_execution_authorization_sha256'))),
             search_only_scope=contract['search_only_scope'],pilot_observation_policy=contract['pilot_observation_policy'],
             max_opportunities=contract['provider_bounds']['max_opportunities'],
             solver_call_ceiling=contract['provider_bounds']['solver_calls'],
@@ -176,6 +183,9 @@ def execution_scope(manifest, contract):
     if 'initial_condition_amendment_sha256' in contract:
         scope['initial_condition']={k:contract[k] for k in ('initial_team_version',
             'initial_team_artifact_sha256','initial_team_sha256','initial_condition_amendment_sha256')}
+    if 'numeric_admissibility_amendment_sha256' in contract:
+        scope['numeric_admissibility']={k:contract[k] for k in ('numeric_parent_binding_sha256',
+            'numeric_admissibility_amendment_sha256','gradient_prompt_sha256','pattern_abstraction_guard')}
     return scope
 
 
@@ -222,7 +232,7 @@ def inventory(run_root):
 
 def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, experiment_id="math_v2_pattern_memory_v1"):
     from ..benchmarks.math_domain_binding import execution_binding
-    binding_path=binding_path or 'experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v3.json'
+    binding_path=binding_path or 'experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v4.json'
     contract=read_json(root/binding_path)
     b=execution_binding(root,contract)
     if b.blockers():

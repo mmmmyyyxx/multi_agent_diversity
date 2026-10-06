@@ -89,6 +89,11 @@ class MATHGradientPatternBinding:
 
     def blockers(self):
         try:
+            if 'numeric_admissibility_amendment_path' in self.contract:
+                from .numeric_admissibility_contract import validate_numeric_admissibility
+                validate_numeric_admissibility(self)
+                validate_effective_math_dependencies(self)
+                return ()
             c,historical=initial_condition_provenance(self)
             CURRENT_POLICY_BUNDLE.validate_contract(c)
             for path,sha in [('gradient_parent_binding_path','gradient_parent_binding_sha256'),
@@ -151,6 +156,6 @@ class MATHGradientPatternBinding:
             validate_effective_math_dependencies(self)
             return ()
         except SearchContractError as error:
-            if str(error)=='CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN' or str(error).startswith(('CURRENT_DATA_', 'CURRENT_INITIAL_CONDITION_')):return (str(error),)
+            if str(error)=='CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN' or str(error).startswith(('CURRENT_DATA_', 'CURRENT_INITIAL_CONDITION_', 'CURRENT_NUMERIC_ADMISSIBILITY_')):return (str(error),)
             return ('GRADIENT_PATTERN_BINDING_INVALID',)
         except (KeyError,TypeError,ValueError,OSError):return ('GRADIENT_PATTERN_BINDING_INVALID',)

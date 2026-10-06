@@ -15,7 +15,7 @@ ROOT=Path(__file__).resolve().parents[2]
 
 class PilotAuditControls(unittest.TestCase):
     def wire(self):
-        c=json.loads((ROOT/'experiments/execution_bindings/math_v2_1_gradient_pattern_seed81_pilot_v1.json').read_text(encoding='utf-8'))
+        c=json.loads((ROOT/'experiments/execution_bindings/math_v2_1_gradient_pattern_seed81_pilot_v2.json').read_text(encoding='utf-8'))
         benchmark=NS(output_contract='immutable output framing',solver_user_content=lambda p,item:p+'\n'+item.input_payload)
         prompt='Check assumptions before algebra.';item=NS(input_id='synthetic',input_payload='public synthetic input')
         messages=[dict(role='system',content=benchmark.output_contract),dict(role='user',content=benchmark.solver_user_content(prompt,item))]
@@ -45,10 +45,10 @@ class PilotAuditControls(unittest.TestCase):
                 elif mutation=='extra_field':row['request']['unexpected']='unfrozen'
                 with self.assertRaises(AssertionError):verify_request_firewall(*args)
 
-    def test_frozen_numeric_rule_rejects_generic_mathematical_digit(self):
+    def test_current_numeric_rule_admits_generic_mathematical_digit(self):
         row=NS(example_id='synthetic',signals=dict(input_payload='Simplify a rational expression.',gold='x',target_output='y'))
-        with self.assertRaisesRegex(SearchContractError,'PATTERN_GRADIENT_EXTRACTION_INVALID'):
-            validate_gradient('Check that integer coefficients have greatest common divisor 1.',(row,))
+        gradient='Check that integer coefficients have greatest common divisor 1.'
+        self.assertEqual(validate_gradient(gradient,(row,)),gradient)
 
     def test_synthetic_abstract_behavior_passes_existing_contract(self):
         row=NS(example_id='synthetic',signals=dict(input_payload='Simplify a rational expression.',gold='x',target_output='y'))

@@ -625,8 +625,8 @@ failures:
     abstraction guard.
 - failure_id: FAIL-MATH-GRADIENT-GENERIC-DIGIT-CONTRACT
   title: A generic mathematical numeric literal violates the frozen absolute digit prohibition
-  status: OPEN
-  lifecycle: OPEN
+  status: MITIGATED
+  lifecycle: MITIGATED
   first_observed: math_v2_1_gradient_pattern_seed81_pilot_v1
   affected_components:
   - per_example_textual_gradient
@@ -646,3 +646,13 @@ failures:
   evidence_format: HASH_BOUND_PRIVATE_PREFIX_AND_SYNTHETIC_ZERO_API_CONTROLS
   mitigation: Preserve the aborted prefix, close consumed and unused conditional retry scopes, stop before new API
     calls.
+  resolution:
+    identity: MATH_NUMERIC_ADMISSIBILITY_AMENDMENT_V1
+    original_frozen_failure_classification_unchanged: true
+    user_decision: Minimal Guard V5 numeric provenance and Gradient prompt V3; fresh Pilot only.
+    interpretation: Absolute digit admissibility overimplements the intended example-specific abstraction boundary.
+    zero_api_regressions: reports/math_v2_1_gradient_pattern_seed81_pilot_v2_preexecution_20261006/zero_api/historical_gradient_recheck.json
+    negative_controls: reports/math_v2_1_gradient_pattern_seed81_pilot_v2_preexecution_20261006/zero_api/real_source_negative_controls.json
+    contract: docs/design/NUMERIC_PROVENANCE_GUARD_V5.md
+    scientific_admissibility_changed: true
+    comprehensive_semantic_provenance_claim: false

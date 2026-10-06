@@ -1,0 +1,348 @@
+schema_version: experiment_manifest_v2
+experiment_id: math_v2_1_gradient_pattern_seed81_pilot_v2
+method_family: unified_team_prompt_search_v2_1
+method_identity: unified_team_prompt_search_v2_1
+source_sha: null
+benchmark_id: math
+benchmark_protocol_id: 3aee274eeee86c07b7ea66a8700d925e42ecab17663a65e93e96f4ae475e1a67
+dataset_manifest_identity: 7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f
+split_identity: 196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507
+seed: 81
+models:
+  solver: qwen3-8b
+  optimizer: qwen3.7-flash
+  solver_thinking: false
+concurrency:
+  solver: 1
+  optimizer: 1
+provider_policy:
+  identity: lwj
+  frozen: true
+cache_policy:
+  identity: SOLVER_MEMBER_LANE_EXACT_CACHE_V2
+  frozen: true
+solver_output_interface_identity: MATH_SOLVER_INTERFACE_V5
+parser_identity: MATH_PAYLOAD_PARSER_V2
+access:
+  search_access: frozen_search
+  shadow_access: frozen_adaptive_gate
+  validation_access: not_authorized
+  test_access: sealed
+budget:
+  regime: saturation
+  saturation_identity: team_epoch_no_commit_v1
+  successful_provider_call_ceiling: 1935570982199742762144051266061140435691993064623341350498181508509130531735311257330498608981572725852860528848497278842874200639548672264485129590583424355115892651551545057031790640085757179731359621403843833709741733230559646097019222458767297574485051690126318067282051888728059415867209410
+  transport_attempt_ceiling: 40646990626194598005025076587283949149531854357090168360461811678691741166441536403940470788613027242910071105818442855700358213430522117554187721402251911457433745682582446197667603441800900774358552049480720507904576397841752568037403671634113249064186085492652679412923089663289247733211397610
+authorization:
+  real_api_authorized: false
+  attempt_id: null
+  authorization_identity: null
+  single_use: true
+lifecycle:
+  status: DRAFT
+  history:
+  - status: DRAFT
+    event: ZERO_API_BLOCKER_CLOSURE
+  - status: DRAFT
+    event: AWAITING_SOURCE_COMMIT
+hash_closure:
+  scientific_source_hash: 10a28aba04467555ea57ccf82a3387aa36cea2e2f3684e0e53f400a44e5adede
+  governance_hash: 3079636955b562523aa67f431bbce94117be33a6fe92373584f31d2a1816c0d9
+  benchmark_contract_hash: 9ca650ec9f546aaddec7138ac0ba8a8dbf3f1e243de329055ae7d19b5461890b
+  dataset_manifest_hash: d3c3f587bf9e08f5d9a12c8b777953c57cd30fc4c655e82e95f556b337119d81
+execution_binding:
+  identity: MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1
+  path: experiments/execution_bindings/math_v2_1_gradient_pattern_seed81_pilot_v2.json
+  sha256: 5e9d287ef70ca19d0ed560f24fa84e44609cf3c1ef2a6529c40449cb274b2abc
+mechanism_config:
+  memory:
+    top_k_private: 3
+    top_k_shared: 3
+    max_context_chars: 1200
+    private_storage_limit: 24
+    shared_storage_limit: 48
+    max_failure_entries_per_member: 5
+  shared_risk_policy:
+    signature: closed_action_outcome_failure_signature_v1
+    retention: recent_opportunity_recurrence_retention_v1
+    minimum_distinct_members: 2
+    recent_opportunity_window: 48
+    failure_evidence_capacity: 240
+    shared_event_capacity: 48
+    promotion_timing: opportunity_commit
+    retention_order:
+    - recent_recurrence
+    - recent_distinct_members
+    - same_lane
+    - last_seen
+    - semantic_key
+    retrieval_order:
+    - same_lane
+    - compatible_family
+    - last_seen
+    - recent_recurrence
+    - semantic_key
+  optimizer_input_schema: PATTERN_GRADIENT_TRAJECTORIES_MEMORY_INPUT_V4
+  panel_policy: pattern_gradient_representatives_preservation_transition_v5
+  pattern_policy:
+    discovery: gradient_cluster_pattern_discovery_v4
+    responsibility: same_raw_pattern_responsibility_v1
+    raw_value: raw_responsibility_max_4D_2N_C_v1
+    schema: GRADIENT_PATTERN_PARTITION_V2
+    correctness: target_member_correctness_validity_v1
+    universe: all_selected_member_wrong_optimize
+    gradient_policy:
+      identity: PER_EXAMPLE_TEXTUAL_GRADIENT_V1
+      prompt_identity: PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3
+      schema: PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V1
+      max_characters: 400
+      universe: all_selected_member_wrong_optimize
+      logical_calls_per_wrong: 1
+      successful_generations_per_wrong: 1
+      output_cache: false
+      semantic_regeneration: false
+      provider_role: pattern_gradient
+      generation_contract_role: pattern
+      generation_policy: OPTIMIZER_REFLECTION_GENERATION_POLICY_V3
+      abstraction_guard: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5
+    cluster_calls_per_opportunity: 1
+    provider_role: pattern_cluster
+    output_cache: false
+    generation_contract_role: pattern
+    generation_policy: OPTIMIZER_REFLECTION_GENERATION_POLICY_V3
+    identity: GENERALIZED_CORRECTIVE_GRADIENT_IDENTITY_V1
+    selection: raw_responsibility_then_canonical_identity
+    generalized_gradient_max_characters: 600
+    accounting: wrong_universe_ceiling_plus_one_cluster_per_opportunity_v1
+    input_limit_tokens: 991808
+    context_limit_tokens: 1000000
+    input_estimate: serialized_utf8_bytes_plus_1024
+  pattern_provider_binding: f117763691a8f4a3cf3d62e12bd136761356c66140358cc9870c0789bee724e6
+  pattern_support_id_transport: PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1
+  pattern_abstraction_guard: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5
+search_engine_identity: LAYER1_BOUNDED_MEMORY_SEARCH_V2
+aggregation_identity: equal_equivalence_plurality_consistency_v1
+responsibility_identity: binary_plurality_raw_responsibility_v1
+transition_identity: initial_competence_team_gain_v2
+adaptive_gate_identity: winner_only_shadow_v1
+pattern_identity: gradient_cluster_pattern_discovery_v4
+memory_identity: structured_cross_member_rolling_risk_memory_v4
+search_acceptance_identity: layer1_local_guidance_team_admission_v1
+evidence_identity: pattern_gradient_representatives_preservation_transition_v5
+feasibility_identity: variable_evidence_feasibility_v1
+initial_competence_binding:
+  aggregation_independent: true
+  candidate_support: same_complete_optimize
+  count: 60
+  evaluator: MATH_EQUIVALENCE_V2
+  identity: MATH_INITIAL_COMPETENCE_LOW_COST_V1
+  immutable: true
+  metric: binary_correct_count
+  role: optimize
+  split_identity: 196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507
+  support_identity: f52c5f2a88337d187f5bf6fe7e9b419d92a96e6848dfeaae01b3f123f197b256
+solver_decoding_policy:
+  enable_thinking: false
+  frequency_penalty: 0
+  identity: SOLVER_DECODING_POLICY_V2
+  max_output_tokens: 3600
+  min_p: 0
+  presence_penalty: 0
+  temperature: 0.2
+  top_k: 20
+  top_p: 0.8
+prediction_validity_policy:
+  denominator: all_frozen_examples
+  fallback_extraction: false
+  identity: MATH_PREDICTION_VALIDITY_V2
+  invalid_response_retries: 3
+  invalid_vote: excluded_from_equivalence_classes
+  invalidity_telemetry: observation_only
+  prediction_failure: invalid_incorrect_continue
+  reference_failure: hard_contract_failure
+  truncated_even_with_marker: invalid_incorrect
+global_stop_identity: team_epoch_no_commit_v1
+invalid_recovery_policy:
+  cache: resolved_valid_or_exhausted_terminal_only
+  first_valid_stops: true
+  identity: MATH_SOLVER_INVALID_RECOVERY_V1
+  invalidity_weight: none
+  logical_evaluation_count: 1
+  max_semantic_attempts: 4
+  same_request_bytes: true
+  solver_invalid_max_retries: 3
+  terminal_invalid: incorrect_continue_no_vote
+  terminal_requires_completed_invalid_attempts: 4
+  transport_failures_consume_semantic_attempt: false
+low_cost_protocol:
+  analysis_policy:
+    classification: sign_of_final_minus_initial_VoteAcc
+    identity: MATH_V2_1_PILOT_DEVELOPMENT_ANALYSIS_V1
+    paired_resampling_unit: frozen_validation_example
+    resamples: 10000
+    scope: development_uncertainty_only_no_formal_significance_no_search_feedback
+    seed: 81
+  canary_stop: one_complete_production_opportunity_v1
+  counts:
+    canary_optimize: 12
+    pilot_optimize: 60
+    pilot_shadow: 40
+    pilot_validation: 100
+  identity: MATH_V2_1_LOW_COST_DEV_PROTOCOL_V1
+  membership_hashes:
+    canary_optimize: 16ad84b5bb22a6aa10e23ef1e1a71ff6d54b7e8e4fcd749571808fba0b2f27ab
+    pilot_optimize: f52c5f2a88337d187f5bf6fe7e9b419d92a96e6848dfeaae01b3f123f197b256
+    pilot_shadow: 9732600d0cc9d22c05fa2460738ba45804e23c82ed313ba5545ace5d42886857
+    pilot_validation: c71c48a25ed0439e886481926fcdc6195abc9ab8997c74d4bde3eae712ee3adc
+  pilot_stop: team_epoch_no_commit_v1
+  scientific_scope: development_only
+  selection_policy:
+    apportionment: integer_largest_remainder_lexical_tie
+    identity: MATH_LOW_COST_SUBJECT_LEVEL_HASH_V1
+    minimum_per_stratum: 0
+    ordering: sha256_identity_role_stable_id
+    output_order: source_superset_order
+    performance_used: false
+    strata:
+    - subject
+    - level
+  source_superset_sha256: 196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507
+  test_access: sealed
+low_cost_subsets_sha256: b6ef5a287d91baa60a329b8a55f88db9e019f83ff2329cf8a62cbae5388d8f5b
+optimizer_generation_policy:
+  accounting_output_ceiling: 1810
+  enable_thinking: false
+  frequency_penalty: 0
+  identity: OPTIMIZER_REFLECTION_GENERATION_POLICY_V3
+  max_completion_tokens: 1800
+  max_tokens: NOT_SENT
+  measurement_tolerance_tokens: 10
+  model: qwen3.7-flash
+  output_token_scope: reasoning_plus_answer
+  presence_penalty: 1.5
+  roles:
+  - reflection
+  - pattern
+  temperature: 0.7
+  top_k: 20
+  top_p: 0.8
+  truncation: existing_operational_output_truncation
+optimizer_amendment_authorization_sha256: 76c1ee39f31c2155437b192897265357f89dbb7a6ed53e49a434e209e0cd1e0a
+optimizer_nonthinking_evidence_policy:
+  contradiction: provider_control_failure
+  diagnostic_candidate_rejection: record_only_no_output_reuse
+  direct: dispatched_false_and_actual_zero_without_contradiction
+  equivalent: dispatched_false_accepted_stop_no_reasoning_no_parser_loss
+  identity: OPTIMIZER_NONTHINKING_EQUIVALENT_EVIDENCE_V1
+  missing_tokens: never_infer_zero
+layer1_search_policy:
+  candidate_contract: SEMANTIC_MUTABLE_REASONING_CONTRACT_V2
+  identity_version: LAYER1_BOUNDED_MEMORY_SEARCH_V2
+  k_local_return: 4
+  max_generations: 6
+  max_prompt_chars: 3000
+  metric_limit: 36
+  official_gepa_fidelity: false
+  optimizer_input_schema: PATTERN_GRADIENT_TRAJECTORIES_MEMORY_INPUT_V4
+  panel_policy: pattern_gradient_representatives_preservation_transition_v5
+  panel_size: 6
+candidate_contract_identity: SEMANTIC_MUTABLE_REASONING_CONTRACT_V2
+post_search_validation_policy:
+  cache: SOLVER_MEMBER_LANE_EXACT_CACHE_V2
+  count: 100
+  development_protocol:
+    analysis_policy:
+      classification: sign_of_final_minus_initial_VoteAcc
+      identity: MATH_V2_1_PILOT_DEVELOPMENT_ANALYSIS_V1
+      paired_resampling_unit: frozen_validation_example
+      resamples: 10000
+      scope: development_uncertainty_only_no_formal_significance_no_search_feedback
+      seed: 81
+    canary_stop: one_complete_production_opportunity_v1
+    counts:
+      canary_optimize: 12
+      pilot_optimize: 60
+      pilot_shadow: 40
+      pilot_validation: 100
+    identity: MATH_V2_1_LOW_COST_DEV_PROTOCOL_V1
+    membership_hashes:
+      canary_optimize: 16ad84b5bb22a6aa10e23ef1e1a71ff6d54b7e8e4fcd749571808fba0b2f27ab
+      pilot_optimize: f52c5f2a88337d187f5bf6fe7e9b419d92a96e6848dfeaae01b3f123f197b256
+      pilot_shadow: 9732600d0cc9d22c05fa2460738ba45804e23c82ed313ba5545ace5d42886857
+      pilot_validation: c71c48a25ed0439e886481926fcdc6195abc9ab8997c74d4bde3eae712ee3adc
+    pilot_stop: team_epoch_no_commit_v1
+    scientific_scope: development_only
+    selection_policy:
+      apportionment: integer_largest_remainder_lexical_tie
+      identity: MATH_LOW_COST_SUBJECT_LEVEL_HASH_V1
+      minimum_per_stratum: 0
+      ordering: sha256_identity_role_stable_id
+      output_order: source_superset_order
+      performance_used: false
+      strata:
+      - subject
+      - level
+    source_superset_sha256: 196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507
+    test_access: sealed
+  evaluator: MATH_EQUIVALENCE_V2
+  identity: MATH_PAIRED_VALIDATION_INTERVENTION_V2
+  initial_team: MATH_GENERIC_TEAM_SEED_V1_2
+  invalid_recovery_policy:
+    cache: resolved_valid_or_exhausted_terminal_only
+    first_valid_stops: true
+    identity: MATH_SOLVER_INVALID_RECOVERY_V1
+    invalidity_weight: none
+    logical_evaluation_count: 1
+    max_semantic_attempts: 4
+    same_request_bytes: true
+    solver_invalid_max_retries: 3
+    terminal_invalid: incorrect_continue_no_vote
+    terminal_requires_completed_invalid_attempts: 4
+    transport_failures_consume_semantic_attempt: false
+  invalidity_metrics: resolved_terminal_by_member_and_semantic_attempts
+  logical_evaluations: 1000
+  memory: false
+  metrics:
+  - VoteAcc
+  - Member0Acc
+  - Member1Acc
+  - Member2Acc
+  - Member3Acc
+  - Member4Acc
+  - MeanMemberAcc
+  - MinMemberAcc
+  - OracleAcc
+  paired_transitions:
+  - vote_fixed
+  - vote_broken
+  - vote_net
+  - oracle_fixed
+  - oracle_broken
+  - oracle_net
+  pattern: false
+  prediction_validity_policy:
+    denominator: all_frozen_examples
+    fallback_extraction: false
+    identity: MATH_PREDICTION_VALIDITY_V2
+    invalid_response_retries: 3
+    invalid_vote: excluded_from_equivalence_classes
+    invalidity_telemetry: observation_only
+    prediction_failure: invalid_incorrect_continue
+    reference_failure: hard_contract_failure
+    truncated_even_with_marker: invalid_incorrect
+  provider: lwj
+  require_deployed_team_change: true
+  search_feedback: false
+  solver: qwen3-8b
+  split: validation
+  successful_provider_call_ceiling: 4000
+  team_size: 5
+  test_model_calls: 0
+  thinking: false
+  transport_attempt_ceiling: 84000
+  unchanged_outcome: NO_INTERVENTION
+  unchanged_signal: NOT_ESTIMATED
+  unchanged_status: SKIPPED_NO_TEAM_CHANGE
+pattern_support_id_transport: PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1
+pattern_abstraction_guard: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5
+preregistration_identity: 65d8040d693aee24827f53e99e1e01d92b80bf80d5d9b4bb05dc39b1d5eb2113

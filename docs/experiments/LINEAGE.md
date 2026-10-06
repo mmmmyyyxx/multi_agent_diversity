@@ -123,15 +123,15 @@ gradient_cluster_semantic_behavior: SHARED_PATTERN_OBSERVED
 current_gradient_prompt: PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V2
 future_execution_requires_new_frozen_single_use_scope: true
 gradient_raw_comparison_classification: MIXED
-pending_pilot_milestone: null
-pending_pilot_manifest: null
-pending_pilot_attempt_id: null
-pending_pilot_scope: null
-pending_pilot_user_task_sha256: 505a692d8fc7ce0ece9a54282075f6c0415e8a3f1226e0e8144f34bafd705230
-pending_pilot_user_authorization_received: false
-pending_pilot_status: EXECUTION_ABORTED_SCOPE_CLOSED
+pending_pilot_milestone: math_v2_1_gradient_pattern_seed81_pilot_v2
+pending_pilot_manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v2.yaml
+pending_pilot_attempt_id: math_v2_1_gradient_pattern_A4_seed81_pilot_attempt2
+pending_pilot_scope: A4_SEED81_OPTIMIZE60_SHADOW40_SEARCH_ONLY
+pending_pilot_user_task_sha256: b535d10c83932a150adf8298a986112ecd6a6c3d2a955696cf15e21e4109e257
+pending_pilot_user_authorization_received: true
+pending_pilot_status: ZERO_API_NUMERIC_ADMISSIBILITY_PREFLIGHT
 pending_pilot_operational_retry_limit: 0
-pending_pilot_scientific_changes_authorized: false
+pending_pilot_scientific_changes_authorized: true
 pending_pilot_validation_authorized: false
 pending_pilot_test_authorized: false
 pending_pilot_push_authorized: false
@@ -147,9 +147,12 @@ current_initial_condition_milestone: math_identical_initial_condition_v1
 current_initial_condition_status: VERIFIED_ZERO_API_INITIAL_CONDITION_CORRECTION
 current_initial_condition_report: reports/math_identical_initial_condition_v1_20261006
 current_initial_condition_execution_authorized: false
-current_offline_execution_profile: experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v3.json
-current_pilot_offline_execution_profile: experiments/execution_bindings/math_v2_1_gradient_pattern_pilot_offline_profile_v2.json
+current_offline_execution_profile: experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v4.json
+current_pilot_offline_execution_profile: experiments/execution_bindings/math_v2_1_gradient_pattern_pilot_offline_profile_v3.json
 current_initial_condition_runtime_source: 52ada98b4735cfa7713de2c2f5437a94ce0bef0b
+current_gradient_prompt_identity: PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3
+current_pattern_guard_identity: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5
+pending_pilot_scientific_amendment_scope: NUMERIC_ADMISSIBILITY_GUARD_AND_MINIMAL_GRADIENT_PROMPT_ONLY
 ```
 
 ## Experiment and engineering DAG
@@ -410,6 +413,7 @@ flowchart TD
     n181["v2_pattern_memory_factorial_v1_1<br/>FORMAL_EXPERIMENT<br/>SUPERSEDED"]
     n201["unified_semantic_contract_v2_1<br/>ARCHITECTURE_REFACTOR<br/>IMPLEMENTED_NOT_EXECUTED"]
     n275["math_v2_1_gradient_pattern_seed81_pilot_v1<br/>PILOT<br/>HOLD"]
+    n277["math_v2_1_gradient_pattern_seed81_pilot_v2<br/>PILOT<br/>DRAFT"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -610,6 +614,8 @@ flowchart TD
   n273 -->|followup_of| n274
   n274 -->|followup_of| n275
   n275 -->|derived_from| n276
+  n275 -->|followup_of| n277
+  n276 -->|followup_of| n277
 ```
 
 ## Archived branches and unresolved evidence

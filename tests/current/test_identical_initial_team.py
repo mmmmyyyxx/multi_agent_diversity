@@ -17,8 +17,8 @@ from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker
 from multi_dataset_diverse_rl.search.schemas import SearchContractError
 
 ROOT=Path(__file__).resolve().parents[2]
-PROFILE='experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v3.json'
-PILOT_PROFILE='experiments/execution_bindings/math_v2_1_gradient_pattern_pilot_offline_profile_v2.json'
+PROFILE='experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v4.json'
+PILOT_PROFILE='experiments/execution_bindings/math_v2_1_gradient_pattern_pilot_offline_profile_v3.json'
 
 
 def contract(path=PROFILE):return json.loads((ROOT/path).read_bytes())
@@ -60,16 +60,19 @@ def test_initial_contract_rejects_invalid_condition(fault):
 
 @pytest.mark.parametrize('path',[PROFILE,PILOT_PROFILE])
 def test_amendment_changes_only_initial_condition_and_run_identity(path):
-    c=contract(path);p=json.loads((ROOT/c['initial_condition_parent_binding_path']).read_bytes())
+    c=contract(path);initial=json.loads((ROOT/c['numeric_parent_binding_path']).read_bytes())
+    p=json.loads((ROOT/initial['initial_condition_parent_binding_path']).read_bytes())
+    from multi_dataset_diverse_rl.benchmarks.initial_condition_contract import initial_condition_provenance
+    from multi_dataset_diverse_rl.benchmarks.math_gradient_pattern_binding import MATHGradientPatternBinding
+    assert initial_condition_provenance(MATHGradientPatternBinding(ROOT,initial))[0]==p
     assert not execution_binding(ROOT,c).blockers()
-    assert execution_binding(ROOT,c).method('A4')==execution_binding(ROOT,p).method('A4')
     for field in ('models','decoding','provider_bounds','pattern_policy','memory_limits',
             'layer1_search_policy','solver_decoding_policy','membership_hashes','low_cost_protocol',
             'gradient_prompt_sha256','pattern_abstraction_guard','shared_risk_policy'):
-        assert c[field]==p[field]
-    assert c['execution_attempt_id']!=p['execution_attempt_id']
-    assert c['cache_namespace']!=p['cache_namespace']
-    assert c['initial_team_artifact_sha256']!=p['initial_team_artifact_sha256']
+        assert initial[field]==p[field]
+    assert initial['execution_attempt_id']!=p['execution_attempt_id']
+    assert initial['cache_namespace']!=p['cache_namespace']
+    assert initial['initial_team_artifact_sha256']!=p['initial_team_artifact_sha256']
     m=preexecution_manifest(ROOT,source_sha=None,frozen=False,binding_path=path,
         experiment_id='math_identical_initial_condition_v1')
     status=bound_preflight(ROOT,m)
@@ -87,7 +90,7 @@ def test_amendment_changes_only_initial_condition_and_run_identity(path):
     ('gradient_prompt_sha256','0'*64),('initial_condition_amendment_sha256','0'*64)])
 def test_amendment_rejects_identity_or_method_tampering(field,value):
     c=contract();c[field]=value
-    assert execution_binding(ROOT,c).blockers()[0].startswith('CURRENT_INITIAL_CONDITION_')
+    assert execution_binding(ROOT,c).blockers()[0].startswith('CURRENT_NUMERIC_ADMISSIBILITY_')
 
 
 def test_archive_preserves_old_bytes_without_authorizing_old_binding():
@@ -100,7 +103,8 @@ def test_archive_preserves_old_bytes_without_authorizing_old_binding():
     p=json.loads((ROOT/c['initial_condition_parent_binding_path']).read_bytes())
     with pytest.raises(SearchContractError,match='PROVENANCE_RECEIPT_HASH_MISMATCH'):
         verify_receipt_dependencies(ROOT,p)
-    assert execution_binding(ROOT,p).blockers()
+    with pytest.raises(SearchContractError,match='CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN'):
+        execution_binding(ROOT,p)
     with pytest.raises(SearchContractError,match='PROVENANCE_RECEIPT_HASH_MISMATCH'):
         verify_receipt_dependencies(ROOT,p,historical_initial_team=(
             a['initial_team_path'],'0'*64,a['archived_team_path']))

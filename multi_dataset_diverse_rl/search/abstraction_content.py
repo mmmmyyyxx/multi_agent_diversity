@@ -40,12 +40,13 @@ def contains_literal(text, literal):
     return bool(literal and re.search(r'(?<!\w)' + re.escape(literal) + r'(?!\w)', text))
 
 
-def specific_content_leaked(text, rows):
+def specific_content_leaked(text, rows, *, numeric_gold=True):
     normalized = normalize(text)
     for row in rows:
         source = unicodedata.normalize('NFKC', str(row.signals['input_payload']))
         gold = normalize(row.signals['gold'])
-        if gold and (normalized == gold or len(gold) >= 3 and contains_literal(normalized, gold)):
+        numeric_answer = bool(re.fullmatch(r'[\d\s.,+*/^{}()\\-]+', gold))
+        if gold and (numeric_gold or not numeric_answer) and (normalized == gold or len(gold) >= 3 and contains_literal(normalized, gold)):
             return True
         # Short symbolic answers are prohibited when supplied as an answer,
         # while a variable in a general reasoning instruction remains legal.
@@ -69,10 +70,10 @@ def specific_content_leaked(text, rows):
     return False
 
 
-def current_specific_content_leaked(text, rows):
+def current_specific_content_leaked(text, rows, *, numeric_gold=True):
     """V4 implementation repair; the original V3 helper remains replayable."""
     rows = tuple(rows)
-    if specific_content_leaked(text, rows):
+    if specific_content_leaked(text, rows, numeric_gold=numeric_gold):
         return True
     normalized = normalize(text)
     for row in rows:

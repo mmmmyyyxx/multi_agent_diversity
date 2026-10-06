@@ -1,6 +1,5 @@
 """Shared wrong-universe, labels, raw F and current abstraction checks."""
 from dataclasses import dataclass
-import re
 from .. import current_contract as versions
 from ..evaluation.semantic_mutable_contract import semantic_violation_reasons
 from ..local_optimizers.example_text import contains_supplied_example_text
@@ -8,6 +7,7 @@ from ..local_optimizers.schemas import LocalEvidenceExample
 from .responsibility_value import responsibility_value
 from .schemas import SearchContractError
 from .abstraction_content import current_specific_content_leaked
+from .numeric_provenance import numeric_content_leaked
 
 @dataclass(frozen=True)
 class PatternResponsibilitySignal:
@@ -48,13 +48,15 @@ def guard_abstraction(text, rows, *, abstraction_guard_version=None):
     if abstraction_guard_version != versions.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION:
         raise SearchContractError('PATTERN_ABSTRACTION_GUARD_NOT_BOUND')
     if (not isinstance(text,str) or not text.strip() or len(text)>600
-            or re.search(r'\d',text) or semantic_violation_reasons(text)):
+            or semantic_violation_reasons(text)):
         raise SearchContractError('PATTERN_DISCOVERY_INVALID_ABSTRACTION')
+    rows=tuple(rows)
     examples=tuple(LocalEvidenceExample(r.example_id,r.signals['input_payload'],r.signals['gold']) for r in rows)
     if contains_supplied_example_text(text,examples):
         raise SearchContractError('PATTERN_DISCOVERY_EXAMPLE_LEAKAGE')
     if abstraction_guard_version == versions.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION:
-        if current_specific_content_leaked(text, rows):
+        if (current_specific_content_leaked(text, rows, numeric_gold=False)
+                or numeric_content_leaked(text, rows)):
             raise SearchContractError('PATTERN_DISCOVERY_EXAMPLE_LEAKAGE')
         return
 
