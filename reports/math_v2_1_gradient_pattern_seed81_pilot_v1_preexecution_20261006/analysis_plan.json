@@ -1,0 +1,26 @@
+{
+  "excluded": [
+    "Shadow raw samples",
+    "Validation samples",
+    "Test samples",
+    "extra judge calls",
+    "matched diagnostic"
+  ],
+  "failure_reporting": "Preserve completed prefix and any incomplete opportunity; output contract failures are not an implementation-invalid rerun grant",
+  "per_opportunity": [
+    "WHO all five members",
+    "wrong universe and F-zero labels",
+    "gradient contracts and tokens",
+    "all Pattern supports and same-F selection",
+    "representatives and preservation/transition evidence",
+    "Memory before/read/write/update/eviction and generation state",
+    "all local proposal outcomes and export rank",
+    "TeamProbe Full aggregate Shadow and atomic transition",
+    "scientific epoch stop reconstruction",
+    "per-role costs"
+  ],
+  "private_bundle": "Immutable ignored analysis_bundle with exact gradients, generalized gradients, prompts, diffs, Memory state and actual read sets",
+  "public_content": "Hashes, counters, categories and aggregate Optimize/Shadow metrics only",
+  "scope": "DESCRIPTIVE_TRAINING_PROCESS_NO_EFFICACY_INFERENCE",
+  "source": "Existing provider/ledger/trajectory journals plus read-only Memory and generation state snapshots"
+}

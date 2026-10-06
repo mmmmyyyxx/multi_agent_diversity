@@ -1,0 +1,17 @@
+{
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt1",
+  "full_current_suite": {
+    "errors": 0,
+    "failures": 0,
+    "passed": 1278,
+    "skipped": 2,
+    "tests": 1280
+  },
+  "provider_calls": 0,
+  "push_authorized": false,
+  "scientific_diff": "EMPTY",
+  "source_sha": "1298d5497706d8f9c05adba66b0f5e57f4443567",
+  "status": "FROZEN_CURRENT_SUITE_PASS_ACTIVATION_PENDING",
+  "test_authorized": false,
+  "validation_authorized": false
+}

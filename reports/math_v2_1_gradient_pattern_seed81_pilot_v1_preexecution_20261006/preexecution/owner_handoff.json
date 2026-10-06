@@ -1,0 +1,62 @@
+{
+  "READY_TO_RUN": false,
+  "authorization": {
+    "api_scope": "EXACT_FROZEN_SINGLE_USE_PILOT_ACTIVATION_PENDING",
+    "test_access_policy": "sealed",
+    "user_task_sha256": "505a692d8fc7ce0ece9a54282075f6c0415e8a3f1226e0e8144f34bafd705230",
+    "validation_access_policy": "not_authorized"
+  },
+  "data": {
+    "dataset": "math",
+    "split_identity": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+    "split_sha256": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507"
+  },
+  "execution": {
+    "allowed_retries": "One fresh retry only after independently proven implementation-invalid attempt; no scientific reruns",
+    "early_stop_rule": "team_epoch_no_commit_v1",
+    "exact_runner_command": [
+      "runs/math_v2_1/runtime/Scripts/python.exe",
+      "scripts/run_experiment.py",
+      "--prep",
+      "runs/math_v2_1_gradient_pattern_A4_seed81_pilot_attempt1_prep",
+      "--run-root",
+      "runs/math_v2_1_gradient_pattern_A4_seed81_pilot_attempt1",
+      "--execute"
+    ],
+    "expected_checkpoint_path": "runs/math_v2_1_gradient_pattern_A4_seed81_pilot_attempt1/final_state_private.json",
+    "expected_ledger_path": "runs/math_autonomous_accounting_v2/token_ledger",
+    "expected_output_directory": "runs/math_v2_1_gradient_pattern_A4_seed81_pilot_attempt1",
+    "opportunity_budget": 2043897552481248956857498697002260227763456245642387909712968857982186411547319173527453652567658633424351139227557844607047730347992262158907211816877956024409601532789382319991331193332372945862048174660869940559389369831636373914487035331327663753416105269404770926380202628012734335657030,
+    "seeds": [
+      81
+    ]
+  },
+  "experiment_id": "math_v2_1_gradient_pattern_seed81_pilot_v1",
+  "fail_closed_conditions": [
+    "source/hash/namespace/scope mismatch",
+    "provider/ledger/budget/persistence failure",
+    "Validation/Test access",
+    "nonempty initial Memory",
+    "need for scientific policy change"
+  ],
+  "models": {
+    "optimizer_reflection": "qwen3.7-flash",
+    "pattern": "qwen3.7-flash",
+    "solver": "qwen3-8b",
+    "solver_thinking": false
+  },
+  "no_luna_dispatch_requested": true,
+  "protocol": {
+    "manifest_path": "experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v1.yaml",
+    "manifest_sha256": "f88117d564b7de92ca1a62cdb20fb417882513ba282775a97905a0b4a5a4162f",
+    "name": "CURRENT_GRADIENT_PATTERN_SEARCH_ONLY_PILOT",
+    "protocol_sha256": "d6c0e418398b9731e9c23bc984fc49486fd38a9747860a6db7af24651c5aecfa",
+    "version": "CURRENT_FROZEN_IDENTITIES"
+  },
+  "runner_owner": "ROOT_DIRECT_USER_AUTHORIZED_CURRENT_PILOT",
+  "schema_version": "sol_luna_experiment_handoff_v1",
+  "source": {
+    "repository_commit": "1298d5497706d8f9c05adba66b0f5e57f4443567",
+    "tracked_worktree_status": "clean_at_source_freeze"
+  }
+}

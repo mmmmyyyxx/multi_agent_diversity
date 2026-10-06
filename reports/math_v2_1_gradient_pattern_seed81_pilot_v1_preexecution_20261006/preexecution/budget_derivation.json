@@ -1,0 +1,352 @@
+{
+  "existing_validation_protected_reserve_policy_unchanged": true,
+  "failure_counts_survive_epochs_and_commits": true,
+  "gross_reservations_are_not_spending": true,
+  "hard_cumulative_charge_ceiling": 40000000,
+  "ledger_start": {
+    "authorization_amendments": [
+      {
+        "authorization_sha256": "fb10eaa9747715e25ae60b1eeead524a0c7aec1a78adfc04d7764fc1e1ed9cae",
+        "authorized_total": 40000000,
+        "event_sha256": "dfc1498d06da9c1bb206ef4a7b24686f9046a6e8ab8fe262399d104b59b6ef09"
+      }
+    ],
+    "authorized_total": 40000000,
+    "by_attempt": {
+      "math_unified_v2_1_A1_seed81_canary_attempt1": {
+        "charged_total": 14245,
+        "fallback_charged": 0,
+        "input_tokens": 3423,
+        "output_tokens": 10822,
+        "physical_attempts": 27,
+        "provider_reported_actual": 14245
+      },
+      "math_unified_v2_1_A1_seed81_canary_attempt2": {
+        "charged_total": 1007,
+        "fallback_charged": 0,
+        "input_tokens": 327,
+        "output_tokens": 680,
+        "physical_attempts": 2,
+        "provider_reported_actual": 1007
+      },
+      "math_unified_v2_1_A1_seed81_canary_attempt3": {
+        "charged_total": 21535,
+        "fallback_charged": 0,
+        "input_tokens": 13764,
+        "output_tokens": 7771,
+        "physical_attempts": 55,
+        "provider_reported_actual": 21535
+      },
+      "math_unified_v2_1_A1_seed81_canary_attempt4": {
+        "charged_total": 5327,
+        "fallback_charged": 0,
+        "input_tokens": 1090,
+        "output_tokens": 4237,
+        "physical_attempts": 5,
+        "provider_reported_actual": 5327
+      },
+      "math_unified_v2_1_A1_seed81_canary_attempt5": {
+        "charged_total": 34928,
+        "fallback_charged": 0,
+        "input_tokens": 16609,
+        "output_tokens": 18319,
+        "physical_attempts": 63,
+        "provider_reported_actual": 34928
+      },
+      "math_unified_v2_1_A1_seed81_canary_attempt6": {
+        "charged_total": 162884,
+        "fallback_charged": 9504,
+        "input_tokens": 77748,
+        "output_tokens": 85136,
+        "physical_attempts": 274,
+        "provider_reported_actual": 153380
+      },
+      "math_unified_v2_A1_seed81_canary_attempt2": {
+        "charged_total": 7231,
+        "fallback_charged": 7231,
+        "input_tokens": 5431,
+        "output_tokens": 1800,
+        "physical_attempts": 1,
+        "provider_reported_actual": 0
+      },
+      "math_unified_v2_A1_seed81_canary_attempt3": {
+        "charged_total": 8303,
+        "fallback_charged": 0,
+        "input_tokens": 2149,
+        "output_tokens": 6154,
+        "physical_attempts": 16,
+        "provider_reported_actual": 8303
+      },
+      "math_v2_1_gradient_pattern_A4_seed81_canary_attempt1": {
+        "charged_total": 30792,
+        "fallback_charged": 0,
+        "input_tokens": 17117,
+        "output_tokens": 13675,
+        "physical_attempts": 64,
+        "provider_reported_actual": 30792
+      },
+      "math_v2_1_gradient_pattern_A4_seed81_canary_attempt2": {
+        "charged_total": 63037,
+        "fallback_charged": 0,
+        "input_tokens": 40623,
+        "output_tokens": 22414,
+        "physical_attempts": 110,
+        "provider_reported_actual": 63037
+      },
+      "math_v2_1_gradient_pattern_A4_seed81_canary_attempt3": {
+        "charged_total": 55687,
+        "fallback_charged": 0,
+        "input_tokens": 39846,
+        "output_tokens": 15841,
+        "physical_attempts": 100,
+        "provider_reported_actual": 55687
+      },
+      "math_v2_1_layer1_A1_seed81_canary_attempt2": {
+        "charged_total": 264313,
+        "fallback_charged": 0,
+        "input_tokens": 167442,
+        "output_tokens": 96871,
+        "physical_attempts": 371,
+        "provider_reported_actual": 264313
+      },
+      "math_v2_1_low_cost_A1_seed81_canary_attempt1": {
+        "charged_total": 38428,
+        "fallback_charged": 10292,
+        "input_tokens": 24117,
+        "output_tokens": 14311,
+        "physical_attempts": 61,
+        "provider_reported_actual": 28136
+      },
+      "math_v2_1_low_cost_A1_seed81_canary_attempt2": {
+        "charged_total": 29405,
+        "fallback_charged": 0,
+        "input_tokens": 16948,
+        "output_tokens": 12457,
+        "physical_attempts": 61,
+        "provider_reported_actual": 29405
+      },
+      "math_v2_1_low_cost_A1_seed81_canary_attempt4": {
+        "charged_total": 32828,
+        "fallback_charged": 0,
+        "input_tokens": 20360,
+        "output_tokens": 12468,
+        "physical_attempts": 64,
+        "provider_reported_actual": 32828
+      },
+      "math_v2_1_low_cost_A1_seed81_pilot_attempt4": {
+        "charged_total": 218638,
+        "fallback_charged": 0,
+        "input_tokens": 105691,
+        "output_tokens": 112947,
+        "physical_attempts": 360,
+        "provider_reported_actual": 218638
+      },
+      "math_v2_1_low_cost_A1_seed81_pilot_attempt4_validation_attempt1": {
+        "charged_total": 263775,
+        "fallback_charged": 0,
+        "input_tokens": 138342,
+        "output_tokens": 125433,
+        "physical_attempts": 523,
+        "provider_reported_actual": 263775
+      },
+      "math_v2_1_memory_A3_seed81_canary_attempt1": {
+        "charged_total": 62943,
+        "fallback_charged": 0,
+        "input_tokens": 42876,
+        "output_tokens": 20067,
+        "physical_attempts": 107,
+        "provider_reported_actual": 62943
+      },
+      "math_v2_1_optimizer_nonthinking_witness_attempt2": {
+        "charged_total": 1709,
+        "fallback_charged": 0,
+        "input_tokens": 1325,
+        "output_tokens": 384,
+        "physical_attempts": 1,
+        "provider_reported_actual": 1709
+      },
+      "math_v2_1_pattern_A4_seed81_canary_attempt1": {
+        "charged_total": 35693,
+        "fallback_charged": 0,
+        "input_tokens": 17880,
+        "output_tokens": 17813,
+        "physical_attempts": 63,
+        "provider_reported_actual": 35693
+      },
+      "math_v2_1_pattern_A4_seed81_canary_attempt2": {
+        "charged_total": 39335,
+        "fallback_charged": 0,
+        "input_tokens": 17722,
+        "output_tokens": 21613,
+        "physical_attempts": 64,
+        "provider_reported_actual": 39335
+      },
+      "math_v2_1_pattern_A4_seed81_canary_attempt3": {
+        "charged_total": 34197,
+        "fallback_charged": 0,
+        "input_tokens": 17136,
+        "output_tokens": 17061,
+        "physical_attempts": 62,
+        "provider_reported_actual": 34197
+      },
+      "math_v2_1_pattern_A4_seed81_canary_attempt4": {
+        "charged_total": 234925,
+        "fallback_charged": 0,
+        "input_tokens": 144395,
+        "output_tokens": 90530,
+        "physical_attempts": 362,
+        "provider_reported_actual": 234925
+      }
+    },
+    "by_model": {
+      "qwen3-8b": {
+        "charged_total": 1528204,
+        "fallback_charged": 16735,
+        "input_tokens": 825569,
+        "output_tokens": 702635,
+        "physical_attempts": 2745,
+        "provider_reported_actual": 1511469
+      },
+      "qwen3.7-flash": {
+        "charged_total": 132961,
+        "fallback_charged": 10292,
+        "input_tokens": 106792,
+        "output_tokens": 26169,
+        "physical_attempts": 71,
+        "provider_reported_actual": 122669
+      }
+    },
+    "by_role": {
+      "diagnostic_raw_pattern": {
+        "charged_total": 1626,
+        "fallback_charged": 0,
+        "input_tokens": 1217,
+        "output_tokens": 409,
+        "physical_attempts": 1,
+        "provider_reported_actual": 1626
+      },
+      "pattern": {
+        "charged_total": 7949,
+        "fallback_charged": 0,
+        "input_tokens": 5331,
+        "output_tokens": 2618,
+        "physical_attempts": 4,
+        "provider_reported_actual": 7949
+      },
+      "pattern_cluster": {
+        "charged_total": 1457,
+        "fallback_charged": 0,
+        "input_tokens": 1075,
+        "output_tokens": 382,
+        "physical_attempts": 2,
+        "provider_reported_actual": 1457
+      },
+      "pattern_gradient": {
+        "charged_total": 9026,
+        "fallback_charged": 0,
+        "input_tokens": 8297,
+        "output_tokens": 729,
+        "physical_attempts": 17,
+        "provider_reported_actual": 9026
+      },
+      "reflection": {
+        "charged_total": 112903,
+        "fallback_charged": 10292,
+        "input_tokens": 90872,
+        "output_tokens": 22031,
+        "physical_attempts": 47,
+        "provider_reported_actual": 102611
+      },
+      "solver": {
+        "charged_total": 1528204,
+        "fallback_charged": 16735,
+        "input_tokens": 825569,
+        "output_tokens": 702635,
+        "physical_attempts": 2745,
+        "provider_reported_actual": 1511469
+      }
+    },
+    "by_stage": {
+      "canary": {
+        "charged_total": 1175417,
+        "fallback_charged": 27027,
+        "input_tokens": 685786,
+        "output_tokens": 489631,
+        "physical_attempts": 1931,
+        "provider_reported_actual": 1148390
+      },
+      "optimizer_witness": {
+        "charged_total": 1709,
+        "fallback_charged": 0,
+        "input_tokens": 1325,
+        "output_tokens": 384,
+        "physical_attempts": 1,
+        "provider_reported_actual": 1709
+      },
+      "pilot": {
+        "charged_total": 218638,
+        "fallback_charged": 0,
+        "input_tokens": 105691,
+        "output_tokens": 112947,
+        "physical_attempts": 360,
+        "provider_reported_actual": 218638
+      },
+      "posthoc_diagnostic": {
+        "charged_total": 1626,
+        "fallback_charged": 0,
+        "input_tokens": 1217,
+        "output_tokens": 409,
+        "physical_attempts": 1,
+        "provider_reported_actual": 1626
+      },
+      "validation_initial": {
+        "charged_total": 263775,
+        "fallback_charged": 0,
+        "input_tokens": 138342,
+        "output_tokens": 125433,
+        "physical_attempts": 523,
+        "provider_reported_actual": 263775
+      }
+    },
+    "charged_total": 1661165,
+    "fallback_charged": 27027,
+    "identity": "AUTONOMOUS_REAL_TOKEN_LEDGER_V2",
+    "input_tokens": 932361,
+    "last_event_sha256": "4db68cac22efbf822896be39c82310cc4d6c5f7d022a4897d554e907cb610153",
+    "output_tokens": 728804,
+    "provider_reported_actual": 1634138,
+    "remaining": 38338835,
+    "reserved_inflight": 0,
+    "task_sha256": "3db28ade2b799d2169c6cdbdb03b82e63517ab74c46f8212905855f2fcf9cd9a"
+  },
+  "opportunity_ceiling_is_not_scientific_stop": true,
+  "proof_reference": "multi_dataset_diverse_rl/benchmarks/gradient_pilot_contract.py",
+  "provider_bounds": {
+    "bound_proof": {
+      "failure_cap_recurrence": "T=(4*N+1)*(H+1); E=M*(T+1); H_next=T+1",
+      "final_failure_cap": 407083329954771576469543308946508261131310787513836596125404585822178206449258590578082055283185122009829272543248035440407846708313811550321768328672787921874111508605354155019020320663709134445553163417932602269089998970616373227781650190471899834705282377308834043428422100185108913326004,
+      "identity": "CARRIED_FAILURE_EPOCH_BOUND_V1",
+      "initial_failure_cap": 0,
+      "max_commits": 60,
+      "max_epoch_segments": 122,
+      "responsibility_upper_bound": 240,
+      "scientific_stopper_unchanged": true
+    },
+    "cumulative_charged_token_ceiling": 40000000,
+    "gross_reservation_upper_bound": 1625879625047783920201003063491357965981274174283606734418472467147669646657661456157618831544521089716402844232737714228014328537220884702167508856090076458297349827303297847906704137672036030974342081979228820316183055913670102721496146865364529962567443419706107176516923586531569909328455904400000000,
+    "max_opportunities": 2043897552481248956857498697002260227763456245642387909712968857982186411547319173527453652567658633424351139227557844607047730347992262158907211816877956024409601532789382319991331193332372945862048174660869940559389369831636373914487035331327663753416105269404770926380202628012734335657030,
+    "max_proposals_per_opportunity": 6,
+    "pattern_calls": 124677750701356186368307420517137873893570830984185662492491100336913371104386469585174672806627176638885419492881028521029911551227527991693339920829555317488985693500152321519471202793274749697584938654313066374122751559729818808783709155210987488958382421433691026509192360308776794475078830,
+    "pattern_cluster_calls": 2043897552481248956857498697002260227763456245642387909712968857982186411547319173527453652567658633424351139227557844607047730347992262158907211816877956024409601532789382319991331193332372945862048174660869940559389369831636373914487035331327663753416105269404770926380202628012734335657030,
+    "pattern_gradient_calls": 122633853148874937411449921820135613665807374738543274582778131478931184692839150411647219154059518005461068353653470676422863820879535729534432709012677361464576091967362939199479871599942376751722890479652196433563362189898182434869222119879659825204966316164286255582812157680764060139421800,
+    "reflection_calls": 12263385314887493741144992182013561366580737473854327458277813147893118469283915041164721915405951800546106835365347067642286382087953572953443270901267736146457609196736293919947987159994237675172289047965219643356336218989818243486922211987965982520496631616428625558281215768076406013942180,
+    "reservation_peak_upper_bound": 40000000,
+    "shadow_solver_calls": 327023608396999833097199791520361636442152999302782065554075017277149825847571067764392584410825381347896182276409255137127636855678761945425153890700472963905536245246301171198612990933179671337927707945739190489502299173061819826317925653012426200546576843104763348220832420482037493705125600,
+    "solver_calls": 1798629846183499082034598853361989000431841496165301360547412595024324042161640872704159214259539597413429002520250903254202002706233190699838346398852601301480449348854656441592371450132488192358602393701565547692262645451840009044748591091568344103006172637076198415214578312651206215378188400,
+    "solver_per_opportunity": 220,
+    "successful_provider_calls": 1935570982199742762144051266061140435691993064623341350498181508509130531735311257330498608981572725852860528848497278842874200639548672264485129590583424355115892651551545057031790640085757179731359621403843833709741733230559646097019222458767297574485051690126318067282051888728059415867209410,
+    "transport_attempts": 40646990626194598005025076587283949149531854357090168360461811678691741166441536403940470788613027242910071105818442855700358213430522117554187721402251911457433745682582446197667603441800900774358552049480720507904576397841752568037403671634113249064186085492652679412923089663289247733211397610
+  },
+  "reservation_peak_at_freeze_upper_bound": 38338835,
+  "validation_provider_calls_authorized": 0
+}
