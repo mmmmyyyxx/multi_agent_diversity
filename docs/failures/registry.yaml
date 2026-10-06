@@ -623,3 +623,26 @@ failures:
     Canary.
   symptom: Generic mathematical command tokens were treated as example-specific proper names and rejected by the
     abstraction guard.
+- failure_id: FAIL-MATH-GRADIENT-GENERIC-DIGIT-CONTRACT
+  title: A generic mathematical numeric literal violates the frozen absolute digit prohibition
+  status: OPEN
+  lifecycle: OPEN
+  first_observed: math_v2_1_gradient_pattern_seed81_pilot_v1
+  affected_components:
+  - per_example_textual_gradient
+  - pattern_abstraction_guard
+  symptom: Fourth gradient is267 characters and valid JSON, but contains a numeric literal in a general mathematical
+    rule; search aborts before clustering.
+  evidence:
+  - reports/math_v2_1_gradient_pattern_seed81_pilot_v1_execution_20261006/gradient_contract_forensic.json
+  evidence_level: observed
+  root_cause_status: GENERATED_CONTRACT_NONCOMPLIANCE_FROZEN_GUARD_ENFORCED
+  forbidden_inference: No confirmed implementation bug, copied problem-specific value, efficacy or population compliance
+    rate; no automatic retry or parser loosening.
+  regression_tests:
+  - tests/current/test_gradient_pilot_audit.py
+  required_resolution: User decision for any prompt or guard amendment, fresh identity/freeze and exact authorization.
+    Existing400-character cap and method remain unchanged.
+  evidence_format: HASH_BOUND_PRIVATE_PREFIX_AND_SYNTHETIC_ZERO_API_CONTROLS
+  mitigation: Preserve the aborted prefix, close consumed and unused conditional retry scopes, stop before new API
+    calls.

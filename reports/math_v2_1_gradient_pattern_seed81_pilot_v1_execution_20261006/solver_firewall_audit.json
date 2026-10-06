@@ -1,0 +1,21 @@
+{
+  "Optimize_count": 60,
+  "Shadow_count": 40,
+  "arm": "A4",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt1",
+  "audit_provider_calls": 0,
+  "benchmark_owned_solver_messages_checked": true,
+  "llm_judge_calls": 0,
+  "member_lane_identity_checked": true,
+  "optimizer_context_leakage": false,
+  "pushed": false,
+  "raw_diagnostic_calls": 0,
+  "request_identity_rows_checked": 356,
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "seed": 81,
+  "solver_wire_rows_checked": 352,
+  "source_sha": "1298d5497706d8f9c05adba66b0f5e57f4443567",
+  "status": "PASS",
+  "test_model_calls": 0,
+  "validation_model_calls": 0
+}

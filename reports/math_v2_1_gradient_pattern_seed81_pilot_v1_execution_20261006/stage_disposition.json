@@ -1,0 +1,23 @@
+{
+  "Full": "NOT_REACHED",
+  "Layer1": "NOT_REACHED",
+  "Memory_reads": "NOT_REACHED",
+  "Optimize_count": 60,
+  "Pattern": "NOT_REACHED",
+  "Shadow": "NOT_REACHED",
+  "Shadow_count": 40,
+  "TeamProbe": "NOT_REACHED",
+  "arm": "A4",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt1",
+  "commit": "NOT_REACHED",
+  "gradient_extraction": "CONTRACT_FAILURE_INCOMPLETE",
+  "initial_Optimize": "COMPLETE",
+  "llm_judge_calls": 0,
+  "pushed": false,
+  "raw_diagnostic_calls": 0,
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "seed": 81,
+  "source_sha": "1298d5497706d8f9c05adba66b0f5e57f4443567",
+  "test_model_calls": 0,
+  "validation_model_calls": 0
+}

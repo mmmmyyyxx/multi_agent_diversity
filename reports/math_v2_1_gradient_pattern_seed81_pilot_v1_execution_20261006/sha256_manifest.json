@@ -1,0 +1,113 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "accounting_integrity_audit.json",
+      "sha256": "41809ce6cdf58dc16d3bd9fcc890e98a6fc6842da62c850782436f5aefd1fed6"
+    },
+    {
+      "file": "analysis_index.md",
+      "sha256": "69fa63ad0ece999c3317823b969a0b0ca6f73162a857ed6a7bb05cb420771443"
+    },
+    {
+      "file": "authorization_closure.json",
+      "sha256": "49feb9aad1fc2d6dd6160909faf10d26a91061150fc0a6869f90519d9f48e9d0"
+    },
+    {
+      "file": "candidate_funnel.json",
+      "sha256": "907b59272efc229d7f7404d570bb640945448e43e2309746e2fdd6d14c4239a9"
+    },
+    {
+      "file": "candidate_trajectory.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "cost_trajectory.json",
+      "sha256": "f854ea53780586a0a09d4e9cea337edbbdaf54bbada365b13b1a5dff216cb6f9"
+    },
+    {
+      "file": "execution_identity.json",
+      "sha256": "0d478af7fca715369f2edf3354167917b5519dcba24e632fc2f3f9adbc86c232"
+    },
+    {
+      "file": "final_status.json",
+      "sha256": "432eb79f95d4b7915289d3ba536c513c1bc7432359813d832a0ae484abf2c5d8"
+    },
+    {
+      "file": "governance_audit.json",
+      "sha256": "f55a3c345da842198869accd78b56be79e7c13c9e0a50e3ca7558a6a5033ef70"
+    },
+    {
+      "file": "gradient_contract_forensic.json",
+      "sha256": "46500af0c1ab979c737f7def1c53e153ffc7026dbaa667b99c87e817c2ed55f5"
+    },
+    {
+      "file": "gradient_trajectory.json",
+      "sha256": "12a265e8e0b6d978feb6bb4500ce33c3fc322789c1e7c49cb3fec8003a871c69"
+    },
+    {
+      "file": "initial_team_audit.json",
+      "sha256": "62e04e65367c5450667b8406fccb6cce2ed1ebc42c53bf16c11de0f8c7aff69f"
+    },
+    {
+      "file": "member_training_summary.csv",
+      "sha256": "a2c7eceabf175cacb1cb4b04c0a89cba49802b09e663d0d9d42382dc1c89d584"
+    },
+    {
+      "file": "memory_trajectory.json",
+      "sha256": "4c0b96346f909b57b4339142a721b3f279f80799e5f750471948cab085e99025"
+    },
+    {
+      "file": "module_behavior_summary.json",
+      "sha256": "53b3ab849cf5725c49137579e748d9e228eae7fa509d415b4d971596e128365e"
+    },
+    {
+      "file": "nonthinking_wire_audit.json",
+      "sha256": "51e4534ec0596df57b13a94618416bf688f7d5b17fee1d46b42ec885270814b5"
+    },
+    {
+      "file": "opportunity_summary.csv",
+      "sha256": "45341eab948e84e673abca08435ed15867596084d0ec357918396dc4d5e1bf9a"
+    },
+    {
+      "file": "pattern_trajectory.json",
+      "sha256": "b76167405e7b179170286d0e356a6f4787a285b10635d40c6bb57062ad4acc34"
+    },
+    {
+      "file": "prompt_lineage.json",
+      "sha256": "39f907d8c5ce91ec9454a672d30f49bf6228dd3c3366b1546b474f95bfd41107"
+    },
+    {
+      "file": "provider_usage.json",
+      "sha256": "3f672598c5107ba54c9b6758aab56da3d9f62abba12c6ea391d9588667d79e54"
+    },
+    {
+      "file": "README.md",
+      "sha256": "5e9df4ccee4b1ba0b513618787df7b90a97c7a227105fe2b93fe9df2253b8be8"
+    },
+    {
+      "file": "responsibility_trajectory.json",
+      "sha256": "d88e4999c16f4873220fb896a00a2933ac44239f85129941722de47e5a56527c"
+    },
+    {
+      "file": "solver_firewall_audit.json",
+      "sha256": "e21dd70c041f84e9c7861277f3cc40cff6f0682d8009ad44a5d3a8e7aba4f363"
+    },
+    {
+      "file": "stage_disposition.json",
+      "sha256": "72d17ef23a6d39b18e914310cc6d97920f1e5c03de972eb0ec914d0a5568f2f4"
+    },
+    {
+      "file": "stop_trace.json",
+      "sha256": "2fd45fff3c16f37bae3d840895b622a485e5614c4d02cb41e4a34a86a8cebba0"
+    },
+    {
+      "file": "team_state_trajectory.json",
+      "sha256": "425e700e4f0b121f7f14ac55c86058f78417d4ac19cf8d6ab0c8d2b106768e34"
+    },
+    {
+      "file": "transition_trace.json",
+      "sha256": "4e0f3baf09ba43be7d4caa4ce65aeda46497a4c23f05d3e0fcf31fbe9319b986"
+    }
+  ]
+}

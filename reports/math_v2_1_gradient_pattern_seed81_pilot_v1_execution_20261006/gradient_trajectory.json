@@ -1,0 +1,89 @@
+{
+  "Optimize_count": 60,
+  "Shadow_count": 40,
+  "arm": "A4",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt1",
+  "contract_failures": 1,
+  "contract_passes": 3,
+  "exact_texts": {
+    "path": "runs/gradient_pilot_v1/analysis_bundle",
+    "sha256_manifest_sha256": "16759015d20d52bfdfcaaf0df96d7d51e8364fa8b3206aec56def2344f5f51b8"
+  },
+  "llm_judge_calls": 0,
+  "pushed": false,
+  "raw_diagnostic_calls": 0,
+  "rows": [
+    {
+      "category": null,
+      "contract_status": "PASS",
+      "example_alias": "o6",
+      "gradient_sha256": "af96cb7ae0ba316e8fecbe6337af61916dbd1bec07acdf329878e7a89201b76d",
+      "guard_status": "PASS",
+      "incomplete": true,
+      "input_tokens": 478,
+      "length": 201,
+      "opportunity_index": 1,
+      "output_tokens": 47,
+      "prediction_valid": false,
+      "provider_request_sha256": "c7e785162faa042219ce44c71997f718e24eefc6b291433a04948605a94ba864",
+      "responsibility_labels": []
+    },
+    {
+      "category": null,
+      "contract_status": "PASS",
+      "example_alias": "o9",
+      "gradient_sha256": "dce92ef0fb6a44ead77d0011607a67fba6c45a4b39de41f0e95f4ec325f474ce",
+      "guard_status": "PASS",
+      "incomplete": true,
+      "input_tokens": 429,
+      "length": 184,
+      "opportunity_index": 1,
+      "output_tokens": 27,
+      "prediction_valid": true,
+      "provider_request_sha256": "d7ec3bc4d34942f5b5faf6acbeb7c92e0968de29ea9221af72f84a79cb63a4e4",
+      "responsibility_labels": [
+        "coverage"
+      ]
+    },
+    {
+      "category": null,
+      "contract_status": "PASS",
+      "example_alias": "o10",
+      "gradient_sha256": "0de421b922bf39ca9e7ca4a5b0c70a2b32c958a8298f4632a480f10d794683b5",
+      "guard_status": "PASS",
+      "incomplete": true,
+      "input_tokens": 424,
+      "length": 129,
+      "opportunity_index": 1,
+      "output_tokens": 23,
+      "prediction_valid": true,
+      "provider_request_sha256": "82c9815bccbe57ebb87f7487a5d9ec2226eb5245768e011f7c5795883433d512",
+      "responsibility_labels": [
+        "coverage"
+      ]
+    },
+    {
+      "category": "PATTERN_GRADIENT_EXTRACTION_INVALID",
+      "contract_status": "FAIL",
+      "example_alias": "o13",
+      "gradient_sha256": "666f17d12d303afe5e5e6685cfbc0afc9d345f9756621c5ffed28a61dd6e4c01",
+      "guard_status": "FAIL",
+      "incomplete": true,
+      "input_tokens": 479,
+      "length": 267,
+      "opportunity_index": 1,
+      "output_tokens": 54,
+      "prediction_valid": true,
+      "provider_request_sha256": "0916ce07eebed698cbe0b9b5c9ca15f7df1d18d62819bf697769362d26f687a7",
+      "responsibility_labels": [
+        "near_margin"
+      ]
+    }
+  ],
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "seed": 81,
+  "semantic_quality": "USER_REVIEW_PENDING_NO_LLM_JUDGE",
+  "source_sha": "1298d5497706d8f9c05adba66b0f5e57f4443567",
+  "test_model_calls": 0,
+  "validation_model_calls": 0
+}

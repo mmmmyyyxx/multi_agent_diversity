@@ -7895,16 +7895,33 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_gradient_pattern_seed81_canary_v3
-  status: DRAFT
-  scientific_status: NOT_EXECUTED_EFFICACY_NOT_ESTIMATED
-  implementation_commit: null
-  execution_commit: null
+  status: HOLD
+  scientific_status: NOT_EVALUABLE_GENERATED_PATTERN_CONTRACT_FAILURE
+  implementation_commit: 1298d5497706d8f9c05adba66b0f5e57f4443567
+  execution_commit: 8ef911d0f314497b21fb4f1bf3009809e8e90a07
   result_commit: null
   manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v1.yaml
-  report: reports/math_v2_1_gradient_pattern_seed81_pilot_v1_preexecution_20261006
-  classifier: CURRENT_SEARCH_ONLY_PILOT
-  active_for_new_work: true
+  report: reports/math_v2_1_gradient_pattern_seed81_pilot_v1_execution_20261006
+  classifier: GENERATED_GRADIENT_NUMERIC_CONTRACT_FAILURE
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
-  notes: User-authorized A4 Seed81 Optimize60 Shadow40 training-process audit. Method and prompts unchanged; fresh
-    current-only Pilot wiring. Validation deferred, Test sealed, no diagnostic or push.
+  notes:
+  - One authorized fresh current-only A4 Seed81 Pilot attempt; method and prompts unchanged.
+  - 'Optimize60 initialization completed: Vote28, Oracle38; target member1 had33 wrong examples.'
+  - Three gradients passed; fourth267-character gradient violated frozen digit prohibition in a general mathematical
+    rule.
+  - No complete opportunity, Cluster, Reflection, candidate, Shadow gate or commit. No scientifically completed
+    final team.
+  - 356 successful calls, no transport failures; charged193812 tokens, cumulative1854977, remaining38145023; reservations0.
+  - No implementation invalidity established. No automatic operational retry or scientific rerun; all exact scopes
+    closed.
+  - Validation/Test/otherarms/otherseeds/diagnostic/judge/push all0; efficacy NOT_ESTIMATED; historical private
+    replay NOT_RUN.
+  authorization_consumed: true
+  authorization_closed: true
+  authorization_closure_evidence: reports/math_v2_1_gradient_pattern_seed81_pilot_v1_execution_20261006/authorization_closure.json
+  reports:
+  - reports/math_v2_1_gradient_pattern_seed81_pilot_v1_preexecution_20261006
+  unavailable:
+    result_commit: Local result commit is recorded in git history without a self-referential hash.

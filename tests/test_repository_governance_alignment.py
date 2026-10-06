@@ -290,8 +290,33 @@ def _assert_canary_does_not_unlock_formal_or_heldout(frontier,registry):
                 assert previous['scientific_status'] == 'VALID_OPERATIONAL_CANARY'
                 assert previous['authorization_closed'] is True
                 assert previous['active_for_new_work'] is False
-                assert frontier['current_experiment'] == previous['experiment_id']
-                assert frontier['current_execution_blocker'] == 'NO_AUTHORIZED_FOLLOWUP_SCOPE'
+                if frontier['current_experiment'] != previous['experiment_id']:
+                    assert frontier['current_pilot_status']=='GRADIENT_OUTPUT_CONTRACT_FAILURE'
+                    assert frontier['current_experiment']==frontier['last_pilot_milestone']
+                    pilot=next(r for r in registry['experiments'] if r['experiment_id']==frontier['current_experiment'])
+                    assert pilot['kind']=='PILOT' and pilot['status']=='HOLD'
+                    assert pilot['scientific_status']=='NOT_EVALUABLE_GENERATED_PATTERN_CONTRACT_FAILURE'
+                    assert pilot['authorization_consumed'] is True and pilot['authorization_closed'] is True
+                    assert pilot['active_for_new_work'] is False
+                    assert frontier['current_execution_blocker']=='USER_SCIENTIFIC_POLICY_DECISION_REQUIRED'
+                    assert frontier['pilot_search_complete'] is False and frontier['pilot_validation_complete'] is False
+                    assert frontier['pending_pilot_attempt_id'] is None
+                    assert frontier['pending_pilot_operational_retry_limit']==0
+                    pilot_manifest=load_yaml(ROOT/pilot['manifest'])
+                    pilot_binding=load_yaml(ROOT/pilot_manifest['execution_binding']['path'])
+                    pilot_closure=load_yaml(ROOT/pilot['authorization_closure_evidence'])
+                    assert pilot_binding['execution_phase']=='pilot'
+                    assert pilot_manifest['authorization']['real_api_authorized'] is False
+                    assert pilot_closure['attempt_id']==pilot_binding['execution_attempt_id']
+                    assert pilot_closure['closed'] is True and pilot_closure['single_use_consumed'] is True
+                    assert pilot_closure['unused_operational_retry_grant_closed'] is True
+                    assert pilot_closure['proven_implementation_invalid'] is False
+                    assert pilot_closure['scientific_reruns_authorized']==0
+                    assert pilot_closure['future_real_execution_requires_new_exact_user_authorization'] is True
+                    for role in ('pilot','validation','test','push','raw_diagnostic','llm_judge'):
+                        assert pilot_closure[role+'_authorized'] is False
+                else:
+                    assert frontier['current_execution_blocker'] == 'NO_AUTHORIZED_FOLLOWUP_SCOPE'
                 assert frontier['next_canary_authorized'] is False
                 assert frontier['next_pilot_authorized'] is False
                 assert frontier['next_validation_authorized'] is False
@@ -352,6 +377,28 @@ def _assert_canary_does_not_unlock_formal_or_heldout(frontier,registry):
 def test_canary_abort_does_not_unlock_formal_or_heldout():
     _assert_canary_does_not_unlock_formal_or_heldout(
         load_yaml(ROOT/'experiments/current_frontier.yaml'),load_yaml(ROOT/'experiments/registry.yaml'))
+
+
+@pytest.mark.parametrize('location,field,value',[
+    ('frontier','next_pilot_authorized',True),
+    ('frontier','next_validation_authorized',True),
+    ('frontier','current_execution_blocker','RETRY_READY'),
+    ('frontier','pilot_search_complete',True),
+    ('frontier','pending_pilot_operational_retry_limit',1),
+    ('registry','authorization_closed',False),
+    ('registry','authorization_consumed',False),
+    ('registry','active_for_new_work',True),
+])
+def test_aborted_pilot_scope_cannot_authorize_retry_or_heldout(location,field,value):
+    frontier=deepcopy(load_yaml(ROOT/'experiments/current_frontier.yaml'))
+    registry=deepcopy(load_yaml(ROOT/'experiments/registry.yaml'))
+    assert frontier['current_pilot_status']=='GRADIENT_OUTPUT_CONTRACT_FAILURE'
+    _assert_canary_does_not_unlock_formal_or_heldout(frontier,registry)
+    if location=='frontier':frontier[field]=value
+    else:
+        pilot=next(r for r in registry['experiments'] if r['experiment_id']==frontier['current_experiment'])
+        pilot[field]=value
+    with pytest.raises(AssertionError):_assert_canary_does_not_unlock_formal_or_heldout(frontier,registry)
 
 
 @pytest.mark.parametrize('location,field,value', [

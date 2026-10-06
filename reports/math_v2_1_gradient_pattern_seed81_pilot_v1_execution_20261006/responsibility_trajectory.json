@@ -1,0 +1,94 @@
+{
+  "Optimize_count": 60,
+  "Shadow_count": 40,
+  "arm": "A4",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt1",
+  "llm_judge_calls": 0,
+  "pattern_and_memory_did_not_determine_target": true,
+  "pushed": false,
+  "raw_diagnostic_calls": 0,
+  "reconstruction": "PASS",
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "seed": 81,
+  "source_sha": "1298d5497706d8f9c05adba66b0f5e57f4443567",
+  "test_model_calls": 0,
+  "trajectory": [
+    {
+      "expected_gradient_count": 33,
+      "failure_counts_not_updated": true,
+      "generated_gradient_count": 4,
+      "incomplete": true,
+      "members": [
+        {
+          "C": 14,
+          "D": 2,
+          "F": 14,
+          "N": 0,
+          "current_competence": 36.0,
+          "discounted_score": 14.0,
+          "failure_count": 0,
+          "feasible": true,
+          "initial_floor": 36.0,
+          "member_id": 0,
+          "primary_lane": "coverage"
+        },
+        {
+          "C": 14,
+          "D": 6,
+          "F": 24,
+          "N": 2,
+          "current_competence": 27.0,
+          "discounted_score": 24.0,
+          "failure_count": 0,
+          "feasible": true,
+          "initial_floor": 27.0,
+          "member_id": 1,
+          "primary_lane": "direct_flip"
+        },
+        {
+          "C": 14,
+          "D": 6,
+          "F": 24,
+          "N": 2,
+          "current_competence": 26.0,
+          "discounted_score": 24.0,
+          "failure_count": 0,
+          "feasible": true,
+          "initial_floor": 26.0,
+          "member_id": 2,
+          "primary_lane": "direct_flip"
+        },
+        {
+          "C": 15,
+          "D": 6,
+          "F": 24,
+          "N": 4,
+          "current_competence": 25.0,
+          "discounted_score": 24.0,
+          "failure_count": 0,
+          "feasible": true,
+          "initial_floor": 25.0,
+          "member_id": 3,
+          "primary_lane": "direct_flip"
+        },
+        {
+          "C": 15,
+          "D": 3,
+          "F": 15,
+          "N": 4,
+          "current_competence": 31.0,
+          "discounted_score": 15.0,
+          "failure_count": 0,
+          "feasible": true,
+          "initial_floor": 31.0,
+          "member_id": 4,
+          "primary_lane": "coverage"
+        }
+      ],
+      "opportunity_index": 1,
+      "target_member": 1,
+      "ungenerated_gradient_count": 29
+    }
+  ],
+  "validation_model_calls": 0
+}

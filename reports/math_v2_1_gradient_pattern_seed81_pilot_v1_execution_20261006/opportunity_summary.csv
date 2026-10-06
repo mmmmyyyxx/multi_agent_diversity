@@ -1,0 +1,2 @@
+opportunity_index,incomplete,target_member,raw_F,discounted_score,wrong_count,gradient_count,gradient_passes,gradient_failures,pattern_count,selected_pattern_F,selected_support_count,memory_reads,memory_writes,proposals,valid,local_positive,local_neutral,local_negative,exported,TeamProbe_pass,Full_pass,Shadow_pass,commit,team_vote_before,team_vote_after
+1,True,1,24,24.0,33,4,3,1,0,NOT_REACHED,NOT_REACHED,0,0,0,0,0,0,0,0,0,0,0,0,28,28

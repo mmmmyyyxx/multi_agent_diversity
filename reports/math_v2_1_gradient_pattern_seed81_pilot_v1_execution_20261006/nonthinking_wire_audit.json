@@ -1,0 +1,24 @@
+{
+  "Optimize_count": 60,
+  "Shadow_count": 40,
+  "arm": "A4",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt1",
+  "llm_judge_calls": 0,
+  "optimizer_evidence_levels": {
+    "EQUIVALENT_LEVEL_B": 4
+  },
+  "optimizer_wire_requests_checked": 4,
+  "pushed": false,
+  "raw_diagnostic_calls": 0,
+  "raw_response_metadata_counts": {
+    "reported_reasoning_content_chars": 0,
+    "reported_reasoning_tokens": 0
+  },
+  "reasoning_tokens_not_inferred_as_zero": true,
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "seed": 81,
+  "source_sha": "1298d5497706d8f9c05adba66b0f5e57f4443567",
+  "status": "PASS",
+  "test_model_calls": 0,
+  "validation_model_calls": 0
+}

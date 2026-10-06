@@ -1,0 +1,244 @@
+{
+  "Optimize_count": 60,
+  "Optimize_oracle_delta": 0.0,
+  "Optimize_vote_delta": 0.0,
+  "Shadow_count": 40,
+  "accounting_integrity": "PASS",
+  "all_future_execution_scopes_closed": true,
+  "analysis_bundle": {
+    "path": "runs/gradient_pilot_v1/analysis_bundle",
+    "sha256_manifest_sha256": "16759015d20d52bfdfcaaf0df96d7d51e8364fa8b3206aec56def2344f5f51b8"
+  },
+  "arm": "A4",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt1",
+  "automatic_operational_retries_used": 0,
+  "base_commit": "9991c0e1d02a28583238a3fa3c058e529af385a4",
+  "candidate_funnel": {
+    "changed_valid_scored": 0,
+    "cluster_calls": 0,
+    "commit": 0,
+    "exported": 0,
+    "full": 0,
+    "full_pass": 0,
+    "gradient_calls": 4,
+    "local_negative": 0,
+    "local_neutral": 0,
+    "local_positive": 0,
+    "optimizer_generations": 0,
+    "patterns": 0,
+    "shadow": 0,
+    "shadow_pass": 0,
+    "teamprobe": 0,
+    "teamprobe_pass": 0
+  },
+  "charged_tokens": 193812,
+  "classification": "NOT_EVALUABLE_GENERATED_PATTERN_CONTRACT_FAILURE",
+  "commits": 0,
+  "cumulative_charged": 1854977,
+  "executable_commit": "1298d5497706d8f9c05adba66b0f5e57f4443567",
+  "execution_status": "EXECUTION_ABORTED",
+  "expected_incomplete_gradient_count": 33,
+  "final_Optimize_metrics": {
+    "MeanMemberAcc": 0.48333333333333334,
+    "MinMemberAcc": 0.4166666666666667,
+    "OracleAcc": 0.6333333333333333,
+    "VoteAcc": 0.4666666666666667,
+    "count": 60,
+    "disagreement_definition": "mean unequal-equivalence fraction over valid member pairs; rows with fewer than two valid outputs excluded",
+    "invalid_count_by_member": [
+      4,
+      4,
+      3,
+      2,
+      4
+    ],
+    "invalid_rates_by_member": [
+      0.06666666666666667,
+      0.06666666666666667,
+      0.05,
+      0.03333333333333333,
+      0.06666666666666667
+    ],
+    "mean_distinct_valid_equivalence_classes": 1.5833333333333333,
+    "mean_valid_pair_disagreement": 0.26206896551724135,
+    "member_accuracies": [
+      0.6,
+      0.45,
+      0.43333333333333335,
+      0.4166666666666667,
+      0.5166666666666667
+    ],
+    "member_correct_counts": [
+      36,
+      27,
+      26,
+      25,
+      31
+    ],
+    "oracle_correct_count": 38,
+    "vote_correct_count": 28
+  },
+  "final_metrics_scope": "DEPLOYED_PREFIX_ONLY_INCOMPLETE_PILOT",
+  "final_team_disposition": "NO_PILOT_FINAL_TEAM_INITIAL_OR_COMMITTED_PREFIX_RETAINED",
+  "full_current_suite": {
+    "errors": 0,
+    "failures": 0,
+    "passed": 1278,
+    "skipped": 2,
+    "tests": 1280
+  },
+  "future_execution_requires_new_exact_scope": true,
+  "historical_private_tests": "NOT_RUN",
+  "incomplete_target_member": 1,
+  "initial_Optimize_metrics": {
+    "MeanMemberAcc": 0.48333333333333334,
+    "MinMemberAcc": 0.4166666666666667,
+    "OracleAcc": 0.6333333333333333,
+    "VoteAcc": 0.4666666666666667,
+    "count": 60,
+    "disagreement_definition": "mean unequal-equivalence fraction over valid member pairs; rows with fewer than two valid outputs excluded",
+    "invalid_count_by_member": [
+      4,
+      4,
+      3,
+      2,
+      4
+    ],
+    "invalid_rates_by_member": [
+      0.06666666666666667,
+      0.06666666666666667,
+      0.05,
+      0.03333333333333333,
+      0.06666666666666667
+    ],
+    "mean_distinct_valid_equivalence_classes": 1.5833333333333333,
+    "mean_valid_pair_disagreement": 0.26206896551724135,
+    "member_accuracies": [
+      0.6,
+      0.45,
+      0.43333333333333335,
+      0.4166666666666667,
+      0.5166666666666667
+    ],
+    "member_correct_counts": [
+      36,
+      27,
+      26,
+      25,
+      31
+    ],
+    "oracle_correct_count": 38,
+    "vote_correct_count": 28
+  },
+  "llm_judge_calls": 0,
+  "memory_final_audit": {
+    "failure_evidence_events": 0,
+    "failure_family_count": 0,
+    "failure_family_repeated_count": 0,
+    "failure_memory_evictions": 0,
+    "failure_memory_peak_by_member": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "failure_reads": 0,
+    "failure_to_shared_promotions": 0,
+    "failure_writes": 0,
+    "initial_memory_entries": 0,
+    "memory_context_chars": {
+      "max": 0,
+      "mean": 0,
+      "min": 0
+    },
+    "memory_ids": [],
+    "memory_llm_calls": 0,
+    "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+    "private_failure_count_by_member": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "private_success_count_by_member": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "promoted_families": [],
+    "risk_clock": 0,
+    "shared_reads": 0,
+    "shared_risk_count": 0,
+    "shared_risk_created": 0,
+    "shared_risk_evicted": 0,
+    "shared_risk_reads": 0,
+    "shared_risk_storage_final": 0,
+    "shared_risk_storage_peak": 0,
+    "shared_risk_updated": 0,
+    "shared_writes": 0,
+    "stateful_write_count": 0,
+    "success_reads": 0,
+    "success_writes": 0
+  },
+  "opportunities_built": 0,
+  "opportunities_completed": 0,
+  "other_arms_executed": false,
+  "other_seeds_executed": false,
+  "pattern_or_gradient_contract_failure": true,
+  "pilot_search_complete": false,
+  "preexecution_commit": "8ef911d0f314497b21fb4f1bf3009809e8e90a07",
+  "provider_calls": 356,
+  "provider_usage_by_role": {
+    "pattern_cluster": {
+      "cache_hits": 0,
+      "charged_input_tokens": 0,
+      "charged_output_tokens": 0,
+      "physical_attempts": 0,
+      "successful_calls": 0,
+      "transport_failures": 0
+    },
+    "pattern_gradient": {
+      "cache_hits": 0,
+      "charged_input_tokens": 1810,
+      "charged_output_tokens": 151,
+      "physical_attempts": 4,
+      "successful_calls": 4,
+      "transport_failures": 0
+    },
+    "reflection": {
+      "cache_hits": 0,
+      "charged_input_tokens": 0,
+      "charged_output_tokens": 0,
+      "physical_attempts": 0,
+      "successful_calls": 0,
+      "transport_failures": 0
+    },
+    "solver": {
+      "cache_hits": 0,
+      "charged_input_tokens": 89701,
+      "charged_output_tokens": 102150,
+      "physical_attempts": 352,
+      "successful_calls": 352,
+      "transport_failures": 0
+    }
+  },
+  "pushed": false,
+  "raw_diagnostic_calls": 0,
+  "remaining_tokens": 38145023,
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "scientific_reruns": 0,
+  "seed": 81,
+  "source_closure_matches": true,
+  "source_sha": "1298d5497706d8f9c05adba66b0f5e57f4443567",
+  "stop_reason": "PATTERN_GRADIENT_EXTRACTION_INVALID",
+  "target_sequence": [],
+  "task_stop_reason": "USER_SCIENTIFIC_POLICY_DECISION_REQUIRED",
+  "team_changed": false,
+  "test_model_calls": 0,
+  "validation_model_calls": 0,
+  "validation_status": "SKIPPED_NO_TEAM_CHANGE"
+}

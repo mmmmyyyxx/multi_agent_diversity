@@ -1,0 +1,106 @@
+{
+  "Optimize_count": 60,
+  "Shadow_count": 40,
+  "arm": "A4",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt1",
+  "committed_states": 0,
+  "final": {
+    "MeanMemberAcc": 0.48333333333333334,
+    "MinMemberAcc": 0.4166666666666667,
+    "OracleAcc": 0.6333333333333333,
+    "VoteAcc": 0.4666666666666667,
+    "count": 60,
+    "disagreement_definition": "mean unequal-equivalence fraction over valid member pairs; rows with fewer than two valid outputs excluded",
+    "invalid_count_by_member": [
+      4,
+      4,
+      3,
+      2,
+      4
+    ],
+    "invalid_rates_by_member": [
+      0.06666666666666667,
+      0.06666666666666667,
+      0.05,
+      0.03333333333333333,
+      0.06666666666666667
+    ],
+    "mean_distinct_valid_equivalence_classes": 1.5833333333333333,
+    "mean_valid_pair_disagreement": 0.26206896551724135,
+    "member_accuracies": [
+      0.6,
+      0.45,
+      0.43333333333333335,
+      0.4166666666666667,
+      0.5166666666666667
+    ],
+    "member_correct_counts": [
+      36,
+      27,
+      26,
+      25,
+      31
+    ],
+    "oracle_correct_count": 38,
+    "vote_correct_count": 28
+  },
+  "final_deployed_prefix_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+  "final_metrics_scope": "DEPLOYED_PREFIX_ONLY_INCOMPLETE_PILOT",
+  "initial": {
+    "MeanMemberAcc": 0.48333333333333334,
+    "MinMemberAcc": 0.4166666666666667,
+    "OracleAcc": 0.6333333333333333,
+    "VoteAcc": 0.4666666666666667,
+    "count": 60,
+    "disagreement_definition": "mean unequal-equivalence fraction over valid member pairs; rows with fewer than two valid outputs excluded",
+    "invalid_count_by_member": [
+      4,
+      4,
+      3,
+      2,
+      4
+    ],
+    "invalid_rates_by_member": [
+      0.06666666666666667,
+      0.06666666666666667,
+      0.05,
+      0.03333333333333333,
+      0.06666666666666667
+    ],
+    "mean_distinct_valid_equivalence_classes": 1.5833333333333333,
+    "mean_valid_pair_disagreement": 0.26206896551724135,
+    "member_accuracies": [
+      0.6,
+      0.45,
+      0.43333333333333335,
+      0.4166666666666667,
+      0.5166666666666667
+    ],
+    "member_correct_counts": [
+      36,
+      27,
+      26,
+      25,
+      31
+    ],
+    "oracle_correct_count": 38,
+    "vote_correct_count": 28
+  },
+  "initial_prompt_hashes": [
+    "57e468e68d9ab974a0018353e4bc0a15ca0e1e002c8dbd6676802d89839bc674",
+    "c6e4039d562e0f1cf9e7f4ab4a0245f91c605a566947bcc31b6f1db90d1e5d23",
+    "37d8569a6e38128535bae504b4e7a4acb165d5bb8a4528a5e1e86c51a51a94d5",
+    "ade4c363f59d20e8fc2e6d743c47d4e7e8d059ce9cb8fa0c309f61bd50c9e112",
+    "6f9ee08d5b0055d8d5986c2cd55aea000074e11df4aee614241ca6b4e59b3098"
+  ],
+  "initial_state_id": "a673566088e2ddc6bb282d7e835fc91fc2246fbb004720e764a124ea06665007",
+  "llm_judge_calls": 0,
+  "pushed": false,
+  "raw_diagnostic_calls": 0,
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "seed": 81,
+  "source_sha": "1298d5497706d8f9c05adba66b0f5e57f4443567",
+  "test_model_calls": 0,
+  "trajectory": [],
+  "validation_model_calls": 0
+}

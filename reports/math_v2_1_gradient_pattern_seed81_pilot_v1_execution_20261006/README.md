@@ -1,0 +1,21 @@
+# A4 Seed81 Gradient Pattern Memory Pilot search audit
+
+Status: **NOT_EVALUABLE_GENERATED_PATTERN_CONTRACT_FAILURE**. Stop: `PATTERN_GRADIENT_EXTRACTION_INVALID`. This is a descriptive training-process run; component efficacy and generalization are **NOT_ESTIMATED**.
+
+Optimize60 and private Shadow40 use existing frozen memberships. Completed opportunities: 0; built: 0; target sequence: []; commits: 0. Incomplete target: 1.
+
+Initial Optimize metrics: `{"MeanMemberAcc": 0.48333333333333334, "MinMemberAcc": 0.4166666666666667, "OracleAcc": 0.6333333333333333, "VoteAcc": 0.4666666666666667, "count": 60, "disagreement_definition": "mean unequal-equivalence fraction over valid member pairs; rows with fewer than two valid outputs excluded", "invalid_count_by_member": [4, 4, 3, 2, 4], "invalid_rates_by_member": [0.06666666666666667, 0.06666666666666667, 0.05, 0.03333333333333333, 0.06666666666666667], "mean_distinct_valid_equivalence_classes": 1.5833333333333333, "mean_valid_pair_disagreement": 0.26206896551724135, "member_accuracies": [0.6, 0.45, 0.43333333333333335, 0.4166666666666667, 0.5166666666666667], "member_correct_counts": [36, 27, 26, 25, 31], "oracle_correct_count": 38, "vote_correct_count": 28}`.
+
+Final deployed-prefix Optimize metrics: `{"MeanMemberAcc": 0.48333333333333334, "MinMemberAcc": 0.4166666666666667, "OracleAcc": 0.6333333333333333, "VoteAcc": 0.4666666666666667, "count": 60, "disagreement_definition": "mean unequal-equivalence fraction over valid member pairs; rows with fewer than two valid outputs excluded", "invalid_count_by_member": [4, 4, 3, 2, 4], "invalid_rates_by_member": [0.06666666666666667, 0.06666666666666667, 0.05, 0.03333333333333333, 0.06666666666666667], "mean_distinct_valid_equivalence_classes": 1.5833333333333333, "mean_valid_pair_disagreement": 0.26206896551724135, "member_accuracies": [0.6, 0.45, 0.43333333333333335, 0.4166666666666667, 0.5166666666666667], "member_correct_counts": [36, 27, 26, 25, 31], "oracle_correct_count": 38, "vote_correct_count": 28}`.
+
+Provider calls: 356; charged tokens: 193812; cumulative: 1854977; remaining: 38145023 of the durable 40M authorization. Roles and detailed stages are in [provider usage](provider_usage.json) and [cost trajectory](cost_trajectory.json).
+
+Validation: `SKIPPED_NO_TEAM_CHANGE` (0 calls). Test: sealed (0 calls). Other arms/seeds, raw diagnostic and LLM judge: 0. No tuning or scientific rerun. No push.
+
+Executable source: `1298d5497706d8f9c05adba66b0f5e57f4443567`. Preexecution commit: `8ef911d0f314497b21fb4f1bf3009809e8e90a07`. Base: `9991c0e1d02a28583238a3fa3c058e529af385a4`. Full current suite: 1278 passed, 2 skipped. Historical private tests: NOT_RUN; full historical replay PASS is not claimed.
+
+The [analysis index](analysis_index.md) links the module traces and explicit [stage dispositions](stage_disposition.json). Exact gradients, procedures/diffs and Memory read sets/states are in the ignored local bundle `runs/gradient_pilot_v1/analysis_bundle`; its SHA manifest hash is `16759015d20d52bfdfcaaf0df96d7d51e8364fa8b3206aec56def2344f5f51b8`. Public evidence contains hashes, counters, categories and aggregate metrics.
+
+This attempt stopped before a complete production opportunity. Three gradients passed; the fourth had 267 characters and violated the frozen digit prohibition. Its numeric literal occurred in a general mathematical rule; problem-specific numeric copying is not established. The guard enforced its frozen implementation. This is not proven implementation invalidity and does not qualify for an automatic operational retry. The 400-character limit, prompt, guard, method, models and stopping are unchanged. [Forensic evidence](gradient_contract_forensic.json) retains hashes and categories.
+
+Search is closed with incomplete Pilot status. No scientifically completed final team is claimed; final metrics above describe the unchanged deployed prefix. [All one-shot scopes are closed](authorization_closure.json), including the unused conditional operational retry. A prompt or guard amendment requires user decision, a fresh identity/freeze and exact authorization under the user task sections 26, 30 and 106. Continuing training requires a new scope. No API calls were made by the report audit.

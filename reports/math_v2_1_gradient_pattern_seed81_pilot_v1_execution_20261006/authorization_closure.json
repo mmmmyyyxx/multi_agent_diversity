@@ -1,0 +1,21 @@
+{
+  "activated_authorization_sha256": "20d9b847231a0df0f4b2c2bf4955ec3a06612212e3a7e87eccf7b1f6cbbef958",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt1",
+  "authority": "USER_TASK_SECTIONS_26_30_80_106_108",
+  "automatic_operational_retries_used": 0,
+  "closed": true,
+  "closed_authorization_sha256": "ac94e4bc4cbff03e7df1beedec90301efeb44f410aed228db2bf05f9bc1553dc",
+  "consumed_marker_sha256": "1832f21619833caa132a98ac9a2fc8fc7c4aa31fa25f00c9f7ec9f46387b6915",
+  "future_real_execution_requires_new_exact_user_authorization": true,
+  "llm_judge_authorized": false,
+  "pilot_authorized": false,
+  "proven_implementation_invalid": false,
+  "push_authorized": false,
+  "raw_diagnostic_authorized": false,
+  "scientific_reruns_authorized": 0,
+  "single_use_consumed": true,
+  "task_sha256": "505a692d8fc7ce0ece9a54282075f6c0415e8a3f1226e0e8144f34bafd705230",
+  "test_authorized": false,
+  "unused_operational_retry_grant_closed": true,
+  "validation_authorized": false
+}

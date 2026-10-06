@@ -1,0 +1,21 @@
+{
+  "Optimize_count": 60,
+  "Shadow_count": 40,
+  "arm": "A4",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt1",
+  "exact_texts": {
+    "path": "runs/gradient_pilot_v1/analysis_bundle",
+    "sha256_manifest_sha256": "16759015d20d52bfdfcaaf0df96d7d51e8364fa8b3206aec56def2344f5f51b8"
+  },
+  "llm_judge_calls": 0,
+  "partial_opportunity": true,
+  "pushed": false,
+  "raw_diagnostic_calls": 0,
+  "rows": [],
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "seed": 81,
+  "source_sha": "1298d5497706d8f9c05adba66b0f5e57f4443567",
+  "test_model_calls": 0,
+  "unintegrated_cluster_calls": 0,
+  "validation_model_calls": 0
+}

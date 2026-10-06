@@ -1,0 +1,58 @@
+{
+  "Optimize_count": 60,
+  "Shadow_count": 40,
+  "arm": "A4",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt1",
+  "charge_measurement": "RESERVATION_V2_OPERATIONAL_ACCOUNTING_NOT_PROVIDER_BILLING_PROOF",
+  "charged_tokens": 193812,
+  "llm_judge_calls": 0,
+  "logical_solver_evaluations": 300,
+  "logical_solver_requests": 300,
+  "physical_attempts": 356,
+  "pushed": false,
+  "raw_diagnostic_calls": 0,
+  "raw_invalid_solver_attempts": 69,
+  "recovered_logical_solver_requests": 1,
+  "roles": {
+    "pattern_cluster": {
+      "cache_hits": 0,
+      "charged_input_tokens": 0,
+      "charged_output_tokens": 0,
+      "physical_attempts": 0,
+      "successful_calls": 0,
+      "transport_failures": 0
+    },
+    "pattern_gradient": {
+      "cache_hits": 0,
+      "charged_input_tokens": 1810,
+      "charged_output_tokens": 151,
+      "physical_attempts": 4,
+      "successful_calls": 4,
+      "transport_failures": 0
+    },
+    "reflection": {
+      "cache_hits": 0,
+      "charged_input_tokens": 0,
+      "charged_output_tokens": 0,
+      "physical_attempts": 0,
+      "successful_calls": 0,
+      "transport_failures": 0
+    },
+    "solver": {
+      "cache_hits": 0,
+      "charged_input_tokens": 89701,
+      "charged_output_tokens": 102150,
+      "physical_attempts": 352,
+      "successful_calls": 352,
+      "transport_failures": 0
+    }
+  },
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "seed": 81,
+  "source_sha": "1298d5497706d8f9c05adba66b0f5e57f4443567",
+  "successful_calls": 356,
+  "terminal_invalid_solver_evaluations": 17,
+  "test_model_calls": 0,
+  "transport_failures": 0,
+  "validation_model_calls": 0
+}

@@ -1,0 +1,144 @@
+{
+  "Optimize_count": 60,
+  "Shadow_count": 40,
+  "actual_retrieval_invocations": 0,
+  "arm": "A4",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt1",
+  "events": [
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 0,
+          "mean": 0,
+          "min": 0
+        },
+        "memory_ids": [],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 0,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {},
+      "event_index": 0,
+      "memory_state_sha256": "ae65e25ec198401c972810a169357b2f6f8b0e1aba3809ba71f7f3f758e995a1",
+      "revision": 0,
+      "risk_clock": 0,
+      "sequence": 0,
+      "stage": "INITIAL_EMPTY_MEMORY",
+      "storage_utilization": {
+        "private_failure": 0,
+        "private_success": 0,
+        "shared_risk": 0
+      }
+    }
+  ],
+  "final_audit": {
+    "failure_evidence_events": 0,
+    "failure_family_count": 0,
+    "failure_family_repeated_count": 0,
+    "failure_memory_evictions": 0,
+    "failure_memory_peak_by_member": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "failure_reads": 0,
+    "failure_to_shared_promotions": 0,
+    "failure_writes": 0,
+    "initial_memory_entries": 0,
+    "memory_context_chars": {
+      "max": 0,
+      "mean": 0,
+      "min": 0
+    },
+    "memory_ids": [],
+    "memory_llm_calls": 0,
+    "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+    "private_failure_count_by_member": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "private_success_count_by_member": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "promoted_families": [],
+    "risk_clock": 0,
+    "shared_reads": 0,
+    "shared_risk_count": 0,
+    "shared_risk_created": 0,
+    "shared_risk_evicted": 0,
+    "shared_risk_reads": 0,
+    "shared_risk_storage_final": 0,
+    "shared_risk_storage_peak": 0,
+    "shared_risk_updated": 0,
+    "shared_writes": 0,
+    "stateful_write_count": 0,
+    "success_reads": 0,
+    "success_writes": 0
+  },
+  "full_states": {
+    "path": "runs/gradient_pilot_v1/analysis_bundle",
+    "sha256_manifest_sha256": "16759015d20d52bfdfcaaf0df96d7d51e8364fa8b3206aec56def2344f5f51b8"
+  },
+  "generation_and_opportunity_states": "NOT_REACHED",
+  "llm_judge_calls": 0,
+  "memory_llm_calls": 0,
+  "per_generation_and_opportunity_restoration_available": false,
+  "pushed": false,
+  "raw_diagnostic_calls": 0,
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "seed": 81,
+  "source_sha": "1298d5497706d8f9c05adba66b0f5e57f4443567",
+  "test_model_calls": 0,
+  "validation_model_calls": 0
+}

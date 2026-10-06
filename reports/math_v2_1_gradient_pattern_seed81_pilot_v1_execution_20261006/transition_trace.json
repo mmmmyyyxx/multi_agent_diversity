@@ -1,0 +1,17 @@
+{
+  "Optimize_count": 60,
+  "Shadow_count": 40,
+  "arm": "A4",
+  "atomic_parent_child_identity_checked": true,
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt1",
+  "initial_competence_floor_immutable": true,
+  "llm_judge_calls": 0,
+  "pushed": false,
+  "raw_diagnostic_calls": 0,
+  "rows": [],
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "seed": 81,
+  "source_sha": "1298d5497706d8f9c05adba66b0f5e57f4443567",
+  "test_model_calls": 0,
+  "validation_model_calls": 0
+}
