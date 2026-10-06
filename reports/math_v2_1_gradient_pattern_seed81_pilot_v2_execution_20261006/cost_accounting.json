@@ -1,0 +1,16 @@
+{
+  "attempt_charged_tokens": 74607,
+  "complete_response_records": 290,
+  "cumulative_authorized_ceiling": 40000000,
+  "cumulative_tokens_charged": 1929584,
+  "derived_snapshot_rebuilt": true,
+  "fallback_charged_tokens": 0,
+  "journal_unchanged_during_snapshot_recovery": true,
+  "recorded_response_tokens": 74389,
+  "remaining_tokens": 38070416,
+  "reserved_inflight": 0,
+  "response_charges": 291,
+  "run_accounting_end_unchanged": true,
+  "status": "PASS",
+  "terminal_unrecorded_response_charged_tokens": 218
+}

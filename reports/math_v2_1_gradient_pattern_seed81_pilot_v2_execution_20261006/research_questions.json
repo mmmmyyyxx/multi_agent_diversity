@@ -1,0 +1,11 @@
+{
+  "Q1_contract_compliance": "NOT_OBSERVED_NO_GRADIENT_CALLS",
+  "Q1_semantic_usefulness": "NOT_OBSERVED_NO_GRADIENT_CALLS",
+  "Q2_clustering": "NOT_OBSERVED",
+  "Q3_pattern_responsibility": "NOT_OBSERVED",
+  "Q4_search_and_deployment": "NOT_OBSERVED",
+  "Q5_memory": "NOT_OBSERVED",
+  "limitation": "Historical rechecks establish bounded admissibility regression only, not fresh provider compliance or usefulness.",
+  "prior_zero_api_canary3_gradients_passed": 7,
+  "prior_zero_api_pilot1_gradients_passed": 4
+}

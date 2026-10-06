@@ -1,0 +1,50 @@
+{
+  "READY_TO_RUN": false,
+  "actual_run_evidence_unchanged": true,
+  "authoritative_token_journal_unchanged_since_abort": true,
+  "branch": "main",
+  "compileall": "PASS",
+  "distinct_governance_cases_now_pass": 71,
+  "exact_attempt_authorization_closed": true,
+  "failed_check_retest": {
+    "errors": 0,
+    "failures": 0,
+    "passed": 1,
+    "skipped": 0,
+    "tests": 1
+  },
+  "failure_registry": "PASS",
+  "frozen_full_current_suite": {
+    "errors": 0,
+    "failures": 0,
+    "passed": 1356,
+    "skipped": 2,
+    "tests": 1358
+  },
+  "frozen_full_suite_source": "b4ec2d3c5025949af1e8dbcfc43042c3c06ac6e6",
+  "generated_views_refreshed": true,
+  "historical_evidence_unchanged": true,
+  "historical_immutable_files_checked": 4703,
+  "historical_private_replay": "NOT_RUN_1468_CASES_DESELECTED",
+  "initial_failure": "GENERATED_VIEWS_STALE",
+  "manifest_preflight": "PASS",
+  "network_attempt_count": 0,
+  "old_failure_registry_repair": "ADDED_EXISTING_OBSERVED_EVIDENCE_AND_MITIGATION_METADATA_ONLY",
+  "production_source_and_normative_design_unchanged_since_execution": true,
+  "provider_calls": 0,
+  "public_receipt_bytes_preserved": "ATTRIBUTES_DISABLE_CONVERSION_FOR_OWN_SEALED_WINDOWS_REPORTS",
+  "public_report_files_exact_index_hashes_checked": 35,
+  "publication_governance_first_check": {
+    "errors": 0,
+    "failures": 1,
+    "passed": 70,
+    "skipped": 0,
+    "tests": 71
+  },
+  "push_authority": "LATEST_USER_EXPLICIT_SUMMARIZE_AND_PUSH_REQUEST",
+  "remote": "origin",
+  "repository_governance": "PASS",
+  "sanitization": "PASS",
+  "status": "PASS",
+  "unrelated_untracked_files_preserved": true
+}

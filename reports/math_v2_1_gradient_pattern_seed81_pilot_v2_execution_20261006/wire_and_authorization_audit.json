@@ -1,0 +1,21 @@
+{
+  "audit_provider_calls": 0,
+  "consumed_authorization_sha256": "f7a1d7936a2931c23739418290bce164c3749b3227dd42fd4ab740c013e62fbd",
+  "exact_current_scope": true,
+  "final_unrecorded_response_audit": "NOT_POSSIBLE_NO_RAW_EVIDENCE",
+  "initial_prompt_unique_count": 1,
+  "member_lanes": 5,
+  "old_authorization_reused": false,
+  "optimizer_context_leakage": false,
+  "source_sha": "b4ec2d3c5025949af1e8dbcfc43042c3c06ac6e6",
+  "status": "PASS_RECORDED_PREFIX",
+  "wire": {
+    "audit_provider_calls": 0,
+    "benchmark_owned_solver_messages_checked": true,
+    "member_lane_identity_checked": true,
+    "optimizer_context_leakage": false,
+    "request_identity_rows_checked": 290,
+    "solver_wire_rows_checked": 290,
+    "status": "PASS"
+  }
+}

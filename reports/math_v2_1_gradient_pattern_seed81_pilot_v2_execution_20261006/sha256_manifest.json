@@ -1,0 +1,57 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "authorization_closure.json",
+      "sha256": "cdb8cc2485a9fb0bb051bb8a74a4a9c333c94454712368bf52e683d1b77e669c"
+    },
+    {
+      "file": "classification.json",
+      "sha256": "0b537f6eb5aecbd3c8de423f8e05d7bacbb67a2cb42572b28aaa62311a2650f0"
+    },
+    {
+      "file": "cost_accounting.json",
+      "sha256": "1a040fbdd4a3b04a5e96e8bf7830487b194ec9a26c45a36380580a93825e32f6"
+    },
+    {
+      "file": "integrity_audit.json",
+      "sha256": "6c263f11182a39cb2df6f2e9ff2a01d38ecd1c860fa70038392c24f2db0fcfb6"
+    },
+    {
+      "file": "monitor_repair_zero_api.json",
+      "sha256": "786390b01bc914195190e3d6e512cfe0ac6fef0adcb2f31dcf0e49aad4a8b1f4"
+    },
+    {
+      "file": "persistence_forensic.json",
+      "sha256": "ae1e04c11f3ecb00eee896046c95c8eaaf3608d6cb671e60a2c68a125b965707"
+    },
+    {
+      "file": "preexecution_full_current_suite.json",
+      "sha256": "a58e94507563ff5a270962664683d0e870dca35ea788abb752e44f69981e81ef"
+    },
+    {
+      "file": "preexecution_historical_gradient_recheck.json",
+      "sha256": "49e041bdfe41510d12b6c2c549a5b1e785245d6fa9f734ae5f7195287c5fbde3"
+    },
+    {
+      "file": "preexecution_real_source_negative_controls.json",
+      "sha256": "ce3703b38fbc8c55396fdf941872516089206d908a4609dfbb96db3d8aa7a976"
+    },
+    {
+      "file": "publication_verification.json",
+      "sha256": "6071e14649bfbbdf33175e91c3840a3f2ab9627d90526e2e5bb86931fadb652c"
+    },
+    {
+      "file": "README.md",
+      "sha256": "84fafd3d395e863e5ac41c7e68564dc8e5c28448e31cdde417e983c62825d81a"
+    },
+    {
+      "file": "research_questions.json",
+      "sha256": "24287095b79fee560541b063a9565c2780ff930ca89ba19937cd97c10d002a09"
+    },
+    {
+      "file": "wire_and_authorization_audit.json",
+      "sha256": "7f71315814465d59c0bc8da804d608dfbce7b9c9f7324f363edbb34989aef969"
+    }
+  ]
+}

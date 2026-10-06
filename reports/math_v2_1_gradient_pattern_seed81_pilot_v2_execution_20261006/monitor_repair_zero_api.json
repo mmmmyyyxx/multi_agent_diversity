@@ -1,0 +1,17 @@
+{
+  "delete_shared_reader_approach": "NOT_ADOPTED_REPLACEMENT_STILL_FAILED_IN_ZERO_API_CONTROL",
+  "held_append_only_journal_reader_atomic_snapshot_replacements": 100,
+  "incident_lock_holder": "NOT_ESTABLISHED",
+  "live_monitor_reads_atomic_lifecycle": false,
+  "live_monitor_reads_derived_snapshot": false,
+  "monitor_script_sha256": "00c1a35c6a51a99f37056f5c208da11ef43a88ee3af378a5c24a55099ea7eb50",
+  "monitor_totals_match_sealed_accounting_end": true,
+  "monitor_validates_journal_hash_chain": true,
+  "network_attempt_count": 0,
+  "ordinary_reader_failure_control": "REPRODUCED_WINERROR_5_IN_ABORT_FORENSIC",
+  "production_source_changed": false,
+  "provider_retry_policy_changed": false,
+  "real_provider_calls": 0,
+  "scientific_policy_changed": false,
+  "status": "PASS"
+}

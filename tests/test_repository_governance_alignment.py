@@ -422,6 +422,43 @@ def test_new_pending_pilot_has_separate_user_scope_without_inheriting_closed_aut
     assert not execution_binding(ROOT,contract).blockers()
 
 
+def test_initial_persistence_abort_preserves_accounting_and_closes_scope():
+    registry=load_yaml(ROOT/'experiments/registry.yaml')
+    row=next(r for r in registry['experiments'] if r['experiment_id']=='math_v2_1_gradient_pattern_seed81_pilot_v2')
+    assert row['status']=='INVALID' and row['active_for_new_work'] is False
+    assert row['authorization_consumed'] is True and row['authorization_closed'] is True
+    report=ROOT/row['report']
+    classification=load_yaml(report/'classification.json')
+    integrity=load_yaml(report/'integrity_audit.json')
+    cost=load_yaml(report/'cost_accounting.json')
+    closure=load_yaml(ROOT/row['authorization_closure_evidence'])
+    assert classification['scientific_status']=='NOT_EVALUABLE_PERSISTENCE_FAILURE_BEFORE_INITIAL_STATE'
+    assert classification['scientific_stopping_reached'] is False
+    assert classification['efficacy']=='NOT_ESTIMATED'
+    assert classification['gradient_contract_compliance']=='NOT_OBSERVED_IN_THIS_ATTEMPT'
+    for role in ('gradient_calls','cluster_calls','reflection_calls','opportunities_completed','candidates','commits'):
+        assert classification[role]==0
+    assert integrity['missing_raw_response_reconstructed'] is False
+    assert integrity['unresolved_request_not_promoted_to_terminal_or_cached'] is True
+    assert integrity['original_run_files_unchanged'] is True
+    assert cost['response_charges']==cost['complete_response_records']+classification['terminal_response_evidence_gap']
+    assert cost['attempt_charged_tokens']==cost['recorded_response_tokens']+cost['terminal_unrecorded_response_charged_tokens']
+    assert cost['cumulative_tokens_charged']+cost['remaining_tokens']==cost['cumulative_authorized_ceiling']
+    assert cost['reserved_inflight']==0 and cost['journal_unchanged_during_snapshot_recovery'] is True
+    assert closure['closed'] is True and closure['single_use_consumed'] is True
+    assert closure['restart_authorized'] is False and closure['fresh_retry_authorized'] is False
+    assert closure['retry_limit']==closure['scientific_reruns_authorized']==0
+    assert closure['future_real_execution_requires_new_exact_user_authorization'] is True
+    for role in ('pilot','validation','test','push','raw_diagnostic','llm_judge','new_canary'):
+        assert closure[role+'_authorized'] is False
+    forensic=load_yaml(report/'persistence_forensic.json')
+    assert forensic['incident_lock_holder']=='NOT_ESTABLISHED'
+    monitor=load_yaml(report/'monitor_repair_zero_api.json')
+    assert monitor['live_monitor_reads_derived_snapshot'] is False
+    assert monitor['live_monitor_reads_atomic_lifecycle'] is False
+    assert monitor['production_source_changed'] is False
+
+
 @pytest.mark.parametrize('location,field,value',[
     ('frontier','next_pilot_authorized',True),
     ('frontier','next_validation_authorized',True),

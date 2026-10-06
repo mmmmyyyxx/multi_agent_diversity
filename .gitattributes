@@ -66,3 +66,9 @@ experiments/protocols/math_v2_1_gradient_pattern_seed81_pilot_v1/** text eol=lf
 experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v1.yaml text eol=lf
 reports/math_v2_1_gradient_pattern_seed81_pilot_v1_preexecution_20261006/** text eol=lf
 reports/math_v2_1_gradient_pattern_seed81_pilot_v1_execution_20261006/** text eol=lf
+
+# Preserve the already-sealed receipt bytes from these Windows owner audits.
+# Disabling conversion keeps their published files equal to recorded SHA256s.
+reports/math_identical_initial_condition_v1_20261006/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+reports/math_v2_1_gradient_pattern_seed81_pilot_v2_preexecution_20261006/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+reports/math_v2_1_gradient_pattern_seed81_pilot_v2_execution_20261006/** -text whitespace=trailing-space,space-before-tab,cr-at-eol

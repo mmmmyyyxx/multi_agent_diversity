@@ -13,6 +13,8 @@ failures:
   - reports/math_v2_1_gradient_pattern_seed81_canary_v3_execution_20261006/matched_raw_pattern_diagnostic.json
   root_cause_status: CONFIRMED_IMPLEMENTATION_MISMATCH
   symptom: Pre-provider identity failure despite exact archived prompt hash; zero diagnostic calls.
+  evidence_level: observed
+  mitigation: Check archive schema and discovery policy fields separately; preserve frozen prompts and evidence.
   required_resolution: Check actual schema identity and discovery policy fields separately; fake transport regression
     uses the real frozen archive representation; fresh source and namespace.
   forbidden_inference: Do not alter scientific prompts, guard thresholds, partition semantics, sample selection,
@@ -656,3 +658,28 @@ failures:
     contract: docs/design/NUMERIC_PROVENANCE_GUARD_V5.md
     scientific_admissibility_changed: true
     comprehensive_semantic_provenance_claim: false
+- failure_id: FAIL-MATH-WINDOWS-TOKEN-SNAPSHOT-REPLACE
+  title: Windows atomic token snapshot replacement aborts fresh Pilot initialization
+  status: MITIGATED
+  lifecycle: MITIGATED
+  lifecycle_note: Append-only monitor fix verified offline; incident holder and fresh runtime persistence closure
+    remain unestablished.
+  first_observed: math_v2_1_gradient_pattern_seed81_pilot_v2
+  affected_components:
+  - token_accounting_derived_snapshot
+  - owner_runtime_monitor
+  symptom: WinError5 in atomic derived snapshot replacement after a durable RESPONSE charge;263/300 initial evaluations,
+    no Gradient observations.
+  evidence:
+  - reports/math_v2_1_gradient_pattern_seed81_pilot_v2_execution_20261006/persistence_forensic.json
+  - reports/math_v2_1_gradient_pattern_seed81_pilot_v2_execution_20261006/monitor_repair_zero_api.json
+  - reports/math_v2_1_gradient_pattern_seed81_pilot_v2_execution_20261006/integrity_audit.json
+  root_cause_status: CONFIRMED_ATOMIC_REPLACEMENT_FAILURE_SITE_ACTUAL_LOCK_HOLDER_NOT_ESTABLISHED
+  forbidden_inference: Do not claim proven monitor causality, complete persistence closure, new guard noncompliance,
+    convergence, efficacy or completed Pilot; do not reuse consumed authorization.
+  regression_tests:
+  - tests/test_repository_governance_alignment.py::test_initial_persistence_abort_preserves_accounting_and_closes_scope
+  mitigation: Preserve raw evidence and the one-response evidence gap; replay unchanged authoritative journal into
+    derived snapshot; close one-shot scope. Monitor reads append-only journal instead of live atomic files;100 isolated
+    replacements pass.
+  evidence_level: observed

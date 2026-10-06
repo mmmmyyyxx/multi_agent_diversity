@@ -1,0 +1,32 @@
+{
+  "all_attempts_accounted_for": true,
+  "audit_provider_calls": 0,
+  "binding_and_hashes": "PASS",
+  "historical_files_unchanged": true,
+  "historical_immutable_files_checked": 4703,
+  "initial_memory_empty": true,
+  "initial_state_complete": false,
+  "missing_raw_response_physical_attempt": 291,
+  "missing_raw_response_reconstructed": false,
+  "network_attempt_count": 0,
+  "no_optimizer_pattern_calls": true,
+  "no_shadow_validation_test_calls": true,
+  "original_run_files_unchanged": true,
+  "partial_initial_evaluations_by_member": {
+    "0": 60,
+    "1": 60,
+    "2": 60,
+    "3": 60,
+    "4": 23
+  },
+  "prediction_validity_rows_checked": 263,
+  "raw_inventory": "PASS",
+  "raw_inventory_sha256": "895f8103556c3a752d7a68fa752b49a304f530f9e1be822ba871687cde625fc9",
+  "recorded_invalid_realizations_of_unresolved_request": 3,
+  "recorded_response_trace_and_success_ledger": "PASS",
+  "source_commit": "PASS",
+  "source_freeze": "PASS",
+  "status": "PASS_WITH_EXPLICIT_TERMINAL_RESPONSE_GAP",
+  "unresolved_logical_requests": 1,
+  "unresolved_request_not_promoted_to_terminal_or_cached": true
+}

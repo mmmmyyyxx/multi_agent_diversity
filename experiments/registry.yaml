@@ -7966,21 +7966,38 @@ experiments:
   parent_ids:
   - math_v2_1_gradient_pattern_seed81_pilot_v1
   - math_identical_initial_condition_v1
-  status: DRAFT
-  scientific_status: NOT_EXECUTED_EFFICACY_NOT_ESTIMATED
-  implementation_commit: null
-  execution_commit: null
+  status: INVALID
+  scientific_status: NOT_EVALUABLE_PERSISTENCE_FAILURE_BEFORE_INITIAL_STATE
+  implementation_commit: b4ec2d3c5025949af1e8dbcfc43042c3c06ac6e6
+  execution_commit: b4ec2d3c5025949af1e8dbcfc43042c3c06ac6e6
   result_commit: null
   manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v2.yaml
-  report: reports/math_v2_1_gradient_pattern_seed81_pilot_v2_preexecution_20261006
-  classifier: NUMERIC_ADMISSIBILITY_AMENDMENT_FRESH_PILOT
-  active_for_new_work: true
+  report: reports/math_v2_1_gradient_pattern_seed81_pilot_v2_execution_20261006
+  classifier: PERSISTENCE_ABORT_BEFORE_INITIAL_STATE_NO_GRADIENT_OBSERVATION
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
-  - User-selected bounded numeric provenance amendment and minimal prompt clarification; no core method change.
-  - Fresh V1_2 symmetric initialization, empty Memory, new namespace. Search only; no new Canary or retry.
+  - Frozen V5 numeric provenance guard and V3 prompt;400 chars and all core scientific policies unchanged.
+  - Fresh V1_2 identical initialization, empty Memory and independent member lanes; Optimize60/Shadow40 search-only
+    scope.
+  - Windows PermissionError during atomic derived token snapshot replacement after a durable journal charge;263/300
+    logical initial evaluations.
+  - 291 physical Solver attempts,290 recorded responses and one charged response without raw evidence; no Gradient,
+    cluster, reflection, opportunity, candidate or commit.
+  - NOT_EVALUABLE initial-stage persistence abort; efficacy and Q1-Q5 not observed; no convergence or no-intervention
+    claim.
+  - Charged74607 tokens; cumulative1929584, remaining38070416, unresolved0. Journal and actual run evidence unchanged.
+  - Frozen current suite1356 pass/2skip/1468deselected;11 historical gradients pass and22 real-source copy negatives
+    rejected.
+  - No new Canary, Shadow/Validation/Test/diagnostic/judge/push calls; exact scope consumed and closed with no retry.
+  - Monitor now avoids live atomic-file reads;100 isolated snapshot replacements pass. Actual incident lock holder
+    not established.
   unavailable:
-    implementation_commit: Pending source freeze
-    execution_commit: Not executed
-    result_commit: Not executed
+    result_commit: Terminal evidence publication is recorded by git history without a self-referential hash.
+  authorization_consumed: true
+  authorization_closed: true
+  authorization_closure_evidence: reports/math_v2_1_gradient_pattern_seed81_pilot_v2_execution_20261006/authorization_closure.json
+  frozen_repository_commit: 97412b3002bd4b5ba8af02bcdbb506f1a0016b7e
+  reports:
+  - reports/math_v2_1_gradient_pattern_seed81_pilot_v2_preexecution_20261006
