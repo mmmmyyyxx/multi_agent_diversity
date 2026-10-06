@@ -1,0 +1,18 @@
+{
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt2",
+  "authorization_consumed": false,
+  "binding_sha256": "e98630c38506948b27f30aa49a8cacb882a056d30e9a2af24c7e6f2de39081e2",
+  "cluster_prompt_sha256": "1154e313e60b599b51dab2eee0c5a209e03a6178ccbe19df0241fa397f5e7173",
+  "hash_closure": {
+    "benchmark_contract_hash": "9ca1143e8dc2dc5d885d58f79f7b65cce177ee24e941abef3d0d5031e63669b5",
+    "dataset_manifest_hash": "d3c3f587bf9e08f5d9a12c8b777953c57cd30fc4c655e82e95f556b337119d81",
+    "governance_hash": "dc2b9c11dacab1eedd6867c037c1b3327380b905e582af061dbd17534f8697c1",
+    "scientific_source_hash": "2eb9a7642063cc871abc7e934eb6fa5bbd2b414725e3058a770aacd9aa9b8751"
+  },
+  "method_identity": "b03daebfc07fce4d3b06baa00fc5aac21425e13a825de6c2e929afa23c7563e3",
+  "prior_attempt_not_resumed": true,
+  "prompt_sha256": "10bd3b0b5e37c1cf294448ac0159c80ef74b1bc8c414b62a7cba734df9eebf7c",
+  "protocol_sha256": "0dc1a02983b2cebfcd1de7706c74eeeb7d2f81b081d00981764576016745b70d",
+  "source_sha": "330a47049810a1b6d113a52c6211fa7626c2a13a",
+  "startup_identity_sha256": "63d508f4c89bd6cdfb4cd8a9e5df8feda32213b54e92e3c088b2c2f60f3db2de"
+}

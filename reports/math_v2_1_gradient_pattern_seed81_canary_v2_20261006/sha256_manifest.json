@@ -1,0 +1,78 @@
+{
+  "files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9"
+    },
+    {
+      "path": "accounting_integrity_audit.json",
+      "sha256": "c7f2a34383f2c31cca7ee12f51751789597eedf3db9b0bbc450745fd4de86087"
+    },
+    {
+      "path": "change_scope_audit.json",
+      "sha256": "c70efa275410c9208a8987f817ebc4384ee0f10ec193ee11a41c11ff11716a70"
+    },
+    {
+      "path": "current_import_audit.json",
+      "sha256": "c9228901bd458f2c8fc90beb3b4623b8e9927a737c478bcd3d627f0cc7da06f0"
+    },
+    {
+      "path": "execution_identity.json",
+      "sha256": "2e152e6e5716a4d3d657bb715dafabbbec62eae9bf018757603346fb2c489410"
+    },
+    {
+      "path": "final_status.json",
+      "sha256": "b1b68dd4b7929eb8cfff4a307f680b9714570b1c3e3b54139e57f51248c8e57d"
+    },
+    {
+      "path": "five_question_closure.json",
+      "sha256": "ba5aa8503f59eb4b264c87cc68ce2dc5557e9a52e59295839cddbcf0b1e264b2"
+    },
+    {
+      "path": "governance_preflight.json",
+      "sha256": "3f771caf6182e2ef390025ba66399f72ce7320fb5a0d32d584662fa6fa0abc62"
+    },
+    {
+      "path": "historical_preservation_audit.json",
+      "sha256": "29a3c01cc47ad5919d0ead5bb464f3316b6ef91b80618df42582469a64ee0223"
+    },
+    {
+      "path": "preexecution/authorization_request.json",
+      "sha256": "9496368ecadb98de22591ffa13082488663f37fb373717fd45b8292d6ba9ff08"
+    },
+    {
+      "path": "preexecution/final_governance.json",
+      "sha256": "6ab2df37644275a69e70e2c9d13e79c3c00b83d35ba494f2796ee16afa089eac"
+    },
+    {
+      "path": "preexecution/frozen_scope.json",
+      "sha256": "2f81a36f2eaf4140e782b0a61d2f5d1778a1d39c629762399bfec07853e58dd8"
+    },
+    {
+      "path": "preexecution/owner_handoff.json",
+      "sha256": "4aaca3ae436534f75d24432c2e096e151ae857ed99d0bc9115a630f9a20ab4d7"
+    },
+    {
+      "path": "provider_usage.json",
+      "sha256": "c9656f43d0519a1de2c649f1a623b1b541b6abada81edf1f86aeaad0735dd795"
+    },
+    {
+      "path": "README.md",
+      "sha256": "3371d597abe6f6a51b8c4cfbf71bb7f737b3b355532a2dba78314b26f7eb9936"
+    },
+    {
+      "path": "sanitization_audit.json",
+      "sha256": "7d94e754442468228ac12cbc742007beda5dddde53abea68db64bcb2f1a52c35"
+    },
+    {
+      "path": "verification.json",
+      "sha256": "0ccf97ff84814a33d3cd8a0842774acf0d875d4800b169697192ba2e765f4ce3"
+    },
+    {
+      "path": "zero_api_forensic.json",
+      "sha256": "8e25ad202d3747e97e250d0f325b54fba338c787c7ec6190f70d964a0ea7f58a"
+    }
+  ],
+  "schema_version": "sanitized_report_sha256_v1",
+  "scope": "IMMUTABLE_ZERO_API_PREEXECUTION_SNAPSHOT"
+}

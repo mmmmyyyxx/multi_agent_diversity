@@ -2,7 +2,7 @@ schema_version: experiment_manifest_v2
 experiment_id: math_v2_1_gradient_pattern_seed81_canary_v2
 method_family: unified_team_prompt_search_v2_1
 method_identity: unified_team_prompt_search_v2_1
-source_sha: null
+source_sha: 330a47049810a1b6d113a52c6211fa7626c2a13a
 benchmark_id: math
 benchmark_protocol_id: 3aee274eeee86c07b7ea66a8700d925e42ecab17663a65e93e96f4ae475e1a67
 dataset_manifest_identity: 7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f
@@ -39,12 +39,12 @@ authorization:
   authorization_identity: null
   single_use: true
 lifecycle:
-  status: DRAFT
+  status: PREEXECUTION_FROZEN
   history:
   - status: DRAFT
     event: ZERO_API_BLOCKER_CLOSURE
-  - status: DRAFT
-    event: AWAITING_SOURCE_COMMIT
+  - status: PREEXECUTION_FROZEN
+    event: FROZEN_SOURCE_RECEIPT
 hash_closure:
   scientific_source_hash: 2eb9a7642063cc871abc7e934eb6fa5bbd2b414725e3058a770aacd9aa9b8751
   governance_hash: dc2b9c11dacab1eedd6867c037c1b3327380b905e582af061dbd17534f8697c1
@@ -345,4 +345,4 @@ post_search_validation_policy:
   unchanged_status: SKIPPED_NO_TEAM_CHANGE
 pattern_support_id_transport: PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1
 pattern_abstraction_guard: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V4
-preregistration_identity: a0665abdf772b0f1484d8aa7d31f2cbf31279f8beff21a4299478030d33c4c65
+preregistration_identity: 950f33da64a50a42c7d035c637b868352f5cf3d5ef61fc7782b0e5d5b6b692be

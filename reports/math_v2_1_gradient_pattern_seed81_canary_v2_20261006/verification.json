@@ -1,0 +1,82 @@
+{
+  "compileall": {
+    "directories": [
+      "multi_dataset_diverse_rl",
+      "scripts",
+      "tests"
+    ],
+    "real_api_calls": 0,
+    "status": "PASS"
+  },
+  "compileall_first_wrapper_invocation": "incorrect_-m_script_syntax_no_compile_performed_fixed_by_guarded_script",
+  "current_skips": [
+    {
+      "case": "test_frozen_real_data_identity[hover]",
+      "module": "tests.test_benchmark_data_freeze_v1",
+      "reason_category": "REAL_DATASET_ASSETS_UNAVAILABLE",
+      "reason_sha256": "afe517dc5b97dd60151d1fa9b9505bd5ca02432d773a946c0b6a998dad2b4019"
+    },
+    {
+      "case": "test_frozen_real_data_identity[pupa]",
+      "module": "tests.test_benchmark_data_freeze_v1",
+      "reason_category": "REAL_DATASET_ASSETS_UNAVAILABLE",
+      "reason_sha256": "afe517dc5b97dd60151d1fa9b9505bd5ca02432d773a946c0b6a998dad2b4019"
+    }
+  ],
+  "deterministic_smokes": [
+    "full_fake_current_production_opportunity",
+    "one_call_invalid_gradient_no_partial_cluster",
+    "coordinated_actor_entity_rejection_and_generic_math_acceptance",
+    "V3_replay_preservation",
+    "mixed_identity_and_regeneration_manifest_rejection",
+    "legacy_factory_exclusion",
+    "separate_role_accounting"
+  ],
+  "development_focused_initial": {
+    "categories": [
+      "manifest_schema_version_pairing",
+      "provider_guard_identity_binding",
+      "amended_method_identity_golden"
+    ],
+    "failed": 7,
+    "network_attempts": 0,
+    "passed": 248,
+    "resolved_before_source_freeze": true
+  },
+  "diff_check": "PASS",
+  "focused_junit_sha256": "1b59214dd307743d3ba599be78cb0368cbc11171b944f087eab03d582e8cd03f",
+  "focused_passed": 261,
+  "full_current_initial": {
+    "category": "GENERATED_REPORT_VIEWS_STALE_AFTER_NEW_REPORT_FIRST_TRACKED",
+    "counts": {
+      "errors": 0,
+      "failures": 1,
+      "skipped": 2,
+      "tests": 1267
+    },
+    "execution_code_changed": false,
+    "full_current_rerun_pass_required": true,
+    "junit_sha256": "c7be47caf94045a36d596274a5101a2ea698ac10ad2a4d337d2415c8d7f876ea",
+    "repaired_files": [
+      "reports/INDEX.md",
+      "reports/index.json"
+    ]
+  },
+  "full_current_junit_sha256": "1c25092f6c552539ed9fc9411a2a14231d6b3a5c4e0e84f8e5e2902e355d547e",
+  "full_current_suite": {
+    "errors": 0,
+    "failures": 0,
+    "passed": 1265,
+    "skipped": 2,
+    "tests": 1267
+  },
+  "full_historical_replay_pass": false,
+  "historical_private_tests": "NOT_RUN_CURRENT_SCOPE_EXCLUDES_64_PRIVATE_CASES",
+  "historical_public_suite": "NOT_RERUN_NOT_CLAIMED_PASS",
+  "network_attempt_count": 0,
+  "real_api_calls": 0,
+  "sanitization": "PASS",
+  "source_sha": "330a47049810a1b6d113a52c6211fa7626c2a13a",
+  "status": "PASS",
+  "tested_source": "c3b26207654e30addbe17d7f74fb32494d040399"
+}

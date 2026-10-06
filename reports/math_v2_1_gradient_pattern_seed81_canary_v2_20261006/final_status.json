@@ -1,0 +1,26 @@
+{
+  "Q1": [
+    "Contract Compliance",
+    "Semantic Usefulness"
+  ],
+  "READY_TO_RUN": false,
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt2",
+  "authorization_pending": true,
+  "charged_new_tokens": 0,
+  "core_method_unchanged": true,
+  "execution_status": "NOT_EXECUTED",
+  "full_current_passed": 1265,
+  "full_current_skipped": 2,
+  "guard_identity": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V4",
+  "hard_gradient_chars": 400,
+  "pilot_authorized": false,
+  "prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V2",
+  "push_authorized": false,
+  "real_api_calls": 0,
+  "regeneration": false,
+  "source_sha": "330a47049810a1b6d113a52c6211fa7626c2a13a",
+  "status": "ZERO_API_COMPLETE_FRESH_CANARY_FROZEN_NOT_AUTHORIZED",
+  "test_authorized": false,
+  "validation_authorized": false,
+  "validation_continues": true
+}

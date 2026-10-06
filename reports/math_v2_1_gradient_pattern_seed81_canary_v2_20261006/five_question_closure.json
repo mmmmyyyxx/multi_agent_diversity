@@ -1,0 +1,35 @@
+{
+  "fresh_canary_executed": false,
+  "implementation_repair": "ZERO_API_VERIFIED",
+  "prompt_compliance": "NOT_YET_TESTED_WITH_REAL_PROVIDER",
+  "questions": {
+    "Q1": {
+      "dimensions": [
+        "Contract Compliance",
+        "Semantic Usefulness"
+      ],
+      "length_compliance_alone_never_success": true,
+      "observed_fresh_evidence": false,
+      "status": "PENDING_FRESH_EXACT_API_AUTHORIZATION",
+      "wrong_example_denominator": "all_selected_member_wrong_rows_from_fresh_initial_team_realization"
+    },
+    "Q2": {
+      "observed_fresh_evidence": false,
+      "status": "PENDING_FRESH_EXACT_API_AUTHORIZATION"
+    },
+    "Q3": {
+      "observed_fresh_evidence": false,
+      "status": "PENDING_FRESH_EXACT_API_AUTHORIZATION"
+    },
+    "Q4": {
+      "observed_fresh_evidence": false,
+      "status": "PENDING_FRESH_EXACT_API_AUTHORIZATION"
+    },
+    "Q5": {
+      "observed_fresh_evidence": false,
+      "status": "PENDING_FRESH_EXACT_API_AUTHORIZATION"
+    }
+  },
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "status": "VALIDATION_CONTINUES_NOT_TERMINATED"
+}

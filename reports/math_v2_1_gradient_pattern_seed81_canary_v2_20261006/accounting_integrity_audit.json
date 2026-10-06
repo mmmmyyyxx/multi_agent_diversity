@@ -1,0 +1,11 @@
+{
+  "cumulative_charged": 1542441,
+  "ledger_sha256_after": "7daa9d28497ef13f3e56a012f79490264b84d4405f111fbde7b46ddedc362848",
+  "ledger_sha256_before": "7daa9d28497ef13f3e56a012f79490264b84d4405f111fbde7b46ddedc362848",
+  "ledger_unchanged": true,
+  "new_attempt_charged_tokens": 0,
+  "new_attempt_provider_calls": 0,
+  "remaining": 38457559,
+  "reserved_inflight": 0,
+  "status": "PASS_ZERO_API"
+}

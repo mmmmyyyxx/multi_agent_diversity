@@ -1,0 +1,12 @@
+{
+  "diagnostic_raw_pattern": 0,
+  "pattern_cluster": 0,
+  "pattern_gradient": 0,
+  "reflection": 0,
+  "solver": 0,
+  "status": "ZERO_API_PREPARATION_COMPLETE",
+  "successes": 0,
+  "test": 0,
+  "transport_attempts": 0,
+  "validation": 0
+}
