@@ -51,7 +51,8 @@ def bound_preflight(root, manifest):
         else:
             try:verify_source_commit(root,manifest['source_sha'],identity)
             except (SearchContractError,subprocess.CalledProcessError):errors.append('EXECUTION_SOURCE_COMMIT_BYTE_MISMATCH')
-    return dict(gate='HOLD' if errors else 'CANARY_READY_NOT_AUTHORIZED',blockers=errors,
+    phase=binding.contract['execution_phase'] if binding is not None else 'canary'
+    return dict(gate='HOLD' if errors else ('PILOT_READY_NOT_AUTHORIZED' if phase=='pilot' else 'CANARY_READY_NOT_AUTHORIZED'),blockers=errors,
         benchmark_id='math',readiness_identity='MATH_RUNTIME_READINESS_V1',provider_attempts=0,
         validation_calls=0,test_calls=0,real_api_authorized=False,binding_sha256=ref.get('sha256'),ready_for_authorization=not errors)
 
@@ -65,6 +66,7 @@ def execution_identity(root, contract):
                contract["pattern_prompt_path"], contract["binding_path"]]
     configs.extend(contract[k] for k in ("parent_binding_path", "accounting_policy_path", "validation_accounting_metadata_path", "verify_settings_path", "amendment_parent_binding_path", "low_cost_subsets_path", "optimizer_amendment_authorization_path", "layer1_parent_binding_path", "layer1_amendment_authorization_path", "memory_parent_binding_path", "memory_amendment_authorization_path", "pattern_parent_binding_path", "pattern_amendment_authorization_path", "rolling_memory_freeze_path") if k in contract)
     configs.extend(contract[k] for k in ('gradient_prompt_path','gradient_parent_binding_path') if k in contract)
+    configs.extend(contract[k] for k in ('pilot_parent_binding_path','pilot_execution_authorization_path') if k in contract)
     parent=read_json(root/contract['gradient_parent_binding_path'])
     configs.extend(parent[k] for k in ('pattern_amendment_authorization_path','pattern_prompt_path'))
     approval=read_json(root/parent['pattern_amendment_authorization_path'])
@@ -157,6 +159,12 @@ def execution_scope(manifest, contract):
         task_sha256=contract['task_authorization_sha256'],ledger_directory=contract['token_ledger_directory'],
         validation_metadata_sha256=contract['validation_accounting_metadata_sha256'],
         continuation_authorization_sha256=contract['continuation_authorization_sha256'])
+    if contract['execution_phase']=='pilot':
+        scope.update(execution_phase='pilot',user_scope_sha256=contract['pilot_execution_authorization_sha256'],
+            search_only_scope=contract['search_only_scope'],pilot_observation_policy=contract['pilot_observation_policy'],
+            max_opportunities=contract['provider_bounds']['max_opportunities'],
+            solver_call_ceiling=contract['provider_bounds']['solver_calls'],
+            reflection_call_ceiling=contract['provider_bounds']['reflection_calls'])
     return scope
 
 

@@ -167,6 +167,7 @@ class UnifiedSearchOrchestrator:
         self.provider_call_reader = provider_call_reader
         self.runtime_readiness = runtime_readiness
         self.execution_observer = execution_observer
+        self.observation_observer = None
 
     def _emergency_provider_limit_reached(self) -> bool:
         if self.provider_call_reader is None:
@@ -237,6 +238,9 @@ class UnifiedSearchOrchestrator:
             if opportunity is None:
                 reason = "NO_FEASIBLE_OPPORTUNITY"
                 break
+            if self.observation_observer:
+                self.observation_observer('MEMORY_BEFORE_OPPORTUNITY',dict(
+                    opportunity_id=opportunity.opportunity_id,target_member=opportunity.target_member))
             opportunity = replace(
                 opportunity,
                 memory_view=dict(self.memory.read_for_opportunity(opportunity)),
@@ -283,6 +287,10 @@ class UnifiedSearchOrchestrator:
                 raise SearchContractError("state changed without matching atomic commit")
             if v2:
                 self.memory.apply_outcome(memory_delta)
+            if self.observation_observer:
+                self.observation_observer('MEMORY_AFTER_OPPORTUNITY',dict(
+                    opportunity_id=opportunity.opportunity_id,target_member=opportunity.target_member,
+                    committed=committed,selected=selected,gate_passed=gate_passed))
             if self.execution_observer:
                 self.execution_observer("TRANSITION", {"opportunity_id": opportunity.opportunity_id, "selected": selected,
                     "gate_passed": gate_passed, "committed": committed, "child": child})

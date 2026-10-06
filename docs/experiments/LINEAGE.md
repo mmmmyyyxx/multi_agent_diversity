@@ -123,6 +123,18 @@ gradient_cluster_semantic_behavior: SHARED_PATTERN_OBSERVED
 current_gradient_prompt: PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V2
 future_execution_requires_new_frozen_single_use_scope: true
 gradient_raw_comparison_classification: MIXED
+pending_pilot_milestone: math_v2_1_gradient_pattern_seed81_pilot_v1
+pending_pilot_manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v1.yaml
+pending_pilot_attempt_id: math_v2_1_gradient_pattern_A4_seed81_pilot_attempt1
+pending_pilot_scope: A4_SEED81_OPTIMIZE60_SHADOW40_SEARCH_ONLY
+pending_pilot_user_task_sha256: 505a692d8fc7ce0ece9a54282075f6c0415e8a3f1226e0e8144f34bafd705230
+pending_pilot_user_authorization_received: true
+pending_pilot_status: ZERO_API_IMPLEMENTATION_PREFLIGHT
+pending_pilot_operational_retry_limit: 1
+pending_pilot_scientific_changes_authorized: false
+pending_pilot_validation_authorized: false
+pending_pilot_test_authorized: false
+pending_pilot_push_authorized: false
 ```
 
 ## Experiment and engineering DAG
@@ -381,6 +393,7 @@ flowchart TD
     n180["v2_pattern_memory_factorial_v1_preexecution_audit<br/>ZERO_API_AUDIT<br/>HOLD"]
     n181["v2_pattern_memory_factorial_v1_1<br/>FORMAL_EXPERIMENT<br/>SUPERSEDED"]
     n201["unified_semantic_contract_v2_1<br/>ARCHITECTURE_REFACTOR<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n275["math_v2_1_gradient_pattern_seed81_pilot_v1<br/>PILOT<br/>DRAFT"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -579,6 +592,7 @@ flowchart TD
   n271 -->|followup_of| n272
   n272 -->|followup_of| n273
   n273 -->|followup_of| n274
+  n274 -->|followup_of| n275
 ```
 
 ## Archived branches and unresolved evidence

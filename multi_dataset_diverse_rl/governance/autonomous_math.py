@@ -152,6 +152,9 @@ async def execute_search(root, prep, run_root, payload):
             stream.flush()
             os.fsync(stream.fileno())
         composed.execution_observer = lambda stage,data:append_jsonl(run_root / "trajectory_private.jsonl",{"stage":stage,**plain(data)})
+        if c['execution_phase']=='pilot':
+            from .pilot_observation import attach_pilot_observer
+            attach_pilot_observer(composed,run_root)
         composed.state.initialize()
         atomic_write_json(run_root / "initial_state_private.json",plain(composed.state.snapshot()))
         if "initial_competence_binding" in c:
@@ -178,18 +181,24 @@ async def execute_search(root, prep, run_root, payload):
         summary.update(pattern_gradient_calls=broker.usage['pattern_gradient'],
             pattern_cluster_calls=broker.usage['pattern_cluster'],gradient_input_audit=gradients.input_audit)
         if (gradients.calls!=broker.usage['pattern_gradient'] or pattern_provider.calls!=broker.usage['pattern_cluster']
-                or broker.usage['pattern']!=gradients.calls+pattern_provider.calls
-                or not 1<=gradients.calls<=c['initial_competence_binding']['count']):
+                or broker.usage['pattern']!=gradients.calls+pattern_provider.calls):
+            raise OperationalAbort('PATTERN_GRADIENT_ACCOUNTING_INCOMPLETE')
+        if c['execution_phase']=='canary' and not 1<=gradients.calls<=c['initial_competence_binding']['count']:
             raise OperationalAbort('PATTERN_GRADIENT_CANARY_ACCOUNTING_INCOMPLETE')
-        if pattern_provider.calls!=1 or not composed.evaluation.provider.probed:
+        if c['execution_phase']=='canary' and (pattern_provider.calls!=1 or not composed.evaluation.provider.probed):
             raise OperationalAbort('PATTERN_CANARY_FLOW_INCOMPLETE')
+        if c['execution_phase']=='pilot' and (pattern_provider.calls!=len(result.trace)
+                or gradients.calls!=len(gradients.input_audit)
+                or not len(result.trace)<=gradients.calls<=60*len(result.trace)):
+            raise OperationalAbort('PATTERN_PILOT_FLOW_INCOMPLETE')
         summary['memory_activity']=composed.memory.audit()['stateful_write_count']
         summary['memory_audit']=composed.memory.audit()
         from .team_change import team_change_receipt
         summary['deployed_team_change']=team_change_receipt(initial_prompts(root,c),final.member_prompts)
-        if c['execution_phase']=='pilot' and not summary['deployed_team_change']['team_changed']:
+        if c['execution_phase']=='pilot':
             atomic_write_json(run_root/'VALIDATION_DISPOSITION.json',dict(
                 **summary['deployed_team_change'],validation_model_calls=0,validation_provider_calls=0,
+                validation_status=('DEFERRED_BY_USER_SCOPE' if summary['deployed_team_change']['team_changed'] else 'SKIPPED_NO_TEAM_CHANGE'),
                 VoteAccDelta='NOT_AVAILABLE',OracleAccDelta='NOT_AVAILABLE',bootstrap='NOT_RUN'))
         atomic_write_json(run_root / "execution_summary.json",summary)
         if read_json(run_root / "execution_summary.json")!=summary:

@@ -1,0 +1,22 @@
+{
+  "api_scope_activation": "EXACT_SOURCE_BINDING_BUDGET_FREEZE_REQUIRED",
+  "arm": "A4",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt1",
+  "automatic_scientific_reruns": 0,
+  "baseline_commit": "9991c0e1d02a28583238a3fa3c058e529af385a4",
+  "initial_state": "FROZEN_GENERIC_TEAM_EMPTY_MEMORY_FRESH_REALIZATIONS",
+  "llm_judge_authorized": false,
+  "observation_policy": "PILOT_READ_ONLY_STATE_JOURNAL_V1",
+  "operational_fresh_retry_limit": 1,
+  "parent_binding_sha256": "d8ff9f5ea34f759775a321903b400e3c8264327426fce1d415721a124cca2506",
+  "phase": "pilot_search_only",
+  "push_authorized": false,
+  "raw_diagnostic_authorized": false,
+  "schema_version": "current_gradient_pilot_user_scope_v1",
+  "scientific_change_authorized": false,
+  "seed": 81,
+  "test_authorized": false,
+  "user_authorized": true,
+  "user_task_sha256": "505a692d8fc7ce0ece9a54282075f6c0415e8a3f1226e0e8144f34bafd705230",
+  "validation_authorized": false
+}

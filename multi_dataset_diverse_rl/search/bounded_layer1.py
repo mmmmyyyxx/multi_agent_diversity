@@ -69,6 +69,7 @@ class BoundedMemoryOptimizer:
         self.evaluator=evaluator;self.reflection_lm=reflection_lm
         self.accounting_reader=accounting_reader;self.run_root=Path(run_root)
         self.config=self.config_factory();self.memory=None
+        self.observation_observer=None
 
     async def search_task(self,task,opportunity_id):
         if (task.backend_state is not None or task.target_member not in range(5)
@@ -106,9 +107,18 @@ class BoundedMemoryOptimizer:
         input_stats=[]
         parent_hash=hashlib.sha256(task.parent_prompt.encode()).hexdigest()
         stop='LAYER1_GENERATION_BOUND_REACHED'
+        def journal_generation(stage,generation,**data):
+            if self.observation_observer:
+                self.observation_observer(stage,dict(opportunity_id=opportunity_id,
+                    target_member=task.target_member,generation=generation,**data))
+        def journal_row(row,**data):
+            events.append(row);append_jsonl(lineage,row)
+            journal_generation('GENERATION_COMPLETE',row['generation'],row=row,**data)
         for generation in range(1,self.config.max_generations+1):
             if metric+len(panel)>task.budget.max_metric_calls:
                 stop='LAYER1_METRIC_BOUND_REACHED';break
+            journal_generation('MEMORY_BEFORE_GENERATION',generation,parent_prompt=selected_parent,
+                root_parent_sha256=parent_hash)
             memory=self.memory.read_for_member(task.target_member,task.responsibility_lane)
             prompt=self.prompt_builder(task,selected_parent,current_records,memory)
             generation_before=dict(self.accounting_reader())
@@ -126,7 +136,7 @@ class BoundedMemoryOptimizer:
             except (ValueError,TypeError):
                 row=dict(generation=generation,status='CONTRACT_INVALID',failed_checks=['invalid_structure'],
                     evidence_packet_hash=packet_hash,source_proposal_call=generation)
-                events.append(row);append_jsonl(lineage,row);continue
+                journal_row(row);continue
             h=hashlib.sha256(proposed.encode()).hexdigest()
             checks=candidate_failed_checks(proposed,parent_prompt=task.parent_prompt,
                 examples=all_examples,max_chars=self.config.max_prompt_chars)
@@ -140,7 +150,7 @@ class BoundedMemoryOptimizer:
                 mutation_shape=mutation_shape(proposed,task.parent_prompt),change_summary_status=summary_status)
             if checks:
                 row=dict(common,status='CONTRACT_INVALID',failed_checks=list(checks),solver_evaluated=False)
-                events.append(row);append_jsonl(lineage,row);continue
+                journal_row(row,proposed_prompt=proposed,change_summary=summary);continue
             observed=evaluate(proposed);bits=[int(r['correct']) for r in observed]
             fixed=sum(not a and b for a,b in zip(root_bits,bits,strict=True))
             broken=sum(a and not b for a,b in zip(root_bits,bits,strict=True))
@@ -164,7 +174,8 @@ class BoundedMemoryOptimizer:
             pool.append(candidate)
             self.memory.observe_local_failure(member=task.target_member,lane=task.responsibility_lane,
                 parent=selected_parent,prompt=proposed,details=details,opportunity_id=opportunity_id)
-            row=dict(details,status='LOCALLY_EVALUATED');events.append(row);append_jsonl(lineage,row)
+            row=dict(details,status='LOCALLY_EVALUATED');journal_row(row,
+                proposed_prompt=proposed,change_summary=summary)
             if score>best_score:selected_parent=proposed;best_score=score;best_bits=bits;current_records=observed
         ranked=sorted(pool,key=lambda c:(-c.backend_details['local_newly_fixed'],
             c.backend_details['local_newly_broken'],-c.backend_details['local_correct_count'],

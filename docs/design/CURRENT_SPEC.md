@@ -747,3 +747,11 @@ The current Gradient bundle uses prompt clarification
 contract. The 400-character hard limit, one generation per wrong example,
 gradients-only clustering, same-F selection and all search/Memory semantics
 remain unchanged. A fresh experiment and exact authorization are required.
+
+Current composition dispatches the frozen execution phase explicitly: Canary
+ends after one production opportunity; Pilot uses the existing two consecutive
+no-commit team epochs. Phase binding does not change the policy bundle, prompts,
+failure-count lifetime or candidate admission. Pilot read-only state journals
+record actual Memory retrieval and generation/transaction boundaries without
+additional retrieval, inference, ranking or stopping read points. Search-only
+Pilot authorization keeps Validation deferred and Test sealed.

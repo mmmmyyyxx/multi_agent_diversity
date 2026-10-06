@@ -60,3 +60,9 @@ experiments/manifests/math_v2_1_pattern_semantic_partition_audit_v1.yaml text eo
 experiments/protocols/math_v2_1_gradient_contract_repair_v2/** text eol=lf
 experiments/protocols/math_v2_1_gradient_pattern_seed81_canary_v2/** text eol=lf
 experiments/manifests/math_v2_1_gradient_pattern_seed81_canary_v2.yaml text eol=lf
+
+# Exact-byte current search-only Pilot bindings, authorization and audit receipts.
+experiments/protocols/math_v2_1_gradient_pattern_seed81_pilot_v1/** text eol=lf
+experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v1.yaml text eol=lf
+reports/math_v2_1_gradient_pattern_seed81_pilot_v1_preexecution_20261006/** text eol=lf
+reports/math_v2_1_gradient_pattern_seed81_pilot_v1_execution_20261006/** text eol=lf

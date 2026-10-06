@@ -13,6 +13,7 @@ from ..search.scientific_aggregation import EquivalencePluralityAggregation
 from ..governance.provenance_receipts import verify_receipt_dependencies
 from .data_freeze import file_hash
 from .gradient_contract_receipt import derive_gradient_contract
+from .gradient_pilot_contract import derive_current_pilot_contract, OBSERVATION_POLICY
 from .experiment_splits import ExperimentSplitReader
 from .access import DataPurpose
 from .protocols import protocol_input, PROTOCOLS
@@ -68,7 +69,7 @@ class MATHGradientPatternBinding:
             examples=self.examples('optimize'),prompts=tuple(m['prompt'] for m in team['members']),solver=solver,
             optimizer=optimizer,method=self.method(arm),seed=seed,shadow_loader=lambda:self.examples('shadow'),
             shadow_count=self.contract['shadow_count'],runtime_readiness=self.blockers,pattern_provider=pattern_provider,
-            provider_call_reader=lambda:solver.broker.successes)
+            provider_call_reader=lambda:solver.broker.successes,execution_phase=self.contract['execution_phase'])
 
     def examples(self,role):
         if role not in {'optimize','shadow'}:raise SearchContractError('HELDOUT_SEARCH_ACCESS_FORBIDDEN')
@@ -117,6 +118,32 @@ class MATHGradientPatternBinding:
                 approval_path=c['pattern_amendment_authorization_path'],approval_sha256=c['pattern_amendment_authorization_sha256'],
                 gradient_prompt_path=c['gradient_prompt_path'],gradient_prompt_sha256=c['gradient_prompt_sha256'],
                 cluster_prompt_path=c['pattern_prompt_path'],cluster_prompt_sha256=c['pattern_prompt_sha256'])
+            if c.get('execution_phase') == 'pilot':
+                pilot_parent=json.loads(self.path(c['pilot_parent_binding_path']).read_bytes())
+                authority=json.loads(self.path(c['pilot_execution_authorization_path']).read_bytes())
+                if (file_hash(self.path(c['pilot_parent_binding_path']))!=c['pilot_parent_binding_sha256']
+                        or file_hash(self.path(c['pilot_execution_authorization_path']))!=c['pilot_execution_authorization_sha256']
+                        or pilot_parent!=derive_gradient_contract(parent,
+                            attempt=pilot_parent['execution_attempt_id'],binding_path=pilot_parent['binding_path'],
+                            parent_path=c['gradient_parent_binding_path'],parent_sha256=c['gradient_parent_binding_sha256'],
+                            approval_path=c['pattern_amendment_authorization_path'],approval_sha256=c['pattern_amendment_authorization_sha256'],
+                            gradient_prompt_path=c['gradient_prompt_path'],gradient_prompt_sha256=c['gradient_prompt_sha256'],
+                            cluster_prompt_path=c['pattern_prompt_path'],cluster_prompt_sha256=c['pattern_prompt_sha256'])):
+                    return ('CURRENT_PILOT_PARENT_RECEIPT_MISMATCH',)
+                required=dict(schema_version='current_gradient_pilot_user_scope_v1',arm='A4',seed=81,
+                    phase='pilot_search_only',attempt_id=c['execution_attempt_id'],user_authorized=True,
+                    parent_binding_sha256=c['pilot_parent_binding_sha256'],scientific_change_authorized=False,
+                    validation_authorized=False,test_authorized=False,raw_diagnostic_authorized=False,
+                    llm_judge_authorized=False,push_authorized=False,operational_fresh_retry_limit=1,
+                    observation_policy=OBSERVATION_POLICY)
+                if (any(authority.get(k)!=v for k,v in required.items())
+                        or not isinstance(authority.get('user_task_sha256'),str)
+                        or len(authority['user_task_sha256'])!=64):
+                    return ('CURRENT_PILOT_USER_SCOPE_MISMATCH',)
+                expected=derive_current_pilot_contract(pilot_parent,attempt=c['execution_attempt_id'],
+                    binding_path=c['binding_path'],parent_path=c['pilot_parent_binding_path'],
+                    parent_sha256=c['pilot_parent_binding_sha256'],authorization_path=c['pilot_execution_authorization_path'],
+                    authorization_sha256=c['pilot_execution_authorization_sha256'])
             if (c!=expected or not c['execution_attempt_id'].startswith('math_v2_1_gradient_pattern_A4_seed81_')
                     or c['execution_attempt_id']==parent['execution_attempt_id'] or c['cache_namespace']==parent['cache_namespace']):
                 return ('GRADIENT_PATTERN_FROZEN_CONTRACT_MISMATCH',)

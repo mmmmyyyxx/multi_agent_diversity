@@ -127,6 +127,7 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
         super().__init__(**limits)
         self.risk_policy=json.loads(json.dumps(POLICY))
         self.clock=0;self.failure_events=()
+        self.observation_observer=None
         self.risk_counts=dict(failure_to_shared_promotions=0,shared_risk_created=0,
             shared_risk_updated=0,shared_risk_evicted=0,shared_risk_storage_peak=0)
 
@@ -285,6 +286,10 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
             self.counts[kind+'_reads']+=len(groups[group])
         self.read_private_count=len(groups['private_failure'])+len(groups['private_success'])
         self.read_shared_count=len(groups['shared_risk'])
+        if self.observation_observer:
+            self.observation_observer('MEMORY_READ',dict(member=member,lane=lane,
+                entries={k:[dict(memory_id=e.memory_id,visible=e.visible()) for e in values] for k,values in groups.items()},
+                visible=visible,context_chars=size()))
         return visible
 
     def audit(self):

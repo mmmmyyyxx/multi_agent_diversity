@@ -837,6 +837,8 @@ nodes:
   kind: REAL_CANARY
 - experiment_id: math_v2_1_gradient_pattern_seed81_canary_v3
   kind: REAL_CANARY
+- experiment_id: math_v2_1_gradient_pattern_seed81_pilot_v1
+  kind: PILOT
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1599,4 +1601,10 @@ edges:
   evidence: experiments/protocols/math_v2_1_gradient_pattern_seed81_canary_v3/implementation_repair.json
   scope: Confirmed diagnostic metadata repair only; fresh source and namespace. One complete active opportunity
     and one isolated matched raw diagnostic audited. Method and prompts unchanged; no efficacy inference.
+- from: math_v2_1_gradient_pattern_seed81_canary_v3
+  to: math_v2_1_gradient_pattern_seed81_pilot_v1
+  relation: followup_of
+  evidence: experiments/protocols/math_v2_1_gradient_pattern_seed81_pilot_v1/user_scope.json
+  scope: Unchanged current method; fresh Optimize60 Shadow40 search-only scope and full descriptive training-process
+    audit.
 current_frontier: experiments/current_frontier.yaml

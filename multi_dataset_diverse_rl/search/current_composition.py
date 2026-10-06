@@ -26,7 +26,10 @@ class OneProductionOpportunityStop(GlobalStopPolicy):
 
 def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompts, solver,
         optimizer, method, seed, shadow_loader, shadow_count, runtime_readiness,
-        pattern_provider, provider_call_reader=None, policy_bundle=CURRENT_POLICY_BUNDLE):
+        pattern_provider, provider_call_reader=None, policy_bundle=CURRENT_POLICY_BUNDLE,
+        execution_phase='canary'):
+    if execution_phase not in {'canary', 'pilot'}:
+        raise SearchContractError('CURRENT_EXECUTION_PHASE_UNBOUND')
     if policy_bundle != CURRENT_POLICY_BUNDLE:
         raise SearchContractError('CURRENT_POLICY_MISMATCH')
     policy_bundle.validate_method(method)
@@ -62,5 +65,5 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
         engine=CurrentEngine(optimizer,seed),evaluation=CandidateEvaluationPipeline(provider,
             FixedPeerPromotion(invalid_predictions_are_incorrect=invalidity)),
         transition=transition,gate=gate,committer=TeamStateCommitter(store),history=history,memory=memory,
-        stop=OneProductionOpportunityStop(2),runtime_readiness=runtime_readiness,
+        stop=(OneProductionOpportunityStop(2) if execution_phase == 'canary' else GlobalStopPolicy(2)),runtime_readiness=runtime_readiness,
         provider_call_reader=provider_call_reader)
