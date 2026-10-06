@@ -1,0 +1,13 @@
+{
+  "source_at_failed_preflight": "9222ec2b18f55378ccb222976c9fa39be348965c",
+  "category": "DYNAMIC_FRONTIER_CHANGED_NEGATIVE_CONTROL_FIXTURE_BRANCH",
+  "real_provider_calls": 0,
+  "scientific_attempt_consumed": false,
+  "full_current_run": "INTERRUPTED_AFTER_SEVEN_CONFIRMED_FAILURES_NOT_PASS",
+  "focused_diagnosis": {"passed": 46, "failed": 7, "network_attempts": 0},
+  "repair": "Explicitly model the closed historical scope before applying authorization poisons; preserve all poison assertions and validate the baseline first.",
+  "targeted_repair_verification": {"passed": 10, "failed": 0, "network_attempts": 0},
+  "active_runtime_modified": false,
+  "scientific_diff": "EMPTY",
+  "fresh_full_current_verification_required": true
+}

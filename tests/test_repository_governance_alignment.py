@@ -352,6 +352,13 @@ def test_completed_canary_scope_cannot_authorize_followup(location, field, value
     frontier = deepcopy(load_yaml(ROOT / 'experiments/current_frontier.yaml'))
     registry = deepcopy(load_yaml(ROOT / 'experiments/registry.yaml'))
     assert frontier['current_canary_status'] == 'VALID_OPERATIONAL_CANARY'
+    # This negative control models a closed scope with no pending attempt.
+    # A newly registered attempt must not redirect it into the pending-scope
+    # branch, where the completed-scope poison would never be examined.
+    frontier['next_canary_attempt_id'] = None
+    frontier['next_canary_milestone'] = None
+    frontier['current_execution_blocker'] = 'NO_AUTHORIZED_FOLLOWUP_SCOPE'
+    _assert_canary_does_not_unlock_formal_or_heldout(frontier, registry)
     if location == 'frontier':
         frontier[field] = value
     else:
