@@ -831,6 +831,8 @@ nodes:
 - experiment_id: math_v2_1_current_runtime_consolidation_v1
   kind: ARCHITECTURE_REFACTOR
   era: BENCHMARK_GENERALIZATION
+- experiment_id: math_v2_1_gradient_pattern_seed81_canary_v1
+  kind: REAL_CANARY
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1575,4 +1577,9 @@ edges:
   relation: derived_from
   evidence: reports/math_v2_1_current_runtime_consolidation_v1_20261005/README.md
   scope: Semantic-preserving current runtime consolidation and explicit legacy isolation; zero API.
+- from: math_v2_1_current_runtime_consolidation_v1
+  to: math_v2_1_gradient_pattern_seed81_canary_v1
+  relation: followup_of
+  evidence: reports/math_v2_1_gradient_pattern_seed81_canary_v1_20261006/README.md
+  scope: Fresh one-opportunity current Gradient Canary plus isolated post-hoc raw diagnostic; no efficacy claim.
 current_frontier: experiments/current_frontier.yaml

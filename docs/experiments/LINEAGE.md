@@ -211,6 +211,7 @@ flowchart TD
     n269["math_v2_1_pattern_semantic_partition_audit_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
     n270["math_v2_1_gradient_pattern_refactor_v1<br/>ARCHITECTURE_REFACTOR<br/>COMPLETED"]
     n271["math_v2_1_current_runtime_consolidation_v1<br/>ARCHITECTURE_REFACTOR<br/>COMPLETED"]
+    n272["math_v2_1_gradient_pattern_seed81_canary_v1<br/>REAL_CANARY<br/>DRAFT"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -559,6 +560,7 @@ flowchart TD
   n268 -->|audit_of| n269
   n269 -->|derived_from| n270
   n270 -->|derived_from| n271
+  n271 -->|followup_of| n272
 ```
 
 ## Archived branches and unresolved evidence

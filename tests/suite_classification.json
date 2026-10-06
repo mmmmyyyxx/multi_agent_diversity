@@ -1249,6 +1249,12 @@
       "classification": "CURRENT_CONTRACT",
       "required_private_artifacts": [],
       "current_suite_included": true
+    },
+    {
+      "path": "tests/test_gradient_canary_diagnostic.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
     }
   ]
 }

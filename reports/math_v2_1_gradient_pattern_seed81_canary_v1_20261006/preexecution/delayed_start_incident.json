@@ -1,0 +1,12 @@
+{
+  "canary_started": false,
+  "category": "ORIGINAL_THREAD_ALREADY_HAS_ACTIVE_WRITER",
+  "continuation_started": false,
+  "experiment_provider_calls": 0,
+  "launcher_failed_local": "2026-10-06T02:42:23+08:00",
+  "model_refresh_timeout_observed": true,
+  "planned_start_local": "2026-10-06T02:42:00+08:00",
+  "remediation": "Continue directly in the existing owner thread after the requested delay",
+  "scheduler_triggered": true,
+  "scientific_attempt_consumed": false
+}
