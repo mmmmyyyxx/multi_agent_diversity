@@ -1,0 +1,31 @@
+{
+  "arm": "A4",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt3",
+  "canary_authorized": false,
+  "cumulative_token_ceiling": 40000000,
+  "exact_frozen_api_authorization_required": true,
+  "initial_memory_entries": 0,
+  "initial_team_version": "MATH_GENERIC_TEAM_SEED_V1_2",
+  "llm_judge_authorized": false,
+  "operational_retry_policy": "FRESH_AFTER_PROVEN_OPERATIONAL_INVALIDITY_ONLY",
+  "parent_binding_sha256": "5e9d287ef70ca19d0ed560f24fa84e44609cf3c1ef2a6529c40449cb274b2abc",
+  "phase": "pilot_search_only",
+  "push_authorized": true,
+  "raw_diagnostic_authorized": false,
+  "runtime_persistence_policy": {
+    "derived_token_snapshot": "best_effort_detach_on_io_failure",
+    "identity": "JOURNAL_FIRST_PROVIDER_DURABILITY_V1",
+    "response_before_charge": true,
+    "scientific_resume": false,
+    "unresolved_reservation": "CHARGE_FULL_RESERVATION"
+  },
+  "schema_version": "current_gradient_operational_pilot_user_scope_v1",
+  "scientific_method_changed": false,
+  "scientific_regeneration": false,
+  "seed": 81,
+  "test_authorized": false,
+  "user_authorized": true,
+  "user_task_hash_scope": "FULL_ATTACHMENT_ORIGINAL_UTF8_BYTES",
+  "user_task_sha256": "f689d066d4b53dc365ab643804a54875572c4986c43fdcededdc4b8cf9416ea9",
+  "validation_authorized": false
+}

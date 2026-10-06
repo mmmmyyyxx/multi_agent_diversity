@@ -412,11 +412,24 @@ def test_new_pending_pilot_has_separate_user_scope_without_inheriting_closed_aut
     assert contract['execution_attempt_id']!=old_contract['execution_attempt_id']
     assert contract['cache_namespace']!=old_contract['cache_namespace']
     assert contract['provider_bounds']==old_contract['provider_bounds'] and contract['models']==old_contract['models']
-    scope=load_yaml(ROOT/contract['numeric_user_scope_path'])
+    scope=load_yaml(ROOT/contract.get('operational_user_scope_path',contract['numeric_user_scope_path']))
     assert scope['user_authorized'] is True and scope['attempt_id']==contract['execution_attempt_id']
-    assert scope['exact_frozen_api_authorization_required'] is True and scope['operational_fresh_retry_limit']==0
-    assert scope['core_method_changed'] is False and scope['provider_output_admissibility_changed'] is True
-    for role in ('validation','test','push','raw_diagnostic','llm_judge','canary'):
+    assert scope['exact_frozen_api_authorization_required'] is True
+    if 'operational_user_scope_path' in contract:
+        assert scope['schema_version']=='current_gradient_operational_pilot_user_scope_v1'
+        assert scope['scientific_method_changed'] is False
+        assert scope['user_task_sha256']==frontier['pending_pilot_user_task_sha256']
+        assert scope['operational_retry_policy']=='FRESH_AFTER_PROVEN_OPERATIONAL_INVALIDITY_ONLY'
+        assert scope['push_authorized'] is frontier['pending_pilot_push_authorized'] is True
+        assert contract['continuation_authorization_sha256']==contract['operational_user_scope_sha256']
+        assert contract['operational_user_scope_sha256']!=contract['numeric_user_scope_sha256']
+        closed_parent=next(r for r in registry['experiments'] if r['experiment_id']=='math_v2_1_gradient_pattern_seed81_pilot_v2')
+        assert closed_parent['authorization_closed'] is True and closed_parent['authorization_consumed'] is True
+    else:
+        assert scope['operational_fresh_retry_limit']==0
+        assert scope['core_method_changed'] is False and scope['provider_output_admissibility_changed'] is True
+        assert scope['push_authorized'] is False
+    for role in ('validation','test','raw_diagnostic','llm_judge','canary'):
         assert scope[role+'_authorized'] is False
     from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
     assert not execution_binding(ROOT,contract).blockers()

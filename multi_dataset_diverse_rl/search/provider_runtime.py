@@ -20,13 +20,17 @@ from ..current_contract import PATTERN_SPECIFIC_CONTENT_GUARD_VERSION as CURRENT
 
 class RequestBroker:
     def __init__(self, *, contract, transport, arm, seed, ledger_writer=None, raw_writer=None, usage=None, lock=None,
-                 token_ledger=None, reserve_reader=None, validation_only=False, durable_cache=None):
+                 token_ledger=None, reserve_reader=None, validation_only=False, durable_cache=None,
+                 response_receipts=None):
         self.contract = contract
         self.transport = transport
         self.arm = arm
         self.seed = seed
         self.ledger_writer = ledger_writer
         self.raw_writer = raw_writer
+        self.response_receipts = response_receipts
+        if response_receipts is not None and token_ledger is None:
+            raise SearchContractError("PROVIDER_RECEIPTS_REQUIRE_DURABLE_ACCOUNTING")
         self.cache = {}
         self.cache_seals = {}
         self.usage = usage if usage is not None else dict(attempts=0, successes=0, failures=0, input_tokens=0, output_tokens=0,
@@ -71,7 +75,7 @@ class RequestBroker:
         return RequestBroker(contract=self.contract, transport=self.transport, arm=self.arm, seed=self.seed,
             ledger_writer=self.ledger_writer, raw_writer=self.raw_writer, usage=self.usage, lock=self.lock,
             token_ledger=self.token_ledger, reserve_reader=self.reserve_reader, validation_only=self.validation_only,
-            durable_cache=self.durable_cache)
+            durable_cache=self.durable_cache, response_receipts=self.response_receipts)
 
     def _request_identity(self, *, role, split, messages, member_slot=None):
         pattern_roles={'pattern_gradient','pattern_cluster'} if self.gradient_pattern else {'pattern'}
@@ -205,8 +209,18 @@ class RequestBroker:
                 try:
                     result = self.transport(request)
                 except Exception as exc:
+                    receipt = None
+                    if self.response_receipts is not None:
+                        receipt = self.response_receipts.persist(token_reservation, dict(
+                            role=role, split=split, stage=stage, request_sha256=key,
+                            request=request, error_category=type(exc).__name__,
+                            token_usage=getattr(exc, "token_usage", None),
+                            provider_evidence=getattr(exc, "provider_evidence", None),
+                            semantic_attempt_no=semantic_attempt_no,
+                            physical_attempt_no=self.usage["attempts"]))
                     if token_reservation is not None:
-                        charge = self.token_ledger.reconcile(token_reservation, getattr(exc, "token_usage", None), outcome=type(exc).__name__)
+                        charge = self.token_ledger.reconcile(token_reservation, getattr(exc, "token_usage", None),
+                            outcome=type(exc).__name__, **({"response_receipt": receipt} if receipt is not None else {}))
                         for k in ("input_tokens", "output_tokens"):
                             self.usage[k] += charge[k]
                     self.usage["failures"] += 1
@@ -224,8 +238,15 @@ class RequestBroker:
                         raise
                     time.sleep(min(c["decoding"]["retry_sleep_seconds"] * 2**retry, c["decoding"]["retry_backoff_ceiling_seconds"]))
                     continue
+                receipt = None
+                if self.response_receipts is not None:
+                    receipt = self.response_receipts.persist(token_reservation, dict(
+                        role=role, split=split, stage=stage, request_sha256=key,
+                        request=request, response=result, semantic_attempt_no=semantic_attempt_no,
+                        physical_attempt_no=self.usage["attempts"]))
                 if token_reservation is not None:
-                    charge = self.token_ledger.reconcile(token_reservation, result, outcome="RESPONSE")
+                    charge = self.token_ledger.reconcile(token_reservation, result, outcome="RESPONSE",
+                        **({"response_receipt": receipt} if receipt is not None else {}))
                     if isinstance(result, dict):
                         result = {**result, "provider_reported_input_tokens":result.get("input_tokens"),
                                   "provider_reported_output_tokens":result.get("output_tokens"), **charge}

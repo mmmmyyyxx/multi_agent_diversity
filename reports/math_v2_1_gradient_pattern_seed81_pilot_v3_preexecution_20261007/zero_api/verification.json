@@ -1,0 +1,42 @@
+{
+  "authoritative_ledger_sha256": "5e4aa1edb65d1055e9de81622c9e64896089ab91f5f2670151e74b2bd62dd9db",
+  "compileall": "PASS",
+  "concurrent_readers": 3,
+  "crash_recovery_boundaries": [
+    "response_before_charge",
+    "charge_before_snapshot_report"
+  ],
+  "cumulative_charged": 1929584,
+  "current_modules": 144,
+  "four_provider_role_wire_bytes_unchanged": true,
+  "full_current_counts": {
+    "errors": 0,
+    "failures": 0,
+    "passed": 1374,
+    "skipped": 2,
+    "tests": 1376
+  },
+  "full_current_junit_sha256": "3647f423c83d4b51a7f3132dbb74449e304163d947c502fe1a602f1fdc4d4d1d",
+  "full_historical_replay_pass": false,
+  "gradient_prompt": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3",
+  "guard": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5",
+  "hard_character_limit": 400,
+  "historical_files_changed": 0,
+  "historical_private_tests": "NOT_RUN",
+  "immutable_files": 5009,
+  "independent_member_realization_lanes": 5,
+  "initial_full_collection": "STOPPED_BEFORE_EXECUTION_FOR_MISSING_TESTS_DIRECTORY",
+  "legacy_dependencies": 0,
+  "network_attempt_count": 0,
+  "parent_and_new_method_config_sha256": "572aed120c96f5754f7066bd038b2749facdb6af0dbcf4e308efad8e1ca7a8ef",
+  "persistence_cycles": 1005,
+  "protected_current_modules": 137,
+  "provider_calls": 0,
+  "remaining_tokens": 38070416,
+  "reserved_inflight": 0,
+  "response_before_charge": true,
+  "scientific_method_changed": false,
+  "snapshot_lock_injection": "DETACHED_WITHOUT_LOSS",
+  "source_hashes_reflect_operational_repair": true,
+  "status": "PASS"
+}

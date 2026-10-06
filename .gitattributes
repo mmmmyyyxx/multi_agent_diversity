@@ -72,3 +72,7 @@ reports/math_v2_1_gradient_pattern_seed81_pilot_v1_execution_20261006/** text eo
 reports/math_identical_initial_condition_v1_20261006/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 reports/math_v2_1_gradient_pattern_seed81_pilot_v2_preexecution_20261006/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 reports/math_v2_1_gradient_pattern_seed81_pilot_v2_execution_20261006/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+reports/math_v2_1_gradient_pattern_seed81_pilot_v3_preexecution_20261007/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+reports/math_v2_1_gradient_pattern_seed81_pilot_v3_execution_20261007/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+experiments/protocols/math_v2_1_gradient_pattern_seed81_pilot_v3/** text eol=lf
+experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v3.yaml text eol=lf

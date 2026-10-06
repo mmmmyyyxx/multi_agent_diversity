@@ -101,10 +101,16 @@ def _digest(value):
 
 
 class TokenLedger:
-    def __init__(self, directory: Path, *, task_sha256: str, policy=POLICY):
+    def __init__(self, directory: Path, *, task_sha256: str, policy=POLICY,
+                 best_effort_snapshots=False):
         if policy not in (POLICY, POLICY_40M) or len(task_sha256) != 64:
             raise OperationalAbort("TOKEN_ACCOUNTING_POLICY_IDENTITY_MISMATCH")
         self.directory = Path(directory)
+        if type(best_effort_snapshots) is not bool:
+            raise OperationalAbort("TOKEN_SNAPSHOT_POLICY_INVALID")
+        self.best_effort_snapshots = best_effort_snapshots
+        self.snapshot_updates_disabled = False
+        self.snapshot_error_category = None
         self.directory.mkdir(parents=True, exist_ok=True)
         self.journal = self.directory / "events.jsonl"
         self.snapshot = self.directory / "AUTONOMOUS_REAL_TOKEN_LEDGER_V2.json"
@@ -190,6 +196,16 @@ class TokenLedger:
                 raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
             if row["input_tokens"] + row["output_tokens"] != row["charged"]:
                 raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
+            receipt = row.get('response_receipt')
+            if receipt is not None:
+                from ..persistence.provider_receipts import IDENTITY
+                if (not isinstance(receipt,dict) or receipt.get('identity') != IDENTITY
+                        or receipt.get('reservation_id') != row['reservation_id']
+                        or receipt.get('attempt_id') != old['attempt_id']
+                        or not isinstance(receipt.get('integrity_sha256'),str)
+                        or len(receipt['integrity_sha256']) != 64
+                        or any(ch not in '0123456789abcdef' for ch in receipt['integrity_sha256'])):
+                    raise OperationalAbort('TOKEN_LEDGER_RESPONSE_RECEIPT_MISMATCH')
             charge = {"charged_total": row["charged"],
                       "provider_reported_actual": row["charged"] if row["reliable_usage"] else 0,
                       "fallback_charged": 0 if row["reliable_usage"] else row["charged"],
@@ -250,7 +266,17 @@ class TokenLedger:
                 prior_charged_total=expected_charged_total))
 
     def _snapshot(self):
-        atomic_write_json(self.snapshot, self.view())
+        if self.snapshot_updates_disabled:
+            return
+        try:
+            atomic_write_json(self.snapshot, self.view())
+        except OSError as exc:
+            if not self.best_effort_snapshots:
+                raise
+            # The fsynced journal and in-memory replay remain authoritative.
+            # Detach this derived observer; never retry a paid request for it.
+            self.snapshot_updates_disabled = True
+            self.snapshot_error_category = type(exc).__name__
 
     def reserve(self, request, *, attempt_id, stage, role, model, protected_validation=0):
         with self.mutex:
@@ -270,14 +296,15 @@ class TokenLedger:
                 protected_validation=protected_validation))
             return key
 
-    def reconcile(self, key, result, *, outcome):
+    def reconcile(self, key, result, *, outcome, response_receipt=None):
         with self.mutex:
             bound = self.inflight[key]["bound"]
             reliable = reliable_usage(result, bound)
             inp = result["input_tokens"] if reliable else bound["input_upper_bound"]
             out = result["output_tokens"] if reliable else bound["output_hard_cap"]
             self._append(dict(kind="CHARGE", reservation_id=key, reliable_usage=reliable,
-                input_tokens=inp, output_tokens=out, charged=inp + out, outcome=outcome))
+                input_tokens=inp, output_tokens=out, charged=inp + out, outcome=outcome,
+                **({"response_receipt": response_receipt} if response_receipt is not None else {})))
             return dict(input_tokens=inp, output_tokens=out, usage_reliable=reliable)
 
     def close(self):

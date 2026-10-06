@@ -3,6 +3,15 @@
   "title": "Unified experiment manifest v2",
   "type": "object",
   "properties": {
+    "runtime_persistence_policy": {
+      "const": {
+        "identity": "JOURNAL_FIRST_PROVIDER_DURABILITY_V1",
+        "response_before_charge": true,
+        "derived_token_snapshot": "best_effort_detach_on_io_failure",
+        "unresolved_reservation": "CHARGE_FULL_RESERVATION",
+        "scientific_resume": false
+      }
+    },
     "experiment_id": {
       "type": "string",
       "minLength": 1

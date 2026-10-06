@@ -67,11 +67,17 @@ def execution_identity(root, contract):
     configs.extend(contract[k] for k in ("parent_binding_path", "accounting_policy_path", "validation_accounting_metadata_path", "verify_settings_path", "amendment_parent_binding_path", "low_cost_subsets_path", "optimizer_amendment_authorization_path", "layer1_parent_binding_path", "layer1_amendment_authorization_path", "memory_parent_binding_path", "memory_amendment_authorization_path", "pattern_parent_binding_path", "pattern_amendment_authorization_path", "rolling_memory_freeze_path") if k in contract)
     configs.extend(contract[k] for k in ('gradient_prompt_path','gradient_parent_binding_path') if k in contract)
     configs.extend(contract[k] for k in ('pilot_parent_binding_path','pilot_execution_authorization_path') if k in contract)
-    if 'numeric_admissibility_amendment_path' in contract:
+    provenance_contract = contract
+    if 'operational_user_scope_path' in contract:
+        from ..benchmarks.operational_pilot_contract import validate_operational_pilot
+        from ..benchmarks.math_gradient_pattern_binding import MATHGradientPatternBinding
+        provenance_contract=validate_operational_pilot(MATHGradientPatternBinding(root,contract))
+        configs.extend(contract[k] for k in ('operational_parent_binding_path','operational_user_scope_path'))
+    if 'numeric_admissibility_amendment_path' in provenance_contract:
         from ..benchmarks.numeric_admissibility_contract import validate_numeric_admissibility
         from ..benchmarks.math_gradient_pattern_binding import MATHGradientPatternBinding
         from .provenance_receipts import verify_receipt_dependencies
-        historical=validate_numeric_admissibility(MATHGradientPatternBinding(root,contract))
+        historical=validate_numeric_admissibility(MATHGradientPatternBinding(root,provenance_contract))
         configs.extend(contract[k] for k in ('numeric_admissibility_amendment_path','numeric_parent_binding_path','numeric_user_scope_path') if k in contract)
         configs.extend(verify_receipt_dependencies(root,contract,historical_initial_team=historical))
     elif 'initial_condition_amendment_path' in contract:
@@ -186,6 +192,10 @@ def execution_scope(manifest, contract):
     if 'numeric_admissibility_amendment_sha256' in contract:
         scope['numeric_admissibility']={k:contract[k] for k in ('numeric_parent_binding_sha256',
             'numeric_admissibility_amendment_sha256','gradient_prompt_sha256','pattern_abstraction_guard')}
+    if 'operational_user_scope_path' in contract:
+        scope['runtime_persistence_policy']=contract['runtime_persistence_policy']
+        scope['operational_user_scope_sha256']=contract['operational_user_scope_sha256']
+        scope['operational_parent_binding_sha256']=contract['operational_parent_binding_sha256']
     return scope
 
 
@@ -268,6 +278,8 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
     if "prediction_validity_policy" in contract:
         manifest["prediction_validity_policy"] = contract["prediction_validity_policy"]
     manifest["global_stop_identity"] = method.global_stop.identity
+    if 'runtime_persistence_policy' in contract:
+        manifest['runtime_persistence_policy']=contract['runtime_persistence_policy']
     for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256", "optimizer_nonthinking_evidence_policy", "layer1_search_policy", "candidate_contract_identity", "post_search_validation_policy", "pattern_support_id_transport", "pattern_abstraction_guard"):
         if k in contract:manifest[k]=contract[k]
     manifest["preregistration_identity"] = canonical_sha256({k: v for k, v in manifest.items() if k not in {"lifecycle", "authorization"}})

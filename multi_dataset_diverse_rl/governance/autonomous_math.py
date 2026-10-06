@@ -70,11 +70,13 @@ def create_transport(contract):
         try:
             try:
                 body = response.json()
-            except ValueError:
+            except ValueError as exc:
                 if response.is_error or response.is_redirect:
                     error = client._make_status_error_from_response(response)
                     error.provider_evidence = dict(http_status=response.status_code, response_text=response.text)
                     raise error
+                if contract.get('runtime_persistence_policy'):
+                    exc.provider_evidence = dict(http_status=response.status_code, response_text=response.text)
                 raise
             if response.is_error or response.is_redirect:
                 error = client._make_status_error_from_response(response)
@@ -83,11 +85,22 @@ def create_transport(contract):
                 error.token_usage = dict(input_tokens=usage.get("prompt_tokens"), output_tokens=usage.get("completion_tokens"))
                 error.provider_evidence = dict(http_status=response.status_code, response_body=body)
                 raise error
-            choice = body["choices"][0]
+            try:
+                choice = body["choices"][0]
+                content = choice["message"].get("content")
+            except (KeyError, IndexError, TypeError, AttributeError) as exc:
+                if contract.get('runtime_persistence_policy'):
+                    exc.provider_evidence = dict(http_status=response.status_code, response_body=body)
+                    usage = body.get('usage') if isinstance(body,dict) else None
+                    usage = usage if isinstance(usage,dict) else {}
+                    exc.token_usage = dict(input_tokens=usage.get('prompt_tokens'),output_tokens=usage.get('completion_tokens'))
+                raise
             usage = body.get("usage")
             usage = usage if isinstance(usage, dict) else {}
-            result = dict(text=choice["message"].get("content"), finish_reason=choice.get("finish_reason"),
+            result = dict(text=content, finish_reason=choice.get("finish_reason"),
                 input_tokens=usage.get("prompt_tokens"), output_tokens=usage.get("completion_tokens"), response_id=body.get("id"))
+            if contract.get('runtime_persistence_policy'):
+                result['provider_http_response_body'] = body
             if 'optimizer_generation_policy' in contract:
                 from ..benchmarks.math_optimizer_diagnostics import provider_thinking_indicators
                 reasoning = choice['message'].get('reasoning_content')
@@ -125,7 +138,12 @@ async def execute_search(root, prep, run_root, payload):
     binding = execution_binding(root, c)
     if binding.blockers():
         raise SearchContractError("AUTONOMOUS_BINDING_NOT_READY")
-    budget = TokenLedger(root / c["token_ledger_directory"], task_sha256=c["task_authorization_sha256"],policy=ledger_policy(c))
+    from ..persistence.provider_receipts import POLICY as durability_policy, ProviderResponseReceipts
+    durable = c.get("runtime_persistence_policy")
+    if durable is not None and durable != durability_policy:
+        raise SearchContractError("RUNTIME_PERSISTENCE_POLICY_MISMATCH")
+    budget = TokenLedger(root / c["token_ledger_directory"], task_sha256=c["task_authorization_sha256"],
+        policy=ledger_policy(c), best_effort_snapshots=durable is not None)
     broker = client = None
     try:
         reserve = ValidationReserve(read_json(root / c["validation_accounting_metadata_path"]), initial_prompts(root,c))
@@ -138,7 +156,10 @@ async def execute_search(root, prep, run_root, payload):
         broker = RequestBroker(contract=c,transport=transport,arm=arm,seed=81,token_ledger=budget,
             reserve_reader=reserve.remaining,ledger_writer=lambda r:append_jsonl(run_root / "ledger.jsonl",r),
             raw_writer=lambda r:append_jsonl(run_root / "provider_trace_private.jsonl",r),
-            durable_cache=durable_output_cache(run_root,c,payload))
+            durable_cache=durable_output_cache(run_root,c,payload),
+            response_receipts=(ProviderResponseReceipts(run_root/'provider_response_receipts_private',
+                attempt_id=c['execution_attempt_id'],startup_identity_sha256=payload['startup_identity_sha256'])
+                if durable is not None else None))
         broker.prompt_observer = reserve.observe
         solver = BenchmarkSolver(binding.benchmark(),broker)
         from ..search.textual_gradients import PerExampleGradientProvider, GradientClusterProvider
@@ -177,6 +198,10 @@ async def execute_search(root, prep, run_root, payload):
         summary = dict(result=plain(result),ledger=broker.usage,accounting=budget.view(),validation_reserve=reserve.remaining(),
             validation_search_raw_reads=0,validation_calls=0,test_raw_reads=0,test_calls=0,pattern_calls=broker.usage['pattern'],memory_activity=0)
         summary['pattern_input_audit']=pattern_provider.input_audit
+        if durable is not None:
+            summary['runtime_persistence'] = dict(policy=durable,
+                derived_token_snapshot_detached=budget.snapshot_updates_disabled,
+                snapshot_error_category=budget.snapshot_error_category)
         gradients=pattern_provider.gradient_provider
         summary.update(pattern_gradient_calls=broker.usage['pattern_gradient'],
             pattern_cluster_calls=broker.usage['pattern_cluster'],gradient_input_audit=gradients.input_audit)

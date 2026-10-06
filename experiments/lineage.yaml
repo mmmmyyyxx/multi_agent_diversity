@@ -844,6 +844,8 @@ nodes:
   era: BENCHMARK_GENERALIZATION
 - experiment_id: math_v2_1_gradient_pattern_seed81_pilot_v2
   kind: PILOT
+- experiment_id: math_v2_1_gradient_pattern_seed81_pilot_v3
+  kind: PILOT
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1627,4 +1629,9 @@ edges:
   relation: followup_of
   evidence: experiments/protocols/math_numeric_admissibility_v1/amendment.json
   scope: Fresh Pilot after numeric admissibility amendment; historical runs and initialization correction preserved.
+- from: math_v2_1_gradient_pattern_seed81_pilot_v2
+  to: math_v2_1_gradient_pattern_seed81_pilot_v3
+  relation: followup_of
+  evidence: experiments/protocols/math_v2_1_gradient_pattern_seed81_pilot_v3/user_scope.json
+  scope: Fresh operational retry; frozen scientific method unchanged.
 current_frontier: experiments/current_frontier.yaml

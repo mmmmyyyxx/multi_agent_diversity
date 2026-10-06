@@ -81,7 +81,7 @@ memory_policy_real_execution_authorized: false
 current_pattern_support_id_transport: PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1
 next_canary_authorized: false
 current_pattern_abstraction_guard: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5
-future_execution_requires_new_user_authorization: true
+future_execution_requires_new_user_authorization: false
 available_opt_in_pattern_abstraction_guard: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5
 pattern_guard_amendment_status: VERIFIED_ZERO_API_FRESH_GRADIENT_OBSERVATION_NOT_REACHED
 next_canary_manifest: null
@@ -123,18 +123,18 @@ gradient_cluster_semantic_behavior: SHARED_PATTERN_OBSERVED
 current_gradient_prompt: PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3
 future_execution_requires_new_frozen_single_use_scope: true
 gradient_raw_comparison_classification: MIXED
-pending_pilot_milestone: null
-pending_pilot_manifest: null
-pending_pilot_attempt_id: null
-pending_pilot_scope: null
-pending_pilot_user_task_sha256: null
-pending_pilot_user_authorization_received: false
-pending_pilot_status: CLOSED_CONSUMED_NO_RETRY
-pending_pilot_operational_retry_limit: 0
+pending_pilot_milestone: math_v2_1_gradient_pattern_seed81_pilot_v3
+pending_pilot_manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v3.yaml
+pending_pilot_attempt_id: math_v2_1_gradient_pattern_A4_seed81_pilot_attempt3
+pending_pilot_scope: A4_SEED81_OPTIMIZE60_SHADOW40_SEARCH_ONLY
+pending_pilot_user_task_sha256: f689d066d4b53dc365ab643804a54875572c4986c43fdcededdc4b8cf9416ea9
+pending_pilot_user_authorization_received: true
+pending_pilot_status: ZERO_API_OPERATIONAL_DURABILITY_PREFLIGHT
+pending_pilot_operational_retry_limit: FRESH_AFTER_PROVEN_OPERATIONAL_INVALIDITY_ONLY
 pending_pilot_scientific_changes_authorized: false
 pending_pilot_validation_authorized: false
 pending_pilot_test_authorized: false
-pending_pilot_push_authorized: false
+pending_pilot_push_authorized: true
 last_pilot_milestone: math_v2_1_gradient_pattern_seed81_pilot_v2
 current_pilot_status: INITIAL_PERSISTENCE_FAILURE
 current_pilot_report: reports/math_v2_1_gradient_pattern_seed81_pilot_v2_execution_20261006
@@ -419,6 +419,7 @@ flowchart TD
     n201["unified_semantic_contract_v2_1<br/>ARCHITECTURE_REFACTOR<br/>IMPLEMENTED_NOT_EXECUTED"]
     n275["math_v2_1_gradient_pattern_seed81_pilot_v1<br/>PILOT<br/>HOLD"]
     n277["math_v2_1_gradient_pattern_seed81_pilot_v2<br/>PILOT<br/>INVALID"]
+    n278["math_v2_1_gradient_pattern_seed81_pilot_v3<br/>PILOT<br/>DRAFT"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -621,6 +622,7 @@ flowchart TD
   n275 -->|derived_from| n276
   n275 -->|followup_of| n277
   n276 -->|followup_of| n277
+  n277 -->|followup_of| n278
 ```
 
 ## Archived branches and unresolved evidence
