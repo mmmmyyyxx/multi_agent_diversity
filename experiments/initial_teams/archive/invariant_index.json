@@ -1,0 +1,11 @@
+{
+  "schema_version": "initial_team_archive_invariants_v1",
+  "source_commit": "c71c5aa3bbf9fe3981a439c8f968c67df8f936b0",
+  "original_path": "experiments/initial_teams/math_generic_team_seed_v1_1.json",
+  "archived_path": "experiments/initial_teams/archive/math_generic_team_seed_v1_1.json",
+  "raw_sha256": "a0ce805d8e88499a829b9843f790c70ad14d99ab587a6e670e657e109695456a",
+  "historical_team_version": "MATH_GENERIC_TEAM_SEED_V1_1",
+  "historical_unique_prompt_count": 5,
+  "original_ordered_team_sha256": "4ca685adff5ca8a97e53b0aa0f5715783c7c6937433bd5bbc1308cbad9e97200",
+  "preservation": "Exact original bytes; historical bindings, manifests and reports remain immutable. Replay uses the original frozen source and original authorization requirements."
+}

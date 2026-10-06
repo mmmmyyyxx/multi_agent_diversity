@@ -229,7 +229,12 @@ inherited. Pattern/Memory are IMPLEMENTED_DEFAULT_OFF, efficacy unverified.
   rejection diagnostics are present.
   The fixed GEPA evidence schedule replays complete epochs so perfect-score
   skips cannot exhaust it before frozen patience. Metric reserves and ceilings
-  remain unchanged. Initial prompts are generic mutable reasoning only; the
+  remain unchanged. **INV-MATH-INITIAL-SYMMETRY-001**: Current MATH initialization uses five byte-identical minimal
+  mutable prompts under `MATH_GENERIC_TEAM_SEED_V1_2`; no reasoning, verification,
+  role or diversity behavior is predefined. Member IDs and Solver realization
+  lanes remain independent. Historical V1_1 retains five wording variants.
+  Initial-condition amendments require fresh binding/attempt/cache identities;
+  historical parent receipts grant no new execution authority. The
   immutable output interface remains separate.
 - **INV-MATH-OUTPUT-INTERFACE-002**: MATH Solver requests bind the versioned
   benchmark-owned immutable formatting interface in the system message for

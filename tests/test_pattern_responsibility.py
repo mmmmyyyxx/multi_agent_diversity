@@ -249,13 +249,13 @@ def test_memory_after_selected_pattern_and_no_WHO_effect(tmp_path):
 
 
 @pytest.mark.parametrize('binding_version',[1,2,3,4])
-def test_new_binding_scope_hashes_and_generation_policy(binding_version):
+def test_new_binding_scope_hashes_and_generation_policy(binding_version,historical_math_workspace):
     from multi_dataset_diverse_rl.benchmarks.legacy.math_domain_binding import execution_binding
     from multi_dataset_diverse_rl.governance.legacy.unified_execution import preexecution_manifest,execution_scope
     from multi_dataset_diverse_rl.governance.repository import validate_manifest_v2
     from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker
     from multi_dataset_diverse_rl.governance.token_accounting import serialized_request
-    root=Path(__file__).resolve().parents[1];bp=f'experiments/execution_bindings/math_v2_1_pattern_canary_v{binding_version}.json'
+    root=historical_math_workspace;bp=f'experiments/execution_bindings/math_v2_1_pattern_canary_v{binding_version}.json'
     c=json.loads((root/bp).read_bytes());b=execution_binding(root,c);assert not b.blockers()
     m=preexecution_manifest(root,source_sha='0'*40,frozen=False,binding_path=bp,experiment_id='synthetic_pattern')
     assert not validate_manifest_v2(root,m)
@@ -307,13 +307,13 @@ def test_duplicate_scientific_discovery_fails_before_provider():
 
 
 @pytest.mark.parametrize('binding_version',[1,2,3,4])
-def test_pattern_memory_full_fake_production_graph(tmp_path,monkeypatch,binding_version):
+def test_pattern_memory_full_fake_production_graph(tmp_path,monkeypatch,binding_version,historical_math_workspace):
     from multi_dataset_diverse_rl.benchmarks.legacy.math_domain_binding import execution_binding
     from multi_dataset_diverse_rl.benchmarks.protocols import protocol_input
     from multi_dataset_diverse_rl.search.binary_runtime import CorrectnessExample
     from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker,BenchmarkSolver,ReflectionProvider
     from multi_dataset_diverse_rl.governance.token_accounting import serialized_request
-    root=Path(__file__).resolve().parents[1]
+    root=historical_math_workspace
     alias_transport=binding_version>=2
     c=json.loads((root/f'experiments/execution_bindings/math_v2_1_pattern_canary_v{binding_version}.json').read_bytes());binding=execution_binding(root,c)
     adapter=binding.benchmark();prompts=tuple(x['prompt'] for x in json.loads((root/c['initial_team_path']).read_bytes())['members'])

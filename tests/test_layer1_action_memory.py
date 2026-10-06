@@ -205,7 +205,7 @@ def test_heldout_never_read_or_write_memory(split):
     assert not m.private and not m.shared and not m.failures
 
 
-def test_memory_on_governed_binding_full_fake_production_graph(tmp_path,monkeypatch):
+def test_memory_on_governed_binding_full_fake_production_graph(tmp_path,monkeypatch,historical_math_workspace):
     from pathlib import Path
     from multi_dataset_diverse_rl import versions
     from multi_dataset_diverse_rl.benchmarks.math_memory_binding import MATHMemoryBinding
@@ -214,7 +214,7 @@ def test_memory_on_governed_binding_full_fake_production_graph(tmp_path,monkeypa
     from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker,BenchmarkSolver,ReflectionProvider
     from multi_dataset_diverse_rl.governance.token_accounting import serialized_request
     from multi_dataset_diverse_rl.governance.legacy.unified_execution import preexecution_manifest,bound_preflight,execution_scope
-    root=Path(__file__).resolve().parents[1]
+    root=historical_math_workspace
     binding_path='experiments/execution_bindings/math_v2_1_memory_canary_v1.json'
     c=json.loads((root/binding_path).read_bytes());binding=MATHMemoryBinding(root,c)
     assert not binding.blockers()

@@ -3,6 +3,12 @@
   "schema_version": "suite_classification_v1",
   "tests": [
     {
+      "path": "tests/current/test_identical_initial_team.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
       "path": "tests/current/test_gradient_pilot_audit.py",
       "classification": "CURRENT_CONTRACT",
       "required_private_artifacts": [],

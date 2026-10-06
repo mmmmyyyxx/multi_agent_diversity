@@ -1,5 +1,17 @@
 schema_version: invariant_registry_v1
 invariants:
+- id: INV-MATH-INITIAL-SYMMETRY-001
+  description: Five byte-identical minimal V1_2 initial prompts with distinct member IDs and independent Solver request/cache lanes; historical V1_1 is immutable.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/benchmarks/current_math_dependencies.py
+  - multi_dataset_diverse_rl/benchmarks/initial_condition_contract.py
+  - multi_dataset_diverse_rl/search/provider_runtime.py
+  tests:
+  - tests/current/test_identical_initial_team.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
 - id: INV-INITIAL-COMPETENCE-002
   description: Strict team deployment gains above immutable initial member competence; no incumbent monotonicity requirement.
   authority: docs/design/CURRENT_SPEC.md

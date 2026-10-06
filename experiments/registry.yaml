@@ -7925,3 +7925,37 @@ experiments:
   - reports/math_v2_1_gradient_pattern_seed81_pilot_v1_preexecution_20261006
   unavailable:
     result_commit: Local result commit is recorded in git history without a self-referential hash.
+- experiment_id: math_identical_initial_condition_v1
+  kind: ZERO_API_AUDIT
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_gradient_pattern_seed81_pilot_v1
+  status: IN_PROGRESS
+  scientific_status: ZERO_API_INITIAL_CONDITION_CORRECTION
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_identical_initial_condition_v1.yaml
+  report: reports/math_identical_initial_condition_v1_20261006
+  classifier: INITIAL_CONDITION_CHANGED_METHOD_UNCHANGED
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - 'V1_2: five byte-identical minimal initial prompts; five independent Solver lanes.'
+  - Only initial condition and fresh offline identities change; all real execution remains unauthorized.
+  - Closed V1_1 bindings and evidence are immutable; historical receipt bytes are explicitly archived.
+  unavailable:
+    implementation_commit: Recorded by git history; no self-reference.
+    execution_commit: Zero API only; no real execution.
+    result_commit: Recorded by git history; no self-reference.
+  audit_scope:
+    provider_call_budget: 0
+    api_token_budget: 0
+    canary_authorized: false
+    pilot_authorized: false
+    validation_authorized: false
+    test_authorized: false
+    push_authorized: false
+    execution_profile_scope: OFFLINE_CONFORMANCE_ONLY_NEVER_DISPATCHED

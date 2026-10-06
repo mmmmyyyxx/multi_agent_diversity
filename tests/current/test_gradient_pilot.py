@@ -14,18 +14,22 @@ from multi_dataset_diverse_rl.search.history import HistoryState
 from multi_dataset_diverse_rl.search.schemas import Diagnosis,SearchContractError
 
 ROOT=Path(__file__).resolve().parents[2]
-BP='experiments/execution_bindings/math_v2_1_gradient_pattern_seed81_pilot_v1.json'
+BP='experiments/execution_bindings/math_v2_1_gradient_pattern_pilot_offline_profile_v2.json'
 def contract():return json.loads((ROOT/BP).read_bytes())
 
 def test_current_pilot_scope_and_scientific_identity_are_closed():
-    c=contract();p=json.loads((ROOT/c['pilot_parent_binding_path']).read_bytes())
+    c=contract();p=json.loads((ROOT/c['initial_condition_parent_binding_path']).read_bytes())
     assert not execution_binding(ROOT,c).blockers()
-    changed={k for k in c if c[k]!=p.get(k)}
-    assert changed=={'binding_path','execution_attempt_id','canary_attempt_id','cache_namespace',
-        'execution_phase','pilot_parent_binding_path','pilot_parent_binding_sha256',
-        'pilot_execution_authorization_path','pilot_execution_authorization_sha256',
-        'pilot_observation_policy','continuation_authorization_sha256','provider_bounds',
-        'initial_competence_binding','search_only_scope'}
+    changed={k for k in c.keys()|p.keys() if c.get(k)!=p.get(k)}
+    assert changed=={'binding_path','execution_attempt_id','cache_namespace',
+        'initial_team_version','initial_team_sha256','initial_team_artifact_sha256',
+        'initial_condition_parent_binding_path','initial_condition_parent_binding_sha256',
+        'initial_condition_amendment_path','initial_condition_amendment_sha256',
+        'continuation_authorization_sha256','post_search_validation_policy',
+        'pilot_execution_authorization_path','pilot_execution_authorization_sha256'}
+    assert c['provider_bounds']==p['provider_bounds']
+    assert execution_binding(ROOT,c).method('A4')==execution_binding(ROOT,p).method('A4')
+    assert 'pilot_execution_authorization_path' not in c
     b=execution_binding(ROOT,c)
     assert len(b.examples('optimize'))==60 and len(b.examples('shadow'))==40
     with pytest.raises(SearchContractError,match='HELDOUT'):b.examples('validation')

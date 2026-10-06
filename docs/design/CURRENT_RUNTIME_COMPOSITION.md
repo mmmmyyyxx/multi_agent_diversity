@@ -5,7 +5,9 @@ This is an engineering consolidation of the existing scientific treatment.
 `CURRENT_RUNTIME_COMPOSITION_V1` names the composition boundary; all scientific
 identity values and provider-visible prompt bytes were unchanged by that
 consolidation. Subsequent versioned amendments are defined in CURRENT_SPEC.md;
-the current offline binding is the Gradient profile V2.
+the current offline binding is the Gradient profile V3, with identical minimal
+V1_2 initialization. Its Pilot offline counterpart preserves the closed Pilot's
+method, phase and resource ceilings; neither profile has execution authority.
 
 New experiments use `scripts/run_experiment.py`,
 `benchmarks.math_domain_binding.execution_binding`, the flat
@@ -54,6 +56,17 @@ treatment definitions. Historical execution tooling uses `scripts/replay_experim
 and explicit legacy binding/governance imports. It retains separate frozen source,
 integrity and authorization requirements; parsing an old manifest cannot dispatch
 it through the current CLI.
+
+The initial-condition amendment archives exact V1_1 team bytes with a provenance
+and invariant index. Only the new amendment's explicit path/hash pair resolves
+historical initial-team receipt references to that archive. All other receipt
+dependencies retain exact path and hash verification. The effective current
+team is independently checked against V1_2 and its new artifact/team hashes.
+Old closed bindings remain unchanged and require their frozen historical source
+for replay. New scopes include initial-team identity and never reuse old Pilot
+authorization; fresh runs start with empty Memory and independent member lanes.
+Historical MATH compatibility tests use an explicit isolated V1_1 artifact
+workspace; this test fixture changes no legacy runtime or historical evidence.
 
 Current tests are selected by `tests/suite_classification.json`; new entrypoint
 and dependency tests live in `tests/current/`. Public compatibility tests remain

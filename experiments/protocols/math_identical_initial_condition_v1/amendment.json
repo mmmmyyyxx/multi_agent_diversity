@@ -1,0 +1,40 @@
+{
+  "schema_version": "math_identical_initial_condition_amendment_v1",
+  "code_change_authorized": true,
+  "scientific_method_changed": false,
+  "initial_condition_changed": true,
+  "real_api_authorized": false,
+  "canary_authorized": false,
+  "pilot_authorized": false,
+  "validation_authorized": false,
+  "test_authorized": false,
+  "push_authorized": false,
+  "provider_call_budget": 0,
+  "api_token_budget": 0,
+  "user_request_sha256": "ad1357ac80957bd93cadaa3b01c8fd77e56b063655b33db6919174a37f58333e",
+  "source_parent_commit": "c71c5aa3bbf9fe3981a439c8f968c67df8f936b0",
+  "parents": [
+    {
+      "binding_path": "experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v2.json",
+      "binding_sha256": "c98b242a8b4a011249dfde0ab45e6bc6ebb0b6a9b4b8f2655583ab68a4fe0b01"
+    },
+    {
+      "binding_path": "experiments/execution_bindings/math_v2_1_gradient_pattern_seed81_pilot_v1.json",
+      "binding_sha256": "3928e68b7958cbd0bf48fc010e02a6162793afbc1be39d1dbaee79a9423f3428"
+    }
+  ],
+  "initial_team_path": "experiments/initial_teams/math_generic_team_seed_v1_1.json",
+  "initial_team_version": "MATH_GENERIC_TEAM_SEED_V1_2",
+  "initial_team_artifact_sha256": "bdde9df785adaaebcdfcafcc6b5c39f461be072e0cd31b6026f8925460b69cf2",
+  "ordered_team_sha256": "d1a04dbdd540371638e8271cca90469f0a8cf4d42a5f944eeee8c6dfcfca9110",
+  "prompt_sha256": "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80",
+  "historical_team_artifact_sha256": "a0ce805d8e88499a829b9843f790c70ad14d99ab587a6e670e657e109695456a",
+  "archived_team_path": "experiments/initial_teams/archive/math_generic_team_seed_v1_1.json",
+  "archived_team_sha256": "a0ce805d8e88499a829b9843f790c70ad14d99ab587a6e670e657e109695456a",
+  "historical_unique_prompt_count": 5,
+  "current_unique_prompt_count": 1,
+  "execution_profile_scope": "OFFLINE_CONFORMANCE_ONLY_NEVER_DISPATCHED",
+  "future_execution_requires_new_frozen_single_use_authorization": true,
+  "archive_invariant_index_path": "experiments/initial_teams/archive/invariant_index.json",
+  "archive_invariant_index_sha256": "5c3d4e7d0a80899146cce6818c9fded3751864eef7d4aed6160a1b96d451a6c6"
+}

@@ -15,7 +15,7 @@ from multi_dataset_diverse_rl.search.current_policy import CURRENT_POLICY_BUNDLE
 from multi_dataset_diverse_rl.search.schemas import SearchContractError
 
 ROOT=Path(__file__).resolve().parents[2]
-PROFILE='experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v2.json'
+PROFILE='experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v3.json'
 
 
 def contract():return json.loads((ROOT/PROFILE).read_bytes())
@@ -122,7 +122,9 @@ def test_historical_binding_requires_explicit_replay_factory():
     c=json.loads((ROOT/'experiments/execution_bindings/math_v2_1_pattern_canary_v4.json').read_bytes())
     with pytest.raises(SearchContractError,match='CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN'):execution_binding(ROOT,c)
     from multi_dataset_diverse_rl.benchmarks.legacy.math_domain_binding import execution_binding as replay_binding
-    assert not replay_binding(ROOT,c).blockers()
+    # V1_1 replay needs its frozen source/artifact; the V1_2 worktree cannot
+    # silently execute it with a changed initial treatment.
+    assert replay_binding(ROOT,c).blockers()
 
 
 def test_amended_treatment_identity_and_n_plus_one_ceiling_are_frozen():
@@ -138,7 +140,9 @@ def test_flat_current_authorization_scope_matches_frozen_gradient_scope():
     from multi_dataset_diverse_rl.governance.unified_execution import execution_scope
     from multi_dataset_diverse_rl.governance.legacy.unified_execution import execution_scope as previous_scope
     manifest=dict(source_sha='0'*40,preregistration_identity='0'*64,execution_binding={'sha256':'0'*64})
-    assert execution_scope(manifest,contract())==previous_scope(manifest,contract())
+    historical=json.loads((ROOT/'experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v2.json').read_bytes())
+    assert execution_scope(manifest,historical)==previous_scope(manifest,historical)
+    assert execution_scope(manifest,contract())!=previous_scope(manifest,historical)
 
 
 @pytest.mark.parametrize('package',['openai','math-verify'])

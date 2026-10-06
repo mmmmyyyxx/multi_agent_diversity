@@ -19,6 +19,7 @@ from .access import DataPurpose
 from .protocols import protocol_input, PROTOCOLS
 from .math_v21_interface import MATHV21BenchmarkAdapter
 from .current_math_dependencies import validate_effective_math_dependencies
+from .initial_condition_contract import initial_condition_provenance
 
 
 class MATHGradientPatternBinding:
@@ -87,17 +88,17 @@ class MATHGradientPatternBinding:
             protocol=b.protocol),r['reference_final_answer']) for r in rows)
 
     def blockers(self):
-        c=self.contract
         try:
+            c,historical=initial_condition_provenance(self)
             CURRENT_POLICY_BUNDLE.validate_contract(c)
             for path,sha in [('gradient_parent_binding_path','gradient_parent_binding_sha256'),
                 ('pattern_amendment_authorization_path','pattern_amendment_authorization_sha256'),
                 ('gradient_prompt_path','gradient_prompt_sha256'),('pattern_prompt_path','pattern_prompt_sha256')]:
                 if file_hash(self.path(c[path]))!=c[sha]:return ('GRADIENT_PATTERN_DEPENDENCY_HASH_MISMATCH',)
             parent=json.loads(self.path(c['gradient_parent_binding_path']).read_bytes())
-            verify_receipt_dependencies(self.root,parent)
+            verify_receipt_dependencies(self.root,parent,historical_initial_team=historical)
             approval=json.loads(self.path(c['pattern_amendment_authorization_path']).read_bytes())
-            verify_receipt_dependencies(self.root,approval)
+            verify_receipt_dependencies(self.root,approval,historical_initial_team=historical)
             if (approval.get('schema_version')!='gradient_pattern_code_amendment_v1'
                     or approval.get('code_change_authorized') is not True
                     or any(approval.get(k) is not False for k in ('real_api_authorized','canary_authorized',
@@ -150,6 +151,6 @@ class MATHGradientPatternBinding:
             validate_effective_math_dependencies(self)
             return ()
         except SearchContractError as error:
-            if str(error)=='CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN' or str(error).startswith('CURRENT_DATA_'):return (str(error),)
+            if str(error)=='CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN' or str(error).startswith(('CURRENT_DATA_', 'CURRENT_INITIAL_CONDITION_')):return (str(error),)
             return ('GRADIENT_PATTERN_BINDING_INVALID',)
         except (KeyError,TypeError,ValueError,OSError):return ('GRADIENT_PATTERN_BINDING_INVALID',)

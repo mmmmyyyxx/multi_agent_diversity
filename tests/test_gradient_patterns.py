@@ -24,7 +24,7 @@ from multi_dataset_diverse_rl.search.rolling_risk_memory import StructuredRollin
 from multi_dataset_diverse_rl.search.private_action_memory import LIMITS
 
 ROOT=Path(__file__).resolve().parents[1]
-BP='experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v2.json'
+BP='experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v3.json'
 CHECK='Check constraints before transforming intermediate expressions.'
 VERIFY='Verify substitution against the original conditions.'
 
@@ -347,8 +347,10 @@ def test_offline_profile_is_not_ready_and_old_authorization_scope_is_incompatibl
     assert result['gate']=='HOLD' and 'PREEXECUTION_NOT_FROZEN' in result['blockers'] and result['provider_attempts']==0
     old=json.loads((ROOT/'experiments/execution_bindings/math_v2_1_pattern_canary_v4.json').read_bytes())
     from multi_dataset_diverse_rl.governance.legacy.unified_execution import preexecution_manifest as legacy_manifest, execution_scope as legacy_scope
-    old_manifest=legacy_manifest(ROOT,source_sha='0'*40,frozen=False,
-        binding_path=old['binding_path'],experiment_id='synthetic_old')
+    # The old binding is closed and cannot be materialized against V1_2 bytes.
+    # Scope construction is data-only and does not require running its preflight.
+    old_manifest=dict(source_sha='0'*40,preregistration_identity='0'*64,
+        execution_binding={'sha256':'0'*64})
     assert canonical_sha256(execution_scope(m,c))!=canonical_sha256(legacy_scope(old_manifest,old))
     assert m['authorization']['real_api_authorized'] is False
 
@@ -398,7 +400,7 @@ def test_invalid_json_is_one_successful_generation_then_terminal_not_retried():
 def test_binding_rejects_stale_single_call_ceilings(key):
     from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
     c=json.loads((ROOT/BP).read_bytes());c['provider_bounds'][key]=1 if key!='pattern_cluster_calls' else 2
-    assert execution_binding(ROOT,c).blockers()==('GRADIENT_PATTERN_FROZEN_CONTRACT_MISMATCH',)
+    assert execution_binding(ROOT,c).blockers()==('CURRENT_INITIAL_CONDITION_FROZEN_CONTRACT_MISMATCH',)
 
 
 def test_full_fake_production_opportunity_preserves_who_memory_layer2(tmp_path,monkeypatch):
@@ -419,7 +421,9 @@ def test_full_fake_production_opportunity_preserves_who_memory_layer2(tmp_path,m
             payload=req['messages'][1]['content'];solver_inputs.append(payload);prompt,problem=payload.split('\n\n',1)
             from multi_dataset_diverse_rl.benchmarks.math_v21_interface import MATH_SOLVER_INTERFACE_V4_USER_SUFFIX
             i=int(problem.removesuffix(MATH_SOLVER_INTERFACE_V4_USER_SUFFIX).rsplit(' ',1)[1].rstrip('.'))
-            correct=(prompts.index(prompt)>=3 or i>=7) if prompt in prompts else True
+            lane=next(row['member_realization_lane'] for row in reversed(ledger)
+                if row['kind']=='ATTEMPT' and row['role']=='solver')
+            correct=(lane>=3 or i>=7) if prompt in prompts else True
             text='FINAL_ANSWER: '+('1' if correct else '2')
         elif len(req['messages'])==2:
             p=json.loads(req['messages'][1]['content'])

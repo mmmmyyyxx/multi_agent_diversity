@@ -77,7 +77,7 @@ def test_unamended_science_and_domain_poison_rejected(field):
 @pytest.mark.parametrize('arm',['A1','A2','A3','A4'])
 @pytest.mark.parametrize('good,bad',CASES)
 def test_actual_gepa_structured_four_arm_e2e(tmp_path,arm,good,bad):
-    from test_math_preexecution import run_fake_arm
+    from tests.test_math_preexecution import run_fake_arm
     run_fake_arm(tmp_path,arm,adapter=MATHBenchmarkAdapterV2(),gold=good,wrong=bad)
 
 
@@ -143,6 +143,6 @@ def test_real_accounting_local_fault_bypasses_gepa_exception_handler(monkeypatch
 
 @pytest.mark.parametrize('phase',['canary','pilot'])
 def test_v2_binding_actual_frozen_fake_execution(tmp_path,monkeypatch,phase):
-    from test_math_token_accounting import test_actual_public_gepa_with_accounting_and_phase_persistence
+    from tests.test_math_token_accounting import test_actual_public_gepa_with_accounting_and_phase_persistence
     test_actual_public_gepa_with_accounting_and_phase_persistence(tmp_path,monkeypatch,phase,
         binding_path=f'experiments/execution_bindings/math_v2_answer_domain_{phase}_v1_4_final.json',adapter=MATHBenchmarkAdapterV2())

@@ -8,10 +8,29 @@ from .math_low_cost import read_subsets
 from .math_worker import PINS
 from ..search.schemas import SearchContractError
 from ..evaluation.mutable_prompt_contract import validate_mutable_decision_procedure
+from ..current_contract import MATH_INITIAL_TEAM_VERSION, MATH_INITIAL_PROMPT
 
 
 def require(condition, category):
     if not condition:raise SearchContractError('CURRENT_DATA_'+category)
+
+
+def validate_current_initial_team(team, contract):
+    require(team['team_version']==contract['initial_team_version']==MATH_INITIAL_TEAM_VERSION
+        and team['initial_team_data_dependency']=='NONE'
+        and len(team['members'])==5
+        and team['ordered_member_ids']==[m['member_id'] for m in team['members']]==list(range(5)),
+        'INITIAL_TEAM_CONTRACT_MISMATCH')
+    require(team['semantic_contract']==['solve the problem']
+        and len({m['prompt'] for m in team['members']})==1
+        and all(m['prompt']==MATH_INITIAL_PROMPT for m in team['members']),
+        'INITIAL_TEAM_SYMMETRY_MISMATCH')
+    for member in team['members']:
+        validate_mutable_decision_procedure(member['prompt'])
+        require(hashlib.sha256(member['prompt'].encode('utf-8')).hexdigest()==member['prompt_sha256'],
+            'INITIAL_PROMPT_HASH_MISMATCH')
+    require(digest([m['prompt_sha256'] for m in team['members']])==contract['initial_team_sha256']
+        and team['ordered_team_sha256']==contract['initial_team_sha256'],'INITIAL_TEAM_HASH_MISMATCH')
 
 
 def validate_effective_math_dependencies(binding):
@@ -49,15 +68,9 @@ def validate_effective_math_dependencies(binding):
     fields=('stable_example_id','source_split','source_index','content_sha256','input_sha256','project_split')
     require(all(all(r[k]==original[r['stable_example_id']][k] for k in fields) for r in subsets['metadata_universe']),
         'LOW_COST_SUPERSET_MEMBERSHIP_MISMATCH')
-    team=json.loads(binding.path(c['initial_team_path']).read_bytes())
-    require(team['team_version']==c['initial_team_version'] and team['initial_team_data_dependency']=='NONE'
-        and [m['member_id'] for m in team['members']]==list(range(5)),'INITIAL_TEAM_CONTRACT_MISMATCH')
-    for member in team['members']:
-        validate_mutable_decision_procedure(member['prompt'])
-        require(hashlib.sha256(member['prompt'].encode()).hexdigest()==member['prompt_sha256'],'INITIAL_PROMPT_HASH_MISMATCH')
-    require(len({m['prompt'] for m in team['members']})==5
-        and digest([m['prompt_sha256'] for m in team['members']])==c['initial_team_sha256']
-        and team['ordered_team_sha256']==c['initial_team_sha256'],'INITIAL_TEAM_HASH_MISMATCH')
+    team_path=binding.path(c['initial_team_path'])
+    require(file_hash(team_path)==c['initial_team_artifact_sha256'],'INITIAL_TEAM_ARTIFACT_HASH_MISMATCH')
+    validate_current_initial_team(json.loads(team_path.read_bytes()),c)
     metadata=json.loads(binding.path(c['validation_accounting_metadata_path']).read_bytes())
     rows=subsets['memberships']['pilot_validation']
     require([(r['example_id'],r['input_sha256']) for r in metadata['examples']]==[(r['stable_example_id'],r['input_sha256']) for r in rows]

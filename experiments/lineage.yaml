@@ -839,6 +839,9 @@ nodes:
   kind: REAL_CANARY
 - experiment_id: math_v2_1_gradient_pattern_seed81_pilot_v1
   kind: PILOT
+- experiment_id: math_identical_initial_condition_v1
+  kind: ZERO_API_AUDIT
+  era: BENCHMARK_GENERALIZATION
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1607,4 +1610,9 @@ edges:
   evidence: experiments/protocols/math_v2_1_gradient_pattern_seed81_pilot_v1/user_scope.json
   scope: Unchanged current method; fresh Optimize60 Shadow40 search-only scope and full descriptive training-process
     audit.
+- from: math_v2_1_gradient_pattern_seed81_pilot_v1
+  to: math_identical_initial_condition_v1
+  relation: derived_from
+  evidence: reports/math_identical_initial_condition_v1_20261006/README.md
+  scope: Initial-condition correction only; frozen historical evidence and method remain unchanged.
 current_frontier: experiments/current_frontier.yaml

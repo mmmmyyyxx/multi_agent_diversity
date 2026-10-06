@@ -1,5 +1,5 @@
 {
-  "team_version": "MATH_GENERIC_TEAM_SEED_V1_1",
+  "team_version": "MATH_GENERIC_TEAM_SEED_V1_2",
   "ordered_member_ids": [
     0,
     1,
@@ -8,39 +8,36 @@
     4
   ],
   "semantic_contract": [
-    "independent solution",
-    "careful reasoning",
-    "verify reasoning and result",
-    "robust general mathematical reasoning"
+    "solve the problem"
   ],
-  "design_rationale": "Generic equivalent wording variants designed from the public task contract and static guard alone. No subject experts, example content, output-interface directions or data-derived hints.",
+  "design_rationale": "All five members start from exactly the same minimal mutable prompt. No role, reasoning strategy, verification behavior, specialization, diversity instruction, example content or data-derived hint is predefined. Member identities and model realizations remain independent.",
   "initial_team_data_dependency": "NONE",
   "members": [
     {
       "member_id": 0,
-      "prompt": "Solve the mathematical problem independently. Reason carefully using general mathematical principles, and check both the reasoning and the result before finalizing.",
-      "prompt_sha256": "57e468e68d9ab974a0018353e4bc0a15ca0e1e002c8dbd6676802d89839bc674"
+      "prompt": "Solve the problem.",
+      "prompt_sha256": "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80"
     },
     {
       "member_id": 1,
-      "prompt": "Work through the mathematical problem on your own. Use sound general mathematical reasoning with care, then verify your reasoning and result before you finish.",
-      "prompt_sha256": "c6e4039d562e0f1cf9e7f4ab4a0245f91c605a566947bcc31b6f1db90d1e5d23"
+      "prompt": "Solve the problem.",
+      "prompt_sha256": "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80"
     },
     {
       "member_id": 2,
-      "prompt": "Find an independent solution to the mathematical problem. Think carefully with robust mathematical reasoning, and review the reasoning and the result before concluding.",
-      "prompt_sha256": "37d8569a6e38128535bae504b4e7a4acb165d5bb8a4528a5e1e86c51a51a94d5"
+      "prompt": "Solve the problem.",
+      "prompt_sha256": "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80"
     },
     {
       "member_id": 3,
-      "prompt": "Address the mathematical problem independently. Apply reliable general mathematical reasoning, take care with every inference, and verify the reasoning and result before completing your work.",
-      "prompt_sha256": "ade4c363f59d20e8fc2e6d743c47d4e7e8d059ce9cb8fa0c309f61bd50c9e112"
+      "prompt": "Solve the problem.",
+      "prompt_sha256": "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80"
     },
     {
       "member_id": 4,
-      "prompt": "Reason independently to solve the mathematical problem. Favor robust general mathematical reasoning, proceed carefully, and check the reasoning and resulting conclusion before finishing.",
-      "prompt_sha256": "6f9ee08d5b0055d8d5986c2cd55aea000074e11df4aee614241ca6b4e59b3098"
+      "prompt": "Solve the problem.",
+      "prompt_sha256": "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80"
     }
   ],
-  "ordered_team_sha256": "4ca685adff5ca8a97e53b0aa0f5715783c7c6937433bd5bbc1308cbad9e97200"
+  "ordered_team_sha256": "d1a04dbdd540371638e8271cca90469f0a8cf4d42a5f944eeee8c6dfcfca9110"
 }

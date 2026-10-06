@@ -325,22 +325,22 @@ def test_new_identity_and_cli_are_closed_until_new_freeze():
 
 
 @pytest.mark.parametrize("arm", ["A1", "A2", "A3", "A4"])
-def test_current_binary_production_composition_actual_pinned_gepa_four_arms(tmp_path, arm):
+def test_current_binary_production_composition_actual_pinned_gepa_four_arms(tmp_path, arm,historical_math_workspace):
     import os
-    import test_math_preexecution as fixtures
+    from tests import test_math_preexecution as fixtures
     from multi_dataset_diverse_rl.search.binary_composition import build_binary_orchestrator
     from multi_dataset_diverse_rl.search.gepa_v2 import GEPATeamExposureOptimizer
     from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker,BenchmarkSolver,ReflectionProvider
     from multi_dataset_diverse_rl.search.legacy.pattern_provider import PatternProvider
     c = fixtures.contract()
-    binding = fixtures.MATHExecutionBinding(ROOT, c)
+    binding = fixtures.MATHExecutionBinding(historical_math_workspace, c)
     old = binding.method(arm)
     method = replace(old, method=versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION,
         evidence_policy=versions.UNIFIED_FOCUSED_EVIDENCE_VERSION,
         transition_policy=versions.UNIFIED_COMPETENCE_TRANSITION_VERSION,
         pattern_policy=versions.UNIFIED_FOCUSED_PATTERN_VERSION if c["arms"][arm][0] else versions.UNIFIED_NULL_PATTERN_VERSION,
         memory_policy=versions.UNIFIED_EXPERIENCE_MEMORY_VERSION if c["arms"][arm][1] else versions.UNIFIED_NULL_MEMORY_VERSION)
-    prompts = tuple(m["prompt"] for m in json.loads((ROOT / c["initial_team_path"]).read_bytes())["members"])
+    prompts = tuple(m["prompt"] for m in json.loads((historical_math_workspace / c["initial_team_path"]).read_bytes())["members"])
     adapter = fixtures.MATHBenchmarkAdapter()
     def examples(prefix, count):
         return tuple(fixtures.CorrectnessExample(fixtures.BenchmarkInput(prefix + str(i),

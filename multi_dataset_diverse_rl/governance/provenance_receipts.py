@@ -5,7 +5,7 @@ from pathlib import Path
 from ..search.schemas import SearchContractError
 
 
-def verify_receipt_dependencies(root, receipt, seen=None):
+def verify_receipt_dependencies(root, receipt, seen=None, *, historical_initial_team=None):
     root=Path(root).resolve();seen=set() if seen is None else seen
     def visit(value):
         if isinstance(value,list):
@@ -16,6 +16,11 @@ def verify_receipt_dependencies(root, receipt, seen=None):
                 digest=value.get('initial_team_artifact_sha256' if key=='initial_team_path' else key[:-5]+'_sha256')
                 if digest is None:continue
                 path=(root/relative).resolve()
+                # Only an explicit new initial-condition receipt can substitute
+                # the old team bytes. Other paths and hashes remain exact.
+                if (historical_initial_team is not None and key=='initial_team_path'
+                        and (relative,digest)==historical_initial_team[:2]):
+                    path=(root/historical_initial_team[2]).resolve()
                 if not path.is_relative_to(root) or not path.is_file():
                     raise SearchContractError('CURRENT_PROVENANCE_RECEIPT_INVALID')
                 actual=hashlib.sha256(path.read_bytes()).hexdigest()
