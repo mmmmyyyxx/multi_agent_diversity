@@ -1,0 +1,19 @@
+{
+  "module": "tests/test_rolling_risk_memory.py",
+  "passed": 41,
+  "failed": 0,
+  "xml_sha256": "0f824960368fed0e52412b87e462f6abf8495507de75de930badf8bc48305b03",
+  "corrected_failures": [
+    {
+      "module": "tests.test_rolling_risk_memory",
+      "test": "test_opt_in_v4_full_fake_production_graph"
+    },
+    {
+      "module": "tests.test_rolling_risk_memory",
+      "test": "test_production_factory_opt_in_identity_and_old_binding_immutable"
+    }
+  ],
+  "initial_failure_category": "HISTORICAL_V1_1_FIXTURE_READ_UPDATED_LIVE_INITIAL_ARTIFACT",
+  "resolution": "EXPLICIT_COPIED_HISTORICAL_INITIAL_WORKSPACE",
+  "production_code_changed": false
+}

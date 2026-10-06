@@ -1,0 +1,9 @@
+{
+  "real_canary": "NO",
+  "real_pilot": "NO",
+  "real_validation": "NO",
+  "real_test": "NO",
+  "heldout_search_projection": "NONE",
+  "test_access": "SEALED",
+  "profile_scope": "OFFLINE_CONFORMANCE_ONLY_NEVER_DISPATCHED"
+}

@@ -7931,9 +7931,9 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_gradient_pattern_seed81_pilot_v1
-  status: IN_PROGRESS
-  scientific_status: ZERO_API_INITIAL_CONDITION_CORRECTION
-  implementation_commit: null
+  status: COMPLETED
+  scientific_status: VERIFIED_ZERO_API_INITIAL_CONDITION_CORRECTION
+  implementation_commit: 52ada98b4735cfa7713de2c2f5437a94ce0bef0b
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_identical_initial_condition_v1.yaml

@@ -1,0 +1,18 @@
+{
+  "source_parent_commit": "c71c5aa3bbf9fe3981a439c8f968c67df8f936b0",
+  "runtime_source_commit": "52ada98b4735cfa7713de2c2f5437a94ce0bef0b",
+  "user_request_sha256": "ad1357ac80957bd93cadaa3b01c8fd77e56b063655b33db6919174a37f58333e",
+  "amendment_sha256": "b93272b9ffa4cbd9cd033408859a7a8968ea4e9cfa66b04cea1de4d9713aa799",
+  "old_initial_team_artifact_sha256": "a0ce805d8e88499a829b9843f790c70ad14d99ab587a6e670e657e109695456a",
+  "new_initial_team_artifact_sha256": "bdde9df785adaaebcdfcafcc6b5c39f461be072e0cd31b6026f8925460b69cf2",
+  "initial_team_archive_path": "experiments/initial_teams/archive/math_generic_team_seed_v1_1.json",
+  "member_request_identity_sha256": [
+    "daab3fada9e9645d59f85069604ac03433051685c439919c5c0458243f22d9ed",
+    "b446228c3ca68cd0e958aeda7a669bdf98011d4fac5c37e9c2b324905e4170e4",
+    "e2fae263d59ad6fa1d52524b5b285ba8b4531164e9e151ecdac775bd2d862a5f",
+    "4e47e88a074ea1b8f789a7497497749eb9f1ae1fb69cc75a8f57d3dfe646012a",
+    "420c862ec252808f4d3ed9e0ca363e27f7ec7893d4306ff00a80c36d9341ca16"
+  ],
+  "full_current_evidence_sha256": "e58d04943567604aa83bf77b80cf395e33c5f0c851215078c5fd950d72d14664",
+  "full_current_log_sha256": "8fb73269e9068886fb39960c5b4ce0403c3885b2b783a9a12f3a46d4e966ec3a"
+}

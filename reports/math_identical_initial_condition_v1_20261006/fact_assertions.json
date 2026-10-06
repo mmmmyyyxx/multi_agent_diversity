@@ -1,0 +1,11 @@
+{
+  "initial_prompts_identical": true,
+  "unique_initial_prompt_count_is_one": true,
+  "independent_member_realization_lanes": true,
+  "exact_cache_reuse_preserved": true,
+  "cross_member_and_cross_attempt_cache_isolation": true,
+  "scientific_method_unchanged": true,
+  "historical_evidence_unchanged": true,
+  "real_provider_calls_zero": true,
+  "all_real_execution_unauthorized": true
+}

@@ -1,0 +1,8 @@
+{
+  "classifier": "VERIFIED_INITIAL_SYMMETRY_INDEPENDENT_LANES_METHOD_UNCHANGED",
+  "evidence_type": "ZERO_API_ENGINEERING_CONFORMANCE",
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "historical_treatment": "FIVE_SIMILAR_TEXTUALLY_DIFFERENT_PROMPTS",
+  "new_treatment": "FIVE_BYTE_IDENTICAL_MINIMAL_PROMPTS",
+  "same_initialization_treatment": false
+}

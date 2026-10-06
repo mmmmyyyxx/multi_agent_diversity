@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "findings": [],
+  "scope": "ONLY_NEW_TASK_REPORT",
+  "public_initial_prompt": "USER_EXPLICITLY_REQUESTED_GENERIC_INITIAL_CONFIGURATION",
+  "private_questions_answers_responses_endpoints_host_paths": "EXCLUDED"
+}

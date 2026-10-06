@@ -1,0 +1,31 @@
+{
+  "schema_version": "identical_initial_zero_api_engineering_audit_v1",
+  "historical_tracked_files_checked": 4256,
+  "historical_tracked_files_changed": [],
+  "immutable_runtime_files_checked": 318,
+  "immutable_runtime_files_changed": [],
+  "mutable_generated_report_indexes": [
+    "reports/INDEX.md",
+    "reports/index.json"
+  ],
+  "legacy_dependency_count": 0,
+  "compileall": "PASS",
+  "diff_check": "PASS",
+  "bindings": [
+    {
+      "path": "experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v3.json",
+      "sha256": "13bb276ad617f7f5c9c797bdedc646521f3306eb8af757715931017e2a09413d",
+      "method_identity": "b03daebfc07fce4d3b06baa00fc5aac21425e13a825de6c2e929afa23c7563e3",
+      "parent_method_identity": "b03daebfc07fce4d3b06baa00fc5aac21425e13a825de6c2e929afa23c7563e3",
+      "execution_closure_sha256": "ab197b74ed80977b8434a9c3b1427b26f6b5517ccf60e184b5c50baa23f04332"
+    },
+    {
+      "path": "experiments/execution_bindings/math_v2_1_gradient_pattern_pilot_offline_profile_v2.json",
+      "sha256": "fd27b2261c25069b760d54a75b3e0eaa91b75f460b92026264498e5834fe7e60",
+      "method_identity": "e967b7ce0cb1e5ac6d0338b9c65c01a6822ff218fcb5bcaff5e05ae1043aeae4",
+      "parent_method_identity": "e967b7ce0cb1e5ac6d0338b9c65c01a6822ff218fcb5bcaff5e05ae1043aeae4",
+      "execution_closure_sha256": "ed334800b857fb8b702e9ee9ed7a1022c43d507d47b503817b5b4eefbe9d0b32"
+    }
+  ],
+  "real_provider_calls": 0
+}

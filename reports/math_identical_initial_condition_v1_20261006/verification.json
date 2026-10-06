@@ -1,0 +1,33 @@
+{
+  "selected": 1316,
+  "passed": 1314,
+  "skipped": 2,
+  "failed": 0,
+  "errors": 0,
+  "seconds": 1167.423,
+  "suite": "current",
+  "source_commit": "52ada98b4735cfa7713de2c2f5437a94ce0bef0b",
+  "network_attempt_count": 0,
+  "private_artifact_and_full_historical_replay": "NOT_EXECUTED_NOT_CLAIMED",
+  "accounting": "COMPLETE_CURRENT_SUITE_PLUS_AFFECTED_MODULE_RECHECK",
+  "initial_full_run": {
+    "passed": 1312,
+    "failed": 2,
+    "skipped": 2,
+    "source_commit": "52ada98b4735cfa7713de2c2f5437a94ce0bef0b"
+  },
+  "affected_module_recheck": {
+    "module": "tests/test_rolling_risk_memory.py",
+    "passed": 41,
+    "failed": 0,
+    "corrected_fixture_failures": 2
+  },
+  "production_source_unchanged_during_fixture_repair": true,
+  "final_governance_recheck": {
+    "passed": 145,
+    "failed": 0,
+    "scope": "CURRENT_INITIAL_RUNTIME_REGISTRY_MANIFEST_AND_GOVERNANCE",
+    "xml_sha256": "0ee5c9cfe0808516e5bee747b1092a69981694a21eb98a6d55a084cb69081185",
+    "real_provider_calls": 0
+  }
+}

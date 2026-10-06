@@ -332,11 +332,11 @@ def test_new_policy_requires_explicit_identity_and_frozen_limits():
     with pytest.raises(SearchContractError,match='LIMITS'):StructuredRollingRiskMemoryV4(**{**LIMITS,'shared_storage_limit':49},risk_policy=POLICY)
 
 
-def test_production_factory_opt_in_identity_and_old_binding_immutable(tmp_path):
+def test_production_factory_opt_in_identity_and_old_binding_immutable(tmp_path,historical_math_workspace):
     from multi_dataset_diverse_rl.benchmarks.math_memory_binding import MATHMemoryBinding
     from multi_dataset_diverse_rl.search.binary_composition import build_binary_orchestrator
     from multi_dataset_diverse_rl.search.layer1_memory import MemoryConditionedOptimizer
-    root=Path(__file__).resolve().parents[1]
+    root=historical_math_workspace
     binding=MATHMemoryBinding(root,json.loads((root/'experiments/execution_bindings/math_v2_1_memory_canary_v1.json').read_bytes()))
     assert not binding.blockers() and binding.method('A3').memory_policy==versions.STRUCTURED_ACTION_MEMORY_VERSION
     method=replace(binding.method('A3'),memory_policy=versions.STRUCTURED_ROLLING_RISK_MEMORY_VERSION,
@@ -350,7 +350,7 @@ def test_production_factory_opt_in_identity_and_old_binding_immutable(tmp_path):
             prompts=(),solver=None,optimizer=optimizer,method=bad,seed=81,shadow_loader=lambda:(),shadow_count=40,runtime_readiness=lambda:())
 
 
-def test_opt_in_v4_full_fake_production_graph(tmp_path,monkeypatch):
+def test_opt_in_v4_full_fake_production_graph(tmp_path,monkeypatch,historical_math_workspace):
     # Synthetic in-memory composition, never a real binding or authorization.
 
     from pathlib import Path
@@ -361,7 +361,7 @@ def test_opt_in_v4_full_fake_production_graph(tmp_path,monkeypatch):
     from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker,BenchmarkSolver,ReflectionProvider
     from multi_dataset_diverse_rl.governance.token_accounting import serialized_request
     from multi_dataset_diverse_rl.governance.legacy.unified_execution import preexecution_manifest,bound_preflight,execution_scope
-    root=Path(__file__).resolve().parents[1]
+    root=historical_math_workspace
     binding_path='experiments/execution_bindings/math_v2_1_memory_canary_v1.json'
     c=json.loads((root/binding_path).read_bytes());binding=MATHMemoryBinding(root,c)
     assert not binding.blockers()

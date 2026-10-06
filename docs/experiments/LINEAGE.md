@@ -108,7 +108,7 @@ last_runtime_consolidation_milestone: math_v2_1_current_runtime_consolidation_v1
 runtime_consolidation_status: COMPLETED_ZERO_API_EQUIVALENCE
 current_execution_eligibility: GRADIENT_PATTERN_V4_ROLLING_MEMORY_FIXED_BUNDLE_ONLY
 runtime_consolidation_report: reports/math_v2_1_current_runtime_consolidation_v1_20261005
-current_runtime_source: 1298d5497706d8f9c05adba66b0f5e57f4443567
+current_runtime_source: 52ada98b4735cfa7713de2c2f5437a94ce0bef0b
 pending_user_task_scope: null
 pending_user_task_sha256: null
 pending_operational_attempt_limit: 0
@@ -144,11 +144,12 @@ current_initial_team_version: MATH_GENERIC_TEAM_SEED_V1_2
 current_initial_team_path: experiments/initial_teams/math_generic_team_seed_v1_1.json
 current_initial_team_sha256: d1a04dbdd540371638e8271cca90469f0a8cf4d42a5f944eeee8c6dfcfca9110
 current_initial_condition_milestone: math_identical_initial_condition_v1
-current_initial_condition_status: ZERO_API_VERIFICATION_IN_PROGRESS
+current_initial_condition_status: VERIFIED_ZERO_API_INITIAL_CONDITION_CORRECTION
 current_initial_condition_report: reports/math_identical_initial_condition_v1_20261006
 current_initial_condition_execution_authorized: false
 current_offline_execution_profile: experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v3.json
 current_pilot_offline_execution_profile: experiments/execution_bindings/math_v2_1_gradient_pattern_pilot_offline_profile_v2.json
+current_initial_condition_runtime_source: 52ada98b4735cfa7713de2c2f5437a94ce0bef0b
 ```
 
 ## Experiment and engineering DAG
@@ -254,7 +255,7 @@ flowchart TD
     n272["math_v2_1_gradient_pattern_seed81_canary_v1<br/>REAL_CANARY<br/>HOLD"]
     n273["math_v2_1_gradient_pattern_seed81_canary_v2<br/>REAL_CANARY<br/>HOLD"]
     n274["math_v2_1_gradient_pattern_seed81_canary_v3<br/>REAL_CANARY<br/>COMPLETED"]
-    n276["math_identical_initial_condition_v1<br/>ZERO_API_AUDIT<br/>IN_PROGRESS"]
+    n276["math_identical_initial_condition_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]

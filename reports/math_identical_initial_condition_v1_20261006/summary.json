@@ -1,0 +1,66 @@
+{
+  "OLD_TEAM_VERSION": "MATH_GENERIC_TEAM_SEED_V1_1",
+  "NEW_TEAM_VERSION": "MATH_GENERIC_TEAM_SEED_V1_2",
+  "OLD_UNIQUE_PROMPT_COUNT": 5,
+  "NEW_UNIQUE_PROMPT_COUNT": 1,
+  "INITIAL_PROMPT": "Solve the problem.",
+  "PROMPT_SHA256": "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80",
+  "ORDERED_TEAM_SHA256": "d1a04dbdd540371638e8271cca90469f0a8cf4d42a5f944eeee8c6dfcfca9110",
+  "INITIAL_TEAM_ARTIFACT_SHA256": "bdde9df785adaaebcdfcafcc6b5c39f461be072e0cd31b6026f8925460b69cf2",
+  "MEMBER_IDS": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "MEMBER_REALIZATION_IDENTITIES_DISTINCT": "YES",
+  "SCIENTIFIC_METHOD_CHANGED": "NO",
+  "INITIAL_CONDITION_CHANGED": "YES",
+  "REAL_PROVIDER_CALLS": 0,
+  "CANARY": "NO",
+  "PILOT": "NO",
+  "VALIDATION": "NO",
+  "TEST": "NO",
+  "initial_prompts_identical": true,
+  "unique_initial_prompt_count": 1,
+  "independent_member_realization_lanes": true,
+  "exact_same_member_cache_reuse": "PASS_IN_MEMORY_AND_DURABLE",
+  "cross_member_cache_reuse": "FORBIDDEN_VERIFIED",
+  "cross_attempt_cache_reuse": "FORBIDDEN_VERIFIED",
+  "initial_memory_entries": 0,
+  "future_execution": "NEW_FROZEN_SINGLE_USE_AUTHORIZATION_REQUIRED",
+  "verification": {
+    "selected": 1316,
+    "passed": 1314,
+    "skipped": 2,
+    "failed": 0,
+    "errors": 0,
+    "seconds": 1167.423,
+    "suite": "current",
+    "source_commit": "52ada98b4735cfa7713de2c2f5437a94ce0bef0b",
+    "network_attempt_count": 0,
+    "private_artifact_and_full_historical_replay": "NOT_EXECUTED_NOT_CLAIMED",
+    "accounting": "COMPLETE_CURRENT_SUITE_PLUS_AFFECTED_MODULE_RECHECK",
+    "initial_full_run": {
+      "passed": 1312,
+      "failed": 2,
+      "skipped": 2,
+      "source_commit": "52ada98b4735cfa7713de2c2f5437a94ce0bef0b"
+    },
+    "affected_module_recheck": {
+      "module": "tests/test_rolling_risk_memory.py",
+      "passed": 41,
+      "failed": 0,
+      "corrected_fixture_failures": 2
+    },
+    "production_source_unchanged_during_fixture_repair": true,
+    "final_governance_recheck": {
+      "passed": 145,
+      "failed": 0,
+      "scope": "CURRENT_INITIAL_RUNTIME_REGISTRY_MANIFEST_AND_GOVERNANCE",
+      "xml_sha256": "0ee5c9cfe0808516e5bee747b1092a69981694a21eb98a6d55a084cb69081185",
+      "real_provider_calls": 0
+    }
+  }
+}
