@@ -1,0 +1,43 @@
+{
+  "activation_pending": true,
+  "arm": "A4",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt3",
+  "automatic_scientific_reruns": 0,
+  "binding_sha256": "d8ff9f5ea34f759775a321903b400e3c8264327426fce1d415721a124cca2506",
+  "combined_successful_provider_call_ceiling": 1652,
+  "combined_transport_attempt_ceiling": 34672,
+  "cumulative_token_ceiling": 40000000,
+  "diagnostic_identity_implementation_repair_only": true,
+  "diagnostic_physical_call_ceiling": 1,
+  "frozen_scope_sha256": "69ad2103ef0e4f82f890113682ca50c0fe16935a6e58465a4c4a176587d3327e",
+  "hard_gradient_chars": 400,
+  "method_and_prompts_unchanged": true,
+  "models": {
+    "optimizer_reflection": "qwen3.7-flash",
+    "pattern": "qwen3.7-flash",
+    "solver": "qwen3-8b",
+    "solver_thinking": false
+  },
+  "phase": "one_complete_production_opportunity_then_one_isolated_matched_raw_diagnostic",
+  "pilot_authorized": false,
+  "push_authorized": false,
+  "regeneration": false,
+  "remaining_tokens": 38394522,
+  "roles": [
+    "solver",
+    "reflection",
+    "pattern_gradient",
+    "pattern_cluster"
+  ],
+  "schema_version": "method_preserving_delegated_exact_canary_scope_v1",
+  "scope_reuse": false,
+  "seed": 81,
+  "single_use": true,
+  "source_sha": "f2d43c6880c39b872e8a7e5829fd913f85edffe6",
+  "startup_identity_sha256": "b7a4cbccf490a2665277e7fe584f715c04176e5813a4bd0823a446116f455420",
+  "successful_provider_call_ceiling": 1651,
+  "test_authorized": false,
+  "transport_attempt_ceiling": 34671,
+  "user_delegation_sha256": "9bd61de2d6a1d23e4d2a49c8660dfbcafed5419a68572837ebf4e04e9ad9cf97",
+  "validation_authorized": false
+}

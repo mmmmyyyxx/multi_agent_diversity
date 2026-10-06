@@ -1,0 +1,42 @@
+{
+  "files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9"
+    },
+    {
+      "path": "final_status.json",
+      "sha256": "163cc49033734e3a4455e5bcebbccb56e92bb211c1ea3afa97a217abf5ee5eb7"
+    },
+    {
+      "path": "implementation_repair_audit.json",
+      "sha256": "f38fd6bf6a7726a3425e4072b2eae5be0fd259a0ebb2e521a53954ff7e58a7e2"
+    },
+    {
+      "path": "preexecution/delegated_authorization_scope.json",
+      "sha256": "ecb12972fc27fc2169df2c49c9d1cf1d3a2ff8099009c49dd92af86901f5c20c"
+    },
+    {
+      "path": "preexecution/frozen_scope.json",
+      "sha256": "69ad2103ef0e4f82f890113682ca50c0fe16935a6e58465a4c4a176587d3327e"
+    },
+    {
+      "path": "preexecution/owner_handoff.json",
+      "sha256": "678197cbba3d0580d1526c00fb1c6c10fcc8ff0b7f2b99b4a452997335ae46b7"
+    },
+    {
+      "path": "README.md",
+      "sha256": "693b2d6bb648b5f5429127f4d68152571f2840e18921b3f1fce1c6a00bd83d26"
+    },
+    {
+      "path": "verification.json",
+      "sha256": "d3a42cb9eec3ccc42dd1a221d0ab54d8e3ccb5be5207ab64d6c7caff500c6864"
+    },
+    {
+      "path": "zero_api_preflight.json",
+      "sha256": "92b99de428037bf4de896089085afc4c2c513aee2026700dca58bc4106bfea03"
+    }
+  ],
+  "schema_version": "sanitized_report_sha256_v1",
+  "scope": "IMMUTABLE_ZERO_API_PREEXECUTION_SNAPSHOT"
+}

@@ -1,0 +1,26 @@
+{
+  "compileall": "PASS",
+  "current_skips": "HoVer and PUPA real dataset assets unavailable",
+  "development_focused_initial": "Wrong optional test filename; collection aborted before tests; corrected selection passed 156 tests.",
+  "diagnostic_tests_passed": 12,
+  "focused_tests_passed": 156,
+  "full_current_junit_sha256": "3bf4691b017d0d58ec50f9d3f46abc1e87951eda477dca3ede9f24514d3e18f6",
+  "full_current_suite": {
+    "errors": 0,
+    "failures": 0,
+    "passed": 1268,
+    "skipped": 2,
+    "tests": 1270
+  },
+  "full_historical_replay_pass": false,
+  "governance": "PASS",
+  "historical_files_preserved": 4131,
+  "historical_private_tests": "NOT_RUN_CURRENT_SCOPE_EXCLUDES_64_PRIVATE_CASES",
+  "historical_public_suite": "NOT_RUN_NOT_CLAIMED_PASS",
+  "method_and_prompt_unchanged": true,
+  "network_attempt_count": 0,
+  "real_api_calls": 0,
+  "sanitization": "PASS",
+  "source_sha": "f2d43c6880c39b872e8a7e5829fd913f85edffe6",
+  "status": "PASS"
+}

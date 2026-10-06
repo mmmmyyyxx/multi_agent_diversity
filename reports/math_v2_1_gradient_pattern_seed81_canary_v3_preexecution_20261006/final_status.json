@@ -1,0 +1,13 @@
+{
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt3",
+  "execution_status": "NOT_EXECUTED",
+  "method_and_prompt_unchanged": true,
+  "pilot_authorized": false,
+  "push_authorized": false,
+  "real_api_calls": 0,
+  "source_sha": "f2d43c6880c39b872e8a7e5829fd913f85edffe6",
+  "status": "FULL_CURRENT_PASS_FRESH_CANARY_FROZEN_DELEGATED_SCOPE_ACTIVATION_PENDING",
+  "test_authorized": false,
+  "validation_authorized": false,
+  "validation_continues": true
+}
