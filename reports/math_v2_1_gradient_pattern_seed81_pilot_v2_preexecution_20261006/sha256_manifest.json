@@ -1,0 +1,49 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "preexecution/authorization_request.json",
+      "sha256": "37038dd52d4579e2e3f3ce25e0573a25424698dfae084a882e678391613c37e4"
+    },
+    {
+      "file": "preexecution/execution_identity.json",
+      "sha256": "8b903f5c33873ea50373d3b15a21af0b559c44199be0e3c4e2be23ebd2a31e25"
+    },
+    {
+      "file": "preexecution/frozen_scope.json",
+      "sha256": "257bb634be01b5a62682ca13c289496ccc267b3bfedc7fb8bc19d944311fc829"
+    },
+    {
+      "file": "preexecution/handoff.json",
+      "sha256": "5fa3b48d480e9f74ef6ad9f725821dd71bba265bb9409bd81184db55bca0e9e9"
+    },
+    {
+      "file": "README.md",
+      "sha256": "e9ae45513f5de7e9514be182696583f54a8cf06e33dfe6bf7bf234237a618016"
+    },
+    {
+      "file": "zero_api/closed_scope_fixture_repair.json",
+      "sha256": "5d4ba034230250bb3335cb5a56b802c6ebc22acd8c51365b5c6931d30f09dc44"
+    },
+    {
+      "file": "zero_api/full_current_suite.json",
+      "sha256": "a58e94507563ff5a270962664683d0e870dca35ea788abb752e44f69981e81ef"
+    },
+    {
+      "file": "zero_api/historical_gradient_recheck.json",
+      "sha256": "49e041bdfe41510d12b6c2c549a5b1e785245d6fa9f734ae5f7195287c5fbde3"
+    },
+    {
+      "file": "zero_api/real_source_negative_controls.json",
+      "sha256": "ce3703b38fbc8c55396fdf941872516089206d908a4609dfbb96db3d8aa7a976"
+    },
+    {
+      "file": "zero_api/verification.json",
+      "sha256": "37647c29bf41f34aa78d7c1ce7ff312c9996c324a1cdec26e671e60f88774f5f"
+    },
+    {
+      "file": "zero_api/written_numeric_reference_checks.json",
+      "sha256": "64b7f25db371dd325fc5d0e493470c99592ee3bc7f6928eddf30c0a3943c0101"
+    }
+  ]
+}

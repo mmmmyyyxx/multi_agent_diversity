@@ -1,0 +1,17 @@
+{
+  "counts": {
+    "errors": 0,
+    "failures": 0,
+    "passed": 1356,
+    "skipped": 2,
+    "tests": 1358
+  },
+  "full_historical_replay_pass": false,
+  "historical_cases_deselected": 1468,
+  "historical_private_tests": "NOT_RUN",
+  "junit_sha256": "ea32f18047e0cc07f982a64eb0b718480c9e419537a102b8c9cbf04a84f3636d",
+  "network_attempt_count": 0,
+  "provider_calls": 0,
+  "source_sha": "b4ec2d3c5025949af1e8dbcfc43042c3c06ac6e6",
+  "status": "PASS"
+}
