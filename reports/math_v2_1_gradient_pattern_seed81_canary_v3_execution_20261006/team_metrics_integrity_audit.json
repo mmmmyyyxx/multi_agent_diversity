@@ -1,0 +1,95 @@
+{
+  "all_recorded_teamprobe_full_metrics_independently_recomputed": true,
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt3",
+  "candidate_evaluation_metrics": [
+    {
+      "candidate_sha256": "5242140cd54888d0855dfe8c75bf88c119552f1496542919add692c9e7d4e21f",
+      "denominator": 4,
+      "member_correct_counts": [
+        2,
+        0,
+        1,
+        0,
+        1
+      ],
+      "oracle_correct_count": 2,
+      "stage": "team_probe",
+      "vote_correct_count": 1
+    },
+    {
+      "candidate_sha256": "7f8d91f391ee2dbc4e8825d0a43c5b4cf5238b8ea92269d0fd80d7988c548e86",
+      "denominator": 4,
+      "member_correct_counts": [
+        2,
+        0,
+        1,
+        0,
+        1
+      ],
+      "oracle_correct_count": 2,
+      "stage": "team_probe",
+      "vote_correct_count": 1
+    },
+    {
+      "candidate_sha256": "d7919fded9192f8eda491c23bc6cb8378453fb12f0f717680e9f5a791a6af2da",
+      "denominator": 4,
+      "member_correct_counts": [
+        2,
+        0,
+        1,
+        0,
+        1
+      ],
+      "oracle_correct_count": 2,
+      "stage": "team_probe",
+      "vote_correct_count": 1
+    },
+    {
+      "candidate_sha256": "c7dc1c46e263efa29b99ce862f0e8117310daef093dfc25feb755ae5e46809a1",
+      "denominator": 4,
+      "member_correct_counts": [
+        2,
+        0,
+        1,
+        0,
+        1
+      ],
+      "oracle_correct_count": 2,
+      "stage": "team_probe",
+      "vote_correct_count": 1
+    }
+  ],
+  "committed": 0,
+  "efficacy_estimated": false,
+  "final": {
+    "member_scores": [
+      8,
+      5,
+      5,
+      4,
+      6
+    ],
+    "oracle_correct_count": 8,
+    "vote_correct_count": 5
+  },
+  "initial": {
+    "member_scores": [
+      8,
+      5,
+      5,
+      4,
+      6
+    ],
+    "oracle_correct_count": 8,
+    "vote_correct_count": 5
+  },
+  "initial_floor_unchanged": true,
+  "llm_judge_calls": 0,
+  "prediction_identity_replay_exact": true,
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "shadow_calls": 0,
+  "source_sha": "f2d43c6880c39b872e8a7e5829fd913f85edffe6",
+  "status": "PASS",
+  "test_calls": 0,
+  "validation_calls": 0
+}

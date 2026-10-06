@@ -1,0 +1,23 @@
+{
+  "Q1_contract_compliance": "PASS",
+  "Q1_operational": "PASS",
+  "Q1_real_gradients": "PASS",
+  "Q1_semantic_usefulness": "PASS_WITH_ONE_PLAUSIBLE_BUT_WEAK_SIGNAL",
+  "Q2_classification": "MIXED",
+  "Q2_gradient_vs_raw_clustering": "MIXED_CANARY_OBSERVATION",
+  "Q2_matched_diagnostic": "PASS",
+  "Q3_optimizer_handoff": "PASS",
+  "Q4_provider_accounting_wire": "PASS",
+  "Q5_end_to_end_teamprobe": "PASS",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt3",
+  "gradient_semantic_quality": "SUPPORTED_IN_CANARY_WITH_ONE_TRANSFER_QUALIFICATION",
+  "implementation_closure": "ESTABLISHED_FOR_CANARY_SCOPE",
+  "llm_judge_calls": 0,
+  "pattern_semantic_behavior": "SHARED_PATTERN_OBSERVED",
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "scientific_superiority_established": false,
+  "shared_pattern_observed": true,
+  "source_sha": "f2d43c6880c39b872e8a7e5829fd913f85edffe6",
+  "test_calls": 0,
+  "validation_calls": 0
+}

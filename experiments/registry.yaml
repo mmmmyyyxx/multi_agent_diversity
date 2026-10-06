@@ -7860,23 +7860,32 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_gradient_pattern_seed81_canary_v2
-  status: DRAFT
-  scientific_status: NOT_EXECUTED
-  implementation_commit: null
-  execution_commit: null
+  status: COMPLETED
+  scientific_status: VALID_OPERATIONAL_CANARY
+  implementation_commit: f2d43c6880c39b872e8a7e5829fd913f85edffe6
+  execution_commit: 6f5e4f2834e0acbd6a89ff5c57fd27ed42606280
   result_commit: null
   manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_canary_v3.yaml
-  report: reports/math_v2_1_gradient_pattern_seed81_canary_v3_preexecution_20261006
-  classifier: METHOD_PRESERVING_DIAGNOSTIC_IMPLEMENTATION_REPAIR_FRESH_FREEZE_PENDING
-  active_for_new_work: true
+  report: reports/math_v2_1_gradient_pattern_seed81_canary_v3_execution_20261006
+  classifier: GRADIENT_PATTERN_IMPLEMENTATION_CLOSURE_CANARY_SCOPE
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
-  authorization_consumed: false
+  authorization_consumed: true
   notes:
   - Fresh A4 Seed81 attempt3 after confirmed diagnostic pre-provider identity mismatch.
   - Method, Gradient/Cluster prompts, guard, same F, Memory, models, sampling and budgets exactly unchanged.
   - Latest user delegates implementation iterations; each concrete scope must be frozen and single-use. No Pilot/Validation/Test/push.
+  - One production opportunity and one isolated matched raw diagnostic completed; integrity and accounting independently
+    replayed.
+  - 'Q1: PASS; Q2: MIXED_CANARY_OBSERVATION (MIXED); Q3/Q4/Q5: PASS.'
+  - 100 classified successful physical calls charged 55687 tokens; no reservations outstanding.
+  - Implementation closure is limited to this Canary. No efficacy, population stability or scientific superiority
+    established.
+  - Method, prompts, guard, same F, Memory, models, sampling and budgets remained unchanged. Scopes closed; no Pilot/Validation/Test/push.
   unavailable:
-    implementation_commit: Awaiting source freeze
-    execution_commit: Awaiting full current tests and exact delegated-scope activation
-    result_commit: Not executed
+    result_commit: Local result commit is recorded in git history without a self-referential hash.
+  reports:
+  - reports/math_v2_1_gradient_pattern_seed81_canary_v3_preexecution_20261006
+  authorization_closed: true
+  authorization_closure_evidence: reports/math_v2_1_gradient_pattern_seed81_canary_v3_execution_20261006/authorization_closure.json

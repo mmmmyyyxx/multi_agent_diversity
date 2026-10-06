@@ -1,0 +1,85 @@
+{
+  "files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9"
+    },
+    {
+      "path": "accounting_integrity_audit.json",
+      "sha256": "98d1dcaedf7c20b5fd23df40e078c30d66b9aff9cdb8be04f248e2e62adf895f"
+    },
+    {
+      "path": "authorization_closure.json",
+      "sha256": "19538600c97607a51a14a390a54211941c62eed3557d9b2b3058bb403c3f3e3b"
+    },
+    {
+      "path": "candidate_funnel.json",
+      "sha256": "05905bc1d33529e2e35e70574a1843ed2c289cf406c88e3b9039ab8a1d22b340"
+    },
+    {
+      "path": "execution_identity.json",
+      "sha256": "50448767fbad155f47fe4a620f8d127b851911a00a13be3b161eb16be74fa4a4"
+    },
+    {
+      "path": "final_status.json",
+      "sha256": "c0eccdd5b52fd01f5d95272cf2f6b068eabc3c5d62606ae133cdb789bd4f4edc"
+    },
+    {
+      "path": "five_question_closure.json",
+      "sha256": "018f72506568d1133fe65f2515bb3bf966dfa6e6911f3f4b61671694d614da13"
+    },
+    {
+      "path": "gradient_cluster_audit.json",
+      "sha256": "9b84e0fcb0d292034dcf5dd01ad38a4ff70d8c178da6aefb4576963bffd5568c"
+    },
+    {
+      "path": "gradient_outputs_audit.json",
+      "sha256": "86a695f4101e20529838fdc9da1b6cd2a0b36e36092b4a58ac08f388b6d8469f"
+    },
+    {
+      "path": "gradient_semantics_audit.json",
+      "sha256": "5916a1d4554bbf48d15ec06fe2d2a1e0c68d275cdc8153278a45e0f5ffbc9a49"
+    },
+    {
+      "path": "matched_raw_pattern_diagnostic.json",
+      "sha256": "8cb272bc47d1413d75da04f1a5a57b645314ebf42be97e89eacd927a219fb7bf"
+    },
+    {
+      "path": "memory_timing_audit.json",
+      "sha256": "0aaf702953661383efdd7d9db01402ecef00a4c4ec2861ba64b92c0a98eb6089"
+    },
+    {
+      "path": "optimizer_handoff_audit.json",
+      "sha256": "64f703038a07152833530bc62d72cb616f166a6d4525d66171da3e8fe052d1f8"
+    },
+    {
+      "path": "pattern_comparison.json",
+      "sha256": "39575c8e44397505b72b3cc0424f0ca0e9bbead11337f5b8e2b8f76839b6394a"
+    },
+    {
+      "path": "pattern_responsibility_audit.json",
+      "sha256": "8b891c9af9c3ba5f10931b876bd3cd0bdc7f8c327ef60478ef6d2f2488c061fc"
+    },
+    {
+      "path": "provider_usage.json",
+      "sha256": "4d8b4305976ac0cd0a52223c94e5b06ad6b51558f6c1251283f035409520ef2a"
+    },
+    {
+      "path": "README.md",
+      "sha256": "0323be460949c3eb5baf00c622c98ce3732e46ccc7f78419bd95ab5dfaa92b7c"
+    },
+    {
+      "path": "representative_trajectory_audit.json",
+      "sha256": "ec195bb9e734902a9e56a2c5f775beef9cc92c8c27ff7eda40915f9ae47151aa"
+    },
+    {
+      "path": "team_metrics_integrity_audit.json",
+      "sha256": "388f3ede913bece94eabdb7f977e3744416bc46e255df618e4bd8e7c6a1c6c86"
+    },
+    {
+      "path": "verification.json",
+      "sha256": "56c51cae1efb8f1bc1bb66960896236b2b41f9338c038d2d34ab94ab4da9538b"
+    }
+  ],
+  "schema_version": "sanitized_report_sha256_v1"
+}

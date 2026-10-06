@@ -1,0 +1,20 @@
+{
+  "base_integrity_replay": "PASS",
+  "current_skips": "HoVer and PUPA real dataset assets unavailable",
+  "diagnostic_regressions_passed": 12,
+  "diagnostic_replay": "PASS",
+  "focused_passed": 156,
+  "full_current": {
+    "errors": 0,
+    "failed": 0,
+    "passed": 1268,
+    "skipped": 2
+  },
+  "full_current_network_attempt_count": 0,
+  "full_historical_replay_pass": false,
+  "historical_private_replay": "NOT_RUN",
+  "pipeline_replay": "PASS",
+  "source_closure": "PASS",
+  "source_sha": "f2d43c6880c39b872e8a7e5829fd913f85edffe6",
+  "status": "PASS"
+}

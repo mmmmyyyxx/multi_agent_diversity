@@ -1,0 +1,52 @@
+{
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt3",
+  "audit_type": "POST_HOC_OWNER_MANUAL_STATIC_UNBLINDED",
+  "classification": "MIXED",
+  "comparison_was_two_arm_experiment": false,
+  "diagnostic_realizations": 1,
+  "gradient_clustering": {
+    "assigned_fraction": 0.5714285714285714,
+    "max_pattern_support": 4,
+    "non_singleton_pattern_count": 1,
+    "normalized_entropy": 0,
+    "pattern_count": 1,
+    "shared_support_count": 4,
+    "shared_support_fraction": 0.5714285714285714,
+    "singleton_count": 0,
+    "singleton_fraction": 0.0,
+    "support_distribution": [
+      4
+    ],
+    "unassigned_fraction": 0.42857142857142855
+  },
+  "llm_judge_calls": 0,
+  "matched_raw_diagnostic": {
+    "assigned_fraction": 1.0,
+    "max_pattern_support": 1,
+    "non_singleton_pattern_count": 0,
+    "normalized_entropy": 1.0,
+    "pattern_count": 7,
+    "shared_support_count": 0,
+    "shared_support_fraction": 0.0,
+    "singleton_count": 7,
+    "singleton_fraction": 1.0,
+    "support_distribution": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "unassigned_fraction": 0.0
+  },
+  "output_selection": false,
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "semantic_comparison": "Gradient clustering grouped four examples under a broad decomposition and coverage instruction, whereas the matched raw diagnostic produced seven singleton directions. This is a real difference in grouping, but the shared gradient wording blurs disjoint counting with probability factorization and does not retain every domain constraint. Raw directions are more specific. Shared support increased, while comparative semantic coherence is mixed; no advantage or scientific superiority is established.",
+  "source_sha": "f2d43c6880c39b872e8a7e5829fd913f85edffe6",
+  "status": "COMPARABLE",
+  "superiority_established": false,
+  "test_calls": 0,
+  "validation_calls": 0
+}

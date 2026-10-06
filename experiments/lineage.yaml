@@ -1597,6 +1597,6 @@ edges:
   to: math_v2_1_gradient_pattern_seed81_canary_v3
   relation: followup_of
   evidence: experiments/protocols/math_v2_1_gradient_pattern_seed81_canary_v3/implementation_repair.json
-  scope: Confirmed diagnostic schema/discovery identity bug only; fresh scope after original active completion and
-    unused diagnostic closure. No method or prompt change.
+  scope: Confirmed diagnostic metadata repair only; fresh source and namespace. One complete active opportunity
+    and one isolated matched raw diagnostic audited. Method and prompts unchanged; no efficacy inference.
 current_frontier: experiments/current_frontier.yaml

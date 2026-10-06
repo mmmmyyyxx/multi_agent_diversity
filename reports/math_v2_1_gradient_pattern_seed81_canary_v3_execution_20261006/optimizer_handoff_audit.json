@@ -1,0 +1,15 @@
+{
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt3",
+  "candidate_archive_in_provider_input": false,
+  "contract_valid_changed_scored_candidates": 6,
+  "exact_generalized_gradient_handoff": true,
+  "llm_judge_calls": 0,
+  "nonselected_repair_isolation": true,
+  "optimizer_generations": 6,
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "selected_generalized_gradient_sha256": "69cdcc820b1d3f5ba20ea48b9e0395effa224f0266777a37dbe658811c8f454d",
+  "source_sha": "f2d43c6880c39b872e8a7e5829fd913f85edffe6",
+  "status": "PASS",
+  "test_calls": 0,
+  "validation_calls": 0
+}

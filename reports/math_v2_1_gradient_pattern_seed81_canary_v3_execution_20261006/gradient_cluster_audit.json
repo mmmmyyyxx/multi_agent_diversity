@@ -1,0 +1,45 @@
+{
+  "assigned_fraction": 0.5714285714285714,
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt3",
+  "cluster_calls": 1,
+  "full_disjoint_membership": true,
+  "generalized_gradient_rows": [
+    {
+      "F": 2,
+      "abstract_review": "The shared theme is decomposition before calculation and completeness checking. Counting and geometric coverage have clear common behavior. Probability factorization and discrete admissibility require additional dependency and integrality checks; mutually exclusive cases cannot be equated with independent factors. This broad cluster is interpretable but its full membership is not evidence of an identical mathematical correction.",
+      "actionable": true,
+      "coherence": "SHARED_BROAD_DECOMPOSITION_AND_COVERAGE_BEHAVIOR_WITH_TRANSFER_LIMITS",
+      "generalizable": true,
+      "gradient_sha256": "69cdcc820b1d3f5ba20ea48b9e0395effa224f0266777a37dbe658811c8f454d",
+      "over_generalization_risk": true,
+      "pattern_id": "454f61c55b15b281b08054e700ad964192a0bde9e69ddf57219c19bb0e19c1ac",
+      "procedural_theme_coherent": true,
+      "support_count": 4,
+      "uniform_specific_corrective_principle_established": false
+    }
+  ],
+  "gradient_count": 7,
+  "gradients_only_input": true,
+  "llm_judge_calls": 0,
+  "max_pattern_support": 4,
+  "non_singleton_pattern_count": 1,
+  "normalized_entropy": 0,
+  "pattern_count": 1,
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "selected_F": 2,
+  "selected_generalized_gradient_sha256": "69cdcc820b1d3f5ba20ea48b9e0395effa224f0266777a37dbe658811c8f454d",
+  "selected_pattern_id": "454f61c55b15b281b08054e700ad964192a0bde9e69ddf57219c19bb0e19c1ac",
+  "shared_coherent_cluster_count": 1,
+  "shared_support_count": 4,
+  "shared_support_fraction": 0.5714285714285714,
+  "singleton_count": 0,
+  "singleton_fraction": 0.0,
+  "source_sha": "f2d43c6880c39b872e8a7e5829fd913f85edffe6",
+  "status": "PASS",
+  "support_distribution": [
+    4
+  ],
+  "test_calls": 0,
+  "unassigned_fraction": 0.42857142857142855,
+  "validation_calls": 0
+}

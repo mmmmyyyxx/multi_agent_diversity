@@ -1,0 +1,80 @@
+{
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt3",
+  "audit": {
+    "failure_evidence_events": 6,
+    "failure_family_count": 6,
+    "failure_family_repeated_count": 0,
+    "failure_memory_evictions": 1,
+    "failure_memory_peak_by_member": [
+      0,
+      5,
+      0,
+      0,
+      0
+    ],
+    "failure_reads": 12,
+    "failure_to_shared_promotions": 0,
+    "failure_writes": 6,
+    "initial_memory_entries": 0,
+    "memory_context_chars": {
+      "max": 1036,
+      "mean": 565.7142857142857,
+      "min": 2
+    },
+    "memory_ids": [
+      "2b13c49882c2468ef5c5b70655030350a26dc85c8e4d59a8e38b8945e63f718b",
+      "ebdbd9cabfff90a6eb1e6fb7edc81fdf249058c72df01ff8206b2f582751e455",
+      "5e81921e5585c26eb33fe9b1a18fe49c0224b384314c0463f133e297ead8553f",
+      "e2210c1521708df2af264e6a2e944bec66b9bc7d22439a1aa6384217641b7d50",
+      "0cd5b1e4801ffa24ff1dd1618bd04b7b69ad8dd70aeb5a3511e0f0e0787ab946"
+    ],
+    "memory_llm_calls": 0,
+    "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+    "private_failure_count_by_member": [
+      0,
+      5,
+      0,
+      0,
+      0
+    ],
+    "private_success_count_by_member": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "promoted_families": [],
+    "risk_clock": 1,
+    "shared_reads": 0,
+    "shared_risk_count": 0,
+    "shared_risk_created": 0,
+    "shared_risk_evicted": 0,
+    "shared_risk_reads": 0,
+    "shared_risk_storage_final": 0,
+    "shared_risk_storage_peak": 0,
+    "shared_risk_updated": 0,
+    "shared_writes": 0,
+    "stateful_write_count": 7,
+    "success_reads": 0,
+    "success_writes": 0
+  },
+  "first_reflection_memory_empty": true,
+  "gradient_or_pattern_automatic_memory_writes": false,
+  "initial_memory_empty": true,
+  "later_memory_entry_counts": [
+    0,
+    1,
+    2,
+    3,
+    3,
+    3
+  ],
+  "llm_judge_calls": 0,
+  "pattern_before_memory": true,
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "source_sha": "f2d43c6880c39b872e8a7e5829fd913f85edffe6",
+  "status": "PASS",
+  "test_calls": 0,
+  "validation_calls": 0
+}

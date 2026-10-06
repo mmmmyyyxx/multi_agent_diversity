@@ -1,0 +1,19 @@
+{
+  "active_provider_calls": 99,
+  "active_scope_sha256": "0b5bb9f7b3c27bb54b1443319b9400f9fcbd7fbbf5e575cf524fb0faaa5f5a45",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt3",
+  "closed": true,
+  "diagnostic_consumed": true,
+  "diagnostic_provider_calls": 1,
+  "diagnostic_scope_sha256": "1419bb70ddfb1f5878fbf8c2af1970d3578ad142771c0619bcd2aec092a8b37e",
+  "future_real_execution_requires_new_exact_user_authorization": true,
+  "method_change_authorized": false,
+  "pilot_authorized": false,
+  "prompt_change_authorized": false,
+  "push_authorized": false,
+  "scientific_reruns_authorized": 0,
+  "scope_reusable": false,
+  "single_use_consumed": true,
+  "test_authorized": false,
+  "validation_authorized": false
+}
