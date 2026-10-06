@@ -7789,9 +7789,9 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_current_runtime_consolidation_v1
-  status: DRAFT
+  status: PREPARED_NOT_EXECUTED
   scientific_status: NOT_ESTIMATED
-  implementation_commit: null
+  implementation_commit: 243a352f2e1f1a0a3d778f17ec8c4b8f16df09f9
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_canary_v1.yaml
@@ -7804,7 +7804,7 @@ experiments:
   - Fresh A4/Seed81 Gradient Pattern V4 plus Rolling Memory; one complete production opportunity.
   - One separate post-hoc matched raw diagnostic; no optimizer feedback or efficacy inference.
   - User-authorized operational repair loop is bounded at three fresh invalid attempts; no Pilot/Validation/Test/push.
+  - Source and governance are frozen before the final current-suite verification; exact local authorization is single-use.
   unavailable:
-    implementation_commit: Awaiting local source freeze
     execution_commit: Not yet executed
     result_commit: Not yet audited

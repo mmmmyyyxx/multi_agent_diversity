@@ -114,6 +114,8 @@ def execute_diagnostic(root, active_run, destination, authorization_path):
         raise SearchContractError('DIAGNOSTIC_SOURCE_MISMATCH')
     from .unified_execution import execution_identity, verify_source_commit
     verify_source_commit(root, scope['source_sha'], execution_identity(root, binding))
+    verify_source_commit(root, scope['source_sha'], dict(execution_closure=dict(files=[dict(
+        path='multi_dataset_diverse_rl/governance/gradient_canary_diagnostic.py', sha256=scope['diagnostic_module_sha256'])])))
     if sha256(Path(__file__).read_bytes().replace(b'\r\n', b'\n')).hexdigest() != scope['diagnostic_module_sha256']:
         raise SearchContractError('DIAGNOSTIC_SOURCE_MISMATCH')
     prompt_path = root / scope['prompt_path']
