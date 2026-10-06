@@ -1,0 +1,27 @@
+{
+  "cumulative_token_ceiling": 40000000,
+  "evidence": {
+    "expected_policy_identity": "set_level_wrong_pattern_discovery_v3",
+    "expected_schema_identity": "SET_LEVEL_PATTERN_PARTITION_V1",
+    "mistaken_check": "artifact.identity == discovery_identity",
+    "module_sha256": "26ff98339a51b0b618ee05797061c0698771d876f6d237a39d7459440cc38b54",
+    "provider_calls": 0,
+    "scientific_or_generation_policy_change_required": false,
+    "status": "CONFIRMED_IMPLEMENTATION_MISMATCH"
+  },
+  "identity": "ARCHIVED_RAW_PROMPT_IDENTITY_IMPLEMENTATION_REPAIR_V1",
+  "meaningful_regression": "Actual archived prompt representation reaches one fake transport call; independent schema/policy corruption fails before dispatch.",
+  "method_change": false,
+  "parent_attempt": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt2",
+  "pilot_authorized": false,
+  "prior_actual_diagnostic_calls": 0,
+  "prompt_change": false,
+  "provider_call_ceiling_per_fresh_attempt": 1652,
+  "push_authorized": false,
+  "regeneration": false,
+  "repair": "Validate schema identity and policy discovery identity in their actual frozen artifact fields.",
+  "rerun_reason": "Required fresh source and namespace after a confirmed pre-provider operational mismatch; no efficacy or clustering outcome used.",
+  "test_authorized": false,
+  "user_delegation_sha256": "9bd61de2d6a1d23e4d2a49c8660dfbcafed5419a68572837ebf4e04e9ad9cf97",
+  "validation_authorized": false
+}

@@ -1,0 +1,17 @@
+{
+  "compileall": "PASS",
+  "current_modules": 137,
+  "focused_tests_passed": 156,
+  "full_current_status": "PENDING",
+  "full_historical_replay_pass": false,
+  "governance": "PASS",
+  "historical_files_preserved": 4131,
+  "historical_private_cases": "NOT_RUN",
+  "legacy_dependencies": 0,
+  "method_change": false,
+  "network_attempt_count": 0,
+  "prompt_change": false,
+  "provider_calls": 0,
+  "sanitization": "PASS",
+  "status": "PASS"
+}

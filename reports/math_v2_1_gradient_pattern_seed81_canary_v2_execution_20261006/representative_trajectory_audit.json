@@ -1,0 +1,14 @@
+{
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt2",
+  "exact_trajectories": true,
+  "full_reasoning_trace_observed": false,
+  "llm_judge_calls": 0,
+  "order_same_F_then_stable_ID": true,
+  "representative_count": 1,
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "selected_support_subset": true,
+  "source_sha": "330a47049810a1b6d113a52c6211fa7626c2a13a",
+  "status": "PASS",
+  "test_calls": 0,
+  "validation_calls": 0
+}

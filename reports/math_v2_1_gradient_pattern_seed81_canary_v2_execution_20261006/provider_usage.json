@@ -1,0 +1,60 @@
+{
+  "active_provider_calls": 110,
+  "active_successes": 110,
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt2",
+  "charged_tokens": 63037,
+  "diagnostic_provider_calls": 0,
+  "llm_judge_calls": 0,
+  "logical_solver_requests": 114,
+  "missing_reasoning_token_counts_inferred_as_zero": false,
+  "optimizer_nonthinking_evidence_levels": {
+    "EQUIVALENT_LEVEL_B": 14
+  },
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "solver_semantic_recovery_extra_generations": 3,
+  "source_sha": "330a47049810a1b6d113a52c6211fa7626c2a13a",
+  "test_calls": 0,
+  "usage_by_role": {
+    "diagnostic_raw_pattern": {
+      "cache_hits": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "physical_attempts": 0,
+      "successful_generations": 0,
+      "transport_failures": 0
+    },
+    "pattern_cluster": {
+      "cache_hits": 0,
+      "input_tokens": 551,
+      "output_tokens": 306,
+      "physical_attempts": 1,
+      "successful_generations": 1,
+      "transport_failures": 0
+    },
+    "pattern_gradient": {
+      "cache_hits": 0,
+      "input_tokens": 3549,
+      "output_tokens": 269,
+      "physical_attempts": 7,
+      "successful_generations": 7,
+      "transport_failures": 0
+    },
+    "reflection": {
+      "cache_hits": 0,
+      "input_tokens": 5487,
+      "output_tokens": 1886,
+      "physical_attempts": 6,
+      "successful_generations": 6,
+      "transport_failures": 0
+    },
+    "solver": {
+      "cache_hits": 21,
+      "input_tokens": 31036,
+      "output_tokens": 19953,
+      "physical_attempts": 96,
+      "successful_generations": 96,
+      "transport_failures": 0
+    }
+  },
+  "validation_calls": 0
+}

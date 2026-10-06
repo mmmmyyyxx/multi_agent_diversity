@@ -1,0 +1,67 @@
+{
+  "assigned_fraction": 1.0,
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt2",
+  "cluster_calls": 1,
+  "full_disjoint_membership": true,
+  "generalized_gradient_rows": [
+    {
+      "F": 1,
+      "gradient_sha256": "3dff6d014994cf589a05484f0bc42cf1dbdfd3b9286b2ced7635e8a4b2ef51de",
+      "pattern_id": "2149502e7a1efa460a1757bfb17282114634e498279f6d10e506091fcab1a83e",
+      "support_count": 2
+    },
+    {
+      "F": 1,
+      "gradient_sha256": "9d5bcc29d9bbd10d709d3d17ba075e87241c8da160a8f44869239ae5011ed430",
+      "pattern_id": "578ac589c258b28a04e7ffa97391df6ae712b5275fbf6e565516564340d8979b",
+      "support_count": 1
+    },
+    {
+      "F": 2,
+      "gradient_sha256": "8315087c0ac336911f91e9bf58eaaebbfcca91f0126b204951df75488e387427",
+      "pattern_id": "6c265d3c2c78793402a15cf03ad6d1c0da71fffa87acef2c61e268143d75e938",
+      "support_count": 2
+    },
+    {
+      "F": 1,
+      "gradient_sha256": "ec03ede40109ef46b54e97744f5a3977421cc42edd5ffb3f30f4bbb210ccd652",
+      "pattern_id": "7a514fd1ee9d1d946c4da3e72d48b5938c536b7396beecb9f66fb7e52a7d2385",
+      "support_count": 1
+    },
+    {
+      "F": 4,
+      "gradient_sha256": "4a9a3110369ed2ea0915c708c85742137d7bc72d5fa9ed8c7394a06d871a91ac",
+      "pattern_id": "9be5d73d9d508d8913d9f9b3bbae1bbadd7e0c56dedda229495719a988a935b8",
+      "support_count": 1
+    }
+  ],
+  "gradient_count": 7,
+  "gradients_only_input": true,
+  "llm_judge_calls": 0,
+  "max_pattern_support": 2,
+  "non_singleton_pattern_count": 2,
+  "normalized_entropy": 0.9629610647945144,
+  "pattern_count": 5,
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "selected_F": 4,
+  "selected_generalized_gradient_sha256": "4a9a3110369ed2ea0915c708c85742137d7bc72d5fa9ed8c7394a06d871a91ac",
+  "selected_pattern_id": "9be5d73d9d508d8913d9f9b3bbae1bbadd7e0c56dedda229495719a988a935b8",
+  "semantic_review": "Two shared clusters express disjoint constraint accounting and symbolic geometric decomposition. Three distinct corrections remain singletons. The selected arithmetic-checking singleton inherits an underidentified causal rationale.",
+  "shared_coherent_cluster_count": 2,
+  "shared_support_count": 4,
+  "shared_support_fraction": 0.5714285714285714,
+  "singleton_count": 3,
+  "singleton_fraction": 0.6,
+  "source_sha": "330a47049810a1b6d113a52c6211fa7626c2a13a",
+  "status": "PASS",
+  "support_distribution": [
+    2,
+    2,
+    1,
+    1,
+    1
+  ],
+  "test_calls": 0,
+  "unassigned_fraction": 0.0,
+  "validation_calls": 0
+}

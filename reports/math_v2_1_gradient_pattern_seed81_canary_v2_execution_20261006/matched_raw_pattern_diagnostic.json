@@ -1,0 +1,20 @@
+{
+  "active_run_unchanged": true,
+  "archived_artifact_identity": "SET_LEVEL_PATTERN_PARTITION_V1",
+  "archived_discovery_policy_identity": "set_level_wrong_pattern_discovery_v3",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt2",
+  "cache_hits": 0,
+  "diagnosis": "The diagnostic checked the artifact schema identity against the discovery policy identity; its fake fixture repeated the mismatch. Failure occurred before scope consumption, credentials, ledger reservation or provider dispatch.",
+  "error_category": "SearchContractError",
+  "frozen_prompt_sha256": "cc2df6ad33252dcd9f112cb095ebc62430e47d1c9c993e31780a9440b6db6a6c",
+  "llm_judge_calls": 0,
+  "mode": "POST_HOC_MATCHED_DIAGNOSTIC_ONLY",
+  "physical_calls": 0,
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "scope_closed_unused": true,
+  "source_sha": "330a47049810a1b6d113a52c6211fa7626c2a13a",
+  "status": "NOT_EXECUTED_PREFLIGHT_IMPLEMENTATION_MISMATCH",
+  "stop_category": "DIAGNOSTIC_ARCHIVED_PROMPT_IDENTITY_MISMATCH",
+  "test_calls": 0,
+  "validation_calls": 0
+}

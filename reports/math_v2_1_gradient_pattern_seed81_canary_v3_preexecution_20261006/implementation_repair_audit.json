@@ -1,0 +1,16 @@
+{
+  "active_binding_changes": [
+    "binding_path",
+    "cache_namespace",
+    "canary_attempt_id",
+    "execution_attempt_id"
+  ],
+  "corrected_identity_check": true,
+  "focused_current_tests_passed": 12,
+  "focused_guard_network_attempts": 0,
+  "method_change": false,
+  "prior_diagnostic_provider_calls": 0,
+  "prior_provider_calls": 110,
+  "prior_report_immutable": true,
+  "status": "CONFIRMED_IMPLEMENTATION_REPAIR"
+}

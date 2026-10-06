@@ -1,0 +1,32 @@
+{
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt2",
+  "classification": "NOT_COMPARABLE",
+  "comparison_was_two_arm_experiment": false,
+  "gradient_clustering": {
+    "assigned_fraction": 1.0,
+    "max_pattern_support": 2,
+    "non_singleton_pattern_count": 2,
+    "normalized_entropy": 0.9629610647945144,
+    "pattern_count": 5,
+    "shared_support_count": 4,
+    "shared_support_fraction": 0.5714285714285714,
+    "singleton_count": 3,
+    "singleton_fraction": 0.6,
+    "support_distribution": [
+      2,
+      2,
+      1,
+      1,
+      1
+    ],
+    "unassigned_fraction": 0.0
+  },
+  "llm_judge_calls": 0,
+  "matched_raw_diagnostic": null,
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "source_sha": "330a47049810a1b6d113a52c6211fa7626c2a13a",
+  "status": "NOT_COMPARABLE",
+  "superiority_established": false,
+  "test_calls": 0,
+  "validation_calls": 0
+}

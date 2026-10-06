@@ -1,0 +1,17 @@
+{
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt2",
+  "canonical_tie_checked": true,
+  "llm_judge_calls": 0,
+  "pattern_F_recomputed": true,
+  "same_F": "max(4D,2N,C)",
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "selected_F": 4,
+  "selected_pattern_id": "9be5d73d9d508d8913d9f9b3bbae1bbadd7e0c56dedda229495719a988a935b8",
+  "source_sha": "330a47049810a1b6d113a52c6211fa7626c2a13a",
+  "status": "PASS",
+  "target_member": 1,
+  "target_rank_recomputed": true,
+  "test_calls": 0,
+  "validation_calls": 0,
+  "wrong_universe_size": 7
+}

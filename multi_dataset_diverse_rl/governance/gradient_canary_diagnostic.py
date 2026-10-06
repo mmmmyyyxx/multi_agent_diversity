@@ -122,7 +122,10 @@ def execute_diagnostic(root, active_run, destination, authorization_path):
     if sha256(prompt_path.read_bytes()).hexdigest() != scope['prompt_sha256']:
         raise SearchContractError('DIAGNOSTIC_ARCHIVED_PROMPT_HASH_MISMATCH')
     prompt = read_json(prompt_path)
-    if prompt['identity'] != 'set_level_wrong_pattern_discovery_v3':
+    if (prompt.get('identity') != scope['raw_partition_schema']
+            or scope['raw_partition_schema'] != 'SET_LEVEL_PATTERN_PARTITION_V1'
+            or prompt.get('policy', {}).get('schema') != scope['raw_partition_schema']
+            or prompt.get('policy', {}).get('discovery') != 'set_level_wrong_pattern_discovery_v3'):
         raise SearchContractError('DIAGNOSTIC_ARCHIVED_PROMPT_IDENTITY_MISMATCH')
     before = inventory(active_run)
     examples = matched_examples(active_run)

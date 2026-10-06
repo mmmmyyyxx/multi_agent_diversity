@@ -1,0 +1,26 @@
+{
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt2",
+  "charged_delta": 63037,
+  "classified_successes": 110,
+  "cumulative_authorized": 40000000,
+  "cumulative_charged": 1605478,
+  "fallback_charged": 0,
+  "llm_judge_calls": 0,
+  "optimizer_nonthinking_evidence_levels": {
+    "EQUIVALENT_LEVEL_B": 14
+  },
+  "physical_attempts": 110,
+  "provider_usage_sum": 63037,
+  "remaining": 38394522,
+  "reserved_inflight": 0,
+  "role_wire_fields_exact": true,
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "solver_optimizer_firewall_exact": true,
+  "source_sha": "330a47049810a1b6d113a52c6211fa7626c2a13a",
+  "status": "PASS",
+  "terminal_inventory_matches": true,
+  "test_calls": 0,
+  "transport_failures": 0,
+  "unclassified_charged_calls": 0,
+  "validation_calls": 0
+}

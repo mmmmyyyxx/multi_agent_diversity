@@ -1,5 +1,25 @@
 schema_version: failure_registry_v1
 failures:
+- failure_id: FAIL-GRADIENT-DIAGNOSTIC-ARCHIVE-IDENTITY-FIELD
+  title: Matched raw diagnostic confused archive schema identity with discovery policy identity
+  status: MITIGATED
+  lifecycle: OPEN
+  first_observed: math_v2_1_gradient_pattern_seed81_canary_v2
+  affected_components:
+  - posthoc_matched_raw_diagnostic
+  - diagnostic_fake_fixture
+  evidence:
+  - reports/math_v2_1_gradient_pattern_seed81_canary_v2_execution_20261006/diagnostic_preflight_failure.json
+  root_cause_status: CONFIRMED_IMPLEMENTATION_MISMATCH
+  symptom: Pre-provider identity failure despite exact archived prompt hash; zero diagnostic calls.
+  required_resolution: Check actual schema identity and discovery policy fields separately; fake transport regression
+    uses the real frozen archive representation; fresh source and namespace.
+  forbidden_inference: Do not alter scientific prompts, guard thresholds, partition semantics, sample selection,
+    budgets or regeneration policy to repair this metadata error.
+  regression_tests:
+  - tests/test_gradient_canary_diagnostic.py
+  latest_repair: math_v2_1_gradient_pattern_seed81_canary_v3
+  latest_repair_status: FOCUSED_ZERO_API_REGRESSION_PASS_FULL_CURRENT_PENDING
 - failure_id: FAIL-GRADIENT-COORDINATED-ACTOR-ABSTRACTION-COVERAGE
   title: Coordinated participant constraint bypassed the specific-content abstraction guard
   status: MITIGATED
@@ -14,8 +34,8 @@ failures:
   symptom: A copied participant literal in a coordinated refusal-to-participate context passed V3.
   forbidden_inference: Do not accept example entities, widen the hard 400-character gradient limit, add regeneration,
     or infer a hidden reasoning trace to resolve contract noncompliance.
-  required_resolution: Repair supported coordinated-actor provenance; minimally clarify the single-call Gradient prompt;
-    freeze fresh identities and run full current tests before separately authorized fresh Canary.
+  required_resolution: Repair supported coordinated-actor provenance; minimally clarify the single-call Gradient
+    prompt; freeze fresh identities and run full current tests before separately authorized fresh Canary.
   regression_tests:
   - tests/test_gradient_patterns.py
   evidence_format: hash_bound_private_wire_and_synthetic_zero_api_regressions

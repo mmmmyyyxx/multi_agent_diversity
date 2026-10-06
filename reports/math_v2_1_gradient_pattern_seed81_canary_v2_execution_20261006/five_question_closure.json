@@ -1,0 +1,22 @@
+{
+  "Q1_contract_compliance": "PASS",
+  "Q1_operational": "PASS",
+  "Q1_real_gradients": "PARTIAL_SEMANTIC_WEAKNESS",
+  "Q1_semantic_usefulness": "PARTIAL",
+  "Q2_gradient_vs_raw_clustering": "NOT_COMPARABLE_PREFLIGHT_IMPLEMENTATION_FAILURE",
+  "Q3_optimizer_handoff": "PASS",
+  "Q4_provider_accounting_wire": "PASS_ACTIVE_PIPELINE",
+  "Q5_end_to_end_teamprobe": "PASS",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt2",
+  "gradient_semantic_quality": "PARTIAL",
+  "implementation_closure": "HOLD_DIAGNOSTIC_IMPLEMENTATION_REPAIR",
+  "llm_judge_calls": 0,
+  "pattern_semantic_behavior": "SHARED_PATTERN_OBSERVED",
+  "rerun_reason": "Confirmed diagnostic identity implementation mismatch before any diagnostic API call; a fresh freeze is required. The active result is preserved and no rerun is justified by candidate efficacy.",
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "scientific_superiority_established": false,
+  "shared_pattern_observed": true,
+  "source_sha": "330a47049810a1b6d113a52c6211fa7626c2a13a",
+  "test_calls": 0,
+  "validation_calls": 0
+}

@@ -61,7 +61,8 @@ def test_early_diagnostic_is_forbidden(tmp_path):
         diagnostic.matched_examples(tmp_path)
 
 
-def test_failed_transport_is_one_call_and_does_not_mutate_active_run(tmp_path, monkeypatch):
+@pytest.mark.parametrize('archive_drift', [None, 'schema_identity', 'policy_schema', 'discovery_identity'])
+def test_failed_transport_is_one_call_and_does_not_mutate_active_run(tmp_path, monkeypatch, archive_drift):
     root = Path(__file__).resolve().parents[1]
     binding = json.loads((root / 'experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v2.json').read_text(encoding='utf-8'))
     binding['token_ledger_directory'] = 'runs/fake_ledger'
@@ -69,7 +70,16 @@ def test_failed_transport_is_one_call_and_does_not_mutate_active_run(tmp_path, m
     binding['validation_accounting_metadata_path'] = 'reserve.json'
     atomic_write_json(tmp_path / 'binding.json', binding)
     atomic_write_json(tmp_path / 'reserve.json', {})
-    atomic_write_json(tmp_path / 'raw_prompt.json', dict(identity='set_level_wrong_pattern_discovery_v3', prompt='Frozen historical prompt'))
+    # Use the actual frozen archive representation: identity names the schema,
+    # while policy.discovery names the historical discovery treatment.
+    archived_prompt = json.loads((root / 'experiments/execution_bindings/math_pattern_prompt_v3.json').read_text(encoding='utf-8'))
+    if archive_drift == 'schema_identity':
+        archived_prompt['identity'] = archived_prompt['policy']['discovery']
+    elif archive_drift == 'policy_schema':
+        archived_prompt['policy']['schema'] = 'wrong-schema'
+    elif archive_drift == 'discovery_identity':
+        archived_prompt['policy']['discovery'] = 'wrong-discovery'
+    atomic_write_json(tmp_path / 'raw_prompt.json', archived_prompt)
     active = tmp_path / 'runs/active'
     active.mkdir(parents=True)
     atomic_write_json(active / 'lifecycle.json', dict(status='EXECUTION_COMPLETE'))
@@ -83,7 +93,7 @@ def test_failed_transport_is_one_call_and_does_not_mutate_active_run(tmp_path, m
         binding_path='binding.json', binding_sha256=sha256((tmp_path / 'binding.json').read_bytes()).hexdigest(),
         diagnostic_module_sha256=sha256(Path(diagnostic.__file__).read_bytes().replace(b'\r\n', b'\n')).hexdigest(),
         prompt_path='raw_prompt.json', prompt_sha256=sha256((tmp_path / 'raw_prompt.json').read_bytes()).hexdigest(),
-        raw_partition_schema='synthetic-schema', model=binding['models']['pattern'], generation_policy=binding['optimizer_generation_policy'])
+        raw_partition_schema='SET_LEVEL_PATTERN_PARTITION_V1', model=binding['models']['pattern'], generation_policy=binding['optimizer_generation_policy'])
     atomic_write_json(tmp_path / 'auth.json', dict(explicit_user_authorized=True, single_use=True, consumed=False, scope=scope))
     from multi_dataset_diverse_rl.governance import unified_execution
     monkeypatch.setattr(unified_execution, 'execution_identity', lambda *a: {})
@@ -104,9 +114,18 @@ def test_failed_transport_is_one_call_and_does_not_mutate_active_run(tmp_path, m
         def close(self): pass
     monkeypatch.setattr(diagnostic, 'TokenLedger', FakeLedger)
     def failed_transport(request):
+        assert request['messages'][0]['content'] == archived_prompt['prompt']
+        assert json.loads(request['messages'][1]['content'])['schema'] == archived_prompt['identity']
         calls.append(request)
         raise ConnectionError('Synthetic transport failure')
     monkeypatch.setattr(diagnostic, 'create_transport', lambda *a: (failed_transport, SimpleNamespace(close=lambda: None)))
+    if archive_drift is not None:
+        with pytest.raises(SearchContractError, match='DIAGNOSTIC_ARCHIVED_PROMPT_IDENTITY_MISMATCH'):
+            diagnostic.execute_diagnostic(tmp_path, active, tmp_path / 'runs/diagnostic', tmp_path / 'auth.json')
+        assert not calls and not charges
+        assert not (tmp_path / 'runs/diagnostic').exists()
+        assert not (tmp_path / 'runs/posthoc_diagnostic_consumption').exists()
+        return
     outcome = diagnostic.execute_diagnostic(tmp_path, active, tmp_path / 'runs/diagnostic', tmp_path / 'auth.json')
     assert len(calls) == outcome['physical_calls'] == 1
     assert charges == ['DIAGNOSTIC_FAILURE_NO_RETRY']

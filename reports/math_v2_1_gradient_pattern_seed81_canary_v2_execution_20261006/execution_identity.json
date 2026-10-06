@@ -1,0 +1,19 @@
+{
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt2",
+  "binding_sha256": "e98630c38506948b27f30aa49a8cacb882a056d30e9a2af24c7e6f2de39081e2",
+  "fresh_cache_namespace": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt2",
+  "fresh_memory_entries": 0,
+  "full_current_junit_sha256": "1c25092f6c552539ed9fc9411a2a14231d6b3a5c4e0e84f8e5e2902e355d547e",
+  "full_current_suite_passed": 1265,
+  "full_current_suite_skipped": 2,
+  "llm_judge_calls": 0,
+  "manifest_sha256": "a493b23358c310179777fc87c3d3eaed2bb9fec93370e335881347d7e7819eaa",
+  "protocol_sha256": "0dc1a02983b2cebfcd1de7706c74eeeb7d2f81b081d00981764576016745b70d",
+  "repository_commit": "9edf70e21fdc521effd85ae3285635941cfc1c3b",
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "source_sha": "330a47049810a1b6d113a52c6211fa7626c2a13a",
+  "startup_identity_sha256": "63d508f4c89bd6cdfb4cd8a9e5df8feda32213b54e92e3c088b2c2f60f3db2de",
+  "test_calls": 0,
+  "user_authorization_sha256": "9bd61de2d6a1d23e4d2a49c8660dfbcafed5419a68572837ebf4e04e9ad9cf97",
+  "validation_calls": 0
+}

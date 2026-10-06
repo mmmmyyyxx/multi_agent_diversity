@@ -1,0 +1,9 @@
+{
+  "expected_policy_identity": "set_level_wrong_pattern_discovery_v3",
+  "expected_schema_identity": "SET_LEVEL_PATTERN_PARTITION_V1",
+  "mistaken_check": "artifact.identity == discovery_identity",
+  "module_sha256": "26ff98339a51b0b618ee05797061c0698771d876f6d237a39d7459440cc38b54",
+  "provider_calls": 0,
+  "scientific_or_generation_policy_change_required": false,
+  "status": "CONFIRMED_IMPLEMENTATION_MISMATCH"
+}

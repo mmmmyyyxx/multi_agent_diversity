@@ -1,0 +1,32 @@
+{
+  "actionable_generalizable_count": 6,
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt2",
+  "audit_type": "POST_HOC_OWNER_MANUAL_STATIC_UNBLINDED",
+  "contract_compliance": "PASS",
+  "example_specific_count": 0,
+  "gradient_outputs_not_used_for_runtime_adaptation": true,
+  "latent_cause_recovery_established": false,
+  "llm_judge_calls": 0,
+  "method_definition_unchanged": true,
+  "observed_gradient_count": 7,
+  "primary_category_counts": {
+    "ACTIONABLE_GENERALIZABLE": 6,
+    "UNSUPPORTED_DIAGNOSIS": 1
+  },
+  "review_notes": [
+    "Disjoint case accounting and invalid-configuration subtraction.",
+    "Dependent-event and constraint accounting in combinatorial probability.",
+    "Symbolic area decomposition before constraint substitution.",
+    "Determinant verification is actionable, but the claimed arithmetic-versus-conceptual cause is not established by final-only evidence or a team responsibility label.",
+    "Boundary and equality-condition checks for constrained optimization.",
+    "Algebraic simplification before substitution.",
+    "Non-overlapping geometric decomposition with boundary and coordinate checks."
+  ],
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "semantic_usefulness": "PARTIAL_CAUSAL_RATIONALE_OVERSTATED_IN_ONE_SIGNAL",
+  "source_sha": "330a47049810a1b6d113a52c6211fa7626c2a13a",
+  "status": "PARTIAL",
+  "test_calls": 0,
+  "unsupported_diagnosis_count": 1,
+  "validation_calls": 0
+}

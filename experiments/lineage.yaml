@@ -835,6 +835,8 @@ nodes:
   kind: REAL_CANARY
 - experiment_id: math_v2_1_gradient_pattern_seed81_canary_v2
   kind: REAL_CANARY
+- experiment_id: math_v2_1_gradient_pattern_seed81_canary_v3
+  kind: REAL_CANARY
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1591,4 +1593,10 @@ edges:
   evidence: reports/math_v2_1_gradient_pattern_seed81_canary_v2_20261006/zero_api_forensic.json
   scope: User-decided guard implementation repair and prompt clarification; fresh attempt, no previous authorization
     reuse.
+- from: math_v2_1_gradient_pattern_seed81_canary_v2
+  to: math_v2_1_gradient_pattern_seed81_canary_v3
+  relation: followup_of
+  evidence: experiments/protocols/math_v2_1_gradient_pattern_seed81_canary_v3/implementation_repair.json
+  scope: Confirmed diagnostic schema/discovery identity bug only; fresh scope after original active completion and
+    unused diagnostic closure. No method or prompt change.
 current_frontier: experiments/current_frontier.yaml
