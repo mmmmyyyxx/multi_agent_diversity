@@ -1,0 +1,27 @@
+{
+  "status": "PASS",
+  "previous_full_suite_source": "81f914c7073f00f213bd673ee21974af8fa8661a",
+  "previous_full_suite": {
+    "tests": 1357,
+    "errors": 0,
+    "failures": 9,
+    "skipped": 2
+  },
+  "affected_module_recheck": {
+    "tests": 70,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0
+  },
+  "failures": "Historical closure fixtures incorrectly assumed no newly authorized pending attempt.",
+  "repair": "Explicit immutable attempt1 snapshot; independent fresh scope provenance control.",
+  "historical_closed_authorizations_preserved": true,
+  "algorithm_changed": false,
+  "protocol_changed": false,
+  "immutable_historical_files": 4703,
+  "historical_files_changed": 0,
+  "compileall": "PASS",
+  "provider_calls": 0,
+  "network_attempt_count": 0,
+  "full_current_suite": "FINAL_ALL_GREEN_INVOCATION_REQUIRED"
+}
