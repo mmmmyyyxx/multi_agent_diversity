@@ -1,0 +1,93 @@
+{
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt1",
+  "gradient_cache_hits": 0,
+  "gradient_contract_successes": 2,
+  "gradient_input_tokens": 1201,
+  "gradient_logical_calls": 3,
+  "gradient_max_chars": 545,
+  "gradient_mean_chars": 388.6666666666667,
+  "gradient_output_tokens": 223,
+  "gradient_physical_calls": 3,
+  "gradient_provider_successes": 3,
+  "gradient_terminal_invalid": 1,
+  "llm_judge_calls": 0,
+  "requested_wrong_examples": 3,
+  "rows": [
+    {
+      "complete_prompt_rewrite": false,
+      "example_alias": "e1",
+      "example_sha256": "ada848d3be33231756edaacdcd7ec744fbfb36eea0d5ec843c7b4603a07729c4",
+      "gradient_sha256": "4b59c30ed886d21fd9234e6c63d67ca572462fd6d71a534e8c1d72a64270104d",
+      "length": 308,
+      "provider_call_sha256": "2df9427a11cdd92c7ed454f2da34da5666a5e6113a175650abd1d6bff987aa54",
+      "response_interface_contamination": false,
+      "responsibility_labels": [
+        "coverage"
+      ],
+      "runtime_abstraction_guard": "PASS",
+      "runtime_contract_status": "PASS",
+      "schema_valid": true,
+      "secondary_unsupported_directional_diagnosis": false,
+      "semantic_category": "EXAMPLE_SPECIFIC",
+      "specific_answer_copy": false,
+      "specific_entity_copy": true,
+      "specific_number_copy": false,
+      "wire_body_sha256": "3bab705e53f5b47cea78ace2c7d0c0001f55e8c9b358acf1781c8b214e658af9",
+      "within_400_chars": true,
+      "wrong_valid": true
+    },
+    {
+      "complete_prompt_rewrite": false,
+      "example_alias": "e2",
+      "example_sha256": "9986b0f78cecb02703ea81f662fd848769b10be8ec2d1348c16b362e755e3293",
+      "gradient_sha256": "2a2be0d5271a2c6f2edb45ae43decc73b1dd4cc45fc407caa57e77095243addf",
+      "length": 313,
+      "provider_call_sha256": "613828830a0ab1800a02e051a1aae1204ae78292c39a92bb1cd082674cd7536a",
+      "response_interface_contamination": false,
+      "responsibility_labels": [
+        "coverage"
+      ],
+      "runtime_abstraction_guard": "PASS",
+      "runtime_contract_status": "PASS",
+      "schema_valid": true,
+      "secondary_unsupported_directional_diagnosis": false,
+      "semantic_category": "ACTIONABLE_GENERALIZABLE",
+      "specific_answer_copy": false,
+      "specific_entity_copy": false,
+      "specific_number_copy": false,
+      "wire_body_sha256": "4592142f9ac6db1253ff684d3f5fa1a2f54b4e420ea59e0816e5316d7d4803c5",
+      "within_400_chars": true,
+      "wrong_valid": true
+    },
+    {
+      "complete_prompt_rewrite": false,
+      "example_alias": "e3",
+      "example_sha256": "d9d6be19ea1405cadf7c6054f9b6e0fa74c3b6e9de7405c8401ec2c4af7de994",
+      "gradient_sha256": "c68d51aa8b5923c9acbb49e891e6c68d1958461e0b7695396de4a4b0aca94d43",
+      "length": 545,
+      "provider_call_sha256": "da2f2a4d743a9827525c1f637ea3db236f4cb47728af1ca35aa9a496eb8d3228",
+      "response_interface_contamination": false,
+      "responsibility_labels": [
+        "coverage"
+      ],
+      "runtime_abstraction_guard": "FAIL_NUMERIC_LITERAL_ON_INDEPENDENT_RECHECK",
+      "runtime_contract_status": "FAIL",
+      "schema_valid": true,
+      "secondary_unsupported_directional_diagnosis": true,
+      "semantic_category": "EXAMPLE_SPECIFIC",
+      "specific_answer_copy": true,
+      "specific_entity_copy": false,
+      "specific_number_copy": true,
+      "wire_body_sha256": "0daf55be82ab187cba7a26496772b3611949ff00a8fef47cc8a57c8236cc0078",
+      "within_400_chars": false,
+      "wrong_valid": true
+    }
+  ],
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "source_sha": "59703562590acdc6cf454ede3e84d3fab2b7e3a9",
+  "stop_reason": "Third provider output violated the frozen character and numeric-content constraints; fail-closed extraction stopped before the remaining four examples.",
+  "test_calls": 0,
+  "unrequested_wrong_examples": 4,
+  "validation_calls": 0,
+  "wrong_universe_size": 7
+}

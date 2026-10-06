@@ -7789,22 +7789,33 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_current_runtime_consolidation_v1
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: NOT_ESTIMATED
-  implementation_commit: 243a352f2e1f1a0a3d778f17ec8c4b8f16df09f9
-  execution_commit: null
+  status: HOLD
+  scientific_status: NOT_EVALUABLE_GENERATED_GRADIENT_CONTRACT_FAILURE
+  implementation_commit: 59703562590acdc6cf454ede3e84d3fab2b7e3a9
+  execution_commit: 59703562590acdc6cf454ede3e84d3fab2b7e3a9
   result_commit: null
   manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_canary_v1.yaml
   report: reports/math_v2_1_gradient_pattern_seed81_canary_v1_20261006
-  classifier: FIVE_QUESTION_IMPLEMENTATION_CLOSURE_CANARY_ONLY
-  active_for_new_work: true
+  classifier: GRADIENT_OUTPUT_CONTRACT_FAILURE_IMPLEMENTATION_CLOSURE_NOT_ESTABLISHED
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
-  - Fresh A4/Seed81 Gradient Pattern V4 plus Rolling Memory; one complete production opportunity.
-  - One separate post-hoc matched raw diagnostic; no optimizer feedback or efficacy inference.
+  - Preregistered fresh A4/Seed81 Gradient Pattern V4 plus Rolling Memory; extraction stopped before a complete opportunity.
+  - Preregistered post-hoc matched raw diagnostic was not dispatched because active completion failed; no efficacy inference.
   - User-authorized operational repair loop is bounded at three fresh invalid attempts; no Pilot/Validation/Test/push.
   - Source and governance are frozen before the final current-suite verification; exact local authorization is single-use.
+  - Initial Solver stage complete; third Gradient exceeded 400 characters and retained numeric outcomes.
+  - Two gradients passed the runtime guard; manual review found one retained source entities outside its bounded
+    detector.
+  - No cluster, optimizer, candidate, TeamProbe, Full, Shadow, Memory retrieval, diagnostic, Pilot, Validation or
+    Test execution.
+  - 64 classified successful physical calls charged 30792 tokens; remaining cumulative budget 38457559; no restart
+    or push.
+  - No implementation mismatch established; scientific output-policy decision required before any new method or
+    fresh run.
   unavailable:
-    execution_commit: Not yet executed
-    result_commit: Not yet audited
+    result_commit: Local evidence commit is recorded by git history; no self-referential hash.
+  authorization_consumed: true
+  authorization_closed: true
+  authorization_closure_evidence: reports/math_v2_1_gradient_pattern_seed81_canary_v1_20261006/authorization_closure.json

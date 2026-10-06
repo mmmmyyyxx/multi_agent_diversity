@@ -1,0 +1,26 @@
+{
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt1",
+  "basis": "Reparsed every original realization, reproduced resolved predictions, checked prediction hashes and exact Solver messages, then independently rescored all initial member outputs and plurality votes.",
+  "deployed_commit_count": 0,
+  "final_team": "NOT_PERSISTED",
+  "frozen_optimize_count": 12,
+  "full_candidate_metrics": "NOT_EVALUABLE",
+  "initial": {
+    "member_scores": [
+      8,
+      5,
+      5,
+      4,
+      7
+    ],
+    "oracle_correct_count": 8,
+    "vote_correct_count": 5
+  },
+  "initial_predictions_reconstructed_from_provider_realizations": 60,
+  "llm_judge_calls": 0,
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "source_sha": "59703562590acdc6cf454ede3e84d3fab2b7e3a9",
+  "status": "PASS_INITIAL_PREFIX_ONLY",
+  "test_calls": 0,
+  "validation_calls": 0
+}

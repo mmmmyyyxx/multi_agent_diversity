@@ -269,7 +269,23 @@ def _assert_canary_does_not_unlock_formal_or_heldout(frontier,registry):
     if next_attempt is None:
         assert frontier['real_execution_ready'] is False
         if frontier['current_method'] == 'unified_team_prompt_search_v2_1':
-            if frontier['current_canary_status'] == 'VALID_OPERATIONAL_CANARY':
+            if frontier['current_canary_status'] == 'GRADIENT_OUTPUT_CONTRACT_FAILURE':
+                assert previous['status'] == 'HOLD'
+                assert previous['scientific_status'] == 'NOT_EVALUABLE_GENERATED_GRADIENT_CONTRACT_FAILURE'
+                assert previous['authorization_closed'] is True
+                assert previous['active_for_new_work'] is False
+                assert frontier['current_experiment'] == previous['experiment_id']
+                assert frontier['current_execution_blocker'] == 'USER_SCIENTIFIC_POLICY_DECISION_REQUIRED'
+                for field in ('next_canary_authorized', 'next_pilot_authorized', 'next_validation_authorized'):
+                    assert frontier[field] is False
+                closure = load_yaml(ROOT / previous['authorization_closure_evidence'])
+                assert closure['closed'] is True and closure['single_use_consumed'] is True
+                assert closure['unused_diagnostic_grant_closed'] is True
+                assert closure['future_real_execution_requires_new_exact_user_authorization'] is True
+                assert closure['scientific_reruns_authorized'] == 0
+                for role in ('pilot', 'validation', 'test'):
+                    assert closure[role + '_authorized'] is False
+            elif frontier['current_canary_status'] == 'VALID_OPERATIONAL_CANARY':
                 assert previous['status'] == 'COMPLETED'
                 assert previous['scientific_status'] == 'VALID_OPERATIONAL_CANARY'
                 assert previous['authorization_closed'] is True
@@ -351,7 +367,14 @@ def test_canary_abort_does_not_unlock_formal_or_heldout():
 def test_completed_canary_scope_cannot_authorize_followup(location, field, value):
     frontier = deepcopy(load_yaml(ROOT / 'experiments/current_frontier.yaml'))
     registry = deepcopy(load_yaml(ROOT / 'experiments/registry.yaml'))
-    assert frontier['current_canary_status'] == 'VALID_OPERATIONAL_CANARY'
+    # Select immutable completed evidence rather than the changing latest run.
+    previous = next(row for row in reversed(registry['experiments'])
+                    if row.get('scientific_status') == 'VALID_OPERATIONAL_CANARY'
+                    and row.get('status') == 'COMPLETED'
+                    and row.get('authorization_closed') is True)
+    frontier['last_canary_milestone'] = previous['experiment_id']
+    frontier['current_experiment'] = previous['experiment_id']
+    frontier['current_canary_status'] = 'VALID_OPERATIONAL_CANARY'
     # This negative control models a closed scope with no pending attempt.
     # A newly registered attempt must not redirect it into the pending-scope
     # branch, where the completed-scope poison would never be examined.
@@ -364,6 +387,34 @@ def test_completed_canary_scope_cannot_authorize_followup(location, field, value
     else:
         previous = next(row for row in registry['experiments']
                         if row['experiment_id'] == frontier['last_canary_milestone'])
+        previous[field] = value
+    with pytest.raises(AssertionError):
+        _assert_canary_does_not_unlock_formal_or_heldout(frontier, registry)
+
+
+@pytest.mark.parametrize('location,field,value', [
+    ('frontier', 'next_canary_authorized', True),
+    ('frontier', 'next_pilot_authorized', True),
+    ('frontier', 'next_validation_authorized', True),
+    ('frontier', 'current_experiment', 'unregistered_followup'),
+    ('frontier', 'current_execution_blocker', 'FOLLOWUP_READY'),
+    ('registry', 'authorization_closed', False),
+    ('registry', 'authorization_consumed', False),
+    ('registry', 'active_for_new_work', True),
+])
+def test_closed_gradient_output_failure_cannot_authorize_followup(location, field, value):
+    frontier = deepcopy(load_yaml(ROOT / 'experiments/current_frontier.yaml'))
+    registry = deepcopy(load_yaml(ROOT / 'experiments/registry.yaml'))
+    previous = next(row for row in registry['experiments']
+                    if row['experiment_id'] == 'math_v2_1_gradient_pattern_seed81_canary_v1')
+    frontier.update(last_canary_milestone=previous['experiment_id'], current_experiment=previous['experiment_id'],
+        current_canary_status='GRADIENT_OUTPUT_CONTRACT_FAILURE', next_canary_attempt_id=None,
+        current_execution_blocker='USER_SCIENTIFIC_POLICY_DECISION_REQUIRED', real_execution_ready=False,
+        next_canary_authorized=False, next_pilot_authorized=False, next_validation_authorized=False)
+    _assert_canary_does_not_unlock_formal_or_heldout(frontier, registry)
+    if location == 'frontier':
+        frontier[field] = value
+    else:
         previous[field] = value
     with pytest.raises(AssertionError):
         _assert_canary_does_not_unlock_formal_or_heldout(frontier, registry)

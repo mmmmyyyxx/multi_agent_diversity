@@ -1,0 +1,14 @@
+{
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt1",
+  "exact_optimizer_handoff": null,
+  "full_reasoning_trace_observed": false,
+  "llm_judge_calls": 0,
+  "reason": "Gradient extraction failed before cluster or opportunity construction.",
+  "representative_count": 0,
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "selected_support_subset": null,
+  "source_sha": "59703562590acdc6cf454ede3e84d3fab2b7e3a9",
+  "status": "NOT_REACHED",
+  "test_calls": 0,
+  "validation_calls": 0
+}

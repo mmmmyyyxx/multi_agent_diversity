@@ -1,0 +1,53 @@
+{
+  "READY_TO_RUN": true,
+  "active_runner_command": [
+    "runs/math_v2_1/runtime/Scripts/python.exe",
+    "scripts/run_experiment.py",
+    "--prep",
+    "runs/math_v2_1_gradient_pattern_A4_seed81_canary_attempt1_prep",
+    "--run-root",
+    "runs/math_v2_1_gradient_pattern_A4_seed81_canary_attempt1",
+    "--execute"
+  ],
+  "active_successful_provider_ceiling": 1651,
+  "active_transport_ceiling": 34671,
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt1",
+  "cumulative_token_ceiling": 40000000,
+  "diagnostic_physical_call_ceiling": 1,
+  "diagnostic_role": "diagnostic_raw_pattern",
+  "expected_stop": "CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE",
+  "fail_closed": [
+    "source/hash mismatch",
+    "scope/budget mismatch",
+    "provider/persistence/ledger failure",
+    "heldout access",
+    "stale cache or nonempty initial Memory"
+  ],
+  "fresh_cache_namespace": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt1",
+  "full_current_junit_sha256": "dece79aa284e0693b11282fce1487c95a751f9c53319f9b6fb6dd314a3617f2d",
+  "full_current_passed": 1224,
+  "full_current_suite": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 2,
+    "tests": 1226
+  },
+  "full_current_suite_source": "d76dd6ca729e77bdcc2c467121e057b491f95978",
+  "initial_memory_entries": 0,
+  "ledger_remaining_before_execution": 38488351,
+  "provider_calls_before_execution": 0,
+  "pushed": false,
+  "roles": [
+    "solver",
+    "reflection",
+    "pattern_gradient",
+    "pattern_cluster"
+  ],
+  "runner_owner": "ROOT_DIRECT_USER_AUTHORIZED",
+  "source_closure_bytes_equal_tested_source": true,
+  "source_sha": "59703562590acdc6cf454ede3e84d3fab2b7e3a9",
+  "startup_identity_sha256": "af36243a4b7fff0f8ad10196e2165fde277f365cb3d7715c193e110364b94030",
+  "test_access": "sealed",
+  "user_request_sha256": "6327a703b9b337e81b52b67cd136d98c469eb372dc5aa82862101bdc8d6811e2",
+  "validation_access": "not_authorized"
+}

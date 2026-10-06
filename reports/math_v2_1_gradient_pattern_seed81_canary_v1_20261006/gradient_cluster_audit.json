@@ -1,0 +1,20 @@
+{
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt1",
+  "cluster_calls": 0,
+  "gradient_count": 2,
+  "llm_judge_calls": 0,
+  "pattern_count": null,
+  "provider_gradient_count": 3,
+  "reason": "Gradient extraction failed before cluster or opportunity construction.",
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "selected_F": null,
+  "selected_generalized_gradient_sha256": null,
+  "selected_pattern": null,
+  "shared_support_count": null,
+  "singleton_count": null,
+  "source_sha": "59703562590acdc6cf454ede3e84d3fab2b7e3a9",
+  "status": "NOT_REACHED",
+  "support_distribution": null,
+  "test_calls": 0,
+  "validation_calls": 0
+}

@@ -1,0 +1,25 @@
+{
+  "affected_regression_scope": "Closed authorization metadata and fixture safety; standalone diagnostic verification.",
+  "all_historical_replay_pass_claimed": false,
+  "broader_full_current_repeat_required": false,
+  "compileall": "PASS",
+  "current_preexecution_suite_passed": 1224,
+  "current_preexecution_suite_skipped": 2,
+  "diff_check": "PASS",
+  "full_current_suite_source": "d76dd6ca729e77bdcc2c467121e057b491f95978",
+  "full_suite_source_matches_executed_code_and_preexecution_tests": true,
+  "governance": "PASS",
+  "historical_private_artifact_tests": "NOT_RUN",
+  "postexecution_governance_and_diagnostic_cases": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 70
+  },
+  "postexecution_junit_sha256": "32c2694f23e0c1b02ff7e7b074c124910350e290a94465c18116c5fee4207177",
+  "postexecution_network_attempt_count": 0,
+  "production_source_or_scientific_policy_changed": false,
+  "raw_runtime_evidence_unchanged": true,
+  "raw_runtime_inventory_sha256": "3de32cba754bddad3d6dca8e5b44b8129aaa3c94f93cd5873f6849726b56fb79",
+  "sanitization": "PASS"
+}

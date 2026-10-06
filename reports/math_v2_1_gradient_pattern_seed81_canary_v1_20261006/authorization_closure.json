@@ -1,0 +1,21 @@
+{
+  "active_evidence_unchanged": true,
+  "active_provider_calls": 64,
+  "active_scope_sha256": "da284616354e67658f2158ecb625b3187a9ba57eff3c3e2a694fab3c3bc31b53",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt1",
+  "closed": true,
+  "closed_reason": "GENERATED_GRADIENT_CONTRACT_FAILURE_BEFORE_CLUSTER",
+  "diagnostic_consumed": false,
+  "diagnostic_provider_calls": 0,
+  "diagnostic_scope_sha256": "01995dbe1321423f647b5fc330210fd56d7fe8a1046e6a35256524f258ab13f7",
+  "future_real_execution_requires_new_exact_user_authorization": true,
+  "operational_restart_occurred": false,
+  "pilot_authorized": false,
+  "scientific_reruns_authorized": 0,
+  "single_use_consumed": true,
+  "startup_identity_sha256": "af36243a4b7fff0f8ad10196e2165fde277f365cb3d7715c193e110364b94030",
+  "test_authorized": false,
+  "unused_diagnostic_grant_closed": true,
+  "user_request_sha256": "6327a703b9b337e81b52b67cd136d98c469eb372dc5aa82862101bdc8d6811e2",
+  "validation_authorized": false
+}

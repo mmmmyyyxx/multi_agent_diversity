@@ -1,0 +1,22 @@
+{
+  "Q1_failure_category": "GENERATED_OUTPUT_LENGTH_AND_SPECIFIC_CONTENT_CONTRACT_VIOLATION",
+  "Q1_operational": "FAIL",
+  "Q1_real_gradients": "OPERATIONAL_FAIL",
+  "Q1_semantic": "PARTIAL",
+  "Q2_gradient_vs_raw_clustering": "NOT_COMPARABLE",
+  "Q3_optimizer_handoff": "NOT_REACHED",
+  "Q4_observed_prefix": "PASS",
+  "Q4_provider_accounting_wire": "NOT_EVALUABLE_FULL_PIPELINE",
+  "Q5_end_to_end_teamprobe": "NOT_REACHED",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt1",
+  "gradient_semantic_quality": "PARTIAL",
+  "implementation_closure": "NOT_ESTABLISHED",
+  "llm_judge_calls": 0,
+  "pattern_semantic_behavior": "NOT_EVALUABLE",
+  "rerun_reason": "No implementation bug established; any prompt, guard, constrained-generation or semantic-regeneration change requires user decision.",
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "shared_pattern_observed": false,
+  "source_sha": "59703562590acdc6cf454ede3e84d3fab2b7e3a9",
+  "test_calls": 0,
+  "validation_calls": 0
+}

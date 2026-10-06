@@ -1,0 +1,16 @@
+{
+  "executable_source": "59703562590acdc6cf454ede3e84d3fab2b7e3a9",
+  "full_current_junit_sha256": "dece79aa284e0693b11282fce1487c95a751f9c53319f9b6fb6dd314a3617f2d",
+  "full_current_passed": 1224,
+  "full_current_skipped": 2,
+  "full_current_suite_source": "d76dd6ca729e77bdcc2c467121e057b491f95978",
+  "historical_deselected": 1468,
+  "historical_private_artifact_cases_not_run": 64,
+  "postexecution_changes": "Reports, closed-scope governance metadata and governance regression fixtures only; no production runtime, prompts, policy or membership changes.",
+  "preexecution_compileall": "PASS",
+  "preexecution_diff_check": "PASS",
+  "preexecution_governance": "PASS",
+  "preexecution_guard_network_attempts": 0,
+  "preexecution_real_provider_calls": 0,
+  "preexecution_sanitization": "PASS"
+}

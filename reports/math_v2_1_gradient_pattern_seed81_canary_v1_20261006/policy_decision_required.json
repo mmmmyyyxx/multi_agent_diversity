@@ -1,0 +1,14 @@
+{
+  "stop": "STOP_GRADIENT_OUTPUT_POLICY_DECISION_REQUIRED",
+  "authority": "User autonomous task sections 2, 3, 50, 51 and 80",
+  "observed": {"wrong_universe": 7, "gradient_calls": 3, "contract_accepted": 2, "overlength_terminal_rejection": 1, "accepted_example_specific_outputs": 1},
+  "operationally_correct": ["Frozen role, model and generation fields", "Exact request serialization and prompt", "400-character fail-closed contract", "Bounded V3 detector matches its specified implementation", "Classified durable token accounting"],
+  "scientifically_weak": ["Output length compliance failed", "An accepted output retained source entities", "The rejected output retained source numeric outcomes and contradicted its directional diagnosis"],
+  "implementation_bug_established": false,
+  "scientific_rerun_automatically_authorized": false,
+  "options": [
+    {"id": "minimal_gradient_prompt_amendment", "recommended": true, "change": "Strengthen concise anonymous corrective behavior and prohibition on restating observed answer values, while retaining the 400-character cap and one fresh generation per wrong example.", "semantic_effect": "Changes the scientific Gradient instruction, with no automatic guard relaxation or extra generation.", "versioned_amendment_required": true, "fresh_canary_required": true},
+    {"id": "constrained_generation_or_one_repair", "recommended": false, "change": "Design an explicitly frozen constrained-output generation policy or one bounded corrective regeneration.", "semantic_effect": "Changes provider/generation or regeneration semantics; a repair can alter n-plus-one accounting and physical-call ceilings.", "versioned_amendment_required": true, "fresh_canary_required": true, "provider_capability_not_probed": true},
+    {"id": "end_without_method_change", "recommended": false, "change": "Keep the frozen method and close this verification at the observed contract failure.", "semantic_effect": "No method or prompt change; implementation closure remains not established.", "versioned_amendment_required": false, "fresh_canary_required": false}
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "active_provider_calls": 64,
+  "active_successes": 64,
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt1",
+  "charged_tokens": 30792,
+  "diagnostic_provider_calls": 0,
+  "input_tokens": 17117,
+  "ledger_remaining": 38457559,
+  "llm_judge_calls": 0,
+  "logical_solver_requests": 60,
+  "missing_reasoning_token_counts_inferred_as_zero": false,
+  "observed_generation_fields": {
+    "pattern_gradient": {
+      "extra_body": {
+        "enable_thinking": false,
+        "top_k": 20
+      },
+      "frequency_penalty": 0,
+      "max_completion_tokens": 1800,
+      "model": "qwen3.7-flash",
+      "presence_penalty": 1.5,
+      "temperature": 0.7,
+      "top_p": 0.8
+    },
+    "solver": {
+      "extra_body": {
+        "enable_thinking": false,
+        "min_p": 0,
+        "top_k": 20
+      },
+      "frequency_penalty": 0,
+      "max_tokens": 3600,
+      "model": "qwen3-8b",
+      "presence_penalty": 0,
+      "temperature": 0.2,
+      "top_p": 0.8
+    }
+  },
+  "optimizer_nonthinking_evidence_levels": {
+    "EQUIVALENT_LEVEL_B": 3
+  },
+  "output_tokens": 13675,
+  "reserved_inflight": 0,
+  "scientific_efficacy": "NOT_ESTIMATED",
+  "solver_semantic_recovery_extra_generations": 1,
+  "source_sha": "59703562590acdc6cf454ede3e84d3fab2b7e3a9",
+  "test_calls": 0,
+  "unexecuted_roles": [
+    "pattern_cluster",
+    "reflection",
+    "diagnostic_raw_pattern"
+  ],
+  "usage_by_role": {
+    "diagnostic_raw_pattern": {
+      "cache_hits": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "physical_attempts": 0,
+      "successful_generations": 0,
+      "transport_failures": 0
+    },
+    "pattern_cluster": {
+      "cache_hits": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "physical_attempts": 0,
+      "successful_generations": 0,
+      "transport_failures": 0
+    },
+    "pattern_gradient": {
+      "cache_hits": 0,
+      "input_tokens": 1201,
+      "output_tokens": 223,
+      "physical_attempts": 3,
+      "successful_generations": 3,
+      "transport_failures": 0
+    },
+    "reflection": {
+      "cache_hits": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "physical_attempts": 0,
+      "successful_generations": 0,
+      "transport_failures": 0
+    },
+    "solver": {
+      "cache_hits": 0,
+      "input_tokens": 15916,
+      "output_tokens": 13452,
+      "physical_attempts": 61,
+      "successful_generations": 61,
+      "transport_failures": 0
+    }
+  },
+  "validation_calls": 0
+}
