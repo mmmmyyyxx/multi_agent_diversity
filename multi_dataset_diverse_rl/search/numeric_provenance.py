@@ -31,6 +31,12 @@ _ANSWER = re.compile(r'\b(?:answer\s+(?:is|equals)|return|output|report\s+(?:the
 _EXPRESSION = re.compile(r'(?<!\w)[a-z0-9]+(?:\s*[=+*/^<>-]\s*[a-z0-9]+)+(?!\w)')
 
 
+def numeric_answer_literal(text):
+    """Recognize bounded numeric literals before symbolic-answer substring checks."""
+    return bool(re.fullmatch(r'[\d\s.,+*/^{}()\\-]+',text)
+        or _WORDS.fullmatch(text) or _RATIO.fullmatch(text))
+
+
 @dataclass(frozen=True)
 class Number:
     value: Fraction

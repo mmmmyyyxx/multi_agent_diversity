@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "suite": {
+    "tests": 123,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0
+  },
+  "compileall": "PASS",
+  "historical_helper_default_preserved": true,
+  "numeric_reference_aliases_consistent": true,
+  "immutable_historical_files": 4703,
+  "historical_files_changed": 0,
+  "legacy_dependencies": 0,
+  "provider_calls": 0,
+  "network_attempt_count": 0,
+  "first_full_suite": "INTENTIONALLY_INTERRUPTED_BEFORE_COMPLETION_FOR_ADDITIONAL_IMPLEMENTATION_REPAIR",
+  "final_full_suite": "REQUIRED_ON_NEW_FINAL_SOURCE"
+}

@@ -63,6 +63,12 @@ def test_small_unanchored_overlap_is_not_a_provenance_claim():
     assert not numeric_content_leaked('Use constant 123.',(row('A symbolic example.','x','y'),))
 
 
+@pytest.mark.parametrize('gold',['one','zero','two','\\frac{1}{2}'])
+def test_generic_numeric_rule_with_written_numeric_reference(gold):
+    gradient='Check that probabilities sum to one and use 2 independent derivations.'
+    assert validate_gradient(gradient,(row('A symbolic example.',gold,'x'),))==gradient
+
+
 def test_generalized_gradient_checks_all_original_wrong_sources():
     rows=(row('A symbolic example.','x','y'),row('The given value is 123.','z','w'))
     with pytest.raises(SearchContractError,match='CLUSTER_INVALID'):

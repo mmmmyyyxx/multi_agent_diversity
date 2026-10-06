@@ -45,7 +45,10 @@ def specific_content_leaked(text, rows, *, numeric_gold=True):
     for row in rows:
         source = unicodedata.normalize('NFKC', str(row.signals['input_payload']))
         gold = normalize(row.signals['gold'])
-        numeric_answer = bool(re.fullmatch(r'[\d\s.,+*/^{}()\\-]+', gold))
+        numeric_answer=False
+        if not numeric_gold:
+            from .numeric_provenance import numeric_answer_literal
+            numeric_answer=numeric_answer_literal(gold)
         if gold and (numeric_gold or not numeric_answer) and (normalized == gold or len(gold) >= 3 and contains_literal(normalized, gold)):
             return True
         # Short symbolic answers are prohibited when supplied as an answer,

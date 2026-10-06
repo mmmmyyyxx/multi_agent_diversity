@@ -32,7 +32,8 @@ provenance by themselves. The detector rejects these stronger signals:
   numeric value outside zero, one and two, copied with optional whitespace.
 
 A shared small number alone is insufficient, including zero, one and two.
-Numeric answer substring matching is delegated to this detector; symbolic-answer
+Numeric answer substring matching (including bounded cardinal-word and simple
+LaTeX fraction literals) is delegated to this detector; symbolic-answer
 checks, entity contexts, coordinated participant constraints, supplied example
 text, quoted labels, explicit expression copying and external-interface checks
 remain. The original V3/V4 helpers retain their default historical behavior.
