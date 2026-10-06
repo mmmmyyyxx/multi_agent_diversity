@@ -1,0 +1,29 @@
+{
+  "READY_TO_RUN": false,
+  "compileall": "PASS",
+  "full_historical_replay_pass": false,
+  "historical_files_changed": 0,
+  "historical_immutable_file_count": 5009,
+  "network_attempt_count": 0,
+  "omitted_historical_private_artifact_cases": 64,
+  "preexecution_full_current": {
+    "deselected": 1468,
+    "passed": 1374,
+    "skipped": 2
+  },
+  "preexecution_full_junit_sha256": "3647f423c83d4b51a7f3132dbb74449e304163d947c502fe1a602f1fdc4d4d1d",
+  "production_source_changed_after_freeze": false,
+  "provider_calls": 0,
+  "publication_authorized": true,
+  "runtime_file_count": 805,
+  "scientific_api_scope_consumed_closed": true,
+  "status": "PASS",
+  "terminal_governance_tests": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 83
+  },
+  "terminal_junit_sha256": "3c840f4eb52cc71cf7c7999baa3eba14767716c0bbfc7b747ff5d1ba75034986",
+  "terminal_runtime_inventory": "PASS"
+}

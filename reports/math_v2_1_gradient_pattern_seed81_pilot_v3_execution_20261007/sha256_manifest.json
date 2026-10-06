@@ -1,0 +1,117 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "accounting_integrity_audit.json",
+      "sha256": "130fcc1d3d84bbd215d10588e79f6e30cb04f93c4c064db5a9917f333d159b37"
+    },
+    {
+      "file": "analysis_index.md",
+      "sha256": "94a509b9b1d784d9dd16a5c53110441ca5e2958ad3af4ea8fe497cc6563b674d"
+    },
+    {
+      "file": "authorization_closure.json",
+      "sha256": "4c8326e2033674cb4728068b8b7031462a9e847ee837f5de123c7f79b6f3a1ee"
+    },
+    {
+      "file": "candidate_funnel.json",
+      "sha256": "4f91d7ade00b44f84f181c94a0fb2069b7d00d826934005f046ba0890207982e"
+    },
+    {
+      "file": "candidate_trajectory.jsonl",
+      "sha256": "61c61bbc27aa90d31827c789a723edca29a4e2c4f166f1fb7e8e73e6cdad3ae9"
+    },
+    {
+      "file": "cost_trajectory.json",
+      "sha256": "08a0af6c2732930f5e2f0512ded9d6f1861645ebe96ef38f2ffe5e5edacf62c0"
+    },
+    {
+      "file": "execution_identity.json",
+      "sha256": "3f9b90ef1d8f72486d2400ce8bcd5170d8425f127afbe19098d0ac6784ca801c"
+    },
+    {
+      "file": "failed_partition_audit.json",
+      "sha256": "2d478effa9e6cca8f1a360afe2fcbaf37ad9ad465bb4e01647791071ed7731df"
+    },
+    {
+      "file": "final_status.json",
+      "sha256": "d186ccb520720f610e0cebf4891768ae8c7c87ee7c9efd710d30f6dd1c10d135"
+    },
+    {
+      "file": "final_zero_api_verification.json",
+      "sha256": "7613be7177ad1fd8a8707ac9295c5cf34c322f054140c0d637b302d2e80fc380"
+    },
+    {
+      "file": "gate_outcomes.json",
+      "sha256": "b94d9c27182bfac2235c35f16d481818786f6c5c36be3e2c29a2e66bc533425c"
+    },
+    {
+      "file": "governance_audit.json",
+      "sha256": "a0fc93c04c9f6859bbada924acd86c9e8792c1498cf8fc0519f3511c19782313"
+    },
+    {
+      "file": "gradient_trajectory.json",
+      "sha256": "d4aa593823be1cd16fcead66635da36a7f483ae04bcf4eb49397c9c27a18ce2b"
+    },
+    {
+      "file": "initial_symmetry_and_differentiation.json",
+      "sha256": "7ba830eba40b5f3b0474b95c382549d486f0227c4024c3b8f56fe0b4e8f95fb1"
+    },
+    {
+      "file": "member_training_summary.csv",
+      "sha256": "0919c7cfe6dfb45a3ed437bfc4218d2a80d41b8516cdad00b7b97fe0216238d6"
+    },
+    {
+      "file": "memory_trajectory.json",
+      "sha256": "b6e6e8b65e41be80db0b3751bea26e53a223cae338bc2aa12a475c8b0ef50c3f"
+    },
+    {
+      "file": "module_behavior_summary.json",
+      "sha256": "1f79dca2ba84bd78a124b5183d05b3de4c9990ba98388444c163cbf52ec5a362"
+    },
+    {
+      "file": "opportunity_summary.csv",
+      "sha256": "d62fb75e95361d9431368a4be3959b3faa5294f853a1229baf6ef56f4fe08f8e"
+    },
+    {
+      "file": "pattern_trajectory.json",
+      "sha256": "11e97350224f17c0912b8d29838ce816a44df5134bb21927a2b97d2f421c084b"
+    },
+    {
+      "file": "prompt_lineage.json",
+      "sha256": "24592bf9c87e3890714cc38b33a9cd8d07cf2bd497fb7c61fa740a4bc87d5505"
+    },
+    {
+      "file": "provider_usage.json",
+      "sha256": "d4dc04319e70544d3146d7e9864bef2148a3d93a89dcdc6ae40aac2e68e22b41"
+    },
+    {
+      "file": "README.md",
+      "sha256": "97b42f9c01b162f8701f54d4f684b161277738369a4cfdbb437cfc49f58d5a46"
+    },
+    {
+      "file": "responsibility_trajectory.json",
+      "sha256": "c31ca0dcf287515dc78bac103479031ea4ccd44f0e23f560972abf928192516f"
+    },
+    {
+      "file": "scientific_decision_request.json",
+      "sha256": "909e441ca46ef317ae00aec3125c129193601f1ea86203e6b88f24934e180c2b"
+    },
+    {
+      "file": "stop_trace.json",
+      "sha256": "52fd0bd5ebfeb036ef7d3c7fd5537a3365c926452d90d6b891fe70b2de6de8fc"
+    },
+    {
+      "file": "team_state_trajectory.json",
+      "sha256": "b1e1689a98b58f14727d7d65831cf6f7d46e8c460b51c14585244fdfc2f3e69d"
+    },
+    {
+      "file": "transition_trace.json",
+      "sha256": "1d37490b076020cbb9c705a481db638fc33a02901bde2b92d095367b8dbc8e8a"
+    },
+    {
+      "file": "wire_and_durability_audit.json",
+      "sha256": "8166cefc8f6b0f14cb601b59d893e9981b36dade5f0a1490fd4341355ec12d99"
+    }
+  ]
+}

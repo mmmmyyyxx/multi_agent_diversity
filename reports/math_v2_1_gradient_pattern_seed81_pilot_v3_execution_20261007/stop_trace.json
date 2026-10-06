@@ -1,0 +1,38 @@
+{
+  "Optimize_count": 60,
+  "Shadow_count": 40,
+  "arm": "A4",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt3",
+  "llm_judge_calls": 0,
+  "no_efficacy_adaptation": true,
+  "operational_bound_was_not_scientific_stop": true,
+  "patience": 2,
+  "raw_diagnostic_calls": 0,
+  "rows": [
+    {
+      "committed": false,
+      "eligible_members": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "no_commit_epochs": 0,
+      "opportunity_index": 1,
+      "parent_state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "seen_members": [
+        0
+      ],
+      "stop_reason": null
+    }
+  ],
+  "scientific_efficacy": "NOT_CAUSALLY_ESTABLISHED",
+  "scientific_stop_reached": false,
+  "scientific_stopper": "team_epoch_no_commit_v1",
+  "seed": 81,
+  "source_sha": "9158ebc55b1d36d04e9acb3693d3a5e500ee4a3c",
+  "stop_reason": "PATTERN_GRADIENT_CLUSTER_INVALID_MEMBERSHIP",
+  "test_model_calls": 0,
+  "validation_model_calls": 0
+}

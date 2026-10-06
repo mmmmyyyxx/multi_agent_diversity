@@ -1,0 +1,2131 @@
+{
+  "Optimize_count": 60,
+  "Shadow_count": 40,
+  "actual_retrieval_invocations": 7,
+  "arm": "A4",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt3",
+  "events": [
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 0,
+          "mean": 0,
+          "min": 0
+        },
+        "memory_ids": [],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 0,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {},
+      "event_index": 0,
+      "memory_state_sha256": "ae65e25ec198401c972810a169357b2f6f8b0e1aba3809ba71f7f3f758e995a1",
+      "revision": 0,
+      "risk_clock": 0,
+      "sequence": 0,
+      "stage": "INITIAL_EMPTY_MEMORY",
+      "storage_utilization": {
+        "private_failure": 0,
+        "private_success": 0,
+        "shared_risk": 0
+      }
+    },
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 0,
+          "mean": 0,
+          "min": 0
+        },
+        "memory_ids": [],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 0,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {
+        "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+        "target_member": 0
+      },
+      "counter_deltas": {
+        "failure_memory_evictions": 0,
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "shared_reads": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "event_index": 1,
+      "failures_added_ids": [],
+      "failures_removed_ids": [],
+      "memory_state_sha256": "ae65e25ec198401c972810a169357b2f6f8b0e1aba3809ba71f7f3f758e995a1",
+      "private_added_ids": [],
+      "private_removed_ids": [],
+      "revision": 0,
+      "risk_clock": 0,
+      "sequence": 0,
+      "shared_added_ids": [],
+      "shared_removed_ids": [],
+      "stage": "MEMORY_BEFORE_OPPORTUNITY",
+      "storage_utilization": {
+        "private_failure": 0,
+        "private_success": 0,
+        "shared_risk": 0
+      }
+    },
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 2,
+          "mean": 2.0,
+          "min": 2
+        },
+        "memory_ids": [],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 0,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {
+        "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+        "target_member": 0
+      },
+      "context_chars": 2,
+      "counter_deltas": {
+        "failure_memory_evictions": 0,
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "shared_reads": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "event_index": 2,
+      "failures_added_ids": [],
+      "failures_removed_ids": [],
+      "lane": "coverage",
+      "member": 0,
+      "memory_state_sha256": "e196e9ef3afc5ed7379db952a915c04cbb1b3339e876946210a19d4c4a02c63d",
+      "private_added_ids": [],
+      "private_removed_ids": [],
+      "read_entries": 0,
+      "read_ids": {
+        "private_failure": [],
+        "private_success": [],
+        "shared_risk": []
+      },
+      "revision": 0,
+      "risk_clock": 0,
+      "sequence": 0,
+      "shared_added_ids": [],
+      "shared_removed_ids": [],
+      "stage": "MEMORY_READ",
+      "storage_utilization": {
+        "private_failure": 0,
+        "private_success": 0,
+        "shared_risk": 0
+      },
+      "visible_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 2,
+          "mean": 2.0,
+          "min": 2
+        },
+        "memory_ids": [],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 0,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {
+        "generation": 1,
+        "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+        "target_member": 0
+      },
+      "counter_deltas": {
+        "failure_memory_evictions": 0,
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "shared_reads": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "event_index": 3,
+      "failures_added_ids": [],
+      "failures_removed_ids": [],
+      "memory_state_sha256": "e196e9ef3afc5ed7379db952a915c04cbb1b3339e876946210a19d4c4a02c63d",
+      "private_added_ids": [],
+      "private_removed_ids": [],
+      "revision": 0,
+      "risk_clock": 0,
+      "sequence": 0,
+      "shared_added_ids": [],
+      "shared_removed_ids": [],
+      "stage": "MEMORY_BEFORE_GENERATION",
+      "storage_utilization": {
+        "private_failure": 0,
+        "private_success": 0,
+        "shared_risk": 0
+      }
+    },
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 2,
+          "mean": 2.0,
+          "min": 2
+        },
+        "memory_ids": [],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 0,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {
+        "generation": 1,
+        "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+        "target_member": 0
+      },
+      "context_chars": 2,
+      "counter_deltas": {
+        "failure_memory_evictions": 0,
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "shared_reads": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "event_index": 4,
+      "failures_added_ids": [],
+      "failures_removed_ids": [],
+      "lane": "coverage",
+      "member": 0,
+      "memory_state_sha256": "fe2e6814534517b9d6a7da895f4e701a888cc7f53b2b30a8780ea0a2e03cf37d",
+      "private_added_ids": [],
+      "private_removed_ids": [],
+      "read_entries": 0,
+      "read_ids": {
+        "private_failure": [],
+        "private_success": [],
+        "shared_risk": []
+      },
+      "revision": 0,
+      "risk_clock": 0,
+      "sequence": 0,
+      "shared_added_ids": [],
+      "shared_removed_ids": [],
+      "stage": "MEMORY_READ",
+      "storage_utilization": {
+        "private_failure": 0,
+        "private_success": 0,
+        "shared_risk": 0
+      },
+      "visible_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 2,
+          "mean": 2.0,
+          "min": 2
+        },
+        "memory_ids": [],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 0,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {
+        "generation": 1,
+        "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+        "target_member": 0
+      },
+      "counter_deltas": {
+        "failure_memory_evictions": 0,
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "shared_reads": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "event_index": 5,
+      "failures_added_ids": [],
+      "failures_removed_ids": [],
+      "memory_state_sha256": "fe2e6814534517b9d6a7da895f4e701a888cc7f53b2b30a8780ea0a2e03cf37d",
+      "private_added_ids": [],
+      "private_removed_ids": [],
+      "revision": 0,
+      "risk_clock": 0,
+      "sequence": 0,
+      "shared_added_ids": [],
+      "shared_removed_ids": [],
+      "stage": "GENERATION_COMPLETE",
+      "storage_utilization": {
+        "private_failure": 0,
+        "private_success": 0,
+        "shared_risk": 0
+      }
+    },
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 2,
+          "mean": 2.0,
+          "min": 2
+        },
+        "memory_ids": [],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 0,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {
+        "generation": 2,
+        "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+        "target_member": 0
+      },
+      "counter_deltas": {
+        "failure_memory_evictions": 0,
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "shared_reads": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "event_index": 6,
+      "failures_added_ids": [],
+      "failures_removed_ids": [],
+      "memory_state_sha256": "fe2e6814534517b9d6a7da895f4e701a888cc7f53b2b30a8780ea0a2e03cf37d",
+      "private_added_ids": [],
+      "private_removed_ids": [],
+      "revision": 0,
+      "risk_clock": 0,
+      "sequence": 0,
+      "shared_added_ids": [],
+      "shared_removed_ids": [],
+      "stage": "MEMORY_BEFORE_GENERATION",
+      "storage_utilization": {
+        "private_failure": 0,
+        "private_success": 0,
+        "shared_risk": 0
+      }
+    },
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 2,
+          "mean": 2.0,
+          "min": 2
+        },
+        "memory_ids": [],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 0,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {
+        "generation": 2,
+        "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+        "target_member": 0
+      },
+      "context_chars": 2,
+      "counter_deltas": {
+        "failure_memory_evictions": 0,
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "shared_reads": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "event_index": 7,
+      "failures_added_ids": [],
+      "failures_removed_ids": [],
+      "lane": "coverage",
+      "member": 0,
+      "memory_state_sha256": "35a658d16bb2f4dd1c5f1f62466ec4cf8cee4979c518fa7a75b35bbcd0c72dde",
+      "private_added_ids": [],
+      "private_removed_ids": [],
+      "read_entries": 0,
+      "read_ids": {
+        "private_failure": [],
+        "private_success": [],
+        "shared_risk": []
+      },
+      "revision": 0,
+      "risk_clock": 0,
+      "sequence": 0,
+      "shared_added_ids": [],
+      "shared_removed_ids": [],
+      "stage": "MEMORY_READ",
+      "storage_utilization": {
+        "private_failure": 0,
+        "private_success": 0,
+        "shared_risk": 0
+      },
+      "visible_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 2,
+          "mean": 2.0,
+          "min": 2
+        },
+        "memory_ids": [],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 0,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {
+        "generation": 2,
+        "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+        "target_member": 0
+      },
+      "counter_deltas": {
+        "failure_memory_evictions": 0,
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "shared_reads": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "event_index": 8,
+      "failures_added_ids": [],
+      "failures_removed_ids": [],
+      "memory_state_sha256": "35a658d16bb2f4dd1c5f1f62466ec4cf8cee4979c518fa7a75b35bbcd0c72dde",
+      "private_added_ids": [],
+      "private_removed_ids": [],
+      "revision": 0,
+      "risk_clock": 0,
+      "sequence": 0,
+      "shared_added_ids": [],
+      "shared_removed_ids": [],
+      "stage": "GENERATION_COMPLETE",
+      "storage_utilization": {
+        "private_failure": 0,
+        "private_success": 0,
+        "shared_risk": 0
+      }
+    },
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 2,
+          "mean": 2.0,
+          "min": 2
+        },
+        "memory_ids": [],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 0,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {
+        "generation": 3,
+        "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+        "target_member": 0
+      },
+      "counter_deltas": {
+        "failure_memory_evictions": 0,
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "shared_reads": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "event_index": 9,
+      "failures_added_ids": [],
+      "failures_removed_ids": [],
+      "memory_state_sha256": "35a658d16bb2f4dd1c5f1f62466ec4cf8cee4979c518fa7a75b35bbcd0c72dde",
+      "private_added_ids": [],
+      "private_removed_ids": [],
+      "revision": 0,
+      "risk_clock": 0,
+      "sequence": 0,
+      "shared_added_ids": [],
+      "shared_removed_ids": [],
+      "stage": "MEMORY_BEFORE_GENERATION",
+      "storage_utilization": {
+        "private_failure": 0,
+        "private_success": 0,
+        "shared_risk": 0
+      }
+    },
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 2,
+          "mean": 2.0,
+          "min": 2
+        },
+        "memory_ids": [],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 0,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {
+        "generation": 3,
+        "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+        "target_member": 0
+      },
+      "context_chars": 2,
+      "counter_deltas": {
+        "failure_memory_evictions": 0,
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "shared_reads": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "event_index": 10,
+      "failures_added_ids": [],
+      "failures_removed_ids": [],
+      "lane": "coverage",
+      "member": 0,
+      "memory_state_sha256": "9803ce41bec2aa5c5011e3a4c0910084410ca7363d88c6151e10364ec30ac951",
+      "private_added_ids": [],
+      "private_removed_ids": [],
+      "read_entries": 0,
+      "read_ids": {
+        "private_failure": [],
+        "private_success": [],
+        "shared_risk": []
+      },
+      "revision": 0,
+      "risk_clock": 0,
+      "sequence": 0,
+      "shared_added_ids": [],
+      "shared_removed_ids": [],
+      "stage": "MEMORY_READ",
+      "storage_utilization": {
+        "private_failure": 0,
+        "private_success": 0,
+        "shared_risk": 0
+      },
+      "visible_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 1,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 2,
+          "mean": 2.0,
+          "min": 2
+        },
+        "memory_ids": [
+          "80e2b7b840cbc90c4260e907a5556417562af652fb34f385f0ca62e41f7550dc"
+        ],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 0,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 1,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {
+        "generation": 3,
+        "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+        "target_member": 0
+      },
+      "counter_deltas": {
+        "failure_memory_evictions": 0,
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 1,
+        "shared_reads": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "event_index": 11,
+      "failures_added_ids": [
+        "80e2b7b840cbc90c4260e907a5556417562af652fb34f385f0ca62e41f7550dc"
+      ],
+      "failures_removed_ids": [],
+      "memory_state_sha256": "56ac5f3a74b3824e2b55e08ebb2da07298b65c7abf2fc0063d802d4480e25df6",
+      "private_added_ids": [],
+      "private_removed_ids": [],
+      "revision": 1,
+      "risk_clock": 0,
+      "sequence": 1,
+      "shared_added_ids": [],
+      "shared_removed_ids": [],
+      "stage": "GENERATION_COMPLETE",
+      "storage_utilization": {
+        "private_failure": 1,
+        "private_success": 0,
+        "shared_risk": 0
+      }
+    },
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 1,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 2,
+          "mean": 2.0,
+          "min": 2
+        },
+        "memory_ids": [
+          "80e2b7b840cbc90c4260e907a5556417562af652fb34f385f0ca62e41f7550dc"
+        ],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 0,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 1,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {
+        "generation": 4,
+        "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+        "target_member": 0
+      },
+      "counter_deltas": {
+        "failure_memory_evictions": 0,
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "shared_reads": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "event_index": 12,
+      "failures_added_ids": [],
+      "failures_removed_ids": [],
+      "memory_state_sha256": "56ac5f3a74b3824e2b55e08ebb2da07298b65c7abf2fc0063d802d4480e25df6",
+      "private_added_ids": [],
+      "private_removed_ids": [],
+      "revision": 1,
+      "risk_clock": 0,
+      "sequence": 1,
+      "shared_added_ids": [],
+      "shared_removed_ids": [],
+      "stage": "MEMORY_BEFORE_GENERATION",
+      "storage_utilization": {
+        "private_failure": 1,
+        "private_success": 0,
+        "shared_risk": 0
+      }
+    },
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 1,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 1,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 362,
+          "mean": 74.0,
+          "min": 2
+        },
+        "memory_ids": [
+          "80e2b7b840cbc90c4260e907a5556417562af652fb34f385f0ca62e41f7550dc"
+        ],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 0,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 1,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {
+        "generation": 4,
+        "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+        "target_member": 0
+      },
+      "context_chars": 362,
+      "counter_deltas": {
+        "failure_memory_evictions": 0,
+        "failure_reads": 1,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "shared_reads": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "event_index": 13,
+      "failures_added_ids": [],
+      "failures_removed_ids": [],
+      "lane": "coverage",
+      "member": 0,
+      "memory_state_sha256": "f9c2be0f3168f61dad408ee153019887c5bced87e97fcef677bac46aee27cd7e",
+      "private_added_ids": [],
+      "private_removed_ids": [],
+      "read_entries": 1,
+      "read_ids": {
+        "private_failure": [
+          "80e2b7b840cbc90c4260e907a5556417562af652fb34f385f0ca62e41f7550dc"
+        ],
+        "private_success": [],
+        "shared_risk": []
+      },
+      "revision": 1,
+      "risk_clock": 0,
+      "sequence": 1,
+      "shared_added_ids": [],
+      "shared_removed_ids": [],
+      "stage": "MEMORY_READ",
+      "storage_utilization": {
+        "private_failure": 1,
+        "private_success": 0,
+        "shared_risk": 0
+      },
+      "visible_sha256": "c0a75c1239123eb050c16761d1010f463c234f0ec1617266fc1acb948e718c24"
+    },
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 1,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 1,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 362,
+          "mean": 74.0,
+          "min": 2
+        },
+        "memory_ids": [
+          "80e2b7b840cbc90c4260e907a5556417562af652fb34f385f0ca62e41f7550dc"
+        ],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 0,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 1,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {
+        "generation": 4,
+        "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+        "target_member": 0
+      },
+      "counter_deltas": {
+        "failure_memory_evictions": 0,
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "shared_reads": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "event_index": 14,
+      "failures_added_ids": [],
+      "failures_removed_ids": [],
+      "memory_state_sha256": "f9c2be0f3168f61dad408ee153019887c5bced87e97fcef677bac46aee27cd7e",
+      "private_added_ids": [],
+      "private_removed_ids": [],
+      "revision": 1,
+      "risk_clock": 0,
+      "sequence": 1,
+      "shared_added_ids": [],
+      "shared_removed_ids": [],
+      "stage": "GENERATION_COMPLETE",
+      "storage_utilization": {
+        "private_failure": 1,
+        "private_success": 0,
+        "shared_risk": 0
+      }
+    },
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 1,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 1,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 362,
+          "mean": 74.0,
+          "min": 2
+        },
+        "memory_ids": [
+          "80e2b7b840cbc90c4260e907a5556417562af652fb34f385f0ca62e41f7550dc"
+        ],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 0,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 1,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {
+        "generation": 5,
+        "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+        "target_member": 0
+      },
+      "counter_deltas": {
+        "failure_memory_evictions": 0,
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "shared_reads": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "event_index": 15,
+      "failures_added_ids": [],
+      "failures_removed_ids": [],
+      "memory_state_sha256": "f9c2be0f3168f61dad408ee153019887c5bced87e97fcef677bac46aee27cd7e",
+      "private_added_ids": [],
+      "private_removed_ids": [],
+      "revision": 1,
+      "risk_clock": 0,
+      "sequence": 1,
+      "shared_added_ids": [],
+      "shared_removed_ids": [],
+      "stage": "MEMORY_BEFORE_GENERATION",
+      "storage_utilization": {
+        "private_failure": 1,
+        "private_success": 0,
+        "shared_risk": 0
+      }
+    },
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 2,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 1,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 362,
+          "mean": 122.0,
+          "min": 2
+        },
+        "memory_ids": [
+          "80e2b7b840cbc90c4260e907a5556417562af652fb34f385f0ca62e41f7550dc"
+        ],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 0,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 1,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {
+        "generation": 5,
+        "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+        "target_member": 0
+      },
+      "context_chars": 362,
+      "counter_deltas": {
+        "failure_memory_evictions": 0,
+        "failure_reads": 1,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "shared_reads": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "event_index": 16,
+      "failures_added_ids": [],
+      "failures_removed_ids": [],
+      "lane": "coverage",
+      "member": 0,
+      "memory_state_sha256": "7e8db0aef6333bf54bd5fd6c5c37dde140dc9b93866de4978901d3e396970e41",
+      "private_added_ids": [],
+      "private_removed_ids": [],
+      "read_entries": 1,
+      "read_ids": {
+        "private_failure": [
+          "80e2b7b840cbc90c4260e907a5556417562af652fb34f385f0ca62e41f7550dc"
+        ],
+        "private_success": [],
+        "shared_risk": []
+      },
+      "revision": 1,
+      "risk_clock": 0,
+      "sequence": 1,
+      "shared_added_ids": [],
+      "shared_removed_ids": [],
+      "stage": "MEMORY_READ",
+      "storage_utilization": {
+        "private_failure": 1,
+        "private_success": 0,
+        "shared_risk": 0
+      },
+      "visible_sha256": "c0a75c1239123eb050c16761d1010f463c234f0ec1617266fc1acb948e718c24"
+    },
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 2,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 1,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 362,
+          "mean": 122.0,
+          "min": 2
+        },
+        "memory_ids": [
+          "80e2b7b840cbc90c4260e907a5556417562af652fb34f385f0ca62e41f7550dc"
+        ],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 0,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 1,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {
+        "generation": 5,
+        "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+        "target_member": 0
+      },
+      "counter_deltas": {
+        "failure_memory_evictions": 0,
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "shared_reads": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "event_index": 17,
+      "failures_added_ids": [],
+      "failures_removed_ids": [],
+      "memory_state_sha256": "7e8db0aef6333bf54bd5fd6c5c37dde140dc9b93866de4978901d3e396970e41",
+      "private_added_ids": [],
+      "private_removed_ids": [],
+      "revision": 1,
+      "risk_clock": 0,
+      "sequence": 1,
+      "shared_added_ids": [],
+      "shared_removed_ids": [],
+      "stage": "GENERATION_COMPLETE",
+      "storage_utilization": {
+        "private_failure": 1,
+        "private_success": 0,
+        "shared_risk": 0
+      }
+    },
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 2,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 1,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 362,
+          "mean": 122.0,
+          "min": 2
+        },
+        "memory_ids": [
+          "80e2b7b840cbc90c4260e907a5556417562af652fb34f385f0ca62e41f7550dc"
+        ],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 0,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 1,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {
+        "generation": 6,
+        "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+        "target_member": 0
+      },
+      "counter_deltas": {
+        "failure_memory_evictions": 0,
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "shared_reads": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "event_index": 18,
+      "failures_added_ids": [],
+      "failures_removed_ids": [],
+      "memory_state_sha256": "7e8db0aef6333bf54bd5fd6c5c37dde140dc9b93866de4978901d3e396970e41",
+      "private_added_ids": [],
+      "private_removed_ids": [],
+      "revision": 1,
+      "risk_clock": 0,
+      "sequence": 1,
+      "shared_added_ids": [],
+      "shared_removed_ids": [],
+      "stage": "MEMORY_BEFORE_GENERATION",
+      "storage_utilization": {
+        "private_failure": 1,
+        "private_success": 0,
+        "shared_risk": 0
+      }
+    },
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 3,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 1,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 362,
+          "mean": 156.28571428571428,
+          "min": 2
+        },
+        "memory_ids": [
+          "80e2b7b840cbc90c4260e907a5556417562af652fb34f385f0ca62e41f7550dc"
+        ],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 0,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 1,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {
+        "generation": 6,
+        "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+        "target_member": 0
+      },
+      "context_chars": 362,
+      "counter_deltas": {
+        "failure_memory_evictions": 0,
+        "failure_reads": 1,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "shared_reads": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "event_index": 19,
+      "failures_added_ids": [],
+      "failures_removed_ids": [],
+      "lane": "coverage",
+      "member": 0,
+      "memory_state_sha256": "9fd0699af4b4b92473201ae421ecc5a38de00461643623efed37417aeb2f4309",
+      "private_added_ids": [],
+      "private_removed_ids": [],
+      "read_entries": 1,
+      "read_ids": {
+        "private_failure": [
+          "80e2b7b840cbc90c4260e907a5556417562af652fb34f385f0ca62e41f7550dc"
+        ],
+        "private_success": [],
+        "shared_risk": []
+      },
+      "revision": 1,
+      "risk_clock": 0,
+      "sequence": 1,
+      "shared_added_ids": [],
+      "shared_removed_ids": [],
+      "stage": "MEMORY_READ",
+      "storage_utilization": {
+        "private_failure": 1,
+        "private_success": 0,
+        "shared_risk": 0
+      },
+      "visible_sha256": "c0a75c1239123eb050c16761d1010f463c234f0ec1617266fc1acb948e718c24"
+    },
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 3,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 1,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 362,
+          "mean": 156.28571428571428,
+          "min": 2
+        },
+        "memory_ids": [
+          "80e2b7b840cbc90c4260e907a5556417562af652fb34f385f0ca62e41f7550dc"
+        ],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 0,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 1,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {
+        "generation": 6,
+        "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+        "target_member": 0
+      },
+      "counter_deltas": {
+        "failure_memory_evictions": 0,
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "shared_reads": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "event_index": 20,
+      "failures_added_ids": [],
+      "failures_removed_ids": [],
+      "memory_state_sha256": "9fd0699af4b4b92473201ae421ecc5a38de00461643623efed37417aeb2f4309",
+      "private_added_ids": [],
+      "private_removed_ids": [],
+      "revision": 1,
+      "risk_clock": 0,
+      "sequence": 1,
+      "shared_added_ids": [],
+      "shared_removed_ids": [],
+      "stage": "GENERATION_COMPLETE",
+      "storage_utilization": {
+        "private_failure": 1,
+        "private_success": 0,
+        "shared_risk": 0
+      }
+    },
+    {
+      "audit": {
+        "failure_evidence_events": 0,
+        "failure_family_count": 0,
+        "failure_family_repeated_count": 0,
+        "failure_memory_evictions": 0,
+        "failure_memory_peak_by_member": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "failure_reads": 3,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 1,
+        "initial_memory_entries": 0,
+        "memory_context_chars": {
+          "max": 362,
+          "mean": 156.28571428571428,
+          "min": 2
+        },
+        "memory_ids": [
+          "80e2b7b840cbc90c4260e907a5556417562af652fb34f385f0ca62e41f7550dc"
+        ],
+        "memory_llm_calls": 0,
+        "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+        "private_failure_count_by_member": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "private_success_count_by_member": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "promoted_families": [],
+        "risk_clock": 1,
+        "shared_reads": 0,
+        "shared_risk_count": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_reads": 0,
+        "shared_risk_storage_final": 0,
+        "shared_risk_storage_peak": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "stateful_write_count": 2,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "context": {
+        "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+        "target_member": 0
+      },
+      "counter_deltas": {
+        "failure_memory_evictions": 0,
+        "failure_reads": 0,
+        "failure_to_shared_promotions": 0,
+        "failure_writes": 0,
+        "shared_reads": 0,
+        "shared_risk_created": 0,
+        "shared_risk_evicted": 0,
+        "shared_risk_updated": 0,
+        "shared_writes": 0,
+        "success_reads": 0,
+        "success_writes": 0
+      },
+      "event_index": 21,
+      "failures_added_ids": [],
+      "failures_removed_ids": [],
+      "memory_state_sha256": "14a301440072a7a7f1d6b77a9c107558d32769bae890c7aa39e6c7680e1fef5c",
+      "private_added_ids": [],
+      "private_removed_ids": [],
+      "revision": 2,
+      "risk_clock": 1,
+      "sequence": 1,
+      "shared_added_ids": [],
+      "shared_removed_ids": [],
+      "stage": "MEMORY_AFTER_OPPORTUNITY",
+      "storage_utilization": {
+        "private_failure": 1,
+        "private_success": 0,
+        "shared_risk": 0
+      }
+    }
+  ],
+  "final_audit": {
+    "failure_evidence_events": 0,
+    "failure_family_count": 0,
+    "failure_family_repeated_count": 0,
+    "failure_memory_evictions": 0,
+    "failure_memory_peak_by_member": [
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    "failure_reads": 3,
+    "failure_to_shared_promotions": 0,
+    "failure_writes": 1,
+    "initial_memory_entries": 0,
+    "memory_context_chars": {
+      "max": 362,
+      "mean": 156.28571428571428,
+      "min": 2
+    },
+    "memory_ids": [
+      "80e2b7b840cbc90c4260e907a5556417562af652fb34f385f0ca62e41f7550dc"
+    ],
+    "memory_llm_calls": 0,
+    "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+    "private_failure_count_by_member": [
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    "private_success_count_by_member": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "promoted_families": [],
+    "risk_clock": 1,
+    "shared_reads": 0,
+    "shared_risk_count": 0,
+    "shared_risk_created": 0,
+    "shared_risk_evicted": 0,
+    "shared_risk_reads": 0,
+    "shared_risk_storage_final": 0,
+    "shared_risk_storage_peak": 0,
+    "shared_risk_updated": 0,
+    "shared_writes": 0,
+    "stateful_write_count": 2,
+    "success_reads": 0,
+    "success_writes": 0
+  },
+  "full_states": {
+    "path": "runs/pilot_completion_v1/analysis_bundle",
+    "sha256_manifest_sha256": "3dc7dccb19b5ec16a53bfb875b8c7f3f9f3d2a0cded53945c167344758ce1746"
+  },
+  "llm_judge_calls": 0,
+  "memory_llm_calls": 0,
+  "per_generation_and_opportunity_restoration_available": true,
+  "raw_diagnostic_calls": 0,
+  "scientific_efficacy": "NOT_CAUSALLY_ESTABLISHED",
+  "seed": 81,
+  "source_sha": "9158ebc55b1d36d04e9acb3693d3a5e500ee4a3c",
+  "test_model_calls": 0,
+  "validation_model_calls": 0
+}

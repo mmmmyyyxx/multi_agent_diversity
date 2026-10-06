@@ -1,0 +1,28 @@
+{
+  "Optimize_count": 60,
+  "Shadow_count": 40,
+  "arm": "A4",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt3",
+  "base_commit": "a734e198191e0b1da860084e5cc6f37d17e4a951",
+  "binding_sha256": "49fd5e232ee32f681b58f3584a8b5d378116615eccfbe113744a0e15d6076cf9",
+  "cache_namespace": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt3",
+  "composition": "build_current_team_prompt_search",
+  "execution_entrypoint": "scripts/run_experiment.py",
+  "frozen_initial_state_empty": true,
+  "llm_judge_calls": 0,
+  "preexecution_commit": "a000a6d84ecbf53ad9ce3c386381b5c929a1d5c7",
+  "raw_diagnostic_calls": 0,
+  "scientific_diff": "EMPTY",
+  "scientific_efficacy": "NOT_CAUSALLY_ESTABLISHED",
+  "seed": 81,
+  "source_identity_hashes": {
+    "benchmark_contract_hash": "6f39b709bf91e388250055c7e22c7099dee6c7e8c4ed367b9c22fd71dbf31bc3",
+    "dataset_manifest_hash": "d3c3f587bf9e08f5d9a12c8b777953c57cd30fc4c655e82e95f556b337119d81",
+    "governance_hash": "f86c903bf8df9677164434dcb6cadf875c4b2d4878cf41f9cd4ece5df399002f",
+    "scientific_source_hash": "64f8d04ac1226fb1c035b775a95af06ff32e1c1ac59794be2f19e5d8d6050c17"
+  },
+  "source_sha": "9158ebc55b1d36d04e9acb3693d3a5e500ee4a3c",
+  "startup_identity_sha256": "ea698d46c25bba0a66ccdb3427331d369474fc0e269655bc37b18421a57f4bdc",
+  "test_model_calls": 0,
+  "validation_model_calls": 0
+}

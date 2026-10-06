@@ -1,0 +1,12 @@
+{
+  "commits": 0,
+  "full_attempts": 0,
+  "full_pass_definition": "INITIAL_COMPETENCE_FLOOR_AND_STRICT_TEAM_GAIN",
+  "full_passes": 0,
+  "shadow_attempts": 0,
+  "shadow_pass_definition": "FROZEN_SHADOW_GATE_TRUE",
+  "shadow_passes": 0,
+  "teamprobe_attempts": 4,
+  "teamprobe_pass_definition": "SELECTED_FOR_FULL_UNDER_FROZEN_TOP_TWO_PROMOTION",
+  "teamprobe_passes": 0
+}

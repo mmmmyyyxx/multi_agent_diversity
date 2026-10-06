@@ -1,0 +1,57 @@
+{
+  "alias_and_partition_implementation_unchanged": true,
+  "classification": "GENERATED_PARTITION_CONTRACT_FAILURE",
+  "clusters": [
+    {
+      "alias_decode_replay": "PASS",
+      "cluster_index": 1,
+      "duplicate_counts": {},
+      "duplicated_aliases": [],
+      "empty_supports": 0,
+      "finish_reason": "stop",
+      "input_count": 38,
+      "membership_contract": "PASS",
+      "missing_aliases": [],
+      "pattern_count": 2,
+      "provider_original_response_unchanged": true,
+      "provider_response_sha256": "8edce8a78888f90fcd95fb4abf0903eec09e31831d05ed777b41d8c8c5c35835",
+      "receipt_integrity": "PASS",
+      "request_sha256": "a7e217746ddf8150e3f25711af52f844b22149b1f4d1b7af73aa50c237cb629d",
+      "support_occurrences": 38,
+      "unassigned_count": 0,
+      "unknown_aliases": []
+    },
+    {
+      "alias_decode_replay": "PASS",
+      "cluster_index": 2,
+      "duplicate_counts": {},
+      "duplicated_aliases": [],
+      "empty_supports": 0,
+      "finish_reason": "stop",
+      "input_count": 38,
+      "membership_contract": "FAIL",
+      "missing_aliases": [
+        "e2",
+        "e24"
+      ],
+      "pattern_count": 12,
+      "provider_original_response_unchanged": true,
+      "provider_response_sha256": "97b807e87efe52205ff16acec4cc185c2271caa115c4c98d4c06a2825ff1cc41",
+      "receipt_integrity": "PASS",
+      "request_sha256": "354f4f62f1ac1d48391c452ef2f6201dc720421a8ee3babab85521f8955afa24",
+      "support_occurrences": 36,
+      "unassigned_count": 0,
+      "unknown_aliases": []
+    }
+  ],
+  "decision_required": "STOP_SCIENTIFIC_METHOD_DECISION_REQUIRED",
+  "implementation_bug_established": false,
+  "network_attempt_count": 0,
+  "output_repaired": false,
+  "provider_calls": 0,
+  "raw_tree_unchanged": true,
+  "runtime_stop": "PATTERN_GRADIENT_CLUSTER_INVALID_MEMBERSHIP",
+  "scientific_method_changed": false,
+  "semantic_regeneration": false,
+  "status": "FORENSIC_COMPLETE"
+}

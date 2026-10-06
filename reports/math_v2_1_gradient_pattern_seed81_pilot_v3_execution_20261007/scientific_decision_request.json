@@ -1,0 +1,24 @@
+{
+  "attempt3_resume_authorized": false,
+  "choices": [
+    {
+      "choice": "KEEP_FROZEN_CONTRACT_STOP",
+      "impact": "Preserve this prefix; no new API attempt."
+    },
+    {
+      "choice": "AUTHORIZE_SEPARATE_SCIENTIFIC_CONTRACT_AMENDMENT",
+      "impact": "Design and audit a versioned cluster-compliance amendment offline before any fresh exact freeze; no implementation or API amendment performed now."
+    }
+  ],
+  "current_method_changed": false,
+  "evidence": "failed_partition_audit.json",
+  "excluded_actions": [
+    "silent missing-ID completion",
+    "silent output repair",
+    "automatic semantic regeneration",
+    "scientific rerun under the operational-only retry grant",
+    "reuse of any attempt3 scientific state"
+  ],
+  "immediate_model_calls_authorized": false,
+  "status": "USER_DECISION_REQUIRED"
+}

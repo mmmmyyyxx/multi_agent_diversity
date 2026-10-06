@@ -8007,21 +8007,32 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_gradient_pattern_seed81_pilot_v2
-  status: DRAFT
-  scientific_status: NOT_EXECUTED_EFFICACY_NOT_ESTIMATED
-  implementation_commit: null
-  execution_commit: null
+  status: HOLD
+  scientific_status: NOT_EVALUABLE_GENERATED_PATTERN_CONTRACT_FAILURE
+  implementation_commit: 9158ebc55b1d36d04e9acb3693d3a5e500ee4a3c
+  execution_commit: 9158ebc55b1d36d04e9acb3693d3a5e500ee4a3c
   result_commit: null
   manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v3.yaml
-  report: reports/math_v2_1_gradient_pattern_seed81_pilot_v3_preexecution_20261007
-  classifier: OPERATIONAL_DURABILITY_REPAIR_SCIENTIFIC_METHOD_IMMUTABLE
-  active_for_new_work: true
+  report: reports/math_v2_1_gradient_pattern_seed81_pilot_v3_execution_20261007
+  classifier: GENERATED_PARTITION_MISSING_ALIASES_NOT_OPERATIONAL_INVALIDITY
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
-  - Fresh attempt after proven initial persistence invalidity.
-  - Explicit full engineering authority; scientific outcomes never trigger a retry.
+  - Journal-first receipt durability repair passed1005cycles and full current suite1374pass2skip.
+  - Five byte-identical V1_2 minimal prompts;300complete initial evaluations and5 independent realization lanes.
+  - 76gradients pass; first partition and one opportunity complete; second partition omitted2of38aliases.
+  - 6admissible locally negative candidates;4exports;TeamProbe4/0;Full0;Shadow0;commits0.
+  - 468successful provider attempts and468sealed pre-charge receipts;raw-response gaps0;reservations0.
+  - Charged164463tokens; cumulative2094047; remaining37905953of40M.
+  - Scientific stopper not reached; full Pilot NOT_EVALUABLE; no operational-only fresh retry.
+  - PromptV3 GuardV5 400chars and all scientific policies unchanged; scope consumed/closed; sanitized publication
+    authorized.
   unavailable:
-    implementation_commit: Pending source freeze
-    execution_commit: Not executed
-    result_commit: Not executed
+    result_commit: Terminal publication commit is recorded by git history without a self-referential hash.
+  authorization_consumed: true
+  authorization_closed: true
+  authorization_closure_evidence: reports/math_v2_1_gradient_pattern_seed81_pilot_v3_execution_20261007/authorization_closure.json
+  frozen_repository_commit: a000a6d84ecbf53ad9ce3c386381b5c929a1d5c7
+  reports:
+  - reports/math_v2_1_gradient_pattern_seed81_pilot_v3_preexecution_20261007

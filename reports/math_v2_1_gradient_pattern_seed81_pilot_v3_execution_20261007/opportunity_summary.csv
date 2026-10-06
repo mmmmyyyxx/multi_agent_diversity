@@ -1,0 +1,2 @@
+opportunity_index,target_member,parent_vote,child_vote,wrong_count,pattern_count,selected_F,Coverage,DPR_all,gradient_calls,cluster_calls,patterns,selected_patterns,optimizer_generations,contract_rejects,changed_valid_scored,local_positive,exported,local_rejected_exported,teamprobe,full,promoted,shadow,shadow_pass,commit
+1,0,22,22,38,2,20,1.0,0.5526315789473685,38,1,2,1,6,0,6,0,4,4,4,0,0,0,0,0

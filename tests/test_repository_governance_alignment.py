@@ -291,7 +291,8 @@ def _assert_canary_does_not_unlock_formal_or_heldout(frontier,registry):
                 assert previous['authorization_closed'] is True
                 assert previous['active_for_new_work'] is False
                 if frontier['current_experiment'] != previous['experiment_id']:
-                    assert frontier['current_pilot_status']=='GRADIENT_OUTPUT_CONTRACT_FAILURE'
+                    assert frontier['current_pilot_status'] in (
+                        'GRADIENT_OUTPUT_CONTRACT_FAILURE','PATTERN_PARTITION_CONTRACT_FAILURE')
                     assert frontier['current_experiment']==frontier['last_pilot_milestone']
                     pilot=next(r for r in registry['experiments'] if r['experiment_id']==frontier['current_experiment'])
                     assert pilot['kind']=='PILOT' and pilot['status']=='HOLD'
@@ -313,8 +314,15 @@ def _assert_canary_does_not_unlock_formal_or_heldout(frontier,registry):
                     assert pilot_closure['proven_implementation_invalid'] is False
                     assert pilot_closure['scientific_reruns_authorized']==0
                     assert pilot_closure['future_real_execution_requires_new_exact_user_authorization'] is True
-                    for role in ('pilot','validation','test','push','raw_diagnostic','llm_judge'):
+                    for role in ('pilot','validation','test','raw_diagnostic','llm_judge'):
                         assert pilot_closure[role+'_authorized'] is False
+                    if frontier['current_pilot_status']=='PATTERN_PARTITION_CONTRACT_FAILURE':
+                        assert pilot_closure['operational_invalid'] is False
+                        assert pilot_closure['operational_fresh_retry_authorized'] is False
+                        assert pilot_closure['push_authorized'] is True
+                        assert pilot_closure['publication_scope']=='SANITIZED_ENGINEERING_AND_TERMINAL_EVIDENCE_ONLY'
+                    else:
+                        assert pilot_closure['push_authorized'] is False
                 else:
                     assert frontier['current_execution_blocker'] == 'NO_AUTHORIZED_FOLLOWUP_SCOPE'
                 assert frontier['next_canary_authorized'] is False
@@ -470,6 +478,39 @@ def test_initial_persistence_abort_preserves_accounting_and_closes_scope():
     assert monitor['live_monitor_reads_derived_snapshot'] is False
     assert monitor['live_monitor_reads_atomic_lifecycle'] is False
     assert monitor['production_source_changed'] is False
+
+
+@pytest.mark.parametrize('location,field,value',[
+    ('frontier','next_pilot_authorized',True),
+    ('frontier','next_validation_authorized',True),
+    ('frontier','current_execution_blocker','RETRY_READY'),
+    ('frontier','pilot_search_complete',True),
+    ('frontier','pending_pilot_operational_retry_limit','FRESH_AFTER_PROVEN_OPERATIONAL_INVALIDITY_ONLY'),
+    ('registry','authorization_closed',False),
+    ('registry','authorization_consumed',False),
+    ('registry','active_for_new_work',True),
+])
+def test_partition_contract_abort_cannot_use_operational_retry_scope(location,field,value):
+    frontier=deepcopy(load_yaml(ROOT/'experiments/current_frontier.yaml'))
+    registry=deepcopy(load_yaml(ROOT/'experiments/registry.yaml'))
+    assert frontier['current_pilot_status']=='PATTERN_PARTITION_CONTRACT_FAILURE'
+    pilot=next(r for r in registry['experiments'] if r['experiment_id']==frontier['current_experiment'])
+    report=ROOT/pilot['report']
+    status=load_yaml(report/'final_status.json')
+    forensic=load_yaml(report/'failed_partition_audit.json')
+    durability=load_yaml(report/'wire_and_durability_audit.json')
+    assert status['classification']=='STOP_SCIENTIFIC_METHOD_DECISION_REQUIRED'
+    assert status['PILOT_SEARCH_COMPLETE'] is False and status['operational_invalid'] is False
+    assert status['contract_compliance']==dict(gradient_pass=76,gradient_fail=0,partition_pass=1,partition_fail=1)
+    assert forensic['clusters'][1]['missing_aliases']==['e2','e24']
+    assert forensic['clusters'][1]['alias_decode_replay']=='PASS'
+    assert forensic['implementation_bug_established'] is False
+    assert durability['immutable_response_receipts']==durability['charges_with_response_receipt']==468
+    assert durability['charged_response_evidence_gaps']==0
+    _assert_canary_does_not_unlock_formal_or_heldout(frontier,registry)
+    if location=='frontier':frontier[field]=value
+    else:pilot[field]=value
+    with pytest.raises(AssertionError):_assert_canary_does_not_unlock_formal_or_heldout(frontier,registry)
 
 
 @pytest.mark.parametrize('location,field,value',[

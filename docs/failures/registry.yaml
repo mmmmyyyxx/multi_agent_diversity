@@ -683,3 +683,24 @@ failures:
     derived snapshot; close one-shot scope. Monitor reads append-only journal instead of live atomic files;100 isolated
     replacements pass.
   evidence_level: observed
+- failure_id: FAIL-MATH-GRADIENT-PARTITION-MISSING-ALIASES
+  title: Generated gradient partition omits supplied aliases without unassigned membership
+  status: OPEN
+  lifecycle: OPEN
+  first_observed: math_v2_1_gradient_pattern_seed81_pilot_v3
+  affected_components:
+  - gradient_cluster_provider
+  - gradient_pattern_partition
+  symptom: Second cluster returned12groups covering36of38aliases, omitted e2/e24 and left unassigned_ids empty.
+  evidence:
+  - reports/math_v2_1_gradient_pattern_seed81_pilot_v3_execution_20261007/failed_partition_audit.json
+  - reports/math_v2_1_gradient_pattern_seed81_pilot_v3_execution_20261007/wire_and_durability_audit.json
+  - reports/math_v2_1_gradient_pattern_seed81_pilot_v3_execution_20261007/authorization_closure.json
+  root_cause_status: GENERATED_PARTITION_CONTRACT_NONCOMPLIANCE_NO_IMPLEMENTATION_BUG_ESTABLISHED
+  forbidden_inference: Do not classify this as operational invalidity or completed Pilot; do not silently complete
+    membership, regenerate, loosen parsing, or reuse conditional operational retry scope.
+  regression_tests:
+  - tests/test_repository_governance_alignment.py::test_partition_contract_abort_cannot_use_operational_retry_scope
+  mitigation: Preserve raw response, charge and prefix; close exact single-use scope; request separate user scientific
+    contract decision.
+  evidence_level: observed

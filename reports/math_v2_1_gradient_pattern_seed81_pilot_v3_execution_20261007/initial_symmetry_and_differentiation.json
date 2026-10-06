@@ -1,0 +1,104 @@
+{
+  "cross_member_initial_request_collision": 0,
+  "ever_changed_members": [],
+  "independent_member_lanes": 5,
+  "initial_Memory_empty": true,
+  "initial_logical_evaluations": 300,
+  "initial_metrics": {
+    "MeanMemberAcc": 0.36666666666666664,
+    "MinMemberAcc": 0.36666666666666664,
+    "OracleAcc": 0.36666666666666664,
+    "VoteAcc": 0.36666666666666664,
+    "count": 60,
+    "invalid_count_by_member": [
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    "mean_disagreement": 0.9666666666666667,
+    "member_correct_counts": [
+      22,
+      22,
+      22,
+      22,
+      22
+    ],
+    "oracle_correct_count": 22,
+    "vote_correct_count": 22
+  },
+  "initial_prompt_hashes": [
+    "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80",
+    "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80",
+    "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80",
+    "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80",
+    "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80"
+  ],
+  "initial_prompts_byte_identical": true,
+  "initial_state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+  "initial_team_version": "MATH_GENERIC_TEAM_SEED_V1_2",
+  "initial_unique_prompt_count": 1,
+  "scientific_diversity_objective": false,
+  "status": "PASS",
+  "trajectory": [
+    {
+      "exact_pair_reconvergences": [],
+      "members_changed_from_previous": [],
+      "members_equal_to_initial": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "opportunity_index": 0,
+      "pairwise_exact_equality": [
+        [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      ],
+      "prompt_hashes": [
+        "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80",
+        "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80",
+        "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80",
+        "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80",
+        "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80"
+      ],
+      "stage": "INITIAL",
+      "unique_prompt_count": 1
+    }
+  ]
+}
