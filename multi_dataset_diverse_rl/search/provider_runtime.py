@@ -15,6 +15,7 @@ from ..benchmarks.math_solver_decoding import generation_request_fields, frozen_
 from ..benchmarks.math_prediction_validity import frozen_prediction_policy, frozen_recovery_policy
 from ..benchmarks.math_optimizer_generation import frozen_optimizer_policy
 from .. import versions
+from ..current_contract import PATTERN_SPECIFIC_CONTENT_GUARD_VERSION as CURRENT_CONTENT_GUARD
 
 
 class RequestBroker:
@@ -42,7 +43,7 @@ class RequestBroker:
             from .textual_gradients import POLICY
             if (contract.get('identity')!=versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION
                     or contract['pattern_policy']!=POLICY
-                    or contract.get('pattern_abstraction_guard')!=versions.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION
+                    or contract.get('pattern_abstraction_guard')!=CURRENT_CONTENT_GUARD
                     or not contract.get('gradient_prompt_sha256')):
                 raise SearchContractError('GRADIENT_PATTERN_PROVIDER_BINDING_MISMATCH')
             for role in ('pattern_gradient','pattern_cluster'):self.usage.setdefault(role,0)

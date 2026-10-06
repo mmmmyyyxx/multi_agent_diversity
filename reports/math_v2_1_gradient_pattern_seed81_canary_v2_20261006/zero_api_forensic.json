@@ -1,0 +1,48 @@
+{
+  "classification": "IMPLEMENTATION_REPAIR_OF_EXISTING_NO_EXAMPLE_SPECIFIC_ENTITIES_CONTRACT",
+  "confirmed_gap": "coordinated_actor_participation_constraint_with_post_name_comma_not_recognized",
+  "current_guard_rejects_first": true,
+  "first_gradient_entity_literals_confirmed_from_explicit_source_actor_context": true,
+  "identity": "GRADIENT_ABSTRACTION_COVERAGE_FORENSIC_V2",
+  "limits": "Bounded contextual literal detector; not comprehensive entity or paraphrase recognition",
+  "no_blanket_capitalization_rule": true,
+  "no_math_word_allowlist": true,
+  "prior_evidence_immutable": true,
+  "prior_guard": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V3",
+  "prior_guard_passed": true,
+  "prior_supported_entity_matches": 0,
+  "prior_v3_helper_preserved": true,
+  "private_trace_sha256": "1be0d1ddb347930339231babeaeb4e39dc16eb607eaa6e1bc64083a59f765849",
+  "real_api_calls": 0,
+  "repaired_guard": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V4",
+  "reviews": [
+    {
+      "alias": "e1",
+      "chars": 308,
+      "current_guard_contract_status": "FAIL",
+      "gradient_sha256": "4b59c30ed886d21fd9234e6c63d67ca572462fd6d71a534e8c1d72a64270104d",
+      "reason": "PATTERN_GRADIENT_EXTRACTION_INVALID",
+      "request_sha256": "2df9427a11cdd92c7ed454f2da34da5666a5e6113a175650abd1d6bff987aa54",
+      "source_problem_sha256": "ba8df098f877e0394d64837ba4593ff094dbc365282833a13769d1789da1b175"
+    },
+    {
+      "alias": "e2",
+      "chars": 313,
+      "current_guard_contract_status": "PASS",
+      "gradient_sha256": "2a2be0d5271a2c6f2edb45ae43decc73b1dd4cc45fc407caa57e77095243addf",
+      "reason": null,
+      "request_sha256": "613828830a0ab1800a02e051a1aae1204ae78292c39a92bb1cd082674cd7536a",
+      "source_problem_sha256": "613fa2694d57e4d6fff0a1cabfbb69907cf6d5294f0b99c7a280adfe31a1eef6"
+    },
+    {
+      "alias": "e3",
+      "chars": 545,
+      "current_guard_contract_status": "FAIL",
+      "gradient_sha256": "c68d51aa8b5923c9acbb49e891e6c68d1958461e0b7695396de4a4b0aca94d43",
+      "reason": "PATTERN_GRADIENT_EXTRACTION_INVALID",
+      "request_sha256": "da2f2a4d743a9827525c1f637ea3db236f4cb47728af1ca35aa9a496eb8d3228",
+      "source_problem_sha256": "d2048850bd5d01c98cd037c51f1e01d1fada430e3a4a251fdc2da4131ccdf365"
+    }
+  ],
+  "token_usage": 0
+}

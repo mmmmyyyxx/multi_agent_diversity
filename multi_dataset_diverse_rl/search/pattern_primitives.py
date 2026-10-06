@@ -7,7 +7,7 @@ from ..local_optimizers.example_text import contains_supplied_example_text
 from ..local_optimizers.schemas import LocalEvidenceExample
 from .responsibility_value import responsibility_value
 from .schemas import SearchContractError
-from .abstraction_content import specific_content_leaked
+from .abstraction_content import current_specific_content_leaked
 
 @dataclass(frozen=True)
 class PatternResponsibilitySignal:
@@ -54,7 +54,7 @@ def guard_abstraction(text, rows, *, abstraction_guard_version=None):
     if contains_supplied_example_text(text,examples):
         raise SearchContractError('PATTERN_DISCOVERY_EXAMPLE_LEAKAGE')
     if abstraction_guard_version == versions.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION:
-        if specific_content_leaked(text, rows):
+        if current_specific_content_leaked(text, rows):
             raise SearchContractError('PATTERN_DISCOVERY_EXAMPLE_LEAKAGE')
         return
 

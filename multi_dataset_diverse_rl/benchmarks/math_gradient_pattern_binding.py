@@ -96,6 +96,7 @@ class MATHGradientPatternBinding:
             parent=json.loads(self.path(c['gradient_parent_binding_path']).read_bytes())
             verify_receipt_dependencies(self.root,parent)
             approval=json.loads(self.path(c['pattern_amendment_authorization_path']).read_bytes())
+            verify_receipt_dependencies(self.root,approval)
             if (approval.get('schema_version')!='gradient_pattern_code_amendment_v1'
                     or approval.get('code_change_authorized') is not True
                     or any(approval.get(k) is not False for k in ('real_api_authorized','canary_authorized',
@@ -108,7 +109,7 @@ class MATHGradientPatternBinding:
             request_hash=approval.get('user_request_sha256')
             if not isinstance(request_hash,str) or len(request_hash)!=64 or any(x not in '0123456789abcdef' for x in request_hash):
                 return ('GRADIENT_PATTERN_CODE_AUTHORITY_MISMATCH',)
-            if (json.loads(self.path(c['gradient_prompt_path']).read_bytes())!={'identity':versions.PER_EXAMPLE_GRADIENT_VERSION,'prompt':GRADIENT_PROMPT}
+            if (json.loads(self.path(c['gradient_prompt_path']).read_bytes())!={'identity':versions.GRADIENT_PROMPT_VERSION,'prompt':GRADIENT_PROMPT}
                     or json.loads(self.path(c['pattern_prompt_path']).read_bytes())!={'identity':versions.GRADIENT_PATTERN_DISCOVERY_VERSION,'prompt':CLUSTER_PROMPT}):
                 return ('GRADIENT_PATTERN_PROMPT_CONTRACT_MISMATCH',)
             expected=derive_gradient_contract(parent,attempt=c['execution_attempt_id'],binding_path=c['binding_path'],

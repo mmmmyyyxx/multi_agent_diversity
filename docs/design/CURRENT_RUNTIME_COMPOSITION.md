@@ -3,7 +3,9 @@
 The sole active research architecture is Unified Team Prompt Search.
 This is an engineering consolidation of the existing scientific treatment.
 `CURRENT_RUNTIME_COMPOSITION_V1` names the composition boundary; all scientific
-identity values and provider-visible prompt bytes remain unchanged.
+identity values and provider-visible prompt bytes were unchanged by that
+consolidation. Subsequent versioned amendments are defined in CURRENT_SPEC.md;
+the current offline binding is the Gradient profile V2.
 
 New experiments use `scripts/run_experiment.py`,
 `benchmarks.math_domain_binding.execution_binding`, the flat

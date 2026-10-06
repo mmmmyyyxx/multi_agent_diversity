@@ -63,7 +63,7 @@ def test_early_diagnostic_is_forbidden(tmp_path):
 
 def test_failed_transport_is_one_call_and_does_not_mutate_active_run(tmp_path, monkeypatch):
     root = Path(__file__).resolve().parents[1]
-    binding = json.loads((root / 'experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v1.json').read_text(encoding='utf-8'))
+    binding = json.loads((root / 'experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v2.json').read_text(encoding='utf-8'))
     binding['token_ledger_directory'] = 'runs/fake_ledger'
     binding['initial_team_path'] = 'team.json'
     binding['validation_accounting_metadata_path'] = 'reserve.json'

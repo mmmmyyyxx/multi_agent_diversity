@@ -26,6 +26,14 @@ _ENTITY_CONTEXTS = tuple(re.compile(pattern) for pattern in (
 _QUOTED = re.compile(r'"([^"\n]+)"|“([^”\n]+)”|\'([^\'\n]+)\'')
 _MATH_SPAN = re.compile(r'\$([^$\n]+)\$|\\\((.+?)\\\)|\\\[(.+?)\\\]')
 
+# A relational participation constraint supplies actor provenance even when
+# neither name is individually followed by an action. The optional comma is
+# part of the source grammar, not evidence that ordinary capitals are names.
+_COORDINATED_CONSTRAINT = re.compile(
+    rf'\b(?P<first>{_NAME})\s+and\s+(?P<second>{_NAME})\s*,?\s*'
+    r'(?:refuse|decline)\s+to\s+(?:play|work|travel|sit|participate)\s+'
+    r'(?:together|with\s+each\s+other)\b')
+
 
 def contains_literal(text, literal):
     """Match a complete normalized literal, never a substring of another word."""
@@ -57,5 +65,20 @@ def specific_content_leaked(text, rows):
         for match in _MATH_SPAN.finditer(source):
             literal = normalize(next(group for group in match.groups() if group is not None))
             if len(literal) >= 5 and re.search(r'[=+*/^\\-]', literal) and contains_literal(normalized, literal):
+                return True
+    return False
+
+
+def current_specific_content_leaked(text, rows):
+    """V4 implementation repair; the original V3 helper remains replayable."""
+    rows = tuple(rows)
+    if specific_content_leaked(text, rows):
+        return True
+    normalized = normalize(text)
+    for row in rows:
+        source = unicodedata.normalize('NFKC', str(row.signals['input_payload']))
+        for match in _COORDINATED_CONSTRAINT.finditer(source):
+            if any(contains_literal(normalized, normalize(match.group(key)))
+                    for key in ('first', 'second')):
                 return True
     return False

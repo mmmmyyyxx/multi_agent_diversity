@@ -203,7 +203,7 @@ def inventory(run_root):
 
 def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, experiment_id="math_v2_pattern_memory_v1"):
     from ..benchmarks.math_domain_binding import execution_binding
-    binding_path=binding_path or 'experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v1.json'
+    binding_path=binding_path or 'experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v2.json'
     contract=read_json(root/binding_path)
     b=execution_binding(root,contract)
     if b.blockers():

@@ -740,3 +740,10 @@ preservation, transition safety and existing bounded Memory. This amendment
 changes discovery, input identities and Pattern meta accounting only. Null remains
 the default; V3 artifacts retain their frozen semantics. No experiment or held-out
 execution is authorized by this modification.
+
+The current Gradient bundle uses prompt clarification
+`PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V2` and implementation repair
+`PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V4`, specified in the same Gradient
+contract. The 400-character hard limit, one generation per wrong example,
+gradients-only clustering, same-F selection and all search/Memory semantics
+remain unchanged. A fresh experiment and exact authorization are required.

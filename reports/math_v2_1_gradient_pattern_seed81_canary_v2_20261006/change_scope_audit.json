@@ -1,0 +1,43 @@
+{
+  "Q1_dimensions": [
+    "Contract Compliance",
+    "Semantic Usefulness"
+  ],
+  "changed_binding_fields": [
+    "binding_path",
+    "cache_namespace",
+    "canary_attempt_id",
+    "continuation_authorization_sha256",
+    "execution_attempt_id",
+    "gradient_prompt_path",
+    "gradient_prompt_sha256",
+    "pattern_abstraction_guard",
+    "pattern_amendment_authorization_path",
+    "pattern_amendment_authorization_sha256",
+    "pattern_policy.gradient_policy.abstraction_guard",
+    "pattern_policy.gradient_policy.prompt_identity"
+  ],
+  "correction_calls": 0,
+  "fresh_wrong_universe_must_not_be_forced_to_prior_count": true,
+  "guard_identity": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V4",
+  "hard_gradient_character_limit": 400,
+  "length_alone_never_success": true,
+  "prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V2",
+  "real_provider_calls": 0,
+  "regeneration": false,
+  "unchanged_core_keys": [
+    "Gradient V1",
+    "gradients-only clustering V4",
+    "same F",
+    "WHO",
+    "Memory V4",
+    "Layer1",
+    "Layer2",
+    "models",
+    "generation settings",
+    "split memberships",
+    "initial team",
+    "aggregation",
+    "all numeric ceilings"
+  ]
+}

@@ -18,15 +18,20 @@ from .selected_evidence import compose_selected_evidence
 from .schemas import SearchContractError
 
 
-GRADIENT_PROMPT = '''Infer one concise, generalizable prompt-level corrective reasoning
-direction from this single observable failure and the current member procedure.
-Describe what reasoning behavior should be strengthened, changed, added or avoided.
-This is a hypothetical corrective signal, not proof of the true causal reasoning error.
-Return exactly one JSON object with only a gradient string of at most 400 characters.
-Give one local actionable correction, not a complete replacement solver procedure or
-candidate prompt. Do not control the external response interface, presentation or markers.
-Do not copy the answer, numeric constants, entities, question fragments or shortcuts.
-You have only this example; do not infer other examples, members, memory or held-out data.'''
+GRADIENT_PROMPT = '''Return exactly {"gradient":"one corrective reasoning instruction"}.
+HARD LIMIT: the gradient string must contain at most 400 characters, including spaces.
+Prefer one or two short sentences totaling at most 250-300 characters.
+Infer one hypothetical, actionable prompt-level correction from this single observable
+failure and the current member procedure. State one reasoning behavior to strengthen,
+change, add or avoid, directly usable as a reasoning instruction on other problems.
+Use abstract roles and operations. Do not repeat problem entities or names, numbers,
+answers, formula constants, quoted conditions, question fragments or example details.
+Do not explain this particular example or claim proof of its hidden causal error.
+If the root cause is uncertain, state a conservative generalizable corrective behavior.
+Before output, ensure the string is short, abstract and actionable; omit example details.
+Do not write a full replacement procedure or candidate prompt, or control the external
+response interface, presentation or markers. Do not infer other examples, members,
+memory or held-out data. Output only the JSON object with the single gradient key.'''
 
 CLUSTER_PROMPT = '''Compare the entire gradient set before forming clusters.
 Group gradients when they express the same reusable corrective reasoning behavior,
@@ -45,6 +50,7 @@ answers, constants, entities, example fragments or response-interface instructio
 The controller computes responsibility and selects which correction receives budget.'''
 
 GRADIENT_POLICY = dict(identity=versions.PER_EXAMPLE_GRADIENT_VERSION,
+    prompt_identity=versions.GRADIENT_PROMPT_VERSION,
     schema='PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V1', max_characters=versions.GRADIENT_MAX_CHARACTERS,
     universe='all_selected_member_wrong_optimize', logical_calls_per_wrong=1,
     successful_generations_per_wrong=1, output_cache=False, semantic_regeneration=False,

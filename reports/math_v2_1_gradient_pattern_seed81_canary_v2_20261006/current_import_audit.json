@@ -1,0 +1,9 @@
+{
+  "builder": "build_current_team_prompt_search",
+  "classes": 375,
+  "entrypoint": "scripts/run_experiment.py",
+  "legacy_dependencies": [],
+  "legacy_treatment_definitions": [],
+  "loc": 28106,
+  "modules": 137
+}

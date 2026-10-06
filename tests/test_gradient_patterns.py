@@ -24,7 +24,7 @@ from multi_dataset_diverse_rl.search.rolling_risk_memory import StructuredRollin
 from multi_dataset_diverse_rl.search.private_action_memory import LIMITS
 
 ROOT=Path(__file__).resolve().parents[1]
-BP='experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v1.json'
+BP='experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v2.json'
 CHECK='Check constraints before transforming intermediate expressions.'
 VERIFY='Verify substitution against the original conditions.'
 
@@ -94,6 +94,78 @@ def test_seven_wrong_five_correct_exactly_one_single_example_including_zero_inva
 def test_gradient_guard_rejects_specific_content_interface_full_procedure(text):
     r=evidence()[0];r=replace(r,signals={**r.signals,'input_payload':'Alice calculates a symbolic equation.'})
     with pytest.raises(SearchContractError,match='GRADIENT_EXTRACTION_INVALID'):validate_gradient(text,(r,))
+
+
+@pytest.mark.parametrize('punctuation', ['', ','])
+@pytest.mark.parametrize('activity', ['play together', 'work together', 'travel together',
+    'sit together', 'participate with each other'])
+@pytest.mark.parametrize('name', ['Clara', 'IVAN'])
+def test_coordinated_participation_entities_rejected_in_individual_and_cluster_gradients(punctuation,activity,name):
+    r=replace(evidence()[0],signals={**evidence()[0].signals,
+        'input_payload':f'Two participants, Clara and Ivan{punctuation} refuse to {activity}.'})
+    text=f'Exclude {name} from simultaneous selections.'
+    from multi_dataset_diverse_rl.search.pattern_primitives import guard_abstraction
+    from multi_dataset_diverse_rl.current_contract import PATTERN_SPECIFIC_CONTENT_GUARD_VERSION
+    with pytest.raises(SearchContractError,match='GRADIENT_EXTRACTION_INVALID'):
+        validate_gradient(text,(r,))
+    with pytest.raises(SearchContractError,match='EXAMPLE_LEAKAGE'):
+        guard_abstraction(text,(r,),abstraction_guard_version=PATTERN_SPECIFIC_CONTENT_GUARD_VERSION)
+
+
+def test_repair_preserves_v3_replay_and_generic_actionable_instruction():
+    from multi_dataset_diverse_rl.search.abstraction_content import specific_content_leaked, current_specific_content_leaked
+    r=replace(evidence()[0],signals={**evidence()[0].signals,
+        'input_payload':'Two participants, Clara and Ivan, decline to play together.'})
+    assert not specific_content_leaked('Exclude Clara from simultaneous selections.',(r,))
+    assert current_specific_content_leaked('Exclude Clara from simultaneous selections.',(r,))
+    validate_gradient('Enforce incompatibility constraints by counting the complement of invalid joint selections.',(r,))
+    assert not current_specific_content_leaked('Compare claravel with ivanhoe independently.',(r,))
+
+
+@pytest.mark.parametrize('word', ['Simplify', 'Exponent', 'Dimension', 'Total'])
+def test_current_guard_preserves_generic_capitalized_mathematical_vocabulary(word):
+    r=replace(evidence()[0],signals={**evidence()[0].signals,
+        'input_payload':f'{word}: consider a symbolic mathematical expression.'})
+    validate_gradient(f'Check the {word.lower()} using an independent transformation.',(r,))
+
+
+def test_hard_character_boundary_and_no_semantic_regeneration_remain_frozen():
+    validate_gradient('x'*400,(evidence()[0],))
+    with pytest.raises(SearchContractError,match='GRADIENT_EXTRACTION_INVALID'):
+        validate_gradient('x'*401,(evidence()[0],))
+    assert POLICY['gradient_policy']['max_characters']==400
+    assert POLICY['gradient_policy']['logical_calls_per_wrong']==1
+    assert POLICY['gradient_policy']['successful_generations_per_wrong']==1
+    assert POLICY['gradient_policy']['semantic_regeneration'] is False
+
+
+def test_prompt_amendment_changes_current_binding_and_rejects_historical_authorization():
+    from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
+    current=json.loads((ROOT/BP).read_bytes())
+    prior=json.loads((ROOT/'experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v1.json').read_bytes())
+    assert current['gradient_prompt_sha256']!=prior['gradient_prompt_sha256']
+    assert current['pattern_prompt_sha256']==prior['pattern_prompt_sha256']
+    assert current['pattern_policy']['gradient_policy']['prompt_identity']=='PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V2'
+    assert current['pattern_policy']['gradient_policy']['identity']==prior['pattern_policy']['gradient_policy']['identity']
+    with pytest.raises(SearchContractError,match='CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN'):
+        execution_binding(ROOT,prior)
+
+
+@pytest.mark.parametrize('mutation',['outer_guard','inner_guard','old_policy','stale_prompt','regeneration','hard_limit'])
+def test_manifest_schema_rejects_mixed_or_relaxed_gradient_treatments(mutation):
+    from multi_dataset_diverse_rl.governance.registries import load_yaml
+    from multi_dataset_diverse_rl.governance.repository import validate_manifest_v2
+    manifest=load_yaml(ROOT/'experiments/manifests/math_v2_1_gradient_pattern_seed81_canary_v2.yaml')
+    old=load_yaml(ROOT/'experiments/manifests/math_v2_1_gradient_pattern_seed81_canary_v1.yaml')
+    assert not validate_manifest_v2(ROOT,old)
+    assert not validate_manifest_v2(ROOT,manifest)
+    if mutation=='outer_guard':manifest['pattern_abstraction_guard']=old['pattern_abstraction_guard']
+    if mutation=='inner_guard':manifest['mechanism_config']['pattern_abstraction_guard']=old['pattern_abstraction_guard']
+    if mutation=='old_policy':manifest['mechanism_config']['pattern_policy']=old['mechanism_config']['pattern_policy']
+    if mutation=='stale_prompt':manifest['mechanism_config']['pattern_policy']['gradient_policy']['prompt_identity']='PER_EXAMPLE_TEXTUAL_GRADIENT_V1'
+    if mutation=='regeneration':manifest['mechanism_config']['pattern_policy']['gradient_policy']['semantic_regeneration']=True
+    if mutation=='hard_limit':manifest['mechanism_config']['pattern_policy']['gradient_policy']['max_characters']=600
+    assert validate_manifest_v2(ROOT,manifest)
 
 
 @pytest.mark.parametrize('split',['shadow','validation','test'])

@@ -7801,8 +7801,10 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Preregistered fresh A4/Seed81 Gradient Pattern V4 plus Rolling Memory; extraction stopped before a complete opportunity.
-  - Preregistered post-hoc matched raw diagnostic was not dispatched because active completion failed; no efficacy inference.
+  - Preregistered fresh A4/Seed81 Gradient Pattern V4 plus Rolling Memory; extraction stopped before a complete
+    opportunity.
+  - Preregistered post-hoc matched raw diagnostic was not dispatched because active completion failed; no efficacy
+    inference.
   - User-authorized operational repair loop is bounded at three fresh invalid attempts; no Pilot/Validation/Test/push.
   - Source and governance are frozen before the final current-suite verification; exact local authorization is single-use.
   - Initial Solver stage complete; third Gradient exceeded 400 characters and retained numeric outcomes.
@@ -7819,3 +7821,30 @@ experiments:
   authorization_consumed: true
   authorization_closed: true
   authorization_closure_evidence: reports/math_v2_1_gradient_pattern_seed81_canary_v1_20261006/authorization_closure.json
+- experiment_id: math_v2_1_gradient_pattern_seed81_canary_v2
+  kind: REAL_CANARY
+  era: BENCHMARK_GENERALIZATION
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_gradient_pattern_seed81_canary_v1
+  status: DRAFT
+  scientific_status: NOT_EXECUTED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_canary_v2.yaml
+  report: reports/math_v2_1_gradient_pattern_seed81_canary_v2_20261006
+  classifier: ZERO_API_REPAIR_FRESH_EXACT_AUTHORIZATION_PENDING
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  authorization_consumed: false
+  notes:
+  - Minimal Gradient prompt V2 clarification; guard V4 implementation coverage repair.
+  - Fresh A4 Seed81 attempt2 after full current tests; Q1 contract compliance plus semantic usefulness.
+  - No regeneration, hard 400 chars; unchanged gradients-only clustering, same F, Memory, models, sampling and budgets.
+  - Exact frozen API approval pending; no Pilot/Validation/Test/push.
+  unavailable:
+    implementation_commit: Awaiting source freeze
+    execution_commit: Not yet authorized or executed
+    result_commit: Local commit identified by git history

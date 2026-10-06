@@ -15,9 +15,27 @@ example's problem, reference, output, validity, responsibility labels, margin an
 disagreement. Output is exactly `{"gradient": "..."}`, bounded to 400 characters.
 A gradient is a hypothetical, actionable local correction derived from observable
 evidence; it does not establish a latent root cause. The shared specific-content
-guard V3 rejects example literals, answers, constants and interface instructions.
+guard V4 rejects example literals, answers, constants and interface instructions.
 Complete replacement-procedure declarations are also rejected. These bounded
 guards do not establish comprehensive semantic safety for arbitrary prose.
+
+`PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V2` clarifies this existing definition:
+one abstract instruction, preferably one or two sentences and 250-300 characters,
+with the hard 400-character limit unchanged. It explicitly prohibits repeating
+entities, numbers, answers, formula constants, conditions and question details.
+Uncertain diagnoses use conservative generalizable corrective behavior. There is
+still one generation per wrong example, no correction call or regeneration, and
+no inference of hidden reasoning or a proven failure mechanism.
+
+`PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V4` repairs the V3 coverage gap for
+coordinated participants who refuse or decline to play, work, travel, sit or
+participate together (or with each other), including a comma after the names.
+Both complete entity literals are rejected when copied into a gradient. Ordinary
+capitalization and shared mathematical vocabulary remain insufficient evidence.
+All V3 checks remain; its original helper and frozen receipts retain V3 behavior.
+This is implementation repair of the existing abstraction contract. The new guard
+and prompt identities enter the current policy and fresh execution identity;
+Gradient V1, clustering V4, same-F responsibility and Memory remain unchanged.
 
 `gradient_cluster_pattern_discovery_v4` receives only stable IDs and the complete
 current gradient set. Its provider projection uses lossless opaque aliases. No raw

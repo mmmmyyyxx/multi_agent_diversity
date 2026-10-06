@@ -15,7 +15,7 @@ from multi_dataset_diverse_rl.search.current_policy import CURRENT_POLICY_BUNDLE
 from multi_dataset_diverse_rl.search.schemas import SearchContractError
 
 ROOT=Path(__file__).resolve().parents[2]
-PROFILE='experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v1.json'
+PROFILE='experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v2.json'
 
 
 def contract():return json.loads((ROOT/PROFILE).read_bytes())
@@ -125,9 +125,9 @@ def test_historical_binding_requires_explicit_replay_factory():
     assert not replay_binding(ROOT,c).blockers()
 
 
-def test_scientific_identity_and_n_plus_one_ceiling_are_frozen():
+def test_amended_treatment_identity_and_n_plus_one_ceiling_are_frozen():
     c=contract();b=execution_binding(ROOT,c)
-    assert b.method('A4').identity()=='806f7851f705069d475453615c0bc5344c5cc83a36acfba3efddefa8bd33d0be'
+    assert b.method('A4').identity()=='b03daebfc07fce4d3b06baa00fc5aac21425e13a825de6c2e929afa23c7563e3'
     assert asdict(CurrentLayer1Config())==c['layer1_search_policy']
     assert c['provider_bounds']['pattern_calls']==c['provider_bounds']['pattern_gradient_calls']+c['provider_bounds']['pattern_cluster_calls']==13
     assert c['provider_bounds']['successful_provider_calls']==1651

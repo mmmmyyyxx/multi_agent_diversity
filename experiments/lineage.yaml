@@ -833,6 +833,8 @@ nodes:
   era: BENCHMARK_GENERALIZATION
 - experiment_id: math_v2_1_gradient_pattern_seed81_canary_v1
   kind: REAL_CANARY
+- experiment_id: math_v2_1_gradient_pattern_seed81_canary_v2
+  kind: REAL_CANARY
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1583,4 +1585,10 @@ edges:
   evidence: reports/math_v2_1_gradient_pattern_seed81_canary_v1_20261006/README.md
   scope: One fresh current Canary attempted; generated Gradient contract failure stopped before clustering. Diagnostic
     prerequisite failed; scope closed pending scientific policy decision.
+- from: math_v2_1_gradient_pattern_seed81_canary_v1
+  to: math_v2_1_gradient_pattern_seed81_canary_v2
+  relation: followup_of
+  evidence: reports/math_v2_1_gradient_pattern_seed81_canary_v2_20261006/zero_api_forensic.json
+  scope: User-decided guard implementation repair and prompt clarification; fresh attempt, no previous authorization
+    reuse.
 current_frontier: experiments/current_frontier.yaml

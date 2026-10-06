@@ -1,5 +1,30 @@
 schema_version: failure_registry_v1
 failures:
+- failure_id: FAIL-GRADIENT-COORDINATED-ACTOR-ABSTRACTION-COVERAGE
+  title: Coordinated participant constraint bypassed the specific-content abstraction guard
+  status: MITIGATED
+  first_observed: math_v2_1_gradient_pattern_seed81_canary_v1
+  affected_components:
+  - pattern_abstraction_guard
+  - per_example_gradient_contract
+  evidence:
+  - reports/math_v2_1_gradient_pattern_seed81_canary_v1_20261006/gradient_semantics_audit.json
+  - reports/math_v2_1_gradient_pattern_seed81_canary_v2_20261006/zero_api_forensic.json
+  root_cause_status: CONFIRMED_IMPLEMENTATION_COVERAGE_GAP
+  symptom: A copied participant literal in a coordinated refusal-to-participate context passed V3.
+  forbidden_inference: Do not accept example entities, widen the hard 400-character gradient limit, add regeneration,
+    or infer a hidden reasoning trace to resolve contract noncompliance.
+  required_resolution: Repair supported coordinated-actor provenance; minimally clarify the single-call Gradient prompt;
+    freeze fresh identities and run full current tests before separately authorized fresh Canary.
+  regression_tests:
+  - tests/test_gradient_patterns.py
+  evidence_format: hash_bound_private_wire_and_synthetic_zero_api_regressions
+  evidence_level: observed
+  mitigation: V4 current guard adds coordinated participation constraints; V3 replay helper remains unchanged.
+  lifecycle: OPEN
+  latest_repair: math_v2_1_gradient_pattern_seed81_canary_v2
+  latest_repair_status: ZERO_API_VERIFICATION_PENDING_FRESH_CANARY_NOT_AUTHORIZED
+  latest_repair_limits: Bounded literal provenance; comprehensive abstraction quality requires owner semantic audit.
 - failure_id: FAIL-UNIFIED-METHOD-SEMANTIC-DRIFT
   title: Historical V2 implementation differs from the newly supplied method semantic contract
   status: MITIGATED
