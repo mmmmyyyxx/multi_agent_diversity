@@ -1,0 +1,15 @@
+{
+  "active_runtime_loc": 28070,
+  "active_runtime_modules": 137,
+  "base_head": "d4325ac260cf103bc3b2801421116cadfca27f43",
+  "consolidated_runtime_head": "f99e4d46759232eecd566fa840852a18dfe1d54d",
+  "current_method_identity": "806f7851f705069d475453615c0bc5344c5cc83a36acfba3efddefa8bd33d0be",
+  "current_to_legacy_imports": 0,
+  "new_scope": "Fresh attempt-specific binding plus separate post-hoc tool; active graph code unchanged",
+  "old_memory_reachable_definitions": 0,
+  "old_pattern_reachable_definitions": 0,
+  "prior_current_passed": 1215,
+  "prior_current_skipped": 2,
+  "prior_current_suite_source": "f99e4d46759232eecd566fa840852a18dfe1d54d",
+  "scientific_diff": "EMPTY"
+}

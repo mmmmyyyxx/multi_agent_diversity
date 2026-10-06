@@ -34,13 +34,13 @@ last_canary_milestone: math_v2_1_a4_seed81_pattern_canary_v4
 current_canary_status: VALID_OPERATIONAL_CANARY
 formal_a1_ready: false
 formal_a1_authorized: false
-current_execution_blocker: NO_AUTHORIZED_FOLLOWUP_SCOPE
+current_execution_blocker: FRESH_CANARY_FINAL_SOURCE_PREFLIGHT_PENDING
 default_optimizer_generation_policy: OPTIMIZER_REFLECTION_GENERATION_POLICY_V3
 default_optimizer_enable_thinking: false
 optimizer_policy_amendment_status: LAYER1_GENERATION_V3_FROZEN_AND_DISPATCHED
 optimizer_policy_amendment_authority: experiments/protocols/math_v2_1_layer1_redesign_v1/canary_only_authorization_decision.json
-next_canary_milestone: null
-next_canary_attempt_id: null
+next_canary_milestone: math_v2_1_gradient_pattern_seed81_canary_v1
+next_canary_attempt_id: math_v2_1_gradient_pattern_A4_seed81_canary_attempt1
 last_autonomous_milestone: math_v2_1_layer1_preexecution_repair_v1
 autonomous_user_authorization_received: true
 autonomous_token_authorization: 40000000
@@ -84,7 +84,7 @@ current_pattern_abstraction_guard: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V3
 future_execution_requires_new_user_authorization: true
 available_opt_in_pattern_abstraction_guard: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V3
 pattern_guard_amendment_status: VALID_ONE_OPPORTUNITY_CANARY_EFFICACY_NOT_ESTIMATED
-next_canary_manifest: null
+next_canary_manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_canary_v1.yaml
 prior_autonomous_authorization_status: USER_STOPPED_PATTERN_TASK_ALL_ATTEMPTS_CLOSED
 prior_task_stop_reason: USER_STOP_PATTERN_TASK
 current_canary_report: reports/math_v2_1_a4_seed81_pattern_canary_v4_20261005
@@ -109,6 +109,10 @@ runtime_consolidation_status: COMPLETED_ZERO_API_EQUIVALENCE
 current_execution_eligibility: GRADIENT_PATTERN_V4_ROLLING_MEMORY_FIXED_BUNDLE_ONLY
 runtime_consolidation_report: reports/math_v2_1_current_runtime_consolidation_v1_20261005
 current_runtime_source: f99e4d46759232eecd566fa840852a18dfe1d54d
+pending_user_task_scope: ONE_FRESH_CURRENT_CANARY_PLUS_ONE_POSTHOC_RAW_DIAGNOSTIC
+pending_user_task_sha256: 6327a703b9b337e81b52b67cd136d98c469eb372dc5aa82862101bdc8d6811e2
+pending_operational_attempt_limit: 3
+pending_user_task_authorization_received: true
 ```
 
 ## Experiment and engineering DAG
@@ -211,7 +215,7 @@ flowchart TD
     n269["math_v2_1_pattern_semantic_partition_audit_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
     n270["math_v2_1_gradient_pattern_refactor_v1<br/>ARCHITECTURE_REFACTOR<br/>COMPLETED"]
     n271["math_v2_1_current_runtime_consolidation_v1<br/>ARCHITECTURE_REFACTOR<br/>COMPLETED"]
-    n272["math_v2_1_gradient_pattern_seed81_canary_v1<br/>REAL_CANARY<br/>DRAFT"]
+    n272["math_v2_1_gradient_pattern_seed81_canary_v1<br/>REAL_CANARY<br/>PREPARED_NOT_EXECUTED"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
