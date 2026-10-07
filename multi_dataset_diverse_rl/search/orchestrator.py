@@ -198,7 +198,6 @@ class UnifiedSearchOrchestrator:
             versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION,
             versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION,
         }
-        current_semantics = self.method.method == versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION
         if self.method.method in {
                 versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION,
                 versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION,
