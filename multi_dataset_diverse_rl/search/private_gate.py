@@ -22,6 +22,9 @@ def private_binary_gate(*, benchmark, load_examples, expected_count, solver, sto
             nonlocal examples
             if candidate.full is None or not candidate.promoted or store.snapshot().team_state_id != opportunity.parent_state_id:
                 raise SearchContractError("GATE_REQUIRES_FROZEN_FULL_WINNER")
+            if (getattr(opportunity, 'evaluation_plan', {}).get('current_parent_binding') and
+                    candidate.candidate.backend_details.get('parent_state_id') != opportunity.parent_state_id):
+                raise SearchContractError('CANDIDATE_PARENT_MISMATCH')
             if examples is None:
                 examples = tuple(load_examples())
                 if len(examples) != expected_count:

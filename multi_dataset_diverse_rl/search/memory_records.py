@@ -32,6 +32,9 @@ class OpportunityOutcome:
     update_index: int
     complete: bool = True
     operational_failure: bool = False
+    realized_team_gain: float | None = None
+    realized_target_gain: float | None = None
+    progress_path: str | None = None
 
 @dataclass(frozen=True)
 class MemoryDelta:

@@ -224,7 +224,7 @@ def test_source_identity_binds_v22_authority_and_excludes_replay_receipt_constru
         for scope in identity['scopes'].values() for row in scope['files'])
 
 
-def test_complete_current_fake_graph_commits_first_target_only_update(tmp_path):
+def make_current_fake_graph(tmp_path, *, shadow_progress=False, shadow_regression=False):
     from multi_dataset_diverse_rl.benchmarks.protocols import protocol_input
     from multi_dataset_diverse_rl.benchmarks.math_v21_interface import MATHV21BenchmarkAdapter
     from multi_dataset_diverse_rl.search.binary_runtime import CorrectnessExample
@@ -255,7 +255,10 @@ def test_complete_current_fake_graph_commits_first_target_only_update(tmp_path):
             prompt, problem = req['messages'][1]['content'].split('\n\n', 1)
             i = int(problem.split('arithmetic ')[1].split('.')[0])
             initial = prompt == 'Solve the problem.'
-            correct = i < 22 or (not initial and i in gradients[:3] and 'Synthetic optimize' in problem)
+            correct = i < 22 or (not initial and i in gradients[:3]
+                and ('Synthetic optimize' in problem or shadow_progress))
+            if shadow_regression and not initial and 'Synthetic shadow' in problem and 19 <= i < 22:
+                correct = False
             output = 'FINAL_ANSWER: ' + ('1' if correct else '2')
         elif len(req['messages']) == 2:
             payload = json.loads(req['messages'][1]['content'])
@@ -287,6 +290,11 @@ def test_complete_current_fake_graph_commits_first_target_only_update(tmp_path):
         shadow_count=40, runtime_readiness=lambda:(), pattern_provider=pattern,
         provider_call_reader=lambda:broker.successes)
     run.state.initialize()
+    return run, broker, requests
+
+
+def test_complete_current_fake_graph_commits_first_target_only_update(tmp_path):
+    run, broker, requests = make_current_fake_graph(tmp_path)
     result = asyncio.run(run.run(max_opportunities=1))
     assert len(result.transitions) == 1 and result.trace[0].committed_candidate_id
     trace = result.trace[0].allocation_audit
@@ -297,6 +305,170 @@ def test_complete_current_fake_graph_commits_first_target_only_update(tmp_path):
     assert run.gate.winner_count == 1 and run.gate.feedback.passed
     # Shadow target is unchanged (0 gain), proving safety rather than gain replication.
     assert run.memory.audit()['success_writes'] == 1 and len(run.memory.private) == 1
+    success = run.memory.private[0]
+    assert 'realized_team_gain=0' in success.outcome
+    assert 'realized_target_gain=3' in success.outcome and 'progress_path=TARGET' in success.outcome
+    visible = run.memory.read_for_opportunity(NS(target_member=success.owner_member,
+        evidence=NS(mutation_evidence=(NS(source_split='optimize'),),search_validation_evidence=()),
+        diagnosis=NS(responsibility={success.owner_member:NS(primary_lane=success.lane)})))
+    assert any('progress_path=TARGET' in row['outcome'] for row in visible['private_success'])
     assert not run.memory.shared
     assert broker.usage['validation'] == broker.usage['test'] == 0
     assert result.stop_reason == 'CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE'
+
+
+def test_sequential_commits_use_current_peers_and_floors_and_reject_stale_parent(tmp_path):
+    from multi_dataset_diverse_rl.search.transition import TeamStateCommitter
+    from multi_dataset_diverse_rl.search.history import NullMemoryProvider
+    from multi_dataset_diverse_rl.search.schemas import TransitionDecision
+    from multi_dataset_diverse_rl.search.binary_runtime import BinaryEvidenceSource
+    run, broker, requests = make_current_fake_graph(tmp_path, shadow_progress=True)
+    first = asyncio.run(run.run(max_opportunities=1))
+    first_target = first.trace[0].target_member
+    state1 = run.state.snapshot()
+    evidence = BinaryEvidenceSource(run.state, run.history)
+    diagnosis = run.analyzer.analyze(state1, run.history)
+    residual = evidence.for_member(state1, diagnosis, first_target)
+    assert sum(r.signals['target_member_correct'] is False for r in residual) == 35
+    floor = run.state.initial_member_scores
+    for index, target in enumerate(m for m in range(5) if m != first_target):
+        if index == 2:
+            break
+        parent = run.state.snapshot()
+        opportunity = NS(parent_state_id=parent.team_state_id, target_member=target,
+            parent_prompt=parent.member_prompts[target], opportunity_id=f'sequential_{index}',
+            evaluation_plan={'current_parent_binding':True})
+        candidate = SearchCandidate(f'candidate_{index}', 'Check constraints and verify signs. ' + str(index),
+            backend_details={'parent_state_id':parent.team_state_id})
+        full = asyncio.run(run.evaluation.provider.full(opportunity, candidate))
+        active = asyncio.run(run.evaluation.provider.active(opportunity))
+        assert full.member_scores[first_target] == 25  # A', never the initial A.
+        assert run.transition.allows(active, full, target)
+        assert full.aggregate_score == (22 if index == 0 else 25)
+        row = EvaluatedCandidate(candidate, None, full, True, False, {'target_member':target})
+        assert asyncio.run(run.gate.check(opportunity, row))
+        # The second Shadow incumbent includes both previously committed lanes.
+        assert run.gate.feedback.passed
+        assert run.gate.feedback.aggregate_score == (22 if index == 0 else 25)
+        history_before = run.history.snapshot()
+        with pytest.raises(SearchContractError, match='COMMIT_CURRENT_PARENT_FULL_MISMATCH'):
+            TeamStateCommitter(run.state).commit(opportunity,
+                TransitionDecision(replace(row, full=replace(full, aggregate_score=full.aggregate_score+1)), 'bad_full'),
+                run.history, NullMemoryProvider())
+        assert run.state.snapshot() == parent and run.history == history_before
+        assert run.state.initial_member_scores == floor
+        TeamStateCommitter(run.state).commit(opportunity, TransitionDecision(row, 'synthetic'),
+            run.history, NullMemoryProvider())
+        child = run.state.snapshot()
+        assert child.member_outputs[first_target] == parent.member_outputs[first_target]
+        assert child.member_scores == full.member_scores
+        assert run.state.initial_member_scores == run.transition.initial_scores == floor == (22,)*5
+        before_requests = len(requests)
+        with pytest.raises(SearchContractError, match='EVALUATION_PARENT_MISMATCH'):
+            asyncio.run(run.evaluation.provider.full(opportunity, candidate))
+        assert len(requests) == before_requests
+    assert run.state.snapshot().team_scores['vote_correct_count'] == 25
+    assert broker.usage['validation'] == broker.usage['test'] == 0
+
+
+def test_shadow_rejection_has_no_atomic_update_or_success_memory(tmp_path):
+    run, broker, _ = make_current_fake_graph(tmp_path, shadow_regression=True)
+    initial = run.state.snapshot()
+    result = asyncio.run(run.run(max_opportunities=1))
+    assert run.gate.winner_count == 1 and run.gate.feedback.passed is False
+    assert result.trace[0].selected_candidate_id and not result.transitions
+    assert run.state.snapshot() == initial
+    assert run.memory.audit()['success_writes'] == 0
+    assert run.state.initial_member_scores == (22,)*5
+
+
+def test_stale_candidate_fails_before_any_teamprobe_provider_call():
+    from multi_dataset_diverse_rl.search.evaluation import CandidateEvaluationPipeline, FixedPeerPromotion
+    from multi_dataset_diverse_rl.search.schemas import SearchResult
+    calls = []
+    class Provider:
+        async def team_probe(self, *args):
+            calls.append('provider')
+            raise AssertionError('Stale candidate must be rejected first')
+    opportunity = NS(parent_state_id='active', target_member=0,
+        evaluation_plan={'current_parent_binding':True})
+    candidate = SearchCandidate('stale', 'Check constraints.', backend_details={'parent_state_id':'old'})
+    with pytest.raises(SearchContractError, match='CANDIDATE_PARENT_MISMATCH'):
+        asyncio.run(CandidateEvaluationPipeline(Provider(), FixedPeerPromotion()).evaluate(
+            opportunity, SearchResult((candidate,), 'synthetic')))
+    assert not calls
+
+
+@pytest.mark.parametrize('mutation', ['fractional','outside','missing_support','nan_tie','peer_change'])
+def test_complete_binary_measurements_are_required_for_potential_proof(mutation):
+    p = InitialCompetenceTargetOrTeamProgressV3(evaluation_count=60)
+    p.bind_initial((22,)*5, 'initial')
+    parent = measurement(evaluation_count=60)
+    full = measurement(25, evaluation_count=60)
+    if mutation == 'fractional': full = replace(full, aggregate_score=22.5)
+    if mutation == 'outside': full = replace(full, aggregate_score=61)
+    if mutation == 'missing_support': full = measurement(25)
+    if mutation == 'nan_tie': full = measurement(25, evaluation_count=60, mean_soft_vote_utility=float('nan'))
+    if mutation == 'peer_change': full = replace(full, member_scores=(25,23,22,22,22))
+    with pytest.raises(SearchContractError): p.allows(parent, full, 0)
+
+
+def test_v22_potential_exhaustively_covers_target_team_and_competence_decline():
+    from multi_dataset_diverse_rl.benchmarks.gradient_pilot_contract import progress_potential
+    n = 4
+    for floor in range(n+1):
+        p = InitialCompetenceTargetOrTeamProgressV3(evaluation_count=n)
+        p.bind_initial((floor,)*5, 'initial')
+        for old_target in range(floor,n+1):
+            for new_target in range(n+1):
+                for old_vote in range(n+1):
+                    for new_vote in range(n+1):
+                        def value(target, vote):
+                            return TeamEvaluation(vote, None, (target,floor,floor,floor,floor),
+                                aggregation_diagnostics={'terminal_invalid_delta':0,'evaluation_count':n})
+                        before, after = value(old_target,old_vote), value(new_target,new_vote)
+                        expected = new_target >= floor and new_vote >= old_vote and (
+                            new_target > old_target or new_vote > old_vote)
+                        assert p.allows(before,after,0) == expected
+                        if expected:
+                            assert progress_potential(new_vote,after.member_scores,optimize_count=n) > \
+                                progress_potential(old_vote,before.member_scores,optimize_count=n)
+    # Simple unweighted sum is false for a legal competence drop.
+    assert 1+0 < 0+4
+    assert progress_potential(1,(0,0,0,0,0),optimize_count=4) > \
+        progress_potential(0,(4,0,0,0,0),optimize_count=4)
+
+
+def test_finite_mathematical_bound_does_not_unlock_impractical_real_execution():
+    from multi_dataset_diverse_rl.benchmarks.gradient_pilot_contract import finite_bound_assessment, pilot_provider_bounds
+    bound = finite_bound_assessment()
+    assert bound['potential_maximum'] == bound['max_commits'] == 3960
+    assert bound['max_epoch_segments'] == 7922
+    assert bound['conservative_opportunity_ceiling_min_decimal_digits'] > 18000
+    assert not bound['resource_realistic_completion_bound_established']
+    assert bound['execution_gate'] == 'HOLD'
+    measured = finite_bound_assessment(initial_vote=22, initial_scores=(22,)*5)
+    assert measured['max_commits'] == 2508
+    with pytest.raises(SearchContractError, match='PILOT_BOUND_NOT_FROZEN'):
+        pilot_provider_bounds({'bound_proof':bound})
+
+
+@pytest.mark.parametrize('code,failures', [(5,2),(32,2),(33,2),(5,8),(13,1)])
+def test_windows_atomic_replace_retries_only_bounded_sharing_failures(monkeypatch, code, failures):
+    from multi_dataset_diverse_rl.persistence import durable_io
+    calls, sleeps = [], []
+    def replacement(*args):
+        calls.append(args)
+        if len(calls) <= failures:
+            error = PermissionError('Synthetic Windows file sharing failure')
+            error.winerror = code
+            raise error
+    monkeypatch.setattr(durable_io.os, 'replace', replacement)
+    monkeypatch.setattr(durable_io.time, 'sleep', sleeps.append)
+    if code in {5,32,33} and failures < 8:
+        durable_io.atomic_replace('synthetic.tmp', 'synthetic.json')
+        assert len(calls) == failures+1 and len(sleeps) == failures
+    else:
+        with pytest.raises(PermissionError): durable_io.atomic_replace('synthetic.tmp','synthetic.json')
+        assert len(calls) == (8 if code == 5 else 1)
+    assert len(sleeps) <= 7 and sum(sleeps) <= 1.11

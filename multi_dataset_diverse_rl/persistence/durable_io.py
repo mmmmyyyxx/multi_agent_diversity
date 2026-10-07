@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from pathlib import Path
 import uuid
 from typing import Any
@@ -34,7 +35,16 @@ def ensure_directory(path: str | Path) -> None:
 
 
 def atomic_replace(source: str | Path, destination: str | Path) -> None:
-    os.replace(io_path(source), io_path(destination))
+    # Both files are closed before this boundary. Short Windows sharing races
+    # may clear; a persistent lock still fails closed with the original error.
+    for attempt in range(8):
+        try:
+            os.replace(io_path(source), io_path(destination))
+            return
+        except OSError as error:
+            if os.name != "nt" or getattr(error, "winerror", None) not in {5, 32, 33} or attempt == 7:
+                raise
+            time.sleep(min(0.01 * 2 ** attempt, 0.2))
 
 
 def atomic_write_json(path: str | Path, payload: Any) -> None:

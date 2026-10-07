@@ -115,6 +115,9 @@ class CandidateEvaluationPipeline:
         evaluated_probe: list[tuple[SearchCandidate, TeamEvaluation]] = []
         seen_prompts = set()
         for candidate in search.candidates:
+            if (opportunity.evaluation_plan.get('current_parent_binding') and
+                    candidate.backend_details.get('parent_state_id') != opportunity.parent_state_id):
+                raise SearchContractError('CANDIDATE_PARENT_MISMATCH')
             if opportunity.evaluation_plan.get("v2_candidate_contract"):
                 import hashlib
                 h = hashlib.sha256(candidate.prompt.encode()).hexdigest()

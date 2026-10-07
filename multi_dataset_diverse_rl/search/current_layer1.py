@@ -48,6 +48,12 @@ class GradientPatternMemoryOptimizer(BoundedMemoryOptimizer):
     prompt_builder=staticmethod(gradient_pattern_input)
 
 class GradientPatternMemoryEngine(LocalTaskEngine):
+    async def search(self, opportunity, context):
+        result = await super().search(opportunity, context)
+        # Execution metadata only; no change to the provider-visible prompt.
+        return replace(result, candidates=tuple(replace(c, backend_details={**c.backend_details,
+            'parent_state_id':opportunity.parent_state_id}) for c in result.candidates))
+
     def make_task(self,opportunity,context):
         base=super().make_task(opportunity,context)
         universe=opportunity.evaluation_plan['evidence_universe']

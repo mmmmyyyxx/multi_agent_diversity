@@ -20,8 +20,11 @@ def progress_path(team_gain, target_gain):
 class InitialCompetenceTargetOrTeamProgressV3:
     identity = UNIFIED_TARGET_OR_TEAM_TRANSITION_VERSION
 
-    def __init__(self, *, invalid_predictions_are_incorrect=False):
+    def __init__(self, *, invalid_predictions_are_incorrect=False, evaluation_count=None):
         self.invalid_predictions_are_incorrect = invalid_predictions_are_incorrect
+        if evaluation_count is not None and (type(evaluation_count) is not int or evaluation_count <= 0):
+            raise SearchContractError("INVALID_TRANSITION_SUPPORT")
+        self.evaluation_count = evaluation_count
         self.initial_scores = None
         self.initial_state_id = None
 
@@ -29,6 +32,8 @@ class InitialCompetenceTargetOrTeamProgressV3:
         scores = tuple(scores)
         if len(scores) != 5 or any(not math.isfinite(x) or x < 0 for x in scores) or not state_id:
             raise SearchContractError("INITIAL_COMPETENCE_NOT_FROZEN")
+        if self.evaluation_count is not None and any(x != int(x) or x > self.evaluation_count for x in scores):
+            raise SearchContractError("INVALID_BINARY_TRANSITION_MEASUREMENT")
         if self.initial_scores is not None and (scores, state_id) != (self.initial_scores, self.initial_state_id):
             raise SearchContractError("INITIAL_COMPETENCE_CANNOT_REBASE")
         self.initial_scores, self.initial_state_id = scores, state_id
@@ -45,6 +50,18 @@ class InitialCompetenceTargetOrTeamProgressV3:
         invalid_delta = full.aggregation_diagnostics["terminal_invalid_delta"]
         if any(not math.isfinite(v) for v in (*parent.member_scores, *full.member_scores,
                 parent.aggregate_score, full.aggregate_score, invalid_delta)):
+            raise SearchContractError("NONFINITE_TRANSITION_MEASUREMENT")
+        if self.evaluation_count is not None:
+            if any(row.aggregation_diagnostics.get('evaluation_count') != self.evaluation_count
+                   for row in (parent, full)):
+                raise SearchContractError("INCOMPLETE_TRANSITION_SUPPORT")
+            if any(v != int(v) or not 0 <= v <= self.evaluation_count
+                   for v in (*parent.member_scores, *full.member_scores, parent.aggregate_score, full.aggregate_score)):
+                raise SearchContractError("INVALID_BINARY_TRANSITION_MEASUREMENT")
+            if any(parent.member_scores[i] != full.member_scores[i] for i in range(5) if i != target):
+                raise SearchContractError("TRANSITION_FIXED_PEERS_CHANGED")
+        if any(not math.isfinite(full.aggregation_diagnostics.get(k, 0)) for k in
+               ('team_newly_broken_count', 'mean_soft_vote_utility', 'target_invalid_count')):
             raise SearchContractError("NONFINITE_TRANSITION_MEASUREMENT")
         return (full.member_scores[target] >= self.initial_scores[target]
                 and full.aggregate_score >= parent.aggregate_score

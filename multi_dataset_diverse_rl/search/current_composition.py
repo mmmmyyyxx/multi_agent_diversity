@@ -59,7 +59,8 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
         raise SearchContractError('HOLD_PRE_PROVIDER: CURRENT_MEMORY_PROVIDER_NOT_BOUND')
     optimizer.memory=memory
     invalidity=bool(getattr(benchmark,'invalid_predictions_are_incorrect',False))
-    transition=InitialCompetenceTargetOrTeamProgressV3(invalid_predictions_are_incorrect=invalidity)
+    transition=InitialCompetenceTargetOrTeamProgressV3(invalid_predictions_are_incorrect=invalidity,
+        evaluation_count=len(store.examples))
     provider=FixedPeerTeamEvaluationProvider(store,transition)
     gate=private_binary_gate(benchmark=benchmark,load_examples=shadow_loader,expected_count=shadow_count,
         solver=solver.for_gate() if hasattr(solver,'for_gate') else solver,store=store)

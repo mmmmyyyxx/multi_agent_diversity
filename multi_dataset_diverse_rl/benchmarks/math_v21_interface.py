@@ -75,7 +75,8 @@ class MATHV21BenchmarkAdapter(MATHBenchmarkAdapterV2):
         if self.invalid_predictions_are_incorrect:
             from .protocols import MATH_PROTOCOL_V3
             self.protocol = MATH_PROTOCOL_V3
-            if contract['identity'] in versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS:
+            if contract['identity'] in {*versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS,
+                                       versions.MATH_V2_2_EXECUTION_BINDING_VERSION}:
                 from .protocols import MATH_PROTOCOL_V4
                 self.protocol=MATH_PROTOCOL_V4
 

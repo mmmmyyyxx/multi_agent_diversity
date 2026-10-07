@@ -188,6 +188,9 @@ class FixedPeerTeamEvaluationProvider:
 
     def _evaluate(self, opportunity, candidate, ids, stage):
         parent = self._parent(opportunity)
+        if (getattr(opportunity, 'evaluation_plan', {}).get('current_parent_binding') and
+                candidate.backend_details.get('parent_state_id') != parent.team_state_id):
+            raise SearchContractError('CANDIDATE_PARENT_MISMATCH')
         selected = [(i, e) for i, e in enumerate(self.store.examples) if e.item.input_id in ids]
         if len(selected) != len(ids):
             raise SearchContractError("EVALUATION_SCOPE_NOT_OPTIMIZE")
@@ -212,7 +215,14 @@ class FixedPeerTeamEvaluationProvider:
         return before, states
 
     async def active(self, opportunity):
-        return self.evaluation(self._parent(opportunity).diagnostics["team_states"])
+        return self._complete_measurement(self._parent(opportunity).diagnostics["team_states"])
+
+    def _complete_measurement(self, states):
+        result = self.evaluation(states)
+        if getattr(self.transition, 'evaluation_count', None) is not None:
+            result = replace(result, aggregation_diagnostics={**result.aggregation_diagnostics,
+                'evaluation_count':len(states)})
+        return result
 
     async def team_probe(self, opportunity, candidate):
         self.probed.append(candidate.candidate_id)
@@ -235,14 +245,16 @@ class FixedPeerTeamEvaluationProvider:
     async def full(self, opportunity, candidate):
         self.fulled.append(candidate.candidate_id)
         before, after = self._evaluate(opportunity, candidate, {e.item.input_id for e in self.store.examples}, "full")
-        old, new = self.evaluation(before), self.evaluation(after)
+        old, new = self._complete_measurement(before), self._complete_measurement(after)
         t = opportunity.target_member
         invalid_delta = sum(not b.team_validity[t] for b in after)-sum(not a.team_validity[t] for a in before)
         fixed = sum(not a.vote_correct and b.vote_correct for a, b in zip(before, after, strict=True))
         broken = sum(a.vote_correct and not b.vote_correct for a, b in zip(before, after, strict=True))
         safe = (new.member_scores[t] >= old.member_scores[t] and new.aggregate_score >= old.aggregate_score
                 and (new.member_scores[t] > old.member_scores[t] or new.aggregate_score > old.aggregate_score) and invalid_delta <= 0)
-        measurement = replace(new, aggregation_diagnostics=dict(terminal_invalid_delta=invalid_delta,
+        measurement = replace(new, aggregation_diagnostics=dict(
+            **({'evaluation_count':len(after)} if getattr(self.transition, 'evaluation_count', None) is not None else {}),
+            terminal_invalid_delta=invalid_delta,
             team_newly_fixed_count=fixed, team_newly_broken_count=broken,
             mean_soft_vote_utility=sum(soft_vote_utility(s.gold_vote_count, s.plurality_margin) for s in after)/len(after),
             target_invalid_count=sum(not s.team_validity[t] for s in after),

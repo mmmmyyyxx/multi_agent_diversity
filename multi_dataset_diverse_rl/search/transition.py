@@ -85,6 +85,16 @@ class TeamStateCommitter:
             )
             if child.team_state_id == parent.team_state_id:
                 raise SearchContractError("commit did not change team state")
+            if getattr(opportunity, 'evaluation_plan', {}).get('current_parent_binding'):
+                full = decision.candidate.full
+                target = opportunity.target_member
+                if (decision.candidate.candidate.backend_details.get('parent_state_id') != parent.team_state_id
+                        or child.member_scores != full.member_scores
+                        or child.team_scores.get('vote_correct_count') != full.aggregate_score
+                        or any(parent.member_prompts[i] != child.member_prompts[i]
+                               or parent.member_outputs[i] != child.member_outputs[i]
+                               for i in range(5) if i != target)):
+                    raise SearchContractError('COMMIT_CURRENT_PARENT_FULL_MISMATCH')
             record = TransitionRecord(
                 opportunity.opportunity_id, parent.team_state_id, child.team_state_id,
                 opportunity.target_member, decision.candidate.candidate.candidate_id,

@@ -192,8 +192,20 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
                     oid=sha256(op.opportunity_id.encode()).hexdigest()
                     prompt_id=sha256(row.candidate.prompt.encode()).hexdigest()
                     mid=sha256(f'{sequence}:{oid}:{prompt_id}:SUCCESS'.encode()).hexdigest()
+                    measured_outcome = f"Committed; team fixed {int(d.get('team_newly_fixed_count',0))}, broken {int(d.get('team_newly_broken_count',0))}."
+                    if outcome.progress_path is not None:
+                        from .target_or_team_transition import progress_path
+                        import math
+                        if (outcome.realized_team_gain is None or outcome.realized_target_gain is None
+                                or not all(math.isfinite(v) for v in (outcome.realized_team_gain, outcome.realized_target_gain))
+                                or outcome.realized_team_gain < 0
+                                or outcome.progress_path != progress_path(outcome.realized_team_gain, outcome.realized_target_gain)
+                                or outcome.progress_path not in {'TARGET','TEAM','TARGET_AND_TEAM'}):
+                            raise SearchContractError('MEMORY_COMMITTED_PROGRESS_MISMATCH')
+                        measured_outcome += (f" realized_team_gain={outcome.realized_team_gain:g};"
+                            f" realized_target_gain={outcome.realized_target_gain:g}; progress_path={outcome.progress_path}.")
                     private.append(ActionExperience(mid,member,'SUCCESS',lane,sequence,lane+' repair',action,
-                        f"Committed; team fixed {int(d.get('team_newly_fixed_count',0))}, broken {int(d.get('team_newly_broken_count',0))}.",
+                        measured_outcome,
                         'Reuse cautiously against current evidence and preserve fixed-peer competence.',oid,prompt_id))
                 continue
             risk=row.diagnostics.get('scientific_risk_code')

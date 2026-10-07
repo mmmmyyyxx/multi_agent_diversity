@@ -28,6 +28,7 @@ class CurrentOpportunityBuilder(OpportunityBuilder):
             search_budget={"metric_calls":self.search_metric_budget},
             evaluation_plan={"max_promoted":2, "evidence_universe":rows,
                              "evidence_audit":audit, "v2_candidate_contract":True,
+                             "current_parent_binding":True,
                              **{"allocation_failure_counts":{m:history.failure_counts.get(m, 0) for m in rows_by_member},
                                  "prior_opportunity_counts":{m:history.target_counts.get(m, 0) for m in rows_by_member},
                                  "prior_exposure_counts":{m:update_index for m in rows_by_member}}})

@@ -265,13 +265,22 @@ class UnifiedSearchOrchestrator:
             memory_delta = None
             if v2:
                 from .memory_records import OpportunityOutcome
+                progress = {}
+                if (self.method.method == versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION
+                        and decision.candidate is not None and gate_passed):
+                    from .target_or_team_transition import progress_path
+                    team_gain = decision.candidate.full.aggregate_score - active.aggregate_score
+                    target_gain = (decision.candidate.full.member_scores[opportunity.target_member]
+                                   - active.member_scores[opportunity.target_member])
+                    progress = dict(realized_team_gain=team_gain, realized_target_gain=target_gain,
+                                    progress_path=progress_path(team_gain, target_gain))
                 memory_delta = self.memory.prepare_outcome(OpportunityOutcome(
                     opportunity, tuple(evaluated), selected,
                     bool(decision.candidate is not None and gate_passed), gate_passed, index,
                     operational_failure=(bool(searched.search_state.get("operational_failure")) or
                                          any(r.diagnostics.get("operational_failure") for r in evaluated) or
                                          bool(decision.candidate is not None and
-                                              getattr(self.gate, "operational_failure", False)))))
+                                              getattr(self.gate, "operational_failure", False))), **progress))
                 self.memory.validate_delta(memory_delta)
             if decision.candidate is not None and gate_passed:
                 record = self.committer.commit(
