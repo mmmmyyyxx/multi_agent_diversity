@@ -1,0 +1,12 @@
+{
+  "benchmark_protocol_identity": "3aee274eeee86c07b7ea66a8700d925e42ecab17663a65e93e96f4ae475e1a67",
+  "distinct_member_ids": true,
+  "heldout_content_parsed": false,
+  "immutable_initial_prompt_count": 5,
+  "passed": true,
+  "prompt_bytes_identical": true,
+  "provider_calls": 0,
+  "scope": "compatibility data/evaluator/initial-team integrity only",
+  "test_calls": 0,
+  "validation_calls": 0
+}

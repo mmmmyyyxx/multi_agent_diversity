@@ -1,0 +1,11 @@
+{
+  "baseline_source": "e9b5f55317ddc88fee21c49c7c87ee8254b9c0f2",
+  "distinct_solver_lanes": 5,
+  "passed": true,
+  "provider_calls": 0,
+  "roles": 4,
+  "scope": "Unchanged transport/accounting physics; TARGET Memory outcome repair is intentional",
+  "sdk_wire_and_request_keys_identical": true,
+  "transport_attempts": 0,
+  "wire_checks": 8
+}

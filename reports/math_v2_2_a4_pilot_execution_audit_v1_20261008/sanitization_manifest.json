@@ -1,0 +1,64 @@
+{
+  "files": [
+    {
+      "path": "effective_dependencies.json",
+      "sha256": "10eb50a543c8f8399c70dd25f0f1ab7b452d8615c4d9d0f47aa49a773fc7be5a"
+    },
+    {
+      "path": "engineering_verification.json",
+      "sha256": "89c02d601841c4d105d499d630dfe9de97a70e1d63c9a645476e2c351730bdfb"
+    },
+    {
+      "path": "final_governance.json",
+      "sha256": "c0ed75eae6eefed9988a674be1fe57ca6eb4cb58efeae216f37c64d72234a608"
+    },
+    {
+      "path": "findings.json",
+      "sha256": "f6978146aa809049c2cb05401c6e96efe82d9f38b029f3b1df11fd0d522255d8"
+    },
+    {
+      "path": "finite_bound_assessment.json",
+      "sha256": "bcb8deb1a32ef3a51fbe93960db76078f2a9bbeb2ac325283b392a7b39d2797e"
+    },
+    {
+      "path": "historical_preservation.json",
+      "sha256": "8e7ec277f11beaf8f3d40b4d96c66f79bb84c7480d43637c498300babb23c84c"
+    },
+    {
+      "path": "plurality_potential_counterexample.json",
+      "sha256": "bbe15d1f3f59d26f5b446ba395cb87f327e7187ad9b00db5826b6def10af5648"
+    },
+    {
+      "path": "provider_accounting_read_only.json",
+      "sha256": "7f9543a408a4d5ff5831d46a8576c82de565825195e239362cddf35466bc3a4c"
+    },
+    {
+      "path": "raw_evidence_hashes.json",
+      "sha256": "63550398fff9be9b9a25ef596dce6c871f8df2a4ce48c4bdee97d5ff2ddba58a"
+    },
+    {
+      "path": "README.md",
+      "sha256": "503446dd6bde8d9af6a3fa69632352ba2bc90355873bd928ae4393a5d83b6a35"
+    },
+    {
+      "path": "source_identity_summary.json",
+      "sha256": "dbcb1e693e8e9f2d89f797ec7bd5acc132a67b052e9b94bbf16ae2a8a6bd3668"
+    },
+    {
+      "path": "strict_vote_occurrence_classification.json",
+      "sha256": "733a3b90774c440489556bfd0a98fb95241d5e462b185740fe656279b725fe83"
+    },
+    {
+      "path": "summary.json",
+      "sha256": "bf7f91f4d0e6060c96bd028597e607081f923b48c13d6504e54d037f71e38160"
+    },
+    {
+      "path": "v22_wire_equivalence.json",
+      "sha256": "14c2fd0a3af563d26f6e8a5d0db1bfbce88d4c7dd917318b905fbc0800e78766"
+    }
+  ],
+  "host_paths_endpoints_secrets_published": false,
+  "passed": true,
+  "private_evidence_hash_only": true,
+  "raw_problem_answer_provider_material_published": false
+}

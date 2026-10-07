@@ -1,0 +1,47 @@
+{
+  "fixes": [
+    {
+      "after": "V2.2 routes to the existing V4 protocol; parser and recovery policies unchanged",
+      "before": "V2.2 identity selected prediction protocol V3 instead of the frozen V4 recovery protocol",
+      "classification": "CONFIRMED_IMPLEMENTATION_BUG",
+      "id": "V22_MATH_PROTOCOL_ROUTING"
+    },
+    {
+      "after": "Private outcome records finite realized team/target gains and progress path; retrieval limits/order unchanged",
+      "before": "Completed TARGET deployment was already SUCCESS, but its action outcome omitted target gain and progress path",
+      "classification": "CONFIRMED_IMPLEMENTATION_GAP",
+      "id": "TARGET_SUCCESS_MEMORY_GAINS"
+    },
+    {
+      "after": "Export, TeamProbe, Full, Shadow and atomic deployment bind the current parent; mismatched materialized Full rolls back",
+      "classification": "MISSING_FAIL_CLOSED_ASSERTIONS_NO_REAL_STALE_PEER_INCIDENT_CLAIMED",
+      "id": "CURRENT_PARENT_INVARIANTS"
+    },
+    {
+      "after": "Current builder binds Optimize cardinality; incomplete, fractional, out-of-range, nonfinite or changed-peer measurements fail closed",
+      "classification": "MISSING_BOUND_PRECONDITION_VALIDATION",
+      "id": "COMPLETE_BINARY_MEASUREMENTS"
+    },
+    {
+      "after": "At most eight atomic replacement attempts for Windows errors 5/32/33; persistent locks and corruption remain fatal",
+      "bounded_recovery_controls_passed": true,
+      "classification": "BOUNDED_OPERATIONAL_REPAIR",
+      "id": "WINDOWS_SHARING_RETRY",
+      "windows_io_failure_observed_in_final_full_suite": false
+    }
+  ],
+  "unchanged": [
+    "WHO formula and failure discount",
+    "Gradient V1/Prompt V3/Guard V6/400 chars",
+    "Partition Completion V1",
+    "Gradient Recovery V1 first-valid max3",
+    "same-F Pattern",
+    "Memory retrieval policy",
+    "Layer1 36/6/6/4 and promotion2",
+    "5 independent member lanes and equal plurality",
+    "immutable initial floor",
+    "winner-only Shadow",
+    "scientific no-commit patience2",
+    "models, data, seed and cumulative40M"
+  ]
+}

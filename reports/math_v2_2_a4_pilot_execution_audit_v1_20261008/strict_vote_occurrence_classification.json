@@ -1,0 +1,969 @@
+{
+  "patterns": [
+    "aggregate_score\\s*>\\s*parent\\.aggregate_score",
+    "vote_delta\\s*>\\s*0",
+    "vote_delta\\s*<=\\s*0",
+    "NO_STRICT_TEAM_VOTE_GAIN",
+    "NO_TEAM_GAIN",
+    "INITIAL_COMPETENCE_TEAM_GAIN",
+    "team_score_delta\\s*>\\s*0",
+    "realized_team_gain\\s*>\\s*0"
+  ],
+  "records": [
+    {
+      "classification": "HISTORICAL_PROTOCOL_NOT_CURRENT_EXECUTION_AUTHORITY",
+      "line": 122,
+      "path": "experiments/accepted_local_mutation_team_transfer_v1/PROTOCOL.md",
+      "pattern_index": 1
+    },
+    {
+      "classification": "HISTORICAL_PROTOCOL_NOT_CURRENT_EXECUTION_AUTHORITY",
+      "line": 125,
+      "path": "experiments/accepted_local_mutation_team_transfer_v1/PROTOCOL.md",
+      "pattern_index": 1
+    },
+    {
+      "classification": "HISTORICAL_PROTOCOL_NOT_CURRENT_EXECUTION_AUTHORITY",
+      "line": 70,
+      "path": "experiments/v16_module2_candidate_design_fixed_trajectory_isolation_20260811/design_variants.json",
+      "pattern_index": 1
+    },
+    {
+      "classification": "SHARED_HISTORICAL_FALLBACK_NOT_CURRENT_V22_SELECTOR",
+      "line": 284,
+      "path": "multi_dataset_diverse_rl/search/binary_runtime.py",
+      "pattern_index": 0
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "line": 43,
+      "path": "multi_dataset_diverse_rl/search/initial_competence_transition.py",
+      "pattern_index": 4
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "line": 43,
+      "path": "multi_dataset_diverse_rl/search/initial_competence_transition.py",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "line": 55,
+      "path": "multi_dataset_diverse_rl/search/initial_competence_transition.py",
+      "pattern_index": 0
+    },
+    {
+      "classification": "CURRENT_GATE_LEGAL_OR_TEAM_BRANCH",
+      "line": 69,
+      "path": "multi_dataset_diverse_rl/search/target_or_team_transition.py",
+      "pattern_index": 0
+    },
+    {
+      "classification": "SHARED_HISTORICAL_FALLBACK_NOT_CURRENT_V22_SELECTOR",
+      "line": 42,
+      "path": "multi_dataset_diverse_rl/search/transition.py",
+      "pattern_index": 0
+    },
+    {
+      "classification": "HISTORICAL_ANALYSIS_OR_REPLAY_NOT_CURRENT_EXECUTION",
+      "line": 108,
+      "path": "multi_dataset_diverse_rl/team_search/accepted_mutation_replay.py",
+      "pattern_index": 1
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 4,
+      "path": "reports/math_v2_1_gradient_pattern_seed81_pilot_v6_execution_20261007/bottleneck_diagnosis.json",
+      "pattern_index": 3
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 11,
+      "path": "reports/math_v2_1_gradient_pattern_seed81_pilot_v6_execution_20261007/teamprobe_failure_breakdown.json",
+      "pattern_index": 3
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 11,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 4
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 12,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 526,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 938,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 1781,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 1796,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 1811,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 1826,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 1891,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 1953,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 2065,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 2177,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 2289,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 2401,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 2513,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 2625,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 2737,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 2849,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 2961,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 3113,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 3265,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 3417,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 3569,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 3721,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 3873,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 4025,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 4177,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 4329,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 4481,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 4583,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 4685,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 4787,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 4889,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 4991,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 5093,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 5195,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 5297,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 5399,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 5501,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 5603,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 5705,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 5817,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 5929,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 6041,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 6153,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 6165,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 6180,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 6195,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 6210,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 6275,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 6337,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 7774,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 7865,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 7936,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 8007,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 8078,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 8149,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 8240,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 8331,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 8402,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 8473,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 8544,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 8615,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 8706,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 8757,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 8808,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 8859,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 8910,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 8961,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 9012,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 9063,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 9114,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 9165,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 9216,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 9267,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 9318,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 9419,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 9520,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 9621,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 9722,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 9813,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 9864,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 9945,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 10046,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 10147,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 10248,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 10349,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 10450,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 10551,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 10652,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 10753,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 10854,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 10955,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 11046,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 11117,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 11208,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 11299,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 11390,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 11481,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 11552,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 11643,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 11714,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 11785,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 11836,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 11887,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 11948,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 12049,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 12150,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 12251,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 12352,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 12453,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 12554,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 12655,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 12746,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 12797,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 12848,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 12899,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 12950,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 13001,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 13052,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 13103,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 13174,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 13245,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 13316,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 13387,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 13478,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 13569,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 13650,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 13741,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 13792,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 13843,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 14275,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 19576,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 19847,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 22230,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 4
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 22231,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 23801,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 30312,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "line": 31753,
+      "path": "reports/transition_reachability_audit_v1_20261007/occurrence_classification.json",
+      "pattern_index": 5
+    },
+    {
+      "classification": "HISTORICAL_ANALYSIS_OR_REPLAY_NOT_CURRENT_EXECUTION",
+      "line": 189,
+      "path": "scripts/analyze_v18_trajectory_gain_loss_decomposition.py",
+      "pattern_index": 1
+    },
+    {
+      "classification": "HISTORICAL_ANALYSIS_OR_REPLAY_NOT_CURRENT_EXECUTION",
+      "line": 72,
+      "path": "scripts/audit_diversity_writeback_cost_mechanism.py",
+      "pattern_index": 1
+    },
+    {
+      "classification": "HISTORICAL_ANALYSIS_OR_REPLAY_NOT_CURRENT_EXECUTION",
+      "line": 78,
+      "path": "scripts/audit_diversity_writeback_cost_mechanism.py",
+      "pattern_index": 1
+    },
+    {
+      "classification": "HISTORICAL_ANALYSIS_OR_REPLAY_NOT_CURRENT_EXECUTION",
+      "line": 70,
+      "path": "scripts/build_final_method_complete_report.py",
+      "pattern_index": 1
+    },
+    {
+      "classification": "HISTORICAL_ANALYSIS_OR_REPLAY_NOT_CURRENT_EXECUTION",
+      "line": 85,
+      "path": "scripts/build_strict_v2_s345_report.py",
+      "pattern_index": 1
+    },
+    {
+      "classification": "HISTORICAL_ANALYSIS_OR_REPLAY_NOT_CURRENT_EXECUTION",
+      "line": 406,
+      "path": "scripts/run_vote_aligned_seed75_static_control.py",
+      "pattern_index": 1
+    },
+    {
+      "classification": "HISTORICAL_ANALYSIS_OR_REPLAY_NOT_CURRENT_EXECUTION",
+      "line": 408,
+      "path": "scripts/run_vote_aligned_seed75_static_control.py",
+      "pattern_index": 1
+    },
+    {
+      "classification": "HISTORICAL_ANALYSIS_OR_REPLAY_NOT_CURRENT_EXECUTION",
+      "line": 410,
+      "path": "scripts/run_vote_aligned_seed75_static_control.py",
+      "pattern_index": 1
+    }
+  ],
+  "unreviewed": []
+}

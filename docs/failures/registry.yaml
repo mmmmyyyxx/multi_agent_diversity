@@ -904,3 +904,21 @@ failures:
   mitigation: Fresh V2.2 OR-progress identity and target-second ranking; execution
     and Pilot bounds fail closed until separately frozen. Historical V2.1 is preserved.
   lifecycle_note: IMPLEMENTED_ZERO_API_ONLY; REAL_EXECUTION_HOLD
+- failure_id: FAIL-V22-PILOT-RESOURCE-BOUND-NOT-FROZEN
+  title: Commit finiteness does not establish a resource-realistic opportunity bound
+  status: OPEN
+  lifecycle: OPEN
+  first_observed: math_v2_2_a4_pilot_execution_audit_v1
+  affected_components:
+  - pilot_operational_bound
+  - failure_discount_execution_bound
+  evidence:
+  - reports/math_v2_2_a4_pilot_execution_audit_v1_20261008/finite_bound_assessment.json
+  evidence_level: zero_api_proof_and_counterexample
+  root_cause_status: Conservative carried-failure recurrence grows beyond realistic
+    execution resources; tighter bound unresolved.
+  mitigation: Retain HOLD; do not guess a ceiling or change scientific allocation/stopping.
+  regression_tests:
+  - tests/current/test_transition_reachability_v22.py::test_finite_mathematical_bound_does_not_unlock_impractical_real_execution
+  forbidden_inference: Not an empirical A4 failure or proof that no tighter bound
+    exists.

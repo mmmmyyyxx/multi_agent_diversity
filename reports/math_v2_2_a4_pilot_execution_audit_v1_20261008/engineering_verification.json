@@ -1,0 +1,99 @@
+{
+  "earlier_new_fixture_failure": {
+    "cause": "Test fixture omitted the required search-only evidence view",
+    "corrected": true,
+    "failed": 1,
+    "final_scoped_result": "38 passed",
+    "passed": 37
+  },
+  "full_current_suite": {
+    "deselected": 1468,
+    "elapsed_seconds": 1309.253,
+    "errors": 0,
+    "failed": 0,
+    "failure_cases": [],
+    "full_suite_pass_claimed": true,
+    "junit_sha256": "8fc98424e4817b27d68bb8d36630bd3b7834548d4b05fa6681cf2f7be37de4fc",
+    "network_attempt_count": 0,
+    "passed": 1551,
+    "preimport_network_guard": true,
+    "scope": {
+      "deselected": 1468,
+      "historical_replay_test_cases": 1767,
+      "mode": "current",
+      "private_artifact_test_cases": 64,
+      "selected": 1553
+    },
+    "skipped": 2,
+    "tested_patch_source": "edb5536d9a5839f099bcce74d401ea2e94080e61"
+  },
+  "historical_private_artifact_full_replay_executed": false,
+  "initial_persistence_and_v22_regressions": {
+    "failed": 0,
+    "passed": 38,
+    "stress_cycles": 1005
+  },
+  "isolated_rerun": {
+    "deselected": 0,
+    "elapsed_seconds": 17.548,
+    "errors": 0,
+    "failed": 0,
+    "failure_cases": [],
+    "full_suite_pass_claimed": true,
+    "junit_sha256": "5451fc592747103eadfc35d1e326fa4bdd0539d4038348bba47e22727b69a0f6",
+    "network_attempt_count": 0,
+    "passed": 60,
+    "preimport_network_guard": true,
+    "scope": {
+      "deselected": 0,
+      "historical_replay_test_cases": 0,
+      "mode": "current",
+      "private_artifact_test_cases": 0,
+      "selected": 60
+    },
+    "skipped": 0,
+    "tested_patch_source": "edb5536d9a5839f099bcce74d401ea2e94080e61"
+  },
+  "prior_full_current_suite": {
+    "deselected": 1468,
+    "elapsed_seconds": 1350.688,
+    "errors": 0,
+    "failed": 2,
+    "failure_cases": [
+      {
+        "category": "LIGHTWEIGHT_PORT_COMPATIBILITY_REGRESSION_CORRECTED",
+        "module": "tests.test_math_output_reuse",
+        "test": "test_initial_responsibility_evidence_fixed_peers_overlap_commit"
+      },
+      {
+        "category": "LIGHTWEIGHT_PORT_COMPATIBILITY_REGRESSION_CORRECTED",
+        "module": "tests.test_math_prediction_validity",
+        "test": "test_initial_floor_binds_all_rows_and_candidate_invalidity_is_just_wrong"
+      }
+    ],
+    "full_suite_pass_claimed": false,
+    "junit_sha256": "928eaaa57652ba96065249451389a68a6d69d01588a8ec0d9eb9a577e5c0fdfc",
+    "network_attempt_count": 0,
+    "passed": 1549,
+    "preimport_network_guard": true,
+    "scope": {
+      "deselected": 1468,
+      "historical_replay_test_cases": 1767,
+      "mode": "current",
+      "private_artifact_test_cases": 64,
+      "selected": 1553
+    },
+    "skipped": 2,
+    "tested_patch_source": null,
+    "tested_worktree_revision": "BEFORE_LIGHTWEIGHT_PORT_COMPATIBILITY_FIX"
+  },
+  "prior_full_regression_corrected": true,
+  "prior_full_suite_failures_retained": true,
+  "v22_scoped_regressions": {
+    "deselected": 0,
+    "failed": 0,
+    "network_attempt_count": 0,
+    "passed": 38,
+    "skipped": 0
+  }
+}

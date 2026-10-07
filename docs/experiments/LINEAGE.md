@@ -12,7 +12,7 @@ method_identity: unified_team_prompt_search_v2_2
 current_method: unified_team_prompt_search_v2_2
 current_implementation: One closed current policy bundle; current-only composition;
   explicit legacy replay
-current_experiment: transition_reachability_audit_v1
+current_experiment: "math_v2_2_a4_pilot_execution_audit_v1"
 current_benchmark_suite:
 - math
 - ifbench
@@ -35,7 +35,7 @@ last_canary_milestone: math_v2_1_gradient_pattern_seed81_canary_v3
 current_canary_status: V2_2_BINDING_NOT_FROZEN
 formal_a1_ready: false
 formal_a1_authorized: false
-current_execution_blocker: CURRENT_V2_2_EXECUTION_BINDING_NOT_FROZEN
+current_execution_blocker: "TARGET_OR_TEAM_PROGRESS_PILOT_BOUND_NOT_FROZEN"
 default_optimizer_generation_policy: OPTIMIZER_REFLECTION_GENERATION_POLICY_V3
 default_optimizer_enable_thinking: false
 optimizer_policy_amendment_status: LAYER1_GENERATION_V3_FROZEN_AND_DISPATCHED
@@ -45,15 +45,15 @@ next_canary_attempt_id: null
 last_autonomous_milestone: math_v2_1_layer1_preexecution_repair_v1
 autonomous_user_authorization_received: true
 autonomous_token_authorization: 40000000
-autonomous_tokens_consumed: 3072683
-autonomous_tokens_remaining: 36927317
+autonomous_tokens_consumed: 3414772
+autonomous_tokens_remaining: 36585228
 token_accounting_policy: RESERVATION_V2
 prior_accounting_stop_resolution: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2
-autonomous_authorization_status: PRIOR_V2_1_SCOPES_CLOSED_NO_V2_2_AUTHORITY
-pilot_search_complete: true
+autonomous_authorization_status: "CONDITIONAL_ONE_V2_2_PILOT_NO_FROZEN_SCOPE_PRIOR_V2_1_CLOSED"
+pilot_search_complete: false
 pilot_validation_complete: false
-pilot_final_status: VALID_A4_SEED81_PILOT_SEARCH
-task_stop_reason: ONE_COMPLETE_VALID_PILOT_STOP
+pilot_final_status: "V2_2_PILOT_NOT_EXECUTED_HOLD_RESOURCE_BOUND"
+task_stop_reason: "USER_FINITE_RESOURCE_BOUND_HOLD_BOUNDARY"
 optimizer_nonthinking_wire_confirmed: YES_EQUIVALENT_EVIDENCE
 last_candidate_contract_audit: math_v2_1_proposal_semantic_postmortem_v1
 pilot_scientific_interpretation: NOT_CAUSALLY_ESTABLISHED
@@ -70,7 +70,7 @@ historical_pilot_status:
   interpretation: ZERO_INTERVENTION_NO_ADMISSIBLE_CANDIDATE
 new_pilot_search_complete: false
 new_pilot_validation_complete: false
-new_pilot_final_status: NOT_EVALUABLE_PERSISTENCE_FAILURE_BEFORE_INITIAL_STATE
+new_pilot_final_status: "V2_2_PILOT_NOT_EXECUTED_HOLD_RESOURCE_BOUND"
 current_memory_policy: structured_cross_member_rolling_risk_memory_v4
 current_configuration_arm: A4
 current_pattern_enabled: true
@@ -107,12 +107,12 @@ current_execution_entrypoint: scripts/run_experiment.py
 historical_replay_entrypoint: scripts/replay_experiment.py
 last_runtime_consolidation_milestone: math_v2_1_current_runtime_consolidation_v1
 runtime_consolidation_status: COMPLETED_ZERO_API_EQUIVALENCE
-current_execution_eligibility: V2_2_IMPLEMENTED_ZERO_API_ONLY
+current_execution_eligibility: "V2_2_ZERO_API_AUDITED_REAL_PILOT_HOLD_RESOURCE_BOUND"
 runtime_consolidation_report: reports/math_v2_1_current_runtime_consolidation_v1_20261005
-current_runtime_source: null
-pending_user_task_scope: V2_2_CODE_AND_ZERO_API_AUDIT_ONLY
-pending_user_task_sha256: 2db412f23108d2b03f155c349a4877cb254c13c5c6c977cb3fa0a0d881318630
-pending_operational_attempt_limit: 0
+current_runtime_source: "edb5536d9a5839f099bcce74d401ea2e94080e61"
+pending_user_task_scope: "PRE_PILOT_AUDIT_REPAIR_AND_CONDITIONAL_ONE_V2_2_A4_PILOT"
+pending_user_task_sha256: "cca29d5898945c72dee56eda7453e14623458ad0b78733608680b2d749cb8313"
+pending_operational_attempt_limit: 1
 pending_user_task_authorization_received: true
 previous_valid_canary_milestone: math_v2_1_a4_seed81_pattern_canary_v4
 previous_valid_canary_status: VALID_OPERATIONAL_CANARY
@@ -124,21 +124,21 @@ gradient_cluster_semantic_behavior: SHARED_PATTERN_OBSERVED
 current_gradient_prompt: PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3
 future_execution_requires_new_frozen_single_use_scope: true
 gradient_raw_comparison_classification: MIXED
-pending_pilot_milestone: math_v2_1_gradient_pattern_seed81_pilot_v6
+pending_pilot_milestone: null
 pending_pilot_manifest: null
 pending_pilot_attempt_id: null
 pending_pilot_scope: null
-pending_pilot_user_task_sha256: 942dc2d9bcd8ec40f0373997a817b1158c6a6af57f624df119a294b19cc4fd86
-pending_pilot_user_authorization_received: false
-pending_pilot_status: NO_V2_2_EXECUTION_SCOPE
+pending_pilot_user_task_sha256: "cca29d5898945c72dee56eda7453e14623458ad0b78733608680b2d749cb8313"
+pending_pilot_user_authorization_received: true
+pending_pilot_status: "HOLD_RESOURCE_BOUND_NO_FROZEN_SCOPE"
 pending_pilot_operational_retry_limit: 0
 pending_pilot_scientific_changes_authorized: false
 pending_pilot_validation_authorized: false
 pending_pilot_test_authorized: false
 pending_pilot_push_authorized: false
 last_pilot_milestone: math_v2_1_gradient_pattern_seed81_pilot_v6
-current_pilot_status: VALID_A4_SEED81_PILOT_SEARCH
-current_pilot_report: reports/math_v2_1_gradient_pattern_seed81_pilot_v6_execution_20261007
+current_pilot_status: "V2_2_PILOT_NOT_EXECUTED_HOLD_RESOURCE_BOUND"
+current_pilot_report: null
 last_pilot_manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v6.yaml
 pilot_gradient_contract_compliance: ALL_ACCEPTED_PASS
 current_initial_team_version: MATH_GENERIC_TEAM_SEED_V1_2
@@ -236,10 +236,19 @@ current_execution_blockers:
 - TARGET_OR_TEAM_PROGRESS_PILOT_BOUND_NOT_FROZEN
 current_transition_audit_report: reports/transition_reachability_audit_v1_20261007
 current_transition_audit_status: COMPLETE_ZERO_API_FULL_SUITE_IO_LIMITATION
-current_transition_conformance: PASS_SCOPED_REGRESSIONS
-current_transition_full_suite: 1534_PASSED_2_SKIPPED_2_WINERROR5_FAILED_1468_DESELECTED
+current_transition_conformance: PASS_FINAL_FULL_CURRENT_SUITE
+current_transition_full_suite: 1551_PASSED_0_FAILED_2_SKIPPED_1468_DESELECTED
 finite_pilot_bound_frozen: false
 scientific_method_changed: true
+last_valid_v21_pilot_status: "VALID_A4_SEED81_PILOT_SEARCH"
+last_valid_v21_pilot_report: "reports/math_v2_1_gradient_pattern_seed81_pilot_v6_execution_20261007"
+last_v22_execution_audit: "math_v2_2_a4_pilot_execution_audit_v1"
+last_v22_execution_audit_report: "reports/math_v2_2_a4_pilot_execution_audit_v1_20261008"
+v22_commit_bound_established: true
+v22_resource_realistic_completion_bound_established: false
+new_v22_pilot_executed: false
+this_task_scientific_method_changed: false
+current_transition_full_suite_source: edb5536d9a5839f099bcce74d401ea2e94080e61
 ```
 
 ## Experiment and engineering DAG
@@ -511,6 +520,7 @@ flowchart TD
     n285["math_v2_1_full_candidate_specialization_forensic_v1<br/>FORENSIC_AUDIT<br/>COMPLETED"]
     n286["math_v2_1_manual_prompt_capacity_probe_v1<br/>DIAGNOSTIC<br/>COMPLETED"]
     n287["transition_reachability_audit_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
+    n288["math_v2_2_a4_pilot_execution_audit_v1<br/>ZERO_API_AUDIT<br/>HOLD"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -727,6 +737,7 @@ flowchart TD
   n284 -->|followup_of| n286
   n284 -->|followup_of| n287
   n286 -->|followup_of| n287
+  n287 -->|followup_of| n288
 ```
 
 ## Archived branches and unresolved evidence

@@ -1,0 +1,31 @@
+{
+  "authorization": {
+    "commit_authorized": true,
+    "push_authorized": false,
+    "real_api_authorized": false,
+    "test_authorized": false,
+    "validation_authorized": false
+  },
+  "base_source_sha": "e9b5f55317ddc88fee21c49c7c87ee8254b9c0f2",
+  "bound_assessment": "V2_2_WEIGHTED_PROGRESS_FINITE_BOUND_ASSESSMENT_V1",
+  "execution_gate": "HOLD",
+  "identity": "math_v2_2_a4_pilot_execution_audit_v1",
+  "kind": "ZERO_API_AUDIT",
+  "method": "unified_team_prompt_search_v2_2",
+  "patch_source_sha": "edb5536d9a5839f099bcce74d401ea2e94080e61",
+  "phase_c_started": false,
+  "prospective_pilot": {
+    "arm": "A4",
+    "attempt_id": null,
+    "authorization_consumed": false,
+    "conditional_user_authorized": true,
+    "exact_frozen_scope_created": false,
+    "optimize": 60,
+    "seed": 81,
+    "shadow": 40
+  },
+  "report": "reports/math_v2_2_a4_pilot_execution_audit_v1_20261008",
+  "scientific_method_changed": false,
+  "stop_boundary": "User task section 5: no reasonable finite operational bound",
+  "user_task_sha256": "cca29d5898945c72dee56eda7453e14623458ad0b78733608680b2d749cb8313"
+}

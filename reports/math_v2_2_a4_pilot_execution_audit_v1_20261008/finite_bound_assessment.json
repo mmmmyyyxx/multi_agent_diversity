@@ -1,0 +1,26 @@
+{
+  "blocker": "TARGET_OR_TEAM_PROGRESS_PILOT_BOUND_NOT_FROZEN",
+  "conservative_opportunity_ceiling_min_decimal_digits": 18872,
+  "execution_gate": "HOLD",
+  "failure_cap_factor": 241,
+  "failure_cap_recurrence": "H_next=(4*N+1)*H+(4*N+2); E=5*H_next",
+  "finite_commit_bound_proved": true,
+  "finite_epoch_bound_proved_in_exact_arithmetic": true,
+  "float_discount_implementation_not_proved_at_symbolic_ceiling": true,
+  "identity": "V2_2_WEIGHTED_PROGRESS_FINITE_BOUND_ASSESSMENT_V1",
+  "initial_potential": 0,
+  "max_commits": 3960,
+  "max_epoch_segments": 7922,
+  "members": 5,
+  "optimize_count": 60,
+  "potential": "(N+1)*Vote+sum(member_scores)",
+  "potential_maximum": 3960,
+  "resource_realistic_completion_bound_established": false,
+  "responsibility_upper_bound": 240,
+  "scientific_stopper_unchanged": true,
+  "symbolic_opportunity_ceiling": "5*(a+1)/(a-1)*(a*(a**S-1)/(a-1)-S)",
+  "symbolic_parameters": {
+    "S": 7922,
+    "a": 241
+  }
+}

@@ -867,6 +867,9 @@ nodes:
 - experiment_id: transition_reachability_audit_v1
   kind: ZERO_API_AUDIT
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: math_v2_2_a4_pilot_execution_audit_v1
+  kind: ZERO_API_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1773,4 +1776,10 @@ edges:
   relation: followup_of
   evidence: experiments/protocols/transition_reachability_audit_v1/protocol.json
   scope: Explicit V2.2 deployment-semantic amendment; prior evidence remains immutable.
+- from: transition_reachability_audit_v1
+  to: math_v2_2_a4_pilot_execution_audit_v1
+  relation: followup_of
+  evidence: experiments/protocols/math_v2_2_a4_pilot_execution_audit_v1/protocol.json
+  scope: Unchanged V2.2 engineering audit; conditional Pilot held at finite resource-bound
+    requirement.
 current_frontier: experiments/current_frontier.yaml

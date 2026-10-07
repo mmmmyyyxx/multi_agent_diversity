@@ -1,0 +1,35 @@
+{
+  "actual_equivalence_plurality_measured": true,
+  "child_member_scores": [
+    1.0,
+    4.0,
+    4.0,
+    3.0,
+    3.0
+  ],
+  "child_vote": 4.0,
+  "immutable_initial_scores": [
+    0.0,
+    4.0,
+    4.0,
+    3.0,
+    3.0
+  ],
+  "parent_member_scores": [
+    3.0,
+    4.0,
+    4.0,
+    3.0,
+    3.0
+  ],
+  "parent_vote": 3.0,
+  "progress_path": "TEAM",
+  "provider_calls": 0,
+  "scientific_scope_changed": false,
+  "scope": "FOUR_ROW_DETERMINISTIC_MATHEMATICAL_WITNESS_NOT_PILOT",
+  "transition_eligible": true,
+  "unweighted_potential_after": 19.0,
+  "unweighted_potential_before": 20.0,
+  "weighted_potential_after": 35,
+  "weighted_potential_before": 32
+}

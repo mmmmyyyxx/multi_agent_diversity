@@ -1,0 +1,17 @@
+{
+  "benchmark_contract_hash": "94e3615ee8ff5e8028fb13bf99acd5c6b08c6cb1e836b3d040869eb1fc01cc0c",
+  "current_module_count": 141,
+  "governance_hash": "7b8040ba9ada9c720bafe1b15beee84223bc7f65804243b25321d499775b9473",
+  "legacy_classes": [],
+  "legacy_dependencies": [],
+  "patch_source_sha": "edb5536d9a5839f099bcce74d401ea2e94080e61",
+  "phase": "TESTED_PATCH_BEFORE_PUBLICATION_METADATA",
+  "real_execution_ready": false,
+  "scientific_source_hash": "3eed1c235981e52515b3fd4942c2b0ab603f80d05e3b409feecae2345a7db5d6",
+  "scope_file_counts": {
+    "benchmark": 49,
+    "dataset_manifest": 0,
+    "governance": 71,
+    "scientific": 62
+  }
+}

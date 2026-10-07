@@ -1,0 +1,12 @@
+{
+  "authoritative_journal_sha256": "78e309b8bf00dbe758637fd4b4faaf058f007aa90f279bdd3059c4edec8ed973",
+  "authorized_total": 40000000,
+  "charged_total": 3414772,
+  "last_event_sha256": "b0d8a798578a1fd81bbdc503a7a933bc4666e499424af5240ff932e2b2399eeb",
+  "new_task_provider_calls": 0,
+  "new_task_tokens": 0,
+  "remaining": 36585228,
+  "reserved_inflight": 0,
+  "test_calls": 0,
+  "validation_calls": 0
+}
