@@ -1,13 +1,11 @@
-"""Current-only Pilot scope and conservative bounds for the unchanged search graph.
+"""Current-only Pilot scope and conservative bounds.
 
-An epoch need not be round-robin. Failure counts survive commits. If all counts
-start below H, an unseen feasible member has score >= 1/(H+1). A previously
-seen member with count T=(4N+1)(H+1) has score strictly below that value, even
-with float rounding. Thus it cannot be selected again while any member is
-unseen. An epoch, including a commit-interrupted prefix, takes <= M(T+1)
-opportunities and ends with counts <= T+1. Strict integer Vote improvement
-permits at most N commits; each parent has at most two epoch segments. This
-deliberately loose bound is a safety ceiling, never a scientific stop rule.
+V2.1's historical Pilot bound used the fact that every commit strictly
+increased integer team Vote and therefore allowed at most N commits. V2.2
+admits safe target-only progress as well, so that proof is no longer valid.
+Until a new target-or-team progress bound is frozen, current Pilot derivation
+fails closed before any provider call. Historical V2.1 receipts remain
+unchanged and replayable through their historical binding.
 """
 from copy import deepcopy
 
@@ -20,6 +18,11 @@ OBSERVATION_POLICY = 'PILOT_READ_ONLY_STATE_JOURNAL_V1'
 
 def pilot_provider_bounds(parent):
     CURRENT_POLICY_BUNDLE.validate_contract(parent)
+    # V2.1 bounded accepted state changes by strict integer Vote gain. V2.2 can
+    # also commit Vote-neutral target gains, so reusing that proof would make
+    # the operational ceiling scientifically unsound.
+    raise SearchContractError('TARGET_OR_TEAM_PROGRESS_PILOT_BOUND_NOT_FROZEN')
+
     n = parent['low_cost_protocol']['counts']['pilot_optimize']
     shadow = parent['low_cost_protocol']['counts']['pilot_shadow']
     if n != 60 or shadow != 40 or parent['stop_policy'] != 'team_epoch_no_commit_v1':
