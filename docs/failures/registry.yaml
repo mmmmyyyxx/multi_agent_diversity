@@ -730,9 +730,10 @@ failures:
   - reports/math_v2_1_gradient_pattern_seed81_pilot_v4_execution_20261007/failed_gradient_audit.json
   - reports/math_v2_1_gradient_pattern_seed81_pilot_v4_execution_20261007/authorization_closure.json
   - reports/math_v2_1_gradient_pattern_seed81_pilot_v4_execution_20261007/scientific_decision_request.json
-  root_cause_status: FROZEN_BOUNDED_NUMERIC_GUARD_REJECTION_REPLAYED; SEMANTIC_COPYING_NOT_INDEPENDENTLY_PROVEN
-  forbidden_inference: Do not label this operational invalidity, a partition-completion bug, proven semantic copying,
-    or a complete valid Pilot; do not regenerate or rerun under engineering authority.
+  root_cause_status: CONFIRMED_COPIED_NUMERIC_EXPRESSION_LITERAL_IN_ATTEMPT4
+  forbidden_inference: Do not label operational invalidity, a partition-completion bug, a complete valid Pilot,
+    comprehensive semantic provenance, population compliance or causal efficacy; no fresh retry under engineering
+    authority.
   regression_tests:
   - tests/current/test_numeric_provenance.py::test_clear_numeric_provenance_rejected_in_both_boundaries
   - tests/current/test_partition_completion.py::test_omission_does_not_mask_any_other_defect
@@ -749,3 +750,6 @@ failures:
     original_frozen_classification_unchanged: true
     fresh_pilot_condition_met: false
     user_task_sha256: b81ddb478d7d52285394899f31dc648fd7c1b05bf75d37d852911c8b7d73a9fc
+  prior_root_cause_status: FROZEN_BOUNDED_NUMERIC_GUARD_REJECTION_REPLAYED; SEMANTIC_COPYING_NOT_INDEPENDENTLY_PROVEN
+  prior_forbidden_inference: Do not label this operational invalidity, a partition-completion bug, proven semantic
+    copying, or a complete valid Pilot; do not regenerate or rerun under engineering authority.

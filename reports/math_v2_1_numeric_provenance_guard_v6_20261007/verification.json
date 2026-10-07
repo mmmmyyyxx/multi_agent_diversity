@@ -1,0 +1,64 @@
+{
+  "cluster_prompt_unchanged": true,
+  "compileall": true,
+  "current_dependency_legacy_imports": 0,
+  "execution_closure_sha256": "4d57d418024cb81d17c8b299a5b89705a435bf09e6c7234ffdc1c00f44e67eed",
+  "final_synthetic_fixture_checks": {
+    "passed": 36,
+    "xml_sha256": "5d1b8bb36cf1dfae4db55293bc88ebab5af0a43408422a9a763f02a6c7bef74d"
+  },
+  "fixture_only_sanitization_after_suite_collection": true,
+  "full_current_suite": {
+    "deselected": 1468,
+    "errors": 0,
+    "failures": 0,
+    "full_historical_replay_claimed": false,
+    "historical_private_artifact_tests_not_run": true,
+    "mode": "current",
+    "passed": 1455,
+    "scope": {
+      "deselected": 1468,
+      "historical_replay_test_cases": 1404,
+      "mode": "current",
+      "private_artifact_test_cases": 64,
+      "selected": 1457
+    },
+    "selected": 1457,
+    "skipped": 2,
+    "xml_sha256": "44bce5b9682d6a98f23ae00b74db6ed05d68bccc66479b44f39822319939c64d"
+  },
+  "full_suite_runtime_bytes_equal_final_source": true,
+  "git_diff_check": true,
+  "governance": true,
+  "gradient_prompt_v3_unchanged": true,
+  "hard400_unchanged": true,
+  "historical_changed_files": 0,
+  "historical_gradient_replay": {
+    "new_rejections_of_prior_v5_passes": 0,
+    "passed": 119,
+    "passed_with_warning": 11,
+    "strong_reject": 1,
+    "total": 131
+  },
+  "immutable_files": 6684,
+  "manual_real_source_fragment_scan_passed": true,
+  "network_attempt_count": 0,
+  "new_token_charges": 0,
+  "partition_completion_v1_unchanged": true,
+  "prior_real_source_negative_controls_rejected": 22,
+  "provider_calls": 0,
+  "provider_visible_wire_equivalence": true,
+  "sanitization": true,
+  "secret_scan": true,
+  "source_commit_matches_runtime_closure": true,
+  "source_sha": "81dae30d355993ed22e6e3dd3f8a57ecfd9fc6f3",
+  "source_verification_scope": "GUARD_FREEZE_BEFORE_TERMINAL_GOVERNANCE_UPDATES",
+  "status": "PASS",
+  "terminal_governance_checks": {
+    "network_attempt_count": 0,
+    "passed": 79,
+    "xml_sha256": "8a26b5bf13eee3405b3eef03c474cc4688a603a0973f51df507872c12a7319f8"
+  },
+  "test_calls": 0,
+  "validation_calls": 0
+}

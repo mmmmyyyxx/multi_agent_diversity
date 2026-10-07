@@ -15,7 +15,9 @@ Zero-API replay covers 131 actual Gradients: 119 PASS, 11 PASS with numeric
 warnings, and one strong-provenance rejection. No prior V5 pass becomes a V6
 rejection. All22 original real-source negative controls remain rejected.
 Exact private evidence stays local; public artifacts contain hashes and categories.
-Full current-suite verification is recorded in verification.json after completion.
+Full current suite:1455 passed,2 skipped. Its runtime byte closure matches final
+source `81dae30d`. After fixture-only sanitization, all36 numeric calibration
+tests passed separately. See verification.json.
 Historical private-artifact tests and full historical replay are not claimed.
 
 The prospective Pilotv5 binding and DRAFT manifest record the new guard and

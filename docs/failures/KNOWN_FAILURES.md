@@ -369,7 +369,7 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 - Lifecycle context: See evidence below.
 - Evidence level: `observed`
 - First observed: `math_v2_1_gradient_pattern_seed81_pilot_v4`
-- Root-cause status: FROZEN_BOUNDED_NUMERIC_GUARD_REJECTION_REPLAYED; SEMANTIC_COPYING_NOT_INDEPENDENTLY_PROVEN
+- Root-cause status: CONFIRMED_COPIED_NUMERIC_EXPRESSION_LITERAL_IN_ATTEMPT4
 - Symptom: Second opportunity sixth Gradient (44th total),139characters, valid JSON and within hard400, rejected by unchanged numeric provenance guard; second cluster not reached.
-- Forbidden inference: Do not label this operational invalidity, a partition-completion bug, proven semantic copying, or a complete valid Pilot; do not regenerate or rerun under engineering authority.
+- Forbidden inference: Do not label operational invalidity, a partition-completion bug, a complete valid Pilot, comprehensive semantic provenance, population compliance or causal efficacy; no fresh retry under engineering authority.
 - Mitigation: Preserve raw response and charged prefix, close consumed scope, retain frozen Gradient V1 Prompt V3 Guard V5; any continuation requiring admissibility changes needs a separate scientific decision.

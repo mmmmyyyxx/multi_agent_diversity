@@ -1,0 +1,8 @@
+{
+  "full_private_text_not_published": true,
+  "llm_alignment_judge_calls": 0,
+  "mutation_behavior_trace_status": "NOT_RUN_FRESH_PILOT_BLOCKED",
+  "private_artifact_count": 5,
+  "private_manifest_sha256": "0f506063a30421e4d912c195c4e60351f6257144eb0401c704e2747758f79b76",
+  "status": "LOCAL_PRIVATE_EVIDENCE_SEALED"
+}

@@ -2,12 +2,20 @@
   "algorithm": "sha256",
   "files": [
     {
+      "file": "analysis_bundle_index.json",
+      "sha256": "79b584436d1b34fd183443b5d38f935f34505f564afd6e9ef8e760ddbce9413b"
+    },
+    {
       "file": "attempt4_forensic.json",
       "sha256": "6349ec1f5cc43147dcab3906625d9b1cdf8147d3107a314bbe9e463990a7b272"
     },
     {
       "file": "authorization_closure.json",
       "sha256": "a9708c6d1f90724a86a244ce86c7ac6523567beaa64b5a6c799a110658ae219c"
+    },
+    {
+      "file": "final_status.json",
+      "sha256": "864f2364881e9cede8d77489de7134cc48ae2aa155ad593c640625a288484939"
     },
     {
       "file": "historical_gradient_replay.json",
@@ -27,7 +35,7 @@
     },
     {
       "file": "README.md",
-      "sha256": "59ed95d03dd13f5f003a91371ca32ef4738ff5f03381425a2d173d1468def77e"
+      "sha256": "b11fb9cf11cebd8cb0c1de6dc6cf3245e287121d79e797a168ede502ab785b3b"
     },
     {
       "file": "reason_code_contract.json",
@@ -44,6 +52,10 @@
     {
       "file": "strong_provenance_negatives.json",
       "sha256": "1cc0db25dcbe6792fc640051732cc32e07a62d7d57cf9e50e511bd2123ccd71c"
+    },
+    {
+      "file": "verification.json",
+      "sha256": "621ee253811461c3122f8a549231295023aacd7b5891d3234f7a27490292fed2"
     },
     {
       "file": "weak_numeric_coincidence_cases.json",
