@@ -9,7 +9,7 @@ and authorization come from the frozen manifest. Reports are evidence, never
 design authority. Historical specifications and invariant IDs are preserved in
 `docs/archive/specs/historical_current_spec.md` and its invariant index.
 
-## Active Unified Team Prompt Search V2.1 (opt-in)
+## Active Unified Team Prompt Search V2.2 (opt-in)
 
 Only the complete Gradient Pattern V4 + Rolling Risk Memory + bounded Layer1
 bundle is eligible for new execution. The current graph is defined in
@@ -59,10 +59,11 @@ search, deployment, generation policy or data membership.
 ## Active search and stopping contract
 
 The user-authored [method semantic contract](UNIFIED_METHOD_SEMANTIC_CONTRACT.md)
-defines the research meaning and claim boundaries. `SearchMethodConfig.v2_1()`
-preserves its identity serialization for compatibility. New execution uses the
-complete current bundle and current-only builder. V1/V2 and earlier V2.1
-component factories retain replay behavior and confer no current access.
+defines the research meaning and claim boundaries. `SearchMethodConfig.v2_2()`
+defines the current transition semantics; `SearchMethodConfig.v2_1()` remains
+an exact historical replay identity. New execution uses the complete current
+bundle and current-only builder. V1/V2/V2.1 component factories retain replay
+behavior and confer no current access.
 
 Responsibility remains resource allocation: raw overlapping D/N/C,
 `V=max(4D,2N,C)` and target score `V/(1+f)` are unchanged. Target selection
@@ -76,12 +77,14 @@ Historical GEPA bindings retain strict local survival. Progressive TeamProbe/Ful
 winner-only Shadow, atomic single-member commit and parent-scoped epochs remain.
 Reflection minibatch three, local metric budget36, local no-update patience three
 and team no-commit patience two are unchanged. A successful commit resets team
-patience; V2.1 commits require strict Full team gain. Resource/budget exhaustion,
+patience. V2.2 requires the immutable initial target floor, non-regressing Full
+team Vote, and strict progress in either target competence or team Vote.
+Resource/budget exhaustion,
 incomplete outcomes and technical/conformance failures are not convergence.
 Shadow retains its separately frozen nonnegative team and bounded target-loss
 guard; the competence floor is measured on the complete Optimize scope.
 
-## V2.1 mechanism invariants
+## V2.2 mechanism invariants
 
 - **INV-SEARCH-TEAM-ADMISSION-DECOUPLING**: GEPA survival controls search lineage
   only. All changed, valid, unique, Solver-evaluated proposals enter outer team
@@ -109,14 +112,18 @@ guard; the competence floor is measured on the complete Optimize scope.
   principle, not provider cluster labels; identical normalized descriptions
   merge. This is deterministic description identity, not a paraphrase resolver.
   Provider/model/prompt/limits require a fresh explicit experiment binding.
-- **INV-INITIAL-COMPETENCE-002**: Freeze the initial five-member Optimize
+- **INV-INITIAL-COMPETENCE-003**: Freeze the initial five-member Optimize
   scores and state identity from actual initialization. Candidate Full target
-  competence must be at least its INITIAL score and team score must strictly
-  improve; terminal-invalid delta must be measured and nonpositive. A member
-  may decline relative to incumbent while staying above initial competence.
-  Team-neutral/down or below-initial changes never deploy. Initial floors
-  survive commit/rollback and cannot be rebased. Missing floors/guards fail
-  closed. Safety tie-breaking never uses GEPA local scores.
+  competence must remain at least its immutable INITIAL score; Full team Vote
+  must not regress; and at least one of target competence or team Vote must
+  strictly improve relative to the current parent. Thus Vote-positive candidates
+  may trade incumbent target competence only down to the initial floor, while
+  Vote-neutral candidates must strictly improve the target. Terminal-invalid
+  delta must be measured and nonpositive. Initial floors survive commit/rollback
+  and cannot be rebased. Missing floors/guards fail closed. Winner ranking is
+  team Vote first and target competence second before safety tie-breakers; GEPA
+  local scores never rank deployment. Historical V2.1 retains the stricter
+  initial-floor AND strict-team-gain rule for exact replay.
 - **INV-LONG-TERM-MEMORY-001**: Memory contains Situation–Action–Outcome–Lesson
   strategy experience, not a telemetry log. The deterministic closed action
   vocabulary recognizes added/removed reasoning checks from the ACTUAL parent
@@ -137,8 +144,9 @@ guard; the competence floor is measured on the complete Optimize scope.
   independently toggled, null by default.
 - **INV-ALLOCATION-EVIDENCE-002**: Observation-only traces record D/N/C/V,
   failure counts, target scores, feasibility, exposure, initial/incumbent/child
-  competence and realized team gain per opportunity. Opportunity-to-gain
-  conversion and alignment can be audited from these facts. Distribution or
+  competence plus realized team and target gain per opportunity. The committed
+  progress path is recorded as TEAM, TARGET, or TARGET_AND_TEAM. Opportunity-to-
+  gain conversion and alignment can be audited from these facts. Distribution or
   concentration alone is not efficacy; counterfactual optimality and individual
   component causality require separately designed experiments. No observation
   changes online ranking, budgets or stopping.
@@ -146,7 +154,7 @@ guard; the competence floor is measured on the complete Optimize scope.
 The current questions are allocation efficiency, focused repair quality and
 experience transfer efficiency. Task-aligned differentiation is an explanation
 of team gains, not generic diversity or member accuracy maximization. Overall
-V2.1 gains do not identify a single component's independent effect. No router,
+V2.2 gains do not identify a single component's independent effect. No router,
 weighted voting, aggregation change, hand-assigned roles or equal member budget
 is introduced. IFBench responsibility and HotpotQA retrieval remain blockers.
 Implementation and fake conformance do not imply efficacy or execution readiness.

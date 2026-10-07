@@ -276,9 +276,10 @@ def inventory(run_root):
                       for p in sorted(run_root.rglob("*")) if p.is_file() and p.name != "raw_evidence_inventory.json"]}
 
 
-def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, experiment_id="math_v2_pattern_memory_v1"):
+def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, experiment_id="math_v2_2_target_or_team_progress_v1"):
     from ..benchmarks.math_domain_binding import execution_binding
-    binding_path=binding_path or 'experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v4.json'
+    if binding_path is None:
+        raise SearchContractError("CURRENT_V2_2_EXECUTION_BINDING_NOT_FROZEN")
     contract=read_json(root/binding_path)
     b=execution_binding(root,contract)
     if b.blockers():

@@ -2,9 +2,9 @@
 
 The sole active research architecture is Unified Team Prompt Search.
 
-- CURRENT_METHOD: unified_team_prompt_search_v2_1.
+- CURRENT_METHOD: unified_team_prompt_search_v2_2.
 - CURRENT_BENCHMARK_SUITE: MATH, IFBench, HotpotQA.
-- CURRENT_EXPERIMENT: unified_semantic_contract_v2_1 zero-API implementation audit.
+- CURRENT_EXPERIMENT: transition_reachability_audit_v1 zero-API method amendment.
 - Execution readiness and authorization come from experiments/current_frontier.yaml.
 - CURRENT_RUNTIME: one complete Gradient Pattern / Rolling Memory / bounded Layer1 bundle.
 - Older Pattern/Memory/search combinations: EXPLICIT_HISTORICAL_REPLAY_ONLY.
@@ -69,10 +69,15 @@ is superseded for new work; its creation-time reports remain unchanged.
 
 ## Method semantic-contract amendment
 
-V2.1 is implemented with single-mechanism repair, separate coverage metrics,
-initial competence floors, strict team deployment gains and grounded experience.
-Allocation telemetry is descriptive and observation-only. Historical MATH V2
-Canary/Pilot preps remain immutable and unused; they cannot authorize the new
-method. Current readiness is HOLD pending a new benchmark execution binding,
-source/preexecution freeze and explicit attempt authorization. No real efficacy
-was observed for this amendment. Solver/model/data/access contracts are retained.
+V2.2 replaces V2.1's strict-team-only transition with an immutable initial
+competence floor, team-Vote non-regression, and strict progress in either target
+competence or team Vote. This removes the symmetric-start single-member
+reachability deadlock while retaining a monotone safety boundary. The winner key
+now includes target competence after team Vote so target-only candidates are not
+ordered only by secondary soft-vote/hash ties.
+
+Historical V2.1 bindings and evidence remain immutable. Their Pilot resource-bound
+proof depends on every commit strictly increasing integer team Vote and therefore
+cannot authorize V2.2. Current readiness is HOLD pending a new finite bound proof,
+fresh execution binding/source/preexecution freeze and explicit attempt
+authorization. No real efficacy result follows from this amendment.

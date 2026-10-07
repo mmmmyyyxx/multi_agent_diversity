@@ -194,9 +194,16 @@ class UnifiedSearchOrchestrator:
             raise SearchContractError("SCIENTIFIC_DECISION_REQUIRED: aggregation-aware responsibility")
         if getattr(self.aggregation, "identity", None) != self.method.aggregation_policy:
             raise SearchContractError("aggregation implementation/method identity mismatch")
-        current_semantics = self.method.method == versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION
-        if self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION}:
-            expected_acceptance=('layer1_local_guidance_team_admission_v1' if current_semantics and
+        competence_semantics = self.method.method in {
+            versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION,
+            versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION,
+        }
+        if self.method.method in {
+                versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION,
+                versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION,
+                versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION,
+        }:
+            expected_acceptance=('layer1_local_guidance_team_admission_v1' if competence_semantics and
                 self.method.search_engine in {versions.LAYER1_RESPONSIBILITY_SEARCH_VERSION,versions.LAYER1_FEEDBACK_SEARCH_VERSION} else versions.UNIFIED_DECOUPLED_ACCEPTANCE_VERSION)
             if self.method.search_acceptance_policy != expected_acceptance:
                 raise SearchContractError("V2 requires decoupled team candidate admission")
@@ -210,14 +217,14 @@ class UnifiedSearchOrchestrator:
                       (self.opportunities.feasibility, self.method.feasibility_policy))
             if any(getattr(obj, "identity", None) != expected for obj, expected in checks):
                 raise SearchContractError("V2 component identity mismatch")
-            if current_semantics and getattr(self.transition, "identity", None) != self.method.transition_policy:
+            if competence_semantics and getattr(self.transition, "identity", None) != self.method.transition_policy:
                 raise SearchContractError("TRANSITION_POLICY_IDENTITY_MISMATCH")
             if self.method.memory_policy != versions.UNIFIED_NULL_MEMORY_VERSION and self.method.mechanism_config.get("memory") != self.memory.limits:
                 raise SearchContractError("memory limits must enter explicit method identity")
             if self.method.pattern_policy != versions.UNIFIED_NULL_PATTERN_VERSION and not self.method.mechanism_config.get("pattern_provider_binding"):
                 raise SearchContractError("PATTERN_PROVIDER_NOT_BOUND")
         initial = self.state.snapshot().team_state_id
-        if current_semantics:
+        if competence_semantics:
             scores = getattr(self.state, "initial_member_scores", None)
             identity = getattr(self.state, "initial_state_id", None)
             if scores is None or identity is None:
@@ -261,7 +268,11 @@ class UnifiedSearchOrchestrator:
             committed: str | None = None
             gate_passed = (await self.gate.check(opportunity, decision.candidate)
                            if decision.candidate is not None else None)
-            v2 = self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION}
+            v2 = self.method.method in {
+                versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION,
+                versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION,
+                versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION,
+            }
             memory_delta = None
             if v2:
                 from .memory_records import OpportunityOutcome
@@ -304,9 +315,20 @@ class UnifiedSearchOrchestrator:
                 committed=committed is not None,
             )
             allocation = {}
-            if current_semantics:
-                gain = (decision.candidate.full.aggregate_score - active.aggregate_score
-                        if committed is not None and decision.candidate is not None else 0.0)
+            if competence_semantics:
+                team_gain = (decision.candidate.full.aggregate_score - active.aggregate_score
+                             if committed is not None and decision.candidate is not None else 0.0)
+                target_gain = (
+                    decision.candidate.full.member_scores[opportunity.target_member]
+                    - active.member_scores[opportunity.target_member]
+                    if committed is not None and decision.candidate is not None else 0.0
+                )
+                progress_path = (
+                    "TARGET_AND_TEAM" if team_gain > 0 and target_gain > 0
+                    else "TEAM" if team_gain > 0
+                    else "TARGET" if target_gain > 0
+                    else "NONE"
+                )
                 # Observation only: this record has no scheduler read point.
                 allocation = dict(raw_values={str(m): s.raw_value for m, s in diagnosis.responsibility.items()},
                     DNC={str(m):dict(D=s.direct_count, N=s.near_margin_count, C=s.coverage_count)
@@ -324,7 +346,8 @@ class UnifiedSearchOrchestrator:
                     evaluation_support_identity=parent.diagnostics.get("evaluation_support_identity"),
                     member_metric=parent.diagnostics.get("member_metric"),
                     evaluator_identity=parent.diagnostics.get("evaluator_identity"),
-                    realized_team_gain=gain, committed=committed is not None,
+                    realized_team_gain=team_gain, realized_target_gain=target_gain,
+                    realized_progress_path=progress_path, committed=committed is not None,
                     initial_member_scores=self.transition.initial_scores,
                     incumbent_member_scores=parent.member_scores, child_member_scores=child.member_scores,
                     inference_scope="DESCRIPTIVE_NOT_COUNTERFACTUAL_OR_COMPONENT_CAUSAL")

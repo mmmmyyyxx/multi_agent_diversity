@@ -70,7 +70,8 @@
       "enum": [
         "unified_team_prompt_search_v1",
         "unified_team_prompt_search_v2",
-        "unified_team_prompt_search_v2_1"
+        "unified_team_prompt_search_v2_1",
+        "unified_team_prompt_search_v2_2"
       ]
     },
     "source_sha": {
@@ -611,7 +612,7 @@
               "pattern"
             ],
             "enable_thinking": true,
-            "temperature": 0.0,
+            "temperature": 0,
             "max_completion_tokens": 1800,
             "max_tokens": "NOT_SENT",
             "output_token_scope": "reasoning_plus_answer",
@@ -629,7 +630,7 @@
               "pattern"
             ],
             "enable_thinking": false,
-            "temperature": 0.0,
+            "temperature": 0,
             "max_completion_tokens": 1800,
             "max_tokens": "NOT_SENT",
             "output_token_scope": "reasoning_plus_answer",
@@ -1110,6 +1111,87 @@
           },
           "transition_identity": {
             "const": "initial_competence_team_gain_v2"
+          },
+          "pattern_identity": {
+            "enum": [
+              "null_pattern_v1",
+              "focused_pattern_diagnostic_v2",
+              "set_level_wrong_pattern_discovery_v3",
+              "gradient_cluster_pattern_discovery_v4"
+            ]
+          },
+          "memory_identity": {
+            "enum": [
+              "null_memory_v1",
+              "strategy_experience_memory_v2",
+              "structured_action_failure_memory_v3",
+              "structured_cross_member_rolling_risk_memory_v4"
+            ]
+          },
+          "models": {
+            "properties": {
+              "solver": {
+                "const": "qwen3-8b"
+              },
+              "optimizer": {
+                "const": "qwen3.7-flash"
+              },
+              "solver_thinking": {
+                "const": false
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "method_family"
+        ],
+        "properties": {
+          "method_family": {
+            "const": "unified_team_prompt_search_v2_2"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "search_acceptance_identity",
+          "evidence_identity",
+          "feasibility_identity",
+          "mechanism_config"
+        ],
+        "properties": {
+          "method_identity": {
+            "const": "unified_team_prompt_search_v2_2"
+          },
+          "search_engine_identity": {
+            "enum": [
+              "gepa_derived_team_candidate_exposure_v2",
+              "LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1",
+              "LAYER1_BOUNDED_MEMORY_SEARCH_V2"
+            ]
+          },
+          "search_acceptance_identity": {
+            "enum": [
+              "local_survival_team_admission_decoupled_v1",
+              "layer1_local_guidance_team_admission_v1"
+            ]
+          },
+          "evidence_identity": {
+            "enum": [
+              "single_mechanism_evidence_v2",
+              "single_mechanism_preservation_anchor_v3",
+              "pattern_representatives_preservation_transition_v4",
+              "pattern_gradient_representatives_preservation_transition_v5"
+            ]
+          },
+          "feasibility_identity": {
+            "const": "variable_evidence_feasibility_v1"
+          },
+          "transition_identity": {
+            "const": "initial_competence_target_or_team_progress_v3"
           },
           "pattern_identity": {
             "enum": [

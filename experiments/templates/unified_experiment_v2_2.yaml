@@ -1,0 +1,59 @@
+schema_version: experiment_manifest_v2
+experiment_id: UNBOUND_DRAFT
+method_family: unified_team_prompt_search_v2_2
+method_identity: unified_team_prompt_search_v2_2
+source_sha: null
+benchmark_id: UNBOUND
+benchmark_protocol_id: UNBOUND
+dataset_manifest_identity: null
+split_identity: null
+search_engine_identity: gepa_derived_team_candidate_exposure_v2
+search_acceptance_identity: local_survival_team_admission_decoupled_v1
+evidence_identity: single_mechanism_evidence_v2
+feasibility_identity: variable_evidence_feasibility_v1
+mechanism_config: {}
+aggregation_identity: UNBOUND_BENCHMARK_POLICY
+responsibility_identity: UNBOUND_BENCHMARK_CAPABILITY
+transition_identity: initial_competence_target_or_team_progress_v3
+adaptive_gate_identity: winner_only_shadow_v1
+pattern_identity: null_pattern_v1
+memory_identity: null_memory_v1
+global_stop_identity: team_epoch_no_commit_v1
+models:
+  solver: qwen3-8b
+  optimizer: qwen3.7-flash
+  solver_thinking: false
+seed: 0
+concurrency:
+  solver: 1
+  optimizer: 1
+provider_policy:
+  identity: UNBOUND
+  frozen: false
+cache_policy:
+  identity: UNBOUND
+  frozen: false
+access:
+  search_access: not_authorized
+  shadow_access: not_authorized
+  validation_access: not_authorized
+  test_access: sealed
+budget:
+  regime: saturation
+  saturation_identity: team_epoch_no_commit_v1
+  successful_provider_call_ceiling: null
+  transport_attempt_ceiling: null
+preregistration_identity: null
+authorization:
+  real_api_authorized: false
+  attempt_id: null
+  authorization_identity: null
+  single_use: true
+lifecycle:
+  status: DRAFT
+  history: []
+hash_closure:
+  scientific_source_hash: null
+  governance_hash: null
+  benchmark_contract_hash: null
+  dataset_manifest_hash: null

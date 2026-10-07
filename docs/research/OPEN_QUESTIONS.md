@@ -4,7 +4,8 @@ Design questions below confer no execution authorization.
 
 | Question | State / required decision |
 |---|---|
-| Local acceptance versus team transition | Implemented in V2; efficacy unverified. GEPA survival and outer eligibility are decoupled. |
+| Local acceptance versus team transition | V2.2 admits safe strict progress from either target competence or team Vote. Efficacy remains unverified. |
+| V2.2 saturation/provider bound | OPEN/HOLD. V2.1's strict-Vote max-commit proof is invalid after target-only commits; freeze a new finite bound before any Pilot authorization. |
 | Pattern-aware causal hypothesis | Implemented dormant mechanism, default disabled; efficacy not evaluated. Freeze provider/model, null comparator and evidence intervention before an experiment. |
 | Long-term memory | Implemented dormant mechanism, default disabled; efficacy not evaluated. Freeze limits and causal comparisons before an experiment. |
 | LLM aggregation responsibility | Define counterfactual scoring and capabilities; current default fails closed. |

@@ -47,7 +47,7 @@ class CurrentPolicyBundle:
         # The compatibility dataclass preserves its exact frozen identity payload.
         if partition_completion_policy not in (None, self.partition_completion):
             raise SearchContractError('PATTERN_PARTITION_COMPLETION_POLICY_MISMATCH')
-        method=SearchMethodConfig(method=identities.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION,
+        method=SearchMethodConfig(method=identities.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION,
             search_engine=self.layer1, diagnosis_policy=self.responsibility,
             aggregation_policy=aggregation, evidence_policy=self.evidence,
             feasibility_policy='variable_evidence_feasibility_v1',
