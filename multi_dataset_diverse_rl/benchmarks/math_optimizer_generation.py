@@ -20,11 +20,11 @@ def optimizer_generation_contract(identity=versions.MATH_OPTIMIZER_GENERATION_PO
 
 def frozen_optimizer_policy(contract):
     policy = contract.get('optimizer_generation_policy')
-    if contract.get('identity') in {versions.MATH_LOW_COST_OPTIMIZER_EXECUTION_BINDING_VERSION, versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION}:
+    if contract.get('identity') in {versions.MATH_LOW_COST_OPTIMIZER_EXECUTION_BINDING_VERSION, versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION, versions.MATH_V2_2_EXECUTION_BINDING_VERSION}:
         if not isinstance(policy,dict):
             raise SearchContractError('OPTIMIZER_GENERATION_POLICY_BINDING_MISMATCH')
         expected = optimizer_generation_contract(policy.get('identity'))
-        if (contract['identity'] in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION}) != (expected['identity']==versions.MATH_OPTIMIZER_GENERATION_POLICY_V3_VERSION):
+        if (contract['identity'] in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION, versions.MATH_V2_2_EXECUTION_BINDING_VERSION}) != (expected['identity']==versions.MATH_OPTIMIZER_GENERATION_POLICY_V3_VERSION):
             raise SearchContractError('OPTIMIZER_GENERATION_POLICY_BINDING_MISMATCH')
         if (policy != expected or any(type(policy[k]) is not type(v) for k,v in expected.items())
                 or any(contract['models'][k] != expected['model'] for k in ('optimizer_reflection','pattern'))):

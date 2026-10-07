@@ -7,10 +7,10 @@ authorization. Parent receipts cannot compose the current treatment.
 from copy import deepcopy
 import json
 
-from .. import current_contract as versions
+from .. import legacy_current_contract_v21 as versions
 from .. import versions as historical
 from ..search.textual_gradients import POLICY, GRADIENT_PROMPT
-from ..search.current_policy import CURRENT_POLICY_BUNDLE
+from ..search.legacy.current_policy_v21 import CURRENT_POLICY_BUNDLE
 from ..search.schemas import SearchContractError
 from ..governance.provenance_receipts import verify_receipt_dependencies
 from .data_freeze import file_hash
@@ -80,7 +80,7 @@ def validate_numeric_admissibility(binding):
         raise SearchContractError('CURRENT_NUMERIC_ADMISSIBILITY_PARENT_MISMATCH')
     # Explicitly validate the initialization-only parent. Historical providers
     # and legacy runtime classes are never imported or composed here.
-    from .math_gradient_pattern_binding import MATHGradientPatternBinding
+    from .legacy.math_gradient_pattern_binding_v21 import MATHGradientPatternBinding
     _,archived=initial_condition_provenance(MATHGradientPatternBinding(binding.root,parent))
     verify_receipt_dependencies(binding.root,parent,historical_initial_team=archived)
     verify_receipt_dependencies(binding.root,a,historical_initial_team=archived)

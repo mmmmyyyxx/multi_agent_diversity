@@ -1,3 +1,4 @@
+# V2.1 frozen replay assertions; V2.2 current conformance is tested separately.
 """Zero-API checks for minimal symmetric initialization and independent lanes."""
 from copy import deepcopy
 import hashlib
@@ -8,9 +9,9 @@ import pytest
 
 from multi_dataset_diverse_rl.benchmarks.current_math_dependencies import validate_current_initial_team
 from multi_dataset_diverse_rl.benchmarks.data_freeze import digest
-from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
+from multi_dataset_diverse_rl.benchmarks.legacy.current_math_domain_binding_v21 import execution_binding
 from multi_dataset_diverse_rl.governance.provenance_receipts import verify_receipt_dependencies
-from multi_dataset_diverse_rl.governance.unified_execution import (
+from multi_dataset_diverse_rl.governance.legacy.current_unified_execution_v21 import (
     preexecution_manifest, bound_preflight, execution_scope, execution_identity)
 from multi_dataset_diverse_rl.persistence.exact_output_cache import DurableExactOutputCache
 from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker
@@ -63,7 +64,7 @@ def test_amendment_changes_only_initial_condition_and_run_identity(path):
     c=contract(path);initial=json.loads((ROOT/c['numeric_parent_binding_path']).read_bytes())
     p=json.loads((ROOT/initial['initial_condition_parent_binding_path']).read_bytes())
     from multi_dataset_diverse_rl.benchmarks.initial_condition_contract import initial_condition_provenance
-    from multi_dataset_diverse_rl.benchmarks.math_gradient_pattern_binding import MATHGradientPatternBinding
+    from multi_dataset_diverse_rl.benchmarks.legacy.math_gradient_pattern_binding_v21 import MATHGradientPatternBinding
     assert initial_condition_provenance(MATHGradientPatternBinding(ROOT,initial))[0]==p
     assert not execution_binding(ROOT,c).blockers()
     for field in ('models','decoding','provider_bounds','pattern_policy','memory_limits',

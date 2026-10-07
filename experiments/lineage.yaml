@@ -864,6 +864,9 @@ nodes:
 - experiment_id: math_v2_1_manual_prompt_capacity_probe_v1
   kind: DIAGNOSTIC
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: transition_reachability_audit_v1
+  kind: ZERO_API_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1094,19 +1097,20 @@ edges:
   to: two_layer_gepa_grounded_refactor_20260910
   relation: refactor_of
   evidence: reports/two_layer_gepa_grounded_refactor_20260910/README.md
-  scope: Engineering source-family migration of the canonical runtime used by V17; not result-derived or efficacy
-    evidence.
+  scope: Engineering source-family migration of the canonical runtime used by V17;
+    not result-derived or efficacy evidence.
 - from: two_layer_gepa_grounded_refactor_20260910
   to: gepa_saturation_comparison_v2
   relation: freeze_of
   evidence: experiments/manifests/gepa_saturation_comparison_v2.yaml
-  scope: Engineering freeze of backend-neutral controller with official GEPA Level-B, not a claim of the same scientific
-    protocol.
+  scope: Engineering freeze of backend-neutral controller with official GEPA Level-B,
+    not a claim of the same scientific protocol.
 - from: gepa_saturation_comparison_v2
   to: gepa_saturation_comparison_v3
   relation: derived_from
   evidence: experiments/gepa_saturation_comparison_v3/PROTOCOL.md
-  scope: Protocol explicitly states V3 supersedes the unexecuted V2 freeze; frozen scientific results are unchanged.
+  scope: Protocol explicitly states V3 supersedes the unexecuted V2 freeze; frozen
+    scientific results are unchanged.
 - from: repository_hygiene_alignment_v1
   to: unified_team_prompt_search_v2_method_refactor
   relation: refactor_of
@@ -1121,7 +1125,8 @@ edges:
   to: v2_pattern_memory_factorial_v1_1
   relation: derived_from
   evidence: reports/v2_pattern_memory_factorial_v1_1_20261001/preexecution/protocol_revision.md
-  scope: Proposed within-V2 factorial; no historical V1 causal comparison or efficacy observation.
+  scope: Proposed within-V2 factorial; no historical V1 causal comparison or efficacy
+    observation.
 - from: v2_pattern_memory_factorial_v1_preexecution_audit
   to: v2_pattern_memory_factorial_v1_1
   relation: followup_of
@@ -1156,17 +1161,20 @@ edges:
   to: math_v2_preexecution_freeze_v1
   relation: freeze_of
   evidence: reports/math_v2_preexecution_freeze_v1_20261001/README.md
-  scope: Zero-API attempted preexecution freeze stopped on a missing Optimize reference; no efficacy evidence.
+  scope: Zero-API attempted preexecution freeze stopped on a missing Optimize reference;
+    no efficacy evidence.
 - from: unified_team_prompt_search_v2_method_refactor
   to: math_v2_preexecution_freeze_v1
   relation: freeze_of
   evidence: reports/math_v2_preexecution_freeze_v1_20261001/README.md
-  scope: Zero-API attempted preexecution freeze; no runtime method or authorization change.
+  scope: Zero-API attempted preexecution freeze; no runtime method or authorization
+    change.
 - from: math_v2_preexecution_freeze_v1
   to: math_v2_preexecution_freeze_v1_1
   relation: resolves_blockers_of
   evidence: reports/math_v2_preexecution_freeze_v1_1_20261001/README.md
-  scope: Zero-API reference validity and runtime conformance closure; no efficacy evidence.
+  scope: Zero-API reference validity and runtime conformance closure; no efficacy
+    evidence.
 - from: math_v2_preexecution_freeze_v1_1
   to: math_v2_pattern_memory_v1
   relation: derived_from
@@ -1176,42 +1184,50 @@ edges:
   to: math_v2_a1_seed81_real_canary_v1
   relation: derived_from
   evidence: reports/math_v2_a1_seed81_real_canary_v1_20261002/README.md
-  scope: Single-use execution canary aborted before search; no scientific efficacy evidence.
+  scope: Single-use execution canary aborted before search; no scientific efficacy
+    evidence.
 - from: math_v2_preexecution_freeze_v1_1
   to: math_v2_preexecution_freeze_v1_2
   relation: repairs_operational_blocker_of
   evidence: reports/math_v2_solver_interface_repair_v1_2_20261002/README.md
-  scope: Pre-search output-interface conformance refreeze; zero new API calls; no efficacy inference.
+  scope: Pre-search output-interface conformance refreeze; zero new API calls; no
+    efficacy inference.
 - from: math_v2_a1_seed81_real_canary_v1
   to: math_v2_preexecution_freeze_v1_2
   relation: repairs_operational_blocker_of
   evidence: reports/math_v2_solver_interface_repair_v1_2_20261002/README.md
-  scope: Pre-search output-interface conformance refreeze; zero new API calls; no efficacy inference.
+  scope: Pre-search output-interface conformance refreeze; zero new API calls; no
+    efficacy inference.
 - from: math_v2_preexecution_freeze_v1_2
   to: math_v2_solver_interface_repair_v1_2
   relation: freeze_of
   evidence: reports/math_v2_solver_interface_repair_v1_2_20261002/README.md
-  scope: Pre-search output-interface conformance refreeze; zero new API calls; no efficacy inference.
+  scope: Pre-search output-interface conformance refreeze; zero new API calls; no
+    efficacy inference.
 - from: math_v2_preexecution_freeze_v1_2
   to: math_v2_autonomous_accounting_preflight_v1
   relation: audit_of
   evidence: reports/math_v2_autonomous_accounting_preflight_v1_20261002/README.md
-  scope: Zero-provider, metadata-only task-budget audit; no efficacy or new execution freeze.
+  scope: Zero-provider, metadata-only task-budget audit; no efficacy or new execution
+    freeze.
 - from: math_v2_autonomous_accounting_preflight_v1
   to: math_v2_token_accounting_repair_v2
   relation: resolves_blockers_of
   evidence: reports/math_v2_token_accounting_repair_v2_20261002/README.md
-  scope: Operational accounting preparation and planned A1 Seed81 phase; no efficacy evidence.
+  scope: Operational accounting preparation and planned A1 Seed81 phase; no efficacy
+    evidence.
 - from: math_v2_token_accounting_repair_v2
   to: math_v2_a1_seed81_real_canary_v2
   relation: derived_from
   evidence: reports/math_v2_token_accounting_repair_v2_20261002/README.md
-  scope: Operational accounting preparation and planned A1 Seed81 phase; no efficacy evidence.
+  scope: Operational accounting preparation and planned A1 Seed81 phase; no efficacy
+    evidence.
 - from: math_v2_a1_seed81_real_canary_v2
   to: math_v2_a1_seed81_pilot_v1
   relation: derived_from
   evidence: reports/math_v2_token_accounting_repair_v2_20261002/README.md
-  scope: Operational accounting preparation and planned A1 Seed81 phase; no efficacy evidence.
+  scope: Operational accounting preparation and planned A1 Seed81 phase; no efficacy
+    evidence.
 - from: math_v2_a1_seed81_real_canary_v2
   to: math_v2_provider_error_mapping_repair_v1
   relation: repairs_operational_blocker_of
@@ -1226,32 +1242,38 @@ edges:
   to: math_v2_reference_parser_domain_audit_v1
   relation: audit_of
   evidence: reports/math_v2_reference_parser_domain_audit_v1_20261002/README.md
-  scope: Optimize-only reference representation audit; no scientific amendment or new real API attempt.
+  scope: Optimize-only reference representation audit; no scientific amendment or
+    new real API attempt.
 - from: math_v2_reference_parser_domain_audit_v1
   to: math_v2_answer_domain_amendment_v2
   relation: derived_from
   evidence: reports/math_v2_answer_domain_amendment_v2_20261002/README.md
-  scope: Source-grounded answer-domain amendment and fresh execution plan; no efficacy observed.
+  scope: Source-grounded answer-domain amendment and fresh execution plan; no efficacy
+    observed.
 - from: math_v2_answer_domain_amendment_v2
   to: math_v2_preexecution_freeze_v1_4
   relation: derived_from
   evidence: reports/math_v2_preexecution_freeze_v1_4_20261002/README.md
-  scope: Source-grounded answer-domain amendment and fresh execution plan; no efficacy observed.
+  scope: Source-grounded answer-domain amendment and fresh execution plan; no efficacy
+    observed.
 - from: math_v2_preexecution_freeze_v1_4
   to: math_v2_a1_seed81_real_canary_v4
   relation: derived_from
   evidence: reports/math_v2_a1_seed81_real_canary_v4_20261002/README.md
-  scope: Source-grounded answer-domain amendment and fresh execution plan; no efficacy observed.
+  scope: Source-grounded answer-domain amendment and fresh execution plan; no efficacy
+    observed.
 - from: math_v2_a1_seed81_real_canary_v4
   to: math_v2_a1_seed81_pilot_v2
   relation: derived_from
   evidence: reports/math_v2_a1_seed81_pilot_v2_20261002/README.md
-  scope: Source-grounded answer-domain amendment and fresh execution plan; no efficacy observed.
+  scope: Source-grounded answer-domain amendment and fresh execution plan; no efficacy
+    observed.
 - from: math_v2_preexecution_freeze_v1_4
   to: unified_semantic_contract_v2_1
   relation: derived_from
   evidence: reports/unified_semantic_contract_v2_1_20261002/README.md
-  scope: User-authored method semantic correction; zero-API only; prior frozen prep preserved.
+  scope: User-authored method semantic correction; zero-API only; prior frozen prep
+    preserved.
 - to: math_v2_1_answer_domain_amendment_v1
   relation: derived_from
   evidence: reports/math_v2_1_answer_domain_amendment_v1_20261002/README.md
@@ -1340,43 +1362,51 @@ edges:
 - to: math_v2_1_solver_decoding_policy_v1
   relation: derived_from
   evidence: reports/math_v2_1_solver_decoding_policy_v1_20261003/README.md
-  scope: Fresh decoding identity and exact execution scope; no inherited Canary state or cache.
+  scope: Fresh decoding identity and exact execution scope; no inherited Canary state
+    or cache.
   from: math_v2_1_a1_seed81_real_canary_v4
 - to: math_v2_1_preexecution_freeze_v5
   relation: derived_from
   evidence: reports/math_v2_1_preexecution_freeze_v5_20261003/README.md
-  scope: Fresh decoding identity and exact execution scope; no inherited Canary state or cache.
+  scope: Fresh decoding identity and exact execution scope; no inherited Canary state
+    or cache.
   from: math_v2_1_solver_decoding_policy_v1
 - to: math_v2_1_a1_seed81_real_canary_v5
   relation: derived_from
   evidence: reports/math_v2_1_a1_seed81_real_canary_v5_20261003/README.md
-  scope: Fresh decoding identity and exact execution scope; no inherited Canary state or cache.
+  scope: Fresh decoding identity and exact execution scope; no inherited Canary state
+    or cache.
   from: math_v2_1_preexecution_freeze_v5
 - to: math_v2_1_a1_seed81_pilot_v5
   relation: derived_from
   evidence: reports/math_v2_1_a1_seed81_pilot_v5_20261003/README.md
-  scope: Fresh decoding identity and exact execution scope; no inherited Canary state or cache.
+  scope: Fresh decoding identity and exact execution scope; no inherited Canary state
+    or cache.
   from: math_v2_1_a1_seed81_real_canary_v5
 - from: math_v2_1_a1_seed81_real_canary_v5
   to: math_v2_1_prediction_validity_policy_v1
   relation: derived_from
   evidence: reports/math_v2_1_prediction_validity_policy_v1_20261003/README.md
-  scope: Fresh prediction-invalidity authority; no historical state/cache/authorization reused.
+  scope: Fresh prediction-invalidity authority; no historical state/cache/authorization
+    reused.
 - from: math_v2_1_prediction_validity_policy_v1
   to: math_v2_1_preexecution_freeze_v6
   relation: derived_from
   evidence: reports/math_v2_1_preexecution_freeze_v6_20261003/README.md
-  scope: Fresh prediction-invalidity authority; no historical state/cache/authorization reused.
+  scope: Fresh prediction-invalidity authority; no historical state/cache/authorization
+    reused.
 - from: math_v2_1_preexecution_freeze_v6
   to: math_v2_1_a1_seed81_real_canary_v6
   relation: derived_from
   evidence: reports/math_v2_1_a1_seed81_real_canary_v6_20261003/README.md
-  scope: Fresh prediction-invalidity authority; no historical state/cache/authorization reused.
+  scope: Fresh prediction-invalidity authority; no historical state/cache/authorization
+    reused.
 - from: math_v2_1_a1_seed81_real_canary_v6
   to: math_v2_1_a1_seed81_pilot_v6
   relation: derived_from
   evidence: reports/math_v2_1_a1_seed81_pilot_v6_20261003/README.md
-  scope: Fresh prediction-invalidity authority; no historical state/cache/authorization reused.
+  scope: Fresh prediction-invalidity authority; no historical state/cache/authorization
+    reused.
 - from: math_v2_1_a1_seed81_real_canary_v6
   to: math_v2_1_output_reuse_audit_v1
   relation: derived_from
@@ -1411,42 +1441,50 @@ edges:
   to: math_v2_1_optimizer_wire_amendment_v1
   relation: derived_from
   evidence: reports/math_v2_1_optimizer_wire_amendment_v1_20261003/README.md
-  scope: Approved wire contract; fresh source, scope and process; no historical output import.
+  scope: Approved wire contract; fresh source, scope and process; no historical output
+    import.
 - from: math_v2_1_optimizer_wire_amendment_v1
   to: math_v2_1_preexecution_low_cost_v2
   relation: derived_from
   evidence: reports/math_v2_1_preexecution_low_cost_v2_20261003/README.md
-  scope: Approved wire contract; fresh source, scope and process; no historical output import.
+  scope: Approved wire contract; fresh source, scope and process; no historical output
+    import.
 - from: math_v2_1_preexecution_low_cost_v2
   to: math_v2_1_a1_seed81_low_cost_canary_v2
   relation: derived_from
   evidence: reports/math_v2_1_a1_seed81_low_cost_canary_v2_20261003/README.md
-  scope: Approved wire contract; fresh source, scope and process; no historical output import.
+  scope: Approved wire contract; fresh source, scope and process; no historical output
+    import.
 - from: math_v2_1_a1_seed81_low_cost_canary_v2
   to: math_v2_1_a1_seed81_low_cost_pilot_v2
   relation: derived_from
   evidence: reports/math_v2_1_a1_seed81_low_cost_pilot_v2_20261003/README.md
-  scope: Approved wire contract; fresh source, scope and process; no historical output import.
+  scope: Approved wire contract; fresh source, scope and process; no historical output
+    import.
 - from: math_v2_1_a1_seed81_low_cost_canary_v2
   to: math_v2_1_optimizer_truncation_root_cause_v1
   relation: derived_from
   evidence: reports/math_v2_1_optimizer_truncation_root_cause_v1_20261003/README.md
-  scope: Fresh non-thinking task; bounded diagnostic scope and unchanged low-cost method/data.
+  scope: Fresh non-thinking task; bounded diagnostic scope and unchanged low-cost
+    method/data.
 - from: math_v2_1_optimizer_truncation_root_cause_v1
   to: math_v2_1_preexecution_low_cost_v3
   relation: derived_from
   evidence: reports/math_v2_1_preexecution_low_cost_v3_20261003/README.md
-  scope: Fresh non-thinking task; bounded diagnostic scope and unchanged low-cost method/data.
+  scope: Fresh non-thinking task; bounded diagnostic scope and unchanged low-cost
+    method/data.
 - from: math_v2_1_preexecution_low_cost_v3
   to: math_v2_1_a1_seed81_low_cost_canary_v3
   relation: derived_from
   evidence: reports/math_v2_1_a1_seed81_low_cost_canary_v3_20261003/README.md
-  scope: Fresh non-thinking task; bounded diagnostic scope and unchanged low-cost method/data.
+  scope: Fresh non-thinking task; bounded diagnostic scope and unchanged low-cost
+    method/data.
 - from: math_v2_1_a1_seed81_low_cost_canary_v3
   to: math_v2_1_a1_seed81_low_cost_pilot_v3
   relation: derived_from
   evidence: reports/math_v2_1_a1_seed81_low_cost_pilot_v3_20261003/README.md
-  scope: Fresh non-thinking task; bounded diagnostic scope and unchanged low-cost method/data.
+  scope: Fresh non-thinking task; bounded diagnostic scope and unchanged low-cost
+    method/data.
 - from: math_v2_1_optimizer_truncation_root_cause_v1
   to: math_v2_1_autonomous_constitution_v1
   relation: derived_from
@@ -1471,32 +1509,38 @@ edges:
   to: math_v2_1_proposal_semantic_postmortem_v1
   relation: audit_of
   evidence: reports/math_v2_1_proposal_semantic_postmortem_v1_20261004/README.md
-  scope: Read-only semantic and cache reconciliation; no efficacy rerun or policy change.
+  scope: Read-only semantic and cache reconciliation; no efficacy rerun or policy
+    change.
 - from: math_v2_1_proposal_semantic_postmortem_v1
   to: math_v2_1_layer1_gepa_flow_audit_v1
   relation: audit_of
   evidence: reports/math_v2_1_layer1_gepa_flow_audit_v1_20261004/README.md
-  scope: Zero-API baseline code flow and historical Optimize-only reflection/throughput audit before redesign.
+  scope: Zero-API baseline code flow and historical Optimize-only reflection/throughput
+    audit before redesign.
 - from: math_v2_1_layer1_gepa_flow_audit_v1
   to: math_v2_1_layer1_redesign_v1
   relation: derived_from
   evidence: reports/math_v2_1_layer1_redesign_v1_20261004/README.md
-  scope: Fresh authorized Layer1 protocol; immutable Layer2 and Low-Cost memberships; no historical outputs.
+  scope: Fresh authorized Layer1 protocol; immutable Layer2 and Low-Cost memberships;
+    no historical outputs.
 - from: math_v2_1_layer1_redesign_v1
   to: math_v2_1_preexecution_low_cost_v5
   relation: derived_from
   evidence: reports/math_v2_1_preexecution_low_cost_v5_20261004/README.md
-  scope: Fresh authorized Layer1 protocol; immutable Layer2 and Low-Cost memberships; no historical outputs.
+  scope: Fresh authorized Layer1 protocol; immutable Layer2 and Low-Cost memberships;
+    no historical outputs.
 - from: math_v2_1_preexecution_low_cost_v5
   to: math_v2_1_a1_seed81_low_cost_canary_v5
   relation: derived_from
   evidence: reports/math_v2_1_a1_seed81_low_cost_canary_v5_20261004/README.md
-  scope: Fresh authorized Layer1 protocol; immutable Layer2 and Low-Cost memberships; no historical outputs.
+  scope: Fresh authorized Layer1 protocol; immutable Layer2 and Low-Cost memberships;
+    no historical outputs.
 - from: math_v2_1_a1_seed81_low_cost_canary_v5
   to: math_v2_1_a1_seed81_low_cost_pilot_v5
   relation: derived_from
   evidence: reports/math_v2_1_a1_seed81_low_cost_pilot_v5_20261004/README.md
-  scope: Fresh authorized Layer1 protocol; immutable Layer2 and Low-Cost memberships; no historical outputs.
+  scope: Fresh authorized Layer1 protocol; immutable Layer2 and Low-Cost memberships;
+    no historical outputs.
 - from: math_v2_1_preexecution_low_cost_v5
   to: math_v2_1_layer1_preexecution_repair_v1
   relation: derived_from
@@ -1516,8 +1560,8 @@ edges:
   to: math_v2_1_layer1_panel_feedback_audit_v1
   relation: audit_of
   evidence: reports/math_v2_1_layer1_panel_feedback_audit_v1_20261004/README.md
-  scope: Retrospective zero-API panel and actual rejected-action feedback audit; no policy or held-out efficacy
-    change.
+  scope: Retrospective zero-API panel and actual rejected-action feedback audit; no
+    policy or held-out efficacy change.
 - from: math_v2_1_layer1_panel_feedback_audit_v1
   to: math_v2_1_layer1_memory_amendment_v1
   relation: derived_from
@@ -1537,7 +1581,8 @@ edges:
   to: math_v2_1_shared_risk_memory_amendment_v1
   relation: derived_from
   evidence: reports/math_v2_1_shared_risk_memory_amendment_v1_20261004/README.md
-  scope: Zero-API opt-in cross-member promotion and rolling retention; no execution or prior evidence changes.
+  scope: Zero-API opt-in cross-member promotion and rolling retention; no execution
+    or prior evidence changes.
 - from: math_v2_1_shared_risk_memory_amendment_v1
   to: math_v2_1_pattern_aware_refactor_v1
   relation: derived_from
@@ -1607,46 +1652,52 @@ edges:
   to: math_v2_1_current_runtime_consolidation_v1
   relation: derived_from
   evidence: reports/math_v2_1_current_runtime_consolidation_v1_20261005/README.md
-  scope: Semantic-preserving current runtime consolidation and explicit legacy isolation; zero API.
+  scope: Semantic-preserving current runtime consolidation and explicit legacy isolation;
+    zero API.
 - from: math_v2_1_current_runtime_consolidation_v1
   to: math_v2_1_gradient_pattern_seed81_canary_v1
   relation: followup_of
   evidence: reports/math_v2_1_gradient_pattern_seed81_canary_v1_20261006/README.md
-  scope: One fresh current Canary attempted; generated Gradient contract failure stopped before clustering. Diagnostic
-    prerequisite failed; scope closed pending scientific policy decision.
+  scope: One fresh current Canary attempted; generated Gradient contract failure stopped
+    before clustering. Diagnostic prerequisite failed; scope closed pending scientific
+    policy decision.
 - from: math_v2_1_gradient_pattern_seed81_canary_v1
   to: math_v2_1_gradient_pattern_seed81_canary_v2
   relation: followup_of
   evidence: reports/math_v2_1_gradient_pattern_seed81_canary_v2_20261006/zero_api_forensic.json
-  scope: User-decided guard implementation repair and prompt clarification; fresh attempt, no previous authorization
-    reuse.
+  scope: User-decided guard implementation repair and prompt clarification; fresh
+    attempt, no previous authorization reuse.
 - from: math_v2_1_gradient_pattern_seed81_canary_v2
   to: math_v2_1_gradient_pattern_seed81_canary_v3
   relation: followup_of
   evidence: experiments/protocols/math_v2_1_gradient_pattern_seed81_canary_v3/implementation_repair.json
-  scope: Confirmed diagnostic metadata repair only; fresh source and namespace. One complete active opportunity
-    and one isolated matched raw diagnostic audited. Method and prompts unchanged; no efficacy inference.
+  scope: Confirmed diagnostic metadata repair only; fresh source and namespace. One
+    complete active opportunity and one isolated matched raw diagnostic audited. Method
+    and prompts unchanged; no efficacy inference.
 - from: math_v2_1_gradient_pattern_seed81_canary_v3
   to: math_v2_1_gradient_pattern_seed81_pilot_v1
   relation: followup_of
   evidence: experiments/protocols/math_v2_1_gradient_pattern_seed81_pilot_v1/user_scope.json
-  scope: Unchanged current method; fresh Optimize60 Shadow40 search-only scope and full descriptive training-process
-    audit.
+  scope: Unchanged current method; fresh Optimize60 Shadow40 search-only scope and
+    full descriptive training-process audit.
 - from: math_v2_1_gradient_pattern_seed81_pilot_v1
   to: math_identical_initial_condition_v1
   relation: derived_from
   evidence: reports/math_identical_initial_condition_v1_20261006/README.md
-  scope: Initial-condition correction only; frozen historical evidence and method remain unchanged.
+  scope: Initial-condition correction only; frozen historical evidence and method
+    remain unchanged.
 - from: math_v2_1_gradient_pattern_seed81_pilot_v1
   to: math_v2_1_gradient_pattern_seed81_pilot_v2
   relation: followup_of
   evidence: experiments/protocols/math_numeric_admissibility_v1/amendment.json
-  scope: Fresh Pilot after numeric admissibility amendment; historical runs and initialization correction preserved.
+  scope: Fresh Pilot after numeric admissibility amendment; historical runs and initialization
+    correction preserved.
 - from: math_identical_initial_condition_v1
   to: math_v2_1_gradient_pattern_seed81_pilot_v2
   relation: followup_of
   evidence: experiments/protocols/math_numeric_admissibility_v1/amendment.json
-  scope: Fresh Pilot after numeric admissibility amendment; historical runs and initialization correction preserved.
+  scope: Fresh Pilot after numeric admissibility amendment; historical runs and initialization
+    correction preserved.
 - from: math_v2_1_gradient_pattern_seed81_pilot_v2
   to: math_v2_1_gradient_pattern_seed81_pilot_v3
   relation: followup_of
@@ -1686,17 +1737,20 @@ edges:
   to: math_v2_1_gradient_contract_recovery_v1
   relation: followup_of
   evidence: experiments/protocols/math_v2_1_gradient_contract_recovery_v1/amendment.json
-  scope: First-contract-valid sampling only; existing admissibility and core method unchanged.
+  scope: First-contract-valid sampling only; existing admissibility and core method
+    unchanged.
 - from: math_v2_1_gradient_contract_recovery_v1
   to: math_v2_1_gradient_pattern_seed81_pilot_v6
   relation: followup_of
   evidence: experiments/protocols/math_v2_1_gradient_contract_recovery_v1/amendment.json
-  scope: First-contract-valid sampling only; existing admissibility and core method unchanged.
+  scope: First-contract-valid sampling only; existing admissibility and core method
+    unchanged.
 - from: math_v2_1_gradient_pattern_seed81_pilot_v5
   to: math_v2_1_gradient_pattern_seed81_pilot_v6
   relation: followup_of
   evidence: experiments/protocols/math_v2_1_gradient_contract_recovery_v1/amendment.json
-  scope: First-contract-valid sampling only; existing admissibility and core method unchanged.
+  scope: First-contract-valid sampling only; existing admissibility and core method
+    unchanged.
 - from: math_v2_1_gradient_pattern_seed81_pilot_v6
   to: math_v2_1_full_candidate_specialization_forensic_v1
   relation: followup_of
@@ -1709,4 +1763,14 @@ edges:
   evidence: experiments/protocols/math_v2_1_manual_prompt_capacity_probe_v1/protocol.json
   scope: Post-hoc forensic or independent Solver capacity diagnostic; no A4 scientific
     amendment.
+- from: math_v2_1_gradient_pattern_seed81_pilot_v6
+  to: transition_reachability_audit_v1
+  relation: followup_of
+  evidence: experiments/protocols/transition_reachability_audit_v1/protocol.json
+  scope: Explicit V2.2 deployment-semantic amendment; prior evidence remains immutable.
+- from: math_v2_1_manual_prompt_capacity_probe_v1
+  to: transition_reachability_audit_v1
+  relation: followup_of
+  evidence: experiments/protocols/transition_reachability_audit_v1/protocol.json
+  scope: Explicit V2.2 deployment-semantic amendment; prior evidence remains immutable.
 current_frontier: experiments/current_frontier.yaml

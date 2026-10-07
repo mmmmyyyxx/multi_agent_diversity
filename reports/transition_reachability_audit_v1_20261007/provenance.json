@@ -1,0 +1,22 @@
+{
+  "schema": "zero_api_semantic_audit_provenance_v1",
+  "branch": "main",
+  "base_sha": "c921c395a75320f02081eeae517be7a5f975d248",
+  "final_head": "c921c395a75320f02081eeae517be7a5f975d248",
+  "committed": false,
+  "pushed": false,
+  "review_patch_uncommitted": true,
+  "source_hashes": {
+    "scientific_source_hash": "519bb3b725e809b907068ac6720652092129edc01ce2a23ea39e6b1bbe30341f",
+    "governance_hash": "7b8040ba9ada9c720bafe1b15beee84223bc7f65804243b25321d499775b9473",
+    "benchmark_contract_hash": "9b086180a24d3df75e8a90736908f8cf7d4538d1229d75745c9db66614a63d9d"
+  },
+  "source_closure_counts": {
+    "scientific": 62,
+    "governance": 71,
+    "benchmark": 49,
+    "dataset_manifest": 0
+  },
+  "scientific_method_changed": true,
+  "authorization_scope": "CODE_AND_ZERO_API_AUDIT_ONLY"
+}

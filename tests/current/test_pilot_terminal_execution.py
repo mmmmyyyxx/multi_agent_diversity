@@ -1,3 +1,4 @@
+# V2.1 frozen replay assertions; V2.2 current conformance is tested separately.
 """Real execution lifecycle with synthetic data and a fake transport."""
 import asyncio,hashlib,json
 from copy import deepcopy
@@ -11,7 +12,7 @@ PROFILE='experiments/execution_bindings/math_v2_1_gradient_pattern_pilot_offline
 @pytest.mark.parametrize('changed',[False,True])
 def test_current_pilot_runner_seals_terminal_receipts_and_validation_disposition(tmp_path,monkeypatch,changed):
     from multi_dataset_diverse_rl.governance import autonomous_math as execution
-    from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
+    from multi_dataset_diverse_rl.benchmarks.legacy.current_math_domain_binding_v21 import execution_binding
     from multi_dataset_diverse_rl.benchmarks.protocols import protocol_input
     from multi_dataset_diverse_rl.search.binary_runtime import CorrectnessExample
     original=json.loads((ROOT/PROFILE).read_bytes());binding=execution_binding(ROOT,original)

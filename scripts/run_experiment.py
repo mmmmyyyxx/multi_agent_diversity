@@ -19,8 +19,6 @@ def _load(path):
 
 
 def preflight(manifest):
-    if manifest.get('execution_binding') is None:
-        return dict(gate='HOLD',blockers=['CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN'],provider_attempts=0,validation_calls=0,test_calls=0)
     return bound_preflight(ROOT,manifest)
 
 

@@ -1,3 +1,4 @@
+# V2.1 frozen replay assertions; V2.2 current conformance is tested separately.
 """Compliance completion never chooses semantic supports or changes same-F."""
 from copy import deepcopy
 from dataclasses import replace
@@ -162,7 +163,7 @@ def test_manifest_completion_identity_must_match_effective_method(mutation):
     ('gradient_prompt_sha256','0'*64),('partition_completion_policy','other')])
 def test_fresh_binding_rejects_scientific_drift(field,value):
     from multi_dataset_diverse_rl.benchmarks.partition_completion_contract import validate_partition_completion
-    from multi_dataset_diverse_rl.benchmarks.math_gradient_pattern_binding import MATHGradientPatternBinding
+    from multi_dataset_diverse_rl.benchmarks.legacy.math_gradient_pattern_binding_v21 import MATHGradientPatternBinding
     root=Path(__file__).resolve().parents[2]
     c=json.loads((root/'experiments/execution_bindings/math_v2_1_gradient_pattern_seed81_pilot_v4.json').read_bytes())
     c[field]=value

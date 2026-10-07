@@ -364,8 +364,8 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 
 ## FAIL-MATH-GRADIENT-V5-NUMERIC-PROVENANCE-PILOT4: Fresh Pilot stops on a short Gradient rejected by frozen numeric provenance guard
 
-- Status: `OPEN`
-- Lifecycle: `OPEN`
+- Status: `MITIGATED`
+- Lifecycle: `MITIGATED`
 - Lifecycle context: See evidence below.
 - Evidence level: `observed`
 - First observed: `math_v2_1_gradient_pattern_seed81_pilot_v4`
@@ -373,3 +373,27 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 - Symptom: Second opportunity sixth Gradient (44th total),139characters, valid JSON and within hard400, rejected by unchanged numeric provenance guard; second cluster not reached.
 - Forbidden inference: Do not label operational invalidity, a partition-completion bug, a complete valid Pilot, comprehensive semantic provenance, population compliance or causal efficacy; no fresh retry under engineering authority.
 - Mitigation: Preserve raw response and charged prefix, close consumed scope, retain frozen Gradient V1 Prompt V3 Guard V5; any continuation requiring admissibility changes needs a separate scientific decision.
+
+## FAIL-MATH-PILOT-POST-STOP-TERMINAL-SERIALIZATION: Terminal metadata keyword collision aborts runner after complete scientific search
+
+- Status: `MITIGATED`
+- Lifecycle: `MITIGATED`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `math_v2_1_gradient_pattern_seed81_pilot_v6`
+- Root-cause status: CONFIRMED_POST_SCIENTIFIC_STOP_IMPLEMENTATION_DEFECT
+- Symptom: Complete ten-opportunity trace and final state persist, then duplicate validation_status keyword raises TypeError.
+- Forbidden inference: Do not rewrite raw lifecycle, invent original completion receipts, claim causal efficacy, or rerun the complete zero-commit scientific result.
+- Mitigation: Use explicit metadata merge and canonical JSON-compatible summary; verify both terminal branches with fake providers.
+
+## FAIL-IDENTICAL-INITIAL-STRICT-VOTE-DEADLOCK: Single-member progress cannot deploy against four identical wrong peer votes
+
+- Status: `MITIGATED`
+- Lifecycle: `MITIGATED`
+- Lifecycle context: IMPLEMENTED_ZERO_API_ONLY; REAL_EXECUTION_HOLD
+- Evidence level: `observed`
+- First observed: `transition_reachability_audit_v1`
+- Root-cause status: Strict-Vote deployment semantics; coupling in winner key and N-commit bound.
+- Symptom: V2.1 requires strict team Vote gain, preventing first commit when peer outcomes are identical; a target-only gain cannot outvote four peers.
+- Forbidden inference: Byte-identical prompts do not guarantee identical stochastic member outputs; zero-API conformance proves neither real efficacy nor generalization.
+- Mitigation: Fresh V2.2 OR-progress identity and target-second ranking; execution and Pilot bounds fail closed until separately frozen. Historical V2.1 is preserved.

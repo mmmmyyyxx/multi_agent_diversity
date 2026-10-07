@@ -21,7 +21,7 @@ class CurrentPolicyBundle:
     evidence: str = identities.GRADIENT_CONDITIONED_EVIDENCE_VERSION
     memory: str = identities.STRUCTURED_ROLLING_RISK_MEMORY_VERSION
     layer1: str = identities.LAYER1_FEEDBACK_SEARCH_VERSION
-    transition: str = identities.UNIFIED_COMPETENCE_TRANSITION_VERSION
+    transition: str = identities.UNIFIED_TARGET_OR_TEAM_TRANSITION_VERSION
 
     def __post_init__(self):
         expected = dict(responsibility=identities.BINARY_PLURALITY_RESPONSIBILITY_VERSION,
@@ -34,7 +34,7 @@ class CurrentPolicyBundle:
             evidence=identities.GRADIENT_CONDITIONED_EVIDENCE_VERSION,
             memory=identities.STRUCTURED_ROLLING_RISK_MEMORY_VERSION,
             layer1=identities.LAYER1_FEEDBACK_SEARCH_VERSION,
-            transition=identities.UNIFIED_COMPETENCE_TRANSITION_VERSION)
+            transition=identities.UNIFIED_TARGET_OR_TEAM_TRANSITION_VERSION)
         if asdict(self) != expected:
             raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
 
@@ -47,7 +47,7 @@ class CurrentPolicyBundle:
         # The compatibility dataclass preserves its exact frozen identity payload.
         if partition_completion_policy not in (None, self.partition_completion):
             raise SearchContractError('PATTERN_PARTITION_COMPLETION_POLICY_MISMATCH')
-        method=SearchMethodConfig(method=identities.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION,
+        method=SearchMethodConfig(method=identities.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION,
             search_engine=self.layer1, diagnosis_policy=self.responsibility,
             aggregation_policy=aggregation, evidence_policy=self.evidence,
             feasibility_policy='variable_evidence_feasibility_v1',

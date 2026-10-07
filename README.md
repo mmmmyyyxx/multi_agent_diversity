@@ -44,22 +44,24 @@ Older implementations use explicit `legacy` replay tooling.
 
 [Registry](experiments/registry.yaml) records metadata; [lineage authority](experiments/lineage.yaml)
 generates [LINEAGE](docs/experiments/LINEAGE.md). New experiments use the
-[current template](experiments/templates/unified_experiment_v2_1.yaml).
+[current template](experiments/templates/unified_experiment_v2_2.yaml).
 [Reports index](reports/INDEX.md) catalogs immutable evidence. Reports are
 evidence, never design authority. [Archives](docs/archive/) preserve historical
 contracts and paper text with source provenance.
 
-## Current V2.1 method state
+## Current V2.2 method state
 
-The active opt-in method is `unified_team_prompt_search_v2_1`.
-Use `SearchMethodConfig.v2_1()` and the shared binary production composition.
+The active opt-in method is `unified_team_prompt_search_v2_2`.
+Use the complete `CurrentPolicyBundle` and `build_current_team_prompt_search`.
+`SearchMethodConfig.v2_2()` identifies the new policy; earlier factories are replay.
 Pattern selects one mechanism after WHO, with explicit all-residual coverage
 metrics. The current opt-in [Pattern path](docs/design/PATTERN_GRADIENT_DISCOVERY_V4.md)
 extracts one textual gradient per wrong example, clusters gradients only and selects
-one generalized correction with the unchanged responsibility F. Deployment requires strict team gain above an immutable initial member
-competence floor. Memory stores grounded strategy experience, default disabled.
-V1/V2 factories and frozen bindings remain replay identities; current experiments
-need a fresh V2.1 binding, preexecution freeze and explicit authorization.
+one generalized correction with the unchanged responsibility F. Deployment requires the immutable initial member floor, non-regressing Full
+Vote and strict target OR team progress. Rank Full Vote first and target second. Memory stores bounded private committed success and recurrent shared risk.
+V1/V2/V2.1 factories and frozen bindings remain replay identities. V2.2 is
+IMPLEMENTED / ZERO-API ONLY; real execution is HOLD until a fresh execution
+binding and finite Pilot bound are frozen, followed by exact authorization.
 See CURRENT_SPEC for precise rules; fake conformance does not establish efficacy.
 The active research suite is MATH, IFBench and HotpotQA. BBH is historical
 development/replay only. Canonical data and separate experiment memberships

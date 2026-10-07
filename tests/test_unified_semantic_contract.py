@@ -1,4 +1,7 @@
-"""Zero-API semantic-contract proofs, including the pinned GEPA reflection seam."""
+"""Frozen V2.1 replay proofs, including the pinned GEPA reflection seam.
+
+Strict-gain assertions remain historical; V2.2 has separate current tests.
+"""
 import asyncio
 from dataclasses import asdict, replace
 import json

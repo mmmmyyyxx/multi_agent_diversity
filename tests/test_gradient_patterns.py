@@ -1,3 +1,4 @@
+# V2.1 frozen replay assertions; V2.2 current conformance is tested separately.
 """Synthetic contracts for target-first textual gradients and bounded mutation."""
 import asyncio
 from copy import deepcopy
@@ -140,7 +141,7 @@ def test_hard_character_boundary_and_no_semantic_regeneration_remain_frozen():
 
 
 def test_prompt_amendment_changes_current_binding_and_rejects_historical_authorization():
-    from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
+    from multi_dataset_diverse_rl.benchmarks.legacy.current_math_domain_binding_v21 import execution_binding
     current=json.loads((ROOT/BP).read_bytes())
     prior=json.loads((ROOT/'experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v1.json').read_bytes())
     assert current['gradient_prompt_sha256']!=prior['gradient_prompt_sha256']
@@ -314,8 +315,8 @@ def test_singleton_preservation_loss_measurable(tmp_path):
 
 
 def test_binding_scope_generation_and_fresh_roles_are_not_cached():
-    from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
-    from multi_dataset_diverse_rl.governance.unified_execution import preexecution_manifest,execution_scope
+    from multi_dataset_diverse_rl.benchmarks.legacy.current_math_domain_binding_v21 import execution_binding
+    from multi_dataset_diverse_rl.governance.legacy.current_unified_execution_v21 import preexecution_manifest,execution_scope
     from multi_dataset_diverse_rl.governance.repository import validate_manifest_v2
     from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker
     c=json.loads((ROOT/BP).read_bytes());b=execution_binding(ROOT,c);assert not b.blockers()
@@ -340,7 +341,7 @@ def test_binding_scope_generation_and_fresh_roles_are_not_cached():
 
 
 def test_offline_profile_is_not_ready_and_old_authorization_scope_is_incompatible():
-    from multi_dataset_diverse_rl.governance.unified_execution import preexecution_manifest,execution_scope,bound_preflight,canonical_sha256
+    from multi_dataset_diverse_rl.governance.legacy.current_unified_execution_v21 import preexecution_manifest,execution_scope,bound_preflight,canonical_sha256
     c=json.loads((ROOT/BP).read_bytes())
     m=preexecution_manifest(ROOT,source_sha='0'*40,frozen=False,binding_path=BP,experiment_id='synthetic_gradient')
     result=bound_preflight(ROOT,m)
@@ -356,7 +357,7 @@ def test_offline_profile_is_not_ready_and_old_authorization_scope_is_incompatibl
 
 
 def test_method_emergency_limit_includes_gradient_and_cluster_costs():
-    from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
+    from multi_dataset_diverse_rl.benchmarks.legacy.current_math_domain_binding_v21 import execution_binding
     from multi_dataset_diverse_rl.search.orchestrator import UnifiedSearchOrchestrator
     c=json.loads((ROOT/BP).read_bytes());method=execution_binding(ROOT,c).method('A4')
     assert method.global_stop.emergency_max_provider_calls==c['provider_bounds']['successful_provider_calls']==1651
@@ -398,13 +399,13 @@ def test_invalid_json_is_one_successful_generation_then_terminal_not_retried():
 
 @pytest.mark.parametrize('key',['pattern_gradient_calls','pattern_cluster_calls','pattern_calls','successful_provider_calls'])
 def test_binding_rejects_stale_single_call_ceilings(key):
-    from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
+    from multi_dataset_diverse_rl.benchmarks.legacy.current_math_domain_binding_v21 import execution_binding
     c=json.loads((ROOT/BP).read_bytes());c['provider_bounds'][key]=1 if key!='pattern_cluster_calls' else 2
     assert execution_binding(ROOT,c).blockers()==('CURRENT_NUMERIC_CALIBRATION_SCIENTIFIC_SETTING_CHANGED',)
 
 
 def test_full_fake_production_opportunity_preserves_who_memory_layer2(tmp_path,monkeypatch):
-    from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
+    from multi_dataset_diverse_rl.benchmarks.legacy.current_math_domain_binding_v21 import execution_binding
     from multi_dataset_diverse_rl.benchmarks.protocols import protocol_input
     from multi_dataset_diverse_rl.search.binary_runtime import CorrectnessExample
     from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker,BenchmarkSolver,ReflectionProvider

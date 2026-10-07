@@ -1,7 +1,7 @@
 """Immutable initial floor and strict fixed-peer gain."""
 import math
 import hashlib
-from .. import current_contract as versions
+from .. import versions
 from .schemas import SearchContractError, TransitionDecision
 
 class InitialCompetenceTransitionV2:

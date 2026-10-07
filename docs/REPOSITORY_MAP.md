@@ -46,3 +46,12 @@ The current suite excludes the named private-artifact modules and reports their
 count. Full historical runs them when private frozen assets exist, otherwise
 skips them explicitly. Historical source remains at its reproduction paths;
 archiving documentation does not imply HEAD replay has private assets.
+
+V2.1 flat Gradient replay lives in the explicit `*_v21.py` legacy modules.
+`legacy_current_contract_v21.py` freezes their identity imports. The receipt
+helpers `gradient_contract_receipt`, `numeric_admissibility_contract`,
+`numeric_calibration_contract`, `operational_pilot_contract`,
+`partition_completion_contract` and `gradient_recovery_contract` reconstruct
+historical V2.1 receipts only. They are absent from the current dependency
+graph. The invariant/provenance index is
+[the V2.1 replay index](archive/specs/unified_v2_1_replay_index.json).

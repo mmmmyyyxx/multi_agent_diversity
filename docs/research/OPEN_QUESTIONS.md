@@ -4,6 +4,9 @@ Design questions below confer no execution authorization.
 
 | Question | State / required decision |
 |---|---|
+| V2.2 finite Pilot resource bound | NOT_FROZEN; strict-Vote N-commit proof invalid; fail closed until a reviewed operational proof and ceilings are frozen. |
+| V2.2 execution binding | NOT_FROZEN; require MATH_V2_2_EXECUTION_BINDING_V1, fresh source/scope/cache and exact authorization. |
+| Shadow target-gain replication | Separate scientific decision; current Shadow retains Vote non-regression and target loss >= -2. |
 | Local acceptance versus team transition | Implemented in V2; efficacy unverified. GEPA survival and outer eligibility are decoupled. |
 | Pattern-aware causal hypothesis | Implemented dormant mechanism, default disabled; efficacy not evaluated. Freeze provider/model, null comparator and evidence intervention before an experiment. |
 | Long-term memory | Implemented dormant mechanism, default disabled; efficacy not evaluated. Freeze limits and causal comparisons before an experiment. |

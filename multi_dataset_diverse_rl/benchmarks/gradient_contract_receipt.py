@@ -2,7 +2,7 @@
 from copy import deepcopy
 from dataclasses import asdict
 from .. import versions as historical_versions
-from .. import current_contract as versions
+from .. import legacy_current_contract_v21 as versions
 from ..search.current_layer1 import GradientPatternLayer1Config
 from ..search.textual_gradients import POLICY
 from ..search.schemas import SearchContractError

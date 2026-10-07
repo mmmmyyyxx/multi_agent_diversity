@@ -2,9 +2,9 @@
 
 The sole active research architecture is Unified Team Prompt Search.
 
-- CURRENT_METHOD: unified_team_prompt_search_v2_1.
+- CURRENT_METHOD: unified_team_prompt_search_v2_2.
 - CURRENT_BENCHMARK_SUITE: MATH, IFBench, HotpotQA.
-- CURRENT_EXPERIMENT: unified_semantic_contract_v2_1 zero-API implementation audit.
+- CURRENT_EXPERIMENT: transition_reachability_audit_v1 zero-API semantic amendment.
 - Execution readiness and authorization come from experiments/current_frontier.yaml.
 - CURRENT_RUNTIME: one complete Gradient Pattern / Rolling Memory / bounded Layer1 bundle.
 - Older Pattern/Memory/search combinations: EXPLICIT_HISTORICAL_REPLAY_ONLY.
@@ -32,7 +32,16 @@ Optimize supplies adaptive search. Shadow supplies the winner-only adaptive gate
 Validation is post-freeze development evaluation with no online feedback. Test
 is sealed. Data availability does not confer held-out model access.
 
-## Readiness and next steps
+## Current V2.2 execution status
+
+V2.2 is IMPLEMENTED / ZERO-API ONLY. Real execution is HOLD with
+CURRENT_V2_2_EXECUTION_BINDING_NOT_FROZEN and
+TARGET_OR_TEAM_PROGRESS_PILOT_BOUND_NOT_FROZEN. The existing V2.1 receipts,
+experiments, bindings and reports remain historical evidence, with no new
+authority. Optimize/Full permits target-only progress; Shadow remains its
+existing safety gate, with no requirement to replicate target gain.
+
+## Historical benchmark preparation and remaining system blockers
 
 1. MATH: V1.1 reference eligibility, split, initial team, production composition,
    models/provider and finite canary bounds are versioned. Four arms have

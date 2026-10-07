@@ -1,0 +1,12 @@
+{
+  "real_optimize_evaluations": 0,
+  "real_shadow_evaluations": 0,
+  "validation_evaluations": 0,
+  "test_evaluations": 0,
+  "validation_authorized": false,
+  "test_authorized": false,
+  "counter_scope": "Real benchmark/model evaluation only; synthetic unit split labels excluded",
+  "synthetic_optimize_shadow_fixtures": true,
+  "synthetic_validation_fixture_hooks": true,
+  "sealed_test_preserved": true
+}

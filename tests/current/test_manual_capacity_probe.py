@@ -1,3 +1,4 @@
+# V2.1 frozen replay assertions; V2.2 current conformance is tested separately.
 """A Solver-only diagnostic must preserve wire semantics and isolate realizations."""
 from copy import deepcopy
 from hashlib import sha256
@@ -144,7 +145,7 @@ def test_preflight_binds_authority_source_data_prompts_and_exact_budget(tmp_path
 
 @pytest.mark.parametrize('fail_after',[None,1])
 def test_complete_fresh_diagnostic_or_operational_abort_preserves_evidence(tmp_path,monkeypatch,fail_after):
-    from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
+    from multi_dataset_diverse_rl.benchmarks.legacy.current_math_domain_binding_v21 import execution_binding
     from multi_dataset_diverse_rl.benchmarks.protocols import protocol_input
     from multi_dataset_diverse_rl.search.binary_runtime import CorrectnessExample
     from multi_dataset_diverse_rl.governance.token_accounting import TokenLedger,POLICY

@@ -1,3 +1,4 @@
+# V2.1 frozen replay assertions; V2.2 current conformance is tested separately.
 """Strong/weak numeric evidence, private telemetry and exact fresh identities."""
 from copy import deepcopy
 import json
@@ -7,7 +8,7 @@ import pytest
 from multi_dataset_diverse_rl.search.numeric_provenance import numeric_guard_result,numeric_content_leaked_v5
 from multi_dataset_diverse_rl.search.textual_gradients import validate_gradient,GradientExtractor
 from multi_dataset_diverse_rl.search.schemas import SearchContractError
-from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
+from multi_dataset_diverse_rl.benchmarks.legacy.current_math_domain_binding_v21 import execution_binding
 from multi_dataset_diverse_rl.current_contract import TARGET_CORRECTNESS_SIGNAL_VERSION
 ROOT=Path(__file__).resolve().parents[2]
 PROFILE='experiments/execution_bindings/math_v2_1_gradient_pattern_seed81_pilot_v5.json'
@@ -106,7 +107,7 @@ def test_critical_warning_journal_failure_does_not_regenerate():
     assert len(calls)==1
 
 def test_scientific_boundary_blocks_pilot_preparation_without_any_provider(tmp_path):
-    from multi_dataset_diverse_rl.governance.unified_execution import preexecution_manifest,bound_preflight,prepare_canary
+    from multi_dataset_diverse_rl.governance.legacy.current_unified_execution_v21 import preexecution_manifest,bound_preflight,prepare_canary
     manifest=preexecution_manifest(ROOT,source_sha=None,frozen=False,binding_path=PROFILE,
         experiment_id='math_v2_1_gradient_pattern_seed81_pilot_v5')
     result=bound_preflight(ROOT,manifest)

@@ -1,3 +1,10 @@
+# Historical V2.1 contract scope
+
+The original user-authored V2.1 contract below is retained for replay.
+Current deployment semantics are defined in
+[the V2.2 transition contract](TRANSITION_TARGET_OR_TEAM_PROGRESS_V3.md).
+The exact original is archived with provenance and invariant index.
+
 # Unified Team Prompt Search：方法语义契约
 
 本契约用于固定当前研究方法的**科学含义、模块职责和实验解释边界**。其目的不是规定具体代码实现，而是防止后续实验迭代、重构或 Codex 实现过程中，模块虽然名字不变，但实际回答的问题发生漂移。

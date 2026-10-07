@@ -1,0 +1,19 @@
+{
+  "real_api_calls_zero": true,
+  "real_heldout_evaluations_zero": true,
+  "historical_v21_strict_semantics_preserved": true,
+  "v22_target_only_commit_proved": true,
+  "full_ranking_target_second_proved": true,
+  "promotion_ceiling_two_preserved": true,
+  "shadow_safety_semantics_preserved": true,
+  "memory_success_commit_based": true,
+  "scientific_stop_commit_based": true,
+  "old_bound_not_reused": true,
+  "old_binding_not_current": true,
+  "real_execution_hold": true,
+  "full_suite_results_disclosed": true,
+  "v22_scoped_regressions_actually_passed": true,
+  "historical_evidence_preserved": true,
+  "unrelated_user_artifacts_preserved": true,
+  "no_commit_or_push": true
+}

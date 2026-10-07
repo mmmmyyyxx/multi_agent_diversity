@@ -34,7 +34,7 @@ def validate_operational_pilot(binding):
         return json.loads(p.read_bytes())
     parent = checked('operational_parent_binding_path','operational_parent_binding_sha256')
     # Recursive validation is provenance only; no historical runtime is composed.
-    from .math_gradient_pattern_binding import MATHGradientPatternBinding
+    from .legacy.math_gradient_pattern_binding_v21 import MATHGradientPatternBinding
     parent_binding = MATHGradientPatternBinding(binding.root,parent)
     if parent_binding.blockers():
         raise SearchContractError('OPERATIONAL_PILOT_PARENT_INVALID')

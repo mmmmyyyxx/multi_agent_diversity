@@ -194,8 +194,8 @@ class UnifiedSearchOrchestrator:
             raise SearchContractError("SCIENTIFIC_DECISION_REQUIRED: aggregation-aware responsibility")
         if getattr(self.aggregation, "identity", None) != self.method.aggregation_policy:
             raise SearchContractError("aggregation implementation/method identity mismatch")
-        current_semantics = self.method.method == versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION
-        if self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION}:
+        current_semantics = self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION}
+        if self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION}:
             expected_acceptance=('layer1_local_guidance_team_admission_v1' if current_semantics and
                 self.method.search_engine in {versions.LAYER1_RESPONSIBILITY_SEARCH_VERSION,versions.LAYER1_FEEDBACK_SEARCH_VERSION} else versions.UNIFIED_DECOUPLED_ACCEPTANCE_VERSION)
             if self.method.search_acceptance_policy != expected_acceptance:
@@ -261,7 +261,7 @@ class UnifiedSearchOrchestrator:
             committed: str | None = None
             gate_passed = (await self.gate.check(opportunity, decision.candidate)
                            if decision.candidate is not None else None)
-            v2 = self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION}
+            v2 = self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION}
             memory_delta = None
             if v2:
                 from .memory_records import OpportunityOutcome
@@ -328,6 +328,12 @@ class UnifiedSearchOrchestrator:
                     initial_member_scores=self.transition.initial_scores,
                     incumbent_member_scores=parent.member_scores, child_member_scores=child.member_scores,
                     inference_scope="DESCRIPTIVE_NOT_COUNTERFACTUAL_OR_COMPONENT_CAUSAL")
+                if self.method.method == versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION:
+                    from .target_or_team_transition import progress_path
+                    target_gain = (child.member_scores[opportunity.target_member]
+                                   - parent.member_scores[opportunity.target_member]) if committed else 0.0
+                    allocation.update(realized_target_gain=target_gain,
+                        realized_progress_path=progress_path(gain, target_gain))
             trace.append(OpportunityTrace(
                 opportunity.opportunity_id, parent.team_state_id,
                 opportunity.target_member,

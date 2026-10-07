@@ -13,8 +13,8 @@ def solver_decoding_contract(identity=versions.MATH_SOLVER_DECODING_POLICY_VERSI
 
 def frozen_solver_policy(contract):
     policy = contract.get("solver_decoding_policy")
-    if contract.get("identity") in {versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION, *versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS}:
-        expected = solver_decoding_contract(versions.MATH_SOLVER_DECODING_POLICY_V2_VERSION if contract.get('identity') in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION} else versions.MATH_SOLVER_DECODING_POLICY_VERSION)
+    if contract.get("identity") in {versions.MATH_V2_1_DECODING_EXECUTION_BINDING_VERSION, versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION, *versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS, versions.MATH_V2_2_EXECUTION_BINDING_VERSION}:
+        expected = solver_decoding_contract(versions.MATH_SOLVER_DECODING_POLICY_V2_VERSION if contract.get('identity') in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION, versions.MATH_V2_2_EXECUTION_BINDING_VERSION} else versions.MATH_SOLVER_DECODING_POLICY_VERSION)
         if (policy != expected or any(type(policy[k]) is not type(v) for k, v in expected.items())):
             raise SearchContractError("SOLVER_DECODING_POLICY_BINDING_MISMATCH")
         return dict(policy)

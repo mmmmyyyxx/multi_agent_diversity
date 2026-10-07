@@ -8,10 +8,11 @@ Registry provides node metadata; current_frontier.yaml provides readiness only.
 ```yaml
 schema_version: current_frontier_v1
 current_architecture: Unified Team Prompt Search
-method_identity: unified_team_prompt_search_v2_1
-current_method: unified_team_prompt_search_v2_1
-current_implementation: One closed current policy bundle; current-only composition; explicit legacy replay
-current_experiment: math_v2_1_gradient_pattern_seed81_pilot_v6
+method_identity: unified_team_prompt_search_v2_2
+current_method: unified_team_prompt_search_v2_2
+current_implementation: One closed current policy bundle; current-only composition;
+  explicit legacy replay
+current_experiment: transition_reachability_audit_v1
 current_benchmark_suite:
 - math
 - ifbench
@@ -27,14 +28,14 @@ real_api_authorized: false
 validation_access: not_authorized
 test_access: sealed
 open_questions: docs/research/OPEN_QUESTIONS.md
-last_method_milestone: math_v2_1_gradient_pattern_refactor_v1
-canary_manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_canary_v3.yaml
+last_method_milestone: transition_reachability_audit_v1
+canary_manifest: null
 last_preexecution_milestone: math_v2_1_pattern_preexecution_v3
 last_canary_milestone: math_v2_1_gradient_pattern_seed81_canary_v3
-current_canary_status: VALID_OPERATIONAL_CANARY
+current_canary_status: V2_2_BINDING_NOT_FROZEN
 formal_a1_ready: false
 formal_a1_authorized: false
-current_execution_blocker: TASK_COMPLETE_NO_NEW_SCOPE
+current_execution_blocker: CURRENT_V2_2_EXECUTION_BINDING_NOT_FROZEN
 default_optimizer_generation_policy: OPTIMIZER_REFLECTION_GENERATION_POLICY_V3
 default_optimizer_enable_thinking: false
 optimizer_policy_amendment_status: LAYER1_GENERATION_V3_FROZEN_AND_DISPATCHED
@@ -48,7 +49,7 @@ autonomous_tokens_consumed: 3072683
 autonomous_tokens_remaining: 36927317
 token_accounting_policy: RESERVATION_V2
 prior_accounting_stop_resolution: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2
-autonomous_authorization_status: RECOVERY_PILOT_SCOPE_CONSUMED_AND_CLOSED
+autonomous_authorization_status: PRIOR_V2_1_SCOPES_CLOSED_NO_V2_2_AUTHORITY
 pilot_search_complete: true
 pilot_validation_complete: false
 pilot_final_status: VALID_A4_SEED81_PILOT_SEARCH
@@ -106,11 +107,11 @@ current_execution_entrypoint: scripts/run_experiment.py
 historical_replay_entrypoint: scripts/replay_experiment.py
 last_runtime_consolidation_milestone: math_v2_1_current_runtime_consolidation_v1
 runtime_consolidation_status: COMPLETED_ZERO_API_EQUIVALENCE
-current_execution_eligibility: GRADIENT_PATTERN_V4_ROLLING_MEMORY_FIXED_BUNDLE_ONLY
+current_execution_eligibility: V2_2_IMPLEMENTED_ZERO_API_ONLY
 runtime_consolidation_report: reports/math_v2_1_current_runtime_consolidation_v1_20261005
-current_runtime_source: 81dae30d355993ed22e6e3dd3f8a57ecfd9fc6f3
-pending_user_task_scope: null
-pending_user_task_sha256: 942dc2d9bcd8ec40f0373997a817b1158c6a6af57f624df119a294b19cc4fd86
+current_runtime_source: null
+pending_user_task_scope: V2_2_CODE_AND_ZERO_API_AUDIT_ONLY
+pending_user_task_sha256: 2db412f23108d2b03f155c349a4877cb254c13c5c6c977cb3fa0a0d881318630
 pending_operational_attempt_limit: 0
 pending_user_task_authorization_received: true
 previous_valid_canary_milestone: math_v2_1_a4_seed81_pattern_canary_v4
@@ -124,17 +125,17 @@ current_gradient_prompt: PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3
 future_execution_requires_new_frozen_single_use_scope: true
 gradient_raw_comparison_classification: MIXED
 pending_pilot_milestone: math_v2_1_gradient_pattern_seed81_pilot_v6
-pending_pilot_manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v6.yaml
-pending_pilot_attempt_id: math_v2_1_gradient_pattern_A4_seed81_pilot_attempt6
-pending_pilot_scope: experiments/protocols/math_v2_1_gradient_contract_recovery_v1/attempt6_user_scope.json
+pending_pilot_manifest: null
+pending_pilot_attempt_id: null
+pending_pilot_scope: null
 pending_pilot_user_task_sha256: 942dc2d9bcd8ec40f0373997a817b1158c6a6af57f624df119a294b19cc4fd86
-pending_pilot_user_authorization_received: true
-pending_pilot_status: CLOSED_AFTER_VALID_PILOT
-pending_pilot_operational_retry_limit: UNBOUNDED_STRICT_OPERATIONAL_INVALID_ONLY
+pending_pilot_user_authorization_received: false
+pending_pilot_status: NO_V2_2_EXECUTION_SCOPE
+pending_pilot_operational_retry_limit: 0
 pending_pilot_scientific_changes_authorized: false
 pending_pilot_validation_authorized: false
 pending_pilot_test_authorized: false
-pending_pilot_push_authorized: true
+pending_pilot_push_authorized: false
 last_pilot_milestone: math_v2_1_gradient_pattern_seed81_pilot_v6
 current_pilot_status: VALID_A4_SEED81_PILOT_SEARCH
 current_pilot_report: reports/math_v2_1_gradient_pattern_seed81_pilot_v6_execution_20261007
@@ -147,8 +148,8 @@ current_initial_condition_milestone: math_identical_initial_condition_v1
 current_initial_condition_status: VERIFIED_ZERO_API_INITIAL_CONDITION_CORRECTION
 current_initial_condition_report: reports/math_identical_initial_condition_v1_20261006
 current_initial_condition_execution_authorized: false
-current_offline_execution_profile: experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v6.json
-current_pilot_offline_execution_profile: experiments/execution_bindings/math_v2_1_gradient_pattern_pilot_offline_profile_v5.json
+current_offline_execution_profile: experiments/execution_bindings/math_v2_2_offline_profile_v1.json
+current_pilot_offline_execution_profile: null
 current_initial_condition_runtime_source: 52ada98b4735cfa7713de2c2f5437a94ce0bef0b
 current_gradient_prompt_identity: PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3
 current_pattern_guard_identity: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6
@@ -229,6 +230,16 @@ independent_capacity_diagnostic_status: VALID_DEVELOPMENT_DIAGNOSTIC
 independent_capacity_diagnostic_report: reports/math_v2_1_manual_prompt_capacity_probe_v1_20261007
 independent_capacity_diagnostic_A4_method_changed: false
 independent_capacity_diagnostic_authorization_closed: true
+current_transition_policy: initial_competence_target_or_team_progress_v3
+current_execution_blockers:
+- CURRENT_V2_2_EXECUTION_BINDING_NOT_FROZEN
+- TARGET_OR_TEAM_PROGRESS_PILOT_BOUND_NOT_FROZEN
+current_transition_audit_report: reports/transition_reachability_audit_v1_20261007
+current_transition_audit_status: COMPLETE_ZERO_API_FULL_SUITE_IO_LIMITATION
+current_transition_conformance: PASS_SCOPED_REGRESSIONS
+current_transition_full_suite: 1534_PASSED_2_SKIPPED_2_WINERROR5_FAILED_1468_DESELECTED
+finite_pilot_bound_frozen: false
+scientific_method_changed: true
 ```
 
 ## Experiment and engineering DAG
@@ -499,6 +510,7 @@ flowchart TD
     n284["math_v2_1_gradient_pattern_seed81_pilot_v6<br/>PILOT<br/>COMPLETED"]
     n285["math_v2_1_full_candidate_specialization_forensic_v1<br/>FORENSIC_AUDIT<br/>COMPLETED"]
     n286["math_v2_1_manual_prompt_capacity_probe_v1<br/>DIAGNOSTIC<br/>COMPLETED"]
+    n287["transition_reachability_audit_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -713,6 +725,8 @@ flowchart TD
   n282 -->|followup_of| n284
   n284 -->|followup_of| n285
   n284 -->|followup_of| n286
+  n284 -->|followup_of| n287
+  n286 -->|followup_of| n287
 ```
 
 ## Archived branches and unresolved evidence

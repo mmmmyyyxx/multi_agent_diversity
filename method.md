@@ -46,13 +46,13 @@ Historical paper text is preserved in
 do not define the active method. See [open questions](docs/research/OPEN_QUESTIONS.md)
 for changes requiring separate scientific identities and experiments.
 
-## Unified Team Prompt Search V2.1
+## Unified Team Prompt Search V2.2
 
 ```text
 Diagnosis -> Target -> Pattern diagnostic (optional)
     -> Variable evidence composition -> GEPA search
        (local survival and team candidate exposure are separate decisions)
-    -> TeamProbe -> promotion -> Full -> initial competence / strict team gain -> winner-only Shadow
+    -> TeamProbe -> promotion -> Full -> initial floor / target-or-team progress -> winner-only Shadow
     -> atomic transition -> Memory outcome update (optional)
 ```
 
@@ -74,7 +74,12 @@ one repair mechanism after the target; low concentration is diagnostic, never
 an intervention gate. The current explicit opt-in path uses per-example textual
 gradients followed by gradients-only semantic aggregation and the same support F;
 see [the V4 contract](docs/design/PATTERN_GRADIENT_DISCOVERY_V4.md). Other mechanisms do not fill repair evidence. Deployment
-permits incumbent member decline only above initial competence and with strict
-team gain. Memory distills actual edit strategies into private success and shared
+requires target >= immutable initial floor, Vote >= parent Vote and strict
+target OR team progress. Full ranking is team-first / target-second; incumbent
+member decline requires strict team gain. Memory distills actual edit strategies into private success and shared
 failure experience; unclassified edits produce no fabricated lesson. All claims
 remain bounded to the whole method unless a separate causal comparison is run.
+
+V2.2 real execution is HOLD pending its new binding and finite Pilot bound.
+Shadow keeps its existing safety rule; target-gain replication is a separate
+scientific decision. Historical V2.1 replay retains strict team gain.

@@ -1,9 +1,9 @@
 """V6 calibration receipt: exact parent settings, unchanged provider prompts."""
 from copy import deepcopy
 import json
-from .. import current_contract as identities
+from .. import legacy_current_contract_v21 as identities
 from ..search.schemas import SearchContractError
-from ..search.current_policy import CURRENT_POLICY_BUNDLE
+from ..search.legacy.current_policy_v21 import CURRENT_POLICY_BUNDLE
 from ..search.numeric_provenance import STRONG_REASONS, WARNING_REASONS
 from .data_freeze import file_hash
 
@@ -54,7 +54,7 @@ def validate_numeric_calibration(binding):
         raise SearchContractError('CURRENT_NUMERIC_CALIBRATION_AUTHORITY_MISMATCH')
     # Explicit receipt validation only. No historical runtime or old API scope
     # is imported into current execution, and the original V5 guard is preserved.
-    from .math_gradient_pattern_binding import MATHGradientPatternBinding
+    from .legacy.math_gradient_pattern_binding_v21 import MATHGradientPatternBinding
     blockers=MATHGradientPatternBinding(binding.root,parent).blockers()
     if blockers:
         if blockers[0].startswith('CURRENT_DATA_'):raise SearchContractError(blockers[0])

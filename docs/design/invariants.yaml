@@ -1,7 +1,21 @@
 schema_version: invariant_registry_v1
 invariants:
+- id: INV-INITIAL-COMPETENCE-003
+  description: V2.2 immutable initial floor, non-regressing Vote and strict target
+    OR team progress; Full team-first target-second ranking.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/target_or_team_transition.py
+  - multi_dataset_diverse_rl/search/current_composition.py
+  tests:
+  - tests/current/test_transition_reachability_v22.py
+  failure_refs:
+  - FAIL-IDENTICAL-INITIAL-STRICT-VOTE-DEADLOCK
+  critical: true
+  status: ACTIVE
 - id: INV-MATH-INITIAL-SYMMETRY-001
-  description: Five byte-identical minimal V1_2 initial prompts with distinct member IDs and independent Solver request/cache lanes; historical V1_1 is immutable.
+  description: Five byte-identical minimal V1_2 initial prompts with distinct member
+    IDs and independent Solver request/cache lanes; historical V1_1 is immutable.
   authority: docs/design/CURRENT_SPEC.md
   implementation_refs:
   - multi_dataset_diverse_rl/benchmarks/current_math_dependencies.py
@@ -13,31 +27,34 @@ invariants:
   critical: true
   status: ACTIVE
 - id: INV-INITIAL-COMPETENCE-002
-  description: Strict team deployment gains above immutable initial member competence; no incumbent monotonicity requirement.
-  authority: docs/design/CURRENT_SPEC.md
+  description: Strict team deployment gains above immutable initial member competence;
+    no incumbent monotonicity requirement.
+  authority: docs/archive/specs/unified_v2_1_current_spec.md
   implementation_refs:
-  - multi_dataset_diverse_rl/search/semantic_contract.py
-  - multi_dataset_diverse_rl/search/binary_runtime.py
+  - multi_dataset_diverse_rl/search/initial_competence_transition.py
   tests:
   - tests/test_unified_semantic_contract.py
   failure_refs:
   - FAIL-UNIFIED-METHOD-SEMANTIC-DRIFT
   critical: true
-  status: ACTIVE
+  status: HISTORICAL
 - id: INV-ALLOCATION-EVIDENCE-002
-  description: Observation-only allocation alignment and realized team gains; distribution is not efficacy or counterfactual proof.
+  description: Observation-only committed team/target gains and progress path; distribution
+    and competence changes do not establish causal efficacy.
   authority: docs/design/CURRENT_SPEC.md
   implementation_refs:
   - multi_dataset_diverse_rl/search/orchestrator.py
   - multi_dataset_diverse_rl/search/runtime_v2.py
   tests:
   - tests/test_unified_semantic_contract.py
+  - tests/current/test_transition_reachability_v22.py
   failure_refs:
   - FAIL-UNIFIED-METHOD-SEMANTIC-DRIFT
   critical: true
   status: ACTIVE
 - id: INV-MATH-ANSWER-DOMAIN-002
-  description: Versioned pinned mathematical payload parsing and directed correctness with strict marker extraction and container negative controls.
+  description: Versioned pinned mathematical payload parsing and directed correctness
+    with strict marker extraction and container negative controls.
   authority: docs/design/CURRENT_SPEC.md
   implementation_refs:
   - multi_dataset_diverse_rl/benchmarks/math_domain_v2.py
@@ -49,7 +66,8 @@ invariants:
   critical: true
   status: ACTIVE
 - id: INV-MATH-SCORABLE-REFERENCE-002
-  description: Isolated whole-source scorability eligibility precedes unchanged stratification; unscorable references fail before provider dispatch.
+  description: Isolated whole-source scorability eligibility precedes unchanged stratification;
+    unscorable references fail before provider dispatch.
   authority: docs/design/CURRENT_SPEC.md
   implementation_refs:
   - multi_dataset_diverse_rl/benchmarks/math_domain_prep.py
@@ -576,7 +594,8 @@ invariants:
   critical: true
   status: ACTIVE
 - id: INV-PATTERN-DIAGNOSTIC-001
-  description: One focus after WHO; separate all-residual DPR and coverage; structural description identity.
+  description: One focus after WHO; separate all-residual DPR and coverage; structural
+    description identity.
   authority: docs/design/CURRENT_SPEC.md
   implementation_refs:
   - multi_dataset_diverse_rl/search/patterns.py
@@ -588,7 +607,8 @@ invariants:
   critical: true
   status: ACTIVE
 - id: INV-LONG-TERM-MEMORY-001
-  description: Grounded Situation-Action-Outcome-Lesson; private successful strategy and shared failed strategy.
+  description: Grounded Situation-Action-Outcome-Lesson; private successful strategy
+    and shared failed strategy.
   authority: docs/design/CURRENT_SPEC.md
   implementation_refs:
   - multi_dataset_diverse_rl/search/memory.py
@@ -621,7 +641,8 @@ invariants:
   critical: true
   status: ACTIVE
 - id: INV-MATH-OUTPUT-INTERFACE-002
-  description: Versioned immutable response formatting stays outside mutable prompt evolution and inside request/cache identity.
+  description: Versioned immutable response formatting stays outside mutable prompt
+    evolution and inside request/cache identity.
   authority: docs/design/CURRENT_SPEC.md
   implementation_refs:
   - multi_dataset_diverse_rl/benchmarks/math_interface.py
@@ -633,7 +654,8 @@ invariants:
   critical: true
   status: ACTIVE
 - id: INV-ACCOUNTING-RESERVATION-002
-  description: User-bound operational per-transport reservations, monotonic full fallback charges and crash-safe single-owner accounting.
+  description: User-bound operational per-transport reservations, monotonic full fallback
+    charges and crash-safe single-owner accounting.
   authority: docs/design/CURRENT_SPEC.md
   implementation_refs:
   - multi_dataset_diverse_rl/governance/token_accounting.py
@@ -645,7 +667,8 @@ invariants:
   critical: true
   status: ACTIVE
 - id: INV-VALIDATION-ACCOUNTING-PREP-002
-  description: Isolated Validation byte metadata never exposes held-out content or scores to search and protects paired evaluation reserve.
+  description: Isolated Validation byte metadata never exposes held-out content or
+    scores to search and protects paired evaluation reserve.
   authority: docs/design/CURRENT_SPEC.md
   implementation_refs:
   - multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py

@@ -3,10 +3,17 @@
   "schema_version": "suite_classification_v1",
   "tests": [
     {
-      "path": "tests/current/test_manual_capacity_probe.py",
+      "path": "tests/current/test_transition_reachability_v22.py",
       "classification": "CURRENT_CONTRACT",
       "required_private_artifacts": [],
       "current_suite_included": true
+    },
+    {
+      "path": "tests/current/test_manual_capacity_probe.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": true,
+      "scope_note": "Frozen V2.1 and unchanged component compatibility checks; included to prevent semantic rewrite."
     },
     {
       "path": "tests/current/test_specialization_diagnostic.py",
@@ -16,27 +23,31 @@
     },
     {
       "path": "tests/current/test_partition_completion.py",
-      "classification": "CURRENT_CONTRACT",
+      "classification": "HISTORICAL_REPLAY",
       "required_private_artifacts": [],
-      "current_suite_included": true
+      "current_suite_included": true,
+      "scope_note": "Frozen V2.1 and unchanged component compatibility checks; included to prevent semantic rewrite."
     },
     {
       "path": "tests/current/test_operational_persistence.py",
-      "classification": "CURRENT_CONTRACT",
+      "classification": "HISTORICAL_REPLAY",
       "required_private_artifacts": [],
-      "current_suite_included": true
+      "current_suite_included": true,
+      "scope_note": "Frozen V2.1 and unchanged component compatibility checks; included to prevent semantic rewrite."
     },
     {
       "path": "tests/current/test_numeric_provenance.py",
-      "classification": "CURRENT_CONTRACT",
+      "classification": "HISTORICAL_REPLAY",
       "required_private_artifacts": [],
-      "current_suite_included": true
+      "current_suite_included": true,
+      "scope_note": "Frozen V2.1 and unchanged component compatibility checks; included to prevent semantic rewrite."
     },
     {
       "path": "tests/current/test_identical_initial_team.py",
-      "classification": "CURRENT_CONTRACT",
+      "classification": "HISTORICAL_REPLAY",
       "required_private_artifacts": [],
-      "current_suite_included": true
+      "current_suite_included": true,
+      "scope_note": "Frozen V2.1 and unchanged component compatibility checks; included to prevent semantic rewrite."
     },
     {
       "path": "tests/current/test_gradient_pilot_audit.py",
@@ -46,21 +57,24 @@
     },
     {
       "path": "tests/current/test_gradient_pilot.py",
-      "classification": "CURRENT_CONTRACT",
+      "classification": "HISTORICAL_REPLAY",
       "required_private_artifacts": [],
-      "current_suite_included": true
+      "current_suite_included": true,
+      "scope_note": "Frozen V2.1 and unchanged component compatibility checks; included to prevent semantic rewrite."
     },
     {
       "path": "tests/current/test_current_runtime.py",
-      "classification": "CURRENT_CONTRACT",
+      "classification": "HISTORICAL_REPLAY",
       "required_private_artifacts": [],
-      "current_suite_included": true
+      "current_suite_included": true,
+      "scope_note": "Frozen V2.1 and unchanged component compatibility checks; included to prevent semantic rewrite."
     },
     {
       "path": "tests/test_unified_semantic_contract.py",
-      "classification": "CURRENT_CONTRACT",
+      "classification": "HISTORICAL_REPLAY",
       "required_private_artifacts": [],
-      "current_suite_included": true
+      "current_suite_included": true,
+      "scope_note": "V2.1 strict gain and memory meaning retained verbatim."
     },
     {
       "path": "tests/governance/test_governance.py",
@@ -1294,9 +1308,10 @@
     },
     {
       "path": "tests/test_gradient_patterns.py",
-      "classification": "CURRENT_CONTRACT",
+      "classification": "HISTORICAL_REPLAY",
       "required_private_artifacts": [],
-      "current_suite_included": true
+      "current_suite_included": true,
+      "scope_note": "Frozen V2.1 and unchanged component compatibility checks; included to prevent semantic rewrite."
     },
     {
       "path": "tests/test_gradient_canary_diagnostic.py",
@@ -1306,21 +1321,24 @@
     },
     {
       "path": "tests/current/test_gradient_contract_recovery.py",
-      "classification": "CURRENT_CONTRACT",
+      "classification": "HISTORICAL_REPLAY",
       "required_private_artifacts": [],
-      "current_suite_included": true
+      "current_suite_included": true,
+      "scope_note": "Frozen V2.1 and unchanged component compatibility checks; included to prevent semantic rewrite."
     },
     {
       "path": "tests/current/test_numeric_calibration.py",
-      "classification": "CURRENT_CONTRACT",
+      "classification": "HISTORICAL_REPLAY",
       "required_private_artifacts": [],
-      "current_suite_included": true
+      "current_suite_included": true,
+      "scope_note": "Frozen V2.1 and unchanged component compatibility checks; included to prevent semantic rewrite."
     },
     {
       "path": "tests/current/test_pilot_terminal_execution.py",
-      "classification": "CURRENT_CONTRACT",
+      "classification": "HISTORICAL_REPLAY",
       "required_private_artifacts": [],
-      "current_suite_included": true
+      "current_suite_included": true,
+      "scope_note": "Frozen V2.1 and unchanged component compatibility checks; included to prevent semantic rewrite."
     }
   ]
 }

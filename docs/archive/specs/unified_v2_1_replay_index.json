@@ -1,0 +1,112 @@
+{
+  "schema_version": "versioned_semantic_replay_index_v1",
+  "source_commit": "c921c395a75320f02081eeae517be7a5f975d248",
+  "archives": [
+    {
+      "archive": "docs/archive/specs/unified_v2_1_current_spec.md",
+      "source_path": "docs/design/CURRENT_SPEC.md",
+      "source_commit": "c921c395a75320f02081eeae517be7a5f975d248",
+      "body_sha256": "f1eea5f86cf316a1f9e159ba6728194c969104b5d315e53c135bc16ae65b89e0",
+      "invariants": [
+        "INV-ACCOUNTING-RESERVATION-002",
+        "INV-AGGREGATION-001",
+        "INV-ALLOCATION-EVIDENCE-002",
+        "INV-BENCHMARK-CONTRACT-001",
+        "INV-BENCHMARK-EVALUATOR-001",
+        "INV-BENCHMARK-FIREWALL-001",
+        "INV-EVIDENCE-ROLE-001",
+        "INV-EXPERIMENT-FIREWALL-001",
+        "INV-EXPERIMENT-MODEL-001",
+        "INV-EXPERIMENT-SPLIT-001",
+        "INV-GEPA-DERIVED-001",
+        "INV-HISTORY-MEMORY-001",
+        "INV-INITIAL-COMPETENCE-002",
+        "INV-LONG-TERM-MEMORY-001",
+        "INV-MATH-ANSWER-DOMAIN-002",
+        "INV-MATH-INITIAL-SYMMETRY-001",
+        "INV-MATH-OUTPUT-INTERFACE-002",
+        "INV-MATH-REFERENCE-VALIDITY-001",
+        "INV-MATH-RUNTIME-BINDING-001",
+        "INV-MATH-SCORABLE-REFERENCE-002",
+        "INV-MULTIBENCH-READINESS-001",
+        "INV-PATTERN-DIAGNOSTIC-001",
+        "INV-REPLAY-001",
+        "INV-RESP-CAPABILITY-001",
+        "INV-SEARCH-TEAM-ADMISSION-DECOUPLING",
+        "INV-SEARCH-TRANSITION-001",
+        "INV-UNIFIED-FLOW-001",
+        "INV-VALIDATION-ACCOUNTING-PREP-002",
+        "INV-VARIABLE-EVIDENCE-001"
+      ]
+    },
+    {
+      "archive": "docs/archive/specs/unified_v2_1_method_semantic_contract.md",
+      "source_path": "docs/design/UNIFIED_METHOD_SEMANTIC_CONTRACT.md",
+      "source_commit": "c921c395a75320f02081eeae517be7a5f975d248",
+      "body_sha256": "8dc715930d4f7e8883723a201a93cd466a0829ddf0ace3d8b34ba1b613c56188",
+      "invariants": []
+    }
+  ],
+  "replay_modules": [
+    {
+      "original": "multi_dataset_diverse_rl/current_contract.py",
+      "replay": "multi_dataset_diverse_rl/legacy_current_contract_v21.py",
+      "source_commit": "c921c395a75320f02081eeae517be7a5f975d248",
+      "original_normalized_sha256": "a57ef3b9017cdebd022e85b762d00f07f2b2aedcb8062944bcb863145702926e",
+      "replay_normalized_sha256": "fc8a2b9926692f63b55d7e328bde223b3fe3e847f243df78fd4fd0ceb5279151",
+      "adaptation": "Namespace relocation and explicit frozen V2.1 identity/receipt imports only."
+    },
+    {
+      "original": "multi_dataset_diverse_rl/search/current_policy.py",
+      "replay": "multi_dataset_diverse_rl/search/legacy/current_policy_v21.py",
+      "source_commit": "c921c395a75320f02081eeae517be7a5f975d248",
+      "original_normalized_sha256": "47faa6e346354a557afb82516bdc74bab307f62f06927ac38a719d9305786f12",
+      "replay_normalized_sha256": "53198c13fe370794542752d1a732898d86a4e2a341f7d003963c238cfa54866e",
+      "adaptation": "Namespace relocation and explicit frozen V2.1 identity/receipt imports only."
+    },
+    {
+      "original": "multi_dataset_diverse_rl/search/current_composition.py",
+      "replay": "multi_dataset_diverse_rl/search/legacy/current_composition_v21.py",
+      "source_commit": "c921c395a75320f02081eeae517be7a5f975d248",
+      "original_normalized_sha256": "ea6b3a1616ededf713ca1f5e0ae796e17adbd127fa2aa0ce68c6221fb8563302",
+      "replay_normalized_sha256": "75a114855285f6f6d3bbfbb471fc0df30baa4ff3a236f10aa6786bccffa0fc5d",
+      "adaptation": "Namespace relocation and explicit frozen V2.1 identity/receipt imports only."
+    },
+    {
+      "original": "multi_dataset_diverse_rl/benchmarks/math_gradient_pattern_binding.py",
+      "replay": "multi_dataset_diverse_rl/benchmarks/legacy/math_gradient_pattern_binding_v21.py",
+      "source_commit": "c921c395a75320f02081eeae517be7a5f975d248",
+      "original_normalized_sha256": "cced12b0229f4128dfed34f0efcc4cc0ab69dfba94447add4bdfb30b9cc02371",
+      "replay_normalized_sha256": "aaad80030742d076802d20bc1ec71f92f35120ea85bdcf879e139e80b025cda8",
+      "adaptation": "Namespace relocation and explicit frozen V2.1 identity/receipt imports only."
+    },
+    {
+      "original": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py",
+      "replay": "multi_dataset_diverse_rl/benchmarks/legacy/current_math_domain_binding_v21.py",
+      "source_commit": "c921c395a75320f02081eeae517be7a5f975d248",
+      "original_normalized_sha256": "2cb46edbd862f719fc6a92254d1e3066a1db7fa2232a7fbcba8bbab2c9f2fd1f",
+      "replay_normalized_sha256": "1168b9bee2e5b7a1e0b6f42a2b431f0e64ae0ad580a3cd7c294eb2bf3cd67860",
+      "adaptation": "Namespace relocation and explicit frozen V2.1 identity/receipt imports only."
+    },
+    {
+      "original": "multi_dataset_diverse_rl/benchmarks/gradient_pilot_contract.py",
+      "replay": "multi_dataset_diverse_rl/benchmarks/legacy/gradient_pilot_contract_v21.py",
+      "source_commit": "c921c395a75320f02081eeae517be7a5f975d248",
+      "original_normalized_sha256": "72480e801e3aeb6b76dd38179b4198e2ef146a4801cb9bcfbefcd9e62605804d",
+      "replay_normalized_sha256": "deae2e85b9e17e34708d7bb88929c452893543f911fbee6bacecba5b2b5b2dd6",
+      "adaptation": "Namespace relocation and explicit frozen V2.1 identity/receipt imports only."
+    },
+    {
+      "original": "multi_dataset_diverse_rl/governance/unified_execution.py",
+      "replay": "multi_dataset_diverse_rl/governance/legacy/current_unified_execution_v21.py",
+      "source_commit": "c921c395a75320f02081eeae517be7a5f975d248",
+      "original_normalized_sha256": "f48b4b90573137370d6464e0fe50d3df6289d3aacdfd4e97805ec2b4af1d9fbd",
+      "replay_normalized_sha256": "8b19239e585368509724f654b2220ff5d46aa8cc1546c10363f05a632fcd7270",
+      "adaptation": "Namespace relocation and explicit frozen V2.1 identity/receipt imports only."
+    }
+  ],
+  "transition_invariant": "INV-INITIAL-COMPETENCE-002",
+  "historical_transition": "initial_competence_team_gain_v2",
+  "new_transition": "initial_competence_target_or_team_progress_v3",
+  "original_frozen_source_required_for_exact_startup_replay": true
+}

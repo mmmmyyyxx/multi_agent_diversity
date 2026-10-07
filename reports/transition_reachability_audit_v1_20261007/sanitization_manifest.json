@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "findings": [],
+  "real_content_published": false,
+  "policy": "Only hashes, counters, categories and synthetic metrics; no questions, answers, raw responses, endpoints or host paths."
+}

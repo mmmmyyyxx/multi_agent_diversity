@@ -1,0 +1,22 @@
+{
+  "base_sha": "c921c395a75320f02081eeae517be7a5f975d248",
+  "comparison": "Exact raw blob first; CRLF-to-LF fallback for Git text checkout",
+  "checked_files": 4497,
+  "scope_counts": {
+    "data": 10,
+    "docs": 10,
+    "experiments": 246,
+    "reports": 4231
+  },
+  "comparison_counts": {
+    "GIT_TEXT_CRLF_TO_LF": 1569,
+    "EXACT_RAW": 2928
+  },
+  "changed_files": [],
+  "inventory_sha256": "f696b2917fe0b4ba82884b3aee39af8c97037c3c91c5765b2eaa5fcc84c1039e",
+  "generated_index_exceptions": [
+    "reports/INDEX.md",
+    "reports/index.json"
+  ],
+  "preexisting_untracked_evidence_preserved": true
+}

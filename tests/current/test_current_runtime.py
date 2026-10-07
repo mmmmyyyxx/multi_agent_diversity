@@ -1,3 +1,4 @@
+# V2.1 frozen replay assertions; V2.2 current conformance is tested separately.
 """Current eligibility, explicit replay boundaries and dependency conformance."""
 import ast
 from dataclasses import asdict, replace
@@ -7,11 +8,11 @@ from types import SimpleNamespace as NS
 
 import pytest
 
-from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
+from multi_dataset_diverse_rl.benchmarks.legacy.current_math_domain_binding_v21 import execution_binding
 from multi_dataset_diverse_rl.governance.current_dependencies import current_dependency_graph
-from multi_dataset_diverse_rl.search.current_composition import build_current_team_prompt_search
+from multi_dataset_diverse_rl.search.legacy.current_composition_v21 import build_current_team_prompt_search
 from multi_dataset_diverse_rl.search.current_layer1 import CurrentLayer1Config, CurrentOptimizer, CurrentEngine
-from multi_dataset_diverse_rl.search.current_policy import CURRENT_POLICY_BUNDLE, CurrentPolicyBundle
+from multi_dataset_diverse_rl.search.legacy.current_policy_v21 import CURRENT_POLICY_BUNDLE, CurrentPolicyBundle
 from multi_dataset_diverse_rl.search.schemas import SearchContractError
 
 ROOT=Path(__file__).resolve().parents[2]
@@ -60,7 +61,7 @@ def test_missing_gradient_provider_has_no_silent_fallback():
 
 
 def test_missing_memory_provider_has_no_silent_fallback(monkeypatch):
-    from multi_dataset_diverse_rl.search import current_composition as composition
+    from multi_dataset_diverse_rl.search.legacy import current_composition_v21 as composition
     monkeypatch.setattr(composition,'BinaryTeamStateStore',lambda **kw:object())
     monkeypatch.setattr(composition,'StructuredRollingRiskMemoryV4',lambda **kw:None)
     method=execution_binding(ROOT,contract()).method('A4')
@@ -110,7 +111,7 @@ def test_legacy_implementation_does_not_determine_current_source_identity():
 
 
 def test_current_manifest_rejects_old_engine_without_schema_migration():
-    from multi_dataset_diverse_rl.governance.unified_execution import preexecution_manifest,bound_preflight
+    from multi_dataset_diverse_rl.governance.legacy.current_unified_execution_v21 import preexecution_manifest,bound_preflight
     m=preexecution_manifest(ROOT,source_sha='0'*40,frozen=False,binding_path=PROFILE,experiment_id='synthetic_current')
     m['search_engine_identity']='gepa_team_candidate_exposure_v2'
     result=bound_preflight(ROOT,m)
@@ -137,7 +138,7 @@ def test_amended_treatment_identity_and_n_plus_one_ceiling_are_frozen():
 
 
 def test_flat_current_authorization_scope_matches_frozen_gradient_scope():
-    from multi_dataset_diverse_rl.governance.unified_execution import execution_scope
+    from multi_dataset_diverse_rl.governance.legacy.current_unified_execution_v21 import execution_scope
     from multi_dataset_diverse_rl.governance.legacy.unified_execution import execution_scope as previous_scope
     manifest=dict(source_sha='0'*40,preregistration_identity='0'*64,execution_binding={'sha256':'0'*64})
     historical=json.loads((ROOT/'experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v2.json').read_bytes())

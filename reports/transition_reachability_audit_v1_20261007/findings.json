@@ -1,0 +1,65 @@
+{
+  "occurrence_bug_classification": "E for confirmed/coupled issues; A-D locations in occurrence inventory",
+  "findings": [
+    {
+      "classification": "CONFIRMED BUG",
+      "path": "multi_dataset_diverse_rl/search/initial_competence_transition.py",
+      "line": 55,
+      "description": "Strict team gate blocks first target-only repair with four fixed same-class wrong peers."
+    },
+    {
+      "classification": "COUPLED BUG",
+      "path": "multi_dataset_diverse_rl/search/target_or_team_transition.py",
+      "line": 64,
+      "description": "Full winner needs target competence second once equal-Vote target progress is legal."
+    },
+    {
+      "classification": "COUPLED BUG",
+      "path": "multi_dataset_diverse_rl/benchmarks/legacy/gradient_pilot_contract_v21.py",
+      "line": 50,
+      "description": "N-commit Pilot proof is historical only; current derivation fails closed."
+    },
+    {
+      "classification": "COUPLED BUG",
+      "path": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py",
+      "line": 9,
+      "description": "New identity/default required before historical executor construction."
+    },
+    {
+      "classification": "COUPLED BUG",
+      "path": "multi_dataset_diverse_rl/governance/source_identity.py",
+      "line": 98,
+      "description": "Current scientific hash binds V3 normative contract and excludes historical receipt constructors."
+    },
+    {
+      "classification": "STALE ASSUMPTION",
+      "path": "multi_dataset_diverse_rl/search/orchestrator.py",
+      "line": 332,
+      "description": "Team gain alone is incomplete success telemetry; target gain and progress path added."
+    },
+    {
+      "classification": "DESIGN CHOICE — NOT CHANGED",
+      "path": "multi_dataset_diverse_rl/search/evaluation.py",
+      "line": 87,
+      "description": "Positive target signals can promote under unchanged catastrophe guards and ceiling two."
+    },
+    {
+      "classification": "DESIGN CHOICE — NOT CHANGED",
+      "path": "multi_dataset_diverse_rl/search/private_gate.py",
+      "line": 17,
+      "description": "Winner-only Shadow remains safety rather than target-gain replication."
+    },
+    {
+      "classification": "DESIGN CHOICE — NOT CHANGED",
+      "path": "multi_dataset_diverse_rl/search/rolling_risk_memory.py",
+      "line": 185,
+      "description": "Completed atomic commit is private Memory success."
+    },
+    {
+      "classification": "DESIGN CHOICE — NOT CHANGED",
+      "path": "multi_dataset_diverse_rl/search/policies.py",
+      "line": 238,
+      "description": "Any completed commit resets no-commit patience."
+    }
+  ]
+}

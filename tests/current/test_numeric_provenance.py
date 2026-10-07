@@ -1,3 +1,4 @@
+# V2.1 frozen replay assertions; V2.2 current conformance is tested separately.
 """Admissibility positives, leakage negatives and frozen amendment controls."""
 from copy import deepcopy
 import json
@@ -6,7 +7,7 @@ from types import SimpleNamespace as NS
 
 import pytest
 from multi_dataset_diverse_rl import versions as historical, current_contract as current
-from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
+from multi_dataset_diverse_rl.benchmarks.legacy.current_math_domain_binding_v21 import execution_binding
 from multi_dataset_diverse_rl.search.numeric_provenance import numeric_content_leaked,numeric_content_leaked_v5
 from multi_dataset_diverse_rl.search.textual_gradients import validate_gradient,GRADIENT_PROMPT,POLICY
 from multi_dataset_diverse_rl.search.schemas import SearchContractError
@@ -95,7 +96,7 @@ def test_guard_prompt_identities_and_single_generation_are_versioned():
 
 def test_fresh_pilot_preserves_all_other_fields_and_closes_old_treatment():
     c=json.loads((ROOT/BP).read_bytes());parent=json.loads((ROOT/c['numeric_parent_binding_path']).read_bytes())
-    from multi_dataset_diverse_rl.benchmarks.math_gradient_pattern_binding import MATHGradientPatternBinding
+    from multi_dataset_diverse_rl.benchmarks.legacy.math_gradient_pattern_binding_v21 import MATHGradientPatternBinding
     assert not MATHGradientPatternBinding(ROOT,c).blockers()
     with pytest.raises(SearchContractError,match='CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN'):execution_binding(ROOT,c)
     for key in ('models','provider_bounds','decoding','memory_limits','shared_risk_policy',
@@ -119,5 +120,5 @@ def test_fresh_pilot_preserves_all_other_fields_and_closes_old_treatment():
     ('cache_namespace','old_attempt'),('execution_phase','canary'),('pilot_observation_policy','unknown')])
 def test_treatment_mutations_fail_before_dispatch(key,value):
     c=json.loads((ROOT/BP).read_bytes());c[key]=value
-    from multi_dataset_diverse_rl.benchmarks.math_gradient_pattern_binding import MATHGradientPatternBinding
+    from multi_dataset_diverse_rl.benchmarks.legacy.math_gradient_pattern_binding_v21 import MATHGradientPatternBinding
     assert MATHGradientPatternBinding(ROOT,c).blockers()[0].startswith('CURRENT_NUMERIC_ADMISSIBILITY_')

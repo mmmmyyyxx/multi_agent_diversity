@@ -1,7 +1,8 @@
 schema_version: failure_registry_v1
 failures:
 - failure_id: FAIL-GRADIENT-DIAGNOSTIC-ARCHIVE-IDENTITY-FIELD
-  title: Matched raw diagnostic confused archive schema identity with discovery policy identity
+  title: Matched raw diagnostic confused archive schema identity with discovery policy
+    identity
   status: MITIGATED
   lifecycle: MITIGATED
   first_observed: math_v2_1_gradient_pattern_seed81_canary_v2
@@ -12,22 +13,28 @@ failures:
   - reports/math_v2_1_gradient_pattern_seed81_canary_v2_execution_20261006/diagnostic_preflight_failure.json
   - reports/math_v2_1_gradient_pattern_seed81_canary_v3_execution_20261006/matched_raw_pattern_diagnostic.json
   root_cause_status: CONFIRMED_IMPLEMENTATION_MISMATCH
-  symptom: Pre-provider identity failure despite exact archived prompt hash; zero diagnostic calls.
+  symptom: Pre-provider identity failure despite exact archived prompt hash; zero
+    diagnostic calls.
   evidence_level: observed
-  mitigation: Check archive schema and discovery policy fields separately; preserve frozen prompts and evidence.
-  required_resolution: Check actual schema identity and discovery policy fields separately; fake transport regression
-    uses the real frozen archive representation; fresh source and namespace.
-  forbidden_inference: Do not alter scientific prompts, guard thresholds, partition semantics, sample selection,
-    budgets or regeneration policy to repair this metadata error.
+  mitigation: Check archive schema and discovery policy fields separately; preserve
+    frozen prompts and evidence.
+  required_resolution: Check actual schema identity and discovery policy fields separately;
+    fake transport regression uses the real frozen archive representation; fresh source
+    and namespace.
+  forbidden_inference: Do not alter scientific prompts, guard thresholds, partition
+    semantics, sample selection, budgets or regeneration policy to repair this metadata
+    error.
   regression_tests:
   - tests/test_gradient_canary_diagnostic.py
   latest_repair: math_v2_1_gradient_pattern_seed81_canary_v3
   latest_repair_status: FULL_CURRENT_AND_FRESH_MATCHED_DIAGNOSTIC_PASS
   resolution_evidence: reports/math_v2_1_gradient_pattern_seed81_canary_v3_execution_20261006/matched_raw_pattern_diagnostic.json
-  resolution_note: Actual archived schema/discovery fields checked separately; 12 focused regressions and full current
-    suite passed. One real diagnostic transport completed and its partition parsed without modifying active evidence.
+  resolution_note: Actual archived schema/discovery fields checked separately; 12
+    focused regressions and full current suite passed. One real diagnostic transport
+    completed and its partition parsed without modifying active evidence.
 - failure_id: FAIL-GRADIENT-COORDINATED-ACTOR-ABSTRACTION-COVERAGE
-  title: Coordinated participant constraint bypassed the specific-content abstraction guard
+  title: Coordinated participant constraint bypassed the specific-content abstraction
+    guard
   status: MITIGATED
   first_observed: math_v2_1_gradient_pattern_seed81_canary_v1
   affected_components:
@@ -37,26 +44,32 @@ failures:
   - reports/math_v2_1_gradient_pattern_seed81_canary_v1_20261006/gradient_semantics_audit.json
   - reports/math_v2_1_gradient_pattern_seed81_canary_v2_20261006/zero_api_forensic.json
   root_cause_status: CONFIRMED_IMPLEMENTATION_COVERAGE_GAP
-  symptom: A copied participant literal in a coordinated refusal-to-participate context passed V3.
-  forbidden_inference: Do not accept example entities, widen the hard 400-character gradient limit, add regeneration,
-    or infer a hidden reasoning trace to resolve contract noncompliance.
-  required_resolution: Repair supported coordinated-actor provenance; minimally clarify the single-call Gradient
-    prompt; freeze fresh identities and run full current tests before separately authorized fresh Canary.
+  symptom: A copied participant literal in a coordinated refusal-to-participate context
+    passed V3.
+  forbidden_inference: Do not accept example entities, widen the hard 400-character
+    gradient limit, add regeneration, or infer a hidden reasoning trace to resolve
+    contract noncompliance.
+  required_resolution: Repair supported coordinated-actor provenance; minimally clarify
+    the single-call Gradient prompt; freeze fresh identities and run full current
+    tests before separately authorized fresh Canary.
   regression_tests:
   - tests/test_gradient_patterns.py
   evidence_format: hash_bound_private_wire_and_synthetic_zero_api_regressions
   evidence_level: observed
-  mitigation: V4 current guard adds coordinated participation constraints; V3 replay helper remains unchanged.
+  mitigation: V4 current guard adds coordinated participation constraints; V3 replay
+    helper remains unchanged.
   lifecycle: OPEN
   latest_repair: math_v2_1_gradient_pattern_seed81_canary_v2
   latest_repair_status: ZERO_API_VERIFICATION_PENDING_FRESH_CANARY_NOT_AUTHORIZED
-  latest_repair_limits: Bounded literal provenance; comprehensive abstraction quality requires owner semantic audit.
+  latest_repair_limits: Bounded literal provenance; comprehensive abstraction quality
+    requires owner semantic audit.
   latest_real_verification: math_v2_1_gradient_pattern_seed81_canary_v3
   latest_real_evidence: reports/math_v2_1_gradient_pattern_seed81_canary_v3_execution_20261006/gradient_outputs_audit.json
   latest_real_contract_status: ALL_OBSERVED_GRADIENTS_PASS_BOUNDED_CANARY_SCOPE
   latest_real_semantic_status: PASS
 - failure_id: FAIL-UNIFIED-METHOD-SEMANTIC-DRIFT
-  title: Historical V2 implementation differs from the newly supplied method semantic contract
+  title: Historical V2 implementation differs from the newly supplied method semantic
+    contract
   status: MITIGATED
   first_observed: unified_semantic_contract_v2_1
   affected_components:
@@ -64,19 +77,19 @@ failures:
   - focused_evidence
   - team_transition
   - experience_memory
-  symptom: Assigned-only DPR, other-repair technical backfill, incumbent monotonicity and fixed-template memory
-    contradict the current semantic contract.
+  symptom: Assigned-only DPR, other-repair technical backfill, incumbent monotonicity
+    and fixed-template memory contradict the current semantic contract.
   evidence:
   - reports/unified_semantic_contract_v2_1_20261002
   evidence_level: observed
-  root_cause_status: Historical policy definitions were narrower or different than the user-authored current research
-    contract.
-  forbidden_inference: Fake conformance does not prove real efficacy, memory transfer benefit, counterfactual allocation
-    optimality or independent component causality.
+  root_cause_status: Historical policy definitions were narrower or different than
+    the user-authored current research contract.
+  forbidden_inference: Fake conformance does not prove real efficacy, memory transfer
+    benefit, counterfactual allocation optimality or independent component causality.
   regression_tests:
   - tests/test_unified_semantic_contract.py
-  mitigation: Fresh V2.1 policies and runtime identity; old frozen V2 artifacts preserved; new real execution requires
-    fresh binding and authorization.
+  mitigation: Fresh V2.1 policies and runtime identity; old frozen V2 artifacts preserved;
+    new real execution requires fresh binding and authorization.
   lifecycle: MITIGATED
   lifecycle_note: ZERO_API_CONFORMANCE_ONLY; REAL_EXECUTION_AND_EFFICACY_UNVERIFIED
   resolved_by: unified_semantic_contract_v2_1
@@ -98,7 +111,8 @@ failures:
   - tests/test_repairability_adjusted_v13.py
   mitigation: Preserve unique routing, wait accounting, and explicit target telemetry.
   lifecycle: HISTORICAL
-  lifecycle_note: Historical observed facts retained; not an active Unified scientific decision.
+  lifecycle_note: Historical observed facts retained; not an active Unified scientific
+    decision.
 - failure_id: FAIL-LOW-UPDATE-THROUGHPUT
   title: Low feasible-update throughput
   status: DIAGNOSED
@@ -111,13 +125,15 @@ failures:
   - reports/v17_failure_decomposition_20260820
   - reports/v18_hybrid_online_accumulation_pilot_20260822
   evidence_level: observed
-  root_cause_status: Multiple upstream bottlenecks exist; no single universal cause is established.
+  root_cause_status: Multiple upstream bottlenecks exist; no single universal cause
+    is established.
   forbidden_inference: Throughput improvement alone is not quality or final Vote improvement.
   regression_tests:
   - tests/test_final_method_pipeline.py
   mitigation: Record each funnel layer separately and preserve compute parity.
   lifecycle: HISTORICAL
-  lifecycle_note: Historical observed facts retained; not an active Unified scientific decision.
+  lifecycle_note: Historical observed facts retained; not an active Unified scientific
+    decision.
 - failure_id: FAIL-PRE-STUDENT-CRITIC-GATE
   title: Pre-Student semantic Critic gate bottleneck
   status: DIAGNOSED
@@ -131,20 +147,25 @@ failures:
   - reports/gepa_critic_gate_failure_audit_20260831
   - reports/v18_shadow_raw_critic_pilot_20260902
   evidence_level: causally_supported
-  root_cause_status: Shadow continuation established feasible candidate-supply loss on fixed parents.
-  forbidden_inference: Do not infer that removing the Critic improves online or validation Vote.
+  root_cause_status: Shadow continuation established feasible candidate-supply loss
+    on fixed parents.
+  forbidden_inference: Do not infer that removing the Critic improves online or validation
+    Vote.
   regression_tests:
   - tests/test_v18_shadow_raw_critic_pilot.py
-  mitigation: Candidate pipeline alternatives require prospective online validation before promotion.
+  mitigation: Candidate pipeline alternatives require prospective online validation
+    before promotion.
   lifecycle: HISTORICAL
-  lifecycle_note: Historical observed facts retained; not an active Unified scientific decision.
+  lifecycle_note: Historical observed facts retained; not an active Unified scientific
+    decision.
 - failure_id: FAIL-CANDIDATE-SELECTION-NOT-PRIMARY
   title: Historical winner selection is not the primary harmful-pool bottleneck
   status: NOT_PRIMARY
   first_observed: gepa_candidate_selection_audit
   affected_components:
   - candidate_ranking
-  symptom: GEPA-style frontier replay retained the historical winner in key harmful pools.
+  symptom: GEPA-style frontier replay retained the historical winner in key harmful
+    pools.
   evidence:
   - reports/gepa_candidate_breadth_audit_20260831
   evidence_level: observed
@@ -154,7 +175,8 @@ failures:
   - tests/test_gepa_candidate_breadth_pilot.py
   mitigation: Keep ranking fixed while testing candidate-supply interventions.
   lifecycle: HISTORICAL
-  lifecycle_note: Historical observed facts retained; not an active Unified scientific decision.
+  lifecycle_note: Historical observed facts retained; not an active Unified scientific
+    decision.
 - failure_id: FAIL-FEASIBLE-SET-QUALITY
   title: Feasible-set candidate quality gap
   status: DIAGNOSED
@@ -167,13 +189,16 @@ failures:
   - reports/v18_writeback_quality_diagnostic_20260824
   - reports/gepa_candidate_breadth_audit_20260831
   evidence_level: observed
-  root_cause_status: Candidate breadth remained untested where the pre-Student gate blocked generation.
-  forbidden_inference: Do not label proposal breadth ineffective when Student was never reached.
+  root_cause_status: Candidate breadth remained untested where the pre-Student gate
+    blocked generation.
+  forbidden_inference: Do not label proposal breadth ineffective when Student was
+    never reached.
   regression_tests:
   - tests/test_gepa_candidate_breadth_pilot.py
   mitigation: Separate reach, validity, feasibility, and selection in the funnel.
   lifecycle: HISTORICAL
-  lifecycle_note: Historical observed facts retained; not an active Unified scientific decision.
+  lifecycle_note: Historical observed facts retained; not an active Unified scientific
+    decision.
 - failure_id: FAIL-WRITEBACK-TRANSFER
   title: Train-safe write-back can transfer poorly to validation
   status: DIAGNOSED
@@ -186,13 +211,15 @@ failures:
   - reports/v18_writeback_quality_diagnostic_20260824
   - reports/v18_trajectory_gain_loss_decomposition_20260824
   evidence_level: observed
-  root_cause_status: Transfer and trajectory overwrite are measured; a train-only discriminator is not established.
+  root_cause_status: Transfer and trajectory overwrite are measured; a train-only
+    discriminator is not established.
   forbidden_inference: Do not use validation outcomes inside candidate acceptance.
   regression_tests:
   - tests/test_test_split_isolation.py
   mitigation: Report train-to-validation transfer separately from write-back legality.
   lifecycle: HISTORICAL
-  lifecycle_note: Historical observed facts retained; not an active Unified scientific decision.
+  lifecycle_note: Historical observed facts retained; not an active Unified scientific
+    decision.
 - failure_id: FAIL-TEACHER-PRESERVATION-PATTERN
   title: Stable Teacher preservation-rule safety marker pattern
   status: DIAGNOSED
@@ -200,35 +227,44 @@ failures:
   affected_components:
   - teacher_schema
   - preservation_rule
-  symptom: Historical deterministic markers concentrate in preservation_rule and repeat after retry.
+  symptom: Historical deterministic markers concentrate in preservation_rule and repeat
+    after retry.
   evidence:
   - reports/v18_historical_teacher_safety_failure_audit_20260902
   evidence_level: observed
-  root_cause_status: Pattern is stable but does not discriminate canonical Critic pass from block.
+  root_cause_status: Pattern is stable but does not discriminate canonical Critic
+    pass from block.
   forbidden_inference: Do not infer that preservation_rule alone causes semantic rejection.
   regression_tests:
   - tests/test_v18_historical_teacher_safety.py
-  mitigation: Record field-local safety categories prospectively before changing the schema.
+  mitigation: Record field-local safety categories prospectively before changing the
+    schema.
   lifecycle: HISTORICAL
-  lifecycle_note: Historical observed facts retained; not an active Unified scientific decision.
+  lifecycle_note: Historical observed facts retained; not an active Unified scientific
+    decision.
 - failure_id: FAIL-DETERMINISTIC-SAFETY-OVERBROAD-RISK
   title: Deterministic safety classifier may over-block benign wording
   status: OPEN
   first_observed: safety_only_prospective_pilot
   affected_components:
   - deterministic_hard_gate
-  symptom: A strict rule can classify preservation wording as output-contract or copying risk.
+  symptom: A strict rule can classify preservation wording as output-contract or copying
+    risk.
   evidence:
   - reports/v18_safety_only_critic_pilot_20260902
   - reports/v18_teacher_critic_pipeline_ablation_20260902
   evidence_level: hypothesized
-  root_cause_status: Historical regression is low for the selected candidate gate, but broader sufficiency is unproven.
-  forbidden_inference: Do not call the deterministic gate generally safe from six passing prospective plans.
+  root_cause_status: Historical regression is low for the selected candidate gate,
+    but broader sufficiency is unproven.
+  forbidden_inference: Do not call the deterministic gate generally safe from six
+    passing prospective plans.
   regression_tests:
   - tests/test_v18_teacher_critic_pipeline.py
-  mitigation: Keep conservative lexical rules and historical false-positive regression bounds.
+  mitigation: Keep conservative lexical rules and historical false-positive regression
+    bounds.
   lifecycle: HISTORICAL
-  lifecycle_note: Historical observed facts retained; not an active Unified scientific decision.
+  lifecycle_note: Historical observed facts retained; not an active Unified scientific
+    decision.
 - failure_id: FAIL-SEMANTIC-CRITIC-OVERFILTERING
   title: Semantic Critic removes some useful fixed-parent opportunities
   status: DIAGNOSED
@@ -236,38 +272,46 @@ failures:
   affected_components:
   - semantic_critic
   - candidate_supply
-  symptom: Canonically rejected plans produced feasible candidates under no-commit shadow continuation.
+  symptom: Canonically rejected plans produced feasible candidates under no-commit
+    shadow continuation.
   evidence:
   - reports/v18_shadow_raw_critic_pilot_20260902
   - reports/v18_teacher_critic_pipeline_ablation_20260902
   evidence_level: causally_supported
-  root_cause_status: Fixed-parent candidate-supply effect is supported; trajectory efficacy is untested.
-  forbidden_inference: Do not claim Critic removal improves Vote, test, or online trajectories.
+  root_cause_status: Fixed-parent candidate-supply effect is supported; trajectory
+    efficacy is untested.
+  forbidden_inference: Do not claim Critic removal improves Vote, test, or online
+    trajectories.
   regression_tests:
   - tests/test_v18_shadow_raw_critic_pilot.py
   - tests/test_v18_teacher_critic_pipeline.py
   mitigation: Candidate C remains selected only for future online validation.
   lifecycle: HISTORICAL
-  lifecycle_note: Historical observed facts retained; not an active Unified scientific decision.
+  lifecycle_note: Historical observed facts retained; not an active Unified scientific
+    decision.
 - failure_id: FAIL-GEPA-SERIAL-EVALUATION
   title: GEPA synchronous local evaluation serializes Solver batches
   status: MITIGATED
   lifecycle: MITIGATED
-  lifecycle_note: MITIGATED_IMPLEMENTATION; REAL_PERFORMANCE_UNVERIFIED. Fake equivalence and concurrency only.
+  lifecycle_note: MITIGATED_IMPLEMENTATION; REAL_PERFORMANCE_UNVERIFIED. Fake equivalence
+    and concurrency only.
   first_observed: formal_v3_attempt3_seed80_preliminary
   affected_components:
   - gepa_adapter
   - local_solver_evaluation
-  symptom: Old GEPA local adapter had effective concurrency 1 despite a higher configured semaphore.
+  symptom: Old GEPA local adapter had effective concurrency 1 despite a higher configured
+    semaphore.
   evidence:
   - reports/formal_v3_attempt4_concurrent_execution_preexecution_20260930
   evidence_level: observed
-  root_cause_status: Serial batch submission replaced by ordered existing gather path; deterministic fake equivalence
-    passed.
-  forbidden_inference: Do not infer real throughput, efficacy or API authorization from fake concurrency calibration.
+  root_cause_status: Serial batch submission replaced by ordered existing gather path;
+    deterministic fake equivalence passed.
+  forbidden_inference: Do not infer real throughput, efficacy or API authorization
+    from fake concurrency calibration.
   regression_tests:
   - tests/test_formal_v3_concurrent_local_batch.py
-  mitigation: Use the versioned current batch path only within separately frozen and authorized execution.
+  mitigation: Use the versioned current batch path only within separately frozen and
+    authorized execution.
 - failure_id: FAIL-MATH-CANARY-FINAL-MARKER
   title: MATH canary initial Solver response omitted final marker
   status: MITIGATED
@@ -275,19 +319,22 @@ failures:
   affected_components:
   - solver_output_contract
   - math_parser
-  symptom: First qwen3-8b response contained zero FINAL_ANSWER marker lines; frozen parser rejected without regeneration.
+  symptom: First qwen3-8b response contained zero FINAL_ANSWER marker lines; frozen
+    parser rejected without regeneration.
   evidence:
   - reports/math_v2_a1_seed81_real_canary_v1_20261002
   - reports/math_v2_solver_interface_repair_v1_2_20261002
   evidence_level: observed
-  root_cause_status: 'R2 proven by exact request reconstruction: system layer contained one marker contract; response
-    contained zero markers. Underlying model noncompliance cause remains unproven.'
-  forbidden_inference: Do not infer mathematical correctness, search effectiveness or generalization from this aborted
-    canary.
+  root_cause_status: 'R2 proven by exact request reconstruction: system layer contained
+    one marker contract; response contained zero markers. Underlying model noncompliance
+    cause remains unproven.'
+  forbidden_inference: Do not infer mathematical correctness, search effectiveness
+    or generalization from this aborted canary.
   regression_tests:
   - tests/test_math_preexecution.py
-  mitigation: Versioned immutable formatting interface and request/cache identity under zero-API tests. Real compliance
-    unverified; parser unchanged. No old-attempt continuation.
+  mitigation: Versioned immutable formatting interface and request/cache identity
+    under zero-API tests. Real compliance unverified; parser unchanged. No old-attempt
+    continuation.
   lifecycle: MITIGATED
   lifecycle_note: ZERO_API_INTERFACE_CONFORMANCE_ONLY; REAL_OUTPUT_ADHERENCE_UNVERIFIED
   resolved_by: math_v2_solver_interface_repair_v1_2
@@ -298,20 +345,23 @@ failures:
   affected_components:
   - provider_accounting_contract
   - cumulative_token_budget
-  symptom: Existing call-count ceilings and output request limit do not establish a reliable total billable-token
-    bound before each transport.
+  symptom: Existing call-count ceilings and output request limit do not establish
+    a reliable total billable-token bound before each transport.
   evidence:
   - reports/math_v2_autonomous_accounting_preflight_v1_20261002
   evidence_level: observed
-  root_cause_status: Frozen lwj binding has no tokenizer identity, framing bound, alias accounting binding or failed-request
-    accounting contract. Validation required reserve is also unresolved from metadata alone.
-  forbidden_inference: Do not infer provider billing bounds from upstream model names, successful historical usage
-    or an arbitrary characters-per-token multiplier. No efficacy was observed.
+  root_cause_status: Frozen lwj binding has no tokenizer identity, framing bound,
+    alias accounting binding or failed-request accounting contract. Validation required
+    reserve is also unresolved from metadata alone.
+  forbidden_inference: Do not infer provider billing bounds from upstream model names,
+    successful historical usage or an arbitrary characters-per-token multiplier. No
+    efficacy was observed.
   regression_tests:
   - tests/test_math_token_accounting.py
-  mitigation: User explicitly authorizes RESERVATION_V2 operational byte-plus-margin accounting, full fallback charge
-    and isolated Validation length preparation. Historical STOP evidence remains immutable. New real calls require
-    fresh source and exact attempt admission.
+  mitigation: User explicitly authorizes RESERVATION_V2 operational byte-plus-margin
+    accounting, full fallback charge and isolated Validation length preparation. Historical
+    STOP evidence remains immutable. New real calls require fresh source and exact
+    attempt admission.
   lifecycle: MITIGATED
   lifecycle_note: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2; NOT_PROVIDER_BILLING_PROOF
   resolved_by: math_v2_token_accounting_repair_v2
@@ -322,17 +372,20 @@ failures:
   affected_components:
   - autonomous_math_transport
   - provider_failure_evidence
-  symptom: First HTTP error response raised TypeError before SDK status classification and response persistence.
+  symptom: First HTTP error response raised TypeError before SDK status classification
+    and response persistence.
   evidence:
   - reports/math_v2_a1_seed81_real_canary_v2_20261002
   - reports/math_v2_provider_error_mapping_repair_v1_20261002
   evidence_level: observed
-  root_cause_status: Installed SDK accepts response only; body keyword unsupported. Original HTTP status is unknown.
-  forbidden_inference: No Solver output, opportunity, scientific efficacy or provider denial cause is established.
+  root_cause_status: Installed SDK accepts response only; body keyword unsupported.
+    Original HTTP status is unknown.
+  forbidden_inference: No Solver output, opportunity, scientific efficacy or provider
+    denial cause is established.
   regression_tests:
   - tests/test_math_token_accounting.py
-  mitigation: Use the installed SDK response-only signature and persist private HTTP error evidence before terminal
-    abort or frozen retry.
+  mitigation: Use the installed SDK response-only signature and persist private HTTP
+    error evidence before terminal abort or frozen retry.
   lifecycle: MITIGATED
   lifecycle_note: ZERO_API_ERROR_MAPPING_CONFORMANCE_ONLY; REAL_PROVIDER_ACCESS_UNVERIFIED
   resolved_by: math_v2_provider_error_mapping_repair_v1
@@ -342,18 +395,19 @@ failures:
   first_observed: math_v2_provider_error_mapping_repair_v1
   affected_components:
   - autonomous_math_transport
-  symptom: Installed SDK default headers exclude authentication; the old manual request copied only those headers.
+  symptom: Installed SDK default headers exclude authentication; the old manual request
+    copied only those headers.
   evidence:
   - reports/math_v2_provider_error_mapping_repair_v1_20261002
   evidence_level: observed
-  root_cause_status: Installed SDK inspection and a synthetic offline negative control prove the missing header.
-    The original failed request HTTP status remains unknown.
-  forbidden_inference: Do not infer a historical HTTP status, credential validity, provider availability or scientific
-    efficacy from this offline reconstruction.
+  root_cause_status: Installed SDK inspection and a synthetic offline negative control
+    prove the missing header. The original failed request HTTP status remains unknown.
+  forbidden_inference: Do not infer a historical HTTP status, credential validity,
+    provider availability or scientific efficacy from this offline reconstruction.
   regression_tests:
   - tests/test_math_token_accounting.py
-  mitigation: Build headers and URL through ordinary SDK security handling, preserve exact reserved body bytes,
-    pin installed SDK version, and deny uncounted redirects.
+  mitigation: Build headers and URL through ordinary SDK security handling, preserve
+    exact reserved body bytes, pin installed SDK version, and deny uncounted redirects.
   lifecycle: MITIGATED
   lifecycle_note: ZERO_API_TRANSPORT_CONFORMANCE_ONLY; REAL_PROVIDER_ACCESS_UNVERIFIED
   resolved_by: math_v2_provider_error_mapping_repair_v1
@@ -365,24 +419,25 @@ failures:
   - math_reference_admission
   - math_parser
   - math_equivalence
-  symptom: Final-marker compliant Solver response and its admitted Optimize reference both trigger the ordered-tuple
-    payload guard.
+  symptom: Final-marker compliant Solver response and its admitted Optimize reference
+    both trigger the ordered-tuple payload guard.
   evidence:
   - reports/math_v2_a1_seed81_real_canary_v3_20261002
   - reports/math_v2_reference_parser_domain_audit_v1_20261002
   - reports/math_v2_answer_domain_amendment_v2_20261002
   evidence_level: observed
-  root_cause_status: Reference admission checks nonempty extraction; scoring requires payload_supported for both
-    operands. Nine Optimize references fail the lexical guard, six the tuple guard.
-  forbidden_inference: No mathematical correctness, answer equivalence, efficacy or generalization is inferred from
-    representation support.
+  root_cause_status: Reference admission checks nonempty extraction; scoring requires
+    payload_supported for both operands. Nine Optimize references fail the lexical
+    guard, six the tuple guard.
+  forbidden_inference: No mathematical correctness, answer equivalence, efficacy or
+    generalization is inferred from representation support.
   regression_tests:
   - tests/test_benchmark_scientific_contracts.py
   - tests/test_repository_governance_alignment.py
   - tests/test_math_answer_domain_v2.py
-  mitigation: Explicit user-authorized V2 native mathematical parsing, compatible object families and full-source
-    scorable eligibility. Fresh versioned split and exact new phase freeze required; historical Canary V3 remains
-    INVALID.
+  mitigation: Explicit user-authorized V2 native mathematical parsing, compatible
+    object families and full-source scorable eligibility. Fresh versioned split and
+    exact new phase freeze required; historical Canary V3 remains INVALID.
   lifecycle: MITIGATED
   lifecycle_note: SOURCE_GROUNDED_SCIENTIFIC_AMENDMENT_ZERO_API_PASS; REAL_EXECUTION_AND_EFFICACY_UNVERIFIED
   resolved_by: math_v2_answer_domain_amendment_v2
@@ -392,16 +447,20 @@ failures:
   first_observed: math_v2_1_a1_seed81_real_canary_v1
   affected_components:
   - math_solver_output_interface
-  symptom: 27th Solver response has zero FINAL_ANSWER markers and finish_reason stop below the output cap.
+  symptom: 27th Solver response has zero FINAL_ANSWER markers and finish_reason stop
+    below the output cap.
   evidence:
   - reports/math_v2_1_a1_seed81_real_canary_v1_20261002
   - reports/math_v2_1_a1_seed81_real_canary_v2_20261002
   evidence_level: observed
-  root_cause_status: OUTPUT_FORMAT_NONCOMPLIANCE; parser correctly fails closed; provider cause unknown.
-  forbidden_inference: No mathematical correctness, method efficacy or causal claim is established.
+  root_cause_status: OUTPUT_FORMAT_NONCOMPLIANCE; parser correctly fails closed; provider
+    cause unknown.
+  forbidden_inference: No mathematical correctness, method efficacy or causal claim
+    is established.
   regression_tests:
   - tests/test_math_v21_binding.py
-  mitigation: Separate immutable interface version; strict parser unchanged; fresh source, authorization and process.
+  mitigation: Separate immutable interface version; strict parser unchanged; fresh
+    source, authorization and process.
   lifecycle: OPEN
   lifecycle_note: FAILED_ATTEMPT_PRESERVED; REPAIR_PENDING
 - failure_id: FAIL-MATH-V21-SOLVER-OUTPUT-TRUNCATION
@@ -410,22 +469,26 @@ failures:
   first_observed: math_v2_1_a1_seed81_real_canary_v3
   affected_components:
   - math_solver_output_envelope
-  symptom: Length termination at cap 1800 in Canary v3 and cap 3600 in Canary v4; both before completed initialization.
+  symptom: Length termination at cap 1800 in Canary v3 and cap 3600 in Canary v4;
+    both before completed initialization.
   evidence:
   - reports/math_v2_1_a1_seed81_real_canary_v3_20261002
   - reports/math_v2_1_a1_seed81_real_canary_v4_20261002
   - reports/math_v2_1_a1_seed81_pilot_v4_20261002
   evidence_level: observed
-  root_cause_status: OUTPUT_TRUNCATION_AND_REPETITIVE_STRUCTURE_OBSERVED; provider/backend cause unknown; no serialization
-    mismatch found.
-  forbidden_inference: No method efficacy or performance-driven budget selection is established.
+  root_cause_status: OUTPUT_TRUNCATION_AND_REPETITIVE_STRUCTURE_OBSERVED; provider/backend
+    cause unknown; no serialization mismatch found.
+  forbidden_inference: No method efficacy or performance-driven budget selection is
+    established.
   regression_tests:
   - tests/test_math_v21_binding.py
   - tests/test_math_token_accounting.py
-  mitigation: Preserve strict parser, failed responses, frozen initial prompts and durable ledger. Cap enlargement
-    failed. Task clause 147 stops before unapproved generation policy changes.
+  mitigation: Preserve strict parser, failed responses, frozen initial prompts and
+    durable ledger. Cap enlargement failed. Task clause 147 stops before unapproved
+    generation policy changes.
   lifecycle: OPEN
-  lifecycle_note: STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED; FAILED_ATTEMPTS_PRESERVED; NO_PILOT_OR_VALIDATION_EXECUTION
+  lifecycle_note: STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED; FAILED_ATTEMPTS_PRESERVED;
+    NO_PILOT_OR_VALIDATION_EXECUTION
 - failure_id: FAIL-MATH-V21-FROZEN-DECODING-V1
   title: Fresh frozen Solver decoding attempt failed closed
   status: OPEN
@@ -437,7 +500,8 @@ failures:
   - reports/math_v2_1_a1_seed81_real_canary_v5_20261003
   - reports/math_v2_1_a1_seed81_pilot_v5_20261003
   evidence_level: observed
-  root_cause_status: Exact client request policy verified; provider internal cause unverified.
+  root_cause_status: Exact client request policy verified; provider internal cause
+    unverified.
   forbidden_inference: No efficacy conclusion or parameter adaptation.
   regression_tests:
   - tests/test_math_solver_decoding.py
@@ -451,23 +515,24 @@ failures:
   affected_components:
   - optimizer generation envelope
   - provider usage accounting
-  symptom: Frozen max_tokens=1800 request returned finish_reason stop with 1814 reported output tokens; first reflection
-    aborted before proposal admission.
+  symptom: Frozen max_tokens=1800 request returned finish_reason stop with 1814 reported
+    output tokens; first reflection aborted before proposal admission.
   evidence:
   - reports/math_v2_1_a1_seed81_low_cost_canary_v1_20261003
   - reports/math_v2_1_a1_seed81_low_cost_pilot_v1_20261003
   evidence_level: observed
-  root_cause_status: Observed cap/usage dimension mismatch. Qwen documentation distinguishes answer-only max_tokens
-    from combined max_completion_tokens. The actual provider internal cause is unverified; detailed usage was not
-    retained.
-  forbidden_inference: No backend thinking-token count, method efficacy, generalization or performance-based tuning
-    is inferred.
+  root_cause_status: Observed cap/usage dimension mismatch. Qwen documentation distinguishes
+    answer-only max_tokens from combined max_completion_tokens. The actual provider
+    internal cause is unverified; detailed usage was not retained.
+  forbidden_inference: No backend thinking-token count, method efficacy, generalization
+    or performance-based tuning is inferred.
   regression_tests:
   - tests/test_math_token_accounting.py
   - tests/test_math_solver_decoding.py
   - tests/test_repository_governance_alignment.py
-  mitigation: Preserve failed attempt and full fallback charge, close scopes, and require explicit optimizer generation/accounting
-    policy decision before fresh freeze and execution.
+  mitigation: Preserve failed attempt and full fallback charge, close scopes, and
+    require explicit optimizer generation/accounting policy decision before fresh
+    freeze and execution.
   lifecycle: MITIGATED
   lifecycle_note: APPROVED_WIRE_CORRECTION_IMPLEMENTED_AND_DISPATCH_VERIFIED; HISTORICAL_FAILURE_AND_FALLBACK_CHARGE_IMMUTABLE
   corrected_failure_category: CLIENT_OUTPUT_CAP_SCOPE_MISMATCH
@@ -486,16 +551,19 @@ failures:
   - reports/math_v2_1_a1_seed81_low_cost_canary_v2_20261003
   - reports/math_v2_1_a1_seed81_low_cost_pilot_v2_20261003
   evidence_level: observed
-  root_cause_status: Frozen wire policy dispatched exactly; 1810 accounting/verification ceiling respected. Existing
-    truncation guard aborted. No client implementation or serialization defect found.
-  forbidden_inference: No method efficacy, generalization or provider over-cap violation is established. The10-token
-    measurement tolerance does not accept a truncated generation.
+  root_cause_status: Frozen wire policy dispatched exactly; 1810 accounting/verification
+    ceiling respected. Existing truncation guard aborted. No client implementation
+    or serialization defect found.
+  forbidden_inference: No method efficacy, generalization or provider over-cap violation
+    is established. The10-token measurement tolerance does not accept a truncated
+    generation.
   regression_tests:
   - tests/test_math_optimizer_generation.py
   - tests/test_math_token_accounting.py
   - tests/test_repository_governance_alignment.py
-  mitigation: Close failed scope and undispatched Pilot, preserve all evidence/charges, stop for a new user optimizer
-    generation-policy decision. Do not tune, rerun, enlarge cap or disable thinking autonomously.
+  mitigation: Close failed scope and undispatched Pilot, preserve all evidence/charges,
+    stop for a new user optimizer generation-policy decision. Do not tune, rerun,
+    enlarge cap or disable thinking autonomously.
   lifecycle: OPEN
   lifecycle_note: STOP_NEW_SCIENTIFIC_POLICY_REQUIRED; FAILED_CANARY_IMMUTABLE; PILOT_AND_VALIDATION_NOT_EXECUTED
 - failure_id: FAIL-MATH-V21-OPTIMIZER-NONTHINKING-TELEMETRY-UNCONFIRMED
@@ -505,25 +573,27 @@ failures:
   affected_components:
   - provider response metadata
   - optimizer diagnostic admission
-  symptom: Explicit false witness returned stop with 384 completion tokens and absent reasoning_content, but raw
-    usage omitted reasoning_tokens.
+  symptom: Explicit false witness returned stop with 384 completion tokens and absent
+    reasoning_content, but raw usage omitted reasoning_tokens.
   evidence:
   - reports/math_v2_1_optimizer_truncation_root_cause_v1_20261003
   evidence_level: observed
-  root_cause_status: No metadata parser loss found. Missing reasoning_tokens cannot satisfy task clause 16 actual-zero
-    evidence requirement. Truncation and repetition were not reproduced.
-  forbidden_inference: Do not infer missing counts as zero, hidden thinking as present, provider cap violation,
-    model efficacy or an admissible candidate.
+  root_cause_status: No metadata parser loss found. Missing reasoning_tokens cannot
+    satisfy task clause 16 actual-zero evidence requirement. Truncation and repetition
+    were not reproduced.
+  forbidden_inference: Do not infer missing counts as zero, hidden thinking as present,
+    provider cap violation, model efficacy or an admissible candidate.
   regression_tests:
   - tests/test_math_optimizer_generation.py
-  mitigation: Close single-use witness authorization, preserve diagnostics and ledger, keep both generation policies
-    and validators unchanged; require a human evidence-policy decision before fresh Canary.
+  mitigation: Close single-use witness authorization, preserve diagnostics and ledger,
+    keep both generation policies and validators unchanged; require a human evidence-policy
+    decision before fresh Canary.
   lifecycle: MITIGATED
   lifecycle_note: STOP_NEW_SCIENTIFIC_POLICY_REQUIRED; NO_CANARY_PILOT_VALIDATION_OR_TEST_DISPATCH
   resolved_by: math_v2_1_autonomous_constitution_v1
   resolution_evidence: reports/math_v2_1_autonomous_constitution_v1_20261003/equivalent_evidence_receipt.json
-  resolution_note: Current constitution permits audited Level B equivalent evidence; prior diagnostic evidence and
-    absent token count remain unchanged.
+  resolution_note: Current constitution permits audited Level B equivalent evidence;
+    prior diagnostic evidence and absent token count remain unchanged.
 - failure_id: FAIL-MATH-V21-PROPOSER-MUTABLE-GUARD-MISMATCH
   title: Complete optimizer proposals do not reach admissible mutable candidates
   status: MITIGATED
@@ -532,26 +602,32 @@ failures:
   - decision_procedure_proposer
   - mutable_prompt_contract
   - candidate_throughput
-  symptom: 10 physical proposals become 28 contract-invalid logical proposals; zero export/team evaluation/commit.
+  symptom: 10 physical proposals become 28 contract-invalid logical proposals; zero
+    export/team evaluation/commit.
   evidence:
   - reports/math_v2_1_proposal_semantic_postmortem_v1_20261004
   evidence_level: observed
-  root_cause_status: Six output-control, three answer-representation and one benign proposal under owner semantic
-    rubric; lexical overreach coexists with real proposer violations and five append-only failures.
-  forbidden_inference: Neutral identity comparison does not identify efficacy; one finite owner annotation is not
-    a population false-positive rate; phrase masking is not a safe admission repair.
+  root_cause_status: Six output-control, three answer-representation and one benign
+    proposal under owner semantic rubric; lexical overreach coexists with real proposer
+    violations and five append-only failures.
+  forbidden_inference: Neutral identity comparison does not identify efficacy; one
+    finite owner annotation is not a population false-positive rate; phrase masking
+    is not a safe admission repair.
   regression_tests:
   - tests/test_math_proposal_postmortem.py
-  required_resolution: Versioned proposer/validator semantic alignment, including mathematical representation boundary;
-    preserve output-interface isolation, replacement and example-copying checks.
+  required_resolution: Versioned proposer/validator semantic alignment, including
+    mathematical representation boundary; preserve output-interface isolation, replacement
+    and example-copying checks.
   lifecycle: MITIGATED
   prior_lifecycle: OPEN
-  prior_lifecycle_note: Read-only audit complete; production policy and closed historical search unchanged; fresh
-    real execution not authorized.
-  lifecycle_note: Versioned semantic boundary and Layer1 repairs passed offline regression and a fresh real Canary;
-    six admissible proposals reached local Solver scoring and four reached team evaluation. One complete production
-    opportunity ended without commit because its selected candidate failed the frozen Shadow gate. Historical Pilot
-    invalid-proposal evidence remains immutable; scientific efficacy is not estimated.
+  prior_lifecycle_note: Read-only audit complete; production policy and closed historical
+    search unchanged; fresh real execution not authorized.
+  lifecycle_note: Versioned semantic boundary and Layer1 repairs passed offline regression
+    and a fresh real Canary; six admissible proposals reached local Solver scoring
+    and four reached team evaluation. One complete production opportunity ended without
+    commit because its selected candidate failed the frozen Shadow gate. Historical
+    Pilot invalid-proposal evidence remains immutable; scientific efficacy is not
+    estimated.
   mitigated_by: math_v2_1_a1_seed81_low_cost_canary_v6
   resolution_evidence:
   - reports/math_v2_1_layer1_gepa_flow_audit_v1_20261004
@@ -559,35 +635,41 @@ failures:
   - reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/layer1_search_audit.json
   - reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/candidate_funnel.json
   - reports/math_v2_1_a1_seed81_low_cost_canary_v6_20261004/shadow_gate_audit.json
-  resolution_limits: Throughput and contract conformance only; no population false-positive-rate estimate, component-level
-    causal attribution or scientific efficacy claim.
+  resolution_limits: Throughput and contract conformance only; no population false-positive-rate
+    estimate, component-level causal attribution or scientific efficacy claim.
   evidence_format: hash_bound_private_replay_and_synthetic_zero_api_controls
-  mitigation: Versioned proposer/validator semantic alignment, including mathematical representation boundary; preserve
-    output-interface isolation, replacement and example-copying checks.
+  mitigation: Versioned proposer/validator semantic alignment, including mathematical
+    representation boundary; preserve output-interface isolation, replacement and
+    example-copying checks.
 - failure_id: FAIL-MATH-PATTERN-LONG-SUPPORT-ID-COPY
   title: Pattern support identifier loses characters on the provider wire
   status: OPEN
   first_observed: math_v2_1_a4_seed81_pattern_canary_v1
   affected_components:
   - pattern_support_id_transport
-  symptom: One of seven supplied eighty-character IDs was returned with two characters omitted; strict membership
-    validation rejected the unknown ID and missing original.
+  symptom: One of seven supplied eighty-character IDs was returned with two characters
+    omitted; strict membership validation rejected the unknown ID and missing original.
   evidence:
   - reports/math_v2_1_a4_seed81_pattern_canary_v1_20261004/pattern_membership_failure.json
   - reports/math_v2_1_a4_seed81_pattern_canary_v1_20261004/WHO_and_wide_universe_audit.json
   evidence_level: observed
-  root_cause_status: Provider identifier copy loss; original universe and client parser were correct.
-  forbidden_inference: No fuzzy ID repair, semantic reassignment, parser loosening or efficacy inference.
+  root_cause_status: Provider identifier copy loss; original universe and client parser
+    were correct.
+  forbidden_inference: No fuzzy ID repair, semantic reassignment, parser loosening
+    or efficacy inference.
   regression_tests:
   - tests/test_pattern_responsibility.py
-  required_resolution: Explicit opt-in lossless support-ID alias transport, strict exact decoding, fresh identity/source/preexecution/authorization
-    and fresh Canary under user attachment section 102.
+  required_resolution: Explicit opt-in lossless support-ID alias transport, strict
+    exact decoding, fresh identity/source/preexecution/authorization and fresh Canary
+    under user attachment section 102.
   lifecycle: OPEN
   evidence_format: hash_bound_private_wire_and_exact_cached_state_replay
-  mitigation: Explicit opt-in lossless support-ID alias transport, strict exact decoding, fresh identity/source/preexecution/authorization
-    and fresh Canary under user attachment section 102.
+  mitigation: Explicit opt-in lossless support-ID alias transport, strict exact decoding,
+    fresh identity/source/preexecution/authorization and fresh Canary under user attachment
+    section 102.
 - failure_id: FAIL-MATH-PATTERN-GENERIC-COMMAND-NAME-GUARD
-  title: Generic mathematical imperative misclassified as example-specific proper name
+  title: Generic mathematical imperative misclassified as example-specific proper
+    name
   status: MITIGATED
   first_observed: math_v2_1_a4_seed81_pattern_canary_v2
   affected_components:
@@ -595,64 +677,67 @@ failures:
   evidence:
   - reports/math_v2_1_a4_seed81_pattern_canary_v2_20261004/WHO_and_wide_universe_audit.json
   root_cause_status: CONFIRMED_IMPLEMENTATION_FALSE_POSITIVE
-  forbidden_inference: Do not loosen example copying, answer, numeric, interface or proper-name guards; do not tune
-    Pattern prompt or sampling.
+  forbidden_inference: Do not loosen example copying, answer, numeric, interface or
+    proper-name guards; do not tune Pattern prompt or sampling.
   regression_tests:
   - tests/test_pattern_responsibility.py
-  required_resolution: Opt-in versioned generic mathematical-command classification; new freeze, authorization and
-    fresh Canary.
+  required_resolution: Opt-in versioned generic mathematical-command classification;
+    new freeze, authorization and fresh Canary.
   lifecycle: OPEN
-  resolution_progress: Opt-in V2 repaired the imperative case but retained a noun false positive. V3 replaces capitalized-token
-    admission with bounded specific-content checks; current offline regressions and one complete fresh real Canary
-    pass.
+  resolution_progress: Opt-in V2 repaired the imperative case but retained a noun
+    false positive. V3 replaces capitalized-token admission with bounded specific-content
+    checks; current offline regressions and one complete fresh real Canary pass.
   additional_evidence:
   - reports/math_v2_1_a4_seed81_pattern_canary_v3_20261005/STOP_REPORT.md
   prior_task_status: STOPPED_BY_USER
   current_task_status: GUARD_V3_SINGLE_CANARY_COMPLETE_AUDITED_CLOSED
   further_real_execution_authorized: false
   latest_repair: math_v2_1_pattern_specific_content_guard_v3
-  latest_repair_scope: Guard V3 zero-API repair followed by exact user-authorized attempt4 only; all attempt scopes
-    now closed.
+  latest_repair_scope: Guard V3 zero-API repair followed by exact user-authorized
+    attempt4 only; all attempt scopes now closed.
   latest_repair_status: VALID_ONE_COMPLETE_PRODUCTION_OPPORTUNITY_CANARY
   latest_repair_evidence:
   - reports/math_v2_1_pattern_specific_content_guard_v3_20261005
   - reports/math_v2_1_a4_seed81_pattern_canary_v4_20261005
-  latest_repair_limits: Bounded contextual literal detector; single-canary operation verified, general semantic
-    coverage and scientific efficacy not established.
+  latest_repair_limits: Bounded contextual literal detector; single-canary operation
+    verified, general semantic coverage and scientific efficacy not established.
   evidence_format: hash_bound_private_wire_and_synthetic_zero_api_regressions
   evidence_level: observed
-  mitigation: Opt-in versioned generic mathematical-command classification; new freeze, authorization and fresh
-    Canary.
-  symptom: Generic mathematical command tokens were treated as example-specific proper names and rejected by the
-    abstraction guard.
+  mitigation: Opt-in versioned generic mathematical-command classification; new freeze,
+    authorization and fresh Canary.
+  symptom: Generic mathematical command tokens were treated as example-specific proper
+    names and rejected by the abstraction guard.
 - failure_id: FAIL-MATH-GRADIENT-GENERIC-DIGIT-CONTRACT
-  title: A generic mathematical numeric literal violates the frozen absolute digit prohibition
+  title: A generic mathematical numeric literal violates the frozen absolute digit
+    prohibition
   status: MITIGATED
   lifecycle: MITIGATED
   first_observed: math_v2_1_gradient_pattern_seed81_pilot_v1
   affected_components:
   - per_example_textual_gradient
   - pattern_abstraction_guard
-  symptom: Fourth gradient is267 characters and valid JSON, but contains a numeric literal in a general mathematical
-    rule; search aborts before clustering.
+  symptom: Fourth gradient is267 characters and valid JSON, but contains a numeric
+    literal in a general mathematical rule; search aborts before clustering.
   evidence:
   - reports/math_v2_1_gradient_pattern_seed81_pilot_v1_execution_20261006/gradient_contract_forensic.json
   evidence_level: observed
   root_cause_status: GENERATED_CONTRACT_NONCOMPLIANCE_FROZEN_GUARD_ENFORCED
-  forbidden_inference: No confirmed implementation bug, copied problem-specific value, efficacy or population compliance
-    rate; no automatic retry or parser loosening.
+  forbidden_inference: No confirmed implementation bug, copied problem-specific value,
+    efficacy or population compliance rate; no automatic retry or parser loosening.
   regression_tests:
   - tests/current/test_gradient_pilot_audit.py
-  required_resolution: User decision for any prompt or guard amendment, fresh identity/freeze and exact authorization.
-    Existing400-character cap and method remain unchanged.
+  required_resolution: User decision for any prompt or guard amendment, fresh identity/freeze
+    and exact authorization. Existing400-character cap and method remain unchanged.
   evidence_format: HASH_BOUND_PRIVATE_PREFIX_AND_SYNTHETIC_ZERO_API_CONTROLS
-  mitigation: Preserve the aborted prefix, close consumed and unused conditional retry scopes, stop before new API
-    calls.
+  mitigation: Preserve the aborted prefix, close consumed and unused conditional retry
+    scopes, stop before new API calls.
   resolution:
     identity: MATH_NUMERIC_ADMISSIBILITY_AMENDMENT_V1
     original_frozen_failure_classification_unchanged: true
-    user_decision: Minimal Guard V5 numeric provenance and Gradient prompt V3; fresh Pilot only.
-    interpretation: Absolute digit admissibility overimplements the intended example-specific abstraction boundary.
+    user_decision: Minimal Guard V5 numeric provenance and Gradient prompt V3; fresh
+      Pilot only.
+    interpretation: Absolute digit admissibility overimplements the intended example-specific
+      abstraction boundary.
     zero_api_regressions: reports/math_v2_1_gradient_pattern_seed81_pilot_v2_preexecution_20261006/zero_api/historical_gradient_recheck.json
     negative_controls: reports/math_v2_1_gradient_pattern_seed81_pilot_v2_preexecution_20261006/zero_api/real_source_negative_controls.json
     contract: docs/design/NUMERIC_PROVENANCE_GUARD_V5.md
@@ -662,26 +747,27 @@ failures:
   title: Windows atomic token snapshot replacement aborts fresh Pilot initialization
   status: MITIGATED
   lifecycle: MITIGATED
-  lifecycle_note: Append-only monitor fix verified offline; incident holder and fresh runtime persistence closure
-    remain unestablished.
+  lifecycle_note: Append-only monitor fix verified offline; incident holder and fresh
+    runtime persistence closure remain unestablished.
   first_observed: math_v2_1_gradient_pattern_seed81_pilot_v2
   affected_components:
   - token_accounting_derived_snapshot
   - owner_runtime_monitor
-  symptom: WinError5 in atomic derived snapshot replacement after a durable RESPONSE charge;263/300 initial evaluations,
-    no Gradient observations.
+  symptom: WinError5 in atomic derived snapshot replacement after a durable RESPONSE
+    charge;263/300 initial evaluations, no Gradient observations.
   evidence:
   - reports/math_v2_1_gradient_pattern_seed81_pilot_v2_execution_20261006/persistence_forensic.json
   - reports/math_v2_1_gradient_pattern_seed81_pilot_v2_execution_20261006/monitor_repair_zero_api.json
   - reports/math_v2_1_gradient_pattern_seed81_pilot_v2_execution_20261006/integrity_audit.json
   root_cause_status: CONFIRMED_ATOMIC_REPLACEMENT_FAILURE_SITE_ACTUAL_LOCK_HOLDER_NOT_ESTABLISHED
-  forbidden_inference: Do not claim proven monitor causality, complete persistence closure, new guard noncompliance,
-    convergence, efficacy or completed Pilot; do not reuse consumed authorization.
+  forbidden_inference: Do not claim proven monitor causality, complete persistence
+    closure, new guard noncompliance, convergence, efficacy or completed Pilot; do
+    not reuse consumed authorization.
   regression_tests:
   - tests/test_repository_governance_alignment.py::test_initial_persistence_abort_preserves_accounting_and_closes_scope
-  mitigation: Preserve raw evidence and the one-response evidence gap; replay unchanged authoritative journal into
-    derived snapshot; close one-shot scope. Monitor reads append-only journal instead of live atomic files;100 isolated
-    replacements pass.
+  mitigation: Preserve raw evidence and the one-response evidence gap; replay unchanged
+    authoritative journal into derived snapshot; close one-shot scope. Monitor reads
+    append-only journal instead of live atomic files;100 isolated replacements pass.
   evidence_level: observed
 - failure_id: FAIL-MATH-GRADIENT-PARTITION-MISSING-ALIASES
   title: Generated gradient partition omits supplied aliases without unassigned membership
@@ -691,18 +777,20 @@ failures:
   affected_components:
   - gradient_cluster_provider
   - gradient_pattern_partition
-  symptom: Second cluster returned12groups covering36of38aliases, omitted e2/e24 and left unassigned_ids empty.
+  symptom: Second cluster returned12groups covering36of38aliases, omitted e2/e24 and
+    left unassigned_ids empty.
   evidence:
   - reports/math_v2_1_gradient_pattern_seed81_pilot_v3_execution_20261007/failed_partition_audit.json
   - reports/math_v2_1_gradient_pattern_seed81_pilot_v3_execution_20261007/wire_and_durability_audit.json
   - reports/math_v2_1_gradient_pattern_seed81_pilot_v3_execution_20261007/authorization_closure.json
   root_cause_status: GENERATED_PARTITION_CONTRACT_NONCOMPLIANCE_NO_IMPLEMENTATION_BUG_ESTABLISHED
-  forbidden_inference: Do not classify this as operational invalidity or completed Pilot; do not silently complete
-    membership, regenerate, loosen parsing, or reuse conditional operational retry scope.
+  forbidden_inference: Do not classify this as operational invalidity or completed
+    Pilot; do not silently complete membership, regenerate, loosen parsing, or reuse
+    conditional operational retry scope.
   regression_tests:
   - tests/test_repository_governance_alignment.py::test_partition_contract_abort_cannot_use_operational_retry_scope
-  mitigation: Preserve raw response, charge and prefix; close exact single-use scope; request separate user scientific
-    contract decision.
+  mitigation: Preserve raw response, charge and prefix; close exact single-use scope;
+    request separate user scientific contract decision.
   evidence_level: observed
   resolution:
     identity: GRADIENT_PATTERN_PARTITION_COMPLETION_V1
@@ -715,30 +803,34 @@ failures:
     compliance_behavior_changed: true
     semantic_assignment: false
     extra_provider_calls: 0
-    mitigation_scope: KNOWN_ALIAS_OMISSION_ONLY; duplicates, unknown aliases and invalid gradients remain terminal
+    mitigation_scope: KNOWN_ALIAS_OMISSION_ONLY; duplicates, unknown aliases and invalid
+      gradients remain terminal
 - failure_id: FAIL-MATH-GRADIENT-V5-NUMERIC-PROVENANCE-PILOT4
-  title: Fresh Pilot stops on a short Gradient rejected by frozen numeric provenance guard
+  title: Fresh Pilot stops on a short Gradient rejected by frozen numeric provenance
+    guard
   status: MITIGATED
   lifecycle: MITIGATED
   first_observed: math_v2_1_gradient_pattern_seed81_pilot_v4
   affected_components:
   - per_example_gradient
   - pattern_abstraction_guard_v5
-  symptom: Second opportunity sixth Gradient (44th total),139characters, valid JSON and within hard400, rejected
-    by unchanged numeric provenance guard; second cluster not reached.
+  symptom: Second opportunity sixth Gradient (44th total),139characters, valid JSON
+    and within hard400, rejected by unchanged numeric provenance guard; second cluster
+    not reached.
   evidence:
   - reports/math_v2_1_gradient_pattern_seed81_pilot_v4_execution_20261007/failed_gradient_audit.json
   - reports/math_v2_1_gradient_pattern_seed81_pilot_v4_execution_20261007/authorization_closure.json
   - reports/math_v2_1_gradient_pattern_seed81_pilot_v4_execution_20261007/scientific_decision_request.json
   root_cause_status: CONFIRMED_COPIED_NUMERIC_EXPRESSION_LITERAL_IN_ATTEMPT4
-  forbidden_inference: Do not label operational invalidity, a partition-completion bug, a complete valid Pilot,
-    comprehensive semantic provenance, population compliance or causal efficacy; no fresh retry under engineering
-    authority.
+  forbidden_inference: Do not label operational invalidity, a partition-completion
+    bug, a complete valid Pilot, comprehensive semantic provenance, population compliance
+    or causal efficacy; no fresh retry under engineering authority.
   regression_tests:
   - tests/current/test_numeric_provenance.py::test_clear_numeric_provenance_rejected_in_both_boundaries
   - tests/current/test_partition_completion.py::test_omission_does_not_mask_any_other_defect
-  mitigation: Preserve raw response and charged prefix, close consumed scope, retain frozen Gradient V1 Prompt V3
-    Guard V5; any continuation requiring admissibility changes needs a separate scientific decision.
+  mitigation: Preserve raw response and charged prefix, close consumed scope, retain
+    frozen Gradient V1 Prompt V3 Guard V5; any continuation requiring admissibility
+    changes needs a separate scientific decision.
   evidence_level: observed
   followup_forensic:
     identity: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6
@@ -751,8 +843,9 @@ failures:
     fresh_pilot_condition_met: false
     user_task_sha256: b81ddb478d7d52285394899f31dc648fd7c1b05bf75d37d852911c8b7d73a9fc
   prior_root_cause_status: FROZEN_BOUNDED_NUMERIC_GUARD_REJECTION_REPLAYED; SEMANTIC_COPYING_NOT_INDEPENDENTLY_PROVEN
-  prior_forbidden_inference: Do not label this operational invalidity, a partition-completion bug, proven semantic
-    copying, or a complete valid Pilot; do not regenerate or rerun under engineering authority.
+  prior_forbidden_inference: Do not label this operational invalidity, a partition-completion
+    bug, proven semantic copying, or a complete valid Pilot; do not regenerate or
+    rerun under engineering authority.
   recovery_followup:
     identity: PER_EXAMPLE_GRADIENT_CONTRACT_RECOVERY_V1
     user_task_sha256: 942dc2d9bcd8ec40f0373997a817b1158c6a6af57f624df119a294b19cc4fd86
@@ -763,25 +856,51 @@ failures:
     first_contract_valid_only: true
     complete_valid_pilot_observed: true
     semantic_provenance_exhaustiveness_claim: false
-    limits: Bounded recovery, not guaranteed compliance; three invalid draws remain terminal.
+    limits: Bounded recovery, not guaranteed compliance; three invalid draws remain
+      terminal.
 - failure_id: FAIL-MATH-PILOT-POST-STOP-TERMINAL-SERIALIZATION
-  title: Terminal metadata keyword collision aborts runner after complete scientific search
+  title: Terminal metadata keyword collision aborts runner after complete scientific
+    search
   status: MITIGATED
   lifecycle: MITIGATED
   first_observed: math_v2_1_gradient_pattern_seed81_pilot_v6
   affected_components:
   - terminal_validation_disposition
   - execution_summary_serialization
-  symptom: Complete ten-opportunity trace and final state persist, then duplicate validation_status keyword raises
-    TypeError.
+  symptom: Complete ten-opportunity trace and final state persist, then duplicate
+    validation_status keyword raises TypeError.
   evidence:
   - reports/math_v2_1_gradient_pattern_seed81_pilot_v6_execution_20261007/owner_scientific_completion_receipt.json
   - reports/math_v2_1_gradient_pattern_seed81_pilot_v6_execution_20261007/post_stop_engineering_verification.json
   root_cause_status: CONFIRMED_POST_SCIENTIFIC_STOP_IMPLEMENTATION_DEFECT
   evidence_level: observed
-  mitigation: Use explicit metadata merge and canonical JSON-compatible summary; verify both terminal branches with
-    fake providers.
+  mitigation: Use explicit metadata merge and canonical JSON-compatible summary; verify
+    both terminal branches with fake providers.
   regression_tests:
   - tests/current/test_pilot_terminal_execution.py::test_current_pilot_runner_seals_terminal_receipts_and_validation_disposition
-  forbidden_inference: Do not rewrite raw lifecycle, invent original completion receipts, claim causal efficacy,
-    or rerun the complete zero-commit scientific result.
+  forbidden_inference: Do not rewrite raw lifecycle, invent original completion receipts,
+    claim causal efficacy, or rerun the complete zero-commit scientific result.
+- failure_id: FAIL-IDENTICAL-INITIAL-STRICT-VOTE-DEADLOCK
+  title: Single-member progress cannot deploy against four identical wrong peer votes
+  status: MITIGATED
+  lifecycle: MITIGATED
+  first_observed: transition_reachability_audit_v1
+  affected_components:
+  - team_transition
+  - deployment_ranking
+  - pilot_operational_bound
+  - current_binding_admission
+  symptom: V2.1 requires strict team Vote gain, preventing first commit when peer
+    outcomes are identical; a target-only gain cannot outvote four peers.
+  evidence:
+  - reports/transition_reachability_audit_v1_20261007
+  evidence_level: observed
+  root_cause_status: Strict-Vote deployment semantics; coupling in winner key and
+    N-commit bound.
+  forbidden_inference: Byte-identical prompts do not guarantee identical stochastic
+    member outputs; zero-API conformance proves neither real efficacy nor generalization.
+  regression_tests:
+  - tests/current/test_transition_reachability_v22.py
+  mitigation: Fresh V2.2 OR-progress identity and target-second ranking; execution
+    and Pilot bounds fail closed until separately frozen. Historical V2.1 is preserved.
+  lifecycle_note: IMPLEMENTED_ZERO_API_ONLY; REAL_EXECUTION_HOLD

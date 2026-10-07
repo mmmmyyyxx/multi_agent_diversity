@@ -1,3 +1,4 @@
+# V2.1 frozen replay assertions; V2.2 current conformance is tested separately.
 """Offline Windows durability, crash accounting, and unchanged request witnesses."""
 import hashlib
 import json
@@ -226,7 +227,7 @@ def test_current_transport_preserves_exact_http_body_offline(monkeypatch,body):
     ('initial_team_version','changed'),('pattern_abstraction_guard','changed'),
     ('gradient_prompt_sha256','0'*64),('cache_policy','changed')])
 def test_operational_binding_rejects_scientific_delta(field,value):
-    from multi_dataset_diverse_rl.benchmarks.math_gradient_pattern_binding import MATHGradientPatternBinding
+    from multi_dataset_diverse_rl.benchmarks.legacy.math_gradient_pattern_binding_v21 import MATHGradientPatternBinding
     c=json.loads((ROOT/'experiments/execution_bindings/math_v2_1_gradient_pattern_seed81_pilot_v3.json').read_bytes())
     c[field]=value
     assert MATHGradientPatternBinding(ROOT,c).blockers()==('OPERATIONAL_PILOT_SCIENTIFIC_SETTING_CHANGED',)

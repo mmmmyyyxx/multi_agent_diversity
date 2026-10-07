@@ -377,7 +377,8 @@ def test_request_cache_accounting_and_gate_capability():
 
 def test_historical_frontier_stays_closed():
     import yaml
-    original = subprocess.check_output(["git", "show", "fa718b9842fcfb50c5a651a59225d1435ebdd7e5:experiments/current_frontier.yaml"], cwd=ROOT)
+    # Git provenance belongs to the checkout, not the isolated artifact fixture.
+    original = subprocess.check_output(["git", "show", "fa718b9842fcfb50c5a651a59225d1435ebdd7e5:experiments/current_frontier.yaml"], cwd=Path(__file__).resolve().parents[1])
     frontier = yaml.safe_load(original)
     assert frontier["real_execution_ready"] is False and frontier["real_api_authorized"] is False
     assert frontier["test_access"] == "sealed" and frontier["validation_access"] == "not_authorized"

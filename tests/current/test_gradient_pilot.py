@@ -1,3 +1,4 @@
+# V2.1 frozen replay assertions; V2.2 current conformance is tested separately.
 """Phase wiring and observational equivalence under deterministic fake providers."""
 import asyncio
 from copy import deepcopy
@@ -6,8 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from multi_dataset_diverse_rl.benchmarks.gradient_pilot_contract import pilot_provider_bounds
-from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
+from multi_dataset_diverse_rl.benchmarks.legacy.gradient_pilot_contract_v21 import pilot_provider_bounds
+from multi_dataset_diverse_rl.benchmarks.legacy.current_math_domain_binding_v21 import execution_binding
 from multi_dataset_diverse_rl.governance.pilot_observation import attach_pilot_observer,memory_snapshot
 from multi_dataset_diverse_rl.search.policies import GlobalStopPolicy,TargetPolicyV1,ResponsibilitySignal
 from multi_dataset_diverse_rl.search.history import HistoryState

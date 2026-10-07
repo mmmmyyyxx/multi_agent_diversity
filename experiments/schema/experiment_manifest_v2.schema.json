@@ -70,7 +70,8 @@
       "enum": [
         "unified_team_prompt_search_v1",
         "unified_team_prompt_search_v2",
-        "unified_team_prompt_search_v2_1"
+        "unified_team_prompt_search_v2_1",
+        "unified_team_prompt_search_v2_2"
       ]
     },
     "source_sha": {
@@ -402,7 +403,8 @@
             "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
             "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
             "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1",
-            "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1"
+            "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1",
+            "MATH_V2_2_EXECUTION_BINDING_V1"
           ]
         },
         "path": {
@@ -2075,7 +2077,10 @@
           "execution_binding": {
             "properties": {
               "identity": {
-                "const": "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1"
+                "enum": [
+                  "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1",
+                  "MATH_V2_2_EXECUTION_BINDING_V1"
+                ]
               }
             }
           },
@@ -2098,7 +2103,10 @@
           "execution_binding": {
             "properties": {
               "identity": {
-                "const": "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1"
+                "enum": [
+                  "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1",
+                  "MATH_V2_2_EXECUTION_BINDING_V1"
+                ]
               }
             }
           },
@@ -2129,7 +2137,10 @@
           "execution_binding": {
             "properties": {
               "identity": {
-                "const": "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1"
+                "enum": [
+                  "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1",
+                  "MATH_V2_2_EXECUTION_BINDING_V1"
+                ]
               }
             }
           },
@@ -2448,6 +2459,232 @@
             }
           }
         ]
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "method_family"
+        ],
+        "properties": {
+          "method_family": {
+            "const": "unified_team_prompt_search_v2_2"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "method_identity",
+          "search_engine_identity",
+          "transition_identity",
+          "search_acceptance_identity",
+          "evidence_identity",
+          "feasibility_identity",
+          "adaptive_gate_identity",
+          "pattern_identity",
+          "memory_identity",
+          "global_stop_identity",
+          "models",
+          "mechanism_config"
+        ],
+        "properties": {
+          "method_identity": {
+            "const": "unified_team_prompt_search_v2_2"
+          },
+          "search_engine_identity": {
+            "const": "LAYER1_BOUNDED_MEMORY_SEARCH_V2"
+          },
+          "transition_identity": {
+            "const": "initial_competence_target_or_team_progress_v3"
+          },
+          "search_acceptance_identity": {
+            "const": "layer1_local_guidance_team_admission_v1"
+          },
+          "evidence_identity": {
+            "const": "pattern_gradient_representatives_preservation_transition_v5"
+          },
+          "feasibility_identity": {
+            "const": "variable_evidence_feasibility_v1"
+          },
+          "adaptive_gate_identity": {
+            "const": "winner_only_shadow_v1"
+          },
+          "pattern_identity": {
+            "const": "gradient_cluster_pattern_discovery_v4"
+          },
+          "memory_identity": {
+            "const": "structured_cross_member_rolling_risk_memory_v4"
+          },
+          "global_stop_identity": {
+            "const": "team_epoch_no_commit_v1"
+          },
+          "models": {
+            "const": {
+              "solver": "qwen3-8b",
+              "optimizer": "qwen3.7-flash",
+              "solver_thinking": false
+            }
+          },
+          "mechanism_config": {
+            "type": "object",
+            "required": [
+              "memory",
+              "shared_risk_policy",
+              "optimizer_input_schema",
+              "panel_policy",
+              "pattern_policy",
+              "pattern_provider_binding",
+              "pattern_support_id_transport",
+              "pattern_abstraction_guard",
+              "partition_completion_policy",
+              "gradient_recovery_policy"
+            ],
+            "properties": {
+              "memory": {
+                "const": {
+                  "top_k_private": 3,
+                  "top_k_shared": 3,
+                  "max_context_chars": 1200,
+                  "private_storage_limit": 24,
+                  "shared_storage_limit": 48,
+                  "max_failure_entries_per_member": 5
+                }
+              },
+              "shared_risk_policy": {
+                "const": {
+                  "signature": "closed_action_outcome_failure_signature_v1",
+                  "retention": "recent_opportunity_recurrence_retention_v1",
+                  "minimum_distinct_members": 2,
+                  "recent_opportunity_window": 48,
+                  "failure_evidence_capacity": 240,
+                  "shared_event_capacity": 48,
+                  "promotion_timing": "opportunity_commit",
+                  "retention_order": [
+                    "recent_recurrence",
+                    "recent_distinct_members",
+                    "same_lane",
+                    "last_seen",
+                    "semantic_key"
+                  ],
+                  "retrieval_order": [
+                    "same_lane",
+                    "compatible_family",
+                    "last_seen",
+                    "recent_recurrence",
+                    "semantic_key"
+                  ]
+                }
+              },
+              "optimizer_input_schema": {
+                "const": "PATTERN_GRADIENT_TRAJECTORIES_MEMORY_INPUT_V4"
+              },
+              "panel_policy": {
+                "const": "pattern_gradient_representatives_preservation_transition_v5"
+              },
+              "pattern_policy": {
+                "const": {
+                  "discovery": "gradient_cluster_pattern_discovery_v4",
+                  "responsibility": "same_raw_pattern_responsibility_v1",
+                  "raw_value": "raw_responsibility_max_4D_2N_C_v1",
+                  "schema": "GRADIENT_PATTERN_PARTITION_V2",
+                  "correctness": "target_member_correctness_validity_v1",
+                  "universe": "all_selected_member_wrong_optimize",
+                  "gradient_policy": {
+                    "identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_V1",
+                    "prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3",
+                    "schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V1",
+                    "max_characters": 400,
+                    "universe": "all_selected_member_wrong_optimize",
+                    "logical_calls_per_wrong": 1,
+                    "successful_generations_per_wrong": 1,
+                    "output_cache": false,
+                    "semantic_regeneration": false,
+                    "provider_role": "pattern_gradient",
+                    "generation_contract_role": "pattern",
+                    "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+                    "abstraction_guard": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6"
+                  },
+                  "cluster_calls_per_opportunity": 1,
+                  "provider_role": "pattern_cluster",
+                  "output_cache": false,
+                  "generation_contract_role": "pattern",
+                  "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+                  "identity": "GENERALIZED_CORRECTIVE_GRADIENT_IDENTITY_V1",
+                  "selection": "raw_responsibility_then_canonical_identity",
+                  "generalized_gradient_max_characters": 600,
+                  "accounting": "wrong_universe_ceiling_plus_one_cluster_per_opportunity_v1",
+                  "input_limit_tokens": 991808,
+                  "context_limit_tokens": 1000000,
+                  "input_estimate": "serialized_utf8_bytes_plus_1024"
+                }
+              },
+              "pattern_provider_binding": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "pattern_support_id_transport": {
+                "const": "PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1"
+              },
+              "pattern_abstraction_guard": {
+                "const": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6"
+              },
+              "partition_completion_policy": {
+                "const": "GRADIENT_PATTERN_PARTITION_COMPLETION_V1"
+              },
+              "gradient_recovery_policy": {
+                "const": {
+                  "accepted_gradients_per_wrong": 1,
+                  "identity": "PER_EXAMPLE_GRADIENT_CONTRACT_RECOVERY_V1",
+                  "infrastructure_retry": false,
+                  "llm_judge": false,
+                  "logical_gradients_per_wrong": 1,
+                  "max_physical_attempts_per_wrong": 3,
+                  "output_cache": false,
+                  "previous_invalid_output_visible": false,
+                  "same_provider_visible_request": true,
+                  "selection": "first_contract_valid",
+                  "semantic_quality_selection": false
+                }
+              }
+            }
+          },
+          "execution_binding": {
+            "properties": {
+              "identity": {
+                "const": "MATH_V2_2_EXECUTION_BINDING_V1"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "execution_binding"
+        ],
+        "properties": {
+          "execution_binding": {
+            "required": [
+              "identity"
+            ],
+            "properties": {
+              "identity": {
+                "const": "MATH_V2_2_EXECUTION_BINDING_V1"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "method_family": {
+            "const": "unified_team_prompt_search_v2_2"
+          },
+          "method_identity": {
+            "const": "unified_team_prompt_search_v2_2"
+          }
+        }
       }
     }
   ]

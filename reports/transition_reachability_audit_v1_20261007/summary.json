@@ -1,0 +1,33 @@
+{
+  "status": "V2_2_IMPLEMENTED_ZERO_API_ONLY",
+  "real_execution": "HOLD",
+  "method": "unified_team_prompt_search_v2_2",
+  "transition": "initial_competence_target_or_team_progress_v3",
+  "winner_ranking": [
+    "FULL_TEAM_VOTE",
+    "FULL_TARGET_COMPETENCE",
+    "EXISTING_SAFETY_TIEBREAKS",
+    "DETERMINISTIC_HASH"
+  ],
+  "promotion_ceiling": 2,
+  "first_target_only_fake_commit": {
+    "initial_target": 22,
+    "full_target": 25,
+    "parent_vote": 22,
+    "full_vote": 22,
+    "realized_team_gain": 0,
+    "realized_target_gain": 3,
+    "realized_progress_path": "TARGET",
+    "shadow_target_gain": 0,
+    "memory_success_writes": 1
+  },
+  "finite_pilot_bound_frozen": false,
+  "execution_binding_frozen": false,
+  "blockers": [
+    "CURRENT_V2_2_EXECUTION_BINDING_NOT_FROZEN",
+    "TARGET_OR_TEAM_PROGRESS_PILOT_BOUND_NOT_FROZEN"
+  ],
+  "real_provider_calls": 0,
+  "validation_evaluations": 0,
+  "test_evaluations": 0
+}

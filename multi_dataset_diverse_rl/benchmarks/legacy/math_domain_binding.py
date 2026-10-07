@@ -76,7 +76,7 @@ class MATHDomainBinding(MATHAutonomousBinding):
 def execution_binding(root,contract):
     if contract['identity']==versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION:
         if contract.get('pattern_policy',{}).get('discovery')==versions.GRADIENT_PATTERN_DISCOVERY_VERSION:
-            from ..math_gradient_pattern_binding import MATHGradientPatternBinding
+            from .math_gradient_pattern_binding_v21 import MATHGradientPatternBinding
             return MATHGradientPatternBinding(root,contract)
         from ..math_pattern_binding import MATHPatternBinding
         return MATHPatternBinding(root,contract)

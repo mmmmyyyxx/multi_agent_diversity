@@ -3,7 +3,7 @@ from copy import deepcopy
 import json
 
 from ..search.gradient_recovery import POLICY
-from ..search.current_policy import CURRENT_POLICY_BUNDLE
+from ..search.legacy.current_policy_v21 import CURRENT_POLICY_BUNDLE
 from ..search.schemas import SearchContractError
 from .data_freeze import file_hash
 
@@ -62,7 +62,7 @@ def validate_gradient_recovery(binding):
         raise SearchContractError('CURRENT_GRADIENT_RECOVERY_USER_SCOPE_MISMATCH')
     if scope.get('real_attempt_authorized') is not (c['execution_phase']=='pilot' and 'offline' not in c['execution_attempt_id']):
         raise SearchContractError('CURRENT_GRADIENT_RECOVERY_USER_SCOPE_MISMATCH')
-    from .math_gradient_pattern_binding import MATHGradientPatternBinding
+    from .legacy.math_gradient_pattern_binding_v21 import MATHGradientPatternBinding
     blockers=MATHGradientPatternBinding(binding.root,parent).blockers()
     if blockers:
         if blockers[0].startswith('CURRENT_DATA_'):raise SearchContractError(blockers[0])

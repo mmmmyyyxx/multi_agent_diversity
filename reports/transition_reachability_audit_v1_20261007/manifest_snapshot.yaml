@@ -1,0 +1,19 @@
+schema_version: zero_api_semantic_amendment_audit_v1
+experiment_id: transition_reachability_audit_v1
+method_identity: unified_team_prompt_search_v2_2
+transition_identity: initial_competence_target_or_team_progress_v3
+source_base: c921c395a75320f02081eeae517be7a5f975d248
+parent_manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v6.yaml
+parent_manifest_normalized_sha256: c04a499958901913ddf536beb27239e3fbcd06011e4b1e251a0b22272ebf2f83
+user_task_sha256: 2db412f23108d2b03f155c349a4877cb254c13c5c6c977cb3fa0a0d881318630
+scope: CODE_AND_ZERO_API_SEMANTIC_AUDIT
+scientific_method_changed: true
+real_api_authorized: false
+validation_authorized: false
+test_authorized: false
+pilot_authorized: false
+provider_calls: 0
+readiness: HOLD
+blockers:
+- CURRENT_V2_2_EXECUTION_BINDING_NOT_FROZEN
+- TARGET_OR_TEAM_PROGRESS_PILOT_BOUND_NOT_FROZEN

@@ -9,15 +9,16 @@ and authorization come from the frozen manifest. Reports are evidence, never
 design authority. Historical specifications and invariant IDs are preserved in
 `docs/archive/specs/historical_current_spec.md` and its invariant index.
 
-## Active Unified Team Prompt Search V2.1 (opt-in)
+## Active Unified Team Prompt Search V2.2 (opt-in)
 
 Only the complete Gradient Pattern V4 + Rolling Risk Memory + bounded Layer1
 bundle is eligible for new execution. The current graph is defined in
 [Current Runtime Composition](CURRENT_RUNTIME_COMPOSITION.md). Existing null,
 factorial-arm and older component constructors remain schema/replay compatibility;
-they cannot select a current execution path. This engineering consolidation
-changes no scientific identity, prompt, responsibility, evidence, Memory,
-search, deployment, generation policy or data membership.
+they cannot select a current execution path. The V2.2 transition amendment changes deployment eligibility and ranking only;
+unchanged component policies retain their identities. V2.1 is explicit replay.
+The [V3 deployment contract](TRANSITION_TARGET_OR_TEAM_PROGRESS_V3.md) defines
+the new semantics and execution HOLD boundaries.
 
 - **INV-UNIFIED-FLOW-001**: One orchestrator owns snapshot, state analysis,
   opportunity construction, candidate search, progressive team evaluation,
@@ -58,8 +59,9 @@ search, deployment, generation policy or data membership.
 
 ## Active search and stopping contract
 
-The user-authored [method semantic contract](UNIFIED_METHOD_SEMANTIC_CONTRACT.md)
-defines the research meaning and claim boundaries. `SearchMethodConfig.v2_1()`
+The [V2.2 deployment contract](TRANSITION_TARGET_OR_TEAM_PROGRESS_V3.md) defines
+current transition semantics. The frozen [V2.1 method semantic contract](../archive/specs/unified_v2_1_method_semantic_contract.md)
+retains the earlier research meaning and unchanged component claim boundaries. `SearchMethodConfig.v2_1()`
 preserves its identity serialization for compatibility. New execution uses the
 complete current bundle and current-only builder. V1/V2 and earlier V2.1
 component factories retain replay behavior and confer no current access.
@@ -75,13 +77,14 @@ no-commit parent; after sufficient exposure, allocation may remain concentrated.
 Historical GEPA bindings retain strict local survival. Progressive TeamProbe/Full, promotion ceiling two,
 winner-only Shadow, atomic single-member commit and parent-scoped epochs remain.
 Reflection minibatch three, local metric budget36, local no-update patience three
-and team no-commit patience two are unchanged. A successful commit resets team
-patience; V2.1 commits require strict Full team gain. Resource/budget exhaustion,
+and team no-commit patience two are unchanged. A completed atomic commit resets team
+patience, including target-only progress. V2.1 strict-gain stopping bounds cannot
+be reused: V2.2 Pilot is closed until its finite operational bound is frozen. Resource/budget exhaustion,
 incomplete outcomes and technical/conformance failures are not convergence.
 Shadow retains its separately frozen nonnegative team and bounded target-loss
 guard; the competence floor is measured on the complete Optimize scope.
 
-## V2.1 mechanism invariants
+## Current mechanism invariants
 
 - **INV-SEARCH-TEAM-ADMISSION-DECOUPLING**: GEPA survival controls search lineage
   only. All changed, valid, unique, Solver-evaluated proposals enter outer team
@@ -109,14 +112,16 @@ guard; the competence floor is measured on the complete Optimize scope.
   principle, not provider cluster labels; identical normalized descriptions
   merge. This is deterministic description identity, not a paraphrase resolver.
   Provider/model/prompt/limits require a fresh explicit experiment binding.
-- **INV-INITIAL-COMPETENCE-002**: Freeze the initial five-member Optimize
-  scores and state identity from actual initialization. Candidate Full target
-  competence must be at least its INITIAL score and team score must strictly
-  improve; terminal-invalid delta must be measured and nonpositive. A member
-  may decline relative to incumbent while staying above initial competence.
-  Team-neutral/down or below-initial changes never deploy. Initial floors
-  survive commit/rollback and cannot be rebased. Missing floors/guards fail
-  closed. Safety tie-breaking never uses GEPA local scores.
+- **INV-INITIAL-COMPETENCE-003**: Freeze the actual initial five-member Optimize
+  competence and state identity once. V2.2 Full eligibility requires target >=
+  immutable initial floor, Vote >= parent Vote and (target > parent target OR
+  Vote > parent Vote), with the existing versioned invalid-output safety rule.
+  Incumbent target decline is allowed only with strict Vote gain above the floor.
+  Neutral, Vote regression and below-floor candidates never deploy. Initial
+  floors survive commit/rollback without rebase. Rank Full team Vote first,
+  Full target competence second, then existing safety metrics and stable hash;
+  never local search score. Historical INV-INITIAL-COMPETENCE-002 is preserved
+  in the [V2.1 spec archive](../archive/specs/unified_v2_1_current_spec.md).
 - **INV-LONG-TERM-MEMORY-001**: Memory contains Situation–Action–Outcome–Lesson
   strategy experience, not a telemetry log. The deterministic closed action
   vocabulary recognizes added/removed reasoning checks from the ACTUAL parent
@@ -137,7 +142,7 @@ guard; the competence floor is measured on the complete Optimize scope.
   independently toggled, null by default.
 - **INV-ALLOCATION-EVIDENCE-002**: Observation-only traces record D/N/C/V,
   failure counts, target scores, feasibility, exposure, initial/incumbent/child
-  competence and realized team gain per opportunity. Opportunity-to-gain
+  competence, realized team/target gains and progress path per opportunity. Opportunity-to-gain
   conversion and alignment can be audited from these facts. Distribution or
   concentration alone is not efficacy; counterfactual optimality and individual
   component causality require separately designed experiments. No observation
@@ -220,7 +225,9 @@ inherited. Pattern/Memory are IMPLEMENTED_DEFAULT_OFF, efficacy unverified.
   Static registry readiness alone cannot grant execution. The shared binary
   ports use the benchmark's actual aggregation and check agreement with the
   responsibility algebra. Historical V2 bindings use their frozen monotone-safe S0-S2
-  key; new V2.1 bindings require the initial-competence/strict-team-gain policy.
+  key; historical V2.1 bindings require their initial-competence/strict-team-gain policy.
+  Current V2.2 requires a fresh MATH_V2_2_EXECUTION_BINDING_V1; until frozen,
+  current execution is HOLD before any old binding or provider is instantiated.
   Local scores never enter team ranking. Shadow cardinality is manifest
   driven, preserving its nonnegative Vote and target-loss-at-most-two guards.
   Shadow raw records/cache stay within a private gate capability. Successful
@@ -327,7 +334,7 @@ inherited. Pattern/Memory are IMPLEMENTED_DEFAULT_OFF, efficacy unverified.
   Historical bindings through V2.1 execution binding V2 still abort on marker failure without regeneration; the explicitly frozen prediction validity binding below supersedes that behavior only for fresh scopes. Only evaluator semantics
   change; responsibility, aggregation, scheduling, GEPA and admission do not.
 
-## V2.1 MATH fresh binding
+## Historical V2.1 MATH fresh binding
 
 `MATH_V2_1_EXECUTION_BINDING_V1` binds the V2.1 factory directly to the
 benchmark-wide `MATH_ANSWER_DOMAIN_V2` / `MATH_EQUIVALENCE_V2` amendment and
@@ -493,7 +500,8 @@ Unified V2.1. All Solver decoding fields and immutable interface V5 bytes stay
 unchanged. Reference scorable checks, payload mathematical semantics,
 `MATH_EQUIVALENCE_V2`, `MATH_SCORABLE_REFERENCE_V2`, memberships, initial
 team, Responsibility, allocation, failure discount, GEPA budgets, Pattern,
-Memory, strict team gain and immutable initial floor stay frozen.
+Memory, strict team gain and immutable initial floor stay frozen for this
+historical V2.1 binding; V2.2 deployment uses the V3 contract above.
 
 After successful transport, missing/empty/multiple final markers, other strict
 framing violations, unsupported/unparseable payloads, and length termination
@@ -515,8 +523,9 @@ by phase/member are observations, with no allocation, promotion, transition,
 Shadow, stopping or efficacy threshold read point. Existing score-based
 TeamProbe/Full/Shadow guards remain unchanged. Legacy invalid-response hard
 guards apply only to historical bindings; in V3 invalidity acts solely through
-incorrectness. Transition still requires candidate member >= immutable initial
-floor and candidate team > incumbent team, allowing specialization.
+incorrectness. Historical V2.1 transition requires candidate member >= immutable
+initial floor and candidate team > incumbent team. Current V2.2 retains this
+validity policy but uses target-or-team progress with Vote non-regression.
 
 The policy enters execution binding, manifest, preexecution, authorization,
 request/cache identities and Validation accounting metadata. Cached invalid
@@ -571,7 +580,7 @@ own floor on all 60 Optimize rows, uses the existing adaptive gate on 40
 Shadow rows, and stops through the unchanged team_epoch_no_commit_v1
 semantics. Responsibility, failure discount, opportunity allocation, initial
 floor, strict team gain, aggregation, team size and GEPA numerical budgets
-remain unchanged. Search never reads Validation correctness. After immutable
+remain unchanged within this historical V2.1 protocol. Search never reads Validation correctness. After immutable
 SEARCH_COMPLETE_RECEIPT, paired Initial/Final Validation uses all 100 rows,
 identical Solver policy/recovery and shared exact realization caching.
 Mandatory first-attempt Validation reserve covers 1000 logical evaluations;
@@ -581,7 +590,7 @@ an upper bound, with every physical transport separately charged, and never
 an expenditure target. This is development evidence only; no Test, formal
 three-seed run, other arm or other seed follows any result.
 
-## Responsibility-conditioned Layer1 amendment (fresh binding V3)
+## Historical V2.1 Responsibility-conditioned Layer1 binding V3
 
 `MATH_V2_1_LAYER1_EXECUTION_BINDING_V3` opts into the user-authorized
 [Layer1 search specification](LAYER1_SEARCH_SEMANTICS_VNEXT.md).
@@ -762,8 +771,9 @@ V6 retains hard rejection for strong source-bound evidence and records bare
 numeric coincidences as warnings. V5 remains a frozen historical receipt and
 replay contract. Warnings do not enter any scientific selection or provider input.
 
-Current composition dispatches the frozen execution phase explicitly: Canary
-ends after one production opportunity; Pilot uses the existing two consecutive
+Synthetic current composition retains the one-opportunity Canary boundary.
+V2.2 Pilot fails before initialization while its finite bound is unfrozen.
+Historical V2.1 Pilot uses the existing two consecutive
 no-commit team epochs. Phase binding does not change the policy bundle, prompts,
 failure-count lifetime or candidate admission. Pilot read-only state journals
 record actual Memory retrieval and generation/transaction boundaries without

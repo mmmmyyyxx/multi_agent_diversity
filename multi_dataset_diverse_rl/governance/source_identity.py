@@ -51,6 +51,17 @@ HISTORICAL_CONTROL_PATHS = {
     'multi_dataset_diverse_rl/search/legacy_bbh_replay.py',
 }
 
+# These receipt constructors now reconstruct only the preserved V2.1 bundle.
+# Shared benchmark validity/decoding primitives remain current authority.
+HISTORICAL_RECEIPT_PATHS = {
+    'multi_dataset_diverse_rl/benchmarks/gradient_contract_receipt.py',
+    'multi_dataset_diverse_rl/benchmarks/gradient_recovery_contract.py',
+    'multi_dataset_diverse_rl/benchmarks/numeric_admissibility_contract.py',
+    'multi_dataset_diverse_rl/benchmarks/numeric_calibration_contract.py',
+    'multi_dataset_diverse_rl/benchmarks/operational_pilot_contract.py',
+    'multi_dataset_diverse_rl/benchmarks/partition_completion_contract.py',
+}
+
 
 def current_scientific_files(root: Path, *, execution_closure: bool = False) -> list[Path]:
     composition=root/'multi_dataset_diverse_rl/search/current_composition.py'
@@ -84,7 +95,10 @@ def current_scientific_files(root: Path, *, execution_closure: bool = False) -> 
     spec = root/'docs/design/CURRENT_SPEC.md'
     if spec.is_file():
         result.append(spec)
-    semantic_contract = root/'docs/design/UNIFIED_METHOD_SEMANTIC_CONTRACT.md'
+    semantic_contract = root/'docs/design/TRANSITION_TARGET_OR_TEAM_PROGRESS_V3.md'
+    if not semantic_contract.is_file():
+        # Preserve synthetic and explicit original-source workspace hashing.
+        semantic_contract = root/'docs/design/UNIFIED_METHOD_SEMANTIC_CONTRACT.md'
     if semantic_contract.is_file():
         result.append(semantic_contract)
     risk_contract = root/'docs/design/SHARED_RISK_MEMORY_V4.md'
@@ -129,6 +143,8 @@ def current_authority_files(root: Path, area: str) -> list[Path]:
         if path.suffix not in {'.py','.json','.md','.txt'}:
             continue
         if path.name=='legacy_bbh_replay.py':
+            continue
+        if path.relative_to(root).as_posix() in HISTORICAL_RECEIPT_PATHS:
             continue
         if path.suffix=='.py' and is_legacy_forwarder(root,path):
             continue

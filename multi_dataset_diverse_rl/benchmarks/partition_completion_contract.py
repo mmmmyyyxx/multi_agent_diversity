@@ -30,7 +30,7 @@ def validate_partition_completion(binding):
         if file_hash(p)!=c[hash_key]:raise SearchContractError('PARTITION_COMPLETION_DEPENDENCY_HASH_MISMATCH')
         return json.loads(p.read_bytes())
     parent=checked('partition_completion_parent_binding_path','partition_completion_parent_binding_sha256')
-    from .math_gradient_pattern_binding import MATHGradientPatternBinding
+    from .legacy.math_gradient_pattern_binding_v21 import MATHGradientPatternBinding
     if MATHGradientPatternBinding(binding.root,parent).blockers():
         raise SearchContractError('PARTITION_COMPLETION_PARENT_INVALID')
     expected=derive_partition_completion(parent,attempt=c['execution_attempt_id'],binding_path=c['binding_path'],

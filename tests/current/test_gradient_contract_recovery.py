@@ -1,3 +1,4 @@
+# V2.1 frozen replay assertions; V2.2 current conformance is tested separately.
 """First-valid recovery has an output-only boundary and identical requests."""
 from copy import deepcopy
 import json
@@ -9,7 +10,7 @@ from multi_dataset_diverse_rl.search.gradient_recovery import POLICY,statistics
 from multi_dataset_diverse_rl.search.textual_gradients import GradientExtractor,PerExampleGradientProvider
 from multi_dataset_diverse_rl.search.schemas import EvidenceItem,SearchContractError
 from multi_dataset_diverse_rl.persistence.durable_io import append_jsonl
-from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
+from multi_dataset_diverse_rl.benchmarks.legacy.current_math_domain_binding_v21 import execution_binding
 
 ROOT=Path(__file__).resolve().parents[2]
 PROFILE='experiments/execution_bindings/math_v2_1_gradient_pattern_seed81_pilot_v6.json'

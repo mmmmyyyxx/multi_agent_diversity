@@ -108,6 +108,8 @@ def test_current_experiment_registration_fails_closed(monkeypatch,poison,expecte
             result=deepcopy(result)
             result['current_experiment']=poison
             result['real_execution_ready']='true_for_canary_only'
+            # Model a concrete frozen Canary; the V2.2 frontier has none.
+            result['canary_manifest']='experiments/manifests/math_v2_1_gradient_pattern_seed81_canary_v3.yaml'
         return result
     monkeypatch.setattr(repository,'load_yaml',read)
     assert expected in repository.audit_repository(ROOT,check_generated=False)['errors']
@@ -268,7 +270,12 @@ def _assert_canary_does_not_unlock_formal_or_heldout(frontier,registry):
     next_attempt = frontier['next_canary_attempt_id']
     if next_attempt is None:
         assert frontier['real_execution_ready'] is False
-        if frontier['current_method'] == 'unified_team_prompt_search_v2_1':
+        if frontier['current_method'] == 'unified_team_prompt_search_v2_2':
+            assert frontier['current_execution_blocker']=='CURRENT_V2_2_EXECUTION_BINDING_NOT_FROZEN'
+            assert frontier['finite_pilot_bound_frozen'] is False
+            assert frontier['next_canary_authorized'] is frontier['next_pilot_authorized'] is False
+            assert frontier['next_validation_authorized'] is False
+        elif frontier['current_method'] == 'unified_team_prompt_search_v2_1':
             if frontier['current_canary_status'] == 'GRADIENT_OUTPUT_CONTRACT_FAILURE':
                 assert previous['status'] == 'HOLD'
                 assert previous['scientific_status'] == 'NOT_EVALUABLE_GENERATED_GRADIENT_CONTRACT_FAILURE'
@@ -385,7 +392,8 @@ def _assert_canary_does_not_unlock_formal_or_heldout(frontier,registry):
 def _closed_pilot_frontier():
     """The immutable attempt1 closure, independent of later user decisions."""
     frontier=deepcopy(load_yaml(ROOT/'experiments/current_frontier.yaml'))
-    frontier.update(last_canary_milestone='math_v2_1_gradient_pattern_seed81_canary_v3',
+    frontier.update(current_method='unified_team_prompt_search_v2_1',
+        last_canary_milestone='math_v2_1_gradient_pattern_seed81_canary_v3',
         current_experiment='math_v2_1_gradient_pattern_seed81_pilot_v1',
         last_pilot_milestone='math_v2_1_gradient_pattern_seed81_pilot_v1',
         current_canary_status='VALID_OPERATIONAL_CANARY',current_pilot_status='GRADIENT_OUTPUT_CONTRACT_FAILURE',
@@ -464,7 +472,7 @@ def test_new_pending_pilot_has_separate_user_scope_without_inheriting_closed_aut
         assert scope['push_authorized'] is False
     for role in ('validation','test','raw_diagnostic','llm_judge','canary'):
         assert scope[role+'_authorized'] is False
-    from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
+    from multi_dataset_diverse_rl.benchmarks.legacy.current_math_domain_binding_v21 import execution_binding
     assert not execution_binding(ROOT,contract).blockers()
 
 
@@ -576,6 +584,7 @@ def test_aborted_pilot_scope_cannot_authorize_retry_or_heldout(location,field,va
 ])
 def test_completed_canary_scope_cannot_authorize_followup(location, field, value):
     frontier = deepcopy(load_yaml(ROOT / 'experiments/current_frontier.yaml'))
+    frontier['current_method'] = 'unified_team_prompt_search_v2_1'
     registry = deepcopy(load_yaml(ROOT / 'experiments/registry.yaml'))
     # Select immutable completed evidence rather than the changing latest run.
     previous = next(row for row in reversed(registry['experiments'])
@@ -614,6 +623,7 @@ def test_completed_canary_scope_cannot_authorize_followup(location, field, value
 ])
 def test_closed_gradient_output_failure_cannot_authorize_followup(location, field, value):
     frontier = deepcopy(load_yaml(ROOT / 'experiments/current_frontier.yaml'))
+    frontier['current_method'] = 'unified_team_prompt_search_v2_1'
     registry = deepcopy(load_yaml(ROOT / 'experiments/registry.yaml'))
     previous = next(row for row in registry['experiments']
                     if row['experiment_id'] == 'math_v2_1_gradient_pattern_seed81_canary_v1')

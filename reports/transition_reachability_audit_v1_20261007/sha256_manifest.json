@@ -1,0 +1,69 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "058bdc2136d39f4c8465287379fe4d634e9a579b239fe9432ee13d4e30bd6bec"
+    },
+    {
+      "file": "changed_files.json",
+      "sha256": "1a2f84ee51224d6ae0a82355584f8eee712fdc78a248266a00a27654be965920"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "a7fb256d0447ebc3a5cf613347d1ccb8ad139e87b67bebbe3fae6cdca8c2df6c"
+    },
+    {
+      "file": "current_dependency_audit.json",
+      "sha256": "bbfd5dff0b90627c1dbf44a2cf3a441f5b7c757a3e4b16e39123c2a38cb0c825"
+    },
+    {
+      "file": "current_governance.json",
+      "sha256": "1efc87c82f09ac1097d54322f673ed6312f21099f4e42439389e3e05801e226c"
+    },
+    {
+      "file": "engineering_verification.json",
+      "sha256": "c8064138193845f348743c8698698df2acd069138f4861a599eaea3e1d7cc35a"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "8d6a742eac9e1901c920a3050c6e1cca10eecd358727fe67109b15b273bb5cb1"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "40959a86085f78ee84d0bb1f0ea235eed46411db164b6f6215772a9b2076a75a"
+    },
+    {
+      "file": "findings.json",
+      "sha256": "4687a20098e87f47ceae03b12b23ff02952cae822f13a199d3278899909fc97f"
+    },
+    {
+      "file": "historical_preservation.json",
+      "sha256": "b886745b63d608bef99efddc86946ff2cd67e2ac1b0876e04b3f9cb1c4c9112b"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "5079219b69e504c48b7382a6b21771fb434fc9cdd3c8d5be9928734d0a43b6a4"
+    },
+    {
+      "file": "occurrence_classification.json",
+      "sha256": "79140dfa63d7fd4dfe71570d48c1bc80f721697e531a3a7cf4ce6cfb0ccafed6"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "d0e4981ccfabca2af42d9feca002199de0e45bb55c84666bd1fe9ce30546bb93"
+    },
+    {
+      "file": "README.md",
+      "sha256": "fe8d006c7219ca64e9f2309eb35209233de24ec94d742497e5b0ad02c1777edb"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "0eb2c76c3b2ca8b3e7803d11c1e309e114fe94ae106e00b8e129565987ed9532"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "8295e3a99d10e322c7d6c0c37e74d0de73d0121685207ba7f7c77b9ab265062b"
+    }
+  ]
+}
