@@ -1,0 +1,181 @@
+{
+  "Optimize_count": 60,
+  "allowed_roles": [
+    "solver"
+  ],
+  "allowed_splits": [
+    "optimize"
+  ],
+  "attempt_id": "manual_prompt_capacity_probe_v1_attempt1",
+  "cache_namespace": "manual_capacity/v1/attempt1",
+  "classification_rule": {
+    "a4_search_gap": "SUPPORTED iff both P1-P5 mean best single accuracy and fixed-team mean Vote exceed 22/60; INCONCLUSIVE for single or coverage-only gains, or non-replicated team gain; otherwise NOT_SUPPORTED within this finite probe",
+    "coverage_space": "OBSERVED iff any fixed P1-P5 replicate team Oracle exceeds 22/60",
+    "plurality_conversion_bottleneck": "SUPPORTED iff both fixed teams have Oracle > Vote and union of novel coverage not converted to correct plurality; INCONCLUSIVE if only one does; otherwise NOT_SUPPORTED within this probe",
+    "single_prompt_space": "OBSERVED iff any P1-P5 replicate exceeds original 22/60",
+    "team_vote_space": "OBSERVED iff any fixed P1-P5 replicate team Vote exceeds 22/60"
+  },
+  "evaluation_order": "replicate_then_prompt_then_frozen_optimize_order",
+  "exact_prompt_text_public": false,
+  "experiment_id": "math_v2_1_manual_prompt_capacity_probe_v1",
+  "finite_bounds": {
+    "bound_enforcement": "Before every transport reservation, a sequential attempt ceiling is enforced in addition to the unchanged cumulative 40M journal. No transport occurs when either budget lacks the full reservation.",
+    "charged_start": 3072683,
+    "cumulative_authorized_total": 40000000,
+    "effective_token_charge_ceiling": 30000000,
+    "fit": true,
+    "logical_evaluations": 720,
+    "max_semantic_attempts": 4,
+    "maximum_per_transport_token_reservation": 10333,
+    "no_transport_failure_all_semantic_attempts_reservation_bound": 26826144,
+    "remaining_start": 36927317,
+    "successful_provider_call_ceiling": 2880,
+    "transport_attempt_ceiling": 60480,
+    "transport_retries_per_semantic_attempt": 20,
+    "uncapped_all_transport_attempts_reservation_envelope": 563349024,
+    "uncapped_envelope_note": "The uncapped retry envelope exceeds remaining funds; it is not authorized. The effective hard charge ceiling bounds spend even for transport failures."
+  },
+  "identity": "MANUAL_PROMPT_CAPACITY_PROBE_V1",
+  "invalid_recovery_policy": {
+    "cache": "resolved_valid_or_exhausted_terminal_only",
+    "first_valid_stops": true,
+    "identity": "MATH_SOLVER_INVALID_RECOVERY_V1",
+    "invalidity_weight": "none",
+    "logical_evaluation_count": 1,
+    "max_semantic_attempts": 4,
+    "same_request_bytes": true,
+    "solver_invalid_max_retries": 3,
+    "terminal_invalid": "incorrect_continue_no_vote",
+    "terminal_requires_completed_invalid_attempts": 4,
+    "transport_failures_consume_semantic_attempt": false
+  },
+  "logical_evaluations": 720,
+  "manual_design_sha256": "e5b20a43f5b0a8bcee787f1409113eb6f6016d8e72eb484ffd38a44b3c32d8e9",
+  "manual_team": [
+    "P1_GENERALIST",
+    "P2_SPECIALIST_A",
+    "P3_SPECIALIST_B",
+    "P4_SPECIALIST_C",
+    "P5_SPECIALIST_D"
+  ],
+  "model": "qwen3-8b",
+  "parent_binding_sha256": "02efd18e8431937f2cf1b196289a36cd0ff8381546fe0f4603f46011b330da22",
+  "parent_manifest_sha256": "c04a499958901913ddf536beb27239e3fbcd06011e4b1e251a0b22272ebf2f83",
+  "post_hoc_selection_main_result": false,
+  "prediction_validity_policy": {
+    "denominator": "all_frozen_examples",
+    "fallback_extraction": false,
+    "identity": "MATH_PREDICTION_VALIDITY_V2",
+    "invalid_response_retries": 3,
+    "invalid_vote": "excluded_from_equivalence_classes",
+    "invalidity_telemetry": "observation_only",
+    "prediction_failure": "invalid_incorrect_continue",
+    "reference_failure": "hard_contract_failure",
+    "truncated_even_with_marker": "invalid_incorrect"
+  },
+  "private_manifest_sha256": "a38019dfca6876a8bd10f5cb87d7c98e53e5ebf063e68be02e1ede5a4ee39898",
+  "prompt_edit_after_results": false,
+  "prompts": [
+    {
+      "char_count": 18,
+      "design_rationale": "Exact original minimal prompt; two independent stochastic references.",
+      "intended_reusable_behavior": "baseline",
+      "prompt_id": "P0_BASELINE",
+      "prompt_sha256": "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80",
+      "source_failure_families": "baseline"
+    },
+    {
+      "char_count": 478,
+      "design_rationale": "Recurring interpretation, arithmetic and feasibility weaknesses occur across the development set; broad candidate checklists also lose previously correct tasks, motivating a concise general procedure.",
+      "intended_reusable_behavior": "cross_family_generalist",
+      "prompt_id": "P1_GENERALIST",
+      "prompt_sha256": "d7eb3cbbb5a99ffd023192bf41dc685a1453ff59f404fb81d3e256d2da1e9afa",
+      "source_failure_families": "cross_family_generalist"
+    },
+    {
+      "char_count": 517,
+      "design_rationale": "Repeated standard-form, substitution-order, coefficient, real-domain and feasible-branch instructions are visible in the reviewed gradients; broad algebraic losses caution against forcing this procedure on other problems.",
+      "intended_reusable_behavior": "algebraic_structure_and_feasible_branches",
+      "prompt_id": "P2_SPECIALIST_A",
+      "prompt_sha256": "7c7b06b7dcf07a18f4ab4421681a4c7450ef314f92faf23e34f00d3edf330b98",
+      "source_failure_families": "algebraic_structure_and_feasible_branches"
+    },
+    {
+      "char_count": 549,
+      "design_rationale": "The reviewed failures repeatedly concern distinguishability, forbidden combinations, threshold events, replacement and joint selection processes; this procedure addresses model choice and exhaustive coverage.",
+      "intended_reusable_behavior": "sample_space_and_exhaustive_counting",
+      "prompt_id": "P3_SPECIALIST_B",
+      "prompt_sha256": "b0358c8c846bf5e492157f17f8100c5208c4b897c30f8ab95436f63ff5d05fb3",
+      "source_failure_families": "sample_space_and_exhaustive_counting"
+    },
+    {
+      "char_count": 585,
+      "design_rationale": "Recurrent geometry traces concern region identification, unproved scaling, tangency constraints, determinant signs and inverse vertex transformations; direct modeling is more specific than generic checking.",
+      "intended_reusable_behavior": "geometric_model_and_region_correspondence",
+      "prompt_id": "P4_SPECIALIST_C",
+      "prompt_sha256": "8472db5128eeb46f254492a1e0f6cd184315692ac3e90426163ea1a95e3f2108",
+      "source_failure_families": "geometric_model_and_region_correspondence"
+    },
+    {
+      "char_count": 576,
+      "design_rationale": "Reviewed failures repeatedly concern structured integer arithmetic, distinct-prime counting, noninvertible modular division, simultaneous residues, digit-case completeness and base conversion.",
+      "intended_reusable_behavior": "integer_structure_and_representation",
+      "prompt_id": "P5_SPECIALIST_D",
+      "prompt_sha256": "6dfc08271401e32ee72d7c18b7546bb6d1eeb73f2f0f685eadab2d388cde9664",
+      "source_failure_families": "integer_structure_and_representation"
+    }
+  ],
+  "replacement_member_slots": {
+    "P0_BASELINE": 0,
+    "P1_GENERALIST": 0,
+    "P2_SPECIALIST_A": 1,
+    "P3_SPECIALIST_B": 2,
+    "P4_SPECIALIST_C": 3,
+    "P5_SPECIALIST_D": 4
+  },
+  "replicates": [
+    1,
+    2
+  ],
+  "schema_version": "manual_prompt_capacity_probe_manifest_v1",
+  "scientific_method_changed": false,
+  "scientific_spec_sha256": "f1eea5f86cf316a1f9e159ba6728194c969104b5d315e53c135bc16ae65b89e0",
+  "scope_expansion": false,
+  "solver_output_interface": {
+    "identity": "MATH_SOLVER_INTERFACE_V5",
+    "parser_identity": "math_verify_no_fallback_v1",
+    "reflection_max_output_tokens": 1800,
+    "sha256": "6ff187ad4f0e6ffc7360c84263c1c2c8b18d59bded4bbfeb550db6fc818b7c06",
+    "solver_max_output_tokens": 3600,
+    "system_sha256": "655fa13b3e52c42903722b7418d164ef7adbde289fe925b52d2ab4ec72107376",
+    "user_suffix_sha256": "2d889a53f47fb5763bcc70579302a2289cd8d718811a1b3caf68c4134b59fdd4"
+  },
+  "solver_request_fields": {
+    "extra_body": {
+      "enable_thinking": false,
+      "min_p": 0,
+      "top_k": 20
+    },
+    "frequency_penalty": 0,
+    "max_tokens": 3600,
+    "presence_penalty": 0,
+    "temperature": 0.2,
+    "top_p": 0.8
+  },
+  "source_sha": "498d667586e8a29de7dffe38f8f50542c8fb0f3c",
+  "successful_provider_call_ceiling": 2880,
+  "token_charge_ceiling": 30000000,
+  "transport_attempt_ceiling": 60480,
+  "transport_decoding": {
+    "invalid_response_retries": 3,
+    "max_output_tokens": 1800,
+    "retry_backoff_ceiling_seconds": 60,
+    "retry_sleep_seconds": 1.5,
+    "sdk_retries": 0,
+    "solver_max_output_tokens": 3600,
+    "temperature": 0.0,
+    "timeout_seconds": 120,
+    "transport_retries": 20
+  },
+  "user_task_sha256": "b12572428f76a6adc429c893166328b8c5602a552a4a5e045f324ce11fd3cc95"
+}
