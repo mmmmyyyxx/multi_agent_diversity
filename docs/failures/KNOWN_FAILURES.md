@@ -349,3 +349,27 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 - Symptom: WinError5 in atomic derived snapshot replacement after a durable RESPONSE charge;263/300 initial evaluations, no Gradient observations.
 - Forbidden inference: Do not claim proven monitor causality, complete persistence closure, new guard noncompliance, convergence, efficacy or completed Pilot; do not reuse consumed authorization.
 - Mitigation: Preserve raw evidence and the one-response evidence gap; replay unchanged authoritative journal into derived snapshot; close one-shot scope. Monitor reads append-only journal instead of live atomic files;100 isolated replacements pass.
+
+## FAIL-MATH-GRADIENT-PARTITION-MISSING-ALIASES: Generated gradient partition omits supplied aliases without unassigned membership
+
+- Status: `MITIGATED`
+- Lifecycle: `MITIGATED`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `math_v2_1_gradient_pattern_seed81_pilot_v3`
+- Root-cause status: GENERATED_PARTITION_CONTRACT_NONCOMPLIANCE_NO_IMPLEMENTATION_BUG_ESTABLISHED
+- Symptom: Second cluster returned12groups covering36of38aliases, omitted e2/e24 and left unassigned_ids empty.
+- Forbidden inference: Do not classify this as operational invalidity or completed Pilot; do not silently complete membership, regenerate, loosen parsing, or reuse conditional operational retry scope.
+- Mitigation: Preserve raw response, charge and prefix; close exact single-use scope; request separate user scientific contract decision.
+
+## FAIL-MATH-GRADIENT-V5-NUMERIC-PROVENANCE-PILOT4: Fresh Pilot stops on a short Gradient rejected by frozen numeric provenance guard
+
+- Status: `OPEN`
+- Lifecycle: `OPEN`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `math_v2_1_gradient_pattern_seed81_pilot_v4`
+- Root-cause status: FROZEN_BOUNDED_NUMERIC_GUARD_REJECTION_REPLAYED; SEMANTIC_COPYING_NOT_INDEPENDENTLY_PROVEN
+- Symptom: Second opportunity sixth Gradient (44th total),139characters, valid JSON and within hard400, rejected by unchanged numeric provenance guard; second cluster not reached.
+- Forbidden inference: Do not label this operational invalidity, a partition-completion bug, proven semantic copying, or a complete valid Pilot; do not regenerate or rerun under engineering authority.
+- Mitigation: Preserve raw response and charged prefix, close consumed scope, retain frozen Gradient V1 Prompt V3 Guard V5; any continuation requiring admissibility changes needs a separate scientific decision.

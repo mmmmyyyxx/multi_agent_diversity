@@ -685,8 +685,8 @@ failures:
   evidence_level: observed
 - failure_id: FAIL-MATH-GRADIENT-PARTITION-MISSING-ALIASES
   title: Generated gradient partition omits supplied aliases without unassigned membership
-  status: OPEN
-  lifecycle: OPEN
+  status: MITIGATED
+  lifecycle: MITIGATED
   first_observed: math_v2_1_gradient_pattern_seed81_pilot_v3
   affected_components:
   - gradient_cluster_provider
@@ -703,4 +703,39 @@ failures:
   - tests/test_repository_governance_alignment.py::test_partition_contract_abort_cannot_use_operational_retry_scope
   mitigation: Preserve raw response, charge and prefix; close exact single-use scope; request separate user scientific
     contract decision.
+  evidence_level: observed
+  resolution:
+    identity: GRADIENT_PATTERN_PARTITION_COMPLETION_V1
+    user_task_sha256: 9c5f6e8ce42591051426e6c7300e764859ac994bef18b3a12e1fb0fd4ef5ea32
+    normative_contract: docs/design/GRADIENT_PARTITION_COMPLETION_V1.md
+    zero_api_replay: reports/math_v2_1_gradient_partition_completion_v1_20261007/attempt3_partition_replay.json
+    fresh_execution_evidence: reports/math_v2_1_gradient_pattern_seed81_pilot_v4_execution_20261007/partition_completion_audit.json
+    original_frozen_failure_classification_unchanged: true
+    core_scientific_method_changed: false
+    compliance_behavior_changed: true
+    semantic_assignment: false
+    extra_provider_calls: 0
+    mitigation_scope: KNOWN_ALIAS_OMISSION_ONLY; duplicates, unknown aliases and invalid gradients remain terminal
+- failure_id: FAIL-MATH-GRADIENT-V5-NUMERIC-PROVENANCE-PILOT4
+  title: Fresh Pilot stops on a short Gradient rejected by frozen numeric provenance guard
+  status: OPEN
+  lifecycle: OPEN
+  first_observed: math_v2_1_gradient_pattern_seed81_pilot_v4
+  affected_components:
+  - per_example_gradient
+  - pattern_abstraction_guard_v5
+  symptom: Second opportunity sixth Gradient (44th total),139characters, valid JSON and within hard400, rejected
+    by unchanged numeric provenance guard; second cluster not reached.
+  evidence:
+  - reports/math_v2_1_gradient_pattern_seed81_pilot_v4_execution_20261007/failed_gradient_audit.json
+  - reports/math_v2_1_gradient_pattern_seed81_pilot_v4_execution_20261007/authorization_closure.json
+  - reports/math_v2_1_gradient_pattern_seed81_pilot_v4_execution_20261007/scientific_decision_request.json
+  root_cause_status: FROZEN_BOUNDED_NUMERIC_GUARD_REJECTION_REPLAYED; SEMANTIC_COPYING_NOT_INDEPENDENTLY_PROVEN
+  forbidden_inference: Do not label this operational invalidity, a partition-completion bug, proven semantic copying,
+    or a complete valid Pilot; do not regenerate or rerun under engineering authority.
+  regression_tests:
+  - tests/current/test_numeric_provenance.py::test_clear_numeric_provenance_rejected_in_both_boundaries
+  - tests/current/test_partition_completion.py::test_omission_does_not_mask_any_other_defect
+  mitigation: Preserve raw response and charged prefix, close consumed scope, retain frozen Gradient V1 Prompt V3
+    Guard V5; any continuation requiring admissibility changes needs a separate scientific decision.
   evidence_level: observed

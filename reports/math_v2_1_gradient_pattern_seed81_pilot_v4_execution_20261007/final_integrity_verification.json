@@ -1,0 +1,38 @@
+{
+  "READY_TO_RUN": false,
+  "authorization_closed": true,
+  "compliance_behavior_changed": true,
+  "frozen_repository_commit": "447c8aa6eb3a4cb0f35e3eb980b4d0e1299a0d5a",
+  "full_current_counts": {
+    "errors": 0,
+    "failures": 0,
+    "passed": 1418,
+    "skipped": 2,
+    "tests": 1420
+  },
+  "gradient_contract_failures": 1,
+  "gradient_contract_passes": 43,
+  "historical_changed_files": 0,
+  "independent_solver_member_lanes": 5,
+  "initial_memory_entries": 0,
+  "initial_prompt_unique_count": 1,
+  "llm_judge_calls": 0,
+  "network_attempt_count": 0,
+  "old_immutable_files": 5852,
+  "provider_calls": 0,
+  "raw_diagnostic_calls": 0,
+  "runtime_read_only_during_analysis": true,
+  "scientific_method_changed": false,
+  "scientific_stop_reason": "STOP_SCIENTIFIC_METHOD_DECISION_REQUIRED",
+  "source_sha": "57e3d77915a731a69d3f0182f6cc19b6adf92c9a",
+  "start_head": "d29ef395f00d6fb9d11f3b29b72e3b2f1e95380c",
+  "status": "PASS",
+  "targets_including_incomplete": [
+    0,
+    3
+  ],
+  "terminal_runtime_files": 779,
+  "test_calls": 0,
+  "valid_pilot": false,
+  "validation_calls": 0
+}

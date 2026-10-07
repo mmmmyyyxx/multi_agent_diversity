@@ -8042,24 +8042,23 @@ experiments:
   method_family: unified_team_prompt_search_v2_1
   parent_ids:
   - math_v2_1_gradient_pattern_seed81_pilot_v3
-  status: DRAFT
-  scientific_status: NOT_EXECUTED_EFFICACY_NOT_ESTIMATED
-  implementation_commit: null
+  status: COMPLETED
+  scientific_status: ZERO_API_COMPLIANCE_AMENDMENT_VERIFIED
+  implementation_commit: 57e3d77915a731a69d3f0182f6cc19b6adf92c9a
   execution_commit: null
   result_commit: null
   manifest: experiments/protocols/math_v2_1_gradient_partition_completion_v1/amendment.json
   report: reports/math_v2_1_gradient_partition_completion_v1_20261007
   classifier: DETERMINISTIC_MISSING_ONLY_COMPLIANCE_AMENDMENT
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
   - User-approved known omissions only; no semantic inference or new LLM calls.
   - Core scientific treatment immutable; fresh reruns only after proven operational invalidity.
   unavailable:
-    implementation_commit: Pending source freeze
-    execution_commit: Not executed
-    result_commit: Not executed
+    execution_commit: Zero-API amendment only
+    result_commit: Publication recorded by git history
 - experiment_id: math_v2_1_gradient_pattern_seed81_pilot_v4
   kind: PILOT
   era: UNIFIED_TEAM_PROMPT_SEARCH
@@ -8067,21 +8066,28 @@ experiments:
   parent_ids:
   - math_v2_1_gradient_partition_completion_v1
   - math_v2_1_gradient_pattern_seed81_pilot_v3
-  status: DRAFT
-  scientific_status: NOT_EXECUTED_EFFICACY_NOT_ESTIMATED
-  implementation_commit: null
-  execution_commit: null
+  status: HOLD
+  scientific_status: NOT_EVALUABLE_GENERATED_GRADIENT_CONTRACT_FAILURE
+  implementation_commit: 57e3d77915a731a69d3f0182f6cc19b6adf92c9a
+  execution_commit: 57e3d77915a731a69d3f0182f6cc19b6adf92c9a
   result_commit: null
   manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v4.yaml
-  report: reports/math_v2_1_gradient_pattern_seed81_pilot_v4_preexecution_20261007
-  classifier: FRESH_PARTITION_COMPLETION_PILOT
-  active_for_new_work: true
+  report: reports/math_v2_1_gradient_pattern_seed81_pilot_v4_execution_20261007
+  classifier: FROZEN_GENERATED_CONTRACT_FAILURE
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
-  - User-approved known omissions only; no semantic inference or new LLM calls.
-  - Core scientific treatment immutable; fresh reruns only after proven operational invalidity.
+  - Completed opportunities 1; commits 0; stop PATTERN_GRADIENT_EXTRACTION_INVALID.
+  - Raw clusters 1; raw complete 1; completion events 0; missing aliases 0.
+  - Charged 146438; cumulative 2240485; remaining 37759515 of40M.
+  - Core scientific method unchanged; known omission compliance amendment explicitly versioned.
+  - Validation/Test/other arms/seeds/diagnostics/judge not run; all consumed scopes closed.
   unavailable:
-    implementation_commit: Pending source freeze
-    execution_commit: Not executed
-    result_commit: Not executed
+    result_commit: Terminal publication recorded by git history without a self-reference
+  authorization_consumed: true
+  authorization_closed: true
+  authorization_closure_evidence: reports/math_v2_1_gradient_pattern_seed81_pilot_v4_execution_20261007/authorization_closure.json
+  frozen_repository_commit: 447c8aa6eb3a4cb0f35e3eb980b4d0e1299a0d5a
+  reports:
+  - reports/math_v2_1_gradient_pattern_seed81_pilot_v4_preexecution_20261007

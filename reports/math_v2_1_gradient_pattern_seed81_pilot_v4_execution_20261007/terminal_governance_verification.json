@@ -1,0 +1,24 @@
+{
+  "READY_TO_RUN": false,
+  "compileall": "PASS",
+  "compliance_behavior_changed": true,
+  "consumed_authorization_closed": true,
+  "full_current_passed": 1418,
+  "full_current_skipped": 2,
+  "full_historical_replay_pass": false,
+  "governance": "PASS",
+  "historical_files_unchanged": 5852,
+  "historical_private_artifact_tests": "NOT_RUN",
+  "network_attempt_count": 0,
+  "raw_runtime_files_unchanged": 779,
+  "real_api_calls_during_final_checks": 0,
+  "scientific_method_changed": false,
+  "status": "PASS",
+  "terminal_governance_and_contract_tests": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 156
+  },
+  "terminal_junit_sha256": "649c17aff292eb304b73943b2b72dc477f646329202b77354547cd4fb5464cb7"
+}

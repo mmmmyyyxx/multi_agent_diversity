@@ -1,0 +1,3183 @@
+{
+  "Optimize_count": 60,
+  "Shadow_count": 40,
+  "arm": "A4",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt4",
+  "charge_events": [
+    {
+      "charged_tokens": 204,
+      "index": 0,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 221,
+      "index": 1,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 208,
+      "index": 2,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 185,
+      "index": 3,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 200,
+      "index": 4,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 278,
+      "index": 5,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 202,
+      "index": 6,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 200,
+      "index": 7,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 205,
+      "index": 8,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 202,
+      "index": 9,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 404,
+      "index": 10,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 224,
+      "index": 11,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 247,
+      "index": 12,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 228,
+      "index": 13,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 210,
+      "index": 14,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 196,
+      "index": 15,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 239,
+      "index": 16,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 187,
+      "index": 17,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 201,
+      "index": 18,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 283,
+      "index": 19,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 237,
+      "index": 20,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 254,
+      "index": 21,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 436,
+      "index": 22,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 218,
+      "index": 23,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 218,
+      "index": 24,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 218,
+      "index": 25,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 218,
+      "index": 26,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 27,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 387,
+      "index": 28,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 247,
+      "index": 29,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 236,
+      "index": 30,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 220,
+      "index": 31,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 254,
+      "index": 32,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 799,
+      "index": 33,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 278,
+      "index": 34,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 783,
+      "index": 35,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 227,
+      "index": 36,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 226,
+      "index": 37,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 211,
+      "index": 38,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 244,
+      "index": 39,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 225,
+      "index": 40,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 41,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 42,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 43,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 44,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 229,
+      "index": 45,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 238,
+      "index": 46,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 220,
+      "index": 47,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 317,
+      "index": 48,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 204,
+      "index": 49,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 198,
+      "index": 50,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 268,
+      "index": 51,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 228,
+      "index": 52,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 226,
+      "index": 53,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 211,
+      "index": 54,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 197,
+      "index": 55,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 203,
+      "index": 56,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 208,
+      "index": 57,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 206,
+      "index": 58,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 433,
+      "index": 59,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 210,
+      "index": 60,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 267,
+      "index": 61,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 244,
+      "index": 62,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 236,
+      "index": 63,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 622,
+      "index": 64,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 214,
+      "index": 65,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 204,
+      "index": 66,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 221,
+      "index": 67,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 208,
+      "index": 68,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 185,
+      "index": 69,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 200,
+      "index": 70,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 278,
+      "index": 71,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 202,
+      "index": 72,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 200,
+      "index": 73,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 205,
+      "index": 74,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 202,
+      "index": 75,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 404,
+      "index": 76,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 224,
+      "index": 77,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 247,
+      "index": 78,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 228,
+      "index": 79,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 210,
+      "index": 80,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 196,
+      "index": 81,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 239,
+      "index": 82,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 187,
+      "index": 83,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 201,
+      "index": 84,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 283,
+      "index": 85,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 237,
+      "index": 86,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 254,
+      "index": 87,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 436,
+      "index": 88,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 218,
+      "index": 89,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 218,
+      "index": 90,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 218,
+      "index": 91,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 218,
+      "index": 92,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 93,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 387,
+      "index": 94,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 247,
+      "index": 95,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 236,
+      "index": 96,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 220,
+      "index": 97,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 254,
+      "index": 98,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 799,
+      "index": 99,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 278,
+      "index": 100,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 783,
+      "index": 101,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 227,
+      "index": 102,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 226,
+      "index": 103,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 211,
+      "index": 104,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 244,
+      "index": 105,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 225,
+      "index": 106,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 107,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 108,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 109,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 110,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 229,
+      "index": 111,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 238,
+      "index": 112,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 220,
+      "index": 113,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 317,
+      "index": 114,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 204,
+      "index": 115,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 198,
+      "index": 116,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 268,
+      "index": 117,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 228,
+      "index": 118,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 226,
+      "index": 119,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 211,
+      "index": 120,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 197,
+      "index": 121,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 203,
+      "index": 122,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 208,
+      "index": 123,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 206,
+      "index": 124,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 433,
+      "index": 125,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 210,
+      "index": 126,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 267,
+      "index": 127,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 244,
+      "index": 128,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 236,
+      "index": 129,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 622,
+      "index": 130,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 214,
+      "index": 131,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 204,
+      "index": 132,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 221,
+      "index": 133,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 208,
+      "index": 134,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 185,
+      "index": 135,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 200,
+      "index": 136,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 278,
+      "index": 137,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 202,
+      "index": 138,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 200,
+      "index": 139,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 205,
+      "index": 140,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 202,
+      "index": 141,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 404,
+      "index": 142,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 224,
+      "index": 143,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 247,
+      "index": 144,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 228,
+      "index": 145,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 210,
+      "index": 146,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 196,
+      "index": 147,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 239,
+      "index": 148,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 187,
+      "index": 149,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 201,
+      "index": 150,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 283,
+      "index": 151,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 237,
+      "index": 152,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 254,
+      "index": 153,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 436,
+      "index": 154,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 218,
+      "index": 155,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 218,
+      "index": 156,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 218,
+      "index": 157,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 218,
+      "index": 158,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 159,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 387,
+      "index": 160,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 247,
+      "index": 161,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 236,
+      "index": 162,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 220,
+      "index": 163,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 254,
+      "index": 164,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 799,
+      "index": 165,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 278,
+      "index": 166,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 783,
+      "index": 167,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 227,
+      "index": 168,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 226,
+      "index": 169,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 211,
+      "index": 170,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 244,
+      "index": 171,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 225,
+      "index": 172,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 173,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 174,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 175,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 176,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 229,
+      "index": 177,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 238,
+      "index": 178,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 220,
+      "index": 179,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 317,
+      "index": 180,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 204,
+      "index": 181,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 198,
+      "index": 182,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 268,
+      "index": 183,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 228,
+      "index": 184,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 226,
+      "index": 185,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 211,
+      "index": 186,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 197,
+      "index": 187,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 203,
+      "index": 188,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 208,
+      "index": 189,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 206,
+      "index": 190,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 433,
+      "index": 191,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 210,
+      "index": 192,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 267,
+      "index": 193,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 244,
+      "index": 194,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 236,
+      "index": 195,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 622,
+      "index": 196,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 214,
+      "index": 197,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 204,
+      "index": 198,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 221,
+      "index": 199,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 208,
+      "index": 200,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 185,
+      "index": 201,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 200,
+      "index": 202,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 278,
+      "index": 203,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 202,
+      "index": 204,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 200,
+      "index": 205,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 205,
+      "index": 206,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 202,
+      "index": 207,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 404,
+      "index": 208,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 224,
+      "index": 209,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 247,
+      "index": 210,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 228,
+      "index": 211,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 210,
+      "index": 212,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 196,
+      "index": 213,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 239,
+      "index": 214,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 187,
+      "index": 215,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 201,
+      "index": 216,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 283,
+      "index": 217,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 237,
+      "index": 218,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 254,
+      "index": 219,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 436,
+      "index": 220,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 218,
+      "index": 221,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 218,
+      "index": 222,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 218,
+      "index": 223,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 218,
+      "index": 224,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 225,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 387,
+      "index": 226,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 247,
+      "index": 227,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 236,
+      "index": 228,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 220,
+      "index": 229,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 254,
+      "index": 230,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 799,
+      "index": 231,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 278,
+      "index": 232,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 783,
+      "index": 233,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 227,
+      "index": 234,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 226,
+      "index": 235,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 211,
+      "index": 236,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 244,
+      "index": 237,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 225,
+      "index": 238,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 239,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 240,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 241,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 242,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 229,
+      "index": 243,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 238,
+      "index": 244,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 220,
+      "index": 245,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 317,
+      "index": 246,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 204,
+      "index": 247,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 198,
+      "index": 248,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 268,
+      "index": 249,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 228,
+      "index": 250,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 226,
+      "index": 251,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 211,
+      "index": 252,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 197,
+      "index": 253,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 203,
+      "index": 254,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 208,
+      "index": 255,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 206,
+      "index": 256,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 433,
+      "index": 257,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 210,
+      "index": 258,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 267,
+      "index": 259,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 244,
+      "index": 260,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 236,
+      "index": 261,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 622,
+      "index": 262,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 214,
+      "index": 263,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 204,
+      "index": 264,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 221,
+      "index": 265,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 208,
+      "index": 266,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 185,
+      "index": 267,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 200,
+      "index": 268,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 278,
+      "index": 269,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 202,
+      "index": 270,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 200,
+      "index": 271,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 205,
+      "index": 272,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 202,
+      "index": 273,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 404,
+      "index": 274,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 224,
+      "index": 275,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 247,
+      "index": 276,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 228,
+      "index": 277,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 210,
+      "index": 278,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 196,
+      "index": 279,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 239,
+      "index": 280,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 187,
+      "index": 281,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 201,
+      "index": 282,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 283,
+      "index": 283,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 237,
+      "index": 284,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 254,
+      "index": 285,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 436,
+      "index": 286,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 218,
+      "index": 287,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 218,
+      "index": 288,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 218,
+      "index": 289,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 218,
+      "index": 290,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 291,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 387,
+      "index": 292,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 247,
+      "index": 293,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 236,
+      "index": 294,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 220,
+      "index": 295,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 254,
+      "index": 296,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 823,
+      "index": 297,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 278,
+      "index": 298,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 783,
+      "index": 299,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 227,
+      "index": 300,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 226,
+      "index": 301,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 211,
+      "index": 302,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 244,
+      "index": 303,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 225,
+      "index": 304,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 305,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 306,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 307,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 219,
+      "index": 308,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 229,
+      "index": 309,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 238,
+      "index": 310,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 220,
+      "index": 311,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 317,
+      "index": 312,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 204,
+      "index": 313,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 198,
+      "index": 314,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 268,
+      "index": 315,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 228,
+      "index": 316,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 226,
+      "index": 317,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 211,
+      "index": 318,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 197,
+      "index": 319,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 203,
+      "index": 320,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 208,
+      "index": 321,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 206,
+      "index": 322,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 433,
+      "index": 323,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 210,
+      "index": 324,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 267,
+      "index": 325,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 244,
+      "index": 326,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 236,
+      "index": 327,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 622,
+      "index": 328,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 214,
+      "index": 329,
+      "role": "solver",
+      "stage": "initial",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 484,
+      "index": 330,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 575,
+      "index": 331,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 494,
+      "index": 332,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 443,
+      "index": 333,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 673,
+      "index": 334,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 468,
+      "index": 335,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 535,
+      "index": 336,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 469,
+      "index": 337,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 468,
+      "index": 338,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 522,
+      "index": 339,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 453,
+      "index": 340,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 470,
+      "index": 341,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 551,
+      "index": 342,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 505,
+      "index": 343,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 513,
+      "index": 344,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 468,
+      "index": 345,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 489,
+      "index": 346,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 674,
+      "index": 347,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 535,
+      "index": 348,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 498,
+      "index": 349,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 492,
+      "index": 350,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 513,
+      "index": 351,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 546,
+      "index": 352,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 503,
+      "index": 353,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 504,
+      "index": 354,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 488,
+      "index": 355,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 478,
+      "index": 356,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 501,
+      "index": 357,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 518,
+      "index": 358,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 574,
+      "index": 359,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 458,
+      "index": 360,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 514,
+      "index": 361,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 455,
+      "index": 362,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 723,
+      "index": 363,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 535,
+      "index": 364,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 522,
+      "index": 365,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 490,
+      "index": 366,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 987,
+      "index": 367,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 2361,
+      "index": 368,
+      "role": "pattern_cluster",
+      "stage": "set_level_gradient_clustering",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 1683,
+      "index": 369,
+      "role": "reflection",
+      "stage": "gepa_reflection",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 364,
+      "index": 370,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 364,
+      "index": 371,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 364,
+      "index": 372,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 364,
+      "index": 373,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 367,
+      "index": 374,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 365,
+      "index": 375,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 365,
+      "index": 376,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 365,
+      "index": 377,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 365,
+      "index": 378,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 550,
+      "index": 379,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 1663,
+      "index": 380,
+      "role": "reflection",
+      "stage": "gepa_reflection",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 350,
+      "index": 381,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 350,
+      "index": 382,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 350,
+      "index": 383,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 350,
+      "index": 384,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 353,
+      "index": 385,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 351,
+      "index": 386,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 351,
+      "index": 387,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 351,
+      "index": 388,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 351,
+      "index": 389,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 536,
+      "index": 390,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 1700,
+      "index": 391,
+      "role": "reflection",
+      "stage": "gepa_reflection",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 383,
+      "index": 392,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 383,
+      "index": 393,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 383,
+      "index": 394,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 383,
+      "index": 395,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 386,
+      "index": 396,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 384,
+      "index": 397,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 384,
+      "index": 398,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 384,
+      "index": 399,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 384,
+      "index": 400,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 569,
+      "index": 401,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 1704,
+      "index": 402,
+      "role": "reflection",
+      "stage": "gepa_reflection",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 381,
+      "index": 403,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 381,
+      "index": 404,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 381,
+      "index": 405,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 381,
+      "index": 406,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 384,
+      "index": 407,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 382,
+      "index": 408,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 382,
+      "index": 409,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 382,
+      "index": 410,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 382,
+      "index": 411,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 567,
+      "index": 412,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 1664,
+      "index": 413,
+      "role": "reflection",
+      "stage": "gepa_reflection",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 349,
+      "index": 414,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 349,
+      "index": 415,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 349,
+      "index": 416,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 349,
+      "index": 417,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 357,
+      "index": 418,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 350,
+      "index": 419,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 350,
+      "index": 420,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 350,
+      "index": 421,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 350,
+      "index": 422,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 535,
+      "index": 423,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 1880,
+      "index": 424,
+      "role": "reflection",
+      "stage": "gepa_reflection",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 549,
+      "index": 425,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 549,
+      "index": 426,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 549,
+      "index": 427,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 549,
+      "index": 428,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 552,
+      "index": 429,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 542,
+      "index": 430,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 542,
+      "index": 431,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 542,
+      "index": 432,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 542,
+      "index": 433,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 735,
+      "index": 434,
+      "role": "solver",
+      "stage": "gepa_local",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 464,
+      "index": 435,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 565,
+      "index": 436,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 471,
+      "index": 437,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 446,
+      "index": 438,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 687,
+      "index": 439,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    },
+    {
+      "charged_tokens": 477,
+      "index": 440,
+      "role": "pattern_gradient",
+      "stage": "per_example_textual_gradient",
+      "usage_reliable": true
+    }
+  ],
+  "efficiency_interpretation": "DESCRIPTIVE_COST_ONLY_NO_COMPARATIVE_EFFICACY",
+  "efficiency_per_commit": "NOT_ESTIMATED",
+  "llm_judge_calls": 0,
+  "opportunities": [
+    {
+      "charged_tokens": 57634,
+      "incomplete": false,
+      "opportunity_index": 1,
+      "physical_attempts": 105,
+      "roles": {
+        "pattern_cluster": {
+          "charged_tokens": 2361,
+          "physical_attempts": 1
+        },
+        "pattern_gradient": {
+          "charged_tokens": 20088,
+          "physical_attempts": 38
+        },
+        "reflection": {
+          "charged_tokens": 10294,
+          "physical_attempts": 6
+        },
+        "solver": {
+          "charged_tokens": 24891,
+          "physical_attempts": 60
+        }
+      },
+      "successful_calls": 105
+    },
+    {
+      "charged_tokens": 3110,
+      "incomplete": true,
+      "opportunity_index": 2,
+      "physical_attempts": 6,
+      "roles": {
+        "pattern_cluster": {
+          "charged_tokens": 0,
+          "physical_attempts": 0
+        },
+        "pattern_gradient": {
+          "charged_tokens": 3110,
+          "physical_attempts": 6
+        },
+        "reflection": {
+          "charged_tokens": 0,
+          "physical_attempts": 0
+        },
+        "solver": {
+          "charged_tokens": 0,
+          "physical_attempts": 0
+        }
+      },
+      "successful_calls": 6
+    }
+  ],
+  "raw_diagnostic_calls": 0,
+  "role_stage": {
+    "gepa_local:solver": {
+      "charged_input_tokens": 24168,
+      "charged_output_tokens": 723,
+      "physical_attempts": 60
+    },
+    "gepa_reflection:reflection": {
+      "charged_input_tokens": 8910,
+      "charged_output_tokens": 1384,
+      "physical_attempts": 6
+    },
+    "initial:solver": {
+      "charged_input_tokens": 76850,
+      "charged_output_tokens": 8844,
+      "physical_attempts": 330
+    },
+    "per_example_textual_gradient:pattern_gradient": {
+      "charged_input_tokens": 21478,
+      "charged_output_tokens": 1720,
+      "physical_attempts": 44
+    },
+    "set_level_gradient_clustering:pattern_cluster": {
+      "charged_input_tokens": 1919,
+      "charged_output_tokens": 442,
+      "physical_attempts": 1
+    }
+  },
+  "scientific_efficacy": "NOT_CAUSALLY_ESTABLISHED",
+  "seed": 81,
+  "source_sha": "57e3d77915a731a69d3f0182f6cc19b6adf92c9a",
+  "test_model_calls": 0,
+  "validation_model_calls": 0
+}

@@ -1,0 +1,18 @@
+{
+  "cluster_calls": 1,
+  "duplicate_partition_failures": 0,
+  "extra_llm_repair_calls": 0,
+  "generalized_gradients_and_explicit_supports_preserved": true,
+  "independently_reconstructed": true,
+  "maximum_missing_aliases_per_call": 0,
+  "network_attempt_count": 0,
+  "no_semantic_assignment": true,
+  "partition_completion_events": 0,
+  "policy": "GRADIENT_PATTERN_PARTITION_COMPLETION_V1",
+  "provider_calls": 0,
+  "raw_complete_partitions": 1,
+  "raw_missing_only_partitions": 0,
+  "raw_provider_responses_immutable": true,
+  "total_missing_aliases_completed": 0,
+  "unknown_alias_failures": 0
+}

@@ -1,0 +1,125 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "accounting_integrity_audit.json",
+      "sha256": "b86fe5bd46dd411131608d0a665679fc1035ddd6d01877b8da1e5e8a81569696"
+    },
+    {
+      "file": "analysis_index.md",
+      "sha256": "9777b7be839eab10047962c1524e8c70d7620229f4e3ab909a556748875a8489"
+    },
+    {
+      "file": "authorization_closure.json",
+      "sha256": "aa90c265bec46c34dc7d1a816076619c02b9b0e18304120c2ff627bf2ef0bb3c"
+    },
+    {
+      "file": "candidate_funnel.json",
+      "sha256": "141d573012952c4ba5c07a8955d1e278c63d7e4b810acdabeff956e1f7993cb5"
+    },
+    {
+      "file": "candidate_trajectory.jsonl",
+      "sha256": "2e77362262affa3162adc323d02941a0e9fce7a4b0d04f9a5646f5b4fb28b505"
+    },
+    {
+      "file": "cost_trajectory.json",
+      "sha256": "1654a567013574181c1591a738aa162a422b71f83196d3eca90774909eb5672f"
+    },
+    {
+      "file": "execution_identity.json",
+      "sha256": "0c75f4c0dc438f91fbc5ebe4d296daac1ce2d679d4aef9cc7cabed82cd178d08"
+    },
+    {
+      "file": "failed_gradient_audit.json",
+      "sha256": "0ded19d484335f3cd199bd4dc35f2e63584b481936e6b17f8b06788f74fa45a6"
+    },
+    {
+      "file": "final_integrity_verification.json",
+      "sha256": "83302b7c80821397326391e446265553825989c5a1057709015d93a9f4849dcf"
+    },
+    {
+      "file": "final_status.json",
+      "sha256": "21095e66f3585429481fb4b2dec271e41d4b7a12e795af4be64df29201155eec"
+    },
+    {
+      "file": "gate_outcomes.json",
+      "sha256": "b94d9c27182bfac2235c35f16d481818786f6c5c36be3e2c29a2e66bc533425c"
+    },
+    {
+      "file": "governance_audit.json",
+      "sha256": "dc2f9b33136f3ca6b1f8baad871d58321ae5cf30f1f6a5a56c26c12ef73f0618"
+    },
+    {
+      "file": "gradient_trajectory.json",
+      "sha256": "0a4446223ad9c265621d1be6828489d006d212baa5117b4bdce8fbb9b0536c7a"
+    },
+    {
+      "file": "initial_symmetry_and_differentiation.json",
+      "sha256": "a8f0fad566810c5c6af52d9ccc4735143563b051b966ff83123d9f473ca1a739"
+    },
+    {
+      "file": "member_training_summary.csv",
+      "sha256": "d6cf209347c49aa1eb9edb51e92f6a643c4ebe78d79d47763b7bbdd8d1b06a1c"
+    },
+    {
+      "file": "memory_trajectory.json",
+      "sha256": "082a071c77ac5af239b73f123ba0a813741479be1aca2472557e567418f13576"
+    },
+    {
+      "file": "module_behavior_summary.json",
+      "sha256": "e6a50f3e2ed2aefcbf08ea73ca464f54745b88e981833531dc4e5a9a87b84a44"
+    },
+    {
+      "file": "opportunity_summary.csv",
+      "sha256": "15d9d45b74370d8cfb839705fb33f7b3d563748bbf8d17d745affbc0b82139a2"
+    },
+    {
+      "file": "partition_completion_audit.json",
+      "sha256": "0d122ee36c41a972baa29a010daf5278102a189e1d4f32cffc46988877a7b866"
+    },
+    {
+      "file": "pattern_trajectory.json",
+      "sha256": "847e41b76d58a333cc35995af000e7de1d895dfeaf2e95cc9a3b06333c1e6ea5"
+    },
+    {
+      "file": "prompt_lineage.json",
+      "sha256": "163057345271fcb6175582f4b93b5b38adfc793f575c1e73ea11f33280f22b08"
+    },
+    {
+      "file": "provider_usage.json",
+      "sha256": "1173d56f8620203b9884e69cf9c35ad9f91057b4fb73d0436137dc1cf6cb5dcb"
+    },
+    {
+      "file": "README.md",
+      "sha256": "6bfe379a6ffa63c8c0f92b74b8fe3303043b9dc87b7fccade572041edc2b170b"
+    },
+    {
+      "file": "responsibility_trajectory.json",
+      "sha256": "0cdaffe38d704b7d6facc62e6a6b014d53b8b0468be2c51038afabc810f77390"
+    },
+    {
+      "file": "scientific_decision_request.json",
+      "sha256": "c0535b353f0525acc90a3056c651b802c52eedd1f3eda5cbb5222228d97a5a6c"
+    },
+    {
+      "file": "stop_trace.json",
+      "sha256": "9f51117f66288e3f0e9882d7e01e10178a5138ef7f04fa8c7fba2faab035a627"
+    },
+    {
+      "file": "team_state_trajectory.json",
+      "sha256": "0d5e28d3aaa3ea74dbb313da828194f2e94b345dc06c4bcbeefec544a0404b93"
+    },
+    {
+      "file": "terminal_governance_verification.json",
+      "sha256": "1052e2e7b4541d0061135128ed13d38a02743bb27fe4c36dfc4da4cd8b6c5da8"
+    },
+    {
+      "file": "transition_trace.json",
+      "sha256": "b8e32700ad7f9f6a4a6384a18c077479caf634d9328af829b2723c522aad1bf1"
+    },
+    {
+      "file": "wire_and_durability_audit.json",
+      "sha256": "90e9b6c73fe9ef771a20697a47ff0d34db3d045c1303bec2db42994e3329b1c6"
+    }
+  ]
+}

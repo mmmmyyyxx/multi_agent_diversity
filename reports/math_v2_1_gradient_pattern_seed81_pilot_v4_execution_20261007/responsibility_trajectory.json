@@ -1,0 +1,163 @@
+{
+  "Optimize_count": 60,
+  "Shadow_count": 40,
+  "arm": "A4",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt4",
+  "llm_judge_calls": 0,
+  "pattern_and_memory_did_not_determine_target": true,
+  "raw_diagnostic_calls": 0,
+  "reconstruction": "PASS",
+  "scientific_efficacy": "NOT_CAUSALLY_ESTABLISHED",
+  "seed": 81,
+  "source_sha": "57e3d77915a731a69d3f0182f6cc19b6adf92c9a",
+  "test_model_calls": 0,
+  "trajectory": [
+    {
+      "members": [
+        {
+          "C": 36,
+          "D": 2,
+          "F": 36,
+          "N": 0,
+          "current_competence": 22.0,
+          "discounted_score": 36.0,
+          "failure_count": 0,
+          "feasible": true,
+          "initial_floor": 22.0,
+          "member_id": 0,
+          "primary_lane": "coverage"
+        },
+        {
+          "C": 35,
+          "D": 2,
+          "F": 35,
+          "N": 0,
+          "current_competence": 22.0,
+          "discounted_score": 35.0,
+          "failure_count": 0,
+          "feasible": true,
+          "initial_floor": 22.0,
+          "member_id": 1,
+          "primary_lane": "coverage"
+        },
+        {
+          "C": 35,
+          "D": 2,
+          "F": 35,
+          "N": 0,
+          "current_competence": 22.0,
+          "discounted_score": 35.0,
+          "failure_count": 0,
+          "feasible": true,
+          "initial_floor": 22.0,
+          "member_id": 2,
+          "primary_lane": "coverage"
+        },
+        {
+          "C": 36,
+          "D": 2,
+          "F": 36,
+          "N": 0,
+          "current_competence": 22.0,
+          "discounted_score": 36.0,
+          "failure_count": 0,
+          "feasible": true,
+          "initial_floor": 22.0,
+          "member_id": 3,
+          "primary_lane": "coverage"
+        },
+        {
+          "C": 36,
+          "D": 2,
+          "F": 36,
+          "N": 0,
+          "current_competence": 22.0,
+          "discounted_score": 36.0,
+          "failure_count": 0,
+          "feasible": true,
+          "initial_floor": 22.0,
+          "member_id": 4,
+          "primary_lane": "coverage"
+        }
+      ],
+      "opportunity_index": 1,
+      "opportunity_sha256": "9c4f901ce595d4830345aa99000955c947063deaf72b702548097d3fd2a0d11c",
+      "selection_reason": "F/(1+failure_count), deterministic member-ID tie",
+      "target_member": 0,
+      "tie_status": true
+    },
+    {
+      "incomplete": true,
+      "members": [
+        {
+          "C": 36,
+          "D": 2,
+          "F": 36,
+          "N": 0,
+          "current_competence": 22.0,
+          "discounted_score": 18.0,
+          "failure_count": 1,
+          "feasible": true,
+          "initial_floor": 22.0,
+          "member_id": 0,
+          "primary_lane": "coverage"
+        },
+        {
+          "C": 35,
+          "D": 2,
+          "F": 35,
+          "N": 0,
+          "current_competence": 22.0,
+          "discounted_score": 35.0,
+          "failure_count": 0,
+          "feasible": true,
+          "initial_floor": 22.0,
+          "member_id": 1,
+          "primary_lane": "coverage"
+        },
+        {
+          "C": 35,
+          "D": 2,
+          "F": 35,
+          "N": 0,
+          "current_competence": 22.0,
+          "discounted_score": 35.0,
+          "failure_count": 0,
+          "feasible": true,
+          "initial_floor": 22.0,
+          "member_id": 2,
+          "primary_lane": "coverage"
+        },
+        {
+          "C": 36,
+          "D": 2,
+          "F": 36,
+          "N": 0,
+          "current_competence": 22.0,
+          "discounted_score": 36.0,
+          "failure_count": 0,
+          "feasible": true,
+          "initial_floor": 22.0,
+          "member_id": 3,
+          "primary_lane": "coverage"
+        },
+        {
+          "C": 36,
+          "D": 2,
+          "F": 36,
+          "N": 0,
+          "current_competence": 22.0,
+          "discounted_score": 36.0,
+          "failure_count": 0,
+          "feasible": true,
+          "initial_floor": 22.0,
+          "member_id": 4,
+          "primary_lane": "coverage"
+        }
+      ],
+      "opportunity_index": 2,
+      "target_member": 3
+    }
+  ],
+  "validation_model_calls": 0
+}

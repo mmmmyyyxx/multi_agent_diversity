@@ -1,0 +1,30 @@
+{
+  "Optimize_Shadow_memberships_unchanged": true,
+  "Optimize_count": 60,
+  "Shadow_count": 40,
+  "Test_raw_sample_access": 0,
+  "Validation_raw_sample_access": 0,
+  "analysis_bundle": {
+    "path": "runs/partition_completion_v1/analysis_bundle",
+    "sha256_manifest_sha256": "a11aa9a4c1e8d898ae80db9584c3c0eeb1dd88b8a8e0221e0a3456eaccddacf2"
+  },
+  "arm": "A4",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt4",
+  "full_historical_replay_pass": false,
+  "historical_private_tests": "NOT_RUN",
+  "initial_Memory_empty": true,
+  "initial_team_frozen": true,
+  "llm_judge_calls": 0,
+  "no_cross_attempt_realization_reuse": true,
+  "publication_content": "HASHES_COUNTERS_CATEGORIES_AGGREGATE_METRICS",
+  "raw_diagnostic_calls": 0,
+  "roles_and_splits_frozen": true,
+  "scientific_efficacy": "NOT_CAUSALLY_ESTABLISHED",
+  "seed": 81,
+  "source_sha": "57e3d77915a731a69d3f0182f6cc19b6adf92c9a",
+  "source_startup_identity_frozen": true,
+  "status": "PASS",
+  "test_model_calls": 0,
+  "validation_model_calls": 0,
+  "validation_status": "SKIPPED_NO_TEAM_CHANGE"
+}

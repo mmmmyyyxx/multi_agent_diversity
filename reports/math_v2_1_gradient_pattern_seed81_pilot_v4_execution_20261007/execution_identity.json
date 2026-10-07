@@ -1,0 +1,29 @@
+{
+  "Optimize_count": 60,
+  "Shadow_count": 40,
+  "arm": "A4",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt4",
+  "base_commit": "d29ef395f00d6fb9d11f3b29b72e3b2f1e95380c",
+  "binding_sha256": "7f8d23d38fc8ee2c6cd4b7651d777796cb4a38e2c92a4d81684be1773539d5df",
+  "cache_namespace": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt4",
+  "composition": "build_current_team_prompt_search",
+  "execution_entrypoint": "scripts/run_experiment.py",
+  "frozen_initial_state_empty": true,
+  "llm_judge_calls": 0,
+  "partition_completion_policy": "GRADIENT_PATTERN_PARTITION_COMPLETION_V1",
+  "preexecution_commit": "447c8aa6eb3a4cb0f35e3eb980b4d0e1299a0d5a",
+  "raw_diagnostic_calls": 0,
+  "scientific_diff": "COMPLIANCE_ONLY_KNOWN_ALIAS_OMISSION",
+  "scientific_efficacy": "NOT_CAUSALLY_ESTABLISHED",
+  "seed": 81,
+  "source_identity_hashes": {
+    "benchmark_contract_hash": "4da03f1257195e6ef264fda8cde7f07d37d77771ddcf74af1ee0c6446388aa5d",
+    "dataset_manifest_hash": "d3c3f587bf9e08f5d9a12c8b777953c57cd30fc4c655e82e95f556b337119d81",
+    "governance_hash": "abd1700e37491fbef449af94e75e6a52ea251e0580e6ff3b5fe2d338db0786cc",
+    "scientific_source_hash": "d7c788de1a60fd3814c5c27ade8513d5e9d7059de9613c9994b431b4892bae99"
+  },
+  "source_sha": "57e3d77915a731a69d3f0182f6cc19b6adf92c9a",
+  "startup_identity_sha256": "d2d9bfeec14ab479bf7ea9be23a2d72eece49bf54f28f7ee197f1f736e3b8967",
+  "test_model_calls": 0,
+  "validation_model_calls": 0
+}

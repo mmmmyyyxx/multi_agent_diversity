@@ -1,0 +1,17 @@
+{
+  "attempt4_resume_authorized": false,
+  "automatic_fresh_retry_authorized": false,
+  "boundary": "authorized_task.md section48 freezes Gradient Prompt V3 and Guard V5",
+  "evidence": "failed_gradient_audit.json",
+  "excluded_actions": [
+    "automatic semantic regeneration",
+    "silent prompt or guard changes",
+    "retry under operational-invalidity authority"
+  ],
+  "immediate_model_calls_authorized": false,
+  "implementation_bug_established": false,
+  "interpretation": "Frozen bounded numeric provenance guard rejects the output; this is not a comprehensive semantic provenance conclusion.",
+  "reviewable_next_step": "Separate user decision on frozen Gradient admissibility; no amendment performed in this task",
+  "semantic_numeric_copying_proven": false,
+  "status": "USER_SCIENTIFIC_CONTRACT_DECISION_REQUIRED"
+}
