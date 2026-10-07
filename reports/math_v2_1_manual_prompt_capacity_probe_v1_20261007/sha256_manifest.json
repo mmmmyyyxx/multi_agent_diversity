@@ -1,0 +1,77 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "accounting_audit.json",
+      "sha256": "8951832e0b9a0dfb0adf405dfd2738f3bdb4755f56ee57e37cd92864b4d2fa93"
+    },
+    {
+      "file": "authorization_closure.json",
+      "sha256": "89bb00ea5dbbc4ca03f4c5946d9ae34e0816a4460174e7ed24984f98729bd4b2"
+    },
+    {
+      "file": "capacity_probe_summary.json",
+      "sha256": "56458abbd55bc4a3dce4b04b94d2fe35b1f7c6a1e8434ab64e235b0764c36168"
+    },
+    {
+      "file": "engineering_verification.json",
+      "sha256": "8a4284a49fca536e19209b5018e57a3b3b555d250783586726d8d971aa7d0332"
+    },
+    {
+      "file": "integrity_audit.json",
+      "sha256": "298053ddf8bdd98dbf6a377b0c4f527a17b0e6c45d0b8e32b6af8963776cd84d"
+    },
+    {
+      "file": "manual_prompt_capacity_probe_manifest.json",
+      "sha256": "ea99a4f767be1d6d556025f910951db9b90eba1b7a4d63902fe47afdf9da615a"
+    },
+    {
+      "file": "manual_prompt_design.json",
+      "sha256": "b9b3ef0c4de47176d59861ef6b293ace268c610cc1f0af80f592e132f0130f1c"
+    },
+    {
+      "file": "manual_prompt_leak_audit.json",
+      "sha256": "c89739a07f6b6f6e193cc2e179ce6180b8d1d5aef1bf65bd36d01e737c9a2b9e"
+    },
+    {
+      "file": "manual_prompt_pareto.csv",
+      "sha256": "92dc3f0d00ce1d1698b917526d07788bc07f19bb9b2337674d93e080f57b1f27"
+    },
+    {
+      "file": "manual_team_results.json",
+      "sha256": "fd7a56eb0c045e4b5814cfd6fb07f6da3b4d63a09908ce18c00ecb416acc9afe"
+    },
+    {
+      "file": "manual_vs_a4_full_candidates.csv",
+      "sha256": "fce026866a645e9f6c9ca9f4cc379d8bd113865ecc6f6e6e9d4fd04c40c43df5"
+    },
+    {
+      "file": "preexecution_authorization.json",
+      "sha256": "34b6e9539cb432d0183c905ce2484b0ef8864f89c9319ffcf267dc2fce306d0e"
+    },
+    {
+      "file": "preexecution_bounds.json",
+      "sha256": "4960e8b57927d0985edf404f70fca8d13fc7a835d1029a2fb9f7eb39c9eae757"
+    },
+    {
+      "file": "provider_usage.json",
+      "sha256": "d4927a36a083f17bc37c92169b61d721e55bbf2723ae452aa30a9fe54ecc8595"
+    },
+    {
+      "file": "README.md",
+      "sha256": "c03ac50356b6c8a444e5191747c5f708362cbc895e6522f0a19a3cd345cbaa9a"
+    },
+    {
+      "file": "replacement_analysis.csv",
+      "sha256": "c127350855eb648bde8c8246288d2e7bf9e13a2480c657f730f8d1708c0319f9"
+    },
+    {
+      "file": "sanitization_audit.json",
+      "sha256": "728a617c2afbed6d9f16afe997da82c7b8b7e5f09a245b5166eb5674b903bd56"
+    },
+    {
+      "file": "single_prompt_results.csv",
+      "sha256": "c5a7923e3eb887575a9eb88c889a3f6d2e6ea00082cdf4dad7ce355193a743d6"
+    }
+  ]
+}

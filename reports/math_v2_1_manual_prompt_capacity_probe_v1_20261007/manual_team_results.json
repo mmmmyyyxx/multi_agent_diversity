@@ -1,0 +1,86 @@
+{
+  "replicate1": {
+    "MeanMemberAcc": 0.3466666666666667,
+    "MinMemberAcc": 0.2833333333333333,
+    "OracleAcc": 0.45,
+    "VoteAcc": 0.35,
+    "aggregation_abstention_counts": {},
+    "disagreement_definition": "Mean unequal-equivalence fraction over valid member pairs; rows with fewer than two valid outputs excluded.",
+    "equivalence_statistics_excluded_rows": 0,
+    "invalid_count_by_member": [
+      3,
+      3,
+      2,
+      3,
+      4
+    ],
+    "lost_original_team_correct": 3,
+    "manual_team": [
+      "P1_GENERALIST",
+      "P2_SPECIALIST_A",
+      "P3_SPECIALIST_B",
+      "P4_SPECIALIST_C",
+      "P5_SPECIALIST_D"
+    ],
+    "mean_disagreement": 0.3241379310344827,
+    "mean_distinct_valid_equivalence_classes": 1.7666666666666666,
+    "member_correct_counts": [
+      23,
+      25,
+      17,
+      18,
+      21
+    ],
+    "newly_correct_vs_original_team": 2,
+    "novel_coverage_converted_to_correct_vote": 2,
+    "novel_coverage_not_converted": 3,
+    "novel_oracle_coverage": 5,
+    "oracle_correct_count": 27,
+    "replicate": 1,
+    "retained_original_team_correct": 19,
+    "scientific_status": "VALID_DEVELOPMENT_DIAGNOSTIC",
+    "vote_correct_count": 21
+  },
+  "replicate2": {
+    "MeanMemberAcc": 0.35333333333333333,
+    "MinMemberAcc": 0.2833333333333333,
+    "OracleAcc": 0.45,
+    "VoteAcc": 0.38333333333333336,
+    "aggregation_abstention_counts": {},
+    "disagreement_definition": "Mean unequal-equivalence fraction over valid member pairs; rows with fewer than two valid outputs excluded.",
+    "equivalence_statistics_excluded_rows": 0,
+    "invalid_count_by_member": [
+      3,
+      3,
+      2,
+      2,
+      3
+    ],
+    "lost_original_team_correct": 3,
+    "manual_team": [
+      "P1_GENERALIST",
+      "P2_SPECIALIST_A",
+      "P3_SPECIALIST_B",
+      "P4_SPECIALIST_C",
+      "P5_SPECIALIST_D"
+    ],
+    "mean_disagreement": 0.339655172413793,
+    "mean_distinct_valid_equivalence_classes": 1.85,
+    "member_correct_counts": [
+      23,
+      25,
+      17,
+      18,
+      23
+    ],
+    "newly_correct_vs_original_team": 4,
+    "novel_coverage_converted_to_correct_vote": 4,
+    "novel_coverage_not_converted": 1,
+    "novel_oracle_coverage": 5,
+    "oracle_correct_count": 27,
+    "replicate": 2,
+    "retained_original_team_correct": 19,
+    "scientific_status": "VALID_DEVELOPMENT_DIAGNOSTIC",
+    "vote_correct_count": 23
+  }
+}

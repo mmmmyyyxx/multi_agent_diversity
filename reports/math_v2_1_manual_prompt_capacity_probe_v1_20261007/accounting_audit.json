@@ -1,0 +1,20 @@
+{
+  "all_charges_have_durable_receipts": true,
+  "attempt_charge_ceiling": 30000000,
+  "attempt_id": "manual_prompt_capacity_probe_v1_attempt1",
+  "charged_total": 342089,
+  "cumulative_authorized_total": 40000000,
+  "cumulative_charged": 3414772,
+  "durable_receipts_verified": 819,
+  "fallback_charged": 0,
+  "input_tokens": 251427,
+  "new_A4_accounting_or_scientific_state": false,
+  "original_journal_prefix_unchanged": true,
+  "output_tokens": 90662,
+  "physical_attempts": 819,
+  "provider_reported_actual": 342089,
+  "remaining": 36585228,
+  "reserved_inflight": 0,
+  "source_sha": "498d667586e8a29de7dffe38f8f50542c8fb0f3c",
+  "status": "PASS"
+}

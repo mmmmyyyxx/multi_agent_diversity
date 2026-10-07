@@ -1,0 +1,3 @@
+# Keep these Windows-sealed diagnostic reports byte-identical to their receipts.
+math_v2_1_full_candidate_specialization_forensic_v1_20261007/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+math_v2_1_manual_prompt_capacity_probe_v1_20261007/** -text whitespace=trailing-space,space-before-tab,cr-at-eol

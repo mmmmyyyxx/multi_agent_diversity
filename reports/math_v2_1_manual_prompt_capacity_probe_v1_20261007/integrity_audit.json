@@ -1,0 +1,30 @@
+{
+  "authority_sha256": "b12572428f76a6adc429c893166328b8c5602a552a4a5e045f324ce11fd3cc95",
+  "cache_hits": 0,
+  "durable_receipts_verified": 819,
+  "first_valid_wrong_stops": true,
+  "frozen_invalid_recovery_only": true,
+  "heldout_model_calls": 0,
+  "independent_replicate_cache_namespaces": true,
+  "logical_evaluations": 720,
+  "manifest_sha256": "a38019dfca6876a8bd10f5cb87d7c98e53e5ebf063e68be02e1ede5a4ee39898",
+  "persisted_predictions_verified_by_frozen_deserializer": true,
+  "profiles": 12,
+  "provider_reasoning_content_present_responses": 0,
+  "rationale_or_gold_fields_appended_to_solver_requests": false,
+  "raw_inventory_sha256": "c2b3eb636a6a2f239e45c584f5fd2a55b56422346d1047714b12bc9bb282dc86",
+  "requested_enable_thinking": false,
+  "requested_temperature": 0.2,
+  "roles": [
+    "solver"
+  ],
+  "scientific_method_changed": false,
+  "scientific_status": "VALID_DEVELOPMENT_DIAGNOSTIC",
+  "source_sha": "498d667586e8a29de7dffe38f8f50542c8fb0f3c",
+  "splits": [
+    "optimize"
+  ],
+  "status": "PASS",
+  "unique_logical_request_identities": 720,
+  "wire_body_verified_successful_calls": 819
+}

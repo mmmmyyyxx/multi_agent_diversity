@@ -8204,7 +8204,7 @@ experiments:
   - math_v2_1_gradient_pattern_seed81_pilot_v6
   status: COMPLETED
   scientific_status: POST_HOC_ZERO_API_DIAGNOSTIC
-  implementation_commit: null
+  implementation_commit: 498d667586e8a29de7dffe38f8f50542c8fb0f3c
   execution_commit: null
   result_commit: null
   manifest: experiments/protocols/math_v2_1_full_candidate_specialization_forensic_v1/protocol.json
@@ -8216,7 +8216,6 @@ experiments:
   notes:
   - Independent diagnostic only; frozen A4 method and original evidence unchanged.
   unavailable:
-    implementation_commit: Containing diagnostic source commit
     execution_commit: Zero API
     result_commit: Containing publication commit
 - experiment_id: math_v2_1_manual_prompt_capacity_probe_v1
@@ -8225,12 +8224,12 @@ experiments:
   method_family: independent_development_diagnostic
   parent_ids:
   - math_v2_1_gradient_pattern_seed81_pilot_v6
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: DEVELOPMENT_DIAGNOSTIC_NOT_EXECUTED
-  implementation_commit: null
-  execution_commit: null
+  status: COMPLETED
+  scientific_status: VALID_DEVELOPMENT_DIAGNOSTIC
+  implementation_commit: 498d667586e8a29de7dffe38f8f50542c8fb0f3c
+  execution_commit: 498d667586e8a29de7dffe38f8f50542c8fb0f3c
   result_commit: null
-  manifest: experiments/protocols/math_v2_1_manual_prompt_capacity_probe_v1/protocol.json
+  manifest: reports/math_v2_1_manual_prompt_capacity_probe_v1_20261007/manual_prompt_capacity_probe_manifest.json
   report: reports/math_v2_1_manual_prompt_capacity_probe_v1_20261007
   classifier: MANUAL_PROMPT_CAPACITY_PROBE_V1
   active_for_new_work: false
@@ -8239,6 +8238,8 @@ experiments:
   notes:
   - Independent diagnostic only; frozen A4 method and original evidence unchanged.
   unavailable:
-    implementation_commit: Containing diagnostic source commit
-    execution_commit: Pending frozen diagnostic
     result_commit: Containing publication commit
+  authorization_consumed: true
+  authorization_closed: true
+  analysis_complete: true
+  scientific_efficacy: NOT_CAUSALLY_ESTABLISHED

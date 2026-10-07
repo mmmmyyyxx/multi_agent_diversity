@@ -1,0 +1,13 @@
+profile_id,correct_count,novel_team_coverage,lost_initial_correct,invalid_count,nondominated,dominated_by
+P0_BASELINE_r1,22,0,0,2,True,[]
+P1_GENERALIST_r1,23,3,2,3,False,"[""P2_SPECIALIST_A_r1"", ""P2_SPECIALIST_A_r2""]"
+P2_SPECIALIST_A_r1,25,3,0,3,True,[]
+P3_SPECIALIST_B_r1,17,1,6,2,False,"[""P4_SPECIALIST_C_r2""]"
+P4_SPECIALIST_C_r1,18,2,6,3,False,"[""P1_GENERALIST_r1"", ""P2_SPECIALIST_A_r1"", ""P1_GENERALIST_r2"", ""P2_SPECIALIST_A_r2"", ""P4_SPECIALIST_C_r2"", ""P5_SPECIALIST_D_r2""]"
+P5_SPECIALIST_D_r1,21,3,4,4,False,"[""P1_GENERALIST_r1"", ""P2_SPECIALIST_A_r1"", ""P1_GENERALIST_r2"", ""P2_SPECIALIST_A_r2"", ""P5_SPECIALIST_D_r2""]"
+P0_BASELINE_r2,22,0,0,2,True,[]
+P1_GENERALIST_r2,23,3,2,3,False,"[""P2_SPECIALIST_A_r1"", ""P2_SPECIALIST_A_r2""]"
+P2_SPECIALIST_A_r2,25,3,0,3,True,[]
+P3_SPECIALIST_B_r2,17,1,6,2,False,"[""P4_SPECIALIST_C_r2""]"
+P4_SPECIALIST_C_r2,18,2,6,2,True,[]
+P5_SPECIALIST_D_r2,23,5,4,3,True,[]

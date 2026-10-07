@@ -1,0 +1,11 @@
+{
+  "exact_manual_prompt_text_public": false,
+  "exact_raw_outputs_public": false,
+  "manual_prompt_literals_checked": 5,
+  "optimize_question_literals_checked": 60,
+  "private_literal_findings": 0,
+  "provider_calls": 0,
+  "public_reports_checked": 2,
+  "standard_findings": 0,
+  "status": "PASS"
+}

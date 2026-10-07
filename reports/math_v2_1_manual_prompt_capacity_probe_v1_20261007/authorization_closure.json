@@ -1,0 +1,7 @@
+{
+  "attempt_id": "manual_prompt_capacity_probe_v1_attempt1",
+  "closed": true,
+  "manifest_sha256": "a38019dfca6876a8bd10f5cb87d7c98e53e5ebf063e68be02e1ede5a4ee39898",
+  "reason": "One complete valid diagnostic; no prompt adaptation or efficacy rerun.",
+  "source_sha": "498d667586e8a29de7dffe38f8f50542c8fb0f3c"
+}

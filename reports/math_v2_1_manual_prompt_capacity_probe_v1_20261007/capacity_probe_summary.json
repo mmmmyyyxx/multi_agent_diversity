@@ -1,0 +1,168 @@
+{
+  "Q6": {
+    "P1_beats_fresh_P0": true,
+    "P1_beats_original_reference": true,
+    "P1_mean_correct": 23,
+    "fresh_P0_mean_correct": 22,
+    "interpretation": "Descriptive two-replicate in-sample comparison; no p-value or causal claim."
+  },
+  "Q7": {
+    "A4_best_single_novel": 4,
+    "manual_specialist_novel_observed": true,
+    "original_U0_unchanged": true,
+    "specialist_max_novel": 5
+  },
+  "Q8": {
+    "replicate_votes": [
+      21,
+      23
+    ],
+    "team_vote_space": "OBSERVED"
+  },
+  "Q9": {
+    "a4_search_gap": "INCONCLUSIVE",
+    "interpretation": "Finite development-set capacity contrast, not a controlled optimizer comparison."
+  },
+  "a4_search_gap": "INCONCLUSIVE",
+  "additional_prompts": 0,
+  "all_prompt_aggregates": [
+    {
+      "correct_range": [
+        22,
+        22
+      ],
+      "mean_accuracy": 0.36666666666666664,
+      "mean_correct": 22,
+      "mean_invalid_count": 2,
+      "mean_lost_coverage": 0,
+      "mean_novel_coverage": 0,
+      "novel_range": [
+        0,
+        0
+      ],
+      "prompt_id": "P0_BASELINE"
+    },
+    {
+      "correct_range": [
+        23,
+        23
+      ],
+      "mean_accuracy": 0.38333333333333336,
+      "mean_correct": 23,
+      "mean_invalid_count": 3,
+      "mean_lost_coverage": 2,
+      "mean_novel_coverage": 3,
+      "novel_range": [
+        3,
+        3
+      ],
+      "prompt_id": "P1_GENERALIST"
+    },
+    {
+      "correct_range": [
+        25,
+        25
+      ],
+      "mean_accuracy": 0.4166666666666667,
+      "mean_correct": 25,
+      "mean_invalid_count": 3,
+      "mean_lost_coverage": 0,
+      "mean_novel_coverage": 3,
+      "novel_range": [
+        3,
+        3
+      ],
+      "prompt_id": "P2_SPECIALIST_A"
+    },
+    {
+      "correct_range": [
+        17,
+        17
+      ],
+      "mean_accuracy": 0.2833333333333333,
+      "mean_correct": 17,
+      "mean_invalid_count": 2,
+      "mean_lost_coverage": 6,
+      "mean_novel_coverage": 1,
+      "novel_range": [
+        1,
+        1
+      ],
+      "prompt_id": "P3_SPECIALIST_B"
+    },
+    {
+      "correct_range": [
+        18,
+        18
+      ],
+      "mean_accuracy": 0.3,
+      "mean_correct": 18,
+      "mean_invalid_count": 2.5,
+      "mean_lost_coverage": 6,
+      "mean_novel_coverage": 2,
+      "novel_range": [
+        2,
+        2
+      ],
+      "prompt_id": "P4_SPECIALIST_C"
+    },
+    {
+      "correct_range": [
+        21,
+        23
+      ],
+      "mean_accuracy": 0.3666666666666667,
+      "mean_correct": 22,
+      "mean_invalid_count": 3.5,
+      "mean_lost_coverage": 4,
+      "mean_novel_coverage": 4,
+      "novel_range": [
+        3,
+        5
+      ],
+      "prompt_id": "P5_SPECIALIST_D"
+    }
+  ],
+  "best_single_manual_correct": 25,
+  "best_single_manual_mean_correct": 25,
+  "best_single_profiles": [
+    "P2_SPECIALIST_A_r1",
+    "P2_SPECIALIST_A_r2"
+  ],
+  "coverage_space": "OBSERVED",
+  "heldout_calls": {
+    "shadow": 0,
+    "test": 0,
+    "validation": 0
+  },
+  "limitations": [
+    "Optimize60 informed manual design and evaluation",
+    "only two independent realizations per prompt",
+    "no held-out or causal inference",
+    "historical A4 stochastic reference retained",
+    "manual team composition fixed before responses"
+  ],
+  "manifest_sha256": "a38019dfca6876a8bd10f5cb87d7c98e53e5ebf063e68be02e1ede5a4ee39898",
+  "manual_team_fixed_before_results": true,
+  "mean_manual_team_oracle_correct": 27,
+  "mean_manual_team_vote_correct": 22,
+  "no_rerun_for_unfavorable_valid_results": true,
+  "optional_posthoc_best_five": "NOT_PERFORMED",
+  "original_A4_reference_correct": 22,
+  "original_A4_reference_count": 60,
+  "plurality_conversion_bottleneck": "SUPPORTED",
+  "prompt_edits_after_results": 0,
+  "scientific_method_changed": false,
+  "scientific_status": "VALID_DEVELOPMENT_DIAGNOSTIC",
+  "scope_expansion": false,
+  "single_prompt_space": "OBSERVED",
+  "source_sha": "498d667586e8a29de7dffe38f8f50542c8fb0f3c",
+  "team_vote_space": "OBSERVED",
+  "tokens": {
+    "attempt_charged": 342089,
+    "cumulative_charged": 3414772,
+    "input_tokens": 251427,
+    "output_tokens": 90662,
+    "remaining": 36585228
+  }
+}

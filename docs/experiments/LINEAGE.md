@@ -224,6 +224,11 @@ pilot_terminal_serialization_status: FAILED_AFTER_SCIENTIFIC_STOP
 pilot_owner_scientific_completion_receipt: reports/math_v2_1_gradient_pattern_seed81_pilot_v6_execution_20261007/owner_scientific_completion_receipt.json
 pilot_terminal_engineering_repair_status: VERIFIED_ZERO_API
 pilot_terminal_engineering_repair_report: reports/math_v2_1_gradient_pattern_seed81_pilot_v6_execution_20261007/post_stop_engineering_verification.json
+latest_independent_capacity_diagnostic: math_v2_1_manual_prompt_capacity_probe_v1
+independent_capacity_diagnostic_status: VALID_DEVELOPMENT_DIAGNOSTIC
+independent_capacity_diagnostic_report: reports/math_v2_1_manual_prompt_capacity_probe_v1_20261007
+independent_capacity_diagnostic_A4_method_changed: false
+independent_capacity_diagnostic_authorization_closed: true
 ```
 
 ## Experiment and engineering DAG
@@ -493,7 +498,7 @@ flowchart TD
     n283["math_v2_1_gradient_contract_recovery_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
     n284["math_v2_1_gradient_pattern_seed81_pilot_v6<br/>PILOT<br/>COMPLETED"]
     n285["math_v2_1_full_candidate_specialization_forensic_v1<br/>FORENSIC_AUDIT<br/>COMPLETED"]
-    n286["math_v2_1_manual_prompt_capacity_probe_v1<br/>DIAGNOSTIC<br/>PREPARED_NOT_EXECUTED"]
+    n286["math_v2_1_manual_prompt_capacity_probe_v1<br/>DIAGNOSTIC<br/>COMPLETED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]

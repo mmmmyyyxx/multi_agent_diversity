@@ -1,0 +1,40 @@
+{
+  "compileall": true,
+  "current_passed": 1538,
+  "current_skipped": 2,
+  "current_suite_xml_sha256": "2abb23a2aa009d6eb7ddde136fc1ec58b7580f852aa898a4bc945214982b781b",
+  "formal_network_attempts": 0,
+  "full_historical_replay_pass_claimed": false,
+  "git_diff_check": true,
+  "historical_or_private_test_cases_deselected": 1468,
+  "legacy_preflight_baseline": {
+    "baseline_error_count": 40,
+    "baseline_ok": false,
+    "cli": "scripts/preflight_experiment_governance.py",
+    "interpretation": "The older preflight fails with the untouched starting metadata because it mixes legacy generated views and registry-v2 lineage. Its failures are recorded, not reported as passing or repaired by altering historical files."
+  },
+  "manifest_count": 159,
+  "manifest_validation": true,
+  "protected_identity_audit": {
+    "compileall": true,
+    "immutable_parent_raw_files": 2560,
+    "old_reports_and_scientific_source_unchanged": true,
+    "parent_raw_unchanged": true,
+    "phase_a_report_inventory_verified": true,
+    "protected_tracked_files": 6042,
+    "provider_calls": 0,
+    "raw_heldout_samples_parsed": 0,
+    "status": "PASS"
+  },
+  "real_credentials_visible_to_tests": false,
+  "registry_v2_governance": true,
+  "status": "PASS_CURRENT_CONTRACT",
+  "suite_classification": {
+    "deselected": 1468,
+    "historical_replay_test_cases": 1404,
+    "mode": "current",
+    "private_artifact_test_cases": 64,
+    "selected": 1540
+  },
+  "targeted_diagnostic_tests_passed": 39
+}
