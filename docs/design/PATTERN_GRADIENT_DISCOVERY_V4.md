@@ -15,7 +15,7 @@ example's problem, reference, output, validity, responsibility labels, margin an
 disagreement. Output is exactly `{"gradient": "..."}`, bounded to 400 characters.
 A gradient is a hypothetical, actionable local correction derived from observable
 evidence; it does not establish a latent root cause. The shared specific-content
-guard V5 rejects example literals, answers, problem-specific numeric content and
+guard V6 rejects example literals, answers, problem-specific numeric content and
 interface instructions; necessary reusable mathematical quantities are permitted.
 Complete replacement-procedure declarations are also rejected. These bounded
 guards do not establish comprehensive semantic safety for arbitrary prose.
@@ -36,7 +36,7 @@ participate together (or with each other), including a comma after the names.
 Both complete entity literals are rejected when copied into a gradient. Ordinary
 capitalization and shared mathematical vocabulary remain insufficient evidence.
 All V3 checks remain; its original helper and frozen receipts retain V3 behavior.
-That historical V4 repair retains its frozen absolute digit rejection. Current
+That historical V4 repair retains its frozen absolute digit rejection. Historical
 V5 removes this lexical rejection in a scientific admissibility amendment and
 uses the [bounded numeric provenance detector](NUMERIC_PROVENANCE_GUARD_V5.md).
 Entity, interface, replacement and example-fragment checks remain. New guard
@@ -94,3 +94,6 @@ by semantic aggregation. [AgentGrad](https://arxiv.org/abs/2609.08572) uses sequ
 intervention to attribute a failure and obtain agent-level supervision. Our WHO is
 team Responsibility, followed by gradients from observable member failures. This
 implements neither intervention attribution nor the complete AgentGrad method.
+
+Current Guard V6 uses [strong/weak evidence calibration](NUMERIC_PROVENANCE_GUARD_V6.md).
+Prompt V3, hard400, one generation and all core method semantics remain frozen.

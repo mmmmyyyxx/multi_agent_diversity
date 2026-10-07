@@ -1,0 +1,15 @@
+{
+  "engineering_failure": false,
+  "engineering_retry_cannot_override_boundary": true,
+  "fresh_pilot_not_dispatched": true,
+  "gradient_prompt_v3_changed": false,
+  "guard_v6_allows_bare_coincidence": true,
+  "guard_v6_still_rejects_this_case": true,
+  "permitted_guard_calibration_complete": true,
+  "reason": "ATTEMPT4_CONFIRMED_STRONG_NUMERIC_LEAKAGE",
+  "regeneration_introduced": false,
+  "scientific_efficacy": "NOT_CAUSALLY_ESTABLISHED",
+  "status": "STOP_SCIENTIFIC_METHOD_DECISION_REQUIRED",
+  "strong_reason": "COPIED_NUMERIC_EXPRESSION",
+  "valid_pilot_completed": false
+}

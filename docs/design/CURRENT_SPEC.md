@@ -748,15 +748,19 @@ execution is authorized by this modification.
 
 The current Gradient bundle uses prompt clarification
 `PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3` and the versioned admissibility amendment
-`PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5`. It forbids example-specific
+`PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6`. It forbids example-specific
 numeric leakage, rather than numeric characters. Necessary generic mathematical
 constants and structural quantities may state a reusable reasoning rule. The
-[numeric provenance contract](NUMERIC_PROVENANCE_GUARD_V5.md) specifies the bounded
+[numeric provenance contract](NUMERIC_PROVENANCE_GUARD_V6.md) specifies the bounded
 deterministic heuristic and its limits. V4 and prompt V2 retain their historical
 absolute digit rule; their frozen results are not reclassified. The
 400-character hard limit, one generation per wrong example,
 gradients-only clustering, same-F selection and all search/Memory semantics
 remain unchanged. A fresh experiment and exact authorization are required.
+
+V6 retains hard rejection for strong source-bound evidence and records bare
+numeric coincidences as warnings. V5 remains a frozen historical receipt and
+replay contract. Warnings do not enter any scientific selection or provider input.
 
 Current composition dispatches the frozen execution phase explicitly: Canary
 ends after one production opportunity; Pilot uses the existing two consecutive

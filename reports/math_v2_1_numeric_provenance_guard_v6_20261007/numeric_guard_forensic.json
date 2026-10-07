@@ -1,0 +1,53 @@
+{
+  "answer_context_present": false,
+  "bare_numeric_overlap_only": false,
+  "comprehensive_semantic_oracle": false,
+  "copied_expression_present": true,
+  "copied_expression_source_fields": [
+    "input_payload"
+  ],
+  "copied_expression_span_sha256": [
+    "bcab05466bb02926ab9a61bd1ee3ef665754c14004d7cb9da8f07892ebb9f852"
+  ],
+  "detector_reason_codes": [
+    "COPIED_NUMERIC_EXPRESSION"
+  ],
+  "entity_or_long_fragment_present": false,
+  "fresh_pilot_condition_met": false,
+  "gradient_length": 139,
+  "gradient_sha256": "e73c0c79927c2d266006dfb4cfb456fbe8e45ea7748a1f3511800bec8e21e2e0",
+  "hard_reject": true,
+  "instance_cue_present": false,
+  "matched_numeric_values": [
+    {
+      "value_sha256": "8527a891e224136950ff32ca212b45bc93f69fbb801c3b1ebedac52775f99e61"
+    },
+    {
+      "value_sha256": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+    }
+  ],
+  "matched_source_fields": [
+    "input_payload"
+  ],
+  "matched_source_spans_hashes": [
+    "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce",
+    "8527a891e224136950ff32ca212b45bc93f69fbb801c3b1ebedac52775f99e61"
+  ],
+  "matched_values_sha256": [
+    "8527a891e224136950ff32ca212b45bc93f69fbb801c3b1ebedac52775f99e61",
+    "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+  ],
+  "provider_calls": 0,
+  "semantic_leakage_established": true,
+  "semantic_leakage_scope": "EXACT_INSTANTIATED_SOURCE_EXPRESSION_COPY_IN_THIS_CASE",
+  "status": "ATTEMPT4_CONFIRMED_STRONG_NUMERIC_LEAKAGE",
+  "strong_reasons": [
+    "COPIED_NUMERIC_EXPRESSION"
+  ],
+  "unit_match_present": false,
+  "v5_first_firing_branch": "COPIED_NUMERIC_EXPRESSION",
+  "v6_expected_decision": "REJECT_STRONG_PROVENANCE",
+  "warning_reasons": [
+    "BARE_NON_DISTINCTIVE_VALUE_MATCH"
+  ]
+}

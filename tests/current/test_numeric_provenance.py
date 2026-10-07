@@ -7,7 +7,7 @@ from types import SimpleNamespace as NS
 import pytest
 from multi_dataset_diverse_rl import versions as historical, current_contract as current
 from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
-from multi_dataset_diverse_rl.search.numeric_provenance import numeric_content_leaked
+from multi_dataset_diverse_rl.search.numeric_provenance import numeric_content_leaked,numeric_content_leaked_v5
 from multi_dataset_diverse_rl.search.textual_gradients import validate_gradient,GRADIENT_PROMPT,POLICY
 from multi_dataset_diverse_rl.search.schemas import SearchContractError
 
@@ -51,7 +51,12 @@ def test_generic_structural_values_pass_despite_source_overlap(gradient):
 ])
 def test_clear_numeric_provenance_rejected_in_both_boundaries(problem,gold,prediction,gradient):
     r=row(problem,gold,prediction)
-    assert numeric_content_leaked(gradient,(r,))
+    assert numeric_content_leaked_v5(gradient,(r,))
+    strong=not gradient.startswith(('Use constant ','Use 0.125','Use 1.25e-1','Use １２３４','Use the ratio '))
+    assert numeric_content_leaked(gradient,(r,)) is strong
+    if not strong:
+        assert validate_gradient(gradient,(r,))==gradient
+        return
     for generalized in (False,True):
         with pytest.raises(SearchContractError,match='GRADIENT_.*_INVALID'):
             validate_gradient(gradient,(r,),generalized=generalized)
@@ -72,13 +77,14 @@ def test_generic_numeric_rule_with_written_numeric_reference(gold):
 def test_generalized_gradient_checks_all_original_wrong_sources():
     rows=(row('A symbolic example.','x','y'),row('The given value is 123.','z','w'))
     with pytest.raises(SearchContractError,match='CLUSTER_INVALID'):
-        validate_gradient('Use constant 123.',rows,generalized=True)
+        validate_gradient('Use the given value 123.',rows,generalized=True)
 
 
 def test_guard_prompt_identities_and_single_generation_are_versioned():
     assert historical.PATTERN_CONSTRAINT_ENTITY_GUARD_VERSION=='PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V4'
     assert historical.GRADIENT_PROMPT_VERSION=='PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V2'
-    assert current.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION=='PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5'
+    assert current.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION=='PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6'
+    assert historical.PATTERN_NUMERIC_PROVENANCE_GUARD_VERSION=='PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5'
     assert current.GRADIENT_PROMPT_VERSION=='PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3'
     assert 'problem-specific numeric constants' in GRADIENT_PROMPT
     assert 'Generic mathematical constants or structural quantities are allowed only when' in GRADIENT_PROMPT
@@ -89,7 +95,9 @@ def test_guard_prompt_identities_and_single_generation_are_versioned():
 
 def test_fresh_pilot_preserves_all_other_fields_and_closes_old_treatment():
     c=json.loads((ROOT/BP).read_bytes());parent=json.loads((ROOT/c['numeric_parent_binding_path']).read_bytes())
-    assert not execution_binding(ROOT,c).blockers()
+    from multi_dataset_diverse_rl.benchmarks.math_gradient_pattern_binding import MATHGradientPatternBinding
+    assert not MATHGradientPatternBinding(ROOT,c).blockers()
+    with pytest.raises(SearchContractError,match='CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN'):execution_binding(ROOT,c)
     for key in ('models','provider_bounds','decoding','memory_limits','shared_risk_policy',
             'layer1_search_policy','low_cost_protocol','membership_hashes','initial_team_sha256',
             'initial_team_artifact_sha256','post_search_validation_policy','pattern_prompt_sha256',
@@ -111,4 +119,5 @@ def test_fresh_pilot_preserves_all_other_fields_and_closes_old_treatment():
     ('cache_namespace','old_attempt'),('execution_phase','canary'),('pilot_observation_policy','unknown')])
 def test_treatment_mutations_fail_before_dispatch(key,value):
     c=json.loads((ROOT/BP).read_bytes());c[key]=value
-    assert execution_binding(ROOT,c).blockers()[0].startswith('CURRENT_NUMERIC_ADMISSIBILITY_')
+    from multi_dataset_diverse_rl.benchmarks.math_gradient_pattern_binding import MATHGradientPatternBinding
+    assert MATHGradientPatternBinding(ROOT,c).blockers()[0].startswith('CURRENT_NUMERIC_ADMISSIBILITY_')

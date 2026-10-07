@@ -11,7 +11,7 @@ current_architecture: Unified Team Prompt Search
 method_identity: unified_team_prompt_search_v2_1
 current_method: unified_team_prompt_search_v2_1
 current_implementation: One closed current policy bundle; current-only composition; explicit legacy replay
-current_experiment: math_v2_1_gradient_pattern_seed81_pilot_v4
+current_experiment: math_v2_1_numeric_provenance_guard_v6
 current_benchmark_suite:
 - math
 - ifbench
@@ -34,7 +34,7 @@ last_canary_milestone: math_v2_1_gradient_pattern_seed81_canary_v3
 current_canary_status: VALID_OPERATIONAL_CANARY
 formal_a1_ready: false
 formal_a1_authorized: false
-current_execution_blocker: USER_SCIENTIFIC_POLICY_DECISION_REQUIRED
+current_execution_blocker: ATTEMPT4_CONFIRMED_STRONG_NUMERIC_LEAKAGE
 default_optimizer_generation_policy: OPTIMIZER_REFLECTION_GENERATION_POLICY_V3
 default_optimizer_enable_thinking: false
 optimizer_policy_amendment_status: LAYER1_GENERATION_V3_FROZEN_AND_DISPATCHED
@@ -80,10 +80,10 @@ available_opt_in_memory_policy: structured_cross_member_rolling_risk_memory_v4
 memory_policy_real_execution_authorized: false
 current_pattern_support_id_transport: PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1
 next_canary_authorized: false
-current_pattern_abstraction_guard: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5
+current_pattern_abstraction_guard: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6
 future_execution_requires_new_user_authorization: true
-available_opt_in_pattern_abstraction_guard: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5
-pattern_guard_amendment_status: FROZEN_V5_NO_ADDITIONAL_AMENDMENT
+available_opt_in_pattern_abstraction_guard: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6
+pattern_guard_amendment_status: V6_ZERO_API_IN_PROGRESS
 next_canary_manifest: null
 prior_autonomous_authorization_status: USER_STOPPED_PATTERN_TASK_ALL_ATTEMPTS_CLOSED
 prior_task_stop_reason: USER_STOP_PATTERN_TASK
@@ -147,11 +147,11 @@ current_initial_condition_milestone: math_identical_initial_condition_v1
 current_initial_condition_status: VERIFIED_ZERO_API_INITIAL_CONDITION_CORRECTION
 current_initial_condition_report: reports/math_identical_initial_condition_v1_20261006
 current_initial_condition_execution_authorized: false
-current_offline_execution_profile: experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v4.json
-current_pilot_offline_execution_profile: experiments/execution_bindings/math_v2_1_gradient_pattern_pilot_offline_profile_v3.json
+current_offline_execution_profile: experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v5.json
+current_pilot_offline_execution_profile: experiments/execution_bindings/math_v2_1_gradient_pattern_pilot_offline_profile_v4.json
 current_initial_condition_runtime_source: 52ada98b4735cfa7713de2c2f5437a94ce0bef0b
 current_gradient_prompt_identity: PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3
-current_pattern_guard_identity: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5
+current_pattern_guard_identity: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6
 pending_pilot_scientific_amendment_scope: null
 numeric_guard_historical_regression_status: PASS_7_CANARY3_PLUS_4_PILOT1_AND_22_REAL_SOURCE_NEGATIVES
 pilot_monitor_repair_status: APPEND_ONLY_MONITOR_AND_ACTUAL_PREFIX_PASS
@@ -177,6 +177,9 @@ pilot_partition_completion_statistics:
   raw_provider_responses_immutable: true
   total_missing_aliases_completed: 0
   unknown_alias_failures: 0
+numeric_calibration_user_task_sha256: b81ddb478d7d52285394899f31dc648fd7c1b05bf75d37d852911c8b7d73a9fc
+numeric_calibration_report: reports/math_v2_1_numeric_provenance_guard_v6_20261007
+numeric_calibration_fresh_pilot_condition_met: false
 ```
 
 ## Experiment and engineering DAG
@@ -441,6 +444,8 @@ flowchart TD
     n278["math_v2_1_gradient_pattern_seed81_pilot_v3<br/>PILOT<br/>HOLD"]
     n279["math_v2_1_gradient_partition_completion_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
     n280["math_v2_1_gradient_pattern_seed81_pilot_v4<br/>PILOT<br/>HOLD"]
+    n281["math_v2_1_numeric_provenance_guard_v6<br/>ZERO_API_AUDIT<br/>DRAFT"]
+    n282["math_v2_1_gradient_pattern_seed81_pilot_v5<br/>PILOT<br/>HOLD"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -647,6 +652,9 @@ flowchart TD
   n278 -->|followup_of| n279
   n279 -->|followup_of| n280
   n278 -->|followup_of| n280
+  n280 -->|followup_of| n281
+  n281 -->|followup_of| n282
+  n280 -->|followup_of| n282
 ```
 
 ## Archived branches and unresolved evidence

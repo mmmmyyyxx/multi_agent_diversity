@@ -14,17 +14,17 @@ from multi_dataset_diverse_rl.search.history import HistoryState
 from multi_dataset_diverse_rl.search.schemas import Diagnosis,SearchContractError
 
 ROOT=Path(__file__).resolve().parents[2]
-BP='experiments/execution_bindings/math_v2_1_gradient_pattern_pilot_offline_profile_v3.json'
+BP='experiments/execution_bindings/math_v2_1_gradient_pattern_pilot_offline_profile_v4.json'
 def contract():return json.loads((ROOT/BP).read_bytes())
 
 def test_current_pilot_scope_and_scientific_identity_are_closed():
-    c=contract();p=json.loads((ROOT/c['numeric_parent_binding_path']).read_bytes())
+    c=contract();p=json.loads((ROOT/c['numeric_calibration_parent_binding_path']).read_bytes())
     assert not execution_binding(ROOT,c).blockers()
     changed={k for k in c.keys()|p.keys() if c.get(k)!=p.get(k)}
     assert changed=={'binding_path','execution_attempt_id','cache_namespace',
-        'numeric_parent_binding_path','numeric_parent_binding_sha256',
-        'numeric_admissibility_amendment_path','numeric_admissibility_amendment_sha256',
-        'continuation_authorization_sha256','gradient_prompt_path','gradient_prompt_sha256',
+        'numeric_calibration_parent_binding_path','numeric_calibration_parent_binding_sha256',
+        'numeric_calibration_amendment_path','numeric_calibration_amendment_sha256',
+        'continuation_authorization_sha256',
         'pattern_abstraction_guard','pattern_policy'}
     assert c['provider_bounds']==p['provider_bounds']
     with pytest.raises(SearchContractError,match='CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN'):

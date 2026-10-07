@@ -1,0 +1,16 @@
+{
+  "READY_TO_RUN": false,
+  "attempt5_prep_created": false,
+  "exact_frozen_api_authorization_created": false,
+  "new_real_attempts": 0,
+  "prior_attempt_scopes_unchanged": true,
+  "provider_calls": 0,
+  "real_api_authorized": false,
+  "scientific_boundary": "ATTEMPT4_CONFIRMED_STRONG_NUMERIC_LEAKAGE",
+  "status": "CLOSED_BEFORE_FRESH_PILOT",
+  "stop_reason": "STOP_SCIENTIFIC_METHOD_DECISION_REQUIRED",
+  "test_calls": 0,
+  "user_boundary_section": 17,
+  "user_task_sha256": "b81ddb478d7d52285394899f31dc648fd7c1b05bf75d37d852911c8b7d73a9fc",
+  "validation_calls": 0
+}

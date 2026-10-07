@@ -13,6 +13,7 @@ from .current_layer1 import CurrentLayer1Config
 class CurrentPolicyBundle:
     responsibility: str = identities.BINARY_PLURALITY_RESPONSIBILITY_VERSION
     gradient: str = identities.PER_EXAMPLE_GRADIENT_VERSION
+    abstraction_guard: str = identities.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION
     clustering: str = identities.GRADIENT_PATTERN_DISCOVERY_VERSION
     partition_completion: str = identities.GRADIENT_PARTITION_COMPLETION_VERSION
     pattern_responsibility: str = identities.PATTERN_RESPONSIBILITY_VERSION
@@ -24,6 +25,7 @@ class CurrentPolicyBundle:
     def __post_init__(self):
         expected = dict(responsibility=identities.BINARY_PLURALITY_RESPONSIBILITY_VERSION,
             gradient=identities.PER_EXAMPLE_GRADIENT_VERSION,
+            abstraction_guard=identities.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION,
             clustering=identities.GRADIENT_PATTERN_DISCOVERY_VERSION,
             partition_completion=identities.GRADIENT_PARTITION_COMPLETION_VERSION,
             pattern_responsibility=identities.PATTERN_RESPONSIBILITY_VERSION,

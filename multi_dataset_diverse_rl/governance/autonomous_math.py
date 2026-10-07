@@ -164,7 +164,8 @@ async def execute_search(root, prep, run_root, payload):
         solver = BenchmarkSolver(binding.benchmark(),broker)
         from ..search.textual_gradients import PerExampleGradientProvider, GradientClusterProvider
         pattern_provider=GradientClusterProvider(broker,read_json(root/c['pattern_prompt_path'])['prompt'],
-            gradient_provider=PerExampleGradientProvider(broker,read_json(root/c['gradient_prompt_path'])['prompt']),
+            gradient_provider=PerExampleGradientProvider(broker,read_json(root/c['gradient_prompt_path'])['prompt'],
+                numeric_guard_writer=lambda r:append_jsonl(run_root/'numeric_guard_private.jsonl',r)),
             partition_completion_policy=c.get('partition_completion_policy'),
             partition_writer=(lambda r:append_jsonl(run_root/'partition_completion_private.jsonl',r))
                 if c.get('partition_completion_policy') is not None else None)

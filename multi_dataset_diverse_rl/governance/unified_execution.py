@@ -34,6 +34,10 @@ def bound_preflight(root, manifest):
         return dict(gate='HOLD',blockers=errors+['EXECUTION_BINDING_HASH_MISMATCH'],provider_attempts=0)
     try:
         binding=execution_binding(root,read_json(path));errors.extend(binding.blockers())
+        if ('numeric_calibration_amendment_path' in binding.contract
+                and binding.contract['execution_phase']=='pilot'
+                and read_json(root/binding.contract['numeric_calibration_amendment_path']).get('fresh_pilot_condition_met') is not True):
+            errors.append('ATTEMPT4_CONFIRMED_STRONG_NUMERIC_LEAKAGE')
         method=binding.method('A4')
         expected=preexecution_manifest(root,source_sha=manifest.get('source_sha'),frozen=False,
             binding_path=ref['path'],experiment_id=manifest.get('experiment_id'))
@@ -68,10 +72,16 @@ def execution_identity(root, contract):
     configs.extend(contract[k] for k in ('gradient_prompt_path','gradient_parent_binding_path') if k in contract)
     configs.extend(contract[k] for k in ('pilot_parent_binding_path','pilot_execution_authorization_path') if k in contract)
     provenance_contract = contract
+    if 'numeric_calibration_amendment_path' in contract:
+        from ..benchmarks.numeric_calibration_contract import validate_numeric_calibration
+        from ..benchmarks.math_gradient_pattern_binding import MATHGradientPatternBinding
+        provenance_contract=validate_numeric_calibration(MATHGradientPatternBinding(root,contract))
+        configs.extend(contract[k] for k in ('numeric_calibration_parent_binding_path',
+            'numeric_calibration_amendment_path'))
     if 'partition_completion_amendment_path' in contract:
         from ..benchmarks.partition_completion_contract import validate_partition_completion
         from ..benchmarks.math_gradient_pattern_binding import MATHGradientPatternBinding
-        provenance_contract=validate_partition_completion(MATHGradientPatternBinding(root,contract))
+        provenance_contract=validate_partition_completion(MATHGradientPatternBinding(root,provenance_contract))
         configs.extend(contract[k] for k in ('partition_completion_parent_binding_path',
             'partition_completion_user_scope_path','partition_completion_amendment_path'))
     if 'operational_user_scope_path' in provenance_contract:
@@ -198,6 +208,9 @@ def execution_scope(manifest, contract):
     if 'numeric_admissibility_amendment_sha256' in contract:
         scope['numeric_admissibility']={k:contract[k] for k in ('numeric_parent_binding_sha256',
             'numeric_admissibility_amendment_sha256','gradient_prompt_sha256','pattern_abstraction_guard')}
+    if 'numeric_calibration_amendment_sha256' in contract:
+        scope['numeric_calibration']={k:contract[k] for k in ('numeric_calibration_parent_binding_sha256',
+            'numeric_calibration_amendment_sha256','pattern_abstraction_guard')}
     if 'operational_user_scope_path' in contract:
         scope['runtime_persistence_policy']=contract['runtime_persistence_policy']
         scope['operational_user_scope_sha256']=contract['operational_user_scope_sha256']

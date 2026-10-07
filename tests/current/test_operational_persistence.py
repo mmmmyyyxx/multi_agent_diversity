@@ -166,7 +166,8 @@ def test_all_four_role_wire_bytes_and_five_member_lanes_match_frozen_baseline():
     module=types.ModuleType('multi_dataset_diverse_rl.search._frozen_broker_witness')
     module.__package__='multi_dataset_diverse_rl.search'
     exec(compile(frozen,'<frozen provider runtime>','exec'),module.__dict__)
-    c=json.loads((ROOT/'experiments/execution_bindings/math_v2_1_gradient_pattern_seed81_pilot_v2.json').read_bytes())
+    # Current V6 fixture; frozen broker source witnesses unchanged wire physics.
+    c=json.loads((ROOT/'experiments/execution_bindings/math_v2_1_gradient_pattern_seed81_pilot_v5.json').read_bytes())
     old=module.RequestBroker(contract=c,transport=None,arm='A4',seed=81)
     new=RequestBroker(contract=dict(c,runtime_persistence_policy=POLICY),transport=None,arm='A4',seed=81)
     messages=[dict(role='user',content='Synthetic scientific request 数学')]

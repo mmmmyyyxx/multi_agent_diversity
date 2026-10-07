@@ -15,7 +15,7 @@ ROOT=Path(__file__).resolve().parents[2]
 
 class PilotAuditControls(unittest.TestCase):
     def wire(self):
-        c=json.loads((ROOT/'experiments/execution_bindings/math_v2_1_gradient_pattern_seed81_pilot_v2.json').read_text(encoding='utf-8'))
+        c=json.loads((ROOT/'experiments/execution_bindings/math_v2_1_gradient_pattern_seed81_pilot_v5.json').read_text(encoding='utf-8'))
         benchmark=NS(output_contract='immutable output framing',solver_user_content=lambda p,item:p+'\n'+item.input_payload)
         prompt='Check assumptions before algebra.';item=NS(input_id='synthetic',input_payload='public synthetic input')
         messages=[dict(role='system',content=benchmark.output_contract),dict(role='user',content=benchmark.solver_user_content(prompt,item))]

@@ -1,0 +1,12 @@
+{
+  "bottleneck_stage": "GRADIENT_CONTRACT",
+  "llm_alignment_judge_calls": 0,
+  "new_candidates": 0,
+  "new_gradients": 0,
+  "new_patterns": 0,
+  "new_solver_calls": 0,
+  "prior_attempt4_candidate_trace": "reports/math_v2_1_gradient_pattern_seed81_pilot_v4_execution_20261007/analysis_index.json",
+  "prior_trace_is_new_v6_evidence": false,
+  "repair_yield": null,
+  "status": "NOT_RUN_FRESH_PILOT_BLOCKED_BEFORE_INITIALIZATION"
+}

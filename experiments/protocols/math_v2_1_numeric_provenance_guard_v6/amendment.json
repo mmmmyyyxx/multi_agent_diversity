@@ -1,0 +1,51 @@
+{
+  "code_change_authorized": true,
+  "core_method_changed": false,
+  "experiment_id": "math_v2_1_numeric_provenance_guard_v6",
+  "fresh_pilot_condition": "ATTEMPT4_V6_NO_STRONG_PROVENANCE",
+  "fresh_pilot_condition_met": false,
+  "fresh_pilot_status": "ATTEMPT4_CONFIRMED_STRONG_NUMERIC_LEAKAGE",
+  "llm_judge_authorized": false,
+  "parents": [
+    {
+      "binding_path": "experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v4.json",
+      "binding_sha256": "08e9aec734a9dc57a083db6245a1d8f3a592ceabb97c428529392d22fcd81bfd"
+    },
+    {
+      "binding_path": "experiments/execution_bindings/math_v2_1_gradient_pattern_pilot_offline_profile_v3.json",
+      "binding_sha256": "9daa6bd0d8725dc38a2952c045d7766dd4bdd513fe4f77de01065be20892c55d"
+    },
+    {
+      "binding_path": "experiments/execution_bindings/math_v2_1_gradient_pattern_seed81_pilot_v4.json",
+      "binding_sha256": "7f8d23d38fc8ee2c6cd4b7651d777796cb4a38e2c92a4d81684be1773539d5df"
+    }
+  ],
+  "policy": {
+    "bare_numeric_coincidence_hard_reject": false,
+    "bounded_heuristic": true,
+    "core_method_changed": false,
+    "gradient_prompt_changed": false,
+    "identity": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6",
+    "regeneration": false,
+    "strong_reasons": [
+      "ANSWER_LITERAL_MATCH",
+      "COPIED_NUMERIC_EXPRESSION",
+      "VALUE_AND_UNIT_MATCH",
+      "INSTANCE_CUED_VALUE_MATCH",
+      "VALUE_WITH_ENTITY_CONTEXT",
+      "VALUE_WITH_LONG_SOURCE_FRAGMENT"
+    ],
+    "warning_reasons": [
+      "BARE_DISTINCTIVE_VALUE_MATCH",
+      "BARE_NON_DISTINCTIVE_VALUE_MATCH"
+    ]
+  },
+  "provider_call_budget": 0,
+  "provider_output_admissibility_changed": true,
+  "push_authorized": true,
+  "real_api_authorized": false,
+  "schema_version": "math_numeric_provenance_calibration_amendment_v1",
+  "test_authorized": false,
+  "user_task_sha256": "b81ddb478d7d52285394899f31dc648fd7c1b05bf75d37d852911c8b7d73a9fc",
+  "validation_authorized": false
+}

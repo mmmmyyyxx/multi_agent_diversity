@@ -1,0 +1,15 @@
+{
+  "bare_numeric_coincidence_no_longer_sufficient": true,
+  "bounded_deterministic_evidence_threshold_changed": true,
+  "cluster_prompt_changed": false,
+  "core_method_changed": false,
+  "fresh_pilot_blocker": "ATTEMPT4_CONFIRMED_STRONG_NUMERIC_LEAKAGE",
+  "fresh_pilot_dispatched": false,
+  "gradient_definition_changed": false,
+  "gradient_prompt_changed": false,
+  "hard400_unchanged": true,
+  "partition_completion_v1_unchanged": true,
+  "provider_calls": 0,
+  "semantic_regeneration": false,
+  "single_generation_unchanged": true
+}

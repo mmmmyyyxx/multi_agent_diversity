@@ -17,8 +17,8 @@ from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker
 from multi_dataset_diverse_rl.search.schemas import SearchContractError
 
 ROOT=Path(__file__).resolve().parents[2]
-PROFILE='experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v4.json'
-PILOT_PROFILE='experiments/execution_bindings/math_v2_1_gradient_pattern_pilot_offline_profile_v3.json'
+PROFILE='experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v5.json'
+PILOT_PROFILE='experiments/execution_bindings/math_v2_1_gradient_pattern_pilot_offline_profile_v4.json'
 
 
 def contract(path=PROFILE):return json.loads((ROOT/path).read_bytes())
@@ -77,7 +77,9 @@ def test_amendment_changes_only_initial_condition_and_run_identity(path):
         experiment_id='math_identical_initial_condition_v1')
     status=bound_preflight(ROOT,m)
     assert status['gate']=='HOLD' and status['provider_attempts']==0
-    assert status['blockers']==['PREEXECUTION_NOT_FROZEN']
+    expected=['PREEXECUTION_NOT_FROZEN']
+    if c['execution_phase']=='pilot':expected.append('ATTEMPT4_CONFIRMED_STRONG_NUMERIC_LEAKAGE')
+    assert status['blockers']==expected
     assert m['authorization']['real_api_authorized'] is False
     scope=execution_scope(m,c)
     assert scope['initial_memory_entries']==0
@@ -90,7 +92,7 @@ def test_amendment_changes_only_initial_condition_and_run_identity(path):
     ('gradient_prompt_sha256','0'*64),('initial_condition_amendment_sha256','0'*64)])
 def test_amendment_rejects_identity_or_method_tampering(field,value):
     c=contract();c[field]=value
-    assert execution_binding(ROOT,c).blockers()[0].startswith('CURRENT_NUMERIC_ADMISSIBILITY_')
+    assert execution_binding(ROOT,c).blockers()[0].startswith('CURRENT_NUMERIC_CALIBRATION_')
 
 
 def test_archive_preserves_old_bytes_without_authorizing_old_binding():

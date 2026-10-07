@@ -7,7 +7,7 @@ from ..local_optimizers.schemas import LocalEvidenceExample
 from .responsibility_value import responsibility_value
 from .schemas import SearchContractError
 from .abstraction_content import current_specific_content_leaked
-from .numeric_provenance import numeric_content_leaked
+from .numeric_provenance import numeric_guard_result
 
 @dataclass(frozen=True)
 class PatternResponsibilitySignal:
@@ -55,10 +55,13 @@ def guard_abstraction(text, rows, *, abstraction_guard_version=None):
     if contains_supplied_example_text(text,examples):
         raise SearchContractError('PATTERN_DISCOVERY_EXAMPLE_LEAKAGE')
     if abstraction_guard_version == versions.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION:
+        numeric=numeric_guard_result(text, rows)
         if (current_specific_content_leaked(text, rows, numeric_gold=False)
-                or numeric_content_leaked(text, rows)):
-            raise SearchContractError('PATTERN_DISCOVERY_EXAMPLE_LEAKAGE')
-        return
+                or numeric['hard_reject']):
+            error=SearchContractError('PATTERN_DISCOVERY_EXAMPLE_LEAKAGE')
+            error.numeric_guard_result=numeric
+            raise error
+        return numeric
 
 def single_failure_example(row):
     return dict(example_id=row.example_id,problem=row.signals['input_payload'],reference=row.signals['gold'],prediction=row.signals.get('target_output'),valid=row.signals['target_member_valid'],responsibility_labels=sample_labels(row),team_margin=row.signals.get('team_margin'),team_disagreement=row.signals.get('team_disagreement'))

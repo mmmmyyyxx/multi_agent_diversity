@@ -122,7 +122,8 @@ class _FreshSearchProvider:
 
 class PerExampleGradientProvider(_FreshSearchProvider):
     role='pattern_gradient';stage='per_example_textual_gradient'
-    def __init__(self,broker,prompt=GRADIENT_PROMPT):super().__init__(broker,prompt)
+    def __init__(self,broker,prompt=GRADIENT_PROMPT,*,numeric_guard_writer=None):
+        super().__init__(broker,prompt);self.numeric_guard_writer=numeric_guard_writer
     def extract(self,payload):
         expected={'example_id','problem','reference','prediction','valid','responsibility_labels','team_margin','team_disagreement'}
         if (not isinstance(payload,dict) or set(payload)!={'schema','current_member_procedure','example'}
@@ -195,7 +196,7 @@ class GradientClusterProvider(_FreshSearchProvider):
 class GradientExtractor:
     def __init__(self,provider):
         if provider is None:raise SearchContractError('PATTERN_GRADIENT_PROVIDER_NOT_BOUND')
-        self.provider=provider
+        self.provider=provider;self.numeric_guard_audit=[]
     def extract(self,procedure,rows):
         if not isinstance(procedure,str) or not procedure.strip():raise SearchContractError('PATTERN_MEMBER_PROCEDURE_REQUIRED')
         rows=tuple(rows)
@@ -208,6 +209,13 @@ class GradientExtractor:
             value=self.provider.extract(dict(schema=GRADIENT_POLICY['schema'],current_member_procedure=procedure,example=example))
             if not isinstance(value,dict) or set(value)!={'gradient'}:
                 raise SearchContractError('PATTERN_GRADIENT_EXTRACTION_INVALID')
+            if isinstance(value['gradient'],str):
+                from .numeric_provenance import numeric_guard_result
+                audit=dict(example_id=row.example_id,gradient_sha256=hashlib.sha256(
+                    value['gradient'].encode()).hexdigest(),numeric_guard_result=numeric_guard_result(value['gradient'],(row,)))
+                self.numeric_guard_audit.append(audit)
+                writer=getattr(self.provider,'numeric_guard_writer',None)
+                if writer is not None:writer(audit)
             gradients.append(dict(example_id=row.example_id,gradient=validate_gradient(value['gradient'],(row,))))
         return tuple(gradients)
 

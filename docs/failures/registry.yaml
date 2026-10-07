@@ -739,3 +739,13 @@ failures:
   mitigation: Preserve raw response and charged prefix, close consumed scope, retain frozen Gradient V1 Prompt V3
     Guard V5; any continuation requiring admissibility changes needs a separate scientific decision.
   evidence_level: observed
+  followup_forensic:
+    identity: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6
+    evidence: reports/math_v2_1_numeric_provenance_guard_v6_20261007/numeric_guard_forensic.json
+    confirmed_reason: COPIED_NUMERIC_EXPRESSION
+    bare_numeric_overlap_only: false
+    v6_expected_decision: REJECT_STRONG_PROVENANCE
+    semantic_copying_established_for_this_literal_case: true
+    original_frozen_classification_unchanged: true
+    fresh_pilot_condition_met: false
+    user_task_sha256: b81ddb478d7d52285394899f31dc648fd7c1b05bf75d37d852911c8b7d73a9fc

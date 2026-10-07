@@ -33,3 +33,8 @@ complete and missing-only partitions separately, completion events, total and
 maximum missing aliases, duplicate failures and unknown failures. Fresh attempts
 start with empty Memory and independent member realization lanes; no old output
 is admitted to new scientific state.
+
+The separately authorized Guard V6 calibration replaces only the bound numeric
+admissibility guard in fresh contracts. Partition Completion V1 itself remains
+unchanged: its generalized-gradient validation uses the exact bound current guard.
+The original V5 binding and historical partition evidence retain their identities.

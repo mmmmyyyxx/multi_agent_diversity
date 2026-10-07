@@ -1,0 +1,220 @@
+{
+  "cases": [
+    {
+      "case_sha256": "00f46e8b5be451cb61fc744dc4808e50e1cca469287885d4dae312f8fcc0adb9",
+      "classification": "BARE_OVERLAP_NEGATIVE_RECLASSIFIED_AS_ALLOWED",
+      "copied_expression_source_fields": [],
+      "copied_expression_span_sha256": [],
+      "decision": "PASS_WITH_NUMERIC_WARNING",
+      "hard_reject": false,
+      "matched_source_fields": [
+        "input_payload"
+      ],
+      "matched_source_spans_hashes": [
+        "ad57366865126e55649ecb23ae1d48887544976efea46a48eb5d85a6eeb4d306"
+      ],
+      "matched_values_sha256": [
+        "ad57366865126e55649ecb23ae1d48887544976efea46a48eb5d85a6eeb4d306"
+      ],
+      "strong_reasons": [],
+      "warning_reasons": [
+        "BARE_DISTINCTIVE_VALUE_MATCH"
+      ]
+    },
+    {
+      "case_sha256": "36e8d516ab6cefe57525dc3af557f259653c059c5cefa051b109e81033b111d3",
+      "classification": "BARE_OVERLAP_NEGATIVE_RECLASSIFIED_AS_ALLOWED",
+      "copied_expression_source_fields": [],
+      "copied_expression_span_sha256": [],
+      "decision": "PASS_WITH_NUMERIC_WARNING",
+      "hard_reject": false,
+      "matched_source_fields": [
+        "input_payload"
+      ],
+      "matched_source_spans_hashes": [
+        "7b69759630f869f2723875f873935fed29d2d12b10ef763c1c33b8e0004cb405"
+      ],
+      "matched_values_sha256": [
+        "7b69759630f869f2723875f873935fed29d2d12b10ef763c1c33b8e0004cb405"
+      ],
+      "strong_reasons": [],
+      "warning_reasons": [
+        "BARE_DISTINCTIVE_VALUE_MATCH"
+      ]
+    },
+    {
+      "case_sha256": "90e834528de76a95bc107b773a83fd05165294204858dcff8c678ef8c1138a5e",
+      "classification": "BARE_OVERLAP_NEGATIVE_RECLASSIFIED_AS_ALLOWED",
+      "copied_expression_source_fields": [],
+      "copied_expression_span_sha256": [],
+      "decision": "PASS_WITH_NUMERIC_WARNING",
+      "hard_reject": false,
+      "matched_source_fields": [
+        "input_payload"
+      ],
+      "matched_source_spans_hashes": [
+        "838f461c2fa673cec73e6eecdafa88b127802d6cb0a61c53175197a122cb645a"
+      ],
+      "matched_values_sha256": [
+        "838f461c2fa673cec73e6eecdafa88b127802d6cb0a61c53175197a122cb645a"
+      ],
+      "strong_reasons": [],
+      "warning_reasons": [
+        "BARE_DISTINCTIVE_VALUE_MATCH"
+      ]
+    },
+    {
+      "case_sha256": "50c92951fa26f74a42cecc6b46ad39970b21bd9b097c60369c4dd3287c535888",
+      "classification": "BARE_OVERLAP_NEGATIVE_RECLASSIFIED_AS_ALLOWED",
+      "copied_expression_source_fields": [],
+      "copied_expression_span_sha256": [],
+      "decision": "PASS_WITH_NUMERIC_WARNING",
+      "hard_reject": false,
+      "matched_source_fields": [
+        "input_payload"
+      ],
+      "matched_source_spans_hashes": [
+        "d2cbad71ff333de67d07ec676e352ab7f38248eb69c942950157220607c55e84"
+      ],
+      "matched_values_sha256": [
+        "d939926f05444b0f4495fb9629ecbfa80d99a8ec1a20d06800ca5a3d5f4fd276"
+      ],
+      "strong_reasons": [],
+      "warning_reasons": [
+        "BARE_NON_DISTINCTIVE_VALUE_MATCH"
+      ]
+    },
+    {
+      "case_sha256": "6a9a7da483a4c5a99436ba166ad414b26255ac205b79b389881bb4b3d4d9ffcf",
+      "classification": "BARE_OVERLAP_NEGATIVE_RECLASSIFIED_AS_ALLOWED",
+      "copied_expression_source_fields": [],
+      "copied_expression_span_sha256": [],
+      "decision": "PASS_WITH_NUMERIC_WARNING",
+      "hard_reject": false,
+      "matched_source_fields": [
+        "input_payload"
+      ],
+      "matched_source_spans_hashes": [
+        "52c003e77e74cbacd60930b997433027175ca60b20b7fbb4ec6073b2c4932bb9"
+      ],
+      "matched_values_sha256": [
+        "52e90ae24326591c8161e2e05a8f3b9b57287ca13aba3be7e84043691e160ba6"
+      ],
+      "strong_reasons": [],
+      "warning_reasons": [
+        "BARE_DISTINCTIVE_VALUE_MATCH"
+      ]
+    },
+    {
+      "case_sha256": "e34e2c3e92fce3fe120ec325059d08a6a8a74465d450d704bbb34eafddf5942b",
+      "classification": "BARE_OVERLAP_NEGATIVE_RECLASSIFIED_AS_ALLOWED",
+      "copied_expression_source_fields": [],
+      "copied_expression_span_sha256": [],
+      "decision": "PASS_WITH_NUMERIC_WARNING",
+      "hard_reject": false,
+      "matched_source_fields": [
+        "input_payload"
+      ],
+      "matched_source_spans_hashes": [
+        "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+        "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+        "d939926f05444b0f4495fb9629ecbfa80d99a8ec1a20d06800ca5a3d5f4fd276"
+      ],
+      "matched_values_sha256": [
+        "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+        "d939926f05444b0f4495fb9629ecbfa80d99a8ec1a20d06800ca5a3d5f4fd276",
+        "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+      ],
+      "strong_reasons": [],
+      "warning_reasons": [
+        "BARE_NON_DISTINCTIVE_VALUE_MATCH"
+      ]
+    },
+    {
+      "case_sha256": "e2541554b251d919c091a2237edc772a71e207150166c2527ee0368f74c35eb4",
+      "classification": "BARE_OVERLAP_NEGATIVE_RECLASSIFIED_AS_ALLOWED",
+      "copied_expression_source_fields": [],
+      "copied_expression_span_sha256": [],
+      "decision": "PASS_WITH_NUMERIC_WARNING",
+      "hard_reject": false,
+      "matched_source_fields": [
+        "input_payload"
+      ],
+      "matched_source_spans_hashes": [
+        "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+      ],
+      "matched_values_sha256": [
+        "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+      ],
+      "strong_reasons": [],
+      "warning_reasons": [
+        "BARE_NON_DISTINCTIVE_VALUE_MATCH"
+      ]
+    },
+    {
+      "case_sha256": "7481c9d5ce6958c38180910519015080c881c2929635f712e036f8e3575924a4",
+      "classification": "BARE_OVERLAP_NEGATIVE_RECLASSIFIED_AS_ALLOWED",
+      "copied_expression_source_fields": [],
+      "copied_expression_span_sha256": [],
+      "decision": "PASS_WITH_NUMERIC_WARNING",
+      "hard_reject": false,
+      "matched_source_fields": [
+        "input_payload"
+      ],
+      "matched_source_spans_hashes": [
+        "4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5"
+      ],
+      "matched_values_sha256": [
+        "4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5"
+      ],
+      "strong_reasons": [],
+      "warning_reasons": [
+        "BARE_NON_DISTINCTIVE_VALUE_MATCH"
+      ]
+    },
+    {
+      "case_sha256": "30e9f6bd6f5bd329cfbfbdb4007a58f427bea74719d84e53901c1322a9787e22",
+      "classification": "BARE_OVERLAP_NEGATIVE_RECLASSIFIED_AS_ALLOWED",
+      "copied_expression_source_fields": [],
+      "copied_expression_span_sha256": [],
+      "decision": "PASS_WITH_NUMERIC_WARNING",
+      "hard_reject": false,
+      "matched_source_fields": [
+        "input_payload"
+      ],
+      "matched_source_spans_hashes": [
+        "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3"
+      ],
+      "matched_values_sha256": [
+        "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3"
+      ],
+      "strong_reasons": [],
+      "warning_reasons": [
+        "BARE_DISTINCTIVE_VALUE_MATCH"
+      ]
+    },
+    {
+      "case_sha256": "c121c77dc375dabcc9e5b30866e269416819dfd7f7dd8e278f38e6feb84c681c",
+      "classification": "BARE_OVERLAP_NEGATIVE_RECLASSIFIED_AS_ALLOWED",
+      "copied_expression_source_fields": [],
+      "copied_expression_span_sha256": [],
+      "decision": "PASS_WITH_NUMERIC_WARNING",
+      "hard_reject": false,
+      "matched_source_fields": [
+        "input_payload"
+      ],
+      "matched_source_spans_hashes": [
+        "16fac5421a323769a310b65e3eb26d563d93c2e7d6096e4142b44802fa4b778e"
+      ],
+      "matched_values_sha256": [
+        "52e90ae24326591c8161e2e05a8f3b9b57287ca13aba3be7e84043691e160ba6"
+      ],
+      "strong_reasons": [],
+      "warning_reasons": [
+        "BARE_DISTINCTIVE_VALUE_MATCH"
+      ]
+    }
+  ],
+  "provider_calls": 0,
+  "status": "PASS"
+}

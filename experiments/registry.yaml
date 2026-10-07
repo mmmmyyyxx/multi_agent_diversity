@@ -8091,3 +8091,52 @@ experiments:
   frozen_repository_commit: 447c8aa6eb3a4cb0f35e3eb980b4d0e1299a0d5a
   reports:
   - reports/math_v2_1_gradient_pattern_seed81_pilot_v4_preexecution_20261007
+- experiment_id: math_v2_1_numeric_provenance_guard_v6
+  kind: ZERO_API_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_gradient_pattern_seed81_pilot_v4
+  status: DRAFT
+  scientific_status: ZERO_API_IN_PROGRESS
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/protocols/math_v2_1_numeric_provenance_guard_v6/amendment.json
+  report: reports/math_v2_1_numeric_provenance_guard_v6_20261007
+  classifier: STRONG_WEAK_NUMERIC_EVIDENCE_CALIBRATION
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Prompt V3 and core method unchanged.
+  - User section17 blocks fresh Pilot when attempt4 has strong provenance.
+  unavailable:
+    implementation_commit: Pending source freeze
+    execution_commit: No real execution permitted by forensic boundary
+    result_commit: Pending publication
+- experiment_id: math_v2_1_gradient_pattern_seed81_pilot_v5
+  kind: PILOT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_numeric_provenance_guard_v6
+  - math_v2_1_gradient_pattern_seed81_pilot_v4
+  status: HOLD
+  scientific_status: NOT_RUN_CONFIRMED_STRONG_NUMERIC_LEAKAGE
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v5.yaml
+  report: reports/math_v2_1_numeric_provenance_guard_v6_20261007
+  classifier: NOT_DISPATCHED_CONFIRMED_STRONG_NUMERIC_LEAKAGE
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Prompt V3 and core method unchanged.
+  - User section17 blocks fresh Pilot when attempt4 has strong provenance.
+  unavailable:
+    implementation_commit: Pending source freeze
+    execution_commit: No real execution permitted by forensic boundary
+    result_commit: Pending publication

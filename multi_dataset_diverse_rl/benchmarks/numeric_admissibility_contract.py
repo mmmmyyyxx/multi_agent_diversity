@@ -17,6 +17,12 @@ from .data_freeze import file_hash
 from .initial_condition_contract import initial_condition_provenance
 
 
+def v5_policy():
+    policy=deepcopy(POLICY)
+    policy['gradient_policy']['abstraction_guard']=historical.PATTERN_NUMERIC_PROVENANCE_GUARD_VERSION
+    return policy
+
+
 def previous_policy():
     policy=deepcopy(POLICY)
     policy['gradient_policy'].update(prompt_identity=historical.GRADIENT_PROMPT_VERSION,
@@ -38,8 +44,8 @@ def derive_numeric_contract(parent, *, attempt, binding_path, parent_path,
         numeric_admissibility_amendment_path=amendment_path,
         numeric_admissibility_amendment_sha256=amendment_sha256,
         gradient_prompt_path=gradient_prompt_path,gradient_prompt_sha256=gradient_prompt_sha256,
-        pattern_abstraction_guard=versions.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION,
-        pattern_policy=deepcopy(POLICY),continuation_authorization_sha256=amendment_sha256)
+        pattern_abstraction_guard=historical.PATTERN_NUMERIC_PROVENANCE_GUARD_VERSION,
+        pattern_policy=v5_policy(),continuation_authorization_sha256=amendment_sha256)
     if user_scope_path is not None:
         c.update(numeric_user_scope_path=user_scope_path,numeric_user_scope_sha256=user_scope_sha256,
             continuation_authorization_sha256=user_scope_sha256)
@@ -56,7 +62,7 @@ def validate_numeric_admissibility(binding):
     required=dict(schema_version='math_numeric_admissibility_amendment_v1',
         code_change_authorized=True,provider_output_admissibility_changed=True,
         core_method_changed=False,provider_call_budget=0,api_token_budget=0,
-        pattern_policy=POLICY,guard_identity=versions.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION,
+        pattern_policy=v5_policy(),guard_identity=historical.PATTERN_NUMERIC_PROVENANCE_GUARD_VERSION,
         gradient_prompt_identity=versions.GRADIENT_PROMPT_VERSION)
     if (any(a.get(k)!=v for k,v in required.items())
             or any(a.get(k) is not False for k in ('real_api_authorized','canary_authorized',
@@ -103,5 +109,6 @@ def validate_numeric_admissibility(binding):
         gradient_prompt_path=c['gradient_prompt_path'],gradient_prompt_sha256=c['gradient_prompt_sha256'],
         user_scope_path=c.get('numeric_user_scope_path'),user_scope_sha256=c.get('numeric_user_scope_sha256'))
     if c!=expected:raise SearchContractError('CURRENT_NUMERIC_ADMISSIBILITY_FROZEN_CONTRACT_MISMATCH')
-    CURRENT_POLICY_BUNDLE.validate_contract(c)
+    # This is a data-only V5 receipt. Current execution eligibility is checked
+    # by execution_binding; a historical receipt never selects a runtime guard.
     return archived

@@ -53,7 +53,7 @@ def test_omission_does_not_mask_any_other_defect(mutation):
     if mutation=='extra':raw['patterns'][0]['confidence']=1
     if mutation=='schema':raw['other']=[]
     if mutation=='bad_gradient':raw['patterns'][0]['generalized_gradient']='x'*601
-    if mutation=='leak':raw['patterns'][0]['generalized_gradient']='Use constant 12347.'
+    if mutation=='leak':raw['patterns'][0]['generalized_gradient']='Use the given value 12347.'
     if mutation=='nonstring':raw['patterns'][0]['support_ids']=[None]
     saved=deepcopy(raw)
     with pytest.raises(SearchContractError) as exc:normalize(raw)

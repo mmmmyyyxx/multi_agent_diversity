@@ -74,13 +74,15 @@ authorization; fresh runs start with empty Memory and independent member lanes.
 Historical MATH compatibility tests use an explicit isolated V1_1 artifact
 workspace; this test fixture changes no legacy runtime or historical evidence.
 
-The current numeric-admissibility amendment derives Guard V5 / Gradient prompt
+The historical numeric-admissibility amendment derives Guard V5 / Gradient prompt
 V3 from a hash-pinned V1_2 parent as data-only provenance. It changes only those
 two treatment fields and fresh attempt/cache/scope metadata. The parent policy,
 budgets, initialization, memberships and all remaining method fields must match
 the exact derivation. The runtime verifies every parent receipt and archives the
 old initial-team reference explicitly; it never composes an old policy. Current
-offline conformance uses profile V4 and Pilot offline profile V3. These profiles
+offline conformance uses Guard V6 profile V5 and Pilot offline profile V4.
+The V6 calibration preserves Prompt V3 and changes only the bounded evidence
+threshold: bare coincidence warns; strong source-bound numeric evidence rejects. These profiles
 grant no dispatch; fresh Pilot execution needs its own frozen single-use scope.
 
 Current tests are selected by `tests/suite_classification.json`; new entrypoint
@@ -91,3 +93,6 @@ full current suite must run on the final runtime source commit.
 
 No Canary, Pilot, Validation, Test, real provider call or efficacy result follows
 from this consolidation. Existing offline profiles remain code conformance only.
+
+Current Guard V6 uses [strong/weak evidence calibration](NUMERIC_PROVENANCE_GUARD_V6.md).
+Prompt V3, hard400, one generation and all core method semantics remain frozen.
