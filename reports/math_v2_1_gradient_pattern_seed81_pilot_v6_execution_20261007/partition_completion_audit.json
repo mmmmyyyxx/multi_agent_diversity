@@ -1,0 +1,13 @@
+{
+  "cluster_calls": 10,
+  "duplicate_partition_failures": 0,
+  "extra_llm_repair_calls": 0,
+  "independent_reconstruction": true,
+  "maximum_missing_aliases_per_call": 2,
+  "partition_completion_events": 4,
+  "policy": "GRADIENT_PATTERN_PARTITION_COMPLETION_V1",
+  "raw_complete_partitions": 6,
+  "raw_missing_only_partitions": 4,
+  "total_missing_aliases_completed": 5,
+  "unknown_alias_failures": 0
+}

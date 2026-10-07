@@ -1,0 +1,55 @@
+{
+  "compileall": true,
+  "current_cumulative_charged": 3072683,
+  "current_ledger_remaining": 36927317,
+  "current_ledger_reserved": 0,
+  "current_ledger_sha256": "d05e2064d816fda9c36df4b1f0365cd87538396575fd1697c723c78ba9fd499f",
+  "fixes": [
+    "Overwrite terminal validation metadata without duplicate keyword arguments.",
+    "Canonicalize summary values before JSON persistence and equality verification."
+  ],
+  "full_current_junit_sha256": "6580c6536d6eb6a5472914501394ab0741d40a9d683996081e0149ea25c0f5ad",
+  "full_current_suite": {
+    "deselected": 1468,
+    "errors": 0,
+    "failures": 0,
+    "passed": 1497,
+    "skipped": 2,
+    "tests": 1499
+  },
+  "full_historical_replay_pass": false,
+  "historical_private_artifact_cases_not_run": 64,
+  "historical_private_tests": "NOT_RUN",
+  "historical_replay_cases_deselected": 1404,
+  "network_attempt_count": 0,
+  "network_guard_active_before_application_import": true,
+  "original_ledger_prefix_intact": true,
+  "original_run_raw_tree_unchanged": true,
+  "original_runner_status": "EXECUTION_ABORTED",
+  "original_scientific_result_retained": true,
+  "provider_calls": 0,
+  "provider_visible_requests_changed": false,
+  "real_credentials_present": false,
+  "regression_branches": [
+    "UNCHANGED_TEAM_SKIPPED_NO_TEAM_CHANGE",
+    "CHANGED_TEAM_DEFERRED_BY_USER_SCOPE"
+  ],
+  "scientific_method_changed": false,
+  "scientific_reruns": 0,
+  "scope": "POST_SCIENTIFIC_STOP_TERMINAL_SERIALIZATION_REPAIR",
+  "source_file_hashes": {
+    "multi_dataset_diverse_rl/governance/autonomous_math.py": "09ca38536d8c72c7d64ab3aa5be1d519b6964650e2e30f467f50de1df194d9ff",
+    "tests/current/test_pilot_terminal_execution.py": "a58b9208e83368461abb53f3696e272473c0043da8ccf5f8e921030e65a785c4",
+    "tests/suite_classification.json": "7501745cd5c221d2498e873a7a5c9a835dcb4604839dfd157da2daf9cebc12d9"
+  },
+  "status": "PASS",
+  "targeted_junit_sha256": "52df8104e777233bbccc78ff1121beb0d0e946f7ba89c2a93ecce062d6d391c2",
+  "targeted_terminal_regressions": {
+    "deselected": 0,
+    "errors": 0,
+    "failures": 0,
+    "passed": 2,
+    "skipped": 0,
+    "tests": 2
+  }
+}

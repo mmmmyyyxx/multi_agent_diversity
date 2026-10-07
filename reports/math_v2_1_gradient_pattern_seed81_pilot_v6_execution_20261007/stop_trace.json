@@ -1,0 +1,203 @@
+{
+  "Optimize_count": 60,
+  "Shadow_count": 40,
+  "arm": "A4",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt6",
+  "independent_terminal_reconstruction": true,
+  "llm_judge_calls": 0,
+  "no_efficacy_adaptation": true,
+  "operational_bound_was_not_scientific_stop": true,
+  "original_runner_status": "EXECUTION_ABORTED",
+  "patience": 2,
+  "publication_state_at_report_creation": "UNPUBLISHED",
+  "raw_diagnostic_calls": 0,
+  "rows": [
+    {
+      "committed": false,
+      "eligible_members": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "no_commit_epochs": 0,
+      "opportunity_index": 1,
+      "parent_state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "seen_members": [
+        0
+      ],
+      "stop_reason": null
+    },
+    {
+      "committed": false,
+      "eligible_members": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "no_commit_epochs": 0,
+      "opportunity_index": 2,
+      "parent_state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "seen_members": [
+        0,
+        1
+      ],
+      "stop_reason": null
+    },
+    {
+      "committed": false,
+      "eligible_members": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "no_commit_epochs": 0,
+      "opportunity_index": 3,
+      "parent_state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "seen_members": [
+        0,
+        1,
+        2
+      ],
+      "stop_reason": null
+    },
+    {
+      "committed": false,
+      "eligible_members": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "no_commit_epochs": 0,
+      "opportunity_index": 4,
+      "parent_state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "seen_members": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "stop_reason": null
+    },
+    {
+      "committed": false,
+      "eligible_members": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "no_commit_epochs": 1,
+      "opportunity_index": 5,
+      "parent_state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "seen_members": [],
+      "stop_reason": null
+    },
+    {
+      "committed": false,
+      "eligible_members": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "no_commit_epochs": 1,
+      "opportunity_index": 6,
+      "parent_state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "seen_members": [
+        0
+      ],
+      "stop_reason": null
+    },
+    {
+      "committed": false,
+      "eligible_members": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "no_commit_epochs": 1,
+      "opportunity_index": 7,
+      "parent_state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "seen_members": [
+        0,
+        1
+      ],
+      "stop_reason": null
+    },
+    {
+      "committed": false,
+      "eligible_members": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "no_commit_epochs": 1,
+      "opportunity_index": 8,
+      "parent_state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "seen_members": [
+        0,
+        1,
+        2
+      ],
+      "stop_reason": null
+    },
+    {
+      "committed": false,
+      "eligible_members": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "no_commit_epochs": 1,
+      "opportunity_index": 9,
+      "parent_state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "seen_members": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "stop_reason": null
+    },
+    {
+      "committed": false,
+      "eligible_members": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "no_commit_epochs": 2,
+      "opportunity_index": 10,
+      "parent_state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "seen_members": [],
+      "stop_reason": "SATURATION_REACHED"
+    }
+  ],
+  "runner_stop_category": "TypeError",
+  "scientific_efficacy": "NOT_CAUSALLY_ESTABLISHED",
+  "scientific_stop_reached": true,
+  "scientific_stopper": "team_epoch_no_commit_v1",
+  "seed": 81,
+  "source_sha": "d294025acc9151e146efae258ac3b9c90d05baa9",
+  "stop_reason": "SATURATION_REACHED",
+  "test_model_calls": 0,
+  "validation_model_calls": 0
+}

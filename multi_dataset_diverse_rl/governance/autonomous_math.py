@@ -242,10 +242,11 @@ async def execute_search(root, prep, run_root, payload):
         from .team_change import team_change_receipt
         summary['deployed_team_change']=team_change_receipt(initial_prompts(root,c),final.member_prompts)
         if c['execution_phase']=='pilot':
-            atomic_write_json(run_root/'VALIDATION_DISPOSITION.json',dict(
-                **summary['deployed_team_change'],validation_model_calls=0,validation_provider_calls=0,
-                validation_status=('DEFERRED_BY_USER_SCOPE' if summary['deployed_team_change']['team_changed'] else 'SKIPPED_NO_TEAM_CHANGE'),
-                VoteAccDelta='NOT_AVAILABLE',OracleAccDelta='NOT_AVAILABLE',bootstrap='NOT_RUN'))
+            atomic_write_json(run_root/'VALIDATION_DISPOSITION.json',{
+                **summary['deployed_team_change'], 'validation_model_calls':0, 'validation_provider_calls':0,
+                'validation_status':('DEFERRED_BY_USER_SCOPE' if summary['deployed_team_change']['team_changed'] else 'SKIPPED_NO_TEAM_CHANGE'),
+                'VoteAccDelta':'NOT_AVAILABLE', 'OracleAccDelta':'NOT_AVAILABLE', 'bootstrap':'NOT_RUN'})
+        summary = plain(summary)
         atomic_write_json(run_root / "execution_summary.json",summary)
         if read_json(run_root / "execution_summary.json")!=summary:
             raise OperationalAbort("EXECUTION_PERSISTENCE_MISMATCH")

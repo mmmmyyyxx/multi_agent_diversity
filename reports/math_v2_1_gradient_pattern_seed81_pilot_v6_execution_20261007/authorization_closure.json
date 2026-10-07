@@ -1,0 +1,13 @@
+{
+  "READY_TO_RUN": false,
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt6",
+  "authorization_closed": true,
+  "authorization_consumed": true,
+  "conditional_operational_retry_not_used": true,
+  "future_execution_requires_new_exact_scope": true,
+  "scientific_stop_reached": true,
+  "source_sha": "d294025acc9151e146efae258ac3b9c90d05baa9",
+  "test_authorized": false,
+  "user_task_sha256": "942dc2d9bcd8ec40f0373997a817b1158c6a6af57f624df119a294b19cc4fd86",
+  "validation_authorized": false
+}

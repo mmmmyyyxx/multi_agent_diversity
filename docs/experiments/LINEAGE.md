@@ -34,7 +34,7 @@ last_canary_milestone: math_v2_1_gradient_pattern_seed81_canary_v3
 current_canary_status: VALID_OPERATIONAL_CANARY
 formal_a1_ready: false
 formal_a1_authorized: false
-current_execution_blocker: EXACT_SOURCE_SCOPE_ACTIVATION_PENDING
+current_execution_blocker: TASK_COMPLETE_NO_NEW_SCOPE
 default_optimizer_generation_policy: OPTIMIZER_REFLECTION_GENERATION_POLICY_V3
 default_optimizer_enable_thinking: false
 optimizer_policy_amendment_status: LAYER1_GENERATION_V3_FROZEN_AND_DISPATCHED
@@ -44,20 +44,20 @@ next_canary_attempt_id: null
 last_autonomous_milestone: math_v2_1_layer1_preexecution_repair_v1
 autonomous_user_authorization_received: true
 autonomous_token_authorization: 40000000
-autonomous_tokens_consumed: 2240485
-autonomous_tokens_remaining: 37759515
+autonomous_tokens_consumed: 3072683
+autonomous_tokens_remaining: 36927317
 token_accounting_policy: RESERVATION_V2
 prior_accounting_stop_resolution: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2
-autonomous_authorization_status: NEW_RECOVERY_TASK_RECEIVED_EXACT_ACTIVATION_PENDING
-pilot_search_complete: false
+autonomous_authorization_status: RECOVERY_PILOT_SCOPE_CONSUMED_AND_CLOSED
+pilot_search_complete: true
 pilot_validation_complete: false
-pilot_final_status: NOT_EVALUABLE_GENERATED_GRADIENT_CONTRACT_FAILURE
-task_stop_reason: null
+pilot_final_status: VALID_A4_SEED81_PILOT_SEARCH
+task_stop_reason: ONE_COMPLETE_VALID_PILOT_STOP
 optimizer_nonthinking_wire_confirmed: YES_EQUIVALENT_EVIDENCE
 last_candidate_contract_audit: math_v2_1_proposal_semantic_postmortem_v1
 pilot_scientific_interpretation: NOT_CAUSALLY_ESTABLISHED
 candidate_contract_audit_status: COMPLETED_ZERO_API
-next_search_contract_alignment: GUARD_V6_STRONG_PROVENANCE_RETAINED_AWAIT_SCIENTIFIC_DECISION
+next_search_contract_alignment: NO_AUTOMATIC_METHOD_CHANGE
 current_layer1_backend: LAYER1_BOUNDED_MEMORY_SEARCH_V2
 next_pilot_authorized: false
 next_validation_authorized: false
@@ -129,17 +129,17 @@ pending_pilot_attempt_id: math_v2_1_gradient_pattern_A4_seed81_pilot_attempt6
 pending_pilot_scope: experiments/protocols/math_v2_1_gradient_contract_recovery_v1/attempt6_user_scope.json
 pending_pilot_user_task_sha256: 942dc2d9bcd8ec40f0373997a817b1158c6a6af57f624df119a294b19cc4fd86
 pending_pilot_user_authorization_received: true
-pending_pilot_status: VERIFIED_AWAITING_EXACT_FREEZE
+pending_pilot_status: CLOSED_AFTER_VALID_PILOT
 pending_pilot_operational_retry_limit: UNBOUNDED_STRICT_OPERATIONAL_INVALID_ONLY
 pending_pilot_scientific_changes_authorized: false
 pending_pilot_validation_authorized: false
 pending_pilot_test_authorized: false
 pending_pilot_push_authorized: true
-last_pilot_milestone: math_v2_1_gradient_pattern_seed81_pilot_v4
-current_pilot_status: GRADIENT_OUTPUT_CONTRACT_FAILURE
-current_pilot_report: reports/math_v2_1_gradient_pattern_seed81_pilot_v4_execution_20261007
-last_pilot_manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v4.yaml
-pilot_gradient_contract_compliance: PASS_43_FAIL_1
+last_pilot_milestone: math_v2_1_gradient_pattern_seed81_pilot_v6
+current_pilot_status: VALID_A4_SEED81_PILOT_SEARCH
+current_pilot_report: reports/math_v2_1_gradient_pattern_seed81_pilot_v6_execution_20261007
+last_pilot_manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v6.yaml
+pilot_gradient_contract_compliance: ALL_ACCEPTED_PASS
 current_initial_team_version: MATH_GENERIC_TEAM_SEED_V1_2
 current_initial_team_path: experiments/initial_teams/math_generic_team_seed_v1_1.json
 current_initial_team_sha256: d1a04dbdd540371638e8271cca90469f0a8cf4d42a5f944eeee8c6dfcfca9110
@@ -162,20 +162,16 @@ pilot_partition_contract_compliance: GRADIENT_PATTERN_PARTITION_COMPLETION_V1
 pilot_persistence_status: 1005_OFFLINE_CYCLES_AND_SEALED_ACTUAL_RESPONSE_RECEIPTS_NO_GAP
 current_partition_completion_policy: GRADIENT_PATTERN_PARTITION_COMPLETION_V1
 pilot_partition_completion_statistics:
-  cluster_calls: 1
+  cluster_calls: 10
   duplicate_partition_failures: 0
   extra_llm_repair_calls: 0
-  generalized_gradients_and_explicit_supports_preserved: true
-  independently_reconstructed: true
-  maximum_missing_aliases_per_call: 0
-  network_attempt_count: 0
-  no_semantic_assignment: true
-  partition_completion_events: 0
-  provider_calls: 0
-  raw_complete_partitions: 1
-  raw_missing_only_partitions: 0
-  raw_provider_responses_immutable: true
-  total_missing_aliases_completed: 0
+  independent_reconstruction: true
+  maximum_missing_aliases_per_call: 2
+  partition_completion_events: 4
+  policy: GRADIENT_PATTERN_PARTITION_COMPLETION_V1
+  raw_complete_partitions: 6
+  raw_missing_only_partitions: 4
+  total_missing_aliases_completed: 5
   unknown_alias_failures: 0
 numeric_calibration_user_task_sha256: b81ddb478d7d52285394899f31dc648fd7c1b05bf75d37d852911c8b7d73a9fc
 numeric_calibration_report: reports/math_v2_1_numeric_provenance_guard_v6_20261007
@@ -183,8 +179,51 @@ numeric_calibration_fresh_pilot_condition_met: false
 numeric_calibration_status: COMPLETED_ZERO_API_STOP_SCIENTIFIC_METHOD_DECISION_REQUIRED
 numeric_calibration_authorization_closed: true
 current_gradient_recovery_policy: PER_EXAMPLE_GRADIENT_CONTRACT_RECOVERY_V1
-gradient_contract_recovery_status: VERIFIED_ZERO_API
+gradient_contract_recovery_status: VERIFIED_AND_EXECUTED
 gradient_contract_recovery_report: reports/math_v2_1_gradient_contract_recovery_v1_20261007
+gradient_contract_recovery_attempt: math_v2_1_gradient_pattern_A4_seed81_pilot_attempt6
+pilot_gradient_recovery_statistics:
+  accepted_gradient_count: 380
+  gradient_contract_recovery_rate: 0.007894736842105263
+  gradient_first_pass_valid: 377
+  gradient_retry_once: 3
+  gradient_retry_twice: 0
+  gradient_three_fail: 0
+  length_rejections: 0
+  logical_gradient_count: 380
+  numeric_warnings: 19
+  physical_gradient_calls: 383
+  schema_rejections: 0
+  strong_leakage_rejections: 2
+  successful_recovery_rate: 1.0
+pilot_mutation_behavior_statistics:
+  Solver_evaluated_candidates: 57
+  behavior_baseline: actual local parent; exact returned text comparison
+  behavior_change_rate: 0.5964912280701754
+  behavior_changed_candidates: 34
+  correctness_and_class_baseline: actual local parent; frozen binary evaluator
+  correctness_change_rate: 0.2807017543859649
+  correctness_changed_candidates: 16
+  local_classes:
+    NEUTRAL: 41
+    PURE_REGRESSION: 12
+    PURE_REPAIR: 4
+  parsed_answer_change_rate: 0.5789473684210527
+  prompt_changed_behavior_unchanged_candidates: 23
+  prompt_changed_but_behavior_unchanged_rate: 0.40350877192982454
+  repair_candidates: 15
+  repair_target: selected Pattern support intersect local panel, root wrong
+  repair_yield: 0.2631578947368421
+  root_relative_fixed_broken_fields_retained: true
+  scientific_efficacy: NOT_CAUSALLY_ESTABLISHED
+pilot_bottleneck_diagnosis: TEAMPROBE_TO_FULL
+pilot_analysis_complete: true
+pilot_analysis_index: reports/math_v2_1_gradient_pattern_seed81_pilot_v6_execution_20261007/analysis_bundle_index.json
+pilot_original_runner_status: EXECUTION_ABORTED
+pilot_terminal_serialization_status: FAILED_AFTER_SCIENTIFIC_STOP
+pilot_owner_scientific_completion_receipt: reports/math_v2_1_gradient_pattern_seed81_pilot_v6_execution_20261007/owner_scientific_completion_receipt.json
+pilot_terminal_engineering_repair_status: VERIFIED_ZERO_API
+pilot_terminal_engineering_repair_report: reports/math_v2_1_gradient_pattern_seed81_pilot_v6_execution_20261007/post_stop_engineering_verification.json
 ```
 
 ## Experiment and engineering DAG
@@ -452,7 +491,7 @@ flowchart TD
     n281["math_v2_1_numeric_provenance_guard_v6<br/>ZERO_API_AUDIT<br/>COMPLETED"]
     n282["math_v2_1_gradient_pattern_seed81_pilot_v5<br/>PILOT<br/>HOLD"]
     n283["math_v2_1_gradient_contract_recovery_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
-    n284["math_v2_1_gradient_pattern_seed81_pilot_v6<br/>PILOT<br/>DRAFT"]
+    n284["math_v2_1_gradient_pattern_seed81_pilot_v6<br/>PILOT<br/>COMPLETED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]

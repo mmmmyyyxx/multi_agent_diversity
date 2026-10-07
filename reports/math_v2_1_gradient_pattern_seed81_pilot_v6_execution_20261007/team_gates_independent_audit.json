@@ -1,0 +1,584 @@
+{
+  "Full_initial_floor_and_strict_team_gain": true,
+  "Shadow_winner_only": true,
+  "TeamProbe_metrics_and_ranking": true,
+  "counts": {
+    "full": 7,
+    "full_pass": 0,
+    "teamprobe": 40
+  },
+  "heldout_search_feedback": false,
+  "independent_prediction_and_gate_reconstruction": true,
+  "invalid_predictions_are_incorrect": true,
+  "opportunities": [
+    {
+      "candidates": [
+        {
+          "candidate_sha256": "ca119281192b693357619bdb5877ca0daab51b53453e6cb78bfd0d4395a7b850",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "e2a0f7fc225bee4c5bb15b3f62ebed2cdcdc4f01b32ab357bbe0d6477eef526c",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "520ef0c08f41b020b00a1db2b7cf692b39096817ebf90fe954c3776af3d1ccb9",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "4b01f486f368f88c49150517ea60060c60d1b386c127920e791306ac3c2fee31",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        }
+      ],
+      "opportunity_index": 1,
+      "promoted_candidate_hashes": [],
+      "selected_candidate_sha256": null
+    },
+    {
+      "candidates": [
+        {
+          "candidate_sha256": "106fa09a7880ccc03418516f32ef6630db5e2f59b5d5e846cff010cceeb7321d",
+          "teamprobe_metrics": {
+            "broad_delta": 1,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 1,
+            "target_delta": 1,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "b1315f1ec2b6f2bfe67b107a46f166313c2108f8e9f9dfbbd71334d3b174a90a",
+          "teamprobe_metrics": {
+            "broad_delta": 1,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 1,
+            "target_delta": 1,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "a7b3d7988b705921095ba31f354aea1448474eeb6c8bc47af3e86c4731eddd67",
+          "full_allowed": false,
+          "teamprobe_metrics": {
+            "broad_delta": 1,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 1,
+            "target_delta": 1,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "ed9aa5d6e0985e4da611cc5d4c53f9595c5c8312c71c00b910f6c726a01064ab",
+          "full_allowed": false,
+          "teamprobe_metrics": {
+            "broad_delta": 1,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 1,
+            "target_delta": 1,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        }
+      ],
+      "opportunity_index": 2,
+      "promoted_candidate_hashes": [
+        "ed9aa5d6e0985e4da611cc5d4c53f9595c5c8312c71c00b910f6c726a01064ab",
+        "a7b3d7988b705921095ba31f354aea1448474eeb6c8bc47af3e86c4731eddd67"
+      ],
+      "selected_candidate_sha256": null
+    },
+    {
+      "candidates": [
+        {
+          "candidate_sha256": "c307638d2a456f790d9125d6ca0e62f8460391d8c8b448601fb81a2c411eb82c",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "a748c3bbfcc05f88d1a52019a74f8604c2cf5813f54e3ac471ca331c7db03cc0",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "5f7b4603e2a85a2c6883c6f822920f128926ae48f99de5d5dd9965ce75b276b2",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "ca1221009c2ea39ac24c639cbd7fe7a9ef1c70498e9b3f567736791cd25e9028",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        }
+      ],
+      "opportunity_index": 3,
+      "promoted_candidate_hashes": [],
+      "selected_candidate_sha256": null
+    },
+    {
+      "candidates": [
+        {
+          "candidate_sha256": "00d752266b5521147d9352e6d50d9e43126156cfbad5fe273d02d4aabfa1cf45",
+          "teamprobe_metrics": {
+            "broad_delta": 1,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 1,
+            "target_delta": 1,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "5038788aa8d879960748b77e57196e46f88b27872900141ed73178586c930f8c",
+          "teamprobe_metrics": {
+            "broad_delta": 1,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 1,
+            "target_delta": 1,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "380d831512e2da7721357a4cf04143836669b70b5b8e04eff4a89d95061136b8",
+          "full_allowed": false,
+          "teamprobe_metrics": {
+            "broad_delta": 1,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 1,
+            "target_delta": 1,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "e7592a07b23c453dcc1455a1af33ed499d88d5b819f0e94033b4a8331c44bae3",
+          "full_allowed": false,
+          "teamprobe_metrics": {
+            "broad_delta": 1,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 1,
+            "target_delta": 1,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        }
+      ],
+      "opportunity_index": 4,
+      "promoted_candidate_hashes": [
+        "e7592a07b23c453dcc1455a1af33ed499d88d5b819f0e94033b4a8331c44bae3",
+        "380d831512e2da7721357a4cf04143836669b70b5b8e04eff4a89d95061136b8"
+      ],
+      "selected_candidate_sha256": null
+    },
+    {
+      "candidates": [
+        {
+          "candidate_sha256": "0b55ea7324a0bb1ecfdb0a893f2b6d6aaece19f50ff581b408c11f35ca939b18",
+          "full_allowed": false,
+          "teamprobe_metrics": {
+            "broad_delta": 1,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 1,
+            "target_delta": 1,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "7ad07fbc45c0566b306d67f8329ae3e277e425bf47f34068b07884774752b903",
+          "full_allowed": false,
+          "teamprobe_metrics": {
+            "broad_delta": 1,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 1,
+            "target_delta": 1,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "82827c333f9b2c09f9ef7f6cf08642e4561de3fd8344283ceba4187ae250dff4",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "57294ea83bb8c6d38f802a3fced7451d4c04a70df145a123f9e4e1ab3a752d60",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        }
+      ],
+      "opportunity_index": 5,
+      "promoted_candidate_hashes": [
+        "7ad07fbc45c0566b306d67f8329ae3e277e425bf47f34068b07884774752b903",
+        "0b55ea7324a0bb1ecfdb0a893f2b6d6aaece19f50ff581b408c11f35ca939b18"
+      ],
+      "selected_candidate_sha256": null
+    },
+    {
+      "candidates": [
+        {
+          "candidate_sha256": "0a5258ad8b3c80e146cfd12e538628f22a1d7e11ff5c60e38ad475e9354d5531",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "091022524e16bd9b42eee67ec18c53f423c42d9ddb6fb20f2c920c8866554867",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "1291166c93bd42dfbd526dca746f85057856254ebd90fa1a0ee3ca7a5a0ca751",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "2049e363a86def1c353bf03841c015606a55c057f4acf25a7a2be551ec22b289",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        }
+      ],
+      "opportunity_index": 6,
+      "promoted_candidate_hashes": [],
+      "selected_candidate_sha256": null
+    },
+    {
+      "candidates": [
+        {
+          "candidate_sha256": "2e1cf2be9a2743eb8ebc652f9a020cb36b093213d364cf8483ae5fa9fc28b840",
+          "full_allowed": false,
+          "teamprobe_metrics": {
+            "broad_delta": 1,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 1,
+            "target_delta": 1,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "7f64ccbdcdcfb342fc30fa829cd0c9a143c83e687ac9d211d499b84c18f66247",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "d2f1eacd4a8ef915e5202b56f09e2dfb673e1841378a2d9b4a612eae598fa729",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "08225b600f9e09656dfc0d757e8086da64acefb1c5429fa1446c457e62d0767e",
+          "teamprobe_metrics": {
+            "broad_delta": -1,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": -1,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        }
+      ],
+      "opportunity_index": 7,
+      "promoted_candidate_hashes": [
+        "2e1cf2be9a2743eb8ebc652f9a020cb36b093213d364cf8483ae5fa9fc28b840"
+      ],
+      "selected_candidate_sha256": null
+    },
+    {
+      "candidates": [
+        {
+          "candidate_sha256": "13b0999d7f3946961d1ff16102663afa2146ef40ada45aacd1e5704c1c352531",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "679da46dcd647db192388818429c8d7d1b3790eeb604df966221b6539c1f19ea",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "84f4b86efdffe229b348c55450a66019908abda4d158bbb83e540598032ad25e",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "ce22c7503c362ffc0b27bb5b56538a909b6db86d365e36c807ec11ba66b79fa3",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        }
+      ],
+      "opportunity_index": 8,
+      "promoted_candidate_hashes": [],
+      "selected_candidate_sha256": null
+    },
+    {
+      "candidates": [
+        {
+          "candidate_sha256": "2ad0d5e1d91c92a855bd9051dbda508b1b47287b8e991eca6e0d5f0730c5ef31",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "83f485ae91d03d7e45b327c48634771d34647e0f0441afd69660095893d62109",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "6c9e1f2c8f8813af652f4f7d3fad741bba5bc27496a21538e9fc76927cdb36e0",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "b1524ae0aab22b85dd1625750f98e05937ed96a17a35e4e29606062397d2ec9c",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        }
+      ],
+      "opportunity_index": 9,
+      "promoted_candidate_hashes": [],
+      "selected_candidate_sha256": null
+    },
+    {
+      "candidates": [
+        {
+          "candidate_sha256": "08bbf298fd383a08758d727d05feeca100fe14831217954ec777048b812d0cff",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "75352f73ef4781388872e85761cb0c692fb9be69fcda61e2d347d666b253f5bf",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "e13b69e447c8a1277ab53ce5ea9daa1ecbfc732f9b4223c0c838fe6ddd1f237d",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        },
+        {
+          "candidate_sha256": "84293e4c6950618062f88cb2a3c4d71955d65ab98939e6fcf8ce85052ca416ba",
+          "teamprobe_metrics": {
+            "broad_delta": 0,
+            "invalid_delta": 0,
+            "oracle_delta": 0,
+            "responsibility_delta": 0,
+            "target_delta": 0,
+            "team_net_vote_delta": 0,
+            "vote_delta": 0
+          }
+        }
+      ],
+      "opportunity_index": 10,
+      "promoted_candidate_hashes": [],
+      "selected_candidate_sha256": null
+    }
+  ],
+  "status": "PASS"
+}

@@ -1,0 +1,149 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "accounting_integrity_audit.json",
+      "sha256": "a39e004aeaf51ca78c1ad8340554e21f37f41d98a1d2f3edd52bcb3b24b6623b"
+    },
+    {
+      "file": "analysis_bundle_index.json",
+      "sha256": "fb1471c81060f4d2bccd6eff78ce6015ca8653823f587e370fc119a4280bba18"
+    },
+    {
+      "file": "analysis_index.md",
+      "sha256": "a9980b39c5d1f8008e838e1616839104c1d34cca2b647228f4c2073ad03d52c6"
+    },
+    {
+      "file": "authorization_closure.json",
+      "sha256": "1b3df3d0c240bf4b4c3d85c7c6701240ebf96a7f0e84747f33f0feb0af54e5fe"
+    },
+    {
+      "file": "bottleneck_diagnosis.json",
+      "sha256": "c32b258f8f9dabd93672097d8bc20e6e2571483dcc362407019d4b28313a46de"
+    },
+    {
+      "file": "candidate_funnel.json",
+      "sha256": "95f5fbcc0ccca46ea12f59ca125acdf27ed40b016be8e4a2a45c2b01a0431c8b"
+    },
+    {
+      "file": "candidate_trajectory.jsonl",
+      "sha256": "163f599840570dedf09e4c8aa435ea8115ff4efa7296abaabf4e129af9d604bf"
+    },
+    {
+      "file": "cost_trajectory.json",
+      "sha256": "617d9e221d1aaee557883bcd3af980937f224c91fbf8128838fcfa0b5f726235"
+    },
+    {
+      "file": "execution_identity.json",
+      "sha256": "f8c72c9f16ad6436801855206c21d9f9870a2815f7cfacadc9b06fbee59304a4"
+    },
+    {
+      "file": "final_status.json",
+      "sha256": "0e68a192c90d4abd008f1431cd7404be1037a7c9478673c4a2518410bacd722f"
+    },
+    {
+      "file": "governance_audit.json",
+      "sha256": "f9aa362a8c12b6e8dd7dcbc5ad2fa56923da74775e3ebca41a08ad39efb26f1d"
+    },
+    {
+      "file": "gradient_recovery_summary.json",
+      "sha256": "aa2746165f2de392516419eac885676dca6ccb2e46d9db575c8df6f4306f98ca"
+    },
+    {
+      "file": "gradient_recovery_trajectory.jsonl",
+      "sha256": "fe29d64bdc11997d9c61db3c00e2e7fc0583e48ba03dbdc6a88dcca167012305"
+    },
+    {
+      "file": "gradient_to_mutation_trace.jsonl",
+      "sha256": "5b7d10b47af3d422254349647ebfb273eb98483b5a533cc91f86290fad0f2f84"
+    },
+    {
+      "file": "gradient_trajectory.json",
+      "sha256": "471711460ac94c88751d03f54a86f4ba6a328371228a670c39f78e45b95d44c6"
+    },
+    {
+      "file": "member_training_summary.csv",
+      "sha256": "fd3448cfff88afc6984b7322c729dcc8e28fde0d30319dba50c932ca703659d3"
+    },
+    {
+      "file": "memory_trajectory.json",
+      "sha256": "fd362e7ef7aafffc46f261d8719bc3ffcc801b7e5f341bf7cd4df7ba7e9c25a4"
+    },
+    {
+      "file": "module_behavior_summary.json",
+      "sha256": "3a9dd5eace54822549b59f93346212c6bd85351dc4dee0218a2b1c9409ab8871"
+    },
+    {
+      "file": "mutation_behavior_trace.jsonl",
+      "sha256": "d266f60f24c96e10919d938afcef352ffe55bfc665f21ec7c1a31c7e8bdd211b"
+    },
+    {
+      "file": "opportunity_summary.csv",
+      "sha256": "6d582f855344ba98b123a92f6b3cb2dbf12f255273409f097993be191b17564a"
+    },
+    {
+      "file": "owner_scientific_completion_receipt.json",
+      "sha256": "8944db8d5d57961c162d7775148b3b98d5afa4c389b63d79dcb9c9982cfb53cf"
+    },
+    {
+      "file": "partition_completion_audit.json",
+      "sha256": "00585ad3162675a6af36aa00e10d7ac83e95874669e32dab5aef3b3bc7e18bc3"
+    },
+    {
+      "file": "pattern_trajectory.json",
+      "sha256": "8e4557e39968d423829d842e423180fe6386a0348f8aefa3a990d113af3e259b"
+    },
+    {
+      "file": "post_stop_engineering_verification.json",
+      "sha256": "228fcf3c494199b15847a9098af18922d377aae700383c7bd744697e31b5096e"
+    },
+    {
+      "file": "prompt_lineage.json",
+      "sha256": "64a3973ee6da3d9dde51357f4162ca24ffe9dd89ba103f98ea412a1123a98d39"
+    },
+    {
+      "file": "provider_usage.json",
+      "sha256": "1fa691f2492322ef9d855c59ad9eef7b05527a4b2d65ccd4086034a97ccf3ac5"
+    },
+    {
+      "file": "publication_checks.json",
+      "sha256": "2c7a799c827c3b661c273405d04e9796659ae62c367579a8632ebe1fb7c7c46a"
+    },
+    {
+      "file": "README.md",
+      "sha256": "1b9371dd24d9eb8ac9f0b974bd5066d90d8a7d2e6595f80b54a706f77bae535b"
+    },
+    {
+      "file": "repair_yield_summary.json",
+      "sha256": "7ee97292c1f61e0dde49b20c04b142bc3a8ea9e15c31b1efcd25769ef9e064ee"
+    },
+    {
+      "file": "responsibility_trajectory.json",
+      "sha256": "7f31f5aa45bfc8f6725d5e3ad0982f6f8ade5fc2cd5119fabca22c9d2872f102"
+    },
+    {
+      "file": "stop_trace.json",
+      "sha256": "15e82b1d33345f32f7e703fb39839f02a010a8acde3a1015a1ca4c9232eceab8"
+    },
+    {
+      "file": "team_gates_independent_audit.json",
+      "sha256": "b4507b9fa22c668bde6195d12c5274be6e569783c47a34ef7dc4bc16426a1096"
+    },
+    {
+      "file": "team_state_trajectory.json",
+      "sha256": "35af109adca6c08df01c7ba07758814029bb4e7ee42287b69edde595f7a13377"
+    },
+    {
+      "file": "teamprobe_failure_breakdown.json",
+      "sha256": "8d042a8d9ba33c545ba161c3a07aecbf0537330cce6c1da0c7020186b8943279"
+    },
+    {
+      "file": "transition_trace.json",
+      "sha256": "86d0848eb8624381bc9f6cf710904a8d9c2865aac7631c63aa5d346d921b920b"
+    },
+    {
+      "file": "wire_and_durability_audit.json",
+      "sha256": "f90d0a638b2c3fe3c5a44d061fd53bbdbdad5915cd8fb153ff2c41c113131e5d"
+    }
+  ]
+}

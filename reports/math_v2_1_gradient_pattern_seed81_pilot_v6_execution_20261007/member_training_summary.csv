@@ -1,0 +1,6 @@
+member_id,opportunities,initial_correct,final_correct,proposals,scored,exported,commits,private_failure_count
+0,2,22,22,12,10,8,0,2
+1,2,22,22,12,12,8,0,4
+2,2,22,22,12,12,8,0,1
+3,2,22,22,12,12,8,0,1
+4,2,22,22,12,11,8,0,4

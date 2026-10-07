@@ -38,6 +38,10 @@
       "sha256": "e17c9bb4cbc048fae75ff56e8d5a111588ebcce6a5680dfe9fc6b5c8f52490c1"
     },
     {
+      "file": "terminal_serialization_repair.json",
+      "sha256": "228fcf3c494199b15847a9098af18922d377aae700383c7bd744697e31b5096e"
+    },
+    {
       "file": "verification.json",
       "sha256": "46b5b4db94577a93339d30ce524d9c74c91e126c5b66617718bc10fcb2a53378"
     }

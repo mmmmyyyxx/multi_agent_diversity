@@ -1,0 +1,24 @@
+{
+  "charged_response_evidence_gaps": 0,
+  "charges_with_response_receipt": 1613,
+  "exact_new_task_scope": true,
+  "immutable_response_receipts": 1613,
+  "initial_memory_empty": true,
+  "initial_prompt_unique_count": 1,
+  "member_lanes": 5,
+  "network_attempt_count": 0,
+  "old_authorization_reused": false,
+  "owner_audit_blueprint_sha256": "2953df05f74694ddb87ec53f097e80dd8a75abd45250a0a8724a406d2afbb9ac",
+  "provider_calls": 0,
+  "recovery_draws_independently_reconstructed": true,
+  "status": "PASS",
+  "wire": {
+    "audit_provider_calls": 0,
+    "benchmark_owned_solver_messages_checked": true,
+    "member_lane_identity_checked": true,
+    "optimizer_context_leakage": false,
+    "request_identity_rows_checked": 1613,
+    "solver_wire_rows_checked": 1160,
+    "status": "PASS"
+  }
+}

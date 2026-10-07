@@ -1,0 +1,22 @@
+{
+  "Solver_evaluated_candidates": 57,
+  "behavior_baseline": "actual local parent; exact returned text comparison",
+  "behavior_change_rate": 0.5964912280701754,
+  "behavior_changed_candidates": 34,
+  "correctness_and_class_baseline": "actual local parent; frozen binary evaluator",
+  "correctness_change_rate": 0.2807017543859649,
+  "correctness_changed_candidates": 16,
+  "local_classes": {
+    "NEUTRAL": 41,
+    "PURE_REGRESSION": 12,
+    "PURE_REPAIR": 4
+  },
+  "parsed_answer_change_rate": 0.5789473684210527,
+  "prompt_changed_behavior_unchanged_candidates": 23,
+  "prompt_changed_but_behavior_unchanged_rate": 0.40350877192982454,
+  "repair_candidates": 15,
+  "repair_target": "selected Pattern support intersect local panel, root wrong",
+  "repair_yield": 0.2631578947368421,
+  "root_relative_fixed_broken_fields_retained": true,
+  "scientific_efficacy": "NOT_CAUSALLY_ESTABLISHED"
+}

@@ -8148,7 +8148,7 @@ experiments:
   - math_v2_1_numeric_provenance_guard_v6
   status: COMPLETED
   scientific_status: VERIFIED_ZERO_API_RECOVERY
-  implementation_commit: null
+  implementation_commit: d294025acc9151e146efae258ac3b9c90d05baa9
   execution_commit: null
   result_commit: null
   manifest: experiments/protocols/math_v2_1_gradient_contract_recovery_v1/amendment.json
@@ -8161,7 +8161,6 @@ experiments:
   - Prompt V3 and Guard V6 byte-identical; one accepted Gradient per wrong example.
   - Attempt5 identity already registered; use fresh attempt6.
   unavailable:
-    implementation_commit: Exact source recorded by subsequent frozen receipt
     execution_commit: Zero API implementation audit
     result_commit: Containing publication commit
   verification: reports/math_v2_1_gradient_contract_recovery_v1_20261007/verification.json
@@ -8172,22 +8171,28 @@ experiments:
   parent_ids:
   - math_v2_1_gradient_contract_recovery_v1
   - math_v2_1_gradient_pattern_seed81_pilot_v5
-  status: DRAFT
-  scientific_status: VERIFICATION_PENDING
-  implementation_commit: null
-  execution_commit: null
+  status: COMPLETED
+  scientific_status: VALID_A4_SEED81_PILOT_SEARCH
+  implementation_commit: d294025acc9151e146efae258ac3b9c90d05baa9
+  execution_commit: 30b38600e25c0d63cb51f280ca4001bf5c16c88d
   result_commit: null
   manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v6.yaml
-  report: null
+  report: reports/math_v2_1_gradient_pattern_seed81_pilot_v6_execution_20261007
   classifier: FRESH_SEARCH_ONLY_PILOT
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
   - Prompt V3 and Guard V6 byte-identical; one accepted Gradient per wrong example.
   - Attempt5 identity already registered; use fresh attempt6.
+  - Complete valid Pilot; accept observed result without scientific rerun.
   unavailable:
-    implementation_commit: Pending source freeze
-    execution_commit: Pending governed preexecution
-    result_commit: Pending publication
-    report: Pending fresh execution
+    result_commit: Containing sanitized result publication commit
+  authorization_consumed: true
+  authorization_closed: true
+  analysis_complete: true
+  validation_status: SKIPPED_NO_TEAM_CHANGE
+  scientific_efficacy: NOT_CAUSALLY_ESTABLISHED
+  original_runner_status: EXECUTION_ABORTED
+  owner_completion_receipt: reports/math_v2_1_gradient_pattern_seed81_pilot_v6_execution_20261007/owner_scientific_completion_receipt.json
+  post_stop_engineering_verification: reports/math_v2_1_gradient_pattern_seed81_pilot_v6_execution_20261007/post_stop_engineering_verification.json

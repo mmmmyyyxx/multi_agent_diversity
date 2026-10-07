@@ -1,0 +1,23 @@
+{
+  "ALL_ZERO_definition": "No positive frozen promotion coordinate; negative noncatastrophic coordinates retained separately.",
+  "categories": {
+    "ALL_ZERO": 29,
+    "POSITIVE_BUT_RANKED_OUT": 4,
+    "PROMOTED": 7
+  },
+  "full_attempts": 7,
+  "full_failure_reasons_nonexclusive": {
+    "INITIAL_COMPETENCE_FLOOR": 7,
+    "NO_STRICT_TEAM_VOTE_GAIN": 7
+  },
+  "full_pass": 0,
+  "full_reach_rate": 0.175,
+  "invalid_regression_is_descriptive_not_an_added_gate": true,
+  "literal_all_zero": 28,
+  "nonpositive_with_negative_coordinate": 1,
+  "positive": 11,
+  "positive_rate": 0.275,
+  "promoted": 7,
+  "shadow_pass": 0,
+  "total": 40
+}
