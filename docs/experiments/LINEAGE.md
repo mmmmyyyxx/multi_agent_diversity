@@ -492,6 +492,8 @@ flowchart TD
     n282["math_v2_1_gradient_pattern_seed81_pilot_v5<br/>PILOT<br/>HOLD"]
     n283["math_v2_1_gradient_contract_recovery_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
     n284["math_v2_1_gradient_pattern_seed81_pilot_v6<br/>PILOT<br/>COMPLETED"]
+    n285["math_v2_1_full_candidate_specialization_forensic_v1<br/>FORENSIC_AUDIT<br/>COMPLETED"]
+    n286["math_v2_1_manual_prompt_capacity_probe_v1<br/>DIAGNOSTIC<br/>PREPARED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -704,6 +706,8 @@ flowchart TD
   n281 -->|followup_of| n283
   n283 -->|followup_of| n284
   n282 -->|followup_of| n284
+  n284 -->|followup_of| n285
+  n284 -->|followup_of| n286
 ```
 
 ## Archived branches and unresolved evidence

@@ -42,11 +42,19 @@ def main():
     parser=argparse.ArgumentParser()
     source=parser.add_mutually_exclusive_group(required=True)
     source.add_argument('--manifest',type=Path);source.add_argument('--prep',type=Path)
+    source.add_argument('--manual-probe-prep',type=Path)
     parser.add_argument('--run-root',type=Path)
     mode=parser.add_mutually_exclusive_group(required=True)
     mode.add_argument('--preflight',action='store_true');mode.add_argument('--execute',action='store_true')
     args=parser.parse_args()
     def resolve(path):return path if path is None or path.is_absolute() else ROOT/path
+    if args.manual_probe_prep is not None:
+        from multi_dataset_diverse_rl.diagnostics.manual_capacity import preflight as probe_preflight, execute as probe_execute
+        if args.execute and args.run_root is None:
+            raise SearchContractError('MANUAL_PROBE_FRESH_RUN_ROOT_REQUIRED')
+        result=(probe_preflight(ROOT,resolve(args.manual_probe_prep)) if args.preflight
+            else probe_execute(ROOT,resolve(args.manual_probe_prep),resolve(args.run_root)))
+        print(json.dumps(result,indent=2,sort_keys=True));return
     if args.preflight:
         result=governed_preflight(resolve(args.prep)) if args.prep else preflight(_load(resolve(args.manifest)))
     else:

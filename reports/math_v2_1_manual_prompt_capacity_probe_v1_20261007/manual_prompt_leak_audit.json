@@ -1,0 +1,38 @@
+{
+  "bounded_heuristic": true,
+  "instances_or_answers_or_formula_constants_in_prompts": false,
+  "owner_semantic_review": true,
+  "rationale_solver_visible": false,
+  "results": [
+    {
+      "content_leak_detected": false,
+      "numeric_reject": false,
+      "prompt_id": "P0_BASELINE"
+    },
+    {
+      "content_leak_detected": false,
+      "numeric_reject": false,
+      "prompt_id": "P1_GENERALIST"
+    },
+    {
+      "content_leak_detected": false,
+      "numeric_reject": false,
+      "prompt_id": "P2_SPECIALIST_A"
+    },
+    {
+      "content_leak_detected": false,
+      "numeric_reject": false,
+      "prompt_id": "P3_SPECIALIST_B"
+    },
+    {
+      "content_leak_detected": false,
+      "numeric_reject": false,
+      "prompt_id": "P4_SPECIALIST_C"
+    },
+    {
+      "content_leak_detected": false,
+      "numeric_reject": false,
+      "prompt_id": "P5_SPECIALIST_D"
+    }
+  ]
+}

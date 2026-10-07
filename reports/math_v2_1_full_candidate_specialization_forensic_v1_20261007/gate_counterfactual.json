@@ -1,0 +1,12 @@
+{
+  "actual_shadow_and_commit_under_changed_gates": "NOT_EVALUABLE_SHADOW_NOT_OBSERVED",
+  "frozen_full_eligible": 0,
+  "full_candidate_count": 7,
+  "other_observed_conditions_retained": true,
+  "remove_both_full_eligible": 7,
+  "remove_competence_floor_only": 0,
+  "remove_strict_vote_gain_only": 0,
+  "scientific_method_changed": false,
+  "scientific_status": "POST_HOC_ZERO_API_DIAGNOSTIC",
+  "terminal_invalid_is_descriptive_not_added_gate": true
+}

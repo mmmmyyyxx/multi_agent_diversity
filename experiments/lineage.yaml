@@ -858,6 +858,12 @@ nodes:
   kind: ZERO_API_AUDIT
 - experiment_id: math_v2_1_gradient_pattern_seed81_pilot_v6
   kind: PILOT
+- experiment_id: math_v2_1_full_candidate_specialization_forensic_v1
+  kind: FORENSIC_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: math_v2_1_manual_prompt_capacity_probe_v1
+  kind: DIAGNOSTIC
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1691,4 +1697,16 @@ edges:
   relation: followup_of
   evidence: experiments/protocols/math_v2_1_gradient_contract_recovery_v1/amendment.json
   scope: First-contract-valid sampling only; existing admissibility and core method unchanged.
+- from: math_v2_1_gradient_pattern_seed81_pilot_v6
+  to: math_v2_1_full_candidate_specialization_forensic_v1
+  relation: followup_of
+  evidence: experiments/protocols/math_v2_1_full_candidate_specialization_forensic_v1/protocol.json
+  scope: Post-hoc forensic or independent Solver capacity diagnostic; no A4 scientific
+    amendment.
+- from: math_v2_1_gradient_pattern_seed81_pilot_v6
+  to: math_v2_1_manual_prompt_capacity_probe_v1
+  relation: followup_of
+  evidence: experiments/protocols/math_v2_1_manual_prompt_capacity_probe_v1/protocol.json
+  scope: Post-hoc forensic or independent Solver capacity diagnostic; no A4 scientific
+    amendment.
 current_frontier: experiments/current_frontier.yaml

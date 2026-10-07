@@ -1,0 +1,17 @@
+{
+  "bound_enforcement": "Before every transport reservation, a sequential attempt ceiling is enforced in addition to the unchanged cumulative 40M journal. No transport occurs when either budget lacks the full reservation.",
+  "charged_start": 3072683,
+  "cumulative_authorized_total": 40000000,
+  "effective_token_charge_ceiling": 30000000,
+  "fit": true,
+  "logical_evaluations": 720,
+  "max_semantic_attempts": 4,
+  "maximum_per_transport_token_reservation": 10333,
+  "no_transport_failure_all_semantic_attempts_reservation_bound": 26826144,
+  "remaining_start": 36927317,
+  "successful_provider_call_ceiling": 2880,
+  "transport_attempt_ceiling": 60480,
+  "transport_retries_per_semantic_attempt": 20,
+  "uncapped_all_transport_attempts_reservation_envelope": 563349024,
+  "uncapped_envelope_note": "The uncapped retry envelope exceeds remaining funds; it is not authorized. The effective hard charge ceiling bounds spend even for transport failures."
+}

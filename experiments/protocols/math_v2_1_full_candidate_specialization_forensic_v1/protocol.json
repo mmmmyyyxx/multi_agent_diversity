@@ -1,0 +1,16 @@
+{
+  "A4_execution": false,
+  "allowed_splits": [
+    "optimize"
+  ],
+  "experiment_id": "math_v2_1_full_candidate_specialization_forensic_v1",
+  "parent_binding_sha256": "02efd18e8431937f2cf1b196289a36cd0ff8381546fe0f4603f46011b330da22",
+  "parent_experiment_id": "math_v2_1_gradient_pattern_seed81_pilot_v6",
+  "prompts_editable_after_results": false,
+  "provider_roles": [],
+  "raw_heldout_read": false,
+  "report": "reports/math_v2_1_full_candidate_specialization_forensic_v1_20261007",
+  "schema_version": "independent_development_diagnostic_protocol_v1",
+  "scientific_method_changed": false,
+  "user_task_sha256": "b12572428f76a6adc429c893166328b8c5602a552a4a5e045f324ce11fd3cc95"
+}

@@ -8196,3 +8196,49 @@ experiments:
   original_runner_status: EXECUTION_ABORTED
   owner_completion_receipt: reports/math_v2_1_gradient_pattern_seed81_pilot_v6_execution_20261007/owner_scientific_completion_receipt.json
   post_stop_engineering_verification: reports/math_v2_1_gradient_pattern_seed81_pilot_v6_execution_20261007/post_stop_engineering_verification.json
+- experiment_id: math_v2_1_full_candidate_specialization_forensic_v1
+  kind: FORENSIC_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: independent_development_diagnostic
+  parent_ids:
+  - math_v2_1_gradient_pattern_seed81_pilot_v6
+  status: COMPLETED
+  scientific_status: POST_HOC_ZERO_API_DIAGNOSTIC
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/protocols/math_v2_1_full_candidate_specialization_forensic_v1/protocol.json
+  report: reports/math_v2_1_full_candidate_specialization_forensic_v1_20261007
+  classifier: SPECIALIZATION_COLLATERAL_FORENSIC
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Independent diagnostic only; frozen A4 method and original evidence unchanged.
+  unavailable:
+    implementation_commit: Containing diagnostic source commit
+    execution_commit: Zero API
+    result_commit: Containing publication commit
+- experiment_id: math_v2_1_manual_prompt_capacity_probe_v1
+  kind: DIAGNOSTIC
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: independent_development_diagnostic
+  parent_ids:
+  - math_v2_1_gradient_pattern_seed81_pilot_v6
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: DEVELOPMENT_DIAGNOSTIC_NOT_EXECUTED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/protocols/math_v2_1_manual_prompt_capacity_probe_v1/protocol.json
+  report: reports/math_v2_1_manual_prompt_capacity_probe_v1_20261007
+  classifier: MANUAL_PROMPT_CAPACITY_PROBE_V1
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Independent diagnostic only; frozen A4 method and original evidence unchanged.
+  unavailable:
+    implementation_commit: Containing diagnostic source commit
+    execution_commit: Pending frozen diagnostic
+    result_commit: Containing publication commit

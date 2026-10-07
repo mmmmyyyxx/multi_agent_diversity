@@ -1,0 +1,19 @@
+candidate_id,example_alias,correct_vote_count,largest_wrong_vote_count,number_of_distinct_wrong_answers,class_size_topology,tie_structure,invalid_vote_count,final_plurality_answer_correct,candidate_added_correct_vote_changed_team_decision,candidate_added_correct_vote_changed_team_correctness,minimum_additional_correct_votes_needed_to_flip,additional_votes_interpretation
+F01,o14,1,4,1,"[4, 1]",False,0,False,False,False,2,Minimum peer-vote replacements over all subsets of the four fixed peers; team size remains five.
+F01,o19,1,4,1,"[4, 1]",False,0,False,False,False,2,Minimum peer-vote replacements over all subsets of the four fixed peers; team size remains five.
+F01,o43,1,4,1,"[4, 1]",False,0,False,False,False,2,Minimum peer-vote replacements over all subsets of the four fixed peers; team size remains five.
+F02,o14,1,4,1,"[4, 1]",False,0,False,False,False,2,Minimum peer-vote replacements over all subsets of the four fixed peers; team size remains five.
+F02,o19,1,4,1,"[4, 1]",False,0,False,False,False,2,Minimum peer-vote replacements over all subsets of the four fixed peers; team size remains five.
+F02,o43,1,4,1,"[4, 1]",False,0,False,False,False,2,Minimum peer-vote replacements over all subsets of the four fixed peers; team size remains five.
+F03,o10,1,4,1,"[4, 1]",False,0,False,False,False,2,Minimum peer-vote replacements over all subsets of the four fixed peers; team size remains five.
+F03,o19,1,4,1,"[4, 1]",False,0,False,False,False,2,Minimum peer-vote replacements over all subsets of the four fixed peers; team size remains five.
+F04,o19,1,4,1,"[4, 1]",False,0,False,False,False,2,Minimum peer-vote replacements over all subsets of the four fixed peers; team size remains five.
+F05,o14,1,4,1,"[4, 1]",False,0,False,False,False,2,Minimum peer-vote replacements over all subsets of the four fixed peers; team size remains five.
+F05,o19,1,4,1,"[4, 1]",False,0,False,False,False,2,Minimum peer-vote replacements over all subsets of the four fixed peers; team size remains five.
+F05,o38,1,4,1,"[4, 1]",False,0,False,False,False,2,Minimum peer-vote replacements over all subsets of the four fixed peers; team size remains five.
+F06,o14,1,4,1,"[4, 1]",False,0,False,False,False,2,Minimum peer-vote replacements over all subsets of the four fixed peers; team size remains five.
+F06,o19,1,4,1,"[4, 1]",False,0,False,False,False,2,Minimum peer-vote replacements over all subsets of the four fixed peers; team size remains five.
+F07,o14,1,4,1,"[4, 1]",False,0,False,False,False,2,Minimum peer-vote replacements over all subsets of the four fixed peers; team size remains five.
+F07,o18,1,4,1,"[4, 1]",False,0,False,False,False,2,Minimum peer-vote replacements over all subsets of the four fixed peers; team size remains five.
+F07,o19,1,4,1,"[4, 1]",False,0,False,False,False,2,Minimum peer-vote replacements over all subsets of the four fixed peers; team size remains five.
+F07,o43,1,4,1,"[4, 1]",False,0,False,False,False,2,Minimum peer-vote replacements over all subsets of the four fixed peers; team size remains five.

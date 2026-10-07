@@ -1,0 +1,116 @@
+{
+  "points": {
+    "BASELINE": {
+      "Oracle": 22,
+      "Vote": 22,
+      "invalid_count": 2,
+      "novel_team_coverage": 0,
+      "target_accuracy": 22
+    },
+    "F01": {
+      "Oracle": 25,
+      "Vote": 22,
+      "invalid_count": 3,
+      "novel_team_coverage": 3,
+      "target_accuracy": 19
+    },
+    "F02": {
+      "Oracle": 25,
+      "Vote": 22,
+      "invalid_count": 5,
+      "novel_team_coverage": 3,
+      "target_accuracy": 17
+    },
+    "F03": {
+      "Oracle": 24,
+      "Vote": 22,
+      "invalid_count": 3,
+      "novel_team_coverage": 2,
+      "target_accuracy": 18
+    },
+    "F04": {
+      "Oracle": 23,
+      "Vote": 22,
+      "invalid_count": 3,
+      "novel_team_coverage": 1,
+      "target_accuracy": 17
+    },
+    "F05": {
+      "Oracle": 25,
+      "Vote": 22,
+      "invalid_count": 4,
+      "novel_team_coverage": 3,
+      "target_accuracy": 18
+    },
+    "F06": {
+      "Oracle": 24,
+      "Vote": 22,
+      "invalid_count": 4,
+      "novel_team_coverage": 2,
+      "target_accuracy": 17
+    },
+    "F07": {
+      "Oracle": 26,
+      "Vote": 22,
+      "invalid_count": 3,
+      "novel_team_coverage": 4,
+      "target_accuracy": 19
+    }
+  },
+  "post_hoc": true,
+  "relations": {
+    "BASELINE": {
+      "dominated_by": [],
+      "nondominated": true
+    },
+    "F01": {
+      "dominated_by": [
+        "F07"
+      ],
+      "nondominated": false
+    },
+    "F02": {
+      "dominated_by": [
+        "F01",
+        "F05",
+        "F07"
+      ],
+      "nondominated": false
+    },
+    "F03": {
+      "dominated_by": [
+        "F01",
+        "F07"
+      ],
+      "nondominated": false
+    },
+    "F04": {
+      "dominated_by": [
+        "F01",
+        "F03",
+        "F07"
+      ],
+      "nondominated": false
+    },
+    "F05": {
+      "dominated_by": [
+        "F01",
+        "F07"
+      ],
+      "nondominated": false
+    },
+    "F06": {
+      "dominated_by": [
+        "F01",
+        "F03",
+        "F05",
+        "F07"
+      ],
+      "nondominated": false
+    },
+    "F07": {
+      "dominated_by": [],
+      "nondominated": true
+    }
+  }
+}

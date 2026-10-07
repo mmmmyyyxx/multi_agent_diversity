@@ -1,0 +1,41 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "candidate_pareto.json",
+      "sha256": "d81d8444610684687d5b628479dd7d2816c72b3d5d7438743cf966a4e3af16a9"
+    },
+    {
+      "file": "candidate_semantic_forensic.md",
+      "sha256": "dcbce2245adc6930058c294617bdb1cca8653ff4306580fa0ded111f4ef04054"
+    },
+    {
+      "file": "counterfactual_composition_summary.json",
+      "sha256": "6ef21a9372cfa39c3fde4413aa63e30355ba1f1ca7f39386ca4ff03cb3ef3094"
+    },
+    {
+      "file": "counterfactual_full_candidate_teams.csv",
+      "sha256": "21fcde0a23c3b4b7fb69e103d256e5cb5769d6bac6dcf561ead22c23a71277a8"
+    },
+    {
+      "file": "full_candidate_specialization_table.csv",
+      "sha256": "a317b9df95c8d655e9a57f058cf950c942a19a2f470ac955ab87e841961e3848"
+    },
+    {
+      "file": "gate_counterfactual.json",
+      "sha256": "553356f34f3b084e4ddd4f8db207f11fe448cb9fdd52a349367b3c6a875a8b4c"
+    },
+    {
+      "file": "novel_coverage_vote_topology.csv",
+      "sha256": "a7d3e043b444aacf14a3d838544fb36416c35c9c2220928656e90538553165bd"
+    },
+    {
+      "file": "README.md",
+      "sha256": "207628bc73b240621a423845b726ab973dc39dcaffda88d6f9d03484e6d28d77"
+    },
+    {
+      "file": "specialization_collateral_forensic.json",
+      "sha256": "3448e58ac81ed0ff5cfa941975b319cfc2d6449542e1e6fd822a5ac4dc6e8639"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "actual_candidate_count_by_member": {
+    "0": 0,
+    "1": 3,
+    "2": 0,
+    "3": 2,
+    "4": 2
+  },
+  "best_counterfactual_oracle": 28,
+  "best_counterfactual_vote": 22,
+  "best_oracle_team_ids": [
+    "T31"
+  ],
+  "best_vote_team_ids": [
+    "T00",
+    "T01",
+    "T02",
+    "T03",
+    "T04",
+    "T05",
+    "T06",
+    "T07",
+    "T08",
+    "T09",
+    "T10",
+    "T11",
+    "T12",
+    "T15",
+    "T18",
+    "T19",
+    "T20",
+    "T21",
+    "T24",
+    "T27",
+    "T28",
+    "T29",
+    "T30",
+    "T32",
+    "T33"
+  ],
+  "initial_oracle": 22,
+  "initial_vote": 22,
+  "multi_specialist_offline_vote_gain_observed": false,
+  "network_model_calls": 0,
+  "provider_calls": 0,
+  "scientific_method_changed": false,
+  "scientific_status": "POST_HOC_ZERO_API_DIAGNOSTIC",
+  "scope": "Existing independently evaluated Optimize outputs recombined in sample; no new Solver outputs or causal/generalization claim.",
+  "team_count": 36
+}

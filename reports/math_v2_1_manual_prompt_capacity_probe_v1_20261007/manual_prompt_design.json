@@ -1,0 +1,79 @@
+{
+  "exact_prompt_text_public": false,
+  "frozen_before_any_real_calls": true,
+  "identity": "MANUAL_PROMPT_CAPACITY_DESIGN_V1",
+  "private_design_sha256": "e5b20a43f5b0a8bcee787f1409113eb6f6016d8e72eb484ffd38a44b3c32d8e9",
+  "prompts": [
+    {
+      "char_count": 18,
+      "design_rationale": "Exact original minimal prompt; two independent stochastic references.",
+      "intended_reusable_behavior": "baseline",
+      "prompt_id": "P0_BASELINE",
+      "prompt_sha256": "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80",
+      "source_failure_families": "baseline"
+    },
+    {
+      "char_count": 478,
+      "design_rationale": "Recurring interpretation, arithmetic and feasibility weaknesses occur across the development set; broad candidate checklists also lose previously correct tasks, motivating a concise general procedure.",
+      "intended_reusable_behavior": "cross_family_generalist",
+      "prompt_id": "P1_GENERALIST",
+      "prompt_sha256": "d7eb3cbbb5a99ffd023192bf41dc685a1453ff59f404fb81d3e256d2da1e9afa",
+      "source_failure_families": "cross_family_generalist"
+    },
+    {
+      "char_count": 517,
+      "design_rationale": "Repeated standard-form, substitution-order, coefficient, real-domain and feasible-branch instructions are visible in the reviewed gradients; broad algebraic losses caution against forcing this procedure on other problems.",
+      "intended_reusable_behavior": "algebraic_structure_and_feasible_branches",
+      "prompt_id": "P2_SPECIALIST_A",
+      "prompt_sha256": "7c7b06b7dcf07a18f4ab4421681a4c7450ef314f92faf23e34f00d3edf330b98",
+      "source_failure_families": "algebraic_structure_and_feasible_branches"
+    },
+    {
+      "char_count": 549,
+      "design_rationale": "The reviewed failures repeatedly concern distinguishability, forbidden combinations, threshold events, replacement and joint selection processes; this procedure addresses model choice and exhaustive coverage.",
+      "intended_reusable_behavior": "sample_space_and_exhaustive_counting",
+      "prompt_id": "P3_SPECIALIST_B",
+      "prompt_sha256": "b0358c8c846bf5e492157f17f8100c5208c4b897c30f8ab95436f63ff5d05fb3",
+      "source_failure_families": "sample_space_and_exhaustive_counting"
+    },
+    {
+      "char_count": 585,
+      "design_rationale": "Recurrent geometry traces concern region identification, unproved scaling, tangency constraints, determinant signs and inverse vertex transformations; direct modeling is more specific than generic checking.",
+      "intended_reusable_behavior": "geometric_model_and_region_correspondence",
+      "prompt_id": "P4_SPECIALIST_C",
+      "prompt_sha256": "8472db5128eeb46f254492a1e0f6cd184315692ac3e90426163ea1a95e3f2108",
+      "source_failure_families": "geometric_model_and_region_correspondence"
+    },
+    {
+      "char_count": 576,
+      "design_rationale": "Reviewed failures repeatedly concern structured integer arithmetic, distinct-prime counting, noninvertible modular division, simultaneous residues, digit-case completeness and base conversion.",
+      "intended_reusable_behavior": "integer_structure_and_representation",
+      "prompt_id": "P5_SPECIALIST_D",
+      "prompt_sha256": "6dfc08271401e32ee72d7c18b7546bb6d1eeb73f2f0f685eadab2d388cde9664",
+      "source_failure_families": "integer_structure_and_representation"
+    }
+  ],
+  "rationale_solver_visible": false,
+  "review": {
+    "examples_reviewed": 60,
+    "family_counts": {
+      "algebraic_structure_and_feasible_branches": 18,
+      "geometric_model_and_region_correspondence": 9,
+      "integer_structure_and_representation": 6,
+      "sample_space_and_exhaustive_counting": 5
+    },
+    "full_candidate_diffs_reviewed": 7,
+    "full_new_and_lost_outputs_reviewed": 65,
+    "heldout_raw_samples_read": 0,
+    "logical_gradients_reviewed": 380,
+    "omissions": "No Shadow, Validation or Test questions, golds, outputs or prompts were opened; no provider judge.",
+    "patterns_reviewed": 50,
+    "provider_model_calls": 0,
+    "taxonomy_origin": "Owner semantic reading of all authorized Optimize examples, gradients, patterns and candidate traces; not a preset classifier.",
+    "unsupported_gradient_notes": [
+      "Some accepted gradients ask to check an unavailable reference answer.",
+      "Some proposed diagnoses assert an unproved algebraic branch or confuse domain completeness; no hidden chain of thought establishes cause.",
+      "F07 candidate prompt contains instance-specific constants and answer content; its gain is not evidence of abstract transfer."
+    ]
+  }
+}
