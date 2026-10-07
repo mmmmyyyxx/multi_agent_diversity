@@ -14,6 +14,18 @@
       "sha256": "4b24c221727b9da15c115ed7fc839c17867756fba386c88ded22bf88a9c28f32"
     },
     {
+      "file": "preexecution/execution_identity.json",
+      "sha256": "09f7d656455e5351ad92e9cb80dfdde57c53e44777213801f22ef296bb67723d"
+    },
+    {
+      "file": "preexecution/frozen_scope.json",
+      "sha256": "2b3708748e006ac0d8fbbe50310ede58d6c163ed5f5955de8364d43ff4aeddc3"
+    },
+    {
+      "file": "preexecution/handoff.json",
+      "sha256": "df41d1f88e13fbae247adbc5cf10bfdfbe0b188c804809866d4b67bd8dce3ece"
+    },
+    {
       "file": "provider_request_equivalence.json",
       "sha256": "5809014701d428fc7f4f5e5aef4b0909865e9c116a478ce1d1ff2635ab10943c"
     },
