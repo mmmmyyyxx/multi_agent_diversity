@@ -13,19 +13,32 @@ invariants:
   critical: true
   status: ACTIVE
 - id: INV-INITIAL-COMPETENCE-002
-  description: Strict team deployment gains above immutable initial member competence; no incumbent monotonicity requirement.
-  authority: docs/design/CURRENT_SPEC.md
+  description: Historical V2.1 strict-team deployment gain above immutable initial member competence.
+  authority: docs/archive/specs/historical_current_spec.md
   implementation_refs:
-  - multi_dataset_diverse_rl/search/semantic_contract.py
+  - multi_dataset_diverse_rl/search/initial_competence_transition.py
   - multi_dataset_diverse_rl/search/binary_runtime.py
   tests:
   - tests/test_unified_semantic_contract.py
   failure_refs:
   - FAIL-UNIFIED-METHOD-SEMANTIC-DRIFT
   critical: true
+  status: HISTORICAL
+- id: INV-INITIAL-COMPETENCE-003
+  description: Current V2.2 immutable initial floor, non-regressing team Vote, and strict target-or-team progress; team-first target-second winner ranking.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/initial_competence_transition.py
+  - multi_dataset_diverse_rl/search/binary_runtime.py
+  - multi_dataset_diverse_rl/search/orchestrator.py
+  tests:
+  - tests/current/test_transition_target_or_team_v3.py
+  failure_refs:
+  - FAIL-UNIFIED-METHOD-SEMANTIC-DRIFT
+  critical: true
   status: ACTIVE
 - id: INV-ALLOCATION-EVIDENCE-002
-  description: Observation-only allocation alignment and realized team gains; distribution is not efficacy or counterfactual proof.
+  description: Observation-only allocation alignment with realized team gain, target gain and committed progress path; distribution is not efficacy or counterfactual proof.
   authority: docs/design/CURRENT_SPEC.md
   implementation_refs:
   - multi_dataset_diverse_rl/search/orchestrator.py
