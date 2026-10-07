@@ -26,17 +26,16 @@ See [repository map](REPOSITORY_MAP.md) for current/historical classifications,
 [frontier](../experiments/current_frontier.yaml) for readiness and
 [historical architecture](archive/architecture/baseline_architecture.md) for replay.
 
-## Current V2.1 method state
+## Current V2.2 method state
 
-The active opt-in method is `unified_team_prompt_search_v2_1`.
+The active opt-in method is `unified_team_prompt_search_v2_2`.
 Use the complete `CurrentPolicyBundle` and `build_current_team_prompt_search`.
 Pattern selects one mechanism after WHO, with explicit all-residual coverage
 metrics. The current opt-in [Pattern path](design/PATTERN_GRADIENT_DISCOVERY_V4.md)
 extracts one textual gradient per wrong example and clusters gradients only, then
-selects a generalized correction by the unchanged F. Deployment requires strict team gain above an immutable initial member
-competence floor. Memory retains bounded private outcomes and recurrent shared risks.
-V1/V2 factories and frozen bindings remain replay identities; current experiments
-need a fresh V2.1 binding, preexecution freeze and explicit authorization.
+selects a generalized correction by the unchanged F. Deployment preserves the immutable initial competence floor and non-regressing team Vote, then requires strict progress in either target competence or team Vote. Memory retains bounded private outcomes and recurrent shared risks.
+V1/V2/V2.1 factories and frozen bindings remain replay identities; current experiments
+need a fresh V2.2 binding, a new finite Pilot bound, preexecution freeze and explicit authorization.
 See CURRENT_SPEC for precise rules; fake conformance does not establish efficacy.
 Current research benchmarks are MATH, IFBench and HotpotQA. BBH composition
 is retained for historical development/replay and structural tests. Canonical
