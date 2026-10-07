@@ -754,7 +754,7 @@ constants and structural quantities may state a reusable reasoning rule. The
 [numeric provenance contract](NUMERIC_PROVENANCE_GUARD_V6.md) specifies the bounded
 deterministic heuristic and its limits. V4 and prompt V2 retain their historical
 absolute digit rule; their frozen results are not reclassified. The
-400-character hard limit, one generation per wrong example,
+400-character hard limit, one accepted Gradient per wrong example,
 gradients-only clustering, same-F selection and all search/Memory semantics
 remain unchanged. A fresh experiment and exact authorization are required.
 
@@ -779,3 +779,15 @@ remain unchanged. Contradictory membership and invalid generalized gradients
 remain terminal. This versioned compliance amendment makes no provider call and
 changes no Gradient, clustering criterion, same-F, WHO, Memory, Layer1, gates or
 scientific budget/stopping rule. A fresh identity and authorization are required.
+
+## Bounded Gradient contract recovery (explicit fresh binding)
+
+The [recovery contract](GRADIENT_CONTRACT_RECOVERY_V1.md) permits at most three
+fresh draws from the identical frozen Gradient request and accepts the first
+contract-valid output. It changes sampling only: Prompt V3, Guard V6 and accepted
+Gradient semantics remain unchanged. Valid weak outputs are accepted immediately;
+infrastructure failures cannot trigger contract recovery. Three invalid draws
+stop extraction. One accepted Gradient per wrong example remains mandatory.
+Physical Gradient ceilings and audit/accounting reflect the extra draws; all
+other scientific settings, budgets and stopping remain unchanged. Historical
+bindings without the new policy retain their original single-draw behavior.

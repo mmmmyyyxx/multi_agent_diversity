@@ -43,6 +43,8 @@ class RequestBroker:
         self.recovery_policy = frozen_recovery_policy(contract)
         self.optimizer_policy = frozen_optimizer_policy(contract)
         self.gradient_pattern = contract.get('pattern_policy',{}).get('discovery') == versions.GRADIENT_PATTERN_DISCOVERY_VERSION
+        from .gradient_recovery import validate_policy
+        validate_policy(contract.get('gradient_recovery_policy'))
         if self.gradient_pattern:
             from .textual_gradients import POLICY
             if (contract.get('identity')!=versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION
@@ -102,6 +104,8 @@ class RequestBroker:
             if self.gradient_pattern:
                 identity['pattern_treatment'].update(gradient_prompt_sha256=c['gradient_prompt_sha256'],
                     cluster_prompt_sha256=c['pattern_prompt_sha256'])
+                if 'gradient_recovery_policy' in c:
+                    identity['pattern_treatment']['gradient_recovery_policy']=c['gradient_recovery_policy']
         if role in {'reflection','pattern','pattern_gradient','pattern_cluster'} and self.optimizer_policy:
             identity['optimizer_generation_policy'] = self.optimizer_policy
             if c.get('optimizer_nonthinking_evidence_policy'):

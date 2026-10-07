@@ -1,0 +1,33 @@
+{
+  "arm": "A4",
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_recovery_offline_profile",
+  "canary_authorized": false,
+  "exact_frozen_api_authorization_required": true,
+  "llm_judge_authorized": false,
+  "operational_fresh_retry_limit": "UNBOUNDED_STRICT_OPERATIONAL_INVALID_ONLY",
+  "other_scientific_changes_authorized": false,
+  "parent_binding_sha256": "431ab64f8552f29a628f0d7c959f4ca9800757a288bf46e5b56d3e9f2b3c229c",
+  "phase": "pilot",
+  "push_authorized": true,
+  "raw_diagnostic_authorized": false,
+  "real_attempt_authorized": false,
+  "recovery_policy": {
+    "accepted_gradients_per_wrong": 1,
+    "identity": "PER_EXAMPLE_GRADIENT_CONTRACT_RECOVERY_V1",
+    "infrastructure_retry": false,
+    "llm_judge": false,
+    "logical_gradients_per_wrong": 1,
+    "max_physical_attempts_per_wrong": 3,
+    "output_cache": false,
+    "previous_invalid_output_visible": false,
+    "same_provider_visible_request": true,
+    "selection": "first_contract_valid",
+    "semantic_quality_selection": false
+  },
+  "schema_version": "gradient_contract_recovery_user_scope_v1",
+  "seed": 81,
+  "test_authorized": false,
+  "user_authorized": true,
+  "user_task_sha256": "942dc2d9bcd8ec40f0373997a817b1158c6a6af57f624df119a294b19cc4fd86",
+  "validation_authorized": false
+}

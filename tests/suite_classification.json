@@ -1293,6 +1293,12 @@
       "current_suite_included": true
     },
     {
+      "path": "tests/current/test_gradient_contract_recovery.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
       "path": "tests/current/test_numeric_calibration.py",
       "classification": "CURRENT_CONTRACT",
       "required_private_artifacts": [],

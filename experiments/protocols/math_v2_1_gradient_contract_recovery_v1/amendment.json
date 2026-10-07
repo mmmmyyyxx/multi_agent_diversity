@@ -1,0 +1,39 @@
+{
+  "accepted_output_contract_changed": false,
+  "code_change_authorized": true,
+  "experiment_id": "math_v2_1_gradient_contract_recovery_v1",
+  "guard_changed": false,
+  "parents": [
+    {
+      "binding_path": "experiments/execution_bindings/math_v2_1_gradient_pattern_offline_profile_v5.json",
+      "binding_sha256": "16442d683946d6efa26d1fb3e377cb1a6cdc82d3e84a5899810854b11f5213c1"
+    },
+    {
+      "binding_path": "experiments/execution_bindings/math_v2_1_gradient_pattern_pilot_offline_profile_v4.json",
+      "binding_sha256": "431ab64f8552f29a628f0d7c959f4ca9800757a288bf46e5b56d3e9f2b3c229c"
+    },
+    {
+      "binding_path": "experiments/execution_bindings/math_v2_1_gradient_pattern_seed81_pilot_v5.json",
+      "binding_sha256": "b18d5d91c003c7f568a89a9864c7df853eeb8dafef92e4a260b6905e7967a786"
+    }
+  ],
+  "policy": {
+    "accepted_gradients_per_wrong": 1,
+    "identity": "PER_EXAMPLE_GRADIENT_CONTRACT_RECOVERY_V1",
+    "infrastructure_retry": false,
+    "llm_judge": false,
+    "logical_gradients_per_wrong": 1,
+    "max_physical_attempts_per_wrong": 3,
+    "output_cache": false,
+    "previous_invalid_output_visible": false,
+    "same_provider_visible_request": true,
+    "selection": "first_contract_valid",
+    "semantic_quality_selection": false
+  },
+  "prior_strong_leakage_decision_preserved": true,
+  "prompt_changed": false,
+  "push_authorized": true,
+  "real_api_authorized": false,
+  "schema_version": "gradient_contract_recovery_amendment_v1",
+  "user_task_sha256": "942dc2d9bcd8ec40f0373997a817b1158c6a6af57f624df119a294b19cc4fd86"
+}

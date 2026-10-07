@@ -1,0 +1,27 @@
+{
+  "accepted_output_contract_changed": false,
+  "core_source_invariants": [
+    "multi_dataset_diverse_rl/search/numeric_provenance.py",
+    "multi_dataset_diverse_rl/search/pattern_primitives.py",
+    "multi_dataset_diverse_rl/search/abstraction_content.py",
+    "multi_dataset_diverse_rl/evaluation/semantic_mutable_contract.py",
+    "multi_dataset_diverse_rl/search/partition_completion.py",
+    "multi_dataset_diverse_rl/search/current_layer1.py",
+    "multi_dataset_diverse_rl/search/rolling_risk_memory.py",
+    "multi_dataset_diverse_rl/search/selected_evidence.py"
+  ],
+  "gradient_sampling_recovery_policy_changed": true,
+  "gradient_semantic_definition_changed": false,
+  "guard_v6_changed": false,
+  "layer1_changed": false,
+  "logical_gradient_universe_changed": false,
+  "memory_changed": false,
+  "pattern_changed": false,
+  "pattern_f_changed": false,
+  "physical_gradient_ceiling_changed": true,
+  "prompt_v3_changed": false,
+  "responsibility_changed": false,
+  "scientific_stopper_changed": false,
+  "semantic_quality_selection": false,
+  "team_gates_changed": false
+}

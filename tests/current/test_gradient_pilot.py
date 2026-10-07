@@ -62,20 +62,21 @@ def test_carried_failure_bound_does_not_assume_round_robin_or_epoch_reset():
         'solver_calls','reflection_calls','pattern_gradient_calls','pattern_cluster_calls'))
     assert bounds['reservation_peak_upper_bound']==40_000_000
 
-def fake_run(root,monkeypatch,observe):
+def fake_run(root,monkeypatch,observe,*,recovery=False):
     from multi_dataset_diverse_rl.benchmarks.protocols import protocol_input
     from multi_dataset_diverse_rl.search.binary_runtime import CorrectnessExample
     from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker,BenchmarkSolver,ReflectionProvider
     from multi_dataset_diverse_rl.search.textual_gradients import PerExampleGradientProvider,GradientClusterProvider
     from multi_dataset_diverse_rl.governance.token_accounting import serialized_request
-    c=contract();binding=execution_binding(ROOT,c);adapter=binding.benchmark()
+    c=(json.loads((ROOT/'experiments/execution_bindings/math_v2_1_gradient_pattern_pilot_offline_profile_v5.json').read_bytes()) if recovery else contract())
+    binding=execution_binding(ROOT,c);adapter=binding.benchmark()
     prompts=tuple(x['prompt'] for x in json.loads((ROOT/c['initial_team_path']).read_bytes())['members'])
     def examples(role):
         return tuple(CorrectnessExample(protocol_input('math',f'{role}{i}',
             {'problem':f'Synthetic {role} arithmetic {i}.'},adapter.output_contract,protocol=adapter.protocol),'1')
             for i in range(60 if role=='optimize' else 40))
     monkeypatch.setattr(binding,'examples',examples)
-    requests=[];ledger=[];generations=[]
+    requests=[];ledger=[];generations=[];gradient_draws=[]
     def transport(req):
         requests.append(deepcopy(req));body=json.loads(serialized_request(req))
         assert body['enable_thinking'] is False
@@ -87,7 +88,9 @@ def fake_run(root,monkeypatch,observe):
             text='FINAL_ANSWER: '+('1' if correct else '2')
         elif len(req['messages'])==2:
             p=json.loads(req['messages'][1]['content'])
-            if 'example' in p:text=json.dumps({'gradient':'Check constraints before transforming intermediate expressions.'})
+            if 'example' in p:
+                gradient_draws.append(deepcopy(req))
+                text=json.dumps({'gradient':'x'*401 if recovery and len(gradient_draws)==1 else 'Check constraints before transforming intermediate expressions.'})
             else:text=json.dumps({'patterns':[{'generalized_gradient':'Check constraints before transforming intermediate expressions.',
                 'support_ids':[g['example_id'] for g in p['gradients']]}],'unassigned_ids':[]})
         else:
@@ -97,7 +100,8 @@ def fake_run(root,monkeypatch,observe):
             provider_metadata_loss_audited=True,provider_reasoning_content_present=False,
             provider_reasoning_character_count=None,provider_usage_details={},provider_thinking_indicators=[])
     broker=RequestBroker(contract=c,transport=transport,arm='A4',seed=81,ledger_writer=ledger.append)
-    provider=GradientClusterProvider(broker,gradient_provider=PerExampleGradientProvider(broker))
+    provider=GradientClusterProvider(broker,gradient_provider=PerExampleGradientProvider(broker,
+        recovery_policy=c.get('gradient_recovery_policy')))
     run=binding.compose(arm='A4',seed=81,solver=BenchmarkSolver(adapter,broker),reflection=ReflectionProvider(broker),
         pattern_provider=provider,run_root=root)
     assert type(run.stop) is GlobalStopPolicy and run.stop.no_commit_patience==2
@@ -106,7 +110,12 @@ def fake_run(root,monkeypatch,observe):
     result=asyncio.run(run.run(max_opportunities=50))
     assert result.stop_reason=='SATURATION_REACHED'
     assert len(result.trace)==10
-    assert len(provider.input_audit)==10 and provider.gradient_provider.calls==70
+    assert len(provider.input_audit)==10 and provider.gradient_provider.calls==(71 if recovery else 70)
+    if recovery:
+        assert gradient_draws[0]==gradient_draws[1]
+        events=run.opportunities.patterns.extractor.recovery_audit
+        from multi_dataset_diverse_rl.search.gradient_recovery import statistics
+        assert statistics(events)['gradient_retry_once']==1
     assert broker.usage['validation']==broker.usage['test']==0
     return result,requests,ledger,memory_snapshot(run.memory),run.state.snapshot()
 
@@ -122,3 +131,9 @@ def test_pilot_multiple_opportunities_and_observation_do_not_change_execution(tm
     assert rows[0]['memory_state']['audit']['stateful_write_count']==0
     assert all(r['data']['context_chars']<=1200 for r in rows if r['stage']=='MEMORY_READ')
     assert rows[-1]['memory_state']['audit']['failure_writes']>0
+
+def test_recovery_current_composition_completes_the_unchanged_pilot_stopper(tmp_path,monkeypatch):
+    result,requests,ledger,memory,state=fake_run(tmp_path,monkeypatch,True,recovery=True)
+    assert result.stop_reason=='SATURATION_REACHED'
+    assert len(result.trace)==10
+    assert sum(e.get('kind')=='SUCCESS' and e.get('role')=='pattern_cluster' for e in ledger)==10

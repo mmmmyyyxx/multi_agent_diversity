@@ -1,0 +1,13 @@
+{
+  "accepted_gradients_per_wrong": 1,
+  "identity": "PER_EXAMPLE_GRADIENT_CONTRACT_RECOVERY_V1",
+  "infrastructure_retry": false,
+  "llm_judge": false,
+  "logical_gradients_per_wrong": 1,
+  "max_physical_attempts_per_wrong": 3,
+  "output_cache": false,
+  "previous_invalid_output_visible": false,
+  "same_provider_visible_request": true,
+  "selection": "first_contract_valid",
+  "semantic_quality_selection": false
+}

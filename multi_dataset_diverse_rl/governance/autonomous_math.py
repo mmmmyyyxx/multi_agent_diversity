@@ -165,7 +165,10 @@ async def execute_search(root, prep, run_root, payload):
         from ..search.textual_gradients import PerExampleGradientProvider, GradientClusterProvider
         pattern_provider=GradientClusterProvider(broker,read_json(root/c['pattern_prompt_path'])['prompt'],
             gradient_provider=PerExampleGradientProvider(broker,read_json(root/c['gradient_prompt_path'])['prompt'],
-                numeric_guard_writer=lambda r:append_jsonl(run_root/'numeric_guard_private.jsonl',r)),
+                numeric_guard_writer=lambda r:append_jsonl(run_root/'numeric_guard_private.jsonl',r),
+                recovery_policy=c.get('gradient_recovery_policy'),
+                recovery_writer=(lambda r:append_jsonl(run_root/'gradient_recovery_private.jsonl',r))
+                    if c.get('gradient_recovery_policy') is not None else None),
             partition_completion_policy=c.get('partition_completion_policy'),
             partition_writer=(lambda r:append_jsonl(run_root/'partition_completion_private.jsonl',r))
                 if c.get('partition_completion_policy') is not None else None)
@@ -211,18 +214,28 @@ async def execute_search(root, prep, run_root, payload):
                 derived_token_snapshot_detached=budget.snapshot_updates_disabled,
                 snapshot_error_category=budget.snapshot_error_category)
         gradients=pattern_provider.gradient_provider
+        gradient_multiplier=3 if c.get('gradient_recovery_policy') is not None else 1
+        if c.get('gradient_recovery_policy') is not None:
+            from ..search.gradient_recovery import statistics
+            recovery_path=run_root/'gradient_recovery_private.jsonl'
+            recovery_events=[json.loads(line) for line in recovery_path.read_text(encoding='utf-8').splitlines() if line] if recovery_path.exists() else []
+            summary['gradient_recovery']=statistics(recovery_events)
+            if (summary['gradient_recovery']['physical_gradient_calls']!=gradients.calls
+                    or summary['gradient_recovery']['logical_gradient_count']!=summary['gradient_recovery']['accepted_gradient_count']
+                    or summary['gradient_recovery']['gradient_three_fail']):
+                raise OperationalAbort('GRADIENT_CONTRACT_RECOVERY_ACCOUNTING_INCOMPLETE')
         summary.update(pattern_gradient_calls=broker.usage['pattern_gradient'],
             pattern_cluster_calls=broker.usage['pattern_cluster'],gradient_input_audit=gradients.input_audit)
         if (gradients.calls!=broker.usage['pattern_gradient'] or pattern_provider.calls!=broker.usage['pattern_cluster']
                 or broker.usage['pattern']!=gradients.calls+pattern_provider.calls):
             raise OperationalAbort('PATTERN_GRADIENT_ACCOUNTING_INCOMPLETE')
-        if c['execution_phase']=='canary' and not 1<=gradients.calls<=c['initial_competence_binding']['count']:
+        if c['execution_phase']=='canary' and not 1<=gradients.calls<=gradient_multiplier*c['initial_competence_binding']['count']:
             raise OperationalAbort('PATTERN_GRADIENT_CANARY_ACCOUNTING_INCOMPLETE')
         if c['execution_phase']=='canary' and (pattern_provider.calls!=1 or not composed.evaluation.provider.probed):
             raise OperationalAbort('PATTERN_CANARY_FLOW_INCOMPLETE')
         if c['execution_phase']=='pilot' and (pattern_provider.calls!=len(result.trace)
                 or gradients.calls!=len(gradients.input_audit)
-                or not len(result.trace)<=gradients.calls<=60*len(result.trace)):
+                or not len(result.trace)<=gradients.calls<=gradient_multiplier*60*len(result.trace)):
             raise OperationalAbort('PATTERN_PILOT_FLOW_INCOMPLETE')
         summary['memory_activity']=composed.memory.audit()['stateful_write_count']
         summary['memory_audit']=composed.memory.audit()

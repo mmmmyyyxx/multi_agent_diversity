@@ -1,0 +1,29 @@
+{
+  "Windows_persistence_current_suite": true,
+  "compileall": true,
+  "cumulative_tokens": 2240485,
+  "full_current_counts": {
+    "deselected": 1468,
+    "errors": 0,
+    "failures": 0,
+    "passed": 1495,
+    "skipped": 2,
+    "tests": 1497
+  },
+  "full_current_junit_sha256": "a2f5aa82be997e2835face89406f5cec41d4f5be913bc9fe3ed929a7970b4d70",
+  "full_historical_replay_pass": false,
+  "guard_v6_source_unchanged": true,
+  "historical_private_artifact_cases_not_run": 64,
+  "historical_replay_cases_deselected": 1404,
+  "independent_audit_helper_selftest": true,
+  "ledger_remaining": 37759515,
+  "network_attempt_count": 0,
+  "prompt_v3_byte_identical": true,
+  "protected_files": 6702,
+  "provider_calls": 0,
+  "provider_request_equivalence": true,
+  "recovery_1005_journal_cycles": true,
+  "reserved_inflight": 0,
+  "status": "PASS",
+  "targeted_recovery_guard_partition_pass": true
+}

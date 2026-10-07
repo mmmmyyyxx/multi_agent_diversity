@@ -8140,3 +8140,54 @@ experiments:
     result_commit: Pending publication
   authorization_closed: true
   authorization_consumed: false
+- experiment_id: math_v2_1_gradient_contract_recovery_v1
+  kind: ZERO_API_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_numeric_provenance_guard_v6
+  status: COMPLETED
+  scientific_status: VERIFIED_ZERO_API_RECOVERY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/protocols/math_v2_1_gradient_contract_recovery_v1/amendment.json
+  report: reports/math_v2_1_gradient_contract_recovery_v1_20261007
+  classifier: BOUNDED_FIRST_CONTRACT_VALID_RECOVERY
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Prompt V3 and Guard V6 byte-identical; one accepted Gradient per wrong example.
+  - Attempt5 identity already registered; use fresh attempt6.
+  unavailable:
+    implementation_commit: Exact source recorded by subsequent frozen receipt
+    execution_commit: Zero API implementation audit
+    result_commit: Containing publication commit
+  verification: reports/math_v2_1_gradient_contract_recovery_v1_20261007/verification.json
+- experiment_id: math_v2_1_gradient_pattern_seed81_pilot_v6
+  kind: PILOT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_1
+  parent_ids:
+  - math_v2_1_gradient_contract_recovery_v1
+  - math_v2_1_gradient_pattern_seed81_pilot_v5
+  status: DRAFT
+  scientific_status: VERIFICATION_PENDING
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v6.yaml
+  report: null
+  classifier: FRESH_SEARCH_ONLY_PILOT
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Prompt V3 and Guard V6 byte-identical; one accepted Gradient per wrong example.
+  - Attempt5 identity already registered; use fresh attempt6.
+  unavailable:
+    implementation_commit: Pending source freeze
+    execution_commit: Pending governed preexecution
+    result_commit: Pending publication
+    report: Pending fresh execution

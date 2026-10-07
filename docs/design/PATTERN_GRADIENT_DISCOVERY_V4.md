@@ -96,4 +96,8 @@ team Responsibility, followed by gradients from observable member failures. This
 implements neither intervention attribution nor the complete AgentGrad method.
 
 Current Guard V6 uses [strong/weak evidence calibration](NUMERIC_PROVENANCE_GUARD_V6.md).
-Prompt V3, hard400, one generation and all core method semantics remain frozen.
+Prompt V3, hard400 and all core method semantics remain frozen. Historical
+bindings retain one physical generation. The explicit
+[Gradient recovery V1](GRADIENT_CONTRACT_RECOVERY_V1.md) amendment permits up to
+three identical-request draws and accepts the first contract-valid output;
+exactly one accepted Gradient per wrong example still enters clustering.

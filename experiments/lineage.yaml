@@ -854,6 +854,10 @@ nodes:
   kind: ZERO_API_AUDIT
 - experiment_id: math_v2_1_gradient_pattern_seed81_pilot_v5
   kind: PILOT
+- experiment_id: math_v2_1_gradient_contract_recovery_v1
+  kind: ZERO_API_AUDIT
+- experiment_id: math_v2_1_gradient_pattern_seed81_pilot_v6
+  kind: PILOT
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1672,4 +1676,19 @@ edges:
   relation: followup_of
   evidence: experiments/protocols/math_v2_1_numeric_provenance_guard_v6/amendment.json
   scope: V6 evidence threshold only; no fresh execution after confirmed strong provenance.
+- from: math_v2_1_numeric_provenance_guard_v6
+  to: math_v2_1_gradient_contract_recovery_v1
+  relation: followup_of
+  evidence: experiments/protocols/math_v2_1_gradient_contract_recovery_v1/amendment.json
+  scope: First-contract-valid sampling only; existing admissibility and core method unchanged.
+- from: math_v2_1_gradient_contract_recovery_v1
+  to: math_v2_1_gradient_pattern_seed81_pilot_v6
+  relation: followup_of
+  evidence: experiments/protocols/math_v2_1_gradient_contract_recovery_v1/amendment.json
+  scope: First-contract-valid sampling only; existing admissibility and core method unchanged.
+- from: math_v2_1_gradient_pattern_seed81_pilot_v5
+  to: math_v2_1_gradient_pattern_seed81_pilot_v6
+  relation: followup_of
+  evidence: experiments/protocols/math_v2_1_gradient_contract_recovery_v1/amendment.json
+  scope: First-contract-valid sampling only; existing admissibility and core method unchanged.
 current_frontier: experiments/current_frontier.yaml

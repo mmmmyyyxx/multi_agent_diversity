@@ -16,6 +16,7 @@ class CurrentPolicyBundle:
     abstraction_guard: str = identities.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION
     clustering: str = identities.GRADIENT_PATTERN_DISCOVERY_VERSION
     partition_completion: str = identities.GRADIENT_PARTITION_COMPLETION_VERSION
+    gradient_recovery: str = identities.GRADIENT_CONTRACT_RECOVERY_VERSION
     pattern_responsibility: str = identities.PATTERN_RESPONSIBILITY_VERSION
     evidence: str = identities.GRADIENT_CONDITIONED_EVIDENCE_VERSION
     memory: str = identities.STRUCTURED_ROLLING_RISK_MEMORY_VERSION
@@ -28,6 +29,7 @@ class CurrentPolicyBundle:
             abstraction_guard=identities.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION,
             clustering=identities.GRADIENT_PATTERN_DISCOVERY_VERSION,
             partition_completion=identities.GRADIENT_PARTITION_COMPLETION_VERSION,
+            gradient_recovery=identities.GRADIENT_CONTRACT_RECOVERY_VERSION,
             pattern_responsibility=identities.PATTERN_RESPONSIBILITY_VERSION,
             evidence=identities.GRADIENT_CONDITIONED_EVIDENCE_VERSION,
             memory=identities.STRUCTURED_ROLLING_RISK_MEMORY_VERSION,
@@ -37,7 +39,9 @@ class CurrentPolicyBundle:
             raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
 
     def method(self, *, aggregation, provider_binding, successful_provider_calls,
-            partition_completion_policy=None):
+            partition_completion_policy=None,gradient_recovery_policy=None):
+        from .gradient_recovery import validate_policy
+        validate_policy(gradient_recovery_policy)
         if not isinstance(provider_binding, str) or len(provider_binding) != 64:
             raise SearchContractError('CURRENT_GRADIENT_POLICY_MISMATCH')
         # The compatibility dataclass preserves its exact frozen identity payload.
@@ -58,17 +62,22 @@ class CurrentPolicyBundle:
                 pattern_abstraction_guard=identities.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION))
         if partition_completion_policy is not None:
             method.mechanism_config['partition_completion_policy']=partition_completion_policy
+        if gradient_recovery_policy is not None:
+            method.mechanism_config['gradient_recovery_policy']=deepcopy(gradient_recovery_policy)
         return method
 
     def validate_method(self, method):
         expected=self.method(aggregation=method.aggregation_policy,
             provider_binding=method.mechanism_config.get('pattern_provider_binding'),
             successful_provider_calls=method.global_stop.emergency_max_provider_calls,
-            partition_completion_policy=method.mechanism_config.get('partition_completion_policy'))
+            partition_completion_policy=method.mechanism_config.get('partition_completion_policy'),
+            gradient_recovery_policy=method.mechanism_config.get('gradient_recovery_policy'))
         if method.identity() != expected.identity():
             raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
 
     def validate_contract(self, contract):
+        from .gradient_recovery import validate_policy
+        validate_policy(contract.get('gradient_recovery_policy'))
         if contract.get('partition_completion_policy') not in (None, self.partition_completion):
             raise SearchContractError('PATTERN_PARTITION_COMPLETION_POLICY_MISMATCH')
         expected=dict(pattern_policy=PATTERN_POLICY,memory_policy_identity=self.memory,

@@ -5,7 +5,7 @@ This is an engineering consolidation of the existing scientific treatment.
 `CURRENT_RUNTIME_COMPOSITION_V1` names the composition boundary; all scientific
 identity values and provider-visible prompt bytes were unchanged by that
 consolidation. Subsequent versioned amendments are defined in CURRENT_SPEC.md;
-the current offline binding is the Gradient profile V4, with identical minimal
+the current offline binding is the Gradient recovery profile V6, with identical minimal
 V1_2 initialization. Its Pilot offline counterpart preserves the closed Pilot's
 method, phase and resource ceilings; neither profile has execution authority.
 
@@ -95,4 +95,9 @@ No Canary, Pilot, Validation, Test, real provider call or efficacy result follow
 from this consolidation. Existing offline profiles remain code conformance only.
 
 Current Guard V6 uses [strong/weak evidence calibration](NUMERIC_PROVENANCE_GUARD_V6.md).
-Prompt V3, hard400, one generation and all core method semantics remain frozen.
+Prompt V3, hard400 and all core method semantics remain frozen. Current recovery
+profile V6 and Pilot offline profile V5 opt into
+[Gradient recovery V1](GRADIENT_CONTRACT_RECOVERY_V1.md); historical profiles
+retain one physical draw. The new policy enters method/provider identity and
+composition, and only its physical Gradient ceilings increase. First-valid
+selection never evaluates semantic usefulness or sends rejected outputs back.

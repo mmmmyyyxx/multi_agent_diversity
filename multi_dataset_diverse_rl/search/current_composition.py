@@ -35,6 +35,8 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
     policy_bundle.validate_method(method)
     if getattr(pattern_provider,'partition_completion_policy',None) != method.mechanism_config.get('partition_completion_policy'):
         raise SearchContractError('PATTERN_PARTITION_COMPLETION_POLICY_MISMATCH')
+    if getattr(getattr(pattern_provider,'gradient_provider',None),'recovery_policy',None) != method.mechanism_config.get('gradient_recovery_policy'):
+        raise SearchContractError('GRADIENT_CONTRACT_RECOVERY_POLICY_MISMATCH')
     if optimizer.config != CurrentLayer1Config():
         raise SearchContractError('CURRENT_LAYER1_POLICY_MISMATCH')
     if (pattern_provider is None or getattr(pattern_provider,'gradient_provider',None) is None

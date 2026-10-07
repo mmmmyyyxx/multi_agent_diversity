@@ -115,15 +115,23 @@ class _FreshSearchProvider:
             raise SearchContractError('STOP_PATTERN_CONTEXT_LIMIT_POLICY_REQUIRED')
         self.calls+=1
         result=self.broker.complete(role=self.role,split='optimize',stage=self.stage,messages=messages)
+        self.last_response=deepcopy(result)
         try:return json.loads(result['text'])
         except (ValueError,TypeError):
+            if self.role=='pattern_gradient':
+                from .gradient_recovery import GradientOutputContractError
+                raise GradientOutputContractError('MALFORMED_JSON') from None
             raise SearchContractError('PATTERN_GRADIENT_EXTRACTION_INVALID' if self.role=='pattern_gradient' else 'PATTERN_GRADIENT_CLUSTER_INVALID') from None
 
 
 class PerExampleGradientProvider(_FreshSearchProvider):
     role='pattern_gradient';stage='per_example_textual_gradient'
-    def __init__(self,broker,prompt=GRADIENT_PROMPT,*,numeric_guard_writer=None):
+    def __init__(self,broker,prompt=GRADIENT_PROMPT,*,numeric_guard_writer=None,
+            recovery_policy=None,recovery_writer=None):
+        from .gradient_recovery import validate_policy
+        validate_policy(recovery_policy)
         super().__init__(broker,prompt);self.numeric_guard_writer=numeric_guard_writer
+        self.recovery_policy=deepcopy(recovery_policy);self.recovery_writer=recovery_writer
     def extract(self,payload):
         expected={'example_id','problem','reference','prediction','valid','responsibility_labels','team_margin','team_disagreement'}
         if (not isinstance(payload,dict) or set(payload)!={'schema','current_member_procedure','example'}
@@ -197,12 +205,18 @@ class GradientExtractor:
     def __init__(self,provider):
         if provider is None:raise SearchContractError('PATTERN_GRADIENT_PROVIDER_NOT_BOUND')
         self.provider=provider;self.numeric_guard_audit=[]
+        from .gradient_recovery import validate_policy
+        validate_policy(getattr(provider,'recovery_policy',None))
+        self.recovery_audit=[];self.recovery_batch=0
     def extract(self,procedure,rows):
         if not isinstance(procedure,str) or not procedure.strip():raise SearchContractError('PATTERN_MEMBER_PROCEDURE_REQUIRED')
         rows=tuple(rows)
         if wrong_universe(rows)!=rows:raise SearchContractError('PATTERN_GRADIENT_WRONG_UNIVERSE_REQUIRED')
         if not rows or len({r.example_id for r in rows})!=len(rows):
             raise SearchContractError('PATTERN_GRADIENT_WRONG_UNIVERSE_REQUIRED')
+        if getattr(self.provider,'recovery_policy',None) is not None:
+            from .gradient_recovery import extract_first_valid
+            return extract_first_valid(self,procedure,rows)
         gradients=[]
         for row in rows:
             example=single_failure_example(row)
@@ -297,12 +311,19 @@ class GradientPatternDiscovery:
         rows=wrong_universe(evidence_rows)
         if not rows:raise SearchContractError('PATTERN_DISCOVERY_NOT_ACTIONABLE')
         self.attempted_opportunities.add(key)
+        recovery_start=len(self.extractor.recovery_audit)
         gradients=self.extractor.extract(state.member_prompts[target_member],rows)
         payload={'gradients':[dict(g) for g in gradients]}
         completion=getattr(self.cluster_provider,'partition_completion_policy',None)
         value=(self.cluster_provider.cluster(payload,evidence_rows=rows) if completion is not None
             else self.cluster_provider.cluster(payload))
         context=score_gradient_partition(value,rows,gradients)
+        if getattr(self.extractor.provider,'recovery_policy',None) is not None:
+            from .gradient_recovery import statistics
+            events=self.extractor.recovery_audit[recovery_start:]
+            context['gradient_recovery_statistics']=statistics(events)
+            context['gradient_physical_calls']=len(events)
+            context['total_pattern_meta_calls']=len(events)+1
         if completion is not None:
             context['partition_completion_audit']=deepcopy(self.cluster_provider.partition_audit[-1])
         return context

@@ -1,0 +1,33 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "accounting_bounds.json",
+      "sha256": "b5a5376503c184a12516e7ed7ad4e635fec5e14aed72e6c063879ee34ec2dc3b"
+    },
+    {
+      "file": "attempt4_zero_api_replay.json",
+      "sha256": "3c5ca1773cac9f22d7ef82f9bed8e55d092809eb434c0275dfb8b7e007d82d30"
+    },
+    {
+      "file": "policy.json",
+      "sha256": "4b24c221727b9da15c115ed7fc839c17867756fba386c88ded22bf88a9c28f32"
+    },
+    {
+      "file": "provider_request_equivalence.json",
+      "sha256": "5809014701d428fc7f4f5e5aef4b0909865e9c116a478ce1d1ff2635ab10943c"
+    },
+    {
+      "file": "README.md",
+      "sha256": "f5a164b61bccb0cf02818ca2b46d1d2836e28443ba1e3b56476b2e262482466d"
+    },
+    {
+      "file": "scientific_delta.json",
+      "sha256": "e17c9bb4cbc048fae75ff56e8d5a111588ebcce6a5680dfe9fc6b5c8f52490c1"
+    },
+    {
+      "file": "verification.json",
+      "sha256": "46b5b4db94577a93339d30ce524d9c74c91e126c5b66617718bc10fcb2a53378"
+    }
+  ]
+}

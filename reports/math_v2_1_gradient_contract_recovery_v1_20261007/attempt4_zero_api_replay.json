@@ -1,0 +1,30 @@
+{
+  "accepted_attempt_no": 2,
+  "accepted_gradient_sha256": "1ba7a99a3da75cde16b4e9dbcc7c5519749276194a43f7fa0445c92eb4dc27b3",
+  "downstream_contains_only_valid_gradient": true,
+  "guard_reason_codes": [
+    "COPIED_NUMERIC_EXPRESSION"
+  ],
+  "network_attempt_count": 0,
+  "original_attempt_unchanged": true,
+  "original_response_sha256": "714fc9d64ba9ea1d0f15303a20bef4ef9431893a9b97ebe89e1529988ffd33b2",
+  "provider_calls": 0,
+  "rejected_gradient_sha256": "e73c0c79927c2d266006dfb4cfb456fbe8e45ea7748a1f3511800bec8e21e2e0",
+  "stats": {
+    "accepted_gradient_count": 1,
+    "gradient_contract_recovery_rate": 1.0,
+    "gradient_first_pass_valid": 0,
+    "gradient_retry_once": 1,
+    "gradient_retry_twice": 0,
+    "gradient_three_fail": 0,
+    "length_rejections": 0,
+    "logical_gradient_count": 1,
+    "numeric_warnings": 1,
+    "physical_gradient_calls": 2,
+    "schema_rejections": 0,
+    "strong_leakage_rejections": 1,
+    "successful_recovery_rate": 1.0
+  },
+  "status": "PASS",
+  "strong_rejection_preserved": true
+}

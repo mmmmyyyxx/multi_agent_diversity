@@ -47,10 +47,13 @@ class MATHGradientPatternBinding:
             support_id_transport=c['pattern_support_id_transport'],abstraction_guard=c['pattern_abstraction_guard'])
         if 'partition_completion_policy' in c:
             identity['partition_completion_policy']=c['partition_completion_policy']
+        if 'gradient_recovery_policy' in c:
+            identity['gradient_recovery_policy']=c['gradient_recovery_policy']
         binding=hashlib.sha256(json.dumps(identity,sort_keys=True,separators=(',',':')).encode()).hexdigest()
         return CURRENT_POLICY_BUNDLE.method(aggregation=c['aggregation'],provider_binding=binding,
             successful_provider_calls=c['provider_bounds']['successful_provider_calls'],
-            partition_completion_policy=c.get('partition_completion_policy'))
+            partition_completion_policy=c.get('partition_completion_policy'),
+            gradient_recovery_policy=c.get('gradient_recovery_policy'))
 
     def compose(self,*,arm,seed,solver,reflection,pattern_provider,run_root,optimize_fn=None):
         blockers=self.blockers()
@@ -92,6 +95,11 @@ class MATHGradientPatternBinding:
 
     def blockers(self):
         try:
+            if 'gradient_recovery_amendment_path' in self.contract:
+                from .gradient_recovery_contract import validate_gradient_recovery
+                validate_gradient_recovery(self)
+                validate_effective_math_dependencies(self)
+                return ()
             if 'numeric_calibration_amendment_path' in self.contract:
                 from .numeric_calibration_contract import validate_numeric_calibration
                 validate_numeric_calibration(self)
@@ -174,6 +182,6 @@ class MATHGradientPatternBinding:
             validate_effective_math_dependencies(self)
             return ()
         except SearchContractError as error:
-            if str(error)=='CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN' or str(error).startswith(('CURRENT_DATA_', 'CURRENT_INITIAL_CONDITION_', 'CURRENT_NUMERIC_ADMISSIBILITY_', 'CURRENT_NUMERIC_CALIBRATION_', 'OPERATIONAL_PILOT_')):return (str(error),)
+            if str(error)=='CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN' or str(error).startswith(('CURRENT_DATA_', 'CURRENT_INITIAL_CONDITION_', 'CURRENT_NUMERIC_ADMISSIBILITY_', 'CURRENT_NUMERIC_CALIBRATION_', 'CURRENT_GRADIENT_RECOVERY_', 'OPERATIONAL_PILOT_')):return (str(error),)
             return ('GRADIENT_PATTERN_BINDING_INVALID',)
         except (KeyError,TypeError,ValueError,OSError):return ('GRADIENT_PATTERN_BINDING_INVALID',)

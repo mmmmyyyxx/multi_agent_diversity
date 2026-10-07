@@ -419,12 +419,26 @@ def test_new_pending_pilot_has_separate_user_scope_without_inheriting_closed_aut
     old_contract=load_yaml(ROOT/load_yaml(ROOT/old['manifest'])['execution_binding']['path'])
     assert contract['execution_attempt_id']!=old_contract['execution_attempt_id']
     assert contract['cache_namespace']!=old_contract['cache_namespace']
-    assert contract['provider_bounds']==old_contract['provider_bounds'] and contract['models']==old_contract['models']
-    scope=load_yaml(ROOT/contract.get('partition_completion_user_scope_path',
-        contract.get('operational_user_scope_path',contract['numeric_user_scope_path'])))
+    assert contract['models']==old_contract['models']
+    if 'gradient_recovery_policy' in contract:
+        for key in ('solver_calls','reflection_calls','pattern_cluster_calls','max_opportunities'):
+            assert contract['provider_bounds'][key]==old_contract['provider_bounds'][key]
+        assert contract['provider_bounds']['pattern_gradient_calls']==3*old_contract['provider_bounds']['pattern_gradient_calls']
+    else:assert contract['provider_bounds']==old_contract['provider_bounds']
+    scope=load_yaml(ROOT/contract.get('gradient_recovery_user_scope_path',contract.get('partition_completion_user_scope_path',
+        contract.get('operational_user_scope_path',contract['numeric_user_scope_path']))))
     assert scope['user_authorized'] is True and scope['attempt_id']==contract['execution_attempt_id']
     assert scope['exact_frozen_api_authorization_required'] is True
-    if 'partition_completion_user_scope_path' in contract:
+    if 'gradient_recovery_policy' in contract:
+        assert scope['schema_version']=='gradient_contract_recovery_user_scope_v1'
+        assert scope['recovery_policy']==contract['gradient_recovery_policy']
+        assert scope['recovery_policy']['selection']=='first_contract_valid'
+        assert scope['recovery_policy']['semantic_quality_selection'] is False
+        assert scope['user_task_sha256']==frontier['pending_pilot_user_task_sha256']
+        assert scope['push_authorized'] is frontier['pending_pilot_push_authorized'] is True
+        assert contract['continuation_authorization_sha256']==contract['gradient_recovery_user_scope_sha256']
+        assert scope['parent_binding_sha256']==contract['gradient_recovery_parent_binding_sha256']
+    elif 'partition_completion_user_scope_path' in contract:
         assert scope['schema_version']=='current_gradient_partition_completion_pilot_user_scope_v1'
         assert scope['scientific_method_changed'] is False and scope['compliance_behavior_changed'] is True
         assert scope['partition_completion_policy']==contract['partition_completion_policy']=='GRADIENT_PATTERN_PARTITION_COMPLETION_V1'
