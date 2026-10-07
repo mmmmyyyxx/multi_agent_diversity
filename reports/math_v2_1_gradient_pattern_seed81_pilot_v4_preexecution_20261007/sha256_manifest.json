@@ -2,6 +2,18 @@
   "algorithm": "sha256",
   "files": [
     {
+      "file": "preexecution/execution_identity.json",
+      "sha256": "4e339442618ac5fda32c14664efb378a74b8ea5dc0d68492f3bf3d4f56b94ffa"
+    },
+    {
+      "file": "preexecution/frozen_scope.json",
+      "sha256": "968aa1ad91f8ee50984c0fc29af1cbddc9766bc4fa7e8d04e925cb416d7cd27b"
+    },
+    {
+      "file": "preexecution/handoff.json",
+      "sha256": "4a0ca775e3dea68a4e766ab6388a30052be0cd118c994e97720323db2e815e73"
+    },
+    {
       "file": "README.md",
       "sha256": "3c81327626cb66994dfe9f0678108edc953f3a370479d43d31653725107509d4"
     },
