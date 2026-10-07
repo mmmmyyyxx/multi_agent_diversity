@@ -31,7 +31,7 @@ flowchart TD
   E --> M[Bounded Rolling Risk Memory]
   M --> L[Bounded Layer1 prompt search]
   L --> T[TeamProbe and Full Optimize]
-  T --> S[Initial competence and strict team gain]
+  T --> S[Initial floor and safe target-or-team progress]
   S --> H[Winner-only Shadow and atomic commit]
 ```
 
@@ -45,8 +45,8 @@ remain byte identical for the frozen synthetic oracle.
 Historical parent bindings are JSON provenance receipts. Their file hashes and
 transitive receipt dependencies are validated as data; they supply no inherited
 `method()` or `compose()` implementation. The complete effective current contract
-retains the existing generation policies, memberships, candidate rules and n+1
-Pattern accounting. Missing Gradient or Memory dependencies fail before provider
+retains the existing generation policies, memberships and candidate rules. The
+historical strict-Vote Pilot bound is not reusable after the V2.2 transition amendment; a fresh bound must be frozen before Pilot dispatch. Missing Gradient or Memory dependencies fail before provider
 dispatch. Current configuration never falls back to raw Pattern or null treatment.
 
 `current_math_dependencies` preserves the canonical source hashes, source pins,
