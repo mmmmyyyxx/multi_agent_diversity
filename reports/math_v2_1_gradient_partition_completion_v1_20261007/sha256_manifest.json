@@ -1,0 +1,37 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "attempt3_partition_replay.json",
+      "sha256": "040430055c6d306f6b65049142b1c7bd0f17b991d718b7c4e88eebf6fc0a092c"
+    },
+    {
+      "file": "negative_regression.json",
+      "sha256": "7c25b970cd90ca7d4210e1ec36ddecd95b0f88186041ac4d52cabece71fbd136"
+    },
+    {
+      "file": "partition_completion_contract.json",
+      "sha256": "c902d2df676de95847bbbfee983570cf885fc7897d2b8a0f3b9f53cf698e506e"
+    },
+    {
+      "file": "positive_regression.json",
+      "sha256": "a08bb5331ddb69daa258bbf8d00a98f58023293be8db50de7f57e1d8ae9d307d"
+    },
+    {
+      "file": "provider_call_equivalence.json",
+      "sha256": "18bf4acb588dacbc5094ea683c86586e0d42b3c44fda218100474dc5a666b36d"
+    },
+    {
+      "file": "README.md",
+      "sha256": "4139158aec4457de502d04265841ea070853c366d47d52fbe4a59d6ac9725493"
+    },
+    {
+      "file": "same_f_equivalence.json",
+      "sha256": "f9374b2b174ea94e334012f334a7327a2f3f27786df97f0fcbf3d9bbba065423"
+    },
+    {
+      "file": "scientific_delta.json",
+      "sha256": "122498b7d632f5bdaae5476a43ceb115163c89972a614e6fdffa68405baba050"
+    }
+  ]
+}

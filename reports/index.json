@@ -1421,6 +1421,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/math_v2_1_gradient_partition_completion_v1_20261007",
+      "document": "reports/math_v2_1_gradient_partition_completion_v1_20261007/README.md",
+      "date": "20261007",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "ZERO_API",
+      "experiment_id": "math_v2_1_gradient_partition_completion_v1",
+      "status": "DRAFT",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/math_v2_1_gradient_pattern_refactor_v1_20261005",
       "document": "reports/math_v2_1_gradient_pattern_refactor_v1_20261005/README.md",
       "date": "20261005",
@@ -1583,6 +1597,20 @@
       "experiment_id": "math_v2_1_gradient_pattern_seed81_pilot_v3",
       "status": "HOLD",
       "source_commit": "9158ebc55b1d36d04e9acb3693d3a5e500ee4a3c",
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
+      "path": "reports/math_v2_1_gradient_pattern_seed81_pilot_v4_preexecution_20261007",
+      "document": "reports/math_v2_1_gradient_pattern_seed81_pilot_v4_preexecution_20261007/README.md",
+      "date": "20261007",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "PREEXECUTION",
+      "experiment_id": "math_v2_1_gradient_pattern_seed81_pilot_v4",
+      "status": "DRAFT",
+      "source_commit": null,
       "historical_current": "historical_evidence",
       "registry_referenced": true,
       "registry_ref": "experiments/registry.yaml",

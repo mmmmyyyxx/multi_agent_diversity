@@ -1,0 +1,28 @@
+{
+  "categories": [
+    "duplicate_within_support",
+    "overlapping_supports",
+    "support_unassigned_overlap",
+    "duplicate_unassigned",
+    "unknown_support_alias",
+    "unknown_unassigned_alias",
+    "malformed_schema",
+    "empty_support",
+    "invalid_generalized_gradient",
+    "specific_content_leakage",
+    "invalid_alias_type",
+    "scientific_binding_drift",
+    "manifest_identity_mismatch",
+    "missing_controller_provenance",
+    "unknown_policy",
+    "critical_normalization_write_failure",
+    "all_unassigned_not_actionable"
+  ],
+  "compliance_module_cases": 34,
+  "contract_violations_rejected": true,
+  "full_current_junit_sha256": "5d6df0668f30e3a34a8a504004429707b4894e96c987c14256bda0756d2fdd24",
+  "no_semantic_regeneration": true,
+  "provider_calls": 0,
+  "status": "PASS",
+  "test_cases": 27
+}

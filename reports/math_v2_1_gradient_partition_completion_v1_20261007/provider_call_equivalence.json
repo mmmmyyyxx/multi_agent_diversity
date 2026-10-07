@@ -1,0 +1,72 @@
+{
+  "all_prompt_and_generation_bytes_unchanged": true,
+  "cluster_calls_per_opportunity": 1,
+  "cluster_request_projection": "GRADIENTS_ONLY",
+  "extra_llm_repair_calls": 0,
+  "five_independent_solver_lanes": true,
+  "gradient_generations_per_wrong": 1,
+  "network_attempt_count": 0,
+  "old_outputs_reused": false,
+  "provenance_sent_to_provider": false,
+  "provider_calls": 0,
+  "provider_one_call_regression": "PASS",
+  "status": "PASS",
+  "witnesses": [
+    {
+      "fresh_realization_identity": true,
+      "member_slot": 0,
+      "provider_bytes_identical": true,
+      "role": "solver",
+      "wire_sha256": "4e4c27940f830ef5569c9693b585bc369f82e31e0aae2dd7c440e29b376f94b4"
+    },
+    {
+      "fresh_realization_identity": true,
+      "member_slot": 1,
+      "provider_bytes_identical": true,
+      "role": "solver",
+      "wire_sha256": "4e4c27940f830ef5569c9693b585bc369f82e31e0aae2dd7c440e29b376f94b4"
+    },
+    {
+      "fresh_realization_identity": true,
+      "member_slot": 2,
+      "provider_bytes_identical": true,
+      "role": "solver",
+      "wire_sha256": "4e4c27940f830ef5569c9693b585bc369f82e31e0aae2dd7c440e29b376f94b4"
+    },
+    {
+      "fresh_realization_identity": true,
+      "member_slot": 3,
+      "provider_bytes_identical": true,
+      "role": "solver",
+      "wire_sha256": "4e4c27940f830ef5569c9693b585bc369f82e31e0aae2dd7c440e29b376f94b4"
+    },
+    {
+      "fresh_realization_identity": true,
+      "member_slot": 4,
+      "provider_bytes_identical": true,
+      "role": "solver",
+      "wire_sha256": "4e4c27940f830ef5569c9693b585bc369f82e31e0aae2dd7c440e29b376f94b4"
+    },
+    {
+      "fresh_realization_identity": true,
+      "member_slot": null,
+      "provider_bytes_identical": true,
+      "role": "reflection",
+      "wire_sha256": "ca04ca041fdbd0a0df9769b609c9c44a1fd989f5a28da22dabe382527107da75"
+    },
+    {
+      "fresh_realization_identity": true,
+      "member_slot": null,
+      "provider_bytes_identical": true,
+      "role": "pattern_gradient",
+      "wire_sha256": "ca04ca041fdbd0a0df9769b609c9c44a1fd989f5a28da22dabe382527107da75"
+    },
+    {
+      "fresh_realization_identity": true,
+      "member_slot": null,
+      "provider_bytes_identical": true,
+      "role": "pattern_cluster",
+      "wire_sha256": "ca04ca041fdbd0a0df9769b609c9c44a1fd989f5a28da22dabe382527107da75"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "actual_replay": "explicit_unassigned_baseline_identical",
+  "all_explicit_pattern_labels_and_F_unchanged": true,
+  "complete_historical_selection_unchanged": true,
+  "coverage_definition_unchanged": true,
+  "missing_aliases_have_no_pattern_F": true,
+  "provider_calls": 0,
+  "selected_F": 8,
+  "selected_pattern_id": "72d839eb6e28acc2f0f9e13834a213e69e47075b683d6966825245592a3bfff7",
+  "status": "PASS"
+}

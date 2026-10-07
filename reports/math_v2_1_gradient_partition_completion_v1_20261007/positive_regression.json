@@ -1,0 +1,40 @@
+{
+  "cases": [
+    {
+      "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt2",
+      "cluster_index": 1,
+      "completion_applied": false,
+      "normalized_partition_sha256": "d8d04274b3fa898ad8d4143a6f741217e46bd20d69b1b496fc119b0daf255ef7",
+      "pattern_count": 5,
+      "provider_response_sha256": "e119e9e73534b261273e068c6ad70fcfa904664b77064be74b0a0b524cc46d50",
+      "raw_partition_sha256": "d8d04274b3fa898ad8d4143a6f741217e46bd20d69b1b496fc119b0daf255ef7",
+      "same_F_selection_unchanged": true,
+      "wrong_count": 7
+    },
+    {
+      "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_canary_attempt3",
+      "cluster_index": 1,
+      "completion_applied": false,
+      "normalized_partition_sha256": "fc4c3e34484c981ddedab4038b7d48c00f94147f5cf4452470ebc42797539b40",
+      "pattern_count": 1,
+      "provider_response_sha256": "fc4c3e34484c981ddedab4038b7d48c00f94147f5cf4452470ebc42797539b40",
+      "raw_partition_sha256": "fc4c3e34484c981ddedab4038b7d48c00f94147f5cf4452470ebc42797539b40",
+      "same_F_selection_unchanged": true,
+      "wrong_count": 7
+    },
+    {
+      "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt3",
+      "cluster_index": 1,
+      "completion_applied": false,
+      "normalized_partition_sha256": "464abf5fa3cac55a4944e96cd62c911cf4b2e108ad404ea2ac011685d1f79f5e",
+      "pattern_count": 2,
+      "provider_response_sha256": "8edce8a78888f90fcd95fb4abf0903eec09e31831d05ed777b41d8c8c5c35835",
+      "raw_partition_sha256": "464abf5fa3cac55a4944e96cd62c911cf4b2e108ad404ea2ac011685d1f79f5e",
+      "same_F_selection_unchanged": true,
+      "wrong_count": 38
+    }
+  ],
+  "complete_output_count": 3,
+  "provider_calls": 0,
+  "status": "PASS"
+}

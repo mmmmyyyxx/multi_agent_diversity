@@ -765,3 +765,13 @@ failure-count lifetime or candidate admission. Pilot read-only state journals
 record actual Memory retrieval and generation/transaction boundaries without
 additional retrieval, inference, ranking or stopping read points. Search-only
 Pilot authorization keeps Validation deferred and Test sealed.
+
+## Deterministic Gradient partition completion (explicit fresh binding)
+
+The [completion contract](GRADIENT_PARTITION_COMPLETION_V1.md) permits only
+known alias omissions in an otherwise valid provider partition. Missing aliases
+append to unassigned in input order; raw responses and explicit semantic groups
+remain unchanged. Contradictory membership and invalid generalized gradients
+remain terminal. This versioned compliance amendment makes no provider call and
+changes no Gradient, clustering criterion, same-F, WHO, Memory, Layer1, gates or
+scientific budget/stopping rule. A fresh identity and authorization are required.

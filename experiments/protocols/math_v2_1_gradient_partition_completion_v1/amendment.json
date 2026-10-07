@@ -1,0 +1,22 @@
+{
+  "code_change_authorized": true,
+  "compliance_behavior_changed": true,
+  "experiment_id": "math_v2_1_gradient_partition_completion_v1",
+  "parent_binding_sha256": "49fd5e232ee32f681b58f3584a8b5d378116615eccfbe113744a0e15d6076cf9",
+  "policy": {
+    "admissible_defect": "KNOWN_ALIAS_OMISSION_ONLY",
+    "destination": "unassigned_ids",
+    "extra_provider_calls": 0,
+    "identity": "GRADIENT_PATTERN_PARTITION_COMPLETION_V1",
+    "ordering": "existing_then_missing_in_input_order",
+    "preserve_explicit_supports": true,
+    "preserve_raw_response": true,
+    "semantic_assignment": false,
+    "semantic_regeneration": false
+  },
+  "provider_call_budget": 0,
+  "real_api_authorized": false,
+  "schema_version": "gradient_partition_completion_amendment_v1",
+  "scientific_method_changed": false,
+  "user_task_sha256": "9c5f6e8ce42591051426e6c7300e764859ac994bef18b3a12e1fb0fd4ef5ea32"
+}

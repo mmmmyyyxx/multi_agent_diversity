@@ -45,9 +45,12 @@ class MATHGradientPatternBinding:
             gradient_prompt=c['gradient_prompt_sha256'],cluster_prompt=c['pattern_prompt_sha256'],
             generation_policy=c['optimizer_generation_policy'],discovery=c['pattern_policy'],
             support_id_transport=c['pattern_support_id_transport'],abstraction_guard=c['pattern_abstraction_guard'])
+        if 'partition_completion_policy' in c:
+            identity['partition_completion_policy']=c['partition_completion_policy']
         binding=hashlib.sha256(json.dumps(identity,sort_keys=True,separators=(',',':')).encode()).hexdigest()
         return CURRENT_POLICY_BUNDLE.method(aggregation=c['aggregation'],provider_binding=binding,
-            successful_provider_calls=c['provider_bounds']['successful_provider_calls'])
+            successful_provider_calls=c['provider_bounds']['successful_provider_calls'],
+            partition_completion_policy=c.get('partition_completion_policy'))
 
     def compose(self,*,arm,seed,solver,reflection,pattern_provider,run_root,optimize_fn=None):
         blockers=self.blockers()
@@ -89,6 +92,11 @@ class MATHGradientPatternBinding:
 
     def blockers(self):
         try:
+            if 'partition_completion_amendment_path' in self.contract:
+                from .partition_completion_contract import validate_partition_completion
+                validate_partition_completion(self)
+                validate_effective_math_dependencies(self)
+                return ()
             if 'operational_user_scope_path' in self.contract:
                 from .operational_pilot_contract import validate_operational_pilot
                 validate_operational_pilot(self)

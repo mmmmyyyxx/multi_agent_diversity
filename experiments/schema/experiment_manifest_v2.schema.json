@@ -3,6 +3,7 @@
   "title": "Unified experiment manifest v2",
   "type": "object",
   "properties": {
+    "partition_completion_policy": {"const": "GRADIENT_PATTERN_PARTITION_COMPLETION_V1"},
     "runtime_persistence_policy": {
       "const": {
         "identity": "JOURNAL_FIRST_PROVIDER_DURABILITY_V1",
@@ -2147,6 +2148,7 @@
               "panel_policy": {
                 "const": "pattern_gradient_representatives_preservation_transition_v5"
               },
+              "partition_completion_policy": {"const": "GRADIENT_PATTERN_PARTITION_COMPLETION_V1"},
               "pattern_abstraction_guard": {},
               "pattern_policy": {},
               "pattern_provider_binding": {

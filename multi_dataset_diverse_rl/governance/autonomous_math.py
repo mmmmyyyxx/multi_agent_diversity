@@ -164,7 +164,10 @@ async def execute_search(root, prep, run_root, payload):
         solver = BenchmarkSolver(binding.benchmark(),broker)
         from ..search.textual_gradients import PerExampleGradientProvider, GradientClusterProvider
         pattern_provider=GradientClusterProvider(broker,read_json(root/c['pattern_prompt_path'])['prompt'],
-            gradient_provider=PerExampleGradientProvider(broker,read_json(root/c['gradient_prompt_path'])['prompt']))
+            gradient_provider=PerExampleGradientProvider(broker,read_json(root/c['gradient_prompt_path'])['prompt']),
+            partition_completion_policy=c.get('partition_completion_policy'),
+            partition_writer=(lambda r:append_jsonl(run_root/'partition_completion_private.jsonl',r))
+                if c.get('partition_completion_policy') is not None else None)
         composed = binding.compose(arm=arm,seed=81,solver=solver,reflection=ReflectionProvider(broker),pattern_provider=pattern_provider,run_root=run_root)
         if any(composed.memory.audit()[k] for k in ('success_writes','failure_writes','shared_writes')):
             raise OperationalAbort('FRESH_MEMORY_STATE_REQUIRED')
@@ -198,6 +201,10 @@ async def execute_search(root, prep, run_root, payload):
         summary = dict(result=plain(result),ledger=broker.usage,accounting=budget.view(),validation_reserve=reserve.remaining(),
             validation_search_raw_reads=0,validation_calls=0,test_raw_reads=0,test_calls=0,pattern_calls=broker.usage['pattern'],memory_activity=0)
         summary['pattern_input_audit']=pattern_provider.input_audit
+        if c.get('partition_completion_policy') is not None:
+            from ..search.partition_completion import completion_statistics
+            summary['partition_completion']=dict(policy=c['partition_completion_policy'],
+                **completion_statistics(pattern_provider.partition_audit))
         if durable is not None:
             summary['runtime_persistence'] = dict(policy=durable,
                 derived_token_snapshot_detached=budget.snapshot_updates_disabled,

@@ -1,0 +1,20 @@
+{
+  "all_missing_no_patterns": "PATTERN_DISCOVERY_NOT_ACTIONABLE",
+  "compliance_behavior_changed": true,
+  "core_scientific_method_changed": false,
+  "generalized_chars": 600,
+  "hard_individual_chars": 400,
+  "invalid_other_defects": "FAIL_CLOSED",
+  "policy": {
+    "admissible_defect": "KNOWN_ALIAS_OMISSION_ONLY",
+    "destination": "unassigned_ids",
+    "extra_provider_calls": 0,
+    "identity": "GRADIENT_PATTERN_PARTITION_COMPLETION_V1",
+    "ordering": "existing_then_missing_in_input_order",
+    "preserve_explicit_supports": true,
+    "preserve_raw_response": true,
+    "semantic_assignment": false,
+    "semantic_regeneration": false
+  },
+  "raw_response_immutable": true
+}

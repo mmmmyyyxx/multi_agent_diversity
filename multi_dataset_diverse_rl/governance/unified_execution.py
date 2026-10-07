@@ -68,10 +68,16 @@ def execution_identity(root, contract):
     configs.extend(contract[k] for k in ('gradient_prompt_path','gradient_parent_binding_path') if k in contract)
     configs.extend(contract[k] for k in ('pilot_parent_binding_path','pilot_execution_authorization_path') if k in contract)
     provenance_contract = contract
-    if 'operational_user_scope_path' in contract:
+    if 'partition_completion_amendment_path' in contract:
+        from ..benchmarks.partition_completion_contract import validate_partition_completion
+        from ..benchmarks.math_gradient_pattern_binding import MATHGradientPatternBinding
+        provenance_contract=validate_partition_completion(MATHGradientPatternBinding(root,contract))
+        configs.extend(contract[k] for k in ('partition_completion_parent_binding_path',
+            'partition_completion_user_scope_path','partition_completion_amendment_path'))
+    if 'operational_user_scope_path' in provenance_contract:
         from ..benchmarks.operational_pilot_contract import validate_operational_pilot
         from ..benchmarks.math_gradient_pattern_binding import MATHGradientPatternBinding
-        provenance_contract=validate_operational_pilot(MATHGradientPatternBinding(root,contract))
+        provenance_contract=validate_operational_pilot(MATHGradientPatternBinding(root,provenance_contract))
         configs.extend(contract[k] for k in ('operational_parent_binding_path','operational_user_scope_path'))
     if 'numeric_admissibility_amendment_path' in provenance_contract:
         from ..benchmarks.numeric_admissibility_contract import validate_numeric_admissibility
@@ -196,6 +202,11 @@ def execution_scope(manifest, contract):
         scope['runtime_persistence_policy']=contract['runtime_persistence_policy']
         scope['operational_user_scope_sha256']=contract['operational_user_scope_sha256']
         scope['operational_parent_binding_sha256']=contract['operational_parent_binding_sha256']
+    if 'partition_completion_policy' in contract:
+        scope['partition_completion_policy']=contract['partition_completion_policy']
+        scope['partition_completion_amendment_sha256']=contract['partition_completion_amendment_sha256']
+        scope['partition_completion_parent_binding_sha256']=contract['partition_completion_parent_binding_sha256']
+        scope['user_scope_sha256']=contract['partition_completion_user_scope_sha256']
     return scope
 
 
@@ -280,6 +291,8 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
     manifest["global_stop_identity"] = method.global_stop.identity
     if 'runtime_persistence_policy' in contract:
         manifest['runtime_persistence_policy']=contract['runtime_persistence_policy']
+    if 'partition_completion_policy' in contract:
+        manifest['partition_completion_policy']=contract['partition_completion_policy']
     for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256", "optimizer_nonthinking_evidence_policy", "layer1_search_policy", "candidate_contract_identity", "post_search_validation_policy", "pattern_support_id_transport", "pattern_abstraction_guard"):
         if k in contract:manifest[k]=contract[k]
     manifest["preregistration_identity"] = canonical_sha256({k: v for k, v in manifest.items() if k not in {"lifecycle", "authorization"}})

@@ -137,10 +137,16 @@ class PerExampleGradientProvider(_FreshSearchProvider):
 class GradientClusterProvider(_FreshSearchProvider):
     role='pattern_cluster';stage='set_level_gradient_clustering'
     support_id_transport=versions.PATTERN_SUPPORT_ID_ALIAS_VERSION
-    def __init__(self,broker,prompt=CLUSTER_PROMPT,*,gradient_provider=None):
+    def __init__(self,broker,prompt=CLUSTER_PROMPT,*,gradient_provider=None,
+            partition_completion_policy=None, partition_writer=None):
         super().__init__(broker,prompt)
         self.gradient_provider=gradient_provider
-    def cluster(self,payload):
+        if partition_completion_policy not in (None, versions.GRADIENT_PARTITION_COMPLETION_VERSION):
+            raise SearchContractError('PATTERN_PARTITION_COMPLETION_POLICY_MISMATCH')
+        self.partition_completion_policy=partition_completion_policy
+        self.partition_writer=partition_writer
+        self.partition_audit=[]
+    def cluster(self,payload,*,evidence_rows=None):
         if not isinstance(payload,dict) or set(payload)!={'gradients'}:
             raise SearchContractError('PATTERN_GRADIENT_CLUSTER_INPUT_INVALID')
         validate_records(payload['gradients'])
@@ -148,7 +154,23 @@ class GradientClusterProvider(_FreshSearchProvider):
         wire=deepcopy(payload);mapping={}
         for i,row in enumerate(wire['gradients'],1):
             alias=f'e{i}';mapping[alias]=row['example_id'];row['example_id']=alias
+        if self.partition_completion_policy is not None:
+            rows=tuple(evidence_rows or ())
+            if (wrong_universe(rows)!=rows or len(rows)!=len(mapping)
+                    or {r.example_id for r in rows}!=set(mapping.values())):
+                raise SearchContractError('PATTERN_PARTITION_COMPLETION_PROVENANCE_REQUIRED')
         value=self._call(wire)
+        if self.partition_completion_policy is not None:
+            from .partition_completion import complete_known_alias_partition
+            raw=deepcopy(value)
+            try:
+                value,audit=complete_known_alias_partition(raw,tuple(mapping),
+                    validate_generalized=lambda text:validate_gradient(text,rows,generalized=True))
+            except SearchContractError as exc:
+                audit=getattr(exc,'partition_completion_audit',None)
+                if audit is not None:self._record_partition(raw,None,audit)
+                raise
+            self._record_partition(raw,value,audit)
         if not isinstance(value,dict) or set(value)!={'patterns','unassigned_ids'} or not isinstance(value['patterns'],list):
             raise SearchContractError('PATTERN_GRADIENT_CLUSTER_INVALID')
         def decode(ids):
@@ -160,6 +182,14 @@ class GradientClusterProvider(_FreshSearchProvider):
             p['support_ids']=decode(p['support_ids'])
         value['unassigned_ids']=decode(value['unassigned_ids'])
         return value
+
+    def _record_partition(self,raw,normalized,audit):
+        # Persist before decode/scoring. A failed durable write remains a hard
+        # operational failure; it never authorizes an in-attempt second draw.
+        if self.partition_writer is not None:
+            self.partition_writer(dict(cluster_index=self.calls,raw_partition=deepcopy(raw),
+                normalized_controller_partition=deepcopy(normalized),audit=deepcopy(audit)))
+        self.partition_audit.append(deepcopy(audit))
 
 
 class GradientExtractor:
@@ -260,8 +290,14 @@ class GradientPatternDiscovery:
         if not rows:raise SearchContractError('PATTERN_DISCOVERY_NOT_ACTIONABLE')
         self.attempted_opportunities.add(key)
         gradients=self.extractor.extract(state.member_prompts[target_member],rows)
-        value=self.cluster_provider.cluster({'gradients':[dict(g) for g in gradients]})
-        return score_gradient_partition(value,rows,gradients)
+        payload={'gradients':[dict(g) for g in gradients]}
+        completion=getattr(self.cluster_provider,'partition_completion_policy',None)
+        value=(self.cluster_provider.cluster(payload,evidence_rows=rows) if completion is not None
+            else self.cluster_provider.cluster(payload))
+        context=score_gradient_partition(value,rows,gradients)
+        if completion is not None:
+            context['partition_completion_audit']=deepcopy(self.cluster_provider.partition_audit[-1])
+        return context
 
 
 class GradientPatternConditionedEvidence:

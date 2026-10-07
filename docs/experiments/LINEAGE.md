@@ -81,7 +81,7 @@ memory_policy_real_execution_authorized: false
 current_pattern_support_id_transport: PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1
 next_canary_authorized: false
 current_pattern_abstraction_guard: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5
-future_execution_requires_new_user_authorization: true
+future_execution_requires_new_user_authorization: false
 available_opt_in_pattern_abstraction_guard: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5
 pattern_guard_amendment_status: FROZEN_V5_76_FRESH_GRADIENTS_PASS_NO_AMENDMENT
 next_canary_manifest: null
@@ -123,18 +123,18 @@ gradient_cluster_semantic_behavior: SHARED_PATTERN_OBSERVED
 current_gradient_prompt: PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3
 future_execution_requires_new_frozen_single_use_scope: true
 gradient_raw_comparison_classification: MIXED
-pending_pilot_milestone: null
-pending_pilot_manifest: null
-pending_pilot_attempt_id: null
-pending_pilot_scope: null
-pending_pilot_user_task_sha256: null
-pending_pilot_user_authorization_received: false
-pending_pilot_status: CLOSED_SCIENTIFIC_DECISION_REQUIRED
-pending_pilot_operational_retry_limit: 0
+pending_pilot_milestone: math_v2_1_gradient_pattern_seed81_pilot_v4
+pending_pilot_manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v4.yaml
+pending_pilot_attempt_id: math_v2_1_gradient_pattern_A4_seed81_pilot_attempt4
+pending_pilot_scope: A4_SEED81_OPTIMIZE60_SHADOW40_SEARCH_ONLY
+pending_pilot_user_task_sha256: 9c5f6e8ce42591051426e6c7300e764859ac994bef18b3a12e1fb0fd4ef5ea32
+pending_pilot_user_authorization_received: true
+pending_pilot_status: ZERO_API_PARTITION_COMPLETION_PREFLIGHT
+pending_pilot_operational_retry_limit: FRESH_AFTER_PROVEN_OPERATIONAL_INVALIDITY_ONLY
 pending_pilot_scientific_changes_authorized: false
 pending_pilot_validation_authorized: false
 pending_pilot_test_authorized: false
-pending_pilot_push_authorized: false
+pending_pilot_push_authorized: true
 last_pilot_milestone: math_v2_1_gradient_pattern_seed81_pilot_v3
 current_pilot_status: PATTERN_PARTITION_CONTRACT_FAILURE
 current_pilot_report: reports/math_v2_1_gradient_pattern_seed81_pilot_v3_execution_20261007
@@ -152,7 +152,7 @@ current_pilot_offline_execution_profile: experiments/execution_bindings/math_v2_
 current_initial_condition_runtime_source: 52ada98b4735cfa7713de2c2f5437a94ce0bef0b
 current_gradient_prompt_identity: PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3
 current_pattern_guard_identity: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5
-pending_pilot_scientific_amendment_scope: null
+pending_pilot_scientific_amendment_scope: KNOWN_ALIAS_OMISSION_ONLY
 numeric_guard_historical_regression_status: PASS_7_CANARY3_PLUS_4_PILOT1_AND_22_REAL_SOURCE_NEGATIVES
 pilot_monitor_repair_status: APPEND_ONLY_OBSERVER_ZERO_API_AND_ACTUAL_PREFIX_PASS
 pilot_persistence_incident_lock_holder: NOT_ESTABLISHED
@@ -160,6 +160,7 @@ pilot_fresh_gradient_semantic_usefulness: USER_REVIEW_PENDING_NO_LLM_JUDGE
 pilot_authorization_closed: true
 pilot_partition_contract_compliance: FIRST_PASS_SECOND_MISSING_TWO_IDS
 pilot_persistence_status: ZERO_API_1005_CYCLES_AND_468_ACTUAL_RESPONSE_RECEIPTS_NO_GAP
+current_partition_completion_policy: GRADIENT_PATTERN_PARTITION_COMPLETION_V1
 ```
 
 ## Experiment and engineering DAG
@@ -422,6 +423,8 @@ flowchart TD
     n275["math_v2_1_gradient_pattern_seed81_pilot_v1<br/>PILOT<br/>HOLD"]
     n277["math_v2_1_gradient_pattern_seed81_pilot_v2<br/>PILOT<br/>INVALID"]
     n278["math_v2_1_gradient_pattern_seed81_pilot_v3<br/>PILOT<br/>HOLD"]
+    n279["math_v2_1_gradient_partition_completion_v1<br/>ZERO_API_AUDIT<br/>DRAFT"]
+    n280["math_v2_1_gradient_pattern_seed81_pilot_v4<br/>PILOT<br/>DRAFT"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -625,6 +628,9 @@ flowchart TD
   n275 -->|followup_of| n277
   n276 -->|followup_of| n277
   n277 -->|followup_of| n278
+  n278 -->|followup_of| n279
+  n279 -->|followup_of| n280
+  n278 -->|followup_of| n280
 ```
 
 ## Archived branches and unresolved evidence

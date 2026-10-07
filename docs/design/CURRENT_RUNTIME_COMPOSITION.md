@@ -14,6 +14,12 @@ New experiments use `scripts/run_experiment.py`,
 `MATHGradientPatternBinding`, and
 `search.current_composition.build_current_team_prompt_search`.
 The current binding accepts one complete `CurrentPolicyBundle`.
+The separately versioned partition-completion capability is explicitly activated
+by a fresh binding. It validates generalized gradients against controller-only
+provenance, appends only known omissions to unassigned, and stores a separate
+normalization journal before the unchanged decode and same-F scorer. Provenance
+never enters the gradients-only provider request. Historical absent-policy
+bindings preserve their original method identity and strict membership behavior.
 
 ```mermaid
 flowchart TD

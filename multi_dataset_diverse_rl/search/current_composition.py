@@ -33,6 +33,8 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
     if policy_bundle != CURRENT_POLICY_BUNDLE:
         raise SearchContractError('CURRENT_POLICY_MISMATCH')
     policy_bundle.validate_method(method)
+    if getattr(pattern_provider,'partition_completion_policy',None) != method.mechanism_config.get('partition_completion_policy'):
+        raise SearchContractError('PATTERN_PARTITION_COMPLETION_POLICY_MISMATCH')
     if optimizer.config != CurrentLayer1Config():
         raise SearchContractError('CURRENT_LAYER1_POLICY_MISMATCH')
     if (pattern_provider is None or getattr(pattern_provider,'gradient_provider',None) is None

@@ -420,10 +420,21 @@ def test_new_pending_pilot_has_separate_user_scope_without_inheriting_closed_aut
     assert contract['execution_attempt_id']!=old_contract['execution_attempt_id']
     assert contract['cache_namespace']!=old_contract['cache_namespace']
     assert contract['provider_bounds']==old_contract['provider_bounds'] and contract['models']==old_contract['models']
-    scope=load_yaml(ROOT/contract.get('operational_user_scope_path',contract['numeric_user_scope_path']))
+    scope=load_yaml(ROOT/contract.get('partition_completion_user_scope_path',
+        contract.get('operational_user_scope_path',contract['numeric_user_scope_path'])))
     assert scope['user_authorized'] is True and scope['attempt_id']==contract['execution_attempt_id']
     assert scope['exact_frozen_api_authorization_required'] is True
-    if 'operational_user_scope_path' in contract:
+    if 'partition_completion_user_scope_path' in contract:
+        assert scope['schema_version']=='current_gradient_partition_completion_pilot_user_scope_v1'
+        assert scope['scientific_method_changed'] is False and scope['compliance_behavior_changed'] is True
+        assert scope['partition_completion_policy']==contract['partition_completion_policy']=='GRADIENT_PATTERN_PARTITION_COMPLETION_V1'
+        assert scope['user_task_sha256']==frontier['pending_pilot_user_task_sha256']
+        assert scope['push_authorized'] is frontier['pending_pilot_push_authorized'] is True
+        assert contract['continuation_authorization_sha256']==contract['partition_completion_user_scope_sha256']
+        closed_parent=next(r for r in registry['experiments'] if r['experiment_id']=='math_v2_1_gradient_pattern_seed81_pilot_v3')
+        assert closed_parent['authorization_closed'] is True and closed_parent['authorization_consumed'] is True
+        assert scope['parent_binding_sha256']==contract['partition_completion_parent_binding_sha256']
+    elif 'operational_user_scope_path' in contract:
         assert scope['schema_version']=='current_gradient_operational_pilot_user_scope_v1'
         assert scope['scientific_method_changed'] is False
         assert scope['user_task_sha256']==frontier['pending_pilot_user_task_sha256']
@@ -491,7 +502,11 @@ def test_initial_persistence_abort_preserves_accounting_and_closes_scope():
     ('registry','active_for_new_work',True),
 ])
 def test_partition_contract_abort_cannot_use_operational_retry_scope(location,field,value):
-    frontier=deepcopy(load_yaml(ROOT/'experiments/current_frontier.yaml'))
+    # Audit the closed attempt3 independently of later, newly authorized amendments.
+    frontier=_closed_pilot_frontier()
+    frontier.update(current_experiment='math_v2_1_gradient_pattern_seed81_pilot_v3',
+        last_pilot_milestone='math_v2_1_gradient_pattern_seed81_pilot_v3',
+        current_pilot_status='PATTERN_PARTITION_CONTRACT_FAILURE')
     registry=deepcopy(load_yaml(ROOT/'experiments/registry.yaml'))
     assert frontier['current_pilot_status']=='PATTERN_PARTITION_CONTRACT_FAILURE'
     pilot=next(r for r in registry['experiments'] if r['experiment_id']==frontier['current_experiment'])

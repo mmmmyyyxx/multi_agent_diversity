@@ -1,0 +1,31 @@
+{
+  "changed": [
+    "versioned_known_alias_omission_completion",
+    "separate_durable_normalization_audit"
+  ],
+  "compliance_behavior_changed": true,
+  "frozen": [
+    "Gradient_V1",
+    "Prompt_V3",
+    "Guard_V5",
+    "hard400",
+    "cluster_prompt",
+    "schema_V2",
+    "same_F",
+    "WHO",
+    "Memory",
+    "Layer1",
+    "TeamProbe",
+    "Full",
+    "Shadow",
+    "models",
+    "decoding",
+    "dataset",
+    "budgets",
+    "stopping"
+  ],
+  "network_attempt_count": 0,
+  "old_scientific_state_reused": false,
+  "provider_calls": 0,
+  "scientific_method_changed": false
+}

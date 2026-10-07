@@ -53,7 +53,12 @@ similarity threshold. The algorithm does not force semantic merges.
 
 `GRADIENT_PATTERN_PARTITION_V2` accepts exactly patterns containing a generalized
 gradient (at most 600 characters) and nonempty support IDs, plus unassigned IDs.
-Membership is a full disjoint partition of the original wrong universe. Generalized
+Membership is a full disjoint partition of the original wrong universe.
+The explicit fresh completion policy described in
+[GRADIENT_PARTITION_COMPLETION_V1.md](GRADIENT_PARTITION_COMPLETION_V1.md)
+can append only missing known aliases to unassigned before the original scorer;
+its absence preserves strict rejection. Full membership includes unassigned;
+scientific Coverage and F still use explicit Pattern supports only. Generalized
 gradients use the same content guard. Canonical identity depends only on normalized
 generalized gradient text and its version; exactly equal normalized descriptions
 merge deterministically. Original sample labels are recomputed by membership and

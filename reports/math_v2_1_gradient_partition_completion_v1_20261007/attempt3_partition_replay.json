@@ -1,0 +1,50 @@
+{
+  "attempt_id": "math_v2_1_gradient_pattern_A4_seed81_pilot_attempt3",
+  "audit": {
+    "completion_applied": true,
+    "defect": "KNOWN_ALIAS_OMISSION_ONLY",
+    "duplicate_count": 0,
+    "input_count": 38,
+    "missing_aliases": [
+      "e2",
+      "e24"
+    ],
+    "missing_count": 2,
+    "normalized_membership_count": 38,
+    "normalized_partition_sha256": "137ace2ce0d60ada16f1e7d692fe1d4a80c874b9ae47a7b583001403cc4ccc3d",
+    "policy": "GRADIENT_PATTERN_PARTITION_COMPLETION_V1",
+    "raw_complete": false,
+    "raw_partition_sha256": "1d9d87104d7ee4787642d1de086a71c0e036faf44d3d83ea4636e6297aebcb1b",
+    "status": "PASS",
+    "unknown_count": 0
+  },
+  "cluster_index": 2,
+  "explicit_supports_unchanged": true,
+  "generalized_gradients_unchanged": true,
+  "group_order_unchanged": true,
+  "input_count": 38,
+  "membership_coverage": "38/38",
+  "missing_aliases": [
+    "e2",
+    "e24"
+  ],
+  "no_pattern_created": true,
+  "normalized_membership_count": 38,
+  "normalized_partition_sha256": "137ace2ce0d60ada16f1e7d692fe1d4a80c874b9ae47a7b583001403cc4ccc3d",
+  "normalized_unassigned_aliases": [
+    "e2",
+    "e24"
+  ],
+  "old_classification_unchanged": true,
+  "pattern_count": 12,
+  "policy": "GRADIENT_PATTERN_PARTITION_COMPLETION_V1",
+  "provider_calls": 0,
+  "raw_partition_sha256": "1d9d87104d7ee4787642d1de086a71c0e036faf44d3d83ea4636e6297aebcb1b",
+  "raw_response_sha256": "97b807e87efe52205ff16acec4cc185c2271caa115c4c98d4c06a2825ff1cc41",
+  "raw_support_membership_count": 36,
+  "raw_unassigned_count": 0,
+  "scientific_assigned_Coverage": 0.9473684210526315,
+  "selected_F": 8,
+  "selected_pattern_id": "72d839eb6e28acc2f0f9e13834a213e69e47075b683d6966825245592a3bfff7",
+  "status": "PASS"
+}
