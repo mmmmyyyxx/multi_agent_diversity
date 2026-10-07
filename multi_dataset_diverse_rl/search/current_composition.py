@@ -8,7 +8,7 @@ from .policies import TargetPolicyV1, GlobalStopPolicy
 from .private_gate import private_binary_gate
 from .transition import TeamStateCommitter
 from .variable_evidence import VariableEvidenceFeasibilityV1
-from .initial_competence_transition import InitialCompetenceTransitionV2
+from .initial_competence_transition import InitialCompetenceTargetOrTeamTransitionV3
 from .current_layer1 import CurrentEngine, CurrentLayer1Config
 from .current_opportunity import CurrentOpportunityBuilder
 from .current_policy import CURRENT_POLICY_BUNDLE
@@ -57,7 +57,7 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
         raise SearchContractError('HOLD_PRE_PROVIDER: CURRENT_MEMORY_PROVIDER_NOT_BOUND')
     optimizer.memory=memory
     invalidity=bool(getattr(benchmark,'invalid_predictions_are_incorrect',False))
-    transition=InitialCompetenceTransitionV2(invalid_predictions_are_incorrect=invalidity)
+    transition=InitialCompetenceTargetOrTeamTransitionV3(invalid_predictions_are_incorrect=invalidity)
     provider=FixedPeerTeamEvaluationProvider(store,transition)
     gate=private_binary_gate(benchmark=benchmark,load_examples=shadow_loader,expected_count=shadow_count,
         solver=solver.for_gate() if hasattr(solver,'for_gate') else solver,store=store)
