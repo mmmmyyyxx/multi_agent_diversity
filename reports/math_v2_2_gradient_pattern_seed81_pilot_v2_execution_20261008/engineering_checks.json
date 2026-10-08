@@ -1,0 +1,29 @@
+{
+  "binding": true,
+  "compileall": true,
+  "current_governance": true,
+  "excluded_historical_private_cases": 1468,
+  "final_tests": {
+    "current": {
+      "failures": 0,
+      "junit_sha256": "e56bea640e9f8d3851654241f501e3a1bb7dbca46834ae257ef97c8d658dfc61",
+      "network_attempts": 0,
+      "passed": 1605,
+      "skipped": 2
+    },
+    "integration": {
+      "failures": 0,
+      "junit_sha256": "2f0a298c2547d54fbb4274fc5146d76d0dd45bbef7c7f0389a2637b565ed6242",
+      "network_attempts": 0,
+      "passed": 139,
+      "skipped": 0
+    }
+  },
+  "full_historical_replay_pass_claimed": false,
+  "initial_scoped": {
+    "failed": 1,
+    "passed": 162,
+    "reason": "New role schema allowlist; repaired and covered by final integration/current checks"
+  },
+  "network_attempts": 0
+}

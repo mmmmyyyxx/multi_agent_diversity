@@ -2,7 +2,7 @@ schema_version: experiment_manifest_v2
 experiment_id: math_v2_2_gradient_pattern_seed81_pilot_v2
 method_family: unified_team_prompt_search_v2_2
 method_identity: unified_team_prompt_search_v2_2
-source_sha: 2bc670d3e4080221a06ab985df43617aa87f3ae2
+source_sha: 6731aa3f345eff7feac12140b4892f4e07291d17
 benchmark_id: math
 benchmark_protocol_id: 3aee274eeee86c07b7ea66a8700d925e42ecab17663a65e93e96f4ae475e1a67
 dataset_manifest_identity: 7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f
@@ -39,15 +39,15 @@ authorization:
   authorization_identity: null
   single_use: true
 lifecycle:
-  status: DRAFT
+  status: PREEXECUTION_FROZEN
   history:
   - status: DRAFT
     event: ZERO_API_BLOCKER_CLOSURE
-  - status: DRAFT
-    event: AWAITING_SOURCE_COMMIT
+  - status: PREEXECUTION_FROZEN
+    event: FROZEN_SOURCE_RECEIPT
 hash_closure:
-  scientific_source_hash: 39b45c9133b32aa9ba96d4bb28f967c1eb28bbc8ceb0beb1159a510ec50bef19
-  governance_hash: 85a778f0ffd69cb84d20b99bbb43243d078536a92d94e14971c8b613f212f537
+  scientific_source_hash: 7f4f642bb32325f8bcefc76acc687cbe5fc8c6d60dc8d6374e121206bbdcfc83
+  governance_hash: b8046aedfa1abba4b3d29ebb38249199789b02aabeb1e1a7e741c1a55cf97050
   benchmark_contract_hash: 73e3d9e9919bf62b1ba5bb5218f5e7b984737e0d4f8a5d2f612023cfbfa0b4b6
   dataset_manifest_hash: d3c3f587bf9e08f5d9a12c8b777953c57cd30fc4c655e82e95f556b337119d81
 execution_binding:
@@ -411,4 +411,4 @@ post_search_validation_policy:
   unchanged_status: SKIPPED_NO_TEAM_CHANGE
 pattern_support_id_transport: PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1
 pattern_abstraction_guard: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6
-preregistration_identity: 5be7fddd1f598b4dab3e096c4975fde56593bd09cec6352f2c966fb7ce72ebca
+preregistration_identity: 5facbb0a61ac5a75039715b37e75bde691bfdca92b77a4e725e83056022124eb
