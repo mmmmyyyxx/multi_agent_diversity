@@ -115,7 +115,8 @@ class MATHGradientPatternBinding:
             successful_provider_calls=c['provider_bounds']['successful_provider_calls'],
             partition_completion_policy=c.get('partition_completion_policy'),
             gradient_recovery_policy=c.get('gradient_recovery_policy'),
-            pattern_cluster_generation_policy=c.get('pattern_cluster_generation_policy'))
+            pattern_cluster_generation_policy=c.get('pattern_cluster_generation_policy'),
+            solver_trajectory_policy=c.get('solver_trajectory_policy'))
 
     def _compose(self,*,arm,seed,solver,reflection,pattern_provider,run_root,optimize_fn=None):
         blockers=self.blockers()

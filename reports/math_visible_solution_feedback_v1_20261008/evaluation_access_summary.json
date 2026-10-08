@@ -1,0 +1,18 @@
+{
+  "feedback_adaptive_split": "optimize",
+  "heldout_feedback_rejection": "PASS",
+  "historical_git_tree_verified": 1,
+  "historical_reports_verified": 3,
+  "historical_sha256_manifests_verified": 2,
+  "live_optimize_solver_calls": 0,
+  "live_shadow_solver_calls": 0,
+  "new_heldout_content_reads": 0,
+  "original_attempt_raw_files_unchanged": {
+    "attempt1": 683,
+    "attempt2": 1666
+  },
+  "schema_and_membership_metadata_checks_only": true,
+  "synthetic_current_graph_only": true,
+  "test_calls": 0,
+  "validation_calls": 0
+}

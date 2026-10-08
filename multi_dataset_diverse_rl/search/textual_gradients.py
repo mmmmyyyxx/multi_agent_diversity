@@ -35,6 +35,13 @@ Do not write a full replacement procedure or candidate prompt, or control the ex
 response interface, presentation or markers. Do not infer other examples, members,
 memory or held-out data. Output only the JSON object with the single gradient key.'''
 
+VISIBLE_GRADIENT_PROMPT = GRADIENT_PROMPT + '''
+The solver_trajectory contains the actual ordinary response solution associated with
+this member procedure and example. Use the written steps as observable evidence of
+errors, alongside the final prediction, reference, validity and correctness. This is
+not proof of hidden reasoning. Respect missing/invalid-boundary/truncated status and
+feedback truncation metadata; do not invent omitted steps or copy solution fragments.'''
+
 CLUSTER_PROMPT = '''Compare the entire gradient set before forming clusters.
 Group gradients when they express the same reusable corrective reasoning behavior,
 even when their underlying mathematical questions differ. Merge paraphrastic or
@@ -71,6 +78,18 @@ POLICY = dict(discovery=versions.GRADIENT_PATTERN_DISCOVERY_VERSION,
     accounting='wrong_universe_ceiling_plus_one_cluster_per_opportunity_v1',
     input_limit_tokens=991808, context_limit_tokens=1000000,
     input_estimate='serialized_utf8_bytes_plus_1024')
+
+
+def pattern_policy_for_trajectory(policy=None):
+    value = deepcopy(POLICY)
+    if policy is not None:
+        from ..benchmarks.math_visible_trajectory import trajectory_policy
+        if policy != trajectory_policy():
+            raise SearchContractError('MATH_VISIBLE_TRAJECTORY_POLICY_MISMATCH')
+        value['gradient_policy'].update(schema=versions.GRADIENT_VISIBLE_INPUT_VERSION,
+            prompt_identity=versions.GRADIENT_VISIBLE_PROMPT_VERSION)
+        value['solver_trajectory_policy'] = deepcopy(policy)
+    return value
 
 
 def gradient_identity(text):
@@ -129,20 +148,37 @@ class _FreshSearchProvider:
 
 class PerExampleGradientProvider(_FreshSearchProvider):
     role='pattern_gradient';stage='per_example_textual_gradient'
-    def __init__(self,broker,prompt=GRADIENT_PROMPT,*,numeric_guard_writer=None,
+    def __init__(self,broker,prompt=None,*,numeric_guard_writer=None,
             recovery_policy=None,recovery_writer=None):
         from .gradient_recovery import validate_policy
         validate_policy(recovery_policy)
-        super().__init__(broker,prompt);self.numeric_guard_writer=numeric_guard_writer
+        from ..benchmarks.math_visible_trajectory import frozen_trajectory_policy
+        self.solver_trajectory_policy = frozen_trajectory_policy(getattr(broker, 'contract', {}))
+        if self.solver_trajectory_policy is not None and prompt not in (None, VISIBLE_GRADIENT_PROMPT):
+            raise SearchContractError('MATH_VISIBLE_GRADIENT_PROMPT_MISMATCH')
+        self.input_schema = (versions.GRADIENT_VISIBLE_INPUT_VERSION if self.solver_trajectory_policy
+            else GRADIENT_POLICY['schema'])
+        super().__init__(broker,prompt if prompt is not None else
+            VISIBLE_GRADIENT_PROMPT if self.solver_trajectory_policy else GRADIENT_PROMPT)
+        self.numeric_guard_writer=numeric_guard_writer
         self.recovery_policy=deepcopy(recovery_policy);self.recovery_writer=recovery_writer
     def extract(self,payload):
         expected={'example_id','problem','reference','prediction','valid','responsibility_labels','team_margin','team_disagreement'}
+        if self.solver_trajectory_policy is not None:
+            expected.add('solver_trajectory')
         if (not isinstance(payload,dict) or set(payload)!={'schema','current_member_procedure','example'}
-                or payload['schema']!=GRADIENT_POLICY['schema']
+                or payload['schema']!=self.input_schema
                 or not isinstance(payload['current_member_procedure'],str)
                 or not payload['current_member_procedure'].strip()
                 or not isinstance(payload['example'],dict) or set(payload['example'])!=expected):
             raise SearchContractError('PATTERN_GRADIENT_INPUT_INVALID')
+        if self.solver_trajectory_policy is not None:
+            from ..benchmarks.math_visible_trajectory import validate_adaptive_trajectory
+            trajectory = validate_adaptive_trajectory(payload['example']['solver_trajectory'],
+                example_id=payload['example']['example_id'], prompt=payload['current_member_procedure'],
+                problem=payload['example']['problem'])
+            if trajectory['prediction_valid'] is not payload['example']['valid']:
+                raise SearchContractError('MATH_TRAJECTORY_ADAPTIVE_PROVENANCE_MISMATCH')
         return self._call(payload)
 
 
@@ -223,7 +259,7 @@ class GradientExtractor:
         gradients=[]
         for row in rows:
             example=single_failure_example(row)
-            value=self.provider.extract(dict(schema=GRADIENT_POLICY['schema'],current_member_procedure=procedure,example=example))
+            value=self.provider.extract(dict(schema=getattr(self.provider, 'input_schema', GRADIENT_POLICY['schema']),current_member_procedure=procedure,example=example))
             if not isinstance(value,dict) or set(value)!={'gradient'}:
                 raise SearchContractError('PATTERN_GRADIENT_EXTRACTION_INVALID')
             if isinstance(value['gradient'],str):
@@ -345,6 +381,12 @@ class GradientPatternConditionedEvidence:
             trajectory=dict(problem=row.signals['input_payload'],prediction=row.signals.get('target_output'),
                 reference=row.signals['gold'],per_example_gradient=byid[row.example_id],
                 responsibility_labels=sample_labels(row))
+            if 'solver_trajectory' in row.signals:
+                from ..benchmarks.math_visible_trajectory import validate_adaptive_trajectory
+                trajectory['solver_trajectory'] = validate_adaptive_trajectory(
+                    row.signals['solver_trajectory'], example_id=row.example_id,
+                    member_id=member_id, prompt=state.member_prompts[member_id],
+                    problem=row.signals['input_payload'])
             return replace(row,signals={**row.signals,'per_example_gradient':byid[row.example_id],
                 'failure_trajectory':trajectory,'feedback':'Repair only the selected generalized corrective gradient.'})
         view=replace(view,mutation_evidence=tuple(map(enrich,view.mutation_evidence)),
@@ -353,4 +395,5 @@ class GradientPatternConditionedEvidence:
         if sum('REPAIR' in r.roles for r in view.mutation_evidence)>3:
             raise SearchContractError('PATTERN_GRADIENT_REPRESENTATIVE_CAPACITY')
         return view,{**audit,'failure_trajectory_count':sum('REPAIR' in r.roles for r in view.mutation_evidence),
-            'per_example_gradients_retained':True,'trajectory_is_full_reasoning_trace':False}
+            'per_example_gradients_retained':True,'trajectory_is_full_reasoning_trace':False,
+            'ordinary_visible_solution_evidence':any('solver_trajectory' in r.signals for r in rows)}

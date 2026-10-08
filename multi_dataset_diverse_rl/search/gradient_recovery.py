@@ -61,7 +61,7 @@ def extract_first_valid(extractor, procedure, rows):
     output = []
     extractor.recovery_batch += 1
     for row in rows:
-        payload = dict(schema=GRADIENT_POLICY['schema'],
+        payload = dict(schema=getattr(provider, 'input_schema', GRADIENT_POLICY['schema']),
             current_member_procedure=procedure, example=single_failure_example(row))
         payload_hash = digest(payload)
         logical_id = digest(dict(batch=extractor.recovery_batch,

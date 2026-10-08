@@ -20,7 +20,10 @@ class GradientPatternLayer1Config:
     panel_policy: str = versions.GRADIENT_CONDITIONED_EVIDENCE_VERSION
 
     def __post_init__(self):
-        expected=dict(identity_version=versions.LAYER1_FEEDBACK_SEARCH_VERSION,metric_limit=36,panel_size=6,max_generations=6,k_local_return=4,max_prompt_chars=3000,candidate_contract=versions.SEMANTIC_MUTABLE_CONTRACT_VERSION,official_gepa_fidelity=False,optimizer_input_schema=versions.GRADIENT_OPTIMIZER_INPUT_VERSION,
+        if self.optimizer_input_schema not in {versions.GRADIENT_OPTIMIZER_INPUT_VERSION,
+                versions.GRADIENT_VISIBLE_OPTIMIZER_INPUT_VERSION}:
+            raise SearchContractError('PATTERN_GRADIENT_LAYER1_FROZEN_CONFIG_MISMATCH')
+        expected=dict(identity_version=versions.LAYER1_FEEDBACK_SEARCH_VERSION,metric_limit=36,panel_size=6,max_generations=6,k_local_return=4,max_prompt_chars=3000,candidate_contract=versions.SEMANTIC_MUTABLE_CONTRACT_VERSION,official_gepa_fidelity=False,optimizer_input_schema=self.optimizer_input_schema,
             panel_policy=versions.GRADIENT_CONDITIONED_EVIDENCE_VERSION)
         if asdict(self)!=expected:raise SearchContractError('PATTERN_GRADIENT_LAYER1_FROZEN_CONFIG_MISMATCH')
 
@@ -38,14 +41,32 @@ def gradient_pattern_input(task,parent,observations,memory):
         raise SearchContractError('PATTERN_GRADIENT_OPTIMIZER_CONTEXT_INVALID')
     trajectories=json.loads(task.failure_trajectories)
     if not 1<=len(trajectories)<=3:raise SearchContractError('PATTERN_GRADIENT_REPRESENTATIVE_CAPACITY')
-    value.update(schema=versions.GRADIENT_OPTIMIZER_INPUT_VERSION,selected_pattern=selected,
+    if value['schema'] == versions.GRADIENT_VISIBLE_OPTIMIZER_INPUT_VERSION:
+        from ..benchmarks.math_visible_trajectory import validate_adaptive_trajectory
+        for trajectory in trajectories:
+            visible = trajectory.get('solver_trajectory')
+            if visible is None:
+                raise SearchContractError('LAYER1_VISIBLE_TRAJECTORY_MISSING')
+            validate_adaptive_trajectory(visible, example_id=visible['source']['example_id'],
+                member_id=task.target_member, prompt=task.parent_prompt, problem=trajectory['problem'])
+    value.update(selected_pattern=selected,
         repair_objective='Only the selected generalized corrective gradient',
         representative_failure_trajectories=trajectories)
-    return INSTRUCTION+'\n'+json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=True)
+    visible_instruction = ('\nUse the actual written Solver solution in solver_trajectory as observable evidence. '
+        'Respect missing, invalid-boundary and truncation metadata; do not infer omitted or hidden steps. '
+        'Do not copy problem-specific solution text into the procedure or Memory.'
+        if value['schema'] == versions.GRADIENT_VISIBLE_OPTIMIZER_INPUT_VERSION else '')
+    return INSTRUCTION+visible_instruction+'\n'+json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=True)
 
 class GradientPatternMemoryOptimizer(BoundedMemoryOptimizer):
     config_factory=GradientPatternLayer1Config
     prompt_builder=staticmethod(gradient_pattern_input)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        if getattr(getattr(self.evaluator, 'broker', None), 'solver_trajectory_policy', None) is not None:
+            self.config = GradientPatternLayer1Config(
+                optimizer_input_schema=versions.GRADIENT_VISIBLE_OPTIMIZER_INPUT_VERSION)
 
 class GradientPatternMemoryEngine(LocalTaskEngine):
     async def search(self, opportunity, context):

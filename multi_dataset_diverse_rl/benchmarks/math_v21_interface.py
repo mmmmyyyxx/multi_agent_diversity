@@ -46,6 +46,26 @@ def v5_interface_contract():
         solver_max_output_tokens=3600, reflection_max_output_tokens=1800)
 
 
+MATH_SOLVER_INTERFACE_V6 = (
+    "Solve the mathematical problem using the supplied decision procedure.\n\n"
+    "Provide a clear, logically ordered solution showing the relevant reasoning, "
+    "equations, intermediate calculations, and checks.\n\n"
+    "End the response with exactly one final-answer line:\n"
+    "FINAL_ANSWER: <answer>\n\n"
+    "The final-answer payload must contain only the mathematical answer and may "
+    "use mathematical or LaTeX notation. Keep the payload on the same line. "
+    "The final-answer marker must appear exactly once, on the last nonempty line. "
+    "Do not output anything after the final-answer line."
+)
+
+
+def v6_interface_contract():
+    return dict(identity=versions.MATH_SOLVER_INTERFACE_V6_VERSION,
+        sha256=hashlib.sha256(MATH_SOLVER_INTERFACE_V6.encode()).hexdigest(),
+        parser_identity="math_verify_no_fallback_v1",
+        solver_max_output_tokens=3600, reflection_max_output_tokens=1800)
+
+
 def interface_for_contract(contract):
     frozen = contract["solver_output_interface"]
     if frozen == solver_interface_contract():
@@ -56,6 +76,8 @@ def interface_for_contract(contract):
         return MATH_SOLVER_INTERFACE_V3, v4_interface_contract()
     if frozen == v5_interface_contract():
         return MATH_SOLVER_INTERFACE_V3, v5_interface_contract()
+    if frozen == v6_interface_contract():
+        return MATH_SOLVER_INTERFACE_V6, v6_interface_contract()
     raise SearchContractError("MATH_SOLVER_INTERFACE_BINDING_MISMATCH")
 
 
@@ -69,6 +91,8 @@ class MATHV21BenchmarkAdapter(MATHBenchmarkAdapterV2):
     def __init__(self, contract):
         self._contract = contract
         self.output_contract, self._interface_contract = interface_for_contract(contract)
+        from .math_visible_trajectory import frozen_trajectory_policy
+        self.solver_trajectory_policy = frozen_trajectory_policy(contract)
         from .math_prediction_validity import frozen_prediction_policy
         self.prediction_validity_policy = frozen_prediction_policy(contract)
         self.invalid_predictions_are_incorrect = self.prediction_validity_policy is not None
@@ -76,7 +100,8 @@ class MATHV21BenchmarkAdapter(MATHBenchmarkAdapterV2):
             from .protocols import MATH_PROTOCOL_V3
             self.protocol = MATH_PROTOCOL_V3
             if contract['identity'] in {*versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS,
-                                       versions.MATH_V2_2_EXECUTION_BINDING_VERSION}:
+                                       versions.MATH_V2_2_EXECUTION_BINDING_VERSION,
+                                       versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION}:
                 from .protocols import MATH_PROTOCOL_V4
                 self.protocol=MATH_PROTOCOL_V4
 
@@ -93,6 +118,11 @@ class MATHV21BenchmarkAdapter(MATHBenchmarkAdapterV2):
         from ..search.schemas import ParsedOutput
         if item.benchmark_id != self.benchmark_id:
             return ParsedOutput("", False)
+        if isinstance(raw, dict) and raw.get('schema') == versions.MATH_SOLVER_PROFILE_VERSION:
+            if self.solver_trajectory_policy is None:
+                raise SearchContractError('MATH_VISIBLE_PROFILE_REQUIRES_V6')
+            from .math_visible_trajectory import profile_prediction
+            return profile_prediction(raw, example_id=item.input_id).parsed()
         result = classify_prediction(raw) if isinstance(raw, str) else prediction_from_persisted(raw)
         return result.parsed()
 

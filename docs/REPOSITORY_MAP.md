@@ -11,6 +11,8 @@ contract and parent manifest, then the failure registry before changing code.
 | multi_dataset_diverse_rl/benchmarks/legacy/ | Historical binding implementations; current binding is flat |
 | multi_dataset_diverse_rl/governance/legacy/ | Historical execution/governance tools |
 | multi_dataset_diverse_rl/benchmarks/ | Benchmark scientific/data contracts and pinned evaluator provenance |
+| multi_dataset_diverse_rl/benchmarks/math_visible_trajectory.py | V6 private profile/provenance and bounded Optimize feedback; shared scoring is unchanged |
+| multi_dataset_diverse_rl/benchmarks/math_visible_binding.py | Fresh V6 binding and metadata-only request-length rebinding; no authorization |
 | multi_dataset_diverse_rl/data_preparation/ | Isolated full-source derivation; never an adaptive runtime dependency |
 | multi_dataset_diverse_rl/current_contract.py | Closed current identities; no historical dispatch |
 | multi_dataset_diverse_rl/versions.py | Historical registry and preserved identity values |

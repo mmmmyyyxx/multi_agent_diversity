@@ -1,0 +1,32 @@
+{
+  "final_payload_scoring_only": true,
+  "gradient_path": "ACTUAL_SELECTED_MEMBER_OPTIMIZE_PROFILE_TO_SINGLE_EXAMPLE_GRADIENT",
+  "layer1_path": "ACTUAL_CURRENT_PARENT_PANEL_REALIZATION_TO_NEXT_MUTATION",
+  "optimizer_effectiveness": "NOT_EVALUATED",
+  "real_provider_adherence": "NOT_EVALUATED",
+  "scientific_runtime_identity_changed": true,
+  "scope": "IMPLEMENTATION_AND_SYNTHETIC_CURRENT_GRAPH_CONFORMANCE",
+  "search_algorithm_changed": false,
+  "solver_interface": {
+    "identity": "MATH_SOLVER_INTERFACE_V6",
+    "parser_identity": "math_verify_no_fallback_v1",
+    "reflection_max_output_tokens": 1800,
+    "sha256": "0f8d3231716ba2ca0de72e3b0674431daa58949c76120da4b8add4de1b1eecee",
+    "solver_max_output_tokens": 3600
+  },
+  "solver_trajectory_policy": {
+    "adaptive_split": "optimize",
+    "gradient_input_schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V2",
+    "gradient_prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V4",
+    "hidden_reasoning_claim": false,
+    "identity": "MATH_VISIBLE_SOLUTION_FEEDBACK_POLICY_V1",
+    "max_visible_solution_characters": 4096,
+    "memory_trajectory_writes": false,
+    "optimizer_input_schema": "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5",
+    "original_response_retention": "complete_private_resolved_prediction_and_attempts",
+    "profile_schema": "MATH_VISIBLE_SOLVER_PROFILE_V1",
+    "source": "ordinary_assistant_content",
+    "trajectory_schema": "MATH_VISIBLE_SOLVER_TRAJECTORY_V1",
+    "truncation": "unicode_prefix_explicit_metadata"
+  }
+}

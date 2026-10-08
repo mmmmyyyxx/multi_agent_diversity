@@ -152,8 +152,16 @@ class BinaryEvidenceSource:
             if row.question_hash in anchor:
                 roles.add("TRANSITION_ANCHOR")
             output = state.member_outputs[member_id][index]
+            trajectory = {}
+            if getattr(self.store.benchmark, 'solver_trajectory_policy', None) is not None:
+                from ..benchmarks.math_visible_trajectory import adaptive_trajectory
+                trajectory['solver_trajectory'] = adaptive_trajectory(
+                    state.diagnostics['raw_profiles'][member_id][index], member_id=member_id,
+                    prompt=state.member_prompts[member_id], example_id=example.item.input_id,
+                    problem=self.store.benchmark.format_input(example.item))
             result.append(EvidenceItem(example.item.input_id, "optimize", frozenset(roles),
                 dict(input_payload=example.item.problem, gold=example.reference,
+                     **trajectory,
                      correctness_signal_identity=versions.TARGET_CORRECTNESS_SIGNAL_VERSION,
                      target_member_correct=bool(row.team_correctness[member_id]),
                      target_member_valid=bool(output.valid),

@@ -1,0 +1,10 @@
+{
+  "cumulative_charged_tokens": 4068192,
+  "cumulative_remaining_tokens": 35931808,
+  "existing_authorization_closed": true,
+  "ledger_bytes_unchanged": true,
+  "ledger_events_sha256": "30bc3df32d86919f163f1d2a236dd3f15a3a0527043ccd87b6bee15c5b78e4fb",
+  "new_calls": 0,
+  "new_charged_tokens": 0,
+  "reserved_inflight": 0
+}

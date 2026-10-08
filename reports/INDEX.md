@@ -184,6 +184,7 @@ Reports are immutable evidence, never design authority. Unresolved metadata does
 | [math_v2_reference_parser_domain_audit_v1_20261002](math_v2_reference_parser_domain_audit_v1_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | FORENSIC | math_v2_reference_parser_domain_audit_v1 | COMPLETED |
 | [math_v2_solver_interface_repair_v1_2_20261002](math_v2_solver_interface_repair_v1_2_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | PREEXECUTION | math_v2_preexecution_freeze_v1_2 | PREEXECUTION_FROZEN |
 | [math_v2_token_accounting_repair_v2_20261002](math_v2_token_accounting_repair_v2_20261002/README.md) | 20261002 | BENCHMARK_GENERALIZATION | PREEXECUTION | math_v2_token_accounting_repair_v2 | COMPLETED |
+| [math_visible_solution_feedback_v1_20261008](math_visible_solution_feedback_v1_20261008/README.md) | 20261008 | UNIFIED_TEAM_PROMPT_SEARCH | MIGRATION | math_visible_solution_feedback_v1 | IMPLEMENTED_NOT_EXECUTED |
 | [model_headroom_screening_20260901](model_headroom_screening_20260901/README.md) | 20260901 | HISTORICAL_V15_V16_AND_EARLIER | SCIENTIFIC_RESULT | model_headroom_screening_20260901 | STATUS_UNRESOLVED |
 | [multibench_dataset_migration_v1_20261001](multibench_dataset_migration_v1_20261001/README.md) | 20261001 | BENCHMARK_GENERALIZATION | MIGRATION | multibench_dataset_migration_v1 | PREPARED_NOT_EXECUTED |
 | [post_refactor_readiness_20260923](post_refactor_readiness_20260923/README.md) | 20260923 | HISTORICAL_V15_V16_AND_EARLIER | ARCHITECTURE | post_refactor_readiness_20260923 | STATUS_UNRESOLVED |

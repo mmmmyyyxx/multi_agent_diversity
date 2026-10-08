@@ -1,0 +1,17 @@
+{
+  "actual_selected_member_gradient_provenance": true,
+  "api_calls_zero": true,
+  "complete_original_responses_retained": true,
+  "current_parent_layer1_provenance": true,
+  "heldout_feedback_rejected": true,
+  "ledger_unchanged": true,
+  "memory_write_policy_unchanged": true,
+  "no_effectiveness_or_live_provider_success_claim": true,
+  "no_private_reasoning_field_used": true,
+  "old_interface_bytes_and_manifest_acceptance_preserved": true,
+  "parser_and_score_algorithms_unchanged": true,
+  "search_budget_and_selection_unchanged": true,
+  "synthetic_current_graph_feedback_verified": true,
+  "thinking_false_unchanged": true,
+  "visible_solution_status_and_truncation_explicit": true
+}

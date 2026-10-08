@@ -11,6 +11,21 @@ design authority. Historical specifications and invariant IDs are preserved in
 
 ## Active Unified Team Prompt Search V2.2 (opt-in)
 
+The [visible solution feedback correction](MATH_VISIBLE_SOLUTION_FEEDBACK_V1.md)
+adds an explicit V6 MATH Solver interface and provenance-bound ordinary response
+solutions to per-example Gradient and existing Layer1 feedback. It requires a
+fresh visible-trajectory execution binding and downstream input schemas. The
+V2.2 search, selection, scoring, recovery and Memory algorithms remain unchanged;
+the changed instructions and feedback require fresh scientific/runtime identities.
+Historical answer-only interfaces and frozen records retain their meanings.
+
+- **INV-MATH-VISIBLE-SOLUTION-001**: Score only the existing final-answer payload;
+  retain the complete private response and expose deterministically bounded,
+  explicitly status-marked actual written solution evidence. Adaptive feedback
+  binds the correct member, procedure, public input and realization, and accepts
+  Optimize only. Neither provider-private reasoning nor held-out trajectories
+  enter Gradient, Layer1 or Memory. Verify both feedback paths, not only parsing.
+
 Only the complete Gradient Pattern V4 + Rolling Risk Memory + bounded Layer1
 bundle is eligible for new execution. The current graph is defined in
 [Current Runtime Composition](CURRENT_RUNTIME_COMPOSITION.md). Existing null,

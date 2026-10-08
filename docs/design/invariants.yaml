@@ -1,5 +1,19 @@
 schema_version: invariant_registry_v1
 invariants:
+- id: INV-MATH-VISIBLE-SOLUTION-001
+  description: V6 scores only final payload, retains complete private ordinary
+    content and binds bounded Optimize solution feedback to its member and realization.
+  authority: docs/design/MATH_VISIBLE_SOLUTION_FEEDBACK_V1.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/benchmarks/math_visible_trajectory.py
+  - multi_dataset_diverse_rl/benchmarks/math_visible_binding.py
+  - multi_dataset_diverse_rl/search/textual_gradients.py
+  - multi_dataset_diverse_rl/search/current_layer1.py
+  tests:
+  - tests/current/test_visible_solver_trajectories.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
 - id: INV-INITIAL-COMPETENCE-003
   description: V2.2 immutable initial floor, non-regressing Vote and strict target
     OR team progress; Full team-first target-second ranking.

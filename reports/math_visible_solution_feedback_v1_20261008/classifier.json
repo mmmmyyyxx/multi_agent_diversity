@@ -1,0 +1,13 @@
+{
+  "future_canary": "HOLD_NEW_EXACT_FREEZE_AND_AUTHORIZATION_REQUIRED",
+  "identity": "MATH_VISIBLE_SOLUTION_INTERFACE_CONFORMANCE_V1",
+  "implementation": "IMPLEMENTED",
+  "new_api_calls": 0,
+  "optimizer_effectiveness": "NOT_EVALUATED",
+  "real_provider_adherence": "NOT_EVALUATED",
+  "real_provider_execution": false,
+  "scientific_runtime_identity_changed": true,
+  "scope": "OFFLINE_SYNTHETIC_CURRENT_GRAPH",
+  "scoring_changed": false,
+  "search_algorithm_changed": false
+}

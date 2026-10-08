@@ -47,8 +47,10 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
         raise SearchContractError('PATTERN_PARTITION_COMPLETION_POLICY_MISMATCH')
     if getattr(getattr(pattern_provider,'gradient_provider',None),'recovery_policy',None) != method.mechanism_config.get('gradient_recovery_policy'):
         raise SearchContractError('GRADIENT_CONTRACT_RECOVERY_POLICY_MISMATCH')
-    if optimizer.config != CurrentLayer1Config():
+    if optimizer.config != CurrentLayer1Config(optimizer_input_schema=method.mechanism_config['optimizer_input_schema']):
         raise SearchContractError('CURRENT_LAYER1_POLICY_MISMATCH')
+    if getattr(benchmark, 'solver_trajectory_policy', None) != method.mechanism_config.get('solver_trajectory_policy'):
+        raise SearchContractError('CURRENT_VISIBLE_TRAJECTORY_POLICY_MISMATCH')
     if (pattern_provider is None or getattr(pattern_provider,'gradient_provider',None) is None
             or getattr(pattern_provider,'support_id_transport',None) != method.mechanism_config['pattern_support_id_transport']):
         raise SearchContractError('HOLD_PRE_PROVIDER: CURRENT_GRADIENT_PROVIDER_NOT_BOUND')

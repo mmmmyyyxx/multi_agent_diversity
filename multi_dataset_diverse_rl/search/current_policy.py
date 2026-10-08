@@ -3,7 +3,7 @@ from dataclasses import asdict, dataclass
 from copy import deepcopy
 from .. import current_contract as identities
 from .schemas import SearchContractError, SearchMethodConfig, GlobalStopConfig
-from .textual_gradients import POLICY as PATTERN_POLICY
+from .textual_gradients import pattern_policy_for_trajectory
 from .rolling_risk_memory import POLICY as MEMORY_POLICY
 from .private_action_memory import LIMITS
 from .current_layer1 import CurrentLayer1Config
@@ -39,9 +39,13 @@ class CurrentPolicyBundle:
             raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
 
     def method(self, *, aggregation, provider_binding, successful_provider_calls,
-            partition_completion_policy=None,gradient_recovery_policy=None,pattern_cluster_generation_policy=None):
+            partition_completion_policy=None,gradient_recovery_policy=None,pattern_cluster_generation_policy=None,
+            solver_trajectory_policy=None):
         from .gradient_recovery import validate_policy
         validate_policy(gradient_recovery_policy)
+        pattern_policy = pattern_policy_for_trajectory(solver_trajectory_policy)
+        input_schema = (identities.GRADIENT_VISIBLE_OPTIMIZER_INPUT_VERSION if solver_trajectory_policy
+            else identities.GRADIENT_OPTIMIZER_INPUT_VERSION)
         if not isinstance(provider_binding, str) or len(provider_binding) != 64:
             raise SearchContractError('CURRENT_GRADIENT_POLICY_MISMATCH')
         # The compatibility dataclass preserves its exact frozen identity payload.
@@ -55,8 +59,8 @@ class CurrentPolicyBundle:
             memory_policy=self.memory, search_acceptance_policy='layer1_local_guidance_team_admission_v1',
             global_stop=GlobalStopConfig(emergency_max_provider_calls=successful_provider_calls),
             mechanism_config=dict(memory=deepcopy(LIMITS),shared_risk_policy=deepcopy(MEMORY_POLICY),
-                optimizer_input_schema=identities.GRADIENT_OPTIMIZER_INPUT_VERSION,
-                panel_policy=self.evidence,pattern_policy=deepcopy(PATTERN_POLICY),
+                optimizer_input_schema=input_schema,
+                panel_policy=self.evidence,pattern_policy=pattern_policy,
                 pattern_provider_binding=provider_binding,
                 pattern_support_id_transport=identities.PATTERN_SUPPORT_ID_ALIAS_VERSION,
                 pattern_abstraction_guard=identities.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION))
@@ -69,6 +73,8 @@ class CurrentPolicyBundle:
             if pattern_cluster_generation_policy != pattern_cluster_generation_contract():
                 raise SearchContractError('PATTERN_CLUSTER_GENERATION_POLICY_BINDING_MISMATCH')
             method.mechanism_config['pattern_cluster_generation_policy']=deepcopy(pattern_cluster_generation_policy)
+        if solver_trajectory_policy is not None:
+            method.mechanism_config['solver_trajectory_policy'] = deepcopy(solver_trajectory_policy)
         return method
 
     def validate_method(self, method):
@@ -77,7 +83,8 @@ class CurrentPolicyBundle:
             successful_provider_calls=method.global_stop.emergency_max_provider_calls,
             partition_completion_policy=method.mechanism_config.get('partition_completion_policy'),
             gradient_recovery_policy=method.mechanism_config.get('gradient_recovery_policy'),
-            pattern_cluster_generation_policy=method.mechanism_config.get('pattern_cluster_generation_policy'))
+            pattern_cluster_generation_policy=method.mechanism_config.get('pattern_cluster_generation_policy'),
+            solver_trajectory_policy=method.mechanism_config.get('solver_trajectory_policy'))
         if method.identity() != expected.identity():
             raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
 
@@ -86,11 +93,14 @@ class CurrentPolicyBundle:
         frozen_cluster_policy(contract)
         from .gradient_recovery import validate_policy
         validate_policy(contract.get('gradient_recovery_policy'))
+        from ..benchmarks.math_visible_trajectory import frozen_trajectory_policy
+        trajectory = frozen_trajectory_policy(contract)
+        input_schema = identities.GRADIENT_VISIBLE_OPTIMIZER_INPUT_VERSION if trajectory else identities.GRADIENT_OPTIMIZER_INPUT_VERSION
         if contract.get('partition_completion_policy') not in (None, self.partition_completion):
             raise SearchContractError('PATTERN_PARTITION_COMPLETION_POLICY_MISMATCH')
-        expected=dict(pattern_policy=PATTERN_POLICY,memory_policy_identity=self.memory,
-            shared_risk_policy=MEMORY_POLICY,layer1_search_policy=asdict(CurrentLayer1Config()),
-            optimizer_input_schema=identities.GRADIENT_OPTIMIZER_INPUT_VERSION,
+        expected=dict(pattern_policy=pattern_policy_for_trajectory(trajectory),memory_policy_identity=self.memory,
+            shared_risk_policy=MEMORY_POLICY,layer1_search_policy=asdict(CurrentLayer1Config(optimizer_input_schema=input_schema)),
+            optimizer_input_schema=input_schema,
             panel_evidence_policy=self.evidence,candidate_contract_identity=identities.SEMANTIC_MUTABLE_CONTRACT_VERSION,
             responsibility=self.responsibility,transition_policy=self.transition,
             pattern_support_id_transport=identities.PATTERN_SUPPORT_ID_ALIAS_VERSION,

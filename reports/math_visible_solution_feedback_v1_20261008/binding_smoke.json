@@ -1,0 +1,11 @@
+{
+  "check": "FRESH_CURRENT_BINDING_AND_PREFLIGHT_MANIFEST",
+  "frozen": false,
+  "model_calls": 0,
+  "new_heldout_content_reads": 0,
+  "real_api_authorized": false,
+  "result": "PASS",
+  "valid_binding": true,
+  "valid_manifest": true,
+  "validation_request_byte_delta": -188
+}

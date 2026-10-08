@@ -40,11 +40,16 @@ def evaluation_panel(task, size=6):
     return tuple(ordered[:size])
 
 def observation_record(row,observation):
-    return dict(example_id=row.example_id,problem=row.input_payload,reference=row.gold,
+    record = dict(example_id=row.example_id,problem=row.input_payload,reference=row.gold,
         prediction=observation.parsed_answer,correct=bool(observation.valid and observation.correct),
         valid=observation.valid,invalid_reason=observation.failure_reason,
         role_and_lane=list(row.tags),evaluator_feedback=row.textual_feedback,
         visible_reasoning_required=False)
+    if getattr(observation, 'solver_trajectory', None) is not None:
+        from ..benchmarks.math_visible_trajectory import validate_adaptive_trajectory
+        record['solver_trajectory'] = validate_adaptive_trajectory(observation.solver_trajectory,
+            example_id=row.example_id, problem=row.input_payload)
+    return record
 
 def anchored_panel(task,size=6):
     panel=list(evaluation_panel(task,size))
@@ -60,7 +65,17 @@ def build_optimizer_context(task,parent,observations,memory):
     # No example identifiers, candidate archive, generation or controller metadata.
     current=[{k:r[k] for k in ('problem','reference','prediction','correct','valid','invalid_reason','role_and_lane','evaluator_feedback')}
              for r in observations]
-    return dict(schema=versions.GRADIENT_OPTIMIZER_INPUT_VERSION,
+    trajectory_enabled = any('solver_trajectory' in r for r in observations)
+    if trajectory_enabled:
+        from ..benchmarks.math_visible_trajectory import validate_adaptive_trajectory
+        for row, value in zip(observations, current, strict=True):
+            if 'solver_trajectory' not in row:
+                raise SearchContractError('LAYER1_VISIBLE_TRAJECTORY_MISSING')
+            value['solver_trajectory'] = validate_adaptive_trajectory(row['solver_trajectory'],
+                example_id=row['example_id'], member_id=task.target_member, prompt=parent,
+                problem=row['problem'])
+    return dict(schema=versions.GRADIENT_VISIBLE_OPTIMIZER_INPUT_VERSION if trajectory_enabled
+        else versions.GRADIENT_OPTIMIZER_INPUT_VERSION,
         current_parent=parent,repair_objective=task.responsibility_lane+' failures',
         current_panel_observations=current,retrieved_memory=memory)
 
@@ -95,6 +110,14 @@ class BoundedMemoryOptimizer:
                 raise SearchContractError('LAYER1_METRIC_LIMIT_PRE_SOLVER')
             metric+=len(panel)
             obs=[self.evaluator.evaluate(prompt,row) for row in panel]
+            trajectory_enabled = self.config.optimizer_input_schema == versions.GRADIENT_VISIBLE_OPTIMIZER_INPUT_VERSION
+            if any((getattr(o, 'solver_trajectory', None) is not None) != trajectory_enabled for o in obs):
+                raise SearchContractError('LAYER1_VISIBLE_TRAJECTORY_PORT_MISMATCH')
+            if trajectory_enabled:
+                from ..benchmarks.math_visible_trajectory import validate_adaptive_trajectory
+                for row, o in zip(panel, obs, strict=True):
+                    validate_adaptive_trajectory(o.solver_trajectory, example_id=row.example_id,
+                        member_id=task.target_member, prompt=prompt, problem=row.input_payload)
             solver_calls+=sum(o.provider_called for o in obs)
             solver_tokens+=sum(o.input_tokens+o.output_tokens for o in obs)
             return [observation_record(row,o) for row,o in zip(panel,obs,strict=True)]

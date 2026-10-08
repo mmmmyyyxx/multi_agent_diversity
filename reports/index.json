@@ -2513,6 +2513,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/math_visible_solution_feedback_v1_20261008",
+      "document": "reports/math_visible_solution_feedback_v1_20261008/README.md",
+      "date": "20261008",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "MIGRATION",
+      "experiment_id": "math_visible_solution_feedback_v1",
+      "status": "IMPLEMENTED_NOT_EXECUTED",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/model_headroom_screening_20260901",
       "document": "reports/model_headroom_screening_20260901/README.md",
       "date": "20260901",

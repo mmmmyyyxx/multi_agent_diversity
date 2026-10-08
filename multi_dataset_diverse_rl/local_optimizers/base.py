@@ -26,6 +26,12 @@ class LocalSolverObservation:
     provider_called: bool = True
 
 
+@dataclass(frozen=True)
+class VisibleLocalSolverObservation(LocalSolverObservation):
+    """V6 feedback extension; historical observation serialization is unchanged."""
+    solver_trajectory: dict | None = None
+
+
 class LocalSolverEvaluator(Protocol):
     solver_contract_id: str
     output_contract_id: str

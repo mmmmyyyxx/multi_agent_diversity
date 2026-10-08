@@ -1,0 +1,151 @@
+{
+  "binding_smoke": {
+    "check": "FRESH_CURRENT_BINDING_AND_PREFLIGHT_MANIFEST",
+    "frozen": false,
+    "model_calls": 0,
+    "new_heldout_content_reads": 0,
+    "real_api_authorized": false,
+    "result": "PASS",
+    "valid_binding": true,
+    "valid_manifest": true,
+    "validation_request_byte_delta": -188
+  },
+  "compileall": "PASS",
+  "current_repository_governance": {
+    "errors": [],
+    "evidence_sha256": "cb794098fe4733dc9dfa466283842d1ffff6fca7bfd390d078d3d5b16a80ec1a",
+    "real_api_authorized": false,
+    "real_execution_ready": false,
+    "status": "PASS"
+  },
+  "current_suite": {
+    "command": "python tests/formal_zero_api_runner.py tests --suite current --junitxml=<ignored-evidence>/current_suite.xml",
+    "deselected_historical_or_private_artifact_cases": 1468,
+    "duration_seconds": 3146.874,
+    "errors": 0,
+    "failures": 0,
+    "full_historical_replay_pass_claimed": false,
+    "junit_sha256": "c9f33b523d3bb29ce6cc9f44dc65dc28a756b75bf12446a06888b987fb81dd5d",
+    "network_attempt_count": 0,
+    "network_guard_active_before_application_import": true,
+    "passed": 1640,
+    "real_credentials_present": false,
+    "skipped": 2,
+    "status": "PASS"
+  },
+  "diff_check": "PASS",
+  "existing_gradient_and_cluster_regressions": {
+    "network_attempt_count": 0,
+    "passed": 142,
+    "status": "PASS"
+  },
+  "focused_visible_solution_tests": {
+    "duration_seconds": 15.312,
+    "errors": 0,
+    "failures": 0,
+    "junit_sha256": "1de179c7a4c5163aca0cdc9785b01a935d6465fa5c6f8d744a5224c6df9895a5",
+    "passed": 33,
+    "skipped": 0,
+    "status": "PASS"
+  },
+  "integrity_and_privacy": {
+    "cumulative_charged_tokens": 4068192,
+    "cumulative_remaining_tokens": 35931808,
+    "existing_authorization_closed": true,
+    "historical_git_tree_verified": 1,
+    "historical_reports_verified": 3,
+    "historical_sha256_manifests_verified": 2,
+    "ledger_bytes_unchanged": true,
+    "ledger_events_sha256": "30bc3df32d86919f163f1d2a236dd3f15a3a0527043ccd87b6bee15c5b78e4fb",
+    "new_calls": 0,
+    "new_charged_tokens": 0,
+    "new_heldout_content_reads": 0,
+    "parent_frozen_binding_and_manifest_unchanged": true,
+    "parent_raw_file_counts": {
+      "attempt1": 683,
+      "attempt2": 1666
+    },
+    "protected_content_absent_from_report": true,
+    "reserved_inflight": 0,
+    "result": "PASS",
+    "sanitization": "PASS"
+  },
+  "legacy_governance_cli": {
+    "baseline_failure_registry_unchanged": true,
+    "log_sha256": "edbeb51adcc31698d355f4ebdd67dd9c6523e719a9511992c287bc3a0b0ad647",
+    "reported_errors": 3,
+    "status": "PREEXISTING_FAILURE_REGISTRY_COMPATIBILITY_ABORT_NOT_PASS"
+  },
+  "optimizer_effectiveness": "NOT_EVALUATED",
+  "real_provider_adherence": "NOT_EVALUATED",
+  "scientific_runtime_identity_changed": true,
+  "scoring_changed": false,
+  "search_algorithm_changed": false,
+  "semantic_compatibility": {
+    "final_payload_math_scoring_invalidity_and_recovery_unchanged": true,
+    "result": "PASS",
+    "unchanged_semantic_symbols": [
+      {
+        "ast_sha256": "cb2d17e073750fd464c59a11a0c56033a272f3ed543849e04a2e59ec09eb7610",
+        "path": "multi_dataset_diverse_rl/benchmarks/math_domain_v2.py",
+        "symbol": "final_payload"
+      },
+      {
+        "ast_sha256": "8b5067f032d2b4791d38e8a5e6a9ee50ad7fd819bab9d194efa4ecfc81cfa9a0",
+        "path": "multi_dataset_diverse_rl/benchmarks/math_domain_v2.py",
+        "symbol": "MATHBenchmarkAdapterV2"
+      },
+      {
+        "ast_sha256": "3a49bd0a27a5750209275c13abc908e861f3b701ef453cfc2ba319fe08cdfb68",
+        "path": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+        "symbol": "MATHPrediction"
+      },
+      {
+        "ast_sha256": "18a2b4d9b5bfd3f993ac7c18d483be2da5d14a100a02b6f4feb5e7924ad4a9b3",
+        "path": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+        "symbol": "classify_payload"
+      },
+      {
+        "ast_sha256": "987139c54505b3eeda68c95ea37e805d23acdc358f2bcfe7e1a3dfb80d530da0",
+        "path": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+        "symbol": "classify_prediction"
+      },
+      {
+        "ast_sha256": "608c73145228e3d9df6baeac7167cfa2cf1372b98f37b6ab9c967e9410640931",
+        "path": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+        "symbol": "prediction_from_persisted"
+      },
+      {
+        "ast_sha256": "7f1f7e655a06b8087a606421637c98a132cc84b2e1db27d7a9e32d8a2f7a8efa",
+        "path": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+        "symbol": "invalid_recovery_contract"
+      },
+      {
+        "ast_sha256": "cc99e29376cb0ce66d0bd0fe3f27f5431dbe1213fbf7afba0f725efefe6966cc",
+        "path": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+        "symbol": "MATHResolvedPrediction"
+      },
+      {
+        "ast_sha256": "cc9484560b794d5657808b20f313e6ffa626f6154ae3a0df36ff3f12772e73a7",
+        "path": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+        "symbol": "resolve_predictions"
+      },
+      {
+        "ast_sha256": "68692af1f0a6ae0fa8ab40c19bc98acfcceab4c7312b73ff61fb3b3f81c60ac4",
+        "path": "multi_dataset_diverse_rl/benchmarks/math_solver_decoding.py",
+        "symbol": "generation_request_fields"
+      },
+      {
+        "ast_sha256": "0e8ee508b9cc2ca279c7dfc419fba606ee9b64d7b494202d521f2c652cec1678",
+        "path": "multi_dataset_diverse_rl/search/provider_runtime.py",
+        "symbol": "complete"
+      },
+      {
+        "ast_sha256": "24a89b7912027450a2ae21b244de8fa8ebe9199ed7108a24a2b38df99d8bdeee",
+        "path": "multi_dataset_diverse_rl/search/provider_runtime.py",
+        "symbol": "_complete_one"
+      }
+    ],
+    "v3_v4_v5_original_instruction_constants_unchanged": true
+  }
+}

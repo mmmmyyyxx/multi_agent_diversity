@@ -1,0 +1,14 @@
+{
+  "frozen_historical_evidence_not_modified": true,
+  "historical_pilot_source": "6731aa3f345eff7feac12140b4892f4e07291d17",
+  "implementation_tests": "tests/current/test_visible_solver_trajectories.py",
+  "parent_source": "ee65f9ea1cd52a587f6457f3ff8becb7b3da73f2",
+  "protocol_sha256": "c5c3ed4b3c2d205206aaa5221e13c24369cdbbe36c0eb7ca21fd9669149c394d",
+  "references": [
+    "https://gepa-ai.github.io/gepa/blog/2026/02/18/introducing-optimize-anything/",
+    "https://dspy.ai/3.1.1/tutorials/gepa_aime/",
+    "https://github.com/gepa-ai/gepa/blob/main/src/gepa/adapters/dspy_full_program_adapter/README.md"
+  ],
+  "source_commit": "Containing publication commit; inspect git history",
+  "user_task_sha256": "2ac4290c77ee8b54d3e5acccb7fdce0d2fe36fa2bd58bb5cccd0af07b16e50e7"
+}

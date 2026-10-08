@@ -7,7 +7,7 @@ import json
 import threading
 import time
 
-from ..local_optimizers.base import LocalSolverObservation
+from ..local_optimizers.base import LocalSolverObservation, VisibleLocalSolverObservation
 from ..benchmarks.protocols import PROTOCOLS
 from .benchmark import BenchmarkInput
 from .schemas import SearchContractError
@@ -23,6 +23,8 @@ class RequestBroker:
                  token_ledger=None, reserve_reader=None, validation_only=False, durable_cache=None,
                  response_receipts=None):
         self.contract = contract
+        from ..benchmarks.math_visible_trajectory import frozen_trajectory_policy
+        self.solver_trajectory_policy = frozen_trajectory_policy(contract)
         self.transport = transport
         self.arm = arm
         self.seed = seed
@@ -46,15 +48,15 @@ class RequestBroker:
         from .gradient_recovery import validate_policy
         validate_policy(contract.get('gradient_recovery_policy'))
         if self.gradient_pattern:
-            from .textual_gradients import POLICY
-            if (contract.get('identity') not in {versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION, versions.MATH_V2_2_EXECUTION_BINDING_VERSION}
-                    or contract['pattern_policy']!=POLICY
+            from .textual_gradients import pattern_policy_for_trajectory
+            if (contract.get('identity') not in {versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION, versions.MATH_V2_2_EXECUTION_BINDING_VERSION, versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION}
+                    or contract['pattern_policy']!=pattern_policy_for_trajectory(self.solver_trajectory_policy)
                     or contract.get('pattern_abstraction_guard')!=CURRENT_CONTENT_GUARD
                     or not contract.get('gradient_prompt_sha256')):
                 raise SearchContractError('GRADIENT_PATTERN_PROVIDER_BINDING_MISMATCH')
             for role in ('pattern_gradient','pattern_cluster'):self.usage.setdefault(role,0)
         self.member_lane_policy = contract.get('cache_policy') == versions.SOLVER_MEMBER_LANE_CACHE_VERSION
-        if self.member_lane_policy != (contract.get('identity') in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION, versions.MATH_V2_2_EXECUTION_BINDING_VERSION}):
+        if self.member_lane_policy != (contract.get('identity') in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION, versions.MATH_V2_2_EXECUTION_BINDING_VERSION, versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION}):
             raise SearchContractError('SOLVER_MEMBER_LANE_POLICY_BINDING_MISMATCH')
         self.durable_cache = durable_cache
         if durable_cache is not None and self.recovery_policy is None:
@@ -67,7 +69,7 @@ class RequestBroker:
                 recovery_policy_sha256=digest(self.recovery_policy))
             if any(durable_cache.context[k]!=v for k,v in expected.items()):
                 raise SearchContractError('DURABLE_CACHE_PROVIDER_BINDING_MISMATCH')
-        if contract.get('identity') == versions.MATH_V2_2_EXECUTION_BINDING_VERSION:
+        if contract.get('identity') in {versions.MATH_V2_2_EXECUTION_BINDING_VERSION, versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION}:
             if (contract.get('method_identity') != versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION
                     or contract.get('transition_policy') != versions.UNIFIED_TARGET_OR_TEAM_TRANSITION_VERSION):
                 raise SearchContractError('CURRENT_V2_2_METHOD_BINDING_MISMATCH')
@@ -97,9 +99,9 @@ class RequestBroker:
         request = dict(model=model, messages=messages, **generation_request_fields(c, role))
         identity = {"provider": c["provider"], "role": role, "split": split, "request": request,
                     "cache_namespace": c["cache_namespace"]}
-        if c.get('identity') == versions.MATH_V2_2_EXECUTION_BINDING_VERSION:
+        if c.get('identity') in {versions.MATH_V2_2_EXECUTION_BINDING_VERSION, versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION}:
             identity['method_treatment'] = {k:c[k] for k in ('method_identity', 'transition_policy')}
-        if c.get('identity') in {versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION, versions.MATH_V2_2_EXECUTION_BINDING_VERSION}:
+        if c.get('identity') in {versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION, versions.MATH_V2_2_EXECUTION_BINDING_VERSION, versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION}:
             identity['memory_treatment']={k:c[k] for k in ('memory_policy_identity','memory_limits','layer1_search_policy','optimizer_input_schema','panel_evidence_policy')}
         if c.get('pattern_policy'):
             identity['pattern_treatment']={k:c[k] for k in ('pattern_policy','shared_risk_policy','pattern_amendment_authorization_sha256')}
@@ -112,6 +114,8 @@ class RequestBroker:
                     cluster_prompt_sha256=c['pattern_prompt_sha256'])
                 if 'gradient_recovery_policy' in c:
                     identity['pattern_treatment']['gradient_recovery_policy']=c['gradient_recovery_policy']
+        if self.solver_trajectory_policy is not None:
+            identity['solver_trajectory_policy'] = self.solver_trajectory_policy
         if role in {'reflection','pattern','pattern_gradient','pattern_cluster'} and self.optimizer_policy:
             identity['optimizer_generation_policy'] = frozen_optimizer_role_policy(c, role)
             if c.get('optimizer_nonthinking_evidence_policy'):
@@ -373,6 +377,8 @@ class BenchmarkSolver:
         if self.broker.member_lane_policy:
             effective_contract['member_realization_lane']=self.member_id
             effective_contract['cache_policy']=self.broker.contract['cache_policy']
+        if self.broker.solver_trajectory_policy is not None:
+            effective_contract['solver_trajectory_policy'] = self.broker.solver_trajectory_policy
         effective = hashlib.sha256(json.dumps(effective_contract, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
         self.broker._write(dict(kind="SOLVER_REQUEST_CONTRACT", role="solver", split=split, stage=stage,
             solver_interface_identity=contract["identity"], mutable_prompt_sha256=hashlib.sha256(prompt.encode()).hexdigest(),
@@ -384,13 +390,22 @@ class BenchmarkSolver:
     def solve(self, prompt, item, *, stage, split):
         result = self._request(prompt, item, stage=stage, split=split)
         if self.invalid_predictions_are_incorrect:
-            return self._prediction(result, prompt, item, stage=stage, split=split)
+            prediction = self._prediction(result, prompt, item, stage=stage, split=split)
+            if self.broker.solver_trajectory_policy is not None:
+                return self._visible_profile(result, prediction, prompt, item, split)
+            return prediction
         if hasattr(self.benchmark,"final_payload"):
             if self.benchmark.final_payload(result["text"]) is None:
                 self.broker.abort("STOP_SOLVER_DECODING_POLICY_INSUFFICIENT" if frozen_solver_policy(self.broker.contract) else "SOLVER_INVALID_RESPONSE_NO_REGENERATION")
         elif not self.benchmark.parse_member_output(result["text"], item).valid:
             self.broker.abort("STOP_SOLVER_DECODING_POLICY_INSUFFICIENT" if frozen_solver_policy(self.broker.contract) else "SOLVER_INVALID_RESPONSE_NO_REGENERATION")
         return result["text"]
+
+    def _visible_profile(self, result, prediction, prompt, item, split):
+        from ..benchmarks.math_visible_trajectory import solver_profile
+        return solver_profile(result, prediction, member_id=self.member_id, prompt=prompt,
+            example_id=item.input_id, split=split, policy=self.broker.solver_trajectory_policy,
+            problem=self.benchmark.format_input(item))
 
     def _prediction(self, result, prompt, item, *, stage, split):
         prediction = self.benchmark.prediction_result(result)
@@ -430,10 +445,18 @@ class BenchmarkSolver:
         if self.invalid_predictions_are_incorrect:
             prediction = self._prediction(result, prompt, item, stage="gepa_local", split="optimize")
             parsed = prediction.parsed()
-            return LocalSolverObservation(parsed.answer, result["text"],
+            trajectory = None
+            if self.broker.solver_trajectory_policy is not None:
+                from ..benchmarks.math_visible_trajectory import adaptive_trajectory
+                profile = self._visible_profile(result, prediction, prompt, item, 'optimize')
+                trajectory = adaptive_trajectory(profile, member_id=self.member_id,
+                    prompt=prompt, example_id=item.input_id, problem=self.benchmark.format_input(item))
+            observation_type = VisibleLocalSolverObservation if trajectory is not None else LocalSolverObservation
+            return observation_type(parsed.answer, result["text"],
                 self.benchmark.score_member_output(parsed, example.gold) == 1, parsed.valid,
                 failure_reason=prediction.invalid_reason, input_tokens=result["input_tokens"],
-                output_tokens=result["output_tokens"], provider_called=result["provider_called"])
+                output_tokens=result["output_tokens"], provider_called=result["provider_called"],
+                **({'solver_trajectory':trajectory} if trajectory is not None else {}))
         parsed = self.benchmark.parse_member_output(result["text"], item)
         if hasattr(self.benchmark,"final_payload"):
             if self.benchmark.final_payload(result["text"]) is None:
