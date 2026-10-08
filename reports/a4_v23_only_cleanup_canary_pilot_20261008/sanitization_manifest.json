@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "scanner": "multi_dataset_diverse_rl.governance.artifacts.scan_sanitized_artifacts",
+  "findings": [],
+  "private_evidence_published": false,
+  "published_content": "sanitized statistics, hashes, identities and categories",
+  "real_provider_traces_present": false
+}

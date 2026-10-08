@@ -1,0 +1,28 @@
+{
+  "status": "ZERO_API_VERIFIED_FROZEN_APPROVAL_PENDING",
+  "source_sha": "7affed0829ac3d68ea7c2b4bdb10791df56691e3",
+  "execution_attempt_id": "a4_v23_only_seed81_20261008_attempt1",
+  "current_method": "unified_team_prompt_search_v2_3",
+  "current_tests": {
+    "passed": 386,
+    "skipped": 2,
+    "failed": 0
+  },
+  "omitted_historical_private_modules": 213,
+  "synthetic_byte_comparison_cases": 6,
+  "archived_original_files": 52,
+  "current_runtime_python_modules": 124,
+  "current_governance": "PASS",
+  "historical_governance": "NOT_PASS_UNCHANGED_39_LINEAGE_3_FAILURE_METADATA",
+  "real_api_calls": 0,
+  "charged_tokens": 0,
+  "real_canary": "NOT_EXECUTED",
+  "real_pilot": "NOT_EXECUTED",
+  "efficacy": "NOT_ESTIMATED",
+  "exact_single_use_api_approval": "PENDING",
+  "charged_total_ceiling": 2000000,
+  "total_max_opportunities": 5,
+  "completion_guaranteed": false,
+  "validation_calls": 0,
+  "test_calls": 0
+}

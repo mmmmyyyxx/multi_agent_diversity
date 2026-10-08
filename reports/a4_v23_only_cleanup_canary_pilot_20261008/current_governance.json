@@ -1,0 +1,34 @@
+{
+  "ok": true,
+  "errors": [],
+  "registry": {
+    "node_count": 298,
+    "errors": []
+  },
+  "lineage": {
+    "node_count": 298,
+    "edge_count": 192,
+    "errors": []
+  },
+  "manifest": {
+    "historical_indexed_count": 170,
+    "historical_migrated": false
+  },
+  "current_docs": {
+    "errors": []
+  },
+  "imports": {
+    "errors": []
+  },
+  "archives": {
+    "count": 9,
+    "errors": []
+  },
+  "reports": {
+    "indexed_count": 306,
+    "errors": []
+  },
+  "generated_errors": [],
+  "real_api_authorized": false,
+  "real_execution_ready": false
+}

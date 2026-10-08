@@ -1,0 +1,15 @@
+{
+  "current_test_receipts_match": true,
+  "six_synthetic_cases_match_reference_bytes": true,
+  "execution_source_matches_frozen_commit": true,
+  "current_governance_passes": true,
+  "unapproved_execution_fails_closed": true,
+  "manifest_snapshot_matches_frozen_manifest": true,
+  "no_real_run_or_accounting_directory_created": true,
+  "authorization_unconsumed": true,
+  "no_real_provider_results_claimed": true,
+  "historical_failures_disclosed": true,
+  "old_reports_preserved": true,
+  "no_budget_increase": true,
+  "validation_and_test_not_authorized": true
+}

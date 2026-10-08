@@ -59,28 +59,10 @@ inside the same attempt. A passing review continues to the remaining Pilot
 opportunities with unchanged state, history, Memory, cache and budget. Unreached
 Full branches remain NOT_OBSERVED. Exact single-use API approval is pending.
 
-## Evidence inventory
+Execution source: `7affed0829ac3d68ea7c2b4bdb10791df56691e3`.
+Startup identity: `fefcf31738eb7a6ccc86589b8741c59d2f34642ee47b5ee6c82208e0b485f957`.
+Exact approval scope: [freeze receipt](freeze.json).
 
-| Required output | Evidence |
-|---|---|
-| Cleanup inventory | cleanup_inventory.json |
-| Archived/deleted dependencies | archived_runtime_dependencies.json; current_runtime_closure.json |
-| Final regression | regression.json; current_suite_scope.json; test_scope_migration.json |
-| Freeze and authorization | freeze.json; authorization_receipt.json; manifest_snapshot.yaml |
-| Real Canary | canary_execution.json: NOT_EXECUTED |
-| Real Pilot opportunities | pilot_opportunities.csv: zero rows, NOT_EXECUTED |
-| Real candidates | candidates.csv: zero rows, NOT_EXECUTED |
-| Memory learning | memory_learning_trace.json: real efficacy UNTESTED |
-| Commit/rejection and failure layers | commit_rejection_analysis.json: NOT_OBSERVED |
-| Tokens and requests | api_ledger_summary.json; resource_estimate.md |
-| Scientific conclusion | scientific_conclusion.md |
-| Exact source and Git | freeze.json; provenance.json; final delivery verifies origin/main |
-
-The **2M cap may prevent completion of five opportunities**. The conservative
-output-only envelope without Solver semantic retries is 6,290,310 tokens;
-it is a capacity maximum, not a measured forecast. No budget increase is made.
-
-Canary review occurs after initial profiling and the first complete opportunity
-inside the same attempt. A passing review continues to the remaining Pilot
-opportunities with unchanged state, history, Memory, cache and budget. Unreached
-Full branches remain NOT_OBSERVED. Exact single-use API approval is pending.
+The complete current suite explicitly omits 213 historical/private modules.
+The historical governance CLI remains NOT_PASS: 39 lineage and 3 failure-metadata
+findings match the reference commit; the current governance audit has no errors.

@@ -82,3 +82,7 @@ experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v3.yaml text eol=l
 # Exact-byte receipts for the offline optimization-evidence scientific revision.
 reports/math_optimization_evidence_v23_20261008/** text eol=lf
 experiments/protocols/math_optimization_evidence_v23/** text eol=lf
+
+# Preserve exact frozen bytes for the fresh V2.3 single-arm preparation.
+reports/a4_v23_only_cleanup_canary_pilot_20261008/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+experiments/manifests/a4_v23_only_pilot_v1.yaml -text whitespace=trailing-space,space-before-tab,cr-at-eol

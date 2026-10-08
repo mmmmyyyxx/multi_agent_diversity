@@ -1,0 +1,129 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "4987844d48f893ad0f32523dc506706db42973574129c2e1cde3078dde78c988"
+    },
+    {
+      "file": "archived_runtime_dependencies.json",
+      "sha256": "a028219bb65ceedfb0884b7e3602e2500312d4636f9ff42b9a80430f1759db55"
+    },
+    {
+      "file": "authorization_receipt.json",
+      "sha256": "17e4558527db1c5ea1d4720a484382d85b956b6fef39070bdf29a15f292b6a2f"
+    },
+    {
+      "file": "canary_execution.json",
+      "sha256": "bc8f3749a719c4bac25df84fb9e5457f830a830cc5da62c77aaf67081ac43724"
+    },
+    {
+      "file": "candidates.csv",
+      "sha256": "5c5a1ec881fcd4e580766a25ac680dd2799c21e3eda3da30d252a288c5f0f94f"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "5341a7d7871b000693cf8c5896bad69df638f6bcf5f6b17d472f264e4074e35b"
+    },
+    {
+      "file": "cleanup_inventory.json",
+      "sha256": "92930a7ada296e11a52ca30f9f6b0f0bf94e4e68e94fd88e8ab503832c0b83d8"
+    },
+    {
+      "file": "commit_rejection_analysis.json",
+      "sha256": "7082c6cb363170086a330b9781fde033da1895615ca8cd5401fb81ce88d4986f"
+    },
+    {
+      "file": "current_governance.json",
+      "sha256": "fa90215288f1a368590d796ef9b608acaf5a741c8daf2ae008d9ee1646b2c01f"
+    },
+    {
+      "file": "current_runtime_closure.json",
+      "sha256": "eaeaf8c5753f9959e21666b15be2ef61675c6943efc3df507d9afe624da00db0"
+    },
+    {
+      "file": "current_suite_scope.json",
+      "sha256": "c5a3f738302cb5390391a79d13d15677843e276c0f8b918187e4e6d945e0a86d"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "40b4231f7d82231494a6d2ed12e36de9a00ad52f96615cc88ea9661302e13941"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "e935166ecb130f278635eedade87b1d989ba96d62d97bd4002e111f8ac7e08cf"
+    },
+    {
+      "file": "freeze.json",
+      "sha256": "3cf072bf2e6a87a90b9c09e29d52b8902372178b54f0f61bff8c0237e601c8d4"
+    },
+    {
+      "file": "frozen_preflight.json",
+      "sha256": "f1ae7cb69761ae69fc6fccb45024828f44ebbb1d98bfd652abca603560c2aba9"
+    },
+    {
+      "file": "historical_integrity.json",
+      "sha256": "e408b93c89e5e57cbc1c31a4f72fea621e1fd1d26ec2dbe8d365ab3ca6a6218d"
+    },
+    {
+      "file": "legacy_governance_status.json",
+      "sha256": "1316db0befc4c6bdd93b1061a9ed3d92348ce2710385461b57733544299caa6a"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "7fd2d1b6c6463de118a5dcba721adc2c66fddb6814874ed82e0f54251acb80bd"
+    },
+    {
+      "file": "memory_learning_trace.json",
+      "sha256": "b1defd5b323e084bc572a6759b0d8bd7b53b5249454e405316c16110949b460a"
+    },
+    {
+      "file": "offline_integrity.json",
+      "sha256": "ddd40cbac45c82ec14e3e46dfab2e0cea4359eb9460f785d0ccdda21c71c773c"
+    },
+    {
+      "file": "pilot_opportunities.csv",
+      "sha256": "c3e1fd4d3decaf947263ccb646549e4a0eb29dc2df11a71646a10bf4a7e47931"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "3b9f21c84c86a278132fd439b0651c15102d856fa65b6c1cdca37e9528a2b060"
+    },
+    {
+      "file": "README.md",
+      "sha256": "8fd9bdc57b064a4aa445cfebd1f2646b755544dc595ef821b888af0fa4bc50c8"
+    },
+    {
+      "file": "regression.json",
+      "sha256": "abf0c7026a5f87c72c30a8ba4ec75483144857883a345636f94d1ae3498a0195"
+    },
+    {
+      "file": "resource_estimate.md",
+      "sha256": "12b69f974284f8ed70e70bfba0b3ded536a50ca0705f5a7dd67b5b77fd9ca5eb"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "534f8d06357e228086de39441758874009eb255d198fff558c9cc3d9869625c8"
+    },
+    {
+      "file": "scientific_conclusion.md",
+      "sha256": "f963d21c0fb348d0f648986ac48260b974efdd246067e0c7ecdbc83e83b56f80"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "6b4e781160494701414f57d8b49c2e8cb57ea472be552aa0e46868c22e0f7f79"
+    },
+    {
+      "file": "test_scope_migration.json",
+      "sha256": "68f827e7eadff752d7736d5fb38121fc17322e30ed7fbbaed8400cc2610e91e8"
+    },
+    {
+      "file": "v23_semantics_before.json",
+      "sha256": "aa104c89f9945b5277e94db78b07d430105f503b8b7ce26d6291aa6c126eb119"
+    },
+    {
+      "file": "v23_semantics_comparison.json",
+      "sha256": "192f19663de9483e19237235a144e011931091e5c21b4a4cf667993e945f24ea"
+    }
+  ]
+}

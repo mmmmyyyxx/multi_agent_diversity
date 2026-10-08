@@ -1,0 +1,16 @@
+{
+  "status": "PILOT_READY_NOT_AUTHORIZED",
+  "source_sha": "7affed0829ac3d68ea7c2b4bdb10791df56691e3",
+  "startup_identity_sha256": "fefcf31738eb7a6ccc86589b8741c59d2f34642ee47b5ee6c82208e0b485f957",
+  "source_bytes_match_frozen_commit": true,
+  "manifest_snapshot_bytes_verified": true,
+  "current_governance": "PASS",
+  "unapproved_execution_negative_control": "PASS_EXACT_SINGLE_USE_AUTHORIZATION_REQUIRED",
+  "fresh_execution_directory_absent": true,
+  "fresh_accounting_directory_absent": true,
+  "authorization_consumption_absent": true,
+  "real_api_calls": 0,
+  "actual_cli_preflight": "PASS_PILOT_READY_NOT_AUTHORIZED",
+  "cli_log_sha256": "a30466032735d9cb0cf0022d32122645d5b13773795b83e671e33c755a6d0780",
+  "network_attempts": 0
+}

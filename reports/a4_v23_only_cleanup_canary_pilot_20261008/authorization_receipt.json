@@ -1,0 +1,18 @@
+{
+  "status": "PENDING_EXACT_USER_APPROVAL",
+  "attempt_id": "a4_v23_only_seed81_20261008_attempt1",
+  "source_sha": "7affed0829ac3d68ea7c2b4bdb10791df56691e3",
+  "startup_identity_sha256": "fefcf31738eb7a6ccc86589b8741c59d2f34642ee47b5ee6c82208e0b485f957",
+  "scope_sha256": "a2a16a047811189afac33be6ea6c5f6e7aebe5be5b8dae34758ef58310e1f173",
+  "explicit_user_authorized": false,
+  "single_use": true,
+  "consumed": false,
+  "ready_to_run": false,
+  "charged_total_ceiling": 2000000,
+  "validation_authorized": false,
+  "test_authorized": false,
+  "cancelled_paired_authorization_reusable": false,
+  "historical_40m_authorization_reusable": false,
+  "unapproved_execution_negative_control": "PASS_EXACT_SINGLE_USE_AUTHORIZATION_REQUIRED",
+  "approval_requires_no_scientific_source_change": true
+}
