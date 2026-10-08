@@ -5562,7 +5562,7 @@ experiments:
   manifest: null
   report: reports/unified_team_prompt_search_v2_20261001
   classifier: IMPLEMENTED_ZERO_API__EFFICACY_UNTESTED
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -5570,6 +5570,8 @@ experiments:
     authorization.
   - V1 replay and benchmark blockers retained; Pattern/Memory implemented default
     off.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   reports:
   - reports/unified_team_prompt_search_v2_20261001
   unavailable:
@@ -5670,11 +5672,13 @@ experiments:
   manifest: experiments/plans/multibench_dataset_migration_v1.yaml
   report: reports/multibench_dataset_migration_v1_20261001
   classifier: DATA_AND_SPLIT_FROZEN_NO_EFFICACY
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
   - Dataset/protocol preparation only; no efficacy observation or real API authorization.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     implementation_commit: Containing local Git commit; never an execution identity.
     execution_commit: No real execution source is frozen.
@@ -5695,11 +5699,13 @@ experiments:
   manifest: experiments/plans/v2_pattern_memory_multibench_v1.yaml
   report: reports/multibench_dataset_migration_v1_20261001
   classifier: PLAN_ONLY_NO_EXECUTION
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
   - Dataset/protocol preparation only; no efficacy observation or real API authorization.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     implementation_commit: Containing local Git commit; never an execution identity.
     execution_commit: No real execution source is frozen.
@@ -5720,7 +5726,7 @@ experiments:
   manifest: null
   report: reports/math_v2_preexecution_freeze_v1_20261001
   classifier: STOP_MATH_EVIDENCE_CONTRACT_INCOMPLETE
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   baseline_commit: 0356365b8e1e667b1c694417adee77d0531e189a
@@ -5730,6 +5736,8 @@ experiments:
     API execution.
   - Initial generic team is a draft input; no formal preexecution manifest or commit
     was frozen.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     manifest: Hard stop before formal preexecution freeze; no frozen manifest exists.
     implementation_commit: No implementation change or preexecution commit was made.
@@ -5750,7 +5758,7 @@ experiments:
   manifest: experiments/manifests/math_v2_pattern_memory_v1.yaml
   report: reports/math_v2_preexecution_freeze_v1_1_20261001
   classifier: CANARY_READY_NOT_AUTHORIZED
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   baseline_commit: fa718b9842fcfb50c5a651a59225d1435ebdd7e5
@@ -5759,6 +5767,8 @@ experiments:
     observed.
   - Historical HOLD evidence is immutable. Canary readiness does not authorize provider
     access.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     implementation_commit: Exact execution source SHA is frozen in the permanent manifest
       and source receipt; containing report commit is not execution authority.
@@ -5778,12 +5788,14 @@ experiments:
   manifest: experiments/manifests/math_v2_pattern_memory_v1.yaml
   report: reports/math_v2_preexecution_freeze_v1_1_20261001
   classifier: CANARY_READY_NOT_AUTHORIZED
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
   - Registered actual execution identity before final preexecution freeze; no real
     API execution or efficacy observed.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     implementation_commit: Exact execution source is frozen in the permanent manifest
       and source receipt.
@@ -5834,7 +5846,7 @@ experiments:
   manifest: experiments/manifests/math_v2_pattern_memory_v1_2.yaml
   report: reports/math_v2_solver_interface_repair_v1_2_20261002
   classifier: CANARY_READY_NOT_AUTHORIZED
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   baseline_commit: e25a2e251a55e0e189c9c228364e4906b98d560d
@@ -5845,6 +5857,8 @@ experiments:
     or real adherence established.
   - Fresh canary attempt2 requires a separate explicit authorization. Original attempt
     stays aborted and consumed.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     implementation_commit: Exact source receipt is in the versioned manifest after
       source commit.
@@ -5864,7 +5878,7 @@ experiments:
   manifest: experiments/manifests/math_v2_pattern_memory_v1_2.yaml
   report: reports/math_v2_solver_interface_repair_v1_2_20261002
   classifier: CANARY_READY_NOT_AUTHORIZED
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   baseline_commit: e25a2e251a55e0e189c9c228364e4906b98d560d
@@ -5875,6 +5889,8 @@ experiments:
     or real adherence established.
   - Fresh canary attempt2 requires a separate explicit authorization. Original attempt
     stays aborted and consumed.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     implementation_commit: Exact source receipt is in the versioned manifest after
       source commit.
@@ -5894,7 +5910,7 @@ experiments:
   manifest: experiments/manifests/math_v2_autonomous_accounting_preflight_v1.yaml
   report: reports/math_v2_autonomous_accounting_preflight_v1_20261002
   classifier: STOP_TOKEN_ACCOUNTING_UNRESOLVED
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   baseline_commit: 4435d276280b9b990f7ca2564d29b507ee02e55e
@@ -5904,6 +5920,8 @@ experiments:
   - No reliable frozen lwj accounting upper bound; no physical attempt started.
   - All new calls and tokens zero. Validation and Test raw rows remain unread.
   - Draft audit manifest is not an execution or authorization receipt.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     implementation_commit: No runtime or scientific source patch.
     execution_commit: No execution; pre-transport accounting STOP.
@@ -6055,7 +6073,7 @@ experiments:
   manifest: experiments/manifests/math_v2_reference_parser_domain_audit_v1.yaml
   report: reports/math_v2_reference_parser_domain_audit_v1_20261002
   classifier: STOP_SCIENTIFIC_CONTRACT_AMENDMENT_REQUIRED
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   baseline_commit: 9dc4768f49cae0016b09e315631e20e9076ab88a
@@ -6071,6 +6089,8 @@ experiments:
     reservations.'
   - Scientific amendment required; no parser, membership, method or provider execution
     change.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     implementation_commit: Forensic report and governance only; production unchanged.
     execution_commit: Zero-API audit, not a new experiment execution.
@@ -6089,7 +6109,7 @@ experiments:
   manifest: experiments/manifests/math_v2_answer_domain_amendment_v2.yaml
   report: reports/math_v2_answer_domain_amendment_v2_20261002
   classifier: MATH_ANSWER_DOMAIN_V2_PREPARATION
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   baseline_commit: 45631d26bdcdff4dcc4a28cce2fa24f7ca8e5210
@@ -6099,6 +6119,8 @@ experiments:
     split repair.
   - Original budget ledger continues; 15534 previously charged; no fresh 30M.
   - Real API requires exact fresh frozen scope and completed zero-API gates.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     implementation_commit: Pending completed gates and source freeze.
     execution_commit: No new real execution yet.
@@ -6117,7 +6139,7 @@ experiments:
   manifest: experiments/manifests/math_v2_preexecution_freeze_v1_4.yaml
   report: reports/math_v2_preexecution_freeze_v1_4_20261002
   classifier: MATH_ANSWER_DOMAIN_V2_PREPARATION
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   baseline_commit: 45631d26bdcdff4dcc4a28cce2fa24f7ca8e5210
@@ -6127,6 +6149,8 @@ experiments:
     split repair.
   - Original budget ledger continues; 15534 previously charged; no fresh 30M.
   - Real API requires exact fresh frozen scope and completed zero-API gates.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     implementation_commit: Pending completed gates and source freeze.
     execution_commit: No new real execution yet.
@@ -6145,7 +6169,7 @@ experiments:
   manifest: experiments/manifests/math_v2_a1_seed81_real_canary_v4.yaml
   report: reports/math_v2_a1_seed81_real_canary_v4_20261002
   classifier: MATH_ANSWER_DOMAIN_V2_PREPARATION
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   baseline_commit: 45631d26bdcdff4dcc4a28cce2fa24f7ca8e5210
@@ -6155,6 +6179,8 @@ experiments:
     split repair.
   - Original budget ledger continues; 15534 previously charged; no fresh 30M.
   - Real API requires exact fresh frozen scope and completed zero-API gates.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     implementation_commit: Pending completed gates and source freeze.
     execution_commit: No new real execution yet.
@@ -6173,7 +6199,7 @@ experiments:
   manifest: experiments/manifests/math_v2_a1_seed81_pilot_v2.yaml
   report: reports/math_v2_a1_seed81_pilot_v2_20261002
   classifier: MATH_ANSWER_DOMAIN_V2_PREPARATION
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   baseline_commit: 45631d26bdcdff4dcc4a28cce2fa24f7ca8e5210
@@ -6183,6 +6209,8 @@ experiments:
     split repair.
   - Original budget ledger continues; 15534 previously charged; no fresh 30M.
   - Real API requires exact fresh frozen scope and completed zero-API gates.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     implementation_commit: Pending completed gates and source freeze.
     execution_commit: No new real execution yet.
@@ -6201,7 +6229,7 @@ experiments:
   manifest: experiments/manifests/unified_semantic_contract_v2_1.yaml
   report: reports/unified_semantic_contract_v2_1_20261002
   classifier: ZERO_API_METHOD_CONFORMANCE
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   baseline_commit: 153ff13487085ef57f53d65b49005e80718226ba
@@ -6210,6 +6238,8 @@ experiments:
   - User-authored method semantics; no real API or efficacy observation.
   - Prior V2 manifests/preps/reports remain immutable and do not bind V2.1.
   - Real execution requires a fresh benchmark binding and exact frozen authorization.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     execution_commit: Zero-API only.
 - experiment_id: math_v2_1_answer_domain_amendment_v1
@@ -6227,12 +6257,14 @@ experiments:
   manifest: experiments/manifests/math_v2_1_answer_domain_amendment_v1.yaml
   report: reports/math_v2_1_answer_domain_amendment_v1_20261002
   classifier: V2_1_MATH_FRESH_PREEXECUTION
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
   - User-authorized V2.1 continuation; existing 30M ledger remains charged 15534.
   - Historical V2 scopes grant no access; fake A1-A4, real A1 Seed81 only; Test sealed.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_preexecution_freeze_v1
@@ -6249,12 +6281,14 @@ experiments:
   manifest: experiments/manifests/math_v2_1_preexecution_freeze_v1.yaml
   report: reports/math_v2_1_preexecution_freeze_v1_20261002
   classifier: V2_1_MATH_FRESH_PREEXECUTION
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
   - User-authorized V2.1 continuation; existing 30M ledger remains charged 15534.
   - Historical V2 scopes grant no access; fake A1-A4, real A1 Seed81 only; Test sealed.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_a1_seed81_real_canary_v1
@@ -6271,12 +6305,14 @@ experiments:
   manifest: experiments/manifests/math_v2_1_a1_seed81_real_canary_v1.yaml
   report: reports/math_v2_1_a1_seed81_real_canary_v1_20261002
   classifier: V2_1_MATH_FRESH_PREEXECUTION
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
   - User-authorized V2.1 continuation; existing 30M ledger remains charged 15534.
   - Historical V2 scopes grant no access; fake A1-A4, real A1 Seed81 only; Test sealed.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable: {}
   authorization_consumed: true
 - experiment_id: math_v2_1_a1_seed81_pilot_v1
@@ -6293,12 +6329,14 @@ experiments:
   manifest: experiments/manifests/math_v2_1_a1_seed81_pilot_v1.yaml
   report: reports/math_v2_1_a1_seed81_pilot_v1_20261002
   classifier: V2_1_MATH_FRESH_PREEXECUTION
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
   - User-authorized V2.1 continuation; existing 30M ledger remains charged 15534.
   - Historical V2 scopes grant no access; fake A1-A4, real A1 Seed81 only; Test sealed.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_output_interface_repair_v1
@@ -6315,7 +6353,7 @@ experiments:
   manifest: experiments/manifests/math_v2_1_output_interface_repair_v1.yaml
   report: reports/math_v2_1_output_interface_repair_v1_20261002
   classifier: V2_1_MATH_OUTPUT_INTERFACE_REPAIR
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -6323,6 +6361,8 @@ experiments:
     unchanged.
   - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
     fresh exact scope required.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_preexecution_freeze_v2
@@ -6339,7 +6379,7 @@ experiments:
   manifest: experiments/manifests/math_v2_1_preexecution_freeze_v2.yaml
   report: reports/math_v2_1_preexecution_freeze_v2_20261002
   classifier: V2_1_MATH_OUTPUT_INTERFACE_REPAIR
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -6347,6 +6387,8 @@ experiments:
     unchanged.
   - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
     fresh exact scope required.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_a1_seed81_real_canary_v2
@@ -6363,7 +6405,7 @@ experiments:
   manifest: experiments/manifests/math_v2_1_a1_seed81_real_canary_v2.yaml
   report: reports/math_v2_1_a1_seed81_real_canary_v2_20261002
   classifier: V2_1_MATH_OUTPUT_INTERFACE_REPAIR
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -6371,6 +6413,8 @@ experiments:
     unchanged.
   - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
     fresh exact scope required.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable: {}
   authorization_consumed: true
 - experiment_id: math_v2_1_a1_seed81_pilot_v2
@@ -6387,7 +6431,7 @@ experiments:
   manifest: experiments/manifests/math_v2_1_a1_seed81_pilot_v2.yaml
   report: reports/math_v2_1_a1_seed81_pilot_v2_20261002
   classifier: V2_1_MATH_OUTPUT_INTERFACE_REPAIR
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -6395,6 +6439,8 @@ experiments:
     unchanged.
   - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
     fresh exact scope required.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_output_interface_repair_v2
@@ -6411,7 +6457,7 @@ experiments:
   manifest: experiments/manifests/math_v2_1_output_interface_repair_v2.yaml
   report: reports/math_v2_1_output_interface_repair_v2_20261002
   classifier: V2_1_MATH_OUTPUT_INTERFACE_REPAIR
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -6419,6 +6465,8 @@ experiments:
     unchanged.
   - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
     fresh exact scope required.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_preexecution_freeze_v3
@@ -6435,7 +6483,7 @@ experiments:
   manifest: experiments/manifests/math_v2_1_preexecution_freeze_v3.yaml
   report: reports/math_v2_1_preexecution_freeze_v3_20261002
   classifier: V2_1_MATH_OUTPUT_INTERFACE_REPAIR
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -6443,6 +6491,8 @@ experiments:
     unchanged.
   - Initial prompts, models, method, budgets and canonical/split bytes unchanged;
     fresh exact scope required.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     execution_commit: Not executed.
 - experiment_id: math_v2_1_a1_seed81_real_canary_v3
@@ -7770,7 +7820,7 @@ experiments:
   manifest: experiments/manifests/math_v2_1_pattern_specific_content_guard_v3.yaml
   report: reports/math_v2_1_pattern_specific_content_guard_v3_20261005
   classifier: ALL_REQUIRED_ZERO_API_GATES_PASS
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -7778,6 +7828,8 @@ experiments:
   - One freshly authorized A4 Seed81 production opportunity completed and independently
     audited; historical attempts remain closed.
   - Operational verification only; guard coverage limits remain explicit.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     execution_commit: Protocol milestone; execution belongs to the registered attempt4
       Canary.
@@ -7872,7 +7924,7 @@ experiments:
   manifest: experiments/manifests/math_v2_1_gradient_pattern_refactor_v1.yaml
   report: reports/math_v2_1_gradient_pattern_refactor_v1_20261005
   classifier: ZERO_API_CONFORMANCE
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -7880,6 +7932,8 @@ experiments:
     shared F, Memory and Layer2.
   - Modification and synthetic verification only; no real API, Canary, Pilot, Validation,
     Test or push authority.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     execution_commit: No real experiment execution.
     result_commit: Local result commit is identified by git history; no self-referential
@@ -7905,7 +7959,7 @@ experiments:
   manifest: experiments/manifests/math_v2_1_current_runtime_consolidation_v1.yaml
   report: reports/math_v2_1_current_runtime_consolidation_v1_20261005
   classifier: EXACT_SCIENTIFIC_GOLDEN_CURRENT_ISOLATION_FINAL_SOURCE_SUITE_PASS
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -7916,6 +7970,8 @@ experiments:
   - Zero API; no Canary, Pilot, Validation, Test or push authority.
   - 'Public historical replay: six preexisting failures reproduced on BASE; four skips;
     private-artifact suite not run.'
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     execution_commit: No real experiment dispatch.
     result_commit: Recorded by git history; no self-reference.
@@ -8099,7 +8155,7 @@ experiments:
   manifest: experiments/manifests/math_identical_initial_condition_v1.yaml
   report: reports/math_identical_initial_condition_v1_20261006
   classifier: INITIAL_CONDITION_CHANGED_METHOD_UNCHANGED
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -8108,6 +8164,8 @@ experiments:
     remains unauthorized.
   - Closed V1_1 bindings and evidence are immutable; historical receipt bytes are
     explicitly archived.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     implementation_commit: Recorded by git history; no self-reference.
     execution_commit: Zero API only; no real execution.
@@ -8432,13 +8490,15 @@ experiments:
   manifest: experiments/protocols/transition_reachability_audit_v1/protocol.json
   report: reports/transition_reachability_audit_v1_20261007
   classifier: TRANSITION_REACHABILITY_SEMANTIC_AUDIT_V1
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
   - Scientific transition/ranking amendment only; no new real experiment or authority.
   - V2.2/source-closure/governance regressions pass; complete current suite retains
     two Windows ledger-snapshot I/O failures, both passing isolated follow-up checks.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     implementation_commit: Uncommitted reviewable patch
     execution_commit: Zero API; no scientific execution
@@ -8457,7 +8517,7 @@ experiments:
   manifest: experiments/protocols/math_v2_2_a4_pilot_execution_audit_v1/protocol.json
   report: reports/math_v2_2_a4_pilot_execution_audit_v1_20261008
   classifier: V22_A4_ADVERSARIAL_EXECUTION_AUDIT_V1
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -8465,6 +8525,8 @@ experiments:
   - Weighted progress proves commit finiteness; resource-realistic completion ceiling
     remains unproved.
   - Full current failures retained separately from isolated reruns.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     execution_commit: No real execution; user finite-bound HOLD boundary
     result_commit: Containing sanitized audit publication commit
@@ -8560,7 +8622,7 @@ experiments:
   manifest: experiments/protocols/math_visible_solution_feedback_v1/protocol.json
   report: reports/math_visible_solution_feedback_v1_20261008
   classifier: reports/math_visible_solution_feedback_v1_20261008/classifier.json
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -8568,6 +8630,8 @@ experiments:
     algorithm unchanged.
   - Real-provider adherence and optimizer efficacy untested; separate fresh freeze
     and API authorization required.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     implementation_commit: Containing implementation publication commit; no self-referential
       SHA
@@ -8588,7 +8652,7 @@ experiments:
   manifest: experiments/protocols/math_optimization_evidence_v23/protocol.json
   report: reports/math_optimization_evidence_v23_20261008
   classifier: reports/math_optimization_evidence_v23_20261008/classifier.json
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -8597,6 +8661,8 @@ experiments:
   - User stopped final regression before completion; 22 focused cases passed. Published
     implementation is partially verified, with no real-model execution or efficacy
     claim.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     implementation_commit: Containing publication commit; no self-referential SHA
     execution_commit: No real scientific execution
@@ -8608,7 +8674,7 @@ experiments:
   parent_ids:
   - math_optimization_evidence_v23
   - math_visible_solution_feedback_v1
-  status: PREPARED_NOT_EXECUTED
+  status: ABANDONED
   scientific_status: OFFLINE_PREPARATION_REAL_EFFICACY_UNKNOWN
   implementation_commit: null
   execution_commit: null
@@ -8616,12 +8682,15 @@ experiments:
   manifest: experiments/protocols/a4_v23_matched_comparison_v1/protocol.json
   report: reports/a4_v23_real_efficacy_preparation_20261008
   classifier: reports/a4_v23_real_efficacy_preparation_20261008/classifier.json
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
-  superseded_by: []
+  superseded_by:
+  - a4_v23_only_pilot_v1
   notes:
   - Fresh matched V6 initial measurements, five-opportunity horizon, 2M charged tokens
     per cell; new paid approval required.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     implementation_commit: Containing freeze commit; no self-referential SHA
     execution_commit: No real execution authorized
@@ -8632,7 +8701,7 @@ experiments:
   method_family: unified_team_prompt_search_v2_2
   parent_ids:
   - a4_v23_matched_comparison_v1
-  status: PREPARED_NOT_EXECUTED
+  status: ABANDONED
   scientific_status: OFFLINE_PREPARATION_REAL_EFFICACY_UNKNOWN
   implementation_commit: null
   execution_commit: null
@@ -8640,12 +8709,15 @@ experiments:
   manifest: experiments/manifests/a4_v23_matched_comparison_v1_a.yaml
   report: null
   classifier: reports/a4_v23_real_efficacy_preparation_20261008/classifier.json
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
-  superseded_by: []
+  superseded_by:
+  - a4_v23_only_pilot_v1
   notes:
   - Fresh matched V6 initial measurements, five-opportunity horizon, 2M charged tokens
     per cell; new paid approval required.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     implementation_commit: Containing freeze commit; no self-referential SHA
     execution_commit: No real execution authorized
@@ -8657,7 +8729,7 @@ experiments:
   method_family: unified_team_prompt_search_v2_3
   parent_ids:
   - a4_v23_matched_comparison_v1
-  status: PREPARED_NOT_EXECUTED
+  status: ABANDONED
   scientific_status: OFFLINE_PREPARATION_REAL_EFFICACY_UNKNOWN
   implementation_commit: null
   execution_commit: null
@@ -8665,14 +8737,44 @@ experiments:
   manifest: experiments/manifests/a4_v23_matched_comparison_v1_b.yaml
   report: null
   classifier: reports/a4_v23_real_efficacy_preparation_20261008/classifier.json
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
-  superseded_by: []
+  superseded_by:
+  - a4_v23_only_pilot_v1
   notes:
   - Fresh matched V6 initial measurements, five-opportunity horizon, 2M charged tokens
     per cell; new paid approval required.
+  - V23-only task retires this node from new execution; scientific evidence and frozen
+    manifests remain unchanged.
   unavailable:
     implementation_commit: Containing freeze commit; no self-referential SHA
     execution_commit: No real execution authorized
     result_commit: No efficacy result
     report: No cell execution; preparation evidence is attached to the parent study.
+- experiment_id: a4_v23_only_pilot_v1
+  kind: PILOT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_3
+  parent_ids:
+  - math_optimization_evidence_v23
+  - a4_v23_matched_comparison_v1_b
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: ZERO_API_PREPARATION_REAL_PROVIDER_AND_EFFICACY_UNTESTED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/a4_v23_only_pilot_v1.yaml
+  report: reports/a4_v23_only_cleanup_canary_pilot_20261008
+  classifier: reports/a4_v23_only_cleanup_canary_pilot_20261008/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Fresh V23 single-arm continuous Canary/Pilot, 5 opportunities total, 2M charged
+    tokens total; exact single-use API approval pending.
+  - No V22 or paired execution; historical scopes and accounting cannot grant authorization.
+  unavailable:
+    implementation_commit: Exact source recorded by the separate freeze receipt; no
+      self-referential SHA.
+    execution_commit: No real API authorization yet.
+    result_commit: Publication commit identified by Git history and remote verification.

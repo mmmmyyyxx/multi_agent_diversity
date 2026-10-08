@@ -1,0 +1,11 @@
+{
+  "status": "NOT_EXECUTED_EXACT_SINGLE_USE_API_APPROVAL_PENDING",
+  "real_api_calls": 0,
+  "initial_review": "NOT_OBSERVED",
+  "first_opportunity_review": "NOT_OBSERVED",
+  "actual_provider_conformance": "UNTESTED",
+  "synthetic_entrypoint_cases": 2,
+  "synthetic_same_attempt_opportunities_per_case": 5,
+  "no_extra_canary_provider_calls": true,
+  "unreached_branches": "NOT_OBSERVED_NO_FORCED_GENERATION"
+}

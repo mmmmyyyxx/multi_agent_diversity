@@ -8,329 +8,404 @@ Registry provides node metadata; current_frontier.yaml provides readiness only.
 ```yaml
 schema_version: current_frontier_v1
 current_architecture: Unified Team Prompt Search
-method_identity: unified_team_prompt_search_v2_2
-current_method: unified_team_prompt_search_v2_2
-current_implementation: One closed current policy bundle; current-only composition;
-  explicit legacy replay
-current_experiment: math_v2_2_gradient_pattern_seed81_pilot_v2
+method_identity: unified_team_prompt_search_v2_3
+current_method: unified_team_prompt_search_v2_3
+current_experiment: a4_v23_only_pilot_v1
+current_implementation: Closed V23 production graph with V6 trajectories, disjoint
+  evidence and measured competence/edit-effect Memory.
 current_benchmark_suite:
 - math
 - ifbench
 - hotpotqa
 historical_benchmark_only: true
 historical_benchmark: bbh
-current_dataset_migration: multibench_dataset_migration_v1
-future_experiment_plan: v2_pattern_memory_multibench_v1
 last_governance_milestone: repository_hygiene_alignment_v1
-last_scientific_contract_milestone: benchmark_scientific_contract_freeze_v1
 real_execution_ready: false
 real_api_authorized: false
 validation_access: not_authorized
 test_access: sealed
-open_questions: docs/research/OPEN_QUESTIONS.md
-last_method_milestone: transition_reachability_audit_v1
-canary_manifest: null
-last_preexecution_milestone: math_v2_1_pattern_preexecution_v3
-last_canary_milestone: math_v2_1_gradient_pattern_seed81_canary_v3
-current_canary_status: NOT_AUTHORIZED; PILOT_ATTEMPT2_CLOSED_BY_USER
-formal_a1_ready: false
-formal_a1_authorized: false
-current_execution_blocker: USER_REQUESTED_STOP_AUTHORIZATION_CLOSED
-default_optimizer_generation_policy: OPTIMIZER_REFLECTION_GENERATION_POLICY_V3
-default_optimizer_enable_thinking: false
-optimizer_policy_amendment_status: LAYER1_GENERATION_V3_FROZEN_AND_DISPATCHED
-optimizer_policy_amendment_authority: experiments/protocols/math_v2_1_layer1_redesign_v1/canary_only_authorization_decision.json
-next_canary_milestone: null
-next_canary_attempt_id: null
-last_autonomous_milestone: math_v2_1_layer1_preexecution_repair_v1
-autonomous_user_authorization_received: true
-autonomous_token_authorization: 40000000
-autonomous_tokens_consumed: 4068192
-autonomous_tokens_remaining: 35931808
-token_accounting_policy: RESERVATION_V2
-prior_accounting_stop_resolution: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2
-autonomous_authorization_status: CLOSED_USER_REQUESTED_STOP
-pilot_search_complete: false
-pilot_validation_complete: false
-pilot_final_status: USER_STOPPED_INCOMPLETE
-task_stop_reason: USER_REQUESTED_STOP
-optimizer_nonthinking_wire_confirmed: YES_EQUIVALENT_EVIDENCE
-last_candidate_contract_audit: math_v2_1_proposal_semantic_postmortem_v1
-pilot_scientific_interpretation: SEVEN_COMPLETED_OPPORTUNITIES_NO_ADMISSIBLE_WINNER;
-  COMPLETE_PILOT_INCONCLUSIVE
-candidate_contract_audit_status: COMPLETED_ZERO_API
-next_search_contract_alignment: NO_AUTOMATIC_METHOD_CHANGE
-current_layer1_backend: LAYER1_BOUNDED_MEMORY_SEARCH_V2
-next_pilot_authorized: false
-next_validation_authorized: false
-last_completed_pilot_milestone: math_v2_1_a1_seed81_low_cost_pilot_v4
-historical_pilot_status:
-  search_complete: true
-  validation_complete: true
-  final_status: COMPLETE
-  interpretation: ZERO_INTERVENTION_NO_ADMISSIBLE_CANDIDATE
-new_pilot_search_complete: false
-new_pilot_validation_complete: false
-new_pilot_final_status: USER_STOPPED_INCOMPLETE
-current_memory_policy: structured_cross_member_rolling_risk_memory_v4
-current_configuration_arm: A4
-current_pattern_enabled: true
-current_memory_enabled: true
-memory_policy_amendment: math_v2_1_shared_risk_memory_amendment_v1
-memory_policy_amendment_status: FROZEN_ZERO_API
-available_opt_in_memory_policy: structured_cross_member_rolling_risk_memory_v4
-memory_policy_real_execution_authorized: false
-current_pattern_support_id_transport: PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1
-next_canary_authorized: false
-current_pattern_abstraction_guard: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6
-future_execution_requires_new_user_authorization: true
-available_opt_in_pattern_abstraction_guard: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6
-pattern_guard_amendment_status: VERIFIED_GUARD_V6_ZERO_API
-next_canary_manifest: null
-prior_autonomous_authorization_status: USER_STOPPED_PATTERN_TASK_ALL_ATTEMPTS_CLOSED
-prior_task_stop_reason: USER_STOP_PATTERN_TASK
-current_canary_report: reports/math_v2_1_gradient_pattern_seed81_canary_v3_execution_20261006
-last_pattern_semantic_partition_audit: math_v2_1_pattern_semantic_partition_audit_v1
-pattern_semantic_partition_audit_report: reports/math_v2_1_pattern_semantic_partition_audit_v1_20261005
-pattern_semantic_partition_audit_status: VALID_FORENSIC_ZERO_API
-pattern_recurring_support_observed: false
-pattern_overfragmentation_established: false
-pattern_diagnosis_causal_grounding: HYPOTHETICAL_CORRECTIVE_SIGNAL_NO_LATENT_CAUSE_CLAIM
-next_pilot_scientific_recommendation: NO_AUTOMATIC_SCIENTIFIC_RERUN
-current_pattern_policy: gradient_cluster_pattern_discovery_v4
-available_opt_in_pattern_policy: gradient_cluster_pattern_discovery_v4
-available_opt_in_gradient_policy: PER_EXAMPLE_TEXTUAL_GRADIENT_V1
-pattern_gradient_amendment_status: COMPLETED_ZERO_API
-pattern_gradient_amendment_report: reports/math_v2_1_gradient_pattern_refactor_v1_20261005
-current_runtime_composition: CURRENT_RUNTIME_COMPOSITION_V1
+current_execution_blocker: EXACT_SINGLE_USE_API_AUTHORIZATION_REQUIRED_AFTER_FINAL_FREEZE
+current_execution_blockers:
+- FINAL_SOURCE_AND_CURRENT_SUITE_FREEZE_PENDING
+- EXACT_SINGLE_USE_API_AUTHORIZATION_REQUIRED
 current_runtime_builder: build_current_team_prompt_search
 current_execution_entrypoint: scripts/run_experiment.py
-historical_replay_entrypoint: scripts/replay_experiment.py
-last_runtime_consolidation_milestone: math_v2_1_current_runtime_consolidation_v1
-runtime_consolidation_status: COMPLETED_ZERO_API_EQUIVALENCE
-current_execution_eligibility: FRESH_ATTEMPT_PREFLIGHT_PENDING
-runtime_consolidation_report: reports/math_v2_1_current_runtime_consolidation_v1_20261005
-current_runtime_source: 4b02b734e7e5306bd5f0192464b1cf0bb6a95562
-pending_user_task_scope: AUTONOMOUS_V22_FULL_A4_OPERATIONAL_RECOVERY_WITHIN_CUMULATIVE_40M
-pending_user_task_sha256: 9ef0ad2aec560ad107ec41c432a902ab3e4a456f8ebb426b9c0c533d5150dc19
-pending_operational_attempt_limit: 1
-pending_user_task_authorization_received: true
-previous_valid_canary_milestone: math_v2_1_a4_seed81_pattern_canary_v4
-previous_valid_canary_status: VALID_OPERATIONAL_CANARY
-last_attempt_id: math_v2_1_gradient_pattern_A4_seed81_pilot_attempt4
-last_attempt_execution_source: 57e3d77915a731a69d3f0182f6cc19b6adf92c9a
-gradient_implementation_closure: ESTABLISHED_FOR_CANARY_SCOPE
-gradient_semantic_quality: SUPPORTED_IN_CANARY_WITH_ONE_TRANSFER_QUALIFICATION
-gradient_cluster_semantic_behavior: SHARED_PATTERN_OBSERVED
-current_gradient_prompt: PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3
-future_execution_requires_new_frozen_single_use_scope: true
-gradient_raw_comparison_classification: MIXED
-pending_pilot_milestone: math_v2_2_gradient_pattern_seed81_pilot_v2
-pending_pilot_manifest: experiments/manifests/math_v2_2_gradient_pattern_seed81_pilot_v2.yaml
-pending_pilot_attempt_id: math_v2_2_gradient_pattern_A4_seed81_pilot_attempt2
-pending_pilot_scope: A4_SEED81_OPTIMIZE60_SHADOW40_K64_TOKEN24M_ONE_ATTEMPT
-pending_pilot_user_task_sha256: 9ef0ad2aec560ad107ec41c432a902ab3e4a456f8ebb426b9c0c533d5150dc19
-pending_pilot_user_authorization_received: true
-pending_pilot_status: FRESH_CLUSTER_LIMIT_REPAIR_PREFLIGHT_PENDING
-pending_pilot_operational_retry_limit: 0
-pending_pilot_scientific_changes_authorized: false
-pending_pilot_validation_authorized: false
-pending_pilot_test_authorized: false
-pending_pilot_push_authorized: true
-last_pilot_milestone: math_v2_1_gradient_pattern_seed81_pilot_v6
-current_pilot_status: NOT_EXECUTED_FRESH_ATTEMPT
-current_pilot_report: reports/math_v2_2_gradient_pattern_seed81_pilot_v1_execution_20261008
-last_pilot_manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v6.yaml
-pilot_gradient_contract_compliance: ALL_ACCEPTED_PASS
+current_runtime_composition: CURRENT_RUNTIME_COMPOSITION_V1
+current_execution_binding: experiments/execution_bindings/a4_v23_only_seed81_20261008_attempt1.json
+current_layer1_backend: INDEPENDENT_OPTIMIZE_VALIDATION_SEARCH_V1
+current_memory_policy: BOOTSTRAPPED_EDIT_EFFECT_ROLLING_MEMORY_V1
+current_pattern_policy: gradient_cluster_pattern_discovery_v4
+current_gradient_prompt_identity: REFERENCE_SOLUTION_GRADIENT_PROMPT_V5
 current_initial_team_version: MATH_GENERIC_TEAM_SEED_V1_2
 current_initial_team_path: experiments/initial_teams/math_generic_team_seed_v1_1.json
 current_initial_team_sha256: d1a04dbdd540371638e8271cca90469f0a8cf4d42a5f944eeee8c6dfcfca9110
-current_initial_condition_milestone: math_identical_initial_condition_v1
-current_initial_condition_status: VERIFIED_ZERO_API_INITIAL_CONDITION_CORRECTION
-current_initial_condition_report: reports/math_identical_initial_condition_v1_20261006
-current_initial_condition_execution_authorized: false
-current_offline_execution_profile: experiments/execution_bindings/math_v2_2_offline_profile_v1.json
-current_pilot_offline_execution_profile: null
-current_initial_condition_runtime_source: 52ada98b4735cfa7713de2c2f5437a94ce0bef0b
-current_gradient_prompt_identity: PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3
-current_pattern_guard_identity: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6
-pending_pilot_scientific_amendment_scope: PER_EXAMPLE_GRADIENT_CONTRACT_RECOVERY_V1
-numeric_guard_historical_regression_status: PASS_131_REAL_GRADIENTS_PLUS_22_STRONG_REAL_SOURCE_CONTROLS
-pilot_monitor_repair_status: APPEND_ONLY_MONITOR_AND_ACTUAL_PREFIX_PASS
-pilot_persistence_incident_lock_holder: NOT_ESTABLISHED
-pilot_fresh_gradient_semantic_usefulness: INCONCLUSIVE_NO_LLM_JUDGE
-pilot_authorization_closed: false
-pilot_partition_contract_compliance: GRADIENT_PATTERN_PARTITION_COMPLETION_V1
-pilot_persistence_status: 1005_OFFLINE_CYCLES_AND_SEALED_ACTUAL_RESPONSE_RECEIPTS_NO_GAP
-current_partition_completion_policy: GRADIENT_PATTERN_PARTITION_COMPLETION_V1
-numeric_calibration_user_task_sha256: b81ddb478d7d52285394899f31dc648fd7c1b05bf75d37d852911c8b7d73a9fc
-numeric_calibration_report: reports/math_v2_1_numeric_provenance_guard_v6_20261007
-numeric_calibration_fresh_pilot_condition_met: false
-numeric_calibration_status: COMPLETED_ZERO_API_STOP_SCIENTIFIC_METHOD_DECISION_REQUIRED
-numeric_calibration_authorization_closed: true
-current_gradient_recovery_policy: PER_EXAMPLE_GRADIENT_CONTRACT_RECOVERY_V1
-gradient_contract_recovery_status: VERIFIED_AND_EXECUTED
-gradient_contract_recovery_report: reports/math_v2_1_gradient_contract_recovery_v1_20261007
-gradient_contract_recovery_attempt: math_v2_1_gradient_pattern_A4_seed81_pilot_attempt6
-pilot_gradient_recovery_statistics:
-  accepted_gradient_count: 38
-  gradient_contract_recovery_rate: 0.0
-  gradient_first_pass_valid: 38
-  gradient_retry_once: 0
-  gradient_retry_twice: 0
-  gradient_three_fail: 0
-  length_rejections: 0
-  logical_gradient_count: 38
-  numeric_warnings: 1
-  physical_gradient_calls: 38
-  schema_rejections: 0
-  strong_leakage_rejections: 0
-  successful_recovery_rate: null
-pilot_bottleneck_diagnosis: PATTERN_CLUSTER_PROVIDER_OUTPUT_CAP
-pilot_analysis_complete: false
-pilot_analysis_index: reports/math_v2_2_gradient_pattern_seed81_pilot_v1_execution_20261008/analysis_bundle_index.json
-pilot_original_runner_status: EXECUTION_ABORTED
-pilot_terminal_serialization_status: NOT_REACHED
-pilot_owner_scientific_completion_receipt: null
-pilot_terminal_engineering_repair_status: NOT_APPLICABLE
-pilot_terminal_engineering_repair_report: null
-latest_independent_capacity_diagnostic: math_v2_1_manual_prompt_capacity_probe_v1
-independent_capacity_diagnostic_status: VALID_DEVELOPMENT_DIAGNOSTIC
-independent_capacity_diagnostic_report: reports/math_v2_1_manual_prompt_capacity_probe_v1_20261007
-independent_capacity_diagnostic_A4_method_changed: false
-independent_capacity_diagnostic_authorization_closed: true
+current_solver_interface: MATH_SOLVER_INTERFACE_V6
 current_transition_policy: initial_competence_target_or_team_progress_v3
-current_execution_blockers:
-- FRESH_SOURCE_FREEZE_AND_FOCUSED_TESTS_PENDING
-current_transition_audit_report: reports/transition_reachability_audit_v1_20261007
-current_transition_audit_status: COMPLETE_ZERO_API_FULL_SUITE_IO_LIMITATION
-current_transition_conformance: PASS_FINAL_FULL_CURRENT_SUITE
-current_transition_full_suite: 1583_PASSED_0_FAILED_2_SKIPPED_1468_DESELECTED
+current_configuration_arm: A4
+current_pattern_enabled: true
+current_memory_enabled: true
+current_canary_status: NOT_EXECUTED_EXACT_SCOPE_API_APPROVAL_PENDING
+current_pilot_status: NOT_EXECUTED_EXACT_SCOPE_API_APPROVAL_PENDING
+current_pilot_report: reports/a4_v23_only_cleanup_canary_pilot_20261008
+current_canary_report: reports/a4_v23_only_cleanup_canary_pilot_20261008
+last_canary_milestone: math_v2_1_gradient_pattern_seed81_canary_v3
+next_canary_attempt_id: null
+next_canary_milestone: null
+canary_manifest: null
+next_canary_authorized: false
+next_pilot_authorized: false
+next_validation_authorized: false
+formal_a1_ready: false
+formal_a1_authorized: false
+pending_pilot_milestone: a4_v23_only_pilot_v1
+pending_pilot_manifest: experiments/manifests/a4_v23_only_pilot_v1.yaml
+pending_pilot_attempt_id: a4_v23_only_seed81_20261008_attempt1
+pending_pilot_status: FRESH_PREPARATION_EXACT_API_APPROVAL_PENDING
+pending_pilot_operational_retry_limit: 0
+pending_pilot_validation_authorized: false
+pending_pilot_test_authorized: false
+pending_pilot_push_authorized: true
+pending_pilot_scientific_changes_authorized: false
+pilot_search_complete: false
+pilot_validation_complete: false
 finite_pilot_bound_frozen: true
-scientific_method_changed: true
-last_valid_v21_pilot_status: VALID_A4_SEED81_PILOT_SEARCH
-last_valid_v21_pilot_report: reports/math_v2_1_gradient_pattern_seed81_pilot_v6_execution_20261007
-last_v22_execution_audit: math_v2_2_a4_pilot_execution_audit_v1
-last_v22_execution_audit_report: reports/math_v2_2_a4_pilot_execution_audit_v1_20261008
-v22_commit_bound_established: true
-v22_resource_realistic_completion_bound_established: false
-new_v22_pilot_executed: true
-this_task_scientific_method_changed: false
-current_transition_full_suite_source: 4b02b734e7e5306bd5f0192464b1cf0bb6a95562
-operational_horizon_identity: V2_2_FIXED_HORIZON_OPERATIONAL_PILOT_V1
-operational_horizon_K: 64
-operational_attempt_token_ceiling: 24000000
-pilot_report: reports/math_v2_2_gradient_pattern_seed81_pilot_v2_execution_20261008
-pilot_attempt: math_v2_2_gradient_pattern_A4_seed81_pilot_attempt2
-pilot_progress_paths:
-  TARGET: 0
-  TARGET_AND_TEAM: 0
-  TEAM: 0
-pilot_observed_commit_count: 0
-pilot_pattern_cluster_calls: 8
-pilot_pattern_cluster_output_contract_valid: true
-last_valid_v21_pilot_statistics:
-  pilot_partition_completion_statistics:
-    cluster_calls: 10
-    duplicate_partition_failures: 0
-    extra_llm_repair_calls: 0
-    independent_reconstruction: true
-    maximum_missing_aliases_per_call: 2
-    partition_completion_events: 4
-    policy: GRADIENT_PATTERN_PARTITION_COMPLETION_V1
-    raw_complete_partitions: 6
-    raw_missing_only_partitions: 4
-    total_missing_aliases_completed: 5
-    unknown_alias_failures: 0
-  pilot_mutation_behavior_statistics:
-    Solver_evaluated_candidates: 57
-    behavior_baseline: actual local parent; exact returned text comparison
-    behavior_change_rate: 0.5964912280701754
-    behavior_changed_candidates: 34
-    correctness_and_class_baseline: actual local parent; frozen binary evaluator
-    correctness_change_rate: 0.2807017543859649
-    correctness_changed_candidates: 16
-    local_classes:
-      NEUTRAL: 41
-      PURE_REGRESSION: 12
-      PURE_REPAIR: 4
-    parsed_answer_change_rate: 0.5789473684210527
-    prompt_changed_behavior_unchanged_candidates: 23
-    prompt_changed_but_behavior_unchanged_rate: 0.40350877192982454
-    repair_candidates: 15
-    repair_target: selected Pattern support intersect local panel, root wrong
-    repair_yield: 0.2631578947368421
-    root_relative_fixed_broken_fields_retained: true
-    scientific_efficacy: NOT_CAUSALLY_ESTABLISHED
-pending_user_task_status: STOPPED_REPORT_COMPLETE
-pilot_analysis_kind: OWNER_USER_STOP_PREFIX_FAILURE_REPORT
-pilot_execution_complete: false
-pilot_partition_completion_statistics:
-  status: 8_VALID_CLUSTERS_INCLUDING_PARTIAL_OPPORTUNITY8
-  cluster_provider_calls: 8
-  completed_clusters: 8
-  completed_opportunities: 7
-pilot_mutation_behavior_statistics:
-  status: 27_EXPORTED_CONTRACT_VALID_SOLVER_EVALUATED; TWO_FULL_CANDIDATES_BEHAVIOR_CHANGED
-  proposals: 42
-  exported_candidates: 27
-  behavior_confirmed_Full_candidates: 2
-  scope: SEVEN_COMPLETED_OPPORTUNITIES
-current_pattern_cluster_generation_policy: PATTERN_CLUSTER_GENERATION_POLICY_V1
-pattern_cluster_output_ceiling: 8192
-completed_opportunity_count: 7
-partial_opportunity_index: 8
-last_optimizer_failure_audit: math_v2_2_optimizer_failure_audit_v1
-last_optimizer_failure_audit_report: reports/math_v2_2_optimizer_failure_audit_v1_20261008
-optimizer_failure_audit_scope:
-  completed_opportunities: 7
-  proposals: 42
-  scored_contract_valid: 33
-  root_positive: 3
-  root_neutral: 25
-  root_negative: 5
-  incumbent_strict_positive: 1
-  actual_panel_size: 4
-  panel_equals_probe_membership: true
-  full_loss_occurrences: 11
-  full_unique_lost_cases: 6
-  strictly_better_local_net_candidates_omitted: 0
-  new_api_calls: 0
-  scientific_method_changed: false
-  assessment: OBSERVED_PRESERVATION_COVERAGE_GAP_AND_OPTIMIZER_CONTEXT_CONFLATION
-  causal_optimizer_or_solver_noise_conclusion: NOT_ESTABLISHED
-last_solver_feedback_milestone: math_visible_solution_feedback_v1
-solver_feedback_correction_report: reports/math_visible_solution_feedback_v1_20261008
-solver_feedback_correction_status: IMPLEMENTED_ZERO_API_REAL_PROVIDER_CANARY_REQUIRED
-available_opt_in_solver_interface: MATH_SOLVER_INTERFACE_V6
-available_opt_in_solver_trajectory_policy: MATH_VISIBLE_SOLUTION_FEEDBACK_POLICY_V1
-available_opt_in_gradient_prompt: PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V4
-available_opt_in_gradient_input_schema: PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V2
-available_opt_in_layer1_input_schema: PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5
-available_opt_in_visible_solution_profile: experiments/execution_bindings/math_visible_solution_offline_profile_v1.json
-visible_solution_real_execution_authorized: false
-visible_solution_validation_authorized: false
-visible_solution_test_authorized: false
-visible_solution_search_algorithm_changed: false
-visible_solution_scientific_runtime_identity_changed: true
-last_optimization_evidence_milestone: math_optimization_evidence_v23
-optimization_evidence_report: reports/math_optimization_evidence_v23_20261008
-optimization_evidence_method: unified_team_prompt_search_v2_3
-optimization_evidence_status: OFFLINE_VERIFIED
-optimization_evidence_stop_report: reports/math_optimization_evidence_v23_20261008/stop_summary.md
-optimization_evidence_offline_profile: experiments/execution_bindings/math_optimization_evidence_offline_profile_v1.json
-optimization_evidence_real_api_authorized: false
-optimization_evidence_validation_authorized: false
-optimization_evidence_test_authorized: false
-optimization_evidence_scientific_method_changed: true
-optimization_evidence_verification_report: reports/a4_v23_real_efficacy_preparation_20261008
-next_matched_comparison_protocol: experiments/protocols/a4_v23_matched_comparison_v1/protocol.json
-next_matched_comparison_status: OFFLINE_VERIFIED_AUTHORIZATION_PENDING
+operational_horizon_K: 5
+operational_attempt_token_ceiling: 2000000
+accounting_scope_policy: FRESH_V23_SINGLE_ARM_2M_V1
+token_ledger_directory: runs/a4_v23_only_seed81_20261008_attempt1/accounting
+autonomous_authorization_status: FRESH_V23_EXACT_SCOPE_APPROVAL_PENDING_OLD_SCOPES_CLOSED
+future_execution_requires_new_frozen_single_use_scope: true
+next_matched_comparison_status: PERMANENTLY_CANCELLED_HISTORICAL_ONLY
 next_matched_comparison_real_api_authorized: false
-next_matched_comparison_token_ceiling: 4000000
-next_matched_comparison_opportunities_per_arm: 5
-next_matched_comparison_validation_authorized: false
-next_matched_comparison_test_authorized: false
+v22_active: false
+v23_only: true
+this_task_scientific_method_changed: false
+historical_frontier_at_reference:
+  schema_version: current_frontier_v1
+  current_architecture: Unified Team Prompt Search
+  method_identity: unified_team_prompt_search_v2_2
+  current_method: unified_team_prompt_search_v2_2
+  current_implementation: One closed current policy bundle; current-only composition;
+    explicit legacy replay
+  current_experiment: math_v2_2_gradient_pattern_seed81_pilot_v2
+  current_benchmark_suite:
+  - math
+  - ifbench
+  - hotpotqa
+  historical_benchmark_only: true
+  historical_benchmark: bbh
+  current_dataset_migration: multibench_dataset_migration_v1
+  future_experiment_plan: v2_pattern_memory_multibench_v1
+  last_governance_milestone: repository_hygiene_alignment_v1
+  last_scientific_contract_milestone: benchmark_scientific_contract_freeze_v1
+  real_execution_ready: false
+  real_api_authorized: false
+  validation_access: not_authorized
+  test_access: sealed
+  open_questions: docs/research/OPEN_QUESTIONS.md
+  last_method_milestone: transition_reachability_audit_v1
+  canary_manifest: null
+  last_preexecution_milestone: math_v2_1_pattern_preexecution_v3
+  last_canary_milestone: math_v2_1_gradient_pattern_seed81_canary_v3
+  current_canary_status: NOT_AUTHORIZED; PILOT_ATTEMPT2_CLOSED_BY_USER
+  formal_a1_ready: false
+  formal_a1_authorized: false
+  current_execution_blocker: USER_REQUESTED_STOP_AUTHORIZATION_CLOSED
+  default_optimizer_generation_policy: OPTIMIZER_REFLECTION_GENERATION_POLICY_V3
+  default_optimizer_enable_thinking: false
+  optimizer_policy_amendment_status: LAYER1_GENERATION_V3_FROZEN_AND_DISPATCHED
+  optimizer_policy_amendment_authority: experiments/protocols/math_v2_1_layer1_redesign_v1/canary_only_authorization_decision.json
+  next_canary_milestone: null
+  next_canary_attempt_id: null
+  last_autonomous_milestone: math_v2_1_layer1_preexecution_repair_v1
+  autonomous_user_authorization_received: true
+  autonomous_token_authorization: 40000000
+  autonomous_tokens_consumed: 4068192
+  autonomous_tokens_remaining: 35931808
+  token_accounting_policy: RESERVATION_V2
+  prior_accounting_stop_resolution: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2
+  autonomous_authorization_status: CLOSED_USER_REQUESTED_STOP
+  pilot_search_complete: false
+  pilot_validation_complete: false
+  pilot_final_status: USER_STOPPED_INCOMPLETE
+  task_stop_reason: USER_REQUESTED_STOP
+  optimizer_nonthinking_wire_confirmed: YES_EQUIVALENT_EVIDENCE
+  last_candidate_contract_audit: math_v2_1_proposal_semantic_postmortem_v1
+  pilot_scientific_interpretation: SEVEN_COMPLETED_OPPORTUNITIES_NO_ADMISSIBLE_WINNER;
+    COMPLETE_PILOT_INCONCLUSIVE
+  candidate_contract_audit_status: COMPLETED_ZERO_API
+  next_search_contract_alignment: NO_AUTOMATIC_METHOD_CHANGE
+  current_layer1_backend: LAYER1_BOUNDED_MEMORY_SEARCH_V2
+  next_pilot_authorized: false
+  next_validation_authorized: false
+  last_completed_pilot_milestone: math_v2_1_a1_seed81_low_cost_pilot_v4
+  historical_pilot_status:
+    search_complete: true
+    validation_complete: true
+    final_status: COMPLETE
+    interpretation: ZERO_INTERVENTION_NO_ADMISSIBLE_CANDIDATE
+  new_pilot_search_complete: false
+  new_pilot_validation_complete: false
+  new_pilot_final_status: USER_STOPPED_INCOMPLETE
+  current_memory_policy: structured_cross_member_rolling_risk_memory_v4
+  current_configuration_arm: A4
+  current_pattern_enabled: true
+  current_memory_enabled: true
+  memory_policy_amendment: math_v2_1_shared_risk_memory_amendment_v1
+  memory_policy_amendment_status: FROZEN_ZERO_API
+  available_opt_in_memory_policy: structured_cross_member_rolling_risk_memory_v4
+  memory_policy_real_execution_authorized: false
+  current_pattern_support_id_transport: PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1
+  next_canary_authorized: false
+  current_pattern_abstraction_guard: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6
+  future_execution_requires_new_user_authorization: true
+  available_opt_in_pattern_abstraction_guard: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6
+  pattern_guard_amendment_status: VERIFIED_GUARD_V6_ZERO_API
+  next_canary_manifest: null
+  prior_autonomous_authorization_status: USER_STOPPED_PATTERN_TASK_ALL_ATTEMPTS_CLOSED
+  prior_task_stop_reason: USER_STOP_PATTERN_TASK
+  current_canary_report: reports/math_v2_1_gradient_pattern_seed81_canary_v3_execution_20261006
+  last_pattern_semantic_partition_audit: math_v2_1_pattern_semantic_partition_audit_v1
+  pattern_semantic_partition_audit_report: reports/math_v2_1_pattern_semantic_partition_audit_v1_20261005
+  pattern_semantic_partition_audit_status: VALID_FORENSIC_ZERO_API
+  pattern_recurring_support_observed: false
+  pattern_overfragmentation_established: false
+  pattern_diagnosis_causal_grounding: HYPOTHETICAL_CORRECTIVE_SIGNAL_NO_LATENT_CAUSE_CLAIM
+  next_pilot_scientific_recommendation: NO_AUTOMATIC_SCIENTIFIC_RERUN
+  current_pattern_policy: gradient_cluster_pattern_discovery_v4
+  available_opt_in_pattern_policy: gradient_cluster_pattern_discovery_v4
+  available_opt_in_gradient_policy: PER_EXAMPLE_TEXTUAL_GRADIENT_V1
+  pattern_gradient_amendment_status: COMPLETED_ZERO_API
+  pattern_gradient_amendment_report: reports/math_v2_1_gradient_pattern_refactor_v1_20261005
+  current_runtime_composition: CURRENT_RUNTIME_COMPOSITION_V1
+  current_runtime_builder: build_current_team_prompt_search
+  current_execution_entrypoint: scripts/run_experiment.py
+  historical_replay_entrypoint: scripts/replay_experiment.py
+  last_runtime_consolidation_milestone: math_v2_1_current_runtime_consolidation_v1
+  runtime_consolidation_status: COMPLETED_ZERO_API_EQUIVALENCE
+  current_execution_eligibility: FRESH_ATTEMPT_PREFLIGHT_PENDING
+  runtime_consolidation_report: reports/math_v2_1_current_runtime_consolidation_v1_20261005
+  current_runtime_source: 4b02b734e7e5306bd5f0192464b1cf0bb6a95562
+  pending_user_task_scope: AUTONOMOUS_V22_FULL_A4_OPERATIONAL_RECOVERY_WITHIN_CUMULATIVE_40M
+  pending_user_task_sha256: 9ef0ad2aec560ad107ec41c432a902ab3e4a456f8ebb426b9c0c533d5150dc19
+  pending_operational_attempt_limit: 1
+  pending_user_task_authorization_received: true
+  previous_valid_canary_milestone: math_v2_1_a4_seed81_pattern_canary_v4
+  previous_valid_canary_status: VALID_OPERATIONAL_CANARY
+  last_attempt_id: math_v2_1_gradient_pattern_A4_seed81_pilot_attempt4
+  last_attempt_execution_source: 57e3d77915a731a69d3f0182f6cc19b6adf92c9a
+  gradient_implementation_closure: ESTABLISHED_FOR_CANARY_SCOPE
+  gradient_semantic_quality: SUPPORTED_IN_CANARY_WITH_ONE_TRANSFER_QUALIFICATION
+  gradient_cluster_semantic_behavior: SHARED_PATTERN_OBSERVED
+  current_gradient_prompt: PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3
+  future_execution_requires_new_frozen_single_use_scope: true
+  gradient_raw_comparison_classification: MIXED
+  pending_pilot_milestone: math_v2_2_gradient_pattern_seed81_pilot_v2
+  pending_pilot_manifest: experiments/manifests/math_v2_2_gradient_pattern_seed81_pilot_v2.yaml
+  pending_pilot_attempt_id: math_v2_2_gradient_pattern_A4_seed81_pilot_attempt2
+  pending_pilot_scope: A4_SEED81_OPTIMIZE60_SHADOW40_K64_TOKEN24M_ONE_ATTEMPT
+  pending_pilot_user_task_sha256: 9ef0ad2aec560ad107ec41c432a902ab3e4a456f8ebb426b9c0c533d5150dc19
+  pending_pilot_user_authorization_received: true
+  pending_pilot_status: FRESH_CLUSTER_LIMIT_REPAIR_PREFLIGHT_PENDING
+  pending_pilot_operational_retry_limit: 0
+  pending_pilot_scientific_changes_authorized: false
+  pending_pilot_validation_authorized: false
+  pending_pilot_test_authorized: false
+  pending_pilot_push_authorized: true
+  last_pilot_milestone: math_v2_1_gradient_pattern_seed81_pilot_v6
+  current_pilot_status: NOT_EXECUTED_FRESH_ATTEMPT
+  current_pilot_report: reports/math_v2_2_gradient_pattern_seed81_pilot_v1_execution_20261008
+  last_pilot_manifest: experiments/manifests/math_v2_1_gradient_pattern_seed81_pilot_v6.yaml
+  pilot_gradient_contract_compliance: ALL_ACCEPTED_PASS
+  current_initial_team_version: MATH_GENERIC_TEAM_SEED_V1_2
+  current_initial_team_path: experiments/initial_teams/math_generic_team_seed_v1_1.json
+  current_initial_team_sha256: d1a04dbdd540371638e8271cca90469f0a8cf4d42a5f944eeee8c6dfcfca9110
+  current_initial_condition_milestone: math_identical_initial_condition_v1
+  current_initial_condition_status: VERIFIED_ZERO_API_INITIAL_CONDITION_CORRECTION
+  current_initial_condition_report: reports/math_identical_initial_condition_v1_20261006
+  current_initial_condition_execution_authorized: false
+  current_offline_execution_profile: experiments/execution_bindings/math_v2_2_offline_profile_v1.json
+  current_pilot_offline_execution_profile: null
+  current_initial_condition_runtime_source: 52ada98b4735cfa7713de2c2f5437a94ce0bef0b
+  current_gradient_prompt_identity: PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3
+  current_pattern_guard_identity: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6
+  pending_pilot_scientific_amendment_scope: PER_EXAMPLE_GRADIENT_CONTRACT_RECOVERY_V1
+  numeric_guard_historical_regression_status: PASS_131_REAL_GRADIENTS_PLUS_22_STRONG_REAL_SOURCE_CONTROLS
+  pilot_monitor_repair_status: APPEND_ONLY_MONITOR_AND_ACTUAL_PREFIX_PASS
+  pilot_persistence_incident_lock_holder: NOT_ESTABLISHED
+  pilot_fresh_gradient_semantic_usefulness: INCONCLUSIVE_NO_LLM_JUDGE
+  pilot_authorization_closed: false
+  pilot_partition_contract_compliance: GRADIENT_PATTERN_PARTITION_COMPLETION_V1
+  pilot_persistence_status: 1005_OFFLINE_CYCLES_AND_SEALED_ACTUAL_RESPONSE_RECEIPTS_NO_GAP
+  current_partition_completion_policy: GRADIENT_PATTERN_PARTITION_COMPLETION_V1
+  numeric_calibration_user_task_sha256: b81ddb478d7d52285394899f31dc648fd7c1b05bf75d37d852911c8b7d73a9fc
+  numeric_calibration_report: reports/math_v2_1_numeric_provenance_guard_v6_20261007
+  numeric_calibration_fresh_pilot_condition_met: false
+  numeric_calibration_status: COMPLETED_ZERO_API_STOP_SCIENTIFIC_METHOD_DECISION_REQUIRED
+  numeric_calibration_authorization_closed: true
+  current_gradient_recovery_policy: PER_EXAMPLE_GRADIENT_CONTRACT_RECOVERY_V1
+  gradient_contract_recovery_status: VERIFIED_AND_EXECUTED
+  gradient_contract_recovery_report: reports/math_v2_1_gradient_contract_recovery_v1_20261007
+  gradient_contract_recovery_attempt: math_v2_1_gradient_pattern_A4_seed81_pilot_attempt6
+  pilot_gradient_recovery_statistics:
+    accepted_gradient_count: 38
+    gradient_contract_recovery_rate: 0.0
+    gradient_first_pass_valid: 38
+    gradient_retry_once: 0
+    gradient_retry_twice: 0
+    gradient_three_fail: 0
+    length_rejections: 0
+    logical_gradient_count: 38
+    numeric_warnings: 1
+    physical_gradient_calls: 38
+    schema_rejections: 0
+    strong_leakage_rejections: 0
+    successful_recovery_rate: null
+  pilot_bottleneck_diagnosis: PATTERN_CLUSTER_PROVIDER_OUTPUT_CAP
+  pilot_analysis_complete: false
+  pilot_analysis_index: reports/math_v2_2_gradient_pattern_seed81_pilot_v1_execution_20261008/analysis_bundle_index.json
+  pilot_original_runner_status: EXECUTION_ABORTED
+  pilot_terminal_serialization_status: NOT_REACHED
+  pilot_owner_scientific_completion_receipt: null
+  pilot_terminal_engineering_repair_status: NOT_APPLICABLE
+  pilot_terminal_engineering_repair_report: null
+  latest_independent_capacity_diagnostic: math_v2_1_manual_prompt_capacity_probe_v1
+  independent_capacity_diagnostic_status: VALID_DEVELOPMENT_DIAGNOSTIC
+  independent_capacity_diagnostic_report: reports/math_v2_1_manual_prompt_capacity_probe_v1_20261007
+  independent_capacity_diagnostic_A4_method_changed: false
+  independent_capacity_diagnostic_authorization_closed: true
+  current_transition_policy: initial_competence_target_or_team_progress_v3
+  current_execution_blockers:
+  - FRESH_SOURCE_FREEZE_AND_FOCUSED_TESTS_PENDING
+  current_transition_audit_report: reports/transition_reachability_audit_v1_20261007
+  current_transition_audit_status: COMPLETE_ZERO_API_FULL_SUITE_IO_LIMITATION
+  current_transition_conformance: PASS_FINAL_FULL_CURRENT_SUITE
+  current_transition_full_suite: 1583_PASSED_0_FAILED_2_SKIPPED_1468_DESELECTED
+  finite_pilot_bound_frozen: true
+  scientific_method_changed: true
+  last_valid_v21_pilot_status: VALID_A4_SEED81_PILOT_SEARCH
+  last_valid_v21_pilot_report: reports/math_v2_1_gradient_pattern_seed81_pilot_v6_execution_20261007
+  last_v22_execution_audit: math_v2_2_a4_pilot_execution_audit_v1
+  last_v22_execution_audit_report: reports/math_v2_2_a4_pilot_execution_audit_v1_20261008
+  v22_commit_bound_established: true
+  v22_resource_realistic_completion_bound_established: false
+  new_v22_pilot_executed: true
+  this_task_scientific_method_changed: false
+  current_transition_full_suite_source: 4b02b734e7e5306bd5f0192464b1cf0bb6a95562
+  operational_horizon_identity: V2_2_FIXED_HORIZON_OPERATIONAL_PILOT_V1
+  operational_horizon_K: 64
+  operational_attempt_token_ceiling: 24000000
+  pilot_report: reports/math_v2_2_gradient_pattern_seed81_pilot_v2_execution_20261008
+  pilot_attempt: math_v2_2_gradient_pattern_A4_seed81_pilot_attempt2
+  pilot_progress_paths:
+    TARGET: 0
+    TARGET_AND_TEAM: 0
+    TEAM: 0
+  pilot_observed_commit_count: 0
+  pilot_pattern_cluster_calls: 8
+  pilot_pattern_cluster_output_contract_valid: true
+  last_valid_v21_pilot_statistics:
+    pilot_partition_completion_statistics:
+      cluster_calls: 10
+      duplicate_partition_failures: 0
+      extra_llm_repair_calls: 0
+      independent_reconstruction: true
+      maximum_missing_aliases_per_call: 2
+      partition_completion_events: 4
+      policy: GRADIENT_PATTERN_PARTITION_COMPLETION_V1
+      raw_complete_partitions: 6
+      raw_missing_only_partitions: 4
+      total_missing_aliases_completed: 5
+      unknown_alias_failures: 0
+    pilot_mutation_behavior_statistics:
+      Solver_evaluated_candidates: 57
+      behavior_baseline: actual local parent; exact returned text comparison
+      behavior_change_rate: 0.5964912280701754
+      behavior_changed_candidates: 34
+      correctness_and_class_baseline: actual local parent; frozen binary evaluator
+      correctness_change_rate: 0.2807017543859649
+      correctness_changed_candidates: 16
+      local_classes:
+        NEUTRAL: 41
+        PURE_REGRESSION: 12
+        PURE_REPAIR: 4
+      parsed_answer_change_rate: 0.5789473684210527
+      prompt_changed_behavior_unchanged_candidates: 23
+      prompt_changed_but_behavior_unchanged_rate: 0.40350877192982454
+      repair_candidates: 15
+      repair_target: selected Pattern support intersect local panel, root wrong
+      repair_yield: 0.2631578947368421
+      root_relative_fixed_broken_fields_retained: true
+      scientific_efficacy: NOT_CAUSALLY_ESTABLISHED
+  pending_user_task_status: STOPPED_REPORT_COMPLETE
+  pilot_analysis_kind: OWNER_USER_STOP_PREFIX_FAILURE_REPORT
+  pilot_execution_complete: false
+  pilot_partition_completion_statistics:
+    status: 8_VALID_CLUSTERS_INCLUDING_PARTIAL_OPPORTUNITY8
+    cluster_provider_calls: 8
+    completed_clusters: 8
+    completed_opportunities: 7
+  pilot_mutation_behavior_statistics:
+    status: 27_EXPORTED_CONTRACT_VALID_SOLVER_EVALUATED; TWO_FULL_CANDIDATES_BEHAVIOR_CHANGED
+    proposals: 42
+    exported_candidates: 27
+    behavior_confirmed_Full_candidates: 2
+    scope: SEVEN_COMPLETED_OPPORTUNITIES
+  current_pattern_cluster_generation_policy: PATTERN_CLUSTER_GENERATION_POLICY_V1
+  pattern_cluster_output_ceiling: 8192
+  completed_opportunity_count: 7
+  partial_opportunity_index: 8
+  last_optimizer_failure_audit: math_v2_2_optimizer_failure_audit_v1
+  last_optimizer_failure_audit_report: reports/math_v2_2_optimizer_failure_audit_v1_20261008
+  optimizer_failure_audit_scope:
+    completed_opportunities: 7
+    proposals: 42
+    scored_contract_valid: 33
+    root_positive: 3
+    root_neutral: 25
+    root_negative: 5
+    incumbent_strict_positive: 1
+    actual_panel_size: 4
+    panel_equals_probe_membership: true
+    full_loss_occurrences: 11
+    full_unique_lost_cases: 6
+    strictly_better_local_net_candidates_omitted: 0
+    new_api_calls: 0
+    scientific_method_changed: false
+    assessment: OBSERVED_PRESERVATION_COVERAGE_GAP_AND_OPTIMIZER_CONTEXT_CONFLATION
+    causal_optimizer_or_solver_noise_conclusion: NOT_ESTABLISHED
+  last_solver_feedback_milestone: math_visible_solution_feedback_v1
+  solver_feedback_correction_report: reports/math_visible_solution_feedback_v1_20261008
+  solver_feedback_correction_status: IMPLEMENTED_ZERO_API_REAL_PROVIDER_CANARY_REQUIRED
+  available_opt_in_solver_interface: MATH_SOLVER_INTERFACE_V6
+  available_opt_in_solver_trajectory_policy: MATH_VISIBLE_SOLUTION_FEEDBACK_POLICY_V1
+  available_opt_in_gradient_prompt: PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V4
+  available_opt_in_gradient_input_schema: PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V2
+  available_opt_in_layer1_input_schema: PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5
+  available_opt_in_visible_solution_profile: experiments/execution_bindings/math_visible_solution_offline_profile_v1.json
+  visible_solution_real_execution_authorized: false
+  visible_solution_validation_authorized: false
+  visible_solution_test_authorized: false
+  visible_solution_search_algorithm_changed: false
+  visible_solution_scientific_runtime_identity_changed: true
+  last_optimization_evidence_milestone: math_optimization_evidence_v23
+  optimization_evidence_report: reports/math_optimization_evidence_v23_20261008
+  optimization_evidence_method: unified_team_prompt_search_v2_3
+  optimization_evidence_status: OFFLINE_VERIFIED
+  optimization_evidence_stop_report: reports/math_optimization_evidence_v23_20261008/stop_summary.md
+  optimization_evidence_offline_profile: experiments/execution_bindings/math_optimization_evidence_offline_profile_v1.json
+  optimization_evidence_real_api_authorized: false
+  optimization_evidence_validation_authorized: false
+  optimization_evidence_test_authorized: false
+  optimization_evidence_scientific_method_changed: true
+  optimization_evidence_verification_report: reports/a4_v23_real_efficacy_preparation_20261008
+  next_matched_comparison_protocol: experiments/protocols/a4_v23_matched_comparison_v1/protocol.json
+  next_matched_comparison_status: OFFLINE_VERIFIED_AUTHORIZATION_PENDING
+  next_matched_comparison_real_api_authorized: false
+  next_matched_comparison_token_ceiling: 4000000
+  next_matched_comparison_opportunities_per_arm: 5
+  next_matched_comparison_validation_authorized: false
+  next_matched_comparison_test_authorized: false
 ```
 
 ## Experiment and engineering DAG
@@ -608,9 +683,10 @@ flowchart TD
     n291["math_v2_2_optimizer_failure_audit_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
     n292["math_visible_solution_feedback_v1<br/>BENCHMARK_MIGRATION<br/>IMPLEMENTED_NOT_EXECUTED"]
     n293["math_optimization_evidence_v23<br/>ARCHITECTURE_REFACTOR<br/>IMPLEMENTED_NOT_EXECUTED"]
-    n294["a4_v23_matched_comparison_v1<br/>PREEXECUTION_FREEZE<br/>PREPARED_NOT_EXECUTED"]
-    n295["a4_v23_matched_comparison_v1_a<br/>PILOT<br/>PREPARED_NOT_EXECUTED"]
-    n296["a4_v23_matched_comparison_v1_b<br/>PILOT<br/>PREPARED_NOT_EXECUTED"]
+    n294["a4_v23_matched_comparison_v1<br/>PREEXECUTION_FREEZE<br/>ABANDONED"]
+    n295["a4_v23_matched_comparison_v1_a<br/>PILOT<br/>ABANDONED"]
+    n296["a4_v23_matched_comparison_v1_b<br/>PILOT<br/>ABANDONED"]
+    n297["a4_v23_only_pilot_v1<br/>PILOT<br/>PREPARED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -838,6 +914,8 @@ flowchart TD
   n292 -->|followup_of| n294
   n294 -->|followup_of| n295
   n294 -->|followup_of| n296
+  n293 -->|followup_of| n297
+  n296 -->|followup_of| n297
 ```
 
 ## Archived branches and unresolved evidence

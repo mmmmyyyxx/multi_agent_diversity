@@ -3,9 +3,9 @@
   "scripts": [
     {
       "path": "scripts/prepare_a4_v23_matched_comparison.py",
-      "classification": "CURRENT_TOOL",
+      "classification": "HISTORICAL_REPLAY",
       "move": false,
-      "reason": "Offline production constructors for the explicitly frozen A4 matched comparison."
+      "reason": "Permanently cancelled paired execution. Guard stub; original Git source required."
     },
     {
       "path": "scripts/replay_experiment.py",
@@ -1089,9 +1089,9 @@
     },
     {
       "path": "scripts/preflight_experiment_governance.py",
-      "classification": "ONE_OFF_AUDIT",
+      "classification": "HISTORICAL_REPLAY",
       "move": false,
-      "reason": "Original imports, tests, manifests and reproduction paths preserved."
+      "reason": "Historical schema-v1 registry/lineage audit. Current schema-v2 authority is audit_repository_governance.py; legacy findings remain reported, never marked PASS."
     },
     {
       "path": "scripts/preflight_local_gepa_acceptance_rate_phase_b_v2.py",
@@ -1894,6 +1894,12 @@
       "path": "scripts/freeze_benchmark_experiment_splits.py",
       "classification": "CURRENT_TOOLING",
       "move": false
+    },
+    {
+      "path": "scripts/prepare_a4_v23_only.py",
+      "classification": "CURRENT_TOOL",
+      "move": false,
+      "reason": "Thin zero-API CLI for production fresh V23 single-arm preparation."
     }
   ]
 }

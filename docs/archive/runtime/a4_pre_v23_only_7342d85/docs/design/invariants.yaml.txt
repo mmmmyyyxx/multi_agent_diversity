@@ -1,0 +1,693 @@
+schema_version: invariant_registry_v1
+invariants:
+- id: INV-MATH-VISIBLE-SOLUTION-001
+  description: V6 scores only final payload, retains complete private ordinary
+    content and binds bounded Optimize solution feedback to its member and realization.
+  authority: docs/design/MATH_VISIBLE_SOLUTION_FEEDBACK_V1.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/benchmarks/math_visible_trajectory.py
+  - multi_dataset_diverse_rl/benchmarks/math_visible_binding.py
+  - multi_dataset_diverse_rl/search/textual_gradients.py
+  - multi_dataset_diverse_rl/search/current_layer1.py
+  tests:
+  - tests/current/test_visible_solver_trajectories.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-INITIAL-COMPETENCE-003
+  description: V2.2 immutable initial floor, non-regressing Vote and strict target
+    OR team progress; Full team-first target-second ranking.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/target_or_team_transition.py
+  - multi_dataset_diverse_rl/search/current_composition.py
+  tests:
+  - tests/current/test_transition_reachability_v22.py
+  failure_refs:
+  - FAIL-IDENTICAL-INITIAL-STRICT-VOTE-DEADLOCK
+  critical: true
+  status: ACTIVE
+- id: INV-MATH-INITIAL-SYMMETRY-001
+  description: Five byte-identical minimal V1_2 initial prompts with distinct member
+    IDs and independent Solver request/cache lanes; historical V1_1 is immutable.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/benchmarks/current_math_dependencies.py
+  - multi_dataset_diverse_rl/benchmarks/initial_condition_contract.py
+  - multi_dataset_diverse_rl/search/provider_runtime.py
+  tests:
+  - tests/current/test_identical_initial_team.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-INITIAL-COMPETENCE-002
+  description: Strict team deployment gains above immutable initial member competence;
+    no incumbent monotonicity requirement.
+  authority: docs/archive/specs/unified_v2_1_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/initial_competence_transition.py
+  tests:
+  - tests/test_unified_semantic_contract.py
+  failure_refs:
+  - FAIL-UNIFIED-METHOD-SEMANTIC-DRIFT
+  critical: true
+  status: HISTORICAL
+- id: INV-ALLOCATION-EVIDENCE-002
+  description: Observation-only committed team/target gains and progress path; distribution
+    and competence changes do not establish causal efficacy.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/orchestrator.py
+  - multi_dataset_diverse_rl/search/runtime_v2.py
+  tests:
+  - tests/test_unified_semantic_contract.py
+  - tests/current/test_transition_reachability_v22.py
+  failure_refs:
+  - FAIL-UNIFIED-METHOD-SEMANTIC-DRIFT
+  critical: true
+  status: ACTIVE
+- id: INV-MATH-ANSWER-DOMAIN-002
+  description: Versioned pinned mathematical payload parsing and directed correctness
+    with strict marker extraction and container negative controls.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/benchmarks/math_domain_v2.py
+  - multi_dataset_diverse_rl/benchmarks/math_domain_worker.py
+  tests:
+  - tests/test_math_answer_domain_v2.py
+  failure_refs:
+  - FAIL-MATH-REFERENCE-PARSER-DOMAIN-MISMATCH
+  critical: true
+  status: ACTIVE
+- id: INV-MATH-SCORABLE-REFERENCE-002
+  description: Isolated whole-source scorability eligibility precedes unchanged stratification;
+    unscorable references fail before provider dispatch.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/benchmarks/math_domain_prep.py
+  - multi_dataset_diverse_rl/data_preparation/math_scorable_split.py
+  - multi_dataset_diverse_rl/benchmarks/math_domain_binding.py
+  tests:
+  - tests/test_math_answer_domain_v2.py
+  failure_refs:
+  - FAIL-MATH-REFERENCE-PARSER-DOMAIN-MISMATCH
+  critical: true
+  status: ACTIVE
+- id: INV-ID-001
+  description: Runtime identities and frozen constants have one authority.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/versions.py
+  tests:
+  - tests/governance/test_governance.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL
+- id: INV-VOTE-001
+  description: Five equal-weight members use plurality with tie-as-abstain.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/system.py
+  - multi_dataset_diverse_rl/peer_state.py
+  tests:
+  - tests/test_vote.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL
+- id: INV-DATA-001
+  description: Search uses the optimization split and no validation selection.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/cli.py
+  - multi_dataset_diverse_rl/evaluation/fixed_probe.py
+  tests:
+  - tests/test_final_state_protocol_v10.py
+  failure_refs:
+  - FAIL-WRITEBACK-TRANSFER
+  critical: true
+  status: HISTORICAL
+- id: INV-TEST-001
+  description: Test cannot affect training or selection and runs only after final
+    freeze.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/system.py
+  - multi_dataset_diverse_rl/cli.py
+  tests:
+  - tests/test_test_split_isolation.py
+  - tests/governance/test_governance.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL
+- id: INV-RESP-001
+  description: Counterfactual vote and margin alone define residual eligibility.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/responsibility.py
+  tests:
+  - tests/test_attribution_and_responsibility.py
+  failure_refs:
+  - FAIL-TARGET-CONCENTRATION
+  critical: true
+  status: HISTORICAL
+- id: INV-ROUTE-001
+  description: Every serviceable residual has one legal owner and one lane.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/responsibility.py
+  tests:
+  - tests/test_single_service_routing.py
+  failure_refs:
+  - FAIL-TARGET-CONCENTRATION
+  critical: true
+  status: HISTORICAL
+- id: INV-TARGET-001
+  description: Canonical S1/S2 target selection is repairability-adjusted Top-2.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/responsibility.py
+  - multi_dataset_diverse_rl/system.py
+  tests:
+  - tests/test_repairability_adjusted_v13.py
+  failure_refs:
+  - FAIL-TARGET-CONCENTRATION
+  - FAIL-LOW-UPDATE-THROUGHPUT
+  critical: true
+  status: HISTORICAL
+- id: INV-REPAIR-001
+  description: Repairability counters update and reset only on their specified events.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/system.py
+  tests:
+  - tests/test_repairability_adjusted_v13.py
+  failure_refs:
+  - FAIL-LOW-UPDATE-THROUGHPUT
+  critical: true
+  status: HISTORICAL
+- id: INV-BRANCH-001
+  description: Dual branches share one immutable parent and at most one winner commits.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/system.py
+  tests:
+  - tests/test_final_method_pipeline.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL
+- id: INV-TCS-001
+  description: Canonical Teacher-Critic-Student context and recovery remain bounded.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/tcs.py
+  - multi_dataset_diverse_rl/system.py
+  tests:
+  - tests/test_responsibility_conditioned_tcs.py
+  - tests/test_student_invalid_recovery_v4.py
+  failure_refs:
+  - FAIL-PRE-STUDENT-CRITIC-GATE
+  - FAIL-TEACHER-PRESERVATION-PATTERN
+  critical: true
+  status: HISTORICAL
+- id: INV-COMMONSAFE-001
+  description: Candidate write-back requires target/vote monotonicity and strict progress.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/candidate_selection.py
+  tests:
+  - tests/test_competence_constrained_selection.py
+  failure_refs:
+  - FAIL-FEASIBLE-SET-QUALITY
+  - FAIL-WRITEBACK-TRANSFER
+  critical: true
+  status: HISTORICAL
+- id: INV-RANK-001
+  description: Candidate and cross-branch ranking use only frozen Common-Safe keys.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/candidate_selection.py
+  - multi_dataset_diverse_rl/system.py
+  tests:
+  - tests/test_final_method_pipeline.py
+  failure_refs:
+  - FAIL-CANDIDATE-SELECTION-NOT-PRIMARY
+  critical: true
+  status: HISTORICAL
+- id: INV-COMMIT-001
+  description: Commit and refresh are atomic with complete rollback on failure.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/system.py
+  - multi_dataset_diverse_rl/persistence/checkpoint.py
+  tests:
+  - tests/test_final_method_pipeline.py
+  - tests/test_checkpoint_peer_state.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL
+- id: INV-AUTH-001
+  description: API access requires explicit user and frozen manifest authorization.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/governance/authorization.py
+  tests:
+  - tests/governance/test_governance.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL
+- id: INV-ARTIFACT-001
+  description: Publishable artifacts exclude raw, secret, cache, checkpoint, and host-path
+    content.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/governance/artifacts.py
+  tests:
+  - tests/governance/test_governance.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL
+- id: INV-STRUCTURAL-EVIDENCE-001
+  description: Full fixed-probe profiles and post-commit plurality identifiability
+    states are atomically persisted as sanitized categorical evidence.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/evaluation/categorical_profiles.py
+  - multi_dataset_diverse_rl/system.py
+  - multi_dataset_diverse_rl/team_search/system_runtime.py
+  tests:
+  - tests/test_categorical_profile_persistence.py
+  - tests/test_endpoint_identifiability.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL
+- id: INV-MANIFEST-001
+  description: Experiment facts and lifecycle are explicit and preregistration is
+    immutable.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/governance/manifest.py
+  tests:
+  - tests/governance/test_governance.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL
+- id: INV-LOCAL-RESULT-001
+  description: The two-layer GEPA boundary returns changed proposals, never the seed/root
+    baseline.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py
+  - multi_dataset_diverse_rl/versions.py
+  tests:
+  - tests/test_two_layer_optimizer_architecture.py
+  failure_refs:
+  - FAIL-FEASIBLE-SET-QUALITY
+  critical: true
+  status: HISTORICAL
+- id: INV-LAYER-OWNERSHIP-001
+  description: Layer 2 defines the local optimization domain while Layer 1 exclusively
+    owns the optimizer's internal search.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/local_optimizers/schemas.py
+  - multi_dataset_diverse_rl/team_search/controller.py
+  tests:
+  - tests/test_two_layer_optimizer_architecture.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL
+- id: INV-LAYER2-RAW-RESPONSIBILITY-001
+  description: Layer-2 scores, targets and evidence derive from overlapping raw legal
+    member-residual assignments, independent of historical routing.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/team_search/system_runtime.py
+  - multi_dataset_diverse_rl/responsibility.py
+  tests:
+  - tests/test_layer2_raw_responsibility.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL
+- id: INV-LAYER2-FINAL-SEMANTICS-001
+  description: Production Layer-2 uses overlapping raw legal responsibility, non-exclusive
+    primary target justification and seed-independent member-ID score ties.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/team_search/system_runtime.py
+  - multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py
+  tests:
+  - tests/test_final_layer2_semantics.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL
+- id: INV-LAYER2-BOUNDED-EVIDENCE-V4
+  description: V4 preserves full raw-legal responsibility scores and exact latest-transition
+    roles while scheduling at most 36 nominal role items; actual GEPA delivery is
+    separately audited.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/team_search/task_builder.py
+  - multi_dataset_diverse_rl/native_feed.py
+  - multi_dataset_diverse_rl/local_optimizers/gepa_native.py
+  tests:
+  - tests/test_v4_bounded_feasibility.py
+  - tests/test_online_transfer_full_fake.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL
+- id: INV-LAYER2-FEASIBILITY-V4
+  description: V4 admits only members satisfying the unchanged TeamMiniBatch quotas
+    and exact packet capacity before target selection; infeasible members leave f
+    unchanged and an empty feasible set stops scientifically.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/team_search/feasibility.py
+  - multi_dataset_diverse_rl/production_transfer_diagnostic.py
+  - multi_dataset_diverse_rl/team_search/system_runtime.py
+  tests:
+  - tests/test_v4_bounded_feasibility.py
+  - tests/test_online_transfer_full_fake.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL
+- id: INV-SATURATION-V4-EPOCH-001
+  description: V4 team epochs cover the frozen positive-score feasible member set
+    on one parent; commit resets patience and restarts coverage from the successor,
+    while no-feasible and incomplete opportunities do not count.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/experiment.py
+  - multi_dataset_diverse_rl/saturation.py
+  - multi_dataset_diverse_rl/production_transfer_diagnostic.py
+  tests:
+  - tests/test_formal_v4_epoch_semantics.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL
+- id: INV-LAYER2-LOCAL-EVAL-TEAM-MINIBATCH-001
+  description: Layer 2 freezes M_eval from the same TeamMiniBatch12 IDs before candidate
+    generation; member-level GEPA acceptance and later fixed-peer team admission remain
+    separate, and team outcomes never influence local acceptance.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/team_search/system_runtime.py
+  - multi_dataset_diverse_rl/team_search/task_builder.py
+  - multi_dataset_diverse_rl/team_search/controller.py
+  tests:
+  - tests/test_final_layer2_semantics.py
+  - tests/test_two_layer_optimizer_architecture.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL
+- id: INV-OPTIMIZER-FIDELITY-001
+  description: Official GEPA remains a source-verified Level-B API-compatible adaptation
+    with an unmodified search core.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/local_optimizers/gepa_runtime.py
+  - multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py
+  tests:
+  - tests/test_two_layer_optimizer_architecture.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL
+- id: INV-LOCAL-COMPONENT-001
+  description: GEPA evolves only decision_procedure; the immutable solver shell and
+    output contract are instantiated outside GEPA.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py
+  - infrastructure/common_solver_contract_v1/contract.py
+  tests:
+  - tests/test_two_layer_optimizer_architecture.py
+  - tests/test_common_solver_contract_v1.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL
+- id: INV-LOCAL-GEPA-CONTRACT-001
+  description: Local GEPA uses a versioned decision-procedure-only proposer and explicit
+    pinned-engine semantics, with parent, evidence, candidate, deduplication, and
+    budget fail-closed checks.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py
+  - multi_dataset_diverse_rl/local_optimizers/gepa_proposer_contract.py
+  - multi_dataset_diverse_rl/local_optimizers/schemas.py
+  tests:
+  - tests/test_two_layer_optimizer_architecture.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL
+- id: INV-TEAM-MINIBATCH-001
+  description: TeamMiniBatch12 has exactly four primary-lane repair, four team-correct
+    preservation and four global team-hard residual rows with unique IDs and no backfill;
+    preservation vulnerability is latest accepted target transition change OR current
+    target pivotality, followed by smaller positive margin, greater valid-answer disagreement,
+    SHA256(example ID), and raw ID only on hash collision.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/team_search/task_builder.py
+  - multi_dataset_diverse_rl/team_search/controller.py
+  tests:
+  - tests/test_two_layer_optimizer_architecture.py
+  - tests/test_primary_responsibility_scheduler.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL
+- id: INV-PAIRED-EVAL-001
+  description: Paired final evaluations reuse one provider realization for equal request
+    identities.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - infrastructure/common_solver_contract_v1/evaluator.py
+  tests:
+  - tests/test_common_solver_contract_v1.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL
+- id: INV-SOLVER-STAGE-001
+  description: Every Solver-capable runtime context has an explicit non-empty phase
+    before evaluation; phase and evaluation_stage cannot diverge.
+  authority: docs/archive/specs/historical_current_spec.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/evaluation/solver_stage.py
+  - multi_dataset_diverse_rl/team_search/system_runtime.py
+  tests:
+  - tests/test_solver_stage_attribution.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL
+- id: INV-UNIFIED-FLOW-001
+  description: Active Unified contract; see normative specification.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/orchestrator.py
+  tests:
+  - tests/test_repository_governance_alignment.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-SEARCH-TRANSITION-001
+  description: Active Unified contract; see normative specification.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/orchestrator.py
+  tests:
+  - tests/test_repository_governance_alignment.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-GEPA-DERIVED-001
+  description: Active Unified contract; see normative specification.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/orchestrator.py
+  tests:
+  - tests/test_repository_governance_alignment.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-EVIDENCE-ROLE-001
+  description: Active Unified contract; see normative specification.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/orchestrator.py
+  tests:
+  - tests/test_repository_governance_alignment.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-RESP-CAPABILITY-001
+  description: Active Unified contract; see normative specification.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/orchestrator.py
+  tests:
+  - tests/test_repository_governance_alignment.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-AGGREGATION-001
+  description: Active Unified contract; see normative specification.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/orchestrator.py
+  tests:
+  - tests/test_repository_governance_alignment.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-HISTORY-MEMORY-001
+  description: Active Unified contract; see normative specification.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/orchestrator.py
+  tests:
+  - tests/test_repository_governance_alignment.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-REPLAY-001
+  description: Active Unified contract; see normative specification.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/orchestrator.py
+  tests:
+  - tests/test_repository_governance_alignment.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-BENCHMARK-CONTRACT-001
+  description: Active Unified contract; see normative specification.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/orchestrator.py
+  tests:
+  - tests/test_repository_governance_alignment.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-BENCHMARK-FIREWALL-001
+  description: Active Unified contract; see normative specification.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/orchestrator.py
+  tests:
+  - tests/test_repository_governance_alignment.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-BENCHMARK-EVALUATOR-001
+  description: Active Unified contract; see normative specification.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/orchestrator.py
+  tests:
+  - tests/test_repository_governance_alignment.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-SEARCH-TEAM-ADMISSION-DECOUPLING
+  description: Active V2 mechanism contract; see normative specification.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/gepa_v2.py
+  tests:
+  - tests/test_unified_search_v2.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-VARIABLE-EVIDENCE-001
+  description: Active V2 mechanism contract; see normative specification.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/variable_evidence.py
+  tests:
+  - tests/test_unified_search_v2.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-PATTERN-DIAGNOSTIC-001
+  description: One focus after WHO; separate all-residual DPR and coverage; structural
+    description identity.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/patterns.py
+  - multi_dataset_diverse_rl/search/semantic_contract.py
+  tests:
+  - tests/test_unified_search_v2.py
+  - tests/test_unified_semantic_contract.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-LONG-TERM-MEMORY-001
+  description: Grounded Situation-Action-Outcome-Lesson; private successful strategy
+    and shared failed strategy.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/memory.py
+  - multi_dataset_diverse_rl/search/experience.py
+  tests:
+  - tests/test_unified_search_v2.py
+  - tests/test_unified_semantic_contract.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-MATH-REFERENCE-VALIDITY-001
+  description: MATH V1.1 preexecution contract; see normative specification.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/data_preparation/math_reference_split.py
+  tests:
+  - tests/test_math_preexecution.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-MATH-RUNTIME-BINDING-001
+  description: MATH V1.1 preexecution contract; see normative specification.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/benchmarks/math_execution.py
+  - multi_dataset_diverse_rl/search/binary_composition.py
+  tests:
+  - tests/test_math_preexecution.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-MATH-OUTPUT-INTERFACE-002
+  description: Versioned immutable response formatting stays outside mutable prompt
+    evolution and inside request/cache identity.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/benchmarks/math_interface.py
+  - multi_dataset_diverse_rl/search/provider_runtime.py
+  tests:
+  - tests/test_math_preexecution.py
+  failure_refs:
+  - FAIL-MATH-CANARY-FINAL-MARKER
+  critical: true
+  status: ACTIVE
+- id: INV-ACCOUNTING-RESERVATION-002
+  description: User-bound operational per-transport reservations, monotonic full fallback
+    charges and crash-safe single-owner accounting.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/governance/token_accounting.py
+  - multi_dataset_diverse_rl/search/provider_runtime.py
+  tests:
+  - tests/test_math_token_accounting.py
+  failure_refs:
+  - FAIL-MATH-AUTONOMOUS-TOKEN-ACCOUNTING-UNBOUND
+  critical: true
+  status: ACTIVE
+- id: INV-VALIDATION-ACCOUNTING-PREP-002
+  description: Isolated Validation byte metadata never exposes held-out content or
+    scores to search and protects paired evaluation reserve.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py
+  tests:
+  - tests/test_math_token_accounting.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE

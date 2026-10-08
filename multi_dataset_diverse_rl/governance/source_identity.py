@@ -54,6 +54,10 @@ HISTORICAL_CONTROL_PATHS = {
 # These receipt constructors now reconstruct only the preserved V2.1 bundle.
 # Shared benchmark validity/decoding primitives remain current authority.
 HISTORICAL_RECEIPT_PATHS = {
+    'multi_dataset_diverse_rl/benchmarks/math_gradient_pattern_binding.py',
+    'multi_dataset_diverse_rl/benchmarks/math_visible_binding.py',
+    'multi_dataset_diverse_rl/benchmarks/gradient_pilot_contract.py',
+    'multi_dataset_diverse_rl/governance/matched_realization.py',
     'multi_dataset_diverse_rl/benchmarks/gradient_contract_receipt.py',
     'multi_dataset_diverse_rl/benchmarks/gradient_recovery_contract.py',
     'multi_dataset_diverse_rl/benchmarks/numeric_admissibility_contract.py',
@@ -110,12 +114,8 @@ def current_scientific_files(root: Path, *, execution_closure: bool = False) -> 
     optimization_evidence_contract = root/'docs/design/OPTIMIZATION_EVIDENCE_V23.md'
     if optimization_evidence_contract.is_file():
         result.append(optimization_evidence_contract)
-    matched_execution_contract = root/'docs/design/MATCHED_SOLVER_REALIZATION_EXECUTION_V1.md'
-    if matched_execution_contract.is_file():
-        result.append(matched_execution_contract)
-    operational_contract=root/'docs/design/V22_OPERATIONAL_PILOT_CEILING_V1.md'
-    if operational_contract.is_file():
-        result.append(operational_contract)
+    operational_contract=root/'docs/design/V23_ONLY_EXECUTION_SCOPE_V1.md'
+    if operational_contract.is_file():result.append(operational_contract)
     risk_contract = root/'docs/design/SHARED_RISK_MEMORY_V4.md'
     if risk_contract.is_file():
         result.append(risk_contract)

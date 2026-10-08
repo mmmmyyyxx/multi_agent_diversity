@@ -965,6 +965,32 @@
           "const": 900
         }
       }
+    },
+    "canary_review_policy": {
+      "const": {
+        "identity": "V23_CONTINUOUS_CANARY_REVIEW_V1",
+        "stages": [
+          "INITIAL_SOLVER_PROFILE",
+          "FIRST_COMPLETE_OPPORTUNITY"
+        ],
+        "owner_review_required": true,
+        "maximum_wait_seconds": 3600,
+        "extra_provider_calls": 0,
+        "total_max_opportunities": 5,
+        "scientific_state_reset": false,
+        "efficacy_based_stopping": false,
+        "unreached_branch": "NOT_OBSERVED_NO_FORCED_GENERATION"
+      }
+    },
+    "accounting_scope_policy": {
+      "const": "FRESH_V23_SINGLE_ARM_2M_V1"
+    },
+    "accounting_policy_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "heldout_accounting_reserve": {
+      "const": 0
     }
   },
   "required": [

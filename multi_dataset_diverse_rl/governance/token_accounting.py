@@ -30,6 +30,9 @@ POLICY = {
 # Reservation physics remain V2. The enlarged authorization is an explicit
 # opt-in extension of an existing journal, never a replacement ledger.
 POLICY_40M = {**POLICY, "authorized_total": 40_000_000}
+# Fresh single-arm scope. Reservation, crash recovery and journal physics are
+# unchanged; this is a separate accounting ceiling, not an old allowance.
+POLICY_V23_2M = {**POLICY, "authorized_total": 2_000_000}
 
 
 class OperationalAbort(BaseException):
@@ -58,16 +61,12 @@ def reservation(request):
         thinking = request.get('extra_body', {}).get('enable_thinking',request.get('enable_thinking'))
         if type(thinking) is not bool:
             raise OperationalAbort('FROZEN_OPTIMIZER_OUTPUT_BOUND_REQUIRED')
-        identity = (versions.MATH_OPTIMIZER_GENERATION_POLICY_V1_VERSION
-            if thinking else versions.MATH_OPTIMIZER_GENERATION_POLICY_VERSION)
-        # The completion ceiling is shared, but the accounting receipt must
-        # name the generation contract that actually constructed this body.
-        if not thinking:
-            v3 = optimizer_generation_contract(versions.MATH_OPTIMIZER_GENERATION_POLICY_V3_VERSION)
-            wire = json.loads(serialized_request(request))
-            if all(wire.get(k) == v3[k] for k in ('temperature','top_p','top_k',
-                    'presence_penalty','frequency_penalty','enable_thinking')):
-                identity = versions.MATH_OPTIMIZER_GENERATION_POLICY_V3_VERSION
+        identity = versions.MATH_OPTIMIZER_GENERATION_POLICY_V3_VERSION
+        v3 = optimizer_generation_contract(identity)
+        wire = json.loads(serialized_request(request))
+        if thinking or any(wire.get(k) != v3[k] for k in ('temperature','top_p','top_k',
+                'presence_penalty','frequency_penalty','enable_thinking')):
+            raise OperationalAbort('FROZEN_OPTIMIZER_OUTPUT_BOUND_REQUIRED')
         policy = optimizer_generation_contract(identity)
         cluster = pattern_cluster_generation_contract()
         if (identity == versions.MATH_OPTIMIZER_GENERATION_POLICY_V3_VERSION
@@ -107,7 +106,7 @@ def _digest(value):
 class TokenLedger:
     def __init__(self, directory: Path, *, task_sha256: str, policy=POLICY,
                  best_effort_snapshots=False):
-        if policy not in (POLICY, POLICY_40M) or len(task_sha256) != 64:
+        if policy not in (POLICY, POLICY_40M, POLICY_V23_2M) or len(task_sha256) != 64:
             raise OperationalAbort("TOKEN_ACCOUNTING_POLICY_IDENTITY_MISMATCH")
         self.directory = Path(directory)
         if type(best_effort_snapshots) is not bool:
@@ -137,7 +136,7 @@ class TokenLedger:
             raise OperationalAbort("TOKEN_LEDGER_ALREADY_OWNED") from exc
         self.task_sha256 = task_sha256
         self.policy = dict(policy)
-        self.authorized_total = POLICY["authorized_total"]
+        self.authorized_total = policy['authorized_total'] if policy == POLICY_V23_2M else POLICY["authorized_total"]
         self.authorization_amendments = []
         self.events = []
         self.inflight = {}
@@ -157,7 +156,7 @@ class TokenLedger:
                 if not self.events or self.events[0]["task_sha256"] != task_sha256:
                     raise OperationalAbort("TOKEN_LEDGER_AUTHORIZATION_MISMATCH")
             else:
-                if policy != POLICY:
+                if policy not in (POLICY, POLICY_V23_2M):
                     raise OperationalAbort("TOKEN_LEDGER_EXTENSION_REQUIRES_ORIGINAL_JOURNAL")
                 self._append(dict(kind="AUTHORIZE", task_sha256=task_sha256, policy=policy))
             for key in tuple(self.inflight):
@@ -176,7 +175,8 @@ class TokenLedger:
                 or row.get("previous_sha256") != (self.events[-1]["event_sha256"] if self.events else None)):
             raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
         if row["kind"] == "AUTHORIZE":
-            if self.events or row["policy"] != POLICY:
+            if (self.events or row["policy"] not in (POLICY, POLICY_V23_2M)
+                    or (row['policy'] == POLICY_V23_2M) != (self.policy == POLICY_V23_2M)):
                 raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
         elif row["kind"] == "AUTHORIZATION_AMENDMENT":
             if (self.inflight or self.authorization_amendments

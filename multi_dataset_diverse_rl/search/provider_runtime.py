@@ -23,8 +23,10 @@ class RequestBroker:
                  token_ledger=None, reserve_reader=None, validation_only=False, durable_cache=None,
                  response_receipts=None):
         self.contract = contract
-        from ..governance.matched_realization import validate_policy
-        self.paired_realization_policy = validate_policy(contract)
+        from .current_policy import CURRENT_POLICY_BUNDLE
+        CURRENT_POLICY_BUNDLE.validate_contract(contract)
+        if arm!='A4' or seed!=81 or validation_only:
+            raise SearchContractError('CURRENT_V23_ROLE_SEED_SPLIT_FORBIDDEN')
         from ..benchmarks.math_visible_trajectory import frozen_trajectory_policy
         self.solver_trajectory_policy = frozen_trajectory_policy(contract)
         self.transport = transport
@@ -47,18 +49,16 @@ class RequestBroker:
         self.recovery_policy = frozen_recovery_policy(contract)
         self.optimizer_policy = frozen_optimizer_policy(contract)
         self.gradient_pattern = contract.get('pattern_policy',{}).get('discovery') == versions.GRADIENT_PATTERN_DISCOVERY_VERSION
-        from .gradient_recovery import validate_policy
-        validate_policy(contract.get('gradient_recovery_policy'))
         if self.gradient_pattern:
             from .textual_gradients import pattern_policy_for_trajectory
-            if (contract.get('identity') not in {versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION, versions.MATH_V2_2_EXECUTION_BINDING_VERSION, versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION, versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION}
+            if (contract.get('identity')!=versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION
                     or contract['pattern_policy']!=pattern_policy_for_trajectory(self.solver_trajectory_policy, contract.get('optimization_evidence_policy'))
                     or contract.get('pattern_abstraction_guard')!=CURRENT_CONTENT_GUARD
                     or not contract.get('gradient_prompt_sha256')):
                 raise SearchContractError('GRADIENT_PATTERN_PROVIDER_BINDING_MISMATCH')
             for role in ('pattern_gradient','pattern_cluster'):self.usage.setdefault(role,0)
         self.member_lane_policy = contract.get('cache_policy') == versions.SOLVER_MEMBER_LANE_CACHE_VERSION
-        if self.member_lane_policy != (contract.get('identity') in {versions.MATH_LAYER1_EXECUTION_BINDING_VERSION,versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION, versions.MATH_V2_2_EXECUTION_BINDING_VERSION, versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION, versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION}):
+        if not self.member_lane_policy:
             raise SearchContractError('SOLVER_MEMBER_LANE_POLICY_BINDING_MISMATCH')
         self.durable_cache = durable_cache
         if durable_cache is not None and self.recovery_policy is None:
@@ -69,17 +69,8 @@ class RequestBroker:
                 cache_namespace=contract['cache_namespace'],binding_sha256=digest(contract),
                 generation_policy_sha256=digest(frozen_solver_policy(contract)),
                 recovery_policy_sha256=digest(self.recovery_policy))
-            if self.paired_realization_policy:
-                from ..governance.matched_realization import group_scope
-                group = self.paired_realization_policy
-                expected.update(execution_attempt_id=group['group_id'], cache_namespace=group['group_id'],
-                    binding_sha256=digest(group_scope(group)))
             if any(durable_cache.context[k]!=v for k,v in expected.items()):
                 raise SearchContractError('DURABLE_CACHE_PROVIDER_BINDING_MISMATCH')
-        if contract.get('identity') in {versions.MATH_V2_2_EXECUTION_BINDING_VERSION, versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION, versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION}:
-            if (contract.get('method_identity') != (versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_3_VERSION if contract.get('optimization_evidence_policy') else versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION)
-                    or contract.get('transition_policy') != versions.UNIFIED_TARGET_OR_TEAM_TRANSITION_VERSION):
-                raise SearchContractError('CURRENT_V2_2_METHOD_BINDING_MISMATCH')
         self.prompt_observer = None
 
     @property
@@ -93,10 +84,9 @@ class RequestBroker:
             durable_cache=self.durable_cache, response_receipts=self.response_receipts)
 
     def _request_identity(self, *, role, split, messages, member_slot=None):
-        pattern_roles={'pattern_gradient','pattern_cluster'} if self.gradient_pattern else {'pattern'}
-        legal = (role == "solver" and split == "validation") if self.validation_only else (
-            role in {"solver", "reflection", *pattern_roles} and split in {"optimize", "shadow"}
-            and (role == "solver" or split == "optimize"))
+        pattern_roles={'pattern_gradient','pattern_cluster'}
+        legal=(role in {'solver','reflection',*pattern_roles} and split in {'optimize','shadow'}
+            and (role=='solver' or split=='optimize'))
         if not legal:
             raise SearchContractError("PROVIDER_ROLE_SPLIT_FORBIDDEN")
         if role in pattern_roles and not self.contract["arms"][self.arm][0]:
@@ -106,12 +96,14 @@ class RequestBroker:
         request = dict(model=model, messages=messages, **generation_request_fields(c, role))
         identity = {"provider": c["provider"], "role": role, "split": split, "request": request,
                     "cache_namespace": c["cache_namespace"]}
-        if c.get('identity') in {versions.MATH_V2_2_EXECUTION_BINDING_VERSION, versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION, versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION}:
+        if c.get('identity')==versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION:
             identity['method_treatment'] = {k:c[k] for k in ('method_identity', 'transition_policy')}
-        if c.get('identity') in {versions.MATH_LAYER1_MEMORY_EXECUTION_BINDING_VERSION,versions.MATH_PATTERN_AWARE_EXECUTION_BINDING_VERSION, versions.MATH_V2_2_EXECUTION_BINDING_VERSION, versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION, versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION}:
+        if c.get('identity')==versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION:
             identity['memory_treatment']={k:c[k] for k in ('memory_policy_identity','memory_limits','layer1_search_policy','optimizer_input_schema','panel_evidence_policy')}
         if c.get('pattern_policy'):
-            identity['pattern_treatment']={k:c[k] for k in ('pattern_policy','shared_risk_policy','pattern_amendment_authorization_sha256')}
+            identity['pattern_treatment']={k:c[k] for k in ('pattern_policy','shared_risk_policy')}
+            if 'pattern_amendment_authorization_sha256' in c:
+                identity['pattern_treatment']['pattern_amendment_authorization_sha256']=c['pattern_amendment_authorization_sha256']
             if 'pattern_support_id_transport' in c:
                 identity['pattern_treatment']['pattern_support_id_transport']=c['pattern_support_id_transport']
             if 'pattern_abstraction_guard' in c:
@@ -119,8 +111,6 @@ class RequestBroker:
             if self.gradient_pattern:
                 identity['pattern_treatment'].update(gradient_prompt_sha256=c['gradient_prompt_sha256'],
                     cluster_prompt_sha256=c['pattern_prompt_sha256'])
-                if 'gradient_recovery_policy' in c:
-                    identity['pattern_treatment']['gradient_recovery_policy']=c['gradient_recovery_policy']
         if c.get('optimization_evidence_policy'):
             identity['optimization_evidence_policy']=c['optimization_evidence_policy']
         if self.solver_trajectory_policy is not None:
@@ -144,9 +134,6 @@ class RequestBroker:
                 identity.update(invalid_recovery_policy=self.recovery_policy,
                     benchmark_protocol=c['benchmark_protocol_sha256'],
                     development_protocol=c['low_cost_protocol'],cache_policy=c['cache_policy'])
-        if role == 'solver' and self.paired_realization_policy:
-            from ..governance.matched_realization import solver_identity
-            identity = solver_identity(c, request=request, split=split, member_slot=member_slot, seed=self.seed)
         key = hashlib.sha256(json.dumps(identity, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
         return request,key
 
@@ -225,7 +212,8 @@ class RequestBroker:
                     if self.successes>=bounds['successful_provider_calls'] or self.usage[role]>=role_bound:
                         self.abort('PROVIDER_CALL_CEILING')
                     from ..governance.token_accounting import reservation
-                    spent=self.usage['input_tokens']+self.usage['output_tokens']
+                    spent=(self.token_ledger.totals['charged_total'] if self.token_ledger
+                        else self.usage['input_tokens']+self.usage['output_tokens'])
                     if spent+reservation(request)['amount']>c['operational_pilot']['token_ceiling']:
                         self.abort('TOKEN_CEILING')
                 if (self.usage["attempts"] >= bounds["transport_attempts"] or self.successes >= bounds["successful_provider_calls"]

@@ -1,0 +1,237 @@
+{
+  "real_api_calls": 0,
+  "old_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
+  "retired_current_modules": [
+    {
+      "path": "tests/current/test_matched_realization.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/current/test_visible_solver_trajectories.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/current/test_pattern_cluster_output_limit.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/current/test_v22_operational_pilot.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/current/test_transition_reachability_v22.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/current/test_manual_capacity_probe.py",
+      "old_classification": "HISTORICAL_REPLAY",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/current/test_partition_completion.py",
+      "old_classification": "HISTORICAL_REPLAY",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/current/test_operational_persistence.py",
+      "old_classification": "HISTORICAL_REPLAY",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/current/test_numeric_provenance.py",
+      "old_classification": "HISTORICAL_REPLAY",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/current/test_identical_initial_team.py",
+      "old_classification": "HISTORICAL_REPLAY",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/current/test_gradient_pilot_audit.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/current/test_gradient_pilot.py",
+      "old_classification": "HISTORICAL_REPLAY",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/current/test_current_runtime.py",
+      "old_classification": "HISTORICAL_REPLAY",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_unified_semantic_contract.py",
+      "old_classification": "HISTORICAL_REPLAY",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_final_method_pipeline.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_production_architecture.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_unified_backend_runtime.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_unified_bbh_replay.py",
+      "old_classification": "CURRENT_ZERO_API_E2E",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_unified_benchmark_migration.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_unified_execution_governance.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_unified_search_architecture.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_unified_search_v2.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_math_preexecution.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_math_answer_domain_v2.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_math_token_accounting.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_math_v21_binding.py",
+      "old_classification": "CURRENT_ZERO_API_E2E",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_math_solver_decoding.py",
+      "old_classification": "CURRENT_ZERO_API_E2E",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_math_prediction_validity.py",
+      "old_classification": "CURRENT_ZERO_API_E2E",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_math_output_reuse.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_math_terminal_recovery.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_math_optimizer_generation.py",
+      "old_classification": "CURRENT_ZERO_API_E2E",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_math_low_cost.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_layer1_responsibility_search.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_math_layer1_binding.py",
+      "old_classification": "CURRENT_ZERO_API_E2E",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_layer1_action_memory.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_rolling_risk_memory.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_pattern_responsibility.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_gradient_patterns.py",
+      "old_classification": "HISTORICAL_REPLAY",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/test_gradient_canary_diagnostic.py",
+      "old_classification": "CURRENT_CONTRACT",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/current/test_gradient_contract_recovery.py",
+      "old_classification": "HISTORICAL_REPLAY",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/current/test_numeric_calibration.py",
+      "old_classification": "HISTORICAL_REPLAY",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "path": "tests/current/test_pilot_terminal_execution.py",
+      "old_classification": "HISTORICAL_REPLAY",
+      "reason": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    }
+  ],
+  "retained_current_modules": [
+    "tests/current/test_optimization_evidence_v23.py",
+    "tests/current/test_specialization_diagnostic.py",
+    "tests/governance/test_governance.py",
+    "tests/test_agent_governance_docs.py",
+    "tests/test_benchmark_data_freeze_v1.py",
+    "tests/test_benchmark_experiment_splits.py",
+    "tests/test_benchmark_scientific_contracts.py",
+    "tests/test_math_authorization_amendment.py",
+    "tests/test_math_proposal_postmortem.py",
+    "tests/test_repository_governance_alignment.py"
+  ],
+  "ported_checks": {
+    "solver_contract": 20,
+    "admission": 16,
+    "generation": 15,
+    "math_domains": 16
+  },
+  "historical_pass_claim": false,
+  "retired_test_modules_modified": false,
+  "current_governance_pending_scope_assertion_ported": true
+}

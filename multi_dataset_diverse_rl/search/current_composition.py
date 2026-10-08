@@ -9,10 +9,10 @@ from .private_gate import private_binary_gate
 from .transition import TeamStateCommitter
 from .variable_evidence import VariableEvidenceFeasibilityV1
 from .target_or_team_transition import InitialCompetenceTargetOrTeamProgressV3
-from .current_layer1 import CurrentEngine, CurrentLayer1Config, EvidenceLayer1Config
+from .current_layer1 import CurrentEngine, EvidenceLayer1Config
 from .current_opportunity import CurrentOpportunityBuilder
 from .current_policy import CURRENT_POLICY_BUNDLE
-from .textual_gradients import GradientPatternDiscovery, GradientExtractor, GradientPatternConditionedEvidence
+from .textual_gradients import GradientPatternDiscovery, GradientExtractor
 from .rolling_risk_memory import StructuredRollingRiskMemoryV4
 from .schemas import SearchContractError
 
@@ -31,12 +31,12 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
     if execution_phase not in {'canary', 'pilot'}:
         raise SearchContractError('CURRENT_EXECUTION_PHASE_UNBOUND')
     if execution_phase == 'pilot':
-        from ..benchmarks.gradient_pilot_contract import OPERATIONAL_BOUND_ID
+        OPERATIONAL_BOUND_ID='TARGET_OR_TEAM_PROGRESS_OPERATIONAL_PILOT_BOUND_V1'
         if (not isinstance(operational_bound,dict) or operational_bound.get('identity')!=OPERATIONAL_BOUND_ID
                 or type(operational_bound.get('max_opportunities')) is not int
-                or operational_bound['max_opportunities']<=0
+                or not 0<operational_bound['max_opportunities']<=5
                 or type(operational_bound.get('token_ceiling')) is not int
-                or not 0<operational_bound['token_ceiling']<40_000_000
+                or not 0<operational_bound['token_ceiling']<=2_000_000
                 or operational_bound.get('scientific_stopper')!='team_epoch_no_commit_v1'
                 or operational_bound.get('guarantees_saturation') is not False):
             raise SearchContractError('TARGET_OR_TEAM_PROGRESS_PILOT_BOUND_NOT_FROZEN')
@@ -48,7 +48,7 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
         raise SearchContractError('PATTERN_PARTITION_COMPLETION_POLICY_MISMATCH')
     if getattr(getattr(pattern_provider,'gradient_provider',None),'recovery_policy',None) != method.mechanism_config.get('gradient_recovery_policy'):
         raise SearchContractError('GRADIENT_CONTRACT_RECOVERY_POLICY_MISMATCH')
-    if optimizer.config != (EvidenceLayer1Config() if revised else CurrentLayer1Config(optimizer_input_schema=method.mechanism_config['optimizer_input_schema'])):
+    if optimizer.config != EvidenceLayer1Config():
         raise SearchContractError('CURRENT_LAYER1_POLICY_MISMATCH')
     if getattr(benchmark, 'solver_trajectory_policy', None) != method.mechanism_config.get('solver_trajectory_policy'):
         raise SearchContractError('CURRENT_VISIBLE_TRAJECTORY_POLICY_MISMATCH')
@@ -81,8 +81,8 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
         analyzer=StateAnalyzer(BinaryPluralityResponsibilityAnalyzer(benchmark.capabilities)),
         opportunities=CurrentOpportunityBuilder(source=BinaryEvidenceSource(store,history),
             feasibility=VariableEvidenceFeasibilityV1(),target=TargetPolicyV1(),
-            evidence=DisjointGradientEvidence(seed,revised) if revised else GradientPatternConditionedEvidence(),patterns=patterns,
-            search_metric_budget=42 if revised else 36),
+            evidence=DisjointGradientEvidence(seed,revised),patterns=patterns,
+            search_metric_budget=42),
         engine=CurrentEngine(optimizer,seed),evaluation=CandidateEvaluationPipeline(provider,
             FixedPeerPromotion(invalid_predictions_are_incorrect=invalidity)),
         transition=transition,gate=gate,committer=TeamStateCommitter(store),history=history,memory=memory,

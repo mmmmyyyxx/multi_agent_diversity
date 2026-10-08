@@ -85,7 +85,7 @@ class OpportunityBuilder:
         feasibility: OpportunityFeasibilityPolicy,
         target: TargetPolicy,
         evidence: EvidencePolicy,
-        search_metric_budget: int = 36,
+        search_metric_budget: int = 42,
     ) -> None:
         self.source = source
         self.feasibility = feasibility
@@ -93,43 +93,8 @@ class OpportunityBuilder:
         self.evidence = evidence
         self.search_metric_budget = search_metric_budget
 
-    def build(
-        self, *, state: TeamStateSnapshot, diagnosis: Diagnosis,
-        history: HistoryState, update_index: int,
-    ) -> OptimizationOpportunity | None:
-        candidates = sorted(diagnosis.responsibility)
-        rows_by_member = {
-            member: tuple(self.source.for_member(state, diagnosis, member))
-            for member in candidates
-        }
-        feasible = tuple(member for member in candidates if self.feasibility.feasible(
-            state, diagnosis, member, rows_by_member[member],
-        ))
-        target = self.target.select(state, diagnosis, feasible, history)
-        if target.selected_member is None:
-            return None
-        member = target.selected_member
-        if member >= len(state.member_prompts):
-            raise SearchContractError("target outside team")
-        view = self.evidence.build(state, diagnosis, member, rows_by_member[member])
-        signal = diagnosis.responsibility[member]
-        return OptimizationOpportunity(
-            opportunity_id=f"{state.team_state_id}:{update_index}:{member}",
-            parent_state_id=state.team_state_id,
-            target_member=member,
-            parent_prompt=state.member_prompts[member],
-            objective={"raw_responsibility": getattr(signal, "raw_value", None),
-                       "target_score": target.target_scores[member],
-                       "eligible_members": target.eligible_members},
-            diagnosis=diagnosis,
-            evidence=view,
-            pattern_context=diagnosis.patterns,
-            search_budget={"metric_calls": self.search_metric_budget},
-            # The complete Optimize universe remains available for packet
-            # identity and audit; search consumes only role-selected evidence.
-            evaluation_plan={"max_promoted": 2,
-                             "evidence_universe": rows_by_member[member]},
-        )
+    def build(self,**kwargs):
+        raise SearchContractError('CURRENT_OPPORTUNITY_BUILDER_REQUIRED')
 
 
 class UnifiedSearchOrchestrator:
@@ -148,6 +113,10 @@ class UnifiedSearchOrchestrator:
         runtime_readiness: Callable[[], Sequence[str]] | None = None,
         execution_observer: Callable[[str, Mapping[str, Any]], None] | None = None,
     ) -> None:
+        from .current_policy import CURRENT_POLICY_BUNDLE
+        CURRENT_POLICY_BUNDLE.validate_method(method)
+        if memory is None:
+            raise SearchContractError('CURRENT_MEMORY_REQUIRED')
         self.method = method
         self.benchmark = benchmark
         self.aggregation = aggregation
@@ -160,7 +129,7 @@ class UnifiedSearchOrchestrator:
         self.gate = gate
         self.committer = committer
         self.history = history if history is not None else HistoryState()
-        self.memory = memory if memory is not None else NullMemoryProvider()
+        self.memory = memory
         self.stop = stop if stop is not None else GlobalStopPolicy(
             method.global_stop.no_commit_patience,
         )
@@ -197,37 +166,33 @@ class UnifiedSearchOrchestrator:
             raise SearchContractError("SCIENTIFIC_DECISION_REQUIRED: aggregation-aware responsibility")
         if getattr(self.aggregation, "identity", None) != self.method.aggregation_policy:
             raise SearchContractError("aggregation implementation/method identity mismatch")
-        current_semantics = self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_3_VERSION}
-        if self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_3_VERSION}:
-            expected_acceptance=('layer1_local_guidance_team_admission_v1' if current_semantics and
-                self.method.search_engine in {versions.LAYER1_RESPONSIBILITY_SEARCH_VERSION,versions.LAYER1_FEEDBACK_SEARCH_VERSION,'INDEPENDENT_OPTIMIZE_VALIDATION_SEARCH_V1'} else versions.UNIFIED_DECOUPLED_ACCEPTANCE_VERSION)
-            if self.method.search_acceptance_policy != expected_acceptance:
-                raise SearchContractError("V2 requires decoupled team candidate admission")
-            if (self.opportunities.search_metric_budget != (42 if self.method.method==versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_3_VERSION else 36) or
-                    self.opportunities.evidence.metric_budget != self.opportunities.search_metric_budget or
-                    self.opportunities.evidence.minimum != 3):
-                raise SearchContractError("V2 backend budget differs from frozen method")
-            checks = ((self.engine, self.method.search_engine), (self.memory, self.method.memory_policy),
-                      (self.opportunities.patterns, self.method.pattern_policy),
-                      (self.opportunities.evidence, self.method.evidence_policy),
-                      (self.opportunities.feasibility, self.method.feasibility_policy))
-            if any(getattr(obj, "identity", None) != expected for obj, expected in checks):
-                raise SearchContractError("V2 component identity mismatch")
-            if current_semantics and getattr(self.transition, "identity", None) != self.method.transition_policy:
-                raise SearchContractError("TRANSITION_POLICY_IDENTITY_MISMATCH")
-            if self.method.memory_policy != versions.UNIFIED_NULL_MEMORY_VERSION and self.method.mechanism_config.get("memory") != self.memory.limits:
-                raise SearchContractError("memory limits must enter explicit method identity")
-            if self.method.pattern_policy != versions.UNIFIED_NULL_PATTERN_VERSION and not self.method.mechanism_config.get("pattern_provider_binding"):
-                raise SearchContractError("PATTERN_PROVIDER_NOT_BOUND")
-        if self.method.mechanism_config.get('optimization_evidence_policy') and not self.memory.competence:
+        expected_acceptance='layer1_local_guidance_team_admission_v1'
+        if self.method.search_acceptance_policy != expected_acceptance:
+            raise SearchContractError("CURRENT_TEAM_ADMISSION_POLICY_MISMATCH")
+        if (self.opportunities.search_metric_budget != 42 or
+                self.opportunities.evidence.metric_budget != self.opportunities.search_metric_budget or
+                self.opportunities.evidence.minimum != 3):
+            raise SearchContractError("CURRENT_LAYER1_BUDGET_MISMATCH")
+        checks = ((self.engine, self.method.search_engine), (self.memory, self.method.memory_policy),
+                  (self.opportunities.patterns, self.method.pattern_policy),
+                  (self.opportunities.evidence, self.method.evidence_policy),
+                  (self.opportunities.feasibility, self.method.feasibility_policy))
+        if any(getattr(obj, "identity", None) != expected for obj, expected in checks):
+            raise SearchContractError("CURRENT_COMPONENT_IDENTITY_MISMATCH")
+        if getattr(self.transition, "identity", None) != self.method.transition_policy:
+            raise SearchContractError("TRANSITION_POLICY_IDENTITY_MISMATCH")
+        if self.method.memory_policy != versions.UNIFIED_NULL_MEMORY_VERSION and self.method.mechanism_config.get("memory") != self.memory.limits:
+            raise SearchContractError("memory limits must enter explicit method identity")
+        if self.method.pattern_policy != versions.UNIFIED_NULL_PATTERN_VERSION and not self.method.mechanism_config.get("pattern_provider_binding"):
+            raise SearchContractError("PATTERN_PROVIDER_NOT_BOUND")
+        if not self.memory.competence:
             self.memory.bootstrap(self.state)
         initial = self.state.snapshot().team_state_id
-        if current_semantics:
-            scores = getattr(self.state, "initial_member_scores", None)
-            identity = getattr(self.state, "initial_state_id", None)
-            if scores is None or identity is None:
-                raise SearchContractError("INITIAL_COMPETENCE_NOT_FROZEN")
-            self.transition.bind_initial(scores, identity)
+        scores = getattr(self.state, "initial_member_scores", None)
+        identity = getattr(self.state, "initial_state_id", None)
+        if scores is None or identity is None:
+            raise SearchContractError("INITIAL_COMPETENCE_NOT_FROZEN")
+        self.transition.bind_initial(scores, identity)
         trace: list[OpportunityTrace] = []
         reason = "OPERATIONAL_OPPORTUNITY_CEILING"
         for index in range(max_opportunities):
@@ -266,30 +231,28 @@ class UnifiedSearchOrchestrator:
             committed: str | None = None
             gate_passed = (await self.gate.check(opportunity, decision.candidate)
                            if decision.candidate is not None else None)
-            v2 = self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_3_VERSION}
             memory_delta = None
-            if v2:
-                from .memory_records import OpportunityOutcome
-                progress = {}
-                if (self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_3_VERSION}
-                        and decision.candidate is not None and gate_passed):
-                    from .target_or_team_transition import progress_path
-                    team_gain = decision.candidate.full.aggregate_score - active.aggregate_score
-                    target_gain = (decision.candidate.full.member_scores[opportunity.target_member]
-                                   - active.member_scores[opportunity.target_member])
-                    progress = dict(realized_team_gain=team_gain, realized_target_gain=target_gain,
-                                    progress_path=progress_path(team_gain, target_gain))
-                memory_delta = self.memory.prepare_outcome(OpportunityOutcome(
-                    opportunity, tuple(evaluated), selected,
-                    bool(decision.candidate is not None and gate_passed), gate_passed, index,
-                    operational_failure=(bool(searched.search_state.get("operational_failure")) or
-                                         any(r.diagnostics.get("operational_failure") for r in evaluated) or
-                                         bool(decision.candidate is not None and
-                                              getattr(self.gate, "operational_failure", False))), **progress))
-                self.memory.validate_delta(memory_delta)
+            from .memory_records import OpportunityOutcome
+            progress = {}
+            if (True
+                    and decision.candidate is not None and gate_passed):
+                from .target_or_team_transition import progress_path
+                team_gain = decision.candidate.full.aggregate_score - active.aggregate_score
+                target_gain = (decision.candidate.full.member_scores[opportunity.target_member]
+                               - active.member_scores[opportunity.target_member])
+                progress = dict(realized_team_gain=team_gain, realized_target_gain=target_gain,
+                                progress_path=progress_path(team_gain, target_gain))
+            memory_delta = self.memory.prepare_outcome(OpportunityOutcome(
+                opportunity, tuple(evaluated), selected,
+                bool(decision.candidate is not None and gate_passed), gate_passed, index,
+                operational_failure=(bool(searched.search_state.get("operational_failure")) or
+                                     any(r.diagnostics.get("operational_failure") for r in evaluated) or
+                                     bool(decision.candidate is not None and
+                                          getattr(self.gate, "operational_failure", False))), **progress))
+            self.memory.validate_delta(memory_delta)
             if decision.candidate is not None and gate_passed:
                 record = self.committer.commit(
-                    opportunity, decision, self.history, NullMemoryProvider() if v2 else self.memory,
+                    opportunity, decision, self.history, NullMemoryProvider(),
                 )
                 committed = record.candidate_id
                 self.history.observe_opportunity(opportunity.target_member, committed=True)
@@ -299,8 +262,7 @@ class UnifiedSearchOrchestrator:
             if (committed is None and child.team_state_id != parent.team_state_id
                     or committed is not None and child.team_state_id == parent.team_state_id):
                 raise SearchContractError("state changed without matching atomic commit")
-            if v2:
-                self.memory.apply_outcome(memory_delta)
+            self.memory.apply_outcome(memory_delta)
             if self.observation_observer:
                 self.observation_observer('MEMORY_AFTER_OPPORTUNITY',dict(
                     opportunity_id=opportunity.opportunity_id,target_member=opportunity.target_member,
@@ -314,40 +276,38 @@ class UnifiedSearchOrchestrator:
                     "eligible_members", (opportunity.target_member,),
                 )),
                 selected_member=opportunity.target_member,
-                local_update=(searched.local_survival_update_count > 0 if v2 else bool(searched.candidates)),
+                local_update=(searched.local_survival_update_count > 0),
                 committed=committed is not None,
             )
             allocation = {}
-            if current_semantics:
-                gain = (decision.candidate.full.aggregate_score - active.aggregate_score
-                        if committed is not None and decision.candidate is not None else 0.0)
-                # Observation only: this record has no scheduler read point.
-                allocation = dict(raw_values={str(m): s.raw_value for m, s in diagnosis.responsibility.items()},
-                    DNC={str(m):dict(D=s.direct_count, N=s.near_margin_count, C=s.coverage_count)
-                         for m, s in diagnosis.responsibility.items()},
-                    failure_counts=opportunity.evaluation_plan.get("allocation_failure_counts", {}),
-                    prior_opportunity_counts=opportunity.evaluation_plan.get("prior_opportunity_counts", {}),
-                    prior_exposure_counts=opportunity.evaluation_plan.get("prior_exposure_counts", {}),
-                    exposure_definition="one responsibility observation per member per opportunity",
-                    target_scores=opportunity.objective.get("target_scores", {}),
-                    eligible_members=opportunity.objective.get("eligible_members", ()),
-                    feasibility_by_member=opportunity.objective.get("feasibility_by_member", {}),
-                    target_count=self.history.target_counts.get(opportunity.target_member, 0),
-                    parent_team_score=active.aggregate_score,
-                    child_team_score=(decision.candidate.full.aggregate_score if committed is not None else active.aggregate_score),
-                    evaluation_support_identity=parent.diagnostics.get("evaluation_support_identity"),
-                    member_metric=parent.diagnostics.get("member_metric"),
-                    evaluator_identity=parent.diagnostics.get("evaluator_identity"),
-                    realized_team_gain=gain, committed=committed is not None,
-                    initial_member_scores=self.transition.initial_scores,
-                    incumbent_member_scores=parent.member_scores, child_member_scores=child.member_scores,
-                    inference_scope="DESCRIPTIVE_NOT_COUNTERFACTUAL_OR_COMPONENT_CAUSAL")
-                if self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_3_VERSION}:
-                    from .target_or_team_transition import progress_path
-                    target_gain = (child.member_scores[opportunity.target_member]
-                                   - parent.member_scores[opportunity.target_member]) if committed else 0.0
-                    allocation.update(realized_target_gain=target_gain,
-                        realized_progress_path=progress_path(gain, target_gain))
+            gain = (decision.candidate.full.aggregate_score - active.aggregate_score
+                    if committed is not None and decision.candidate is not None else 0.0)
+            # Observation only: this record has no scheduler read point.
+            allocation = dict(raw_values={str(m): s.raw_value for m, s in diagnosis.responsibility.items()},
+                DNC={str(m):dict(D=s.direct_count, N=s.near_margin_count, C=s.coverage_count)
+                     for m, s in diagnosis.responsibility.items()},
+                failure_counts=opportunity.evaluation_plan.get("allocation_failure_counts", {}),
+                prior_opportunity_counts=opportunity.evaluation_plan.get("prior_opportunity_counts", {}),
+                prior_exposure_counts=opportunity.evaluation_plan.get("prior_exposure_counts", {}),
+                exposure_definition="one responsibility observation per member per opportunity",
+                target_scores=opportunity.objective.get("target_scores", {}),
+                eligible_members=opportunity.objective.get("eligible_members", ()),
+                feasibility_by_member=opportunity.objective.get("feasibility_by_member", {}),
+                target_count=self.history.target_counts.get(opportunity.target_member, 0),
+                parent_team_score=active.aggregate_score,
+                child_team_score=(decision.candidate.full.aggregate_score if committed is not None else active.aggregate_score),
+                evaluation_support_identity=parent.diagnostics.get("evaluation_support_identity"),
+                member_metric=parent.diagnostics.get("member_metric"),
+                evaluator_identity=parent.diagnostics.get("evaluator_identity"),
+                realized_team_gain=gain, committed=committed is not None,
+                initial_member_scores=self.transition.initial_scores,
+                incumbent_member_scores=parent.member_scores, child_member_scores=child.member_scores,
+                inference_scope="DESCRIPTIVE_NOT_COUNTERFACTUAL_OR_COMPONENT_CAUSAL")
+            from .target_or_team_transition import progress_path
+            target_gain = (child.member_scores[opportunity.target_member]
+                           - parent.member_scores[opportunity.target_member]) if committed else 0.0
+            allocation.update(realized_target_gain=target_gain,
+                realized_progress_path=progress_path(gain, target_gain))
             trace.append(OpportunityTrace(
                 opportunity.opportunity_id, parent.team_state_id,
                 opportunity.target_member,

@@ -11,7 +11,7 @@ the opportunity builder selects a member and freezes role-bearing evidence.
 
 The current bounded Layer1 SearchEngine explores prompts within that opportunity.
 All admissible scored edits remain eligible for team evaluation, including local
-rejections, under the unchanged six-generation/36-metric/four-export ceilings. Candidate
+rejections, under the unchanged six-generation/42-metric/four-export ceilings. Candidate
 exploration and deployable team transition are separate decisions.
 
 The candidate pipeline evaluates a proposed single-member replacement with fixed
@@ -83,3 +83,28 @@ remain bounded to the whole method unless a separate causal comparison is run.
 V2.2 real execution is HOLD pending its new binding and finite Pilot bound.
 Shadow keeps its existing safety rule; target-gain replication is a separate
 scientific decision. Historical V2.1 replay retains strict team gain.
+
+## Current V2.3 method
+
+V2.3 is the sole active scientific method; V2.2 and paired execution are permanently retired.
+The production entrypoint is `scripts/run_experiment.py`, using `MATHEvidenceBinding`,
+the complete current policy bundle and `build_current_team_prompt_search`.
+Missing or historical method, evidence and trajectory identities fail closed.
+
+Five qwen3-8b members use V6 ordinary visible mathematical steps and one final
+answer line, with thinking disabled. qwen3.7-flash supplies independent
+trajectory/reference Gradients, gradients-only clustering and conservative
+Layer1 edits. Equal-weight equivalence plurality and fixed peers remain.
+Mutation, SearchValidation and TeamProbe are disjoint Optimize memberships.
+Layer1 keeps six generations, 42 metric calls and four exports; at most two
+candidates reach Full. The immutable initial competence floor, nonregressing
+Full Vote, strict target OR team progress and winner-only Shadow gate remain.
+Measured initial competence and edit effects enter bounded Memory; uncommitted
+candidate coverage cannot replace committed competence. Team-epoch no-commit
+patience remains two. Operational horizon/budget stops do not prove saturation.
+
+Real-model adherence and efficacy remain unverified. Fresh source, manifest,
+request, attempt, cache and ledger identities precede exact single-use API
+approval. Historical authorizations grant no new access. Validation is not
+authorized and Test remains sealed. Current execution uses MATH; IFBench and
+HotpotQA contracts remain maintained, with their execution blockers intact.

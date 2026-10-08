@@ -5,11 +5,10 @@ import hashlib
 import json
 import os
 
-from .token_accounting import TokenLedger, OperationalAbort, serialized_request, POLICY, POLICY_40M
+from .token_accounting import TokenLedger, OperationalAbort, serialized_request, POLICY_V23_2M
 from .unified_execution import consumption_path, inventory
 from ..persistence.durable_io import atomic_write_json, append_jsonl, read_json
 from ..benchmarks.math_domain_binding import execution_binding
-from ..benchmarks.math_accounting_prep import ValidationReserve
 from ..benchmarks.math import MATHBenchmarkAdapter
 from ..search.provider_runtime import RequestBroker, BenchmarkSolver, ReflectionProvider
 from ..search.schemas import SearchContractError
@@ -120,17 +119,13 @@ def initial_prompts(root, contract):
 
 
 def ledger_policy(contract):
-    return POLICY_40M
+    if contract.get('accounting_scope_policy') != 'FRESH_V23_SINGLE_ARM_2M_V1':
+        raise SearchContractError('FRESH_V23_ACCOUNTING_SCOPE_REQUIRED')
+    return POLICY_V23_2M
 
 
 def durable_output_cache(run_root,contract,payload,root=None):
     from ..persistence.exact_output_cache import DurableExactOutputCache,digest
-    if contract.get('paired_realization_policy'):
-        from .matched_realization import cache_context, local_path
-        if root is None:
-            raise SearchContractError('MATCHED_CACHE_ROOT_REQUIRED')
-        return DurableExactOutputCache(local_path(root, contract['paired_realization_policy']['cache_directory']),
-            cache_context(root, contract, payload))
     return DurableExactOutputCache(run_root/'resolved_output_cache',dict(
         execution_attempt_id=contract['execution_attempt_id'],cache_namespace=contract['cache_namespace'],
         startup_identity_sha256=payload['startup_identity_sha256'],source_sha=payload['scope']['source_sha'],
@@ -152,29 +147,25 @@ async def execute_search(root, prep, run_root, payload):
         policy=ledger_policy(c), best_effort_snapshots=durable is not None)
     broker = client = None
     try:
-        reserve = ValidationReserve(read_json(root / c["validation_accounting_metadata_path"]), initial_prompts(root,c))
-        if budget.remaining < reserve.remaining():
-            raise OperationalAbort("STOP_TOKEN_BUDGET_INSUFFICIENT_FOR_VALIDATION")
+        if c.get('heldout_accounting_reserve') != 0:
+            raise SearchContractError('UNAUTHORIZED_HELDOUT_ZERO_RESERVE_REQUIRED')
         consume(root,prep,run_root,payload)
         atomic_write_json(run_root / "accounting_start.json",budget.view())
         transport,client = create_transport(c)
-        arm=c.get('execution_arm','A1')
+        arm=c.get('execution_arm','A4')
         broker = RequestBroker(contract=c,transport=transport,arm=arm,seed=81,token_ledger=budget,
-            reserve_reader=reserve.remaining,ledger_writer=lambda r:append_jsonl(run_root / "ledger.jsonl",r),
+            reserve_reader=lambda:0,ledger_writer=lambda r:append_jsonl(run_root / "ledger.jsonl",r),
             raw_writer=lambda r:append_jsonl(run_root / "provider_trace_private.jsonl",r),
             durable_cache=durable_output_cache(run_root,c,payload,root=root),
             response_receipts=(ProviderResponseReceipts(run_root/'provider_response_receipts_private',
                 attempt_id=c['execution_attempt_id'],startup_identity_sha256=payload['startup_identity_sha256'])
                 if durable is not None else None))
-        broker.prompt_observer = reserve.observe
         solver = BenchmarkSolver(binding.benchmark(),broker)
         from ..search.textual_gradients import PerExampleGradientProvider, GradientClusterProvider
         pattern_provider=GradientClusterProvider(broker,read_json(root/c['pattern_prompt_path'])['prompt'],
             gradient_provider=PerExampleGradientProvider(broker,read_json(root/c['gradient_prompt_path'])['prompt'],
                 numeric_guard_writer=lambda r:append_jsonl(run_root/'numeric_guard_private.jsonl',r),
-                recovery_policy=c.get('gradient_recovery_policy'),
-                recovery_writer=(lambda r:append_jsonl(run_root/'gradient_recovery_private.jsonl',r))
-                    if c.get('gradient_recovery_policy') is not None else None),
+                recovery_policy=None),
             partition_completion_policy=c.get('partition_completion_policy'),
             partition_writer=(lambda r:append_jsonl(run_root/'partition_completion_private.jsonl',r))
                 if c.get('partition_completion_policy') is not None else None)
@@ -190,6 +181,21 @@ async def execute_search(root, prep, run_root, payload):
             from .pilot_observation import attach_pilot_observer
             attach_pilot_observer(composed,run_root)
         composed.state.initialize()
+        composed.memory.bootstrap(composed.state)
+        from .canary_review import initial_audit, opportunity_audit, review
+        review('INITIAL_SOLVER_PROFILE',initial_audit(c,composed,run_root),
+            contract=c,payload=payload,run_root=run_root)
+        canary_context={}
+        persisted_observer=composed.execution_observer
+        def reviewed_observer(stage,data):
+            persisted_observer(stage,data)
+            if stage=='OPPORTUNITY' and not canary_context:
+                canary_context['opportunity']=data['opportunity']
+            if stage=='TRANSITION' and not canary_context.get('reviewed'):
+                review('FIRST_COMPLETE_OPPORTUNITY',opportunity_audit(c,composed,run_root,
+                    canary_context['opportunity']),contract=c,payload=payload,run_root=run_root)
+                canary_context['reviewed']=True
+        composed.execution_observer=reviewed_observer
         atomic_write_json(run_root / "initial_state_private.json",plain(composed.state.snapshot()))
         if "initial_competence_binding" in c:
             initial = composed.state.snapshot()
@@ -197,8 +203,6 @@ async def execute_search(root, prep, run_root, payload):
                 raise OperationalAbort("INITIAL_COMPETENCE_SUPPORT_MISMATCH")
             atomic_write_json(run_root / "initial_competence_floor.json",dict(binding=c["initial_competence_binding"],
                 state_id=initial.team_state_id, member_scores=initial.member_scores))
-        from .matched_realization import freeze_initial_and_review
-        freeze_initial_and_review(root, c, payload, run_root, composed.state.snapshot())
         result = await composed.run(max_opportunities=c["provider_bounds"]["max_opportunities"])
         accepted = {"CANARY_PARENT_EPOCH_COMPLETE","CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE","NO_FEASIBLE_OPPORTUNITY"} if c["execution_phase"]=="canary" else {"SATURATION_REACHED","NO_FEASIBLE_OPPORTUNITY"}
         scientific_complete=result.stop_reason in accepted
@@ -206,14 +210,10 @@ async def execute_search(root, prep, run_root, payload):
             'OPERATIONAL_OPPORTUNITY_CEILING','EMERGENCY_PROVIDER_CALL_CEILING'}
         if not scientific_complete and not operational_truncation:
             raise OperationalAbort("NONSCIENTIFIC_STOP_"+result.stop_reason)
-        if c.get("method_identity") == "unified_team_prompt_search_v2_1" and c["execution_phase"] == "canary" and not result.trace:
-            raise OperationalAbort("CANARY_NO_COMPLETE_PRODUCTION_OPPORTUNITY")
-        if c['execution_phase']=='canary' and not any(t.candidate_ids for t in result.trace):
-            raise OperationalAbort('STOP_LAYER1_ZERO_THROUGHPUT')
         final = composed.state.snapshot()
         atomic_write_json(run_root / "final_team_private.json",dict(prompts=final.member_prompts,state_id=final.team_state_id))
         atomic_write_json(run_root / "final_state_private.json",plain(final))
-        summary = dict(result=plain(result),ledger=broker.usage,accounting=budget.view(),validation_reserve=reserve.remaining(),
+        summary = dict(result=plain(result),ledger=broker.usage,accounting=budget.view(),validation_reserve=0,
             validation_search_raw_reads=0,validation_calls=0,test_raw_reads=0,test_calls=0,pattern_calls=broker.usage['pattern'],memory_activity=0)
         if c.get('operational_pilot'):
             summary.update(pilot_completed=scientific_complete,
@@ -229,16 +229,7 @@ async def execute_search(root, prep, run_root, payload):
                 derived_token_snapshot_detached=budget.snapshot_updates_disabled,
                 snapshot_error_category=budget.snapshot_error_category)
         gradients=pattern_provider.gradient_provider
-        gradient_multiplier=3 if c.get('gradient_recovery_policy') is not None else 1
-        if c.get('gradient_recovery_policy') is not None:
-            from ..search.gradient_recovery import statistics
-            recovery_path=run_root/'gradient_recovery_private.jsonl'
-            recovery_events=[json.loads(line) for line in recovery_path.read_text(encoding='utf-8').splitlines() if line] if recovery_path.exists() else []
-            summary['gradient_recovery']=statistics(recovery_events)
-            if (summary['gradient_recovery']['physical_gradient_calls']!=gradients.calls
-                    or summary['gradient_recovery']['logical_gradient_count']!=summary['gradient_recovery']['accepted_gradient_count']
-                    or summary['gradient_recovery']['gradient_three_fail']):
-                raise OperationalAbort('GRADIENT_CONTRACT_RECOVERY_ACCOUNTING_INCOMPLETE')
+        gradient_multiplier=1
         summary.update(pattern_gradient_calls=broker.usage['pattern_gradient'],
             pattern_cluster_calls=broker.usage['pattern_cluster'],gradient_input_audit=gradients.input_audit)
         if (gradients.calls!=broker.usage['pattern_gradient'] or pattern_provider.calls!=broker.usage['pattern_cluster']
@@ -250,8 +241,7 @@ async def execute_search(root, prep, run_root, payload):
             and all(t.evidence_audit.get('nonactionable') for t in result.trace))
         if c['execution_phase']=='canary' and not nonactionable and (pattern_provider.calls!=1 or not composed.evaluation.provider.probed):
             raise OperationalAbort('PATTERN_CANARY_FLOW_INCOMPLETE')
-        expected_clusters=(sum(t.evidence_audit.get('cluster_logical_calls',1) for t in result.trace)
-            if c.get('optimization_evidence_policy') else len(result.trace))
+        expected_clusters=sum(t.evidence_audit.get('cluster_logical_calls',1) for t in result.trace)
         if c['execution_phase']=='pilot' and (pattern_provider.calls!=expected_clusters
                 or gradients.calls!=len(gradients.input_audit)
                 or not len(result.trace)<=gradients.calls<=gradient_multiplier*60*len(result.trace)):

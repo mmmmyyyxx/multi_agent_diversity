@@ -1,28 +1,28 @@
 schema_version: invariant_registry_v1
 invariants:
 - id: INV-MATH-VISIBLE-SOLUTION-001
-  description: V6 scores only final payload, retains complete private ordinary
-    content and binds bounded Optimize solution feedback to its member and realization.
+  description: V6 scores only final payload, retains complete private ordinary content
+    and binds bounded Optimize solution feedback to its member and realization.
   authority: docs/design/MATH_VISIBLE_SOLUTION_FEEDBACK_V1.md
   implementation_refs:
   - multi_dataset_diverse_rl/benchmarks/math_visible_trajectory.py
-  - multi_dataset_diverse_rl/benchmarks/math_visible_binding.py
+  - multi_dataset_diverse_rl/benchmarks/math_evidence_binding.py
   - multi_dataset_diverse_rl/search/textual_gradients.py
   - multi_dataset_diverse_rl/search/current_layer1.py
   tests:
-  - tests/current/test_visible_solver_trajectories.py
+  - tests/current/test_v23_solver_contract.py
   failure_refs: []
   critical: true
   status: ACTIVE
 - id: INV-INITIAL-COMPETENCE-003
-  description: V2.2 immutable initial floor, non-regressing Vote and strict target
-    OR team progress; Full team-first target-second ranking.
+  description: 'V3 transition retained in V23: immutable initial floor, non-regressing
+    Vote and strict target OR team progress; Full team-first target-second ranking.'
   authority: docs/design/CURRENT_SPEC.md
   implementation_refs:
   - multi_dataset_diverse_rl/search/target_or_team_transition.py
   - multi_dataset_diverse_rl/search/current_composition.py
   tests:
-  - tests/current/test_transition_reachability_v22.py
+  - tests/current/test_v23_admission.py
   failure_refs:
   - FAIL-IDENTICAL-INITIAL-STRICT-VOTE-DEADLOCK
   critical: true
@@ -36,7 +36,7 @@ invariants:
   - multi_dataset_diverse_rl/benchmarks/initial_condition_contract.py
   - multi_dataset_diverse_rl/search/provider_runtime.py
   tests:
-  - tests/current/test_identical_initial_team.py
+  - tests/current/test_v23_only_runtime.py
   failure_refs: []
   critical: true
   status: ACTIVE
@@ -60,8 +60,8 @@ invariants:
   - multi_dataset_diverse_rl/search/orchestrator.py
   - multi_dataset_diverse_rl/search/runtime_v2.py
   tests:
-  - tests/test_unified_semantic_contract.py
-  - tests/current/test_transition_reachability_v22.py
+  - tests/current/test_optimization_evidence_v23.py
+  - tests/current/test_v23_admission.py
   failure_refs:
   - FAIL-UNIFIED-METHOD-SEMANTIC-DRIFT
   critical: true
@@ -74,7 +74,7 @@ invariants:
   - multi_dataset_diverse_rl/benchmarks/math_domain_v2.py
   - multi_dataset_diverse_rl/benchmarks/math_domain_worker.py
   tests:
-  - tests/test_math_answer_domain_v2.py
+  - tests/current/test_v23_math_domains.py
   failure_refs:
   - FAIL-MATH-REFERENCE-PARSER-DOMAIN-MISMATCH
   critical: true
@@ -88,7 +88,7 @@ invariants:
   - multi_dataset_diverse_rl/data_preparation/math_scorable_split.py
   - multi_dataset_diverse_rl/benchmarks/math_domain_binding.py
   tests:
-  - tests/test_math_answer_domain_v2.py
+  - tests/current/test_v23_math_domains.py
   failure_refs:
   - FAIL-MATH-REFERENCE-PARSER-DOMAIN-MISMATCH
   critical: true
@@ -616,7 +616,7 @@ invariants:
   - multi_dataset_diverse_rl/search/semantic_contract.py
   tests:
   - tests/test_unified_search_v2.py
-  - tests/test_unified_semantic_contract.py
+  - tests/current/test_optimization_evidence_v23.py
   failure_refs: []
   critical: true
   status: ACTIVE
@@ -629,7 +629,7 @@ invariants:
   - multi_dataset_diverse_rl/search/experience.py
   tests:
   - tests/test_unified_search_v2.py
-  - tests/test_unified_semantic_contract.py
+  - tests/current/test_optimization_evidence_v23.py
   failure_refs: []
   critical: true
   status: ACTIVE
@@ -688,6 +688,50 @@ invariants:
   - multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py
   tests:
   - tests/test_math_token_accounting.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-V23-ONLY-CLOSURE-001
+  description: Historical defaults, constructors and bindings cannot enter fresh V23
+    execution.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/current_policy.py
+  tests:
+  - tests/current/test_v23_only_runtime.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-V23-EVIDENCE-001
+  description: Mutation, SearchValidation and Probe use independent Optimize memberships
+    with post-generation validation.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/optimization_evidence.py
+  tests:
+  - tests/current/test_optimization_evidence_v23.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-V23-MEMORY-001
+  description: Initial measured competence is bootstrapped; only committed edits replace
+    committed coverage.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/rolling_risk_memory.py
+  tests:
+  - tests/current/test_optimization_evidence_v23.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-V23-AUTHORIZATION-001
+  description: Fresh source, exact single-use approval and separate 2M accounting
+    precede new API access.
+  authority: docs/design/CURRENT_SPEC.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/governance/unified_execution.py
+  tests:
+  - tests/current/test_v23_only_runtime.py
   failure_refs: []
   critical: true
   status: ACTIVE

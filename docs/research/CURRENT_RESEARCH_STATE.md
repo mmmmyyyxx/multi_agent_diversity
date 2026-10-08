@@ -2,9 +2,9 @@
 
 The sole active research architecture is Unified Team Prompt Search.
 
-- CURRENT_METHOD: unified_team_prompt_search_v2_2.
+- CURRENT_METHOD: unified_team_prompt_search_v2_3.
 - CURRENT_BENCHMARK_SUITE: MATH, IFBench, HotpotQA.
-- CURRENT_EXPERIMENT: transition_reachability_audit_v1 zero-API semantic amendment.
+- CURRENT_EXPERIMENT: a4_v23_only_pilot_v1, preparation pending exact API approval.
 - Execution readiness and authorization come from experiments/current_frontier.yaml.
 - CURRENT_RUNTIME: one complete Gradient Pattern / Rolling Memory / bounded Layer1 bundle.
 - Older Pattern/Memory/search combinations: EXPLICIT_HISTORICAL_REPLAY_ONLY.
@@ -32,56 +32,27 @@ Optimize supplies adaptive search. Shadow supplies the winner-only adaptive gate
 Validation is post-freeze development evaluation with no online feedback. Test
 is sealed. Data availability does not confer held-out model access.
 
-## Current V2.2 execution status
+## V2.3-only execution scope
 
-V2.2 is IMPLEMENTED / ZERO-API ONLY. Real execution is HOLD with
-CURRENT_V2_2_EXECUTION_BINDING_NOT_FROZEN and
-TARGET_OR_TEAM_PROGRESS_PILOT_BOUND_NOT_FROZEN. The existing V2.1 receipts,
-experiments, bindings and reports remain historical evidence, with no new
-authority. Optimize/Full permits target-only progress; Shadow remains its
-existing safety gate, with no requirement to replicate target gain.
+V2.3 is the sole active scientific method; V2.2 and paired execution are permanently retired.
+The production entrypoint is `scripts/run_experiment.py`, using `MATHEvidenceBinding`,
+the complete current policy bundle and `build_current_team_prompt_search`.
+Missing or historical method, evidence and trajectory identities fail closed.
 
-## Historical benchmark preparation and remaining system blockers
+Five qwen3-8b members use V6 ordinary visible mathematical steps and one final
+answer line, with thinking disabled. qwen3.7-flash supplies independent
+trajectory/reference Gradients, gradients-only clustering and conservative
+Layer1 edits. Equal-weight equivalence plurality and fixed peers remain.
+Mutation, SearchValidation and TeamProbe are disjoint Optimize memberships.
+Layer1 keeps six generations, 42 metric calls and four exports; at most two
+candidates reach Full. The immutable initial competence floor, nonregressing
+Full Vote, strict target OR team progress and winner-only Shadow gate remain.
+Measured initial competence and edit effects enter bounded Memory; uncommitted
+candidate coverage cannot replace committed competence. Team-epoch no-commit
+patience remains two. Operational horizon/budget stops do not prove saturation.
 
-1. MATH: V1.1 reference eligibility, split, initial team, production composition,
-   models/provider and finite canary bounds are versioned. Four arms have
-   actual public GEPA fake E2E conformance evidence. The authorized A1 Seed81
-   first-parent epoch canary aborted during initialization: its first successful
-   Solver response lacked the frozen final marker. No search opportunity or
-   complete epoch occurred. The authorization is consumed; Formal readiness is
-   closed. Private forensic reconstruction proves R2: the system request had
-   the output contract, but the response lacked its marker. V1.2 freezes an
-   independent immutable formatting interface, effective request identity and
-   cache isolation; the strict parser and mutable team remain unchanged.
-   Zero-API readiness covers only a fresh unauthorized canary, with real model
-   adherence unverified. See the current frontier for exact identities.
-2. IFBench: data and new split frozen; pinned checker packages, spaCy model and
-   NLTK resources have a verified isolated runtime lock. Aggregation-aware
-   responsibility remains RESPONSIBILITY_POLICY_NOT_FROZEN. Ambient runtimes
-   must match the lock and explicit NLTK_DATA locator or fail closed.
-3. HotpotQA: train/labeled validation and new split frozen; normalized answer
-   plurality and binary responsibility retained. SYSTEM_DEPENDENCY_RETRIEVAL_NOT_FROZEN:
-   corpus, index, retriever and two-hop summary/query/answer integration are missing.
-4. Future cross-benchmark Pattern/Memory factorial: A1 core, A2 Pattern, A3 Memory,
-   A4 both. MATH develops mechanisms; IFBench/HotpotQA confirm across tasks.
-
-Global current experiment Solver is qwen3-8b for all members, arms, seeds and
-adaptive re-evaluations. Optimizer/reflection and Pattern use qwen3.7-flash.
-See experiments/plans/v2_pattern_memory_multibench_v1.yaml; it authorizes no calls.
-
-## Historical preservation
-
-BBH is historical development/replay only. Frozen source, manifests, reports,
-V17/V18, Formal V3/V4 and V2 BBH structural tests remain intact. The original
-V1 preexecution audit stays PREEXECUTION_BLOCKED. The unexecuted BBH V1.1 draft
-is superseded for new work; its creation-time reports remain unchanged.
-
-## Method semantic-contract amendment
-
-V2.1 is implemented with single-mechanism repair, separate coverage metrics,
-initial competence floors, strict team deployment gains and grounded experience.
-Allocation telemetry is descriptive and observation-only. Historical MATH V2
-Canary/Pilot preps remain immutable and unused; they cannot authorize the new
-method. Current readiness is HOLD pending a new benchmark execution binding,
-source/preexecution freeze and explicit attempt authorization. No real efficacy
-was observed for this amendment. Solver/model/data/access contracts are retained.
+Real-model adherence and efficacy remain unverified. Fresh source, manifest,
+request, attempt, cache and ledger identities precede exact single-use API
+approval. Historical authorizations grant no new access. Validation is not
+authorized and Test remains sealed. Current execution uses MATH; IFBench and
+HotpotQA contracts remain maintained, with their execution blockers intact.

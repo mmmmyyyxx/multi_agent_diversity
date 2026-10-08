@@ -1,0 +1,11 @@
+{
+  "optimize_model_calls": 0,
+  "shadow_model_calls": 0,
+  "validation_model_calls": 0,
+  "test_model_calls": 0,
+  "validation_authorized": false,
+  "test_sealed": true,
+  "heldout_accounting_reserve": 0,
+  "heldout_raw_rows_used_for_preparation": false,
+  "existing_v6_byte_length_metadata_copied": true
+}

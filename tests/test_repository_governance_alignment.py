@@ -412,91 +412,26 @@ def test_canary_abort_does_not_unlock_formal_or_heldout():
 
 def test_new_pending_pilot_has_separate_user_scope_without_inheriting_closed_authorization():
     frontier=load_yaml(ROOT/'experiments/current_frontier.yaml')
+    assert frontier['current_method']=='unified_team_prompt_search_v2_3'
     for key in ('real_api_authorized','next_canary_authorized','next_pilot_authorized','next_validation_authorized'):
         assert frontier[key] is False
-    assert frontier['test_access']=='sealed' and frontier['validation_access']=='not_authorized'
-    if frontier.get('pending_pilot_attempt_id') is None:return
+    assert frontier['validation_access']=='not_authorized' and frontier['test_access']=='sealed'
     registry=load_yaml(ROOT/'experiments/registry.yaml')
     row=next(r for r in registry['experiments'] if r['experiment_id']==frontier['pending_pilot_milestone'])
-    old=next(r for r in registry['experiments'] if r['experiment_id']=='math_v2_1_gradient_pattern_seed81_pilot_v1')
-    assert row['experiment_id']!=old['experiment_id'] and row['kind']=='PILOT'
-    assert old['authorization_closed'] is True and old['authorization_consumed'] is True
-    manifest=load_yaml(ROOT/row['manifest']);assert manifest['authorization']['real_api_authorized'] is False
-    contract=load_yaml(ROOT/manifest['execution_binding']['path'])
-    assert contract['execution_attempt_id']==contract['cache_namespace']==frontier['pending_pilot_attempt_id']
-    old_contract=load_yaml(ROOT/load_yaml(ROOT/old['manifest'])['execution_binding']['path'])
-    assert contract['execution_attempt_id']!=old_contract['execution_attempt_id']
-    assert contract['cache_namespace']!=old_contract['cache_namespace']
-    assert contract['models']==old_contract['models']
-    if contract['identity']=='MATH_V2_2_EXECUTION_BINDING_V1':
-        from multi_dataset_diverse_rl.benchmarks.gradient_pilot_contract import pilot_provider_bounds
-        from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
-        op=contract['operational_pilot']
-        assert contract['provider_bounds']==pilot_provider_bounds(contract,
-            max_opportunities=op['max_opportunities'],token_ceiling=op['token_ceiling'])
-        scope=load_yaml(ROOT/contract['current_user_scope_path'])
-        assert scope['schema_version']=='math_v2_2_operational_pilot_user_scope_v1'
-        assert scope['user_authorized'] and scope['one_attempt_only']
-        assert scope['exact_frozen_api_authorization_required']
-        assert scope['attempt_id']==contract['execution_attempt_id']
-        assert scope['user_task_sha256']==frontier['pending_pilot_user_task_sha256']
-        assert scope['max_opportunities']==op['max_opportunities']
-        assert scope['token_ceiling']==op['token_ceiling']
-        assert contract['continuation_authorization_sha256']==contract['current_user_scope_sha256']
-        assert scope['push_authorized'] is frontier['pending_pilot_push_authorized'] is True
-        assert scope['scientific_method_changed'] is False
-        for role in ('validation','test','raw_diagnostic','llm_judge','canary'):
-            assert scope[role+'_authorized'] is False
-        assert contract['stop_policy']==old_contract['stop_policy']=='team_epoch_no_commit_v1'
-        assert op['guarantees_saturation'] is False
-        assert execution_binding(ROOT,contract).blockers()==()
-        return
-    if 'gradient_recovery_policy' in contract:
-        for key in ('solver_calls','reflection_calls','pattern_cluster_calls','max_opportunities'):
-            assert contract['provider_bounds'][key]==old_contract['provider_bounds'][key]
-        assert contract['provider_bounds']['pattern_gradient_calls']==3*old_contract['provider_bounds']['pattern_gradient_calls']
-    else:assert contract['provider_bounds']==old_contract['provider_bounds']
-    scope=load_yaml(ROOT/contract.get('gradient_recovery_user_scope_path',contract.get('partition_completion_user_scope_path',
-        contract.get('operational_user_scope_path',contract['numeric_user_scope_path']))))
-    assert scope['user_authorized'] is True and scope['attempt_id']==contract['execution_attempt_id']
-    assert scope['exact_frozen_api_authorization_required'] is True
-    if 'gradient_recovery_policy' in contract:
-        assert scope['schema_version']=='gradient_contract_recovery_user_scope_v1'
-        assert scope['recovery_policy']==contract['gradient_recovery_policy']
-        assert scope['recovery_policy']['selection']=='first_contract_valid'
-        assert scope['recovery_policy']['semantic_quality_selection'] is False
-        assert scope['user_task_sha256']==frontier['pending_pilot_user_task_sha256']
-        assert scope['push_authorized'] is frontier['pending_pilot_push_authorized'] is True
-        assert contract['continuation_authorization_sha256']==contract['gradient_recovery_user_scope_sha256']
-        assert scope['parent_binding_sha256']==contract['gradient_recovery_parent_binding_sha256']
-    elif 'partition_completion_user_scope_path' in contract:
-        assert scope['schema_version']=='current_gradient_partition_completion_pilot_user_scope_v1'
-        assert scope['scientific_method_changed'] is False and scope['compliance_behavior_changed'] is True
-        assert scope['partition_completion_policy']==contract['partition_completion_policy']=='GRADIENT_PATTERN_PARTITION_COMPLETION_V1'
-        assert scope['user_task_sha256']==frontier['pending_pilot_user_task_sha256']
-        assert scope['push_authorized'] is frontier['pending_pilot_push_authorized'] is True
-        assert contract['continuation_authorization_sha256']==contract['partition_completion_user_scope_sha256']
-        closed_parent=next(r for r in registry['experiments'] if r['experiment_id']=='math_v2_1_gradient_pattern_seed81_pilot_v3')
-        assert closed_parent['authorization_closed'] is True and closed_parent['authorization_consumed'] is True
-        assert scope['parent_binding_sha256']==contract['partition_completion_parent_binding_sha256']
-    elif 'operational_user_scope_path' in contract:
-        assert scope['schema_version']=='current_gradient_operational_pilot_user_scope_v1'
-        assert scope['scientific_method_changed'] is False
-        assert scope['user_task_sha256']==frontier['pending_pilot_user_task_sha256']
-        assert scope['operational_retry_policy']=='FRESH_AFTER_PROVEN_OPERATIONAL_INVALIDITY_ONLY'
-        assert scope['push_authorized'] is frontier['pending_pilot_push_authorized'] is True
-        assert contract['continuation_authorization_sha256']==contract['operational_user_scope_sha256']
-        assert contract['operational_user_scope_sha256']!=contract['numeric_user_scope_sha256']
-        closed_parent=next(r for r in registry['experiments'] if r['experiment_id']=='math_v2_1_gradient_pattern_seed81_pilot_v2')
-        assert closed_parent['authorization_closed'] is True and closed_parent['authorization_consumed'] is True
-    else:
-        assert scope['operational_fresh_retry_limit']==0
-        assert scope['core_method_changed'] is False and scope['provider_output_admissibility_changed'] is True
-        assert scope['push_authorized'] is False
-    for role in ('validation','test','raw_diagnostic','llm_judge','canary'):
-        assert scope[role+'_authorized'] is False
-    from multi_dataset_diverse_rl.benchmarks.legacy.current_math_domain_binding_v21 import execution_binding
-    assert not execution_binding(ROOT,contract).blockers()
+    assert row['kind']=='PILOT' and row['active_for_new_work']
+    manifest=load_yaml(ROOT/row['manifest']);c=load_yaml(ROOT/manifest['execution_binding']['path'])
+    assert c['execution_attempt_id']==c['cache_namespace']==frontier['pending_pilot_attempt_id']
+    assert manifest['authorization']['real_api_authorized'] is False
+    assert c['accounting_scope_policy']=='FRESH_V23_SINGLE_ARM_2M_V1' and c['heldout_accounting_reserve']==0
+    assert c['operational_pilot']['max_opportunities']==5 and c['operational_pilot']['token_ceiling']==2_000_000
+    assert 'paired_realization_policy' not in c
+    parent=load_yaml(ROOT/c['trajectory_parent_binding_path'])
+    assert c['cache_namespace']!=parent['cache_namespace'] and c['token_ledger_directory']!=parent['token_ledger_directory']
+    scope=load_yaml(ROOT/c['current_user_scope_path'])
+    assert scope['user_authorized'] and not scope['real_api_authorized'] and scope['exact_api_approval_required']
+    assert not scope['cancelled_paired_scope_reusable'] and not scope['historical_40m_authorization_reusable']
+    from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
+    assert not execution_binding(ROOT,c).blockers()
 
 
 def test_initial_persistence_abort_preserves_accounting_and_closes_scope():

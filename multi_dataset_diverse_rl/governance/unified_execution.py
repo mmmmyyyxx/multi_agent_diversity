@@ -1,4 +1,4 @@
-"""Fresh current V2.2 fixed-horizon admission; historical JSON is provenance only."""
+"""Fresh current V2.3 fixed-horizon admission; historical JSON is provenance only."""
 from dataclasses import asdict
 import hashlib,json,subprocess
 from .source_identity import build_unified_source_identity,hash_scope
@@ -9,15 +9,12 @@ from ..search.schemas import SearchContractError
 from ..search.current_policy import CURRENT_POLICY_BUNDLE
 from ..benchmarks.math_domain_binding import BINDING_BLOCKER
 PREP_SCHEMA='unified_canary_prep_v1'
-CURRENT_OFFLINE_PROFILE='experiments/execution_bindings/math_v2_2_offline_profile_v1.json'
+CURRENT_OFFLINE_PROFILE='experiments/execution_bindings/a4_v23_only_offline_profile_v1.json'
 
 def execution_identity(root,contract):
     CURRENT_POLICY_BUNDLE.validate_contract(contract)
     configs=[root/v for k,v in contract.items() if k.endswith('_path') and isinstance(v,str)]
     configs += [root/contract['split_directory']/'math.json']
-    if contract.get('paired_realization_policy'):
-        configs += [root/v for v in contract['paired_realization_policy']['binding_paths'].values()]
-        configs.append(root/contract['paired_realization_policy']['protocol_path'])
     identity=build_unified_source_identity(root,root/contract['canonical_root']/'manifests/math.json',configs)
     files=[root/r['path'] for s in identity['scopes'].values() for r in s['files']]
     files.append(root/contract['split_directory']/'math.ids.jsonl')
@@ -32,13 +29,16 @@ def execution_scope(manifest,contract):
         method=contract['method_identity'],transition=contract['transition_policy'],models=contract['models'],
         provider=contract['provider'],roles=['solver','reflection','pattern_gradient','pattern_cluster'],
         operational_pilot=contract['operational_pilot'],provider_bounds=contract['provider_bounds'],
-        initial_team_sha256=contract['initial_team_sha256'],initial_memory_entries=5 if contract.get('optimization_evidence_policy') else 0,
+        initial_team_sha256=contract['initial_team_sha256'],initial_memory_entries=5,
         user_scope_sha256=contract['current_user_scope_sha256'],validation_calls=0,test_calls=0,
-        cumulative_token_ceiling=40_000_000,
+        cumulative_token_ceiling=contract['operational_pilot']['token_ceiling'],
+        accounting_scope_policy=contract.get('accounting_scope_policy'),
+        token_ledger_directory=contract['token_ledger_directory'],
+        accounting_policy_sha256=contract['accounting_policy_sha256'],
+        heldout_accounting_reserve=contract.get('heldout_accounting_reserve'),
+        canary_review_policy=contract.get('canary_review_policy'),
         **({'optimization_evidence_policy':contract['optimization_evidence_policy']}
             if contract.get('optimization_evidence_policy') else {}),
-        **({'paired_realization_policy':contract['paired_realization_policy']}
-            if contract.get('paired_realization_policy') else {}),
         **({'pattern_cluster_generation_policy':contract['pattern_cluster_generation_policy']}
             if 'pattern_cluster_generation_policy' in contract else {}),
         **({'solver_output_interface':contract['solver_output_interface'],
@@ -48,29 +48,11 @@ def execution_scope(manifest,contract):
 def consumption_path(root, scope):
     return root / "runs/unified_authorization_consumption" / (canonical_sha256(scope) + ".json")
 
-def numeric_pilot_readiness_blockers(root, contract):
-    from ..current_contract import MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION
-    if contract.get('identity') == MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION:
-        # The closed V2.3 binding replaces retries with one reference-grounded
-        # diagnostic. Its absence of the old retry amendment is intentional;
-        # the full binding/policy validators still run before eligibility.
-        from ..search.optimization_evidence import POLICY
-        if contract.get('optimization_evidence_policy') != POLICY:
-            raise SearchContractError('MATH_EVIDENCE_POLICY_MISMATCH')
-        return []
-    if ('numeric_calibration_amendment_path' in contract
-            and 'gradient_recovery_amendment_path' not in contract
-            and contract['execution_phase'] == 'pilot'
-            and read_json(root / contract['numeric_calibration_amendment_path']).get('fresh_pilot_condition_met') is not True):
-        return ['ATTEMPT4_CONFIRMED_STRONG_NUMERIC_LEAKAGE']
-    return []
-
 def bound_preflight(root, manifest):
     from ..benchmarks.math_domain_binding import execution_binding
     ref=manifest.get('execution_binding',{})
     from .. import versions
-    if ref.get('identity') not in {versions.MATH_V2_2_EXECUTION_BINDING_VERSION,
-            versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION, versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION}:
+    if ref.get('identity')!=versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION:
         return dict(gate='HOLD',blockers=[BINDING_BLOCKER],provider_attempts=0)
     errors=validate_manifest_v2(root,manifest)
     if manifest.get('lifecycle',{}).get('status')!='PREEXECUTION_FROZEN':errors.append('PREEXECUTION_NOT_FROZEN')
@@ -80,9 +62,6 @@ def bound_preflight(root, manifest):
         return dict(gate='HOLD',blockers=errors+['EXECUTION_BINDING_HASH_MISMATCH'],provider_attempts=0)
     try:
         binding=execution_binding(root,read_json(path));errors.extend(binding.blockers())
-        from .matched_realization import validate_bindings
-        validate_bindings(root, binding.contract)
-        errors.extend(numeric_pilot_readiness_blockers(root, binding.contract))
         method=binding.method('A4')
         expected=preexecution_manifest(root,source_sha=manifest.get('source_sha'),frozen=False,
             binding_path=ref['path'],experiment_id=manifest.get('experiment_id'))
@@ -127,7 +106,7 @@ def prepare_canary(root, manifest, *, destination, arm="A4", seed=81):
     if result["blockers"]:
         raise SearchContractError("HOLD_PRE_PROVIDER: " + ",".join(result["blockers"]))
     contract = read_json(root / manifest["execution_binding"]["path"])
-    if arm != contract.get('execution_arm','A1') or seed != 81:
+    if arm != contract.get('execution_arm','A4') or seed != 81:
         raise SearchContractError("ONLY_BOUND_ARM_SEED81_CANARY_PHASE_IS_PREPARED")
     if destination.exists():
         raise SearchContractError("FRESH_PREP_DESTINATION_REQUIRED")
@@ -167,8 +146,6 @@ def validate_prep(root, prep, *, require_authorized=False):
     if scope != expected_scope:
         raise SearchContractError("CANARY_SCOPE_MISMATCH")
     if require_authorized:
-        from .matched_realization import validate_authorization
-        validate_authorization(root, contract, payload)
         auth = read_json(prep / "authorization.json")
         if (auth.get("explicit_user_authorized") is not True or auth.get("single_use") is not True or auth.get("consumed") is not False
                 or auth.get("scope") != scope or auth.get("startup_identity_sha256") != checksum
@@ -195,7 +172,7 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
     b=execution_binding(root,contract)
     if b.blockers():
         raise SearchContractError(b.blockers()[0])
-    method = b.method(contract.get('execution_arm','A1'))
+    method = b.method(contract.get('execution_arm','A4'))
     identity = execution_identity(root, contract)
     manifest = dict(schema_version="experiment_manifest_v2", experiment_id=experiment_id,
         method_family=method.method, method_identity=method.method, source_sha=source_sha,
@@ -238,8 +215,9 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
         manifest['solver_trajectory_policy']=contract['solver_trajectory_policy']
     if 'optimization_evidence_policy' in contract:
         manifest['optimization_evidence_policy']=contract['optimization_evidence_policy']
-    if 'paired_realization_policy' in contract:
-        manifest['paired_realization_policy']=contract['paired_realization_policy']
+    for k in ('canary_review_policy','accounting_scope_policy','accounting_policy_sha256',
+            'heldout_accounting_reserve'):
+        if k in contract:manifest[k]=contract[k]
     for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256", "optimizer_nonthinking_evidence_policy", "layer1_search_policy", "candidate_contract_identity", "post_search_validation_policy", "pattern_support_id_transport", "pattern_abstraction_guard"):
         if k in contract:manifest[k]=contract[k]
     manifest["preregistration_identity"] = canonical_sha256({k: v for k, v in manifest.items() if k not in {"lifecycle", "authorization"}})

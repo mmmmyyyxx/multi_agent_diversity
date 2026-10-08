@@ -42,4 +42,4 @@ def attach_pilot_observer(composed, run_root):
     composed.observation_observer=opportunity
     composed.engine.optimizer.observation_observer=generation
     memory.observation_observer=journal
-    journal('INITIAL_EMPTY_MEMORY',{})
+    journal('PRE_PROFILE_MEMORY_STORAGE',{})

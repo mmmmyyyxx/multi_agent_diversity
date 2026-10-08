@@ -1,0 +1,40 @@
+{
+  "accounting_scope_policy": "FRESH_V23_SINGLE_ARM_2M_V1",
+  "attempt_id": "a4_v23_only_seed81_20261008_attempt1",
+  "binding_sha256": "115689b2b75995d80d616ae01813f543137b707c8acf95f586aa0f15b07a5700",
+  "canary_review_policy": {
+    "efficacy_based_stopping": false,
+    "extra_provider_calls": 0,
+    "identity": "V23_CONTINUOUS_CANARY_REVIEW_V1",
+    "maximum_wait_seconds": 3600,
+    "owner_review_required": true,
+    "scientific_state_reset": false,
+    "stages": [
+      "INITIAL_SOLVER_PROFILE",
+      "FIRST_COMPLETE_OPPORTUNITY"
+    ],
+    "total_max_opportunities": 5,
+    "unreached_branch": "NOT_OBSERVED_NO_FORCED_GENERATION"
+  },
+  "charged_token_ceiling": 2000000,
+  "efficacy_based_stopping": false,
+  "experimental_retry": false,
+  "freeze_api_approval_required": true,
+  "heldout_accounting_reserve": 0,
+  "identity": "V23_ONLY_CONTINUOUS_CANARY_PILOT_SCOPE_V1",
+  "inflight_reservations_count_against_ceiling": true,
+  "max_exported_candidates": 4,
+  "max_full_candidates": 2,
+  "max_generations_per_opportunity": 6,
+  "max_opportunities_total": 5,
+  "members": 5,
+  "method": "unified_team_prompt_search_v2_3",
+  "optimize": 60,
+  "parent_binding_sha256": "27b1ba32ec5a6377ba599349044424082d7ab6c1036e60f69b016a7af2678be1",
+  "scientific_stopper": "team_epoch_no_commit_v1",
+  "seed": 81,
+  "shadow": 40,
+  "source_reference": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
+  "test_calls": 0,
+  "validation_calls": 0
+}

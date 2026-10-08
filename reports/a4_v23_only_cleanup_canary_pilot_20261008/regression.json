@@ -1,0 +1,25 @@
+{
+  "status": "PASS_COMPLETE_CURRENT_SUITE",
+  "tests": 388,
+  "passed": 386,
+  "skipped": 2,
+  "failed": 0,
+  "errors": 0,
+  "seconds": 226.398,
+  "command": "runs/math_v2_1/runtime/Scripts/python.exe tests/formal_zero_api_runner.py tests --suite current --junitxml=runs/a4_v23_only_cleanup_20261008/complete_current.junit.xml",
+  "junit_sha256": "7c5805f66f2b501aab4e04af9b53776b942dda20d5bc33a9b7915bdb0a8708d7",
+  "log_sha256": "4790fd61019d7e37608b12a13596564b58ac06d25698ffe299d47e9636b5ff4f",
+  "network_guard_active_before_import": true,
+  "network_attempts": 0,
+  "real_api_calls": 0,
+  "omitted_modules": 213,
+  "omitted_private_modules": 8,
+  "old_baseline": {
+    "passed": 1679,
+    "skipped": 2
+  },
+  "count_comparison": "Different explicit scope after retirement; excluded replay tests are not PASS.",
+  "compiler": "PASS",
+  "current_governance": "PASS",
+  "scientific_semantics_byte_cases": 6
+}

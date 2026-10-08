@@ -1,19 +1,25 @@
-"""Immutable response formatting, independent of every mutable search prompt."""
-from __future__ import annotations
-
+"""The sole active immutable MATH inference interface is V6."""
 import hashlib
-
 from .. import versions
 
-
-MATH_SOLVER_INTERFACE_V2 = (
-    "Reasoning may precede the answer. Your response must end with exactly one "
-    "final-answer line:\nFINAL_ANSWER: <answer>\n"
-    "The answer payload must be nonempty. Do not include any other final-answer lines."
+MATH_SOLVER_INTERFACE_V6 = (
+    "Solve the mathematical problem using the supplied decision procedure.\n\n"
+    "Provide a clear, logically ordered solution showing the relevant reasoning, "
+    "equations, intermediate calculations, and checks.\n\n"
+    "End the response with exactly one final-answer line:\n"
+    "FINAL_ANSWER: <answer>\n\n"
+    "The final-answer payload must contain only the mathematical answer and may "
+    "use mathematical or LaTeX notation. Keep the payload on the same line. "
+    "The final-answer marker must appear exactly once, on the last nonempty line. "
+    "Do not output anything after the final-answer line."
 )
 
 
-def solver_interface_contract():
-    return dict(identity=versions.MATH_SOLVER_INTERFACE_VERSION,
-                sha256=hashlib.sha256(MATH_SOLVER_INTERFACE_V2.encode()).hexdigest(),
-                parser_identity="math_verify_no_fallback_v1")
+def v6_interface_contract():
+    return dict(identity=versions.MATH_SOLVER_INTERFACE_V6_VERSION,
+        sha256=hashlib.sha256(MATH_SOLVER_INTERFACE_V6.encode()).hexdigest(),
+        parser_identity="math_verify_no_fallback_v1",
+        solver_max_output_tokens=3600, reflection_max_output_tokens=1800)
+
+
+solver_interface_contract=v6_interface_contract

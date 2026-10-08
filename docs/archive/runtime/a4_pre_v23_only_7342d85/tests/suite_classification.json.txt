@@ -1,0 +1,1376 @@
+{
+  "current_suite_policy": "Current Unified, benchmark, governance, production and source-identity compatibility contracts. Historical replay and eight private-artifact modules are explicitly deselected and reported; full historical suite is separately available.",
+  "schema_version": "suite_classification_v1",
+  "tests": [
+    {
+      "path": "tests/current/test_matched_realization.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/current/test_optimization_evidence_v23.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/current/test_visible_solver_trajectories.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "classification": "CURRENT_CONTRACT",
+      "current_suite_included": true,
+      "path": "tests/current/test_pattern_cluster_output_limit.py",
+      "reason": "Current cluster-only wire/accounting/truncation and end-to-end synthetic conformance",
+      "required_private_artifacts": []
+    },
+    {
+      "path": "tests/current/test_v22_operational_pilot.py",
+      "classification": "CURRENT_CONTRACT",
+      "current_suite_included": true,
+      "required_private_artifacts": [],
+      "reason": "Current V2.2 fixed-horizon resource admission and synthetic execution lifecycle"
+    },
+    {
+      "path": "tests/current/test_transition_reachability_v22.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/current/test_manual_capacity_probe.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": true,
+      "scope_note": "Frozen V2.1 and unchanged component compatibility checks; included to prevent semantic rewrite."
+    },
+    {
+      "path": "tests/current/test_specialization_diagnostic.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/current/test_partition_completion.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": true,
+      "scope_note": "Frozen V2.1 and unchanged component compatibility checks; included to prevent semantic rewrite."
+    },
+    {
+      "path": "tests/current/test_operational_persistence.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": true,
+      "scope_note": "Frozen V2.1 and unchanged component compatibility checks; included to prevent semantic rewrite."
+    },
+    {
+      "path": "tests/current/test_numeric_provenance.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": true,
+      "scope_note": "Frozen V2.1 and unchanged component compatibility checks; included to prevent semantic rewrite."
+    },
+    {
+      "path": "tests/current/test_identical_initial_team.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": true,
+      "scope_note": "Frozen V2.1 and unchanged component compatibility checks; included to prevent semantic rewrite."
+    },
+    {
+      "path": "tests/current/test_gradient_pilot_audit.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/current/test_gradient_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": true,
+      "scope_note": "Frozen V2.1 and unchanged component compatibility checks; included to prevent semantic rewrite."
+    },
+    {
+      "path": "tests/current/test_current_runtime.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": true,
+      "scope_note": "Frozen V2.1 and unchanged component compatibility checks; included to prevent semantic rewrite."
+    },
+    {
+      "path": "tests/test_unified_semantic_contract.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": true,
+      "scope_note": "V2.1 strict gain and memory meaning retained verbatim."
+    },
+    {
+      "path": "tests/governance/test_governance.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_accepted_local_mutation_team_transfer_v1.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_accepted_local_mutation_team_transfer_v2.py",
+      "classification": "HISTORICAL_PRIVATE_ARTIFACT",
+      "required_private_artifacts": [
+        "runs/accepted_local_mutation_team_transfer_v2_prep/private_bundle.json",
+        "runs/accepted_local_mutation_team_transfer_v1_prep/private_bundle.json"
+      ],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_accepted_local_mutation_team_transfer_v2_execution.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_accepted_mutation_compositional_state_graph_v1.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_accepted_mutation_exact_state_graph_v2.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_agent_clustering_analysis.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_agent_governance_docs.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_answer_formats.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_api_retry.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_artifact_writer_long_paths.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_attribution_and_responsibility.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_audit_v16_module2_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_benchmark_data_freeze_v1.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_benchmark_scientific_contracts.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_categorical_profile_persistence.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_checkpoint_peer_state.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_cli_progress.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_common_contract_seed77_p1_e2e.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_common_contract_seed77_sensitivity.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_common_solver_contract_replay.py",
+      "classification": "HISTORICAL_PRIVATE_ARTIFACT",
+      "required_private_artifacts": [
+        "runs/common_solver_contract_v1_replay_20260906",
+        "runs/common_solver_contract_v1_seed77_prep_20260907/private_replay_registry.json"
+      ],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_common_solver_contract_v1.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_competence_constrained_selection.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_config_and_presets.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_contract_adapted_rg_gepa_fixed_parent_pilot_v2.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_critic_calibration_replay.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_cross_method_cost_accounting.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_cross_repo_p0_parity_audit.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_dataset_format.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_deterministic_member_aware_system_smoke.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_diagnosis_aggregation.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_diversity_matrix_combined_validation.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_diversity_matrix_d0_d5.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_diversity_matrix_split_balance.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_diversity_writeback_cost_mechanism.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_endpoint_identifiability.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_execution_harness_refreeze_artifacts.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_execution_harness_refreeze_v2.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_experimental_contract_adapted_rg_gepa.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_experimental_rg_gepa.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_experimental_v16_module2_context.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_final_layer2_semantics.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_final_method_pipeline.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_final_saturation_preregistration.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_final_state_protocol_v10.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_final_summary_member_aware.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_fixed_probe_protection_diagnostics_v4.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_formal_trajectory.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_formal_v3_attempt2_gate.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_formal_v3_concurrent_local_batch.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_formal_v3_execution_json_boundary.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_formal_v3_full_fake.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_formal_v4_epoch_semantics.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_gepa_candidate_breadth_audit.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_gepa_candidate_breadth_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_gepa_critic_gate_failure_audit.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_gepa_native_feed.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_gepa_proposal_contract_audit.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_layer2_owned_evidence.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_layer2_raw_responsibility.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_level_b_gepa_local_acceptance_rate_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_level_b_gepa_real_canary.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_level_b_gepa_real_canary_v2.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_local_gepa_acceptance_rate_preparation.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_local_gepa_phase_b_v2_freeze.py",
+      "classification": "HISTORICAL_PRIVATE_ARTIFACT",
+      "required_private_artifacts": [
+        "runs/local_gepa_acceptance_rate_pilot_phase_b_v2_freeze/selected_parent_tasks_private.json"
+      ],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_local_optimizer_execution_runtime.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_mars_native_feed.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_matched_gpt4omini_pilot_script.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_member_objectives.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_model_headroom_screening.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_mutable_prompt_contract.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_native_feed_boundary.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_online_transfer_diagnostic.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_online_transfer_full_fake.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_owner_policy_replay.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_package_v16_responsibility_reports.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_parent_acquisition.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_peer_state.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_peer_state_integration.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_persistent_solver_cache.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_pre_run_faults.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_pre_run_filesystem_hardening.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_preflight_member_aware.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_prepare_responsibility_guided_gepa_fixed_parent_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_primary_responsibility_scheduler.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_production_architecture.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_prompt_question_semantics.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_proposal_memory.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_provider_credentials.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_real_api_smoke_scripts.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_repairability_adjusted_v13.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_repairability_freeze.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_residual_diagnosis_module2_variants.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_responsibility_conditioned_tcs.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_responsibility_contribution.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_rg_gepa_execution_ledger.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_rg_gepa_hypothesis_interface_v2_qualification.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_run_identity.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_run_lifecycle.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_sanitized_pilot_report.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_saturation_mode.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_seed78_gepa_differential_audit.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_seed78_gepa_teamminibatch_postmortem.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_seed78_primary_responsibility_ab.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_sequential_symmetry_breaking_online_pilot_v1.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_shadow_gated_evolution.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_single_service_routing.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_solver_headroom_multimodel.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_solver_headroom_screening.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_solver_output_validity.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_solver_stage_attribution.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_source_freeze_hash.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_stage_a_multichannel.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_startup_identity_chain.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_static_checkpoint_restore.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_student_invalid_recovery_v4.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_symmetry_breaking_trajectory.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_task_manifest.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_task_runner.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_tasks_bbh.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_tasks_mmlu.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_tcs_completion_policy.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_team_differentiation.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_terminal_rejection_streak_audit.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_test_split_isolation.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_trajectory_termination.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_two_layer_ledger.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_two_layer_optimizer_architecture.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_unified_backend_runtime.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_unified_bbh_replay.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_unified_benchmark_migration.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_unified_execution_governance.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_unified_search_architecture.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_v16_fixed_parent_generation_probe.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v16_generic_m20_fixed_parent_probe.py",
+      "classification": "HISTORICAL_PRIVATE_ARTIFACT",
+      "required_private_artifacts": [
+        "runs/v16_responsibility_coherence_generic_m20_prep/probe_preregistration.json"
+      ],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v16_m20_collateral_structure_audit.py",
+      "classification": "HISTORICAL_PRIVATE_ARTIFACT",
+      "required_private_artifacts": [
+        "runs/v16_responsibility_coherence_generic_m20_retry1_prep/probe_registry_private.json"
+      ],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v16_m20_m2e_fixed_parent_probe.py",
+      "classification": "HISTORICAL_PRIVATE_ARTIFACT",
+      "required_private_artifacts": [
+        "runs/v16_responsibility_coherence_generic_m20_retry1_prep/probe_registry_private.json"
+      ],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v16_m2f_critical_competence_exchange.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v16_m2f_feedback_necessity_probe.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v16_m2f_online_mechanism_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v16_m2f_probe.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v16_module2_compute_matched_efficacy.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v16_responsibility_coherence_audit.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v17_conversion_priority_hybrid.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v17_conversion_target2_differentiation.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v17_failure_decomposition.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v17_formal_experiment.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v17_hybrid_recovered_update_conversion.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v17_hybrid_recovered_update_conversion_report.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v17_hybrid_target_allocation_phase_a.py",
+      "classification": "HISTORICAL_PRIVATE_ARTIFACT",
+      "required_private_artifacts": [
+        "runs/v17_formal_5arm_3seed_20260813"
+      ],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v17_hybrid_target_allocation_report.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v17_module1_2x2_phase_a.py",
+      "classification": "HISTORICAL_PRIVATE_ARTIFACT",
+      "required_private_artifacts": [
+        "runs/v17_formal_5arm_3seed_20260813"
+      ],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v17_w1_target_allocation_audit.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v18_critic_safety_only_counterfactual.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v18_harmful_commit_m2f_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v18_historical_teacher_safety.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v18_hybrid_online_accumulation.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v18_m2f_trigger_extension_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v18_no_semantic_critic_candidate_ranking.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v18_no_semantic_critic_online.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v18_no_semantic_critic_transfer.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v18_qwen3_8b_light_replication.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v18_qwen3_8b_light_replication_analysis.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v18_revision_parity_semantics.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v18_safety_only_critic_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v18_scientific_analysis_admission.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v18_scientific_report.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v18_shadow_raw_critic_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v18_teacher_critic_pipeline.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v18_trajectory_gain_loss_decomposition.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v18_writeback_quality.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v3_preexecution_fault_campaign.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v3_scientific_blocker_decision_closure.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v4_attempt3_semantics.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v4_bounded_feasibility.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_v6_matched_comparison_records.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_validation_member_aware.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_vote.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_vote_aligned_confirmatory_replication.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_vote_aligned_generic_shadow_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_vote_aligned_scheduler.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_vote_aligned_seed75_static_control.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false
+    },
+    {
+      "path": "tests/test_repository_governance_alignment.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_unified_search_v2.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_benchmark_experiment_splits.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_math_preexecution.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_math_answer_domain_v2.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_math_token_accounting.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_math_v21_binding.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "classification": "CURRENT_ZERO_API_E2E",
+      "current_suite_included": true,
+      "path": "tests/test_math_solver_decoding.py",
+      "required_private_artifacts": []
+    },
+    {
+      "path": "tests/test_math_prediction_validity.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_math_authorization_amendment.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_math_output_reuse.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_math_terminal_recovery.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_math_optimizer_generation.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_math_low_cost.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/test_math_proposal_postmortem.py",
+      "classification": "CURRENT_CONTRACT",
+      "current_suite_included": true,
+      "required_private_artifacts": []
+    },
+    {
+      "path": "tests/test_layer1_responsibility_search.py",
+      "classification": "CURRENT_CONTRACT",
+      "current_suite_included": true,
+      "required_private_artifacts": []
+    },
+    {
+      "path": "tests/test_math_layer1_binding.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "current_suite_included": true,
+      "required_private_artifacts": []
+    },
+    {
+      "classification": "CURRENT_CONTRACT",
+      "current_suite_included": true,
+      "path": "tests/test_layer1_action_memory.py",
+      "required_private_artifacts": []
+    },
+    {
+      "path": "tests/test_rolling_risk_memory.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "classification": "CURRENT_CONTRACT",
+      "current_suite_included": true,
+      "path": "tests/test_pattern_responsibility.py",
+      "required_private_artifacts": []
+    },
+    {
+      "path": "tests/test_gradient_patterns.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": true,
+      "scope_note": "Frozen V2.1 and unchanged component compatibility checks; included to prevent semantic rewrite."
+    },
+    {
+      "path": "tests/test_gradient_canary_diagnostic.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/current/test_gradient_contract_recovery.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": true,
+      "scope_note": "Frozen V2.1 and unchanged component compatibility checks; included to prevent semantic rewrite."
+    },
+    {
+      "path": "tests/current/test_numeric_calibration.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": true,
+      "scope_note": "Frozen V2.1 and unchanged component compatibility checks; included to prevent semantic rewrite."
+    },
+    {
+      "path": "tests/current/test_pilot_terminal_execution.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": true,
+      "scope_note": "Frozen V2.1 and unchanged component compatibility checks; included to prevent semantic rewrite."
+    }
+  ]
+}

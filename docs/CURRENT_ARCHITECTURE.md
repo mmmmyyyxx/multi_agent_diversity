@@ -26,28 +26,27 @@ See [repository map](REPOSITORY_MAP.md) for current/historical classifications,
 [frontier](../experiments/current_frontier.yaml) for readiness and
 [historical architecture](archive/architecture/baseline_architecture.md) for replay.
 
-## Current V2.2 method state
+## Current V2.3 method state
 
-The active opt-in method is `unified_team_prompt_search_v2_2`.
-Use the complete `CurrentPolicyBundle` and `build_current_team_prompt_search`.
-Pattern selects one mechanism after WHO, with explicit all-residual coverage
-metrics. The current opt-in [Pattern path](design/PATTERN_GRADIENT_DISCOVERY_V4.md)
-extracts one textual gradient per wrong example and clusters gradients only, then
-selects a generalized correction by the unchanged F. Deployment requires the immutable initial member floor, non-regressing Full
-Vote and strict target OR team progress. Rank Full Vote first and target second. Memory retains bounded private outcomes and recurrent shared risks.
-V1/V2/V2.1 factories and frozen bindings remain replay identities. V2.2 is
-IMPLEMENTED / ZERO-API ONLY; real execution is HOLD until a fresh execution
-binding and finite Pilot bound are frozen, followed by exact authorization.
-See CURRENT_SPEC for precise rules; fake conformance does not establish efficacy.
-Current research benchmarks are MATH, IFBench and HotpotQA. BBH composition
-is retained for historical development/replay and structural tests. Canonical
-data freeze and experiment-facing split readers are separate benchmark modules;
-their access policies precede raw-row resolution. MATH composition uses the
-`current_composition.py` graph and flat `math_gradient_pattern_binding.py`
-binding. Older builders are explicit legacy replay. `private_gate.py` owns
-gate content and `unified_execution.py` owns
-source/startup identity, canary phase and single-use authorization. Reference
-eligibility preparation is isolated in `data_preparation/`, outside runtime.
-Readiness is checked from the permanent versioned manifest; real calls require
-a separate explicit authorization. IFBench responsibility and HotpotQA
-retrieval remain blockers. Efficacy is unverified.
+V2.3 is the sole active scientific method; V2.2 and paired execution are permanently retired.
+The production entrypoint is `scripts/run_experiment.py`, using `MATHEvidenceBinding`,
+the complete current policy bundle and `build_current_team_prompt_search`.
+Missing or historical method, evidence and trajectory identities fail closed.
+
+Five qwen3-8b members use V6 ordinary visible mathematical steps and one final
+answer line, with thinking disabled. qwen3.7-flash supplies independent
+trajectory/reference Gradients, gradients-only clustering and conservative
+Layer1 edits. Equal-weight equivalence plurality and fixed peers remain.
+Mutation, SearchValidation and TeamProbe are disjoint Optimize memberships.
+Layer1 keeps six generations, 42 metric calls and four exports; at most two
+candidates reach Full. The immutable initial competence floor, nonregressing
+Full Vote, strict target OR team progress and winner-only Shadow gate remain.
+Measured initial competence and edit effects enter bounded Memory; uncommitted
+candidate coverage cannot replace committed competence. Team-epoch no-commit
+patience remains two. Operational horizon/budget stops do not prove saturation.
+
+Real-model adherence and efficacy remain unverified. Fresh source, manifest,
+request, attempt, cache and ledger identities precede exact single-use API
+approval. Historical authorizations grant no new access. Validation is not
+authorized and Test remains sealed. Current execution uses MATH; IFBench and
+HotpotQA contracts remain maintained, with their execution blockers intact.

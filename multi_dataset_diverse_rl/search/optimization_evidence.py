@@ -31,7 +31,7 @@ POLICY = dict(identity=IDENTITY, mutation_size=3, search_validation_size=3,
 
 def frozen_policy(value):
     if value is None:
-        return None
+        raise SearchContractError('CURRENT_V23_OPTIMIZATION_EVIDENCE_REQUIRED')
     if value != POLICY or any(type(value.get(k)) is not type(v) for k, v in POLICY.items()):
         raise SearchContractError('OPTIMIZATION_EVIDENCE_POLICY_MISMATCH')
     return deepcopy(POLICY)

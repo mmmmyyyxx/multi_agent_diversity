@@ -7,7 +7,7 @@ from typing import Any, Mapping
 
 from ..candidate_selection import CandidateEvaluation, ConstraintDecision
 from ..local_optimizers.schemas import LocalPromptCandidate
-from ..native_feed import CandidateTransitionAudit
+from .transition_audit import CandidateTransitionAudit
 
 
 @dataclass(frozen=True)

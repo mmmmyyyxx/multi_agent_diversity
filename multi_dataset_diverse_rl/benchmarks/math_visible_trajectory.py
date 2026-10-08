@@ -40,11 +40,9 @@ def trajectory_policy():
 
 def frozen_trajectory_policy(contract):
     policy = contract.get('solver_trajectory_policy')
-    if contract.get('identity') in {versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION, versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION}:
-        if contract.get('identity')==versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION:
-            from ..search.optimization_evidence import frozen_policy
-            if frozen_policy(contract.get('optimization_evidence_policy')) is None:
-                raise SearchContractError('OPTIMIZATION_EVIDENCE_POLICY_REQUIRED')
+    if contract.get('identity')==versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION:
+        from ..search.optimization_evidence import frozen_policy
+        frozen_policy(contract.get('optimization_evidence_policy'))
         from .math_v21_interface import v6_interface_contract
         expected = trajectory_policy()
         if (policy != expected or any(type(policy.get(k)) is not type(v) for k, v in expected.items())
@@ -55,7 +53,7 @@ def frozen_trajectory_policy(contract):
         return deepcopy(policy)
     if policy is not None or contract.get('solver_output_interface', {}).get('identity') == versions.MATH_SOLVER_INTERFACE_V6_VERSION:
         raise SearchContractError('MATH_VISIBLE_TRAJECTORY_REQUIRES_FRESH_BINDING')
-    return None
+    raise SearchContractError('CURRENT_VISIBLE_TRAJECTORY_REQUIRED')
 
 
 def _projection(prediction, source):

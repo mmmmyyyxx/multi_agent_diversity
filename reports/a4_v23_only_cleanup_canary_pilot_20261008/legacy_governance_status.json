@@ -1,0 +1,14 @@
+{
+  "status": "HISTORICAL_CLI_NOT_PASS",
+  "current_governance_authority": "scripts/audit_repository_governance.py",
+  "legacy_execution": "HISTORICAL_CLI_RENDERER_REJECTED_LEGACY_FAILURE_METADATA",
+  "legacy_registry_baseline_errors": 0,
+  "legacy_registry_current_errors": 0,
+  "legacy_failure_validator_errors": 3,
+  "legacy_lineage_baseline_errors": 39,
+  "legacy_lineage_current_errors": 39,
+  "legacy_failure_errors_unchanged_from_reference": true,
+  "current_invariant_errors": [],
+  "evidence_sha256": "f48cafa5e0717f2920dcfd3d96e8defc213f52e5d2ac2a8fb2ab3e5b88a1e4f9",
+  "historical_findings_suppressed": false
+}

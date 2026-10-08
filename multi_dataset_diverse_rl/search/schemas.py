@@ -217,73 +217,49 @@ class GlobalStopConfig:
 
 @dataclass(frozen=True)
 class SearchMethodConfig:
-    method: str = versions.UNIFIED_TEAM_PROMPT_SEARCH_VERSION
-    search_engine: str = versions.UNIFIED_GEPA_DERIVED_ENGINE_VERSION
-    diagnosis_policy: str = versions.UNIFIED_PLURALITY_RESPONSIBILITY_VERSION
+    method: str = versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_3_VERSION
+    search_engine: str = 'INDEPENDENT_OPTIMIZE_VALIDATION_SEARCH_V1'
+    diagnosis_policy: str = versions.BINARY_PLURALITY_RESPONSIBILITY_VERSION
     target_policy: str = versions.UNIFIED_TARGET_POLICY_VERSION
-    feasibility_policy: str = versions.UNIFIED_FEASIBILITY_POLICY_VERSION
-    evidence_policy: str = versions.UNIFIED_EVIDENCE_POLICY_VERSION
+    feasibility_policy: str = 'variable_evidence_feasibility_v1'
+    evidence_policy: str = 'DISJOINT_ROTATING_OPTIMIZE_EVIDENCE_V1'
     evaluation_policy: str = versions.UNIFIED_EVALUATION_POLICY_VERSION
-    transition_policy: str = versions.UNIFIED_TRANSITION_POLICY_VERSION
+    transition_policy: str = versions.UNIFIED_TARGET_OR_TEAM_TRANSITION_VERSION
     adaptive_gate_policy: str = versions.UNIFIED_ADAPTIVE_GATE_VERSION
     aggregation_policy: str = versions.UNIFIED_PLURALITY_AGGREGATION_VERSION
-    memory_policy: str = versions.UNIFIED_NULL_MEMORY_VERSION
-    pattern_policy: str = versions.UNIFIED_NULL_PATTERN_VERSION
-    search_acceptance_policy: str = versions.UNIFIED_GEPA_ACCEPTANCE_VERSION
+    memory_policy: str = 'BOOTSTRAPPED_EDIT_EFFECT_ROLLING_MEMORY_V1'
+    pattern_policy: str = versions.GRADIENT_PATTERN_DISCOVERY_VERSION
+    search_acceptance_policy: str = 'layer1_local_guidance_team_admission_v1'
     search_stop: SearchStopConfig = field(default_factory=SearchStopConfig)
     global_stop: GlobalStopConfig = field(default_factory=GlobalStopConfig)
 
-    @classmethod
-    def v2(cls, **overrides: Any) -> "SearchMethodConfig":
-        """V2 defaults; the zero-argument constructor retains the V1 replay identity."""
-        values = dict(method=versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION,
-                      search_engine=versions.UNIFIED_GEPA_EXPOSURE_V2_VERSION,
-                      search_acceptance_policy=versions.UNIFIED_DECOUPLED_ACCEPTANCE_VERSION,
-                      evidence_policy=versions.UNIFIED_VARIABLE_EVIDENCE_VERSION,
-                      feasibility_policy=versions.UNIFIED_VARIABLE_FEASIBILITY_VERSION)
-        values.update(overrides)
-        return cls(**values)
 
     mechanism_config: Mapping[str, Any] = field(default_factory=dict)
 
-    @classmethod
-    def v2_1(cls, **overrides: Any) -> "SearchMethodConfig":
-        """Frozen historical V2.1 contract; mechanisms remain explicit opt-ins."""
-        values = dict(method=versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION,
-                      evidence_policy=versions.UNIFIED_FOCUSED_EVIDENCE_VERSION,
-                      transition_policy=versions.UNIFIED_COMPETENCE_TRANSITION_VERSION)
-        values.update(overrides)
-        return cls.v2(**values)
 
-    @classmethod
-    def v2_2(cls, **overrides: Any) -> "SearchMethodConfig":
-        """V2.2 OR progress identity; current execution still requires the full bundle."""
-        values = dict(method=versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION,
-                      transition_policy=versions.UNIFIED_TARGET_OR_TEAM_TRANSITION_VERSION)
-        values.update(overrides)
-        return cls.v2_1(**values)
+
+    def __post_init__(self):
+        if self.method!=versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_3_VERSION:
+            raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
+        # Bundle validation closes all policy combinations before composition.
+        if not self.mechanism_config:
+            raise SearchContractError('CURRENT_V23_COMPLETE_POLICY_REQUIRED')
 
     def identity(self) -> str:
         from dataclasses import asdict
-        payload = asdict(self)
-        if self.method == versions.UNIFIED_TEAM_PROMPT_SEARCH_VERSION and not self.mechanism_config:
-            payload.pop("mechanism_config")  # Exact historical V1 hash payload.
-        return hashlib.sha256(json.dumps(payload, sort_keys=True,
-                                         separators=(",", ":")).encode("utf-8")).hexdigest()
+        return hashlib.sha256(json.dumps(asdict(self),sort_keys=True,
+            separators=(',',':')).encode('utf-8')).hexdigest()
 
     @classmethod
     def from_mapping(cls, payload: Mapping[str, Any]) -> "SearchMethodConfig":
         allowed = {row.name for row in fields(cls)}
         if set(payload) - allowed:
             raise SearchContractError("unknown unified method component")
-        if payload.get("method", cls.method) not in {versions.UNIFIED_TEAM_PROMPT_SEARCH_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_3_VERSION}:
-            raise SearchContractError("unsupported unified method identity")
-        from dataclasses import asdict
-        factory = {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION: cls.v2,
-                   versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION: cls.v2_1,
-                   versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION: cls.v2_2}.get(payload.get("method"))
-        values = asdict(factory()) if factory else {}
-        values.update(payload)
+        if payload.get('method')!=versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_3_VERSION:
+            raise SearchContractError('unsupported unified method identity')
+        if not payload.get('mechanism_config'):
+            raise SearchContractError('CURRENT_V23_COMPLETE_POLICY_REQUIRED')
+        values=dict(payload)
         for key, kind in (("search_stop", SearchStopConfig),
                           ("global_stop", GlobalStopConfig)):
             if key in values:

@@ -1,0 +1,43 @@
+{
+  "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
+  "synthetic_only": true,
+  "real_api_calls": 0,
+  "cases": {
+    "both": {
+      "sha256": "4878ce25636347f5a95f618cfe4929fd6cb43bfef1e2e197ee0283887519aa25",
+      "requests": 157,
+      "proposals": 6,
+      "commits": 1
+    },
+    "bad_only": {
+      "sha256": "0e64b7c5dcfcae04608966653e3f124b694974dfdc5b3af1d945a1e46ff0f2f7",
+      "requests": 121,
+      "proposals": 6,
+      "commits": 0
+    },
+    "validation_harm": {
+      "sha256": "3e69e2ee2e8e4be4f874dca592e4a4be534edaf14e493a492130b1a61664b482",
+      "requests": 157,
+      "proposals": 6,
+      "commits": 1
+    },
+    "invalid": {
+      "sha256": "0e64b7c5dcfcae04608966653e3f124b694974dfdc5b3af1d945a1e46ff0f2f7",
+      "requests": 121,
+      "proposals": 6,
+      "commits": 0
+    },
+    "all_six": {
+      "sha256": "0d7221c21e5b5bbe91545ca170bdba01e8871202e9883178bf43bd5eaba886ba",
+      "requests": 169,
+      "proposals": 6,
+      "commits": 0
+    },
+    "uncertain": {
+      "sha256": "5c1b6e8624264c0529d01511681edfe1349181d74b56c86ffcd52f8124357b7b",
+      "requests": 96,
+      "proposals": 0,
+      "commits": 0
+    }
+  }
+}

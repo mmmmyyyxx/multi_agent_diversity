@@ -1,6 +1,6 @@
 # Unified Team Prompt Search V2.3: optimization evidence
 
-This opt-in revision changes Gradient evidence, local evaluation and edit Memory.
+This sole active revision defines Gradient evidence, local evaluation and edit Memory.
 It uses the existing production orchestrator, providers and two-level search. It
 requires `MATH_OPTIMIZATION_EVIDENCE_BINDING_V1` and a fresh attempt, source,
 authorization, cache namespace, prompt artifact and accounting freeze. V2.2
@@ -106,5 +106,5 @@ Generic exact-form, domain, sign, unit and substitution instructions remain lega
 Lexical checks are not comprehensive semantic verification. No critic, planner,
 LLM Memory summarizer, prompt AST, extra controller or API guard agent is added.
 Synthetic conformance cannot establish real optimizer diagnostic quality,
-Solver stability, efficacy or generalization. Fresh matched real-model baselines
+Solver stability, efficacy or generalization. Fresh V6 real-model baselines
 must be measured; historical 22/60 cannot serve as the V6 baseline.

@@ -1,0 +1,12 @@
+{
+  "compileall": true,
+  "static_runtime_closure": true,
+  "archived_original_bytes_verified": true,
+  "archive_files": 52,
+  "runtime_modules": 124,
+  "legacy_runtime_dependencies": 0,
+  "sanitization_findings": [],
+  "real_api_calls": 0,
+  "validation_calls": 0,
+  "test_calls": 0
+}

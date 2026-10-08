@@ -1,0 +1,483 @@
+{
+  "schema": "immutable_source_archive_v1",
+  "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
+  "executable": false,
+  "deletions": [],
+  "files": [
+    {
+      "original_path": "README.md",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/README.md.txt",
+      "git_blob_sha256": "0dbe857030f392c5c23f1d39bc325e499fdf13515ee26a77025fe1e8f1969830",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "docs/CURRENT_ARCHITECTURE.md",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/docs/CURRENT_ARCHITECTURE.md.txt",
+      "git_blob_sha256": "441fbb584330d05923c446ef41840bf34e0a8ce38dd1e94019466355d2c4cd17",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "docs/REPOSITORY_MAP.md",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/docs/REPOSITORY_MAP.md.txt",
+      "git_blob_sha256": "248182948732614ee6d2523d0350be42322ea6e9385865ee14595cad333554af",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "docs/design/CURRENT_RUNTIME_COMPOSITION.md",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/docs/design/CURRENT_RUNTIME_COMPOSITION.md.txt",
+      "git_blob_sha256": "4dbb543979411958b0719cd2c2fc7ba575e806fcafbe58a372f7de24a4bbbe0b",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "docs/design/CURRENT_SPEC.md",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/docs/design/CURRENT_SPEC.md.txt",
+      "git_blob_sha256": "2a597571a5e9d022930b8ec9bf6715542df371fd5c4ebc50b389fc3180ade6d6",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "docs/design/OPTIMIZATION_EVIDENCE_V23.md",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/docs/design/OPTIMIZATION_EVIDENCE_V23.md.txt",
+      "git_blob_sha256": "31b72020456f92c5c845c9187a4c05d2c49dfa218cf15b00b418bbce90d5714d",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "docs/design/invariants.yaml",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/docs/design/invariants.yaml.txt",
+      "git_blob_sha256": "0705145a9ec3d1f595f57bddfdee9aedb2993fac115ac650e0913edf6dcb1b24",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "docs/research/CURRENT_RESEARCH_STATE.md",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/docs/research/CURRENT_RESEARCH_STATE.md.txt",
+      "git_blob_sha256": "eff15b5f4a0249aeb25182eb488a0ec58e30e6ee755e659cc5ce5e7a95369d14",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "method.md",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/method.md.txt",
+      "git_blob_sha256": "8514a9790b4816025b617299b33bbf8f2748be76bae4356383eebdda981cd43e",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/benchmarks/gradient_pilot_contract.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/benchmarks/gradient_pilot_contract.py.txt",
+      "git_blob_sha256": "8777e88078abc9abf804123ecad2720e704e61fb2796879829cb029ed96b3fee",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/benchmarks/math.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/benchmarks/math.py.txt",
+      "git_blob_sha256": "a00bf7697b7d3801f916f820f79506d5e7b4465cbc0f6c25b0896c9af14a72bc",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py.txt",
+      "git_blob_sha256": "47da340abb0d21cbe571562e7c1d9b2609b42f5627ef8dfae486aa76688b107e",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/benchmarks/math_domain_binding.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/benchmarks/math_domain_binding.py.txt",
+      "git_blob_sha256": "28cecbd77aff912a4e5c1b99d9c859df25c770ea7f91a293cd575e0ff8483663",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/benchmarks/math_evidence_binding.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/benchmarks/math_evidence_binding.py.txt",
+      "git_blob_sha256": "24350545becf4bb9618d68dcda9aea9b1e9c042dbe6b12d42dd7cd366aac1735",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/benchmarks/math_gradient_pattern_binding.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/benchmarks/math_gradient_pattern_binding.py.txt",
+      "git_blob_sha256": "27181225c96fb7cce8b29569b523bdbefc4729deb3353cfbdaf1ececc7089095",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/benchmarks/math_interface.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/benchmarks/math_interface.py.txt",
+      "git_blob_sha256": "6a1ce67b0f0cd24a154604ac27ef82b9a96f745e6a0a5a298365bc920b389abe",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/benchmarks/math_optimizer_generation.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/benchmarks/math_optimizer_generation.py.txt",
+      "git_blob_sha256": "2309c35c9314e2e30cc396e116c5fe3233eebc85d362be6761221d7180e06332",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py.txt",
+      "git_blob_sha256": "2db1b30f719c8993b50758a1ccfa8a4d1533c267f26fc80749f72fc8851467af",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/benchmarks/math_solver_decoding.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/benchmarks/math_solver_decoding.py.txt",
+      "git_blob_sha256": "d896f7f16643e1e1bf8d33d9a4d0eec9486ee6160d2ce2c6c246978c4f6f01f1",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/benchmarks/math_v21_interface.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/benchmarks/math_v21_interface.py.txt",
+      "git_blob_sha256": "6d82bf6fa509371b288511eb252b892d206cd1e6ea1fbbab198cedf3c9790c71",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/benchmarks/math_visible_binding.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/benchmarks/math_visible_binding.py.txt",
+      "git_blob_sha256": "45ba665621777aa44606d762515d7a67554eb5d1ff4ab635d4612b70748c50ff",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/benchmarks/math_visible_trajectory.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/benchmarks/math_visible_trajectory.py.txt",
+      "git_blob_sha256": "a2814a3dff0b7b0da8d8b3b83c32d8b40585d8ae32f2351f831a8578982d9c8f",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/current_contract.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/current_contract.py.txt",
+      "git_blob_sha256": "b684207f4e2ef188144a71b5860a4554be36685f0f54d0e010a3288143b3d997",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/governance/autonomous_math.py.txt",
+      "git_blob_sha256": "f31341437e245ba55c72f0e51403c4447a1d3b35a6050e27cd79b6ff7c3ffea3",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/governance/current_dependencies.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/governance/current_dependencies.py.txt",
+      "git_blob_sha256": "dd7533939ad7b887997e6596bdfcd1952cb73d993ea6c6948a7d4f384c7c6d7b",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/governance/matched_realization.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/governance/matched_realization.py.txt",
+      "git_blob_sha256": "ddfe9d478e87e45f4ea175832dd6ff03799cd8d0734ebcc633eb3011e125ebfe",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/governance/pilot_observation.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/governance/pilot_observation.py.txt",
+      "git_blob_sha256": "c24670eefb4dce9e5a64f2c446bd921404f1b33227cad01b269c38a96fd9be6b",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/governance/source_identity.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/governance/source_identity.py.txt",
+      "git_blob_sha256": "277964217308c2bb4742d01ddb0de13bd216953617699b10e9fdd9f50bca9879",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/governance/token_accounting.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/governance/token_accounting.py.txt",
+      "git_blob_sha256": "66f0570a36a490b08158a524f80bb7036b169911d7c3e9449b329b875b8aa863",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/governance/unified_execution.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/governance/unified_execution.py.txt",
+      "git_blob_sha256": "d642cbc0a2dbc2338884ab8f6180d0b858981f47ef472f5e1fa9b2f1509d0ab3",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/local_optimizers/base.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/local_optimizers/base.py.txt",
+      "git_blob_sha256": "fb1b3883ba2d25e061969806351a7a62e6271146f94b3f2c58f7bdb3576bbc5f",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/bounded_layer1.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/search/bounded_layer1.py.txt",
+      "git_blob_sha256": "16f02e853e1c6548f0c9bd000674a032916c940e1918d11e1ec0067d46c20aea",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/current_composition.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/search/current_composition.py.txt",
+      "git_blob_sha256": "b0fac30338b342598bf2e5735d88822dfef913855315ce73ca1a19634bf14cee",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/current_layer1.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/search/current_layer1.py.txt",
+      "git_blob_sha256": "8be73cd944856a74582dcc20aac51ba951e85401ece31c654f36df0b0be80f8d",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/current_opportunity.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/search/current_opportunity.py.txt",
+      "git_blob_sha256": "b2ee7d8820e83e852d8d256432f5a73aa700ee9bc3a89da52fb463c04208b708",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/current_policy.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/search/current_policy.py.txt",
+      "git_blob_sha256": "8b60eb2907951b8d84bb50a8a21a20945481574b5523ad968a6e9093fb530f3b",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/optimization_evidence.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/search/optimization_evidence.py.txt",
+      "git_blob_sha256": "240ecdc160aee3a3703adbd3beb423e9f949f9a0ee8b575b14fc275e7567ebec",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/orchestrator.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/search/orchestrator.py.txt",
+      "git_blob_sha256": "8999f9a4184b6db794a4a583d37caea573e9fdfa63a7061e3990c5689c8ad02d",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/policies.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/search/policies.py.txt",
+      "git_blob_sha256": "f493a035f23220015b33b663b48c044bc0ae0b8933b66ec5fda224d93c9973e1",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/provider_runtime.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/search/provider_runtime.py.txt",
+      "git_blob_sha256": "80ab1f08af7123ffb74aa90663767d83584d6599548fde8928347a2e62e73b48",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/rolling_risk_memory.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/search/rolling_risk_memory.py.txt",
+      "git_blob_sha256": "a3e802e821ade4e1844068c974653e5390f1b2f866f89189fdd414962bc26477",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/schemas.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/search/schemas.py.txt",
+      "git_blob_sha256": "f7db7032f5ee23172e12f4c1fcaf888d8dfd1b7dfaa7d697b4b29179219ea8e9",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/selected_evidence.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/search/selected_evidence.py.txt",
+      "git_blob_sha256": "7d0de3009d99c2e586c8cdc8dc9cf31441dcb83e023360214baa54115fb5c8c6",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/textual_gradients.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/search/textual_gradients.py.txt",
+      "git_blob_sha256": "97b4285e2d7eee4394cdccb5ec21c42ee364b72cfa42f2d889813b18ecb93244",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/search/variable_evidence.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/search/variable_evidence.py.txt",
+      "git_blob_sha256": "321843e224c193fbec4c3ce3d58a19149c108ad1ee24e687da3d495d41b2cb82",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/team_search/__init__.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/team_search/__init__.py.txt",
+      "git_blob_sha256": "38c6f7bb6ee4488cbbe40e5aea5437359fc042bcc12b3fda39cb7f65d8ba2c3e",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "multi_dataset_diverse_rl/team_search/schemas.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/multi_dataset_diverse_rl/team_search/schemas.py.txt",
+      "git_blob_sha256": "b76c345ee2f5b0d475ae187bb8e84a9e9554f360aa11b13817f344e06035a1d0",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "scripts/prepare_a4_v23_matched_comparison.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/scripts/prepare_a4_v23_matched_comparison.py.txt",
+      "git_blob_sha256": "c3eca798c93d1a07041c18a21e8d6f3e1fede4c80d932cce7d115461783bf6a0",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "scripts/run_experiment.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/scripts/run_experiment.py.txt",
+      "git_blob_sha256": "e8b765b566a26e7710610e058a2a3c2c40d1b742cfaf2741e8eb57b2cdfc4524",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "tests/conftest.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/tests/conftest.py.txt",
+      "git_blob_sha256": "1c6b6d3f2779ed7227e7e38910d7156267241e31552b778e63331545dcd20ce6",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "tests/suite_classification.json",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/tests/suite_classification.json.txt",
+      "git_blob_sha256": "dc6302d8a766956628559fc658c75dc474c14cb7e01c017003aa903aa42472ac",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "original_path": "tests/test_repository_governance_alignment.py",
+      "archived_path": "docs/archive/runtime/a4_pre_v23_only_7342d85/tests/test_repository_governance_alignment.py.txt",
+      "git_blob_sha256": "5b40f917ec6ce205f2c6def0fdc6a7575a7760d9a2765ed5c9daac011f083045",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    }
+  ],
+  "deletion_targets": [],
+  "invariant_index": [
+    {
+      "invariant_id": "INV-ACCOUNTING-RESERVATION-002",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-AGGREGATION-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-ALLOCATION-EVIDENCE-002",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-BENCHMARK-CONTRACT-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-BENCHMARK-EVALUATOR-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-BENCHMARK-FIREWALL-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-EVIDENCE-ROLE-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-EXPERIMENT-FIREWALL-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-EXPERIMENT-MODEL-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-EXPERIMENT-SPLIT-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-GEPA-DERIVED-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-HISTORY-MEMORY-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-INITIAL-COMPETENCE-002",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-INITIAL-COMPETENCE-003",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-LONG-TERM-MEMORY-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-MATH-ANSWER-DOMAIN-002",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-MATH-INITIAL-SYMMETRY-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-MATH-MATCHED-REALIZATION-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-MATH-OUTPUT-INTERFACE-002",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-MATH-REFERENCE-VALIDITY-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-MATH-RUNTIME-BINDING-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-MATH-SCORABLE-REFERENCE-002",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-MATH-VISIBLE-SOLUTION-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-MULTIBENCH-READINESS-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-PATTERN-DIAGNOSTIC-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-REPLAY-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-RESP-CAPABILITY-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-SEARCH-TEAM-ADMISSION-DECOUPLING",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-SEARCH-TRANSITION-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-UNIFIED-FLOW-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-VALIDATION-ACCOUNTING-PREP-002",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    },
+    {
+      "invariant_id": "INV-VARIABLE-EVIDENCE-001",
+      "original_authority": "docs/design/CURRENT_SPEC.md",
+      "source_sha": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+    }
+  ]
+}

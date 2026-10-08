@@ -12,18 +12,15 @@ class CurrentOpportunityBuilder(OpportunityBuilder):
         rows_by_member = {m:tuple(self.source.for_member(state, diagnosis, m)) for m in sorted(diagnosis.responsibility)}
         feasible = tuple(m for m,rows in rows_by_member.items()
             if self.feasibility.feasible(state, diagnosis, m, rows)
-            and (not hasattr(self.evidence,'can_compose') or self.evidence.can_compose(rows)))
+            and self.evidence.can_compose(rows))
         target = self.target.select(state, diagnosis, feasible, history)
         member = target.selected_member
         if member is None: return None
         if member >= len(state.member_prompts): raise SearchContractError("target outside team")
         rows = rows_by_member[member]
         pattern = self.patterns.analyze(state, diagnosis, member, rows, history)
-        if hasattr(self.evidence,'compose_opportunity'):
-            view,audit=self.evidence.compose_opportunity(state,diagnosis,member,rows,pattern,
-                ordinal=history.target_counts.get(member,0))
-        else:
-            view, audit = self.evidence.compose(state, diagnosis, member, rows, pattern)
+        view,audit=self.evidence.compose_opportunity(state,diagnosis,member,rows,pattern,
+            ordinal=history.target_counts.get(member,0))
         signal = diagnosis.responsibility[member]
         return OptimizationOpportunity(f"{state.team_state_id}:{update_index}:{member}",
             state.team_state_id, member, state.member_prompts[member],
@@ -33,8 +30,7 @@ class CurrentOpportunityBuilder(OpportunityBuilder):
                  "feasibility_by_member":{m:m in feasible for m in rows_by_member}}}, diagnosis, view, pattern_context=pattern,
             search_budget={"metric_calls":self.search_metric_budget},
             evaluation_plan={"max_promoted":2, "evidence_universe":rows,
-                             **({'optimization_evidence_policy':self.evidence.policy}
-                                if hasattr(self.evidence,'policy') else {}),
+                             'optimization_evidence_policy':self.evidence.policy,
                              "evidence_audit":audit, "v2_candidate_contract":True,
                              "current_parent_binding":True,
                              **{"allocation_failure_counts":{m:history.failure_counts.get(m, 0) for m in rows_by_member},

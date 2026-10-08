@@ -1,0 +1,15 @@
+{
+  "status": "NOT_EXECUTED",
+  "real_candidates": 0,
+  "real_commits": 0,
+  "failure_layers": {
+    "gradient_diagnosis": "NOT_OBSERVED",
+    "mutation": "NOT_OBSERVED",
+    "validation_transfer": "NOT_OBSERVED",
+    "preservation": "NOT_OBSERVED",
+    "team_level": "NOT_OBSERVED",
+    "admission": "NOT_OBSERVED",
+    "operational": "NOT_OBSERVED"
+  },
+  "method_failure_established": false
+}

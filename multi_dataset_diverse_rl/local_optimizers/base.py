@@ -6,10 +6,6 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 from .schemas import LocalEvidenceExample, LocalOptimizationResult, LocalOptimizationTask
-from ..native_feed import Layer2OptimizationRequest, NativeOptimizationRequest
-
-if TYPE_CHECKING:
-    from ..experiment import LocalOptimizationRequest, RuntimeContext
 
 
 @dataclass(frozen=True)
