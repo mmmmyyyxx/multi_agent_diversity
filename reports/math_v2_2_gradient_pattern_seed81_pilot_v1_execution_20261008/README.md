@@ -1,8 +1,8 @@
 # V2.2 A4 fixed-horizon Pilot
 
-Zero-API closure passed. One fresh A4/Seed81 Pilot is preregistered; exact source,
-manifest and single-use authorization freeze are the next step. No real API call
-has been made for this attempt.
+Zero-API closure passed. Exact source, manifest and single-use authorization
+are frozen; preexecution_freeze.json contains the receipt hashes. No real API
+call has been made for this attempt. Execution source=4b02b734e7e5306bd5f0192464b1cf0bb6a95562.
 
 K=64 and attempt charged-token ceiling=24,000,000. The preexecution cumulative
 ledger is 3,414,772 charged, 36,585,228 remaining, zero reserved. The task protects
