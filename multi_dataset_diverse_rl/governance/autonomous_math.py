@@ -193,7 +193,10 @@ async def execute_search(root, prep, run_root, payload):
                 state_id=initial.team_state_id, member_scores=initial.member_scores))
         result = await composed.run(max_opportunities=c["provider_bounds"]["max_opportunities"])
         accepted = {"CANARY_PARENT_EPOCH_COMPLETE","CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE","NO_FEASIBLE_OPPORTUNITY"} if c["execution_phase"]=="canary" else {"SATURATION_REACHED","NO_FEASIBLE_OPPORTUNITY"}
-        if result.stop_reason not in accepted:
+        scientific_complete=result.stop_reason in accepted
+        operational_truncation=bool(c.get('operational_pilot')) and result.stop_reason in {
+            'OPERATIONAL_OPPORTUNITY_CEILING','EMERGENCY_PROVIDER_CALL_CEILING'}
+        if not scientific_complete and not operational_truncation:
             raise OperationalAbort("NONSCIENTIFIC_STOP_"+result.stop_reason)
         if c.get("method_identity") == "unified_team_prompt_search_v2_1" and c["execution_phase"] == "canary" and not result.trace:
             raise OperationalAbort("CANARY_NO_COMPLETE_PRODUCTION_OPPORTUNITY")
@@ -204,6 +207,10 @@ async def execute_search(root, prep, run_root, payload):
         atomic_write_json(run_root / "final_state_private.json",plain(final))
         summary = dict(result=plain(result),ledger=broker.usage,accounting=budget.view(),validation_reserve=reserve.remaining(),
             validation_search_raw_reads=0,validation_calls=0,test_raw_reads=0,test_calls=0,pattern_calls=broker.usage['pattern'],memory_activity=0)
+        if c.get('operational_pilot'):
+            summary.update(pilot_completed=scientific_complete,
+                pilot_status='SCIENTIFIC_COMPLETION' if scientific_complete else 'INCOMPLETE_OPERATIONAL_TRUNCATION',
+                operational_pilot=c['operational_pilot'])
         summary['pattern_input_audit']=pattern_provider.input_audit
         if c.get('partition_completion_policy') is not None:
             from ..search.partition_completion import completion_statistics
@@ -254,7 +261,8 @@ async def execute_search(root, prep, run_root, payload):
         atomic_write_json(run_root / "lifecycle.json",dict(status="EXECUTION_COMPLETE",attempt_id=c["execution_attempt_id"]))
         atomic_write_json(run_root / "raw_evidence_inventory.json",inventory(run_root))
         if c["execution_phase"]=="pilot":
-            atomic_write_json(run_root / "SEARCH_COMPLETE_RECEIPT.json",dict(identity="SEARCH_COMPLETE_RECEIPT",attempt_id=c["execution_attempt_id"],
+            receipt_name='SEARCH_COMPLETE_RECEIPT' if scientific_complete else 'SEARCH_CLOSED_RECEIPT'
+            atomic_write_json(run_root / (receipt_name+'.json'),dict(identity=receipt_name,attempt_id=c["execution_attempt_id"],
                 source_sha=payload["manifest"]["source_sha"],startup_identity_sha256=payload["startup_identity_sha256"],
                 final_team_sha256=file_sha(run_root / "final_team_private.json"),
                 trajectory_sha256=file_sha(run_root / "trajectory_private.jsonl") if (run_root / "trajectory_private.jsonl").exists() else None,
@@ -265,6 +273,32 @@ async def execute_search(root, prep, run_root, payload):
         for key in tuple(budget.inflight):
             budget.reconcile(key,None,outcome="ABORT_UNKNOWN_FULL_CHARGE")
         if run_root.exists():
+            truncation=(bool(c.get('operational_pilot')) and isinstance(exc,OperationalAbort)
+                and (str(exc) in {'TOKEN_CEILING','PROVIDER_CALL_CEILING','TRANSPORT_CEILING'}
+                    or str(exc).startswith('STOP_TOKEN_BUDGET_')))
+            if truncation:
+                reason=('TOKEN_CEILING' if str(exc).startswith('STOP_TOKEN_BUDGET_') else str(exc))
+                partial=dict(pilot_completed=False,pilot_status='INCOMPLETE_OPERATIONAL_TRUNCATION',
+                    stop_reason=reason,operational_pilot=c['operational_pilot'],
+                    ledger=broker.usage if broker else {},accounting=budget.view(),
+                    validation_calls=0,test_calls=0,partial_opportunity_possible=True)
+                if ('composed' in locals() and composed.state.initial_state_id is not None):
+                    state=composed.state.snapshot()
+                    atomic_write_json(run_root/'final_state_private.json',plain(state))
+                    atomic_write_json(run_root/'final_team_private.json',dict(prompts=state.member_prompts,state_id=state.team_state_id))
+                    from .pilot_observation import memory_snapshot
+                    atomic_write_json(run_root/'terminal_memory_private.json',memory_snapshot(composed.memory))
+                atomic_write_json(run_root/'execution_summary.json',plain(partial))
+                atomic_write_json(run_root/'accounting_end.json',budget.view())
+                atomic_write_json(run_root/'lifecycle.json',dict(status='EXECUTION_COMPLETE',
+                    scientific_complete=False,attempt_id=c['execution_attempt_id'],stop_category=reason))
+                atomic_write_json(run_root/'raw_evidence_inventory.json',inventory(run_root))
+                atomic_write_json(run_root/'SEARCH_CLOSED_RECEIPT.json',dict(identity='SEARCH_CLOSED_RECEIPT',
+                    attempt_id=c['execution_attempt_id'],search_closed_forever=True,pilot_completed=False,
+                    stop_reason=reason,execution_summary_sha256=file_sha(run_root/'execution_summary.json'),
+                    source_sha=payload['manifest']['source_sha'],startup_identity_sha256=payload['startup_identity_sha256'],
+                    validation_model_calls=0,test_model_calls=0))
+                return partial
             pattern_failure=(isinstance(exc,SearchContractError) and str(exc).startswith(('PATTERN_','STOP_PATTERN_','FOCUSED_')))
             atomic_write_json(run_root / "accounting_end.json",budget.view())
             atomic_write_json(run_root / "lifecycle.json",dict(status="EXECUTION_ABORTED",attempt_id=c["execution_attempt_id"],

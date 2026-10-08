@@ -906,8 +906,8 @@ failures:
   lifecycle_note: IMPLEMENTED_ZERO_API_ONLY; REAL_EXECUTION_HOLD
 - failure_id: FAIL-V22-PILOT-RESOURCE-BOUND-NOT-FROZEN
   title: Commit finiteness does not establish a resource-realistic opportunity bound
-  status: OPEN
-  lifecycle: OPEN
+  status: MITIGATED
+  lifecycle: MITIGATED
   first_observed: math_v2_2_a4_pilot_execution_audit_v1
   affected_components:
   - pilot_operational_bound
@@ -922,3 +922,9 @@ failures:
   - tests/current/test_transition_reachability_v22.py::test_finite_mathematical_bound_does_not_unlock_impractical_real_execution
   forbidden_inference: Not an empirical A4 failure or proof that no tighter bound
     exists.
+  resolution:
+    identity: V2_2_FIXED_HORIZON_OPERATIONAL_PILOT_V1
+    user_task_sha256: 5656979b9c93704115a11dd4071174ab7d09229623104116eb0cc95cd687e315
+    normative_contract: docs/design/V22_OPERATIONAL_PILOT_CEILING_V1.md
+    scope: Fixed operational horizon and coupled token admission, not guaranteed saturation
+    global_completion_bound_still_unproved: true

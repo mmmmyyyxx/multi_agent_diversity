@@ -8437,7 +8437,8 @@ experiments:
   superseded_by: []
   notes:
   - Scientific transition/ranking amendment only; no new real experiment or authority.
-  - V2.2/source-closure/governance regressions pass; complete current suite retains two Windows ledger-snapshot I/O failures, both passing isolated follow-up checks.
+  - V2.2/source-closure/governance regressions pass; complete current suite retains
+    two Windows ledger-snapshot I/O failures, both passing isolated follow-up checks.
   unavailable:
     implementation_commit: Uncommitted reviewable patch
     execution_commit: Zero API; no scientific execution
@@ -8467,3 +8468,27 @@ experiments:
   unavailable:
     execution_commit: No real execution; user finite-bound HOLD boundary
     result_commit: Containing sanitized audit publication commit
+- experiment_id: math_v2_2_gradient_pattern_seed81_pilot_v1
+  kind: PILOT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_2
+  parent_ids:
+  - math_v2_2_a4_pilot_execution_audit_v1
+  status: PREREGISTERED
+  scientific_status: ZERO_API_CLOSURE_PASS_EXACT_SOURCE_FREEZE_PENDING
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v2_2_gradient_pattern_seed81_pilot_v1.yaml
+  report: reports/math_v2_2_gradient_pattern_seed81_pilot_v1_execution_20261008
+  classifier: V22_SCIENTIFIC_COMPLETION_VS_OPERATIONAL_TRUNCATION_V1
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Exactly one fresh A4/Seed81 Pilot; no restart or K enlargement.
+  - Historical flat settings are provenance only; scientific stopping unchanged.
+  unavailable:
+    implementation_commit: Resolved by frozen manifest source_sha after source commit
+    execution_commit: Not dispatched
+    result_commit: Not executed

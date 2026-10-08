@@ -1,0 +1,67 @@
+{
+  "arm": "A4",
+  "baseline_source": "d6f56b4e6b2a2e71096d2c0ba3e787a9f362a43e",
+  "experiment_id": "math_v2_2_gradient_pattern_seed81_pilot_v1",
+  "method": "unified_team_prompt_search_v2_2",
+  "one_attempt_only": true,
+  "operational": {
+    "guarantees_saturation": false,
+    "identity": "V2_2_FIXED_HORIZON_OPERATIONAL_PILOT_V1",
+    "max_opportunities": 64,
+    "scientific_stopper": "team_epoch_no_commit_v1",
+    "token_ceiling": 24000000
+  },
+  "operational_truncation": [
+    "OPERATIONAL_OPPORTUNITY_CEILING",
+    "TOKEN_CEILING",
+    "PROVIDER_CALL_CEILING",
+    "TRANSPORT_CEILING"
+  ],
+  "provider_bounds": {
+    "attempt_charged_token_ceiling": 24000000,
+    "bound_proof": {
+      "bootstrap_logical_solver_calls": 500,
+      "gradient_semantic_multiplier": 3,
+      "gross_reservations_are_not_spending": true,
+      "guarantees_saturation": false,
+      "identity": "V2_2_FIXED_HORIZON_OPERATIONAL_PILOT_V1",
+      "per_op_logical_solver": {
+        "full": 120,
+        "local": 36,
+        "probe": 24,
+        "shadow": 40
+      },
+      "scientific_stopper_unchanged": true,
+      "solver_semantic_multiplier": 4,
+      "token_bound": "PRE_TRANSPORT_EXACT_RESERVATION_AND_CUMULATIVE_ATTEMPT_ADMISSION",
+      "transport_multiplier": 21
+    },
+    "cumulative_charged_token_ceiling": 40000000,
+    "gross_reservation_upper_bound": 35425152000000,
+    "max_opportunities": 64,
+    "max_proposals_per_opportunity": 6,
+    "pattern_calls": 11584,
+    "pattern_cluster_calls": 64,
+    "pattern_gradient_calls": 11520,
+    "physical_solver_per_opportunity": 880,
+    "reflection_calls": 384,
+    "reservation_peak_upper_bound": 24000000,
+    "shadow_solver_calls": 11040,
+    "solver_calls": 58320,
+    "solver_per_opportunity": 220,
+    "successful_provider_calls": 70288,
+    "transport_attempts": 1476048
+  },
+  "schema_version": "math_v2_2_operational_pilot_protocol_v1",
+  "scientific_completion": [
+    "SATURATION_REACHED",
+    "NO_FEASIBLE_OPPORTUNITY"
+  ],
+  "scientific_method_changed": false,
+  "seed": 81,
+  "source": "FROZEN_MANIFEST_SOURCE",
+  "test_calls": 0,
+  "transition": "initial_competence_target_or_team_progress_v3",
+  "user_task_sha256": "5656979b9c93704115a11dd4071174ab7d09229623104116eb0cc95cd687e315",
+  "validation_calls": 0
+}

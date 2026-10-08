@@ -1,0 +1,13 @@
+{
+  "accounting_read_only": true,
+  "binding_blockers": [],
+  "compileall": true,
+  "historical_changed": 0,
+  "legacy_dependencies": 0,
+  "passed": true,
+  "provider_calls": 0,
+  "scientific_method_changed": false,
+  "test_calls": 0,
+  "validation_calls": 0,
+  "wire_equivalence": true
+}

@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "provider_calls": 0,
+  "roles": [
+    {
+      "provider_visible_sha256": "edf84642db13121f360c14de2e8edd533ae52c9885b2f1ad8814f70660f3ffff",
+      "role": "solver",
+      "unchanged": true
+    },
+    {
+      "provider_visible_sha256": "1ad46befc7252d6b2e56d9f1bde6a652e0433c4988c0a1ef261863d3ee2e36a8",
+      "role": "reflection",
+      "unchanged": true
+    },
+    {
+      "provider_visible_sha256": "1ad46befc7252d6b2e56d9f1bde6a652e0433c4988c0a1ef261863d3ee2e36a8",
+      "role": "pattern_gradient",
+      "unchanged": true
+    },
+    {
+      "provider_visible_sha256": "1ad46befc7252d6b2e56d9f1bde6a652e0433c4988c0a1ef261863d3ee2e36a8",
+      "role": "pattern_cluster",
+      "unchanged": true
+    }
+  ]
+}

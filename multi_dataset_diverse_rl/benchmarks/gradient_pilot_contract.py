@@ -64,10 +64,68 @@ def finite_bound_assessment(*, optimize_count=60, initial_vote=None, initial_sco
         scientific_stopper_unchanged=True, execution_gate='HOLD', blocker=PILOT_BOUND_BLOCKER)
 
 
-def pilot_provider_bounds(parent):
-    raise SearchContractError(PILOT_BOUND_BLOCKER)
+OPERATIONAL_BOUND_ID = 'V2_2_FIXED_HORIZON_OPERATIONAL_PILOT_V1'
+
+
+def pilot_provider_bounds(parent, *, max_opportunities=None, token_ceiling=None):
+    if max_opportunities is None or token_ceiling is None:
+        raise SearchContractError(PILOT_BOUND_BLOCKER)
+    from ..search.current_policy import CURRENT_POLICY_BUNDLE
+    CURRENT_POLICY_BUNDLE.validate_contract(parent)
+    if (type(max_opportunities) is not int or max_opportunities <= 0
+            or type(token_ceiling) is not int or not 0 < token_ceiling < 40_000_000
+            or parent['low_cost_protocol']['counts']['pilot_optimize'] != 60
+            or parent['shadow_count'] != 40 or parent['stop_policy'] != 'team_epoch_no_commit_v1'):
+        raise SearchContractError('OPERATIONAL_PILOT_BOUND_INVALID')
+    k=max_opportunities; n=60; shadow=40; layer=parent['layer1_search_policy']
+    logical=layer['metric_limit']+layer['k_local_return']*layer['panel_size']+2*n+shadow
+    recovery=parent['invalid_recovery_policy']['max_semantic_attempts']
+    gradient_recovery=parent['gradient_recovery_policy']['max_physical_attempts_per_wrong']
+    solver=recovery*(5*(n+shadow)+k*logical)
+    gradients=k*n*gradient_recovery; clusters=k; reflections=k*layer['max_generations']
+    success=solver+gradients+clusters+reflections
+    transport=success*(parent['decoding']['transport_retries']+1)
+    return dict(max_opportunities=k,max_proposals_per_opportunity=layer['max_generations'],
+        solver_per_opportunity=logical,physical_solver_per_opportunity=recovery*logical,
+        solver_calls=solver,reflection_calls=reflections,pattern_gradient_calls=gradients,
+        pattern_cluster_calls=clusters,pattern_calls=gradients+clusters,
+        shadow_solver_calls=recovery*(5*shadow+k*shadow),successful_provider_calls=success,
+        transport_attempts=transport,reservation_peak_upper_bound=token_ceiling,
+        gross_reservation_upper_bound=transport*token_ceiling,
+        attempt_charged_token_ceiling=token_ceiling,cumulative_charged_token_ceiling=40_000_000,
+        bound_proof=dict(identity=OPERATIONAL_BOUND_ID,scientific_stopper_unchanged=True,
+            guarantees_saturation=False,bootstrap_logical_solver_calls=500,
+            per_op_logical_solver=dict(local=36,probe=24,full=120,shadow=40),
+            solver_semantic_multiplier=recovery,gradient_semantic_multiplier=gradient_recovery,
+            transport_multiplier=parent['decoding']['transport_retries']+1,
+            token_bound='PRE_TRANSPORT_EXACT_RESERVATION_AND_CUMULATIVE_ATTEMPT_ADMISSION',
+            gross_reservations_are_not_spending=True))
 
 
 def derive_current_pilot_contract(parent, *, attempt, binding_path, parent_path,
-        parent_sha256, authorization_path, authorization_sha256):
-    raise SearchContractError(PILOT_BOUND_BLOCKER)
+        parent_sha256, authorization_path, authorization_sha256,
+        max_opportunities=None, token_ceiling=None):
+    if max_opportunities is None or token_ceiling is None:
+        raise SearchContractError(PILOT_BOUND_BLOCKER)
+    from copy import deepcopy
+    from .. import current_contract as versions
+    c=deepcopy(parent)
+    if (not attempt.startswith('math_v2_2_gradient_pattern_A4_seed81_pilot_attempt')
+            or attempt in (parent['execution_attempt_id'],parent['cache_namespace'])
+            or binding_path==parent['binding_path'] or parent['execution_arm']!='A4' or parent['seeds']!=[81]):
+        raise SearchContractError('CURRENT_PILOT_FRESH_IDENTITY_REQUIRED')
+    c.update(identity=versions.MATH_V2_2_EXECUTION_BINDING_VERSION,
+        method_identity=versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION,
+        transition_policy=versions.UNIFIED_TARGET_OR_TEAM_TRANSITION_VERSION,
+        execution_phase='pilot',execution_attempt_id=attempt,cache_namespace=attempt,
+        binding_path=binding_path,canary_attempt_id=None,
+        baseline_scientific_settings_path=parent_path,baseline_scientific_settings_sha256=parent_sha256,
+        current_user_scope_path=authorization_path,current_user_scope_sha256=authorization_sha256,
+        continuation_authorization_sha256=authorization_sha256,
+        operational_pilot=dict(identity=OPERATIONAL_BOUND_ID,max_opportunities=max_opportunities,
+            token_ceiling=token_ceiling,scientific_stopper='team_epoch_no_commit_v1',guarantees_saturation=False),
+        search_only_scope=dict(validation_authorized=False,test_authorized=False,
+            raw_diagnostic_authorized=False,llm_judge_authorized=False,push_authorized=True))
+    c.pop('method_implementation_sha',None)
+    c['provider_bounds']=pilot_provider_bounds(c,max_opportunities=max_opportunities,token_ceiling=token_ceiling)
+    return c

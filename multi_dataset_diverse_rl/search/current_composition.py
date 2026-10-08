@@ -27,11 +27,19 @@ class OneProductionOpportunityStop(GlobalStopPolicy):
 def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompts, solver,
         optimizer, method, seed, shadow_loader, shadow_count, runtime_readiness,
         pattern_provider, provider_call_reader=None, policy_bundle=CURRENT_POLICY_BUNDLE,
-        execution_phase='canary'):
+        execution_phase='canary', operational_bound=None):
     if execution_phase not in {'canary', 'pilot'}:
         raise SearchContractError('CURRENT_EXECUTION_PHASE_UNBOUND')
     if execution_phase == 'pilot':
-        raise SearchContractError('TARGET_OR_TEAM_PROGRESS_PILOT_BOUND_NOT_FROZEN')
+        from ..benchmarks.gradient_pilot_contract import OPERATIONAL_BOUND_ID
+        if (not isinstance(operational_bound,dict) or operational_bound.get('identity')!=OPERATIONAL_BOUND_ID
+                or type(operational_bound.get('max_opportunities')) is not int
+                or operational_bound['max_opportunities']<=0
+                or type(operational_bound.get('token_ceiling')) is not int
+                or not 0<operational_bound['token_ceiling']<40_000_000
+                or operational_bound.get('scientific_stopper')!='team_epoch_no_commit_v1'
+                or operational_bound.get('guarantees_saturation') is not False):
+            raise SearchContractError('TARGET_OR_TEAM_PROGRESS_PILOT_BOUND_NOT_FROZEN')
     if policy_bundle != CURRENT_POLICY_BUNDLE:
         raise SearchContractError('CURRENT_POLICY_MISMATCH')
     policy_bundle.validate_method(method)
@@ -64,7 +72,7 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
     provider=FixedPeerTeamEvaluationProvider(store,transition)
     gate=private_binary_gate(benchmark=benchmark,load_examples=shadow_loader,expected_count=shadow_count,
         solver=solver.for_gate() if hasattr(solver,'for_gate') else solver,store=store)
-    return UnifiedSearchOrchestrator(method=method,benchmark=benchmark,aggregation=aggregation,state=store,
+    composed=UnifiedSearchOrchestrator(method=method,benchmark=benchmark,aggregation=aggregation,state=store,
         analyzer=StateAnalyzer(BinaryPluralityResponsibilityAnalyzer(benchmark.capabilities)),
         opportunities=CurrentOpportunityBuilder(source=BinaryEvidenceSource(store,history),
             feasibility=VariableEvidenceFeasibilityV1(),target=TargetPolicyV1(),
@@ -74,3 +82,5 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
         transition=transition,gate=gate,committer=TeamStateCommitter(store),history=history,memory=memory,
         stop=(OneProductionOpportunityStop(2) if execution_phase == 'canary' else GlobalStopPolicy(2)),runtime_readiness=runtime_readiness,
         provider_call_reader=provider_call_reader)
+    composed.operational_bound=operational_bound
+    return composed

@@ -3,8 +3,9 @@
 The sole active research architecture is Unified Team Prompt Search.
 The current scientific method is V2.2 with target-or-team deployment V3.
 CURRENT_RUNTIME_COMPOSITION_V1 remains the builder boundary; the method and
-transition identities change explicitly. Current real execution is HOLD:
-MATH_V2_2_EXECUTION_BINDING_V1 and a finite Pilot bound are not frozen.
+transition identities change explicitly. Current real execution requires a fresh
+MATH_V2_2_EXECUTION_BINDING_V1 and the fixed operational horizon/resource ceiling
+defined in V22_OPERATIONAL_PILOT_CEILING_V1.md. Unbound profiles remain HOLD.
 The new default offline profile is an explicit HOLD declaration. V2.1
 Gradient profiles, strict transition, composition and N-commit bound are
 available only under explicit historical replay and the original frozen source.

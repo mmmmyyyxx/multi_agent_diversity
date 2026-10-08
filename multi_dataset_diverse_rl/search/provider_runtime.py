@@ -203,6 +203,15 @@ class RequestBroker:
             for retry in range(c["decoding"]["transport_retries"] + 1):
                 bounds = c["provider_bounds"]
                 role_bound = bounds[role+'_calls']
+                if c.get('operational_pilot'):
+                    if self.usage['attempts']>=bounds['transport_attempts']:
+                        self.abort('TRANSPORT_CEILING')
+                    if self.successes>=bounds['successful_provider_calls'] or self.usage[role]>=role_bound:
+                        self.abort('PROVIDER_CALL_CEILING')
+                    from ..governance.token_accounting import reservation
+                    spent=self.usage['input_tokens']+self.usage['output_tokens']
+                    if spent+reservation(request)['amount']>c['operational_pilot']['token_ceiling']:
+                        self.abort('TOKEN_CEILING')
                 if (self.usage["attempts"] >= bounds["transport_attempts"] or self.successes >= bounds["successful_provider_calls"]
                         or self.usage[role] >= role_bound or role in {'pattern_gradient','pattern_cluster'} and self.usage['pattern']>=bounds['pattern_calls']):
                     self.abort("PROVIDER_CEILING_PRE_TRANSPORT")
@@ -307,7 +316,8 @@ class RequestBroker:
                 return result
 
     def abort(self, reason):
-        if self.token_ledger:
+        if self.token_ledger or (self.contract.get('operational_pilot') and reason in {
+                'TOKEN_CEILING','PROVIDER_CALL_CEILING','TRANSPORT_CEILING'}):
             from ..governance.token_accounting import OperationalAbort
             raise OperationalAbort(reason)
         raise SearchContractError(reason)

@@ -79,7 +79,9 @@ winner-only Shadow, atomic single-member commit and parent-scoped epochs remain.
 Reflection minibatch three, local metric budget36, local no-update patience three
 and team no-commit patience two are unchanged. A completed atomic commit resets team
 patience, including target-only progress. V2.1 strict-gain stopping bounds cannot
-be reused: V2.2 Pilot is closed until its finite operational bound is frozen. Resource/budget exhaustion,
+be reused. Fresh V2.2 Pilot binds the [fixed operational horizon](V22_OPERATIONAL_PILOT_CEILING_V1.md)
+and coupled attempt token admission; this bound does not guarantee saturation.
+Unbound profiles remain closed. Resource/budget exhaustion,
 incomplete outcomes and technical/conformance failures are not convergence.
 Shadow retains its separately frozen nonnegative team and bounded target-loss
 guard; the competence floor is measured on the complete Optimize scope.
@@ -772,7 +774,7 @@ numeric coincidences as warnings. V5 remains a frozen historical receipt and
 replay contract. Warnings do not enter any scientific selection or provider input.
 
 Synthetic current composition retains the one-opportunity Canary boundary.
-V2.2 Pilot fails before initialization while its finite bound is unfrozen.
+V2.2 Pilot fails before initialization without its fresh fixed-horizon binding.
 Historical V2.1 Pilot uses the existing two consecutive
 no-commit team epochs. Phase binding does not change the policy bundle, prompts,
 failure-count lifetime or candidate admission. Pilot read-only state journals

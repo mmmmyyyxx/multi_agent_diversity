@@ -1,0 +1,23 @@
+{
+  "arm": "A4",
+  "attempt_id": "math_v2_2_gradient_pattern_A4_seed81_pilot_attempt1",
+  "binding_identity": "MATH_V2_2_EXECUTION_BINDING_V1",
+  "canary_authorized": false,
+  "cumulative_token_ceiling": 40000000,
+  "exact_frozen_api_authorization_required": true,
+  "initial_memory_entries": 0,
+  "llm_judge_authorized": false,
+  "max_opportunities": 64,
+  "one_attempt_only": true,
+  "operational_retry_limit": 0,
+  "push_authorized": true,
+  "raw_diagnostic_authorized": false,
+  "schema_version": "math_v2_2_operational_pilot_user_scope_v1",
+  "scientific_method_changed": false,
+  "seed": 81,
+  "test_authorized": false,
+  "token_ceiling": 24000000,
+  "user_authorized": true,
+  "user_task_sha256": "5656979b9c93704115a11dd4071174ab7d09229623104116eb0cc95cd687e315",
+  "validation_authorized": false
+}

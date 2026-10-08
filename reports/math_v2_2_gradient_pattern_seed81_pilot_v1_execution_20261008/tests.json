@@ -1,0 +1,36 @@
+{
+  "final_current": {
+    "deselected": 1468,
+    "errors": 0,
+    "failed": 0,
+    "junit_sha256": "597d7992f084a1026331db48e49d04e3f38264db4be5fbbb3410986c63e46599",
+    "passed": 1583,
+    "skipped": 2
+  },
+  "first_failure_category": "STALE_V21_ONLY_DYNAMIC_GOVERNANCE_TEST_FIXED_FOR_EXPLICIT_V22_SCOPE",
+  "first_full_current": {
+    "deselected": 1468,
+    "errors": 0,
+    "failed": 1,
+    "junit_sha256": "b113dbbac994767b5527183078b81dcb4a7f055ec331cd825849be5299a0508e",
+    "passed": 1582,
+    "skipped": 2
+  },
+  "governance_isolated": {
+    "errors": 0,
+    "failed": 0,
+    "junit_sha256": "12627e0afb688596242c5e1b83244ab4091e69619e032f62c2e02bac3aab0dab",
+    "passed": 94,
+    "skipped": 0
+  },
+  "historical_private_artifact_tests_executed": false,
+  "historical_replay_pass_claimed": false,
+  "real_api_calls": 0,
+  "scoped_final": {
+    "errors": 0,
+    "failed": 0,
+    "junit_sha256": "02c837e6054f6ff327fead840a80701505e60e167843ca5004b270f25b6e13d9",
+    "passed": 53,
+    "skipped": 0
+  }
+}

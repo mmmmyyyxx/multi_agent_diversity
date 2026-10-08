@@ -178,6 +178,9 @@ class UnifiedSearchOrchestrator:
         return calls >= self.method.global_stop.emergency_max_provider_calls
 
     async def run(self, *, max_opportunities: int) -> UnifiedSearchResult:
+        bound=getattr(self,'operational_bound',None)
+        if bound is not None and max_opportunities!=bound['max_opportunities']:
+            raise SearchContractError('FROZEN_OPERATIONAL_HORIZON_MISMATCH')
         if max_opportunities <= 0:
             raise SearchContractError("positive operational opportunity ceiling required")
         benchmark_id = getattr(self.benchmark, "benchmark_id", None)

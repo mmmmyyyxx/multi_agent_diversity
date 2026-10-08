@@ -58,15 +58,17 @@ Operational opportunity/provider/transport ceilings are distinct from this
 scientific stop. The V2.1 proof of at most N commits by strict integer Vote
 increase is invalid for V2.2. Its derivation is preserved only in explicit
 replay. A V2.2 Pilot derivation or builder fails before provider construction
-with `TARGET_OR_TEAM_PROGRESS_PILOT_BOUND_NOT_FROZEN` until a separately reviewed
-finite bound is frozen. A larger guessed constant cannot replace a proof.
+with `TARGET_OR_TEAM_PROGRESS_PILOT_BOUND_NOT_FROZEN` unless a separately frozen
+[operational horizon and coupled resource ceiling](V22_OPERATIONAL_PILOT_CEILING_V1.md)
+are bound. The horizon does not prove saturation; resource truncation is incomplete.
 
 Current MATH execution requires `MATH_V2_2_EXECUTION_BINDING_V1`. The new default
 offline profile declares HOLD and has no bound or authority. Current preflight,
-prep, scope and execution fail with `CURRENT_V2_2_EXECUTION_BINDING_NOT_FROZEN`;
+prep, scope and execution fail with `CURRENT_V2_2_EXECUTION_BINDING_NOT_FROZEN` without a fresh binding;
 old bindings and authorizations cannot be loaded as the current executor.
 Synthetic finite unit/fake-provider fixtures exercise code conformance only.
-No new scientific Pilot, real provider, Validation or Test execution is authorized.
+Readiness never grants API authority; an exact user-authorized scope is still required.
+Validation and Test require separate authorization.
 
 WHO, raw overlapping D/N/C, V=max(4D,2N,C), failure discount, Pattern selection,
 Gradient generation, Layer1 budgets, five equal-weight plurality members,

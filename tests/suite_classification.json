@@ -3,6 +3,13 @@
   "schema_version": "suite_classification_v1",
   "tests": [
     {
+      "path": "tests/current/test_v22_operational_pilot.py",
+      "classification": "CURRENT_CONTRACT",
+      "current_suite_included": true,
+      "required_private_artifacts": [],
+      "reason": "Current V2.2 fixed-horizon resource admission and synthetic execution lifecycle"
+    },
+    {
       "path": "tests/current/test_transition_reachability_v22.py",
       "classification": "CURRENT_CONTRACT",
       "required_private_artifacts": [],

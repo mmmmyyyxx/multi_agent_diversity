@@ -428,6 +428,29 @@ def test_new_pending_pilot_has_separate_user_scope_without_inheriting_closed_aut
     assert contract['execution_attempt_id']!=old_contract['execution_attempt_id']
     assert contract['cache_namespace']!=old_contract['cache_namespace']
     assert contract['models']==old_contract['models']
+    if contract['identity']=='MATH_V2_2_EXECUTION_BINDING_V1':
+        from multi_dataset_diverse_rl.benchmarks.gradient_pilot_contract import pilot_provider_bounds
+        from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
+        op=contract['operational_pilot']
+        assert contract['provider_bounds']==pilot_provider_bounds(contract,
+            max_opportunities=op['max_opportunities'],token_ceiling=op['token_ceiling'])
+        scope=load_yaml(ROOT/contract['current_user_scope_path'])
+        assert scope['schema_version']=='math_v2_2_operational_pilot_user_scope_v1'
+        assert scope['user_authorized'] and scope['one_attempt_only']
+        assert scope['exact_frozen_api_authorization_required']
+        assert scope['attempt_id']==contract['execution_attempt_id']
+        assert scope['user_task_sha256']==frontier['pending_pilot_user_task_sha256']
+        assert scope['max_opportunities']==op['max_opportunities']
+        assert scope['token_ceiling']==op['token_ceiling']
+        assert contract['continuation_authorization_sha256']==contract['current_user_scope_sha256']
+        assert scope['push_authorized'] is frontier['pending_pilot_push_authorized'] is True
+        assert scope['scientific_method_changed'] is False
+        for role in ('validation','test','raw_diagnostic','llm_judge','canary'):
+            assert scope[role+'_authorized'] is False
+        assert contract['stop_policy']==old_contract['stop_policy']=='team_epoch_no_commit_v1'
+        assert op['guarantees_saturation'] is False
+        assert execution_binding(ROOT,contract).blockers()==()
+        return
     if 'gradient_recovery_policy' in contract:
         for key in ('solver_calls','reflection_calls','pattern_cluster_calls','max_opportunities'):
             assert contract['provider_bounds'][key]==old_contract['provider_bounds'][key]

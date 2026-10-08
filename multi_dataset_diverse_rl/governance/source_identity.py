@@ -101,6 +101,9 @@ def current_scientific_files(root: Path, *, execution_closure: bool = False) -> 
         semantic_contract = root/'docs/design/UNIFIED_METHOD_SEMANTIC_CONTRACT.md'
     if semantic_contract.is_file():
         result.append(semantic_contract)
+    operational_contract=root/'docs/design/V22_OPERATIONAL_PILOT_CEILING_V1.md'
+    if operational_contract.is_file():
+        result.append(operational_contract)
     risk_contract = root/'docs/design/SHARED_RISK_MEMORY_V4.md'
     if risk_contract.is_file():
         result.append(risk_contract)

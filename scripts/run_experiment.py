@@ -24,7 +24,8 @@ def preflight(manifest):
 
 def governed_preflight(prep):
     value=validate_prep(ROOT,prep)
-    return dict(gate='CANARY_READY_NOT_AUTHORIZED',ready_for_authorization=True,
+    return dict(gate=('PILOT_READY_NOT_AUTHORIZED' if value['scope'].get('phase')=='pilot_search_only'
+        else 'CANARY_READY_NOT_AUTHORIZED'),ready_for_authorization=True,
         attempt_id=value['scope']['attempt_id'],startup_identity_sha256=value['startup_identity_sha256'],
         provider_attempts=0,validation_calls=0,test_calls=0)
 

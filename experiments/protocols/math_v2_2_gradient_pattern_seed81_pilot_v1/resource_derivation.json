@@ -1,0 +1,49 @@
+{
+  "K": 64,
+  "attempt_token_ceiling": 24000000,
+  "historical_attempt6_charged_tokens": 832198,
+  "historical_attempt6_opportunities": 10,
+  "historical_cost_inflation_for_selection_only": 4,
+  "historical_cost_is_not_a_worst_case_bound": true,
+  "internal_planning_retry_reporting_margin": 2000000,
+  "planning_horizon_limit": 66,
+  "protected_external_margin": 12585228,
+  "remaining_at_design": 36585228,
+  "selection": "64 below planning limit 66; 6.4 times prior stationary ten-opportunity trajectory",
+  "strict_provider_bounds": {
+    "attempt_charged_token_ceiling": 24000000,
+    "bound_proof": {
+      "bootstrap_logical_solver_calls": 500,
+      "gradient_semantic_multiplier": 3,
+      "gross_reservations_are_not_spending": true,
+      "guarantees_saturation": false,
+      "identity": "V2_2_FIXED_HORIZON_OPERATIONAL_PILOT_V1",
+      "per_op_logical_solver": {
+        "full": 120,
+        "local": 36,
+        "probe": 24,
+        "shadow": 40
+      },
+      "scientific_stopper_unchanged": true,
+      "solver_semantic_multiplier": 4,
+      "token_bound": "PRE_TRANSPORT_EXACT_RESERVATION_AND_CUMULATIVE_ATTEMPT_ADMISSION",
+      "transport_multiplier": 21
+    },
+    "cumulative_charged_token_ceiling": 40000000,
+    "gross_reservation_upper_bound": 35425152000000,
+    "max_opportunities": 64,
+    "max_proposals_per_opportunity": 6,
+    "pattern_calls": 11584,
+    "pattern_cluster_calls": 64,
+    "pattern_gradient_calls": 11520,
+    "physical_solver_per_opportunity": 880,
+    "reflection_calls": 384,
+    "reservation_peak_upper_bound": 24000000,
+    "shadow_solver_calls": 11040,
+    "solver_calls": 58320,
+    "solver_per_opportunity": 220,
+    "successful_provider_calls": 70288,
+    "transport_attempts": 1476048
+  },
+  "token_guarantee": "JOINT_ADMISSION_24M; MAY_TRUNCATE_BEFORE_K; NOT_GUARANTEED_COMPLETION_OF_MAXIMUM_COST_K_TRAJECTORY"
+}
