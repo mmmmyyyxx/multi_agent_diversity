@@ -8474,21 +8474,26 @@ experiments:
   method_family: unified_team_prompt_search_v2_2
   parent_ids:
   - math_v2_2_a4_pilot_execution_audit_v1
-  status: PREREGISTERED
-  scientific_status: ZERO_API_CLOSURE_PASS_EXACT_SOURCE_FREEZE_PENDING
-  implementation_commit: null
-  execution_commit: null
+  status: INVALID
+  scientific_status: EXECUTION_ABORTED_PROVIDER_OUTPUT_TRUNCATION_NOT_EVALUABLE_PILOT
+  implementation_commit: 4b02b734e7e5306bd5f0192464b1cf0bb6a95562
+  execution_commit: 4b02b734e7e5306bd5f0192464b1cf0bb6a95562
   result_commit: null
   manifest: experiments/manifests/math_v2_2_gradient_pattern_seed81_pilot_v1.yaml
   report: reports/math_v2_2_gradient_pattern_seed81_pilot_v1_execution_20261008
   classifier: V22_SCIENTIFIC_COMPLETION_VS_OPERATIONAL_TRUNCATION_V1
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
   - Exactly one fresh A4/Seed81 Pilot; no restart or K enlargement.
   - Historical flat settings are provenance only; scientific stopping unchanged.
+  - One fresh scope consumed; first cluster reached frozen 1800-token output cap and
+    aborted before the first opportunity.
+  - No completed Pilot efficacy result; no rerun or generation-cap amendment; all
+    original raw evidence preserved.
   unavailable:
-    implementation_commit: Resolved by frozen manifest source_sha after source commit
-    execution_commit: Not dispatched
-    result_commit: Not executed
+    result_commit: Containing sanitized aborted-execution report commit
+  authorization_consumed: true
+  authorization_closed: true
+  authorization_closure_evidence: reports/math_v2_2_gradient_pattern_seed81_pilot_v1_execution_20261008/owner_abort_closure_receipt.json

@@ -1,0 +1,76 @@
+{
+  "complete_owner_abort_audit": true,
+  "complete_pilot": false,
+  "experiment_id": "math_v2_2_gradient_pattern_seed81_pilot_v1",
+  "files": [
+    {
+      "path": "actual_raw_preservation.json",
+      "sha256": "dbd016ab0fa20150fe5494c462a94cfca947c0b7bac55a9c894c8b6b5580f51b"
+    },
+    {
+      "path": "closure_summary.json",
+      "sha256": "88ef8518cb621a31737b2686dc60a4c40ee949ea787360b1af2089f51d39e7f7"
+    },
+    {
+      "path": "commit_trajectory.json",
+      "sha256": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f"
+    },
+    {
+      "path": "full_outcomes.json",
+      "sha256": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f"
+    },
+    {
+      "path": "historical_preservation.json",
+      "sha256": "e0b38b0fff56fffe688624fdfeaa95433920a24c5a269d56112b17007f93b850"
+    },
+    {
+      "path": "output_truncation_forensic.json",
+      "sha256": "8190381be5cfa887e549a28ed44ddbe686b242822a42c54b2c9860c7bb72a170"
+    },
+    {
+      "path": "owner_abort_closure_receipt.json",
+      "sha256": "c4111beea866615486821e2beb7830d176b726745185c1627e680709b8e84464"
+    },
+    {
+      "path": "owner_validity_audit.json",
+      "sha256": "292541a8afdfe6aabf1da47c7b75dd9b9832925ae48b9614b57db812d9731bf6"
+    },
+    {
+      "path": "pilot_result.json",
+      "sha256": "d8f2b9c98f17756e3799b44993433f0b3d0df4b851d6d5e2f2e0400eec7928cc"
+    },
+    {
+      "path": "preexecution_accounting.json",
+      "sha256": "9167224536c6b87f5d8582d0bc7640325476d2f4a9f3e1648a5ffff402bdd557"
+    },
+    {
+      "path": "preexecution_freeze.json",
+      "sha256": "71a441d07efe0169354783c655ca8ae6afc3e3a74f7a1596021298a13a0a08ff"
+    },
+    {
+      "path": "preexecution_scope.json",
+      "sha256": "43498c6333dc60625d78cb98b9ec64f6533978025ef1b843d81773376914b707"
+    },
+    {
+      "path": "provider_visible_equivalence.json",
+      "sha256": "d84a8dc9e65b5183f04db3a0e9bffa5c1c88c4f797bd6d8fc76d2a50b4900fd6"
+    },
+    {
+      "path": "publication_checks.json",
+      "sha256": "68a684f104d6057497bb3e5681849a54da5455b20dd45f3d6f5bf4f8868733b5"
+    },
+    {
+      "path": "README.md",
+      "sha256": "9a8435a17a0de602c3295727eafba5ced13ee8742ffeed27182d22f18e48c8cd"
+    },
+    {
+      "path": "scientific_evidence.json",
+      "sha256": "a86635f24284943ba7d80a3bf66c8f1f5a7af91580fee557842a4ce2732116c7"
+    },
+    {
+      "path": "tests.json",
+      "sha256": "950d498515bbed03cc4f82617f02ed8e6bcdb67e240e562a653b2b75a56dd9bf"
+    }
+  ],
+  "provider_calls_added_by_audit": 0
+}

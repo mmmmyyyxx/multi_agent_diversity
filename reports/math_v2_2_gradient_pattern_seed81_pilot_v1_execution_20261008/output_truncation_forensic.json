@@ -1,0 +1,26 @@
+{
+  "category": "FROZEN_CLUSTER_GENERATION_OUTPUT_CAP_REACHED",
+  "cluster_parsing_reached": false,
+  "finish_reason": "length",
+  "frozen_request_output_cap": 1800,
+  "gradient_contract_rejections": 0,
+  "input_tokens": 1918,
+  "method_change": false,
+  "output_characters": 7983,
+  "provider_usage_details_keys": [
+    "completion_tokens",
+    "prompt_tokens",
+    "prompt_tokens_details",
+    "total_tokens"
+  ],
+  "regeneration": false,
+  "reported_output_tokens": 1800,
+  "request_sha256": "4397b6a7f6ba8095d4d1cecb2b36f8dadfe1887a6d05aa19cfd75cc8e94ec1ba",
+  "rerun": false,
+  "response_text_sha256": "700a4b4cb5524d4fd7d4772e52fa422da601e4b3002603850add02371b6c1270",
+  "role": "pattern_cluster",
+  "scientific_transition_reached": false,
+  "source_mismatch": false,
+  "token_or_K_ceiling_reached": false,
+  "transport_failures": 0
+}

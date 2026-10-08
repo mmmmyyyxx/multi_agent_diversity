@@ -1,0 +1,17 @@
+{
+  "actual_raw_files_unchanged": 683,
+  "historical_reports_and_legacy_and_archive_unchanged": true,
+  "network_attempts": 0,
+  "passed": true,
+  "post_publication_checks": {
+    "failed": 0,
+    "junit_sha256": "8cf0a0aecdce3bbafbacfb595a34d9b3ee01a269b4065113d401612e23d1cf67",
+    "passed": 138,
+    "skipped": 0
+  },
+  "private_wire_strings_checked": 817,
+  "provider_calls": 0,
+  "publish_only_hashes_counters_categories_metrics": true,
+  "test_calls": 0,
+  "validation_calls": 0
+}

@@ -1,0 +1,100 @@
+{
+  "K": 64,
+  "PILOT_COMPLETED": false,
+  "PILOT_STATUS": "EXECUTION_ABORTED_PROVIDER_OUTPUT_TRUNCATION",
+  "attempt": "math_v2_2_gradient_pattern_A4_seed81_pilot_attempt1",
+  "cache_entries": 300,
+  "cache_integrity_pass": true,
+  "charged_tokens": 109444,
+  "commit_count": 0,
+  "cumulative_charged_tokens": 3524216,
+  "experiment_id": "math_v2_2_gradient_pattern_seed81_pilot_v1",
+  "final": {
+    "Oracle": 22,
+    "Vote": 22,
+    "member_scores": [
+      22,
+      22,
+      22,
+      22,
+      22
+    ],
+    "state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+    "support_count": 60
+  },
+  "final_metric_provenance": "LAST_DURABLE_INITIAL_STATE_NO_OPPORTUNITY_OR_DEPLOYMENT",
+  "funnel": {
+    "Fulls": 0,
+    "exported": 0,
+    "probed": 0,
+    "promoted": 0,
+    "proposals": 0
+  },
+  "gradient_recovery": {
+    "accepted_gradient_count": 38,
+    "gradient_contract_recovery_rate": 0.0,
+    "gradient_first_pass_valid": 38,
+    "gradient_retry_once": 0,
+    "gradient_retry_twice": 0,
+    "gradient_three_fail": 0,
+    "length_rejections": 0,
+    "logical_gradient_count": 38,
+    "numeric_warnings": 1,
+    "physical_gradient_calls": 38,
+    "schema_rejections": 0,
+    "strong_leakage_rejections": 0,
+    "successful_recovery_rate": null
+  },
+  "inference_scope": "INITIALIZATION_AND_GRADIENT_CONTRACT_OBSERVATIONS_ONLY_NO_DEPLOYMENT_OR_EFFICACY_RESULT",
+  "initial": {
+    "Oracle": 22,
+    "Vote": 22,
+    "member_scores": [
+      22,
+      22,
+      22,
+      22,
+      22
+    ],
+    "state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+    "support_count": 60
+  },
+  "initial_prediction_statistics": {
+    "logical_evaluations": 300,
+    "physical_solver_calls": 330,
+    "raw_invalid_count": 40,
+    "recovered_invalid": 0,
+    "terminal_invalid": 10
+  },
+  "ledger_replay_pass": true,
+  "opportunities": 0,
+  "opportunities_started": 0,
+  "progress_paths": {
+    "TARGET": 0,
+    "TARGET_AND_TEAM": 0,
+    "TEAM": 0
+  },
+  "provider_successes": 369,
+  "raw_inventory_sha256": "0528d392b6d336cc540df57a9287da4fbf508b9254127d7991924e15df53d162",
+  "raw_receipts_pass": true,
+  "receipt_count": 369,
+  "remaining_tokens": 36475784,
+  "remaining_unsaturated_state": "SCIENTIFIC_STOPPING_NOT_REACHED_OR_EVALUATED",
+  "reserved_inflight": 0,
+  "scientific_method_changed": false,
+  "source_scope_and_split_pass": true,
+  "source_sha": "4b02b734e7e5306bd5f0192464b1cf0bb6a95562",
+  "startup_identity_sha256": "3c8e7ec3c38a6e4c9cd30d4aa455902235145d4253d880a5aab050066ebde84f",
+  "stop_reason": "OPERATIONAL_OUTPUT_TRUNCATION",
+  "successful_roles": {
+    "pattern_cluster": 1,
+    "pattern_gradient": 38,
+    "solver": 330
+  },
+  "test_calls": 0,
+  "trajectory_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "transport_attempts": 369,
+  "transport_failures": 0,
+  "validation_calls": 0,
+  "validity": "NOT_EVALUABLE_AS_COMPLETE_PILOT"
+}

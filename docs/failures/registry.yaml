@@ -928,3 +928,24 @@ failures:
     normative_contract: docs/design/V22_OPERATIONAL_PILOT_CEILING_V1.md
     scope: Fixed operational horizon and coupled token admission, not guaranteed saturation
     global_completion_bound_still_unproved: true
+- failure_id: FAIL-V22-PATTERN-CLUSTER-1800-OUTPUT-TRUNCATION
+  title: First real fixed-horizon cluster response reached its frozen output cap
+  status: OPEN
+  lifecycle: OPEN
+  first_observed: math_v2_2_gradient_pattern_seed81_pilot_v1
+  affected_components:
+  - pattern_cluster_generation
+  - provider_output_contract
+  symptom: 38 accepted Gradient records entered clustering; provider returned finish_reason=length
+    at 1800 output tokens before opportunity creation.
+  evidence:
+  - reports/math_v2_2_gradient_pattern_seed81_pilot_v1_execution_20261008/output_truncation_forensic.json
+  evidence_level: observed_sealed_provider_receipt
+  root_cause_status: Observed response reached the frozen 1800-token request cap;
+    no claim that every cluster set needs a larger cap.
+  mitigation: Fail closed; preserve paid response and accounting; consumed one-attempt
+    scope remains closed.
+  regression_tests:
+  - tests/test_math_optimizer_generation.py::test_actual_usage_tolerance_does_not_relax_truncation
+  forbidden_inference: Not a scientific zero-commit result, convergence, V2.2 transition
+    failure, guard failure, or authorization to retry or increase generation limits.

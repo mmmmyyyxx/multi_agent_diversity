@@ -1,0 +1,22 @@
+{
+  "K_enlargements": 0,
+  "accounting_replay": true,
+  "authorization_consumed": true,
+  "fresh_initial_memory": true,
+  "frozen_resource_bounds": true,
+  "output_cap_changes": 0,
+  "raw_response_receipts": true,
+  "reruns": 0,
+  "resolved_cache_integrity": true,
+  "resource_horizon_exhausted": false,
+  "runner_execution": "EXECUTION_ABORTED",
+  "scientific_completion": false,
+  "scientific_method_changed": false,
+  "search_closed_forever": true,
+  "source_scope_split": true,
+  "stop_reason": "OPERATIONAL_OUTPUT_TRUNCATION",
+  "test_calls": 0,
+  "transition_conformance": "NOT_REACHED",
+  "validation_calls": 0,
+  "validity": "NOT_EVALUABLE_AS_COMPLETE_PILOT"
+}

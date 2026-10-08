@@ -873,6 +873,8 @@ nodes:
 - experiment_id: math_v2_2_gradient_pattern_seed81_pilot_v1
   kind: PILOT
   era: UNIFIED_TEAM_PROMPT_SEARCH
+  status: INVALID
+  scientific_status: EXECUTION_ABORTED_PROVIDER_OUTPUT_TRUNCATION_NOT_EVALUABLE_PILOT
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition

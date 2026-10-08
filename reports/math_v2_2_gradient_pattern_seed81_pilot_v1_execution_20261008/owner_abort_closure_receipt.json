@@ -1,0 +1,17 @@
+{
+  "K_enlargements": 0,
+  "PILOT_COMPLETED": false,
+  "accounting_end_sha256": "f06299ba81d43e3666ae6d26ec850c6ec2cdba4f1b2e464f4d084f13f0b8614a",
+  "attempt": "math_v2_2_gradient_pattern_A4_seed81_pilot_attempt1",
+  "authorization_consumed": true,
+  "identity": "OWNER_ABORT_CLOSURE_RECEIPT",
+  "output_cap_changes": 0,
+  "raw_inventory_sha256": "0528d392b6d336cc540df57a9287da4fbf508b9254127d7991924e15df53d162",
+  "reruns": 0,
+  "runner_status": "EXECUTION_ABORTED",
+  "search_closed_forever": true,
+  "source_sha": "4b02b734e7e5306bd5f0192464b1cf0bb6a95562",
+  "stop_reason": "OPERATIONAL_OUTPUT_TRUNCATION",
+  "test_calls": 0,
+  "validation_calls": 0
+}
