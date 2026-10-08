@@ -11,6 +11,13 @@ design authority. Historical specifications and invariant IDs are preserved in
 
 ## Active Unified Team Prompt Search V2.2 (opt-in)
 
+The focused [V2.3 optimization-evidence revision](OPTIMIZATION_EVIDENCE_V23.md)
+is the new opt-in complete method for independent Optimize validation,
+reference-solution diagnostics and bootstrapped measured-edit Memory. It requires
+a fresh V2.3 binding; V2.2 and its V6 feedback correction remain preserved
+compatibility paths. The existing V3 Full transition and benchmark plurality
+are unchanged. Offline implementation does not authorize scientific execution.
+
 The [visible solution feedback correction](MATH_VISIBLE_SOLUTION_FEEDBACK_V1.md)
 adds an explicit V6 MATH Solver interface and provenance-bound ordinary response
 solutions to per-example Gradient and existing Layer1 feedback. It requires a

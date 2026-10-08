@@ -197,14 +197,14 @@ class UnifiedSearchOrchestrator:
             raise SearchContractError("SCIENTIFIC_DECISION_REQUIRED: aggregation-aware responsibility")
         if getattr(self.aggregation, "identity", None) != self.method.aggregation_policy:
             raise SearchContractError("aggregation implementation/method identity mismatch")
-        current_semantics = self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION}
-        if self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION}:
+        current_semantics = self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_3_VERSION}
+        if self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_3_VERSION}:
             expected_acceptance=('layer1_local_guidance_team_admission_v1' if current_semantics and
-                self.method.search_engine in {versions.LAYER1_RESPONSIBILITY_SEARCH_VERSION,versions.LAYER1_FEEDBACK_SEARCH_VERSION} else versions.UNIFIED_DECOUPLED_ACCEPTANCE_VERSION)
+                self.method.search_engine in {versions.LAYER1_RESPONSIBILITY_SEARCH_VERSION,versions.LAYER1_FEEDBACK_SEARCH_VERSION,'INDEPENDENT_OPTIMIZE_VALIDATION_SEARCH_V1'} else versions.UNIFIED_DECOUPLED_ACCEPTANCE_VERSION)
             if self.method.search_acceptance_policy != expected_acceptance:
                 raise SearchContractError("V2 requires decoupled team candidate admission")
-            if (self.opportunities.search_metric_budget != 36 or
-                    self.opportunities.evidence.metric_budget != 36 or
+            if (self.opportunities.search_metric_budget != (42 if self.method.method==versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_3_VERSION else 36) or
+                    self.opportunities.evidence.metric_budget != self.opportunities.search_metric_budget or
                     self.opportunities.evidence.minimum != 3):
                 raise SearchContractError("V2 backend budget differs from frozen method")
             checks = ((self.engine, self.method.search_engine), (self.memory, self.method.memory_policy),
@@ -219,6 +219,8 @@ class UnifiedSearchOrchestrator:
                 raise SearchContractError("memory limits must enter explicit method identity")
             if self.method.pattern_policy != versions.UNIFIED_NULL_PATTERN_VERSION and not self.method.mechanism_config.get("pattern_provider_binding"):
                 raise SearchContractError("PATTERN_PROVIDER_NOT_BOUND")
+        if self.method.mechanism_config.get('optimization_evidence_policy') and not self.memory.competence:
+            self.memory.bootstrap(self.state)
         initial = self.state.snapshot().team_state_id
         if current_semantics:
             scores = getattr(self.state, "initial_member_scores", None)
@@ -264,12 +266,12 @@ class UnifiedSearchOrchestrator:
             committed: str | None = None
             gate_passed = (await self.gate.check(opportunity, decision.candidate)
                            if decision.candidate is not None else None)
-            v2 = self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION}
+            v2 = self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_3_VERSION}
             memory_delta = None
             if v2:
                 from .memory_records import OpportunityOutcome
                 progress = {}
-                if (self.method.method == versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION
+                if (self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_3_VERSION}
                         and decision.candidate is not None and gate_passed):
                     from .target_or_team_transition import progress_path
                     team_gain = decision.candidate.full.aggregate_score - active.aggregate_score
@@ -340,7 +342,7 @@ class UnifiedSearchOrchestrator:
                     initial_member_scores=self.transition.initial_scores,
                     incumbent_member_scores=parent.member_scores, child_member_scores=child.member_scores,
                     inference_scope="DESCRIPTIVE_NOT_COUNTERFACTUAL_OR_COMPONENT_CAUSAL")
-                if self.method.method == versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION:
+                if self.method.method in {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_3_VERSION}:
                     from .target_or_team_transition import progress_path
                     target_gain = (child.member_scores[opportunity.target_member]
                                    - parent.member_scores[opportunity.target_member]) if committed else 0.0

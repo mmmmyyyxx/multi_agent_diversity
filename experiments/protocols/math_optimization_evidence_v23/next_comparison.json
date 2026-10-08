@@ -1,0 +1,74 @@
+{
+  "schema_version": "unexecuted_matched_comparison_plan_v1",
+  "status": "HOLD",
+  "real_api_authorized": false,
+  "aim": "Compare complete evidence-learning revision; no component causal attribution.",
+  "cells": [
+    {
+      "cell": "A",
+      "method": "unified_team_prompt_search_v2_2",
+      "binding": "MATH_V2_2_VISIBLE_TRAJECTORY_EXECUTION_BINDING_V1",
+      "local_metric_limit": 36,
+      "validation": "historical overlapping Optimize panel",
+      "memory": "historical empty initial rolling risk"
+    },
+    {
+      "cell": "B",
+      "method": "unified_team_prompt_search_v2_3",
+      "binding": "MATH_OPTIMIZATION_EVIDENCE_BINDING_V1",
+      "local_metric_limit": 42,
+      "validation": "pairwise disjoint Optimize roles",
+      "memory": "BOOTSTRAPPED_EDIT_EFFECT_ROLLING_MEMORY_V1"
+    }
+  ],
+  "rationale": "Two cells isolate the complete revision with identical visible Solver interface. Four cells would require extra partial-policy runtimes and more API budget; component effects remain unidentified.",
+  "common": {
+    "seed": 81,
+    "initial_team": "five identical frozen Solve-the-problem procedures",
+    "solver": "qwen3-8b",
+    "solver_thinking": false,
+    "optimizer": "qwen3.7-flash",
+    "solver_interface": "MATH_SOLVER_INTERFACE_V6",
+    "optimize": "same frozen Optimize60 membership and hashes",
+    "mutation_membership": "same selected-support seed policy where compatible; explicit overlap difference is treatment",
+    "full_transition": "initial_competence_target_or_team_progress_v3",
+    "aggregation": "equal equivalence plurality",
+    "generations": 6,
+    "exports": 4,
+    "full_candidates": 2,
+    "max_opportunities_per_cell": 5,
+    "charged_token_ceiling_per_cell": 2000000,
+    "cumulative_token_ceiling": 40000000,
+    "validation_access": "not_authorized",
+    "test_access": "sealed",
+    "shadow_access": "existing frozen winner-only adaptive gate"
+  },
+  "freeze_requirements": [
+    "new matched initial Optimize realizations (22/60 not reused)",
+    "exact source and per-cell binding/manifest hashes",
+    "exact selected opportunity memberships persisted before generation",
+    "unchanged role decoding/transport/Solver recovery",
+    "one independent Gradient diagnostic per wrong example in B; historical recovery in A explicitly identified",
+    "fresh per-cell authorization/cache namespace/accounting; paired identical inference requests share a governed realization identity",
+    "separate role resource derivation and token pre-admission; no efficacy-based stopping",
+    "no Validation/Test or old authorization reuse"
+  ],
+  "primary_metrics": [
+    "contract-valid proposal count",
+    "mutation improvement",
+    "SearchValidation improvement",
+    "Full improvement",
+    "newly fixed / broken / retained / invalid",
+    "preservation rate",
+    "commit count",
+    "Vote / Oracle"
+  ],
+  "limitations": [
+    "one seed and five opportunities are diagnostic only",
+    "Optimize is adaptively reused",
+    "bundle comparison cannot identify each component effect",
+    "token ceiling may produce an incomplete prefix; do not classify incomplete results as efficacy"
+  ],
+  "command_after_freeze": "scripts/run_experiment.py --help (resolve exact governed command after manifests and handoff are frozen)",
+  "ready_to_run": false
+}

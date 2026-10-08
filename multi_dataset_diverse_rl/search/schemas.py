@@ -276,7 +276,7 @@ class SearchMethodConfig:
         allowed = {row.name for row in fields(cls)}
         if set(payload) - allowed:
             raise SearchContractError("unknown unified method component")
-        if payload.get("method", cls.method) not in {versions.UNIFIED_TEAM_PROMPT_SEARCH_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION}:
+        if payload.get("method", cls.method) not in {versions.UNIFIED_TEAM_PROMPT_SEARCH_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_1_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_2_VERSION, versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_3_VERSION}:
             raise SearchContractError("unsupported unified method identity")
         from dataclasses import asdict
         factory = {versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_VERSION: cls.v2,

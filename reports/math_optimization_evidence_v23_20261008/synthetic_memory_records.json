@@ -1,0 +1,461 @@
+{
+  "kind": "SYNTHETIC_CONFORMANCE_NOT_REAL_EFFICACY",
+  "private_record_sha256": "b58c7ff561d64fd76cf28eb227813dd19e3b6a657745b287b22490bcafb9d784",
+  "records": [
+    {
+      "candidate_id": "layer1:1:8e97a7145fc7",
+      "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+      "member": 0,
+      "parent_prompt_id": "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80",
+      "child_prompt_id": "8e97a7145fc7f79c6c7fba11533aa4482fa8a12ae6e8c49b175309ba8b253025",
+      "full_parent_prompt_id": "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80",
+      "pattern_id": "af470284ae3a017fae027df322da3fd76823b2b7116dd7cce81d7e744e06b3a2",
+      "supporting_example_ids": [
+        "optimize0",
+        "optimize1",
+        "optimize2",
+        "optimize3",
+        "optimize4",
+        "optimize5"
+      ],
+      "repair_hypothesis": "Check constraints before transforming intermediate expressions.",
+      "intended_edit": "Intended additive substitution check.",
+      "actual_diff": [
+        {
+          "operation": "insert",
+          "parent_span": [
+            18,
+            18
+          ],
+          "child_span": [
+            18,
+            52
+          ],
+          "removed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "added_sha256": "50bc4fb12f0a9d2f1b26fd8127bc5ee041a7435cdba592a5637907a838da7e22",
+          "removed_characters": 0,
+          "added_characters": 34
+        }
+      ],
+      "action": "Add sign checks",
+      "attribution": "compound_edit_no_clause_causal_claim",
+      "expected_behavior": "Check constraints before transforming intermediate expressions.",
+      "effects": {
+        "mutation": {
+          "scope": "mutation_root",
+          "membership": [
+            "optimize0",
+            "optimize1",
+            "optimize11"
+          ],
+          "fixed_ids": [
+            "optimize0",
+            "optimize1"
+          ],
+          "broken_ids": [],
+          "retained_ids": [
+            "optimize11"
+          ],
+          "valid_wrong_ids": [],
+          "invalid_ids": [],
+          "invalid_delta": 0,
+          "member_delta": 2
+        },
+        "search_validation": {
+          "scope": "search_validation_root",
+          "membership": [
+            "optimize15",
+            "optimize2",
+            "optimize9"
+          ],
+          "fixed_ids": [
+            "optimize2"
+          ],
+          "broken_ids": [],
+          "retained_ids": [
+            "optimize15",
+            "optimize9"
+          ],
+          "valid_wrong_ids": [],
+          "invalid_ids": [],
+          "invalid_delta": 0,
+          "member_delta": 1
+        },
+        "actual_parent_validation": {
+          "scope": "search_validation_actual_parent",
+          "membership": [
+            "optimize15",
+            "optimize2",
+            "optimize9"
+          ],
+          "fixed_ids": [
+            "optimize2"
+          ],
+          "broken_ids": [],
+          "retained_ids": [
+            "optimize15",
+            "optimize9"
+          ],
+          "valid_wrong_ids": [],
+          "invalid_ids": [],
+          "invalid_delta": 0,
+          "member_delta": 1
+        },
+        "team_probe": {
+          "scope": "team_probe",
+          "membership": [
+            "optimize17",
+            "optimize3",
+            "optimize7"
+          ],
+          "fixed_ids": [
+            "optimize3"
+          ],
+          "broken_ids": [],
+          "retained_ids": [
+            "optimize17",
+            "optimize7"
+          ],
+          "valid_wrong_ids": [],
+          "invalid_ids": [],
+          "invalid_delta": 0,
+          "member_delta": 1,
+          "team_delta": 0
+        },
+        "full": {
+          "scope": "optimize_full",
+          "membership": [
+            "optimize0",
+            "optimize1",
+            "optimize10",
+            "optimize11",
+            "optimize12",
+            "optimize13",
+            "optimize14",
+            "optimize15",
+            "optimize16",
+            "optimize17",
+            "optimize2",
+            "optimize3",
+            "optimize4",
+            "optimize5",
+            "optimize6",
+            "optimize7",
+            "optimize8",
+            "optimize9"
+          ],
+          "fixed_ids": [
+            "optimize0",
+            "optimize1",
+            "optimize2",
+            "optimize3"
+          ],
+          "broken_ids": [
+            "optimize10",
+            "optimize12",
+            "optimize13",
+            "optimize14",
+            "optimize16",
+            "optimize6",
+            "optimize8"
+          ],
+          "retained_ids": [
+            "optimize11",
+            "optimize15",
+            "optimize17",
+            "optimize7",
+            "optimize9"
+          ],
+          "valid_wrong_ids": [
+            "optimize10",
+            "optimize12",
+            "optimize13",
+            "optimize14",
+            "optimize16",
+            "optimize4",
+            "optimize5",
+            "optimize6",
+            "optimize8"
+          ],
+          "invalid_ids": [],
+          "invalid_delta": 0,
+          "member_delta": -3,
+          "team_delta": 0
+        }
+      },
+      "status": "FULL_REFUTED",
+      "status_history": [
+        "PROPOSED",
+        "LOCALLY_SUPPORTED",
+        "FULL_REFUTED"
+      ],
+      "provenance": {
+        "split": "optimize",
+        "generation": 1,
+        "evidence_packet_sha256": "1c9b95f9722f7c69c9a386cda85cdf0deef88932ee19598899f85eadeaf78d8b",
+        "solver_interface": "MATH_SOLVER_INTERFACE_V6",
+        "local_request_identities": {
+          "root_mutation": {
+            "optimize0": "0a132815d14af05ab185b981c95c954c99d7ae9a744469ce3cfb6c4a353849c3",
+            "optimize1": "8124d9e4fb6ae40dfd214992ae4a0406eba0d8f84c2eb07f7e785a74003eda0e",
+            "optimize11": "1fe2f60ad2bae8ba6adced1600eedea8db226271d7103b9728c660347d08096d"
+          },
+          "root_validation": {
+            "optimize2": "0d2ce3cfd9b8ee624cd9de366febc1eed6a630c259e4e8855adac2b4fe9b739c",
+            "optimize15": "3a25e52e6cfe5e204c01a484d90b66b9718cbabb3c20b36f04ae6ef795e99523",
+            "optimize9": "c4c8b0476743a8ac85106e9f5f5c750d4713bf3d452cecae9661902ffdddf074"
+          },
+          "actual_parent_validation": {
+            "optimize2": "0d2ce3cfd9b8ee624cd9de366febc1eed6a630c259e4e8855adac2b4fe9b739c",
+            "optimize15": "3a25e52e6cfe5e204c01a484d90b66b9718cbabb3c20b36f04ae6ef795e99523",
+            "optimize9": "c4c8b0476743a8ac85106e9f5f5c750d4713bf3d452cecae9661902ffdddf074"
+          },
+          "child_mutation": {
+            "optimize0": "67c0d619590cfa1ed818e5be8a1fa4e4dc4a93aadcf6ea9e9e253fe1d5b83031",
+            "optimize1": "26e9b1ac905d4d78d89c31a0ca6fff75997e40dade7eba77df3e8a0a9c364d52",
+            "optimize11": "a48819274586ccda5a36f6a9d1de7935bf5a314ecba9e0a4dc60bab06cba9541"
+          },
+          "child_validation": {
+            "optimize2": "5c5c45c13a61fac9b5e28410ace42ea06984a73b9e2a79e9e323acb3713c2d0e",
+            "optimize15": "209adbd7359f306a4393b3f453d2165ca07f7e5b3794cfe66fb4a47072cdf88d",
+            "optimize9": "50187cca66c1db59f9d35abde034aa1e67724bc58b853f2d7c03537e392b5e15"
+          }
+        }
+      },
+      "full_evaluation_parent_state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "actual_edit_description": "Add sign checks",
+      "diff_publication": "Verbatim synthetic procedure fragments withheld; lossless spans/text remain in ignored private record."
+    },
+    {
+      "candidate_id": "layer1:2:85cfb50d5639",
+      "opportunity_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba:0:0",
+      "member": 0,
+      "parent_prompt_id": "8e97a7145fc7f79c6c7fba11533aa4482fa8a12ae6e8c49b175309ba8b253025",
+      "child_prompt_id": "85cfb50d5639611feb2e7c3d109345948169be7b811e924e578a71f09e37aebb",
+      "full_parent_prompt_id": "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80",
+      "pattern_id": "af470284ae3a017fae027df322da3fd76823b2b7116dd7cce81d7e744e06b3a2",
+      "supporting_example_ids": [
+        "optimize0",
+        "optimize1",
+        "optimize2",
+        "optimize3",
+        "optimize4",
+        "optimize5"
+      ],
+      "repair_hypothesis": "Check constraints before transforming intermediate expressions.",
+      "intended_edit": "Add a bounded substitution check.",
+      "actual_diff": [
+        {
+          "operation": "replace",
+          "parent_span": [
+            19,
+            41
+          ],
+          "child_span": [
+            19,
+            20
+          ],
+          "removed_sha256": "416d6e78f14effe5629d0775948d34b124551c989c2b32ff838a5f7e42326fcd",
+          "added_sha256": "6b23c0d5f35d1b11f9b683f0b0a617355deb11277d91ae091d399c655b87940d",
+          "removed_characters": 22,
+          "added_characters": 1
+        },
+        {
+          "operation": "insert",
+          "parent_span": [
+            51,
+            51
+          ],
+          "child_span": [
+            30,
+            78
+          ],
+          "removed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "added_sha256": "a4f7b404187a09f181aeec47ef28862320b0fe404a187c1e3b70bbf96b4935e8",
+          "removed_characters": 0,
+          "added_characters": 48
+        }
+      ],
+      "action": "Add explicit constraint check, independent verification, substitution checks",
+      "attribution": "compound_edit_no_clause_causal_claim",
+      "expected_behavior": "Check constraints before transforming intermediate expressions.",
+      "effects": {
+        "mutation": {
+          "scope": "mutation_root",
+          "membership": [
+            "optimize0",
+            "optimize1",
+            "optimize11"
+          ],
+          "fixed_ids": [
+            "optimize0",
+            "optimize1"
+          ],
+          "broken_ids": [],
+          "retained_ids": [
+            "optimize11"
+          ],
+          "valid_wrong_ids": [],
+          "invalid_ids": [],
+          "invalid_delta": 0,
+          "member_delta": 2
+        },
+        "search_validation": {
+          "scope": "search_validation_root",
+          "membership": [
+            "optimize15",
+            "optimize2",
+            "optimize9"
+          ],
+          "fixed_ids": [
+            "optimize2"
+          ],
+          "broken_ids": [],
+          "retained_ids": [
+            "optimize15",
+            "optimize9"
+          ],
+          "valid_wrong_ids": [],
+          "invalid_ids": [],
+          "invalid_delta": 0,
+          "member_delta": 1
+        },
+        "actual_parent_validation": {
+          "scope": "search_validation_actual_parent",
+          "membership": [
+            "optimize15",
+            "optimize2",
+            "optimize9"
+          ],
+          "fixed_ids": [],
+          "broken_ids": [],
+          "retained_ids": [
+            "optimize15",
+            "optimize2",
+            "optimize9"
+          ],
+          "valid_wrong_ids": [],
+          "invalid_ids": [],
+          "invalid_delta": 0,
+          "member_delta": 0
+        },
+        "team_probe": {
+          "scope": "team_probe",
+          "membership": [
+            "optimize17",
+            "optimize3",
+            "optimize7"
+          ],
+          "fixed_ids": [
+            "optimize3"
+          ],
+          "broken_ids": [],
+          "retained_ids": [
+            "optimize17",
+            "optimize7"
+          ],
+          "valid_wrong_ids": [],
+          "invalid_ids": [],
+          "invalid_delta": 0,
+          "member_delta": 1,
+          "team_delta": 0
+        },
+        "full": {
+          "scope": "optimize_full",
+          "membership": [
+            "optimize0",
+            "optimize1",
+            "optimize10",
+            "optimize11",
+            "optimize12",
+            "optimize13",
+            "optimize14",
+            "optimize15",
+            "optimize16",
+            "optimize17",
+            "optimize2",
+            "optimize3",
+            "optimize4",
+            "optimize5",
+            "optimize6",
+            "optimize7",
+            "optimize8",
+            "optimize9"
+          ],
+          "fixed_ids": [
+            "optimize0",
+            "optimize1",
+            "optimize2",
+            "optimize3"
+          ],
+          "broken_ids": [],
+          "retained_ids": [
+            "optimize10",
+            "optimize11",
+            "optimize12",
+            "optimize13",
+            "optimize14",
+            "optimize15",
+            "optimize16",
+            "optimize17",
+            "optimize6",
+            "optimize7",
+            "optimize8",
+            "optimize9"
+          ],
+          "valid_wrong_ids": [
+            "optimize4",
+            "optimize5"
+          ],
+          "invalid_ids": [],
+          "invalid_delta": 0,
+          "member_delta": 4,
+          "team_delta": 0
+        }
+      },
+      "status": "COMMITTED",
+      "status_history": [
+        "PROPOSED",
+        "LOCALLY_SUPPORTED",
+        "FULL_SUPPORTED",
+        "COMMITTED"
+      ],
+      "provenance": {
+        "split": "optimize",
+        "generation": 2,
+        "evidence_packet_sha256": "e3fac8c94428f06f922e83eeb8d756c18740f044d0f89ff194d8bfb660f03c70",
+        "solver_interface": "MATH_SOLVER_INTERFACE_V6",
+        "local_request_identities": {
+          "root_mutation": {
+            "optimize0": "0a132815d14af05ab185b981c95c954c99d7ae9a744469ce3cfb6c4a353849c3",
+            "optimize1": "8124d9e4fb6ae40dfd214992ae4a0406eba0d8f84c2eb07f7e785a74003eda0e",
+            "optimize11": "1fe2f60ad2bae8ba6adced1600eedea8db226271d7103b9728c660347d08096d"
+          },
+          "root_validation": {
+            "optimize2": "0d2ce3cfd9b8ee624cd9de366febc1eed6a630c259e4e8855adac2b4fe9b739c",
+            "optimize15": "3a25e52e6cfe5e204c01a484d90b66b9718cbabb3c20b36f04ae6ef795e99523",
+            "optimize9": "c4c8b0476743a8ac85106e9f5f5c750d4713bf3d452cecae9661902ffdddf074"
+          },
+          "actual_parent_validation": {
+            "optimize2": "5c5c45c13a61fac9b5e28410ace42ea06984a73b9e2a79e9e323acb3713c2d0e",
+            "optimize15": "209adbd7359f306a4393b3f453d2165ca07f7e5b3794cfe66fb4a47072cdf88d",
+            "optimize9": "50187cca66c1db59f9d35abde034aa1e67724bc58b853f2d7c03537e392b5e15"
+          },
+          "child_mutation": {
+            "optimize0": "a3ffd06d2ca3e6a0bdedb20164c71c2397cd37c872f99953e3c46ff952086b37",
+            "optimize1": "4e6d31258bbc43fdfd302010d983661878d91da69c40a3954acd58b13078d3c3",
+            "optimize11": "14fdd8726e040bdb9e97a05706eb75420e09864cd8f0950497de113ca96448ea"
+          },
+          "child_validation": {
+            "optimize2": "d3055e419a13e287c1de97d1abe9d7b4affe80331a9841890ee54ab16e812582",
+            "optimize15": "7cf230fbc9895b3eb66f821693b85ffe383898aea8f342fe4e03e1065548ebbb",
+            "optimize9": "619cbd245a2c3a326bdad52a7e533ff374b337f8331936ed2732cfe7dce04d15"
+          }
+        }
+      },
+      "full_evaluation_parent_state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "actual_edit_description": "Add explicit constraint check, independent verification, substitution checks",
+      "diff_publication": "Verbatim synthetic procedure fragments withheld; lossless spans/text remain in ignored private record."
+    }
+  ]
+}

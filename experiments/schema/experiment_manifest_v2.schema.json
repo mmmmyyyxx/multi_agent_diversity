@@ -71,7 +71,8 @@
         "unified_team_prompt_search_v1",
         "unified_team_prompt_search_v2",
         "unified_team_prompt_search_v2_1",
-        "unified_team_prompt_search_v2_2"
+        "unified_team_prompt_search_v2_2",
+        "unified_team_prompt_search_v2_3"
       ]
     },
     "source_sha": {
@@ -405,7 +406,8 @@
             "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1",
             "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1",
             "MATH_V2_2_EXECUTION_BINDING_V1",
-            "MATH_V2_2_VISIBLE_TRAJECTORY_EXECUTION_BINDING_V1"
+            "MATH_V2_2_VISIBLE_TRAJECTORY_EXECUTION_BINDING_V1",
+            "MATH_OPTIMIZATION_EVIDENCE_BINDING_V1"
           ]
         },
         "path": {
@@ -748,6 +750,20 @@
             "optimizer_input_schema": "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5",
             "panel_policy": "pattern_gradient_representatives_preservation_transition_v5"
           }
+        },
+        {
+          "const": {
+            "identity_version": "INDEPENDENT_OPTIMIZE_VALIDATION_SEARCH_V1",
+            "metric_limit": 42,
+            "panel_size": 6,
+            "max_generations": 6,
+            "k_local_return": 4,
+            "max_prompt_chars": 3000,
+            "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+            "official_gepa_fidelity": false,
+            "optimizer_input_schema": "PATTERN_HYPOTHESIS_EDIT_EFFECT_INPUT_V6",
+            "panel_policy": "DISJOINT_ROTATING_OPTIMIZE_EVIDENCE_V1"
+          }
         }
       ]
     },
@@ -820,6 +836,28 @@
         "adaptive_split": "optimize",
         "hidden_reasoning_claim": false,
         "memory_trajectory_writes": false
+      }
+    },
+    "optimization_evidence_policy": {
+      "const": {
+        "identity": "OPTIMIZATION_EVIDENCE_POLICY_V1",
+        "mutation_size": 3,
+        "search_validation_size": 3,
+        "minimum_current_wrong": 4,
+        "minimum_current_correct": 6,
+        "team_probe_size": 3,
+        "max_generations": 6,
+        "max_returned_candidates": 4,
+        "metric_limit": 42,
+        "sampling": "seeded_member_rotation_without_replacement_v1",
+        "validation_feedback": "measure_after_generation_counts_only_next_iteration",
+        "selection": "validation_net_then_preservation_then_mutation_net_then_generation",
+        "bootstrap": "measured_initial_optimize_profiles_zero_llm",
+        "edit_memory": "actual_diff_and_scope_bound_coverage_v1",
+        "no_safe_edit": "no_candidate_no_success",
+        "reference_solution_split": "optimize",
+        "reference_solution_max_chars": 4096,
+        "candidate_guard": "optimizer_dependency_guard_v1"
       }
     }
   },
@@ -1310,143 +1348,183 @@
     },
     {
       "if": {
-        "anyOf": [
-          {
-            "required": [
-              "execution_binding"
-            ],
-            "properties": {
-              "execution_binding": {
-                "required": [
-                  "identity"
-                ],
-                "properties": {
-                  "identity": {
-                    "enum": [
-                      "MATH_V2_1_EXECUTION_BINDING_V3",
-                      "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
-                      "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
-                      "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
-                      "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1",
-                      "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1"
-                    ]
-                  }
-                }
-              }
-            }
-          },
-          {
-            "required": [
-              "memory_identity"
-            ],
-            "properties": {
-              "memory_identity": {
-                "const": "structured_cross_member_rolling_risk_memory_v4"
-              }
-            }
-          }
-        ]
-      },
-      "then": {
         "required": [
-          "solver_decoding_policy",
-          "prediction_validity_policy"
+          "execution_binding"
         ],
         "properties": {
-          "solver_output_interface_identity": {
-            "enum": [
-              "MATH_SOLVER_INTERFACE_V5",
-              "MATH_SOLVER_INTERFACE_V6"
-            ]
+          "execution_binding": {
+            "required": [
+              "identity"
+            ],
+            "properties": {
+              "identity": {
+                "const": "MATH_OPTIMIZATION_EVIDENCE_BINDING_V1"
+              }
+            }
           }
         }
       },
+      "then": {},
       "else": {
-        "not": {
-          "required": [
-            "prediction_validity_policy"
+        "if": {
+          "anyOf": [
+            {
+              "required": [
+                "execution_binding"
+              ],
+              "properties": {
+                "execution_binding": {
+                  "required": [
+                    "identity"
+                  ],
+                  "properties": {
+                    "identity": {
+                      "enum": [
+                        "MATH_V2_1_EXECUTION_BINDING_V3",
+                        "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
+                        "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
+                        "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
+                        "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1",
+                        "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "required": [
+                "memory_identity"
+              ],
+              "properties": {
+                "memory_identity": {
+                  "const": "structured_cross_member_rolling_risk_memory_v4"
+                }
+              }
+            }
           ]
+        },
+        "then": {
+          "required": [
+            "solver_decoding_policy",
+            "prediction_validity_policy"
+          ],
+          "properties": {
+            "solver_output_interface_identity": {
+              "enum": [
+                "MATH_SOLVER_INTERFACE_V5",
+                "MATH_SOLVER_INTERFACE_V6"
+              ]
+            }
+          }
+        },
+        "else": {
+          "not": {
+            "required": [
+              "prediction_validity_policy"
+            ]
+          }
         }
       }
     },
     {
       "if": {
-        "anyOf": [
-          {
-            "required": [
-              "execution_binding"
-            ],
-            "properties": {
-              "execution_binding": {
-                "required": [
-                  "identity"
-                ],
-                "properties": {
-                  "identity": {
-                    "enum": [
-                      "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
-                      "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
-                      "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
-                      "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1",
-                      "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1"
-                    ]
-                  }
-                }
-              }
-            }
-          },
-          {
-            "required": [
-              "memory_identity"
-            ],
-            "properties": {
-              "memory_identity": {
-                "const": "structured_cross_member_rolling_risk_memory_v4"
-              }
-            }
-          }
-        ]
-      },
-      "then": {
         "required": [
-          "invalid_recovery_policy",
-          "low_cost_protocol",
-          "low_cost_subsets_sha256"
+          "execution_binding"
         ],
         "properties": {
-          "prediction_validity_policy": {
-            "const": {
-              "identity": "MATH_PREDICTION_VALIDITY_V2",
-              "reference_failure": "hard_contract_failure",
-              "prediction_failure": "invalid_incorrect_continue",
-              "truncated_even_with_marker": "invalid_incorrect",
-              "invalid_response_retries": 3,
-              "fallback_extraction": false,
-              "invalid_vote": "excluded_from_equivalence_classes",
-              "denominator": "all_frozen_examples",
-              "invalidity_telemetry": "observation_only"
-            }
-          },
-          "initial_competence_binding": {
+          "execution_binding": {
+            "required": [
+              "identity"
+            ],
             "properties": {
               "identity": {
-                "const": "MATH_INITIAL_COMPETENCE_LOW_COST_V1"
-              },
-              "count": {
-                "enum": [
-                  12,
-                  60
-                ]
+                "const": "MATH_OPTIMIZATION_EVIDENCE_BINDING_V1"
               }
             }
           }
         }
       },
+      "then": {},
       "else": {
-        "not": {
-          "required": [
-            "invalid_recovery_policy"
+        "if": {
+          "anyOf": [
+            {
+              "required": [
+                "execution_binding"
+              ],
+              "properties": {
+                "execution_binding": {
+                  "required": [
+                    "identity"
+                  ],
+                  "properties": {
+                    "identity": {
+                      "enum": [
+                        "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V1",
+                        "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
+                        "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
+                        "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1",
+                        "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "required": [
+                "memory_identity"
+              ],
+              "properties": {
+                "memory_identity": {
+                  "const": "structured_cross_member_rolling_risk_memory_v4"
+                }
+              }
+            }
           ]
+        },
+        "then": {
+          "required": [
+            "invalid_recovery_policy",
+            "low_cost_protocol",
+            "low_cost_subsets_sha256"
+          ],
+          "properties": {
+            "prediction_validity_policy": {
+              "const": {
+                "identity": "MATH_PREDICTION_VALIDITY_V2",
+                "reference_failure": "hard_contract_failure",
+                "prediction_failure": "invalid_incorrect_continue",
+                "truncated_even_with_marker": "invalid_incorrect",
+                "invalid_response_retries": 3,
+                "fallback_extraction": false,
+                "invalid_vote": "excluded_from_equivalence_classes",
+                "denominator": "all_frozen_examples",
+                "invalidity_telemetry": "observation_only"
+              }
+            },
+            "initial_competence_binding": {
+              "properties": {
+                "identity": {
+                  "const": "MATH_INITIAL_COMPETENCE_LOW_COST_V1"
+                },
+                "count": {
+                  "enum": [
+                    12,
+                    60
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "else": {
+          "not": {
+            "required": [
+              "invalid_recovery_policy"
+            ]
+          }
         }
       }
     },
@@ -1527,258 +1605,298 @@
     },
     {
       "if": {
-        "anyOf": [
-          {
+        "required": [
+          "execution_binding"
+        ],
+        "properties": {
+          "execution_binding": {
             "required": [
-              "execution_binding"
+              "identity"
             ],
             "properties": {
-              "execution_binding": {
-                "required": [
-                  "identity"
-                ],
-                "properties": {
-                  "identity": {
-                    "enum": [
-                      "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
-                      "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
-                      "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1",
-                      "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1"
-                    ]
-                  }
-                }
-              }
-            }
-          },
-          {
-            "required": [
-              "memory_identity"
-            ],
-            "properties": {
-              "memory_identity": {
-                "const": "structured_cross_member_rolling_risk_memory_v4"
+              "identity": {
+                "const": "MATH_OPTIMIZATION_EVIDENCE_BINDING_V1"
               }
             }
           }
-        ]
+        }
       },
-      "then": {
-        "required": [
-          "optimizer_generation_policy",
-          "optimizer_amendment_authorization_sha256"
-        ]
-      },
+      "then": {},
       "else": {
-        "not": {
+        "if": {
           "anyOf": [
             {
               "required": [
-                "optimizer_generation_policy"
-              ]
+                "execution_binding"
+              ],
+              "properties": {
+                "execution_binding": {
+                  "required": [
+                    "identity"
+                  ],
+                  "properties": {
+                    "identity": {
+                      "enum": [
+                        "MATH_V2_1_LOW_COST_EXECUTION_BINDING_V2",
+                        "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
+                        "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1",
+                        "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1"
+                      ]
+                    }
+                  }
+                }
+              }
             },
             {
               "required": [
-                "optimizer_amendment_authorization_sha256"
-              ]
+                "memory_identity"
+              ],
+              "properties": {
+                "memory_identity": {
+                  "const": "structured_cross_member_rolling_risk_memory_v4"
+                }
+              }
             }
           ]
+        },
+        "then": {
+          "required": [
+            "optimizer_generation_policy",
+            "optimizer_amendment_authorization_sha256"
+          ]
+        },
+        "else": {
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "optimizer_generation_policy"
+                ]
+              },
+              {
+                "required": [
+                  "optimizer_amendment_authorization_sha256"
+                ]
+              }
+            ]
+          }
         }
       }
     },
     {
       "if": {
-        "anyOf": [
-          {
-            "required": [
-              "execution_binding"
-            ],
-            "properties": {
-              "execution_binding": {
-                "required": [
-                  "identity"
-                ],
-                "properties": {
-                  "identity": {
-                    "enum": [
-                      "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
-                      "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1",
-                      "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1"
-                    ]
-                  }
-                }
-              }
-            }
-          },
-          {
-            "required": [
-              "memory_identity"
-            ],
-            "properties": {
-              "memory_identity": {
-                "const": "structured_cross_member_rolling_risk_memory_v4"
-              }
-            }
-          }
-        ]
-      },
-      "then": {
         "required": [
-          "layer1_search_policy",
-          "candidate_contract_identity",
-          "post_search_validation_policy",
-          "solver_decoding_policy",
-          "optimizer_generation_policy"
+          "execution_binding"
         ],
         "properties": {
-          "search_engine_identity": {
-            "enum": [
-              "LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1",
-              "LAYER1_BOUNDED_MEMORY_SEARCH_V2"
-            ]
-          },
-          "search_acceptance_identity": {
-            "const": "layer1_local_guidance_team_admission_v1"
-          },
-          "cache_policy": {
+          "execution_binding": {
+            "required": [
+              "identity"
+            ],
             "properties": {
               "identity": {
-                "const": "SOLVER_MEMBER_LANE_EXACT_CACHE_V2"
+                "const": "MATH_OPTIMIZATION_EVIDENCE_BINDING_V1"
               }
-            }
-          },
-          "solver_decoding_policy": {
-            "const": {
-              "identity": "SOLVER_DECODING_POLICY_V2",
-              "enable_thinking": false,
-              "temperature": 0.2,
-              "top_p": 0.8,
-              "top_k": 20,
-              "min_p": 0,
-              "presence_penalty": 0,
-              "frequency_penalty": 0,
-              "max_output_tokens": 3600
-            }
-          },
-          "optimizer_generation_policy": {
-            "const": {
-              "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
-              "model": "qwen3.7-flash",
-              "roles": [
-                "reflection",
-                "pattern"
-              ],
-              "enable_thinking": false,
-              "temperature": 0.7,
-              "max_completion_tokens": 1800,
-              "max_tokens": "NOT_SENT",
-              "output_token_scope": "reasoning_plus_answer",
-              "measurement_tolerance_tokens": 10,
-              "accounting_output_ceiling": 1810,
-              "truncation": "existing_operational_output_truncation",
-              "top_p": 0.8,
-              "top_k": 20,
-              "presence_penalty": 1.5,
-              "frequency_penalty": 0
             }
           }
         }
       },
+      "then": {},
       "else": {
-        "not": {
+        "if": {
           "anyOf": [
             {
               "required": [
-                "layer1_search_policy"
-              ]
+                "execution_binding"
+              ],
+              "properties": {
+                "execution_binding": {
+                  "required": [
+                    "identity"
+                  ],
+                  "properties": {
+                    "identity": {
+                      "enum": [
+                        "MATH_V2_1_LAYER1_EXECUTION_BINDING_V3",
+                        "MATH_V2_1_LAYER1_MEMORY_EXECUTION_BINDING_V1",
+                        "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1"
+                      ]
+                    }
+                  }
+                }
+              }
             },
             {
               "required": [
-                "candidate_contract_identity"
-              ]
-            },
-            {
-              "required": [
-                "post_search_validation_policy"
-              ]
+                "memory_identity"
+              ],
+              "properties": {
+                "memory_identity": {
+                  "const": "structured_cross_member_rolling_risk_memory_v4"
+                }
+              }
             }
           ]
         },
-        "properties": {
-          "solver_decoding_policy": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "identity",
-              "enable_thinking",
-              "temperature",
-              "top_p",
-              "top_k",
-              "min_p",
-              "presence_penalty",
-              "frequency_penalty",
-              "max_output_tokens"
-            ],
-            "properties": {
-              "identity": {
-                "const": "SOLVER_DECODING_POLICY_V1",
-                "type": "string"
-              },
-              "enable_thinking": {
-                "const": false,
-                "type": "boolean"
-              },
-              "temperature": {
-                "const": 0.7,
-                "type": "number"
-              },
-              "top_p": {
-                "const": 0.8,
-                "type": "number"
-              },
-              "top_k": {
-                "const": 20,
-                "type": "integer"
-              },
-              "min_p": {
-                "const": 0,
-                "type": "integer"
-              },
-              "presence_penalty": {
-                "const": 0,
-                "type": "integer"
-              },
-              "frequency_penalty": {
-                "const": 0,
-                "type": "integer"
-              },
-              "max_output_tokens": {
-                "const": 3600,
-                "type": "integer"
+        "then": {
+          "required": [
+            "layer1_search_policy",
+            "candidate_contract_identity",
+            "post_search_validation_policy",
+            "solver_decoding_policy",
+            "optimizer_generation_policy"
+          ],
+          "properties": {
+            "search_engine_identity": {
+              "enum": [
+                "LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1",
+                "LAYER1_BOUNDED_MEMORY_SEARCH_V2"
+              ]
+            },
+            "search_acceptance_identity": {
+              "const": "layer1_local_guidance_team_admission_v1"
+            },
+            "cache_policy": {
+              "properties": {
+                "identity": {
+                  "const": "SOLVER_MEMBER_LANE_EXACT_CACHE_V2"
+                }
+              }
+            },
+            "solver_decoding_policy": {
+              "const": {
+                "identity": "SOLVER_DECODING_POLICY_V2",
+                "enable_thinking": false,
+                "temperature": 0.2,
+                "top_p": 0.8,
+                "top_k": 20,
+                "min_p": 0,
+                "presence_penalty": 0,
+                "frequency_penalty": 0,
+                "max_output_tokens": 3600
+              }
+            },
+            "optimizer_generation_policy": {
+              "const": {
+                "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+                "model": "qwen3.7-flash",
+                "roles": [
+                  "reflection",
+                  "pattern"
+                ],
+                "enable_thinking": false,
+                "temperature": 0.7,
+                "max_completion_tokens": 1800,
+                "max_tokens": "NOT_SENT",
+                "output_token_scope": "reasoning_plus_answer",
+                "measurement_tolerance_tokens": 10,
+                "accounting_output_ceiling": 1810,
+                "truncation": "existing_operational_output_truncation",
+                "top_p": 0.8,
+                "top_k": 20,
+                "presence_penalty": 1.5,
+                "frequency_penalty": 0
               }
             }
           }
         },
-        "allOf": [
-          {
-            "if": {
-              "properties": {
-                "method_family": {
-                  "const": "unified_team_prompt_search_v2_1"
-                }
+        "else": {
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "layer1_search_policy"
+                ]
+              },
+              {
+                "required": [
+                  "candidate_contract_identity"
+                ]
+              },
+              {
+                "required": [
+                  "post_search_validation_policy"
+                ]
               }
-            },
-            "then": {
+            ]
+          },
+          "properties": {
+            "solver_decoding_policy": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "identity",
+                "enable_thinking",
+                "temperature",
+                "top_p",
+                "top_k",
+                "min_p",
+                "presence_penalty",
+                "frequency_penalty",
+                "max_output_tokens"
+              ],
               "properties": {
-                "search_engine_identity": {
-                  "const": "gepa_derived_team_candidate_exposure_v2"
+                "identity": {
+                  "const": "SOLVER_DECODING_POLICY_V1",
+                  "type": "string"
                 },
-                "search_acceptance_identity": {
-                  "const": "local_survival_team_admission_decoupled_v1"
+                "enable_thinking": {
+                  "const": false,
+                  "type": "boolean"
+                },
+                "temperature": {
+                  "const": 0.7,
+                  "type": "number"
+                },
+                "top_p": {
+                  "const": 0.8,
+                  "type": "number"
+                },
+                "top_k": {
+                  "const": 20,
+                  "type": "integer"
+                },
+                "min_p": {
+                  "const": 0,
+                  "type": "integer"
+                },
+                "presence_penalty": {
+                  "const": 0,
+                  "type": "integer"
+                },
+                "frequency_penalty": {
+                  "const": 0,
+                  "type": "integer"
+                },
+                "max_output_tokens": {
+                  "const": 3600,
+                  "type": "integer"
                 }
               }
             }
-          }
-        ]
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "method_family": {
+                    "const": "unified_team_prompt_search_v2_1"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "search_engine_identity": {
+                    "const": "gepa_derived_team_candidate_exposure_v2"
+                  },
+                  "search_acceptance_identity": {
+                    "const": "local_survival_team_admission_decoupled_v1"
+                  }
+                }
+              }
+            }
+          ]
+        }
       }
     },
     {
@@ -2167,514 +2285,574 @@
     {
       "if": {
         "required": [
-          "pattern_support_id_transport"
-        ]
-      },
-      "then": {
+          "execution_binding"
+        ],
         "properties": {
           "execution_binding": {
+            "required": [
+              "identity"
+            ],
             "properties": {
               "identity": {
-                "enum": [
-                  "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1",
-                  "MATH_V2_2_EXECUTION_BINDING_V1",
-                  "MATH_V2_2_VISIBLE_TRAJECTORY_EXECUTION_BINDING_V1"
-                ]
+                "const": "MATH_OPTIMIZATION_EVIDENCE_BINDING_V1"
               }
             }
-          },
-          "mechanism_config": {
-            "required": [
-              "pattern_support_id_transport"
-            ]
           }
         }
-      }
-    },
-    {
-      "if": {
-        "required": [
-          "pattern_abstraction_guard"
-        ]
       },
-      "then": {
-        "properties": {
-          "execution_binding": {
-            "properties": {
-              "identity": {
-                "enum": [
-                  "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1",
-                  "MATH_V2_2_EXECUTION_BINDING_V1",
-                  "MATH_V2_2_VISIBLE_TRAJECTORY_EXECUTION_BINDING_V1"
-                ]
-              }
-            }
-          },
-          "mechanism_config": {
-            "required": [
-              "pattern_abstraction_guard"
-            ]
-          }
-        }
-      }
-    },
-    {
-      "if": {
-        "properties": {
-          "pattern_identity": {
-            "const": "gradient_cluster_pattern_discovery_v4"
-          }
+      "then": {},
+      "else": {
+        "if": {
+          "required": [
+            "pattern_support_id_transport"
+          ]
         },
-        "required": [
-          "pattern_identity"
-        ]
-      },
-      "then": {
-        "properties": {
-          "evidence_identity": {
-            "const": "pattern_gradient_representatives_preservation_transition_v5"
-          },
-          "execution_binding": {
-            "properties": {
-              "identity": {
-                "enum": [
-                  "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1",
-                  "MATH_V2_2_EXECUTION_BINDING_V1",
-                  "MATH_V2_2_VISIBLE_TRAJECTORY_EXECUTION_BINDING_V1"
-                ]
-              }
-            }
-          },
-          "layer1_search_policy": {
-            "anyOf": [
-              {
-                "const": {
-                  "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
-                  "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
-                  "k_local_return": 4,
-                  "max_generations": 6,
-                  "max_prompt_chars": 3000,
-                  "metric_limit": 36,
-                  "official_gepa_fidelity": false,
-                  "optimizer_input_schema": "PATTERN_GRADIENT_TRAJECTORIES_MEMORY_INPUT_V4",
-                  "panel_policy": "pattern_gradient_representatives_preservation_transition_v5",
-                  "panel_size": 6
-                }
-              },
-              {
-                "const": {
-                  "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
-                  "metric_limit": 36,
-                  "panel_size": 6,
-                  "max_generations": 6,
-                  "k_local_return": 4,
-                  "max_prompt_chars": 3000,
-                  "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
-                  "official_gepa_fidelity": false,
-                  "optimizer_input_schema": "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5",
-                  "panel_policy": "pattern_gradient_representatives_preservation_transition_v5"
-                }
-              }
-            ]
-          },
-          "mechanism_config": {
-            "additionalProperties": false,
-            "properties": {
-              "memory": {
-                "const": {
-                  "max_context_chars": 1200,
-                  "max_failure_entries_per_member": 5,
-                  "private_storage_limit": 24,
-                  "shared_storage_limit": 48,
-                  "top_k_private": 3,
-                  "top_k_shared": 3
-                }
-              },
-              "optimizer_input_schema": {
-                "enum": [
-                  "PATTERN_GRADIENT_TRAJECTORIES_MEMORY_INPUT_V4",
-                  "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5"
-                ]
-              },
-              "panel_policy": {
-                "const": "pattern_gradient_representatives_preservation_transition_v5"
-              },
-              "partition_completion_policy": {
-                "const": "GRADIENT_PATTERN_PARTITION_COMPLETION_V1"
-              },
-              "pattern_abstraction_guard": {},
-              "pattern_policy": {},
-              "pattern_provider_binding": {
-                "pattern": "^[a-f0-9]{64}$",
-                "type": "string"
-              },
-              "pattern_support_id_transport": {
-                "const": "PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1"
-              },
-              "shared_risk_policy": {
-                "const": {
-                  "failure_evidence_capacity": 240,
-                  "minimum_distinct_members": 2,
-                  "promotion_timing": "opportunity_commit",
-                  "recent_opportunity_window": 48,
-                  "retention": "recent_opportunity_recurrence_retention_v1",
-                  "retention_order": [
-                    "recent_recurrence",
-                    "recent_distinct_members",
-                    "same_lane",
-                    "last_seen",
-                    "semantic_key"
-                  ],
-                  "retrieval_order": [
-                    "same_lane",
-                    "compatible_family",
-                    "last_seen",
-                    "recent_recurrence",
-                    "semantic_key"
-                  ],
-                  "shared_event_capacity": 48,
-                  "signature": "closed_action_outcome_failure_signature_v1"
-                }
-              },
-              "gradient_recovery_policy": {
-                "const": {
-                  "identity": "PER_EXAMPLE_GRADIENT_CONTRACT_RECOVERY_V1",
-                  "max_physical_attempts_per_wrong": 3,
-                  "selection": "first_contract_valid",
-                  "logical_gradients_per_wrong": 1,
-                  "accepted_gradients_per_wrong": 1,
-                  "previous_invalid_output_visible": false,
-                  "same_provider_visible_request": true,
-                  "semantic_quality_selection": false,
-                  "llm_judge": false,
-                  "output_cache": false,
-                  "infrastructure_retry": false
-                }
-              },
-              "pattern_cluster_generation_policy": {
-                "const": {
-                  "identity": "PATTERN_CLUSTER_GENERATION_POLICY_V1",
-                  "model": "qwen3.7-flash",
-                  "roles": [
-                    "pattern_cluster"
-                  ],
-                  "enable_thinking": false,
-                  "temperature": 0.7,
-                  "max_completion_tokens": 8192,
-                  "max_tokens": "NOT_SENT",
-                  "output_token_scope": "reasoning_plus_answer",
-                  "measurement_tolerance_tokens": 10,
-                  "accounting_output_ceiling": 8202,
-                  "truncation": "existing_operational_output_truncation",
-                  "top_p": 0.8,
-                  "top_k": 20,
-                  "presence_penalty": 1.5,
-                  "frequency_penalty": 0
-                }
-              },
-              "solver_trajectory_policy": {
-                "const": {
-                  "identity": "MATH_VISIBLE_SOLUTION_FEEDBACK_POLICY_V1",
-                  "profile_schema": "MATH_VISIBLE_SOLVER_PROFILE_V1",
-                  "trajectory_schema": "MATH_VISIBLE_SOLVER_TRAJECTORY_V1",
-                  "gradient_input_schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V2",
-                  "gradient_prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V4",
-                  "optimizer_input_schema": "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5",
-                  "max_visible_solution_characters": 4096,
-                  "truncation": "unicode_prefix_explicit_metadata",
-                  "original_response_retention": "complete_private_resolved_prediction_and_attempts",
-                  "source": "ordinary_assistant_content",
-                  "adaptive_split": "optimize",
-                  "hidden_reasoning_claim": false,
-                  "memory_trajectory_writes": false
+        "then": {
+          "properties": {
+            "execution_binding": {
+              "properties": {
+                "identity": {
+                  "enum": [
+                    "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1",
+                    "MATH_V2_2_EXECUTION_BINDING_V1",
+                    "MATH_V2_2_VISIBLE_TRAJECTORY_EXECUTION_BINDING_V1"
+                  ]
                 }
               }
             },
-            "required": [
-              "memory",
-              "shared_risk_policy",
-              "optimizer_input_schema",
-              "panel_policy",
-              "pattern_policy",
-              "pattern_provider_binding",
-              "pattern_support_id_transport",
-              "pattern_abstraction_guard"
-            ],
-            "type": "object"
-          },
-          "memory_identity": {
-            "const": "structured_cross_member_rolling_risk_memory_v4"
-          },
-          "search_engine_identity": {
-            "const": "LAYER1_BOUNDED_MEMORY_SEARCH_V2"
+            "mechanism_config": {
+              "required": [
+                "pattern_support_id_transport"
+              ]
+            }
           }
-        },
+        }
+      }
+    },
+    {
+      "if": {
         "required": [
-          "execution_binding",
-          "mechanism_config",
-          "layer1_search_policy"
+          "execution_binding"
         ],
-        "oneOf": [
-          {
+        "properties": {
+          "execution_binding": {
+            "required": [
+              "identity"
+            ],
             "properties": {
-              "pattern_abstraction_guard": {
-                "const": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V3"
+              "identity": {
+                "const": "MATH_OPTIMIZATION_EVIDENCE_BINDING_V1"
+              }
+            }
+          }
+        }
+      },
+      "then": {},
+      "else": {
+        "if": {
+          "required": [
+            "pattern_abstraction_guard"
+          ]
+        },
+        "then": {
+          "properties": {
+            "execution_binding": {
+              "properties": {
+                "identity": {
+                  "enum": [
+                    "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1",
+                    "MATH_V2_2_EXECUTION_BINDING_V1",
+                    "MATH_V2_2_VISIBLE_TRAJECTORY_EXECUTION_BINDING_V1"
+                  ]
+                }
+              }
+            },
+            "mechanism_config": {
+              "required": [
+                "pattern_abstraction_guard"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "execution_binding"
+        ],
+        "properties": {
+          "execution_binding": {
+            "required": [
+              "identity"
+            ],
+            "properties": {
+              "identity": {
+                "const": "MATH_OPTIMIZATION_EVIDENCE_BINDING_V1"
+              }
+            }
+          }
+        }
+      },
+      "then": {},
+      "else": {
+        "if": {
+          "properties": {
+            "pattern_identity": {
+              "const": "gradient_cluster_pattern_discovery_v4"
+            }
+          },
+          "required": [
+            "pattern_identity"
+          ]
+        },
+        "then": {
+          "properties": {
+            "evidence_identity": {
+              "const": "pattern_gradient_representatives_preservation_transition_v5"
+            },
+            "execution_binding": {
+              "properties": {
+                "identity": {
+                  "enum": [
+                    "MATH_V2_1_PATTERN_AWARE_EXECUTION_BINDING_V1",
+                    "MATH_V2_2_EXECUTION_BINDING_V1",
+                    "MATH_V2_2_VISIBLE_TRAJECTORY_EXECUTION_BINDING_V1"
+                  ]
+                }
+              }
+            },
+            "layer1_search_policy": {
+              "anyOf": [
+                {
+                  "const": {
+                    "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+                    "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
+                    "k_local_return": 4,
+                    "max_generations": 6,
+                    "max_prompt_chars": 3000,
+                    "metric_limit": 36,
+                    "official_gepa_fidelity": false,
+                    "optimizer_input_schema": "PATTERN_GRADIENT_TRAJECTORIES_MEMORY_INPUT_V4",
+                    "panel_policy": "pattern_gradient_representatives_preservation_transition_v5",
+                    "panel_size": 6
+                  }
+                },
+                {
+                  "const": {
+                    "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
+                    "metric_limit": 36,
+                    "panel_size": 6,
+                    "max_generations": 6,
+                    "k_local_return": 4,
+                    "max_prompt_chars": 3000,
+                    "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+                    "official_gepa_fidelity": false,
+                    "optimizer_input_schema": "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5",
+                    "panel_policy": "pattern_gradient_representatives_preservation_transition_v5"
+                  }
+                }
+              ]
+            },
+            "mechanism_config": {
+              "additionalProperties": false,
+              "properties": {
+                "memory": {
+                  "const": {
+                    "max_context_chars": 1200,
+                    "max_failure_entries_per_member": 5,
+                    "private_storage_limit": 24,
+                    "shared_storage_limit": 48,
+                    "top_k_private": 3,
+                    "top_k_shared": 3
+                  }
+                },
+                "optimizer_input_schema": {
+                  "enum": [
+                    "PATTERN_GRADIENT_TRAJECTORIES_MEMORY_INPUT_V4",
+                    "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5"
+                  ]
+                },
+                "panel_policy": {
+                  "const": "pattern_gradient_representatives_preservation_transition_v5"
+                },
+                "partition_completion_policy": {
+                  "const": "GRADIENT_PATTERN_PARTITION_COMPLETION_V1"
+                },
+                "pattern_abstraction_guard": {},
+                "pattern_policy": {},
+                "pattern_provider_binding": {
+                  "pattern": "^[a-f0-9]{64}$",
+                  "type": "string"
+                },
+                "pattern_support_id_transport": {
+                  "const": "PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1"
+                },
+                "shared_risk_policy": {
+                  "const": {
+                    "failure_evidence_capacity": 240,
+                    "minimum_distinct_members": 2,
+                    "promotion_timing": "opportunity_commit",
+                    "recent_opportunity_window": 48,
+                    "retention": "recent_opportunity_recurrence_retention_v1",
+                    "retention_order": [
+                      "recent_recurrence",
+                      "recent_distinct_members",
+                      "same_lane",
+                      "last_seen",
+                      "semantic_key"
+                    ],
+                    "retrieval_order": [
+                      "same_lane",
+                      "compatible_family",
+                      "last_seen",
+                      "recent_recurrence",
+                      "semantic_key"
+                    ],
+                    "shared_event_capacity": 48,
+                    "signature": "closed_action_outcome_failure_signature_v1"
+                  }
+                },
+                "gradient_recovery_policy": {
+                  "const": {
+                    "identity": "PER_EXAMPLE_GRADIENT_CONTRACT_RECOVERY_V1",
+                    "max_physical_attempts_per_wrong": 3,
+                    "selection": "first_contract_valid",
+                    "logical_gradients_per_wrong": 1,
+                    "accepted_gradients_per_wrong": 1,
+                    "previous_invalid_output_visible": false,
+                    "same_provider_visible_request": true,
+                    "semantic_quality_selection": false,
+                    "llm_judge": false,
+                    "output_cache": false,
+                    "infrastructure_retry": false
+                  }
+                },
+                "pattern_cluster_generation_policy": {
+                  "const": {
+                    "identity": "PATTERN_CLUSTER_GENERATION_POLICY_V1",
+                    "model": "qwen3.7-flash",
+                    "roles": [
+                      "pattern_cluster"
+                    ],
+                    "enable_thinking": false,
+                    "temperature": 0.7,
+                    "max_completion_tokens": 8192,
+                    "max_tokens": "NOT_SENT",
+                    "output_token_scope": "reasoning_plus_answer",
+                    "measurement_tolerance_tokens": 10,
+                    "accounting_output_ceiling": 8202,
+                    "truncation": "existing_operational_output_truncation",
+                    "top_p": 0.8,
+                    "top_k": 20,
+                    "presence_penalty": 1.5,
+                    "frequency_penalty": 0
+                  }
+                },
+                "solver_trajectory_policy": {
+                  "const": {
+                    "identity": "MATH_VISIBLE_SOLUTION_FEEDBACK_POLICY_V1",
+                    "profile_schema": "MATH_VISIBLE_SOLVER_PROFILE_V1",
+                    "trajectory_schema": "MATH_VISIBLE_SOLVER_TRAJECTORY_V1",
+                    "gradient_input_schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V2",
+                    "gradient_prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V4",
+                    "optimizer_input_schema": "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5",
+                    "max_visible_solution_characters": 4096,
+                    "truncation": "unicode_prefix_explicit_metadata",
+                    "original_response_retention": "complete_private_resolved_prediction_and_attempts",
+                    "source": "ordinary_assistant_content",
+                    "adaptive_split": "optimize",
+                    "hidden_reasoning_claim": false,
+                    "memory_trajectory_writes": false
+                  }
+                }
               },
-              "mechanism_config": {
-                "properties": {
-                  "pattern_abstraction_guard": {
-                    "const": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V3"
-                  },
-                  "pattern_policy": {
-                    "const": {
-                      "discovery": "gradient_cluster_pattern_discovery_v4",
-                      "responsibility": "same_raw_pattern_responsibility_v1",
-                      "raw_value": "raw_responsibility_max_4D_2N_C_v1",
-                      "schema": "GRADIENT_PATTERN_PARTITION_V2",
-                      "correctness": "target_member_correctness_validity_v1",
-                      "universe": "all_selected_member_wrong_optimize",
-                      "gradient_policy": {
-                        "identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_V1",
-                        "schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V1",
-                        "max_characters": 400,
+              "required": [
+                "memory",
+                "shared_risk_policy",
+                "optimizer_input_schema",
+                "panel_policy",
+                "pattern_policy",
+                "pattern_provider_binding",
+                "pattern_support_id_transport",
+                "pattern_abstraction_guard"
+              ],
+              "type": "object"
+            },
+            "memory_identity": {
+              "const": "structured_cross_member_rolling_risk_memory_v4"
+            },
+            "search_engine_identity": {
+              "const": "LAYER1_BOUNDED_MEMORY_SEARCH_V2"
+            }
+          },
+          "required": [
+            "execution_binding",
+            "mechanism_config",
+            "layer1_search_policy"
+          ],
+          "oneOf": [
+            {
+              "properties": {
+                "pattern_abstraction_guard": {
+                  "const": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V3"
+                },
+                "mechanism_config": {
+                  "properties": {
+                    "pattern_abstraction_guard": {
+                      "const": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V3"
+                    },
+                    "pattern_policy": {
+                      "const": {
+                        "discovery": "gradient_cluster_pattern_discovery_v4",
+                        "responsibility": "same_raw_pattern_responsibility_v1",
+                        "raw_value": "raw_responsibility_max_4D_2N_C_v1",
+                        "schema": "GRADIENT_PATTERN_PARTITION_V2",
+                        "correctness": "target_member_correctness_validity_v1",
                         "universe": "all_selected_member_wrong_optimize",
-                        "logical_calls_per_wrong": 1,
-                        "successful_generations_per_wrong": 1,
+                        "gradient_policy": {
+                          "identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_V1",
+                          "schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V1",
+                          "max_characters": 400,
+                          "universe": "all_selected_member_wrong_optimize",
+                          "logical_calls_per_wrong": 1,
+                          "successful_generations_per_wrong": 1,
+                          "output_cache": false,
+                          "semantic_regeneration": false,
+                          "provider_role": "pattern_gradient",
+                          "generation_contract_role": "pattern",
+                          "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+                          "abstraction_guard": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V3"
+                        },
+                        "cluster_calls_per_opportunity": 1,
+                        "provider_role": "pattern_cluster",
                         "output_cache": false,
-                        "semantic_regeneration": false,
-                        "provider_role": "pattern_gradient",
                         "generation_contract_role": "pattern",
                         "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
-                        "abstraction_guard": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V3"
-                      },
-                      "cluster_calls_per_opportunity": 1,
-                      "provider_role": "pattern_cluster",
-                      "output_cache": false,
-                      "generation_contract_role": "pattern",
-                      "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
-                      "identity": "GENERALIZED_CORRECTIVE_GRADIENT_IDENTITY_V1",
-                      "selection": "raw_responsibility_then_canonical_identity",
-                      "generalized_gradient_max_characters": 600,
-                      "accounting": "wrong_universe_ceiling_plus_one_cluster_per_opportunity_v1",
-                      "input_limit_tokens": 991808,
-                      "context_limit_tokens": 1000000,
-                      "input_estimate": "serialized_utf8_bytes_plus_1024"
+                        "identity": "GENERALIZED_CORRECTIVE_GRADIENT_IDENTITY_V1",
+                        "selection": "raw_responsibility_then_canonical_identity",
+                        "generalized_gradient_max_characters": 600,
+                        "accounting": "wrong_universe_ceiling_plus_one_cluster_per_opportunity_v1",
+                        "input_limit_tokens": 991808,
+                        "context_limit_tokens": 1000000,
+                        "input_estimate": "serialized_utf8_bytes_plus_1024"
+                      }
                     }
                   }
                 }
               }
-            }
-          },
-          {
-            "properties": {
-              "pattern_abstraction_guard": {
-                "const": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V4"
-              },
-              "mechanism_config": {
-                "properties": {
-                  "pattern_abstraction_guard": {
-                    "const": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V4"
-                  },
-                  "pattern_policy": {
-                    "const": {
-                      "accounting": "wrong_universe_ceiling_plus_one_cluster_per_opportunity_v1",
-                      "cluster_calls_per_opportunity": 1,
-                      "context_limit_tokens": 1000000,
-                      "correctness": "target_member_correctness_validity_v1",
-                      "discovery": "gradient_cluster_pattern_discovery_v4",
-                      "generalized_gradient_max_characters": 600,
-                      "generation_contract_role": "pattern",
-                      "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
-                      "gradient_policy": {
-                        "abstraction_guard": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V4",
+            },
+            {
+              "properties": {
+                "pattern_abstraction_guard": {
+                  "const": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V4"
+                },
+                "mechanism_config": {
+                  "properties": {
+                    "pattern_abstraction_guard": {
+                      "const": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V4"
+                    },
+                    "pattern_policy": {
+                      "const": {
+                        "accounting": "wrong_universe_ceiling_plus_one_cluster_per_opportunity_v1",
+                        "cluster_calls_per_opportunity": 1,
+                        "context_limit_tokens": 1000000,
+                        "correctness": "target_member_correctness_validity_v1",
+                        "discovery": "gradient_cluster_pattern_discovery_v4",
+                        "generalized_gradient_max_characters": 600,
                         "generation_contract_role": "pattern",
                         "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
-                        "identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_V1",
-                        "logical_calls_per_wrong": 1,
-                        "max_characters": 400,
+                        "gradient_policy": {
+                          "abstraction_guard": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V4",
+                          "generation_contract_role": "pattern",
+                          "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+                          "identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_V1",
+                          "logical_calls_per_wrong": 1,
+                          "max_characters": 400,
+                          "output_cache": false,
+                          "prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V2",
+                          "provider_role": "pattern_gradient",
+                          "schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V1",
+                          "semantic_regeneration": false,
+                          "successful_generations_per_wrong": 1,
+                          "universe": "all_selected_member_wrong_optimize"
+                        },
+                        "identity": "GENERALIZED_CORRECTIVE_GRADIENT_IDENTITY_V1",
+                        "input_estimate": "serialized_utf8_bytes_plus_1024",
+                        "input_limit_tokens": 991808,
                         "output_cache": false,
-                        "prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V2",
-                        "provider_role": "pattern_gradient",
-                        "schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V1",
-                        "semantic_regeneration": false,
-                        "successful_generations_per_wrong": 1,
+                        "provider_role": "pattern_cluster",
+                        "raw_value": "raw_responsibility_max_4D_2N_C_v1",
+                        "responsibility": "same_raw_pattern_responsibility_v1",
+                        "schema": "GRADIENT_PATTERN_PARTITION_V2",
+                        "selection": "raw_responsibility_then_canonical_identity",
                         "universe": "all_selected_member_wrong_optimize"
-                      },
-                      "identity": "GENERALIZED_CORRECTIVE_GRADIENT_IDENTITY_V1",
-                      "input_estimate": "serialized_utf8_bytes_plus_1024",
-                      "input_limit_tokens": 991808,
-                      "output_cache": false,
-                      "provider_role": "pattern_cluster",
-                      "raw_value": "raw_responsibility_max_4D_2N_C_v1",
-                      "responsibility": "same_raw_pattern_responsibility_v1",
-                      "schema": "GRADIENT_PATTERN_PARTITION_V2",
-                      "selection": "raw_responsibility_then_canonical_identity",
-                      "universe": "all_selected_member_wrong_optimize"
+                      }
                     }
                   }
                 }
               }
-            }
-          },
-          {
-            "properties": {
-              "pattern_abstraction_guard": {
-                "const": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5"
-              },
-              "mechanism_config": {
-                "properties": {
-                  "pattern_abstraction_guard": {
-                    "const": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5"
-                  },
-                  "pattern_policy": {
-                    "const": {
-                      "discovery": "gradient_cluster_pattern_discovery_v4",
-                      "responsibility": "same_raw_pattern_responsibility_v1",
-                      "raw_value": "raw_responsibility_max_4D_2N_C_v1",
-                      "schema": "GRADIENT_PATTERN_PARTITION_V2",
-                      "correctness": "target_member_correctness_validity_v1",
-                      "universe": "all_selected_member_wrong_optimize",
-                      "gradient_policy": {
-                        "identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_V1",
-                        "prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3",
-                        "schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V1",
-                        "max_characters": 400,
+            },
+            {
+              "properties": {
+                "pattern_abstraction_guard": {
+                  "const": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5"
+                },
+                "mechanism_config": {
+                  "properties": {
+                    "pattern_abstraction_guard": {
+                      "const": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5"
+                    },
+                    "pattern_policy": {
+                      "const": {
+                        "discovery": "gradient_cluster_pattern_discovery_v4",
+                        "responsibility": "same_raw_pattern_responsibility_v1",
+                        "raw_value": "raw_responsibility_max_4D_2N_C_v1",
+                        "schema": "GRADIENT_PATTERN_PARTITION_V2",
+                        "correctness": "target_member_correctness_validity_v1",
                         "universe": "all_selected_member_wrong_optimize",
-                        "logical_calls_per_wrong": 1,
-                        "successful_generations_per_wrong": 1,
+                        "gradient_policy": {
+                          "identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_V1",
+                          "prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3",
+                          "schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V1",
+                          "max_characters": 400,
+                          "universe": "all_selected_member_wrong_optimize",
+                          "logical_calls_per_wrong": 1,
+                          "successful_generations_per_wrong": 1,
+                          "output_cache": false,
+                          "semantic_regeneration": false,
+                          "provider_role": "pattern_gradient",
+                          "generation_contract_role": "pattern",
+                          "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+                          "abstraction_guard": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5"
+                        },
+                        "cluster_calls_per_opportunity": 1,
+                        "provider_role": "pattern_cluster",
                         "output_cache": false,
-                        "semantic_regeneration": false,
-                        "provider_role": "pattern_gradient",
                         "generation_contract_role": "pattern",
                         "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
-                        "abstraction_guard": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V5"
-                      },
-                      "cluster_calls_per_opportunity": 1,
-                      "provider_role": "pattern_cluster",
-                      "output_cache": false,
-                      "generation_contract_role": "pattern",
-                      "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
-                      "identity": "GENERALIZED_CORRECTIVE_GRADIENT_IDENTITY_V1",
-                      "selection": "raw_responsibility_then_canonical_identity",
-                      "generalized_gradient_max_characters": 600,
-                      "accounting": "wrong_universe_ceiling_plus_one_cluster_per_opportunity_v1",
-                      "input_limit_tokens": 991808,
-                      "context_limit_tokens": 1000000,
-                      "input_estimate": "serialized_utf8_bytes_plus_1024"
+                        "identity": "GENERALIZED_CORRECTIVE_GRADIENT_IDENTITY_V1",
+                        "selection": "raw_responsibility_then_canonical_identity",
+                        "generalized_gradient_max_characters": 600,
+                        "accounting": "wrong_universe_ceiling_plus_one_cluster_per_opportunity_v1",
+                        "input_limit_tokens": 991808,
+                        "context_limit_tokens": 1000000,
+                        "input_estimate": "serialized_utf8_bytes_plus_1024"
+                      }
                     }
                   }
                 }
               }
-            }
-          },
-          {
-            "properties": {
-              "pattern_abstraction_guard": {
-                "const": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6"
-              },
-              "mechanism_config": {
-                "properties": {
-                  "pattern_abstraction_guard": {
-                    "const": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6"
-                  },
-                  "pattern_policy": {
-                    "anyOf": [
-                      {
-                        "const": {
-                          "discovery": "gradient_cluster_pattern_discovery_v4",
-                          "responsibility": "same_raw_pattern_responsibility_v1",
-                          "raw_value": "raw_responsibility_max_4D_2N_C_v1",
-                          "schema": "GRADIENT_PATTERN_PARTITION_V2",
-                          "correctness": "target_member_correctness_validity_v1",
-                          "universe": "all_selected_member_wrong_optimize",
-                          "gradient_policy": {
-                            "identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_V1",
-                            "prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3",
-                            "schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V1",
-                            "max_characters": 400,
+            },
+            {
+              "properties": {
+                "pattern_abstraction_guard": {
+                  "const": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6"
+                },
+                "mechanism_config": {
+                  "properties": {
+                    "pattern_abstraction_guard": {
+                      "const": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6"
+                    },
+                    "pattern_policy": {
+                      "anyOf": [
+                        {
+                          "const": {
+                            "discovery": "gradient_cluster_pattern_discovery_v4",
+                            "responsibility": "same_raw_pattern_responsibility_v1",
+                            "raw_value": "raw_responsibility_max_4D_2N_C_v1",
+                            "schema": "GRADIENT_PATTERN_PARTITION_V2",
+                            "correctness": "target_member_correctness_validity_v1",
                             "universe": "all_selected_member_wrong_optimize",
-                            "logical_calls_per_wrong": 1,
-                            "successful_generations_per_wrong": 1,
+                            "gradient_policy": {
+                              "identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_V1",
+                              "prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V3",
+                              "schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V1",
+                              "max_characters": 400,
+                              "universe": "all_selected_member_wrong_optimize",
+                              "logical_calls_per_wrong": 1,
+                              "successful_generations_per_wrong": 1,
+                              "output_cache": false,
+                              "semantic_regeneration": false,
+                              "provider_role": "pattern_gradient",
+                              "generation_contract_role": "pattern",
+                              "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+                              "abstraction_guard": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6"
+                            },
+                            "cluster_calls_per_opportunity": 1,
+                            "provider_role": "pattern_cluster",
                             "output_cache": false,
-                            "semantic_regeneration": false,
-                            "provider_role": "pattern_gradient",
                             "generation_contract_role": "pattern",
                             "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
-                            "abstraction_guard": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6"
-                          },
-                          "cluster_calls_per_opportunity": 1,
-                          "provider_role": "pattern_cluster",
-                          "output_cache": false,
-                          "generation_contract_role": "pattern",
-                          "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
-                          "identity": "GENERALIZED_CORRECTIVE_GRADIENT_IDENTITY_V1",
-                          "selection": "raw_responsibility_then_canonical_identity",
-                          "generalized_gradient_max_characters": 600,
-                          "accounting": "wrong_universe_ceiling_plus_one_cluster_per_opportunity_v1",
-                          "input_limit_tokens": 991808,
-                          "context_limit_tokens": 1000000,
-                          "input_estimate": "serialized_utf8_bytes_plus_1024"
-                        }
-                      },
-                      {
-                        "const": {
-                          "discovery": "gradient_cluster_pattern_discovery_v4",
-                          "responsibility": "same_raw_pattern_responsibility_v1",
-                          "raw_value": "raw_responsibility_max_4D_2N_C_v1",
-                          "schema": "GRADIENT_PATTERN_PARTITION_V2",
-                          "correctness": "target_member_correctness_validity_v1",
-                          "universe": "all_selected_member_wrong_optimize",
-                          "gradient_policy": {
-                            "identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_V1",
-                            "prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V4",
-                            "schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V2",
-                            "max_characters": 400,
+                            "identity": "GENERALIZED_CORRECTIVE_GRADIENT_IDENTITY_V1",
+                            "selection": "raw_responsibility_then_canonical_identity",
+                            "generalized_gradient_max_characters": 600,
+                            "accounting": "wrong_universe_ceiling_plus_one_cluster_per_opportunity_v1",
+                            "input_limit_tokens": 991808,
+                            "context_limit_tokens": 1000000,
+                            "input_estimate": "serialized_utf8_bytes_plus_1024"
+                          }
+                        },
+                        {
+                          "const": {
+                            "discovery": "gradient_cluster_pattern_discovery_v4",
+                            "responsibility": "same_raw_pattern_responsibility_v1",
+                            "raw_value": "raw_responsibility_max_4D_2N_C_v1",
+                            "schema": "GRADIENT_PATTERN_PARTITION_V2",
+                            "correctness": "target_member_correctness_validity_v1",
                             "universe": "all_selected_member_wrong_optimize",
-                            "logical_calls_per_wrong": 1,
-                            "successful_generations_per_wrong": 1,
+                            "gradient_policy": {
+                              "identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_V1",
+                              "prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V4",
+                              "schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V2",
+                              "max_characters": 400,
+                              "universe": "all_selected_member_wrong_optimize",
+                              "logical_calls_per_wrong": 1,
+                              "successful_generations_per_wrong": 1,
+                              "output_cache": false,
+                              "semantic_regeneration": false,
+                              "provider_role": "pattern_gradient",
+                              "generation_contract_role": "pattern",
+                              "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+                              "abstraction_guard": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6"
+                            },
+                            "cluster_calls_per_opportunity": 1,
+                            "provider_role": "pattern_cluster",
                             "output_cache": false,
-                            "semantic_regeneration": false,
-                            "provider_role": "pattern_gradient",
                             "generation_contract_role": "pattern",
                             "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
-                            "abstraction_guard": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6"
-                          },
-                          "cluster_calls_per_opportunity": 1,
-                          "provider_role": "pattern_cluster",
-                          "output_cache": false,
-                          "generation_contract_role": "pattern",
-                          "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
-                          "identity": "GENERALIZED_CORRECTIVE_GRADIENT_IDENTITY_V1",
-                          "selection": "raw_responsibility_then_canonical_identity",
-                          "generalized_gradient_max_characters": 600,
-                          "accounting": "wrong_universe_ceiling_plus_one_cluster_per_opportunity_v1",
-                          "input_limit_tokens": 991808,
-                          "context_limit_tokens": 1000000,
-                          "input_estimate": "serialized_utf8_bytes_plus_1024",
-                          "solver_trajectory_policy": {
-                            "identity": "MATH_VISIBLE_SOLUTION_FEEDBACK_POLICY_V1",
-                            "profile_schema": "MATH_VISIBLE_SOLVER_PROFILE_V1",
-                            "trajectory_schema": "MATH_VISIBLE_SOLVER_TRAJECTORY_V1",
-                            "gradient_input_schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V2",
-                            "gradient_prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V4",
-                            "optimizer_input_schema": "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5",
-                            "max_visible_solution_characters": 4096,
-                            "truncation": "unicode_prefix_explicit_metadata",
-                            "original_response_retention": "complete_private_resolved_prediction_and_attempts",
-                            "source": "ordinary_assistant_content",
-                            "adaptive_split": "optimize",
-                            "hidden_reasoning_claim": false,
-                            "memory_trajectory_writes": false
+                            "identity": "GENERALIZED_CORRECTIVE_GRADIENT_IDENTITY_V1",
+                            "selection": "raw_responsibility_then_canonical_identity",
+                            "generalized_gradient_max_characters": 600,
+                            "accounting": "wrong_universe_ceiling_plus_one_cluster_per_opportunity_v1",
+                            "input_limit_tokens": 991808,
+                            "context_limit_tokens": 1000000,
+                            "input_estimate": "serialized_utf8_bytes_plus_1024",
+                            "solver_trajectory_policy": {
+                              "identity": "MATH_VISIBLE_SOLUTION_FEEDBACK_POLICY_V1",
+                              "profile_schema": "MATH_VISIBLE_SOLVER_PROFILE_V1",
+                              "trajectory_schema": "MATH_VISIBLE_SOLVER_TRAJECTORY_V1",
+                              "gradient_input_schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V2",
+                              "gradient_prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V4",
+                              "optimizer_input_schema": "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5",
+                              "max_visible_solution_characters": 4096,
+                              "truncation": "unicode_prefix_explicit_metadata",
+                              "original_response_retention": "complete_private_resolved_prediction_and_attempts",
+                              "source": "ordinary_assistant_content",
+                              "adaptive_split": "optimize",
+                              "hidden_reasoning_claim": false,
+                              "memory_trajectory_writes": false
+                            }
                           }
                         }
-                      }
-                    ]
+                      ]
+                    }
                   }
                 }
               }
             }
-          }
-        ]
+          ]
+        }
       }
     },
     {
@@ -2971,21 +3149,41 @@
     {
       "if": {
         "required": [
-          "pattern_cluster_generation_policy"
-        ]
-      },
-      "then": {
+          "execution_binding"
+        ],
         "properties": {
-          "method_family": {
-            "const": "unified_team_prompt_search_v2_2"
-          },
           "execution_binding": {
+            "required": [
+              "identity"
+            ],
             "properties": {
               "identity": {
-                "enum": [
-                  "MATH_V2_2_EXECUTION_BINDING_V1",
-                  "MATH_V2_2_VISIBLE_TRAJECTORY_EXECUTION_BINDING_V1"
-                ]
+                "const": "MATH_OPTIMIZATION_EVIDENCE_BINDING_V1"
+              }
+            }
+          }
+        }
+      },
+      "then": {},
+      "else": {
+        "if": {
+          "required": [
+            "pattern_cluster_generation_policy"
+          ]
+        },
+        "then": {
+          "properties": {
+            "method_family": {
+              "const": "unified_team_prompt_search_v2_2"
+            },
+            "execution_binding": {
+              "properties": {
+                "identity": {
+                  "enum": [
+                    "MATH_V2_2_EXECUTION_BINDING_V1",
+                    "MATH_V2_2_VISIBLE_TRAJECTORY_EXECUTION_BINDING_V1"
+                  ]
+                }
               }
             }
           }
@@ -3004,103 +3202,71 @@
             ],
             "properties": {
               "identity": {
-                "const": "MATH_V2_2_VISIBLE_TRAJECTORY_EXECUTION_BINDING_V1"
+                "const": "MATH_OPTIMIZATION_EVIDENCE_BINDING_V1"
               }
             }
           }
         }
       },
-      "then": {
-        "required": [
-          "solver_trajectory_policy",
-          "layer1_search_policy",
-          "mechanism_config"
-        ],
-        "properties": {
-          "method_identity": {
-            "const": "unified_team_prompt_search_v2_2"
-          },
-          "method_family": {
-            "const": "unified_team_prompt_search_v2_2"
-          },
-          "solver_output_interface_identity": {
-            "const": "MATH_SOLVER_INTERFACE_V6"
-          },
-          "pattern_identity": {
-            "const": "gradient_cluster_pattern_discovery_v4"
-          },
-          "layer1_search_policy": {
-            "const": {
-              "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
-              "metric_limit": 36,
-              "panel_size": 6,
-              "max_generations": 6,
-              "k_local_return": 4,
-              "max_prompt_chars": 3000,
-              "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
-              "official_gepa_fidelity": false,
-              "optimizer_input_schema": "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5",
-              "panel_policy": "pattern_gradient_representatives_preservation_transition_v5"
-            }
-          },
-          "mechanism_config": {
-            "required": [
-              "solver_trajectory_policy"
-            ],
-            "properties": {
-              "solver_trajectory_policy": {
-                "const": {
-                  "identity": "MATH_VISIBLE_SOLUTION_FEEDBACK_POLICY_V1",
-                  "profile_schema": "MATH_VISIBLE_SOLVER_PROFILE_V1",
-                  "trajectory_schema": "MATH_VISIBLE_SOLVER_TRAJECTORY_V1",
-                  "gradient_input_schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V2",
-                  "gradient_prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V4",
-                  "optimizer_input_schema": "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5",
-                  "max_visible_solution_characters": 4096,
-                  "truncation": "unicode_prefix_explicit_metadata",
-                  "original_response_retention": "complete_private_resolved_prediction_and_attempts",
-                  "source": "ordinary_assistant_content",
-                  "adaptive_split": "optimize",
-                  "hidden_reasoning_claim": false,
-                  "memory_trajectory_writes": false
+      "then": {},
+      "else": {
+        "if": {
+          "required": [
+            "execution_binding"
+          ],
+          "properties": {
+            "execution_binding": {
+              "required": [
+                "identity"
+              ],
+              "properties": {
+                "identity": {
+                  "const": "MATH_V2_2_VISIBLE_TRAJECTORY_EXECUTION_BINDING_V1"
                 }
-              },
-              "pattern_policy": {
-                "const": {
-                  "discovery": "gradient_cluster_pattern_discovery_v4",
-                  "responsibility": "same_raw_pattern_responsibility_v1",
-                  "raw_value": "raw_responsibility_max_4D_2N_C_v1",
-                  "schema": "GRADIENT_PATTERN_PARTITION_V2",
-                  "correctness": "target_member_correctness_validity_v1",
-                  "universe": "all_selected_member_wrong_optimize",
-                  "gradient_policy": {
-                    "identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_V1",
-                    "prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V4",
-                    "schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V2",
-                    "max_characters": 400,
-                    "universe": "all_selected_member_wrong_optimize",
-                    "logical_calls_per_wrong": 1,
-                    "successful_generations_per_wrong": 1,
-                    "output_cache": false,
-                    "semantic_regeneration": false,
-                    "provider_role": "pattern_gradient",
-                    "generation_contract_role": "pattern",
-                    "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
-                    "abstraction_guard": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6"
-                  },
-                  "cluster_calls_per_opportunity": 1,
-                  "provider_role": "pattern_cluster",
-                  "output_cache": false,
-                  "generation_contract_role": "pattern",
-                  "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
-                  "identity": "GENERALIZED_CORRECTIVE_GRADIENT_IDENTITY_V1",
-                  "selection": "raw_responsibility_then_canonical_identity",
-                  "generalized_gradient_max_characters": 600,
-                  "accounting": "wrong_universe_ceiling_plus_one_cluster_per_opportunity_v1",
-                  "input_limit_tokens": 991808,
-                  "context_limit_tokens": 1000000,
-                  "input_estimate": "serialized_utf8_bytes_plus_1024",
-                  "solver_trajectory_policy": {
+              }
+            }
+          }
+        },
+        "then": {
+          "required": [
+            "solver_trajectory_policy",
+            "layer1_search_policy",
+            "mechanism_config"
+          ],
+          "properties": {
+            "method_identity": {
+              "const": "unified_team_prompt_search_v2_2"
+            },
+            "method_family": {
+              "const": "unified_team_prompt_search_v2_2"
+            },
+            "solver_output_interface_identity": {
+              "const": "MATH_SOLVER_INTERFACE_V6"
+            },
+            "pattern_identity": {
+              "const": "gradient_cluster_pattern_discovery_v4"
+            },
+            "layer1_search_policy": {
+              "const": {
+                "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
+                "metric_limit": 36,
+                "panel_size": 6,
+                "max_generations": 6,
+                "k_local_return": 4,
+                "max_prompt_chars": 3000,
+                "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+                "official_gepa_fidelity": false,
+                "optimizer_input_schema": "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5",
+                "panel_policy": "pattern_gradient_representatives_preservation_transition_v5"
+              }
+            },
+            "mechanism_config": {
+              "required": [
+                "solver_trajectory_policy"
+              ],
+              "properties": {
+                "solver_trajectory_policy": {
+                  "const": {
                     "identity": "MATH_VISIBLE_SOLUTION_FEEDBACK_POLICY_V1",
                     "profile_schema": "MATH_VISIBLE_SOLVER_PROFILE_V1",
                     "trajectory_schema": "MATH_VISIBLE_SOLVER_TRAJECTORY_V1",
@@ -3115,94 +3281,8 @@
                     "hidden_reasoning_claim": false,
                     "memory_trajectory_writes": false
                   }
-                }
-              },
-              "optimizer_input_schema": {
-                "const": "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5"
-              }
-            }
-          }
-        }
-      },
-      "else": {
-        "not": {
-          "required": [
-            "solver_trajectory_policy"
-          ]
-        },
-        "properties": {
-          "solver_output_interface_identity": {
-            "not": {
-              "const": "MATH_SOLVER_INTERFACE_V6"
-            }
-          },
-          "layer1_search_policy": {
-            "anyOf": [
-              {
-                "const": {
-                  "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
-                  "identity_version": "LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1",
-                  "k_local_return": 4,
-                  "max_generations": 6,
-                  "max_prompt_chars": 3000,
-                  "metric_limit": 36,
-                  "official_gepa_fidelity": false,
-                  "panel_size": 6
-                }
-              },
-              {
-                "const": {
-                  "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
-                  "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
-                  "k_local_return": 4,
-                  "max_generations": 6,
-                  "max_prompt_chars": 3000,
-                  "metric_limit": 36,
-                  "official_gepa_fidelity": false,
-                  "optimizer_input_schema": "LAYER1_CURRENT_EVIDENCE_MEMORY_INPUT_V2",
-                  "panel_policy": "single_mechanism_preservation_anchor_v3",
-                  "panel_size": 6
-                }
-              },
-              {
-                "const": {
-                  "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
-                  "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
-                  "k_local_return": 4,
-                  "max_generations": 6,
-                  "max_prompt_chars": 3000,
-                  "metric_limit": 36,
-                  "official_gepa_fidelity": false,
-                  "optimizer_input_schema": "PATTERN_CURRENT_EVIDENCE_MEMORY_INPUT_V3",
-                  "panel_policy": "pattern_representatives_preservation_transition_v4",
-                  "panel_size": 6
-                }
-              },
-              {
-                "const": {
-                  "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
-                  "metric_limit": 36,
-                  "panel_size": 6,
-                  "max_generations": 6,
-                  "k_local_return": 4,
-                  "max_prompt_chars": 3000,
-                  "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
-                  "official_gepa_fidelity": false,
-                  "optimizer_input_schema": "PATTERN_GRADIENT_TRAJECTORIES_MEMORY_INPUT_V4",
-                  "panel_policy": "pattern_gradient_representatives_preservation_transition_v5"
-                }
-              }
-            ]
-          },
-          "mechanism_config": {
-            "not": {
-              "required": [
-                "solver_trajectory_policy"
-              ]
-            },
-            "properties": {
-              "pattern_policy": {
-                "not": {
+                },
+                "pattern_policy": {
                   "const": {
                     "discovery": "gradient_cluster_pattern_discovery_v4",
                     "responsibility": "same_raw_pattern_responsibility_v1",
@@ -3253,12 +3333,432 @@
                       "memory_trajectory_writes": false
                     }
                   }
+                },
+                "optimizer_input_schema": {
+                  "const": "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5"
+                }
+              }
+            }
+          }
+        },
+        "else": {
+          "not": {
+            "required": [
+              "solver_trajectory_policy"
+            ]
+          },
+          "properties": {
+            "solver_output_interface_identity": {
+              "not": {
+                "const": "MATH_SOLVER_INTERFACE_V6"
+              }
+            },
+            "layer1_search_policy": {
+              "anyOf": [
+                {
+                  "const": {
+                    "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+                    "identity_version": "LAYER1_RESPONSIBILITY_CONDITIONED_SEARCH_V1",
+                    "k_local_return": 4,
+                    "max_generations": 6,
+                    "max_prompt_chars": 3000,
+                    "metric_limit": 36,
+                    "official_gepa_fidelity": false,
+                    "panel_size": 6
+                  }
+                },
+                {
+                  "const": {
+                    "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+                    "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
+                    "k_local_return": 4,
+                    "max_generations": 6,
+                    "max_prompt_chars": 3000,
+                    "metric_limit": 36,
+                    "official_gepa_fidelity": false,
+                    "optimizer_input_schema": "LAYER1_CURRENT_EVIDENCE_MEMORY_INPUT_V2",
+                    "panel_policy": "single_mechanism_preservation_anchor_v3",
+                    "panel_size": 6
+                  }
+                },
+                {
+                  "const": {
+                    "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+                    "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
+                    "k_local_return": 4,
+                    "max_generations": 6,
+                    "max_prompt_chars": 3000,
+                    "metric_limit": 36,
+                    "official_gepa_fidelity": false,
+                    "optimizer_input_schema": "PATTERN_CURRENT_EVIDENCE_MEMORY_INPUT_V3",
+                    "panel_policy": "pattern_representatives_preservation_transition_v4",
+                    "panel_size": 6
+                  }
+                },
+                {
+                  "const": {
+                    "identity_version": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
+                    "metric_limit": 36,
+                    "panel_size": 6,
+                    "max_generations": 6,
+                    "k_local_return": 4,
+                    "max_prompt_chars": 3000,
+                    "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+                    "official_gepa_fidelity": false,
+                    "optimizer_input_schema": "PATTERN_GRADIENT_TRAJECTORIES_MEMORY_INPUT_V4",
+                    "panel_policy": "pattern_gradient_representatives_preservation_transition_v5"
+                  }
+                }
+              ]
+            },
+            "mechanism_config": {
+              "not": {
+                "required": [
+                  "solver_trajectory_policy"
+                ]
+              },
+              "properties": {
+                "pattern_policy": {
+                  "not": {
+                    "const": {
+                      "discovery": "gradient_cluster_pattern_discovery_v4",
+                      "responsibility": "same_raw_pattern_responsibility_v1",
+                      "raw_value": "raw_responsibility_max_4D_2N_C_v1",
+                      "schema": "GRADIENT_PATTERN_PARTITION_V2",
+                      "correctness": "target_member_correctness_validity_v1",
+                      "universe": "all_selected_member_wrong_optimize",
+                      "gradient_policy": {
+                        "identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_V1",
+                        "prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V4",
+                        "schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V2",
+                        "max_characters": 400,
+                        "universe": "all_selected_member_wrong_optimize",
+                        "logical_calls_per_wrong": 1,
+                        "successful_generations_per_wrong": 1,
+                        "output_cache": false,
+                        "semantic_regeneration": false,
+                        "provider_role": "pattern_gradient",
+                        "generation_contract_role": "pattern",
+                        "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+                        "abstraction_guard": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6"
+                      },
+                      "cluster_calls_per_opportunity": 1,
+                      "provider_role": "pattern_cluster",
+                      "output_cache": false,
+                      "generation_contract_role": "pattern",
+                      "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+                      "identity": "GENERALIZED_CORRECTIVE_GRADIENT_IDENTITY_V1",
+                      "selection": "raw_responsibility_then_canonical_identity",
+                      "generalized_gradient_max_characters": 600,
+                      "accounting": "wrong_universe_ceiling_plus_one_cluster_per_opportunity_v1",
+                      "input_limit_tokens": 991808,
+                      "context_limit_tokens": 1000000,
+                      "input_estimate": "serialized_utf8_bytes_plus_1024",
+                      "solver_trajectory_policy": {
+                        "identity": "MATH_VISIBLE_SOLUTION_FEEDBACK_POLICY_V1",
+                        "profile_schema": "MATH_VISIBLE_SOLVER_PROFILE_V1",
+                        "trajectory_schema": "MATH_VISIBLE_SOLVER_TRAJECTORY_V1",
+                        "gradient_input_schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V2",
+                        "gradient_prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V4",
+                        "optimizer_input_schema": "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5",
+                        "max_visible_solution_characters": 4096,
+                        "truncation": "unicode_prefix_explicit_metadata",
+                        "original_response_retention": "complete_private_resolved_prediction_and_attempts",
+                        "source": "ordinary_assistant_content",
+                        "adaptive_split": "optimize",
+                        "hidden_reasoning_claim": false,
+                        "memory_trajectory_writes": false
+                      }
+                    }
+                  }
+                },
+                "optimizer_input_schema": {
+                  "not": {
+                    "const": "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "anyOf": [
+          {
+            "required": [
+              "execution_binding"
+            ],
+            "properties": {
+              "execution_binding": {
+                "required": [
+                  "identity"
+                ],
+                "properties": {
+                  "identity": {
+                    "const": "MATH_OPTIMIZATION_EVIDENCE_BINDING_V1"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "required": [
+              "method_family"
+            ],
+            "properties": {
+              "method_family": {
+                "const": "unified_team_prompt_search_v2_3"
+              }
+            }
+          }
+        ]
+      },
+      "then": {
+        "required": [
+          "method_family",
+          "method_identity",
+          "search_engine_identity",
+          "evidence_identity",
+          "memory_identity",
+          "transition_identity",
+          "search_acceptance_identity",
+          "feasibility_identity",
+          "adaptive_gate_identity",
+          "pattern_identity",
+          "solver_output_interface_identity",
+          "layer1_search_policy",
+          "optimization_evidence_policy",
+          "solver_trajectory_policy",
+          "mechanism_config",
+          "execution_binding"
+        ],
+        "properties": {
+          "method_family": {
+            "const": "unified_team_prompt_search_v2_3"
+          },
+          "method_identity": {
+            "const": "unified_team_prompt_search_v2_3"
+          },
+          "search_engine_identity": {
+            "const": "INDEPENDENT_OPTIMIZE_VALIDATION_SEARCH_V1"
+          },
+          "evidence_identity": {
+            "const": "DISJOINT_ROTATING_OPTIMIZE_EVIDENCE_V1"
+          },
+          "memory_identity": {
+            "const": "BOOTSTRAPPED_EDIT_EFFECT_ROLLING_MEMORY_V1"
+          },
+          "transition_identity": {
+            "const": "initial_competence_target_or_team_progress_v3"
+          },
+          "search_acceptance_identity": {
+            "const": "layer1_local_guidance_team_admission_v1"
+          },
+          "feasibility_identity": {
+            "const": "variable_evidence_feasibility_v1"
+          },
+          "adaptive_gate_identity": {
+            "const": "winner_only_shadow_v1"
+          },
+          "pattern_identity": {
+            "const": "gradient_cluster_pattern_discovery_v4"
+          },
+          "solver_output_interface_identity": {
+            "const": "MATH_SOLVER_INTERFACE_V6"
+          },
+          "layer1_search_policy": {
+            "const": {
+              "identity_version": "INDEPENDENT_OPTIMIZE_VALIDATION_SEARCH_V1",
+              "metric_limit": 42,
+              "panel_size": 6,
+              "max_generations": 6,
+              "k_local_return": 4,
+              "max_prompt_chars": 3000,
+              "candidate_contract": "SEMANTIC_MUTABLE_REASONING_CONTRACT_V2",
+              "official_gepa_fidelity": false,
+              "optimizer_input_schema": "PATTERN_HYPOTHESIS_EDIT_EFFECT_INPUT_V6",
+              "panel_policy": "DISJOINT_ROTATING_OPTIMIZE_EVIDENCE_V1"
+            }
+          },
+          "optimization_evidence_policy": {
+            "const": {
+              "identity": "OPTIMIZATION_EVIDENCE_POLICY_V1",
+              "mutation_size": 3,
+              "search_validation_size": 3,
+              "minimum_current_wrong": 4,
+              "minimum_current_correct": 6,
+              "team_probe_size": 3,
+              "max_generations": 6,
+              "max_returned_candidates": 4,
+              "metric_limit": 42,
+              "sampling": "seeded_member_rotation_without_replacement_v1",
+              "validation_feedback": "measure_after_generation_counts_only_next_iteration",
+              "selection": "validation_net_then_preservation_then_mutation_net_then_generation",
+              "bootstrap": "measured_initial_optimize_profiles_zero_llm",
+              "edit_memory": "actual_diff_and_scope_bound_coverage_v1",
+              "no_safe_edit": "no_candidate_no_success",
+              "reference_solution_split": "optimize",
+              "reference_solution_max_chars": 4096,
+              "candidate_guard": "optimizer_dependency_guard_v1"
+            }
+          },
+          "solver_trajectory_policy": {
+            "const": {
+              "identity": "MATH_VISIBLE_SOLUTION_FEEDBACK_POLICY_V1",
+              "profile_schema": "MATH_VISIBLE_SOLVER_PROFILE_V1",
+              "trajectory_schema": "MATH_VISIBLE_SOLVER_TRAJECTORY_V1",
+              "gradient_input_schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V2",
+              "gradient_prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V4",
+              "optimizer_input_schema": "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5",
+              "max_visible_solution_characters": 4096,
+              "truncation": "unicode_prefix_explicit_metadata",
+              "original_response_retention": "complete_private_resolved_prediction_and_attempts",
+              "source": "ordinary_assistant_content",
+              "adaptive_split": "optimize",
+              "hidden_reasoning_claim": false,
+              "memory_trajectory_writes": false
+            }
+          },
+          "mechanism_config": {
+            "required": [
+              "optimization_evidence_policy",
+              "solver_trajectory_policy",
+              "optimizer_input_schema",
+              "panel_policy",
+              "pattern_policy",
+              "memory",
+              "shared_risk_policy",
+              "pattern_provider_binding"
+            ],
+            "properties": {
+              "optimization_evidence_policy": {
+                "const": {
+                  "identity": "OPTIMIZATION_EVIDENCE_POLICY_V1",
+                  "mutation_size": 3,
+                  "search_validation_size": 3,
+                  "minimum_current_wrong": 4,
+                  "minimum_current_correct": 6,
+                  "team_probe_size": 3,
+                  "max_generations": 6,
+                  "max_returned_candidates": 4,
+                  "metric_limit": 42,
+                  "sampling": "seeded_member_rotation_without_replacement_v1",
+                  "validation_feedback": "measure_after_generation_counts_only_next_iteration",
+                  "selection": "validation_net_then_preservation_then_mutation_net_then_generation",
+                  "bootstrap": "measured_initial_optimize_profiles_zero_llm",
+                  "edit_memory": "actual_diff_and_scope_bound_coverage_v1",
+                  "no_safe_edit": "no_candidate_no_success",
+                  "reference_solution_split": "optimize",
+                  "reference_solution_max_chars": 4096,
+                  "candidate_guard": "optimizer_dependency_guard_v1"
+                }
+              },
+              "solver_trajectory_policy": {
+                "const": {
+                  "identity": "MATH_VISIBLE_SOLUTION_FEEDBACK_POLICY_V1",
+                  "profile_schema": "MATH_VISIBLE_SOLVER_PROFILE_V1",
+                  "trajectory_schema": "MATH_VISIBLE_SOLVER_TRAJECTORY_V1",
+                  "gradient_input_schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V2",
+                  "gradient_prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V4",
+                  "optimizer_input_schema": "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5",
+                  "max_visible_solution_characters": 4096,
+                  "truncation": "unicode_prefix_explicit_metadata",
+                  "original_response_retention": "complete_private_resolved_prediction_and_attempts",
+                  "source": "ordinary_assistant_content",
+                  "adaptive_split": "optimize",
+                  "hidden_reasoning_claim": false,
+                  "memory_trajectory_writes": false
                 }
               },
               "optimizer_input_schema": {
-                "not": {
-                  "const": "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5"
+                "const": "PATTERN_HYPOTHESIS_EDIT_EFFECT_INPUT_V6"
+              },
+              "panel_policy": {
+                "const": "DISJOINT_ROTATING_OPTIMIZE_EVIDENCE_V1"
+              },
+              "pattern_policy": {
+                "const": {
+                  "discovery": "gradient_cluster_pattern_discovery_v4",
+                  "responsibility": "same_raw_pattern_responsibility_v1",
+                  "raw_value": "raw_responsibility_max_4D_2N_C_v1",
+                  "schema": "GRADIENT_PATTERN_PARTITION_V2",
+                  "correctness": "target_member_correctness_validity_v1",
+                  "universe": "all_selected_member_wrong_optimize",
+                  "gradient_policy": {
+                    "identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_V1",
+                    "prompt_identity": "REFERENCE_SOLUTION_GRADIENT_PROMPT_V5",
+                    "schema": "REFERENCE_SOLUTION_GRADIENT_INPUT_V3",
+                    "max_characters": 400,
+                    "universe": "all_selected_member_wrong_optimize",
+                    "logical_calls_per_wrong": 1,
+                    "successful_generations_per_wrong": 1,
+                    "output_cache": false,
+                    "semantic_regeneration": false,
+                    "provider_role": "pattern_gradient",
+                    "generation_contract_role": "pattern",
+                    "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+                    "abstraction_guard": "PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6",
+                    "output_schema": "OBSERVATION_HYPOTHESIS_CORRECTION_EFFECT_V1",
+                    "nonactionable": "UNCERTAIN",
+                    "reference_solution": "separate_optimize_only_4096_unicode_prefix"
+                  },
+                  "cluster_calls_per_opportunity": 1,
+                  "provider_role": "pattern_cluster",
+                  "output_cache": false,
+                  "generation_contract_role": "pattern",
+                  "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+                  "identity": "GENERALIZED_CORRECTIVE_GRADIENT_IDENTITY_V1",
+                  "selection": "raw_responsibility_then_canonical_identity",
+                  "generalized_gradient_max_characters": 600,
+                  "accounting": "wrong_universe_ceiling_plus_one_cluster_per_opportunity_v1",
+                  "input_limit_tokens": 991808,
+                  "context_limit_tokens": 1000000,
+                  "input_estimate": "serialized_utf8_bytes_plus_1024",
+                  "solver_trajectory_policy": {
+                    "identity": "MATH_VISIBLE_SOLUTION_FEEDBACK_POLICY_V1",
+                    "profile_schema": "MATH_VISIBLE_SOLVER_PROFILE_V1",
+                    "trajectory_schema": "MATH_VISIBLE_SOLVER_TRAJECTORY_V1",
+                    "gradient_input_schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V2",
+                    "gradient_prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V4",
+                    "optimizer_input_schema": "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5",
+                    "max_visible_solution_characters": 4096,
+                    "truncation": "unicode_prefix_explicit_metadata",
+                    "original_response_retention": "complete_private_resolved_prediction_and_attempts",
+                    "source": "ordinary_assistant_content",
+                    "adaptive_split": "optimize",
+                    "hidden_reasoning_claim": false,
+                    "memory_trajectory_writes": false
+                  },
+                  "optimization_evidence_policy": {
+                    "identity": "OPTIMIZATION_EVIDENCE_POLICY_V1",
+                    "mutation_size": 3,
+                    "search_validation_size": 3,
+                    "minimum_current_wrong": 4,
+                    "minimum_current_correct": 6,
+                    "team_probe_size": 3,
+                    "max_generations": 6,
+                    "max_returned_candidates": 4,
+                    "metric_limit": 42,
+                    "sampling": "seeded_member_rotation_without_replacement_v1",
+                    "validation_feedback": "measure_after_generation_counts_only_next_iteration",
+                    "selection": "validation_net_then_preservation_then_mutation_net_then_generation",
+                    "bootstrap": "measured_initial_optimize_profiles_zero_llm",
+                    "edit_memory": "actual_diff_and_scope_bound_coverage_v1",
+                    "no_safe_edit": "no_candidate_no_success",
+                    "reference_solution_split": "optimize",
+                    "reference_solution_max_chars": 4096,
+                    "candidate_guard": "optimizer_dependency_guard_v1"
+                  }
                 }
+              }
+            }
+          },
+          "execution_binding": {
+            "properties": {
+              "identity": {
+                "const": "MATH_OPTIMIZATION_EVIDENCE_BINDING_V1"
               }
             }
           }

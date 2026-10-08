@@ -8564,9 +8564,39 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Versioned Solver output and feedback correction; mathematical scoring and search algorithm unchanged.
-  - Real-provider adherence and optimizer efficacy untested; separate fresh freeze and API authorization required.
+  - Versioned Solver output and feedback correction; mathematical scoring and search
+    algorithm unchanged.
+  - Real-provider adherence and optimizer efficacy untested; separate fresh freeze
+    and API authorization required.
   unavailable:
-    implementation_commit: Containing implementation publication commit; no self-referential SHA
+    implementation_commit: Containing implementation publication commit; no self-referential
+      SHA
     execution_commit: Zero API; no scientific execution
+    result_commit: Containing publication commit
+- experiment_id: math_optimization_evidence_v23
+  kind: ARCHITECTURE_REFACTOR
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_3
+  parent_ids:
+  - math_visible_solution_feedback_v1
+  - math_v2_2_optimizer_failure_audit_v1
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_SYNTHETIC_CONFORMANCE_EFFICACY_UNTESTED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/protocols/math_optimization_evidence_v23/protocol.json
+  report: reports/math_optimization_evidence_v23_20261008
+  classifier: reports/math_optimization_evidence_v23_20261008/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Versioned evidence, independent Optimize validation, rotating preservation and
+    measured edit Memory; Full transition unchanged.
+  - User stopped final regression before completion; 22 focused cases passed. Published
+    implementation is partially verified, with no real-model execution or efficacy claim.
+  unavailable:
+    implementation_commit: Containing publication commit; no self-referential SHA
+    execution_commit: No real scientific execution
     result_commit: Containing publication commit

@@ -313,6 +313,16 @@ visible_solution_validation_authorized: false
 visible_solution_test_authorized: false
 visible_solution_search_algorithm_changed: false
 visible_solution_scientific_runtime_identity_changed: true
+last_optimization_evidence_milestone: math_optimization_evidence_v23
+optimization_evidence_report: reports/math_optimization_evidence_v23_20261008
+optimization_evidence_method: unified_team_prompt_search_v2_3
+optimization_evidence_status: IMPLEMENTED_USER_STOP_FINAL_REGRESSION_INCOMPLETE
+optimization_evidence_stop_report: reports/math_optimization_evidence_v23_20261008/stop_summary.md
+optimization_evidence_offline_profile: experiments/execution_bindings/math_optimization_evidence_offline_profile_v1.json
+optimization_evidence_real_api_authorized: false
+optimization_evidence_validation_authorized: false
+optimization_evidence_test_authorized: false
+optimization_evidence_scientific_method_changed: true
 ```
 
 ## Experiment and engineering DAG
@@ -589,6 +599,7 @@ flowchart TD
     n290["math_v2_2_gradient_pattern_seed81_pilot_v2<br/>PILOT<br/>HOLD"]
     n291["math_v2_2_optimizer_failure_audit_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
     n292["math_visible_solution_feedback_v1<br/>BENCHMARK_MIGRATION<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n293["math_optimization_evidence_v23<br/>ARCHITECTURE_REFACTOR<br/>IMPLEMENTED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -810,6 +821,8 @@ flowchart TD
   n289 -->|followup_of| n290
   n290 -->|audit_of| n291
   n291 -->|followup_of| n292
+  n292 -->|followup_of| n293
+  n291 -->|followup_of| n293
 ```
 
 ## Archived branches and unresolved evidence

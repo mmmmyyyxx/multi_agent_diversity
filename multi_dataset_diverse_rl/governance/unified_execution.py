@@ -29,9 +29,11 @@ def execution_scope(manifest,contract):
         method=contract['method_identity'],transition=contract['transition_policy'],models=contract['models'],
         provider=contract['provider'],roles=['solver','reflection','pattern_gradient','pattern_cluster'],
         operational_pilot=contract['operational_pilot'],provider_bounds=contract['provider_bounds'],
-        initial_team_sha256=contract['initial_team_sha256'],initial_memory_entries=0,
+        initial_team_sha256=contract['initial_team_sha256'],initial_memory_entries=5 if contract.get('optimization_evidence_policy') else 0,
         user_scope_sha256=contract['current_user_scope_sha256'],validation_calls=0,test_calls=0,
         cumulative_token_ceiling=40_000_000,
+        **({'optimization_evidence_policy':contract['optimization_evidence_policy']}
+            if contract.get('optimization_evidence_policy') else {}),
         **({'pattern_cluster_generation_policy':contract['pattern_cluster_generation_policy']}
             if 'pattern_cluster_generation_policy' in contract else {}),
         **({'solver_output_interface':contract['solver_output_interface'],
@@ -46,7 +48,7 @@ def bound_preflight(root, manifest):
     ref=manifest.get('execution_binding',{})
     from .. import versions
     if ref.get('identity') not in {versions.MATH_V2_2_EXECUTION_BINDING_VERSION,
-            versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION}:
+            versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION, versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION}:
         return dict(gate='HOLD',blockers=[BINDING_BLOCKER],provider_attempts=0)
     errors=validate_manifest_v2(root,manifest)
     if manifest.get('lifecycle',{}).get('status')!='PREEXECUTION_FROZEN':errors.append('PREEXECUTION_NOT_FROZEN')
@@ -212,6 +214,8 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
         manifest['pattern_cluster_generation_policy']=contract['pattern_cluster_generation_policy']
     if 'solver_trajectory_policy' in contract:
         manifest['solver_trajectory_policy']=contract['solver_trajectory_policy']
+    if 'optimization_evidence_policy' in contract:
+        manifest['optimization_evidence_policy']=contract['optimization_evidence_policy']
     for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256", "optimizer_nonthinking_evidence_policy", "layer1_search_policy", "candidate_contract_identity", "post_search_validation_policy", "pattern_support_id_transport", "pattern_abstraction_guard"):
         if k in contract:manifest[k]=contract[k]
     manifest["preregistration_identity"] = canonical_sha256({k: v for k, v in manifest.items() if k not in {"lifecycle", "authorization"}})

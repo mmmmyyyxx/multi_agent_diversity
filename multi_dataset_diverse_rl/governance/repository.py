@@ -51,6 +51,8 @@ def validate_manifest_v2(root: Path, manifest: Mapping) -> list[str]:
         errors.append('cluster generation manifest and mechanism identities differ')
     if manifest.get('solver_trajectory_policy') != manifest.get('mechanism_config',{}).get('solver_trajectory_policy'):
         errors.append('Solver trajectory manifest and mechanism identities differ')
+    if manifest.get('optimization_evidence_policy') != manifest.get('mechanism_config',{}).get('optimization_evidence_policy'):
+        errors.append('optimization evidence manifest and mechanism identities differ')
     if auth.get('real_api_authorized') and (
         manifest.get('lifecycle',{}).get('status')=='DRAFT' or
         not auth.get('attempt_id') or not auth.get('authorization_identity')):

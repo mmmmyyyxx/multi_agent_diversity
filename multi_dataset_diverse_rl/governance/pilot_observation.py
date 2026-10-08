@@ -18,6 +18,9 @@ def memory_snapshot(memory):
         'risk_counts','counts','peak','evictions','context_lengths','read_private_count',
         'read_shared_count','write_count','limits')
     result={k:plain(getattr(memory,k)) for k in names}
+    if getattr(memory,'optimization_evidence_policy',None):
+        result['competence']=plain(memory.competence)
+        result['optimization_evidence_policy']=plain(memory.optimization_evidence_policy)
     for row,entry in zip(result['shared'],memory.shared,strict=True):
         row.update(memory_id=entry.memory_id,visible=entry.visible())
     result['audit']=plain(memory.audit())

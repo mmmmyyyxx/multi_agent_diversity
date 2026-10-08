@@ -40,7 +40,11 @@ def trajectory_policy():
 
 def frozen_trajectory_policy(contract):
     policy = contract.get('solver_trajectory_policy')
-    if contract.get('identity') == versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION:
+    if contract.get('identity') in {versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION, versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION}:
+        if contract.get('identity')==versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION:
+            from ..search.optimization_evidence import frozen_policy
+            if frozen_policy(contract.get('optimization_evidence_policy')) is None:
+                raise SearchContractError('OPTIMIZATION_EVIDENCE_POLICY_REQUIRED')
         from .math_v21_interface import v6_interface_contract
         expected = trajectory_policy()
         if (policy != expected or any(type(policy.get(k)) is not type(v) for k, v in expected.items())

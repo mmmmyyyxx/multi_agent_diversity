@@ -238,9 +238,13 @@ async def execute_search(root, prep, run_root, payload):
             raise OperationalAbort('PATTERN_GRADIENT_ACCOUNTING_INCOMPLETE')
         if c['execution_phase']=='canary' and not 1<=gradients.calls<=gradient_multiplier*c['initial_competence_binding']['count']:
             raise OperationalAbort('PATTERN_GRADIENT_CANARY_ACCOUNTING_INCOMPLETE')
-        if c['execution_phase']=='canary' and (pattern_provider.calls!=1 or not composed.evaluation.provider.probed):
+        nonactionable=(bool(c.get('optimization_evidence_policy')) and bool(result.trace)
+            and all(t.evidence_audit.get('nonactionable') for t in result.trace))
+        if c['execution_phase']=='canary' and not nonactionable and (pattern_provider.calls!=1 or not composed.evaluation.provider.probed):
             raise OperationalAbort('PATTERN_CANARY_FLOW_INCOMPLETE')
-        if c['execution_phase']=='pilot' and (pattern_provider.calls!=len(result.trace)
+        expected_clusters=(sum(t.evidence_audit.get('cluster_logical_calls',1) for t in result.trace)
+            if c.get('optimization_evidence_policy') else len(result.trace))
+        if c['execution_phase']=='pilot' and (pattern_provider.calls!=expected_clusters
                 or gradients.calls!=len(gradients.input_audit)
                 or not len(result.trace)<=gradients.calls<=gradient_multiplier*60*len(result.trace)):
             raise OperationalAbort('PATTERN_PILOT_FLOW_INCOMPLETE')

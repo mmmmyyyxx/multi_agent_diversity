@@ -1,0 +1,165 @@
+{
+  "schema_version": "offline_revision_user_stop_verification_v1",
+  "status": "PARTIALLY_VERIFIED_USER_STOP",
+  "source_start_sha": "3de088e42c0427a3c4b6a236331348eba0bb2f1a",
+  "historical_execution_sha": "6731aa3f345eff7feac12140b4892f4e07291d17",
+  "stopped_by_user": true,
+  "stop_date": "2026-10-08",
+  "stop_instruction": "停止，梳理实验情况并给出报告，推送",
+  "runner_processes_terminated": 4,
+  "runner_processes_remaining": 0,
+  "new_test_runs_after_stop": 0,
+  "completed_tests": [
+    {
+      "status": "PASS",
+      "command": "tests/formal_zero_api_runner.py tests/current/test_optimization_evidence_v23.py --suite current --junitxml=runs/math_optimization_evidence_v23_20261008/final_memory_bounds_complete_v2.xml",
+      "source_scope": "FINAL_SOURCE_FOCUSED_ONLY",
+      "passed": 22,
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "junit_sha256": "0c832cab0a4622f290a22820cac51c1b95d117b8368e6f840ac2656cca462c2e",
+      "skipped_cases": []
+    },
+    {
+      "status": "PASS",
+      "command": "tests/formal_zero_api_runner.py tests --suite current --junitxml=runs/math_optimization_evidence_v23_20261008/current_suite.xml",
+      "source_scope": "EARLIER_DEVELOPMENT_SOURCE_NOT_FINAL",
+      "passed": 1657,
+      "tests": 1659,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2,
+      "junit_sha256": "66b3c9f0cc0b6e225a6b0d6a329607b4a7fbfb44e6fdc82d7b22305684f5bb4a",
+      "skipped_cases": [
+        {
+          "test": "test_frozen_real_data_identity[hover]",
+          "reason": "USER_DEFERRED_DOWNLOAD: no frozen real-data manifest"
+        },
+        {
+          "test": "test_frozen_real_data_identity[pupa]",
+          "reason": "USER_DEFERRED_DOWNLOAD: no frozen real-data manifest"
+        }
+      ],
+      "historical_private_deselected": 1468
+    },
+    {
+      "status": "PASS",
+      "command": "tests/formal_zero_api_runner.py tests/current/test_optimization_evidence_v23.py tests/current/test_visible_solver_trajectories.py tests/test_unified_execution_governance.py --suite current --junitxml=runs/math_optimization_evidence_v23_20261008/focused_final.xml",
+      "source_scope": "EARLIER_DEVELOPMENT_SOURCE_NOT_FINAL",
+      "passed": 267,
+      "tests": 267,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "junit_sha256": "a85059b089cceb0b496793039735de774aba29ea60057b01cde1e0d39681c0c1",
+      "skipped_cases": []
+    }
+  ],
+  "interrupted_tests": [
+    {
+      "command": "tests/formal_zero_api_runner.py tests --suite current --junitxml=runs/math_optimization_evidence_v23_20261008/current_suite_final.xml",
+      "status": "INTERRUPTED",
+      "reason": "OWNER_RESTART_AFTER_NORMATIVE_SOURCE_HASH_REPAIR",
+      "complete_result": false,
+      "completion_xml_available": false,
+      "final_network_attempt_counter_available": false,
+      "passed": null,
+      "failures": null
+    },
+    {
+      "command": "tests/formal_zero_api_runner.py tests --suite current --junitxml=runs/math_optimization_evidence_v23_20261008/current_suite_release.xml",
+      "status": "INTERRUPTED",
+      "reason": "STOPPED_BY_USER",
+      "complete_result": false,
+      "completion_xml_available": false,
+      "final_network_attempt_counter_available": false,
+      "passed": null,
+      "failures": null
+    }
+  ],
+  "final_complete_current_suite_pass": false,
+  "final_source_files_unchanged_since_release_start": 865,
+  "network_guard_active_before_application_import": true,
+  "real_credentials_present": false,
+  "completed_test_application_network_attempts": 0,
+  "interrupted_test_final_network_attempt_count": null,
+  "real_provider_api_calls": 0,
+  "new_charged_tokens": 0,
+  "real_shadow_calls": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "compileall": {
+    "status": "PASS",
+    "command": "Python -m compileall -q multi_dataset_diverse_rl scripts tests/current/test_optimization_evidence_v23.py"
+  },
+  "governance": {
+    "status": "PASS",
+    "command": "tests/formal_zero_api_runner.py --offline-command scripts/audit_repository_governance.py --generate --out runs/math_optimization_evidence_v23_20261008/governance_stop_publication.json",
+    "registry_nodes": 294,
+    "lineage_edges": 186,
+    "historical_manifests": 166,
+    "reports": 304,
+    "source_hashes": {
+      "scientific_source_hash": "bb334b6fad2258ac2dc36f0fdb5d9e424fe6866a9fef9e9686003130d7739b5b",
+      "governance_hash": "cb18793adbe0537d34848519989e8fc0ecf1900e5d3f2704dba97dafb831d09f",
+      "benchmark_contract_hash": "8da0f96987ae73e262dcb849b88a2aec7e143bc9c965ddbe0513e56f4ddd2491"
+    },
+    "real_execution_ready": false
+  },
+  "synthetic_trace": {
+    "status": "PASS",
+    "real_model_efficacy": false,
+    "statuses": [
+      "FULL_REFUTED",
+      "COMMITTED"
+    ],
+    "command": "tests/formal_zero_api_runner.py --offline-command runs/math_optimization_evidence_v23_20261008/synthetic_report.py"
+  },
+  "integrity": {
+    "result": "PASS",
+    "parent_raw_file_counts": {
+      "attempt2": 1666,
+      "attempt1": 683
+    },
+    "historical_reports_verified": 4,
+    "parent_frozen_binding_and_manifest_unchanged": true,
+    "existing_authorization_closed": true,
+    "ledger_events_sha256": "30bc3df32d86919f163f1d2a236dd3f15a3a0527043ccd87b6bee15c5b78e4fb",
+    "ledger_bytes_unchanged": true,
+    "new_calls": 0,
+    "new_charged_tokens": 0,
+    "cumulative_charged_tokens": 4068192,
+    "cumulative_remaining_tokens": 35931808,
+    "reserved_inflight": 0,
+    "protected_content_absent_from_report": true,
+    "sanitization": "PASS",
+    "new_heldout_content_reads": 0,
+    "new_module_source_closure": true
+  },
+  "legacy_governance": {
+    "status": "BLOCKED_BY_EXISTING_BASELINE",
+    "baseline_registry_errors": [
+      "FAIL-V22-PILOT-RESOURCE-BOUND-NOT-FROZEN: missing fields ['symptom']",
+      "FAIL-V22-PILOT-RESOURCE-BOUND-NOT-FROZEN: invalid evidence_level",
+      "FAIL-V22-PATTERN-CLUSTER-1800-OUTPUT-TRUNCATION: invalid evidence_level"
+    ],
+    "baseline_error_count": 3,
+    "new_registry_errors": 0,
+    "legacy_cli_errors": [
+      "FAIL-V22-PILOT-RESOURCE-BOUND-NOT-FROZEN: missing fields ['symptom']; FAIL-V22-PILOT-RESOURCE-BOUND-NOT-FROZEN: invalid evidence_level; FAIL-V22-PATTERN-CLUSTER-1800-OUTPUT-TRUNCATION: invalid evidence_level"
+    ]
+  },
+  "sanitization": "PASS",
+  "diff_check": "PASS",
+  "scientific_method_changed": true,
+  "real_execution_status": "HOLD",
+  "unresolved": [
+    "Final complete current regression interrupted by user; not PASS.",
+    "1468 historical/private cases excluded; full historical replay not claimed.",
+    "Three unchanged legacy registry errors block legacy CLI.",
+    "No real efficacy, generalization or component causal evidence.",
+    "New matched baseline, source/manifest/binding/cache/access/accounting freeze and exact single-attempt authorization required."
+  ]
+}

@@ -42,6 +42,18 @@ errors, alongside the final prediction, reference, validity and correctness. Thi
 not proof of hidden reasoning. Respect missing/invalid-boundary/truncated status and
 feedback truncation metadata; do not invent omitted steps or copy solution fragments.'''
 
+REFERENCE_GRADIENT_PROMPT = '''Analyze only this one Optimize example. The written
+Solver trajectory is an observation, not hidden reasoning. The separately labeled
+reference_solution is the dataset's worked solution, not the Solver's response.
+Compare observable steps, final prediction, reference answer, validity and correctness.
+Return one JSON object: disposition (ACTIONABLE or UNCERTAIN), observed_failure,
+diagnosis, reusable_correction, expected_effect. Each text is at most 240 characters;
+reusable_correction at most 400. A diagnosis is a hypothesis, not a proven cause.
+If the evidence cannot support a safe reusable repair, use UNCERTAIN with null
+reusable_correction and null expected_effect. Otherwise supply an abstract correction
+and expected behavior. Do not copy example constants, answers or solution fragments
+into the correction, change the response interface, or infer other examples.'''
+
 CLUSTER_PROMPT = '''Compare the entire gradient set before forming clusters.
 Group gradients when they express the same reusable corrective reasoning behavior,
 even when their underlying mathematical questions differ. Merge paraphrastic or
@@ -80,7 +92,7 @@ POLICY = dict(discovery=versions.GRADIENT_PATTERN_DISCOVERY_VERSION,
     input_estimate='serialized_utf8_bytes_plus_1024')
 
 
-def pattern_policy_for_trajectory(policy=None):
+def pattern_policy_for_trajectory(policy=None, optimization_evidence_policy=None):
     value = deepcopy(POLICY)
     if policy is not None:
         from ..benchmarks.math_visible_trajectory import trajectory_policy
@@ -89,6 +101,14 @@ def pattern_policy_for_trajectory(policy=None):
         value['gradient_policy'].update(schema=versions.GRADIENT_VISIBLE_INPUT_VERSION,
             prompt_identity=versions.GRADIENT_VISIBLE_PROMPT_VERSION)
         value['solver_trajectory_policy'] = deepcopy(policy)
+    if optimization_evidence_policy is not None:
+        from .optimization_evidence import frozen_policy, GRADIENT_INPUT, GRADIENT_PROMPT_ID
+        frozen_policy(optimization_evidence_policy)
+        if policy is None:raise SearchContractError('REFERENCE_GRADIENT_REQUIRES_VISIBLE_SOLUTION')
+        value['gradient_policy'].update(schema=GRADIENT_INPUT,prompt_identity=GRADIENT_PROMPT_ID,
+            output_schema='OBSERVATION_HYPOTHESIS_CORRECTION_EFFECT_V1',nonactionable='UNCERTAIN',
+            reference_solution='separate_optimize_only_4096_unicode_prefix')
+        value['optimization_evidence_policy']=deepcopy(optimization_evidence_policy)
     return value
 
 
@@ -154,18 +174,26 @@ class PerExampleGradientProvider(_FreshSearchProvider):
         validate_policy(recovery_policy)
         from ..benchmarks.math_visible_trajectory import frozen_trajectory_policy
         self.solver_trajectory_policy = frozen_trajectory_policy(getattr(broker, 'contract', {}))
-        if self.solver_trajectory_policy is not None and prompt not in (None, VISIBLE_GRADIENT_PROMPT):
+        from .optimization_evidence import frozen_policy, GRADIENT_INPUT
+        self.optimization_evidence_policy=frozen_policy(getattr(broker,'contract',{}).get('optimization_evidence_policy'))
+        expected_prompt=REFERENCE_GRADIENT_PROMPT if self.optimization_evidence_policy else VISIBLE_GRADIENT_PROMPT
+        if self.solver_trajectory_policy is not None and prompt not in (None, expected_prompt):
             raise SearchContractError('MATH_VISIBLE_GRADIENT_PROMPT_MISMATCH')
         self.input_schema = (versions.GRADIENT_VISIBLE_INPUT_VERSION if self.solver_trajectory_policy
             else GRADIENT_POLICY['schema'])
+        if self.optimization_evidence_policy:
+            self.input_schema=GRADIENT_INPUT
+            if recovery_policy is not None:raise SearchContractError('REFERENCE_GRADIENT_RECOVERY_UNBOUND')
         super().__init__(broker,prompt if prompt is not None else
-            VISIBLE_GRADIENT_PROMPT if self.solver_trajectory_policy else GRADIENT_PROMPT)
+            expected_prompt if self.solver_trajectory_policy else GRADIENT_PROMPT)
         self.numeric_guard_writer=numeric_guard_writer
         self.recovery_policy=deepcopy(recovery_policy);self.recovery_writer=recovery_writer
     def extract(self,payload):
         expected={'example_id','problem','reference','prediction','valid','responsibility_labels','team_margin','team_disagreement'}
         if self.solver_trajectory_policy is not None:
             expected.add('solver_trajectory')
+        if self.optimization_evidence_policy:
+            expected={'example_id','problem','reference','reference_solution','prediction','valid','correct','solver_trajectory'}
         if (not isinstance(payload,dict) or set(payload)!={'schema','current_member_procedure','example'}
                 or payload['schema']!=self.input_schema
                 or not isinstance(payload['current_member_procedure'],str)
@@ -179,6 +207,16 @@ class PerExampleGradientProvider(_FreshSearchProvider):
                 problem=payload['example']['problem'])
             if trajectory['prediction_valid'] is not payload['example']['valid']:
                 raise SearchContractError('MATH_TRAJECTORY_ADAPTIVE_PROVENANCE_MISMATCH')
+        if self.optimization_evidence_policy:
+            ref=payload['example']['reference_solution']
+            if (not isinstance(ref,dict) or set(ref)!={'source','example_id','split','text','original_characters','truncated'}
+                    or ref['source']!='dataset_worked_solution' or ref['split']!='optimize'
+                    or ref['example_id']!=payload['example']['example_id'] or payload['example']['correct'] is not False
+                    or not isinstance(ref['text'],str) or not 0<len(ref['text'])<=4096
+                    or type(ref['original_characters']) is not int or type(ref['truncated']) is not bool
+                    or ref['original_characters']<len(ref['text'])
+                    or ref['truncated']!=(ref['original_characters']>len(ref['text']))):
+                raise SearchContractError('OPTIMIZE_REFERENCE_SOLUTION_PROVENANCE_REQUIRED')
         return self._call(payload)
 
 
@@ -253,6 +291,8 @@ class GradientExtractor:
         if wrong_universe(rows)!=rows:raise SearchContractError('PATTERN_GRADIENT_WRONG_UNIVERSE_REQUIRED')
         if not rows or len({r.example_id for r in rows})!=len(rows):
             raise SearchContractError('PATTERN_GRADIENT_WRONG_UNIVERSE_REQUIRED')
+        if getattr(self.provider,'optimization_evidence_policy',None):
+            return self._extract_reference(procedure,rows)
         if getattr(self.provider,'recovery_policy',None) is not None:
             from .gradient_recovery import extract_first_valid
             return extract_first_valid(self,procedure,rows)
@@ -270,6 +310,35 @@ class GradientExtractor:
                 writer=getattr(self.provider,'numeric_guard_writer',None)
                 if writer is not None:writer(audit)
             gradients.append(dict(example_id=row.example_id,gradient=validate_gradient(value['gradient'],(row,))))
+        return tuple(gradients)
+
+    def _extract_reference(self,procedure,rows):
+        from .optimization_evidence import GRADIENT_INPUT
+        gradients=[];self.evidence_diagnostics=[]
+        for row in rows:
+            example=single_failure_example(row)
+            solution=row.signals.get('reference_solution')
+            if not isinstance(solution,str) or not solution.strip():
+                raise SearchContractError('OPTIMIZE_REFERENCE_SOLUTION_REQUIRED')
+            example={k:example[k] for k in ('example_id','problem','reference','prediction','valid','solver_trajectory')}
+            example.update(correct=False,reference_solution=dict(source='dataset_worked_solution',
+                example_id=row.example_id,split='optimize',text=solution[:4096],
+                original_characters=len(solution),truncated=len(solution)>4096))
+            value=self.provider.extract(dict(schema=GRADIENT_INPUT,current_member_procedure=procedure,example=example))
+            if (not isinstance(value,dict) or set(value)!= {'disposition','observed_failure','diagnosis','reusable_correction','expected_effect'}
+                    or value['disposition'] not in {'ACTIONABLE','UNCERTAIN'}
+                    or any(not isinstance(value[k],str) or not value[k].strip() or len(value[k])>240
+                        for k in ('observed_failure','diagnosis'))):
+                raise SearchContractError('REFERENCE_GRADIENT_OUTPUT_INVALID')
+            if value['disposition']=='UNCERTAIN':
+                if value['reusable_correction'] is not None or value['expected_effect'] is not None:
+                    raise SearchContractError('REFERENCE_GRADIENT_OUTPUT_INVALID')
+            else:
+                if not isinstance(value['expected_effect'],str) or not 0<len(value['expected_effect'])<=240:
+                    raise SearchContractError('REFERENCE_GRADIENT_OUTPUT_INVALID')
+                gradients.append(dict(example_id=row.example_id,
+                    gradient=validate_gradient(value['reusable_correction'],(row,))))
+            self.evidence_diagnostics.append(dict(example_id=row.example_id,**value))
         return tuple(gradients)
 
 
@@ -352,11 +421,24 @@ class GradientPatternDiscovery:
         self.attempted_opportunities.add(key)
         recovery_start=len(self.extractor.recovery_audit)
         gradients=self.extractor.extract(state.member_prompts[target_member],rows)
+        rich=bool(getattr(self.extractor.provider,'optimization_evidence_policy',None))
+        diagnostics=deepcopy(getattr(self.extractor,'evidence_diagnostics',[])) if rich else None
+        if rich:
+            actionable={g['example_id'] for g in gradients}
+            rows=tuple(r for r in rows if r.example_id in actionable)
+            if not rows:
+                return dict(patterns=(),per_example_gradients=(),focus_mechanism_id=None,
+                    gradient_diagnostics=diagnostics,nonactionable=True,
+                    gradient_logical_calls=len(diagnostics),cluster_logical_calls=0)
         payload={'gradients':[dict(g) for g in gradients]}
         completion=getattr(self.cluster_provider,'partition_completion_policy',None)
         value=(self.cluster_provider.cluster(payload,evidence_rows=rows) if completion is not None
             else self.cluster_provider.cluster(payload))
         context=score_gradient_partition(value,rows,gradients)
+        if rich:
+            context.update(gradient_diagnostics=diagnostics,gradient_logical_calls=len(diagnostics),
+                gradient_physical_calls=len(diagnostics),total_pattern_meta_calls=len(diagnostics)+1,
+                nonactionable_count=len(diagnostics)-len(gradients))
         if getattr(self.extractor.provider,'recovery_policy',None) is not None:
             from .gradient_recovery import statistics
             events=self.extractor.recovery_audit[recovery_start:]
@@ -397,3 +479,35 @@ class GradientPatternConditionedEvidence:
         return view,{**audit,'failure_trajectory_count':sum('REPAIR' in r.roles for r in view.mutation_evidence),
             'per_example_gradients_retained':True,'trajectory_is_full_reasoning_trace':False,
             'ordinary_visible_solution_evidence':any('solver_trajectory' in r.signals for r in rows)}
+
+
+class DisjointGradientEvidence(GradientPatternConditionedEvidence):
+    """Same Pattern hypothesis, separately measured Optimize scopes."""
+    def __init__(self,seed,policy):
+        from .optimization_evidence import EVIDENCE, frozen_policy
+        self.identity=EVIDENCE;self.seed=seed;self.policy=frozen_policy(policy)
+        self.metric_budget=42;self.minimum=3
+
+    def can_compose(self,rows):
+        # Before Gradient calls: reserve legal rows even for singleton support.
+        # This is a technical role-capacity check, not a local acceptance veto.
+        return (sum(r.signals['target_member_correct'] for r in rows)>=self.policy['minimum_current_correct']
+            and sum(not r.signals['target_member_correct'] for r in rows)>=self.policy['minimum_current_wrong'])
+
+    def compose_opportunity(self,state,diagnosis,member_id,rows,context,*,ordinal):
+        from .selected_evidence import compose_disjoint_evidence
+        view,audit=compose_disjoint_evidence(rows,context,seed=self.seed,member=member_id,ordinal=ordinal)
+        gradients={g['example_id']:g['gradient'] for g in context.get('per_example_gradients',())}
+        def enrich(row):
+            if 'REPAIR' not in row.roles:return row
+            if row.example_id not in gradients:raise SearchContractError('PATTERN_GRADIENT_TRAJECTORY_MISSING')
+            s=row.signals
+            return replace(row,signals={**s,'failure_trajectory':dict(
+                problem=s['input_payload'],reference=s['gold'],prediction=s.get('target_output'),
+                solver_trajectory=s['solver_trajectory'],per_example_gradient=gradients[row.example_id]),
+                'per_example_gradient':gradients[row.example_id]})
+        # Validation records do not become mutation input.
+        return replace(view,mutation_evidence=tuple(map(enrich,view.mutation_evidence))),{
+            **audit,'nonactionable':bool(context.get('nonactionable')),
+            'gradient_logical_calls':context.get('gradient_logical_calls',0),
+            'cluster_logical_calls':context.get('cluster_logical_calls',1)}

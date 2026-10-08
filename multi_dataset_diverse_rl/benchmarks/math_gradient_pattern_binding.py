@@ -116,7 +116,8 @@ class MATHGradientPatternBinding:
             partition_completion_policy=c.get('partition_completion_policy'),
             gradient_recovery_policy=c.get('gradient_recovery_policy'),
             pattern_cluster_generation_policy=c.get('pattern_cluster_generation_policy'),
-            solver_trajectory_policy=c.get('solver_trajectory_policy'))
+            solver_trajectory_policy=c.get('solver_trajectory_policy'),
+            optimization_evidence_policy=c.get('optimization_evidence_policy'))
 
     def _compose(self,*,arm,seed,solver,reflection,pattern_provider,run_root,optimize_fn=None):
         blockers=self.blockers()
@@ -154,4 +155,7 @@ class MATHGradientPatternBinding:
         b=self.benchmark()
         from ..search.binary_runtime import CorrectnessExample
         return tuple(CorrectnessExample(protocol_input('math',r['stable_example_id'],r['content'],b.output_contract,
-            protocol=b.protocol),r['reference_final_answer']) for r in rows)
+            protocol=b.protocol),r['reference_final_answer'],
+            r['content']['solution'] if role=='optimize' and c.get('optimization_evidence_policy') else None,
+            tuple((k,str(r['content'][k])) for k in ('type','level'))
+                if role=='optimize' and c.get('optimization_evidence_policy') else ()) for r in rows)

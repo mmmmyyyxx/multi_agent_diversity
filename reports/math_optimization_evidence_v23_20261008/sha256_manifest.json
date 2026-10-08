@@ -1,0 +1,41 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "classifier.json",
+      "sha256": "e2e5eec15594861bdf9e01c8809efbfb9cc0903ce630be00039b97f3858ed87e"
+    },
+    {
+      "file": "implementation.md",
+      "sha256": "33c167906906fd4f94d9e626cb7090c9b38727502a871abd039938ae376314e6"
+    },
+    {
+      "file": "information_flow_audit.md",
+      "sha256": "c0ef4964756c6f424fcce6242e96bc46c18f3246eacbcc0859d74653fea44f86"
+    },
+    {
+      "file": "README.md",
+      "sha256": "f1be06ae3861d1be671ee87f1d4510ed975a444169666147eb799f5898d652c2"
+    },
+    {
+      "file": "stop_summary.md",
+      "sha256": "a8a6522b70ebe26c14c242ceb617ef647f75369827ed48f752cd4fdfa4de9fb9"
+    },
+    {
+      "file": "synthetic_memory_records.json",
+      "sha256": "7e4dc8ae9d92feeb5f890c54b14ddb726f7fd4a69ee84ca2225435dfbd22b45f"
+    },
+    {
+      "file": "synthetic_wire_trace.json",
+      "sha256": "e738f1b1490669d75503108e884d08bc486fdf0482183f8b303f07e76907475f"
+    },
+    {
+      "file": "verification.json",
+      "sha256": "44f0ab9cd4f16b23883aa4f9f2a203a5499a43de944d4db6b4bb572cb2698112"
+    },
+    {
+      "file": "verification.md",
+      "sha256": "1e3ce7fb817ab913f9472fe21d1c3bf246ee4bc25567c8290d074b5cdd36c90d"
+    }
+  ]
+}

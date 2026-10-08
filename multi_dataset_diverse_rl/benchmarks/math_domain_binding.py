@@ -7,6 +7,10 @@ BINDING_BLOCKER = 'CURRENT_V2_2_EXECUTION_BINDING_NOT_FROZEN'
 
 
 def execution_binding(root, contract):
+    from ..current_contract import MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION
+    if contract.get('identity')==MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION:
+        from .math_evidence_binding import MATHEvidenceBinding
+        return MATHEvidenceBinding(root,contract)
     if contract.get('identity') == MATH_VISIBLE_TRAJECTORY_BINDING_VERSION:
         from .math_visible_binding import MATHVisibleTrajectoryBinding
         return MATHVisibleTrajectoryBinding(root, contract)

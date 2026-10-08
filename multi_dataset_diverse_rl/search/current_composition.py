@@ -9,7 +9,7 @@ from .private_gate import private_binary_gate
 from .transition import TeamStateCommitter
 from .variable_evidence import VariableEvidenceFeasibilityV1
 from .target_or_team_transition import InitialCompetenceTargetOrTeamProgressV3
-from .current_layer1 import CurrentEngine, CurrentLayer1Config
+from .current_layer1 import CurrentEngine, CurrentLayer1Config, EvidenceLayer1Config
 from .current_opportunity import CurrentOpportunityBuilder
 from .current_policy import CURRENT_POLICY_BUNDLE
 from .textual_gradients import GradientPatternDiscovery, GradientExtractor, GradientPatternConditionedEvidence
@@ -43,11 +43,12 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
     if policy_bundle != CURRENT_POLICY_BUNDLE:
         raise SearchContractError('CURRENT_POLICY_MISMATCH')
     policy_bundle.validate_method(method)
+    revised=method.mechanism_config.get('optimization_evidence_policy')
     if getattr(pattern_provider,'partition_completion_policy',None) != method.mechanism_config.get('partition_completion_policy'):
         raise SearchContractError('PATTERN_PARTITION_COMPLETION_POLICY_MISMATCH')
     if getattr(getattr(pattern_provider,'gradient_provider',None),'recovery_policy',None) != method.mechanism_config.get('gradient_recovery_policy'):
         raise SearchContractError('GRADIENT_CONTRACT_RECOVERY_POLICY_MISMATCH')
-    if optimizer.config != CurrentLayer1Config(optimizer_input_schema=method.mechanism_config['optimizer_input_schema']):
+    if optimizer.config != (EvidenceLayer1Config() if revised else CurrentLayer1Config(optimizer_input_schema=method.mechanism_config['optimizer_input_schema'])):
         raise SearchContractError('CURRENT_LAYER1_POLICY_MISMATCH')
     if getattr(benchmark, 'solver_trajectory_policy', None) != method.mechanism_config.get('solver_trajectory_policy'):
         raise SearchContractError('CURRENT_VISIBLE_TRAJECTORY_POLICY_MISMATCH')
@@ -64,8 +65,9 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
         aggregation=aggregation,freeze_initial_competence=True)
     patterns=GradientPatternDiscovery(GradientExtractor(pattern_provider.gradient_provider),pattern_provider)
     memory=StructuredRollingRiskMemoryV4(risk_policy=method.mechanism_config['shared_risk_policy'],
+        optimization_evidence_policy=revised,
         **method.mechanism_config['memory'])
-    if memory is None or memory.identity != policy_bundle.memory:
+    if memory is None or memory.identity != method.memory_policy:
         raise SearchContractError('HOLD_PRE_PROVIDER: CURRENT_MEMORY_PROVIDER_NOT_BOUND')
     optimizer.memory=memory
     invalidity=bool(getattr(benchmark,'invalid_predictions_are_incorrect',False))
@@ -74,11 +76,13 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
     provider=FixedPeerTeamEvaluationProvider(store,transition)
     gate=private_binary_gate(benchmark=benchmark,load_examples=shadow_loader,expected_count=shadow_count,
         solver=solver.for_gate() if hasattr(solver,'for_gate') else solver,store=store)
+    from .textual_gradients import DisjointGradientEvidence
     composed=UnifiedSearchOrchestrator(method=method,benchmark=benchmark,aggregation=aggregation,state=store,
         analyzer=StateAnalyzer(BinaryPluralityResponsibilityAnalyzer(benchmark.capabilities)),
         opportunities=CurrentOpportunityBuilder(source=BinaryEvidenceSource(store,history),
             feasibility=VariableEvidenceFeasibilityV1(),target=TargetPolicyV1(),
-            evidence=GradientPatternConditionedEvidence(),patterns=patterns),
+            evidence=DisjointGradientEvidence(seed,revised) if revised else GradientPatternConditionedEvidence(),patterns=patterns,
+            search_metric_budget=42 if revised else 36),
         engine=CurrentEngine(optimizer,seed),evaluation=CandidateEvaluationPipeline(provider,
             FixedPeerPromotion(invalid_predictions_are_incorrect=invalidity)),
         transition=transition,gate=gate,committer=TeamStateCommitter(store),history=history,memory=memory,

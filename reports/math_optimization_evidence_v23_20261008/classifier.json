@@ -1,0 +1,21 @@
+{
+  "schema_version": "offline_method_revision_classifier_v1",
+  "experiment_id": "math_optimization_evidence_v23",
+  "implementation": "IMPLEMENTED",
+  "publication_validation": "PARTIALLY_VERIFIED_USER_STOP",
+  "final_current_suite": "INTERRUPTED_BY_USER",
+  "stopped_by_user": true,
+  "synthetic_conformance": "SUPPORTED",
+  "scientific_method_changed": true,
+  "historical_evidence_changed": false,
+  "real_optimizer_efficacy": "NOT_EVALUATED",
+  "generalization": "NOT_EVALUATED",
+  "solver_hidden_cause": "NOT_ESTABLISHED",
+  "real_api_calls": 0,
+  "new_charged_tokens": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "real_execution_readiness": "HOLD",
+  "ready_to_run": false,
+  "fresh_single_use_authorization_required": true
+}

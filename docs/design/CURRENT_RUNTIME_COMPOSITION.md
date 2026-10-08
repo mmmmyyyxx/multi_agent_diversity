@@ -1,7 +1,13 @@
 # Current Runtime Composition
 
 The sole active research architecture is Unified Team Prompt Search.
-The current scientific method is V2.2 with target-or-team deployment V3.
+The opt-in current evidence-learning revision is V2.3 with the preserved
+target-or-team deployment V3. The same builder selects its complete versioned
+policy through `optimization_evidence_policy`; no new controller is introduced.
+Its [normative contract](OPTIMIZATION_EVIDENCE_V23.md) binds independent Optimize
+roles, conservative hypothesis edits and bootstrapped edit-effect Memory.
+Historical V2.2 and its visible-solution correction remain explicit compatibility
+and controlled comparison paths. V2.3 requires its own fresh binding and scope.
 CURRENT_RUNTIME_COMPOSITION_V1 remains the builder boundary; the method and
 transition identities change explicitly. Current real execution requires a fresh
 MATH_V2_2_EXECUTION_BINDING_V1 and the fixed operational horizon/resource ceiling

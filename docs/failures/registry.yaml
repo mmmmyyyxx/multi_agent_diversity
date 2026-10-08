@@ -1,5 +1,26 @@
 schema_version: failure_registry_v1
 failures:
+- failure_id: FAIL-A4-OPTIMIZE-ROLE-OVERLAP-EDIT-EVIDENCE-GAP
+  title: Local validation reused mutation examples and Full rejection lacked complete edit evidence
+  status: MITIGATED
+  lifecycle: MITIGATED
+  first_observed: math_v2_2_gradient_pattern_seed81_pilot_v2
+  affected_components:
+  - optimize_evidence_roles
+  - preservation_sampling
+  - private_edit_memory
+  symptom: Seven completed opportunities reused panel membership for Probe and the same correct anchor; measured Full losses were outside that panel.
+  evidence:
+  - reports/math_v2_2_optimizer_failure_audit_v1_20261008/README.md
+  - reports/math_optimization_evidence_v23_20261008/information_flow_audit.md
+  evidence_level: observed
+  root_cause_status: CONFIRMED_ROLE_OVERLAP_AND_INFORMATION_OMISSION_NOT_OPTIMIZER_CAUSALITY
+  mitigation: Explicit V2.3 disjoint Optimize roles, rotating current-correct pool and scope-bound actual-diff Memory; historical execution unchanged.
+  regression_tests:
+  - tests/current/test_optimization_evidence_v23.py
+  latest_repair: math_optimization_evidence_v23
+  latest_repair_status: ZERO_API_SYNTHETIC_CONFORMANCE_REAL_EFFICACY_UNTESTED
+  forbidden_inference: Synthetic conformance does not show a real optimizer improvement, establish hidden Solver causes, or authorize any real API or protected split access.
 - failure_id: FAIL-GRADIENT-DIAGNOSTIC-ARCHIVE-IDENTITY-FIELD
   title: Matched raw diagnostic confused archive schema identity with discovery policy
     identity

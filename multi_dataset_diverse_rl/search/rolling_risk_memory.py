@@ -119,13 +119,46 @@ class RollingMemoryDelta(MemoryDelta):
     risk_counts: tuple[tuple[str,int],...]
 
 
+@dataclass(frozen=True)
+class EditExperience:
+    owner_member: int
+    created_update: int
+    record: dict
+
+    @property
+    def memory_id(self):
+        return sha256((self.record['opportunity_id']+':'+self.record['candidate_id']).encode()).hexdigest()
+
+    @property
+    def lane(self):return 'general'
+
+    def visible(self):
+        effects={name:dict(fixed=len(e['fixed_ids']),broken=len(e['broken_ids']),
+            invalid=len(e['invalid_ids']),delta=e['member_delta'],
+            **({'team_delta':e['team_delta']} if 'team_delta' in e else {}))
+            for name,e in self.record['effects'].items() if name in {'search_validation','full'}}
+        return dict(hypothesis=self.record['repair_hypothesis'][:100],status=self.record['status'],
+            actual_edit=(self.record['action'] or 'Changed instructions; semantic action unclassified.')[:110],
+            diff_operations=sorted({d['operation'] for d in self.record['actual_diff']}),
+            effects=effects,lesson='Compound edit; scope-specific, no causal claim.')
+
+
+@dataclass(frozen=True)
+class EvidenceMemoryDelta(RollingMemoryDelta):
+    competence: tuple[dict,...]
+
+
 class StructuredRollingRiskMemoryV4(PrivateActionMemory):
     identity=versions.STRUCTURED_ROLLING_RISK_MEMORY_VERSION
 
-    def __init__(self, *, risk_policy, **limits):
+    def __init__(self, *, risk_policy, optimization_evidence_policy=None, **limits):
         if risk_policy!=POLICY:raise SearchContractError('ROLLING_RISK_POLICY_NOT_FROZEN')
         super().__init__(**limits)
         self.risk_policy=json.loads(json.dumps(POLICY))
+        from .optimization_evidence import frozen_policy, MEMORY
+        self.optimization_evidence_policy=frozen_policy(optimization_evidence_policy)
+        self.competence=()
+        if self.optimization_evidence_policy:self.identity=MEMORY
         self.clock=0;self.failure_events=()
         self.observation_observer=None
         self.risk_counts=dict(failure_to_shared_promotions=0,shared_risk_created=0,
@@ -160,6 +193,11 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
             -int(lane in {e.lane for e in recent}),-entry.last_seen_update,entry.signature.key())
 
     def prepare_outcome(self, outcome):
+        if self.optimization_evidence_policy:
+            return self._prepare_evidence_outcome(outcome)
+        return self._prepare_rolling_outcome(outcome)
+
+    def _prepare_rolling_outcome(self, outcome):
         self._search_only(outcome.opportunity)
         if not outcome.complete or outcome.operational_failure:
             return RollingMemoryDelta(self.revision,self.private,self.shared,self.clock,self.sequence,
@@ -248,6 +286,16 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
 
     def validate_delta(self, delta):
         super().validate_delta(delta)
+        if self.optimization_evidence_policy:
+            if (not isinstance(delta,EvidenceMemoryDelta) or len(delta.competence)!=5
+                    or any(not isinstance(e,EditExperience) or e.owner_member not in range(5)
+                        or e.record['provenance']['split']!='optimize' for e in delta.private)
+                    or any(sum(e.owner_member==i for e in delta.private)>24 for i in range(5))
+                    or any(sum(e.owner_member==i and e.record['status']=='FULL_REFUTED' for e in delta.private)
+                        >self.limits['max_failure_entries_per_member'] for i in range(5))
+                    or any(set(c['current_correct_ids'])-set(c['all_ids']) or
+                        set(c['original_correct_ids'])-set(c['all_ids']) for c in delta.competence)):
+                raise SearchContractError('EDIT_MEMORY_DELTA_INVALID')
         if (not isinstance(delta,RollingMemoryDelta) or delta.clock not in {self.clock,self.clock+1}
                 or type(delta.sequence) is not int or delta.sequence<self.sequence
                 or len(delta.failure_events)>self.risk_policy['failure_evidence_capacity']
@@ -273,8 +321,12 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
             self.revision+=1;self.write_count+=1
         self.clock=delta.clock;self.sequence=delta.sequence;self.failure_events=delta.failure_events
         self.risk_counts=dict(delta.risk_counts)
+        if self.optimization_evidence_policy:
+            self.competence=delta.competence
 
-    def read_for_member(self, member, lane):
+    def read_for_member(self, member, lane, *, pattern_id=None, hypothesis=None):
+        if self.optimization_evidence_policy:
+            return self._read_evidence(member,pattern_id,hypothesis)
         if member not in range(5) or lane not in LANES:raise SearchContractError('ROLLING_RISK_SCOPE_INVALID')
         events=self._recent(self.failure_events,self.clock+1)
         recurrence=Counter(e.signature.key() for e in events if e.member==member)
@@ -315,4 +367,136 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
                 severity_summary=e.signature.category,
                 last_seen_update=e.last_seen_update,observed_lanes=e.observed_lanes)
                 for e in self.shared if 'REPEATED_PRIVATE_FAILURE' in e.origins])
+        if self.optimization_evidence_policy:
+            result.update(initial_memory_entries=len(self.competence),
+                private_success_count_by_member=[sum(e.owner_member==i and e.record['status']=='COMMITTED' for e in self.private) for i in range(5)],
+                private_failure_count_by_member=[sum(e.owner_member==i and e.record['status']=='FULL_REFUTED' for e in self.private) for i in range(5)],
+                private_edit_count_by_member=[sum(e.owner_member==i for e in self.private) for i in range(5)],
+                edit_status_counts=dict(Counter(e.record['status'] for e in self.private)),
+                memory_policy_identity=self.identity)
+        return result
+
+    def bootstrap(self,store):
+        """Existing measured profiles only; no solve, data loader or LLM call."""
+        if not self.optimization_evidence_policy or self.competence:
+            raise SearchContractError('INITIAL_MEMORY_BOOTSTRAP_ONCE')
+        from .optimization_evidence import prompt_id
+        state=store.snapshot();records=[]
+        for member in range(5):
+            correct=[e.item.input_id for i,e in enumerate(store.examples)
+                if state.diagnostics['team_states'][i].team_correctness[member]]
+            invalid=[e.item.input_id for i,e in enumerate(store.examples)
+                if not state.diagnostics['team_states'][i].team_validity[member]]
+            records.append(dict(member=member,prompt_id=prompt_id(state.member_prompts[member]),
+                initial_prompt_id=prompt_id(state.member_prompts[member]),
+                evaluation_identity=state.diagnostics['evaluation_support_identity'],
+                all_ids=[e.item.input_id for e in store.examples],original_correct_ids=correct,
+                current_correct_ids=correct,invalid_ids=invalid,newly_fixed_ids=[],newly_broken_ids=[],
+                task_metadata={e.item.input_id:dict(e.task_metadata) for e in store.examples},
+                source='measured_initial_optimize_profiles'))
+        self.competence=tuple(records)
+        if self.observation_observer:
+            self.observation_observer('INITIAL_OPTIMIZE_COMPETENCE_BOOTSTRAPPED',dict(
+                member_records=5,source='measured_initial_optimize_profiles',llm_calls=0))
+
+    def observe_edit(self,record):
+        if not self.optimization_evidence_policy or record['member'] not in range(5):
+            raise SearchContractError('EDIT_MEMORY_SCOPE_INVALID')
+        if record['provenance']['split']!='optimize' or not record['actual_diff']:
+            raise SearchContractError('EDIT_MEMORY_PROVENANCE_INVALID')
+        self.sequence+=1
+        entry=EditExperience(record['member'],self.sequence,json.loads(json.dumps(record)))
+        others=tuple(e for e in self.private if e.owner_member!=entry.owner_member)
+        own=tuple(e for e in self.private if e.owner_member==entry.owner_member)
+        self.private=(*others,*(*own,entry)[-self.limits['private_storage_limit']:])
+        self.revision+=1;self.write_count+=1
+
+    def _prepare_evidence_outcome(self,outcome):
+        from copy import deepcopy
+        base=self._prepare_rolling_outcome(outcome)
+        records={e.memory_id:e for e in self.private if isinstance(e,EditExperience)}
+        competence=deepcopy(self.competence)
+        if outcome.complete and not outcome.operational_failure:
+            for row in outcome.evaluated:
+                lineage=row.candidate.backend_details.get('edit_lineage')
+                if lineage is None or row.diagnostics.get('operational_failure'):continue
+                entry=EditExperience(outcome.opportunity.target_member,0,lineage)
+                old=records.get(entry.memory_id)
+                if old is None:raise SearchContractError('EDIT_MEMORY_LINEAGE_MISSING')
+                record=deepcopy(old.record)
+                if row.team_probe and 'edit_effect' in row.team_probe.aggregation_diagnostics:
+                    record['effects']['team_probe']=deepcopy(row.team_probe.aggregation_diagnostics['edit_effect'])
+                if row.full is not None:
+                    effect=row.full.aggregation_diagnostics.get('edit_effect')
+                    if not effect:raise SearchContractError('FULL_EDIT_EFFECT_MISSING')
+                    record['effects']['full']=deepcopy(effect)
+                    record['full_evaluation_parent_state_id']=outcome.opportunity.parent_state_id
+                    record['status']=('FULL_REFUTED' if row.full.aggregation_diagnostics.get('scientific_risk_code')
+                        else 'FULL_SUPPORTED')
+                    record['status_history'].append(record['status'])
+                if outcome.committed and row.candidate.candidate_id==outcome.selected_candidate_id:
+                    if row.full is None:raise SearchContractError('COMMITTED_EDIT_REQUIRES_FULL')
+                    record['status']='COMMITTED';record['status_history'].append('COMMITTED')
+                    current=competence[entry.owner_member]
+                    if current['prompt_id']!=record['full_parent_prompt_id']:
+                        raise SearchContractError('COMMITTED_COVERAGE_PARENT_MISMATCH')
+                    effect=record['effects']['full']
+                    if set(effect['membership'])!=set(current['all_ids']):
+                        raise SearchContractError('COMMITTED_COVERAGE_MEMBERSHIP_MISMATCH')
+                    correct=(set(current['current_correct_ids'])|set(effect['fixed_ids']))-set(effect['broken_ids'])
+                    original=set(current['original_correct_ids'])
+                    current.update(prompt_id=record['child_prompt_id'],current_correct_ids=sorted(correct),
+                        invalid_ids=effect['invalid_ids'],newly_fixed_ids=sorted(correct-original),
+                        newly_broken_ids=sorted(original-correct))
+                records[entry.memory_id]=replace(old,record=record)
+        fields={name:getattr(base,name) for name in RollingMemoryDelta.__dataclass_fields__}
+        retained=[]
+        for member in range(5):
+            own=sorted((e for e in records.values() if e.owner_member==member),key=lambda e:e.created_update)
+            failures=[e for e in own if e.record['status']=='FULL_REFUTED'][-self.limits['max_failure_entries_per_member']:]
+            other=[e for e in own if e.record['status']!='FULL_REFUTED'][-(self.limits['private_storage_limit']-len(failures)):]
+            retained.extend((*failures,*other))
+        fields['private']=tuple(retained)
+        return EvidenceMemoryDelta(**fields,competence=tuple(competence))
+
+    def _read_evidence(self,member,pattern_id,hypothesis):
+        if member not in range(5):raise SearchContractError('EDIT_MEMORY_OWNER_REQUIRED')
+        if len(self.competence)!=5:raise SearchContractError('INITIAL_MEMORY_NOT_BOOTSTRAPPED')
+        c=self.competence[member]
+        initial=dict(source='measured_optimize_coverage',original_correct=len(c['original_correct_ids']),
+            current_correct=len(c['current_correct_ids']),incorrect=len(c['all_ids'])-len(c['current_correct_ids']),
+            invalid=len(c['invalid_ids']),newly_fixed=len(c['newly_fixed_ids']),newly_broken=len(c['newly_broken_ids']))
+        own=sorted((e for e in self.private if e.owner_member==member),key=lambda e:(
+            e.record['pattern_id']!=pattern_id,e.record['repair_hypothesis']!=hypothesis,
+            e.record['status']!='FULL_REFUTED',-e.created_update,e.memory_id))
+        selected=own[:self.limits['top_k_private']]
+        shared=sorted(self.shared,key=lambda e:-e.last_seen_update)[:self.limits['top_k_shared']]
+        def view():return dict(initial_coverage=[initial],edit_effects=[e.visible() for e in selected],
+            shared_risk=[e.visible() for e in shared])
+        def size():return len(json.dumps(view(),sort_keys=True,separators=(',',':'),ensure_ascii=True))
+        while size()>1200:
+            if shared:shared.pop()
+            elif len(selected)>1:selected.pop()
+            elif selected:
+                # Keep the most relevant scope and Full outcome within the old bound.
+                v=selected[0].visible();v['effects']={k:e for k,e in v['effects'].items()
+                    if k in {'search_validation','full'}}
+                result=dict(initial_coverage=[initial],edit_effects=[v],shared_risk=[])
+                if len(json.dumps(result,separators=(',',':'),ensure_ascii=True))<=1200:
+                    return self._evidence_read_record(member,result,selected,shared)
+                selected.pop()
+            else:raise SearchContractError('EDIT_MEMORY_CONTEXT_LIMIT')
+        result=view()
+        return self._evidence_read_record(member,result,selected,shared)
+
+    def _evidence_read_record(self,member,result,selected,shared):
+        self.context_lengths.append(len(json.dumps(result,sort_keys=True,separators=(',',':'),ensure_ascii=True)))
+        self.read_private_count=len(selected)+1;self.read_shared_count=len(shared)
+        self.counts['failure_reads']+=sum(e.record['status']=='FULL_REFUTED' for e in selected)
+        self.counts['success_reads']+=sum(e.record['status']=='COMMITTED' for e in selected)
+        self.counts['shared_reads']+=len(shared)
+        if self.observation_observer:
+            self.observation_observer('MEMORY_READ',dict(member=member,lane='general',visible=result,
+                entries=dict(edit_effects=[dict(memory_id=e.memory_id,visible=e.visible()) for e in selected]),
+                context_chars=self.context_lengths[-1]))
         return result

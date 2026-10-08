@@ -21,9 +21,9 @@ def prediction_validity_contract():
 def frozen_prediction_policy(contract):
     policy = contract.get("prediction_validity_policy")
     if contract.get("identity") in {versions.MATH_V2_1_PREDICTION_EXECUTION_BINDING_VERSION,
-                                   *versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS, versions.MATH_V2_2_EXECUTION_BINDING_VERSION, versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION}:
+                                   *versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS, versions.MATH_V2_2_EXECUTION_BINDING_VERSION, versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION, versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION}:
         expected = prediction_validity_contract()
-        if contract['identity'] in {*versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS, versions.MATH_V2_2_EXECUTION_BINDING_VERSION, versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION}:
+        if contract['identity'] in {*versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS, versions.MATH_V2_2_EXECUTION_BINDING_VERSION, versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION, versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION}:
             expected.update(identity=versions.MATH_RECOVERY_PREDICTION_VERSION, invalid_response_retries=3)
         if policy != expected or any(type(policy[k]) is not type(v) for k, v in expected.items()):
             raise SearchContractError("MATH_PREDICTION_VALIDITY_BINDING_MISMATCH")
@@ -134,7 +134,7 @@ def invalid_recovery_contract():
 
 def frozen_recovery_policy(contract):
     policy=contract.get('invalid_recovery_policy')
-    if contract.get('identity') in {*versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS, versions.MATH_V2_2_EXECUTION_BINDING_VERSION, versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION}:
+    if contract.get('identity') in {*versions.MATH_LOW_COST_EXECUTION_BINDING_VERSIONS, versions.MATH_V2_2_EXECUTION_BINDING_VERSION, versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION, versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION}:
         expected=invalid_recovery_contract()
         if policy != expected or any(type(policy[k]) is not type(v) for k,v in expected.items()):
             raise SearchContractError('MATH_INVALID_RECOVERY_BINDING_MISMATCH')

@@ -884,6 +884,8 @@ nodes:
 - experiment_id: math_visible_solution_feedback_v1
   kind: BENCHMARK_MIGRATION
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: math_optimization_evidence_v23
+  kind: ARCHITECTURE_REFACTOR
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1812,10 +1814,24 @@ edges:
   to: math_v2_2_optimizer_failure_audit_v1
   relation: audit_of
   evidence: experiments/protocols/math_v2_2_optimizer_failure_audit_v1/protocol.json
-  scope: Existing completed-prefix candidate diagnostics only; zero API and unchanged V2.2
+  scope: Existing completed-prefix candidate diagnostics only; zero API and unchanged
+    V2.2
 - from: math_v2_2_optimizer_failure_audit_v1
   to: math_visible_solution_feedback_v1
   relation: followup_of
   evidence: experiments/protocols/math_visible_solution_feedback_v1/protocol.json
-  scope: Explicit V6 ordinary-solution feedback correction; historical Pilot and audit evidence unchanged
+  scope: Explicit V6 ordinary-solution feedback correction; historical Pilot and audit
+    evidence unchanged
+- to: math_optimization_evidence_v23
+  relation: followup_of
+  evidence: experiments/protocols/math_optimization_evidence_v23/protocol.json
+  scope: Explicit offline V2.3 scientific-method revision; historical execution evidence
+    unchanged
+  from: math_visible_solution_feedback_v1
+- to: math_optimization_evidence_v23
+  relation: followup_of
+  evidence: experiments/protocols/math_optimization_evidence_v23/protocol.json
+  scope: Explicit offline V2.3 scientific-method revision; historical execution evidence
+    unchanged
+  from: math_v2_2_optimizer_failure_audit_v1
 current_frontier: experiments/current_frontier.yaml

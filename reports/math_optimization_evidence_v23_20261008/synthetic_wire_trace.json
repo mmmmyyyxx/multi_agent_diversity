@@ -1,0 +1,1615 @@
+{
+  "kind": "SYNTHETIC_PROVIDER_WIRE_TRACE",
+  "requests": [
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "832a2d5eb1deaed67d0b74f7ffe4a055f0549f5ea64225aee8f232d937d1f189",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "7eee17ae12d56b351dbc2e3f42807155129cfb6845c96a06a6e797d3c83a31e3",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "d727ea7315344ce03d9a0c8e54b07b107e8c17735acba8401614c5dcc25fd899",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "7781fea0c2aa48f1bb7886fbfffaf2d7c6bd33fe45bc4beff9fd0f0f20b959d0",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "c222735c1513e9f0671d352362c7381c77e21e337503da43cb30f0d1321856fa",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "3bcb0b494dd3df3516908abb054cf897662bbae3d63564ea1d1c0c7e20791695",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "bba57a8cb2dbdf890d23ad4bd55dde363d84419dcc7fc52aac1b4eb2b67d8603",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "e81c26d9774e7725338ea5a97e15d0260e4538aacd1378c116fc06410ce94459",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "a760de95d94208d4598b476bd4fb47d86f05261ac08a5ae26f24a9cefc05f6c3",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "4065654d52d68b1a276974802cff843c0c22c9888b7d5055e78d226021c43618",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "a5e42f4d5052c0bfa5d76ca57e05acd4869089c50ad939624425a70d01965ebe",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "e77bc2e065884a5cbf92a81ae111c9c431cedba10f78009f908d2b60d564f510",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "00d7759d6398db0ab7c5dbbc7ae70099c78c5c0dcc5e387c942f4292493e77c0",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "8724a845a4ddb9142f0391d3c2adb83768dd52a73d3355fe9ac3935eec6c7970",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "4d36b72e120fcaab0f27db0c330856fbb997517858c5184e464d1d37f2c72b71",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "b337a897f7a417f089c2f1a6886435ed784794a3fcb1a359daacb15738f5829a",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "81ceb594fc87efadeff87c6c220b755be377d7f06f25157d9d591bfda7ac5efe",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "5dcd6b27d39c5ff2d742f73050bd4717d45a748b592bab35d74dae941ba81fd3",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "832a2d5eb1deaed67d0b74f7ffe4a055f0549f5ea64225aee8f232d937d1f189",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "7eee17ae12d56b351dbc2e3f42807155129cfb6845c96a06a6e797d3c83a31e3",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "d727ea7315344ce03d9a0c8e54b07b107e8c17735acba8401614c5dcc25fd899",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "7781fea0c2aa48f1bb7886fbfffaf2d7c6bd33fe45bc4beff9fd0f0f20b959d0",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "c222735c1513e9f0671d352362c7381c77e21e337503da43cb30f0d1321856fa",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "3bcb0b494dd3df3516908abb054cf897662bbae3d63564ea1d1c0c7e20791695",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "bba57a8cb2dbdf890d23ad4bd55dde363d84419dcc7fc52aac1b4eb2b67d8603",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "e81c26d9774e7725338ea5a97e15d0260e4538aacd1378c116fc06410ce94459",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "a760de95d94208d4598b476bd4fb47d86f05261ac08a5ae26f24a9cefc05f6c3",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "4065654d52d68b1a276974802cff843c0c22c9888b7d5055e78d226021c43618",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "a5e42f4d5052c0bfa5d76ca57e05acd4869089c50ad939624425a70d01965ebe",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "e77bc2e065884a5cbf92a81ae111c9c431cedba10f78009f908d2b60d564f510",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "00d7759d6398db0ab7c5dbbc7ae70099c78c5c0dcc5e387c942f4292493e77c0",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "8724a845a4ddb9142f0391d3c2adb83768dd52a73d3355fe9ac3935eec6c7970",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "4d36b72e120fcaab0f27db0c330856fbb997517858c5184e464d1d37f2c72b71",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "b337a897f7a417f089c2f1a6886435ed784794a3fcb1a359daacb15738f5829a",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "81ceb594fc87efadeff87c6c220b755be377d7f06f25157d9d591bfda7ac5efe",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "5dcd6b27d39c5ff2d742f73050bd4717d45a748b592bab35d74dae941ba81fd3",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "832a2d5eb1deaed67d0b74f7ffe4a055f0549f5ea64225aee8f232d937d1f189",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "7eee17ae12d56b351dbc2e3f42807155129cfb6845c96a06a6e797d3c83a31e3",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "d727ea7315344ce03d9a0c8e54b07b107e8c17735acba8401614c5dcc25fd899",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "7781fea0c2aa48f1bb7886fbfffaf2d7c6bd33fe45bc4beff9fd0f0f20b959d0",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "c222735c1513e9f0671d352362c7381c77e21e337503da43cb30f0d1321856fa",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "3bcb0b494dd3df3516908abb054cf897662bbae3d63564ea1d1c0c7e20791695",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "bba57a8cb2dbdf890d23ad4bd55dde363d84419dcc7fc52aac1b4eb2b67d8603",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "e81c26d9774e7725338ea5a97e15d0260e4538aacd1378c116fc06410ce94459",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "a760de95d94208d4598b476bd4fb47d86f05261ac08a5ae26f24a9cefc05f6c3",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "4065654d52d68b1a276974802cff843c0c22c9888b7d5055e78d226021c43618",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "a5e42f4d5052c0bfa5d76ca57e05acd4869089c50ad939624425a70d01965ebe",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "e77bc2e065884a5cbf92a81ae111c9c431cedba10f78009f908d2b60d564f510",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "00d7759d6398db0ab7c5dbbc7ae70099c78c5c0dcc5e387c942f4292493e77c0",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "8724a845a4ddb9142f0391d3c2adb83768dd52a73d3355fe9ac3935eec6c7970",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "4d36b72e120fcaab0f27db0c330856fbb997517858c5184e464d1d37f2c72b71",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "b337a897f7a417f089c2f1a6886435ed784794a3fcb1a359daacb15738f5829a",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "81ceb594fc87efadeff87c6c220b755be377d7f06f25157d9d591bfda7ac5efe",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "5dcd6b27d39c5ff2d742f73050bd4717d45a748b592bab35d74dae941ba81fd3",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "832a2d5eb1deaed67d0b74f7ffe4a055f0549f5ea64225aee8f232d937d1f189",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "7eee17ae12d56b351dbc2e3f42807155129cfb6845c96a06a6e797d3c83a31e3",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "d727ea7315344ce03d9a0c8e54b07b107e8c17735acba8401614c5dcc25fd899",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "7781fea0c2aa48f1bb7886fbfffaf2d7c6bd33fe45bc4beff9fd0f0f20b959d0",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "c222735c1513e9f0671d352362c7381c77e21e337503da43cb30f0d1321856fa",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "3bcb0b494dd3df3516908abb054cf897662bbae3d63564ea1d1c0c7e20791695",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "bba57a8cb2dbdf890d23ad4bd55dde363d84419dcc7fc52aac1b4eb2b67d8603",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "e81c26d9774e7725338ea5a97e15d0260e4538aacd1378c116fc06410ce94459",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "a760de95d94208d4598b476bd4fb47d86f05261ac08a5ae26f24a9cefc05f6c3",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "4065654d52d68b1a276974802cff843c0c22c9888b7d5055e78d226021c43618",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "a5e42f4d5052c0bfa5d76ca57e05acd4869089c50ad939624425a70d01965ebe",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "e77bc2e065884a5cbf92a81ae111c9c431cedba10f78009f908d2b60d564f510",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "00d7759d6398db0ab7c5dbbc7ae70099c78c5c0dcc5e387c942f4292493e77c0",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "8724a845a4ddb9142f0391d3c2adb83768dd52a73d3355fe9ac3935eec6c7970",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "4d36b72e120fcaab0f27db0c330856fbb997517858c5184e464d1d37f2c72b71",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "b337a897f7a417f089c2f1a6886435ed784794a3fcb1a359daacb15738f5829a",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "81ceb594fc87efadeff87c6c220b755be377d7f06f25157d9d591bfda7ac5efe",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "5dcd6b27d39c5ff2d742f73050bd4717d45a748b592bab35d74dae941ba81fd3",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "832a2d5eb1deaed67d0b74f7ffe4a055f0549f5ea64225aee8f232d937d1f189",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "7eee17ae12d56b351dbc2e3f42807155129cfb6845c96a06a6e797d3c83a31e3",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "d727ea7315344ce03d9a0c8e54b07b107e8c17735acba8401614c5dcc25fd899",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "7781fea0c2aa48f1bb7886fbfffaf2d7c6bd33fe45bc4beff9fd0f0f20b959d0",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "c222735c1513e9f0671d352362c7381c77e21e337503da43cb30f0d1321856fa",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "3bcb0b494dd3df3516908abb054cf897662bbae3d63564ea1d1c0c7e20791695",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "bba57a8cb2dbdf890d23ad4bd55dde363d84419dcc7fc52aac1b4eb2b67d8603",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "e81c26d9774e7725338ea5a97e15d0260e4538aacd1378c116fc06410ce94459",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "a760de95d94208d4598b476bd4fb47d86f05261ac08a5ae26f24a9cefc05f6c3",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "4065654d52d68b1a276974802cff843c0c22c9888b7d5055e78d226021c43618",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "a5e42f4d5052c0bfa5d76ca57e05acd4869089c50ad939624425a70d01965ebe",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "e77bc2e065884a5cbf92a81ae111c9c431cedba10f78009f908d2b60d564f510",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "00d7759d6398db0ab7c5dbbc7ae70099c78c5c0dcc5e387c942f4292493e77c0",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "8724a845a4ddb9142f0391d3c2adb83768dd52a73d3355fe9ac3935eec6c7970",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "4d36b72e120fcaab0f27db0c330856fbb997517858c5184e464d1d37f2c72b71",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "b337a897f7a417f089c2f1a6886435ed784794a3fcb1a359daacb15738f5829a",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "81ceb594fc87efadeff87c6c220b755be377d7f06f25157d9d591bfda7ac5efe",
+      "serialized_chars": 857
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "5dcd6b27d39c5ff2d742f73050bd4717d45a748b592bab35d74dae941ba81fd3",
+      "serialized_chars": 857
+    },
+    {
+      "role": "gradient",
+      "fields": [
+        "current_member_procedure",
+        "example",
+        "schema"
+      ],
+      "request_sha256": "3467e1b19ba0902ccfa32188feb5d073541af8710dc1401fa5b38060f00cc165",
+      "serialized_chars": 2681
+    },
+    {
+      "role": "gradient",
+      "fields": [
+        "current_member_procedure",
+        "example",
+        "schema"
+      ],
+      "request_sha256": "a6f21c7d491e7a4d7807c235e59245780bfe2c35bf65131587695a69883d64f0",
+      "serialized_chars": 2681
+    },
+    {
+      "role": "gradient",
+      "fields": [
+        "current_member_procedure",
+        "example",
+        "schema"
+      ],
+      "request_sha256": "6af43fdad3245a0fe30fcccc1f391ee526956f427c4f1d3476644c208aae3212",
+      "serialized_chars": 2681
+    },
+    {
+      "role": "gradient",
+      "fields": [
+        "current_member_procedure",
+        "example",
+        "schema"
+      ],
+      "request_sha256": "c98f26243014159bc7fe1ab0b741abcea9d65d22bc0f534a7c0c6a1746f588b7",
+      "serialized_chars": 2681
+    },
+    {
+      "role": "gradient",
+      "fields": [
+        "current_member_procedure",
+        "example",
+        "schema"
+      ],
+      "request_sha256": "3936bd04b26d7e96979e6f9cbc00800fd7a220ef4790c22bd226178c4d3128f6",
+      "serialized_chars": 2681
+    },
+    {
+      "role": "gradient",
+      "fields": [
+        "current_member_procedure",
+        "example",
+        "schema"
+      ],
+      "request_sha256": "83060824bfbfd7038521a4991e4d4f90b111b03479293d2d737b7429a4e66c1a",
+      "serialized_chars": 2681
+    },
+    {
+      "role": "cluster",
+      "fields": [
+        "gradients"
+      ],
+      "request_sha256": "ad9cc9a0177f0f57c5693ab416f568b6d7ebd7ca3fbf8d6196996fcd896542d7",
+      "serialized_chars": 2143
+    },
+    {
+      "role": "mutation",
+      "fields": [
+        "current_panel_observations",
+        "current_parent",
+        "repair_objective",
+        "retrieved_memory",
+        "schema",
+        "selected_pattern"
+      ],
+      "request_sha256": "05884dbc2162235d5a9c387f9515db620caafcff96a2f2d6f9719bef9ae8134f",
+      "serialized_chars": 5710
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "4140b85be0216d5281076f176cbc3f3788d67fe021c5087ba80a43afcad7377d",
+      "serialized_chars": 890
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "2e68b944c0b6652a7698e9198ce45ed802b9e60583541ebe04b899aee7c44da8",
+      "serialized_chars": 890
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "7d7ca377ced63f83c047704c26c8ef72ae19bb806bed575179ea509b98613e3f",
+      "serialized_chars": 891
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "a7836739dad07d46e62612e9fc9fdde2ebaf0c254fb697968ee6c542939b124e",
+      "serialized_chars": 890
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "c547f3f0936188537dadc570fc3f9cb429cf8780c94c31c5fbc79bde8a314e4d",
+      "serialized_chars": 891
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "c20cb873c56fc6958457a6a5905668f251d30ba9d80a12d952d1c22fe8beda84",
+      "serialized_chars": 890
+    },
+    {
+      "role": "mutation",
+      "fields": [
+        "current_panel_observations",
+        "current_parent",
+        "repair_objective",
+        "retrieved_memory",
+        "schema",
+        "selected_pattern"
+      ],
+      "request_sha256": "9384df3ad0d0c7186ff6994ff36f77e0736ad65dcf7c384a47e6e8f3ffb6766b",
+      "serialized_chars": 6080
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "4b23af6d78c1036a2dcdb0380649586f0a470551108c3f89e5efcf8c1a486722",
+      "serialized_chars": 917
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "1f0e2ac76e8f0b34a98989e2e54473edd802b981beed41e52df90f43afad9679",
+      "serialized_chars": 917
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "d3e1f0edb008d72c68799b15090bef2ffbbf6506d942989e6e852ea2fe87c1d4",
+      "serialized_chars": 918
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "2b973e4d59336bcce2cd23cff79b1d3a0c24071a84a3cab8b50664ca212e5b09",
+      "serialized_chars": 917
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "9172bfb4fca6809ddde32f22254f537dc56c6685452d0e5777942dd50fea2a95",
+      "serialized_chars": 918
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "01ecf55fe8124a7ff2407d15fbde27b169d9e3bee0cb48a1c02c364093b87edd",
+      "serialized_chars": 917
+    },
+    {
+      "role": "mutation",
+      "fields": [
+        "current_panel_observations",
+        "current_parent",
+        "repair_objective",
+        "retrieved_memory",
+        "schema",
+        "selected_pattern"
+      ],
+      "request_sha256": "12f8bc94a0f52f561466fa68e1a6b48745f1666014fa0e5857b51a4bf973ad07",
+      "serialized_chars": 6492
+    },
+    {
+      "role": "mutation",
+      "fields": [
+        "current_panel_observations",
+        "current_parent",
+        "repair_objective",
+        "retrieved_memory",
+        "schema",
+        "selected_pattern"
+      ],
+      "request_sha256": "12f8bc94a0f52f561466fa68e1a6b48745f1666014fa0e5857b51a4bf973ad07",
+      "serialized_chars": 6492
+    },
+    {
+      "role": "mutation",
+      "fields": [
+        "current_panel_observations",
+        "current_parent",
+        "repair_objective",
+        "retrieved_memory",
+        "schema",
+        "selected_pattern"
+      ],
+      "request_sha256": "12f8bc94a0f52f561466fa68e1a6b48745f1666014fa0e5857b51a4bf973ad07",
+      "serialized_chars": 6492
+    },
+    {
+      "role": "mutation",
+      "fields": [
+        "current_panel_observations",
+        "current_parent",
+        "repair_objective",
+        "retrieved_memory",
+        "schema",
+        "selected_pattern"
+      ],
+      "request_sha256": "12f8bc94a0f52f561466fa68e1a6b48745f1666014fa0e5857b51a4bf973ad07",
+      "serialized_chars": 6492
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "65c169bf8cd53649479817958c79cef4cf959440af23c13193b814634775ae1e",
+      "serialized_chars": 890
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "876dd07fc8961e8ba466c417ffc696bf51b22f634187db8ea5fdde0a8ea22fef",
+      "serialized_chars": 890
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "8187f737e2f3065e7723c8f75097e46a0fc67a0c223e0079cee9bd47579b571d",
+      "serialized_chars": 891
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "d97bd7c3699f6c051c8cea7ffdd9a6c718c960859efc6f22f6d66e16bdbff20d",
+      "serialized_chars": 917
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "c62613dbc8c4483907a02eb9dfa79fafe29e016ec85a0404e8fea4b0753183ab",
+      "serialized_chars": 917
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "dcdc506b5618f8b64d8b006d1484c170690f22beb4cd822ff18aa002107d25b0",
+      "serialized_chars": 918
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "48eef020d22a165561ff505a0408b0eba436b951dad0a177b70c88ce91972fe9",
+      "serialized_chars": 890
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "b78295c9be7cc9909fc4e22dc1b1e092a6210586ebfad662badef1d1d9f8a367",
+      "serialized_chars": 890
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "2b4d0fc4978f9c423cf72e089ed1f6b28713dbbe41fc6217a4affa0649d46ee0",
+      "serialized_chars": 890
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "29836dcf997ad13d1b3d2dce3aefa06bcaed0375685cb95f393f41d71a07614a",
+      "serialized_chars": 890
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "32c69db9c6747bde935bb5fc688adaa4a501c50769c3d57267ba6b083a525588",
+      "serialized_chars": 891
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "d98cb081f6e52b8b296fa9a208b66eec9bd8db1ba85a91dad0f70ac48ed62caf",
+      "serialized_chars": 891
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "2ea5332dfeda397cbb102c5ad4ab1bc227e7bbb9b564ff96cad31766fa3a7c86",
+      "serialized_chars": 891
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "59515edb246cb009176733401b5ea15a2a59fae2f70812013a2ddbfe1e4b8d67",
+      "serialized_chars": 891
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "d06c2d58fcc4176b81a5144e084ca7c07c8a70bb1c31fe0ce2da68ebda1018b1",
+      "serialized_chars": 891
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "5817799ba227a1fb40768284d5dc8a5fe090e5da5898da34880ccff09e82a4c8",
+      "serialized_chars": 917
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "9fda7be9c6c7dff85909e9aecb7e232e12d94aabbe64480ef19c00af4d6ecb00",
+      "serialized_chars": 917
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "0794a7ce3c320cb0e10ef9f79d068883b27b436a9276378ec7893809b807fd42",
+      "serialized_chars": 917
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "22e998e4571ceaa505bc7aff926c7c0906755e091bca1e9f492e169e1f82cd82",
+      "serialized_chars": 917
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "e8ba873f7b46bbcb0653404790edf2e18c37d02e6922b9e51e4a3b008ef0cf6e",
+      "serialized_chars": 918
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "ed3eb13dc9f03078bc47921a1f7310aaf2ab2201d90c2654f4488b1fbb07be32",
+      "serialized_chars": 918
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "d4c1fc0cb9535abce0694263ece4300ea60f6a05fb21bc127ddafef726943a04",
+      "serialized_chars": 918
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "b695508b994dc8953e025a25589f61ff21300eff3bab3c18ad356824d72c529e",
+      "serialized_chars": 918
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "46adef4750a723e17cdddeb3af1b33befa5ac0973e7e3921b48f9ade121b5290",
+      "serialized_chars": 918
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "832a2d5eb1deaed67d0b74f7ffe4a055f0549f5ea64225aee8f232d937d1f189",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "7eee17ae12d56b351dbc2e3f42807155129cfb6845c96a06a6e797d3c83a31e3",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "d727ea7315344ce03d9a0c8e54b07b107e8c17735acba8401614c5dcc25fd899",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "832a2d5eb1deaed67d0b74f7ffe4a055f0549f5ea64225aee8f232d937d1f189",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "7eee17ae12d56b351dbc2e3f42807155129cfb6845c96a06a6e797d3c83a31e3",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "d727ea7315344ce03d9a0c8e54b07b107e8c17735acba8401614c5dcc25fd899",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "832a2d5eb1deaed67d0b74f7ffe4a055f0549f5ea64225aee8f232d937d1f189",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "7eee17ae12d56b351dbc2e3f42807155129cfb6845c96a06a6e797d3c83a31e3",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "d727ea7315344ce03d9a0c8e54b07b107e8c17735acba8401614c5dcc25fd899",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "832a2d5eb1deaed67d0b74f7ffe4a055f0549f5ea64225aee8f232d937d1f189",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "7eee17ae12d56b351dbc2e3f42807155129cfb6845c96a06a6e797d3c83a31e3",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "d727ea7315344ce03d9a0c8e54b07b107e8c17735acba8401614c5dcc25fd899",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "832a2d5eb1deaed67d0b74f7ffe4a055f0549f5ea64225aee8f232d937d1f189",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "7eee17ae12d56b351dbc2e3f42807155129cfb6845c96a06a6e797d3c83a31e3",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "d727ea7315344ce03d9a0c8e54b07b107e8c17735acba8401614c5dcc25fd899",
+      "serialized_chars": 856
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "4b23af6d78c1036a2dcdb0380649586f0a470551108c3f89e5efcf8c1a486722",
+      "serialized_chars": 917
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "1f0e2ac76e8f0b34a98989e2e54473edd802b981beed41e52df90f43afad9679",
+      "serialized_chars": 917
+    },
+    {
+      "role": "solver",
+      "fields": [
+        "standalone_procedure",
+        "public_problem",
+        "immutable_V6_interface"
+      ],
+      "request_sha256": "2b973e4d59336bcce2cd23cff79b1d3a0c24071a84a3cab8b50664ca212e5b09",
+      "serialized_chars": 917
+    }
+  ],
+  "memberships": {
+    "mutation": [
+      "optimize0",
+      "optimize1",
+      "optimize11"
+    ],
+    "search_validation": [
+      "optimize15",
+      "optimize2",
+      "optimize9"
+    ],
+    "team_probe": [
+      "optimize17",
+      "optimize3",
+      "optimize7"
+    ]
+  },
+  "full_refuted": 1,
+  "committed": 1,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "memory_initial_entries": 5,
+  "memory_llm_calls": 0,
+  "exact_private_requests_sha256": "b58c7ff561d64fd76cf28eb227813dd19e3b6a657745b287b22490bcafb9d784"
+}

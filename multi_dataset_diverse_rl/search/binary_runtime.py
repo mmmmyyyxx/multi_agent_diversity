@@ -23,6 +23,8 @@ from .schemas import EvidenceItem, SearchContractError, TeamEvaluation
 class CorrectnessExample:
     item: object
     reference: str
+    reference_solution: str | None = None
+    task_metadata: tuple[tuple[str,str], ...] = ()
 
     def __post_init__(self):
         if not isinstance(self.reference, str) or not self.reference.strip():
@@ -161,6 +163,9 @@ class BinaryEvidenceSource:
                     problem=self.store.benchmark.format_input(example.item))
             result.append(EvidenceItem(example.item.input_id, "optimize", frozenset(roles),
                 dict(input_payload=example.item.problem, gold=example.reference,
+                     **(dict(reference_solution=example.reference_solution,
+                         task_metadata=dict(example.task_metadata))
+                         if example.reference_solution is not None else {}),
                      **trajectory,
                      correctness_signal_identity=versions.TARGET_CORRECTNESS_SIGNAL_VERSION,
                      target_member_correct=bool(row.team_correctness[member_id]),
@@ -247,6 +252,8 @@ class FixedPeerTeamEvaluationProvider:
             broad_delta=target, invalid_delta=sum(not b.team_validity[t] for b in after)-sum(not a.team_validity[t] for a in before))
         catastrophe = (metrics.invalid_delta > 0 and not self.invalid_predictions_are_incorrect) or metrics.vote_delta <= -2 or metrics.team_net_vote_delta <= -3
         return replace(new, aggregation_diagnostics={"team_probe_metrics": metrics,
+            **({'edit_effect':self._effect(before, after, t, 'team_probe')}
+               if opportunity.evaluation_plan.get('optimization_evidence_policy') else {}),
             **({"scientific_risk_code": "TEAM_PROBE_REJECTION"} if catastrophe else {}),
             **({"operational_failure": True} if not self.invalid_predictions_are_incorrect and any(not s.team_validity[t] for s in after) else {})})
 
@@ -266,6 +273,8 @@ class FixedPeerTeamEvaluationProvider:
             team_newly_fixed_count=fixed, team_newly_broken_count=broken,
             mean_soft_vote_utility=sum(soft_vote_utility(s.gold_vote_count, s.plurality_margin) for s in after)/len(after),
             target_invalid_count=sum(not s.team_validity[t] for s in after),
+            **({'edit_effect':self._effect(before, after, t, 'optimize_full')}
+               if opportunity.evaluation_plan.get('optimization_evidence_policy') else {}),
             **({"operational_failure": True} if not self.invalid_predictions_are_incorrect and any(not s.team_validity[t] for s in after) else {})))
         if self.transition is not None:
             safe = self.transition.allows(old, measurement, t)
@@ -275,6 +284,15 @@ class FixedPeerTeamEvaluationProvider:
                 "target_initial_margin": new.member_scores[t] - self.transition.initial_scores[t]})
         return replace(measurement, aggregation_diagnostics={**measurement.aggregation_diagnostics,
             **({"scientific_risk_code": "COMMON_SAFE_REJECTION"} if not safe else {})})
+
+    @staticmethod
+    def _effect(before, after, target, scope):
+        from .optimization_evidence import coverage_effect
+        project=lambda rows:{r.question_hash:dict(correct=bool(r.team_correctness[target]),
+            valid=bool(r.team_validity[target])) for r in rows}
+        effect=coverage_effect(project(before),project(after),scope=scope)
+        effect['team_delta']=sum(r.vote_correct for r in after)-sum(r.vote_correct for r in before)
+        return effect
 
 
 class FixedPeerCommonSafe:

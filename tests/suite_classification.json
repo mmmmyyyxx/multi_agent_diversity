@@ -3,6 +3,12 @@
   "schema_version": "suite_classification_v1",
   "tests": [
     {
+      "path": "tests/current/test_optimization_evidence_v23.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
       "path": "tests/current/test_visible_solver_trajectories.py",
       "classification": "CURRENT_CONTRACT",
       "required_private_artifacts": [],
