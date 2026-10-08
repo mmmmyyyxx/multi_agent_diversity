@@ -26,13 +26,14 @@ def frozen_solver_policy(contract):
 def generation_request_fields(contract, role):
     policy = frozen_solver_policy(contract)
     decoding = contract["decoding"]
-    from .math_optimizer_generation import frozen_optimizer_policy
-    optimizer = frozen_optimizer_policy(contract)
+    from .math_optimizer_generation import frozen_optimizer_role_policy
+    optimizer = frozen_optimizer_role_policy(contract, role)
     if role in {'reflection','pattern','pattern_gradient','pattern_cluster'} and optimizer is not None:
         fields=dict(temperature=optimizer['temperature'],
             max_completion_tokens=optimizer['max_completion_tokens'],
             extra_body={'enable_thinking':optimizer['enable_thinking']})
-        if optimizer['identity']==versions.MATH_OPTIMIZER_GENERATION_POLICY_V3_VERSION:
+        if optimizer['identity'] in {versions.MATH_OPTIMIZER_GENERATION_POLICY_V3_VERSION,
+                versions.PATTERN_CLUSTER_GENERATION_POLICY_VERSION}:
             fields.update(top_p=optimizer['top_p'],presence_penalty=optimizer['presence_penalty'],
                 frequency_penalty=optimizer['frequency_penalty'])
             fields['extra_body']['top_k']=optimizer['top_k']

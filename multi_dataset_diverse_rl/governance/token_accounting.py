@@ -53,7 +53,7 @@ def reservation(request):
     if 'max_completion_tokens' in request:
         if 'max_tokens' in request:
             raise OperationalAbort('AMBIGUOUS_OUTPUT_CAP_FIELDS')
-        from ..benchmarks.math_optimizer_generation import optimizer_generation_contract
+        from ..benchmarks.math_optimizer_generation import optimizer_generation_contract, pattern_cluster_generation_contract
         from .. import versions
         thinking = request.get('extra_body', {}).get('enable_thinking',request.get('enable_thinking'))
         if type(thinking) is not bool:
@@ -69,6 +69,10 @@ def reservation(request):
                     'presence_penalty','frequency_penalty','enable_thinking')):
                 identity = versions.MATH_OPTIMIZER_GENERATION_POLICY_V3_VERSION
         policy = optimizer_generation_contract(identity)
+        cluster = pattern_cluster_generation_contract()
+        if (identity == versions.MATH_OPTIMIZER_GENERATION_POLICY_V3_VERSION
+                and request['max_completion_tokens'] == cluster['max_completion_tokens']):
+            policy = cluster
         if (request.get('model') != policy['model']
                 or type(request['max_completion_tokens']) is not int
                 or request['max_completion_tokens'] != policy['max_completion_tokens']):

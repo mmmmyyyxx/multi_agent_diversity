@@ -875,6 +875,9 @@ nodes:
   era: UNIFIED_TEAM_PROMPT_SEARCH
   status: INVALID
   scientific_status: EXECUTION_ABORTED_PROVIDER_OUTPUT_TRUNCATION_NOT_EVALUABLE_PILOT
+- experiment_id: math_v2_2_gradient_pattern_seed81_pilot_v2
+  kind: PILOT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1793,4 +1796,10 @@ edges:
   evidence: experiments/protocols/math_v2_2_gradient_pattern_seed81_pilot_v1/protocol.json
   scope: Unchanged V2.2 scientific method; fresh fixed operational horizon and single-use
     scope
+- from: math_v2_2_gradient_pattern_seed81_pilot_v1
+  to: math_v2_2_gradient_pattern_seed81_pilot_v2
+  relation: followup_of
+  evidence: experiments/protocols/math_v2_2_gradient_pattern_seed81_pilot_v2/cluster_output_amendment.json
+  scope: New user autonomous operational recovery; cluster output capacity only; no
+    scientific algorithm change
 current_frontier: experiments/current_frontier.yaml

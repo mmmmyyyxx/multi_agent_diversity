@@ -3,6 +3,13 @@
   "schema_version": "suite_classification_v1",
   "tests": [
     {
+      "classification": "CURRENT_CONTRACT",
+      "current_suite_included": true,
+      "path": "tests/current/test_pattern_cluster_output_limit.py",
+      "reason": "Current cluster-only wire/accounting/truncation and end-to-end synthetic conformance",
+      "required_private_artifacts": []
+    },
+    {
       "path": "tests/current/test_v22_operational_pilot.py",
       "classification": "CURRENT_CONTRACT",
       "current_suite_included": true,

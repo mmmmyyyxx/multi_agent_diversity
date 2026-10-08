@@ -111,7 +111,10 @@ class _FreshSearchProvider:
         estimate=len(serialized_request(request))+1024
         self.input_audit.append(dict(role=self.role,estimated_input_tokens=estimate,
             provider_input_limit=POLICY['input_limit_tokens'],provider_context_limit=POLICY['context_limit_tokens']))
-        if estimate>POLICY['input_limit_tokens'] or estimate+1810>POLICY['context_limit_tokens']:
+        from ..benchmarks.math_optimizer_generation import frozen_optimizer_role_policy
+        role_policy = frozen_optimizer_role_policy(getattr(self.broker, 'contract', {}), self.role)
+        output_ceiling = role_policy['accounting_output_ceiling'] if role_policy else 1810
+        if estimate>POLICY['input_limit_tokens'] or estimate+output_ceiling>POLICY['context_limit_tokens']:
             raise SearchContractError('STOP_PATTERN_CONTEXT_LIMIT_POLICY_REQUIRED')
         self.calls+=1
         result=self.broker.complete(role=self.role,split='optimize',stage=self.stage,messages=messages)

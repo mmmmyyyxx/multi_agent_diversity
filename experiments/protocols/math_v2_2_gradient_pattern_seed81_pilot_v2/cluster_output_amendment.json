@@ -1,0 +1,42 @@
+{
+  "generation_ceiling_changed": true,
+  "incomplete_output": "Reject length/max_tokens/max_output_tokens before JSON parsing",
+  "operational_effect": "Only pattern_cluster max_completion_tokens 1800 -> 8192; accounting cap 1810 -> 8202",
+  "parent_attempt_closed": true,
+  "parent_binding_sha256": "159a5d86e666a441436f5008ccafaadd6237eccabdd0e787dbe62cfde3864a89",
+  "policy": {
+    "accounting_output_ceiling": 8202,
+    "enable_thinking": false,
+    "frequency_penalty": 0,
+    "identity": "PATTERN_CLUSTER_GENERATION_POLICY_V1",
+    "max_completion_tokens": 8192,
+    "max_tokens": "NOT_SENT",
+    "measurement_tolerance_tokens": 10,
+    "model": "qwen3.7-flash",
+    "output_token_scope": "reasoning_plus_answer",
+    "presence_penalty": 1.5,
+    "roles": [
+      "pattern_cluster"
+    ],
+    "temperature": 0.7,
+    "top_k": 20,
+    "top_p": 0.8,
+    "truncation": "existing_operational_output_truncation"
+  },
+  "schema_version": "pattern_cluster_output_amendment_v1",
+  "scientific_method_changed": false,
+  "unchanged": [
+    "gradient_inputs",
+    "global_clustering",
+    "schema",
+    "support_ids",
+    "Pattern_selection",
+    "WHO",
+    "Layer1",
+    "transition",
+    "Shadow",
+    "Memory",
+    "scientific_stopping"
+  ],
+  "user_task_sha256": "9ef0ad2aec560ad107ec41c432a902ab3e4a456f8ebb426b9c0c533d5150dc19"
+}

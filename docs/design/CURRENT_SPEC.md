@@ -271,6 +271,13 @@ inherited. Pattern/Memory are IMPLEMENTED_DEFAULT_OFF, efficacy unverified.
 
 ## Operational reservation accounting (explicit opt-in)
 
+Fresh V2.2 operational recovery may bind the
+[cluster-specific generation ceiling](PATTERN_CLUSTER_OUTPUT_POLICY_V1.md).
+It raises only clustering from 1800 to 8192 output tokens, with the existing
+measurement tolerance, exact pre-transport reservation and truncation rejection.
+Gradient, Pattern methodology, Layer1 and all scientific gates remain unchanged.
+Historical bindings preserve their original ceiling and outputs.
+
 - **INV-ACCOUNTING-RESERVATION-002**: A versioned, explicitly authorized
   accounting policy may reserve the exact serialized provider-visible UTF-8
   request length plus its declared operational margin and transmitted output

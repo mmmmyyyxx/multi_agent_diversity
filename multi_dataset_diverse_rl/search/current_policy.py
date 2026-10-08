@@ -39,7 +39,7 @@ class CurrentPolicyBundle:
             raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
 
     def method(self, *, aggregation, provider_binding, successful_provider_calls,
-            partition_completion_policy=None,gradient_recovery_policy=None):
+            partition_completion_policy=None,gradient_recovery_policy=None,pattern_cluster_generation_policy=None):
         from .gradient_recovery import validate_policy
         validate_policy(gradient_recovery_policy)
         if not isinstance(provider_binding, str) or len(provider_binding) != 64:
@@ -64,6 +64,11 @@ class CurrentPolicyBundle:
             method.mechanism_config['partition_completion_policy']=partition_completion_policy
         if gradient_recovery_policy is not None:
             method.mechanism_config['gradient_recovery_policy']=deepcopy(gradient_recovery_policy)
+        if pattern_cluster_generation_policy is not None:
+            from ..benchmarks.math_optimizer_generation import pattern_cluster_generation_contract
+            if pattern_cluster_generation_policy != pattern_cluster_generation_contract():
+                raise SearchContractError('PATTERN_CLUSTER_GENERATION_POLICY_BINDING_MISMATCH')
+            method.mechanism_config['pattern_cluster_generation_policy']=deepcopy(pattern_cluster_generation_policy)
         return method
 
     def validate_method(self, method):
@@ -71,11 +76,14 @@ class CurrentPolicyBundle:
             provider_binding=method.mechanism_config.get('pattern_provider_binding'),
             successful_provider_calls=method.global_stop.emergency_max_provider_calls,
             partition_completion_policy=method.mechanism_config.get('partition_completion_policy'),
-            gradient_recovery_policy=method.mechanism_config.get('gradient_recovery_policy'))
+            gradient_recovery_policy=method.mechanism_config.get('gradient_recovery_policy'),
+            pattern_cluster_generation_policy=method.mechanism_config.get('pattern_cluster_generation_policy'))
         if method.identity() != expected.identity():
             raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
 
     def validate_contract(self, contract):
+        from ..benchmarks.math_optimizer_generation import frozen_cluster_policy
+        frozen_cluster_policy(contract)
         from .gradient_recovery import validate_policy
         validate_policy(contract.get('gradient_recovery_policy'))
         if contract.get('partition_completion_policy') not in (None, self.partition_completion):

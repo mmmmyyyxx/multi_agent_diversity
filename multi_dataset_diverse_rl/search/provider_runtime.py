@@ -13,7 +13,7 @@ from .benchmark import BenchmarkInput
 from .schemas import SearchContractError
 from ..benchmarks.math_solver_decoding import generation_request_fields, frozen_solver_policy
 from ..benchmarks.math_prediction_validity import frozen_prediction_policy, frozen_recovery_policy
-from ..benchmarks.math_optimizer_generation import frozen_optimizer_policy
+from ..benchmarks.math_optimizer_generation import frozen_optimizer_policy, frozen_optimizer_role_policy
 from .. import versions
 from ..current_contract import PATTERN_SPECIFIC_CONTENT_GUARD_VERSION as CURRENT_CONTENT_GUARD
 
@@ -113,7 +113,7 @@ class RequestBroker:
                 if 'gradient_recovery_policy' in c:
                     identity['pattern_treatment']['gradient_recovery_policy']=c['gradient_recovery_policy']
         if role in {'reflection','pattern','pattern_gradient','pattern_cluster'} and self.optimizer_policy:
-            identity['optimizer_generation_policy'] = self.optimizer_policy
+            identity['optimizer_generation_policy'] = frozen_optimizer_role_policy(c, role)
             if c.get('optimizer_nonthinking_evidence_policy'):
                 identity['optimizer_nonthinking_evidence_policy']=c['optimizer_nonthinking_evidence_policy']
         if role == "solver":
@@ -285,7 +285,8 @@ class RequestBroker:
                     response_sha256=hashlib.sha256(result["text"].encode() if result["text"] is not None else b"null").hexdigest(), input_tokens=result["input_tokens"], output_tokens=result["output_tokens"]))
                 if role in {'reflection','pattern','pattern_gradient','pattern_cluster'} and self.optimizer_policy:
                     from ..benchmarks.math_optimizer_diagnostics import optimizer_response_telemetry
-                    telemetry=optimizer_response_telemetry(request,result,self.optimizer_policy,c.get('optimizer_nonthinking_evidence_policy'))
+                    role_policy=frozen_optimizer_role_policy(c, role)
+                    telemetry=optimizer_response_telemetry(request,result,role_policy,c.get('optimizer_nonthinking_evidence_policy'))
                     result={**result,'optimizer_generation_diagnostics':telemetry}
                     self._write(dict(kind='OPTIMIZER_GENERATION_DIAGNOSTICS',role=role,split=split,stage=stage,
                         request_sha256=key,**telemetry))
@@ -300,7 +301,7 @@ class RequestBroker:
                     self.abort("STOP_SOLVER_DECODING_POLICY_INSUFFICIENT" if role == "solver" and frozen_solver_policy(c) else "OPERATIONAL_OUTPUT_TRUNCATION")
                 if 'max_completion_tokens' in request:
                     reported = result.get('provider_reported_output_tokens', result.get('output_tokens'))
-                    ceiling = self.optimizer_policy['accounting_output_ceiling']
+                    ceiling = role_policy['accounting_output_ceiling']
                 else:
                     reported = result.get('provider_reported_output_tokens')
                     ceiling = request['max_tokens']

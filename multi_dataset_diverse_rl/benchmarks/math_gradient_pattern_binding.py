@@ -38,9 +38,31 @@ class MATHGradientPatternBinding:
             scope_path=self.path(c['current_user_scope_path'])
             if file_hash(scope_path)!=c['current_user_scope_sha256']:raise SearchContractError('CURRENT_USER_SCOPE_HASH_MISMATCH')
             scope=json.loads(scope_path.read_bytes());op=c['operational_pilot']
+            cluster_amendment = None
+            if 'pattern_cluster_generation_policy' in c:
+                from .math_optimizer_generation import frozen_cluster_policy
+                policy = frozen_cluster_policy(c)
+                for p,h in [('cluster_output_amendment_path','cluster_output_amendment_sha256'),
+                        ('cluster_output_parent_binding_path','cluster_output_parent_binding_sha256')]:
+                    if file_hash(self.path(c[p])) != c[h]:
+                        raise SearchContractError('PATTERN_CLUSTER_GENERATION_AMENDMENT_HASH_MISMATCH')
+                amendment=json.loads(self.path(c['cluster_output_amendment_path']).read_bytes())
+                prior=json.loads(self.path(c['cluster_output_parent_binding_path']).read_bytes())
+                if (amendment.get('schema_version') != 'pattern_cluster_output_amendment_v1'
+                        or amendment.get('policy') != policy
+                        or amendment.get('scientific_method_changed') is not False
+                        or amendment.get('user_task_sha256') != scope.get('user_task_sha256')
+                        or amendment.get('parent_binding_sha256') != c['cluster_output_parent_binding_sha256']
+                        or prior.get('identity') != versions.MATH_V2_2_EXECUTION_BINDING_VERSION
+                        or prior.get('execution_attempt_id') == c['execution_attempt_id']):
+                    raise SearchContractError('PATTERN_CLUSTER_GENERATION_AMENDMENT_INVALID')
+                cluster_amendment=dict(policy=policy,path=c['cluster_output_amendment_path'],
+                    sha256=c['cluster_output_amendment_sha256'],parent_path=c['cluster_output_parent_binding_path'],
+                    parent_sha256=c['cluster_output_parent_binding_sha256'])
             expected=derive_current_pilot_contract(parent,attempt=c['execution_attempt_id'],binding_path=c['binding_path'],
                 parent_path=BASELINE_PATH,parent_sha256=BASELINE_SHA,authorization_path=c['current_user_scope_path'],
-                authorization_sha256=c['current_user_scope_sha256'],max_opportunities=op['max_opportunities'],token_ceiling=op['token_ceiling'])
+                authorization_sha256=c['current_user_scope_sha256'],max_opportunities=op['max_opportunities'],
+                token_ceiling=op['token_ceiling'],cluster_generation_amendment=cluster_amendment)
             if c!=expected:raise SearchContractError('CURRENT_FROZEN_PILOT_SETTING_CHANGED')
             required=dict(schema_version='math_v2_2_operational_pilot_user_scope_v1',attempt_id=c['execution_attempt_id'],
                 arm='A4',seed=81,user_authorized=True,one_attempt_only=True,max_opportunities=op['max_opportunities'],
@@ -86,11 +108,14 @@ class MATHGradientPatternBinding:
             identity['partition_completion_policy']=c['partition_completion_policy']
         if 'gradient_recovery_policy' in c:
             identity['gradient_recovery_policy']=c['gradient_recovery_policy']
+        if 'pattern_cluster_generation_policy' in c:
+            identity['pattern_cluster_generation_policy']=c['pattern_cluster_generation_policy']
         binding=hashlib.sha256(json.dumps(identity,sort_keys=True,separators=(',',':')).encode()).hexdigest()
         return CURRENT_POLICY_BUNDLE.method(aggregation=c['aggregation'],provider_binding=binding,
             successful_provider_calls=c['provider_bounds']['successful_provider_calls'],
             partition_completion_policy=c.get('partition_completion_policy'),
-            gradient_recovery_policy=c.get('gradient_recovery_policy'))
+            gradient_recovery_policy=c.get('gradient_recovery_policy'),
+            pattern_cluster_generation_policy=c.get('pattern_cluster_generation_policy'))
 
     def _compose(self,*,arm,seed,solver,reflection,pattern_provider,run_root,optimize_fn=None):
         blockers=self.blockers()

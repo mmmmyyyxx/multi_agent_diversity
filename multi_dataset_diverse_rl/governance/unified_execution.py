@@ -31,7 +31,9 @@ def execution_scope(manifest,contract):
         operational_pilot=contract['operational_pilot'],provider_bounds=contract['provider_bounds'],
         initial_team_sha256=contract['initial_team_sha256'],initial_memory_entries=0,
         user_scope_sha256=contract['current_user_scope_sha256'],validation_calls=0,test_calls=0,
-        cumulative_token_ceiling=40_000_000)
+        cumulative_token_ceiling=40_000_000,
+        **({'pattern_cluster_generation_policy':contract['pattern_cluster_generation_policy']}
+            if 'pattern_cluster_generation_policy' in contract else {}))
 
 def consumption_path(root, scope):
     return root / "runs/unified_authorization_consumption" / (canonical_sha256(scope) + ".json")
@@ -201,6 +203,8 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
         manifest['partition_completion_policy']=contract['partition_completion_policy']
     if 'gradient_recovery_policy' in contract:
         manifest['gradient_recovery_policy']=contract['gradient_recovery_policy']
+    if 'pattern_cluster_generation_policy' in contract:
+        manifest['pattern_cluster_generation_policy']=contract['pattern_cluster_generation_policy']
     for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256", "optimizer_nonthinking_evidence_policy", "layer1_search_policy", "candidate_contract_identity", "post_search_validation_policy", "pattern_support_id_transport", "pattern_abstraction_guard"):
         if k in contract:manifest[k]=contract[k]
     manifest["preregistration_identity"] = canonical_sha256({k: v for k, v in manifest.items() if k not in {"lifecycle", "authorization"}})

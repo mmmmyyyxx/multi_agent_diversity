@@ -104,7 +104,7 @@ def pilot_provider_bounds(parent, *, max_opportunities=None, token_ceiling=None)
 
 def derive_current_pilot_contract(parent, *, attempt, binding_path, parent_path,
         parent_sha256, authorization_path, authorization_sha256,
-        max_opportunities=None, token_ceiling=None):
+        max_opportunities=None, token_ceiling=None, cluster_generation_amendment=None):
     if max_opportunities is None or token_ceiling is None:
         raise SearchContractError(PILOT_BOUND_BLOCKER)
     from copy import deepcopy
@@ -127,5 +127,16 @@ def derive_current_pilot_contract(parent, *, attempt, binding_path, parent_path,
         search_only_scope=dict(validation_authorized=False,test_authorized=False,
             raw_diagnostic_authorized=False,llm_judge_authorized=False,push_authorized=True))
     c.pop('method_implementation_sha',None)
+    if cluster_generation_amendment is not None:
+        from .math_optimizer_generation import pattern_cluster_generation_contract
+        amendment = cluster_generation_amendment
+        if (set(amendment) != {'policy', 'path', 'sha256', 'parent_path', 'parent_sha256'}
+                or amendment['policy'] != pattern_cluster_generation_contract()):
+            raise SearchContractError('PATTERN_CLUSTER_GENERATION_AMENDMENT_INVALID')
+        c.update(pattern_cluster_generation_policy=deepcopy(amendment['policy']),
+            cluster_output_amendment_path=amendment['path'],
+            cluster_output_amendment_sha256=amendment['sha256'],
+            cluster_output_parent_binding_path=amendment['parent_path'],
+            cluster_output_parent_binding_sha256=amendment['parent_sha256'])
     c['provider_bounds']=pilot_provider_bounds(c,max_opportunities=max_opportunities,token_ceiling=token_ceiling)
     return c
