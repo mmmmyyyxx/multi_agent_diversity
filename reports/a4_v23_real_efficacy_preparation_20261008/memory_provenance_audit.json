@@ -1,0 +1,182 @@
+{
+  "demonstrated_memory_efficacy": false,
+  "gradients": [
+    {
+      "example_id": "optimize0",
+      "member_id": 0,
+      "reference_source_identity_sha256": "193334dca8b915d5d0e4208b2f5f62e254c7c8d55c332c36281a96c7d9a84a80",
+      "solution_reference_field_names": [
+        "example_id",
+        "original_characters",
+        "source",
+        "split",
+        "text",
+        "truncated"
+      ],
+      "solution_reference_original_characters": 57,
+      "solution_reference_truncated": false,
+      "trajectory_source": {
+        "benchmark_input_sha256": "fb5de9c4596445f0bb24c20a880f2388161c580fdabacb0caf0329c50a474d61",
+        "example_id": "optimize0",
+        "member_id": 0,
+        "mutable_prompt_sha256": "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80",
+        "request_sha256": "0a132815d14af05ab185b981c95c954c99d7ae9a744469ce3cfb6c4a353849c3",
+        "solver_interface_identity": "MATH_SOLVER_INTERFACE_V6",
+        "split": "optimize"
+      }
+    },
+    {
+      "example_id": "optimize1",
+      "member_id": 0,
+      "reference_source_identity_sha256": "193334dca8b915d5d0e4208b2f5f62e254c7c8d55c332c36281a96c7d9a84a80",
+      "solution_reference_field_names": [
+        "example_id",
+        "original_characters",
+        "source",
+        "split",
+        "text",
+        "truncated"
+      ],
+      "solution_reference_original_characters": 57,
+      "solution_reference_truncated": false,
+      "trajectory_source": {
+        "benchmark_input_sha256": "4314e471e4394490a6c783a9560e17552eeeb57e50a3a12f51fb1243903bc2e4",
+        "example_id": "optimize1",
+        "member_id": 0,
+        "mutable_prompt_sha256": "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80",
+        "request_sha256": "8124d9e4fb6ae40dfd214992ae4a0406eba0d8f84c2eb07f7e785a74003eda0e",
+        "solver_interface_identity": "MATH_SOLVER_INTERFACE_V6",
+        "split": "optimize"
+      }
+    },
+    {
+      "example_id": "optimize2",
+      "member_id": 0,
+      "reference_source_identity_sha256": "193334dca8b915d5d0e4208b2f5f62e254c7c8d55c332c36281a96c7d9a84a80",
+      "solution_reference_field_names": [
+        "example_id",
+        "original_characters",
+        "source",
+        "split",
+        "text",
+        "truncated"
+      ],
+      "solution_reference_original_characters": 57,
+      "solution_reference_truncated": false,
+      "trajectory_source": {
+        "benchmark_input_sha256": "2848b1030340a46754e962e7d45482174f201e06fb77d7e5535a1f50caffe745",
+        "example_id": "optimize2",
+        "member_id": 0,
+        "mutable_prompt_sha256": "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80",
+        "request_sha256": "0d2ce3cfd9b8ee624cd9de366febc1eed6a630c259e4e8855adac2b4fe9b739c",
+        "solver_interface_identity": "MATH_SOLVER_INTERFACE_V6",
+        "split": "optimize"
+      }
+    },
+    {
+      "example_id": "optimize3",
+      "member_id": 0,
+      "reference_source_identity_sha256": "193334dca8b915d5d0e4208b2f5f62e254c7c8d55c332c36281a96c7d9a84a80",
+      "solution_reference_field_names": [
+        "example_id",
+        "original_characters",
+        "source",
+        "split",
+        "text",
+        "truncated"
+      ],
+      "solution_reference_original_characters": 57,
+      "solution_reference_truncated": false,
+      "trajectory_source": {
+        "benchmark_input_sha256": "38e168f32b88326fd1e9aa0e41c8102f3d04f8d5458114982c7d1d7cb7aadac1",
+        "example_id": "optimize3",
+        "member_id": 0,
+        "mutable_prompt_sha256": "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80",
+        "request_sha256": "2b3dd7c8e1916cf1bcfb1be33a7e1a8040c9527469d110f63d6cb91725bfc5c7",
+        "solver_interface_identity": "MATH_SOLVER_INTERFACE_V6",
+        "split": "optimize"
+      }
+    },
+    {
+      "example_id": "optimize4",
+      "member_id": 0,
+      "reference_source_identity_sha256": "193334dca8b915d5d0e4208b2f5f62e254c7c8d55c332c36281a96c7d9a84a80",
+      "solution_reference_field_names": [
+        "example_id",
+        "original_characters",
+        "source",
+        "split",
+        "text",
+        "truncated"
+      ],
+      "solution_reference_original_characters": 57,
+      "solution_reference_truncated": false,
+      "trajectory_source": {
+        "benchmark_input_sha256": "082643295fa5e52543edddf8a2b12c2518bf3ee2d7ceeb3a3debbdfa83518497",
+        "example_id": "optimize4",
+        "member_id": 0,
+        "mutable_prompt_sha256": "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80",
+        "request_sha256": "eee341296a32031589982f52baec99aa3ac08704dfa0c2f33b5f601e234aed76",
+        "solver_interface_identity": "MATH_SOLVER_INTERFACE_V6",
+        "split": "optimize"
+      }
+    },
+    {
+      "example_id": "optimize5",
+      "member_id": 0,
+      "reference_source_identity_sha256": "193334dca8b915d5d0e4208b2f5f62e254c7c8d55c332c36281a96c7d9a84a80",
+      "solution_reference_field_names": [
+        "example_id",
+        "original_characters",
+        "source",
+        "split",
+        "text",
+        "truncated"
+      ],
+      "solution_reference_original_characters": 57,
+      "solution_reference_truncated": false,
+      "trajectory_source": {
+        "benchmark_input_sha256": "2dee6c805905df74b6080e798c38ff28faffe14c4543eead2d7d1bbe61fe40be",
+        "example_id": "optimize5",
+        "member_id": 0,
+        "mutable_prompt_sha256": "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80",
+        "request_sha256": "d14ca27a8fbf7a0e94ed1b518640f00f28a24d8cdc3f8739c9b362bf4d2f3cf5",
+        "solver_interface_identity": "MATH_SOLVER_INTERFACE_V6",
+        "split": "optimize"
+      }
+    }
+  ],
+  "kind": "SYNTHETIC_CONFORMANCE_NOT_EFFICACY",
+  "measured_full_memory": [
+    {
+      "candidate_id": "layer1:1:8e97a7145fc7",
+      "coverage_counts": {
+        "broken_count": 7,
+        "fixed_count": 4,
+        "invalid_count": 0,
+        "retained_count": 5,
+        "valid_wrong_count": 9
+      },
+      "full_effect_field_names": [
+        "broken_ids",
+        "fixed_ids",
+        "invalid_delta",
+        "invalid_ids",
+        "member_delta",
+        "membership",
+        "retained_ids",
+        "scope",
+        "team_delta",
+        "valid_wrong_ids"
+      ],
+      "intended_effect_and_actual_edit_distinct": true,
+      "invalid_delta": 0,
+      "member_delta": -3,
+      "membership_count": 18,
+      "status": "FULL_REFUTED"
+    }
+  ],
+  "private_evidence_sha256": "b492e6ae388f30c0efe3f617b5fefe586ea301cbb9cae615ed3738f2c0fac1f0",
+  "real_api_calls": 0,
+  "status": "PASS"
+}

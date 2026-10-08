@@ -1,0 +1,26 @@
+{
+  "A": {
+    "benchmark_id": "math",
+    "binding_sha256": "7f7a2eccc0356935b5e3e38c61386274d7e612d60f93adbbb1c7ad9989446cbf",
+    "blockers": [],
+    "gate": "PILOT_READY_NOT_AUTHORIZED",
+    "provider_attempts": 0,
+    "readiness_identity": "MATH_RUNTIME_READINESS_V1",
+    "ready_for_authorization": true,
+    "real_api_authorized": false,
+    "test_calls": 0,
+    "validation_calls": 0
+  },
+  "B": {
+    "benchmark_id": "math",
+    "binding_sha256": "27b1ba32ec5a6377ba599349044424082d7ab6c1036e60f69b016a7af2678be1",
+    "blockers": [],
+    "gate": "PILOT_READY_NOT_AUTHORIZED",
+    "provider_attempts": 0,
+    "readiness_identity": "MATH_RUNTIME_READINESS_V1",
+    "ready_for_authorization": true,
+    "real_api_authorized": false,
+    "test_calls": 0,
+    "validation_calls": 0
+  }
+}

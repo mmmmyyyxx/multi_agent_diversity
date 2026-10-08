@@ -1,0 +1,14 @@
+{
+  "charged_tokens": 0,
+  "current_governance_passed": true,
+  "governance_receipt_sha256": "c6e0ee9ee15720a1b286d470f249d97f433ee84335cd9c1180afd68f877d3a39",
+  "historical_raw_and_reports_preserved": true,
+  "ledger_unchanged": true,
+  "paid_execution_authorized": false,
+  "real_api_calls": 0,
+  "source_sha": "ae57f153d99841ac4848917194184b3800ed486f",
+  "status": "PASS",
+  "tested_source_file_count": 869,
+  "tested_source_unchanged": true,
+  "unrelated_untracked_report_directory_preserved": true
+}

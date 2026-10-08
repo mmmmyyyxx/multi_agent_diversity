@@ -1,0 +1,483 @@
+{
+  "READY_TO_RUN": false,
+  "cells": {
+    "A": {
+      "READY_TO_RUN": false,
+      "authorization": {
+        "api_scope": {
+          "arm": "A4",
+          "attempt_id": "a4_v23_matched_seed81_20261008_attempt1_a",
+          "binding_sha256": "7f7a2eccc0356935b5e3e38c61386274d7e612d60f93adbbb1c7ad9989446cbf",
+          "cache_namespace": "a4_v23_matched_seed81_20261008_attempt1_a",
+          "cumulative_token_ceiling": 40000000,
+          "initial_memory_entries": 0,
+          "initial_team_sha256": "d1a04dbdd540371638e8271cca90469f0a8cf4d42a5f944eeee8c6dfcfca9110",
+          "method": "unified_team_prompt_search_v2_2",
+          "models": {
+            "optimizer_reflection": "qwen3.7-flash",
+            "pattern": "qwen3.7-flash",
+            "solver": "qwen3-8b",
+            "solver_thinking": false
+          },
+          "operational_pilot": {
+            "guarantees_saturation": false,
+            "identity": "V2_2_FIXED_HORIZON_OPERATIONAL_PILOT_V1",
+            "max_opportunities": 5,
+            "scientific_stopper": "team_epoch_no_commit_v1",
+            "token_ceiling": 2000000
+          },
+          "paired_realization_policy": {
+            "attempts": {
+              "A": "a4_v23_matched_seed81_20261008_attempt1_a",
+              "B": "a4_v23_matched_seed81_20261008_attempt1_b"
+            },
+            "authorization_file": "runs/a4_v23_matched_seed81_20261008_attempt1/paired_authorization.json",
+            "binding_paths": {
+              "A": "experiments/execution_bindings/a4_v23_matched_seed81_20261008_attempt1_a.json",
+              "B": "experiments/execution_bindings/a4_v23_matched_seed81_20261008_attempt1_b.json"
+            },
+            "cache_directory": "runs/a4_v23_matched_seed81_20261008_attempt1/paired_solver_cache",
+            "canary_review": "OWNER_INITIAL_PROFILE_REVIEW_BEFORE_OPTIMIZATION",
+            "canary_review_timeout_seconds": 900,
+            "cell": "A",
+            "charged_tokens_per_cell": 2000000,
+            "charged_tokens_total": 4000000,
+            "group_id": "a4_v23_matched_seed81_20261008_attempt1",
+            "identity": "MATCHED_SOLVER_REALIZATION_EXECUTION_POLICY_V1",
+            "inference_identity": "ff36e5aedecb8c67cb55523885824e8b403aa417d2c09b59a598e34968bbc49b",
+            "max_opportunities_per_cell": 5,
+            "protocol_path": "experiments/protocols/a4_v23_matched_comparison_v1/protocol.json",
+            "protocol_sha256": "d8e7d1c04cff719abcf4a74507357123b497eb9d29e1c755057a01daa5d02ec4"
+          },
+          "pattern_cluster_generation_policy": {
+            "accounting_output_ceiling": 8202,
+            "enable_thinking": false,
+            "frequency_penalty": 0,
+            "identity": "PATTERN_CLUSTER_GENERATION_POLICY_V1",
+            "max_completion_tokens": 8192,
+            "max_tokens": "NOT_SENT",
+            "measurement_tolerance_tokens": 10,
+            "model": "qwen3.7-flash",
+            "output_token_scope": "reasoning_plus_answer",
+            "presence_penalty": 1.5,
+            "roles": [
+              "pattern_cluster"
+            ],
+            "temperature": 0.7,
+            "top_k": 20,
+            "top_p": 0.8,
+            "truncation": "existing_operational_output_truncation"
+          },
+          "phase": "pilot_search_only",
+          "preregistration_identity": "5c4f5cf073ec1dffb9740c45b7b7daebd8e7279d663b08a5c450d89e46f2e2ca",
+          "provider": "lwj",
+          "provider_bounds": {
+            "attempt_charged_token_ceiling": 2000000,
+            "bound_proof": {
+              "bootstrap_logical_solver_calls": 500,
+              "gradient_semantic_multiplier": 3,
+              "gross_reservations_are_not_spending": true,
+              "guarantees_saturation": false,
+              "identity": "V2_2_FIXED_HORIZON_OPERATIONAL_PILOT_V1",
+              "per_op_logical_solver": {
+                "full": 120,
+                "local": 36,
+                "probe": 24,
+                "shadow": 40
+              },
+              "scientific_stopper_unchanged": true,
+              "solver_semantic_multiplier": 4,
+              "token_bound": "PRE_TRANSPORT_EXACT_RESERVATION_AND_CUMULATIVE_ATTEMPT_ADMISSION",
+              "transport_multiplier": 21
+            },
+            "cumulative_charged_token_ceiling": 40000000,
+            "gross_reservation_upper_bound": 308070000000,
+            "max_opportunities": 5,
+            "max_proposals_per_opportunity": 6,
+            "pattern_calls": 905,
+            "pattern_cluster_calls": 5,
+            "pattern_gradient_calls": 900,
+            "physical_solver_per_opportunity": 880,
+            "reflection_calls": 30,
+            "reservation_peak_upper_bound": 2000000,
+            "shadow_solver_calls": 1600,
+            "solver_calls": 6400,
+            "solver_per_opportunity": 220,
+            "successful_provider_calls": 7335,
+            "transport_attempts": 154035
+          },
+          "roles": [
+            "solver",
+            "reflection",
+            "pattern_gradient",
+            "pattern_cluster"
+          ],
+          "seed": 81,
+          "solver_output_interface": {
+            "identity": "MATH_SOLVER_INTERFACE_V6",
+            "parser_identity": "math_verify_no_fallback_v1",
+            "reflection_max_output_tokens": 1800,
+            "sha256": "0f8d3231716ba2ca0de72e3b0674431daa58949c76120da4b8add4de1b1eecee",
+            "solver_max_output_tokens": 3600
+          },
+          "solver_trajectory_policy": {
+            "adaptive_split": "optimize",
+            "gradient_input_schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V2",
+            "gradient_prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V4",
+            "hidden_reasoning_claim": false,
+            "identity": "MATH_VISIBLE_SOLUTION_FEEDBACK_POLICY_V1",
+            "max_visible_solution_characters": 4096,
+            "memory_trajectory_writes": false,
+            "optimizer_input_schema": "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5",
+            "original_response_retention": "complete_private_resolved_prediction_and_attempts",
+            "profile_schema": "MATH_VISIBLE_SOLVER_PROFILE_V1",
+            "source": "ordinary_assistant_content",
+            "trajectory_schema": "MATH_VISIBLE_SOLVER_TRAJECTORY_V1",
+            "truncation": "unicode_prefix_explicit_metadata"
+          },
+          "source_sha": "ae57f153d99841ac4848917194184b3800ed486f",
+          "test_calls": 0,
+          "transition": "initial_competence_target_or_team_progress_v3",
+          "user_scope_sha256": "0d0f7d14fde3ba779d27d47e7bdcedc77b23283645810f3d7879449a746adada",
+          "validation_calls": 0
+        },
+        "paired_startups": {
+          "a4_v23_matched_seed81_20261008_attempt1_a": "d93e1dbd2a47c5626bb0080802eb7b4fccbe6b9385e0c7c2d0127f4d578854c8",
+          "a4_v23_matched_seed81_20261008_attempt1_b": "0be76c9b5caf6a0946f9bfcc70918dea5dc531a0abeb386940043dca07dec4b3"
+        },
+        "single_use": true,
+        "startup_identity_sha256": "d93e1dbd2a47c5626bb0080802eb7b4fccbe6b9385e0c7c2d0127f4d578854c8",
+        "status": "PENDING_EXPLICIT_USER_APPROVAL",
+        "study_charged_token_ceiling": 4000000,
+        "test_access_policy": "sealed; zero calls",
+        "validation_access_policy": "zero calls; no post-freeze Validation authorization"
+      },
+      "data": {
+        "dataset": "MATH",
+        "optimize_count": 60,
+        "split_identity": "benchmark_experiment_split_v2",
+        "split_sha256": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+        "test_count_authorized": 0,
+        "validation_count_authorized": 0,
+        "winner_only_shadow_count": 40
+      },
+      "execution": {
+        "allowed_retries": {
+          "experiment": 0,
+          "gradient_semantic_attempts": 3,
+          "solver_semantic_attempts": 4,
+          "transport_attempts_per_draw": 21
+        },
+        "authoritative_cumulative_journal": "runs/math_autonomous_accounting_v2/token_ledger/events.jsonl",
+        "canary_extra_provider_calls": 0,
+        "charged_token_ceiling": 2000000,
+        "early_stop_rule": [
+          "frozen scientific stopper",
+          "NO_FEASIBLE_OPPORTUNITY",
+          "five-opportunity ceiling",
+          "hard token/request limits",
+          "provider/identity/persistence/accounting/canary failure"
+        ],
+        "exact_runner_command": "& 'runs/math_v2_1/runtime/Scripts/python.exe' scripts/run_experiment.py --prep runs/a4_v23_matched_seed81_20261008_attempt1/prep_a_revision2 --run-root runs/a4_v23_matched_seed81_20261008_attempt1_a --execute",
+        "expected_checkpoint_path": "runs/a4_v23_matched_seed81_20261008_attempt1_a/final_state_private.json",
+        "expected_ledger_path": "runs/a4_v23_matched_seed81_20261008_attempt1_a/ledger.jsonl",
+        "expected_output_directory": "runs/a4_v23_matched_seed81_20261008_attempt1_a",
+        "opportunity_budget": 5,
+        "seeds": [
+          81
+        ]
+      },
+      "experiment_id": "a4_v23_matched_comparison_v1_a",
+      "fail_closed_conditions": [
+        "frozen identity/hash or tracked source mismatch",
+        "command/model/seed/split/budget mismatch",
+        "provider/credential failure beyond frozen recovery",
+        "checkpoint/ledger corruption",
+        "budget overrun",
+        "unexpected Validation/Test access",
+        "failed or missing canary",
+        "need to change method, prompts, settings or protocol"
+      ],
+      "models": {
+        "local_optimizer_backend": "LAYER1_BOUNDED_MEMORY_SEARCH_V2",
+        "local_optimizer_version_or_sha256": "8be73cd944856a74582dcc20aac51ba951e85401ece31c654f36df0b0be80f8d",
+        "optimizer_or_reflection": "qwen3.7-flash",
+        "pattern": "qwen3.7-flash",
+        "solver": "qwen3-8b",
+        "thinking": false
+      },
+      "protocol": {
+        "endpoint_structural_identifiability": {
+          "applicability": "primary endpoint is Full-admissible member capability preservation; not solely plurality transfer",
+          "initial_fresh_profile_review_before_search": true,
+          "no_historical_profile_used_as_fresh_V6_measurement": true
+        },
+        "manifest_path": "experiments/manifests/a4_v23_matched_comparison_v1_a.yaml",
+        "manifest_sha256": "41840fb0d85987a010f9b7446d385c754a26a207b3096823ee40dbe70f3a3e18",
+        "name": "A4 V2.2-with-V6 versus V2.3",
+        "preregistration_path": "experiments/protocols/a4_v23_matched_comparison_v1/protocol.json",
+        "preregistration_sha256": "d8e7d1c04cff719abcf4a74507357123b497eb9d29e1c755057a01daa5d02ec4",
+        "protocol_sha256": "d8e7d1c04cff719abcf4a74507357123b497eb9d29e1c755057a01daa5d02ec4",
+        "version": "MATCHED_SOLVER_REALIZATION_EXECUTION_POLICY_V1"
+      },
+      "schema_version": "sol_luna_experiment_handoff_v1",
+      "source": {
+        "execution_closure_sha256": "9fef010a1fedb45d6719238fdb9bf5eeb3501dc7e2dbd60cc36baa8f950171c2",
+        "publication_commit_may_add_metadata": true,
+        "repository_commit": "ae57f153d99841ac4848917194184b3800ed486f",
+        "tracked_worktree_status": "clean at authorized execution"
+      }
+    },
+    "B": {
+      "READY_TO_RUN": false,
+      "authorization": {
+        "api_scope": {
+          "arm": "A4",
+          "attempt_id": "a4_v23_matched_seed81_20261008_attempt1_b",
+          "binding_sha256": "27b1ba32ec5a6377ba599349044424082d7ab6c1036e60f69b016a7af2678be1",
+          "cache_namespace": "a4_v23_matched_seed81_20261008_attempt1_b",
+          "cumulative_token_ceiling": 40000000,
+          "initial_memory_entries": 5,
+          "initial_team_sha256": "d1a04dbdd540371638e8271cca90469f0a8cf4d42a5f944eeee8c6dfcfca9110",
+          "method": "unified_team_prompt_search_v2_3",
+          "models": {
+            "optimizer_reflection": "qwen3.7-flash",
+            "pattern": "qwen3.7-flash",
+            "solver": "qwen3-8b",
+            "solver_thinking": false
+          },
+          "operational_pilot": {
+            "guarantees_saturation": false,
+            "identity": "V2_2_FIXED_HORIZON_OPERATIONAL_PILOT_V1",
+            "max_opportunities": 5,
+            "scientific_stopper": "team_epoch_no_commit_v1",
+            "token_ceiling": 2000000
+          },
+          "optimization_evidence_policy": {
+            "bootstrap": "measured_initial_optimize_profiles_zero_llm",
+            "candidate_guard": "optimizer_dependency_guard_v1",
+            "edit_memory": "actual_diff_and_scope_bound_coverage_v1",
+            "identity": "OPTIMIZATION_EVIDENCE_POLICY_V1",
+            "max_generations": 6,
+            "max_returned_candidates": 4,
+            "metric_limit": 42,
+            "minimum_current_correct": 6,
+            "minimum_current_wrong": 4,
+            "mutation_size": 3,
+            "no_safe_edit": "no_candidate_no_success",
+            "reference_solution_max_chars": 4096,
+            "reference_solution_split": "optimize",
+            "sampling": "seeded_member_rotation_without_replacement_v1",
+            "search_validation_size": 3,
+            "selection": "validation_net_then_preservation_then_mutation_net_then_generation",
+            "team_probe_size": 3,
+            "validation_feedback": "measure_after_generation_counts_only_next_iteration"
+          },
+          "paired_realization_policy": {
+            "attempts": {
+              "A": "a4_v23_matched_seed81_20261008_attempt1_a",
+              "B": "a4_v23_matched_seed81_20261008_attempt1_b"
+            },
+            "authorization_file": "runs/a4_v23_matched_seed81_20261008_attempt1/paired_authorization.json",
+            "binding_paths": {
+              "A": "experiments/execution_bindings/a4_v23_matched_seed81_20261008_attempt1_a.json",
+              "B": "experiments/execution_bindings/a4_v23_matched_seed81_20261008_attempt1_b.json"
+            },
+            "cache_directory": "runs/a4_v23_matched_seed81_20261008_attempt1/paired_solver_cache",
+            "canary_review": "OWNER_INITIAL_PROFILE_REVIEW_BEFORE_OPTIMIZATION",
+            "canary_review_timeout_seconds": 900,
+            "cell": "B",
+            "charged_tokens_per_cell": 2000000,
+            "charged_tokens_total": 4000000,
+            "group_id": "a4_v23_matched_seed81_20261008_attempt1",
+            "identity": "MATCHED_SOLVER_REALIZATION_EXECUTION_POLICY_V1",
+            "inference_identity": "ff36e5aedecb8c67cb55523885824e8b403aa417d2c09b59a598e34968bbc49b",
+            "max_opportunities_per_cell": 5,
+            "protocol_path": "experiments/protocols/a4_v23_matched_comparison_v1/protocol.json",
+            "protocol_sha256": "d8e7d1c04cff719abcf4a74507357123b497eb9d29e1c755057a01daa5d02ec4"
+          },
+          "pattern_cluster_generation_policy": {
+            "accounting_output_ceiling": 8202,
+            "enable_thinking": false,
+            "frequency_penalty": 0,
+            "identity": "PATTERN_CLUSTER_GENERATION_POLICY_V1",
+            "max_completion_tokens": 8192,
+            "max_tokens": "NOT_SENT",
+            "measurement_tolerance_tokens": 10,
+            "model": "qwen3.7-flash",
+            "output_token_scope": "reasoning_plus_answer",
+            "presence_penalty": 1.5,
+            "roles": [
+              "pattern_cluster"
+            ],
+            "temperature": 0.7,
+            "top_k": 20,
+            "top_p": 0.8,
+            "truncation": "existing_operational_output_truncation"
+          },
+          "phase": "pilot_search_only",
+          "preregistration_identity": "a589f2fabdeab90ac100240c9ec1302fb0a9d7d37a8d0e8ab9d7a72d53a27e04",
+          "provider": "lwj",
+          "provider_bounds": {
+            "attempt_charged_token_ceiling": 2000000,
+            "bound_proof": {
+              "bootstrap_logical_solver_calls": 500,
+              "gradient_semantic_multiplier": 1,
+              "gross_reservations_are_not_spending": true,
+              "guarantees_saturation": false,
+              "identity": "V2_3_OPTIMIZE_EVIDENCE_RESOURCE_DERIVATION_V1",
+              "per_op_logical_solver": {
+                "full": 120,
+                "local": 42,
+                "probe": 12,
+                "shadow": 40
+              },
+              "scientific_stopper_unchanged": true,
+              "solver_semantic_multiplier": 4,
+              "token_bound": "PRE_TRANSPORT_EXACT_RESERVATION_AND_CUMULATIVE_ATTEMPT_ADMISSION",
+              "transport_multiplier": 21
+            },
+            "cumulative_charged_token_ceiling": 40000000,
+            "gross_reservation_upper_bound": 308070000000,
+            "max_opportunities": 5,
+            "max_proposals_per_opportunity": 6,
+            "pattern_calls": 305,
+            "pattern_cluster_calls": 5,
+            "pattern_gradient_calls": 300,
+            "physical_solver_per_opportunity": 856,
+            "reflection_calls": 30,
+            "reservation_peak_upper_bound": 2000000,
+            "shadow_solver_calls": 1600,
+            "solver_calls": 6280,
+            "solver_per_opportunity": 214,
+            "successful_provider_calls": 6615,
+            "transport_attempts": 138915
+          },
+          "roles": [
+            "solver",
+            "reflection",
+            "pattern_gradient",
+            "pattern_cluster"
+          ],
+          "seed": 81,
+          "solver_output_interface": {
+            "identity": "MATH_SOLVER_INTERFACE_V6",
+            "parser_identity": "math_verify_no_fallback_v1",
+            "reflection_max_output_tokens": 1800,
+            "sha256": "0f8d3231716ba2ca0de72e3b0674431daa58949c76120da4b8add4de1b1eecee",
+            "solver_max_output_tokens": 3600
+          },
+          "solver_trajectory_policy": {
+            "adaptive_split": "optimize",
+            "gradient_input_schema": "PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V2",
+            "gradient_prompt_identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V4",
+            "hidden_reasoning_claim": false,
+            "identity": "MATH_VISIBLE_SOLUTION_FEEDBACK_POLICY_V1",
+            "max_visible_solution_characters": 4096,
+            "memory_trajectory_writes": false,
+            "optimizer_input_schema": "PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5",
+            "original_response_retention": "complete_private_resolved_prediction_and_attempts",
+            "profile_schema": "MATH_VISIBLE_SOLVER_PROFILE_V1",
+            "source": "ordinary_assistant_content",
+            "trajectory_schema": "MATH_VISIBLE_SOLVER_TRAJECTORY_V1",
+            "truncation": "unicode_prefix_explicit_metadata"
+          },
+          "source_sha": "ae57f153d99841ac4848917194184b3800ed486f",
+          "test_calls": 0,
+          "transition": "initial_competence_target_or_team_progress_v3",
+          "user_scope_sha256": "adcbfdcb9d218b566052b71f0568cf1f07ea6b37550b9c3feeaa7017d362c50d",
+          "validation_calls": 0
+        },
+        "paired_startups": {
+          "a4_v23_matched_seed81_20261008_attempt1_a": "d93e1dbd2a47c5626bb0080802eb7b4fccbe6b9385e0c7c2d0127f4d578854c8",
+          "a4_v23_matched_seed81_20261008_attempt1_b": "0be76c9b5caf6a0946f9bfcc70918dea5dc531a0abeb386940043dca07dec4b3"
+        },
+        "single_use": true,
+        "startup_identity_sha256": "0be76c9b5caf6a0946f9bfcc70918dea5dc531a0abeb386940043dca07dec4b3",
+        "status": "PENDING_EXPLICIT_USER_APPROVAL",
+        "study_charged_token_ceiling": 4000000,
+        "test_access_policy": "sealed; zero calls",
+        "validation_access_policy": "zero calls; no post-freeze Validation authorization"
+      },
+      "data": {
+        "dataset": "MATH",
+        "optimize_count": 60,
+        "split_identity": "benchmark_experiment_split_v2",
+        "split_sha256": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+        "test_count_authorized": 0,
+        "validation_count_authorized": 0,
+        "winner_only_shadow_count": 40
+      },
+      "execution": {
+        "allowed_retries": {
+          "experiment": 0,
+          "gradient_semantic_attempts": 1,
+          "solver_semantic_attempts": 4,
+          "transport_attempts_per_draw": 21
+        },
+        "authoritative_cumulative_journal": "runs/math_autonomous_accounting_v2/token_ledger/events.jsonl",
+        "canary_extra_provider_calls": 0,
+        "charged_token_ceiling": 2000000,
+        "early_stop_rule": [
+          "frozen scientific stopper",
+          "NO_FEASIBLE_OPPORTUNITY",
+          "five-opportunity ceiling",
+          "hard token/request limits",
+          "provider/identity/persistence/accounting/canary failure"
+        ],
+        "exact_runner_command": "& 'runs/math_v2_1/runtime/Scripts/python.exe' scripts/run_experiment.py --prep runs/a4_v23_matched_seed81_20261008_attempt1/prep_b_revision2 --run-root runs/a4_v23_matched_seed81_20261008_attempt1_b --execute",
+        "expected_checkpoint_path": "runs/a4_v23_matched_seed81_20261008_attempt1_b/final_state_private.json",
+        "expected_ledger_path": "runs/a4_v23_matched_seed81_20261008_attempt1_b/ledger.jsonl",
+        "expected_output_directory": "runs/a4_v23_matched_seed81_20261008_attempt1_b",
+        "opportunity_budget": 5,
+        "seeds": [
+          81
+        ]
+      },
+      "experiment_id": "a4_v23_matched_comparison_v1_b",
+      "fail_closed_conditions": [
+        "frozen identity/hash or tracked source mismatch",
+        "command/model/seed/split/budget mismatch",
+        "provider/credential failure beyond frozen recovery",
+        "checkpoint/ledger corruption",
+        "budget overrun",
+        "unexpected Validation/Test access",
+        "failed or missing canary",
+        "need to change method, prompts, settings or protocol"
+      ],
+      "models": {
+        "local_optimizer_backend": "INDEPENDENT_OPTIMIZE_VALIDATION_SEARCH_V1",
+        "local_optimizer_version_or_sha256": "8be73cd944856a74582dcc20aac51ba951e85401ece31c654f36df0b0be80f8d",
+        "optimizer_or_reflection": "qwen3.7-flash",
+        "pattern": "qwen3.7-flash",
+        "solver": "qwen3-8b",
+        "thinking": false
+      },
+      "protocol": {
+        "endpoint_structural_identifiability": {
+          "applicability": "primary endpoint is Full-admissible member capability preservation; not solely plurality transfer",
+          "initial_fresh_profile_review_before_search": true,
+          "no_historical_profile_used_as_fresh_V6_measurement": true
+        },
+        "manifest_path": "experiments/manifests/a4_v23_matched_comparison_v1_b.yaml",
+        "manifest_sha256": "a723a358ecc3e6f128b72312bb543595fc697158474c2c3079d21d5c408afb66",
+        "name": "A4 V2.2-with-V6 versus V2.3",
+        "preregistration_path": "experiments/protocols/a4_v23_matched_comparison_v1/protocol.json",
+        "preregistration_sha256": "d8e7d1c04cff719abcf4a74507357123b497eb9d29e1c755057a01daa5d02ec4",
+        "protocol_sha256": "d8e7d1c04cff719abcf4a74507357123b497eb9d29e1c755057a01daa5d02ec4",
+        "version": "MATCHED_SOLVER_REALIZATION_EXECUTION_POLICY_V1"
+      },
+      "schema_version": "sol_luna_experiment_handoff_v1",
+      "source": {
+        "execution_closure_sha256": "001ff2b46b5b53ba68a9ea4dbc86d639f761adae51d2c2095eeda6e7dee0ac09",
+        "publication_commit_may_add_metadata": true,
+        "repository_commit": "ae57f153d99841ac4848917194184b3800ed486f",
+        "tracked_worktree_status": "clean at authorized execution"
+      }
+    }
+  },
+  "execution_order": [
+    "A",
+    "B"
+  ]
+}

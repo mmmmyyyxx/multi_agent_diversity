@@ -1,0 +1,33 @@
+{
+  "cells": {
+    "A": {
+      "authorization_negative_check": "EXACT_PAIRED_AUTHORIZATION_REQUIRED",
+      "inherited_ledger_sha256": "30bc3df32d86919f163f1d2a236dd3f15a3a0527043ccd87b6bee15c5b78e4fb",
+      "initial_validation_reserve_tokens": 8726200,
+      "provider_attempts": 0,
+      "reserve_authorizes_validation": false,
+      "single_use_unconsumed": true,
+      "startup_identity_sha256": "d93e1dbd2a47c5626bb0080802eb7b4fccbe6b9385e0c7c2d0127f4d578854c8",
+      "worst_case_validation_reserve_tokens": 17717200
+    },
+    "B": {
+      "authorization_negative_check": "EXACT_PAIRED_AUTHORIZATION_REQUIRED",
+      "inherited_ledger_sha256": "30bc3df32d86919f163f1d2a236dd3f15a3a0527043ccd87b6bee15c5b78e4fb",
+      "initial_validation_reserve_tokens": 8726200,
+      "provider_attempts": 0,
+      "reserve_authorizes_validation": false,
+      "single_use_unconsumed": true,
+      "startup_identity_sha256": "0be76c9b5caf6a0946f9bfcc70918dea5dc531a0abeb386940043dca07dec4b3",
+      "worst_case_validation_reserve_tokens": 17717200
+    }
+  },
+  "charged_tokens": 0,
+  "paid_execution_blocked": true,
+  "prior_partial_preparation_authorized": false,
+  "prior_partial_preparation_preserved": true,
+  "prior_partial_preparation_source_sha": "12e63583512decc9cfcba65d300453b6641eec7c",
+  "real_api_calls": 0,
+  "status": "PASS",
+  "test_calls": 0,
+  "validation_calls": 0
+}

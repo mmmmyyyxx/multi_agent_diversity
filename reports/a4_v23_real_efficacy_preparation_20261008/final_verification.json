@@ -1,0 +1,35 @@
+{
+  "compileall": "PASS",
+  "current_governance": "PASS",
+  "deselected_historical": 1468,
+  "final_current_suite": {
+    "duration_seconds": 1713.727,
+    "failed": 0,
+    "passed": 1679,
+    "skipped": 2,
+    "xml_sha256": "a13636343ac11e7b9966e819c92b758e786338e07bb5abc4c14d80348ec54e10"
+  },
+  "focused_current_suite": {
+    "duration_seconds": 22.638,
+    "failed": 0,
+    "passed": 69,
+    "skipped": 0,
+    "xml_sha256": "f432d2ff842dd159d5f10f4fd1fc40083ed60b20ab21ac5009d55e2a5b51494f"
+  },
+  "full_historical_replay_pass_claimed": false,
+  "legacy_cli": "three inherited failure-registry errors; unchanged",
+  "network_attempts": 0,
+  "omitted_historical_private_artifact_cases": 64,
+  "real_api_calls": 0,
+  "regression_and_required_preflight_checks_guarded": true,
+  "selected": 1681,
+  "skipped_datasets": [
+    "HoVer unavailable frozen data",
+    "PubMedQA unavailable frozen data"
+  ],
+  "source_sha": "ae57f153d99841ac4848917194184b3800ed486f",
+  "status": "PASS",
+  "tested_source_file_count": 869,
+  "tested_source_unchanged": true,
+  "tested_source_witness_sha256": "b14fa58be240b8ee7d0542e1399f1eee96fd9631bb5e188dca8594e46ffbaba9"
+}

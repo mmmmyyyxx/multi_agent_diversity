@@ -1,0 +1,25 @@
+{
+  "blocked_freeze_log_sha256": "ff3150eb86f0a7e6d5ebf55065a67ed2a5d6c31d1a642af301c42f9f03c1bfef",
+  "blocked_source_sha": "12e63583512decc9cfcba65d300453b6641eec7c",
+  "blocker": "ATTEMPT4_CONFIRMED_STRONG_NUMERIC_LEAKAGE",
+  "cause": "readiness inferred the old failed numeric pilot from absence of Gradient retry amendment; V2.3 intentionally removes it",
+  "charged_tokens": 0,
+  "correction": "only fully validated closed V2.3 reference-grounded policy is distinguished; old lineage remains blocked",
+  "diagnostic_test_fixture_correction": "negative case now uses the actual numeric-calibrated v5 binding rather than pre-amendment v4",
+  "early_regression_attempt": "terminated after diagnosed fixture failure; preserved log; no PASS claimed",
+  "early_regression_log_sha256": "688a6f0f38d5b5e1c5072f605d445f4dfc5f571d37b41098cfd9b858bdc2420f",
+  "final_focused": {
+    "duration_seconds": 22.638,
+    "failed": 0,
+    "passed": 69,
+    "skipped": 0,
+    "xml_sha256": "f432d2ff842dd159d5f10f4fd1fc40083ed60b20ab21ac5009d55e2a5b51494f"
+  },
+  "method_or_admission_changed": false,
+  "original_partial_preparation_authorized": false,
+  "original_partial_preparation_preserved": true,
+  "paid_execution_attempted": false,
+  "real_api_calls": 0,
+  "source_freeze_revision": 2,
+  "status": "RESOLVED_OFFLINE"
+}
