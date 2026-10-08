@@ -280,6 +280,25 @@ current_pattern_cluster_generation_policy: PATTERN_CLUSTER_GENERATION_POLICY_V1
 pattern_cluster_output_ceiling: 8192
 completed_opportunity_count: 7
 partial_opportunity_index: 8
+last_optimizer_failure_audit: math_v2_2_optimizer_failure_audit_v1
+last_optimizer_failure_audit_report: reports/math_v2_2_optimizer_failure_audit_v1_20261008
+optimizer_failure_audit_scope:
+  completed_opportunities: 7
+  proposals: 42
+  scored_contract_valid: 33
+  root_positive: 3
+  root_neutral: 25
+  root_negative: 5
+  incumbent_strict_positive: 1
+  actual_panel_size: 4
+  panel_equals_probe_membership: true
+  full_loss_occurrences: 11
+  full_unique_lost_cases: 6
+  strictly_better_local_net_candidates_omitted: 0
+  new_api_calls: 0
+  scientific_method_changed: false
+  assessment: OBSERVED_PRESERVATION_COVERAGE_GAP_AND_OPTIMIZER_CONTEXT_CONFLATION
+  causal_optimizer_or_solver_noise_conclusion: NOT_ESTABLISHED
 ```
 
 ## Experiment and engineering DAG
@@ -554,6 +573,7 @@ flowchart TD
     n288["math_v2_2_a4_pilot_execution_audit_v1<br/>ZERO_API_AUDIT<br/>HOLD"]
     n289["math_v2_2_gradient_pattern_seed81_pilot_v1<br/>PILOT<br/>INVALID"]
     n290["math_v2_2_gradient_pattern_seed81_pilot_v2<br/>PILOT<br/>HOLD"]
+    n291["math_v2_2_optimizer_failure_audit_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -773,6 +793,7 @@ flowchart TD
   n287 -->|followup_of| n288
   n288 -->|followup_of| n289
   n289 -->|followup_of| n290
+  n290 -->|audit_of| n291
 ```
 
 ## Archived branches and unresolved evidence

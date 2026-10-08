@@ -1,0 +1,257 @@
+{
+  "actual_Oracle_reconstruction": "Frozen peers share identical initial correctness bits; same four panel/Probe cases; union with observed target repair",
+  "broad_field_semantics": "ALIAS_OF_TARGET_DELTA_SAME_PROBE_MEMBERSHIP",
+  "change_to_runtime": false,
+  "positive_Probe_actual_Oracle_delta": 1,
+  "recorded_oracle_field_semantics": "UNBOUND_DEFAULT_ZERO_DIAGNOSTIC_ONLY_NEVER_PROMOTION",
+  "rows": [
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O1G1",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 2,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 1,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O1G2",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 2,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 1,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O1G4",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 2,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 1,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O1G6",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O2G1",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O2G2",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O2G3",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O2G4",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O3G2",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O3G3",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O3G4",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O3G5",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O4G1",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O4G2",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O4G3",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O4G4",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O5G1",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O5G3",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O5G5",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O6G1",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O6G3",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O6G4",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O6G5",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O7G1",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O7G3",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O7G5",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    },
+    {
+      "actual_Oracle_after": 1,
+      "actual_Oracle_before": 1,
+      "actual_Oracle_delta": 0,
+      "broad_field_equals_target_delta": true,
+      "candidate": "O7G6",
+      "independent_broad_membership": false,
+      "recorded_oracle_delta_default": 0
+    }
+  ],
+  "source_bindings": [
+    "multi_dataset_diverse_rl/search/binary_runtime.py",
+    "multi_dataset_diverse_rl/team_search/schemas.py",
+    "multi_dataset_diverse_rl/search/evaluation.py"
+  ]
+}

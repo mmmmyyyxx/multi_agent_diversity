@@ -8523,3 +8523,26 @@ experiments:
   unavailable:
     result_commit: Publication commit is identified by git history and final remote
       verification; no self-referential SHA.
+- experiment_id: math_v2_2_optimizer_failure_audit_v1
+  kind: ZERO_API_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_2
+  parent_ids:
+  - math_v2_2_gradient_pattern_seed81_pilot_v2
+  status: COMPLETED
+  scientific_status: VALID_RETROSPECTIVE_ZERO_API_CANDIDATE_AUDIT_NO_METHOD_CHANGE
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/protocols/math_v2_2_optimizer_failure_audit_v1/protocol.json
+  report: reports/math_v2_2_optimizer_failure_audit_v1_20261008
+  classifier: reports/math_v2_2_optimizer_failure_audit_v1_20261008/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Retrospective diagnosis of 42 existing proposals; no APIs or method amendment.
+  unavailable:
+    implementation_commit: Evidence-only owner audit; production code unchanged
+    execution_commit: No new scientific execution
+    result_commit: Containing publication commit; no self-referential SHA

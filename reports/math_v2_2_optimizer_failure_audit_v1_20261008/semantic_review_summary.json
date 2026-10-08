@@ -1,0 +1,19 @@
+{
+  "admissible_append_only_count": 0,
+  "context_counts": {
+    "EXPLICIT_OPTIMIZER_CONTEXT": 21,
+    "NO_EXPLICIT_OPTIMIZER_CONTEXT_DEPENDENCY": 12,
+    "OPTIONAL_REFERENCE_VALUE_BRANCH": 9
+  },
+  "gradient_alignment_is_textual_not_execution_evidence": true,
+  "inter_rater_reliability": "NOT_MEASURED",
+  "parsed_replacement_count": 40,
+  "reviewed_proposals": 42,
+  "reviewer_count": 1,
+  "scored_context_counts": {
+    "EXPLICIT_OPTIMIZER_CONTEXT": 16,
+    "NO_EXPLICIT_OPTIMIZER_CONTEXT_DEPENDENCY": 9,
+    "OPTIONAL_REFERENCE_VALUE_BRANCH": 8
+  },
+  "specific_instantiation_count": 15
+}

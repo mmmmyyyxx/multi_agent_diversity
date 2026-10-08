@@ -1,0 +1,17 @@
+{
+  "Full_loss_events_not_confused_with_unique_cases": true,
+  "all_seven_outer_parents_identical": true,
+  "api_calls_zero": true,
+  "invalid_is_still_incorrect": true,
+  "local_panel_count_four_in_all_seven": true,
+  "local_panel_equals_Probe_in_all_seven": true,
+  "local_root_and_incumbent_separately_reported": true,
+  "no_new_A4_experiment": true,
+  "no_new_Full_realizations": true,
+  "original_raw_bytes_unchanged": true,
+  "parent_report_unchanged": true,
+  "positive_unpromoted_Full_unknown": true,
+  "production_source_unchanged": true,
+  "scientific_method_changed": false,
+  "semantic_review_is_single_owner_not_causal_proof": true
+}

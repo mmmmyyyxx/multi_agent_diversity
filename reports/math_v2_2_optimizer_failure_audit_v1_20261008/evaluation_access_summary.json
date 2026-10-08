@@ -1,0 +1,11 @@
+{
+  "Optimize_count": 60,
+  "Shadow_content_access": 0,
+  "Test_content_access": 0,
+  "Validation_content_access": 0,
+  "audit_content_scope": "EXISTING_OPTIMIZE60_ONLY",
+  "new_Solver_logical_evaluations": 0,
+  "new_model_calls": 0,
+  "ranking_counterfactuals_only": true,
+  "unpromoted_Full_results_not_inferred": true
+}

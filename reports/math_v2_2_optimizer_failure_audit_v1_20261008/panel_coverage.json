@@ -1,0 +1,86 @@
+[
+  {
+    "Probe_root_correct_count": 1,
+    "old_correct_outside_panel": 21,
+    "opportunity": 1,
+    "panel_count": 4,
+    "panel_probe_intersection": 4,
+    "parent_state_sha256": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+    "probe_count": 4,
+    "repair_count": 3,
+    "root_correct_anchor_count": 1,
+    "target_member": 0
+  },
+  {
+    "Probe_root_correct_count": 1,
+    "old_correct_outside_panel": 21,
+    "opportunity": 2,
+    "panel_count": 4,
+    "panel_probe_intersection": 4,
+    "parent_state_sha256": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+    "probe_count": 4,
+    "repair_count": 3,
+    "root_correct_anchor_count": 1,
+    "target_member": 1
+  },
+  {
+    "Probe_root_correct_count": 1,
+    "old_correct_outside_panel": 21,
+    "opportunity": 3,
+    "panel_count": 4,
+    "panel_probe_intersection": 4,
+    "parent_state_sha256": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+    "probe_count": 4,
+    "repair_count": 3,
+    "root_correct_anchor_count": 1,
+    "target_member": 3
+  },
+  {
+    "Probe_root_correct_count": 1,
+    "old_correct_outside_panel": 21,
+    "opportunity": 4,
+    "panel_count": 4,
+    "panel_probe_intersection": 4,
+    "parent_state_sha256": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+    "probe_count": 4,
+    "repair_count": 3,
+    "root_correct_anchor_count": 1,
+    "target_member": 2
+  },
+  {
+    "Probe_root_correct_count": 1,
+    "old_correct_outside_panel": 21,
+    "opportunity": 5,
+    "panel_count": 4,
+    "panel_probe_intersection": 4,
+    "parent_state_sha256": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+    "probe_count": 4,
+    "repair_count": 3,
+    "root_correct_anchor_count": 1,
+    "target_member": 4
+  },
+  {
+    "Probe_root_correct_count": 1,
+    "old_correct_outside_panel": 21,
+    "opportunity": 6,
+    "panel_count": 4,
+    "panel_probe_intersection": 4,
+    "parent_state_sha256": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+    "probe_count": 4,
+    "repair_count": 3,
+    "root_correct_anchor_count": 1,
+    "target_member": 0
+  },
+  {
+    "Probe_root_correct_count": 1,
+    "old_correct_outside_panel": 21,
+    "opportunity": 7,
+    "panel_count": 4,
+    "panel_probe_intersection": 4,
+    "parent_state_sha256": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+    "probe_count": 4,
+    "repair_count": 3,
+    "root_correct_anchor_count": 1,
+    "target_member": 1
+  }
+]

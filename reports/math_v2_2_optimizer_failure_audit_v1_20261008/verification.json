@@ -1,0 +1,98 @@
+{
+  "authorization_remains_closed": true,
+  "compileall_and_frozen_parent_integrity": {
+    "all_seven_production_promotion_replays": "PASS",
+    "authorization_closed": true,
+    "closed_attempt_startup_identity": "NOT_CURRENT_METADATA_PUBLISHED_AFTER_CLOSURE",
+    "closed_metadata_changes": [
+      "experiments/current_frontier.yaml",
+      "experiments/lineage.yaml",
+      "experiments/registry.yaml"
+    ],
+    "compileall": "PASS",
+    "ledger_bytes_unchanged": true,
+    "original_attempt_raw_bytes": "PASS",
+    "original_frozen_commit_identity": "PASS",
+    "previous_attempt_raw_bytes": "PASS",
+    "previous_report_hashes": "PASS",
+    "runtime_and_scientific_inputs_unchanged": true
+  },
+  "configuration_cause_verification": {
+    "global_capture_path_negative_control": {
+      "deselected": 29,
+      "expected_path_assertion_failures": 1,
+      "log_sha256": "9dde6511ed0e59517dca0d189905363e850fb9e8bc4e0464acdee3ab2013ac53",
+      "status": "EXPECTED_FAILURE_CONFIRMS_CONFIGURATION_CAUSE"
+    },
+    "isolated_structured_tests_without_global_capture": {
+      "deselected": 29,
+      "log_sha256": "7fbbd3d937dd108935df603a4c4feb1e84263ce003acdb756304182c0eb6fd45",
+      "passed": 24,
+      "status": "PASS"
+    },
+    "production_or_test_code_changed": false
+  },
+  "current_repository_governance": {
+    "errors": [],
+    "evidence_sha256": "a398b8f6981c074454125855da660e405cfea55985b2dab0b88c184150e49783",
+    "indexed_reports": 302,
+    "real_api_authorized": false,
+    "real_execution_ready": false,
+    "status": "PASS"
+  },
+  "current_suite": {
+    "command": "python tests/formal_zero_api_runner.py tests --suite current --junitxml=<ignored-audit-evidence>/current_suite_final.xml",
+    "deselected_historical_or_private_artifact_cases": 1468,
+    "duration_seconds": 2319.93,
+    "errors": 0,
+    "failures": 0,
+    "full_historical_replay_pass_claimed": false,
+    "junit_sha256": "893d5a314b6d0e58635607c5148789651fdf5a0afccf2756d02fbb95cb35e099",
+    "log_sha256": "8edc2ba2459d796ee3391b5393a72a1c07e7ed97fe4592fb00a7f884b1cf0fb9",
+    "network_attempt_count": 0,
+    "network_guard_active_before_application_import": true,
+    "passed": 1605,
+    "real_credentials_present": false,
+    "skipped": 2,
+    "status": "PASS"
+  },
+  "deterministic_audits": {
+    "all_132_local_profiles_and_120_Full_profiles_match_frozen_scoring": "PASS",
+    "all_42_proposals_joined_and_accounted_for": "PASS",
+    "all_seven_local_export_replays": "PASS",
+    "all_seven_production_promotion_replays": "PASS",
+    "panel_and_Probe_membership_cache_identity_and_actual_Oracle_reconstruction": "PASS",
+    "terminal_invalid_recovery_and_unique_repair_anchor_and_Full_loss_reconstruction": "PASS"
+  },
+  "diff_check": "PASS",
+  "legacy_governance_cli": {
+    "baseline_files_unchanged_from_parent_publication": true,
+    "error_categories": [
+      "Missing symptom field on existing resource-bound entry",
+      "Unsupported evidence_level on existing resource-bound entry",
+      "Unsupported evidence_level on existing cluster-truncation entry"
+    ],
+    "log_sha256": "edbeb51adcc31698d355f4ebdd67dd9c6523e719a9511992c287bc3a0b0ad647",
+    "reported_errors": 3,
+    "status": "PREEXISTING_FAILURE_REGISTRY_COMPATIBILITY_ABORT_NOT_PASS"
+  },
+  "new_API_calls": 0,
+  "new_charged_tokens": 0,
+  "published_private_prompts_questions_answers_responses_endpoints_or_host_paths": false,
+  "sanitization": "PASS",
+  "scientific_method_changed": false,
+  "verification_configuration_failures": [
+    {
+      "collection_errors": 153,
+      "configuration": "Initial invocation omitted explicit tests root and collected ignored run copies",
+      "log_sha256": "bbf30dfa5111e80d14db3d04146284bf6683ffeac6993363e71b357fb62dfb0b",
+      "status": "INVALID_SUITE_INVOCATION"
+    },
+    {
+      "configuration": "Explicit tests root with global evidence capture path outside monkeypatched fixture workspace",
+      "log_sha256": "43dc9f2abbf30f12005b83ae0d43eda315921a4c3c7fb090b450beafa7f72e84",
+      "observed_assertion_failures_before_operator_interrupt": 24,
+      "status": "INTERRUPTED_PARTIAL_VERIFICATION_NOT_PASS"
+    }
+  ]
+}

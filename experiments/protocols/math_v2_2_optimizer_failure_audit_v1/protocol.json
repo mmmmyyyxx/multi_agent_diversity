@@ -1,0 +1,44 @@
+{
+  "analysis_design": "Retrospective owner audit; outcomes already known, not a prospective preregistration or causal experiment",
+  "api_budget": 0,
+  "authorization": {
+    "commit_authorized": true,
+    "push_authorized": true,
+    "real_api_authorized": false,
+    "shadow_authorized": false,
+    "test_authorized": false,
+    "validation_authorized": false
+  },
+  "bound_inputs": {
+    "AGENTS.md": "dcd427559bdb519efaaa6723c5350c3c1a4097bf34241ff946d150a80a9c5d86",
+    "docs/design/CURRENT_SPEC.md": "7a0be925ae410233de5d57f08347fbb74103de7c58b63c5b2fe00d602407fe6d",
+    "experiments/execution_bindings/math_v2_2_gradient_pattern_seed81_pilot_v2.json": "c8fdf0f2768ce986d6c170e748f68b651c2aa61c60081eb4ffd9538258e674df",
+    "experiments/manifests/math_v2_2_gradient_pattern_seed81_pilot_v2.yaml": "b74ee76fb20fa86485753330fc0f3257190b754dee009ce020c8e686cdff37bd",
+    "multi_dataset_diverse_rl/benchmarks/protocols.py": "948e662011cd5f7d1c466b869e3b60b5aa2f052f074cd98a289225459c097e47",
+    "multi_dataset_diverse_rl/search/bounded_layer1.py": "bcecdf4603ff9ca6cf9586aefbc0e4b807006386e6bd91ddb3393b4c9a65d1d3",
+    "multi_dataset_diverse_rl/search/evaluation.py": "c2a76ca2db77ff595a6012f8093ff6e878e6f14a6eb64ec05eefb21a23157eb1"
+  },
+  "counterfactual_policy": "Ranking replay only; no additional Solver evaluation, no inferred Full result for unpromoted candidates",
+  "evidence_policy": "Read existing Optimize60 evidence and its sealed resolved outputs only; inspect private diffs and selected generalized gradients; publish hashes, counters, categories and metrics",
+  "identity": "math_v2_2_optimizer_failure_audit_v1",
+  "kind": "ZERO_API_AUDIT",
+  "method": "unified_team_prompt_search_v2_2",
+  "new_experiment_started": false,
+  "observation_journal_sha256": "1e2cc95ad206a576cf50d3b53e327f578a67b4749f5c2dc4df2f27fb48fba1a3",
+  "parent_execution_source_sha": "6731aa3f345eff7feac12140b4892f4e07291d17",
+  "parent_experiment": "math_v2_2_gradient_pattern_seed81_pilot_v2",
+  "parent_publication_sha": "0de6a6d08774948d8fbac010eb4a953799dcfa74",
+  "questions": [
+    "root and incumbent local gain",
+    "actual export ranking and omitted net gain",
+    "mutation scope and optimizer context assumptions",
+    "selected gradient alignment",
+    "local to Probe conversion",
+    "Full preservation coverage and loss categories",
+    "existing realization stability and additive repair evidence"
+  ],
+  "report": "reports/math_v2_2_optimizer_failure_audit_v1_20261008",
+  "scientific_method_changed": false,
+  "scope": "First seven completed opportunities only; 42 proposals; two actual Full candidates; partial opportunity8 excluded",
+  "trajectory_sha256": "924ce940ebc46943be9dd340218afc86464b003993b5f63b3c53e52cadfdfbd4"
+}

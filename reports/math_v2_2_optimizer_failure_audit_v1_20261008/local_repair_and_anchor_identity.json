@@ -1,0 +1,27 @@
+{
+  "anchor_hashes": [
+    "9ec23575d5a250a9cc09f0a6e784a4409901589e58d21aeb95cb269c39448ac2"
+  ],
+  "distinct_local_repaired_cases": 1,
+  "distinct_old_correct_anchors_across_seven": 1,
+  "root_positive_repairs": [
+    {
+      "candidate": "O1G2",
+      "newly_correct_case_hashes": [
+        "f27d9b940df7aa7805e5db140060cd66b6bd343335135efd5fafca1a9fd031ea"
+      ]
+    },
+    {
+      "candidate": "O1G4",
+      "newly_correct_case_hashes": [
+        "f27d9b940df7aa7805e5db140060cd66b6bd343335135efd5fafca1a9fd031ea"
+      ]
+    },
+    {
+      "candidate": "O1G6",
+      "newly_correct_case_hashes": [
+        "f27d9b940df7aa7805e5db140060cd66b6bd343335135efd5fafca1a9fd031ea"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "endpoints_published": false,
+  "host_paths_published": false,
+  "private_diffs_published": false,
+  "private_generation_and_problem_payloads_published": false,
+  "publication_policy": "HASHES_COUNTERS_CATEGORIES_METRICS_ONLY",
+  "secrets_published": false
+}

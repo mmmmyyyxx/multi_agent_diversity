@@ -1,0 +1,10 @@
+{
+  "Full_candidates_independent_complete_replicates": 1,
+  "Full_causal_noise_assessment": "INCONCLUSIVE",
+  "cache_reuse_is_not_independent_replication": true,
+  "initial_correctness_disagreement_samples": 0,
+  "initial_distinct_member_realizations": 300,
+  "initial_parsed_output_disagreement_samples": 3,
+  "initial_raw_output_disagreement_samples": 4,
+  "initial_samples": 60
+}

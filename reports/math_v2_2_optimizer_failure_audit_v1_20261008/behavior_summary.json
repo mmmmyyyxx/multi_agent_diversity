@@ -1,0 +1,11 @@
+{
+  "Full_format_only_visible_loss_occurrences": 2,
+  "Full_shared_gain_cases": 2,
+  "Full_shared_loss_cases": 5,
+  "Full_terminal_invalid_loss_occurrences": 3,
+  "Full_valid_wrong_loss_occurrences": 8,
+  "correctness_changed_candidates": 8,
+  "parsed_or_validity_changed_candidates": 27,
+  "raw_changed_candidates": 27,
+  "scored_candidates": 33
+}

@@ -1,0 +1,83 @@
+[
+  {
+    "Oracle": 24,
+    "Vote": 22,
+    "candidate": "O1G4",
+    "child_correct_count": 18,
+    "gain_hashes": [
+      "f27d9b940df7aa7805e5db140060cd66b6bd343335135efd5fafca1a9fd031ea",
+      "3ef0111a08e85887ae2b942f68ee4338bd80ef376817ff42cb876f4fe8f6af0f"
+    ],
+    "loss_hashes": [
+      "3edc4bf279143a2f3acf6a26c3b0aafe0541c9f5a3c43ba4ad0754c162fd2dbe",
+      "7d9e8d7237b8beecbae032cd7131b3ba073fb9861ff0424da03dcbc892ea6b5e",
+      "34e588342f98daa2db2c5934dacf2f57e37b84e1c945b7ff7dac14f73570459e",
+      "1fd8939111b59db7f6c0de3a5f0f5ae3e695271e3e287b7b8e7d3325c662291c",
+      "d8c3fb19ed5440579004db011b8835656e26fb607e59bfa9ab0003796838fb27",
+      "bb919fa06d573b0f74bb52ff21fe60b661f09bb8077e4ac4db5a70c1effd3f05"
+    ],
+    "loss_subject_counts": {
+      "Algebra": 2,
+      "Intermediate Algebra": 2,
+      "Number Theory": 1,
+      "Prealgebra": 1
+    },
+    "lost_count": 6,
+    "lost_invalid": 2,
+    "lost_on_Probe": 0,
+    "lost_on_panel": 0,
+    "new_correct_count": 2,
+    "old_correct_count": 22,
+    "old_correct_subject_counts": {
+      "Algebra": 6,
+      "Counting & Probability": 1,
+      "Geometry": 1,
+      "Intermediate Algebra": 4,
+      "Number Theory": 2,
+      "Prealgebra": 7,
+      "Precalculus": 1
+    },
+    "prompt_sha256": "0aaa6d96ba280ddd2499d815b8179762bdc03dcb079e27d71d16a17f2adb674a",
+    "retained_correct_count": 16
+  },
+  {
+    "Oracle": 24,
+    "Vote": 22,
+    "candidate": "O1G6",
+    "child_correct_count": 19,
+    "gain_hashes": [
+      "f27d9b940df7aa7805e5db140060cd66b6bd343335135efd5fafca1a9fd031ea",
+      "3ef0111a08e85887ae2b942f68ee4338bd80ef376817ff42cb876f4fe8f6af0f"
+    ],
+    "loss_hashes": [
+      "3edc4bf279143a2f3acf6a26c3b0aafe0541c9f5a3c43ba4ad0754c162fd2dbe",
+      "34e588342f98daa2db2c5934dacf2f57e37b84e1c945b7ff7dac14f73570459e",
+      "1fd8939111b59db7f6c0de3a5f0f5ae3e695271e3e287b7b8e7d3325c662291c",
+      "d8c3fb19ed5440579004db011b8835656e26fb607e59bfa9ab0003796838fb27",
+      "bb919fa06d573b0f74bb52ff21fe60b661f09bb8077e4ac4db5a70c1effd3f05"
+    ],
+    "loss_subject_counts": {
+      "Algebra": 1,
+      "Intermediate Algebra": 2,
+      "Number Theory": 1,
+      "Prealgebra": 1
+    },
+    "lost_count": 5,
+    "lost_invalid": 1,
+    "lost_on_Probe": 0,
+    "lost_on_panel": 0,
+    "new_correct_count": 2,
+    "old_correct_count": 22,
+    "old_correct_subject_counts": {
+      "Algebra": 6,
+      "Counting & Probability": 1,
+      "Geometry": 1,
+      "Intermediate Algebra": 4,
+      "Number Theory": 2,
+      "Prealgebra": 7,
+      "Precalculus": 1
+    },
+    "prompt_sha256": "e56f49e9127c9f2c0afc9971d308848cebb9cadd627b195a351b0888bc07d411",
+    "retained_correct_count": 17
+  }
+]

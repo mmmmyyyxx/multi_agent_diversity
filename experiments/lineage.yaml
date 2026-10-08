@@ -878,6 +878,9 @@ nodes:
 - experiment_id: math_v2_2_gradient_pattern_seed81_pilot_v2
   kind: PILOT
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: math_v2_2_optimizer_failure_audit_v1
+  kind: ZERO_API_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1802,4 +1805,9 @@ edges:
   evidence: experiments/protocols/math_v2_2_gradient_pattern_seed81_pilot_v2/cluster_output_amendment.json
   scope: New user autonomous operational recovery; cluster output capacity only; no
     scientific algorithm change
+- from: math_v2_2_gradient_pattern_seed81_pilot_v2
+  to: math_v2_2_optimizer_failure_audit_v1
+  relation: audit_of
+  evidence: experiments/protocols/math_v2_2_optimizer_failure_audit_v1/protocol.json
+  scope: Existing completed-prefix candidate diagnostics only; zero API and unchanged V2.2
 current_frontier: experiments/current_frontier.yaml

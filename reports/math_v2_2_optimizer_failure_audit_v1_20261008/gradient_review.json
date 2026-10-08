@@ -1,0 +1,72 @@
+[
+  {
+    "generalized_gradient_sha256": "5f0614735c02e8fa179c11b1e59775c63ae47b2f998493156d0ebea6c5bc97c9",
+    "latent_root_cause": "NOT_IDENTIFIED",
+    "observable_alignment": "CORRECTIVE_OPERATOR_PRESENT_IN_GENERATED_CONTENT",
+    "opportunity": 1,
+    "pattern_count": 10,
+    "semantic_family": "substitution_verification",
+    "support_count": 9,
+    "wrong_count": 38
+  },
+  {
+    "generalized_gradient_sha256": "14114d271b42188e3547195ce9276225497aad9c539649edf389ee31f14e5f9e",
+    "latent_root_cause": "NOT_IDENTIFIED",
+    "observable_alignment": "CORRECTIVE_OPERATOR_PRESENT_IN_GENERATED_CONTENT",
+    "opportunity": 2,
+    "pattern_count": 6,
+    "semantic_family": "reference_or_alternative_verification",
+    "support_count": 12,
+    "wrong_count": 38
+  },
+  {
+    "generalized_gradient_sha256": "91e35a243ef10d4739b617f9acd1bebebb60cf4925f20a5b10a6039d05ca45b2",
+    "latent_root_cause": "NOT_IDENTIFIED",
+    "observable_alignment": "CORRECTIVE_OPERATOR_PRESENT_IN_GENERATED_CONTENT",
+    "opportunity": 3,
+    "pattern_count": 8,
+    "semantic_family": "intermediate_arithmetic_and_domain_verification",
+    "support_count": 8,
+    "wrong_count": 38
+  },
+  {
+    "generalized_gradient_sha256": "c2ab7d89c67a73b07fcf8a112e4f6da83b2034d19e073d6d742148f37e8cf591",
+    "latent_root_cause": "NOT_IDENTIFIED",
+    "observable_alignment": "CORRECTIVE_OPERATOR_PRESENT_IN_GENERATED_CONTENT",
+    "opportunity": 4,
+    "pattern_count": 9,
+    "semantic_family": "definition_to_formula_mapping",
+    "support_count": 7,
+    "wrong_count": 38
+  },
+  {
+    "generalized_gradient_sha256": "50df1d4f8d24b6171b6d17f7be3c7e130ec73d3ca30dd1e7b66f2d8b6a5fc1ad",
+    "latent_root_cause": "NOT_IDENTIFIED",
+    "observable_alignment": "CORRECTIVE_OPERATOR_PRESENT_IN_GENERATED_CONTENT",
+    "opportunity": 5,
+    "pattern_count": 2,
+    "semantic_family": "structure_mapping_and_assumption_checks",
+    "support_count": 21,
+    "wrong_count": 38
+  },
+  {
+    "generalized_gradient_sha256": "8225033bb0351a427c6141cd90277df1dda307f434858ae12939f9c992dc14a0",
+    "latent_root_cause": "NOT_IDENTIFIED",
+    "observable_alignment": "CORRECTIVE_OPERATOR_PRESENT_IN_GENERATED_CONTENT",
+    "opportunity": 6,
+    "pattern_count": 6,
+    "semantic_family": "geometric_constraint_consistency",
+    "support_count": 5,
+    "wrong_count": 38
+  },
+  {
+    "generalized_gradient_sha256": "2bc6d20600ee0522ac1d8700f326af84f4122cf9511f78fdd475837ce95de069",
+    "latent_root_cause": "NOT_IDENTIFIED",
+    "observable_alignment": "CORRECTIVE_OPERATOR_PRESENT_IN_GENERATED_CONTENT",
+    "opportunity": 7,
+    "pattern_count": 5,
+    "semantic_family": "arithmetic_and_algebraic_crosscheck",
+    "support_count": 13,
+    "wrong_count": 38
+  }
+]

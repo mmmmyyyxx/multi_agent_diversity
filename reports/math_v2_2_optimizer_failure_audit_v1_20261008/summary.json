@@ -1,0 +1,21 @@
+{
+  "Full_additive_repairs": 0,
+  "Full_count": 2,
+  "Full_loss_occurrences": 11,
+  "Full_unique_lost": 6,
+  "contract_invalid": 9,
+  "contract_valid_scored": 33,
+  "distinct_local_repaired_cases": 1,
+  "distinct_old_correct_anchors_across_seven": 1,
+  "exported": 27,
+  "incumbent_positive": 1,
+  "new_API_calls": 0,
+  "opportunities": 7,
+  "proposals": 42,
+  "root_negative": 5,
+  "root_neutral": 25,
+  "root_positive": 3,
+  "root_positive_Probe_positive": 3,
+  "scientific_method_changed": false,
+  "strict_net_gain_export_omissions": 0
+}

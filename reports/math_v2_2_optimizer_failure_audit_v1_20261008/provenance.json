@@ -1,0 +1,34 @@
+{
+  "analysis_kind": "RETROSPECTIVE_NOT_PREREGISTERED_CAUSAL_EXPERIMENT",
+  "audit_identity": "math_v2_2_optimizer_failure_audit_v1",
+  "bound_inputs": {
+    "AGENTS.md": "dcd427559bdb519efaaa6723c5350c3c1a4097bf34241ff946d150a80a9c5d86",
+    "docs/design/CURRENT_SPEC.md": "7a0be925ae410233de5d57f08347fbb74103de7c58b63c5b2fe00d602407fe6d",
+    "experiments/execution_bindings/math_v2_2_gradient_pattern_seed81_pilot_v2.json": "c8fdf0f2768ce986d6c170e748f68b651c2aa61c60081eb4ffd9538258e674df",
+    "experiments/manifests/math_v2_2_gradient_pattern_seed81_pilot_v2.yaml": "b74ee76fb20fa86485753330fc0f3257190b754dee009ce020c8e686cdff37bd",
+    "multi_dataset_diverse_rl/benchmarks/protocols.py": "948e662011cd5f7d1c466b869e3b60b5aa2f052f074cd98a289225459c097e47",
+    "multi_dataset_diverse_rl/search/bounded_layer1.py": "bcecdf4603ff9ca6cf9586aefbc0e4b807006386e6bd91ddb3393b4c9a65d1d3",
+    "multi_dataset_diverse_rl/search/evaluation.py": "c2a76ca2db77ff595a6012f8093ff6e878e6f14a6eb64ec05eefb21a23157eb1"
+  },
+  "observation_journal_sha256": "1e2cc95ad206a576cf50d3b53e327f578a67b4749f5c2dc4df2f27fb48fba1a3",
+  "original_evidence_byte_preservation": true,
+  "parent_execution_source_sha": "6731aa3f345eff7feac12140b4892f4e07291d17",
+  "parent_publication_sha": "0de6a6d08774948d8fbac010eb4a953799dcfa74",
+  "previous_report_hash_preservation": true,
+  "private_input_file_count": 1666,
+  "private_worksheet_sha256": {
+    "analyze.py": "412c11d557e4ede81d4d7e2ce23d67902ec08731084e9eac2504491773977771",
+    "enrich.py": "9732d94401e55e1536b6f12ac55f949909d9e7d809ab600b46d1f2f00d248128",
+    "finalize_report.py": "05b0acd746b831e2b1d76218753ba6079e9865874f8db68be86ca52e0815a9ae",
+    "manual_cases_private.json": "e3c1e8f3b46edf86c78138579f8befc387f7ce0846de54c779d89bd2c70ec4a5",
+    "manual_diffs_private.json": "eeffd478155b3d92d2ccbd992e2d3e5a81e07596ba0a4c920562dab2b612b8e7",
+    "probe_interpretation.py": "a4b1b09464efe900f3cbe5a28ef8364a655e2618577c2122b1c159b3975624f2",
+    "publish_check.py": "06d4cb6f19bc3194d06ab5841f37e2630eb38e3725483ccfa4260703f779a56e",
+    "recovery_detail_private.json": "35e2800ef8c8ee946498b8ed2de7d23f04f9fd036c020dee7ec1f6d1e589218d",
+    "review.py": "d051b16a4bdf07cb9f295603806aaed492fe63356ceb681baa4fe8a6e1b23208",
+    "scoring_memo_private.json": "83e168a13f05f040edd32243700e06752b8a7a1173c3416b41461e10db7306d0",
+    "update_review_artifacts.py": "e1ad8df0f3dddf86a72e98e67dd42a6129ee292ce83222fc4962b3eea01dfa30"
+  },
+  "protocol_sha256": "adfdc89b7cd9b3591d09be89248ffa222cde93b456dffc0f745e771d3d0d461a",
+  "trajectory_sha256": "924ce940ebc46943be9dd340218afc86464b003993b5f63b3c53e52cadfdfbd4"
+}
