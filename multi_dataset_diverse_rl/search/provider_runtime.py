@@ -23,6 +23,8 @@ class RequestBroker:
                  token_ledger=None, reserve_reader=None, validation_only=False, durable_cache=None,
                  response_receipts=None):
         self.contract = contract
+        from ..governance.matched_realization import validate_policy
+        self.paired_realization_policy = validate_policy(contract)
         from ..benchmarks.math_visible_trajectory import frozen_trajectory_policy
         self.solver_trajectory_policy = frozen_trajectory_policy(contract)
         self.transport = transport
@@ -67,6 +69,11 @@ class RequestBroker:
                 cache_namespace=contract['cache_namespace'],binding_sha256=digest(contract),
                 generation_policy_sha256=digest(frozen_solver_policy(contract)),
                 recovery_policy_sha256=digest(self.recovery_policy))
+            if self.paired_realization_policy:
+                from ..governance.matched_realization import group_scope
+                group = self.paired_realization_policy
+                expected.update(execution_attempt_id=group['group_id'], cache_namespace=group['group_id'],
+                    binding_sha256=digest(group_scope(group)))
             if any(durable_cache.context[k]!=v for k,v in expected.items()):
                 raise SearchContractError('DURABLE_CACHE_PROVIDER_BINDING_MISMATCH')
         if contract.get('identity') in {versions.MATH_V2_2_EXECUTION_BINDING_VERSION, versions.MATH_VISIBLE_TRAJECTORY_BINDING_VERSION, versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION}:
@@ -137,6 +144,9 @@ class RequestBroker:
                 identity.update(invalid_recovery_policy=self.recovery_policy,
                     benchmark_protocol=c['benchmark_protocol_sha256'],
                     development_protocol=c['low_cost_protocol'],cache_policy=c['cache_policy'])
+        if role == 'solver' and self.paired_realization_policy:
+            from ..governance.matched_realization import solver_identity
+            identity = solver_identity(c, request=request, split=split, member_slot=member_slot, seed=self.seed)
         key = hashlib.sha256(json.dumps(identity, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
         return request,key
 

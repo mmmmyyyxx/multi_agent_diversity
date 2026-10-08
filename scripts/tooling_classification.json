@@ -2,6 +2,12 @@
   "schema_version": "tooling_classification_v1",
   "scripts": [
     {
+      "path": "scripts/prepare_a4_v23_matched_comparison.py",
+      "classification": "CURRENT_TOOL",
+      "move": false,
+      "reason": "Offline production constructors for the explicitly frozen A4 matched comparison."
+    },
+    {
       "path": "scripts/replay_experiment.py",
       "classification": "HISTORICAL_REPLAY",
       "move": false,

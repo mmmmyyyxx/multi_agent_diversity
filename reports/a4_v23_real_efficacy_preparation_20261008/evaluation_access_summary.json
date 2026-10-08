@@ -1,0 +1,11 @@
+{
+  "heldout_content_read": false,
+  "post_freeze_validation_authorized": false,
+  "proposed_optimize": 60,
+  "proposed_winner_only_shadow": 40,
+  "real_solver_calls": 0,
+  "sealed_test_authorized": false,
+  "synthetic_fixture_calls_only": true,
+  "test_calls": 0,
+  "validation_calls": 0
+}

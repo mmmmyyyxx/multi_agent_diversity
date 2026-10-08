@@ -1,0 +1,21 @@
+{
+  "charged_tokens": 0,
+  "historical_reports_verified": 5,
+  "inherited_legacy_registry_errors": [
+    "FAIL-V22-PILOT-RESOURCE-BOUND-NOT-FROZEN: missing fields ['symptom']",
+    "FAIL-V22-PILOT-RESOURCE-BOUND-NOT-FROZEN: invalid evidence_level",
+    "FAIL-V22-PATTERN-CLUSTER-1800-OUTPUT-TRUNCATION: invalid evidence_level"
+  ],
+  "ledger_bytes_unchanged": true,
+  "ledger_events_sha256": "30bc3df32d86919f163f1d2a236dd3f15a3a0527043ccd87b6bee15c5b78e4fb",
+  "new_legacy_registry_errors": 0,
+  "parent_binding_manifest_unchanged": true,
+  "parent_raw_file_counts": {
+    "attempt1": 683,
+    "attempt2": 1666
+  },
+  "prior_authorization_closed": true,
+  "real_api_calls": 0,
+  "status": "PASS",
+  "unrelated_untracked_report_directory_preserved": true
+}

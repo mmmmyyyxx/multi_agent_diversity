@@ -55,7 +55,8 @@ def derive_visible_accounting_metadata(parent_metadata, parent, visible):
 
 def derive_visible_trajectory_contract(parent, *, attempt, binding_path, parent_path,
         parent_sha256, authorization_path, authorization_sha256, gradient_prompt_path,
-        gradient_prompt_sha256, validation_metadata_path, validation_metadata_sha256):
+        gradient_prompt_sha256, validation_metadata_path, validation_metadata_sha256,
+        paired_realization_policy=None):
     if (parent.get('identity') != versions.MATH_V2_2_EXECUTION_BINDING_VERSION
             or not isinstance(attempt, str) or not attempt
             or attempt in {parent['execution_attempt_id'], parent['cache_namespace']}
@@ -80,6 +81,8 @@ def derive_visible_trajectory_contract(parent, *, attempt, binding_path, parent_
         continuation_authorization_sha256=authorization_sha256,
         validation_accounting_metadata_path=validation_metadata_path,
         validation_accounting_metadata_sha256=validation_metadata_sha256)
+    if paired_realization_policy is not None:
+        c['paired_realization_policy'] = deepcopy(paired_realization_policy)
     # All models, decoding, membership, ceilings, algorithms, Memory and scoring
     # are inherited byte-for-byte. These changed feedback/interface identities
     # still require a wholly fresh source/attempt/authorization/cache freeze.
@@ -109,7 +112,8 @@ class MATHVisibleTrajectoryBinding(MATHGradientPatternBinding):
                 authorization_path=c['current_user_scope_path'], authorization_sha256=c['current_user_scope_sha256'],
                 gradient_prompt_path=c['gradient_prompt_path'], gradient_prompt_sha256=c['gradient_prompt_sha256'],
                 validation_metadata_path=c['validation_accounting_metadata_path'],
-                validation_metadata_sha256=c['validation_accounting_metadata_sha256'])
+                validation_metadata_sha256=c['validation_accounting_metadata_sha256'],
+                paired_realization_policy=c.get('paired_realization_policy'))
             if c != expected:
                 raise SearchContractError('MATH_VISIBLE_FROZEN_SETTINGS_CHANGED')
             for path_key, hash_key in [('current_user_scope_path', 'current_user_scope_sha256'),
@@ -126,6 +130,14 @@ class MATHVisibleTrajectoryBinding(MATHGradientPatternBinding):
                 scope_kind='VISIBLE_SOLUTION_INTERFACE_CORRECTION_ONLY',
                 trajectory_policy=trajectory_policy(), parent_binding_sha256=c['trajectory_parent_binding_sha256'],
                 validation_authorized=False, test_authorized=False)
+            if c.get('paired_realization_policy'):
+                required = dict(schema_version='math_matched_comparison_preparation_scope_v1',
+                    attempt_id=c['execution_attempt_id'], one_attempt_only=True,
+                    user_authorized=True, real_api_authorized=False,
+                    paired_realization_policy=c['paired_realization_policy'],
+                    parent_binding_sha256=c['trajectory_parent_binding_sha256'],
+                    validation_authorized=False, test_authorized=False, preparation_only=True,
+                    paid_execution_requires_new_explicit_approval=True)
             if (any(scope.get(k) != v for k, v in required.items())
                     or not isinstance(scope.get('user_task_sha256'), str)
                     or len(scope['user_task_sha256']) != 64):

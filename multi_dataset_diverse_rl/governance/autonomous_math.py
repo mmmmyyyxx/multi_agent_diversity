@@ -123,8 +123,14 @@ def ledger_policy(contract):
     return POLICY_40M
 
 
-def durable_output_cache(run_root,contract,payload):
+def durable_output_cache(run_root,contract,payload,root=None):
     from ..persistence.exact_output_cache import DurableExactOutputCache,digest
+    if contract.get('paired_realization_policy'):
+        from .matched_realization import cache_context, local_path
+        if root is None:
+            raise SearchContractError('MATCHED_CACHE_ROOT_REQUIRED')
+        return DurableExactOutputCache(local_path(root, contract['paired_realization_policy']['cache_directory']),
+            cache_context(root, contract, payload))
     return DurableExactOutputCache(run_root/'resolved_output_cache',dict(
         execution_attempt_id=contract['execution_attempt_id'],cache_namespace=contract['cache_namespace'],
         startup_identity_sha256=payload['startup_identity_sha256'],source_sha=payload['scope']['source_sha'],
@@ -156,7 +162,7 @@ async def execute_search(root, prep, run_root, payload):
         broker = RequestBroker(contract=c,transport=transport,arm=arm,seed=81,token_ledger=budget,
             reserve_reader=reserve.remaining,ledger_writer=lambda r:append_jsonl(run_root / "ledger.jsonl",r),
             raw_writer=lambda r:append_jsonl(run_root / "provider_trace_private.jsonl",r),
-            durable_cache=durable_output_cache(run_root,c,payload),
+            durable_cache=durable_output_cache(run_root,c,payload,root=root),
             response_receipts=(ProviderResponseReceipts(run_root/'provider_response_receipts_private',
                 attempt_id=c['execution_attempt_id'],startup_identity_sha256=payload['startup_identity_sha256'])
                 if durable is not None else None))
@@ -191,6 +197,8 @@ async def execute_search(root, prep, run_root, payload):
                 raise OperationalAbort("INITIAL_COMPETENCE_SUPPORT_MISMATCH")
             atomic_write_json(run_root / "initial_competence_floor.json",dict(binding=c["initial_competence_binding"],
                 state_id=initial.team_state_id, member_scores=initial.member_scores))
+        from .matched_realization import freeze_initial_and_review
+        freeze_initial_and_review(root, c, payload, run_root, composed.state.snapshot())
         result = await composed.run(max_opportunities=c["provider_bounds"]["max_opportunities"])
         accepted = {"CANARY_PARENT_EPOCH_COMPLETE","CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE","NO_FEASIBLE_OPPORTUNITY"} if c["execution_phase"]=="canary" else {"SATURATION_REACHED","NO_FEASIBLE_OPPORTUNITY"}
         scientific_complete=result.stop_reason in accepted

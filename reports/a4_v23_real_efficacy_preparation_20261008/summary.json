@@ -1,0 +1,16 @@
+{
+  "arm_metrics": null,
+  "charged_tokens": 0,
+  "efficacy": "UNKNOWN",
+  "final_regression": {
+    "duration_seconds": 1691.714,
+    "failed": 0,
+    "passed": 1677,
+    "skipped": 2,
+    "xml_sha256": "c2daf071d0911031db3af5547f64e2aa68820881dff9a2bf6f52f437acefa122"
+  },
+  "next_step": "fresh exact-scope authorization after freeze receipt",
+  "real_api_calls": 0,
+  "real_comparison_executed": false,
+  "status": "OFFLINE_VERIFIED"
+}

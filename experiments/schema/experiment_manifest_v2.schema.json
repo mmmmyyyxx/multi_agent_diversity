@@ -859,6 +859,112 @@
         "reference_solution_max_chars": 4096,
         "candidate_guard": "optimizer_dependency_guard_v1"
       }
+    },
+    "paired_realization_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "group_id",
+        "cell",
+        "attempts",
+        "binding_paths",
+        "protocol_path",
+        "protocol_sha256",
+        "inference_identity",
+        "max_opportunities_per_cell",
+        "charged_tokens_per_cell",
+        "charged_tokens_total",
+        "cache_directory",
+        "authorization_file",
+        "canary_review",
+        "canary_review_timeout_seconds"
+      ],
+      "properties": {
+        "identity": {
+          "const": "MATCHED_SOLVER_REALIZATION_EXECUTION_POLICY_V1"
+        },
+        "group_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "cell": {
+          "enum": [
+            "A",
+            "B"
+          ]
+        },
+        "attempts": {
+          "type": "object",
+          "required": [
+            "A",
+            "B"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "A": {
+              "type": "string",
+              "minLength": 1
+            },
+            "B": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "binding_paths": {
+          "type": "object",
+          "required": [
+            "A",
+            "B"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "A": {
+              "type": "string",
+              "minLength": 1
+            },
+            "B": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "protocol_path": {
+          "const": "experiments/protocols/a4_v23_matched_comparison_v1/protocol.json"
+        },
+        "protocol_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "inference_identity": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "max_opportunities_per_cell": {
+          "const": 5
+        },
+        "charged_tokens_per_cell": {
+          "const": 2000000
+        },
+        "charged_tokens_total": {
+          "const": 4000000
+        },
+        "cache_directory": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authorization_file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "canary_review": {
+          "const": "OWNER_INITIAL_PROFILE_REVIEW_BEFORE_OPTIMIZATION"
+        },
+        "canary_review_timeout_seconds": {
+          "const": 900
+        }
+      }
     }
   },
   "required": [

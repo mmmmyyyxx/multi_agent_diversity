@@ -1,0 +1,175 @@
+{
+  "actual_diff_distinguished_from_generated_intent": true,
+  "followup_no_safe_edit_count": 6,
+  "followup_response_was_fixture_defined": true,
+  "full_rejection_records": [
+    {
+      "actual_diff_sha256": "23642fec20780303261d954261e3d5974a7a89c236d4cb93d7a65f5d186c4ab4",
+      "candidate_id": "layer1:1:8e97a7145fc7",
+      "child_prompt_id": "8e97a7145fc7f79c6c7fba11533aa4482fa8a12ae6e8c49b175309ba8b253025",
+      "effects": {
+        "actual_parent_validation": {
+          "member_delta": 1
+        },
+        "full": {
+          "member_delta": -3
+        },
+        "mutation": {
+          "member_delta": 2
+        },
+        "search_validation": {
+          "member_delta": 1
+        },
+        "team_probe": {
+          "member_delta": 1
+        }
+      },
+      "member": 0,
+      "parent_prompt_id": "4e6dfb1595690c9487e7dea0deaafa72363cde09f5ce81186f1e4fbdc4205f80",
+      "status": "FULL_REFUTED",
+      "status_history": [
+        "PROPOSED",
+        "LOCALLY_SUPPORTED",
+        "FULL_REFUTED"
+      ]
+    }
+  ],
+  "kind": "SYNTHETIC_CONFORMANCE_NOT_EFFICACY",
+  "member": 0,
+  "memberships": {
+    "mutation": [
+      "optimize0",
+      "optimize1",
+      "optimize11"
+    ],
+    "search_validation": [
+      "optimize15",
+      "optimize2",
+      "optimize9"
+    ],
+    "team_probe": [
+      "optimize17",
+      "optimize3",
+      "optimize7"
+    ]
+  },
+  "memory_initial_entries": 5,
+  "private_evidence_sha256": "b492e6ae388f30c0efe3f617b5fefe586ea301cbb9cae615ed3738f2c0fac1f0",
+  "provenance": {
+    "heldout_content_read": false,
+    "implementation": "current production composition with synthetic Optimize fixtures",
+    "memory_effect": "measured local/transfer/probe/Full results and actual diff digest",
+    "mutation_evidence": "current_panel_observations from frozen mutation membership only",
+    "optimize_reference": "CorrectnessExample.reference_solution -> per-example Gradient evidence",
+    "reference_or_memory_in_solver": false,
+    "solver_trajectory": "member evaluation profile -> corresponding diagnostic example"
+  },
+  "real_provider_calls": 0,
+  "representative_requests": {
+    "cluster": {
+      "fields": [
+        "gradients"
+      ],
+      "role": "cluster",
+      "serialized_utf8_bytes": 2128,
+      "top_level_fields": [
+        "enable_thinking",
+        "frequency_penalty",
+        "max_completion_tokens",
+        "messages",
+        "model",
+        "presence_penalty",
+        "temperature",
+        "top_k",
+        "top_p"
+      ],
+      "wire_sha256": "9fc9c84a5fcff888e0da0ad67332fadf3037f2eae97df6a45dc75d94e8f4412c"
+    },
+    "gradient": {
+      "fields": [
+        "current_member_procedure",
+        "example",
+        "schema",
+        "example.correct",
+        "example.example_id",
+        "example.prediction",
+        "example.problem",
+        "example.reference",
+        "example.reference_solution",
+        "example.solver_trajectory",
+        "example.valid"
+      ],
+      "role": "gradient",
+      "serialized_utf8_bytes": 2666,
+      "top_level_fields": [
+        "enable_thinking",
+        "frequency_penalty",
+        "max_completion_tokens",
+        "messages",
+        "model",
+        "presence_penalty",
+        "temperature",
+        "top_k",
+        "top_p"
+      ],
+      "wire_sha256": "edc73f53a7f9b091db599e698e2fec4ee37eca36d17e839c4c0a18e2a9c64ebc"
+    },
+    "mutation": {
+      "fields": [
+        "current_panel_observations",
+        "current_parent",
+        "repair_objective",
+        "retrieved_memory",
+        "schema",
+        "selected_pattern"
+      ],
+      "role": "mutation",
+      "serialized_utf8_bytes": 5695,
+      "top_level_fields": [
+        "enable_thinking",
+        "frequency_penalty",
+        "max_completion_tokens",
+        "messages",
+        "model",
+        "presence_penalty",
+        "temperature",
+        "top_k",
+        "top_p"
+      ],
+      "wire_sha256": "49cbf2f5bdc43127eb29a41160359e6e79b0500277bf8db280e419cbdfb6138f"
+    },
+    "solver": {
+      "fields": [
+        "messages.system.immutable_V6_interface",
+        "messages.user.standalone_procedure",
+        "messages.user.public_problem"
+      ],
+      "role": "solver",
+      "serialized_utf8_bytes": 841,
+      "top_level_fields": [
+        "enable_thinking",
+        "frequency_penalty",
+        "max_tokens",
+        "messages",
+        "min_p",
+        "model",
+        "presence_penalty",
+        "temperature",
+        "top_k",
+        "top_p"
+      ],
+      "wire_sha256": "35b8c9670ebbe1338420171dc56b301f6038f3d36064f04b28b276e5f31f175f"
+    }
+  },
+  "request_counts": {
+    "cluster": 1,
+    "gradient": 6,
+    "mutation": 12,
+    "solver": 108
+  },
+  "request_metadata_sha256": "0b902e1ef5c0d6fd1f8cbc6bccacb2c4f05917b53ab0ca4278fb123af2eef84f",
+  "same_member_followup_memory_retrieved": true,
+  "status": "PASS",
+  "test_calls": 0,
+  "validation_calls": 0
+}

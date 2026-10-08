@@ -316,13 +316,21 @@ visible_solution_scientific_runtime_identity_changed: true
 last_optimization_evidence_milestone: math_optimization_evidence_v23
 optimization_evidence_report: reports/math_optimization_evidence_v23_20261008
 optimization_evidence_method: unified_team_prompt_search_v2_3
-optimization_evidence_status: IMPLEMENTED_USER_STOP_FINAL_REGRESSION_INCOMPLETE
+optimization_evidence_status: OFFLINE_VERIFIED
 optimization_evidence_stop_report: reports/math_optimization_evidence_v23_20261008/stop_summary.md
 optimization_evidence_offline_profile: experiments/execution_bindings/math_optimization_evidence_offline_profile_v1.json
 optimization_evidence_real_api_authorized: false
 optimization_evidence_validation_authorized: false
 optimization_evidence_test_authorized: false
 optimization_evidence_scientific_method_changed: true
+optimization_evidence_verification_report: reports/a4_v23_real_efficacy_preparation_20261008
+next_matched_comparison_protocol: experiments/protocols/a4_v23_matched_comparison_v1/protocol.json
+next_matched_comparison_status: OFFLINE_VERIFIED_AUTHORIZATION_PENDING
+next_matched_comparison_real_api_authorized: false
+next_matched_comparison_token_ceiling: 4000000
+next_matched_comparison_opportunities_per_arm: 5
+next_matched_comparison_validation_authorized: false
+next_matched_comparison_test_authorized: false
 ```
 
 ## Experiment and engineering DAG
@@ -600,6 +608,9 @@ flowchart TD
     n291["math_v2_2_optimizer_failure_audit_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
     n292["math_visible_solution_feedback_v1<br/>BENCHMARK_MIGRATION<br/>IMPLEMENTED_NOT_EXECUTED"]
     n293["math_optimization_evidence_v23<br/>ARCHITECTURE_REFACTOR<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n294["a4_v23_matched_comparison_v1<br/>PREEXECUTION_FREEZE<br/>PREPARED_NOT_EXECUTED"]
+    n295["a4_v23_matched_comparison_v1_a<br/>PILOT<br/>PREPARED_NOT_EXECUTED"]
+    n296["a4_v23_matched_comparison_v1_b<br/>PILOT<br/>PREPARED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -823,6 +834,10 @@ flowchart TD
   n291 -->|followup_of| n292
   n292 -->|followup_of| n293
   n291 -->|followup_of| n293
+  n293 -->|followup_of| n294
+  n292 -->|followup_of| n294
+  n294 -->|followup_of| n295
+  n294 -->|followup_of| n296
 ```
 
 ## Archived branches and unresolved evidence

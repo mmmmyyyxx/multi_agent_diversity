@@ -110,6 +110,9 @@ def current_scientific_files(root: Path, *, execution_closure: bool = False) -> 
     optimization_evidence_contract = root/'docs/design/OPTIMIZATION_EVIDENCE_V23.md'
     if optimization_evidence_contract.is_file():
         result.append(optimization_evidence_contract)
+    matched_execution_contract = root/'docs/design/MATCHED_SOLVER_REALIZATION_EXECUTION_V1.md'
+    if matched_execution_contract.is_file():
+        result.append(matched_execution_contract)
     operational_contract=root/'docs/design/V22_OPERATIONAL_PILOT_CEILING_V1.md'
     if operational_contract.is_file():
         result.append(operational_contract)

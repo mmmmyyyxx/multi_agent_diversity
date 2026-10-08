@@ -93,6 +93,8 @@ class CurrentPolicyBundle:
             raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
 
     def validate_contract(self, contract):
+        from ..governance.matched_realization import validate_policy
+        validate_policy(contract)
         from ..benchmarks.math_optimizer_generation import frozen_cluster_policy
         frozen_cluster_policy(contract)
         from .gradient_recovery import validate_policy

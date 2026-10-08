@@ -1,0 +1,10 @@
+{
+  "charged_tokens": 0,
+  "component_causality": "NOT_ESTABLISHED",
+  "efficacy": "UNKNOWN",
+  "readiness": "SOURCE_FREEZE_PENDING",
+  "real_api_calls": 0,
+  "real_comparison": "NOT_EXECUTED",
+  "status": "OFFLINE_VERIFIED",
+  "valid_real_candidate_outcomes": 0
+}

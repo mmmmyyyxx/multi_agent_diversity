@@ -8595,8 +8595,84 @@ experiments:
   - Versioned evidence, independent Optimize validation, rotating preservation and
     measured edit Memory; Full transition unchanged.
   - User stopped final regression before completion; 22 focused cases passed. Published
-    implementation is partially verified, with no real-model execution or efficacy claim.
+    implementation is partially verified, with no real-model execution or efficacy
+    claim.
   unavailable:
     implementation_commit: Containing publication commit; no self-referential SHA
     execution_commit: No real scientific execution
     result_commit: Containing publication commit
+- experiment_id: a4_v23_matched_comparison_v1
+  kind: PREEXECUTION_FREEZE
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: matched_v2_2_visible_vs_v2_3
+  parent_ids:
+  - math_optimization_evidence_v23
+  - math_visible_solution_feedback_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: OFFLINE_PREPARATION_REAL_EFFICACY_UNKNOWN
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/protocols/a4_v23_matched_comparison_v1/protocol.json
+  report: reports/a4_v23_real_efficacy_preparation_20261008
+  classifier: reports/a4_v23_real_efficacy_preparation_20261008/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Fresh matched V6 initial measurements, five-opportunity horizon, 2M charged tokens
+    per cell; new paid approval required.
+  unavailable:
+    implementation_commit: Containing freeze commit; no self-referential SHA
+    execution_commit: No real execution authorized
+    result_commit: No efficacy result
+- experiment_id: a4_v23_matched_comparison_v1_a
+  kind: PILOT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_2
+  parent_ids:
+  - a4_v23_matched_comparison_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: OFFLINE_PREPARATION_REAL_EFFICACY_UNKNOWN
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/a4_v23_matched_comparison_v1_a.yaml
+  report: null
+  classifier: reports/a4_v23_real_efficacy_preparation_20261008/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Fresh matched V6 initial measurements, five-opportunity horizon, 2M charged tokens
+    per cell; new paid approval required.
+  unavailable:
+    implementation_commit: Containing freeze commit; no self-referential SHA
+    execution_commit: No real execution authorized
+    result_commit: No efficacy result
+    report: No cell execution; preparation evidence is attached to the parent study.
+- experiment_id: a4_v23_matched_comparison_v1_b
+  kind: PILOT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_3
+  parent_ids:
+  - a4_v23_matched_comparison_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: OFFLINE_PREPARATION_REAL_EFFICACY_UNKNOWN
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/a4_v23_matched_comparison_v1_b.yaml
+  report: null
+  classifier: reports/a4_v23_real_efficacy_preparation_20261008/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Fresh matched V6 initial measurements, five-opportunity horizon, 2M charged tokens
+    per cell; new paid approval required.
+  unavailable:
+    implementation_commit: Containing freeze commit; no self-referential SHA
+    execution_commit: No real execution authorized
+    result_commit: No efficacy result
+    report: No cell execution; preparation evidence is attached to the parent study.

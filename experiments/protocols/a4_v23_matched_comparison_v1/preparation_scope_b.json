@@ -1,0 +1,36 @@
+{
+  "attempt_id": "a4_v23_matched_seed81_20261008_attempt1_b",
+  "one_attempt_only": true,
+  "paid_execution_requires_new_explicit_approval": true,
+  "paired_realization_policy": {
+    "attempts": {
+      "A": "a4_v23_matched_seed81_20261008_attempt1_a",
+      "B": "a4_v23_matched_seed81_20261008_attempt1_b"
+    },
+    "authorization_file": "runs/a4_v23_matched_seed81_20261008_attempt1/paired_authorization.json",
+    "binding_paths": {
+      "A": "experiments/execution_bindings/a4_v23_matched_seed81_20261008_attempt1_a.json",
+      "B": "experiments/execution_bindings/a4_v23_matched_seed81_20261008_attempt1_b.json"
+    },
+    "cache_directory": "runs/a4_v23_matched_seed81_20261008_attempt1/paired_solver_cache",
+    "canary_review": "OWNER_INITIAL_PROFILE_REVIEW_BEFORE_OPTIMIZATION",
+    "canary_review_timeout_seconds": 900,
+    "cell": "B",
+    "charged_tokens_per_cell": 2000000,
+    "charged_tokens_total": 4000000,
+    "group_id": "a4_v23_matched_seed81_20261008_attempt1",
+    "identity": "MATCHED_SOLVER_REALIZATION_EXECUTION_POLICY_V1",
+    "inference_identity": "ff36e5aedecb8c67cb55523885824e8b403aa417d2c09b59a598e34968bbc49b",
+    "max_opportunities_per_cell": 5,
+    "protocol_path": "experiments/protocols/a4_v23_matched_comparison_v1/protocol.json",
+    "protocol_sha256": "d8e7d1c04cff719abcf4a74507357123b497eb9d29e1c755057a01daa5d02ec4"
+  },
+  "parent_binding_sha256": "2db7c87e9200b04d74435b5f1224126cea50e814fbe5c6d60d5e982e948dbd98",
+  "preparation_only": true,
+  "real_api_authorized": false,
+  "schema_version": "math_matched_comparison_preparation_scope_v1",
+  "test_authorized": false,
+  "user_authorized": true,
+  "user_task_sha256": "5dad8b3c1ef758ffceb0a2aaac543c80964cbce50c1ffa26ada443f0af2400d9",
+  "validation_authorized": false
+}

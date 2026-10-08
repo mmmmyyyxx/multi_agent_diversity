@@ -401,7 +401,9 @@ def test_existing_manifest_schema_acceptance_is_unchanged_for_historical_corpus(
     old_validator = jsonschema.Draft202012Validator(old_schema)
     new_validator = jsonschema.Draft202012Validator(new_schema)
     count = 0
-    for path in sorted((ROOT/'experiments/manifests').glob('*.yaml')):
+    frozen_paths = subprocess.check_output(['git', 'ls-tree', '-r', '--name-only',
+        'ee65f9ea', '--', 'experiments/manifests'], cwd=ROOT, text=True).splitlines()
+    for path in sorted(ROOT / p for p in frozen_paths if p.endswith('.yaml')):
         manifest = yaml.safe_load(path.read_bytes())
         if isinstance(manifest, dict) and manifest.get('schema_version') == 'experiment_manifest_v2':
             count += 1

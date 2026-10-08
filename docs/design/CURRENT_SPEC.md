@@ -26,6 +26,14 @@ V2.2 search, selection, scoring, recovery and Memory algorithms remain unchanged
 the changed instructions and feedback require fresh scientific/runtime identities.
 Historical answer-only interfaces and frozen records retain their meanings.
 
+The [matched realization execution policy](MATCHED_SOLVER_REALIZATION_EXECUTION_V1.md)
+binds a fresh two-cell V2.2-with-V6 versus V2.3 study, common inference realizations,
+independently checked initial floors, operational review and exact single-use
+authorization. **INV-MATH-MATCHED-REALIZATION-001**: Only identical Solver
+requests within the same frozen group and member lane may share across these
+two cells. Optimizer identities remain arm-specific. Both initial baselines
+precede search; old attempts, authorizations and measured 22/60 are not reused.
+
 - **INV-MATH-VISIBLE-SOLUTION-001**: Score only the existing final-answer payload;
   retain the complete private response and expose deterministically bounded,
   explicitly status-marked actual written solution evidence. Adaptive feedback

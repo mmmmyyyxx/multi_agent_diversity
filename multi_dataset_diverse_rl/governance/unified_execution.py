@@ -15,6 +15,9 @@ def execution_identity(root,contract):
     CURRENT_POLICY_BUNDLE.validate_contract(contract)
     configs=[root/v for k,v in contract.items() if k.endswith('_path') and isinstance(v,str)]
     configs += [root/contract['split_directory']/'math.json']
+    if contract.get('paired_realization_policy'):
+        configs += [root/v for v in contract['paired_realization_policy']['binding_paths'].values()]
+        configs.append(root/contract['paired_realization_policy']['protocol_path'])
     identity=build_unified_source_identity(root,root/contract['canonical_root']/'manifests/math.json',configs)
     files=[root/r['path'] for s in identity['scopes'].values() for r in s['files']]
     files.append(root/contract['split_directory']/'math.ids.jsonl')
@@ -34,6 +37,8 @@ def execution_scope(manifest,contract):
         cumulative_token_ceiling=40_000_000,
         **({'optimization_evidence_policy':contract['optimization_evidence_policy']}
             if contract.get('optimization_evidence_policy') else {}),
+        **({'paired_realization_policy':contract['paired_realization_policy']}
+            if contract.get('paired_realization_policy') else {}),
         **({'pattern_cluster_generation_policy':contract['pattern_cluster_generation_policy']}
             if 'pattern_cluster_generation_policy' in contract else {}),
         **({'solver_output_interface':contract['solver_output_interface'],
@@ -58,6 +63,8 @@ def bound_preflight(root, manifest):
         return dict(gate='HOLD',blockers=errors+['EXECUTION_BINDING_HASH_MISMATCH'],provider_attempts=0)
     try:
         binding=execution_binding(root,read_json(path));errors.extend(binding.blockers())
+        from .matched_realization import validate_bindings
+        validate_bindings(root, binding.contract)
         if ('numeric_calibration_amendment_path' in binding.contract
                 and 'gradient_recovery_amendment_path' not in binding.contract
                 and binding.contract['execution_phase']=='pilot'
@@ -147,6 +154,8 @@ def validate_prep(root, prep, *, require_authorized=False):
     if scope != expected_scope:
         raise SearchContractError("CANARY_SCOPE_MISMATCH")
     if require_authorized:
+        from .matched_realization import validate_authorization
+        validate_authorization(root, contract, payload)
         auth = read_json(prep / "authorization.json")
         if (auth.get("explicit_user_authorized") is not True or auth.get("single_use") is not True or auth.get("consumed") is not False
                 or auth.get("scope") != scope or auth.get("startup_identity_sha256") != checksum
@@ -216,6 +225,8 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
         manifest['solver_trajectory_policy']=contract['solver_trajectory_policy']
     if 'optimization_evidence_policy' in contract:
         manifest['optimization_evidence_policy']=contract['optimization_evidence_policy']
+    if 'paired_realization_policy' in contract:
+        manifest['paired_realization_policy']=contract['paired_realization_policy']
     for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256", "optimizer_nonthinking_evidence_policy", "layer1_search_policy", "candidate_contract_identity", "post_search_validation_policy", "pattern_support_id_transport", "pattern_abstraction_guard"):
         if k in contract:manifest[k]=contract[k]
     manifest["preregistration_identity"] = canonical_sha256({k: v for k, v in manifest.items() if k not in {"lifecycle", "authorization"}})

@@ -1,0 +1,9 @@
+{
+  "charged_tokens": 0,
+  "inherited_ledger_unchanged": true,
+  "new_per_arm_ceiling": 2000000,
+  "new_study_ceiling": 4000000,
+  "preparation_is_not_paid_execution_authorization": true,
+  "previous_authorization_closed": true,
+  "real_api_calls": 0
+}

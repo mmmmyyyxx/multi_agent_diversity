@@ -1,0 +1,1 @@
+arm,opportunity,candidate_id,member,parent_hash,pattern_hash,gradient_provenance_hash,hypothesis_hash,actual_diff_hash,mutation_delta,search_validation_delta,probe_delta,full_member_delta,newly_fixed,newly_broken,retained,preservation_rate,invalid_delta,vote_delta,oracle_delta,admission,commit,memory_record_hash,later_retrieval

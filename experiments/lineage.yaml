@@ -886,6 +886,12 @@ nodes:
   era: UNIFIED_TEAM_PROMPT_SEARCH
 - experiment_id: math_optimization_evidence_v23
   kind: ARCHITECTURE_REFACTOR
+- experiment_id: a4_v23_matched_comparison_v1
+  kind: PREEXECUTION_FREEZE
+- experiment_id: a4_v23_matched_comparison_v1_a
+  kind: PILOT
+- experiment_id: a4_v23_matched_comparison_v1_b
+  kind: PILOT
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1834,4 +1840,24 @@ edges:
   scope: Explicit offline V2.3 scientific-method revision; historical execution evidence
     unchanged
   from: math_v2_2_optimizer_failure_audit_v1
+- to: a4_v23_matched_comparison_v1
+  relation: followup_of
+  evidence: experiments/protocols/a4_v23_matched_comparison_v1/protocol.json
+  scope: Offline verified preparation; no API authority or efficacy result.
+  from: math_optimization_evidence_v23
+- to: a4_v23_matched_comparison_v1
+  relation: followup_of
+  evidence: experiments/protocols/a4_v23_matched_comparison_v1/protocol.json
+  scope: Offline verified preparation; no API authority or efficacy result.
+  from: math_visible_solution_feedback_v1
+- to: a4_v23_matched_comparison_v1_a
+  relation: followup_of
+  evidence: experiments/protocols/a4_v23_matched_comparison_v1/protocol.json
+  scope: Offline verified preparation; no API authority or efficacy result.
+  from: a4_v23_matched_comparison_v1
+- to: a4_v23_matched_comparison_v1_b
+  relation: followup_of
+  evidence: experiments/protocols/a4_v23_matched_comparison_v1/protocol.json
+  scope: Offline verified preparation; no API authority or efficacy result.
+  from: a4_v23_matched_comparison_v1
 current_frontier: experiments/current_frontier.yaml

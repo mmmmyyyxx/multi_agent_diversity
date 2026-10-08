@@ -18,6 +18,7 @@ contract and parent manifest, then the failure registry before changing code.
 | multi_dataset_diverse_rl/versions.py | Historical registry and preserved identity values |
 | multi_dataset_diverse_rl/team_search/ | Mixed: shared schemas/evidence/physics are compatibility dependencies; old controllers are historical |
 | multi_dataset_diverse_rl/governance/ | Authorization, manifest, registry and offline governance support |
+| multi_dataset_diverse_rl/governance/matched_realization.py | Explicit two-cell Solver cache identity, exact authorization and initial baseline/canary verification |
 | experiments/registry.yaml | Experiment metadata authority, explicit eras/kinds |
 | experiments/lineage.yaml | Sole lineage authority |
 | experiments/manifests/ | Permanent current and historical freeze paths; historical identities not migrated |

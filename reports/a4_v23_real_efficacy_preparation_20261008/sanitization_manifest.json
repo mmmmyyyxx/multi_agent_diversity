@@ -1,0 +1,27 @@
+{
+  "status": "PASS",
+  "findings": 0,
+  "exact_private_text_matches": 0,
+  "protected_long_string_count": 588,
+  "minimum_string_length": 80,
+  "raw_runtime_files_published": false,
+  "heldout_content_read": false,
+  "permits": [
+    "field_names",
+    "synthetic_ids",
+    "hashes",
+    "counters",
+    "categories",
+    "metrics",
+    "protocol_metadata"
+  ],
+  "excludes": [
+    "learned procedures",
+    "public or heldout problems",
+    "reference or model outputs",
+    "provider response payloads",
+    "service addresses",
+    "host locations",
+    "secrets"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "execution_freeze_receipt": "readiness.json",
+  "historical_reports_immutable": true,
+  "normative_execution_identity": "MATCHED_SOLVER_REALIZATION_EXECUTION_POLICY_V1",
+  "parent_source_sha": "10ac791c0edb23e2b2afbe64d551a9336f7934b7",
+  "protocol": "experiments/protocols/a4_v23_matched_comparison_v1/protocol.json",
+  "protocol_sha256": "d8e7d1c04cff719abcf4a74507357123b497eb9d29e1c755057a01daa5d02ec4",
+  "raw_evidence_ignored": true,
+  "runtime": "pinned MATH virtual environment",
+  "user_task_sha256": "5dad8b3c1ef758ffceb0a2aaac543c80964cbce50c1ffa26ada443f0af2400d9"
+}

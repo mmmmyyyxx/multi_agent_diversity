@@ -1,0 +1,117 @@
+{
+  "canary_extra_provider_calls": 0,
+  "canary_is_initial_optimize_profiling": true,
+  "gradient_semantic_attempts": {
+    "A": 3,
+    "B": 1
+  },
+  "gross_reservations_are_not_spending": true,
+  "guarantees_five_opportunities": false,
+  "historical_cost_reference": {
+    "completed_opportunities": 7,
+    "interface": "V5 answer-only; no empirical V6 cost estimate available",
+    "tokens": 480991
+  },
+  "missing_usage": "charge full reservation",
+  "paired_bootstrap_cost": "charged once to A; both logical baselines reported",
+  "per_cell": {
+    "A": {
+      "attempt_charged_token_ceiling": 2000000,
+      "first_attempt_solver_logical": 1600,
+      "optimizer_output_caps": {
+        "cluster": 8192,
+        "gradient": 1800,
+        "reflection": 1800
+      },
+      "provider_bounds": {
+        "attempt_charged_token_ceiling": 2000000,
+        "bound_proof": {
+          "bootstrap_logical_solver_calls": 500,
+          "gradient_semantic_multiplier": 3,
+          "gross_reservations_are_not_spending": true,
+          "guarantees_saturation": false,
+          "identity": "V2_2_FIXED_HORIZON_OPERATIONAL_PILOT_V1",
+          "per_op_logical_solver": {
+            "full": 120,
+            "local": 36,
+            "probe": 24,
+            "shadow": 40
+          },
+          "scientific_stopper_unchanged": true,
+          "solver_semantic_multiplier": 4,
+          "token_bound": "PRE_TRANSPORT_EXACT_RESERVATION_AND_CUMULATIVE_ATTEMPT_ADMISSION",
+          "transport_multiplier": 21
+        },
+        "cumulative_charged_token_ceiling": 40000000,
+        "gross_reservation_upper_bound": 308070000000,
+        "max_opportunities": 5,
+        "max_proposals_per_opportunity": 6,
+        "pattern_calls": 905,
+        "pattern_cluster_calls": 5,
+        "pattern_gradient_calls": 900,
+        "physical_solver_per_opportunity": 880,
+        "reflection_calls": 30,
+        "reservation_peak_upper_bound": 2000000,
+        "shadow_solver_calls": 1600,
+        "solver_calls": 6400,
+        "solver_per_opportunity": 220,
+        "successful_provider_calls": 7335,
+        "transport_attempts": 154035
+      },
+      "solver_output_cap": 3600
+    },
+    "B": {
+      "attempt_charged_token_ceiling": 2000000,
+      "first_attempt_solver_logical": 1570,
+      "optimizer_output_caps": {
+        "cluster": 8192,
+        "gradient": 1800,
+        "reflection": 1800
+      },
+      "provider_bounds": {
+        "attempt_charged_token_ceiling": 2000000,
+        "bound_proof": {
+          "bootstrap_logical_solver_calls": 500,
+          "gradient_semantic_multiplier": 1,
+          "gross_reservations_are_not_spending": true,
+          "guarantees_saturation": false,
+          "identity": "V2_3_OPTIMIZE_EVIDENCE_RESOURCE_DERIVATION_V1",
+          "per_op_logical_solver": {
+            "full": 120,
+            "local": 42,
+            "probe": 12,
+            "shadow": 40
+          },
+          "scientific_stopper_unchanged": true,
+          "solver_semantic_multiplier": 4,
+          "token_bound": "PRE_TRANSPORT_EXACT_RESERVATION_AND_CUMULATIVE_ATTEMPT_ADMISSION",
+          "transport_multiplier": 21
+        },
+        "cumulative_charged_token_ceiling": 40000000,
+        "gross_reservation_upper_bound": 308070000000,
+        "max_opportunities": 5,
+        "max_proposals_per_opportunity": 6,
+        "pattern_calls": 305,
+        "pattern_cluster_calls": 5,
+        "pattern_gradient_calls": 300,
+        "physical_solver_per_opportunity": 856,
+        "reflection_calls": 30,
+        "reservation_peak_upper_bound": 2000000,
+        "shadow_solver_calls": 1600,
+        "solver_calls": 6280,
+        "solver_per_opportunity": 214,
+        "successful_provider_calls": 6615,
+        "transport_attempts": 138915
+      },
+      "solver_output_cap": 3600
+    }
+  },
+  "physical_transport_ceiling": 292950,
+  "reservation_rule": "serialized UTF-8 request bytes + 4096 + role accounting output ceiling",
+  "schema_version": "matched_real_budget_v1",
+  "solver_semantic_attempts": 4,
+  "study_charged_token_ceiling": 4000000,
+  "test_calls": 0,
+  "transport_attempts_per_draw": 21,
+  "validation_calls": 0
+}

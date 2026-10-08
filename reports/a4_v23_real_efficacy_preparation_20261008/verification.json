@@ -1,0 +1,60 @@
+{
+  "baseline_regression": {
+    "duration_seconds": 1683.424,
+    "failed": 0,
+    "passed": 1664,
+    "skipped": 2,
+    "xml_sha256": "7c66baf377f492823f6713aeaf4ac98f21222f9c9f76f0420c50eca1856a4507"
+  },
+  "classified_suite": "current",
+  "commands": [
+    "python tests/formal_zero_api_runner.py tests --suite current --junitxml=<ignored-output>",
+    "python tests/formal_zero_api_runner.py tests/current/test_matched_realization.py tests/current/test_visible_solver_trajectories.py tests/current/test_optimization_evidence_v23.py",
+    "python -m compileall -q multi_dataset_diverse_rl scripts tests",
+    "python tests/formal_zero_api_runner.py --offline-command scripts/audit_repository_governance.py --generate --out <ignored-output>",
+    "python tests/formal_zero_api_runner.py --offline-command scripts/preflight_experiment_governance.py"
+  ],
+  "compileall": "PASS: multi_dataset_diverse_rl scripts tests",
+  "current_governance": "PASS; no errors",
+  "final_regression": {
+    "duration_seconds": 1691.714,
+    "failed": 0,
+    "passed": 1677,
+    "skipped": 2,
+    "xml_sha256": "c2daf071d0911031db3af5547f64e2aa68820881dff9a2bf6f52f437acefa122"
+  },
+  "final_selected_cases": 1679,
+  "focused_trajectory_evidence_and_pairing": {
+    "duration_seconds": 17.858,
+    "failed": 0,
+    "passed": 66,
+    "skipped": 0,
+    "xml_sha256": "ca1a62198f3725e15738ff5e116d2aa031083f4b6cf909ca9a57571fd2ea0005"
+  },
+  "guard_credentials_present": false,
+  "historical_private_artifact_cases_omitted": 64,
+  "historical_replay_deselected": 1468,
+  "legacy_cli": "BLOCKED_BY_THREE_UNCHANGED_INHERITED_FAILURE_REGISTRY_ERRORS",
+  "legacy_cli_error_categories": [
+    "FAIL-V22-PILOT-RESOURCE-BOUND-NOT-FROZEN: missing fields ['symptom']",
+    "FAIL-V22-PILOT-RESOURCE-BOUND-NOT-FROZEN: invalid evidence_level",
+    "FAIL-V22-PATTERN-CLUSTER-1800-OUTPUT-TRUNCATION: invalid evidence_level"
+  ],
+  "network_guard": "bootstrap plus negative control before application import; zero network attempts",
+  "paired_initial_final": {
+    "duration_seconds": 3.205,
+    "failed": 0,
+    "passed": 12,
+    "skipped": 0,
+    "xml_sha256": "3aca0660abda53dcf019dbc98fb7dedf208420bd435cc26e563aae18d938dc59"
+  },
+  "real_api_calls": 0,
+  "skips": [
+    "HoVer frozen dataset unavailable",
+    "PubMedQA frozen dataset unavailable"
+  ],
+  "status": "PASS",
+  "tested_source_file_count": 869,
+  "tested_source_unchanged": true,
+  "tested_source_witness_sha256": "00b275b097bf654e0b19172172346eaabffb6671f90a363152410963b6d3819d"
+}
