@@ -59,6 +59,12 @@ There is no third cell, additional seed, retry of an attempt, independent
 diagnostic model call, post-freeze Validation or sealed Test access. Winner-only
 Shadow40 is included only when explicitly approved in this new study scope.
 
+The old failed numeric pilot condition continues to block its historical
+retry-free lineage. A fully validated closed V2.3 binding has an explicit
+one-diagnostic reference-grounded policy and intentionally removes the old
+retry amendment; that absence cannot classify it as the older failed pilot.
+Malformed V2.3 policy, binding or manifest still fails closed.
+
 Each cell has a 2,000,000 charged-token ceiling, including initialization,
 Solver semantic recovery, all transport failures/retries, Gradient, clustering,
 mutation, Probe, Full and Shadow. Thus the study can charge at most 4,000,000.

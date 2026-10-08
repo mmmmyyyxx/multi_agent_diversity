@@ -50,6 +50,29 @@ def test_pair_shares_only_identical_solver_realization_keys():
     original = RequestBroker(contract=historical, transport=lambda _: None, arm='A4', seed=81)
     assert original._request_identity(**values)[1] != left._request_identity(**values)[1]
 
+def test_v23_one_diagnostic_is_not_the_old_failed_numeric_pilot():
+    from multi_dataset_diverse_rl.governance.unified_execution import numeric_pilot_readiness_blockers
+    root = Path(__file__).resolve().parents[2]
+    assert numeric_pilot_readiness_blockers(root, evidence_contract()) == []
+    old = json.loads((root / 'experiments/execution_bindings/math_v2_1_gradient_pattern_seed81_pilot_v5.json').read_bytes())
+    assert numeric_pilot_readiness_blockers(root, old) == ['ATTEMPT4_CONFIRMED_STRONG_NUMERIC_LEAKAGE']
+    invalid = evidence_contract(); invalid.pop('optimization_evidence_policy')
+    with pytest.raises(SearchContractError, match='MATH_EVIDENCE_POLICY_MISMATCH'):
+        numeric_pilot_readiness_blockers(root, invalid)
+
+
+def test_v23_actual_bound_preflight_retains_strict_contract_validation():
+    from multi_dataset_diverse_rl.governance.unified_execution import preexecution_manifest, bound_preflight
+    root = Path(__file__).resolve().parents[2]
+    path = 'experiments/execution_bindings/a4_v23_matched_seed81_20261008_attempt1_b.json'
+    manifest = preexecution_manifest(root, source_sha='0' * 40, frozen=False,
+        binding_path=path, experiment_id='a4_v23_matched_comparison_v1_b')
+    assert bound_preflight(root, manifest)['blockers'] == ['PREEXECUTION_NOT_FROZEN']
+    manifest['models']['solver'] = 'changed'
+    status = bound_preflight(root, manifest)
+    assert 'MANIFEST_EXECUTION_BINDING_MISMATCH' in status['blockers']
+    assert status['provider_attempts'] == 0
+
 
 @pytest.mark.parametrize('change', ['seed', 'model', 'thinking', 'horizon', 'budget', 'cell', 'path', 'identity'])
 def test_unfrozen_pair_policy_fails_before_provider(change):

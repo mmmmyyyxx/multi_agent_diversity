@@ -46,8 +46,8 @@ lifecycle:
   - status: DRAFT
     event: AWAITING_SOURCE_COMMIT
 hash_closure:
-  scientific_source_hash: d1a3a7e330eb1b8b40216454ea9e0cd3f606fda81a5d1eefa4df566237547f74
-  governance_hash: 5826ba0b20a7ff7b55c9413867fecd9e6fd6b4e04a6be4d306243644e9a91163
+  scientific_source_hash: 8e7f1da756c81a35df615f5d3aafc1bf503a228411efef6c7af55daa542bd007
+  governance_hash: 646f532cf3d61d24f073706b370e8c88a307468435bbb75b756d2ad799c5c8f8
   benchmark_contract_hash: 2a4f4e2d82ee8d478ee8ee2d16e04b5b915de75eda2b290e55f4e1fad6974303
   dataset_manifest_hash: d3c3f587bf9e08f5d9a12c8b777953c57cd30fc4c655e82e95f556b337119d81
 execution_binding:
@@ -509,4 +509,4 @@ post_search_validation_policy:
   unchanged_status: SKIPPED_NO_TEAM_CHANGE
 pattern_support_id_transport: PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1
 pattern_abstraction_guard: PATTERN_ABSTRACTION_SPECIFIC_CONTENT_GUARD_V6
-preregistration_identity: 2b8a6c05d2583246d3b47ee9f0a3c27b18de36459193015d21aab54f9d9c66e8
+preregistration_identity: 3b5ccc46c4ddaaaaa2a3f78d4ee388c13a03da6a05883f81ffff9710b1f5985a

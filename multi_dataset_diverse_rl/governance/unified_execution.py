@@ -48,6 +48,23 @@ def execution_scope(manifest,contract):
 def consumption_path(root, scope):
     return root / "runs/unified_authorization_consumption" / (canonical_sha256(scope) + ".json")
 
+def numeric_pilot_readiness_blockers(root, contract):
+    from ..current_contract import MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION
+    if contract.get('identity') == MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION:
+        # The closed V2.3 binding replaces retries with one reference-grounded
+        # diagnostic. Its absence of the old retry amendment is intentional;
+        # the full binding/policy validators still run before eligibility.
+        from ..search.optimization_evidence import POLICY
+        if contract.get('optimization_evidence_policy') != POLICY:
+            raise SearchContractError('MATH_EVIDENCE_POLICY_MISMATCH')
+        return []
+    if ('numeric_calibration_amendment_path' in contract
+            and 'gradient_recovery_amendment_path' not in contract
+            and contract['execution_phase'] == 'pilot'
+            and read_json(root / contract['numeric_calibration_amendment_path']).get('fresh_pilot_condition_met') is not True):
+        return ['ATTEMPT4_CONFIRMED_STRONG_NUMERIC_LEAKAGE']
+    return []
+
 def bound_preflight(root, manifest):
     from ..benchmarks.math_domain_binding import execution_binding
     ref=manifest.get('execution_binding',{})
@@ -65,11 +82,7 @@ def bound_preflight(root, manifest):
         binding=execution_binding(root,read_json(path));errors.extend(binding.blockers())
         from .matched_realization import validate_bindings
         validate_bindings(root, binding.contract)
-        if ('numeric_calibration_amendment_path' in binding.contract
-                and 'gradient_recovery_amendment_path' not in binding.contract
-                and binding.contract['execution_phase']=='pilot'
-                and read_json(root/binding.contract['numeric_calibration_amendment_path']).get('fresh_pilot_condition_met') is not True):
-            errors.append('ATTEMPT4_CONFIRMED_STRONG_NUMERIC_LEAKAGE')
+        errors.extend(numeric_pilot_readiness_blockers(root, binding.contract))
         method=binding.method('A4')
         expected=preexecution_manifest(root,source_sha=manifest.get('source_sha'),frozen=False,
             binding_path=ref['path'],experiment_id=manifest.get('experiment_id'))

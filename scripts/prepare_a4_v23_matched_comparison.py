@@ -37,7 +37,7 @@ def read(relative):
     return json.loads((ROOT / relative).read_bytes())
 
 
-def prepare(task_hash, source):
+def prepare(task_hash, source, preparation_revision=1):
     protocol_hash = write(PROTOCOL + '/protocol.json', dict(
         schema_version='matched_a4_real_comparison_protocol_v1',
         experiment_id='a4_v23_matched_comparison_v1',
@@ -156,18 +156,22 @@ def prepare(task_hash, source):
             interface='V5 answer-only; no empirical V6 cost estimate available')))
     if source != '0' * 40:
         preps = {}
+        prep_paths = {}
         for cell, manifest in manifests.items():
-            destination = ROOT / 'runs' / STUDY / ('prep_' + cell.lower())
+            suffix = '' if preparation_revision == 1 else '_revision' + str(preparation_revision)
+            prep_paths[cell] = 'runs/' + STUDY + '/prep_' + cell.lower() + suffix
+            destination = ROOT / prep_paths[cell]
             preps[cell] = prepare_canary(ROOT, manifest, destination=destination)
         write('runs/' + STUDY + '/paired_authorization.json', dict(explicit_user_authorized=False,
             single_use_per_cell=True, scope=group_scope(contracts['A']['paired_realization_policy']),
             approved_startups={ATTEMPTS[cell]: p['startup_identity_sha256'] for cell, p in preps.items()},
             source_sha=source))
         write(PROTOCOL + '/execution_freeze.json', dict(source_sha=source,
-            preps={cell: dict(startup_identity_sha256=p['startup_identity_sha256'], scope=p['scope'])
+            preparation_revision=preparation_revision,
+            preps={cell: dict(path=prep_paths[cell], startup_identity_sha256=p['startup_identity_sha256'], scope=p['scope'])
                 for cell, p in preps.items()}, ready_for_authorization=True,
             real_api_authorized=False, READY_TO_RUN=False,
-            commands={cell: f'python scripts/run_experiment.py --prep runs/{STUDY}/prep_{cell.lower()} --run-root runs/{ATTEMPTS[cell]} --execute'
+            commands={cell: f"& 'runs/math_v2_1/runtime/Scripts/python.exe' scripts/run_experiment.py --prep {prep_paths[cell]} --run-root runs/{ATTEMPTS[cell]} --execute"
                 for cell in ('A', 'B')}))
     print(json.dumps(dict(status='FROZEN_NOT_AUTHORIZED' if source != '0' * 40 else 'DRAFT',
         source_sha=source, max_opportunities_per_arm=5, token_ceiling_per_arm=2_000_000)))
@@ -177,7 +181,8 @@ if __name__ == '__main__':
     p = argparse.ArgumentParser()
     p.add_argument('--task-sha256', required=True)
     p.add_argument('--source-sha', default='0' * 40)
+    p.add_argument('--preparation-revision', type=int, default=1)
     args = p.parse_args()
-    if len(args.task_sha256) != 64 or len(args.source_sha) != 40:
+    if len(args.task_sha256) != 64 or len(args.source_sha) != 40 or args.preparation_revision < 1:
         p.error('full hash identities required')
-    prepare(args.task_sha256, args.source_sha)
+    prepare(args.task_sha256, args.source_sha, args.preparation_revision)
