@@ -1,0 +1,83 @@
+{
+  "Fulls": 2,
+  "TeamProbes": 27,
+  "classification": {
+    "CANDIDATE_ORACLE_COVERAGE_GAIN": "SUPPORTED",
+    "COMMITTED_TARGET_IMPROVEMENT": "NOT SUPPORTED",
+    "COMMITTED_TEAM_VOTE_IMPROVEMENT": "NOT SUPPORTED",
+    "FUNCTIONAL_THROUGH_FULL": "ESTABLISHED",
+    "GENERALIZATION": "INCONCLUSIVE",
+    "GRADIENT_OR_PATTERN_QUALITY_CAUSAL_FAILURE": "INCONCLUSIVE",
+    "METHOD_ADVANTAGE": "INCONCLUSIVE",
+    "POST_COMMIT_SEQUENTIAL_STATE_AND_MEMORY": "INCONCLUSIVE",
+    "SELECTION_FAILURE": "INCONCLUSIVE",
+    "pilot_completed": false,
+    "scope": "FIRST_SEVEN_COMPLETED_OPPORTUNITIES_ON_OPTIMIZE60",
+    "stop_reason": "USER_REQUESTED_STOP"
+  },
+  "commits": 0,
+  "completed_opportunities": 7,
+  "initial": {
+    "Oracle": 22,
+    "Vote": 22,
+    "member_scores": [
+      22,
+      22,
+      22,
+      22,
+      22
+    ],
+    "state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+    "support_count": 60
+  },
+  "last_committed": {
+    "Oracle": 22,
+    "Vote": 22,
+    "member_scores": [
+      22,
+      22,
+      22,
+      22,
+      22
+    ],
+    "state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+    "support_count": 60
+  },
+  "partial_opportunity": 8,
+  "proposals": 42,
+  "scope_accounting": {
+    "charged_provider_reported_tokens": 480991,
+    "partial_opportunity_8": {
+      "conservative_charge": 11459,
+      "provider_reported_tokens": 51526,
+      "provider_successes": 96,
+      "roles": {
+        "pattern_cluster": 1,
+        "pattern_gradient": 40,
+        "reflection": 5,
+        "solver": 50
+      },
+      "unresolved_transport_attempts_conservatively_closed": 1
+    },
+    "physical_attempts": 985,
+    "provider_successes": 985,
+    "roles": {
+      "pattern_cluster": 7,
+      "pattern_gradient": 269,
+      "reflection": 42,
+      "solver": 667
+    },
+    "scope": "INITIALIZATION_PLUS_SEVEN_COMPLETED_OPPORTUNITIES",
+    "seven_cluster_output_tokens": [
+      544,
+      437,
+      759,
+      619,
+      423,
+      420,
+      518
+    ],
+    "total_attempt_charged_tokens": 543976,
+    "total_provider_reported_tokens": 532517
+  }
+}

@@ -1,0 +1,171 @@
+{
+  "all_exported_candidates_changed_contract_valid_solver_evaluated": true,
+  "evaluated_exported_candidates": 27,
+  "final_memory_audit": {
+    "failure_evidence_events": 4,
+    "failure_family_count": 4,
+    "failure_family_repeated_count": 0,
+    "failure_memory_evictions": 0,
+    "failure_memory_peak_by_member": [
+      2,
+      2,
+      1,
+      0,
+      1
+    ],
+    "failure_reads": 25,
+    "failure_to_shared_promotions": 0,
+    "failure_writes": 6,
+    "initial_memory_entries": 0,
+    "memory_context_chars": {
+      "max": 863,
+      "mean": 376.9591836734694,
+      "min": 2
+    },
+    "memory_ids": [
+      "d671f7abd3afbb4491b1ca0ebdbe64df4b00ef6af1d2ab04d55c09979fc3b805",
+      "72b2c3abe726dba9be883bdf1e6ad9554fe797d242ca8216f94b64a22033b607",
+      "ee568fdf8534c30ea309555d347540eea5f8f40b0e480bbb6890581adba9b636",
+      "d17c7e7e35a1a47fa302dda36fb8923d9b721ef323cf7224ec6f0c625a70140e",
+      "2e9a41c3ee1beaf5e481e5667ce376ec7fc80ab5885157f1c60bee69de97b3a1",
+      "9f732135665986ec54cc6eaec5e7779b437646f2dec053729ce4e71cf7e322c7",
+      "cdb72cbedb894bfccd43d9faade2cb8aa14d42982bef082e52127460a676d03a"
+    ],
+    "memory_llm_calls": 0,
+    "memory_policy_identity": "structured_cross_member_rolling_risk_memory_v4",
+    "private_failure_count_by_member": [
+      2,
+      2,
+      1,
+      0,
+      1
+    ],
+    "private_success_count_by_member": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "promoted_families": [],
+    "risk_clock": 7,
+    "shared_reads": 42,
+    "shared_risk_count": 1,
+    "shared_risk_created": 1,
+    "shared_risk_evicted": 0,
+    "shared_risk_reads": 42,
+    "shared_risk_storage_final": 1,
+    "shared_risk_storage_peak": 1,
+    "shared_risk_updated": 0,
+    "shared_writes": 1,
+    "stateful_write_count": 13,
+    "success_reads": 0,
+    "success_writes": 0
+  },
+  "gradient_statistics_all_calls": {
+    "accepted_gradient_count": 304,
+    "gradient_contract_recovery_rate": 0.013157894736842105,
+    "gradient_first_pass_valid": 300,
+    "gradient_retry_once": 3,
+    "gradient_retry_twice": 1,
+    "gradient_three_fail": 0,
+    "length_rejections": 2,
+    "logical_gradient_count": 304,
+    "numeric_warnings": 15,
+    "physical_gradient_calls": 309,
+    "schema_rejections": 0,
+    "strong_leakage_rejections": 0,
+    "successful_recovery_rate": 1.0
+  },
+  "memory_after_opportunity_count": 7,
+  "per_opportunity": [
+    {
+      "Full_count": 2,
+      "Probe_count": 4,
+      "catastrophe": 0,
+      "no_positive_metric": 1,
+      "opportunity": 1,
+      "positive_metric": 3,
+      "positive_unpromoted": 1,
+      "proposals": 6,
+      "target_member": 0
+    },
+    {
+      "Full_count": 0,
+      "Probe_count": 4,
+      "catastrophe": 0,
+      "no_positive_metric": 4,
+      "opportunity": 2,
+      "positive_metric": 0,
+      "positive_unpromoted": 0,
+      "proposals": 6,
+      "target_member": 1
+    },
+    {
+      "Full_count": 0,
+      "Probe_count": 4,
+      "catastrophe": 0,
+      "no_positive_metric": 4,
+      "opportunity": 3,
+      "positive_metric": 0,
+      "positive_unpromoted": 0,
+      "proposals": 6,
+      "target_member": 3
+    },
+    {
+      "Full_count": 0,
+      "Probe_count": 4,
+      "catastrophe": 0,
+      "no_positive_metric": 4,
+      "opportunity": 4,
+      "positive_metric": 0,
+      "positive_unpromoted": 0,
+      "proposals": 6,
+      "target_member": 2
+    },
+    {
+      "Full_count": 0,
+      "Probe_count": 3,
+      "catastrophe": 0,
+      "no_positive_metric": 3,
+      "opportunity": 5,
+      "positive_metric": 0,
+      "positive_unpromoted": 0,
+      "proposals": 6,
+      "target_member": 4
+    },
+    {
+      "Full_count": 0,
+      "Probe_count": 4,
+      "catastrophe": 0,
+      "no_positive_metric": 4,
+      "opportunity": 6,
+      "positive_metric": 0,
+      "positive_unpromoted": 0,
+      "proposals": 6,
+      "target_member": 0
+    },
+    {
+      "Full_count": 0,
+      "Probe_count": 4,
+      "catastrophe": 0,
+      "no_positive_metric": 4,
+      "opportunity": 7,
+      "positive_metric": 0,
+      "positive_unpromoted": 0,
+      "proposals": 6,
+      "target_member": 1
+    }
+  ],
+  "post_commit_memory_exercised": false,
+  "promotion_replay_pass": true,
+  "selection_failure": "INCONCLUSIVE: unpromoted positive candidates have no Full outcome; no counterfactual calls",
+  "total": {
+    "Full_count": 2,
+    "Probe_count": 27,
+    "catastrophe": 0,
+    "no_positive_metric": 24,
+    "positive_metric": 3,
+    "positive_unpromoted": 1
+  }
+}

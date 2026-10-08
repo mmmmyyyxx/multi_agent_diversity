@@ -1,0 +1,22 @@
+{
+  "compileall": true,
+  "current_tests": {
+    "deselected": 1468,
+    "failed": 0,
+    "passed": 1605,
+    "skipped": 2
+  },
+  "exact_output_cache_verified": 564,
+  "generation_ceiling_changed": true,
+  "interrupted_attempt_1666_files_preserved": true,
+  "ledger_replay_pass": true,
+  "method_changed": false,
+  "missing_response_receipt_conservatively_charged": 1,
+  "previous_attempt_683_files_byte_identical": true,
+  "promotion_replay_pass": true,
+  "response_receipts_verified": 1081,
+  "runner_terminal_receipt_not_fabricated": true,
+  "scientific_stop_not_reached": true,
+  "seven_rollback_states_identical_to_initial": true,
+  "source_and_scope_pass": true
+}

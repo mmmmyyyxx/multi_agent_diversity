@@ -8503,22 +8503,23 @@ experiments:
   method_family: unified_team_prompt_search_v2_2
   parent_ids:
   - math_v2_2_gradient_pattern_seed81_pilot_v1
-  status: DRAFT
-  scientific_status: CLUSTER_OUTPUT_REPAIR_ZERO_API_PREFLIGHT
-  implementation_commit: null
-  execution_commit: null
+  status: HOLD
+  scientific_status: INCOMPLETE_USER_STOP; VALID_SEVEN_OPPORTUNITY_PREFIX_NO_COMMIT
+  implementation_commit: 6731aa3f345eff7feac12140b4892f4e07291d17
+  execution_commit: 6731aa3f345eff7feac12140b4892f4e07291d17
   result_commit: null
   manifest: experiments/manifests/math_v2_2_gradient_pattern_seed81_pilot_v2.yaml
-  report: null
-  classifier: V22_SCIENTIFIC_COMPLETION_VS_OPERATIONAL_TRUNCATION_V1
-  active_for_new_work: true
+  report: reports/math_v2_2_gradient_pattern_seed81_pilot_v2_execution_20261008
+  classifier: reports/math_v2_2_gradient_pattern_seed81_pilot_v2_execution_20261008/classifier.json
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
-  - Fresh attempt under new autonomous user authority; previous attempt remains closed.
-  - Cluster-only output ceiling; scientific algorithm and stopping unchanged.
+  - User stopped after seven complete opportunities; opportunity8 partial excluded.
+    No admissible winner; Optimize Vote/Oracle unchanged22/60. Exact scope closed;
+    no automatic rerun.
+  - Cluster cap repair preserved scientific semantics; interrupted raw files retained;
+    owner closure explicitly distinct from runner receipt.
   unavailable:
-    implementation_commit: Awaiting tested source freeze
-    execution_commit: Not dispatched
-    result_commit: Not executed
-    report: Execution evidence not yet produced
+    result_commit: Publication commit is identified by git history and final remote
+      verification; no self-referential SHA.

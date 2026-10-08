@@ -1,0 +1,19 @@
+{
+  "accepted_above_previous_cap": 0,
+  "accounting_cap": 8202,
+  "count": 8,
+  "finish_reasons": {
+    "stop": 8
+  },
+  "output_tokens": [
+    544,
+    437,
+    759,
+    619,
+    423,
+    420,
+    518,
+    283
+  ],
+  "wire_cap": 8192
+}

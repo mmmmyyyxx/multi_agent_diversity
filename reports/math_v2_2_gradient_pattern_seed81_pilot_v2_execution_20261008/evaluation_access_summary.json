@@ -1,0 +1,9 @@
+{
+  "Shadow_calls": 0,
+  "Test_calls": 0,
+  "Validation_calls": 0,
+  "authorization_closed": true,
+  "new_real_calls_after_user_stop": 0,
+  "optimize_count": 60,
+  "rerun": false
+}

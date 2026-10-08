@@ -1,0 +1,275 @@
+[
+  {
+    "Full_count": 2,
+    "Shadow_passed": null,
+    "TeamProbe_count": 4,
+    "admissible_Full_count": 0,
+    "child": {
+      "Oracle": 22,
+      "Vote": 22,
+      "member_scores": [
+        22,
+        22,
+        22,
+        22,
+        22
+      ],
+      "state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "support_count": 60
+    },
+    "committed": false,
+    "exported": 4,
+    "memory_observed": true,
+    "opportunity_index": 1,
+    "parent": {
+      "Oracle": 22,
+      "Vote": 22,
+      "member_scores": [
+        22,
+        22,
+        22,
+        22,
+        22
+      ],
+      "state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "support_count": 60
+    },
+    "proposals": 6,
+    "target_member": 0,
+    "winner_selected": false
+  },
+  {
+    "Full_count": 0,
+    "Shadow_passed": null,
+    "TeamProbe_count": 4,
+    "admissible_Full_count": 0,
+    "child": {
+      "Oracle": 22,
+      "Vote": 22,
+      "member_scores": [
+        22,
+        22,
+        22,
+        22,
+        22
+      ],
+      "state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "support_count": 60
+    },
+    "committed": false,
+    "exported": 4,
+    "memory_observed": true,
+    "opportunity_index": 2,
+    "parent": {
+      "Oracle": 22,
+      "Vote": 22,
+      "member_scores": [
+        22,
+        22,
+        22,
+        22,
+        22
+      ],
+      "state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "support_count": 60
+    },
+    "proposals": 6,
+    "target_member": 1,
+    "winner_selected": false
+  },
+  {
+    "Full_count": 0,
+    "Shadow_passed": null,
+    "TeamProbe_count": 4,
+    "admissible_Full_count": 0,
+    "child": {
+      "Oracle": 22,
+      "Vote": 22,
+      "member_scores": [
+        22,
+        22,
+        22,
+        22,
+        22
+      ],
+      "state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "support_count": 60
+    },
+    "committed": false,
+    "exported": 4,
+    "memory_observed": true,
+    "opportunity_index": 3,
+    "parent": {
+      "Oracle": 22,
+      "Vote": 22,
+      "member_scores": [
+        22,
+        22,
+        22,
+        22,
+        22
+      ],
+      "state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "support_count": 60
+    },
+    "proposals": 6,
+    "target_member": 3,
+    "winner_selected": false
+  },
+  {
+    "Full_count": 0,
+    "Shadow_passed": null,
+    "TeamProbe_count": 4,
+    "admissible_Full_count": 0,
+    "child": {
+      "Oracle": 22,
+      "Vote": 22,
+      "member_scores": [
+        22,
+        22,
+        22,
+        22,
+        22
+      ],
+      "state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "support_count": 60
+    },
+    "committed": false,
+    "exported": 4,
+    "memory_observed": true,
+    "opportunity_index": 4,
+    "parent": {
+      "Oracle": 22,
+      "Vote": 22,
+      "member_scores": [
+        22,
+        22,
+        22,
+        22,
+        22
+      ],
+      "state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "support_count": 60
+    },
+    "proposals": 6,
+    "target_member": 2,
+    "winner_selected": false
+  },
+  {
+    "Full_count": 0,
+    "Shadow_passed": null,
+    "TeamProbe_count": 3,
+    "admissible_Full_count": 0,
+    "child": {
+      "Oracle": 22,
+      "Vote": 22,
+      "member_scores": [
+        22,
+        22,
+        22,
+        22,
+        22
+      ],
+      "state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "support_count": 60
+    },
+    "committed": false,
+    "exported": 3,
+    "memory_observed": true,
+    "opportunity_index": 5,
+    "parent": {
+      "Oracle": 22,
+      "Vote": 22,
+      "member_scores": [
+        22,
+        22,
+        22,
+        22,
+        22
+      ],
+      "state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "support_count": 60
+    },
+    "proposals": 6,
+    "target_member": 4,
+    "winner_selected": false
+  },
+  {
+    "Full_count": 0,
+    "Shadow_passed": null,
+    "TeamProbe_count": 4,
+    "admissible_Full_count": 0,
+    "child": {
+      "Oracle": 22,
+      "Vote": 22,
+      "member_scores": [
+        22,
+        22,
+        22,
+        22,
+        22
+      ],
+      "state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "support_count": 60
+    },
+    "committed": false,
+    "exported": 4,
+    "memory_observed": true,
+    "opportunity_index": 6,
+    "parent": {
+      "Oracle": 22,
+      "Vote": 22,
+      "member_scores": [
+        22,
+        22,
+        22,
+        22,
+        22
+      ],
+      "state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "support_count": 60
+    },
+    "proposals": 6,
+    "target_member": 0,
+    "winner_selected": false
+  },
+  {
+    "Full_count": 0,
+    "Shadow_passed": null,
+    "TeamProbe_count": 4,
+    "admissible_Full_count": 0,
+    "child": {
+      "Oracle": 22,
+      "Vote": 22,
+      "member_scores": [
+        22,
+        22,
+        22,
+        22,
+        22
+      ],
+      "state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "support_count": 60
+    },
+    "committed": false,
+    "exported": 4,
+    "memory_observed": true,
+    "opportunity_index": 7,
+    "parent": {
+      "Oracle": 22,
+      "Vote": 22,
+      "member_scores": [
+        22,
+        22,
+        22,
+        22,
+        22
+      ],
+      "state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+      "support_count": 60
+    },
+    "proposals": 6,
+    "target_member": 1,
+    "winner_selected": false
+  }
+]

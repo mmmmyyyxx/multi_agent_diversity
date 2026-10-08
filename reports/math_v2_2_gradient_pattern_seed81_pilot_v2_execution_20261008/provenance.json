@@ -1,0 +1,10 @@
+{
+  "attempt": "math_v2_2_gradient_pattern_A4_seed81_pilot_attempt2",
+  "interrupted_runner_lifecycle_preserved": "RUNNING; process stopped; owner closure is authoritative",
+  "owner_raw_snapshot_identity": "71627df1d9bf483485eb65ab34fcbe944b974e20759331b95d650ac19b38487a",
+  "preexecution_report_files_preserved": true,
+  "report_scope": "7 complete; opportunity8 partial excluded from efficacy",
+  "source_sha": "6731aa3f345eff7feac12140b4892f4e07291d17",
+  "startup_identity_sha256": "0624f0f7a1ca57121f068a104d36e21e8e5efb65f1e22c2eced8c66ee2e663a9",
+  "trajectory_sha256": "924ce940ebc46943be9dd340218afc86464b003993b5f63b3c53e52cadfdfbd4"
+}

@@ -32,10 +32,10 @@ last_method_milestone: transition_reachability_audit_v1
 canary_manifest: null
 last_preexecution_milestone: math_v2_1_pattern_preexecution_v3
 last_canary_milestone: math_v2_1_gradient_pattern_seed81_canary_v3
-current_canary_status: V2_2_BINDING_NOT_FROZEN
+current_canary_status: NOT_AUTHORIZED; PILOT_ATTEMPT2_CLOSED_BY_USER
 formal_a1_ready: false
 formal_a1_authorized: false
-current_execution_blocker: FRESH_SOURCE_FREEZE_AND_FOCUSED_TESTS_PENDING
+current_execution_blocker: USER_REQUESTED_STOP_AUTHORIZATION_CLOSED
 default_optimizer_generation_policy: OPTIMIZER_REFLECTION_GENERATION_POLICY_V3
 default_optimizer_enable_thinking: false
 optimizer_policy_amendment_status: LAYER1_GENERATION_V3_FROZEN_AND_DISPATCHED
@@ -45,18 +45,19 @@ next_canary_attempt_id: null
 last_autonomous_milestone: math_v2_1_layer1_preexecution_repair_v1
 autonomous_user_authorization_received: true
 autonomous_token_authorization: 40000000
-autonomous_tokens_consumed: 3524216
-autonomous_tokens_remaining: 36475784
+autonomous_tokens_consumed: 4068192
+autonomous_tokens_remaining: 35931808
 token_accounting_policy: RESERVATION_V2
 prior_accounting_stop_resolution: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2
-autonomous_authorization_status: CURRENT_USER_AUTONOMOUS_OPERATIONAL_RECOVERY_AUTHORIZED_FRESH_SCOPE_REQUIRED
+autonomous_authorization_status: CLOSED_USER_REQUESTED_STOP
 pilot_search_complete: false
 pilot_validation_complete: false
-pilot_final_status: NOT_EXECUTED
-task_stop_reason: ENGINEERING_PREFLIGHT_IN_PROGRESS
+pilot_final_status: USER_STOPPED_INCOMPLETE
+task_stop_reason: USER_REQUESTED_STOP
 optimizer_nonthinking_wire_confirmed: YES_EQUIVALENT_EVIDENCE
 last_candidate_contract_audit: math_v2_1_proposal_semantic_postmortem_v1
-pilot_scientific_interpretation: NOT_EVALUABLE_ABORT_BEFORE_FIRST_OPPORTUNITY
+pilot_scientific_interpretation: SEVEN_COMPLETED_OPPORTUNITIES_NO_ADMISSIBLE_WINNER;
+  COMPLETE_PILOT_INCONCLUSIVE
 candidate_contract_audit_status: COMPLETED_ZERO_API
 next_search_contract_alignment: NO_AUTOMATIC_METHOD_CHANGE
 current_layer1_backend: LAYER1_BOUNDED_MEMORY_SEARCH_V2
@@ -70,7 +71,7 @@ historical_pilot_status:
   interpretation: ZERO_INTERVENTION_NO_ADMISSIBLE_CANDIDATE
 new_pilot_search_complete: false
 new_pilot_validation_complete: false
-new_pilot_final_status: EXECUTION_ABORTED_PROVIDER_OUTPUT_TRUNCATION
+new_pilot_final_status: USER_STOPPED_INCOMPLETE
 current_memory_policy: structured_cross_member_rolling_risk_memory_v4
 current_configuration_arm: A4
 current_pattern_enabled: true
@@ -219,15 +220,15 @@ current_transition_full_suite_source: 4b02b734e7e5306bd5f0192464b1cf0bb6a95562
 operational_horizon_identity: V2_2_FIXED_HORIZON_OPERATIONAL_PILOT_V1
 operational_horizon_K: 64
 operational_attempt_token_ceiling: 24000000
-pilot_report: reports/math_v2_2_gradient_pattern_seed81_pilot_v1_execution_20261008
-pilot_attempt: math_v2_2_gradient_pattern_A4_seed81_pilot_attempt1
+pilot_report: reports/math_v2_2_gradient_pattern_seed81_pilot_v2_execution_20261008
+pilot_attempt: math_v2_2_gradient_pattern_A4_seed81_pilot_attempt2
 pilot_progress_paths:
   TARGET: 0
   TARGET_AND_TEAM: 0
   TEAM: 0
 pilot_observed_commit_count: 0
-pilot_pattern_cluster_calls: 1
-pilot_pattern_cluster_output_contract_valid: false
+pilot_pattern_cluster_calls: 8
+pilot_pattern_cluster_output_contract_valid: true
 last_valid_v21_pilot_statistics:
   pilot_partition_completion_statistics:
     cluster_calls: 10
@@ -261,20 +262,24 @@ last_valid_v21_pilot_statistics:
     repair_yield: 0.2631578947368421
     root_relative_fixed_broken_fields_retained: true
     scientific_efficacy: NOT_CAUSALLY_ESTABLISHED
-pending_user_task_status: ACTIVE_ENGINEERING_PREFLIGHT
-pilot_analysis_kind: OWNER_ABORT_AUDIT_NOT_COMPLETE_PILOT
+pending_user_task_status: STOPPED_REPORT_COMPLETE
+pilot_analysis_kind: OWNER_USER_STOP_PREFIX_FAILURE_REPORT
 pilot_execution_complete: false
 pilot_partition_completion_statistics:
-  status: NOT_REACHED
-  cluster_provider_calls: 1
-  completed_clusters: 0
-  partition_completion_events: 0
+  status: 8_VALID_CLUSTERS_INCLUDING_PARTIAL_OPPORTUNITY8
+  cluster_provider_calls: 8
+  completed_clusters: 8
+  completed_opportunities: 7
 pilot_mutation_behavior_statistics:
-  status: NOT_REACHED
-  proposals: 0
-  Solver_evaluated_candidates: 0
+  status: 27_EXPORTED_CONTRACT_VALID_SOLVER_EVALUATED; TWO_FULL_CANDIDATES_BEHAVIOR_CHANGED
+  proposals: 42
+  exported_candidates: 27
+  behavior_confirmed_Full_candidates: 2
+  scope: SEVEN_COMPLETED_OPPORTUNITIES
 current_pattern_cluster_generation_policy: PATTERN_CLUSTER_GENERATION_POLICY_V1
 pattern_cluster_output_ceiling: 8192
+completed_opportunity_count: 7
+partial_opportunity_index: 8
 ```
 
 ## Experiment and engineering DAG
@@ -548,7 +553,7 @@ flowchart TD
     n287["transition_reachability_audit_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
     n288["math_v2_2_a4_pilot_execution_audit_v1<br/>ZERO_API_AUDIT<br/>HOLD"]
     n289["math_v2_2_gradient_pattern_seed81_pilot_v1<br/>PILOT<br/>INVALID"]
-    n290["math_v2_2_gradient_pattern_seed81_pilot_v2<br/>PILOT<br/>DRAFT"]
+    n290["math_v2_2_gradient_pattern_seed81_pilot_v2<br/>PILOT<br/>HOLD"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]

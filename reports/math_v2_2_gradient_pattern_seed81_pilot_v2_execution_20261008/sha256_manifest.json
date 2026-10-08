@@ -1,0 +1,85 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "e5e6be47ffb03f7cb3f765eaf2e8ed142d2615d68860b6094799e9cbbe2d2b91"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "97d31e5152e1f876e31a9efbb53fda3f0102f9919929b4579d92605efc73f60e"
+    },
+    {
+      "file": "cluster_output_metrics.json",
+      "sha256": "ee8fd19e2eefabb1a1afb4749b393feefb3aff55836afb0d0f24105bf86f5739"
+    },
+    {
+      "file": "commit_trajectory.json",
+      "sha256": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f"
+    },
+    {
+      "file": "engineering_checks.json",
+      "sha256": "9fcbc059f9cccec9c4abb1d70370af6c4ab55614e72c7b6a022a4b9d74d994bf"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "5f716bb15413dccfd87a8c94259d4ae2cf6249f62aaa0dde778d2fae0c750a43"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "8fbbe26ce18fc06ad186d06573426d6619d6d54620222bbf0b2088eb0c4cd4f3"
+    },
+    {
+      "file": "full_outcomes.json",
+      "sha256": "8474f4db513b280c9ec2573e40e1277cd809860dc0d627e4f8d087557432895a"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "b74ee76fb20fa86485753330fc0f3257190b754dee009ce020c8e686cdff37bd"
+    },
+    {
+      "file": "opportunity_outcomes.json",
+      "sha256": "33b2ee31e5302510c86a8c899b56674fe8b292405406cf79c40cfea3b41689ab"
+    },
+    {
+      "file": "owner_stop_closure.json",
+      "sha256": "c02ce458182e64b753b9f7d7fd854fc1a6a1c8d79ac439996abd704b97f993ad"
+    },
+    {
+      "file": "pilot_result.json",
+      "sha256": "1571cb77607ee7bd5b667754e8733f30d8e31f5612305163cb97b362ae3b8a4b"
+    },
+    {
+      "file": "preexecution_accounting.json",
+      "sha256": "3adc9c7a4cac513042f668f9eba2e1a444bb7b1566703f65b9470b774a9e8b12"
+    },
+    {
+      "file": "preexecution_freeze.json",
+      "sha256": "a3fad98736218b46769deb242790cd364e89b88c9d8cbfdaf7f2e142eebe2d64"
+    },
+    {
+      "file": "promotion_forensic.json",
+      "sha256": "1499824583cf5ed7a44413fdb6d315a81de8f92198cc6eee71445da3bb90cd25"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "7a5a3db9457d022dff67788ecc94660ba66b50e4a5858e2f93fff472c8c3e73a"
+    },
+    {
+      "file": "README.md",
+      "sha256": "5b22b7ec5d3c537b9282dc58eb02bcc8f1c65c9c1c1d9e75e379e46e0767e077"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "2f853f073bc5a0e5b0853ac86f807a3d712561ad5653c9114568de64dba103ef"
+    },
+    {
+      "file": "scope_accounting.json",
+      "sha256": "6116d0b87d7e97fc772aa1a064dc49652603355ca5a97dbab5773c94862bf9cb"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "2d4c81300b92f51356e441230abf1fe2f139c77997245ea6bb44606069792b1a"
+    }
+  ]
+}

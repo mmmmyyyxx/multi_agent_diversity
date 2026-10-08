@@ -1,0 +1,83 @@
+{
+  "K": 64,
+  "PILOT_COMPLETED": false,
+  "PILOT_STATUS": "USER_STOPPED_INCOMPLETE",
+  "attempt": "math_v2_2_gradient_pattern_A4_seed81_pilot_attempt2",
+  "cache_entries": 564,
+  "charged_tokens": 543976,
+  "commit_count": 0,
+  "conservative_recovery_charge": 11459,
+  "cumulative_charged_tokens": 4068192,
+  "experiment_id": "math_v2_2_gradient_pattern_seed81_pilot_v2",
+  "final": {
+    "Oracle": 22,
+    "Vote": 22,
+    "member_scores": [
+      22,
+      22,
+      22,
+      22,
+      22
+    ],
+    "state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+    "support_count": 60
+  },
+  "final_metric_provenance": "LAST_COMPLETED_TRANSITION",
+  "funnel": {
+    "Fulls": 2,
+    "exported": 27,
+    "opportunities_started": 8,
+    "probed": 27,
+    "promoted": 2,
+    "proposals": 42
+  },
+  "inference_scope": "SEVEN_COMPLETED_OPPORTUNITIES_USER_STOPPED_PREFIX_ONLY",
+  "initial": {
+    "Oracle": 22,
+    "Vote": 22,
+    "member_scores": [
+      22,
+      22,
+      22,
+      22,
+      22
+    ],
+    "state_id": "60593e41e3bd2c2ead58c7b991dfbe0d4c7f84c0e76d8a61d8a1871c47c1feba",
+    "support_count": 60
+  },
+  "invariants_pass": true,
+  "ledger_replay_pass": true,
+  "opportunities": 7,
+  "owner_raw_snapshot_identity": "71627df1d9bf483485eb65ab34fcbe944b974e20759331b95d650ac19b38487a",
+  "partial_opportunity": 8,
+  "pilot_validity": "NOT_EVALUABLE_AS_COMPLETE_PILOT",
+  "progress_paths": {
+    "TARGET": 0,
+    "TARGET_AND_TEAM": 0,
+    "TEAM": 0
+  },
+  "provider_successes": 1081,
+  "receipt_count": 1081,
+  "remaining_tokens": 35931808,
+  "reserved_inflight": 0,
+  "source_sha": "6731aa3f345eff7feac12140b4892f4e07291d17",
+  "startup_identity_sha256": "0624f0f7a1ca57121f068a104d36e21e8e5efb65f1e22c2eced8c66ee2e663a9",
+  "stop_reason": "USER_REQUESTED_STOP",
+  "successful_roles": {
+    "pattern_cluster": 8,
+    "pattern_gradient": 309,
+    "reflection": 47,
+    "solver": 717
+  },
+  "test_calls": 0,
+  "tests": {
+    "deselected": 1468,
+    "failed": 0,
+    "passed": 1605,
+    "skipped": 2
+  },
+  "trajectory_sha256": "924ce940ebc46943be9dd340218afc86464b003993b5f63b3c53e52cadfdfbd4",
+  "transport_attempts": 1082,
+  "transport_failures": 0,
+  "validation_calls": 0
+}
