@@ -2,7 +2,7 @@ schema_version: experiment_manifest_v2
 experiment_id: a4_v25_responsibility_repair_canary_v1
 method_family: unified_team_prompt_search_v2_5_responsibility_fallback_repair_probe
 method_identity: unified_team_prompt_search_v2_5_responsibility_fallback_repair_probe
-source_sha: d61ff702d717cea49052f275383f2b297657d1a2
+source_sha: 7217081d43fff2e94ab46ed28378717e3e912520
 benchmark_id: math
 benchmark_protocol_id: 4daf6f3c4551af80b4fa038424e826422ace29430913120dafd652d03cd3cd98
 dataset_manifest_identity: 7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f
@@ -39,15 +39,15 @@ authorization:
   authorization_identity: null
   single_use: true
 lifecycle:
-  status: DRAFT
+  status: PREEXECUTION_FROZEN
   history:
   - status: DRAFT
     event: ZERO_API_BLOCKER_CLOSURE
-  - status: DRAFT
-    event: AWAITING_SOURCE_COMMIT
+  - status: PREEXECUTION_FROZEN
+    event: FROZEN_SOURCE_RECEIPT
 hash_closure:
-  scientific_source_hash: 10f3b68920e70d6570d058e1d305f82f568b8d2446664a0e24fd7eab1fbb9f79
-  governance_hash: 95b5d72abb14bc6f9c25c82969d00f9881b6536b4b41d448a5b37cfa692b8302
+  scientific_source_hash: 0d9989b60317b9f3e3a76f1aa92624a207e94b4c0adf7982126fbd340b809e32
+  governance_hash: 887d7774693ec91faf723269e39546bebbc1fcf61e87078a4e6878eec79860f2
   benchmark_contract_hash: 2b50aa9df27d2e8edb9a7aec19cca7068b43caa94dcb256ba9bc158fd3500f89
   dataset_manifest_hash: d3c3f587bf9e08f5d9a12c8b777953c57cd30fc4c655e82e95f556b337119d81
 execution_binding:
@@ -551,4 +551,4 @@ layer1_search_policy:
 candidate_contract_identity: STRUCTURED_SYSTEM_BLOCK_MUTATION_CONTRACT_V1
 pattern_support_id_transport: PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1
 pattern_abstraction_guard: PATTERN_STRUCTURED_CONTENT_GUARD_V7
-preregistration_identity: f2c0e1d0242ed0bd211b832de06363aa700ed615f36c7d459bd46f3ae29f0165
+preregistration_identity: 9699a01fe1fa189ac1c6e93db83b487ce7a80bee156b29ed6ff9efcf35b87515
