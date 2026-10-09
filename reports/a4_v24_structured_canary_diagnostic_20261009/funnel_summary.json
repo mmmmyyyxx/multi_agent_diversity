@@ -1,0 +1,64 @@
+{
+  "all_gradients_uncertain_claim": false,
+  "budget_was_bottleneck": false,
+  "candidate_rejection_counts": {},
+  "feasible_members": 0,
+  "first_unentered_stage": "OPPORTUNITY_FEASIBILITY",
+  "full_preservation_rejection_observed": false,
+  "incorrect_member_example_pairs": 45,
+  "initial_solver_cost_tokens": 137572,
+  "opportunities": 0,
+  "stages": {
+    "actionable_gradients": {
+      "charged_tokens": 0,
+      "count": 0,
+      "status": "NOT_OBSERVED_NOT_ENTERED"
+    },
+    "commits": {
+      "charged_tokens": 0,
+      "count": 0,
+      "status": "NOT_OBSERVED_NOT_ENTERED"
+    },
+    "contract_valid_edits": {
+      "charged_tokens": 0,
+      "count": 0,
+      "status": "NOT_OBSERVED_NOT_ENTERED"
+    },
+    "full_candidates": {
+      "charged_tokens": 0,
+      "count": 0,
+      "status": "NOT_OBSERVED_NOT_ENTERED"
+    },
+    "mutation_proposals": {
+      "charged_tokens": 0,
+      "count": 0,
+      "status": "NOT_OBSERVED_NOT_ENTERED"
+    },
+    "patterns": {
+      "charged_tokens": 0,
+      "count": 0,
+      "status": "NOT_OBSERVED_NOT_ENTERED"
+    },
+    "search_validation_candidates": {
+      "charged_tokens": 0,
+      "count": 0,
+      "status": "NOT_OBSERVED_NOT_ENTERED"
+    },
+    "shadow_candidates": {
+      "charged_tokens": 0,
+      "count": 0,
+      "status": "NOT_OBSERVED_NOT_ENTERED"
+    },
+    "solver_evaluated_candidates": {
+      "charged_tokens": 0,
+      "count": 0,
+      "status": "NOT_OBSERVED_NOT_ENTERED"
+    },
+    "team_probe_candidates": {
+      "charged_tokens": 0,
+      "count": 0,
+      "status": "NOT_OBSERVED_NOT_ENTERED"
+    }
+  },
+  "unique_incorrect_examples": 9
+}

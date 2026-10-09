@@ -1,0 +1,29 @@
+{
+  "actual_current_correct": [
+    3,
+    3,
+    3,
+    3,
+    3
+  ],
+  "actual_current_wrong": [
+    9,
+    9,
+    9,
+    9,
+    9
+  ],
+  "causal_scope": "Direct mechanical explanation of frozen NO_FEASIBLE_OPPORTUNITY; no counterfactual intervention measured.",
+  "feasible_members": 0,
+  "gate_implementation_bug": "NOT_OBSERVED",
+  "gradient_dispatch_prevented_before_opportunity_creation": true,
+  "incorrect_member_example_pairs": 45,
+  "initial_competence_full_transition_gate_reached": false,
+  "minimum_current_correct": 6,
+  "minimum_current_wrong": 4,
+  "next_step": "Zero-API review of initial output conventions, boundary coverage and panel feasibility. Any behavioral amendment needs a new version, freeze and authorization.",
+  "preservation_floor_satisfied": false,
+  "seed_parser_output_alignment": "OBSERVED_COMPATIBILITY_RISK",
+  "unique_incorrect_examples": 9,
+  "wrong_floor_satisfied": true
+}

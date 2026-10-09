@@ -1,0 +1,102 @@
+{
+  "all_member_correct_intersection": 3,
+  "correct_counts": [
+    3,
+    3,
+    3,
+    3,
+    3
+  ],
+  "correct_set_symmetric_difference": [
+    [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "correct_union": 3,
+  "incorrect_counts": [
+    9,
+    9,
+    9,
+    9,
+    9
+  ],
+  "interpretation": "Correct coverage is identical; ordinary response contents vary despite identical member prompts.",
+  "pairwise_correct_overlap": [
+    [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    [
+      3,
+      3,
+      3,
+      3,
+      3
+    ]
+  ],
+  "terminal_profiles": 60,
+  "terminal_text_variants": 22,
+  "unique_member_correct_counts": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ]
+}

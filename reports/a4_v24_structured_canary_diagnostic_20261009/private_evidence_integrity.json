@@ -1,0 +1,31 @@
+{
+  "canary_inventory_sha256": "57ee2e818b3140b9351b40f915429ca6f06a68a5b438da2c40a1eda7acde43ab",
+  "canary_inventory_verified_files": 271,
+  "independent_audit_file_sha256": {
+    "canary_completion_audit.json": "e687182c8c105cb8e22e9fbc38771c528d3c81833930e01c3390f53031dc3f47",
+    "canary_format_forensic.json": "9a537567f0b8438205ed60c7f2f0b9b920dfb0dcd5cf62e11418ad4ecf3c3314",
+    "canary_initial_private_recomputation.json": "88404bda39bf0b4d35c78e7876f73644156a4eecdfb7f87a04ab909862a0adcd",
+    "canary_initial_real_audit.json": "1d7bfe912e961f4f81c3696a933babe27648ceff603f63317d74ae9eefd887f8",
+    "canary_visible_text_review.json": "1c0551a5d54b745ad9a11610965c58743884bf1c0eeb25f160903d534182f09c",
+    "current_suite.xml": "8a268d0468b8db37cc79c26e899971bad5ee262e59f0e6e40d10b30c21c6653b",
+    "pilot_user_stop_audit.json": "d8a958894df59c56ab2ec51e70d4bd6b2d3d4accb4b445434f29be6440109fd5",
+    "pilot_user_stop_raw_inventory.json": "0ce435eac0bf06bcd9a82abedc4af853c77887f3d7c043543f913f6b04a81108"
+  },
+  "independent_audit_tools_sha256": {
+    "approve_canary_initial.py": "afdb9a6e97c2339d585117e96397ca2ba8a1d569c31422d8c3e97f807fafacc8",
+    "authorize_canary.py": "1ca4efbae72fc8be4f8fe387a297b60c641b123035d3e3df540e2d14edc917a7",
+    "authorize_pilot.py": "29ad8064fbdf57526a3e3fac25452f8d55134f76fbbf6fa286208c3fdd911808",
+    "build_canary_diagnostic_report.py": "bc74b833e3ef09e554156d6609e2c7944bcb587af5dcb5fd7e89220fcee927c8",
+    "canary_completion_audit.py": "cf79cef11ddc57a59faedeb6ee401b5371e1eeccf080597ef7081fd19e95d29d",
+    "canary_format_forensic.py": "00c384cbcf9553f90e7b100593a64e06793456d53eb0108590f448cc6f33dd18",
+    "canary_visible_text_review.py": "91ffffd999e3f8104c184f3bf6afc5f9e0f821bb8a2feb95ad80445e577276b6",
+    "close_pilot_after_user_stop.py": "379cd6d8feb1e8459ea760129c9d1b22b532b0753be64ec53e5001acc4130919",
+    "health.py": "82a6ea87c27c86d0943d10e421ca9419303b3d18530cb24c01f366c0ac6cefed",
+    "initial_real_audit.py": "0adb05387de6c6b71aac8ae2dab78df4b9555273ead0deb2870b75b965020582",
+    "inspect_canary_texts.py": "ead100e0a78db1b12f092397e14511ec59a45e6adda74b3093e41e581cc40c4a",
+    "inspect_canary_variants.py": "b1cda3e9ccf0d1b425cdcde22798955d714cfd4ae0086aa4f5fb2b96ae37d0f8",
+    "pre_execution_audit.py": "04e19c658824b5daef44e7f10d94df4ce977132f175bf317d323c9fa88ab8812"
+  },
+  "private_contents_published": false,
+  "private_full_evidence_retained": true
+}

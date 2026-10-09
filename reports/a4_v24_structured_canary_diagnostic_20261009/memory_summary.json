@@ -1,0 +1,15 @@
+{
+  "actual_candidate_generation_influence": "NOT_OBSERVED",
+  "bootstrap_from_this_attempt_real_profiles": true,
+  "committed_competence_updates": 0,
+  "edit_writes": 0,
+  "failure_reads": 0,
+  "failure_writes": 0,
+  "initial_competence_entries": 5,
+  "memory_improves_performance": "NOT_ESTABLISHED",
+  "policy": "BOOTSTRAPPED_BLOCK_EDIT_EFFECT_MEMORY_V2",
+  "shared_reads": 0,
+  "shared_writes": 0,
+  "success_reads": 0,
+  "success_writes": 0
+}

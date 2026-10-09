@@ -1,0 +1,37 @@
+{
+  "blockers": [],
+  "checks": {
+    "attempt_isolation": "PASS",
+    "extraction_scoring": "PASS",
+    "frozen_data": "PASS",
+    "governance": "PASS",
+    "gradient_interface": "PASS",
+    "old_method_isolation": "PASS_FROZEN_CURRENT_SUITE",
+    "solver_messages": "PASS",
+    "source_startup_binding": "PASS",
+    "structured_edit_memory": "PASS_FROZEN_CURRENT_SUITE"
+  },
+  "current_suite": {
+    "errors": 0,
+    "failed": 0,
+    "historical_replay_pass_claim": false,
+    "network_attempt_count": 0,
+    "omitted_modules": 220,
+    "passed": 368,
+    "selected": 370,
+    "skipped": 2
+  },
+  "new_provider_calls": 0,
+  "nonblocking_risks": [
+    "Conservative natural-label false rejection.",
+    "Equivalent repeated declarations rejected textually.",
+    "Bounded lexical candidate/provenance guards do not establish exhaustive semantic compliance.",
+    "Budget cap does not guarantee five opportunities."
+  ],
+  "pilot_authorization_metadata": "REDUNDANT_TEXT_TYPO_RECORDED_EXACT_EXECUTION_AND_STARTUP_SCOPES_MATCH",
+  "post_audit_scientific_source_edits": false,
+  "schema_version": "v24_pre_execution_audit_v1",
+  "status": "PASS_FOR_EXACT_FROZEN_SCOPES",
+  "test_calls": 0,
+  "validation_calls": 0
+}

@@ -457,3 +457,15 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 - Symptom: 38 accepted Gradient records entered clustering; provider returned finish_reason=length at 1800 output tokens before opportunity creation.
 - Forbidden inference: Not a scientific zero-commit result, convergence, V2.2 transition failure, guard failure, or authorization to retry or increase generation limits.
 - Mitigation: Fail closed; preserve paid response and accounting; consumed one-attempt scope remains closed.
+
+## FAIL-V24-CANARY-FORMAT-COVERAGE-FEASIBILITY: Canary format rejection leaves insufficient correct evidence to enter structured prompt search
+
+- Status: `DIAGNOSED`
+- Lifecycle: `OPEN`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `a4_v24_structured_canary_v1`
+- Root-cause status: Frozen boundary semantics explain observed categorical rejection; the mechanical feasibility stop is confirmed. Latent mathematical accuracy and remedy effectiveness remain unestablished.
+- Symptom: 45/60 terminal initial profiles invalid after four draws; five members each score 3/12, below the frozen minimum six correct examples. No optimization opportunity occurs.
+- Forbidden inference: Not optimizer failure, convergence, missing visible reasoning, a gate implementation defect, or evidence that only three mathematical answers were intrinsically correct. No full Pilot result or permission to rerun follows.
+- Mitigation: Preserve the valid Canary evidence and stop Pilot as requested. Review initialization/boundary compatibility and panel feasibility offline; any behavioral amendment requires a new version, freeze and authorization.

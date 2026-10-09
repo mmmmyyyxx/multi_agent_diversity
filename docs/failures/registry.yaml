@@ -1077,3 +1077,31 @@ failures:
   - tests/test_math_optimizer_generation.py::test_actual_usage_tolerance_does_not_relax_truncation
   historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
   historical_evidence_category: observed_sealed_provider_receipt
+- failure_id: FAIL-V24-CANARY-FORMAT-COVERAGE-FEASIBILITY
+  title: Canary format rejection leaves insufficient correct evidence to enter structured
+    prompt search
+  status: DIAGNOSED
+  lifecycle: OPEN
+  first_observed: a4_v24_structured_canary_v1
+  affected_components:
+  - initial_output_contract
+  - final_boundary_extraction
+  - opportunity_feasibility
+  symptom: 45/60 terminal initial profiles invalid after four draws; five members
+    each score 3/12, below the frozen minimum six correct examples. No optimization
+    opportunity occurs.
+  evidence:
+  - reports/a4_v24_structured_canary_diagnostic_20261009/format_forensic.json
+  - reports/a4_v24_structured_canary_diagnostic_20261009/feasibility_diagnosis.json
+  - reports/a4_v24_structured_canary_diagnostic_20261009/owner_review_summary.json
+  root_cause_status: Frozen boundary semantics explain observed categorical rejection;
+    the mechanical feasibility stop is confirmed. Latent mathematical accuracy and
+    remedy effectiveness remain unestablished.
+  evidence_level: observed
+  mitigation: Preserve the valid Canary evidence and stop Pilot as requested. Review
+    initialization/boundary compatibility and panel feasibility offline; any behavioral
+    amendment requires a new version, freeze and authorization.
+  regression_tests: []
+  forbidden_inference: Not optimizer failure, convergence, missing visible reasoning,
+    a gate implementation defect, or evidence that only three mathematical answers
+    were intrinsically correct. No full Pilot result or permission to rerun follows.

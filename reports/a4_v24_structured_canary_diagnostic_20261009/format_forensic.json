@@ -1,0 +1,63 @@
+{
+  "alternative_parser_scores_computed": false,
+  "causal_claim": "Frozen parser semantics explain categorical rejections; this does not establish prompt-edit efficacy or latent mathematical accuracy.",
+  "classification": "OBSERVED_FORMAT_COVERAGE_LIMITATION",
+  "flag_counts_overlap": true,
+  "invalid_physical_format_flags": {
+    "boxed_math_declaration": 160,
+    "literal_angle_answer_tag": 179,
+    "markdown_step_heading": 160,
+    "multiple_hash3_headings": 180,
+    "nested_markdown_final_label": 108
+  },
+  "invalid_physical_responses": 180,
+  "mathematical_accuracy_without_format_rejections": "NOT_ESTABLISHED",
+  "parser_changed": false,
+  "per_semantic_draw": {
+    "1": {
+      "charged_tokens": 37309,
+      "input_tokens": 6550,
+      "invalid": 45,
+      "output_tokens": 30759,
+      "responses": 60,
+      "valid": 15
+    },
+    "2": {
+      "charged_tokens": 34022,
+      "input_tokens": 5475,
+      "invalid": 45,
+      "output_tokens": 28547,
+      "responses": 45
+    },
+    "3": {
+      "charged_tokens": 33356,
+      "input_tokens": 5475,
+      "invalid": 45,
+      "output_tokens": 27881,
+      "responses": 45
+    },
+    "4": {
+      "charged_tokens": 32885,
+      "input_tokens": 5475,
+      "invalid": 45,
+      "output_tokens": 27410,
+      "responses": 45
+    }
+  },
+  "physical_format_flags": {
+    "boxed_math_declaration": 160,
+    "literal_angle_answer_tag": 179,
+    "markdown_step_heading": 160,
+    "multiple_hash3_headings": 180,
+    "nested_markdown_final_label": 108
+  },
+  "physical_responses": 195,
+  "recovery_charged_tokens": 100263,
+  "recovery_responses": 135,
+  "recovery_successes": 0,
+  "terminal_reason_counts": {
+    "CONFLICTING_FINAL_ANSWERS": 5,
+    "MALFORMED_FINAL_BOUNDARY": 40,
+    "VALID": 15
+  }
+}

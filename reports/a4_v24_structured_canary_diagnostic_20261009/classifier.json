@@ -1,0 +1,25 @@
+{
+  "authorization_scopes_closed": true,
+  "canary_complete_opportunity": "NOT_OBSERVED_NO_FEASIBLE_OPPORTUNITY",
+  "canary_execution": "EXECUTION_COMPLETE",
+  "canary_optimization_efficacy": "NOT_EVALUABLE_NO_INTERVENTION",
+  "canary_validity": "CANARY_VALID",
+  "facts": [
+    "Natural visible mathematics observed in all 60 Canary terminal profiles.",
+    "45 terminal profiles remain invalid after four draws.",
+    "Every member has only three correct examples, below the frozen minimum six.",
+    "No optimization opportunity, Gradient, proposal, Full, Shadow or commit occurred."
+  ],
+  "not_established": [
+    "Underlying mathematical accuracy after excluding format errors.",
+    "Real Gradient/Pattern quality, block mutation efficacy or Memory benefit.",
+    "Optimizer failure, convergence, generalization or Pilot effectiveness."
+  ],
+  "overall_disposition": "CANARY_DIAGNOSTIC_PUBLISHED_PILOT_CLOSED",
+  "pilot_execution": "STOPPED_BY_USER",
+  "pilot_scientific_efficacy": "NOT_EVALUABLE_INCOMPLETE_INITIALIZATION",
+  "scientific_method_changed": false,
+  "supported_hypotheses": [
+    "Initial output conventions and conservative boundary extraction materially limit measured Canary evidence usability."
+  ]
+}

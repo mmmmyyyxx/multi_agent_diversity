@@ -1,0 +1,23 @@
+{
+  "both_frozen_manifests_byte_identical": true,
+  "classified_current_suite": {
+    "omitted_modules": 220,
+    "passed": 368,
+    "selected": 370,
+    "skipped": 2
+  },
+  "compileall": "PASS",
+  "current_governance": "PASS",
+  "current_governance_private_receipt_sha256": "cb3a211d2bc307d0b36161f0694286d42cd1af3a27ed6efbce8fd3402cafb2d9",
+  "current_suite_timing": "Before execution; scientific source is byte-identical during publication.",
+  "extra_provider_calls": 0,
+  "fact_assertions": "PASS",
+  "git_blob_byte_check": "Performed after final staging; private audit receipt retains exact result.",
+  "manifest_and_failure_preflight": "PASS",
+  "no_live_runner": true,
+  "report_contract": "PASS",
+  "sanitization": "PASS",
+  "scientific_frozen_files_byte_verified": 76,
+  "status": "PASS",
+  "unresolved_reservations": 0
+}

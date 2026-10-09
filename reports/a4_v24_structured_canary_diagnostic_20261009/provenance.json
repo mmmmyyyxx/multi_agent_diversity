@@ -1,0 +1,17 @@
+{
+  "canary_final_state_id": "d1a3e3d69f4428870115a6b978e45ff95bf597a3683905a25931ba2517fc9185",
+  "canary_initial_state_id": "d1a3e3d69f4428870115a6b978e45ff95bf597a3683905a25931ba2517fc9185",
+  "executed_method": "unified_team_prompt_search_v2_4_structured_system_prompt",
+  "frozen_source_and_startup_verified_before_execution": true,
+  "native_math_equivalence_and_plurality_recomputed": true,
+  "original_manifests_unchanged": true,
+  "parser_unchanged": true,
+  "private_raw_evidence_preserved": true,
+  "recomputation_is_native_frozen_scoring_not_an_alternative_parser": true,
+  "report_is_evidence_not_normative": true,
+  "scientific_source_unchanged": true,
+  "source_and_publication_commits_intentionally_different": true,
+  "source_commit": "1f74d4df2dc2591f58b31807264a1505370035fe",
+  "source_verified_again_before_post_execution_metadata_updates": true,
+  "start_and_preparation_report_commit": "1cad9f1a2584621fd031b3d49c513e8fe9e24c43"
+}

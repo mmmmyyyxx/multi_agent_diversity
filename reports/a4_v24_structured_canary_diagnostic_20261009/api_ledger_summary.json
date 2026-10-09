@@ -1,0 +1,32 @@
+{
+  "canary": {
+    "authorized_ceiling": 2000000,
+    "charged_tokens": 137572,
+    "closed": true,
+    "fallback_tokens": 0,
+    "input_tokens": 22975,
+    "max_charged_plus_reserved": 188477,
+    "max_inflight": 8,
+    "output_tokens": 114597,
+    "provider_reported_actual_tokens": 137572,
+    "reserved_tokens": 0,
+    "returned_calls": 195
+  },
+  "ceilings_independent_no_transfer": true,
+  "combined_accounted_tokens": 293346,
+  "combined_provider_reported_actual_tokens": 232908,
+  "combined_reserved_tokens": 0,
+  "combined_unknown_fallback_tokens": 60438,
+  "fallback_is_actual_provider_bill": false,
+  "new_api_calls_after_stop": 0,
+  "stopped_pilot": {
+    "authorized_ceiling": 2000000,
+    "charged_tokens": 155774,
+    "closed": true,
+    "fallback_tokens": 60438,
+    "provider_reported_actual_tokens": 95336,
+    "reserved_tokens": 0,
+    "returned_calls": 120,
+    "unreturned_reservations": 7
+  }
+}

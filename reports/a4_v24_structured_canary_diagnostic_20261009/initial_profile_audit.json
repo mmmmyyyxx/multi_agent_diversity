@@ -1,0 +1,85 @@
+{
+  "actual_max_reserved_inflight_requests": 8,
+  "all_member_correct_intersection": 3,
+  "cache_and_first_valid_recovery_verified": true,
+  "charged_tokens": 137572,
+  "conservative_format_rejections_observed": true,
+  "independent_scores_match_runtime": true,
+  "interface_review_status": "SCIENTIFIC_OWNER_PASS",
+  "logical_profiles": 60,
+  "max_charged_plus_reserved_exposure": 188477,
+  "member_correct": [
+    3.0,
+    3.0,
+    3.0,
+    3.0,
+    3.0
+  ],
+  "optimize_count": 12,
+  "oracle_correct": 3,
+  "pairwise_correct_overlap": [
+    [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    [
+      3,
+      3,
+      3,
+      3,
+      3
+    ]
+  ],
+  "physical_solver_responses": 195,
+  "raw_invalid_reasons": {
+    "CONFLICTING_FINAL_ANSWERS": 20,
+    "MALFORMED_FINAL_BOUNDARY": 156,
+    "MISSING_EXPLICIT_FINAL_ANSWER": 4,
+    "VALID": 15
+  },
+  "real_provider_calls_by_audit": 0,
+  "reasoning_metadata_contradictions": 0,
+  "recovered_invalid": 0,
+  "reserved_tokens": 0,
+  "resolved_invalid": 45,
+  "resolved_valid": 15,
+  "sealed_receipts_verified": 195,
+  "semantic_draw_distribution": {
+    "1": 15,
+    "4": 45
+  },
+  "solution_status_counts": {
+    "FINAL_BOUNDARY_INVALID": 45,
+    "WRITTEN_SOLUTION_PRESENT": 15
+  },
+  "terminal_invalid": 45,
+  "test_calls": 0,
+  "unknown_charged_without_receipt": 0,
+  "validation_calls": 0,
+  "vote_correct": 3.0,
+  "wire_all_exact": true
+}

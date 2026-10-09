@@ -8870,47 +8870,55 @@ experiments:
   method_family: unified_team_prompt_search_v2_4_structured_system_prompt
   parent_ids:
   - structured_system_prompt_v24
-  status: PREEXECUTION_FROZEN
-  scientific_status: UNMEASURED_NOT_AUTHORIZED
-  implementation_commit: null
-  execution_commit: null
+  status: COMPLETED
+  scientific_status: CANARY_VALID_OPTIMIZATION_NOT_EVALUABLE
+  implementation_commit: 1f74d4df2dc2591f58b31807264a1505370035fe
+  execution_commit: 1cad9f1a2584621fd031b3d49c513e8fe9e24c43
   result_commit: null
   manifest: experiments/manifests/a4_v24_structured_canary_v1.yaml
-  report: reports/structured_system_prompt_v24_20261009
-  classifier: reports/structured_system_prompt_v24_20261009/classifier.json
-  active_for_new_work: true
+  report: reports/a4_v24_structured_canary_diagnostic_20261009
+  classifier: reports/a4_v24_structured_canary_diagnostic_20261009/classifier.json
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
-  - New scientific treatment; no historical response, cache, competence or authorization
-    reuse.
+  - Fresh independent scope consumed; exact initial evidence, native scoring and closed
+    ledger audited.
+  - Canary Vote/Oracle 3/12; 45/60 invalid profiles; zero opportunities because each
+    member has fewer than six correct examples.
+  - Real optimization branches unobserved; no method or parser change.
   unavailable:
-    implementation_commit: Execution-source freeze pinned by child manifests; no self-referential
-      SHA.
-    execution_commit: No real API execution authorized or performed.
-    result_commit: No real efficacy result; only synthetic offline verification.
+    result_commit: This sanitized publication is the immutable evidence commit; no
+      self-referential SHA.
+  execution_source_sha: 1f74d4df2dc2591f58b31807264a1505370035fe
+  single_use_authorization_consumed: true
+  current_scope_closed: true
 - experiment_id: a4_v24_structured_pilot_v1
   kind: PILOT
   era: UNIFIED_TEAM_PROMPT_SEARCH
   method_family: unified_team_prompt_search_v2_4_structured_system_prompt
   parent_ids:
   - structured_system_prompt_v24
-  status: PREEXECUTION_FROZEN
-  scientific_status: UNMEASURED_NOT_AUTHORIZED
-  implementation_commit: null
-  execution_commit: null
+  status: HOLD
+  scientific_status: NOT_EVALUABLE_USER_STOP_DURING_INITIALIZATION
+  implementation_commit: 1f74d4df2dc2591f58b31807264a1505370035fe
+  execution_commit: 1cad9f1a2584621fd031b3d49c513e8fe9e24c43
   result_commit: null
   manifest: experiments/manifests/a4_v24_structured_pilot_v1.yaml
-  report: reports/structured_system_prompt_v24_20261009
-  classifier: reports/structured_system_prompt_v24_20261009/classifier.json
-  active_for_new_work: true
+  report: reports/a4_v24_structured_canary_diagnostic_20261009
+  classifier: reports/a4_v24_structured_canary_diagnostic_20261009/classifier.json
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
-  - New scientific treatment; no historical response, cache, competence or authorization
-    reuse.
+  - Fresh independent scope consumed; no Canary or V23 evidence imported.
+  - 'User stopped initial profiling: 36/300 logical profiles, 120 returned calls,
+    no optimization opportunity.'
+  - Seven unknown in-flight requests conservatively accounted; original runtime lifecycle
+    preserved with separate owner stop receipt.
   unavailable:
-    implementation_commit: Execution-source freeze pinned by child manifests; no self-referential
-      SHA.
-    execution_commit: No real API execution authorized or performed.
-    result_commit: No real efficacy result; only synthetic offline verification.
+    result_commit: This sanitized publication is the immutable evidence commit; no
+      self-referential SHA.
+  execution_source_sha: 1f74d4df2dc2591f58b31807264a1505370035fe
+  single_use_authorization_consumed: true
+  current_scope_closed: true

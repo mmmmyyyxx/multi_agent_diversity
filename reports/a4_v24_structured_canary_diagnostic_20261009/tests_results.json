@@ -1,0 +1,14 @@
+{
+  "compileall": "PASS",
+  "errors": 0,
+  "failed": 0,
+  "historical_replay_pass_claim": false,
+  "network_attempt_count": 0,
+  "omitted_modules": 220,
+  "passed": 368,
+  "private_junit_sha256": "8a268d0468b8db37cc79c26e899971bad5ee262e59f0e6e40d10b30c21c6653b",
+  "scope": "Frozen classified current suite before execution; report/governance metadata verified separately after publication preparation.",
+  "selected": 370,
+  "skipped": 2,
+  "synthetic_results_are_real_optimization_evidence": false
+}

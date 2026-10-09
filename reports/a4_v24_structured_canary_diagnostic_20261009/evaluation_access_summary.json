@@ -1,0 +1,14 @@
+{
+  "canary_evidence_imported_into_pilot": false,
+  "canary_shadow_calls": 0,
+  "canary_solver_optimize_responses": 195,
+  "extra_audit_provider_calls": 0,
+  "heldout_outcomes_entered_search": false,
+  "pilot_shadow_calls": 0,
+  "pilot_solver_optimize_responses": 120,
+  "test_model_calls": 0,
+  "test_raw_reads": 0,
+  "v23_evidence_imported": false,
+  "validation_model_calls": 0,
+  "validation_search_raw_reads": 0
+}

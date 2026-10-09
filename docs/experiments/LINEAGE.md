@@ -10,21 +10,21 @@ schema_version: current_frontier_v1
 current_architecture: Unified Team Prompt Search
 method_identity: unified_team_prompt_search_v2_4_structured_system_prompt
 current_method: unified_team_prompt_search_v2_4_structured_system_prompt
-current_experiment: a4_v24_structured_pilot_v1
+current_experiment: NO_AUTHORIZED_REAL_EXPERIMENT
 current_implementation: Complete editable structured System Prompt; raw User problem;
   gold-blind recovery; preserved team graph.
 current_benchmark_suite:
 - math
-last_governance_milestone: structured_system_prompt_v24
+last_governance_milestone: a4_v24_structured_canary_v1
 real_execution_ready: false
 real_api_authorized: false
-ready_for_authorization: true
-current_preparation_status: READY_FOR_AUTHORIZATION
+ready_for_authorization: false
+current_preparation_status: CLOSED_CONSUMED_SCOPES_PILOT_USER_STOPPED
 validation_access: not_authorized
 test_access: sealed
-current_execution_blocker: FRESH_SINGLE_USE_API_AUTHORIZATION_REQUIRED
+current_execution_blocker: FRESH_FROZEN_SCOPE_REQUIRED_AFTER_CONSUMPTION_AND_USER_STOP
 current_execution_blockers:
-- FRESH_SINGLE_USE_API_AUTHORIZATION_REQUIRED
+- FRESH_FROZEN_SCOPE_REQUIRED_AFTER_CONSUMPTION_AND_USER_STOP
 current_runtime_builder: build_current_team_prompt_search
 current_execution_entrypoint: scripts/run_experiment.py
 current_runtime_composition: CURRENT_STRUCTURED_SYSTEM_COMPOSITION_V2
@@ -40,21 +40,21 @@ current_transition_policy: initial_competence_target_or_team_progress_v3
 current_configuration_arm: A4
 current_pattern_enabled: true
 current_memory_enabled: true
-current_canary_status: NOT_EXECUTED_NOT_AUTHORIZED
-current_pilot_status: NOT_EXECUTED_NOT_AUTHORIZED
-current_pilot_report: reports/structured_system_prompt_v24_20261009
-current_canary_report: reports/structured_system_prompt_v24_20261009
+current_canary_status: CANARY_VALID_NO_FEASIBLE_OPPORTUNITY
+current_pilot_status: STOPPED_BY_USER_INCOMPLETE_INITIALIZATION
+current_pilot_report: reports/a4_v24_structured_canary_diagnostic_20261009
+current_canary_report: reports/a4_v24_structured_canary_diagnostic_20261009
 canary_manifest: experiments/manifests/a4_v24_structured_canary_v1.yaml
-next_canary_attempt_id: a4_v24_structured_seed81_canary_attempt1
-next_canary_milestone: a4_v24_structured_canary_v1
+next_canary_attempt_id: null
+next_canary_milestone: null
 next_canary_authorized: false
 next_pilot_authorized: false
 next_validation_authorized: false
 formal_a1_ready: false
 formal_a1_authorized: false
-pending_pilot_milestone: a4_v24_structured_pilot_v1
-pending_pilot_manifest: experiments/manifests/a4_v24_structured_pilot_v1.yaml
-pending_pilot_attempt_id: a4_v24_structured_seed81_pilot_attempt1
+pending_pilot_milestone: null
+pending_pilot_manifest: null
+pending_pilot_attempt_id: null
 pending_pilot_operational_retry_limit: 0
 pending_pilot_validation_authorized: false
 pending_pilot_test_authorized: false
@@ -67,10 +67,14 @@ operational_attempt_token_ceiling: 2000000
 accounting_scope_policy: FRESH_V24_STRUCTURED_SINGLE_ARM_2M_V1
 future_execution_requires_new_frozen_single_use_scope: true
 old_evidence_reuse_allowed: false
-initial_accuracy: UNMEASURED
-this_task_scientific_method_changed: true
+initial_accuracy: CANARY_3_OF_12_PILOT_BASELINE_INCOMPLETE
+this_task_scientific_method_changed: false
 v23_active: false
 v22_active: false
+last_canary_attempt_id: a4_v24_structured_seed81_canary_attempt1
+last_pilot_attempt_id: a4_v24_structured_seed81_pilot_attempt1
+authorization_scopes_closed: true
+unresolved_reservations: 0
 ```
 
 ## Experiment and engineering DAG
@@ -355,8 +359,8 @@ flowchart TD
     n298["a4_v23_only_pilot_v2<br/>PILOT<br/>ABANDONED"]
     n299["a4_v23_parallel_reuse_pilot_v1<br/>PILOT<br/>PREEXECUTION_FROZEN"]
     n300["structured_system_prompt_v24<br/>ARCHITECTURE_REFACTOR<br/>COMPLETED"]
-    n301["a4_v24_structured_canary_v1<br/>REAL_CANARY<br/>PREEXECUTION_FROZEN"]
-    n302["a4_v24_structured_pilot_v1<br/>PILOT<br/>PREEXECUTION_FROZEN"]
+    n301["a4_v24_structured_canary_v1<br/>REAL_CANARY<br/>COMPLETED"]
+    n302["a4_v24_structured_pilot_v1<br/>PILOT<br/>HOLD"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]

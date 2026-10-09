@@ -1,0 +1,21 @@
+{
+  "all_195_canary_receipts_verified": true,
+  "all_canary_semantic_draws_preserved": true,
+  "all_unresolved_reservations_reconciled": true,
+  "canary_exact_wire_verified": true,
+  "canary_initial_final_state_identical": true,
+  "canary_ledger_hash_chain_verified": true,
+  "canary_optimization_not_misclassified_as_efficacy": true,
+  "canary_owner_review_genuine": true,
+  "canary_scores_independently_recomputed": true,
+  "canary_source_frozen": true,
+  "historical_private_suite_omissions_explicit": true,
+  "independent_scopes_not_reused": true,
+  "no_heldout_access": true,
+  "no_post_stop_api_calls": true,
+  "original_runtime_lifecycle_not_rewritten": true,
+  "pilot_no_completed_baseline_claim": true,
+  "pilot_process_stopped": true,
+  "pilot_unknown_usage_separated": true,
+  "scientific_method_unchanged": true
+}

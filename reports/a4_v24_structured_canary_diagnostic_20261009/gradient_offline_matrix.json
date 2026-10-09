@@ -1,0 +1,37 @@
+{
+  "actionable_fixture_outcomes": 6,
+  "answer_repairs_admitted_by_current_guard": true,
+  "cases": [
+    {
+      "advisory_block": "strategy",
+      "category": "derivation_error"
+    },
+    {
+      "advisory_block": "strategy",
+      "category": "constraint_omission"
+    },
+    {
+      "advisory_block": "role",
+      "category": "arithmetic_error"
+    },
+    {
+      "advisory_block": "answer",
+      "category": "invalid_final_expression"
+    },
+    {
+      "advisory_block": "answer",
+      "category": "answer_only"
+    },
+    {
+      "advisory_block": "answer",
+      "category": "truncation"
+    },
+    {
+      "advisory_block": null,
+      "category": "insufficient_attribution"
+    }
+  ],
+  "complete_ordinary_responses_received": 7,
+  "real_clustering_efficacy": "NOT_ESTABLISHED_BY_SYNTHETIC_TEST",
+  "uncertain_fixture_outcomes": 1
+}

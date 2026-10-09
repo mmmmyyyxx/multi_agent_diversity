@@ -1,0 +1,41 @@
+{
+  "budget_was_stop_reason": false,
+  "charged_tokens": 137572,
+  "classification": "CANARY_VALID",
+  "commits": 0,
+  "complete_opportunity_review": "NOT_OBSERVED_NO_FEASIBLE_OPPORTUNITY",
+  "consumed_authorization_sha256": "f9cf9ad772a6a7b3a3d2e68780fcd205b6b424eafaf150cd82087930e58ac0e6",
+  "efficacy": "NOT_EVALUABLE_NO_INTERVENTION",
+  "execution_status": "EXECUTION_COMPLETE",
+  "feasibility": {
+    "actual_current_correct": [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    "actual_current_wrong": [
+      9,
+      9,
+      9,
+      9,
+      9
+    ],
+    "minimum_current_correct": 6,
+    "minimum_current_wrong": 4
+  },
+  "independent_recomputation": "PASS",
+  "initial_and_final_state_identical": true,
+  "opportunities": 0,
+  "optimizer_provider_availability": "NOT_OBSERVED_NO_CALLS",
+  "owner_review_sha256": "ec452fff0cd034cc3d8ed85189652f887d96e531f7ce177f32a5c4e77edabf71",
+  "raw_inventory_files_verified": 271,
+  "raw_inventory_sha256": "57ee2e818b3140b9351b40f915429ca6f06a68a5b438da2c40a1eda7acde43ab",
+  "reserved_tokens": 0,
+  "scientific_method_changed": false,
+  "scope_consumption_marker_sha256": "e8984c1a06d847e82ef38185ed0906e1810cf28b6a608a32deed0c5c4dd2e41f",
+  "stop_reason": "NO_FEASIBLE_OPPORTUNITY",
+  "test_calls": 0,
+  "validation_calls": 0
+}

@@ -1,0 +1,92 @@
+{
+  "cases": [
+    {
+      "category": "markdown",
+      "invalid_reason": null,
+      "valid": true
+    },
+    {
+      "category": "boxed",
+      "invalid_reason": null,
+      "valid": true
+    },
+    {
+      "category": "final_label",
+      "invalid_reason": null,
+      "valid": true
+    },
+    {
+      "category": "answer_label",
+      "invalid_reason": "MISSING_EXPLICIT_FINAL_ANSWER",
+      "valid": false
+    },
+    {
+      "category": "natural_label",
+      "invalid_reason": "MISSING_EXPLICIT_FINAL_ANSWER",
+      "valid": false
+    },
+    {
+      "category": "detailed_final_label",
+      "invalid_reason": null,
+      "valid": true
+    },
+    {
+      "category": "finite_set",
+      "invalid_reason": null,
+      "valid": true
+    },
+    {
+      "category": "interval",
+      "invalid_reason": null,
+      "valid": true
+    },
+    {
+      "category": "fraction",
+      "invalid_reason": null,
+      "valid": true
+    },
+    {
+      "category": "equation",
+      "invalid_reason": null,
+      "valid": true
+    },
+    {
+      "category": "symbolic",
+      "invalid_reason": null,
+      "valid": true
+    },
+    {
+      "category": "equivalent_decimal",
+      "invalid_reason": null,
+      "valid": true
+    },
+    {
+      "category": "intermediate_correct_final_wrong",
+      "invalid_reason": null,
+      "valid": true
+    },
+    {
+      "category": "conflicting",
+      "invalid_reason": "CONFLICTING_FINAL_ANSWERS",
+      "valid": false
+    },
+    {
+      "category": "equivalent_conflicting_labels",
+      "invalid_reason": "CONFLICTING_FINAL_ANSWERS",
+      "valid": false
+    },
+    {
+      "category": "missing",
+      "invalid_reason": "MISSING_EXPLICIT_FINAL_ANSWER",
+      "valid": false
+    }
+  ],
+  "equivalent_separate_answers_score_equal": true,
+  "format_reward": false,
+  "no_gold_aware_selection": true,
+  "risks": [
+    "Answer label and natural prose label not covered.",
+    "Textually conflicting equivalent declarations rejected conservatively."
+  ],
+  "truncation_invalid": true
+}

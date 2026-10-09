@@ -1,0 +1,47 @@
+{
+  "cases": [
+    {
+      "current_prompt_bound": true,
+      "message_count": 2,
+      "raw_user_bytes_equal": true,
+      "split": "optimize",
+      "stage": "initial"
+    },
+    {
+      "current_prompt_bound": true,
+      "message_count": 2,
+      "raw_user_bytes_equal": true,
+      "split": "optimize",
+      "stage": "local"
+    },
+    {
+      "current_prompt_bound": true,
+      "message_count": 2,
+      "raw_user_bytes_equal": true,
+      "split": "optimize",
+      "stage": "search_validation"
+    },
+    {
+      "current_prompt_bound": true,
+      "message_count": 2,
+      "raw_user_bytes_equal": true,
+      "split": "optimize",
+      "stage": "team_probe"
+    },
+    {
+      "current_prompt_bound": true,
+      "message_count": 2,
+      "raw_user_bytes_equal": true,
+      "split": "optimize",
+      "stage": "full"
+    },
+    {
+      "current_prompt_bound": true,
+      "message_count": 2,
+      "raw_user_bytes_equal": true,
+      "split": "shadow",
+      "stage": "shadow"
+    }
+  ],
+  "optimizer_memory_or_reference_leak": false
+}
