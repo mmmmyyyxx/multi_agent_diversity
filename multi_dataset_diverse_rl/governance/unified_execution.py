@@ -9,7 +9,7 @@ from ..search.schemas import SearchContractError
 from ..search.current_policy import CURRENT_POLICY_BUNDLE
 from ..benchmarks.math_domain_binding import BINDING_BLOCKER
 PREP_SCHEMA='unified_canary_prep_v1'
-CURRENT_OFFLINE_PROFILE='experiments/execution_bindings/a4_v24_offline_profile_v1.json'
+CURRENT_OFFLINE_PROFILE='experiments/execution_bindings/a4_v25_seed81_canary_attempt1.json'
 
 def execution_identity(root,contract):
     CURRENT_POLICY_BUNDLE.validate_contract(contract)
@@ -53,7 +53,7 @@ def bound_preflight(root, manifest):
     from ..benchmarks.math_domain_binding import execution_binding
     ref=manifest.get('execution_binding',{})
     from .. import versions
-    if ref.get('identity')!=versions.MATH_STRUCTURED_SYSTEM_BINDING_VERSION:
+    if ref.get('identity')!=versions.MATH_RESPONSIBILITY_REPAIR_BINDING_VERSION:
         return dict(gate='HOLD',blockers=[BINDING_BLOCKER],provider_attempts=0)
     errors=validate_manifest_v2(root,manifest)
     if manifest.get('lifecycle',{}).get('status')!='PREEXECUTION_FROZEN':errors.append('PREEXECUTION_NOT_FROZEN')
@@ -166,7 +166,7 @@ def inventory(run_root):
     return {"files": [{"path": p.relative_to(run_root).as_posix(), "sha256": hashlib.sha256(p.read_bytes()).hexdigest(), "bytes": p.stat().st_size}
                       for p in sorted(run_root.rglob("*")) if p.is_file() and p.name != "raw_evidence_inventory.json"]}
 
-def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, experiment_id="a4_v24_structured_pilot_v1"):
+def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, experiment_id="a4_v25_responsibility_repair_canary_v1"):
     from ..benchmarks.math_domain_binding import execution_binding
     binding_path=binding_path or CURRENT_OFFLINE_PROFILE
     contract=read_json(root/binding_path)
@@ -216,7 +216,7 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
         manifest['optimization_evidence_policy']=contract['optimization_evidence_policy']
     for k in ('solver_execution_policy','system_prompt_policy','answer_extraction_policy',
             'canary_review_policy','accounting_scope_policy','accounting_policy_sha256',
-            'heldout_accounting_reserve'):
+            'heldout_accounting_reserve','repair_probe_policy'):
         if k in contract:manifest[k]=contract[k]
     for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256", "optimizer_nonthinking_evidence_policy", "layer1_search_policy", "candidate_contract_identity", "post_search_validation_policy", "pattern_support_id_transport", "pattern_abstraction_guard"):
         if k in contract:manifest[k]=contract[k]

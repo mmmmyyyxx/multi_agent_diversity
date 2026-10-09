@@ -17,7 +17,7 @@ class GradientPatternLocalTask(MemoryLocalTask):
 
 @dataclass(frozen=True)
 class EvidenceLayer1Config:
-    identity_version: str = 'STRUCTURED_BLOCK_INDEPENDENT_OPTIMIZE_SEARCH_V2'
+    identity_version: str = 'STRUCTURED_EVALUATED_PARENT_SEARCH_V3'
     metric_limit: int = 42
     panel_size: int = 6
     max_generations: int = 6
@@ -25,8 +25,8 @@ class EvidenceLayer1Config:
     max_prompt_chars: int = 3000
     candidate_contract: str = versions.SEMANTIC_MUTABLE_CONTRACT_VERSION
     official_gepa_fidelity: bool = False
-    optimizer_input_schema: str = 'STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V7'
-    panel_policy: str = 'DISJOINT_ROTATING_OPTIMIZE_EVIDENCE_V1'
+    optimizer_input_schema: str = 'STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V8'
+    panel_policy: str = 'DISJOINT_QUOTA_FREE_REPAIR_EVIDENCE_V2'
 
     def __post_init__(self):
         defaults={name:field.default for name,field in self.__dataclass_fields__.items()}
@@ -86,7 +86,7 @@ class GradientPatternMemoryEngine(LocalTaskEngine):
         if any(r.source_split!='optimize' for r in universe):raise SearchContractError('LAYER1_HELDOUT_ACCESS')
         p=next((p for p in context.pattern_view['patterns']
             if p['pattern_id']==context.pattern_view['focus_mechanism_id']),None)
-        lane=opportunity.diagnosis.responsibility[opportunity.target_member].primary_lane
+        lane=('general' if context.pattern_view.get('selection_reason')=='SEEDED_ZERO_RESPONSIBILITY_FALLBACK' else opportunity.diagnosis.responsibility[opportunity.target_member].primary_lane)
         repairs=[r for r in opportunity.evidence.mutation_evidence if 'REPAIR' in r.roles]
         return GradientPatternLocalTask(**{**base.__dict__,'optimization_context':lane},
             responsibility_lane=lane,selected_pattern=json.dumps(self.pattern_projection(p) if p

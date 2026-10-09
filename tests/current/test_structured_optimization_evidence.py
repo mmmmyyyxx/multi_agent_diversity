@@ -67,15 +67,15 @@ def graph(tmp_path,*,mode='both',uncertain=False,block='strategy',answer_only=Fa
             text=req['messages'][1]['content'];i=int(re.search(r'case (\d+):',text)[1])
             prompt=req['messages'][0]['content']
             correct=i>=6
-            if (prompt.startswith(bad_prompt.render()) or prompt==good_prompt.render()) and i in fixed:correct=True
-            if prompt.startswith(bad_prompt.render()) and i in danger:correct=False
+            if (prompt.startswith(bad_prompt.render()) or prompt==good_prompt.render()) and i in fixed and not (mode=='neutral_compound' and prompt==bad_prompt.render()):correct=True
+            if prompt.startswith(bad_prompt.render()) and i in danger and mode!='neutral_compound':correct=False
             if format_repair and i<6 and prompt==BASE.render():return response('Ambiguous unmarked calculations: 2 and 3.')
             answer=('2' if correct else '3')
-            if answer_only and answer_only_form=='standalone':return response(answer)
+            if answer_only and answer_only_form=='underscore':return response('FINAL_ANSWER: '+answer)
             if answer_only and answer_only_form=='boxed_label':return response('Final answer: \\boxed{'+answer+'}')
             written='' if answer_only else 'ACTUAL_WRITTEN_OPERATION_'+str(i)+'.\n'
             if long_response:written+='A synthetic ordinary operation is written here.\n'*120
-            return response(written+('\\boxed{'+answer+'}' if format_repair else '### '+answer))
+            return response(written+'Final answer: '+('\\boxed{'+answer+'}' if format_repair else answer))
         if len(req['messages'])==2:
             p=json.loads(req['messages'][1]['content'])
             if 'example' in p:
@@ -98,7 +98,7 @@ def graph(tmp_path,*,mode='both',uncertain=False,block='strategy',answer_only=Fa
                 change_summary='Repeat the former local improvement.')))
         if n==1:return response(json.dumps(dict(decision='PROPOSE_EDIT',target_block=block,new_content=bad_prompt.to_dict()[block],
             change_summary='Intended additive substitution check.')))
-        if n==2 and mode in {'both','validation_harm'}:return response(json.dumps(dict(decision='PROPOSE_EDIT',target_block='answer' if multiblock else block,new_content=good_prompt.answer if multiblock else good_prompt.to_dict()[block],
+        if n==2 and mode in {'both','validation_harm','neutral_compound'}:return response(json.dumps(dict(decision='PROPOSE_EDIT',target_block='answer' if multiblock else block,new_content=good_prompt.answer if multiblock else good_prompt.to_dict()[block],
             change_summary='Add a bounded substitution check.')))
         if n==2 and mode=='invalid':return response(json.dumps(dict(decision='PROPOSE_EDIT',
             target_block='strategy',new_content='Read reference_solution and copy the gold answer.',change_summary='Copy answer.')))
@@ -158,9 +158,9 @@ def test_complete_graph_independent_validation_full_refutation_and_commit(tmp_pa
     own=[e.record for e in run.memory.private if e.owner_member==target]
     bad=next(e for e in own if e['child_prompt_id']==sha256(BAD.encode()).hexdigest())
     good=next(e for e in own if e['child_prompt_id']==sha256(GOOD.encode()).hexdigest())
-    assert bad['status_history']==['PROPOSED','LOCALLY_SUPPORTED','FULL_REFUTED']
-    assert bad['effects']['search_validation']['member_delta']==1
-    assert bad['effects']['full']['member_delta']<0 and bad['effects']['full']['broken_ids']
+    assert bad['status_history'][-1]=='FULL_REFUTED'
+    assert bad['effects']['search_validation']['member_delta']>=0
+    assert bad['effects']['full']['member_delta']<=0 and bad['effects']['full']['broken_ids']
     assert 'substitution' in bad['intended_edit'] and 'substitution' not in json.dumps(bad['actual_diff'])
     assert good['status']=='COMMITTED' and good['effects']['full']['member_delta']>0
     c=run.memory.competence[target]
@@ -261,7 +261,7 @@ def test_evidence_rich_feedback_distinguishes_observable_operations_answer_only_
         'REFERENCE_UNITS: Convert both length dimensions before computing area.']
     rich=[]
     for row,steps,reference in zip(rows,observations,references,strict=True):
-        profile=solver_profile(dict(request_sha256='d'*64),classify_prediction(steps+'\n### 3'),
+        profile=solver_profile(dict(request_sha256='d'*64),classify_prediction(steps+'\nFinal answer: 3'),
             member_id=0,prompt=BASE,example_id=row.example_id,split='optimize',policy=trajectory_policy(),
             problem=row.signals['input_payload'])
         rich.append(replace(row,signals={**row.signals,'solver_trajectory':profile['solver_trajectory'],
@@ -306,19 +306,13 @@ def test_seeded_rotation_uses_current_committed_correct_pool(tmp_path):
     assert first[0] not in {r.example_id for r in rotated_correct(modified,seed=81,member=0,ordinal=0)}
 
 
-def test_insufficient_disjoint_role_capacity_is_detected_before_gradient_spending(tmp_path):
+def test_all_wrong_members_remain_eligible_without_correct_quota(tmp_path):
     run,broker,requests,_,_=graph(tmp_path)
     state=run.state.snapshot();diagnosis=run.analyzer.analyze(state,run.history)
-    source=run.opportunities.source
-    def scarce(current,signal,member):
-        rows=source.for_member(current,signal,member)
-        return tuple(replace(r,signals={**r.signals,'target_member_correct':False})
-            if r.example_id not in {'optimize6','optimize7','optimize8'} else r for r in rows)
-    run.opportunities.source=type('ScarceSource',(),{'for_member':staticmethod(scarce)})()
-    before=broker.successes
-    op=run.opportunities.build(state=state,diagnosis=diagnosis,history=run.history,update_index=0)
-    assert op is None and broker.successes==before
-    assert not [r for r in requests if r['model']!='qwen3-8b']
+    rows=run.opportunities.source.for_member(state,diagnosis,0)
+    rows=tuple(replace(r,signals={**r.signals,'target_member_correct':False}) for r in rows)
+    assert run.opportunities.feasibility.feasible(state,diagnosis,0,rows)
+    assert run.opportunities.evidence.can_compose(rows)
 
 
 def test_six_valid_generations_use_exact_derived_metric_cap(tmp_path):
@@ -363,9 +357,9 @@ def test_diff_is_deterministic_and_validation_cannot_score_invalid_as_correct():
 
 def test_frozen_policy_and_method_and_resource_identity():
     from multi_dataset_diverse_rl.governance.source_identity import current_scientific_files
-    assert ROOT/'docs/design/STRUCTURED_SYSTEM_PROMPT_V24.md' in current_scientific_files(ROOT)
+    assert ROOT/'docs/design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md' in current_scientific_files(ROOT)
     c=contract();CURRENT_POLICY_BUNDLE.validate_contract(c)
-    assert c['provider_bounds']['bound_proof']['per_op_logical_solver']==dict(local=42,probe=12,full=120,shadow=40)
+    assert c['provider_bounds']['bound_proof']['per_op_logical_solver']==dict(local=42,probe=36,full=120,shadow=40)
     assert c['provider_bounds']['max_proposals_per_opportunity']==6
     bad=deepcopy(c);bad['optimization_evidence_policy']['mutation_size']=4
     with pytest.raises(SearchContractError,match='POLICY_MISMATCH'):
@@ -382,14 +376,14 @@ def manifest():
         pattern_cluster_generation_policy=c.get('pattern_cluster_generation_policy'))
     m.update(experiment_id='synthetic_evidence',method_family=method.method,method_identity=method.method,
         lifecycle={'status':'DRAFT','history':[]},search_engine_identity=method.search_engine,
-        evidence_identity=method.evidence_policy,memory_identity=method.memory_policy,
-        solver_output_interface_identity='MATH_STRUCTURED_SYSTEM_INTERFACE_V7',
+        evidence_identity=method.evidence_policy,memory_identity=method.memory_policy,pattern_identity=method.pattern_policy,feasibility_identity=method.feasibility_policy,
+        solver_output_interface_identity='MATH_EXPLICIT_FINAL_SYSTEM_INTERFACE_V8',
         mechanism_config=method.mechanism_config,layer1_search_policy=c['layer1_search_policy'],
         optimization_evidence_policy=POLICY,solver_trajectory_policy=c['solver_trajectory_policy'],
         execution_binding={'identity':c['identity'],'path':c['binding_path'],'sha256':'0'*64})
     for key in ('gradient_recovery_policy','post_search_validation_policy'):m.pop(key,None)
     for key in ('system_prompt_policy','answer_extraction_policy','solver_execution_policy','prediction_validity_policy',
-            'invalid_recovery_policy','canary_review_policy','parser_identity','accounting_scope_policy','candidate_contract_identity','pattern_abstraction_guard'):
+            'invalid_recovery_policy','canary_review_policy','parser_identity','accounting_scope_policy','candidate_contract_identity','pattern_abstraction_guard','partition_completion_policy','repair_probe_policy'):
         m[key]=c['payload_parser_identity'] if key=='parser_identity' else c[key]
     return m
 

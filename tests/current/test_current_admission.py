@@ -89,9 +89,11 @@ def test_target_only_teamprobe_signal_reaches_full_with_ceiling_two():
     from multi_dataset_diverse_rl.search.schemas import SearchResult
     from multi_dataset_diverse_rl.team_search.schemas import TeamMiniBatchMetrics
     calls = []
+    from multi_dataset_diverse_rl.search.optimization_evidence import PROBE_POLICY
     class Provider:
         async def team_probe(self, opportunity, candidate):
-            return replace(measurement(), aggregation_diagnostics={'team_probe_metrics':
+            return replace(measurement(), aggregation_diagnostics={'probe_policy':PROBE_POLICY,
+                'assigned_repair_count':1,'risk_pass':True,'collateral_loss':0,'team_probe_metrics':
                 TeamMiniBatchMetrics(target_delta=1, vote_delta=0, team_net_vote_delta=0,
                     responsibility_delta=1, broad_delta=1, invalid_delta=0)})
         async def full(self, opportunity, candidate):

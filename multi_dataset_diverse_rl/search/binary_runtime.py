@@ -140,22 +140,19 @@ class BinaryEvidenceSource:
                 validity[member_id] = False
                 pivotal = not build_team_vote_state(question_hash=row.question_hash, gold_answer=row.gold_answer,
                     answers=row.team_answers, valid_vector=validity).vote_correct
-            if not row.vote_correct and opportunity is not None:
-                lane = classify_opportunity_lane(opportunity, diagnosis.benchmark_signals["margins"]) or "coverage"
-                lane = "coverage" if lane == "pure_coverage" else lane
-                roles = {"REPAIR", "TEAM_HARD", lane}
-                tags = ("repair", lane, "team_hard")
-                feedback = f"Improve general reasoning on this legal residual while preserving competence; lane={lane}."
-            elif not row.vote_correct:
-                lane = "team_hard"
-                roles = {"TEAM_HARD", "vote_wrong"}
-                tags = ("team_hard", "vote_wrong")
-                feedback = "Repair current team failure while preserving general competence."
+            if not row.team_correctness[member_id]:
+                lane = (classify_opportunity_lane(opportunity, diagnosis.benchmark_signals['margins'])
+                    if not row.vote_correct and opportunity is not None else 'general') or 'general'
+                lane = 'coverage' if lane == 'pure_coverage' else lane
+                roles = {'REPAIR','target_wrong',lane}
+                if not row.vote_correct:roles.add('TEAM_HARD')
+                tags = ('repair',lane,'team_wrong' if not row.vote_correct else 'team_correct')
+                feedback = 'Repair this member failure while preserving fixed-peer team behavior.'
             else:
-                lane = "preservation"
-                roles = {"PRESERVATION", "target_correct" if row.team_correctness[member_id] else "team_correct"}
-                tags = ("preservation", "target_correct" if row.team_correctness[member_id] else "team_correct")
-                feedback = "Preserve current correct team behavior."
+                lane = 'preservation';roles = {'PRESERVATION','target_correct'}
+                if not row.vote_correct:roles.add('TEAM_HARD')
+                tags = ('preservation','target_correct')
+                feedback = 'Preserve this member correct behavior.'
             if row.question_hash in focus:
                 roles.add("TRANSITION_FOCUS")
             if row.question_hash in anchor:
@@ -176,6 +173,7 @@ class BinaryEvidenceSource:
                      **trajectory,
                      correctness_signal_identity=versions.TARGET_CORRECTNESS_SIGNAL_VERSION,
                      target_member_correct=bool(row.team_correctness[member_id]),
+                     team_correct=bool(row.vote_correct),
                      target_member_valid=bool(output.valid),
                      responsibility_labels=tuple(name for name in ('direct_flip','near_margin','coverage') if name in roles),
                      target_output=output.answer if output.valid else None, feedback=feedback,
@@ -193,6 +191,7 @@ class FixedPeerTeamEvaluationProvider:
         self.invalid_predictions_are_incorrect = bool(getattr(store.benchmark, "invalid_predictions_are_incorrect", False))
         self.probed = []
         self.fulled = []
+        self._last_repeated_ids=set()
 
     def _parent(self, opportunity):
         parent = self.store.snapshot()
@@ -220,6 +219,8 @@ class FixedPeerTeamEvaluationProvider:
         batch=getattr(self.store.solver,'solve_batch',None)
         profile = (tuple(batch(candidate.prompt,[e.item for _,e in selected],stage=stage,split='optimize'))
             if callable(batch) else tuple(self.store.solver.solve(candidate.prompt, e.item, stage=stage, split="optimize") for _, e in selected))
+        self._last_repeated_ids={e.item.input_id for (_,e),p in zip(selected,profile,strict=True)
+            if isinstance(p,dict) and p.get('solver_trajectory',{}).get('retry_summary',{}).get('repeated_format_failure') is True}
         aggregates = tuple(self.store.aggregation.aggregate_sync(item=e.item,
             member_outputs=tuple(profile[j] if m == target else self.store.profiles[m][i] for m in range(5)), benchmark=self.store.benchmark)
             for j, (i, e) in enumerate(selected))
@@ -247,24 +248,42 @@ class FixedPeerTeamEvaluationProvider:
         return result
 
     async def team_probe(self, opportunity, candidate):
+        from .optimization_evidence import PROBE_POLICY
         self.probed.append(candidate.candidate_id)
-        ids = {r.example_id for r in opportunity.evidence.team_probe_evidence}
-        before, after = self._evaluate(opportunity, candidate, ids, "team_probe")
-        old, new = self.evaluation(before), self.evaluation(after)
-        t = opportunity.target_member
-        legal = {r.question_hash for r in opportunity.diagnosis.benchmark_signals["assigned"].get(t, ())}
-        target = int(new.member_scores[t] - old.member_scores[t])
-        vote = int(new.aggregate_score - old.aggregate_score)
-        metrics = TeamMiniBatchMetrics(target_delta=target, vote_delta=vote, team_net_vote_delta=vote,
-            responsibility_delta=sum(not a.team_correctness[t] and b.team_correctness[t] and a.question_hash in legal
-                                     for a, b in zip(before, after, strict=True)),
-            broad_delta=target, invalid_delta=sum(not b.team_validity[t] for b in after)-sum(not a.team_validity[t] for a in before))
-        catastrophe = (metrics.invalid_delta > 0 and not self.invalid_predictions_are_incorrect) or metrics.vote_delta <= -2 or metrics.team_net_vote_delta <= -3
-        return replace(new, aggregation_diagnostics={"team_probe_metrics": metrics,
-            **({'edit_effect':self._effect(before, after, t, 'team_probe')}
-               if opportunity.evaluation_plan.get('optimization_evidence_policy') else {}),
-            **({"scientific_risk_code": "TEAM_PROBE_REJECTION"} if catastrophe else {}),
-            **({"operational_failure": True} if not self.invalid_predictions_are_incorrect and any(not s.team_validity[t] for s in after) else {})})
+        audit=opportunity.evaluation_plan['evidence_audit']
+        assigned=set(audit['assigned_repair_ids'])
+        independent={r.example_id for r in opportunity.evidence.team_probe_evidence}
+        mutation={r.example_id for r in opportunity.evidence.mutation_evidence}
+        if (not assigned<=mutation or assigned&independent or len(independent)!=6):
+            raise SearchContractError('ASSIGNED_REPAIR_PROBE_MEMBERSHIP_MISMATCH')
+        t=opportunity.target_member
+        repaired=0;assigned_effect=None
+        if assigned:
+            root,child=self._evaluate(opportunity,candidate,assigned,'assigned_repair_check')
+            if any(r.team_correctness[t] for r in root):raise SearchContractError('ASSIGNED_REPAIR_PARENT_NOT_WRONG')
+            assigned_effect=self._effect(root,child,t,'SEEN_ASSIGNED_REPAIR')
+            repaired=len(assigned_effect['fixed_ids'])
+        before,after=self._evaluate(opportunity,candidate,independent,'independent_team_probe')
+        old,new=self.evaluation(before),self.evaluation(after)
+        effect=self._effect(before,after,t,'INDEPENDENT_OPTIMIZE_TEAM_PROBE')
+        vote=int(new.aggregate_score-old.aggregate_score)
+        target=int(new.member_scores[t]-old.member_scores[t])
+        collateral=len(effect['broken_ids'])
+        regression=(vote<=-PROBE_POLICY['catastrophic_vote_net_loss'] or
+            target<=-PROBE_POLICY['catastrophic_target_net_loss'] or
+            collateral>=PROBE_POLICY['catastrophic_collateral_loss'] or
+            effect['invalid_delta']>0 and not self.invalid_predictions_are_incorrect)
+        reason=('ASSIGNED_REPAIR_FAILED' if repaired<PROBE_POLICY['minimum_assigned_binary_repairs'] else
+            'INDEPENDENT_PROBE_REGRESSION' if regression else 'PROBE_PASS')
+        metrics=TeamMiniBatchMetrics(target_delta=target,vote_delta=vote,team_net_vote_delta=vote,
+            responsibility_delta=repaired,broad_delta=target,invalid_delta=effect['invalid_delta'])
+        return replace(new,aggregation_diagnostics=dict(team_probe_metrics=metrics,
+            probe_policy=PROBE_POLICY,assigned_repair_count=repaired,assigned_repair_effect=assigned_effect,
+            assigned_repair_scope='SEEN_ASSIGNED_REPAIR',independent_count=6,
+            collateral_loss=collateral,risk_pass=not regression,promotion_reason=reason,
+            edit_effect=effect,
+            **({'scientific_risk_code':'TEAM_PROBE_REJECTION'} if reason!='PROBE_PASS' else {}),
+            **({'operational_failure':True} if not self.invalid_predictions_are_incorrect and any(not r.team_validity[t] for r in after) else {})))
 
     async def full(self, opportunity, candidate):
         self.fulled.append(candidate.candidate_id)
@@ -290,16 +309,18 @@ class FixedPeerTeamEvaluationProvider:
             measurement = replace(measurement, aggregation_diagnostics={**measurement.aggregation_diagnostics,
                 "team_score_delta": new.aggregate_score - old.aggregate_score,
                 "target_score_delta": new.member_scores[t] - old.member_scores[t],
-                "target_initial_margin": new.member_scores[t] - self.transition.initial_scores[t]})
+                "target_initial_margin": new.member_scores[t] - self.transition.initial_scores[t],
+                "promotion_reason":"FULL_PASS" if safe else "PROBE_PASS_FULL_REJECT"})
         return replace(measurement, aggregation_diagnostics={**measurement.aggregation_diagnostics,
             **({"scientific_risk_code": "COMMON_SAFE_REJECTION"} if not safe else {})})
 
-    @staticmethod
-    def _effect(before, after, target, scope):
+    def _effect(self,before, after, target, scope):
         from .optimization_evidence import coverage_effect
         project=lambda rows:{r.question_hash:dict(correct=bool(r.team_correctness[target]),
             valid=bool(r.team_validity[target])) for r in rows}
-        effect=coverage_effect(project(before),project(after),scope=scope)
+        child=project(after)
+        for xid,row in child.items():row['repeated_format_failure']=xid in self._last_repeated_ids
+        effect=coverage_effect(project(before),child,scope=scope)
         effect['team_delta']=sum(r.vote_correct for r in after)-sum(r.vote_correct for r in before)
         return effect
 

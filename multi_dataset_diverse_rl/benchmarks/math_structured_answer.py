@@ -1,24 +1,19 @@
-"""Gold-blind frozen final-answer boundaries for structured System Prompt V2.4.
-
-Terminal declarations or a whole standalone expression are eligible. Every explicit marker, including
-intermediate boxes, must agree textually; conservative false invalids are allowed.
-The existing pinned mathematical payload parser and equivalence scorer are reused.
-"""
+"""Gold-blind explicit terminal declarations; mathematical scoring stays pinned."""
 from dataclasses import asdict
 import json
 import re
-
 from ..search.schemas import SearchContractError
 from .math_prediction_validity import MATHPrediction, MATHResolvedPrediction, classify_payload, resolve_predictions
 
-IDENTITY = 'MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V1'
-VALIDITY = 'MATH_STRUCTURED_PREDICTION_VALIDITY_V1'
-POLICY = dict(identity=IDENTITY, terminal_forms=['markdown_hash3', 'balanced_boxed', 'final_answer_label','standalone_expression'],
+IDENTITY = 'MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V2'
+VALIDITY = 'MATH_EXPLICIT_FINAL_PREDICTION_VALIDITY_V2'
+POLICY = dict(identity=IDENTITY, terminal_forms=['final_answer_label','underscore_final_answer_label','labeled_balanced_boxed'],
     terminal_line='last_nonempty', boxed_suffix='punctuation_only',
-    conflicts='all_explicit_markers_must_have_identical_normalized_payload',
+    conflicts='explicit_declarations_must_be_mathematically_equivalent_gold_blind',
     normalization='strip_outer_math_delimiters_and_whitespace_only',
-    unmarked_expression='whole_response_single_line_math_syntax_only', gold_access=False, intermediate_selection=False,
+    unmarked_expression='forbidden', gold_access=False, intermediate_selection=False,
     truncated='invalid_even_with_answer', payload_parser='math_verify_no_fallback_v1')
+LABEL = re.compile(r'^\s*Final[ _]+answer\s*:\s*(.*?)\s*$', re.I)
 
 
 def normalize_payload(value):
@@ -30,35 +25,33 @@ def normalize_payload(value):
     return value
 
 
+def _label_payload(value):
+    value = normalize_payload(value)
+    match = re.match(r'\\boxed\s*\{', value)
+    if not match:
+        return value if '\\boxed' not in value else None
+    depth = 1
+    cursor = match.end()
+    while cursor < len(value) and depth:
+        if value[cursor] == '{' and value[cursor-1] != '\\': depth += 1
+        elif value[cursor] == '}' and value[cursor-1] != '\\': depth -= 1
+        cursor += 1
+    if depth or not re.fullmatch(r'[.\s]*', value[cursor:]):
+        return None
+    return normalize_payload(value[match.end():cursor-1])
+
+
 def boundaries(text):
-    """Return explicit (payload, start, end, terminal) records without a reference."""
+    """Only labeled declarations. Headings and intermediate boxes are ordinary text."""
+    lines = [(m.start(), m.group()) for m in re.finditer(r'[^\r\n]+', text) if m.group().strip()]
+    last = lines[-1][0] if lines else -1
     records = []
-    nonempty = [(m.start(), m.group()) for m in re.finditer(r'[^\r\n]+', text) if m.group().strip()]
-    last_start = nonempty[-1][0] if nonempty else -1
-    for start, line in nonempty:
-        match = re.fullmatch(r'\s*(?:###\s+|Final answer:\s*)(.+?)\s*', line, re.I)
+    for start, line in lines:
+        match = LABEL.fullmatch(line)
         if match:
-            payload = match[1]
-            if '###' in payload or re.search(r'\bFinal answer:',payload,re.I):
-                return None
-            # A boxed payload inside a label is unwrapped by the box scanner.
-            box=re.search(r'\\boxed\s*\{',payload)
-            if box and normalize_payload(payload[:box.start()]).strip('$'):
-                return None
-            if not box:
-                records.append((normalize_payload(payload), start, start + len(line), start == last_start))
-    for match in re.finditer(r'\\boxed\s*\{', text):
-        depth = 1; cursor = match.end()
-        while cursor < len(text) and depth:
-            if text[cursor] == '{' and (cursor == 0 or text[cursor-1] != '\\'): depth += 1
-            elif text[cursor] == '}' and (cursor == 0 or text[cursor-1] != '\\'): depth -= 1
-            cursor += 1
-        if depth:
-            return None
-        end = cursor
-        suffix = text[end:].strip()
-        terminal = match.start() >= last_start and re.fullmatch(r'[.$\s]*|\\[)\]]\s*[.]*', suffix) is not None
-        records.append((normalize_payload(text[match.end():end-1]), match.start(), end, terminal))
+            payload = _label_payload(match[1])
+            if payload is None: return None
+            records.append((payload, start, start + len(line), start == last))
     return records
 
 
@@ -66,29 +59,25 @@ def extract_answer(text):
     if not isinstance(text, str) or not text.strip():
         return '', 'MISSING_EXPLICIT_FINAL_ANSWER'
     records = boundaries(text)
-    if records is None:
-        return '', 'MALFORMED_FINAL_BOUNDARY'
-    if not records or not any(r[3] for r in records):
-        # Accept a complete standalone expression, never a number picked out of prose.
-        standalone=normalize_payload(text)
-        if (not records and '\n' not in standalone and '\r' not in standalone
-                and re.fullmatch(r'[\d\s+*/^=.,{}()\[\]<>|;:!%\-\\a-zA-Z]+', standalone)
-                and not re.search(r'\b[A-Za-z]{4,}\b', re.sub(r'\\[A-Za-z]+', '', standalone))
-                and any(c.isdigit() for c in standalone)):
-            return standalone, None
-        return '', 'MISSING_EXPLICIT_FINAL_ANSWER'
-    if any(not r[0] for r in records):
-        return '', 'EMPTY_FINAL_PAYLOAD'
-    if len({r[0] for r in records}) != 1:
-        return '', 'CONFLICTING_FINAL_ANSWERS'
-    payload=next(r[0] for r in records if r[3])
-    # The native mathematical parser must not extract a convenient subexpression
-    # from prose inside a final declaration. Mathematical commands remain native.
-    without_commands=re.sub(r'\\[A-Za-z]+','',payload)
-    words=re.findall(r'[A-Za-z]{2,}',without_commands)
-    if any(w.casefold() not in {'sqrt','sin','cos','tan','log','ln','pi','oo','inf','cm','mm','kg'} for w in words):
-        return '', 'AMBIGUOUS_FINAL_PAYLOAD'
-    return payload, None
+    if records is None: return '', 'MALFORMED_FINAL_BOUNDARY'
+    if not records or not records[-1][3]: return '', 'MISSING_EXPLICIT_FINAL_ANSWER'
+    if any(not r[0] for r in records): return '', 'EMPTY_FINAL_PAYLOAD'
+    for payload, *_ in records:
+        without_commands = re.sub(r'\\[A-Za-z]+', '', payload)
+        words = re.findall(r'[A-Za-z]{2,}', without_commands)
+        if any(w.casefold() not in {'sqrt','sin','cos','tan','log','ln','pi','oo','inf','cm','mm','kg'} for w in words):
+            return '', 'AMBIGUOUS_FINAL_PAYLOAD'
+    final = records[-1][0]
+    if len({r[0] for r in records}) > 1:
+        from .math_domain_v2 import domain_matrix
+        # No gold is available here. Compare declarations to one another using
+        # the same pinned relation, instead of treating equivalent syntax as conflict.
+        for other, *_ in records[:-1]:
+            if other == final: continue
+            relation = domain_matrix((other, final))
+            if not all(relation['valid']): return '', 'PAYLOAD_PARSE_FAILURE'
+            if not relation['equivalence'][0][1]: return '', 'CONFLICTING_FINAL_ANSWERS'
+    return final, None
 
 
 def classify_prediction(text, finish_reason='stop'):

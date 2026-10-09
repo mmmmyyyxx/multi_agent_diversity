@@ -7,7 +7,7 @@ from .textual_gradients import pattern_policy_for_trajectory
 from .rolling_risk_memory import POLICY as MEMORY_POLICY
 from .private_action_memory import LIMITS
 from .current_layer1 import EvidenceLayer1Config
-from .optimization_evidence import frozen_policy, METHOD, LAYER1, EVIDENCE, MEMORY, INPUT
+from .optimization_evidence import frozen_policy, METHOD, LAYER1, EVIDENCE, MEMORY, INPUT, PROBE_POLICY
 
 
 def require_current_contract(contract):
@@ -16,7 +16,8 @@ def require_current_contract(contract):
     from .optimization_evidence import BINDING
     if (contract.get('method_identity') != METHOD or contract.get('identity') != BINDING
             or contract.get('paired_realization_policy') is not None
-            or contract.get('gradient_recovery_policy') is not None):
+            or contract.get('gradient_recovery_policy') is not None
+            or contract.get('repair_probe_policy') != PROBE_POLICY):
         raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
     frozen_policy(contract.get('optimization_evidence_policy'))
     from ..benchmarks.math_structured_interface import SYSTEM_PROMPT_POLICY, system_interface_contract
@@ -64,12 +65,13 @@ class CurrentPolicyBundle:
             raise SearchContractError('PATTERN_PARTITION_COMPLETION_POLICY_MISMATCH')
         method = SearchMethodConfig(method=METHOD, search_engine=self.layer1,
             diagnosis_policy=self.responsibility, aggregation_policy=aggregation,
-            evidence_policy=self.evidence, feasibility_policy='variable_evidence_feasibility_v1',
+            evidence_policy=self.evidence, feasibility_policy=identities.UNIFIED_VARIABLE_FEASIBILITY_VERSION,
             transition_policy=self.transition, pattern_policy=self.clustering,
             memory_policy=self.memory, search_acceptance_policy='layer1_local_guidance_team_admission_v1',
             global_stop=GlobalStopConfig(emergency_max_provider_calls=successful_provider_calls),
             mechanism_config=dict(memory=deepcopy(LIMITS), shared_risk_policy=deepcopy(MEMORY_POLICY),
                 optimizer_input_schema=INPUT, panel_policy=self.evidence, pattern_policy=pattern_policy,
+                repair_probe_policy=deepcopy(PROBE_POLICY),
                 pattern_provider_binding=provider_binding,
                 pattern_support_id_transport=identities.PATTERN_SUPPORT_ID_ALIAS_VERSION,
                 pattern_abstraction_guard=identities.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION))
@@ -100,7 +102,7 @@ class CurrentPolicyBundle:
         require_current_contract(contract)
         from .solver_execution import frozen_execution_policy
         execution=frozen_execution_policy(contract)
-        if execution and contract.get('accounting_scope_policy')!='FRESH_V24_STRUCTURED_SINGLE_ARM_2M_V1':
+        if execution and contract.get('accounting_scope_policy')!='FRESH_V25_REPAIR_SINGLE_ARM_2M_V2':
             raise SearchContractError('V24_ACCOUNTING_SCOPE_MISMATCH')
         from ..benchmarks.math_optimizer_generation import frozen_cluster_policy
         frozen_cluster_policy(contract)

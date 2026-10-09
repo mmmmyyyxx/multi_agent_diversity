@@ -11,7 +11,7 @@ from .math_domain_v2 import SETTINGS
 
 
 def frozen_prediction_policy(contract):
-    if contract.get('identity') == versions.MATH_STRUCTURED_SYSTEM_BINDING_VERSION:
+    if contract.get('identity') == versions.MATH_RESPONSIBILITY_REPAIR_BINDING_VERSION:
         from .math_structured_answer import validity_contract
         expected = validity_contract()
         if contract.get('prediction_validity_policy') != expected:
@@ -69,7 +69,7 @@ def invalid_recovery_contract():
 
 
 def frozen_recovery_policy(contract):
-    if contract.get('identity')!=versions.MATH_STRUCTURED_SYSTEM_BINDING_VERSION:
+    if contract.get('identity')!=versions.MATH_RESPONSIBILITY_REPAIR_BINDING_VERSION:
         raise SearchContractError('MATH_INVALID_RECOVERY_REQUIRES_FRESH_BINDING')
     expected=structured_recovery_contract()
     policy=contract.get('invalid_recovery_policy')
@@ -80,7 +80,7 @@ def frozen_recovery_policy(contract):
 
 def structured_recovery_contract():
     from .math_structured_answer import IDENTITY
-    return {**invalid_recovery_contract(), 'identity':'MATH_STRUCTURED_INVALID_RECOVERY_V3',
+    return {**invalid_recovery_contract(), 'identity':'MATH_EXPLICIT_FINAL_INVALID_RECOVERY_V4',
         'same_request_bytes':False,'same_messages_and_sampling':True,
         'capacity_policy':'STRUCTURED_SOLVER_CAPACITY_EXECUTION_V2',
         'answer_extraction':IDENTITY,'retry_trigger':'extraction_or_frozen_invalidity_never_correctness'}

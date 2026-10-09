@@ -108,7 +108,8 @@ def current_scientific_files(root: Path, *, execution_closure: bool = False) -> 
     cluster_output_contract = root/'docs/design/PATTERN_CLUSTER_OUTPUT_POLICY_V1.md'
     if cluster_output_contract.is_file():
         result.append(cluster_output_contract)
-    structured_contract=root/'docs/design/STRUCTURED_SYSTEM_PROMPT_V24.md'
+    structured_contract=root/'docs/design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md'
+    if not structured_contract.is_file():structured_contract=root/'docs/design/STRUCTURED_SYSTEM_PROMPT_V24.md'
     if structured_contract.is_file():result.append(structured_contract)
     risk_contract = root/'docs/design/SHARED_RISK_MEMORY_V4.md'
     if risk_contract.is_file():

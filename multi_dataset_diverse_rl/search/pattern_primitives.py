@@ -47,6 +47,9 @@ def sample_labels(row):
 def guard_abstraction(text, rows, *, abstraction_guard_version=None):
     if abstraction_guard_version != versions.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION:
         raise SearchContractError('PATTERN_ABSTRACTION_GUARD_NOT_BOUND')
+    import re
+    if isinstance(text,str) and re.search(r'\b(?:copy|return|output|use)\s+(?:the\s+)?(?:gold|ground\s*truth|reference)\s+(?:answer|solution)\b',text,re.I):
+        raise SearchContractError('PATTERN_DISCOVERY_EXAMPLE_LEAKAGE')
     if (not isinstance(text,str) or not text.strip() or len(text)>600
             or semantic_violation_reasons(text)):
         raise SearchContractError('PATTERN_DISCOVERY_INVALID_ABSTRACTION')

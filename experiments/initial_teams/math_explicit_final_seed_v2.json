@@ -1,0 +1,92 @@
+{
+  "initial_team_data_dependency": "NONE",
+  "members": [
+    {
+      "block_hashes": {
+        "answer": "48ab141e7f440356df2f7f1b4dc70fa10606bf0cc7ff1393ce789de04eee7c92",
+        "role": "75357d685f238b6afd7738be9786fdafde641eb6ca9a3be7471939715a68a4de",
+        "strategy": "afa6fac81c5121011fdbc4345b2e96360ac9310d9f5acbfdcc341ad1ae267ba6"
+      },
+      "member_id": 0,
+      "prompt": {
+        "answer": "On the last line, write \"Final answer:\" followed by your mathematical answer.",
+        "role": "You are a helpful assistant.",
+        "strategy": "Answer the question."
+      },
+      "prompt_sha256": "db24d1be90c073621b93091f1251f28bd8aaa2296a62584226a770e1b7ffd43d",
+      "rendered_system_sha256": "e9c88f9f727ba650ec75a3e02e63afdad651e489c9a32ed387f5299f7bf28711"
+    },
+    {
+      "block_hashes": {
+        "answer": "48ab141e7f440356df2f7f1b4dc70fa10606bf0cc7ff1393ce789de04eee7c92",
+        "role": "75357d685f238b6afd7738be9786fdafde641eb6ca9a3be7471939715a68a4de",
+        "strategy": "afa6fac81c5121011fdbc4345b2e96360ac9310d9f5acbfdcc341ad1ae267ba6"
+      },
+      "member_id": 1,
+      "prompt": {
+        "answer": "On the last line, write \"Final answer:\" followed by your mathematical answer.",
+        "role": "You are a helpful assistant.",
+        "strategy": "Answer the question."
+      },
+      "prompt_sha256": "db24d1be90c073621b93091f1251f28bd8aaa2296a62584226a770e1b7ffd43d",
+      "rendered_system_sha256": "e9c88f9f727ba650ec75a3e02e63afdad651e489c9a32ed387f5299f7bf28711"
+    },
+    {
+      "block_hashes": {
+        "answer": "48ab141e7f440356df2f7f1b4dc70fa10606bf0cc7ff1393ce789de04eee7c92",
+        "role": "75357d685f238b6afd7738be9786fdafde641eb6ca9a3be7471939715a68a4de",
+        "strategy": "afa6fac81c5121011fdbc4345b2e96360ac9310d9f5acbfdcc341ad1ae267ba6"
+      },
+      "member_id": 2,
+      "prompt": {
+        "answer": "On the last line, write \"Final answer:\" followed by your mathematical answer.",
+        "role": "You are a helpful assistant.",
+        "strategy": "Answer the question."
+      },
+      "prompt_sha256": "db24d1be90c073621b93091f1251f28bd8aaa2296a62584226a770e1b7ffd43d",
+      "rendered_system_sha256": "e9c88f9f727ba650ec75a3e02e63afdad651e489c9a32ed387f5299f7bf28711"
+    },
+    {
+      "block_hashes": {
+        "answer": "48ab141e7f440356df2f7f1b4dc70fa10606bf0cc7ff1393ce789de04eee7c92",
+        "role": "75357d685f238b6afd7738be9786fdafde641eb6ca9a3be7471939715a68a4de",
+        "strategy": "afa6fac81c5121011fdbc4345b2e96360ac9310d9f5acbfdcc341ad1ae267ba6"
+      },
+      "member_id": 3,
+      "prompt": {
+        "answer": "On the last line, write \"Final answer:\" followed by your mathematical answer.",
+        "role": "You are a helpful assistant.",
+        "strategy": "Answer the question."
+      },
+      "prompt_sha256": "db24d1be90c073621b93091f1251f28bd8aaa2296a62584226a770e1b7ffd43d",
+      "rendered_system_sha256": "e9c88f9f727ba650ec75a3e02e63afdad651e489c9a32ed387f5299f7bf28711"
+    },
+    {
+      "block_hashes": {
+        "answer": "48ab141e7f440356df2f7f1b4dc70fa10606bf0cc7ff1393ce789de04eee7c92",
+        "role": "75357d685f238b6afd7738be9786fdafde641eb6ca9a3be7471939715a68a4de",
+        "strategy": "afa6fac81c5121011fdbc4345b2e96360ac9310d9f5acbfdcc341ad1ae267ba6"
+      },
+      "member_id": 4,
+      "prompt": {
+        "answer": "On the last line, write \"Final answer:\" followed by your mathematical answer.",
+        "role": "You are a helpful assistant.",
+        "strategy": "Answer the question."
+      },
+      "prompt_sha256": "db24d1be90c073621b93091f1251f28bd8aaa2296a62584226a770e1b7ffd43d",
+      "rendered_system_sha256": "e9c88f9f727ba650ec75a3e02e63afdad651e489c9a32ed387f5299f7bf28711"
+    }
+  ],
+  "ordered_member_ids": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "ordered_team_sha256": "364c3cb31ab05aab7ee458a473f8a526c919a359070ced04e4890b0cc90aa76f",
+  "semantic_contract": [
+    "complete editable system prompt"
+  ],
+  "team_version": "MATH_IDENTICAL_EXPLICIT_FINAL_SEED_V2"
+}

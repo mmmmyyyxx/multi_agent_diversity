@@ -16,7 +16,7 @@ from multi_dataset_diverse_rl.search.solver_execution import POLICY, bounded_ord
 from multi_dataset_diverse_rl.persistence.provider_receipts import ProviderResponseReceipts
 from multi_dataset_diverse_rl.persistence.exact_output_cache import DurableExactOutputCache, digest
 from multi_dataset_diverse_rl.governance.token_accounting import (
-    TokenLedger, POLICY_V24_2M, POLICY_V23_2M, OperationalAbort, reservation)
+    TokenLedger, POLICY_V25_2M, POLICY_V23_2M, OperationalAbort, reservation)
 from multi_dataset_diverse_rl.persistence.durable_io import append_jsonl
 
 
@@ -57,12 +57,12 @@ def measure_fixture(path,concurrency):
         with mutex:active-=1;completed.append(i)
         if i%53==0 and ordinal==1:
             raise APIConnectionError(request=httpx.Request('POST','https://offline.invalid'))
-        return response('Synthetic arithmetic step.\n### '+('2' if i%3 else '3'))
+        return response('Synthetic arithmetic step.\nFinal answer: '+('2' if i%3 else '3'))
     c['decoding']={**c['decoding'],'retry_sleep_seconds':0}
     # 300 logical observations, 270 distinct keys, adjacent in-flight duplicates.
     jobs=tuple(range(8))+tuple(i for i in range(8,30) for _ in range(2))+tuple(range(8))+tuple(range(30,270))
     started=time.monotonic()
-    with TokenLedger(path/'accounting',task_sha256='e'*64,policy=POLICY_V24_2M) as ledger:
+    with TokenLedger(path/'accounting',task_sha256='e'*64,policy=POLICY_V25_2M) as ledger:
         broker=broker_fixture(path,c,transport,ledger)
         results=bounded_ordered_map(lambda i:call(broker,i),jobs,concurrency)
         view=ledger.view();events=tuple(ledger.events)
@@ -111,12 +111,12 @@ def test_300_serial_parallel_equivalence_dedup_ledger_receipts_and_actual_inflig
 
 
 def test_capacity_only_after_length_and_never_resets_four_draws(tmp_path):
-    requests=[];replies=[('length','unfinished'),('stop','missing marker'),('length','again'),('stop','step\n### 2')]
+    requests=[];replies=[('length','unfinished'),('stop','missing marker'),('length','again'),('stop','step\nFinal answer: 2')]
     def transport(req):
         requests.append(req);finish,text=replies[len(requests)-1]
         return {**response(text),'finish_reason':finish}
     c=parallel_contract()
-    with TokenLedger(tmp_path/'accounting',task_sha256='e'*64,policy=POLICY_V24_2M) as ledger:
+    with TokenLedger(tmp_path/'accounting',task_sha256='e'*64,policy=POLICY_V25_2M) as ledger:
         broker=broker_fixture(tmp_path,c,transport,ledger);result=call(broker,1)
         assert [r['max_tokens'] for r in requests]==[3600,6144,3600,6144]
         assert result['resolved_prediction']['semantic_attempt_count']==4
@@ -129,9 +129,9 @@ def test_capacity_only_after_length_and_never_resets_four_draws(tmp_path):
 def test_terminal_length_is_invalid_and_no_8192_or_fifth_call(tmp_path):
     requests=[]
     def transport(req):
-        requests.append(req);return {**response('step\n### 2'),'finish_reason':'length'}
+        requests.append(req);return {**response('step\nFinal answer: 2'),'finish_reason':'length'}
     c=parallel_contract()
-    with TokenLedger(tmp_path/'accounting',task_sha256='e'*64,policy=POLICY_V24_2M) as ledger:
+    with TokenLedger(tmp_path/'accounting',task_sha256='e'*64,policy=POLICY_V25_2M) as ledger:
         result=call(broker_fixture(tmp_path,c,transport,ledger),1)
     assert [r['max_tokens'] for r in requests]==[3600,6144,6144,6144]
     assert result['resolved_prediction']['terminal_invalid'] and result['resolved_prediction']['answer']==''
@@ -146,8 +146,8 @@ def test_batch_fatal_failure_stops_dispatch_drains_and_persists(tmp_path):
         time.sleep(0.01 if i==0 else 0.15)
         with mutex:active-=1
         if i==0:raise RuntimeError('SYNTHETIC_TERMINAL_FAILURE')
-        return response('step\n### 2')
-    with TokenLedger(tmp_path/'accounting',task_sha256='e'*64,policy=POLICY_V24_2M) as ledger:
+        return response('step\nFinal answer: 2')
+    with TokenLedger(tmp_path/'accounting',task_sha256='e'*64,policy=POLICY_V25_2M) as ledger:
         broker=broker_fixture(tmp_path,c,transport,ledger)
         with pytest.raises(OperationalAbort,match='PROVIDER_TERMINAL_RuntimeError'):
             bounded_ordered_map(lambda i:call(broker,i),range(300),8)
@@ -162,4 +162,4 @@ def test_batch_fatal_failure_stops_dispatch_drains_and_persists(tmp_path):
 def test_structured_scope_cannot_reopen_historical_serial_journal(tmp_path):
     with TokenLedger(tmp_path,task_sha256='e'*64,policy=POLICY_V23_2M):pass
     with pytest.raises(OperationalAbort,match='TOKEN_LEDGER_CORRUPTION'):
-        TokenLedger(tmp_path,task_sha256='e'*64,policy=POLICY_V24_2M)
+        TokenLedger(tmp_path,task_sha256='e'*64,policy=POLICY_V25_2M)

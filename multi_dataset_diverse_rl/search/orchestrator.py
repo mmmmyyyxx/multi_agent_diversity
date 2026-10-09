@@ -206,7 +206,7 @@ class UnifiedSearchOrchestrator:
                 history=self.history, update_index=index,
             )
             if opportunity is None:
-                reason = "NO_FEASIBLE_OPPORTUNITY"
+                reason = getattr(self.opportunities,'last_reason','NO_REPAIR_SIGNAL')
                 break
             if self.observation_observer:
                 self.observation_observer('MEMORY_BEFORE_OPPORTUNITY',dict(

@@ -62,10 +62,10 @@ class RequestBroker:
         self.prediction_policy = frozen_prediction_policy(contract)
         self.recovery_policy = frozen_recovery_policy(contract)
         self.optimizer_policy = frozen_optimizer_policy(contract)
-        self.gradient_pattern = contract.get('pattern_policy',{}).get('discovery') == versions.GRADIENT_PATTERN_DISCOVERY_VERSION
+        self.gradient_pattern = contract.get('pattern_policy',{}).get('discovery') == versions.RECOVERABLE_PATTERN_DISCOVERY_VERSION
         if self.gradient_pattern:
             from .textual_gradients import pattern_policy_for_trajectory
-            if (contract.get('identity')!=versions.MATH_STRUCTURED_SYSTEM_BINDING_VERSION
+            if (contract.get('identity')!=versions.MATH_RESPONSIBILITY_REPAIR_BINDING_VERSION
                     or contract['pattern_policy']!=pattern_policy_for_trajectory(self.solver_trajectory_policy, contract.get('optimization_evidence_policy'))
                     or contract.get('pattern_abstraction_guard')!=CURRENT_CONTENT_GUARD
                     or not contract.get('gradient_prompt_sha256')):
@@ -116,11 +116,11 @@ class RequestBroker:
             request['max_tokens'] = output_capacity
         identity = {"provider": c["provider"], "role": role, "split": split, "request": request,
                     "cache_namespace": c["cache_namespace"]}
-        if c.get('identity')==versions.MATH_STRUCTURED_SYSTEM_BINDING_VERSION:
+        if c.get('identity')==versions.MATH_RESPONSIBILITY_REPAIR_BINDING_VERSION:
             identity['system_prompt_policy'] = c['system_prompt_policy']
             identity['answer_extraction_policy'] = c['answer_extraction_policy']
             identity['method_treatment'] = {k:c[k] for k in ('method_identity', 'transition_policy')}
-        if c.get('identity')==versions.MATH_STRUCTURED_SYSTEM_BINDING_VERSION:
+        if c.get('identity')==versions.MATH_RESPONSIBILITY_REPAIR_BINDING_VERSION:
             identity['memory_treatment']={k:c[k] for k in ('memory_policy_identity','memory_limits','layer1_search_policy','optimizer_input_schema','panel_evidence_policy')}
         if c.get('pattern_policy'):
             identity['pattern_treatment']={k:c[k] for k in ('pattern_policy','shared_risk_policy')}

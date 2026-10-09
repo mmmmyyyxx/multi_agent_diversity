@@ -1,19 +1,21 @@
 # Current Method
 
 The sole active research architecture is Unified Team Prompt Search.
-The sole current method is V2.4 Structured System Prompt Optimization,
-`unified_team_prompt_search_v2_4_structured_system_prompt`.
+The sole current method is V2.5 Responsibility Fallback and Repair Probe,
+`unified_team_prompt_search_v2_5_responsibility_fallback_repair_probe`.
 
 [Current specification](docs/design/CURRENT_SPEC.md) and
-[V2.4 scientific contract](docs/design/STRUCTURED_SYSTEM_PROMPT_V24.md) define the
+[V2.5 scientific contract](docs/design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md) define the
 complete editable Role/Strategy/Answer System Prompt, raw-question User message,
 natural response evidence, gold-blind extraction and bounded invalid recovery.
-The existing team-level responsibility, search, plurality, admission, Shadow,
-Memory transaction and atomic commit rules remain unchanged.
+V2.5 adds seeded zero-responsibility fallback, quota-free evidence, structural
+recovery, evaluated local parents and assigned repair plus independent Probe.
+Full admission, plurality, Shadow, Memory transactions and atomic commit remain.
 
 Current execution uses `scripts/run_experiment.py` and
 `build_current_team_prompt_search`. Paid APIs require a fresh frozen exact
-single-use scope. This refactor is zero API; Validation is unauthorized and Test
-sealed. Initial real V2.4 performance is unmeasured. Synthetic improvements
+single-use scope. The current user task authorizes one newly frozen V2.5 Canary;
+Validation, Test and Pilot are unauthorized. Initial V2.5 performance is unmeasured
+until that attempt completes. Synthetic improvements
 are test fixtures. Historical code is recovered from frozen Git sources;
 reports and manifests retain their original scientific meaning.

@@ -83,7 +83,7 @@ class BoundedMemoryOptimizer:
         if path.exists():raise SearchContractError('LAYER1_FRESH_STATE_REQUIRED')
         pattern=json.loads(task.selected_pattern)
         if pattern['pattern_id'] is None:
-            return SearchResult((),'NO_ACTIONABLE_GRADIENT',{'operational_failure':False,
+            return SearchResult((),'NO_ACTIONABLE_PATTERN',{'operational_failure':False,
                 'telemetry':{'proposal_count':0,'local_metric_evaluations':0}},0,0,0,0,0,0,0,0,0)
         examples=(*mutation,*validation)
         if candidate_failed_checks(task.parent_prompt,parent_prompt='__root_contract_check__',examples=examples):
@@ -107,7 +107,8 @@ class BoundedMemoryOptimizer:
             solver_tokens+=sum(o.input_tokens+o.output_tokens for o in observations)
             return [dict(observation_record(row,obs),evidence_revision=INPUT)
                 for row,obs in zip(rows,observations,strict=True)]
-        def mapping(records):return {r['example_id']:{k:r[k] for k in ('correct','valid')} for r in records}
+        def mapping(records):return {r['example_id']:{**{k:r[k] for k in ('correct','valid')},
+            'repeated_format_failure':r['solver_trajectory']['retry_summary']['repeated_format_failure']} for r in records}
         root_mut=evaluate(task.parent_prompt,mutation);root_val=evaluate(task.parent_prompt,validation)
         selected_parent=task.parent_prompt;current_mut=root_mut;current_val=root_val
         root_score=sum(r['correct'] for r in root_val)
@@ -167,16 +168,17 @@ class BoundedMemoryOptimizer:
                 actual_block_diff=step['block_edits'][0]['actual_block_diff'],
                 expected_behavior=pattern['generalized_gradient'],
                 effects=dict(mutation=mut,search_validation=val,actual_parent_validation=immediate),
+                failure_evidence_kind='FORMAT_AND_MATHEMATICS' if val['invalid_ids'] and val['valid_wrong_ids'] else 'FORMAT' if val['invalid_ids'] else 'MATHEMATICS',
                 status='LOCALLY_SUPPORTED' if val['member_delta']>0 and not val['broken_ids'] else 'INCONCLUSIVE',
                 status_history=['PROPOSED'],provenance=dict(split='optimize',generation=generation,
-                    evidence_packet_sha256=common['evidence_packet_hash'],solver_interface='MATH_STRUCTURED_SYSTEM_INTERFACE_V7'))
+                    evidence_packet_sha256=common['evidence_packet_hash'],solver_interface='MATH_EXPLICIT_FINAL_SYSTEM_INTERFACE_V8'))
             lineage['status_history'].append(lineage['status'])
             lineage['provenance']['local_request_identities']={name:{r['example_id']:
                 r['solver_trajectory']['source']['request_sha256'] for r in rows}
                 for name,rows in dict(root_mutation=root_mut,root_validation=root_val,
                     actual_parent_validation=current_val,child_mutation=child_mut,child_validation=child_val).items()}
             details=dict(common,edit_lineage=lineage,changed=True,contract_valid=True,solver_evaluated=True,
-                duplicate=False,local_correct_count=sum(r['correct'] for r in child_val),
+                duplicate=False,local_parent_advanced=True,neutral_parent_advance=immediate['member_delta']<=0,local_correct_count=sum(r['correct'] for r in child_val),
                 local_correct_delta=val['member_delta'],local_newly_fixed=len(val['fixed_ids']),
                 local_newly_broken=len(val['broken_ids']),local_parent_correct_delta=immediate['member_delta'],
                 local_parent_newly_fixed=len(immediate['fixed_ids']),local_parent_newly_broken=len(immediate['broken_ids']),
@@ -188,8 +190,7 @@ class BoundedMemoryOptimizer:
             candidate=SearchCandidate(cid,proposed,float(details['local_correct_count']),{},details)
             pool.append(candidate);journal(dict(details,status='LOCALLY_EVALUATED'))
             # SearchValidation updates the next parent; never the pre-generation packet.
-            if immediate['member_delta']>0 and not immediate['broken_ids']:
-                selected_parent=proposed;current_mut=child_mut;current_val=child_val
+            selected_parent=proposed;current_mut=child_mut;current_val=child_val
         def rank(c):
             e=c.backend_details['edit_lineage']['effects']
             return (-e['search_validation']['member_delta'],len(e['search_validation']['broken_ids']),
@@ -214,7 +215,7 @@ class BoundedMemoryOptimizer:
             len(events),len(candidates),0,0,sum(c.backend_details['locally_rejected'] for c in candidates))
 
 class LocalTaskEngine:
-    identity='STRUCTURED_BLOCK_INDEPENDENT_OPTIMIZE_SEARCH_V2'
+    identity='STRUCTURED_EVALUATED_PARENT_SEARCH_V3'
     def __init__(self,optimizer,seed):self.optimizer=optimizer;self.seed=seed
 
     def make_task(self,opportunity,context):

@@ -63,7 +63,7 @@ class SystemPrompt:
 
 
 SEED = SystemPrompt('You are a helpful assistant.', 'Answer the question.',
-                    "Put your final answer in the format '### <answer>'")
+                    'On the last line, write "Final answer:" followed by your mathematical answer.')
 
 
 def require_prompt(value):

@@ -7,20 +7,23 @@ import re
 
 from .schemas import SearchContractError
 
-METHOD = 'unified_team_prompt_search_v2_4_structured_system_prompt'
-IDENTITY = 'STRUCTURED_SYSTEM_OPTIMIZATION_EVIDENCE_POLICY_V2'
-INPUT = 'STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V7'
-LAYER1 = 'STRUCTURED_BLOCK_INDEPENDENT_OPTIMIZE_SEARCH_V2'
-EVIDENCE = 'DISJOINT_ROTATING_OPTIMIZE_EVIDENCE_V1'
-MEMORY = 'BOOTSTRAPPED_BLOCK_EDIT_EFFECT_MEMORY_V2'
-GRADIENT_INPUT = 'STRUCTURED_SYSTEM_GRADIENT_INPUT_V4'
-GRADIENT_PROMPT_ID = 'STRUCTURED_SYSTEM_GRADIENT_PROMPT_V6'
-BINDING = 'MATH_STRUCTURED_SYSTEM_EVIDENCE_BINDING_V1'
+METHOD = 'unified_team_prompt_search_v2_5_responsibility_fallback_repair_probe'
+IDENTITY = 'RESPONSIBILITY_REPAIR_OPTIMIZATION_EVIDENCE_POLICY_V3'
+INPUT = 'STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V8'
+LAYER1 = 'STRUCTURED_EVALUATED_PARENT_SEARCH_V3'
+EVIDENCE = 'DISJOINT_QUOTA_FREE_REPAIR_EVIDENCE_V2'
+MEMORY = 'BOOTSTRAPPED_FORMAT_BLOCK_EDIT_EFFECT_MEMORY_V3'
+GRADIENT_INPUT = 'STRUCTURED_SYSTEM_GRADIENT_INPUT_V5'
+GRADIENT_PROMPT_ID = 'STRUCTURED_SYSTEM_GRADIENT_PROMPT_V7'
+BINDING = 'MATH_RESPONSIBILITY_REPAIR_EVIDENCE_BINDING_V2'
 
 POLICY = dict(identity=IDENTITY, mutation_size=3, search_validation_size=3,
-    minimum_current_wrong=4, minimum_current_correct=6,
-    team_probe_size=3, max_generations=6, max_returned_candidates=4,
-    metric_limit=42, sampling='seeded_member_rotation_without_replacement_v1',
+    team_probe_size=6, assigned_repair='selected_pattern_wrong_mutation_ids_seen',
+    opportunity_eligibility='any_member_wrong_no_accuracy_quota',
+    responsibility_fallback='seed_team_state_opportunity_ordinal_random_legal',
+    local_parent='every_contract_legal_evaluated_edit',
+    structural_recovery_draws=3, max_generations=6, max_returned_candidates=4,
+    metric_limit=42, sampling='seeded_disjoint_no_correct_wrong_quota_v2',
     validation_feedback='measure_after_generation_counts_only_next_iteration',
     selection='validation_net_then_preservation_then_mutation_net_then_generation',
     bootstrap='measured_initial_optimize_profiles_zero_llm',
@@ -29,12 +32,21 @@ POLICY = dict(identity=IDENTITY, mutation_size=3, search_validation_size=3,
     reference_solution_max_chars=4096, candidate_guard='optimizer_dependency_guard_v1',
     prompt_state='STRUCTURED_SYSTEM_PROMPT_V1', mutation='single_block_per_generation',
     editable_blocks=['role','strategy','answer'], response_evidence='observed_content_optional_trajectory',
-    answer_extraction='MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V1')
+    answer_extraction='MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V2')
+
+# Six independent examples: losing at least half of this small panel is a
+# catastrophe. Lesser regression stays measurable; unchanged Full/Shadow decide.
+PROBE_POLICY = dict(identity='SEEN_ASSIGNED_REPAIR_INDEPENDENT_TEAM_PROBE_V2',
+    independent_size=6, minimum_assigned_binary_repairs=1,
+    catastrophic_vote_net_loss=3, catastrophic_target_net_loss=3,
+    catastrophic_collateral_loss=3, invalid_math='incorrect_observation_only',
+    rank=['vote_delta','target_delta','negative_collateral_loss','negative_invalid_delta','candidate_id'],
+    max_full=2, seen_repair_inference='SEEN_ASSIGNED_REPAIR_NOT_GENERALIZATION')
 
 
 def frozen_policy(value):
     if value is None:
-        raise SearchContractError('CURRENT_V24_OPTIMIZATION_EVIDENCE_REQUIRED')
+        raise SearchContractError('CURRENT_V25_OPTIMIZATION_EVIDENCE_REQUIRED')
     if value != POLICY or any(type(value.get(k)) is not type(v) for k, v in POLICY.items()):
         raise SearchContractError('OPTIMIZATION_EVIDENCE_POLICY_MISMATCH')
     return deepcopy(POLICY)
@@ -67,6 +79,12 @@ def coverage_effect(before, after, *, scope):
     fixed=[x for x in ids if not before[x]['correct'] and after[x]['correct']]
     broken=[x for x in ids if before[x]['correct'] and not after[x]['correct']]
     return dict(scope=scope, membership=ids, fixed_ids=fixed, broken_ids=broken,
+        parent_invalid_count=sum(not r['valid'] for r in before.values()),
+        child_invalid_count=sum(not r['valid'] for r in after.values()),
+        valid_to_invalid_ids=[x for x in ids if before[x]['valid'] and not after[x]['valid']],
+        invalid_to_valid_wrong_ids=[x for x in ids if not before[x]['valid'] and after[x]['valid'] and not after[x]['correct']],
+        invalid_to_valid_correct_ids=[x for x in ids if not before[x]['valid'] and after[x]['correct']],
+        repeated_format_failure_ids=[x for x in ids if after[x].get('repeated_format_failure') is True],
         retained_ids=[x for x in ids if before[x]['correct'] and after[x]['correct']],
         valid_wrong_ids=[x for x in ids if after[x]['valid'] and not after[x]['correct']],
         invalid_ids=[x for x in ids if not after[x]['valid']],

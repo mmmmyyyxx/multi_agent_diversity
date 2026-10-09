@@ -39,6 +39,8 @@ POLICY_V23_PARALLEL_2M = {**POLICY_V23_2M,
 POLICY_V24_2M = {**POLICY_V23_PARALLEL_2M,
     "identity": "MATH_STRUCTURED_TOKEN_ACCOUNTING_V2"}
 
+POLICY_V25_2M = {**POLICY_V24_2M, "identity": "MATH_RESPONSIBILITY_REPAIR_TOKEN_ACCOUNTING_V3"}
+
 
 class OperationalAbort(BaseException):
     """Cannot be swallowed by optimizer code handling ordinary exceptions."""
@@ -111,7 +113,7 @@ def _digest(value):
 class TokenLedger:
     def __init__(self, directory: Path, *, task_sha256: str, policy=POLICY,
                  best_effort_snapshots=False):
-        if policy not in (POLICY, POLICY_40M, POLICY_V23_2M, POLICY_V23_PARALLEL_2M, POLICY_V24_2M) or len(task_sha256) != 64:
+        if policy not in (POLICY, POLICY_40M, POLICY_V23_2M, POLICY_V23_PARALLEL_2M, POLICY_V24_2M, POLICY_V25_2M) or len(task_sha256) != 64:
             raise OperationalAbort("TOKEN_ACCOUNTING_POLICY_IDENTITY_MISMATCH")
         self.directory = Path(directory)
         if type(best_effort_snapshots) is not bool:
@@ -141,7 +143,7 @@ class TokenLedger:
             raise OperationalAbort("TOKEN_LEDGER_ALREADY_OWNED") from exc
         self.task_sha256 = task_sha256
         self.policy = dict(policy)
-        fresh_policies=(POLICY, POLICY_V23_2M, POLICY_V23_PARALLEL_2M, POLICY_V24_2M)
+        fresh_policies=(POLICY, POLICY_V23_2M, POLICY_V23_PARALLEL_2M, POLICY_V24_2M, POLICY_V25_2M)
         self.authorized_total = policy['authorized_total'] if policy in fresh_policies else POLICY["authorized_total"]
         self.authorization_amendments = []
         self.events = []
@@ -181,7 +183,7 @@ class TokenLedger:
                 or row.get("previous_sha256") != (self.events[-1]["event_sha256"] if self.events else None)):
             raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
         if row["kind"] == "AUTHORIZE":
-            if (self.events or row["policy"] not in (POLICY, POLICY_V23_2M, POLICY_V23_PARALLEL_2M, POLICY_V24_2M)
+            if (self.events or row["policy"] not in (POLICY, POLICY_V23_2M, POLICY_V23_PARALLEL_2M, POLICY_V24_2M, POLICY_V25_2M)
                     or row['policy'] != (POLICY if self.policy == POLICY_40M else self.policy)):
                 raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
         elif row["kind"] == "AUTHORIZATION_AMENDMENT":

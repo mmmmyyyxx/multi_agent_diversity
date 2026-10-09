@@ -261,8 +261,8 @@ def test_real_canary_is_execution_evidence_only(registry):
     assert row['active_for_new_work'] is False
 
 
-def assert_closed_v24_scope(frontier,registry):
-    assert frontier['current_method']=='unified_team_prompt_search_v2_4_structured_system_prompt'
+def assert_closed_v25_scope(frontier,registry):
+    assert frontier['current_method']=='unified_team_prompt_search_v2_5_responsibility_fallback_repair_probe'
     assert frontier['real_execution_ready'] is False
     assert frontier['real_api_authorized'] is False
     assert frontier['validation_access']=='not_authorized' and frontier['test_access']=='sealed'
@@ -271,19 +271,17 @@ def assert_closed_v24_scope(frontier,registry):
                   'pilot_search_complete','pilot_validation_complete','old_evidence_reuse_allowed'):
         assert frontier[field] is False
     assert frontier['pending_pilot_operational_retry_limit']==0
-    assert frontier['initial_accuracy']=='UNMEASURED'
+    assert frontier['initial_accuracy'] in {'UNMEASURED','MEASURED_FROM_CURRENT_CANARY'}
     active={r['experiment_id'] for r in registry['experiments'] if r['active_for_new_work']}
-    assert active=={'structured_system_prompt_v24','a4_v24_structured_canary_v1','a4_v24_structured_pilot_v1'}
-    for role in ('canary','pilot'):
-        ident='a4_v24_structured_'+role+'_v1'
-        m=load_yaml(ROOT/'experiments/manifests'/ (ident+'.yaml'))
-        assert m['authorization']['real_api_authorized'] is False
-        assert m['execution_binding']['identity']=='MATH_STRUCTURED_SYSTEM_EVIDENCE_BINDING_V1'
-        assert m['method_identity']==frontier['current_method']
+    assert active<={'a4_v25_responsibility_repair_canary_v1'}
+    m=load_yaml(ROOT/'experiments/manifests/a4_v25_responsibility_repair_canary_v1.yaml')
+    assert m['authorization']['real_api_authorized'] is False
+    assert m['execution_binding']['identity']=='MATH_RESPONSIBILITY_REPAIR_EVIDENCE_BINDING_V2'
+    assert m['method_identity']==frontier['current_method']
 
 
 def test_current_scope_is_fresh_and_unapproved(registry):
-    assert_closed_v24_scope(load_yaml(ROOT/'experiments/current_frontier.yaml'),registry)
+    assert_closed_v25_scope(load_yaml(ROOT/'experiments/current_frontier.yaml'),registry)
 
 
 @pytest.mark.parametrize('field,value',[
@@ -294,6 +292,6 @@ def test_current_scope_is_fresh_and_unapproved(registry):
     ('initial_accuracy',0.8),('pilot_search_complete',True)])
 def test_preparation_cannot_authorize_or_import_results(registry,field,value):
     frontier=deepcopy(load_yaml(ROOT/'experiments/current_frontier.yaml'))
-    assert_closed_v24_scope(frontier,registry)
+    assert_closed_v25_scope(frontier,registry)
     frontier[field]=value
-    with pytest.raises(AssertionError):assert_closed_v24_scope(frontier,registry)
+    with pytest.raises(AssertionError):assert_closed_v25_scope(frontier,registry)

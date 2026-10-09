@@ -8,10 +8,11 @@ from ..current_contract import GRADIENT_PARTITION_COMPLETION_VERSION
 from .schemas import SearchContractError
 
 IDENTITY = GRADIENT_PARTITION_COMPLETION_VERSION
-POLICY = dict(identity=IDENTITY, admissible_defect='KNOWN_ALIAS_OMISSION_ONLY',
+POLICY = dict(identity=IDENTITY, admissible_defect='KNOWN_ALIAS_OMISSION_OR_INVALID_PATTERN_CONTENT',
     destination='unassigned_ids', ordering='existing_then_missing_in_input_order',
     preserve_raw_response=True, preserve_explicit_supports=True,
-    semantic_assignment=False, semantic_regeneration=False, extra_provider_calls=0)
+    semantic_assignment=False, semantic_regeneration=False, extra_provider_calls=0,
+    invalid_pattern='known_support_to_unassigned_preserve_valid_patterns')
 
 
 def partition_hash(value):
@@ -32,7 +33,7 @@ def complete_known_alias_partition(raw, aliases, *, validate_generalized):
     audit = dict(policy=IDENTITY, raw_complete=False, completion_applied=False,
         missing_aliases=[], missing_count=0, duplicate_count=0, unknown_count=0,
         raw_partition_sha256=partition_hash(raw), normalized_partition_sha256=None,
-        status='FAIL', defect=None)
+        status='FAIL', defect=None,discarded_pattern_count=0,discarded_support_count=0)
 
     def reject(category, defect):
         audit['defect'] = defect
@@ -47,7 +48,7 @@ def complete_known_alias_partition(raw, aliases, *, validate_generalized):
     all_ids = list(raw['unassigned_ids'])
     for pattern in raw['patterns']:
         if (not isinstance(pattern, dict)
-                or set(pattern) != {'generalized_gradient', 'support_ids'}
+                or 'support_ids' not in pattern
                 or not isinstance(pattern['support_ids'], list)
                 or not pattern['support_ids']):
             reject('PATTERN_GRADIENT_CLUSTER_INVALID', 'MALFORMED_PATTERN')
@@ -61,16 +62,23 @@ def complete_known_alias_partition(raw, aliases, *, validate_generalized):
     audit['missing_count'] = len(audit['missing_aliases'])
     if audit['unknown_count'] or audit['duplicate_count']:
         reject('PATTERN_GRADIENT_CLUSTER_INVALID_MEMBERSHIP', 'CONTRADICTORY_MEMBERSHIP')
+    normalized = deepcopy(raw)
+    normalized['patterns']=[]
     for pattern in raw['patterns']:
         try:
+            if set(pattern)!={'generalized_gradient','support_ids'}:
+                raise SearchContractError('PATTERN_GRADIENT_CLUSTER_INVALID')
             validate_generalized(pattern['generalized_gradient'])
-        except SearchContractError:
-            reject('PATTERN_GRADIENT_CLUSTER_INVALID', 'INVALID_GENERALIZED_GRADIENT')
-    normalized = deepcopy(raw)
+        except SearchContractError as exc:
+            if str(exc)=='PATTERN_DISCOVERY_EXAMPLE_LEAKAGE':raise
+            normalized['unassigned_ids'].extend(pattern['support_ids'])
+            audit['discarded_pattern_count']+=1
+            audit['discarded_support_count']+=len(pattern['support_ids'])
+        else:normalized['patterns'].append(deepcopy(pattern))
     normalized['unassigned_ids'].extend(audit['missing_aliases'])
     audit.update(raw_complete=not audit['missing_count'],
         completion_applied=bool(audit['missing_count']), status='PASS',
-        defect='KNOWN_ALIAS_OMISSION_ONLY' if audit['missing_count'] else 'NONE',
+        defect='INVALID_PATTERN_CONTENT' if audit['discarded_pattern_count'] else 'KNOWN_ALIAS_OMISSION_ONLY' if audit['missing_count'] else 'NONE',
         normalized_partition_sha256=partition_hash(normalized),
         normalized_membership_count=len(aliases), input_count=len(aliases))
     return normalized, audit

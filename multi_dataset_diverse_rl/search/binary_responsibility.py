@@ -124,7 +124,7 @@ class BinaryPluralityResponsibilityAnalyzer:
             lane = min(scores, key=lambda name: (-scores[name],
                                                  ("direct_flip", "near_margin", "coverage").index(name)))
             if max(scores.values()) == 0:
-                lane = "fallback"
+                lane = "general"
             signals[member] = ResponsibilitySignal(
                 member, counts["direct_flip"], counts["near_margin"],
                 counts["coverage"], lane,

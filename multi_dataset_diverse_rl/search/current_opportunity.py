@@ -15,6 +15,7 @@ class CurrentOpportunityBuilder(OpportunityBuilder):
             and self.evidence.can_compose(rows))
         target = self.target.select(state, diagnosis, feasible, history)
         member = target.selected_member
+        self.last_reason = target.reason
         if member is None: return None
         if member >= len(state.member_prompts): raise SearchContractError("target outside team")
         rows = rows_by_member[member]
@@ -24,7 +25,7 @@ class CurrentOpportunityBuilder(OpportunityBuilder):
         signal = diagnosis.responsibility[member]
         return OptimizationOpportunity(f"{state.team_state_id}:{update_index}:{member}",
             state.team_state_id, member, state.member_prompts[member],
-            {"raw_responsibility":signal.raw_value, "target_score":target.target_scores[member],
+            {"selection_reason":target.reason,"raw_responsibility":signal.raw_value, "target_score":target.target_scores[member],
              "eligible_members":target.eligible_members,
              **{"target_scores":dict(target.target_scores),
                  "feasibility_by_member":{m:m in feasible for m in rows_by_member}}}, diagnosis, view, pattern_context=pattern,

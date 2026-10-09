@@ -15,11 +15,25 @@ from multi_dataset_diverse_rl.benchmarks.protocols import protocol_input
 from multi_dataset_diverse_rl.search.binary_runtime import CorrectnessExample
 
 ROOT=Path(__file__).resolve().parents[2]
-FRESH='experiments/execution_bindings/a4_v24_structured_seed81_pilot_attempt1.json'
+FRESH='experiments/execution_bindings/a4_v25_seed81_canary_attempt1.json'
 
-def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct=False):
-    fresh=FRESH.replace('_pilot_',f'_{phase}_')
+def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct=False,structural=False):
+    fresh=FRESH
     c=read_json(ROOT/fresh);binding=execution_binding(ROOT,c);assert not binding.blockers()
+    if phase=='pilot':
+        from multi_dataset_diverse_rl.benchmarks.math_structured_binding import derive_structured_contract
+        parent=read_json(ROOT/c['trajectory_parent_binding_path'])
+        c=derive_structured_contract(parent,attempt='synthetic_v25_pilot',binding_path=fresh,
+            parent_path=c['trajectory_parent_binding_path'],parent_sha256=c['trajectory_parent_binding_sha256'],
+            authorization_path=c['current_user_scope_path'],authorization_sha256=c['current_user_scope_sha256'],
+            gradient_prompt_path=c['gradient_prompt_path'],gradient_prompt_sha256=c['gradient_prompt_sha256'],
+            pattern_prompt_path=c['pattern_prompt_path'],pattern_prompt_sha256=c['pattern_prompt_sha256'],
+            validation_metadata_path=c['validation_accounting_metadata_path'],validation_metadata_sha256=c['validation_accounting_metadata_sha256'],
+            initial_team_path=c['initial_team_path'],initial_team_artifact_sha256=c['initial_team_artifact_sha256'],
+            accounting_policy_path=c['accounting_policy_path'],accounting_policy_sha256=c['accounting_policy_sha256'],
+            execution_phase='pilot',max_opportunities=5)
+        binding=execution_binding(ROOT,c)
+        monkeypatch.setattr(binding,'blockers',lambda:())
     subsets=read_subsets(ROOT,c)['memberships'];adapter=binding.benchmark()
     def synthetic_examples(role):
         return tuple(CorrectnessExample(protocol_input('math',r['stable_example_id'],
@@ -34,20 +48,27 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
         p=tmp_path/c[key];p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes((ROOT/c[key]).read_bytes())
     atomic_write_json(tmp_path/fresh,c)
     requests=[]
+    from collections import Counter
+    gradient_draws=Counter();cluster_draws=0
     def transport(req):
+        nonlocal cluster_draws
         requests.append(req)
         if req['model']=='qwen3-8b':
             problem=req['messages'][1]['content']
             answer,i,split=answer_by_problem[problem]
-            return response('Synthetic visible calculation and constraint check.\n### '+(answer if all_correct or i>=6 else '999999997'))
+            return response('Synthetic visible calculation and constraint check.\nFinal answer: '+(answer if all_correct or i>=6 else '999999997'))
         if len(req['messages'])==2:
             p=json.loads(req['messages'][1]['content'])
             if 'example' in p:
+                gradient_draws[p['example']['example_id']]+=1
+                if structural and gradient_draws[p['example']['example_id']]==1:return response('malformed JSON')
                 return response(json.dumps(dict(disposition='UNCERTAIN' if uncertain else 'ACTIONABLE',
                     observed_failure='The actual written operation differs from the labeled reference.',
                     diagnosis='The observed transformation may omit a constraint.',suggested_block='strategy',
                     reusable_correction=None if uncertain else HYPOTHESIS,
                     expected_effect=None if uncertain else 'Retain constraints during transformations.')))
+            cluster_draws+=1
+            if structural and cluster_draws==1:return response('malformed JSON')
             return response(json.dumps(dict(patterns=[dict(generalized_gradient=HYPOTHESIS,
                 support_ids=[g['example_id'] for g in p['gradients']])],unassigned_ids=[])))
         return response('{"decision":"NO_SAFE_EDIT"}')
@@ -84,15 +105,15 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
         assert reviews[1]['audit']['branch_observation']['full']=='NOT_OBSERVED'
     opportunity_count=0 if all_correct else (5 if phase=='pilot' else 1)
     assert len(result['result']['trace'])==opportunity_count
-    assert result['result']['stop_reason']==('NO_FEASIBLE_OPPORTUNITY' if all_correct else
+    assert result['result']['stop_reason']==('NO_REPAIR_SIGNAL' if all_correct else
         'OPERATIONAL_OPPORTUNITY_CEILING' if phase=='pilot' else 'CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE')
     if phase=='pilot':
         assert result['pilot_status']=='INCOMPLETE_OPERATIONAL_TRUNCATION'
     assert result['accounting']['authorized_total']==2_000_000 and not result['accounting']['reserved_inflight']
     assert result['validation_calls']==result['test_calls']==0 and result['memory_audit']['initial_memory_entries']==5
     assert len([r for r in requests if r['model']=='qwen3-8b'])==initial_profiles
-    assert result['pattern_gradient_calls']==6*opportunity_count
-    assert result['pattern_cluster_calls']==(0 if uncertain else opportunity_count)
+    assert result['pattern_gradient_calls']==6*opportunity_count*(2 if structural else 1)
+    assert result['pattern_cluster_calls']==(0 if uncertain else opportunity_count+(1 if structural else 0))
     assert client.closed and read_json(run_root/'lifecycle.json')['status']=='EXECUTION_COMPLETE'
     if phase=='pilot':
         assert (run_root/'SEARCH_CLOSED_RECEIPT.json').exists()
@@ -103,6 +124,10 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
 @pytest.mark.parametrize('phase,all_correct',[('pilot',False),('canary',False),('canary',True)])
 def test_final_entrypoint_continues_same_attempt_after_canary_reviews(tmp_path,monkeypatch,uncertain,phase,all_correct):
     _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase,all_correct)
+
+
+def test_final_entrypoint_accounts_structural_recovery_without_old_single_draw_veto(tmp_path,monkeypatch):
+    _entrypoint_fixture(tmp_path,monkeypatch,False,'canary',False,structural=True)
 
 
 def test_missing_owner_review_aborts_before_optimization_and_closes_accounting(tmp_path,monkeypatch):

@@ -73,7 +73,7 @@ def validate_effective_math_dependencies(binding):
     require(file_hash(team_path)==c['initial_team_artifact_sha256'],'INITIAL_TEAM_ARTIFACT_HASH_MISMATCH')
     validate_current_initial_team(json.loads(team_path.read_bytes()),c)
     metadata=json.loads(binding.path(c['validation_accounting_metadata_path']).read_bytes())
-    require(metadata==dict(identity='V24_HELDOUT_SEAL_NO_ACCESS_METADATA_V1',
+    require(metadata==dict(identity='V25_HELDOUT_SEAL_NO_ACCESS_METADATA_V1',
         validation_model_calls=0,test_model_calls=0,heldout_accounting_reserve=0,
         validation_access='not_authorized',test_access='sealed'),
         'VALIDATION_ACCOUNTING_METADATA_MISMATCH')

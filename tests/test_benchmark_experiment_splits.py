@@ -155,7 +155,7 @@ def test_current_suite_and_bbh_history_only():
     root = Path(__file__).resolve().parents[1]
     frontier = load_yaml(root / "experiments/current_frontier.yaml")
     assert frontier["current_benchmark_suite"] == ["math"]
-    assert frontier["current_method"] == "unified_team_prompt_search_v2_4_structured_system_prompt"
+    assert frontier["current_method"] == "unified_team_prompt_search_v2_5_responsibility_fallback_repair_probe"
     assert frontier["old_evidence_reuse_allowed"] is False
     assert not frontier["real_api_authorized"]
     if frontier["real_execution_ready"] == "true_for_canary_only":

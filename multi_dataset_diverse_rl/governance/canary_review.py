@@ -9,7 +9,7 @@ from ..benchmarks.math_solver_decoding import generation_request_fields
 from .startup_identity import canonical_sha256
 from ..search.schemas import SearchContractError
 
-STRUCTURED_POLICY=dict(identity='STRUCTURED_SYSTEM_CANARY_REVIEW_V3',
+STRUCTURED_POLICY=dict(identity='RESPONSIBILITY_REPAIR_CANARY_REVIEW_V4',
     stages=['INITIAL_SOLVER_PROFILE','FIRST_COMPLETE_OPPORTUNITY'],
     owner_review_required=True,maximum_wait_seconds=3600,
     extra_provider_calls=0,total_max_opportunities=5,
@@ -76,7 +76,7 @@ def opportunity_audit(contract,composed,run_root,opportunity):
     if any(a&b for i,a in enumerate(groups) for b in groups[:i]):
         raise SearchContractError('CANARY_EVIDENCE_ROLE_OVERLAP')
     examples={e.item.input_id:e for e in composed.state.examples}
-    diagnostics=[row for row in rows if row['role']=='pattern_gradient']
+    diagnostics=[row for row in rows if row['role']=='pattern_gradient' and 'response' in row]
     wrong={r.example_id for r in opportunity.evaluation_plan['evidence_universe']
         if not r.signals['target_member_correct']}
     observed=[]
@@ -88,7 +88,7 @@ def opportunity_audit(contract,composed,run_root,opportunity):
                 or e['solver_trajectory']['source']['member_id']!=opportunity.target_member):
             raise SearchContractError('CANARY_GRADIENT_EVIDENCE_MISMATCH')
         observed.append(xid)
-    if len(observed)!=len(wrong) or set(observed)!=wrong:
+    if set(observed)!=wrong or any(not 1<=n<=3 for n in Counter(observed).values()):
         raise SearchContractError('CANARY_INDEPENDENT_GRADIENT_MEMBERSHIP_MISMATCH')
     mutation_problems=[r.signals['input_payload'] for r in opportunity.evidence.mutation_evidence]
     mutations=[row for row in rows if row['role']=='reflection']
@@ -99,7 +99,7 @@ def opportunity_audit(contract,composed,run_root,opportunity):
             raise SearchContractError('CANARY_MUTATION_MEMBERSHIP_MISMATCH')
     statuses=Counter(e.record['status'] for e in composed.memory.private)
     return dict(target_member=opportunity.target_member,membership_disjoint=True,
-        gradient_diagnostics=len(observed),proposal_generations=len(mutations),
+        gradient_diagnostics=len(wrong),gradient_physical_draws=len(observed),proposal_generations=len(mutations),
         probe_candidates=len(composed.evaluation.provider.probed),
         full_candidates=len(composed.evaluation.provider.fulled),memory_status_counts=dict(statuses),
         branch_observation=dict(gradient='OBSERVED',mutation='OBSERVED' if mutations else 'NOT_OBSERVED',

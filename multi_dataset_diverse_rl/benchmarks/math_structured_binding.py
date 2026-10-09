@@ -10,7 +10,7 @@ from ..search.current_policy import CURRENT_POLICY_BUNDLE
 from ..search.current_layer1 import CurrentOptimizer, EvidenceLayer1Config
 from ..search.current_composition import build_current_team_prompt_search
 from ..search.scientific_aggregation import EquivalencePluralityAggregation
-from ..search.optimization_evidence import POLICY, BINDING, METHOD, MEMORY, EVIDENCE, INPUT, GRADIENT_PROMPT_ID
+from ..search.optimization_evidence import POLICY, BINDING, METHOD, MEMORY, EVIDENCE, INPUT, GRADIENT_PROMPT_ID, PROBE_POLICY
 from ..search.textual_gradients import REFERENCE_GRADIENT_PROMPT, CLUSTER_PROMPT, pattern_policy_for_trajectory
 from ..search.schemas import SearchContractError
 from .math_structured_interface import MATHStructuredSystemBenchmark, SYSTEM_PROMPT_POLICY, system_interface_contract
@@ -39,15 +39,15 @@ def gradient_prompt_artifact():
 def prepare_structured_inputs(root,*,experiment_id,attempt,user_task_sha256,execution_phase='pilot'):
     """Prepare a fresh unapproved scope without loading examples or credentials."""
     from ..persistence.durable_io import atomic_write_json
-    from ..governance.token_accounting import POLICY_V24_2M
-    parent_path='experiments/execution_bindings/a4_v23_parallel_seed81_20261009_attempt1.json'
+    from ..governance.token_accounting import POLICY_V25_2M
+    parent_path='experiments/execution_bindings/a4_v24_structured_seed81_canary_attempt1.json'
     parent=json.loads((root/parent_path).read_bytes());parent_hash=file_hash(root/parent_path)
     protocol='experiments/protocols/'+experiment_id
     binding_path='experiments/execution_bindings/'+attempt+'.json'
     paths=dict(scope=protocol+'/preparation_scope.json',gradient=protocol+'/gradient.json',
         pattern=protocol+'/pattern.json',metadata=protocol+'/heldout_seal.json',
-        accounting=protocol+'/accounting_policy.json',team='experiments/initial_teams/math_structured_system_seed_v1.json')
-    if (root/binding_path).exists():raise SearchContractError('V24_FRESH_PATH_REQUIRED')
+        accounting=protocol+'/accounting_policy.json',team='experiments/initial_teams/math_explicit_final_seed_v2.json')
+    if (root/binding_path).exists():raise SearchContractError('V25_FRESH_PATH_REQUIRED')
     scope=dict(schema_version='structured_system_preparation_scope_v1',attempt_id=attempt,
         one_attempt_only=True,preparation_only=True,real_api_authorized=False,
         validation_authorized=False,test_authorized=False,optimization_evidence_policy=POLICY,
@@ -56,12 +56,12 @@ def prepare_structured_inputs(root,*,experiment_id,attempt,user_task_sha256,exec
         old_responses_cache_and_competence_reusable=False,push_authorized=True)
     for path,value in ((paths['scope'],scope),(paths['gradient'],gradient_prompt_artifact()),
             (paths['pattern'],dict(identity='STRUCTURED_GRADIENT_CLUSTER_PROMPT_V2',prompt=CLUSTER_PROMPT)),
-            (paths['accounting'],POLICY_V24_2M),(paths['team'],initial_team_artifact()),
-            (paths['metadata'],dict(identity='V24_HELDOUT_SEAL_NO_ACCESS_METADATA_V1',
+            (paths['accounting'],POLICY_V25_2M),(paths['team'],initial_team_artifact()),
+            (paths['metadata'],dict(identity='V25_HELDOUT_SEAL_NO_ACCESS_METADATA_V1',
                 validation_model_calls=0,test_model_calls=0,heldout_accounting_reserve=0,
                 validation_access='not_authorized',test_access='sealed'))):
         if (root/path).exists():
-            if json.loads((root/path).read_bytes())!=value:raise SearchContractError('V24_PREPARATION_INPUT_CHANGED')
+            if json.loads((root/path).read_bytes())!=value:raise SearchContractError('V25_PREPARATION_INPUT_CHANGED')
         else:atomic_write_json(root/path,value)
     c=derive_structured_contract(parent,attempt=attempt,binding_path=binding_path,
         parent_path=parent_path,parent_sha256=parent_hash,authorization_path=paths['scope'],
@@ -73,9 +73,9 @@ def prepare_structured_inputs(root,*,experiment_id,attempt,user_task_sha256,exec
         accounting_policy_sha256=file_hash(root/paths['accounting']),execution_phase=execution_phase,
         max_opportunities=1 if execution_phase=='canary' else 5)
     blockers=MATHStructuredBinding(root,c).blockers()
-    if blockers:raise SearchContractError('V24_PREPARATION_HOLD:'+','.join(blockers))
+    if blockers:raise SearchContractError('V25_PREPARATION_HOLD:'+','.join(blockers))
     atomic_write_json(root/binding_path,c)
-    atomic_write_json(root/(protocol+'/protocol.json'),dict(identity='STRUCTURED_SYSTEM_V24_PROTOCOL_V1',
+    atomic_write_json(root/(protocol+'/protocol.json'),dict(identity='STRUCTURED_SYSTEM_V25_PROTOCOL_V1',
         attempt_id=attempt,method=METHOD,seed=81,members=5,phase=execution_phase,
         optimize=c['initial_competence_binding']['count'],shadow=40,models=c['models'],
         system_prompt_policy=SYSTEM_PROMPT_POLICY,answer_extraction_policy=EXTRACTION,
@@ -101,7 +101,7 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
                 (gradient_prompt_path,'gradient_prompt_path'),(initial_team_path,'initial_team_path'),
                 (pattern_prompt_path,'pattern_prompt_path'),(accounting_policy_path,'accounting_policy_path'),
                 (validation_metadata_path,'validation_accounting_metadata_path')))):
-        raise SearchContractError('V24_FRESH_FREEZE_REQUIRED')
+        raise SearchContractError('V25_FRESH_FREEZE_REQUIRED')
     c=deepcopy(parent)
     # No historical authorization, response import, operational ancestry or
     # held-out evaluation can become a current execution policy.
@@ -121,7 +121,7 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
         system_prompt_policy=deepcopy(SYSTEM_PROMPT_POLICY),answer_extraction_policy=deepcopy(EXTRACTION),
         solver_output_interface=system_interface_contract(),solver_trajectory_policy=trajectory_policy(),
         prediction_validity_policy=validity_contract(),invalid_recovery_policy=structured_recovery_contract(),
-        payload_parser_identity=PARSER,optimization_evidence_policy=deepcopy(POLICY),
+        payload_parser_identity=PARSER,optimization_evidence_policy=deepcopy(POLICY),repair_probe_policy=deepcopy(PROBE_POLICY),
         optimizer_input_schema=INPUT,layer1_search_policy=asdict(EvidenceLayer1Config()),
         candidate_contract_identity=CONTRACT,memory_policy_identity=MEMORY,panel_evidence_policy=EVIDENCE,
         gradient_prompt_path=gradient_prompt_path,gradient_prompt_sha256=gradient_prompt_sha256,
@@ -137,24 +137,25 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
         solver_execution_policy=deepcopy(execution),
         concurrency=dict(solver=8,optimizer_reflection=1,pattern=1),
         accounting_policy_path=accounting_policy_path,accounting_policy_sha256=accounting_policy_sha256,
-        accounting_scope_policy='FRESH_V24_STRUCTURED_SINGLE_ARM_2M_V1',heldout_accounting_reserve=0,
+        accounting_scope_policy='FRESH_V25_REPAIR_SINGLE_ARM_2M_V2',heldout_accounting_reserve=0,
         token_ledger_directory='runs/'+attempt+'/accounting',execution_arm='A4',arms={'A4':[True,True]},
         canary_review_policy=deepcopy(STRUCTURED_POLICY),canary_phase='initial_profile_first_opportunity',
         operational_pilot=dict(identity='TARGET_OR_TEAM_PROGRESS_OPERATIONAL_PILOT_BOUND_V1',
             max_opportunities=max_opportunities,token_ceiling=token_ceiling,
             scientific_stopper='team_epoch_no_commit_v1',guarantees_saturation=False))
     c['pattern_policy']=pattern_policy_for_trajectory(c['solver_trajectory_policy'],POLICY)
-    from ..current_contract import PATTERN_SPECIFIC_CONTENT_GUARD_VERSION
+    from ..current_contract import PATTERN_SPECIFIC_CONTENT_GUARD_VERSION, GRADIENT_PARTITION_COMPLETION_VERSION
     c['pattern_abstraction_guard']=PATTERN_SPECIFIC_CONTENT_GUARD_VERSION
-    from .protocols import MATH_PROTOCOL_STRUCTURED_V5
-    c['benchmark_protocol_sha256']=MATH_PROTOCOL_STRUCTURED_V5.identity()
+    c['partition_completion_policy']=GRADIENT_PARTITION_COMPLETION_VERSION
+    from .protocols import MATH_PROTOCOL_REPAIR_V6
+    c['benchmark_protocol_sha256']=MATH_PROTOCOL_REPAIR_V6.identity()
     c['budget']['metric_calls']=42
     count=12 if execution_phase=='canary' else 60
     name='canary_optimize' if execution_phase=='canary' else 'pilot_optimize'
     c['initial_competence_binding'].update(count=count,support_identity=c['low_cost_protocol']['membership_hashes'][name])
-    bootstrap=5*(count+c['shadow_count']);per_op=dict(local=42,probe=12,full=2*count,shadow=c['shadow_count'])
+    bootstrap=5*(count+c['shadow_count']);per_op=dict(local=42,probe=36,full=2*count,shadow=c['shadow_count'])
     solver=4*(bootstrap+max_opportunities*sum(per_op.values()))
-    gradients=count*max_opportunities;clusters=max_opportunities;reflection=6*max_opportunities
+    gradients=3*count*max_opportunities;clusters=3*max_opportunities;reflection=6*max_opportunities
     successful=solver+gradients+clusters+reflection;transport=c['decoding']['transport_retries']+1
     c['provider_bounds']=dict(max_opportunities=max_opportunities,max_proposals_per_opportunity=6,
         solver_per_opportunity=sum(per_op.values()),physical_solver_per_opportunity=4*sum(per_op.values()),
@@ -162,9 +163,9 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
         pattern_calls=gradients+clusters,reflection_calls=reflection,successful_provider_calls=successful,
         transport_attempts=successful*transport,attempt_charged_token_ceiling=token_ceiling,
         cumulative_charged_token_ceiling=token_ceiling,reservation_peak_upper_bound=token_ceiling,
-        bound_proof=dict(identity='V24_STRUCTURED_RESOURCE_DERIVATION_V1',
+        bound_proof=dict(identity='V25_STRUCTURED_RESOURCE_DERIVATION_V1',
             bootstrap_logical_solver_calls=bootstrap,per_op_logical_solver=per_op,
-            solver_semantic_multiplier=4,gradient_semantic_multiplier=1,transport_multiplier=transport,
+            solver_semantic_multiplier=4,gradient_semantic_multiplier=3,cluster_semantic_multiplier=3,transport_multiplier=transport,
             scientific_stopper_unchanged=True,guarantees_saturation=False,
             token_bound='PRE_TRANSPORT_EXACT_RESERVATION_AND_CUMULATIVE_ATTEMPT_ADMISSION'))
     return c
@@ -185,7 +186,7 @@ class MATHStructuredBinding:
             CURRENT_POLICY_BUNDLE.validate_contract(c)
             parent_path=c['trajectory_parent_binding_path']
             if file_hash(self.path(parent_path))!=c['trajectory_parent_binding_sha256']:
-                raise SearchContractError('V24_PARENT_HASH_MISMATCH')
+                raise SearchContractError('V25_PARENT_HASH_MISMATCH')
             parent=json.loads(self.path(parent_path).read_bytes())
             expected=derive_structured_contract(parent,attempt=c['execution_attempt_id'],
                 binding_path=c['binding_path'],parent_path=parent_path,parent_sha256=c['trajectory_parent_binding_sha256'],
@@ -198,30 +199,30 @@ class MATHStructuredBinding:
                 accounting_policy_path=c['accounting_policy_path'],accounting_policy_sha256=c['accounting_policy_sha256'],
                 max_opportunities=c['operational_pilot']['max_opportunities'],
                 token_ceiling=c['operational_pilot']['token_ceiling'],execution_phase=c['execution_phase'])
-            if c!=expected:raise SearchContractError('V24_FROZEN_SETTINGS_CHANGED')
+            if c!=expected:raise SearchContractError('V25_FROZEN_SETTINGS_CHANGED')
             for key in sorted(k for k in c if k.endswith('_path')):
                 h='initial_team_artifact_sha256' if key=='initial_team_path' else key[:-5]+'_sha256'
                 if h not in c:continue
                 actual=digest(json.loads(self.path(c[key]).read_bytes())) if key=='verify_settings_path' else file_hash(self.path(c[key]))
-                if actual!=c[h]:raise SearchContractError('V24_DEPENDENCY_HASH_MISMATCH:'+key)
+                if actual!=c[h]:raise SearchContractError('V25_DEPENDENCY_HASH_MISMATCH:'+key)
             if json.loads(self.path(c['gradient_prompt_path']).read_bytes())!=gradient_prompt_artifact():
-                raise SearchContractError('V24_GRADIENT_PROMPT_MISMATCH')
+                raise SearchContractError('V25_GRADIENT_PROMPT_MISMATCH')
             if json.loads(self.path(c['pattern_prompt_path']).read_bytes())['prompt']!=CLUSTER_PROMPT:
-                raise SearchContractError('V24_CLUSTER_PROMPT_MISMATCH')
-            from ..governance.token_accounting import POLICY_V24_2M
-            if json.loads(self.path(c['accounting_policy_path']).read_bytes())!=POLICY_V24_2M:
-                raise SearchContractError('V24_ACCOUNTING_POLICY_MISMATCH')
+                raise SearchContractError('V25_CLUSTER_PROMPT_MISMATCH')
+            from ..governance.token_accounting import POLICY_V25_2M
+            if json.loads(self.path(c['accounting_policy_path']).read_bytes())!=POLICY_V25_2M:
+                raise SearchContractError('V25_ACCOUNTING_POLICY_MISMATCH')
             scope=json.loads(self.path(c['current_user_scope_path']).read_bytes())
             required=dict(schema_version='structured_system_preparation_scope_v1',
                 attempt_id=c['execution_attempt_id'],one_attempt_only=True,preparation_only=True,
                 real_api_authorized=False,validation_authorized=False,test_authorized=False,
                 optimization_evidence_policy=POLICY,parent_binding_sha256=c['trajectory_parent_binding_sha256'])
-            if any(scope.get(k)!=v for k,v in required.items()):raise SearchContractError('V24_PREPARATION_SCOPE_MISMATCH')
+            if any(scope.get(k)!=v for k,v in required.items()):raise SearchContractError('V25_PREPARATION_SCOPE_MISMATCH')
             from .current_math_dependencies import validate_effective_math_dependencies
             validate_effective_math_dependencies(self)
             return ()
         except (SearchContractError,KeyError,TypeError,ValueError,OSError) as exc:
-            return (str(exc) if isinstance(exc,SearchContractError) else 'V24_FRESH_FREEZE_REQUIRED',)
+            return (str(exc) if isinstance(exc,SearchContractError) else 'V25_FRESH_FREEZE_REQUIRED',)
 
     def reader(self):
         c=self.contract

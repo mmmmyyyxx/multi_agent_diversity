@@ -1205,6 +1205,12 @@
       "classification": "CURRENT_ZERO_API_E2E",
       "current_suite_included": true,
       "required_private_artifacts": []
+    },
+    {
+      "path": "tests/current/test_v25_repair_contract.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "current_suite_included": true,
+      "required_private_artifacts": []
     }
   ],
   "current_source_scope": "V23 only; historical replay requires original frozen source, not current constructors.",

@@ -8852,9 +8852,10 @@ experiments:
   manifest: null
   report: reports/structured_system_prompt_v24_20261009
   classifier: reports/structured_system_prompt_v24_20261009/classifier.json
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
-  superseded_by: []
+  superseded_by:
+  - a4_v25_responsibility_repair_canary_v1
   notes:
   - New scientific treatment; no historical response, cache, competence or authorization
     reuse.
@@ -8922,3 +8923,30 @@ experiments:
   execution_source_sha: 1f74d4df2dc2591f58b31807264a1505370035fe
   single_use_authorization_consumed: true
   current_scope_closed: true
+- experiment_id: a4_v25_responsibility_repair_canary_v1
+  kind: REAL_CANARY
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_5_responsibility_fallback_repair_probe
+  parent_ids:
+  - a4_v24_structured_canary_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: OFFLINE_VERIFICATION_PENDING_FRESH_CANARY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/a4_v25_responsibility_repair_canary_v1.yaml
+  report: null
+  classifier: null
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User authorizes one fresh source-bound Canary; no Pilot, Validation or Test.
+  - V2.5 changes are explicit; no old realization, Memory, cache or consumed scope
+    reused.
+  unavailable:
+    implementation_commit: Pinned by child manifest after source freeze; no self-referential
+      SHA.
+    execution_commit: Not executed; source and scope freeze pending.
+    result_commit: No real result yet.
+    report: Report will follow the single authorized Canary.

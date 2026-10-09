@@ -217,18 +217,18 @@ class GlobalStopConfig:
 
 @dataclass(frozen=True)
 class SearchMethodConfig:
-    method: str = versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_4_VERSION
-    search_engine: str = 'STRUCTURED_BLOCK_INDEPENDENT_OPTIMIZE_SEARCH_V2'
+    method: str = versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_5_VERSION
+    search_engine: str = 'STRUCTURED_EVALUATED_PARENT_SEARCH_V3'
     diagnosis_policy: str = versions.BINARY_PLURALITY_RESPONSIBILITY_VERSION
-    target_policy: str = versions.UNIFIED_TARGET_POLICY_VERSION
-    feasibility_policy: str = 'variable_evidence_feasibility_v1'
-    evidence_policy: str = 'DISJOINT_ROTATING_OPTIMIZE_EVIDENCE_V1'
-    evaluation_policy: str = versions.UNIFIED_EVALUATION_POLICY_VERSION
+    target_policy: str = versions.UNIFIED_FALLBACK_TARGET_VERSION
+    feasibility_policy: str = versions.UNIFIED_REPAIR_FEASIBILITY_VERSION
+    evidence_policy: str = 'DISJOINT_QUOTA_FREE_REPAIR_EVIDENCE_V2'
+    evaluation_policy: str = 'SEEN_ASSIGNED_REPAIR_INDEPENDENT_TEAM_PROBE_V2'
     transition_policy: str = versions.UNIFIED_TARGET_OR_TEAM_TRANSITION_VERSION
     adaptive_gate_policy: str = versions.UNIFIED_ADAPTIVE_GATE_VERSION
     aggregation_policy: str = versions.UNIFIED_PLURALITY_AGGREGATION_VERSION
-    memory_policy: str = 'BOOTSTRAPPED_BLOCK_EDIT_EFFECT_MEMORY_V2'
-    pattern_policy: str = versions.GRADIENT_PATTERN_DISCOVERY_VERSION
+    memory_policy: str = 'BOOTSTRAPPED_FORMAT_BLOCK_EDIT_EFFECT_MEMORY_V3'
+    pattern_policy: str = versions.RECOVERABLE_PATTERN_DISCOVERY_VERSION
     search_acceptance_policy: str = 'layer1_local_guidance_team_admission_v1'
     search_stop: SearchStopConfig = field(default_factory=SearchStopConfig)
     global_stop: GlobalStopConfig = field(default_factory=GlobalStopConfig)
@@ -239,11 +239,11 @@ class SearchMethodConfig:
 
 
     def __post_init__(self):
-        if self.method!=versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_4_VERSION:
+        if self.method!=versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_5_VERSION:
             raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
         # Bundle validation closes all policy combinations before composition.
         if not self.mechanism_config:
-            raise SearchContractError('CURRENT_V24_COMPLETE_POLICY_REQUIRED')
+            raise SearchContractError('CURRENT_V25_COMPLETE_POLICY_REQUIRED')
 
     def identity(self) -> str:
         from dataclasses import asdict
@@ -255,10 +255,10 @@ class SearchMethodConfig:
         allowed = {row.name for row in fields(cls)}
         if set(payload) - allowed:
             raise SearchContractError("unknown unified method component")
-        if payload.get('method')!=versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_4_VERSION:
+        if payload.get('method')!=versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_5_VERSION:
             raise SearchContractError('unsupported unified method identity')
         if not payload.get('mechanism_config'):
-            raise SearchContractError('CURRENT_V24_COMPLETE_POLICY_REQUIRED')
+            raise SearchContractError('CURRENT_V25_COMPLETE_POLICY_REQUIRED')
         values=dict(payload)
         for key, kind in (("search_stop", SearchStopConfig),
                           ("global_stop", GlobalStopConfig)):

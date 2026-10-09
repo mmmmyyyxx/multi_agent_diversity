@@ -38,7 +38,7 @@ def test_order_set_and_interval_boundaries():
     assert not b.equivalent('x=2','2')
 
 
-@pytest.mark.parametrize('raw',['unidentified prose','###','### 1\nmore','### 1\n### 2'])
+@pytest.mark.parametrize('raw',['unidentified prose','Final answer:','Final answer: 1\nmore','Final answer: 1\nFinal answer: 2'])
 def test_ambiguous_final_boundary_is_invalid(raw):
     assert final_payload(raw) is None
 
@@ -62,7 +62,7 @@ def test_evaluator_operational_failure_not_prediction_wrong(monkeypatch,failure)
         raise SearchContractError(failure)
     monkeypatch.setattr(domain,'domain_matrix',broken)
     with pytest.raises(SearchContractError,match=failure):
-        domain.MATHBenchmarkAdapterV2().parse_member_output('### 1',BenchmarkInput('synthetic','Synthetic one','FINAL_ANSWER',benchmark_id='math'))
+        domain.MATHBenchmarkAdapterV2().parse_member_output('Final answer: 1',BenchmarkInput('synthetic','Synthetic one','FINAL_ANSWER',benchmark_id='math'))
 
 
 

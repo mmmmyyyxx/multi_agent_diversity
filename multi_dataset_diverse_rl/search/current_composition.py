@@ -63,7 +63,7 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
     history=HistoryState()
     store=BinaryTeamStateStore(benchmark=benchmark,examples=examples,prompts=prompts,solver=solver,
         aggregation=aggregation,freeze_initial_competence=True)
-    patterns=GradientPatternDiscovery(GradientExtractor(pattern_provider.gradient_provider),pattern_provider)
+    patterns=GradientPatternDiscovery(GradientExtractor(pattern_provider.gradient_provider),pattern_provider,seed=seed)
     memory=StructuredRollingRiskMemoryV4(risk_policy=method.mechanism_config['shared_risk_policy'],
         optimization_evidence_policy=revised,
         **method.mechanism_config['memory'])
@@ -80,7 +80,7 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
     composed=UnifiedSearchOrchestrator(method=method,benchmark=benchmark,aggregation=aggregation,state=store,
         analyzer=StateAnalyzer(BinaryPluralityResponsibilityAnalyzer(benchmark.capabilities)),
         opportunities=CurrentOpportunityBuilder(source=BinaryEvidenceSource(store,history),
-            feasibility=VariableEvidenceFeasibilityV1(),target=TargetPolicyV1(),
+            feasibility=VariableEvidenceFeasibilityV1(),target=TargetPolicyV1(seed),
             evidence=DisjointGradientEvidence(seed,revised),patterns=patterns,
             search_metric_budget=42),
         engine=CurrentEngine(optimizer,seed),evaluation=CandidateEvaluationPipeline(provider,

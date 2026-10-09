@@ -77,13 +77,15 @@ class TargetPolicy(Protocol):
 
 
 class TargetPolicyV1:
-    identity = "responsibility_failure_discount_v1"
+    from ..current_contract import UNIFIED_TARGET_POLICY_VERSION as identity
+
+    def __init__(self, seed=81):
+        self.seed = seed
 
     def select(
         self, state: TeamStateSnapshot, diagnosis: Diagnosis,
         feasible_members: Sequence[int], history: HistoryState,
     ) -> TargetDecision:
-        del state
         eligible = tuple(sorted(set(feasible_members)))
         scores: dict[int, float] = {}
         for member in eligible:
@@ -91,9 +93,19 @@ class TargetPolicyV1:
             if not isinstance(signal, ResponsibilitySignal):
                 raise SearchContractError("target lacks responsibility diagnosis")
             scores[member] = signal.raw_value / (1 + history.failure_counts.get(member, 0))
-        selected = min(eligible, key=lambda member: (-scores[member], member)) if eligible else None
-        return TargetDecision(selected, eligible, scores,
-                              "selected" if selected is not None else "NO_FEASIBLE_OPPORTUNITY")
+        positive = tuple(m for m in eligible if scores[m] > 0)
+        if positive:
+            selected = min(positive, key=lambda member: (-scores[member], member))
+            reason = 'POSITIVE_RESPONSIBILITY'
+        elif eligible:
+            import random
+            ordinal = sum(history.target_counts.values())
+            selected = random.Random(f'{self.seed}:{state.team_state_id}:{ordinal}:member-fallback-v2').choice(eligible)
+            reason = 'SEEDED_ZERO_RESPONSIBILITY_FALLBACK'
+        else:
+            selected = None
+            reason = 'NO_REPAIR_SIGNAL'
+        return TargetDecision(selected, eligible, scores, reason)
 
 
 class EvidencePolicy(Protocol):

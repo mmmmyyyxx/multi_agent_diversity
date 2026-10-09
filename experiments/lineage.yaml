@@ -908,6 +908,9 @@ nodes:
 - experiment_id: a4_v24_structured_pilot_v1
   kind: PILOT
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: a4_v25_responsibility_repair_canary_v1
+  kind: REAL_CANARY
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1915,4 +1918,10 @@ edges:
 - from: structured_system_prompt_v24
   to: a4_v24_structured_pilot_v1
   relation: derived_from
+- from: a4_v24_structured_canary_v1
+  to: a4_v25_responsibility_repair_canary_v1
+  relation: refactor_of
+  evidence: docs/design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md
+  scope: New scientific identity and one independent Canary; old run is diagnostic
+    provenance only.
 current_frontier: experiments/current_frontier.yaml

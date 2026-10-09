@@ -129,6 +129,12 @@ MATH_PROTOCOL_STRUCTURED_V5 = replace(MATH_PROTOCOL_V3,
     member_success_semantics='Gold-blind structural extraction; binary pinned mathematical equivalence only; first parseable answer stops four-draw invalid recovery; exhausted examples remain incorrect in the fixed denominator')
 
 
+MATH_PROTOCOL_REPAIR_V6 = replace(MATH_PROTOCOL_STRUCTURED_V5,
+    system_contract_id='MATH_EXPLICIT_FINAL_SYSTEM_INTERFACE_V8',
+    output_contract_id='math_explicit_final_declaration_v3',
+    parser_contract_id='MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V2')
+
+
 def protocol_input(benchmark_id: str, input_id: str, row: Mapping[str, object],
                    output_contract: str, *, protocol: BenchmarkProtocolSpec | None = None) -> BenchmarkInput:
     """Allowlist projection. Evaluator fields never reach solver/aggregator inputs."""

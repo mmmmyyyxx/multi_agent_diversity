@@ -84,16 +84,15 @@ class FixedPeerPromotion:
         self.invalid_predictions_are_incorrect = invalid_predictions_are_incorrect
 
     def select(self, rows):
-        eligible = []
-        for candidate, evaluation in rows:
-            m = evaluation.aggregation_diagnostics[self.diagnostic_key]
-            if (m.invalid_delta > 0 and not self.invalid_predictions_are_incorrect) or m.vote_delta <= -2 or m.team_net_vote_delta <= -3:
-                continue
-            if not any(v > 0 for v in (m.responsibility_delta, m.target_delta, m.vote_delta, m.broad_delta, m.team_net_vote_delta)):
-                continue
-            eligible.append(((m.vote_delta, m.team_net_vote_delta, m.responsibility_delta,
-                              m.target_delta, m.broad_delta, candidate.candidate_id), candidate.candidate_id))
-        return tuple(i for _, i in sorted(eligible, reverse=True)[:2])
+        from .optimization_evidence import PROBE_POLICY
+        eligible=[]
+        for candidate,evaluation in rows:
+            d=evaluation.aggregation_diagnostics
+            if d.get('probe_policy')!=PROBE_POLICY:raise SearchContractError('REPAIR_PROBE_POLICY_NOT_FROZEN')
+            if d['assigned_repair_count']<PROBE_POLICY['minimum_assigned_binary_repairs'] or not d['risk_pass']:continue
+            m=d[self.diagnostic_key]
+            eligible.append(((m.vote_delta,m.target_delta,-d['collateral_loss'],-m.invalid_delta,candidate.candidate_id),candidate.candidate_id))
+        return tuple(i for _,i in sorted(eligible,reverse=True)[:2])
 
 
 class CandidateEvaluationPipeline:
@@ -145,10 +144,10 @@ class CandidateEvaluationPipeline:
                 candidate, probe, full, promoted, False,
                 {"target_member": opportunity.target_member,
                  **({k:v for k,v in probe.aggregation_diagnostics.items() if k in
-                     {"scientific_risk_code", "team_newly_fixed_count", "team_newly_broken_count", "operational_failure"}}
+                     {"scientific_risk_code", "team_newly_fixed_count", "team_newly_broken_count", "operational_failure", "promotion_reason", "assigned_repair_count", "collateral_loss", "risk_pass"}}
                     if opportunity.evaluation_plan.get("v2_candidate_contract") else {}),
                  **({k:v for k,v in full.aggregation_diagnostics.items() if k in
-                     {"scientific_risk_code", "team_newly_fixed_count", "team_newly_broken_count", "operational_failure"}}
+                     {"scientific_risk_code", "team_newly_fixed_count", "team_newly_broken_count", "operational_failure", "promotion_reason", "assigned_repair_count", "collateral_loss", "risk_pass"}}
                     if opportunity.evaluation_plan.get("v2_candidate_contract") and full is not None else {})},
             ))
         return tuple(output)

@@ -1,14 +1,14 @@
 # Repository Map
 
 Current authority: AGENTS.md, docs/design/CURRENT_SPEC.md and
-[Structured System Prompt V2.4](design/STRUCTURED_SYSTEM_PROMPT_V24.md).
+[Responsibility Fallback V2.5](design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md).
 
 | Path | Role |
 |---|---|
 | multi_dataset_diverse_rl/search/system_prompt.py | Sole structured member prompt state and block identity |
 | multi_dataset_diverse_rl/search/current_composition.py | Sole production graph |
 | multi_dataset_diverse_rl/current_contract.py | See package-root current_contract.py for closed identity imports |
-| multi_dataset_diverse_rl/benchmarks/math_structured_binding.py | Fresh V2.4 freeze and composition |
+| multi_dataset_diverse_rl/benchmarks/math_structured_binding.py | Fresh V2.5 freeze and composition |
 | multi_dataset_diverse_rl/benchmarks/math_structured_answer.py | Frozen gold-blind extraction |
 | multi_dataset_diverse_rl/benchmarks/math_response_evidence.py | Private ordinary content with optional written steps |
 | multi_dataset_diverse_rl/governance/ | Authorization, source/startup freeze, accounting and registries |

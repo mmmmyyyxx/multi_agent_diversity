@@ -1,43 +1,39 @@
 # Current Implementation Specification
 
 The sole active research architecture is Unified Team Prompt Search.
-The sole executable method is V2.4 Structured System Prompt Optimization:
-`unified_team_prompt_search_v2_4_structured_system_prompt`.
-[The V2.4 scientific contract](STRUCTURED_SYSTEM_PROMPT_V24.md) is normative.
+The sole executable method is
+`unified_team_prompt_search_v2_5_responsibility_fallback_repair_probe`.
+[The V2.5 scientific contract](RESPONSIBILITY_FALLBACK_REPAIR_V25.md) is normative.
+New execution uses scripts/run_experiment.py, MATHStructuredBinding,
+CurrentPolicyBundle and build_current_team_prompt_search. Structured Role,
+Strategy and Answer are editable; System is exactly rendered blocks and User
+exactly raw problem. Explicit gold-blind final declarations and pinned mathematical
+equivalence determine binary correctness. Four invalid semantic draws remain bounded.
 
-New execution uses `scripts/run_experiment.py`, `MATHStructuredBinding`,
-`CurrentPolicyBundle` and `build_current_team_prompt_search`. Each member owns
-one immutable structured Role/Strategy/Answer prompt. Rendered System content
-contains exactly those editable blocks. User content equals the raw question.
-The five initial prompts are identical with independent realization lanes.
-Natural ordinary response text is private observable evidence; written reasoning
-is optional. The frozen gold-blind extractor and pinned mathematical equivalence
-supply the sole binary reward. At most four semantic draws recover invalid output;
-wrong parseable answers never trigger recovery and exhausted examples score zero.
+Members with any Optimize error are eligible, including zero responsibility and
+member-wrong/team-correct. Positive D/N/C responsibility retains priority and
+failure discount; all-zero fallback is seeded and replayable. Gradient and Pattern
+recover structural failures within three draws, preserving valid partial evidence.
+Mutation3, SearchValidation3 and Independent TeamProbe6 are disjoint. Seen assigned
+repair must actually improve binary correctness before Full, under frozen Probe
+risk. Every safe evaluated local edit advances the temporary parent. Six generations,
+42 local evaluations, four exports and two Full promotions remain fixed.
 
-Gradient compares response evidence and separately labeled Optimize worked
-solutions, supports UNCERTAIN and advisory block suggestions. Layer1 edits one
-block per generation with complete actual-diff lineage. The bounded two-level
-search, independent Optimize roles, rotating preservation, initial competence
-floor, target-or-team progress, equal plurality, fixed peers, winner-only Shadow,
-transactional Memory, atomic commit and scientific stopping are preserved.
 The [V3 transition contract](TRANSITION_TARGET_OR_TEAM_PROGRESS_V3.md) remains
-normative. Six generations, four exports, 42 local evaluations and two Full
-promotions remain fixed. No local acceptance veto gates outer admission.
+normative: immutable initial competence floor, nonregressing Vote, target-or-team
+progress, winner-only Shadow and atomic commit. Team epoch stopping is unchanged.
+Private measured Memory includes mathematical and format failures; shared risk
+contains closed generic categories only. No optimizer context enters Solver.
 
-Retired V2.1/V2.2/V2.3 optimizers and V6 instructions cannot execute from current
-production. Historical manifests and reports retain their original scientific
-meaning. Historical code recovery uses each frozen Git source. Shared scoring,
-data governance, transport, persistence and accounting remain shared infrastructure.
-No old realization, response cache, baseline, competence Memory or API scope is
-eligible for V2.4. Fresh initial performance requires new real Solver requests.
+Older runtime identities cannot execute through current production. Historical
+manifests and reports remain immutable evidence with their frozen source replay.
+No old scoring, response cache, competence, Memory or consumed scope is reusable.
+The latest user task authorizes one freshly frozen V2.5 Canary12, seed81, five
+members, one opportunity, at most eight Solver workers and charged plus reserved
+2M tokens. Validation, Test and Pilot are unauthorized. Readiness never grants
+execution authority; an exact fresh single-use scope is required. Real owner
+barriers audit integrity, not efficacy, and never manufacture a commit.
 
-The current development task authorizes zero API preparation only. Every future
-paid attempt needs a fresh complete source/startup/manifest/request/cache/provider/
-accounting freeze and exact single-use authorization. Validation is unauthorized;
-Test is sealed. Canary reviews audit integrity without efficacy-based adaptation.
-Readiness and synthetic conformance do not establish real-model performance.
-
-Invariants: INV-UNIFIED-FLOW-001; INV-V24-STRUCTURED-SYSTEM-001;
-INV-V24-GOLD-BLIND-RECOVERY-001; INV-V24-EDIT-LINEAGE-001;
-INV-V24-FRESH-ATTEMPT-001. No new agent, critic, planner or team controller exists.
+Invariants: INV-UNIFIED-FLOW-001; INV-V25-RESPONSIBILITY-001;
+INV-V25-EXPLICIT-FINAL-001; INV-V25-SEEN-REPAIR-PROBE-001;
+INV-V25-EVALUATED-PARENT-001; INV-V24-FRESH-ATTEMPT-001.

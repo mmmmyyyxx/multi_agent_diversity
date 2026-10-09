@@ -15,7 +15,7 @@ SYSTEM_PROMPT_POLICY = dict(identity=IDENTITY, blocks=['role','strategy','answer
 
 
 def system_interface_contract():
-    return dict(identity=versions.MATH_SOLVER_INTERFACE_V7_VERSION,
+    return dict(identity=versions.MATH_SOLVER_INTERFACE_V8_VERSION,
         parser_identity=PARSER, system_prompt_policy=SYSTEM_PROMPT_POLICY,
         answer_extraction_policy=POLICY, solver_max_output_tokens=3600, reflection_max_output_tokens=1800)
 
@@ -29,14 +29,14 @@ class MATHStructuredSystemBenchmark(MATHBenchmarkAdapterV2):
         from ..search.current_policy import require_current_contract
         from .math_response_evidence import frozen_trajectory_policy
         from .math_prediction_validity import frozen_prediction_policy
-        from .protocols import MATH_PROTOCOL_STRUCTURED_V5
+        from .protocols import MATH_PROTOCOL_REPAIR_V6
         require_current_contract(contract)
         if contract.get('solver_output_interface') != system_interface_contract():
             raise SearchContractError('MATH_STRUCTURED_INTERFACE_BINDING_MISMATCH')
         self._contract = contract
         # Metadata identity only; it is never sent as a Solver instruction.
-        self.output_contract = versions.MATH_SOLVER_INTERFACE_V7_VERSION
-        self.protocol = MATH_PROTOCOL_STRUCTURED_V5
+        self.output_contract = versions.MATH_SOLVER_INTERFACE_V8_VERSION
+        self.protocol = MATH_PROTOCOL_REPAIR_V6
         self.solver_trajectory_policy = frozen_trajectory_policy(contract)
         self.prediction_validity_policy = frozen_prediction_policy(contract)
 
@@ -54,7 +54,7 @@ class MATHStructuredSystemBenchmark(MATHBenchmarkAdapterV2):
     def parse_member_output(self, raw, item):
         if item.benchmark_id != self.benchmark_id:
             return ParsedOutput('', False)
-        if isinstance(raw, dict) and raw.get('schema') == versions.MATH_STRUCTURED_PROFILE_VERSION:
+        if isinstance(raw, dict) and raw.get('schema') == versions.MATH_REPAIR_PROFILE_VERSION:
             from .math_response_evidence import profile_prediction
             return profile_prediction(raw, example_id=item.input_id).parsed()
         prediction = classify_prediction(raw) if isinstance(raw, str) else prediction_from_persisted(raw)

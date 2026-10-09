@@ -40,6 +40,9 @@ def failure_signature(details, lane):
     """Exact closed semantic concepts, not hashes, raw prose or equal deltas."""
     if lane not in LANES or any(details.get(k) is not True for k in ('changed','contract_valid','solver_evaluated')):
         return None
+    effect=details.get('edit_lineage',{}).get('effects',{}).get('actual_parent_validation',{})
+    if (effect.get('valid_to_invalid_ids') or effect.get('repeated_format_failure_ids')):
+        return FailureSignature('OUTPUT_CONTRACT_FAILURE',(),'observed_invalid_output_no_mathematical_success')
     # Procedure conformance is distinct from Solver response validity. Terminal
     # parser/format failures must not become a reasoning-risk family.
     if (type(details.get('local_invalid_count')) is not int or details['local_invalid_count']!=0
@@ -135,10 +138,14 @@ class EditExperience:
     def visible(self):
         effects={name:dict(fixed=len(e['fixed_ids']),broken=len(e['broken_ids']),
             invalid=len(e['invalid_ids']),delta=e['member_delta'],
+            parent_invalid=e['parent_invalid_count'],valid_to_invalid=len(e['valid_to_invalid_ids']),
+            invalid_to_valid_wrong=len(e['invalid_to_valid_wrong_ids']),invalid_to_valid_correct=len(e['invalid_to_valid_correct_ids']),
+            repeated_format_failure=len(e['repeated_format_failure_ids']),
             **({'team_delta':e['team_delta']} if 'team_delta' in e else {}))
             for name,e in self.record['effects'].items() if name in {'search_validation','full'}}
         return dict(hypothesis=self.record['repair_hypothesis'][:100],status=self.record['status'],
             edited_block=self.record['edited_block'],edit_chain_length=len(self.record['edit_chain']),
+            edited_block_chain=[s['edited_blocks'][0] for s in self.record['edit_chain']],
             actual_edit=(self.record['action'] or 'Changed instructions; semantic action unclassified.')[:110],
             diff_operations=sorted({d['operation'] for d in self.record['actual_diff']}),
             effects=effects,lesson='Compound edit; scope-specific, no causal claim.')
@@ -203,7 +210,7 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
             return RollingMemoryDelta(self.revision,self.private,self.shared,self.clock,self.sequence,
                 self.failure_events,tuple(sorted(self.risk_counts.items())))
         op=outcome.opportunity;member=op.target_member
-        lane=op.diagnosis.responsibility[member].primary_lane
+        lane=('general' if op.pattern_context.get('selection_reason')=='SEEDED_ZERO_RESPONSIBILITY_FALLBACK' else op.diagnosis.responsibility[member].primary_lane)
         if member not in range(5) or lane not in LANES:raise SearchContractError('ROLLING_RISK_SCOPE_INVALID')
         clock=self.clock+1;sequence=self.sequence;private=list(self.private)
         failure_events=self._recent(self.failure_events,clock)
@@ -360,6 +367,8 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
                 evaluation_identity=state.diagnostics['evaluation_support_identity'],
                 all_ids=[e.item.input_id for e in store.examples],original_correct_ids=correct,
                 current_correct_ids=correct,invalid_ids=invalid,newly_fixed_ids=[],newly_broken_ids=[],
+                repeated_format_failure_ids=[e.item.input_id for e,p in zip(store.examples,store.profiles[member],strict=True)
+                    if p['solver_trajectory']['retry_summary']['repeated_format_failure']],
                 task_metadata={e.item.input_id:dict(e.task_metadata) for e in store.examples},
                 source='measured_initial_optimize_profiles'))
         self.competence=tuple(records)
@@ -390,6 +399,11 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
         others=tuple(e for e in self.private if e.owner_member!=entry.owner_member)
         own=tuple(e for e in self.private if e.owner_member==entry.owner_member)
         self.private=(*others,*(*own,entry)[-self.limits['private_storage_limit']:])
+        e=record['effects']['actual_parent_validation']
+        if e['valid_to_invalid_ids'] or e['repeated_format_failure_ids']:
+            event=RiskObservation(FailureSignature('OUTPUT_CONTRACT_FAILURE',(),'observed_invalid_output_no_mathematical_success'),
+                entry.owner_member,'general',self.clock+1,entry.memory_id,'REPEATED_PRIVATE_FAILURE')
+            self.failure_events=(*self._recent(self.failure_events,self.clock+1),event)[-self.risk_policy['failure_evidence_capacity']:]
         self.revision+=1;self.write_count+=1
 
     def _prepare_evidence_outcome(self,outcome):
@@ -407,6 +421,8 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
                 record=deepcopy(old.record)
                 if row.team_probe and 'edit_effect' in row.team_probe.aggregation_diagnostics:
                     record['effects']['team_probe']=deepcopy(row.team_probe.aggregation_diagnostics['edit_effect'])
+                    record['effects']['assigned_repair']=deepcopy(row.team_probe.aggregation_diagnostics.get('assigned_repair_effect'))
+                    record['promotion_reason']=row.team_probe.aggregation_diagnostics['promotion_reason']
                 if row.full is not None:
                     effect=row.full.aggregation_diagnostics.get('edit_effect')
                     if not effect:raise SearchContractError('FULL_EDIT_EFFECT_MISSING')
@@ -415,9 +431,13 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
                     record['status']=('FULL_REFUTED' if row.full.aggregation_diagnostics.get('scientific_risk_code')
                         else 'FULL_SUPPORTED')
                     record['status_history'].append(record['status'])
+                    record['promotion_reason']=row.full.aggregation_diagnostics['promotion_reason']
+                if row.candidate.candidate_id==outcome.selected_candidate_id and outcome.gate_passed is False:
+                    record['promotion_reason']='FULL_PASS_SHADOW_REJECT'
                 if outcome.committed and row.candidate.candidate_id==outcome.selected_candidate_id:
                     if row.full is None:raise SearchContractError('COMMITTED_EDIT_REQUIRES_FULL')
                     record['status']='COMMITTED';record['status_history'].append('COMMITTED')
+                    record['promotion_reason']='COMMIT'
                     current=competence[entry.owner_member]
                     if current['prompt_id']!=record['full_parent_prompt_id']:
                         raise SearchContractError('COMMITTED_COVERAGE_PARENT_MISMATCH')
@@ -446,7 +466,8 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
         c=self.competence[member]
         initial=dict(source='measured_optimize_coverage',original_correct=len(c['original_correct_ids']),
             current_correct=len(c['current_correct_ids']),incorrect=len(c['all_ids'])-len(c['current_correct_ids']),
-            invalid=len(c['invalid_ids']),newly_fixed=len(c['newly_fixed_ids']),newly_broken=len(c['newly_broken_ids']))
+            invalid=len(c['invalid_ids']),repeated_format_failure=len(c['repeated_format_failure_ids']),
+            newly_fixed=len(c['newly_fixed_ids']),newly_broken=len(c['newly_broken_ids']))
         own=sorted((e for e in self.private if e.owner_member==member),key=lambda e:(
             e.record['pattern_id']!=pattern_id,e.record['repair_hypothesis']!=hypothesis,
             edited_block is not None and e.record['edited_block']!=edited_block,

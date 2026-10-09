@@ -772,7 +772,8 @@ invariants:
   - tests/current/test_structured_system_contract.py
   failure_refs: []
   critical: true
-  status: ACTIVE
+  status: HISTORICAL_GIT_ONLY
+  recovery_source: 1f74d4df2dc2591f58b31807264a1505370035fe
 - id: INV-V24-GOLD-BLIND-RECOVERY-001
   description: Frozen gold-blind extraction; first parseable draw stops recovery;
     four invalid draws score zero in the fixed denominator.
@@ -783,7 +784,8 @@ invariants:
   - tests/current/test_structured_system_contract.py
   failure_refs: []
   critical: true
-  status: ACTIVE
+  status: HISTORICAL_GIT_ONLY
+  recovery_source: 1f74d4df2dc2591f58b31807264a1505370035fe
 - id: INV-V24-EDIT-LINEAGE-001
   description: Single-block edits preserve other bytes and retain reconstructable
     complete measured edit chains.
@@ -795,7 +797,8 @@ invariants:
   - tests/current/test_structured_system_contract.py
   failure_refs: []
   critical: true
-  status: ACTIVE
+  status: HISTORICAL_GIT_ONLY
+  recovery_source: 1f74d4df2dc2591f58b31807264a1505370035fe
 - id: INV-V24-FRESH-ATTEMPT-001
   description: No historical execution, response imports, cache, competence Memory
     or authorization can initialize V2.4.
@@ -805,6 +808,54 @@ invariants:
   - multi_dataset_diverse_rl/benchmarks/math_structured_binding.py
   tests:
   - tests/current/test_structured_system_contract.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-V25-RESPONSIBILITY-001
+  description: Any member wrong is eligible; positive responsibility priority and
+    seeded zero fallback.
+  authority: docs/design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/policies.py
+  - multi_dataset_diverse_rl/search/variable_evidence.py
+  - multi_dataset_diverse_rl/search/binary_runtime.py
+  tests:
+  - tests/current/test_v25_repair_contract.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-V25-EXPLICIT-FINAL-001
+  description: Gold-blind explicit terminal declarations, first valid stops, four
+    invalid draws score zero.
+  authority: docs/design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/system_prompt.py
+  tests:
+  - tests/current/test_v25_repair_contract.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-V25-SEEN-REPAIR-PROBE-001
+  description: Seen assigned binary repair and disjoint Independent6 risk precede
+    unchanged Full/Shadow.
+  authority: docs/design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/evaluation.py
+  - multi_dataset_diverse_rl/search/binary_runtime.py
+  tests:
+  - tests/current/test_v25_repair_contract.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-V25-EVALUATED-PARENT-001
+  description: Every safe evaluated local edit advances temporary parent; complete
+    actual chain retained.
+  authority: docs/design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/bounded_layer1.py
+  - multi_dataset_diverse_rl/search/rolling_risk_memory.py
+  tests:
+  - tests/current/test_v25_repair_contract.py
   failure_refs: []
   critical: true
   status: ACTIVE

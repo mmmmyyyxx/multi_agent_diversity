@@ -5,7 +5,7 @@ import hashlib
 import json
 import os
 
-from .token_accounting import TokenLedger, OperationalAbort, serialized_request, POLICY_V24_2M
+from .token_accounting import TokenLedger, OperationalAbort, serialized_request, POLICY_V25_2M
 from .unified_execution import consumption_path, inventory
 from ..persistence.durable_io import atomic_write_json, append_jsonl, read_json
 from ..benchmarks.math_domain_binding import execution_binding
@@ -119,9 +119,9 @@ def initial_prompts(root, contract):
 
 
 def ledger_policy(contract):
-    if contract.get('accounting_scope_policy')!='FRESH_V24_STRUCTURED_SINGLE_ARM_2M_V1':
-        raise SearchContractError('FRESH_V24_ACCOUNTING_SCOPE_REQUIRED')
-    return POLICY_V24_2M
+    if contract.get('accounting_scope_policy')!='FRESH_V25_REPAIR_SINGLE_ARM_2M_V2':
+        raise SearchContractError('FRESH_V25_ACCOUNTING_SCOPE_REQUIRED')
+    return POLICY_V25_2M
 
 
 def durable_output_cache(run_root,contract,payload,root=None):
@@ -204,7 +204,7 @@ async def execute_search(root, prep, run_root, payload):
             atomic_write_json(run_root / "initial_competence_floor.json",dict(binding=c["initial_competence_binding"],
                 state_id=initial.team_state_id, member_scores=initial.member_scores))
         result = await composed.run(max_opportunities=c["provider_bounds"]["max_opportunities"])
-        accepted = {"CANARY_PARENT_EPOCH_COMPLETE","CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE","NO_FEASIBLE_OPPORTUNITY"} if c["execution_phase"]=="canary" else {"SATURATION_REACHED","NO_FEASIBLE_OPPORTUNITY"}
+        accepted = {"CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE","NO_REPAIR_SIGNAL"} if c["execution_phase"]=="canary" else {"SATURATION_REACHED","NO_REPAIR_SIGNAL"}
         scientific_complete=result.stop_reason in accepted
         operational_truncation=bool(c.get('operational_pilot')) and result.stop_reason in {
             'OPERATIONAL_OPPORTUNITY_CEILING','EMERGENCY_PROVIDER_CALL_CEILING'}
@@ -229,7 +229,7 @@ async def execute_search(root, prep, run_root, payload):
                 derived_token_snapshot_detached=budget.snapshot_updates_disabled,
                 snapshot_error_category=budget.snapshot_error_category)
         gradients=pattern_provider.gradient_provider
-        gradient_multiplier=1
+        gradient_multiplier=c['optimization_evidence_policy']['structural_recovery_draws']
         summary.update(pattern_gradient_calls=broker.usage['pattern_gradient'],
             pattern_cluster_calls=broker.usage['pattern_cluster'],gradient_input_audit=gradients.input_audit)
         if (gradients.calls!=broker.usage['pattern_gradient'] or pattern_provider.calls!=broker.usage['pattern_cluster']
@@ -237,7 +237,7 @@ async def execute_search(root, prep, run_root, payload):
             raise OperationalAbort('PATTERN_GRADIENT_ACCOUNTING_INCOMPLETE')
         if c['execution_phase']=='canary' and not len(result.trace)<=gradients.calls<=gradient_multiplier*c['initial_competence_binding']['count']:
             raise OperationalAbort('PATTERN_GRADIENT_CANARY_ACCOUNTING_INCOMPLETE')
-        expected_clusters=sum(t.evidence_audit.get('cluster_logical_calls',1) for t in result.trace)
+        expected_clusters=sum(t.evidence_audit.get('cluster_physical_calls',0) for t in result.trace)
         if c['execution_phase']=='canary' and (pattern_provider.calls!=expected_clusters
                 or gradients.calls!=len(gradients.input_audit)
                 or (any(t.candidate_ids for t in result.trace) and not composed.evaluation.provider.probed)):
