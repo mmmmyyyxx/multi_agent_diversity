@@ -7,7 +7,8 @@ Reports are immutable evidence, never design authority. Unresolved metadata does
 |---|---|---|---|---|---|
 | [a4_v23_only_cleanup_canary_pilot_20261008](a4_v23_only_cleanup_canary_pilot_20261008/README.md) | 20261008 | UNIFIED_TEAM_PROMPT_SEARCH | SCIENTIFIC_RESULT | a4_v23_only_pilot_v1 | INVALID |
 | [a4_v23_only_pilot_execution_20261009](a4_v23_only_pilot_execution_20261009/README.md) | 20261009 | UNIFIED_TEAM_PROMPT_SEARCH | SCIENTIFIC_RESULT | a4_v23_only_pilot_v1 | INVALID |
-| [a4_v23_only_pilot_v2_preparation_20261009](a4_v23_only_pilot_v2_preparation_20261009/README.md) | 20261009 | UNIFIED_TEAM_PROMPT_SEARCH | PREEXECUTION | a4_v23_only_pilot_v2 | PREPARED_NOT_EXECUTED |
+| [a4_v23_only_pilot_v2_preparation_20261009](a4_v23_only_pilot_v2_preparation_20261009/README.md) | 20261009 | UNIFIED_TEAM_PROMPT_SEARCH | PREEXECUTION | a4_v23_only_pilot_v2 | ABANDONED |
+| [a4_v23_only_pilot_v2_user_stop_20261009](a4_v23_only_pilot_v2_user_stop_20261009/README.md) | 20261009 | UNIFIED_TEAM_PROMPT_SEARCH | SCIENTIFIC_RESULT | a4_v23_only_pilot_v2 | ABANDONED |
 | [a4_v23_real_efficacy_preparation_20261008](a4_v23_real_efficacy_preparation_20261008/README.md) | 20261008 | UNIFIED_TEAM_PROMPT_SEARCH | PREEXECUTION | a4_v23_matched_comparison_v1 | ABANDONED |
 | [accepted_local_mutation_team_transfer_v1_prep_20260919](accepted_local_mutation_team_transfer_v1_prep_20260919/README.md) | 20260919 | GEPA_TWO_LAYER | PREEXECUTION | accepted_local_mutation_team_transfer_v1 | STATUS_UNRESOLVED |
 | [accepted_local_mutation_team_transfer_v2_execution_20260919](accepted_local_mutation_team_transfer_v2_execution_20260919/README.md) | 20260919 | GEPA_TWO_LAYER | SCIENTIFIC_RESULT | accepted_local_mutation_team_transfer_v2 | COMPLETED |

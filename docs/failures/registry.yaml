@@ -19,7 +19,7 @@ failures:
   - tests/current/test_v23_production_entrypoint.py::test_missing_owner_review_aborts_before_optimization_and_closes_accounting
   - tests/current/test_v23_production_entrypoint.py::test_owner_review_rejects_unapproved_or_stale_receipt
   forbidden_inference: No Gradient, mutation, Full, Shadow or commit was observed. Do not infer method failure, approve the terminated attempt retrospectively, or reuse the consumed scope/cache/remaining allowance. The monitor account-error timing is not established.
-  repair_effectiveness: ZERO_API_REGRESSION_ONLY_FRESH_REAL_EXECUTION_NOT_AUTHORIZED
+  repair_effectiveness: REAL_FOLLOWUP_USER_STOP_BEFORE_REVIEW_EFFECTIVENESS_NOT_EVALUABLE
 - failure_id: FAIL-A4-OPTIMIZE-ROLE-OVERLAP-EDIT-EVIDENCE-GAP
   title: Local validation reused mutation examples and Full rejection lacked complete edit evidence
   status: MITIGATED

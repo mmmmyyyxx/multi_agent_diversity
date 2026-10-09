@@ -1,0 +1,9 @@
+{
+  "experiment_id": "a4_v23_only_pilot_v2",
+  "execution_start_commit": "8b026ef0c97f76f4944cba057f040eb5830ca153",
+  "source_sha": "f5022a4dc0ccadbf806284b0a003a56c5dec6651",
+  "manifest_sha256": "c7e10adfd0281f0c75628fcd3a6f37c0c58be1cfe2180b36fedca88794fb4941",
+  "binding_sha256": "43a17e84d03d430bf9b5f62ce40222f1b70a2a547498c8816e4c6876000b2b73",
+  "report_publication_commit": "CONTAINING_GIT_COMMIT_NO_SELF_REFERENCE",
+  "frozen_source_or_manifest_modified": false
+}

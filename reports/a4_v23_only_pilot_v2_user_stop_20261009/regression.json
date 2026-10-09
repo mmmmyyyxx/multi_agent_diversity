@@ -1,0 +1,30 @@
+{
+  "source_sha": "f5022a4dc0ccadbf806284b0a003a56c5dec6651",
+  "preexecution_current_suite": {
+    "status": "PASS_COMPLETE_CURRENT_SUITE_AFTER_OPERATIONAL_RECOVERY",
+    "tests": 392,
+    "passed": 390,
+    "skipped": 2,
+    "failed": 0,
+    "errors": 0,
+    "seconds": 239.992,
+    "junit_sha256": "2859a8ff4d0efa5478f157bf62b8c8175716956834485331a02a0c15bb527334",
+    "log_sha256": "be8f8fdf822fc2d3f2a520b89b2b60199fb778165c2d59120cdb44c1cfcd42fe",
+    "command": "runs/math_v2_1/runtime/Scripts/python.exe tests/formal_zero_api_runner.py tests --suite current --junitxml=runs/a4_v23_only_seed81_20261008_attempt1/prep/recovery_current.junit.xml",
+    "network_guard_active_before_import": true,
+    "network_attempts": 0,
+    "real_api_calls": 0,
+    "compileall": "PASS",
+    "current_governance": "PASS",
+    "omitted_modules": 213,
+    "omitted_private_modules": 8,
+    "historical_replay_pass_claim": false,
+    "new_owner_failure_regressions": 4,
+    "focused_owner_review_module_passed": 6,
+    "scientific_implementation_changed": false,
+    "prior_synthetic_semantic_comparison": "SIX_BYTE_IDENTICAL_CASES_IN_PRESERVED_CLEANUP_REPORT"
+  },
+  "new_source_changes": false,
+  "current_suite_repeated_for_report_only_change": false,
+  "terminal_integrity_audit": "PASS"
+}

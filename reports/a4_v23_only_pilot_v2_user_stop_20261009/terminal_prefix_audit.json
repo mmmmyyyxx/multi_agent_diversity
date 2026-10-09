@@ -1,0 +1,38 @@
+{
+  "status": "PASS_PRESERVED_PARTIAL_PREFIX",
+  "source_closure_verified_before_publication": true,
+  "exact_initial_dispatches_verified": 283,
+  "cache_seals_verified": 226,
+  "response_receipts_verified": 283,
+  "accounted_started_attempts": 284,
+  "received_provider_responses": 283,
+  "unknown_inflight_attempts_closed": 1,
+  "raw_inventory_files_verified": 521,
+  "prior_immutable_report_manifests_verified": 3,
+  "resolved_profiles_by_member": {
+    "0": 60,
+    "1": 60,
+    "2": 60,
+    "3": 46,
+    "4": 0
+  },
+  "semantic_draw_distribution": {
+    "1": 203,
+    "4": 16,
+    "2": 5,
+    "3": 2
+  },
+  "terminal_invalid": 13,
+  "recovered_invalid": 10,
+  "finish_reasons": {
+    "stop": 251,
+    "length": 32
+  },
+  "validation_calls": 0,
+  "test_calls": 0,
+  "provider_transport_failures": 0,
+  "accounting_journal_sha256": "fc74dd338351f0abcede3ca7fe039d71d06da374d73a8d7dfe6b49bc7eada938",
+  "raw_inventory_sha256": "6e744ec2331e524bec63e7c6f1d76fb95841245f8a5849918bebfca755b95784",
+  "stop_receipt_sha256": "b6fb29d7794ab570f9c7ad9afb4391dc46d450b4bda0c1a764593d6d218024e8",
+  "network_provider_calls": 0
+}

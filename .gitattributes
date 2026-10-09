@@ -94,3 +94,6 @@ experiments/manifests/a4_v23_only_pilot_v2.yaml text eol=lf
 docs/workflows/V23_CANARY_OWNER_SUPERVISION.md text eol=lf
 reports/a4_v23_only_pilot_execution_20261009/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 reports/a4_v23_only_pilot_v2_preparation_20261009/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+
+# Immutable user-stop evidence for the consumed V2.3 attempt2 scope.
+reports/a4_v23_only_pilot_v2_user_stop_20261009/** -text whitespace=trailing-space,space-before-tab,cr-at-eol

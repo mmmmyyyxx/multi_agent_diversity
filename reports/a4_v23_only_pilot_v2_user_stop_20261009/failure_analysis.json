@@ -1,0 +1,23 @@
+{
+  "dominant_disposition": "USER_REQUESTED_STOP_BEFORE_INITIALIZATION_FINISHED",
+  "gradient_mutation_validation_preservation_team_admission": "NOT_OBSERVED",
+  "method_failure": "NOT_ESTABLISHED",
+  "initialization_cost": {
+    "solver_concurrency": 1,
+    "required_logical_profiles": 300,
+    "completed_logical_profiles": 226,
+    "received_responses": 283,
+    "finish_reasons": {
+      "stop": 251,
+      "length": 32
+    },
+    "semantic_draw_distribution": {
+      "1": 203,
+      "4": 16,
+      "2": 5,
+      "3": 2
+    }
+  },
+  "operational_defect": "NOT_DEMONSTRATED",
+  "prior_owner_timeout_repair_effectiveness": "NOT_EVALUABLE_BARRIER_NOT_REACHED"
+}

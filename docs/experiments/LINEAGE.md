@@ -24,9 +24,9 @@ real_execution_ready: false
 real_api_authorized: false
 validation_access: not_authorized
 test_access: sealed
-current_execution_blocker: FRESH_EXACT_SINGLE_USE_API_APPROVAL_REQUIRED
+current_execution_blocker: USER_REQUESTED_STOP_AUTHORIZATION_CLOSED
 current_execution_blockers:
-- FRESH_EXACT_SINGLE_USE_API_APPROVAL_REQUIRED
+- USER_REQUESTED_STOP_AUTHORIZATION_CLOSED
 current_runtime_builder: build_current_team_prompt_search
 current_execution_entrypoint: scripts/run_experiment.py
 current_runtime_composition: CURRENT_RUNTIME_COMPOSITION_V1
@@ -43,10 +43,10 @@ current_transition_policy: initial_competence_target_or_team_progress_v3
 current_configuration_arm: A4
 current_pattern_enabled: true
 current_memory_enabled: true
-current_canary_status: INITIAL_PROFILE_OBSERVED_PREVIOUS_ATTEMPT_TIMEOUT_FRESH_ATTEMPT_PENDING
-current_pilot_status: NOT_ENTERED_PREVIOUS_ATTEMPT_OPERATIONAL_ABORT_FRESH_ATTEMPT_PENDING
-current_pilot_report: reports/a4_v23_only_pilot_execution_20261009
-current_canary_report: reports/a4_v23_only_pilot_execution_20261009
+current_canary_status: STOPPED_BY_USER_INITIAL_PROFILE_INCOMPLETE
+current_pilot_status: NOT_ENTERED_USER_STOP
+current_pilot_report: reports/a4_v23_only_pilot_v2_user_stop_20261009
+current_canary_report: reports/a4_v23_only_pilot_v2_user_stop_20261009
 last_canary_milestone: math_v2_1_gradient_pattern_seed81_canary_v3
 next_canary_attempt_id: null
 next_canary_milestone: null
@@ -59,7 +59,7 @@ formal_a1_authorized: false
 pending_pilot_milestone: a4_v23_only_pilot_v2
 pending_pilot_manifest: experiments/manifests/a4_v23_only_pilot_v2.yaml
 pending_pilot_attempt_id: a4_v23_only_seed81_20261009_attempt2
-pending_pilot_status: FRESH_OPERATIONAL_FOLLOWUP_APPROVAL_PENDING
+pending_pilot_status: CLOSED_USER_REQUESTED_STOP
 pending_pilot_operational_retry_limit: 0
 pending_pilot_validation_authorized: false
 pending_pilot_test_authorized: false
@@ -72,7 +72,7 @@ operational_horizon_K: 5
 operational_attempt_token_ceiling: 2000000
 accounting_scope_policy: FRESH_V23_SINGLE_ARM_2M_V1
 token_ledger_directory: runs/a4_v23_only_seed81_20261009_attempt2/accounting
-autonomous_authorization_status: PREVIOUS_SCOPE_CONSUMED_AND_CLOSED_NEW_APPROVAL_PENDING
+autonomous_authorization_status: CONSUMED_CLOSED_USER_STOP
 future_execution_requires_new_frozen_single_use_scope: true
 next_matched_comparison_status: PERMANENTLY_CANCELLED_HISTORICAL_ONLY
 next_matched_comparison_real_api_authorized: false
@@ -405,21 +405,16 @@ historical_frontier_at_reference:
   next_matched_comparison_opportunities_per_arm: 5
   next_matched_comparison_validation_authorized: false
   next_matched_comparison_test_authorized: false
-last_v23_attempt_id: a4_v23_only_seed81_20261008_attempt1
-last_v23_attempt_status: EXECUTION_ABORTED_CANARY_OWNER_REVIEW_TIMEOUT
-last_v23_attempt_charged_tokens: 404677
-last_v23_attempt_remaining_closed: 1595323
+last_v23_attempt_id: a4_v23_only_seed81_20261009_attempt2
+last_v23_attempt_status: EXECUTION_ABORTED_USER_REQUESTED_STOP
+last_v23_attempt_charged_tokens: 358930
+last_v23_attempt_remaining_closed: 1641070
 last_v23_completed_opportunities: 0
 last_v23_observed_commits: 0
 last_v23_scientific_status: NOT_EVALUABLE
-last_v23_initial_correct_counts:
-- 52
-- 49
-- 52
-- 51
-- 50
-last_v23_initial_profiles: 300
-proposed_followup_executor: SCIENTIFIC_OWNER_DIRECT_EXECUTION_SUBJECT_TO_EXACT_APPROVAL
+last_v23_initial_correct_counts: null
+last_v23_initial_profiles: 226
+proposed_followup_executor: NONE_USER_REQUESTED_STOP
 ```
 
 ## Experiment and engineering DAG
@@ -701,7 +696,7 @@ flowchart TD
     n295["a4_v23_matched_comparison_v1_a<br/>PILOT<br/>ABANDONED"]
     n296["a4_v23_matched_comparison_v1_b<br/>PILOT<br/>ABANDONED"]
     n297["a4_v23_only_pilot_v1<br/>PILOT<br/>INVALID"]
-    n298["a4_v23_only_pilot_v2<br/>PILOT<br/>PREPARED_NOT_EXECUTED"]
+    n298["a4_v23_only_pilot_v2<br/>PILOT<br/>ABANDONED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]

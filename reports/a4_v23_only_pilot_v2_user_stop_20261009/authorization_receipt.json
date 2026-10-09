@@ -1,0 +1,13 @@
+{
+  "explicit_user_authorized": true,
+  "single_use": true,
+  "consumed": true,
+  "closed": true,
+  "user_stop": true,
+  "automatic_monitor_paused": true,
+  "new_provider_calls_after_owned_process_stop": 0,
+  "authorization_file_sha256": "c13e0385f96d8bee09f6f4a6332816bb4b19f99849d6f17bde73f4fdc5d887ae",
+  "consumption_receipt_sha256": "9168e5fc08bb4ba2fb663d159c0981bb4fc896067cf3c2c645e3ba6202f9eca8",
+  "startup_identity_sha256": "fc02fc0ecdcfa2dd8ad90a46fa08e8ead9bdf58de05120444d6fa0587b04bfc8",
+  "scope_sha256": "17768e91f01f9ae1a62009ee73858f14b0ee3d6b83ffce1f8ee29b0e94243c18"
+}

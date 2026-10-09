@@ -8786,23 +8786,23 @@ experiments:
   method_family: unified_team_prompt_search_v2_3
   parent_ids:
   - a4_v23_only_pilot_v1
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: SEMANTICS_PRESERVED_OPERATIONAL_FOLLOWUP_EXACT_APPROVAL_PENDING
-  implementation_commit: null
-  execution_commit: null
+  status: ABANDONED
+  scientific_status: NOT_EVALUABLE_USER_STOP_BEFORE_INITIAL_CANARY
+  implementation_commit: f5022a4dc0ccadbf806284b0a003a56c5dec6651
+  execution_commit: 8b026ef0c97f76f4944cba057f040eb5830ca153
   result_commit: null
   manifest: experiments/manifests/a4_v23_only_pilot_v2.yaml
-  report: reports/a4_v23_only_pilot_v2_preparation_20261009
-  classifier: reports/a4_v23_only_pilot_v2_preparation_20261009/classifier.json
-  active_for_new_work: true
+  report: reports/a4_v23_only_pilot_v2_user_stop_20261009
+  classifier: reports/a4_v23_only_pilot_v2_user_stop_20261009/classifier.json
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
-  - Fresh independent attempt after pre-optimization owner review timeout; scientific
-    method unchanged.
-  - Direct owner execution and bounded supervision require exact new approval; no
-    reuse of 1595323 remaining closed-scope tokens or prior profiles.
+  - Exact single-use API approval consumed; user stopped the owned process during initialization.
+  - 226 logical profiles, 284 started calls, 283 responses; 358930 charged including 8700 conservative unknown usage; inflight zero.
+  - No Canary review, optimization or held-out calls. Remaining 1641070 closed-scope tokens cannot be reused.
+  reports:
+  - reports/a4_v23_only_pilot_v2_user_stop_20261009
+  - reports/a4_v23_only_pilot_v2_preparation_20261009
   unavailable:
-    implementation_commit: Exact new source SHA in separate freeze receipt.
-    execution_commit: No new API approval or execution.
-    result_commit: No new scientific outcome.
+    result_commit: Containing user-stop publication commit, identified by Git history and remote verification.

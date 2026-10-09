@@ -1,0 +1,58 @@
+{
+  "authorization_amendments": [],
+  "authorized_total": 2000000,
+  "by_attempt": {
+    "a4_v23_only_seed81_20261009_attempt2": {
+      "charged_total": 358930,
+      "fallback_charged": 8700,
+      "input_tokens": 62743,
+      "output_tokens": 296187,
+      "physical_attempts": 284,
+      "provider_reported_actual": 350230
+    }
+  },
+  "by_model": {
+    "qwen3-8b": {
+      "charged_total": 358930,
+      "fallback_charged": 8700,
+      "input_tokens": 62743,
+      "output_tokens": 296187,
+      "physical_attempts": 284,
+      "provider_reported_actual": 350230
+    }
+  },
+  "by_role": {
+    "solver": {
+      "charged_total": 358930,
+      "fallback_charged": 8700,
+      "input_tokens": 62743,
+      "output_tokens": 296187,
+      "physical_attempts": 284,
+      "provider_reported_actual": 350230
+    }
+  },
+  "by_stage": {
+    "pilot": {
+      "charged_total": 358930,
+      "fallback_charged": 8700,
+      "input_tokens": 62743,
+      "output_tokens": 296187,
+      "physical_attempts": 284,
+      "provider_reported_actual": 350230
+    }
+  },
+  "charged_total": 358930,
+  "fallback_charged": 8700,
+  "identity": "AUTONOMOUS_REAL_TOKEN_LEDGER_V2",
+  "input_tokens": 62743,
+  "last_event_sha256": "858c847a091bc8b0501fb98bca1582e7c560ff6191b57b175f47a1ac36986e34",
+  "output_tokens": 296187,
+  "provider_reported_actual": 350230,
+  "remaining": 1641070,
+  "reserved_inflight": 0,
+  "task_sha256": "07ecc2b6d9d28c13f129f0fc3fb1d77df493b2d69426ccc50f9b971f7724f11b",
+  "accounting_scope_status": "CLOSED_USER_REQUESTED_STOP",
+  "unused_allowance_reusable": false,
+  "received_responses": 283,
+  "started_attempts": 284
+}

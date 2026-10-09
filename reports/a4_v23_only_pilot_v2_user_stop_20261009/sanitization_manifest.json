@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "private_evidence_published": false,
+  "published_content": "hashes, counters, categories, metrics and scope identities",
+  "validator": "scripts/validate_sanitized_artifacts.py",
+  "findings": []
+}

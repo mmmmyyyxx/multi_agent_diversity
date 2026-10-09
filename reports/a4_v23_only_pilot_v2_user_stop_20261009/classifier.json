@@ -1,0 +1,15 @@
+{
+  "validity": "VALID_AUDITED_PARTIAL_PREFIX",
+  "efficacy": "NOT_EVALUABLE",
+  "execution": "USER_CANCELLED",
+  "scientific_complete": false,
+  "failure_mechanisms": {
+    "A": "NOT_OBSERVED",
+    "B": "NOT_OBSERVED",
+    "C": "NOT_OBSERVED",
+    "D": "NOT_OBSERVED",
+    "E": "NOT_OBSERVED",
+    "F": "NOT_OBSERVED"
+  },
+  "operational": "USER_CANCELLATION_NOT_A_DEMONSTRATED_ENGINEERING_DEFECT"
+}

@@ -1,0 +1,11 @@
+{
+  "status": "NOT_COMPLETED",
+  "initial_profiles": 226,
+  "required_profiles": 300,
+  "initial_owner_review": "NOT_REACHED",
+  "first_opportunity_owner_review": "NOT_REACHED",
+  "gradient": "NOT_OBSERVED",
+  "mutation": "NOT_OBSERVED",
+  "full": "NOT_OBSERVED",
+  "shadow": "NOT_OBSERVED"
+}
