@@ -1,0 +1,49 @@
+{
+  "accounting_only_difference_paths": [
+    "EVALUATION/search/search_state/token_accounting/solver_tokens",
+    "EVALUATION/search/solver_calls",
+    "EVALUATION/search/solver_tokens"
+  ],
+  "attempt_id": "a4_v25_seed81_canary_attempt1",
+  "consumed_authorization_not_reused": true,
+  "execution_summary_sha256": "96c0b84b4393bc60878d80e1b3ab83e8fbf59016d72230ea5b02a72766b61466",
+  "final_state_sha256": "4f6dde8a5b9842dd76350ba63fa95bf53a8d32edde810532e4380445a97b07df",
+  "frozen_execution_source_verified": true,
+  "frozen_scientific_benchmark_dataset_scopes_verified": true,
+  "local_lineage_equal": true,
+  "new_billable_tokens": 0,
+  "new_provider_calls": 0,
+  "opportunities": 1,
+  "original_evidence_byte_identical": true,
+  "original_files_verified": 1428,
+  "original_inventory_sha256": "08b52647843d0443e7ea3453b3a95eae8380cd24ffbc5af6c286370862b377a3",
+  "original_lifecycle_preserved": "EXECUTION_ABORTED",
+  "owner_reviews": {
+    "FIRST_COMPLETE_OPPORTUNITY": {
+      "owner_review_sha256": "eda4e3602071c42a6ff24a7371e5c9656b270b233c57cf44bbd3afad67802ba0",
+      "review_identity_sha256": "345d1a7ecf27c63cba0589d430b269f7389523d770e6e5f3161836f6fc0c259e",
+      "status": "OWNER_REVIEW_PASS_RECONSUMED"
+    },
+    "INITIAL_SOLVER_PROFILE": {
+      "owner_review_sha256": "bff8d72cd644c73b3b2c5ee6a0b167578969a225d7978fba092b61ec163b701b",
+      "review_identity_sha256": "10100bf33db401ddd912d82dc9fd33848d89714e0fd5f60fd353081d4cc26637",
+      "status": "OWNER_REVIEW_PASS_RECONSUMED"
+    }
+  },
+  "publication_governance_drift_paths": [
+    "docs/failures/registry.yaml",
+    "experiments/current_frontier.yaml",
+    "experiments/registry.yaml"
+  ],
+  "recovery_kind": "EXACT_SAME_ATTEMPT_PRODUCTION_GRAPH_TERMINAL_RECONSTRUCTION",
+  "replay_optimizer_requests_exact": 24,
+  "replay_solver_cache_unique": 336,
+  "scientific_trajectory_equal": true,
+  "solver_cache_reads": 336,
+  "source_sha": "7217081d43fff2e94ab46ed28378717e3e912520",
+  "startup_identity_sha256": "4cdba0f516bb33c1b8a4264edab191110a8cd2a2b60fdfcaa93f5dd3cb6bd775",
+  "status": "EXECUTION_COMPLETE_RECOVERED_ZERO_API",
+  "stop_reason": "CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE",
+  "team_commits": 0,
+  "terminal_memory_sha256": "452d08d6ffd11c46beef2c36faf16931b75e76301b14c0b38e6d9b7030052cce"
+}

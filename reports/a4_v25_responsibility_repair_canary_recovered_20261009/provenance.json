@@ -1,0 +1,50 @@
+{
+  "accounting_only_reconstruction_differences": [
+    "EVALUATION/search/search_state/token_accounting/solver_tokens",
+    "EVALUATION/search/solver_calls",
+    "EVALUATION/search/solver_tokens"
+  ],
+  "binding_sha256": "7a1f64167ef27c37594f69351cc024c8d0327afb5fbeb74c88b8efbb4277104b",
+  "consumed_authorization_reused_for_api": false,
+  "execution_closure_sha256": "7523ef788659719ec81c86f566a66c4dc174b279290153becfdf0c217925cad8",
+  "execution_scope_sha256": "af314b3e5955dbf993a3a56a1ab933f4b8ce5af94b57e0e086822c3904174fbf",
+  "frozen_governance_verified_from_source_commit": true,
+  "frozen_manifest_and_binding_byte_unchanged": true,
+  "governance_metadata_enum_repair": true,
+  "interpretation_of_accounting_differences": "CACHE_REPLAY_REPORTS_ZERO_NEW_SOLVER_CALLS_AND_TOKENS_ORIGINAL_LEDGER_IS_AUTHORITATIVE",
+  "live_publication_governance_drift": [
+    "docs/failures/registry.yaml",
+    "experiments/current_frontier.yaml",
+    "experiments/registry.yaml"
+  ],
+  "local_lineage_equal": true,
+  "manifest_publication_commit": "27c364fca9446fe557388403a31bcf1e4c7f1b38",
+  "manifest_sha256": "fcdda11059e5da75a9776da0a3e6919d08c2b66b588c021600df6370f0ed4c22",
+  "new_run_preflight_not_bypassed": true,
+  "original_evidence_files_verified": 1428,
+  "original_evidence_unchanged": true,
+  "original_explicit_user_task_sha256": "329dcdc2f37988b955239b50880797831d23b403fbb4fbaf6a0e9d4cd68c5fac",
+  "original_interruption_publication_commit": "d3eaac64290d5ee9930277379745627a7f0df7a4",
+  "original_interruption_report": "reports/a4_v25_responsibility_repair_canary_interrupted_20261009",
+  "original_inventory_sha256": "08b52647843d0443e7ea3453b3a95eae8380cd24ffbc5af6c286370862b377a3",
+  "preregistration_identity": "9699a01fe1fa189ac1c6e93db83b487ce7a80bee156b29ed6ff9efcf35b87515",
+  "private_reconstruction_orchestration_sha256": "89da9d934035c3b60dfd7fa459755898a629eedd269e952334cb8634be862a54",
+  "private_terminal_verifier_sha256": "ce7cb5c34031d4368a3583859a522e59bd7fd98a7b59735cf7efae269fa76f31",
+  "production_source_changes_during_recovery": 0,
+  "reconstructed_execution_summary_sha256": "96c0b84b4393bc60878d80e1b3ab83e8fbf59016d72230ea5b02a72766b61466",
+  "reconstructed_final_state_sha256": "4f6dde8a5b9842dd76350ba63fa95bf53a8d32edde810532e4380445a97b07df",
+  "reconstruction_optimizer_requests_exact": 24,
+  "reconstruction_solver_cache_unique": 336,
+  "recovery_start_head": "d3eaac64290d5ee9930277379745627a7f0df7a4",
+  "report_is_not_normative": true,
+  "scientific_trajectory_equal": true,
+  "source_commit": "7217081d43fff2e94ab46ed28378717e3e912520",
+  "source_hash_closure": {
+    "benchmark_contract_hash": "2b50aa9df27d2e8edb9a7aec19cca7068b43caa94dcb256ba9bc158fd3500f89",
+    "dataset_manifest_hash": "d3c3f587bf9e08f5d9a12c8b777953c57cd30fc4c655e82e95f556b337119d81",
+    "governance_hash": "887d7774693ec91faf723269e39546bebbc1fcf61e87078a4e6878eec79860f2",
+    "scientific_source_hash": "0d9989b60317b9f3e3a76f1aa92624a207e94b4c0adf7982126fbd340b809e32"
+  },
+  "startup_identity_sha256": "4cdba0f516bb33c1b8a4264edab191110a8cd2a2b60fdfcaa93f5dd3cb6bd775",
+  "terminal_recovery_human_authorization": "USER_EXPLICIT_CONTINUE_COMPLETE_CANARY_AND_PUSH"
+}

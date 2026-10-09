@@ -1,0 +1,21 @@
+{
+  "all_current_cases_executed": true,
+  "all_current_cases_pass_after_governance_recheck": true,
+  "efficacy_scope_limited": true,
+  "exact_same_attempt_reconstruction": true,
+  "final_state_and_memory_persisted": true,
+  "ledger_and_receipts_verified": true,
+  "local_lineage_equal": true,
+  "native_stop_reached": true,
+  "no_consumed_authorization_reused_for_api": true,
+  "no_method_or_frozen_parameter_change": true,
+  "no_new_api_calls_or_billable_tokens": true,
+  "no_pilot_validation_test": true,
+  "no_unresolved_reservations": true,
+  "original_aborted_lifecycle_preserved": true,
+  "original_evidence_byte_identical": true,
+  "original_interruption_report_immutable": true,
+  "owner_reviews_verified": true,
+  "reported_validity_explicitly_qualifies_terminal_recovery": true,
+  "scientific_trajectory_equal": true
+}

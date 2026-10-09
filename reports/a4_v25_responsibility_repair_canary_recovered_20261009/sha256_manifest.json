@@ -1,0 +1,89 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "6f554706e49040027bc330bfd374d03881f92ac71702765fe91dba870a8e2aa7"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "5449a5c46b33cf4114de4743a154b056f49fe9819d9d61c0f028a130ce18f6fc"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "d69b84250be32215faaa718ffa762ed122851ad0a1466b20a7582c62df1e3d1b"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "335d74545934020c5f74f8216822879783bb35390abd687e560aa668b7698b4c"
+    },
+    {
+      "file": "format_forensic.json",
+      "sha256": "bd9537f8e3d05a713524080280a6482598047c59c5a47059e92374801398ae76"
+    },
+    {
+      "file": "funnel_summary.json",
+      "sha256": "f283cae8695461b788357bfba23062c788fc4012cbb1a44815cd7f899cb04c38"
+    },
+    {
+      "file": "guard_inventory.json",
+      "sha256": "0e23f5022867a68dda4d29cf3417e009a2e74bf7dc0d97e8f901d740073f238b"
+    },
+    {
+      "file": "initial_format_forensic.json",
+      "sha256": "12b27ead1f4df366357af6164ad3c29b6e9e3823f7f282ea2834f27da60560e6"
+    },
+    {
+      "file": "initial_profile_audit.json",
+      "sha256": "80fc194e6abd6b711c1f76e9e42145168574fe01dc9c0115f1a857153ff41c65"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "54cf1383ff82078627ca7017c365f00669756d8b42340e80dfc679a88010dae4"
+    },
+    {
+      "file": "memory_summary.json",
+      "sha256": "7dc5ee00eb9080a17bf4b6cbcffff362a0c0d4d1057ca77b11d7a24ddde1c108"
+    },
+    {
+      "file": "old195_parser_replay.json",
+      "sha256": "4bac6f3a956767a946ff43af7870425a5770a4516712f1ed22fda1f47534d165"
+    },
+    {
+      "file": "opportunity_audit.json",
+      "sha256": "7fbc4335e93a5fbb3d6c53626b069cb3f59c964873f70c7c21b50ae7e6650db4"
+    },
+    {
+      "file": "owner_completion_audit.json",
+      "sha256": "2f9c765835896d747b91485faf79713921c6097e5d2307978944130591effdaa"
+    },
+    {
+      "file": "prompt_block_evolution.json",
+      "sha256": "e456d581fc17f5ed782f4306fd7c4968dd9634d0daad39246ba7bbd36e89921c"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "152e7205ef20055e1a37e1bb85e23955f487b06e72df2f5aeea7212b544b11da"
+    },
+    {
+      "file": "README.md",
+      "sha256": "8a22588d71bc96ba17fc292e79ab66d49f8e913e959eff315ac2c221dfe05e05"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "7da51edf67cd2d3080ec9fd95c8ed82cbcfdbfd6e9e64e331863b8e4fae2f9e8"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "a63201674cd8ded5613f4bbcc13896d931807b662923221740af59260ee2db31"
+    },
+    {
+      "file": "terminal_recovery_receipt.json",
+      "sha256": "f1fa4cde2058567ffae7e9be0a6a58f34c9323224186fb82e65d9cd3ea2af085"
+    },
+    {
+      "file": "tests_results.json",
+      "sha256": "33d406e8c4d984da449ae761c65481d91a9bd712ecd3f44473364b5efd1173e2"
+    }
+  ]
+}

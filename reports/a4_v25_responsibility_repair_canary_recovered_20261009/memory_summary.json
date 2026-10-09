@@ -1,0 +1,84 @@
+{
+  "edit_records": 3,
+  "initial_competence_entries": 5,
+  "later_opportunity_retrieval": "NOT_OBSERVED",
+  "memory_causal_benefit": "NOT_ESTABLISHED",
+  "owner_barrier_status_counts": {
+    "FULL_SUPPORTED": 2,
+    "INCONCLUSIVE": 1
+  },
+  "runtime_audit": {
+    "edit_status_counts": {
+      "FULL_SUPPORTED": 2,
+      "INCONCLUSIVE": 1
+    },
+    "failure_evidence_events": 3,
+    "failure_family_count": 1,
+    "failure_family_repeated_count": 1,
+    "failure_memory_evictions": 0,
+    "failure_memory_peak_by_member": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "failure_reads": 0,
+    "failure_to_shared_promotions": 0,
+    "failure_writes": 0,
+    "initial_memory_entries": 5,
+    "memory_context_chars": {
+      "max": 820,
+      "mean": 643.5714285714286,
+      "min": 225
+    },
+    "memory_ids": [
+      "083923a32179f421b09c61923352faa1543fd56d0f5e3dfdb072d972e47dc391",
+      "05778c492affa515b837b9578ca68d5efd115d9c74a6abb1edbd2e637f31ef66",
+      "1fe0e2cc573671914c38d5fc321181778fe0ae4e3dc706bd43d725a92a42e40d",
+      "883c799752522f064eaa2bfe80b65bc87dcd687afee78f80412e57cc43c5cb01"
+    ],
+    "memory_llm_calls": 0,
+    "memory_policy_identity": "BOOTSTRAPPED_FORMAT_BLOCK_EDIT_EFFECT_MEMORY_V3",
+    "private_edit_count_by_member": [
+      3,
+      0,
+      0,
+      0,
+      0
+    ],
+    "private_failure_count_by_member": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "private_success_count_by_member": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "promoted_families": [],
+    "risk_clock": 1,
+    "shared_reads": 0,
+    "shared_risk_count": 1,
+    "shared_risk_created": 1,
+    "shared_risk_evicted": 0,
+    "shared_risk_reads": 0,
+    "shared_risk_storage_final": 1,
+    "shared_risk_storage_peak": 1,
+    "shared_risk_updated": 0,
+    "shared_writes": 1,
+    "stateful_write_count": 4,
+    "success_reads": 0,
+    "success_writes": 0
+  },
+  "shadow_rejection_does_not_rewrite_full_evidence_status": true,
+  "shared_risk_has_no_math_items_or_provider_text": true,
+  "snapshot_origin": "EXACT_SAME_ATTEMPT_FROZEN_PRODUCTION_GRAPH_RECONSTRUCTION",
+  "terminal_memory_snapshot": true,
+  "terminal_memory_snapshot_sha256": "452d08d6ffd11c46beef2c36faf16931b75e76301b14c0b38e6d9b7030052cce"
+}

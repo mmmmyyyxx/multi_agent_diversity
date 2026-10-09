@@ -1,0 +1,98 @@
+{
+  "actual_max_reserved_inflight_requests": 8,
+  "all_member_correct_intersection": 3,
+  "cache_and_first_valid_recovery_verified": true,
+  "charged_tokens": 231538,
+  "conservative_format_rejections_observed": true,
+  "fallback_charged_tokens": 21678,
+  "independent_scores_match_runtime": true,
+  "interface_review_status": "AWAITING_SCIENTIFIC_OWNER_TEXT_REVIEW",
+  "logical_profiles": 60,
+  "max_charged_plus_reserved_exposure": 241420,
+  "member_correct": [
+    3.0,
+    3.0,
+    4.0,
+    4.0,
+    3.0
+  ],
+  "optimize_count": 12,
+  "oracle_correct": 5,
+  "pairwise_correct_overlap": [
+    [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    [
+      3,
+      3,
+      4,
+      3,
+      3
+    ],
+    [
+      3,
+      3,
+      3,
+      4,
+      3
+    ],
+    [
+      3,
+      3,
+      3,
+      3,
+      3
+    ]
+  ],
+  "physical_solver_responses": 192,
+  "provider_reported_actual_tokens": 209860,
+  "raw_invalid_reasons": {
+    "AMBIGUOUS_FINAL_PAYLOAD": 19,
+    "MISSING_EXPLICIT_FINAL_ANSWER": 141,
+    "OUTPUT_TRUNCATED": 13,
+    "PAYLOAD_PARSE_FAILURE": 2,
+    "VALID": 17
+  },
+  "real_provider_calls_by_audit": 0,
+  "reasoning_metadata_contradictions": 0,
+  "recovered_invalid": 2,
+  "repeated_format_failure_profiles": 35,
+  "reserved_tokens": 0,
+  "resolved_invalid": 43,
+  "resolved_valid": 17,
+  "sealed_receipts_verified": 194,
+  "semantic_draw_distribution": {
+    "1": 15,
+    "2": 1,
+    "3": 1,
+    "4": 43
+  },
+  "semantic_recovery_calls": 132,
+  "semantic_recovery_tokens": 156768,
+  "solution_status_counts": {
+    "FINAL_BOUNDARY_INVALID": 41,
+    "RESPONSE_TRUNCATED": 2,
+    "WRITTEN_SOLUTION_PRESENT": 17
+  },
+  "terminal_invalid": 43,
+  "test_calls": 0,
+  "transport_failures": {
+    "APITimeoutError": 2
+  },
+  "unknown_charged_without_receipt": 0,
+  "valid_mathematical_wrong_profiles": 0.0,
+  "validation_calls": 0,
+  "vote_correct": 5.0,
+  "wire_all_exact": true
+}

@@ -1,0 +1,42 @@
+{
+  "accounting_scope_closed": true,
+  "attempts_by_role": {
+    "pattern_cluster": 1,
+    "pattern_gradient": 17,
+    "reflection": 6,
+    "solver": 1043
+  },
+  "authorized_ceiling": 2000000,
+  "charged_by_role": {
+    "pattern_cluster": 625,
+    "pattern_gradient": 60376,
+    "reflection": 24470,
+    "solver": 1085880
+  },
+  "charged_by_stage": {
+    "canary": 1171351
+  },
+  "charged_tokens": 1171351,
+  "initial_format_recovery_calls": 132,
+  "initial_format_recovery_provider_tokens": 156768,
+  "ledger_events_verified": 2135,
+  "ledger_hash_chain_verified": true,
+  "max_charged_plus_reserved": 1207827,
+  "max_inflight": 8,
+  "new_recovery_billable_tokens": 0,
+  "new_recovery_provider_calls": 0,
+  "provider_reported_actual_tokens": 1130364,
+  "receipts_verified": 1067,
+  "reserved_tokens": 0,
+  "returned_response_counts": {
+    "pattern_cluster": 1,
+    "pattern_gradient": 17,
+    "reflection": 6,
+    "solver": 1039
+  },
+  "transport_failures": {
+    "APITimeoutError": 4
+  },
+  "unknown_usage_conservative_accounting": 40987,
+  "unknown_usage_is_actual_bill": false
+}

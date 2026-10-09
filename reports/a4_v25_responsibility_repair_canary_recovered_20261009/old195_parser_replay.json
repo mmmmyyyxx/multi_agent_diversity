@@ -1,0 +1,11 @@
+{
+  "inference": "PARSER_BOUNDARY_DIAGNOSTIC_ONLY_NEW_V25_SCORING_IMPORT_FORBIDDEN",
+  "new_extractor_invalid_reasons": {
+    "MISSING_EXPLICIT_FINAL_ANSWER": 195
+  },
+  "new_extractor_valid": 0,
+  "original_trace_sha256": "0192ded03a44e693561434fd0d7cb2c15f8fbca0e1a365c1c7e3fb6ed252e6d4",
+  "read_only_proof": true,
+  "real_api_calls": 0,
+  "source_response_count": 195
+}

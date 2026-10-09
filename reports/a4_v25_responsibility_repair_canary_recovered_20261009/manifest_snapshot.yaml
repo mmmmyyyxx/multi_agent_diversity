@@ -1,0 +1,40 @@
+schema_version: experiment_manifest_v2
+experiment_id: a4_v25_responsibility_repair_canary_v1
+method_identity: unified_team_prompt_search_v2_5_responsibility_fallback_repair_probe
+source_sha: 7217081d43fff2e94ab46ed28378717e3e912520
+benchmark_id: math
+benchmark_protocol_id: 4daf6f3c4551af80b4fa038424e826422ace29430913120dafd652d03cd3cd98
+dataset_manifest_identity: 7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f
+split_identity: 196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507
+seed: 81
+models:
+  solver: qwen3-8b
+  optimizer: qwen3.7-flash
+  solver_thinking: false
+concurrency:
+  solver: 8
+  optimizer: 1
+solver_output_interface_identity: MATH_EXPLICIT_FINAL_SYSTEM_INTERFACE_V8
+parser_identity: MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V2
+access:
+  search_access: frozen_search
+  shadow_access: frozen_adaptive_gate
+  validation_access: not_authorized
+  test_access: sealed
+hash_closure:
+  scientific_source_hash: 0d9989b60317b9f3e3a76f1aa92624a207e94b4c0adf7982126fbd340b809e32
+  governance_hash: 887d7774693ec91faf723269e39546bebbc1fcf61e87078a4e6878eec79860f2
+  benchmark_contract_hash: 2b50aa9df27d2e8edb9a7aec19cca7068b43caa94dcb256ba9bc158fd3500f89
+  dataset_manifest_hash: d3c3f587bf9e08f5d9a12c8b777953c57cd30fc4c655e82e95f556b337119d81
+execution_binding:
+  identity: MATH_RESPONSIBILITY_REPAIR_EVIDENCE_BINDING_V2
+  path: experiments/execution_bindings/a4_v25_seed81_canary_attempt1.json
+  sha256: 7a1f64167ef27c37594f69351cc024c8d0327afb5fbeb74c88b8efbb4277104b
+preregistration_identity: 9699a01fe1fa189ac1c6e93db83b487ce7a80bee156b29ed6ff9efcf35b87515
+snapshot_kind: SANITIZED_MANIFEST_PROJECTION
+original_manifest_sha256: fcdda11059e5da75a9776da0a3e6919d08c2b66b588c021600df6370f0ed4c22
+token_ceiling: 2000000
+max_opportunities: 1
+mutation_size: 3
+search_validation_size: 3
+independent_probe_size: 6

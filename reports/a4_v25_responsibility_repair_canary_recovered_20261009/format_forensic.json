@@ -1,0 +1,22 @@
+{
+  "alternative_scores_computed": false,
+  "audit_api_calls": 0,
+  "inference": "TEXT_SHAPE_DIAGNOSTIC_ONLY_FROZEN_NATIVE_PARSER_UNCHANGED",
+  "native_parser_outcomes": {
+    "AMBIGUOUS_FINAL_PAYLOAD": 19,
+    "MISSING_EXPLICIT_FINAL_ANSWER": 141,
+    "OUTPUT_TRUNCATED": 13,
+    "PAYLOAD_PARSE_FAILURE": 2,
+    "VALID": 17
+  },
+  "responses": 192,
+  "stage_responses": {
+    "initial": 192
+  },
+  "terminal_shapes": {
+    "MARKDOWN_EMPHASIZED_DECLARATION": 2,
+    "MARKDOWN_HEADING": 1,
+    "OTHER_TERMINAL_TEXT": 151,
+    "PLAIN_EXPLICIT_DECLARATION": 38
+  }
+}

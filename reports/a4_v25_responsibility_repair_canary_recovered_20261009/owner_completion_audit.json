@@ -1,0 +1,66 @@
+{
+  "attempts_by_role": {
+    "pattern_cluster": 1,
+    "pattern_gradient": 17,
+    "reflection": 6,
+    "solver": 1043
+  },
+  "charged_by_role": {
+    "pattern_cluster": 625,
+    "pattern_gradient": 60376,
+    "reflection": 24470,
+    "solver": 1085880
+  },
+  "charged_tokens": 1171351,
+  "commits": 0,
+  "current_production_source_unchanged": true,
+  "fallback_charged_tokens": 40987,
+  "final_member_correct": [
+    3,
+    3,
+    4,
+    4,
+    3
+  ],
+  "final_oracle": 5,
+  "final_vote": 5,
+  "ledger_events_verified": 2135,
+  "ledger_hash_chain": "PASS",
+  "local_lineage_equal": true,
+  "max_charged_plus_reserved": 1207827,
+  "max_inflight": 8,
+  "negative_controls": {
+    "cache_integrity_tamper": "PASS",
+    "cache_write_forbidden": "PASS",
+    "ledger_hash_tamper": "PASS",
+    "missing_exact_solver_cache": "PASS",
+    "optimizer_request_mismatch": "PASS",
+    "optimizer_transcript_exhausted": "PASS"
+  },
+  "network_attempts": 0,
+  "new_billable_tokens": 0,
+  "new_provider_calls": 0,
+  "original_evidence_unchanged": true,
+  "original_files_verified": 1428,
+  "original_operational_status": "EXECUTION_ABORTED",
+  "owner_reviews_verified": true,
+  "provider_reported_actual_tokens": 1130364,
+  "receipts_verified": 1067,
+  "recovery_status": "EXECUTION_COMPLETE_RECOVERED_ZERO_API",
+  "report_scope": "SAME_MEASURED_CANARY_PLUS_DERIVED_TERMINAL_RECOVERY_NO_NEW_EXPERIMENT",
+  "reserved_tokens": 0,
+  "role_split_response_counts": {
+    "pattern_cluster:optimize": 1,
+    "pattern_gradient:optimize": 17,
+    "reflection:optimize": 6,
+    "solver:optimize": 312,
+    "solver:shadow": 731
+  },
+  "scientific_method_changed_during_recovery": false,
+  "scientific_trajectory_equal": true,
+  "status": "OWNER_TERMINAL_RECOVERY_INTEGRITY_PASS",
+  "stop_reason": "CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE",
+  "terminal_memory_verified": true,
+  "trace_count": 1,
+  "validity": "CANARY_VALID_WITH_TERMINAL_RECOVERY"
+}

@@ -1,0 +1,12 @@
+{
+  "findings": [],
+  "private_evidence_remains_untracked": true,
+  "private_math_items_and_instruction_traces_published": false,
+  "published_types": [
+    "hashes",
+    "counts",
+    "categories",
+    "metrics"
+  ],
+  "status": "PASS"
+}

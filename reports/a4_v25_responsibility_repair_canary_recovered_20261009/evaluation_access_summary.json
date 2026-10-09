@@ -1,0 +1,20 @@
+{
+  "heldout_outcomes_entered_search": false,
+  "original_same_attempt_cache_only": true,
+  "pilot_model_calls": 0,
+  "prior_attempt_realizations_imported": false,
+  "recovery_new_realizations": 0,
+  "role_split_response_counts": {
+    "pattern_cluster:optimize": 1,
+    "pattern_gradient:optimize": 17,
+    "reflection:optimize": 6,
+    "solver:optimize": 312,
+    "solver:shadow": 731
+  },
+  "shadow_purpose": "WINNER_ONLY_PRIVATE_ADAPTIVE_GATE",
+  "shadow_raw_evidence_entered_gradient_or_mutation": false,
+  "test_model_calls": 0,
+  "test_raw_reads": 0,
+  "validation_model_calls": 0,
+  "validation_search_raw_reads": 0
+}

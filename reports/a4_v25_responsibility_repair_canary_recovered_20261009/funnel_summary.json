@@ -1,0 +1,46 @@
+{
+  "actionable_gradients": 5,
+  "cluster_calls": 1,
+  "commits": 0,
+  "diagnosed_wrong": 9,
+  "exhausted_gradients": 4,
+  "exported": 3,
+  "full_passes": 2,
+  "full_uses_optimize_only": true,
+  "generation_status_counts": {
+    "CONTRACT_INVALID": 2,
+    "LOCALLY_EVALUATED": 3,
+    "NO_SAFE_EDIT": 1
+  },
+  "gradient_calls": 17,
+  "gradient_structural_rejected_draws": 12,
+  "independent_probe_vote_deltas": [
+    0,
+    0,
+    0
+  ],
+  "local_metric_calls": 24,
+  "membership_counts": {
+    "assigned_seen": 3,
+    "independent_probe": 6,
+    "mutation": 3,
+    "search_validation": 3
+  },
+  "opportunities": 1,
+  "outer_admission_has_no_local_positive_veto": true,
+  "pattern_support": 4,
+  "patterns": 1,
+  "probed": 3,
+  "promoted_to_full": 2,
+  "real_zero_responsibility_fallback_observed": false,
+  "seen_assigned_repair_counts": [
+    2,
+    2,
+    0
+  ],
+  "selected_member": 0,
+  "shadow_pass": false,
+  "shadow_reject_category": "catastrophic_target_member_regression",
+  "shadow_winners": 1,
+  "uncertain_gradients": 0
+}
