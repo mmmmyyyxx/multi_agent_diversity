@@ -1,0 +1,12 @@
+{
+  "execution": "EXECUTION_ABORTED",
+  "scientific_run": "NOT_EVALUABLE",
+  "prefix_integrity": "PASS",
+  "real_canary": "INCOMPLETE",
+  "real_pilot": "NOT_ENTERED",
+  "method_effectiveness": "INCONCLUSIVE_NOT_OBSERVED",
+  "dominant_failure": "G_OPERATIONAL_OWNER_REVIEW_TIMEOUT",
+  "scientific_method_changed": false,
+  "empirical_optimizer_failure_established": false,
+  "successful_optimization_established": false
+}

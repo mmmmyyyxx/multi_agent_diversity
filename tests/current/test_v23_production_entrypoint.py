@@ -88,3 +88,51 @@ def test_final_entrypoint_continues_same_attempt_after_both_canary_reviews(tmp_p
     assert result['pattern_gradient_calls']==30 and result['pattern_cluster_calls']==(0 if uncertain else 5)
     assert client.closed and (run_root/'SEARCH_CLOSED_RECEIPT.json').exists()
     with pytest.raises(Exception):asyncio.run(autonomous_math.execute_search(tmp_path,prep,run_root,payload))
+
+
+def test_missing_owner_review_aborts_before_optimization_and_closes_accounting(tmp_path,monkeypatch):
+    """A lost supervisor cannot turn paid initialization into Canary PASS."""
+    from types import SimpleNamespace
+    from multi_dataset_diverse_rl.search.schemas import SearchContractError
+    original_write=canary_review.atomic_write_json
+    def unavailable_owner(path,value):
+        if not path.name.endswith('.owner_review.json'):
+            original_write(path,value)
+    monkeypatch.setattr(canary_review,'atomic_write_json',unavailable_owner)
+    ticks=iter((0,canary_review.POLICY['maximum_wait_seconds']))
+    monkeypatch.setattr(canary_review,'time',SimpleNamespace(monotonic=lambda:next(ticks),sleep=lambda _:None))
+    with pytest.raises(SearchContractError,match='^CANARY_OWNER_REVIEW_TIMEOUT$'):
+        test_final_entrypoint_continues_same_attempt_after_both_canary_reviews(tmp_path,monkeypatch,False)
+    run_root=tmp_path/'runs/execution'
+    lifecycle=read_json(run_root/'lifecycle.json')
+    assert lifecycle['status']=='EXECUTION_ABORTED'
+    assert lifecycle['provider_usage']['solver']==300
+    assert lifecycle['provider_usage']['pattern_gradient']==0
+    assert lifecycle['provider_usage']['reflection']==0
+    assert read_json(run_root/'accounting_end.json')['reserved_inflight']==0
+    assert read_json(run_root/'consumed_authorization.json')['consumed'] is True
+    assert (run_root/'INITIAL_SOLVER_PROFILE.review_pending.json').exists()
+    assert not (run_root/'INITIAL_SOLVER_PROFILE.review_pass.json').exists()
+    assert not (run_root/'execution_summary.json').exists()
+    assert (run_root/'trajectory_private.jsonl').read_bytes()==b''
+    assert (run_root/'raw_evidence_inventory.json').exists()
+
+
+@pytest.mark.parametrize('wrong_field',['approved','review_identity_sha256','startup_identity_sha256'])
+def test_owner_review_rejects_unapproved_or_stale_receipt(tmp_path,monkeypatch,wrong_field):
+    from multi_dataset_diverse_rl.search.schemas import SearchContractError
+    original=canary_review.atomic_write_json
+    def stale_review(path,value):
+        original(path,value)
+        if path.name.endswith('.review_pending.json'):
+            decision=dict(approved=True,scientific_method_changed=False,
+                review_identity_sha256=value['review_identity_sha256'],
+                startup_identity_sha256=value['startup_identity_sha256'])
+            decision[wrong_field]=False if wrong_field=='approved' else 'b'*64
+            original(path.parent/'INITIAL_SOLVER_PROFILE.owner_review.json',decision)
+    monkeypatch.setattr(canary_review,'atomic_write_json',stale_review)
+    with pytest.raises(SearchContractError,match='^CANARY_OWNER_REVIEW_NOT_APPROVED$'):
+        canary_review.review('INITIAL_SOLVER_PROFILE',dict(logical_profiles=300),
+            contract=dict(canary_review_policy=canary_review.POLICY,execution_attempt_id='synthetic'),
+            payload=dict(startup_identity_sha256='a'*64),run_root=tmp_path)
+    assert not (tmp_path/'INITIAL_SOLVER_PROFILE.review_pass.json').exists()

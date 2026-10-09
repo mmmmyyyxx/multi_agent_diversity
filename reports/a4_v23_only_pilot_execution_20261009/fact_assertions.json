@@ -1,0 +1,18 @@
+{
+  "physical_receipts_sealed": true,
+  "all_initial_request_bytes_match": true,
+  "all_cache_seals_verified": true,
+  "ledger_chain_replayed": true,
+  "cost_reconciled": true,
+  "budget_not_exceeded": true,
+  "no_pending_reservations": true,
+  "consumed_approval_cannot_restart": true,
+  "timeout_exact_exception_confirmed": true,
+  "zero_optimization_calls": true,
+  "zero_validation_test_calls": true,
+  "no_posthumous_approval": true,
+  "no_scientific_method_change": true,
+  "prior_frozen_manifest_preserved": true,
+  "no_full_canary_pass_claim": true,
+  "no_method_efficacy_claim": true
+}

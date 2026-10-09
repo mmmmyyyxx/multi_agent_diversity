@@ -1,0 +1,19 @@
+{
+  "initial_competence_entries": 5,
+  "initial_correct_counts": [
+    52,
+    49,
+    52,
+    51,
+    50
+  ],
+  "committed_prompts_changed": false,
+  "competence_current_equals_original": true,
+  "edit_effect_entries": 0,
+  "private_edit_entries": 0,
+  "shared_edit_entries": 0,
+  "measured_newly_fixed": 0,
+  "measured_newly_broken": 0,
+  "memory_learning_effect": "NOT_OBSERVED",
+  "observation_receipt_sha256": "8a1e1f3d110d729ad012b7c3f2cdf90790dca6a6f3164c45679da25f15d14c30"
+}

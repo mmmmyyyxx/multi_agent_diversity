@@ -1,0 +1,152 @@
+{
+  "stage": "INITIAL_SOLVER_PROFILE",
+  "exact_dispatch_and_frozen_memberships_verified": true,
+  "logical_profiles": 300,
+  "physical_initial_responses": 357,
+  "provider_returned_models": {
+    "qwen3-8b": 357
+  },
+  "observed_nonempty_provider_reasoning": 0,
+  "cache_seals_verified": 300,
+  "output_counts": {
+    "boundary_valid": 286,
+    "one_marker": 286,
+    "solution_present": 300,
+    "semantic_draws": 357,
+    "boundary_invalid": 14,
+    "marker_count_other": 14
+  },
+  "written_solution_features": {
+    "multiple_solution_lines": 300,
+    "equation_or_math_markup": 300,
+    "written_inference_connective": 294
+  },
+  "sample_metadata": [
+    {
+      "request_sha256": "00f36cbf5c12dcbf897e2637431621a76e0d8c36fade2cd9c0870df70c87de67",
+      "member": 4,
+      "example_sha256": "9e42609dfd3ea8f75b1b1f48d0785832b9774914f2a6b497a21836499d7ee522",
+      "solution_sha256": "bc10bc89a39bf05a690630fec0b2bb97d8a0cd1681a12edfa273c2d60f3f12bf",
+      "solution_characters": 3519,
+      "nonempty_solution_lines": 166,
+      "final_marker_count": 1,
+      "boundary_valid": true
+    },
+    {
+      "request_sha256": "0181d183523edbbc296636d45810257ec754fb385f9979f7b9dffff7928520a3",
+      "member": 3,
+      "example_sha256": "d8c3fb19ed5440579004db011b8835656e26fb607e59bfa9ab0003796838fb27",
+      "solution_sha256": "d176945e7b4099ef4fc0d15c561433410c7cb37de0eae61c8ec936944fadba68",
+      "solution_characters": 772,
+      "nonempty_solution_lines": 30,
+      "final_marker_count": 1,
+      "boundary_valid": true
+    },
+    {
+      "request_sha256": "023d0e4fe59a858965c3bad1604cd09b15891ac0e94336e66f06b3cd4bf2344d",
+      "member": 3,
+      "example_sha256": "9ec23575d5a250a9cc09f0a6e784a4409901589e58d21aeb95cb269c39448ac2",
+      "solution_sha256": "ef390ccd78510b74068792d21c6a9880380fa97f92a5a2af2a1192b0f85e8422",
+      "solution_characters": 506,
+      "nonempty_solution_lines": 16,
+      "final_marker_count": 1,
+      "boundary_valid": true
+    },
+    {
+      "request_sha256": "02cf9daf20980288840aab67f7a448cdd9413fb467e18e512975078082644800",
+      "member": 4,
+      "example_sha256": "8739ba4019c4006973418fae185d2a7a52d8f3243d37ff8806c14746b4841c67",
+      "solution_sha256": "65d5692cf9faa61616635e28f76d553bee19f707672d9dc6a23eefc96a8083e2",
+      "solution_characters": 5822,
+      "nonempty_solution_lines": 311,
+      "final_marker_count": 1,
+      "boundary_valid": true
+    },
+    {
+      "request_sha256": "0388fc83e81a58d1460e991b297c63327f4c5f94505a4e24bd3a5f1a28dc806e",
+      "member": 4,
+      "example_sha256": "34ce8da32719874e6df94fca8bce1157f02e09756cdffde899be3c2c5c0939bd",
+      "solution_sha256": "005c3d66554dd3bc660be14405b2d115b0ec524f618d4ddd90893cdb01b6aa82",
+      "solution_characters": 1300,
+      "nonempty_solution_lines": 36,
+      "final_marker_count": 1,
+      "boundary_valid": true
+    },
+    {
+      "request_sha256": "03d9b69f10cb2108b8a0875f928c349f77516b0fd1f9d72f19942677cb8f8b57",
+      "member": 1,
+      "example_sha256": "7ff6e14283d9791bf62c80085942d80d25c8b69f4ad5b107f8281d0c7c3c17e9",
+      "solution_sha256": "6c049982824d25154f8ee3755694e5706b7e15fe23d5be70b6440cdee08f5f33",
+      "solution_characters": 1245,
+      "nonempty_solution_lines": 30,
+      "final_marker_count": 1,
+      "boundary_valid": true
+    },
+    {
+      "request_sha256": "04415d144ac5a5e488f2c6f7cb1e895f854f545341cfbff30eb598ffe7eea929",
+      "member": 2,
+      "example_sha256": "92dd6e54d3d602ec1a471e0bdfd369a41f8b0500769f5300dad52b8b36bd62e6",
+      "solution_sha256": "c553d57d4214086d7dbe274d4a6a618f1b26b05612f46dd38de3cf23e73753e9",
+      "solution_characters": 955,
+      "nonempty_solution_lines": 54,
+      "final_marker_count": 1,
+      "boundary_valid": true
+    },
+    {
+      "request_sha256": "049437c0f7da32e61dc1cbc7e0015cf4b3c52d961bdcbdf4add0c56680b0901a",
+      "member": 0,
+      "example_sha256": "3dbf527d6b18933f6d00f8154526a70742fc11afb0c9e9f29264f4b6fbda5c01",
+      "solution_sha256": "7c1a69f6d3376ad463997b4c3dfc402fe2f2de0ef00a0e2ada8e14fc03b0d21e",
+      "solution_characters": 1365,
+      "nonempty_solution_lines": 51,
+      "final_marker_count": 1,
+      "boundary_valid": true
+    },
+    {
+      "request_sha256": "05f33dee76fc081288678f62c057bb46f768cbf4f67ad8dc0fe820a740e2aab4",
+      "member": 3,
+      "example_sha256": "d54b69f0efe732cbdeab4ba9985147eaa45475ac4326d7483f1c0d494a679f66",
+      "solution_sha256": "cc545c67a9bee786c320401f40ea77d95c8fae5718d8ec960c1e60e7168eff27",
+      "solution_characters": 955,
+      "nonempty_solution_lines": 46,
+      "final_marker_count": 1,
+      "boundary_valid": true
+    },
+    {
+      "request_sha256": "064f7e180bccc98cdf7cc348181b258624a86bda30c98080d968ddf2d76f6aa1",
+      "member": 4,
+      "example_sha256": "a42bc04d79c1517e87d1add2cc3692d88319e05b00e1f0648863d67fee10a42f",
+      "solution_sha256": "7f411680a7c7161e9489430ff2ffeebc32593942f5e9482e6c62b512a2febbf6",
+      "solution_characters": 838,
+      "nonempty_solution_lines": 41,
+      "final_marker_count": 1,
+      "boundary_valid": true
+    },
+    {
+      "request_sha256": "06666ef68b942b2b1b9e1d7f61ba4b8fbf569a8ee852a55065e9a95ad5a8fb41",
+      "member": 0,
+      "example_sha256": "3ef0111a08e85887ae2b942f68ee4338bd80ef376817ff42cb876f4fe8f6af0f",
+      "solution_sha256": "484ea66a8638f1a59f4cd7020cb31908550d1dd6a6f8e46566cd444bcfa50c94",
+      "solution_characters": 1018,
+      "nonempty_solution_lines": 37,
+      "final_marker_count": 1,
+      "boundary_valid": true
+    },
+    {
+      "request_sha256": "0696fda2606e585b55a48516e3473db110dd1c660da58053268b29d4c573fdf2",
+      "member": 3,
+      "example_sha256": "f27d9b940df7aa7805e5db140060cd66b6bd343335135efd5fafca1a9fd031ea",
+      "solution_sha256": "896ca33ce6c617698ad5c9827bed6e6416815646a1cca8d745a9d04f24af4e7b",
+      "solution_characters": 669,
+      "nonempty_solution_lines": 38,
+      "final_marker_count": 1,
+      "boundary_valid": true
+    }
+  ],
+  "real_provider_request_flow": true,
+  "optimizer_or_reference_content_in_solver": false,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "startup_identity_sha256": "fefcf31738eb7a6ccc86589b8741c59d2f34642ee47b5ee6c82208e0b485f957",
+  "review_identity_sha256": "1b27dbe9f361bd9174927660971ea4606d52b89fc402dae357fc5944fd2752bc"
+}

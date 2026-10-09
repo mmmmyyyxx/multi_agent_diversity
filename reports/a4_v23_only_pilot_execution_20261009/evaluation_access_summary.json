@@ -1,0 +1,15 @@
+{
+  "optimize_examples": 60,
+  "optimize_member_profiles": 300,
+  "provider_splits": {
+    "optimize": 357
+  },
+  "shadow_provider_calls": 0,
+  "validation_provider_calls": 0,
+  "test_provider_calls": 0,
+  "validation_authorized": false,
+  "test_access": "SEALED",
+  "reference_solutions_in_solver": false,
+  "optimizer_memory_in_solver": false,
+  "post_terminal_audit_extra_provider_calls": 0
+}

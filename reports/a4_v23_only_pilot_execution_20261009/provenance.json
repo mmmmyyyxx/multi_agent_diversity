@@ -1,0 +1,15 @@
+{
+  "start_head": "429c84edf499e9e48ce931421072894e97706aee",
+  "original_reference": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
+  "execution_source_sha": "7affed0829ac3d68ea7c2b4bdb10791df56691e3",
+  "startup_identity_sha256": "fefcf31738eb7a6ccc86589b8741c59d2f34642ee47b5ee6c82208e0b485f957",
+  "scope_sha256": "a2a16a047811189afac33be6ea6c5f6e7aebe5be5b8dae34758ef58310e1f173",
+  "frozen_manifest_sha256": "7fd2d1b6c6463de118a5dcba721adc2c66fddb6814874ed82e0f54251acb80bd",
+  "raw_evidence_inventory_sha256": "78c70a56d94f84a3fbca166a9ba74c9ecbe11d0239fafd9341384c25b6fddaf1",
+  "verified_private_files": 667,
+  "publication_branch": "main",
+  "remote_repository": "mmmmyyyxx/multi_agent_diversity",
+  "publication_commit": "Containing report commit; exact final HEAD and origin/main are independently verified in final delivery.",
+  "prior_reports_and_frozen_manifest_preserved": true,
+  "private_content_published": false
+}

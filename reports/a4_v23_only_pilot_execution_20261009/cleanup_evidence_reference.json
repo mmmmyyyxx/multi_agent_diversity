@@ -1,0 +1,8 @@
+{
+  "report": "reports/a4_v23_only_cleanup_canary_pilot_20261008",
+  "published_source_sha": "7affed0829ac3d68ea7c2b4bdb10791df56691e3",
+  "original_report_sha_manifest_sha256": "c07040f4a3f9e36215c251882fa40877b5570c4c845785ab4bf3c94776033e48",
+  "old_report_unchanged": true,
+  "cleanup_redone": false,
+  "production_scientific_code_changed_during_recovery": false
+}

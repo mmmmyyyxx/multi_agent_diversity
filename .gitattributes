@@ -86,3 +86,11 @@ experiments/protocols/math_optimization_evidence_v23/** text eol=lf
 # Preserve exact frozen bytes for the fresh V2.3 single-arm preparation.
 reports/a4_v23_only_cleanup_canary_pilot_20261008/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 experiments/manifests/a4_v23_only_pilot_v1.yaml -text whitespace=trailing-space,space-before-tab,cr-at-eol
+
+# Fresh operational followup identities and exact execution evidence bytes.
+experiments/protocols/a4_v23_only_pilot_v2/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+experiments/execution_bindings/a4_v23_only_seed81_20261009_attempt2.json text eol=lf
+experiments/manifests/a4_v23_only_pilot_v2.yaml text eol=lf
+docs/workflows/V23_CANARY_OWNER_SUPERVISION.md text eol=lf
+reports/a4_v23_only_pilot_execution_20261009/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+reports/a4_v23_only_pilot_v2_preparation_20261009/** -text whitespace=trailing-space,space-before-tab,cr-at-eol

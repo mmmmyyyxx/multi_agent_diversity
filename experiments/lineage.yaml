@@ -894,6 +894,8 @@ nodes:
   kind: PILOT
 - experiment_id: a4_v23_only_pilot_v1
   kind: PILOT
+- experiment_id: a4_v23_only_pilot_v2
+  kind: PILOT
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1874,4 +1876,10 @@ edges:
   evidence: experiments/protocols/a4_v23_only_pilot_v1/protocol.json
   scope: V23 scientific settings retained; cancelled paired receipt is data provenance
     only. Fresh source, attempt, cache, ledger and exact API approval.
+- from: a4_v23_only_pilot_v1
+  to: a4_v23_only_pilot_v2
+  relation: followup_of
+  evidence: experiments/protocols/a4_v23_only_pilot_v2/protocol.json
+  scope: Operational supervision followup, identical scientific method, independent
+    source/startup/cache/accounting freeze and new exact approval.
 current_frontier: experiments/current_frontier.yaml

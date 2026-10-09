@@ -1,5 +1,25 @@
 schema_version: failure_registry_v1
 failures:
+- failure_id: FAIL-V23-CANARY-OWNER-REVIEW-TIMEOUT
+  title: Completed initial Solver profiles waited without an owner review decision
+  status: DIAGNOSED
+  lifecycle: DIAGNOSED
+  first_observed: a4_v23_only_pilot_v1
+  affected_components:
+  - canary_owner_supervision
+  - delegated_execution_monitor
+  symptom: All 300 initial profiles completed; no owner decision arrived within the frozen 3600-second deadline, so execution aborted before optimization.
+  evidence:
+  - reports/a4_v23_only_pilot_execution_20261009/terminal_prefix_audit.json
+  - reports/a4_v23_only_pilot_execution_20261009/failure_analysis.json
+  root_cause_status: CONFIRMED_MISSING_OWNER_DECISION_BEFORE_FROZEN_DEADLINE
+  evidence_level: observed
+  mitigation: Direct owner supervision in a fresh explicitly approved handoff; bounded monitoring and immediate independent review. Keep timeout, receipt binding and consumed-scope rejection unchanged.
+  regression_tests:
+  - tests/current/test_v23_production_entrypoint.py::test_missing_owner_review_aborts_before_optimization_and_closes_accounting
+  - tests/current/test_v23_production_entrypoint.py::test_owner_review_rejects_unapproved_or_stale_receipt
+  forbidden_inference: No Gradient, mutation, Full, Shadow or commit was observed. Do not infer method failure, approve the terminated attempt retrospectively, or reuse the consumed scope/cache/remaining allowance. The monitor account-error timing is not established.
+  repair_effectiveness: ZERO_API_REGRESSION_ONLY_FRESH_REAL_EXECUTION_NOT_AUTHORIZED
 - failure_id: FAIL-A4-OPTIMIZE-ROLE-OVERLAP-EDIT-EVIDENCE-GAP
   title: Local validation reused mutation examples and Full rejection lacked complete edit evidence
   status: MITIGATED

@@ -1,0 +1,21 @@
+{
+  "status": "CONSUMED_CLOSED_AFTER_OPERATIONAL_ABORT",
+  "explicit_user_authorized": true,
+  "approval_evidence_category": "DIRECT_HUMAN_MESSAGE_AFTER_EXACT_FROZEN_SCOPE_QUESTION",
+  "single_use": true,
+  "consumed": true,
+  "attempt_id": "a4_v23_only_seed81_20261008_attempt1",
+  "source_sha": "7affed0829ac3d68ea7c2b4bdb10791df56691e3",
+  "startup_identity_sha256": "fefcf31738eb7a6ccc86589b8741c59d2f34642ee47b5ee6c82208e0b485f957",
+  "scope_sha256": "a2a16a047811189afac33be6ea6c5f6e7aebe5be5b8dae34758ef58310e1f173",
+  "authorization_file_sha256": "7a74fed3042daa8b1e933c27efffe29b20cac2678afd9af43181b3f3c38ebb7e",
+  "consumed_receipt_sha256": "331b5acf8c8edfec03039faa84f56ba9d6e8a0379a302e5b7654ce855b97eaa2",
+  "charged_token_ceiling": 2000000,
+  "charged_tokens": 404677,
+  "remaining_closed_scope": 1595323,
+  "remaining_reusable": false,
+  "retry_or_resume_authorized": false,
+  "consumed_authorization_negative_control": "PASS",
+  "validation_authorized": false,
+  "test_authorized": false
+}

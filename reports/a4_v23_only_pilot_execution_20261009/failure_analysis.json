@@ -1,0 +1,20 @@
+{
+  "primary_category": "G_OPERATIONAL_FAILURE",
+  "primary_failure": "CANARY_OWNER_REVIEW_TIMEOUT",
+  "confirmed_mechanism": "Owner decision absent until the frozen 3600-second review deadline; runtime failed closed before optimization.",
+  "responsibility": "Scientific owner review was not completed in time; dispatching a monitor did not transfer that responsibility.",
+  "monitor_agent_error": "ACCOUNT_USAGE_LIMIT_ERROR",
+  "monitor_error_preceded_timeout": "NOT_ESTABLISHED",
+  "runtime_fail_closed_behavior": "EXPECTED_AND_PRESERVED",
+  "source_defect_in_scientific_method": "NOT_ESTABLISHED",
+  "A_gradient": "NOT_OBSERVED",
+  "B_mutation": "NOT_OBSERVED",
+  "C_validation_transfer": "NOT_OBSERVED",
+  "D_preservation": "NOT_OBSERVED",
+  "E_team_transfer": "NOT_OBSERVED",
+  "F_admission": "NOT_OBSERVED",
+  "repaired_scope": "Operational supervision handoff and regression coverage only; no automatic approval or deadline extension.",
+  "regression_reference": "tests/current/test_v23_production_entrypoint.py",
+  "followup_requires_new_scope_and_approval": true,
+  "followup_paid_repair_effectiveness": "NOT_TESTED"
+}

@@ -1,0 +1,8 @@
+{
+  "pilot": "NOT_ENTERED",
+  "completed_opportunities": 0,
+  "partial_opportunities": 0,
+  "candidates": 0,
+  "empty_tables": "ZERO_OBSERVED_ROWS_NOT_NEGATIVE_CANDIDATE_RESULTS",
+  "initial_profiles_are_not_Full_candidate_evaluations": true
+}

@@ -1,0 +1,35 @@
+{
+  "status": "INCOMPLETE_OPERATIONAL_ABORT_INITIAL_OWNER_REVIEW_TIMEOUT",
+  "solver_initialization_completed": true,
+  "initial_review_pass": false,
+  "first_opportunity_review_reached": false,
+  "canary_pass": false,
+  "logical_initial_profiles": 300,
+  "physical_solver_calls": 357,
+  "post_terminal_dispatch_and_integrity_audit": "PASS",
+  "solution_status_counts": {
+    "FINAL_BOUNDARY_INVALID": 10,
+    "RESPONSE_TRUNCATED": 4,
+    "WRITTEN_SOLUTION_PRESENT": 286
+  },
+  "member_correct_counts": [
+    52,
+    49,
+    52,
+    51,
+    50
+  ],
+  "denominator_each": 60,
+  "reported_model": "qwen3-8b",
+  "frozen_decoding_and_V6_actual_dispatch_verified": true,
+  "solution_quality_assessment": "LEXICAL_FEATURES_AND_PROVENANCE_OBSERVED_NO_FULL_QUALITATIVE_USEFULNESS_APPROVAL",
+  "independent_gradient": "NOT_OBSERVED",
+  "pattern": "NOT_OBSERVED",
+  "mutation": "NOT_OBSERVED",
+  "search_validation": "NOT_OBSERVED",
+  "team_probe": "NOT_OBSERVED",
+  "full": "NOT_OBSERVED",
+  "shadow": "NOT_OBSERVED",
+  "no_posthumous_owner_approval": true,
+  "no_forced_full_or_rejection_outcome": true
+}

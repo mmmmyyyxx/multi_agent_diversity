@@ -1,0 +1,9 @@
+{
+  "status": "INHERITED_LEGACY_FAILURE_METADATA_NOT_PASS",
+  "current_errors": 3,
+  "prior_errors": 3,
+  "no_new_legacy_failure_metadata_errors": true,
+  "historical_lineage_status": "Prior immutable preparation records 39 inherited lineage errors; not relabeled PASS.",
+  "current_governance_authority": "scripts/audit_repository_governance.py",
+  "prior_evidence": "reports/a4_v23_only_cleanup_canary_pilot_20261008/legacy_governance_status.json"
+}

@@ -8758,23 +8758,51 @@ experiments:
   parent_ids:
   - math_optimization_evidence_v23
   - a4_v23_matched_comparison_v1_b
+  status: INVALID
+  scientific_status: NOT_EVALUABLE_OWNER_REVIEW_TIMEOUT_BEFORE_OPTIMIZATION
+  implementation_commit: 7affed0829ac3d68ea7c2b4bdb10791df56691e3
+  execution_commit: 429c84edf499e9e48ce931421072894e97706aee
+  result_commit: null
+  manifest: experiments/manifests/a4_v23_only_pilot_v1.yaml
+  report: reports/a4_v23_only_pilot_execution_20261009
+  classifier: reports/a4_v23_only_pilot_execution_20261009/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by:
+  - a4_v23_only_pilot_v2
+  notes:
+  - Single-use human approval consumed; 300 initial profiles and 357 Solver calls
+    persisted before owner review timeout.
+  - 404677 charged tokens, no pending reservations, no optimization or held-out calls.
+    No efficacy inference or authorization reuse.
+  unavailable:
+    result_commit: Containing execution-report publication commit, identified by Git
+      history and final remote verification.
+  reports:
+  - reports/a4_v23_only_cleanup_canary_pilot_20261008
+- experiment_id: a4_v23_only_pilot_v2
+  kind: PILOT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_3
+  parent_ids:
+  - a4_v23_only_pilot_v1
   status: PREPARED_NOT_EXECUTED
-  scientific_status: ZERO_API_PREPARATION_REAL_PROVIDER_AND_EFFICACY_UNTESTED
+  scientific_status: SEMANTICS_PRESERVED_OPERATIONAL_FOLLOWUP_EXACT_APPROVAL_PENDING
   implementation_commit: null
   execution_commit: null
   result_commit: null
-  manifest: experiments/manifests/a4_v23_only_pilot_v1.yaml
-  report: reports/a4_v23_only_cleanup_canary_pilot_20261008
-  classifier: reports/a4_v23_only_cleanup_canary_pilot_20261008/classifier.json
+  manifest: experiments/manifests/a4_v23_only_pilot_v2.yaml
+  report: reports/a4_v23_only_pilot_v2_preparation_20261009
+  classifier: reports/a4_v23_only_pilot_v2_preparation_20261009/classifier.json
   active_for_new_work: true
   historical_replay: false
   superseded_by: []
   notes:
-  - Fresh V23 single-arm continuous Canary/Pilot, 5 opportunities total, 2M charged
-    tokens total; exact single-use API approval pending.
-  - No V22 or paired execution; historical scopes and accounting cannot grant authorization.
+  - Fresh independent attempt after pre-optimization owner review timeout; scientific
+    method unchanged.
+  - Direct owner execution and bounded supervision require exact new approval; no
+    reuse of 1595323 remaining closed-scope tokens or prior profiles.
   unavailable:
-    implementation_commit: Exact source recorded by the separate freeze receipt; no
-      self-referential SHA.
-    execution_commit: No real API authorization yet.
-    result_commit: Publication commit identified by Git history and remote verification.
+    implementation_commit: Exact new source SHA in separate freeze receipt.
+    execution_commit: No new API approval or execution.
+    result_commit: No new scientific outcome.

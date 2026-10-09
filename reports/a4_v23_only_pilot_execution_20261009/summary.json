@@ -1,0 +1,34 @@
+{
+  "attempt_id": "a4_v23_only_seed81_20261008_attempt1",
+  "source_sha": "7affed0829ac3d68ea7c2b4bdb10791df56691e3",
+  "status": "EXECUTION_ABORTED_CANARY_OWNER_REVIEW_TIMEOUT",
+  "logical_initial_profiles": 300,
+  "physical_calls": 357,
+  "charged_tokens": 404677,
+  "reserved_inflight": 0,
+  "remaining_closed_scope": 1595323,
+  "initial_member_correct_counts": [
+    52,
+    49,
+    52,
+    51,
+    50
+  ],
+  "invalid_final_profiles": 14,
+  "completed_opportunities": 0,
+  "candidates": 0,
+  "commits": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "canary_pass": false,
+  "pilot_entered": false,
+  "scientific_status": "NOT_EVALUABLE",
+  "scientific_method_changed": false,
+  "report_integrity": "PASS",
+  "future_attempt_authorization": "PENDING_SEPARATE_FREEZE",
+  "current_tests": {
+    "passed": 390,
+    "skipped": 2,
+    "failed": 0
+  }
+}
