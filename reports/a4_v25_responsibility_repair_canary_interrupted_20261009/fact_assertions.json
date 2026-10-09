@@ -1,0 +1,11 @@
+{
+  "all_initial_profiles_recomputed_without_api": true,
+  "fresh_scope_and_startup_identity_verified": true,
+  "ledger_hash_chain_verified": true,
+  "official_execution_complete_not_claimed": true,
+  "official_terminal_summary_missing": true,
+  "opportunity_lineage_reconstructed_without_api": true,
+  "rerun_not_attempted": true,
+  "shadow_gate_recomputed_without_api": true,
+  "validation_test_access_zero": true
+}

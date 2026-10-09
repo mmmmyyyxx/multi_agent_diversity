@@ -1,0 +1,21 @@
+{
+  "audit_provider_calls": 0,
+  "fallback_charged_tokens": 21678,
+  "logical_profiles": 60,
+  "member_correct": [
+    3.0,
+    3.0,
+    4.0,
+    4.0,
+    3.0
+  ],
+  "oracle_correct": 5,
+  "physical_solver_responses": 192,
+  "provider_reported_actual_tokens": 209860,
+  "repeated_format_failure_profiles": 35,
+  "resolved_invalid": 43,
+  "resolved_valid": 17,
+  "semantic_recovery_calls": 132,
+  "status": "INDEPENDENT_AUDIT_PASS",
+  "vote_correct": 5.0
+}

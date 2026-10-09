@@ -1,0 +1,11 @@
+{
+  "findings": [],
+  "private_prompts_questions_answers_responses_published": false,
+  "published_types": [
+    "hashes",
+    "counts",
+    "categories",
+    "metrics"
+  ],
+  "status": "PASS"
+}

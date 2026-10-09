@@ -1,0 +1,54 @@
+{
+  "authorized_ceiling": 2000000,
+  "by_role": {
+    "pattern_cluster": {
+      "charged_total": 625,
+      "fallback_charged": 0,
+      "input_tokens": 517,
+      "output_tokens": 108,
+      "physical_attempts": 1,
+      "provider_reported_actual": 625
+    },
+    "pattern_gradient": {
+      "charged_total": 60376,
+      "fallback_charged": 0,
+      "input_tokens": 55986,
+      "output_tokens": 4390,
+      "physical_attempts": 17,
+      "provider_reported_actual": 60376
+    },
+    "reflection": {
+      "charged_total": 24470,
+      "fallback_charged": 0,
+      "input_tokens": 24054,
+      "output_tokens": 416,
+      "physical_attempts": 6,
+      "provider_reported_actual": 24470
+    },
+    "solver": {
+      "charged_total": 1085880,
+      "fallback_charged": 40987,
+      "input_tokens": 146002,
+      "output_tokens": 939878,
+      "physical_attempts": 1043,
+      "provider_reported_actual": 1044893
+    }
+  },
+  "by_stage": {
+    "canary": {
+      "charged_total": 1171351,
+      "fallback_charged": 40987,
+      "input_tokens": 226559,
+      "output_tokens": 944792,
+      "physical_attempts": 1067,
+      "provider_reported_actual": 1130364
+    }
+  },
+  "charged_tokens": 1171351,
+  "fallback_charged_tokens": 40987,
+  "ledger_hash_chain_verified": true,
+  "no_additional_api_calls_after_runner_exit": true,
+  "physical_attempts": 1067,
+  "provider_reported_actual_tokens": 1130364,
+  "reserved_tokens": 0
+}

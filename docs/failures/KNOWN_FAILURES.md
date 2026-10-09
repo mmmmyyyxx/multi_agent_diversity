@@ -469,3 +469,15 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 - Symptom: 45/60 terminal initial profiles invalid after four draws; five members each score 3/12, below the frozen minimum six correct examples. No optimization opportunity occurs.
 - Forbidden inference: Not optimizer failure, convergence, missing visible reasoning, a gate implementation defect, or evidence that only three mathematical answers were intrinsically correct. No full Pilot result or permission to rerun follows.
 - Mitigation: Preserve the valid Canary evidence and stop Pilot as requested. Review initialization/boundary compatibility and panel feasibility offline; any behavioral amendment requires a new version, freeze and authorization.
+
+## FAIL-V25-CANARY-RUNNER-TERMINATED-BEFORE-FINAL-PERSISTENCE: Fresh V2.5 Canary runner terminated after Shadow evidence but before terminal persistence
+
+- Status: `OPEN`
+- Lifecycle: `OPEN`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `a4_v25_seed81_canary_attempt1`
+- Root-cause status: PROCESS_TERMINATION_SITE_EXTERNAL_TO_SCIENTIFIC_METHOD
+- Symptom: Initial profiling and one complete opportunity produced sealed evidence; the owner review was written, but the runner process terminated before consuming it and before writing execution_summary, final state or EXECUTION_COMPLETE.
+- Forbidden inference: Do not call this a complete valid Canary, efficacy result, optimization failure or Shadow-only scientific conclusion. The reconstructed opportunity evidence is diagnostic and the final terminal state is not established.
+- Mitigation: Preserve the sealed raw evidence, mark the attempt aborted and close the single-use scope. Do not reconstruct an official completion receipt, reuse the consumed scope, or rerun without a new freeze and explicit authorization.

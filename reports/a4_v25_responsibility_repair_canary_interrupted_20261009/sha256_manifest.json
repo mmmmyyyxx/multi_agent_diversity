@@ -1,0 +1,53 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "bcbd1cedfc56ae1fdcf1f0cbe0b3ee30e331d842399a24857c47a80e89447bfd"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "43b1fd0280f436211869fb0aa6011c73c8fcf9363217f1102526d2dbd7cd4548"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "6951e0823f45702cdb5a551423c2c01ae684b27e55c187c06a0fa9bd1b492c46"
+    },
+    {
+      "file": "funnel_summary.json",
+      "sha256": "1c3dcaeda9f0ed7b357888a9e9af359f9bf7d7902b80c9bcf0da0d20efafb4ca"
+    },
+    {
+      "file": "initial_profile_audit.json",
+      "sha256": "b1ee699e81ad4c47bbd133400ab1593ee5c480f6fbb97a22fee29925708122b8"
+    },
+    {
+      "file": "opportunity_audit.json",
+      "sha256": "7fbc4335e93a5fbb3d6c53626b069cb3f59c964873f70c7c21b50ae7e6650db4"
+    },
+    {
+      "file": "owner_review_audit.json",
+      "sha256": "99356d04fba4d7cc92e93200d67d3922fb80ec74265eea80958a20f31da15972"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "bb5eb83f2e17f3b065192f5d03f3b62c6b9a8c024ab85f31c7bbf31b74856054"
+    },
+    {
+      "file": "README.md",
+      "sha256": "280f2b30477a44c9aa85c4cfeccbdd9c8d9a34e2af5cf2d4707a46fa237c1b41"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "36087a8e71f740ff89dcac60dd983a9488ffb8c3174335500bff11a276a79e80"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "c98363147d2a8b8cc27400878f46636147487b1992ba43f3af820fcc0e1f46c9"
+    },
+    {
+      "file": "tests_results.json",
+      "sha256": "b9cd34dfe1fdae4746b0bd32b7838ead303162752758f1297658f72cf3fa0be3"
+    }
+  ]
+}

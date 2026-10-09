@@ -1,0 +1,22 @@
+{
+  "actionable_gradients": 5,
+  "commit_observed": 0,
+  "exhausted_gradients": 4,
+  "exported_candidates": 3,
+  "full_candidates": 2,
+  "generations": 6,
+  "gradient_calls": 17,
+  "local_status_counts": {
+    "CONTRACT_INVALID": 2,
+    "LOCALLY_EVALUATED": 3,
+    "NO_SAFE_EDIT": 1
+  },
+  "official_terminal_summary_missing": true,
+  "opportunities_observed": 1,
+  "patterns": 1,
+  "probe_candidates": 3,
+  "selected_member": 0,
+  "shadow_gate": false,
+  "transition_observed_in_trajectory": true,
+  "uncertain_gradients": 0
+}

@@ -1,0 +1,8 @@
+{
+  "audit_provider_calls": 0,
+  "heldout_outcomes_entered_search": false,
+  "new_attempt_started_after_process_exit": false,
+  "shadow_used_only_for_configured_gate": true,
+  "test_model_calls": 0,
+  "validation_model_calls": 0
+}

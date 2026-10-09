@@ -1,0 +1,13 @@
+{
+  "compileall": "PASS",
+  "current_suite_passed": 390,
+  "current_suite_skipped": 2,
+  "current_suite_tests": 392,
+  "errors": 0,
+  "failures": 0,
+  "governance": "PASS",
+  "historical_private_omitted": 220,
+  "network_attempts": 0,
+  "partial_canary_report_only": true,
+  "sanitization": "PASS"
+}

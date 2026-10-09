@@ -1105,3 +1105,29 @@ failures:
   forbidden_inference: Not optimizer failure, convergence, missing visible reasoning,
     a gate implementation defect, or evidence that only three mathematical answers
     were intrinsically correct. No full Pilot result or permission to rerun follows.
+
+- failure_id: FAIL-V25-CANARY-RUNNER-TERMINATED-BEFORE-FINAL-PERSISTENCE
+  title: Fresh V2.5 Canary runner terminated after Shadow evidence but before terminal persistence
+  status: OPEN
+  lifecycle: OPEN
+  first_observed: a4_v25_seed81_canary_attempt1
+  affected_components:
+  - canary_runner_lifecycle
+  - terminal_execution_persistence
+  - owner_review_supervision
+  symptom: Initial profiling and one complete opportunity produced sealed evidence; the
+    owner review was written, but the runner process terminated before consuming it and
+    before writing execution_summary, final state or EXECUTION_COMPLETE.
+  evidence:
+  - reports/a4_v25_responsibility_repair_canary_interrupted_20261009/README.md
+  - reports/a4_v25_responsibility_repair_canary_interrupted_20261009/owner_review_audit.json
+  - reports/a4_v25_responsibility_repair_canary_interrupted_20261009/api_ledger_summary.json
+  evidence_level: observed
+  root_cause_status: PROCESS_TERMINATION_SITE_EXTERNAL_TO_SCIENTIFIC_METHOD
+  mitigation: Preserve the sealed raw evidence, mark the attempt aborted and close the
+    single-use scope. Do not reconstruct an official completion receipt, reuse the
+    consumed scope, or rerun without a new freeze and explicit authorization.
+  forbidden_inference: Do not call this a complete valid Canary, efficacy result,
+    optimization failure or Shadow-only scientific conclusion. The reconstructed
+    opportunity evidence is diagnostic and the final terminal state is not established.
+  regression_tests: []

@@ -10,7 +10,7 @@ schema_version: current_frontier_v1
 current_architecture: Unified Team Prompt Search
 method_identity: unified_team_prompt_search_v2_5_responsibility_fallback_repair_probe
 current_method: unified_team_prompt_search_v2_5_responsibility_fallback_repair_probe
-current_experiment: NO_AUTHORIZED_REAL_EXPERIMENT
+current_experiment: a4_v25_responsibility_repair_canary_v1
 current_implementation: V2.5 quota-free repair; seeded fallback; structural recovery;
   evaluated local parent; seen repair and independent Probe.
 current_benchmark_suite:
@@ -19,12 +19,12 @@ last_governance_milestone: a4_v25_responsibility_repair_canary_v1
 real_execution_ready: false
 real_api_authorized: false
 ready_for_authorization: false
-current_preparation_status: V25_OFFLINE_VERIFICATION_PENDING_NEW_SINGLE_USE_FREEZE
+current_preparation_status: V25_CANARY_ABORTED_PROCESS_TERMINATED_BEFORE_FINAL_PERSISTENCE
 validation_access: not_authorized
 test_access: sealed
-current_execution_blocker: NEW_V25_SOURCE_AND_SCOPE_FREEZE_REQUIRED
+current_execution_blocker: RUNNER_PROCESS_TERMINATED_BEFORE_FINAL_PERSISTENCE
 current_execution_blockers:
-- NEW_V25_SOURCE_AND_SCOPE_FREEZE_REQUIRED
+- RUNNER_PROCESS_TERMINATED_BEFORE_FINAL_PERSISTENCE
 current_runtime_builder: build_current_team_prompt_search
 current_execution_entrypoint: scripts/run_experiment.py
 current_runtime_composition: CURRENT_RESPONSIBILITY_REPAIR_COMPOSITION_V3
@@ -40,13 +40,13 @@ current_transition_policy: initial_competence_target_or_team_progress_v3
 current_configuration_arm: A4
 current_pattern_enabled: true
 current_memory_enabled: true
-current_canary_status: CANARY_NOT_EXECUTED_UNMEASURED
+current_canary_status: CANARY_ABORTED_AFTER_OPPORTUNITY_BEFORE_FINAL_PERSISTENCE
 current_pilot_status: STOPPED_BY_USER_INCOMPLETE_INITIALIZATION
 current_pilot_report: reports/a4_v24_structured_canary_diagnostic_20261009
-current_canary_report: null
+current_canary_report: reports/a4_v25_responsibility_repair_canary_interrupted_20261009
 canary_manifest: experiments/manifests/a4_v25_responsibility_repair_canary_v1.yaml
-next_canary_attempt_id: a4_v25_seed81_canary_attempt1
-next_canary_milestone: null
+next_canary_attempt_id: null
+next_canary_milestone: NEW_FROZEN_SINGLE_USE_SCOPE_REQUIRED
 next_canary_authorized: false
 next_pilot_authorized: false
 next_validation_authorized: false
@@ -67,11 +67,11 @@ operational_attempt_token_ceiling: 2000000
 accounting_scope_policy: FRESH_V25_REPAIR_SINGLE_ARM_2M_V2
 future_execution_requires_new_frozen_single_use_scope: true
 old_evidence_reuse_allowed: false
-initial_accuracy: UNMEASURED
+initial_accuracy: OBSERVED_PARTIAL_CANARY_MEMBER_COUNTS_3_3_4_4_3_OVER_12; COMPLETE_CANARY_NOT_EVALUABLE
 this_task_scientific_method_changed: true
 v23_active: false
 v22_active: false
-last_canary_attempt_id: a4_v24_structured_seed81_canary_attempt1
+last_canary_attempt_id: a4_v25_seed81_canary_attempt1
 last_pilot_attempt_id: a4_v24_structured_seed81_pilot_attempt1
 authorization_scopes_closed: true
 unresolved_reservations: 0
@@ -361,7 +361,7 @@ flowchart TD
     n300["structured_system_prompt_v24<br/>ARCHITECTURE_REFACTOR<br/>COMPLETED"]
     n301["a4_v24_structured_canary_v1<br/>REAL_CANARY<br/>COMPLETED"]
     n302["a4_v24_structured_pilot_v1<br/>PILOT<br/>HOLD"]
-    n303["a4_v25_responsibility_repair_canary_v1<br/>REAL_CANARY<br/>PREPARED_NOT_EXECUTED"]
+    n303["a4_v25_responsibility_repair_canary_v1<br/>REAL_CANARY<br/>ABANDONED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]

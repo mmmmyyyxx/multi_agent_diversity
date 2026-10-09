@@ -8929,24 +8929,30 @@ experiments:
   method_family: unified_team_prompt_search_v2_5_responsibility_fallback_repair_probe
   parent_ids:
   - a4_v24_structured_canary_v1
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: OFFLINE_VERIFICATION_PENDING_FRESH_CANARY
-  implementation_commit: null
+  status: ABANDONED
+  scientific_status: NOT_EVALUABLE_PROCESS_INTERRUPTION_BEFORE_FINAL_PERSISTENCE
+  implementation_commit: 7217081d43fff2e94ab46ed28378717e3e912520
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/a4_v25_responsibility_repair_canary_v1.yaml
-  report: null
-  classifier: null
-  active_for_new_work: true
+  report: reports/a4_v25_responsibility_repair_canary_interrupted_20261009
+  classifier: reports/a4_v25_responsibility_repair_canary_interrupted_20261009/summary.json
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
-  - User authorizes one fresh source-bound Canary; no Pilot, Validation or Test.
-  - V2.5 changes are explicit; no old realization, Memory, cache or consumed scope
-    reused.
+  - User authorized one fresh source-bound Canary; no Pilot, Validation or Test.
+  - The fresh scope was consumed and charged 1,171,351 tokens; no old realization,
+    Memory, cache or consumed scope was reused.
+  - Initial profiling and one complete opportunity reached Shadow; the configured
+    Shadow gate rejected the winner and the transition trace recorded no commit.
+  - The runner process terminated before writing execution_summary, final state and
+    EXECUTION_COMPLETE. Independent no-API audit passed; the result is not evaluable
+    as a complete Canary and the scope is closed.
   unavailable:
-    implementation_commit: Pinned by child manifest after source freeze; no self-referential
-      SHA.
-    execution_commit: Not executed; source and scope freeze pending.
-    result_commit: No real result yet.
-    report: Report will follow the single authorized Canary.
+    execution_commit: No separate execution commit; runtime evidence is private.
+    result_commit: No complete valid Canary result; report is interruption evidence.
+    report: Complete terminal summary was not persisted by the runner.
+  execution_source_sha: 7217081d43fff2e94ab46ed28378717e3e912520
+  single_use_authorization_consumed: true
+  current_scope_closed: true
