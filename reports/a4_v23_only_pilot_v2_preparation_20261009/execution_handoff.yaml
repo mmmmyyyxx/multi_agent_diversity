@@ -1,0 +1,209 @@
+schema_version: sol_luna_experiment_handoff_v1
+experiment_id: a4_v23_only_pilot_v2
+source:
+  repository_commit: f5022a4dc0ccadbf806284b0a003a56c5dec6651
+  execution_source_sha: f5022a4dc0ccadbf806284b0a003a56c5dec6651
+  tracked_worktree_status: clean
+  startup_identity_sha256: fc02fc0ecdcfa2dd8ad90a46fa08e8ead9bdf58de05120444d6fa0587b04bfc8
+protocol:
+  name: V23_ONLY_CONTINUOUS_CANARY_PILOT_SCOPE_V1
+  version: 1
+  protocol_path: experiments/protocols/a4_v23_only_pilot_v2/protocol.json
+  protocol_sha256: c9acebe5102a76ff673cf7887984a7d87cc22fbd4955dad6ab44c977f427e9d2
+  manifest_path: experiments/manifests/a4_v23_only_pilot_v2.yaml
+  manifest_sha256: c7e10adfd0281f0c75628fcd3a6f37c0c58be1cfe2180b36fedca88794fb4941
+  preregistration_path: experiments/manifests/a4_v23_only_pilot_v2.yaml
+  preregistration_sha256: cb4aef64b33a25e7cf2f919886decccb4ea61f4abc0dd372072583ed81a7efe6
+  endpoint_structural_identifiability: NOT_APPLICABLE_TARGET_OR_TEAM_PROGRESS_ENDPOINT
+data:
+  dataset: math
+  split_identity: 196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507
+  split_sha256: 196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507
+models:
+  solver: qwen3-8b
+  optimizer_or_reflection: qwen3.7-flash
+  thinking: false
+  local_optimizer_backend: INDEPENDENT_OPTIMIZE_VALIDATION_SEARCH_V1
+  local_optimizer_version_or_sha256: f5022a4dc0ccadbf806284b0a003a56c5dec6651
+execution:
+  executor: SCIENTIFIC_OWNER_DIRECT_EXECUTION_REQUIRES_NEW_EXPLICIT_APPROVAL
+  seeds:
+  - 81
+  opportunity_budget: 5
+  early_stop_rule: team_epoch_no_commit_v1_patience_2
+  charged_total_ceiling: 2000000
+  exact_runner_command: runs/math_v2_1/runtime/Scripts/python.exe scripts/run_experiment.py
+    --prep runs/a4_v23_only_seed81_20261009_attempt2/prep --run-root runs/a4_v23_only_seed81_20261009_attempt2/execution
+    --execute
+  expected_output_directory: runs/a4_v23_only_seed81_20261009_attempt2/execution
+  expected_checkpoint_path: NOT_RESUMABLE_PRIVATE_DURABLE_EVIDENCE_ONLY
+  expected_ledger_path: runs/a4_v23_only_seed81_20261009_attempt2/accounting/AUTONOMOUS_REAL_TOKEN_LEDGER_V2.json
+  allowed_retries:
+    experimental: 0
+    scientific_resume: false
+    solver_semantic_attempts: 4
+    transport_max_attempts: 21
+    sdk_retries: 0
+monitoring:
+  owner: SCIENTIFIC_OWNER
+  maximum_poll_interval_seconds: 60
+  review_required:
+  - INITIAL_SOLVER_PROFILE
+  - FIRST_COMPLETE_OPPORTUNITY
+  review_deadline_seconds: 3600
+  automatic_approval: false
+  stdout_path: runs/a4_v23_only_seed81_20261009_attempt2/prep/runner_stdout.log
+  stderr_path: runs/a4_v23_only_seed81_20261009_attempt2/prep/runner_stderr.log
+  workflow: docs/workflows/V23_CANARY_OWNER_SUPERVISION.md
+authorization:
+  api_scope:
+    attempt_id: a4_v23_only_seed81_20261009_attempt2
+    cache_namespace: a4_v23_only_seed81_20261009_attempt2
+    arm: A4
+    seed: 81
+    phase: pilot_search_only
+    source_sha: f5022a4dc0ccadbf806284b0a003a56c5dec6651
+    preregistration_identity: cb4aef64b33a25e7cf2f919886decccb4ea61f4abc0dd372072583ed81a7efe6
+    binding_sha256: 43a17e84d03d430bf9b5f62ce40222f1b70a2a547498c8816e4c6876000b2b73
+    method: unified_team_prompt_search_v2_3
+    transition: initial_competence_target_or_team_progress_v3
+    models:
+      optimizer_reflection: qwen3.7-flash
+      pattern: qwen3.7-flash
+      solver: qwen3-8b
+      solver_thinking: false
+    provider: lwj
+    roles:
+    - solver
+    - reflection
+    - pattern_gradient
+    - pattern_cluster
+    operational_pilot:
+      guarantees_saturation: false
+      identity: TARGET_OR_TEAM_PROGRESS_OPERATIONAL_PILOT_BOUND_V1
+      max_opportunities: 5
+      scientific_stopper: team_epoch_no_commit_v1
+      token_ceiling: 2000000
+    provider_bounds:
+      attempt_charged_token_ceiling: 2000000
+      bound_proof:
+        bootstrap_logical_solver_calls: 500
+        gradient_semantic_multiplier: 1
+        gross_reservations_are_not_spending: true
+        guarantees_saturation: false
+        identity: V2_3_OPTIMIZE_EVIDENCE_RESOURCE_DERIVATION_V1
+        per_op_logical_solver:
+          local: 42
+          probe: 12
+          full: 120
+          shadow: 40
+        scientific_stopper_unchanged: true
+        solver_semantic_multiplier: 4
+        token_bound: PRE_TRANSPORT_EXACT_RESERVATION_AND_CUMULATIVE_ATTEMPT_ADMISSION
+        transport_multiplier: 21
+      cumulative_charged_token_ceiling: 40000000
+      gross_reservation_upper_bound: 308070000000
+      max_opportunities: 5
+      max_proposals_per_opportunity: 6
+      pattern_calls: 305
+      pattern_cluster_calls: 5
+      pattern_gradient_calls: 300
+      physical_solver_per_opportunity: 856
+      reflection_calls: 30
+      reservation_peak_upper_bound: 2000000
+      shadow_solver_calls: 1600
+      solver_calls: 6280
+      solver_per_opportunity: 214
+      successful_provider_calls: 6615
+      transport_attempts: 138915
+    initial_team_sha256: d1a04dbdd540371638e8271cca90469f0a8cf4d42a5f944eeee8c6dfcfca9110
+    initial_memory_entries: 5
+    user_scope_sha256: 07ecc2b6d9d28c13f129f0fc3fb1d77df493b2d69426ccc50f9b971f7724f11b
+    validation_calls: 0
+    test_calls: 0
+    cumulative_token_ceiling: 2000000
+    accounting_scope_policy: FRESH_V23_SINGLE_ARM_2M_V1
+    token_ledger_directory: runs/a4_v23_only_seed81_20261009_attempt2/accounting
+    accounting_policy_sha256: 1ce1cf39a893832f11a9dd130e761d50442fb34ff336aa09d860143d5106eea8
+    heldout_accounting_reserve: 0
+    canary_review_policy:
+      identity: V23_CONTINUOUS_CANARY_REVIEW_V1
+      stages:
+      - INITIAL_SOLVER_PROFILE
+      - FIRST_COMPLETE_OPPORTUNITY
+      owner_review_required: true
+      maximum_wait_seconds: 3600
+      extra_provider_calls: 0
+      total_max_opportunities: 5
+      scientific_state_reset: false
+      efficacy_based_stopping: false
+      unreached_branch: NOT_OBSERVED_NO_FORCED_GENERATION
+    optimization_evidence_policy:
+      identity: OPTIMIZATION_EVIDENCE_POLICY_V1
+      mutation_size: 3
+      search_validation_size: 3
+      minimum_current_wrong: 4
+      minimum_current_correct: 6
+      team_probe_size: 3
+      max_generations: 6
+      max_returned_candidates: 4
+      metric_limit: 42
+      sampling: seeded_member_rotation_without_replacement_v1
+      validation_feedback: measure_after_generation_counts_only_next_iteration
+      selection: validation_net_then_preservation_then_mutation_net_then_generation
+      bootstrap: measured_initial_optimize_profiles_zero_llm
+      edit_memory: actual_diff_and_scope_bound_coverage_v1
+      no_safe_edit: no_candidate_no_success
+      reference_solution_split: optimize
+      reference_solution_max_chars: 4096
+      candidate_guard: optimizer_dependency_guard_v1
+    pattern_cluster_generation_policy:
+      accounting_output_ceiling: 8202
+      enable_thinking: false
+      frequency_penalty: 0
+      identity: PATTERN_CLUSTER_GENERATION_POLICY_V1
+      max_completion_tokens: 8192
+      max_tokens: NOT_SENT
+      measurement_tolerance_tokens: 10
+      model: qwen3.7-flash
+      output_token_scope: reasoning_plus_answer
+      presence_penalty: 1.5
+      roles:
+      - pattern_cluster
+      temperature: 0.7
+      top_k: 20
+      top_p: 0.8
+      truncation: existing_operational_output_truncation
+    solver_output_interface:
+      identity: MATH_SOLVER_INTERFACE_V6
+      sha256: 0f8d3231716ba2ca0de72e3b0674431daa58949c76120da4b8add4de1b1eecee
+      parser_identity: math_verify_no_fallback_v1
+      solver_max_output_tokens: 3600
+      reflection_max_output_tokens: 1800
+    solver_trajectory_policy:
+      identity: MATH_VISIBLE_SOLUTION_FEEDBACK_POLICY_V1
+      profile_schema: MATH_VISIBLE_SOLVER_PROFILE_V1
+      trajectory_schema: MATH_VISIBLE_SOLVER_TRAJECTORY_V1
+      gradient_input_schema: PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V2
+      gradient_prompt_identity: PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V4
+      optimizer_input_schema: PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5
+      max_visible_solution_characters: 4096
+      truncation: unicode_prefix_explicit_metadata
+      original_response_retention: complete_private_resolved_prediction_and_attempts
+      source: ordinary_assistant_content
+      adaptive_split: optimize
+      hidden_reasoning_claim: false
+      memory_trajectory_writes: false
+  api_scope_sha256: 17768e91f01f9ae1a62009ee73858f14b0ee3d6b83ffce1f8ee29b0e94243c18
+  approval_status: PENDING_EXACT_NEW_HUMAN_APPROVAL
+  validation_access_policy: NOT_AUTHORIZED_ZERO_CALLS
+  test_access_policy: SEALED_ZERO_CALLS
+fail_closed_conditions:
+- frozen source/hash mismatch
+- source mutation
+- command/model/seed/split mismatch
+- budget/ledger/provider/persistence failure
+- unauthorized held-out access
+- owner review timeout or unapproved receipt
+- scientific change required
+READY_TO_RUN: false

@@ -1,0 +1,21 @@
+{
+  "fresh_scope_identity": "PASS",
+  "new_unapproved_authorization_negative_control": "PASS",
+  "old_authorization_graft_negative_control": "PASS",
+  "report_contract_hashes_and_staged_bytes": "PASS",
+  "fresh_cache_accounting_consumption": true,
+  "ready_for_authorization": true,
+  "api_calls": 0,
+  "startup_identity_sha256": "fc02fc0ecdcfa2dd8ad90a46fa08e8ead9bdf58de05120444d6fa0587b04bfc8",
+  "source_sha": "f5022a4dc0ccadbf806284b0a003a56c5dec6651",
+  "source_closure_files": 183,
+  "source_commit_bytes_verified": true,
+  "scope_budget_ceiling": 2000000,
+  "scope_opportunity_cap": 5,
+  "api_authorized": false,
+  "READY_TO_RUN": false,
+  "frozen_manifest_sha256": "c7e10adfd0281f0c75628fcd3a6f37c0c58be1cfe2180b36fedca88794fb4941",
+  "private_audit_log_sha256": "1fc4a9e33ec2423cd36b2acdc3326ca63c319467e13c73c532c718bfff17c2a7",
+  "network_attempts": 0,
+  "current_governance": "PASS"
+}

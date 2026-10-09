@@ -1,0 +1,8 @@
+{
+  "status": "FROZEN_OPERATIONAL_FOLLOWUP_NOT_EXECUTED",
+  "scientific_method_changed": false,
+  "real_canary": "NOT_EXECUTED",
+  "real_pilot": "NOT_EXECUTED",
+  "method_efficacy": "NOT_ESTIMATED",
+  "authorization": "PENDING"
+}

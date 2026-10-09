@@ -1,0 +1,19 @@
+{
+  "status": "PENDING_EXACT_NEW_HUMAN_APPROVAL",
+  "attempt_id": "a4_v23_only_seed81_20261009_attempt2",
+  "source_sha": "f5022a4dc0ccadbf806284b0a003a56c5dec6651",
+  "startup_identity_sha256": "fc02fc0ecdcfa2dd8ad90a46fa08e8ead9bdf58de05120444d6fa0587b04bfc8",
+  "scope_sha256": "17768e91f01f9ae1a62009ee73858f14b0ee3d6b83ffce1f8ee29b0e94243c18",
+  "single_use": true,
+  "consumed": false,
+  "explicit_user_authorized": false,
+  "ready_to_run": false,
+  "proposed_new_token_ceiling": 2000000,
+  "already_charged_previous_attempt": 404677,
+  "previous_approval_reusable": false,
+  "previous_cache_reusable": false,
+  "validation_authorized": false,
+  "test_authorized": false,
+  "intended_executor": "SCIENTIFIC_OWNER",
+  "unapproved_execution_negative_control": "PASS"
+}

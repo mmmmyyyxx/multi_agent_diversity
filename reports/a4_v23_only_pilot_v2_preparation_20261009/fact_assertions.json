@@ -1,0 +1,11 @@
+{
+  "source_commit_bytes_verified": true,
+  "fresh_namespace": true,
+  "fresh_accounting_directory_absent": true,
+  "consumed_previous_scope_not_reused": true,
+  "unapproved_new_scope_rejected": true,
+  "method_payload_identical": true,
+  "no_extra_provider_calls": true,
+  "no_heldout_access": true,
+  "review_deadline_and_receipt_guards_preserved": true
+}

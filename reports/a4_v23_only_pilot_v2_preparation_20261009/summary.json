@@ -1,0 +1,13 @@
+{
+  "status": "EXACT_NEW_SINGLE_USE_APPROVAL_REQUIRED",
+  "attempt_id": "a4_v23_only_seed81_20261009_attempt2",
+  "source_sha": "f5022a4dc0ccadbf806284b0a003a56c5dec6651",
+  "scientific_method_payload_identical": true,
+  "proposed_token_ceiling": 2000000,
+  "previous_closed_cost": 404677,
+  "proposed_max_opportunities": 5,
+  "real_api_calls": 0,
+  "charged_tokens": 0,
+  "validation_calls": 0,
+  "test_calls": 0
+}

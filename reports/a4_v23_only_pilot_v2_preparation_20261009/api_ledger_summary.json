@@ -1,0 +1,9 @@
+{
+  "provider_attempts": 0,
+  "charged_tokens": 0,
+  "reserved_inflight": 0,
+  "authorized_total": 0,
+  "proposed_new_ceiling": 2000000,
+  "ledger_created": false,
+  "previous_unused_allowance_transferred": false
+}

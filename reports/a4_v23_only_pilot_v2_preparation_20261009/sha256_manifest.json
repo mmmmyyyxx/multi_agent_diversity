@@ -1,0 +1,69 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "ee3109a25cae4771d611dd8eaf86cf398297a2a151aefcab9bc7eb8931956840"
+    },
+    {
+      "file": "authorization_receipt.json",
+      "sha256": "db75a55b5dc48b54dbc735be4b4b3955d09faf12fe75e7661fa5a4c746ec3936"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "533698a67dbdeea0975ca9ef8a9ad438b8b6237b5db09135a21431e781bddcac"
+    },
+    {
+      "file": "current_governance.json",
+      "sha256": "777d470e736c64ba50584afc8d585a2e7ac3c905a11c72e0278548affb5fbf64"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "15fb9d2ead491ab63e5941587a4074862dedfd7a9fc7700b6087da2448cd2081"
+    },
+    {
+      "file": "execution_handoff.yaml",
+      "sha256": "25fb26f79c4b412b31fe9526a659675cef79020ea95ece1fff9dcf3132df580f"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "df04136ec91ce116119a449481290d2df51522a9cf9a4d3a88db7b74f8ac7c56"
+    },
+    {
+      "file": "freeze.json",
+      "sha256": "9bea5baaf1623bb159c3d2df0abd7a69280392a198afb771238b1acda69b49f7"
+    },
+    {
+      "file": "frozen_preflight.json",
+      "sha256": "79a7f25d111f5ee1fcb93e6ed347507fbb56306abe102fff222e738e5edc63e9"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "c7e10adfd0281f0c75628fcd3a6f37c0c58be1cfe2180b36fedca88794fb4941"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "71d868f0dfd15d4c8395e44cb0619494a7634c5796a5de1a4cd458fbf059bf10"
+    },
+    {
+      "file": "README.md",
+      "sha256": "a5ba8558892b8384f2690bb3895ffd985a62b931dbd69d2df5f7d9868a1ff8f0"
+    },
+    {
+      "file": "regression.json",
+      "sha256": "4eb2770172a857d8712b570951c5e9c01f085790cbe2ae48f9b0d54fc67382f6"
+    },
+    {
+      "file": "resource_estimate.md",
+      "sha256": "12b69f974284f8ed70e70bfba0b3ded536a50ca0705f5a7dd67b5b77fd9ca5eb"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "919cbf4fc59cfbfbf732f502a13f0ea73245bd52e602af9c4855420ae994d709"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "8ac1d6707a143dbf75a18d6dc902d15cc27c6533b8b9221bcfeb8362ed2c7df3"
+    }
+  ]
+}
