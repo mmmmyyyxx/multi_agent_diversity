@@ -84,6 +84,7 @@ Reports are immutable evidence, never design authority. Unresolved metadata does
 | [local_gepa_parent_acquisition_v1](local_gepa_parent_acquisition_v1/README.md) | Unknown | GEPA_TWO_LAYER | SCIENTIFIC_RESULT | local_gepa_parent_acquisition_v1 | COMPLETED |
 | [matched_gpt4omini_seed42_20260725](matched_gpt4omini_seed42_20260725/README.md) | 20260725 | HISTORICAL_V15_V16_AND_EARLIER | SCIENTIFIC_RESULT | matched_gpt4omini_seed42_20260725 | STATUS_UNRESOLVED |
 | [math_baseline_calibration_audit_20261009](math_baseline_calibration_audit_20261009/README.md) | 20261009 | UNIFIED_TEAM_PROMPT_SEARCH | ZERO_API | math_baseline_calibration_audit_v1 | COMPLETED |
+| [math_baseline_calibration_stage1_preparation_20261010](math_baseline_calibration_stage1_preparation_20261010/README.md) | 20261010 | UNIFIED_TEAM_PROMPT_SEARCH | PREEXECUTION | math_baseline_calibration_stage1_v1 | PREPARED_NOT_EXECUTED |
 | [math_identical_initial_condition_v1_20261006](math_identical_initial_condition_v1_20261006/README.md) | 20261006 | BENCHMARK_GENERALIZATION | ZERO_API | math_identical_initial_condition_v1 | COMPLETED |
 | [math_optimization_evidence_v23_20261008](math_optimization_evidence_v23_20261008/README.md) | 20261008 | UNIFIED_TEAM_PROMPT_SEARCH | ARCHITECTURE | math_optimization_evidence_v23 | IMPLEMENTED_NOT_EXECUTED |
 | [math_v2_1_a1_seed81_low_cost_canary_v1_20261003](math_v2_1_a1_seed81_low_cost_canary_v1_20261003/README.md) | 20261003 | BENCHMARK_GENERALIZATION | REAL_CANARY | math_v2_1_a1_seed81_low_cost_canary_v1 | INVALID |

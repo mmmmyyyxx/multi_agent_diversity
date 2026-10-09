@@ -9013,3 +9013,32 @@ experiments:
   unavailable:
     execution_commit: No new real experiment executed.
     result_commit: Containing Git publication commit; no self-referential SHA.
+- experiment_id: math_baseline_calibration_stage1_v1
+  kind: DIAGNOSTIC
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: INDEPENDENT_MATH_BASELINE_CALIBRATION
+  parent_ids:
+  - math_baseline_calibration_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: STAGE1_IMPLEMENTED_PENDING_SOURCE_FREEZE
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_baseline_calibration_stage1_v1.json
+  report: reports/math_baseline_calibration_stage1_preparation_20261010
+  classifier: reports/math_baseline_calibration_stage1_preparation_20261010/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Contextual user API approval is limited to the previously proposed Stage 1 A/B/C
+    panel and 1,450,000 charged plus reserved tokens.
+  - Exact source, startup and one-use authorization are frozen privately after the
+    implementation commit; Stage 2 remains unauthorized.
+  - Independent diagnostic; current Unified production method and old reports are
+    unchanged.
+  unavailable:
+    implementation_commit: Exact implementation commit is the containing source-freeze
+      prerequisite publication; private execution manifest binds it after commit.
+    execution_commit: Not executed at preparation publication.
+    result_commit: No results at preparation publication.

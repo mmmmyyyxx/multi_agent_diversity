@@ -2,6 +2,12 @@
   "schema_version": "tooling_classification_v1",
   "scripts": [
     {
+      "path": "scripts/run_math_baseline_calibration.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Governed independent Stage 1 baseline diagnostic; never composes Unified optimization."
+    },
+    {
       "path": "scripts/audit_math_baseline_calibration.py",
       "classification": "ONE_OFF_AUDIT",
       "move": false,

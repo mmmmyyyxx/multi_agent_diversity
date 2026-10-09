@@ -368,6 +368,7 @@ flowchart TD
     n303["a4_v25_responsibility_repair_canary_v1<br/>REAL_CANARY<br/>COMPLETED"]
     n304["math_baseline_calibration_audit_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
     n305["math_baseline_calibration_v1<br/>PROTOCOL_FREEZE<br/>PREPARED_NOT_EXECUTED"]
+    n306["math_baseline_calibration_stage1_v1<br/>DIAGNOSTIC<br/>PREPARED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -606,6 +607,7 @@ flowchart TD
   n301 -->|refactor_of| n303
   n303 -->|audit_of| n304
   n304 -->|followup_of| n305
+  n305 -->|derived_from| n306
 ```
 
 ## Archived branches and unresolved evidence

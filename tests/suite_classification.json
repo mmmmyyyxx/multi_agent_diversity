@@ -3,6 +3,12 @@
   "schema_version": "suite_classification_v1",
   "tests": [
     {
+      "path": "tests/current/test_math_calibration_execution.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
       "path": "tests/current/test_math_baseline_calibration.py",
       "classification": "CURRENT_CONTRACT",
       "required_private_artifacts": [],

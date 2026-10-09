@@ -1,0 +1,25 @@
+{
+  "api_calls": 0,
+  "compileall": "PASS",
+  "current_runtime_closure_files": 131,
+  "current_runtime_closure_unchanged": true,
+  "current_tests": {
+    "omitted_historical_modules": 220,
+    "passed": 444,
+    "selected": 446,
+    "skipped": 2
+  },
+  "evidence_sha256": {
+    "frozen_current_suite.xml": "8e22dffa55dbdc1cc1e9278c854b175d018fc7439489659f9643efb7a903129c",
+    "manifest_preflight.log": "9367274d3cf75a87205b84d083c5cd251f69d283b9b4dfb2963a6adb7c6e0457",
+    "repository_governance.json": "19c64897e5f3f75b47efd086073f9469faf79512b4068acc4654b14616550ae1",
+    "targeted_tests.log": "3af646da9297e9f6b6d3b5ff93f5490c6a19c621ace52d84cc22285c9234e8a6"
+  },
+  "governance": "PASS",
+  "manifest_preflight": "PASS",
+  "new_baseline_runtime_in_current_composition": false,
+  "original_canary_artifacts_and_audit_report_unchanged": true,
+  "readiness": "EXACT_PRIVATE_FREEZE_REQUIRED_AFTER_IMPLEMENTATION_COMMIT",
+  "scoped_execution_tests_passed": 18,
+  "status": "PASS"
+}
