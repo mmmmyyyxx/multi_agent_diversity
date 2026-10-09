@@ -2,6 +2,12 @@
   "schema_version": "tooling_classification_v1",
   "scripts": [
     {
+      "path": "scripts/audit_math_baseline_calibration.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Independent zero-API baseline audit and fake/dry-run calibration only."
+    },
+    {
       "path": "scripts/admit_v18_hybrid_online_scientific_analysis.py",
       "classification": "ONE_OFF_AUDIT",
       "move": false,

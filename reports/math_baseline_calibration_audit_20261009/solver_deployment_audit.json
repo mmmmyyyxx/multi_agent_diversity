@@ -1,0 +1,58 @@
+{
+  "actual_backend_weights": "UNKNOWN_NO_REVISION_ATTESTATION_NO_NEW_MODEL_PROBE",
+  "all_provider_receipts_joined_to_exact_ledger_wire_identity": 1067,
+  "all_solver_successes": 1039,
+  "all_solver_transport_requests": 1043,
+  "capacity_counts": {
+    "3600": 996,
+    "6144": 47
+  },
+  "checks": {
+    "content_equal": 1039,
+    "finish_equal": 1039,
+    "request_parameters_match": 1043,
+    "serialized_thinking_false": 1043,
+    "usage_equal": 1039
+  },
+  "finish_reason_counts": {
+    "length": 55,
+    "stop": 984
+  },
+  "frozen_configuration": {
+    "enable_thinking": false,
+    "frequency_penalty": 0,
+    "identity": "SOLVER_DECODING_POLICY_V2",
+    "max_output_tokens": 3600,
+    "min_p": 0,
+    "presence_penalty": 0,
+    "temperature": 0.2,
+    "top_k": 20,
+    "top_p": 0.8
+  },
+  "initial_attempt_lossless_cache_receipt_trace_checks": 192,
+  "initial_cache_usage_matches_immutable_receipts": 192,
+  "initial_capacity_sequence_verified": true,
+  "initial_profile_lossless_content_checks": 60,
+  "matrix": {
+    "actual_weight_revision": "UNKNOWN",
+    "complete_assistant_content_saved": "PASS",
+    "configuration_thinking_false": "PASS",
+    "dispatched_thinking_false": "PASS",
+    "finish_reason_preserved": "PASS",
+    "parser_input_equals_ordinary_content": "PASS",
+    "provider_returned_model_alias": "PASS",
+    "retry_sampling_preserved": "PASS"
+  },
+  "provider_honors_thinking_control": "UNKNOWN_SERVER_INTERNAL_BEHAVIOR_NOT_ATTESTED",
+  "provider_weight_revision_metadata": "NOT_EXPOSED_IN_EXISTING_HTTP_BODIES",
+  "reasoning_field_observations": {
+    "field_present": 0,
+    "nonempty": 0
+  },
+  "response_model_alias_counts": {
+    "qwen3-8b": 1039
+  },
+  "verification_scope": "SEALED_REQUEST_RECORDS_PLUS_FROZEN_SERIALIZER_AND_SEND_PATH_NOT_SERVER_WEIGHT_ATTESTATION",
+  "wire_body_identity_set_sha256": "b87713a6be8e343946b1306204e21cea77cb301efc69d0afb3b2ea8f87b190c0",
+  "wire_extra_body": "SDK_EXTRA_BODY_FLATTENED_TO_HTTP_JSON_TOP_LEVEL"
+}

@@ -1,0 +1,8 @@
+{
+  "api_calls_zero": true,
+  "no_private_content_published": true,
+  "no_validation_test_rows": true,
+  "original_evidence_unchanged": true,
+  "original_scores_unchanged": true,
+  "thinking_false_preserved": true
+}

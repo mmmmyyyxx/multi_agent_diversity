@@ -1,0 +1,56 @@
+{
+  "allowed_metadata_changes": [
+    "experiments/lineage.yaml",
+    "experiments/registry.yaml"
+  ],
+  "api_calls": 0,
+  "compile_and_source_closure": {
+    "api_calls": 0,
+    "baseline_scientific_and_execution_closure_unchanged": true,
+    "compileall": "PASS",
+    "current_execution_closure_files": 131,
+    "new_diagnostics_in_current_execution_closure": false
+  },
+  "current_suite": {
+    "errors": 0,
+    "failures": 0,
+    "omitted_historical_modules": 220,
+    "passed": 426,
+    "private_historical_replay_pass_claimed": false,
+    "selected": 428,
+    "skipped": 2
+  },
+  "diagnostic_final_counts": {
+    "diagnostic_correct": 28,
+    "explicit_parseable": 37,
+    "final_invalid": 43
+  },
+  "diff_check": "PASS",
+  "evidence_sha256": {
+    "compile_closure.json": "591da6cae4a466a59c90a86c6a5656ca30af7bc8f8aff710ef6965ec154a4f40",
+    "dry_run.log": "9f76244d0183e0a310d5bb28abe9f4f4ea65a6f0dccb92db724d906d534b525a",
+    "fake_smoke.log": "4e61885902f105105263dc6a5af631af2a39ee5948a88b3dcc475ad8594b870f",
+    "final_replay.log": "e99dff8ece2e7d8f16863ba44aed47c3c3646f1b1c5480fa99c16531474877ad",
+    "final_targeted_tests.log": "66928e6fb348d0614b191eadfeaf63ed59e77a9db2626c7bfa2aa5cb0513cab6",
+    "frozen_current_suite.xml": "9bfe0b2892694ee763390b5f32884884a26e437d705c6275ce8f91e5f347715d",
+    "manifest_preflight.log": "d9cff6f4237527f020a6038d7df4eaaa23cd9a563d3a98c125744687e213046f",
+    "repository_governance.json": "b857202ff41b94c7052c11c5ed2454bf1f24ea806b2d1ed7aca1617d7e4f1c47"
+  },
+  "governance_repository": "PASS",
+  "guarded_fake_smoke": "PASS",
+  "guarded_protocol_dry_run": "PASS",
+  "manifest_preflight": "PASS",
+  "new_charge": 0,
+  "original_canary_recovery_evidence_unchanged": true,
+  "protected_inputs_checked": 1666,
+  "protected_inputs_unchanged": 1664,
+  "publication": "LOCAL_COMMIT_ONLY_NO_PUSH",
+  "source_artifact_hashes_match": true,
+  "status": "PASS",
+  "targeted_synthetic_contracts": {
+    "failures": 0,
+    "passed": 36
+  },
+  "test_rows_parsed": 0,
+  "validation_rows_parsed": 0
+}

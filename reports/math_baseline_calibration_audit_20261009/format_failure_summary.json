@@ -1,0 +1,260 @@
+{
+  "api_calls": 0,
+  "attempt_primary_reasons": {
+    "BOXED_ONLY": 3,
+    "FINAL_LABEL_NOT_LAST": 135,
+    "MALFORMED_FINAL_PAYLOAD": 19,
+    "MARKDOWN_WRAPPED_LABEL": 3,
+    "MATH_PAYLOAD_PARSE_FAILURE": 2,
+    "OUTPUT_TRUNCATED": 13,
+    "VALID": 17
+  },
+  "capacity_expanded_draw_reported_tokens": 59469,
+  "capacity_triggered_draws": 11,
+  "conservative_initial_timeout_charge": 21678,
+  "correctness_gain_from_recovery": 2,
+  "diagnostic_is_not_new_baseline": true,
+  "evidence_level": "VERIFIED",
+  "extra_format_draw_reported_tokens": 156768,
+  "extra_successful_semantic_draws": 132,
+  "final_invalid_diagnostic_correct": 28,
+  "final_invalid_diagnostic_forms": {
+    "plain_label": 4,
+    "terminal_boxed_display_block": 36,
+    "wrapped_label": 37
+  },
+  "final_invalid_diagnostic_status": {
+    "EXPLICIT_PARSEABLE_RESULT": 37,
+    "UNKNOWN_NO_EXPLICIT_RESULT": 2,
+    "UNPARSEABLE_CANDIDATE": 4
+  },
+  "final_invalid_explicit_parseable": 37,
+  "first_draw_diagnostic_status": {
+    "EXPLICIT_PARSEABLE_RESULT": 51,
+    "UNKNOWN_NO_EXPLICIT_RESULT": 4,
+    "UNPARSEABLE_CANDIDATE": 5
+  },
+  "first_draw_invalid_diagnostic_correct": 30,
+  "first_draw_primary_reasons": {
+    "BOXED_ONLY": 1,
+    "FINAL_LABEL_NOT_LAST": 34,
+    "MALFORMED_FINAL_PAYLOAD": 5,
+    "MARKDOWN_WRAPPED_LABEL": 1,
+    "OUTPUT_TRUNCATED": 4,
+    "VALID": 15
+  },
+  "initial_reported_input_tokens": 23003,
+  "initial_reported_output_tokens": 186857,
+  "invalid_logical_terminal_primary_reasons": {
+    "FINAL_LABEL_NOT_LAST": 36,
+    "MALFORMED_FINAL_PAYLOAD": 4,
+    "MARKDOWN_WRAPPED_LABEL": 1,
+    "OUTPUT_TRUNCATED": 2
+  },
+  "invalid_logicals_with_correct_explicit_draw": 37,
+  "invalid_successful_attempt_diagnostic_correct_nontruncated": 117,
+  "invalid_successful_attempt_diagnostic_status": {
+    "EXPLICIT_PARSEABLE_RESULT": 143,
+    "UNKNOWN_NO_EXPLICIT_RESULT": 13,
+    "UNPARSEABLE_CANDIDATE": 19
+  },
+  "invalid_successful_attempts": 175,
+  "ledger_integrity": {
+    "events": 2135,
+    "hash_chain_verified": true,
+    "last_event_sha256": "bc14e18922c0e65aee1f7db05e2749fa6226ea1178ea66a787a1cbeeae29ec82"
+  },
+  "logical_examples": 60,
+  "logical_outcomes_by_subject_level": {
+    "algebra|Level 1": {
+      "invalid_final_diagnostic_correct": 0,
+      "logical_examples": 5,
+      "native_correct": 5
+    },
+    "algebra|Level 2": {
+      "invalid_final_diagnostic_correct": 5,
+      "logical_examples": 5,
+      "native_correct": 0
+    },
+    "algebra|Level 3": {
+      "invalid_final_diagnostic_correct": 0,
+      "logical_examples": 5,
+      "native_correct": 5
+    },
+    "algebra|Level 5": {
+      "invalid_final_diagnostic_correct": 0,
+      "logical_examples": 5,
+      "native_correct": 5
+    },
+    "counting_and_probability|Level 4": {
+      "invalid_final_diagnostic_correct": 4,
+      "logical_examples": 5,
+      "native_correct": 1
+    },
+    "counting_and_probability|Level 5": {
+      "invalid_final_diagnostic_correct": 4,
+      "logical_examples": 5,
+      "native_correct": 0
+    },
+    "geometry|Level 4": {
+      "invalid_final_diagnostic_correct": 1,
+      "logical_examples": 5,
+      "native_correct": 0
+    },
+    "geometry|Level 5": {
+      "invalid_final_diagnostic_correct": 4,
+      "logical_examples": 5,
+      "native_correct": 0
+    },
+    "intermediate_algebra|Level 4": {
+      "invalid_final_diagnostic_correct": 3,
+      "logical_examples": 5,
+      "native_correct": 0
+    },
+    "intermediate_algebra|Level 5": {
+      "invalid_final_diagnostic_correct": 0,
+      "logical_examples": 5,
+      "native_correct": 0
+    },
+    "prealgebra|Level 2": {
+      "invalid_final_diagnostic_correct": 2,
+      "logical_examples": 5,
+      "native_correct": 1
+    },
+    "prealgebra|Level 3": {
+      "invalid_final_diagnostic_correct": 5,
+      "logical_examples": 5,
+      "native_correct": 0
+    }
+  },
+  "logical_terminal_primary_reasons": {
+    "FINAL_LABEL_NOT_LAST": 36,
+    "MALFORMED_FINAL_PAYLOAD": 4,
+    "MARKDOWN_WRAPPED_LABEL": 1,
+    "OUTPUT_TRUNCATED": 2,
+    "VALID": 17
+  },
+  "native_attempt_reasons": {
+    "AMBIGUOUS_FINAL_PAYLOAD": 19,
+    "MISSING_EXPLICIT_FINAL_ANSWER": 141,
+    "OUTPUT_TRUNCATED": 13,
+    "PAYLOAD_PARSE_FAILURE": 2,
+    "VALID": 17
+  },
+  "official_accuracy_unchanged": true,
+  "official_final_invalid": 43,
+  "official_final_valid": 17,
+  "official_member_correct_counts": [
+    3,
+    3,
+    4,
+    4,
+    3
+  ],
+  "official_member_denominators": [
+    12,
+    12,
+    12,
+    12,
+    12
+  ],
+  "official_oracle_correct": 5,
+  "official_vote_correct": 5.0,
+  "offline_diagnostic_scores_never_written_back": true,
+  "original_12_level_counts": {
+    "Level 1": 1,
+    "Level 2": 2,
+    "Level 3": 2,
+    "Level 4": 3,
+    "Level 5": 4
+  },
+  "original_12_subject_counts": {
+    "algebra": 4,
+    "counting_and_probability": 2,
+    "geometry": 2,
+    "intermediate_algebra": 2,
+    "prealgebra": 2
+  },
+  "repeated_failure_reported_tokens": 112528,
+  "repeated_native_reason_failures": 35,
+  "reported_success_tokens": 209860,
+  "reported_tokens_by_attempt_primary_reason": {
+    "BOXED_ONLY": 4528,
+    "FINAL_LABEL_NOT_LAST": 119891,
+    "MALFORMED_FINAL_PAYLOAD": 9250,
+    "MARKDOWN_WRAPPED_LABEL": 2623,
+    "MATH_PAYLOAD_PARSE_FAILURE": 3175,
+    "OUTPUT_TRUNCATED": 63883,
+    "VALID": 6510
+  },
+  "retry_reported_tokens_per_additional_official_correct": 78384.0,
+  "retry_tokens_for_repeated_native_failures": 84855,
+  "rounds": [
+    {
+      "became_correct": 15,
+      "became_valid": 15,
+      "conditional_valid_rate": 0.25,
+      "eligible_logical_examples": 60,
+      "input_tokens": 6790,
+      "original_logical_denominator": 60,
+      "output_tokens": 46302,
+      "output_truncated": 4,
+      "reported_tokens": 53092,
+      "semantic_attempt_index": 1,
+      "successful_responses": 60,
+      "transport_errors": 0,
+      "unknown_usage_reservation": 0
+    },
+    {
+      "became_correct": 1,
+      "became_valid": 1,
+      "conditional_valid_rate": 0.022222222222222223,
+      "eligible_logical_examples": 45,
+      "input_tokens": 5655,
+      "original_logical_denominator": 60,
+      "output_tokens": 52847,
+      "output_truncated": 5,
+      "reported_tokens": 58502,
+      "semantic_attempt_index": 2,
+      "successful_responses": 45,
+      "transport_errors": 2,
+      "unknown_usage_reservation": 21678
+    },
+    {
+      "became_correct": 1,
+      "became_valid": 1,
+      "conditional_valid_rate": 0.022727272727272728,
+      "eligible_logical_examples": 44,
+      "input_tokens": 5354,
+      "original_logical_denominator": 60,
+      "output_tokens": 46532,
+      "output_truncated": 2,
+      "reported_tokens": 51886,
+      "semantic_attempt_index": 3,
+      "successful_responses": 44,
+      "transport_errors": 0,
+      "unknown_usage_reservation": 0
+    },
+    {
+      "became_correct": 0,
+      "became_valid": 0,
+      "conditional_valid_rate": 0.0,
+      "eligible_logical_examples": 43,
+      "input_tokens": 5204,
+      "original_logical_denominator": 60,
+      "output_tokens": 41176,
+      "output_truncated": 2,
+      "reported_tokens": 46380,
+      "semantic_attempt_index": 4,
+      "successful_responses": 43,
+      "transport_errors": 0,
+      "unknown_usage_reservation": 0
+    }
+  ],
+  "successful_responses": 192,
+  "test_rows_parsed": 0,
+  "transport_timeouts": 2,
+  "truncated_attempts": 13,
+  "truncated_draw_reported_tokens": 63883,
+  "validation_rows_parsed": 0
+}

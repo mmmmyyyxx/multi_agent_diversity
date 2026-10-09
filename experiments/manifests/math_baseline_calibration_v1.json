@@ -1,0 +1,16 @@
+{
+  "READY_TO_RUN": false,
+  "current_unified_execution_eligible": false,
+  "experiment_id": "math_baseline_calibration_v1",
+  "membership_sha256": "d3342da5cb0a53634d596ff5332cd65a92620aa0969f2f70b5c739ff19771583",
+  "parent_ids": [
+    "math_baseline_calibration_audit_v1"
+  ],
+  "protocol": "experiments/protocols/math_baseline_calibration_v1/protocol.json",
+  "protocol_file_sha256": "e8ca877fdf33343e4ce5e8a1116d2108c749651f4cee34e3bba5cf1d1fbac48c",
+  "protocol_sha256": "e9aa5d6ed729a7b157740230c9326e1c09f21e500a2fc31234981576aaf6ec9b",
+  "real_api_authorized": false,
+  "schema_version": "independent_math_baseline_design_manifest_v1",
+  "source_sha": "9bbe1b502a3c8c6d43b2da959b8b8b0f2256b985",
+  "status": "DESIGN_FROZEN_NO_PAID_RUNNER"
+}

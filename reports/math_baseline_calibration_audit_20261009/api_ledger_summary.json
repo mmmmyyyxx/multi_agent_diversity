@@ -1,0 +1,14 @@
+{
+  "historical_closed_attempt_charged_tokens": 1171351,
+  "historical_counters_not_new_task_usage": true,
+  "historical_initial_reported_tokens": 209860,
+  "historical_initial_unknown_usage_charge": 21678,
+  "ledger_integrity": {
+    "events": 2135,
+    "hash_chain_verified": true,
+    "last_event_sha256": "bc14e18922c0e65aee1f7db05e2749fa6226ea1178ea66a787a1cbeeae29ec82"
+  },
+  "new_api_calls": 0,
+  "new_charged_tokens": 0,
+  "old_scope_reusable": false
+}

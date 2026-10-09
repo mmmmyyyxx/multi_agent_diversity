@@ -108,3 +108,13 @@ experiments/protocols/a4_v24_structured_canary_v1/** text eol=lf
 experiments/protocols/a4_v24_structured_pilot_v1/** text eol=lf
 experiments/manifests/a4_v24_structured_*.yaml text eol=lf
 reports/structured_system_prompt_v24_20261009/** text eol=lf
+
+# Independent baseline diagnosis and design freezes use exact LF report bytes.
+experiments/manifests/math_baseline_calibration*.json text eol=lf
+experiments/protocols/math_baseline_calibration_v1/** text eol=lf
+reports/math_baseline_calibration_audit_20261009/** text eol=lf
+multi_dataset_diverse_rl/diagnostics/math_baseline_audit.py text eol=lf
+multi_dataset_diverse_rl/diagnostics/math_baseline_calibration.py text eol=lf
+multi_dataset_diverse_rl/diagnostics/math_calibration_plan.py text eol=lf
+scripts/audit_math_baseline_calibration.py text eol=lf
+tests/current/test_math_baseline_calibration.py text eol=lf

@@ -1,0 +1,92 @@
+{
+  "capacity_sequence_upper": [
+    3600,
+    6144,
+    6144,
+    6144
+  ],
+  "historical_rate_scenario_source": "EXISTING_V25_INITIAL_60_LOGICAL_192_SUCCESS_2_TIMEOUT",
+  "identity": "MATH_BASELINE_CALIBRATION_BUDGET_V1",
+  "input_bound": "SERIALIZED_UTF8_BYTES_PLUS_4096_NOT_TOKENIZER_MEASUREMENT",
+  "input_reservation_by_arm": {
+    "A": {
+      "max": 5535,
+      "mean": 4664.716666666666,
+      "min": 4483
+    },
+    "B": {
+      "max": 5723,
+      "mean": 4852.716666666666,
+      "min": 4671
+    },
+    "C": {
+      "max": 5574,
+      "mean": 4703.716666666666,
+      "min": 4522
+    }
+  },
+  "model_price": "UNKNOWN_NO_NEW_PRICING_OR_BILLING_QUERY_CURRENCY_COST_NOT_ESTIMATED",
+  "old_2m_scope_reusable": false,
+  "protocol_sha256": "e9aa5d6ed729a7b157740230c9326e1c09f21e500a2fc31234981576aaf6ec9b",
+  "real_api_calls": 0,
+  "stages": {
+    "stage1": {
+      "all_transport_attempts_conservatively_charged_envelope": 154955556,
+      "assumption": "HISTORICAL_RATE_SCENARIO_NOT_A_FORECAST_FOR_NEW_PROMPTS_OR_60_EXAMPLES",
+      "authorization": "NONE_FRESH_EXACT_STAGE_SCOPE_REQUIRED",
+      "cap_derivation": "CEIL_TO_10K(2 * HISTORICAL_CHARGED_RATE * LOGICAL_COUNT + POSITIVE_B_AND_C_MINUS_A_INPUT_MARGIN)",
+      "first_draw_output_tokens_upper": 648000,
+      "historical_first_draw_scenario_tokens": 159276.0,
+      "historical_rate_scenario_charged_tokens": 694614.0,
+      "historical_rate_scenario_input_tokens": 69009.0,
+      "historical_rate_scenario_output_tokens": 560571.0,
+      "historical_rate_scenario_physical_attempts": 582.0,
+      "historical_rate_scenario_reported_tokens": 629580.0,
+      "historical_rate_scenario_successful_responses": 576.0,
+      "historical_rate_scenario_transport_timeouts": 6.0,
+      "historical_rate_scenario_unknown_usage_charge": 65034.0,
+      "logical_requests": 180,
+      "logical_requests_per_arm": 60,
+      "no_transport_failure_reserved_envelope": 7378836,
+      "output_measurement_tolerance_upper": 0,
+      "prompt_input_reservation_margin": 54480,
+      "proposed_independent_charged_plus_reserved_cap": 1450000,
+      "saturation_or_complete_panel_guaranteed": false,
+      "successful_input_reservation_upper": 3413076,
+      "successful_recovered_output_tokens_upper": 3965760,
+      "successful_semantic_responses_upper": 720,
+      "transport_attempts_upper": 15120,
+      "transport_retry_extra_attempts_upper": 14400
+    },
+    "stage2": {
+      "all_transport_attempts_conservatively_charged_envelope": 774777780,
+      "assumption": "HISTORICAL_RATE_SCENARIO_NOT_A_FORECAST_FOR_NEW_PROMPTS_OR_60_EXAMPLES",
+      "authorization": "NONE_FRESH_EXACT_STAGE_SCOPE_REQUIRED",
+      "cap_derivation": "CEIL_TO_10K(2 * HISTORICAL_CHARGED_RATE * LOGICAL_COUNT + POSITIVE_B_AND_C_MINUS_A_INPUT_MARGIN)",
+      "first_draw_output_tokens_upper": 3240000,
+      "historical_first_draw_scenario_tokens": 796380.0,
+      "historical_rate_scenario_charged_tokens": 3473070.0,
+      "historical_rate_scenario_input_tokens": 345045.0,
+      "historical_rate_scenario_output_tokens": 2802855.0,
+      "historical_rate_scenario_physical_attempts": 2910.0,
+      "historical_rate_scenario_reported_tokens": 3147900.0,
+      "historical_rate_scenario_successful_responses": 2880.0,
+      "historical_rate_scenario_transport_timeouts": 30.0,
+      "historical_rate_scenario_unknown_usage_charge": 325170.0,
+      "logical_requests": 900,
+      "logical_requests_per_arm": 300,
+      "no_transport_failure_reserved_envelope": 36894180,
+      "output_measurement_tolerance_upper": 0,
+      "prompt_input_reservation_margin": 272400,
+      "proposed_independent_charged_plus_reserved_cap": 7220000,
+      "saturation_or_complete_panel_guaranteed": false,
+      "successful_input_reservation_upper": 17065380,
+      "successful_recovered_output_tokens_upper": 19828800,
+      "successful_semantic_responses_upper": 3600,
+      "transport_attempts_upper": 75600,
+      "transport_retry_extra_attempts_upper": 72000
+    }
+  },
+  "successful_draws_per_logical_upper": 4,
+  "transport_attempts_per_successful_draw_upper": 21
+}

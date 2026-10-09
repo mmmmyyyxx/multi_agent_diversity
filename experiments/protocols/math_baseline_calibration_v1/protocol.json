@@ -1,0 +1,748 @@
+{
+  "READY_TO_RUN": false,
+  "arms": {
+    "A": {
+      "answer": "On the last line, write \"Final answer:\" followed by your mathematical answer.",
+      "parser": "MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V2",
+      "rendered_system_sha256": "e9c88f9f727ba650ec75a3e02e63afdad651e489c9a32ed387f5299f7bf28711",
+      "role": "You are a helpful assistant.",
+      "strategy": "Answer the question."
+    },
+    "B": {
+      "answer": "End your response with a final answer on a separate line.\nThe line must start with the exact text \"Final answer: \"\nfollowed by only the mathematical result.\nDo not use a Markdown heading, bullet, or bold formatting\nfor this line. Do not write anything after it.",
+      "parser": "MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V2",
+      "rendered_system_sha256": "afc84acf743619c84af438b40b77400be332e814cbb3a844a0f316ac21f5f759",
+      "role": "You are a helpful assistant.",
+      "strategy": "Answer the question."
+    },
+    "C": {
+      "answer": "On the last line, write only your final mathematical answer\nin the form \\boxed{...}. Do not write anything after it.",
+      "parser": "MATH_BASELINE_BOXED_TERMINAL_V1",
+      "rendered_system_sha256": "a2b6dad40acb6b18a1377235b37dce7dea3568a43144081febd42a2d6fb3df33",
+      "role": "You are a helpful assistant.",
+      "strategy": "Answer the question."
+    }
+  },
+  "budget_policy": "FRESH_STAGE_SPECIFIC_CHARGED_PLUS_RESERVED_CAP_NO_OLD_BALANCE",
+  "data": {
+    "independent_generalization_claim": false,
+    "membership": [
+      {
+        "content_sha256": "dfd3d77ae2ce2db2831b249d19259717f1cdd8fd1a78d0078629db4954b4e935",
+        "example_id_sha256": "c9a002c9049dfde7a52c9ed625ecad7413bd5b6659f86c351f0122310d94b221",
+        "input_sha256": "4c409b8475394424e44156422dafec572322a70fb3d8fbdddf95abc488c37e91",
+        "level": "Level 3",
+        "reference_sha256": "7902699be42c8a8e46fbbb4501726517e86b22c56a189f7625a6da49081b2451",
+        "subject": "algebra"
+      },
+      {
+        "content_sha256": "9fc038935a4b66669735c75f25265f1bc651c3992ca29318162e6c6f35bf4e9b",
+        "example_id_sha256": "cec73cdefc2e9423b74147f08a621432e2d7c0664abe43fae73b47704e74d645",
+        "input_sha256": "d71e2df7d9674977be0dd61bc937ca1c0a4da7de096e911e28fd64f6ce535606",
+        "level": "Level 2",
+        "reference_sha256": "a43ed2655ccd38a5f68d0fd77242ce85ef3db59fa27926075a4d402cb23fb2dc",
+        "subject": "algebra"
+      },
+      {
+        "content_sha256": "4f7dda0f6330d13492f7e57a460ceaf1a760374d0ad010575507150d45c57668",
+        "example_id_sha256": "f6f7350e3117eb6ab7b3b2ff23ae9febf22d41d88a5dd0d28ee2fa4c4d19aed2",
+        "input_sha256": "1b0f227297e50176094d44e0ef2e9bd48e7e4cdc4756b41a17f18a0bce0c0765",
+        "level": "Level 3",
+        "reference_sha256": "016147bee7feb115aa3bf1aa4c1200789ceee7f046e79fe808bf2aefe58d2417",
+        "subject": "algebra"
+      },
+      {
+        "content_sha256": "bf1f1300de999cc0cf4db0e76b76ae613eeb521021cbb7410e4ba7b3f798d801",
+        "example_id_sha256": "2ddaaef4f5bceb4a9690be4a5d58b8729267a30532b19e241860778c7aefeca3",
+        "input_sha256": "d46ba080f743c17eb1f72845ffeb282b9dbdddbe70e967a86e67f97d208114a4",
+        "level": "Level 1",
+        "reference_sha256": "4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a",
+        "subject": "algebra"
+      },
+      {
+        "content_sha256": "c629409a375b1b6f1c4cdefba2cf99f2c181240c6c95ea8ae0fa68fa174bf4d7",
+        "example_id_sha256": "0b74c2c7114057d66a99c8d5a519af4a8611de766a22d0329c406c02c97ae6e3",
+        "input_sha256": "66cb655ce70a5c0bcae582e147db742d65fecc48037987b50f8c5335d9cd3dea",
+        "level": "Level 5",
+        "reference_sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+        "subject": "algebra"
+      },
+      {
+        "content_sha256": "6c5e53ffa266f2f907b85dc73e737963d6702241b61652e3f800d2f89174bb17",
+        "example_id_sha256": "06650af8dd237d6868de1d7812824ced6a83f7d42f941c15377cb6ecc4441e8c",
+        "input_sha256": "1444ba505edd4187099517d6157cbcb6a3b412f61b391a628ba5a887b4116660",
+        "level": "Level 3",
+        "reference_sha256": "20e48348600c411fe5cdcb6d78182a3be6fe12c8a2c42961606a2979aef0e479",
+        "subject": "algebra"
+      },
+      {
+        "content_sha256": "bdd75166c27080246c7e1acdaf9cfb3426e961e168b625da3f1fcb828c799fb7",
+        "example_id_sha256": "031f204ecaf0bf8095934b9bfb81ba81f766acf85a8b8cbe2622eda44d8340c9",
+        "input_sha256": "2958fa9e5023620ba524534ddf8165f48ee6c8365d9277cd2d90ef19821740b6",
+        "level": "Level 3",
+        "reference_sha256": "d103bbf440f114321e1e4d51dbb213f9460e05f8400bd51fbc8118916c7ea7cf",
+        "subject": "algebra"
+      },
+      {
+        "content_sha256": "7963c82933e082a9ad725619df4220f60cf69071f61735a72f16e53d8887ccb7",
+        "example_id_sha256": "7ff6e14283d9791bf62c80085942d80d25c8b69f4ad5b107f8281d0c7c3c17e9",
+        "input_sha256": "5b0399b74f8ebdd75afedee388c823a9aef6539079f893af0cfb40363d18dba7",
+        "level": "Level 5",
+        "reference_sha256": "9bed7e59fd4d1d207dc07f720f8638497d9ac847962d95795c4b53a1dd4dec5a",
+        "subject": "algebra"
+      },
+      {
+        "content_sha256": "4cb7bd870af9dbc725300e5ad9b6b3d254b65bbb19308a55250efca53b9b41e5",
+        "example_id_sha256": "92dd6e54d3d602ec1a471e0bdfd369a41f8b0500769f5300dad52b8b36bd62e6",
+        "input_sha256": "3724226c8c21180fa7c226f4526b1aa11405ba112480fa7525df56aa03f38c83",
+        "level": "Level 2",
+        "reference_sha256": "5e968ce47ce4a17e3823c29332a39d049a8d0afb08d157eb6224625f92671a51",
+        "subject": "algebra"
+      },
+      {
+        "content_sha256": "0a335ce132bd33adba3124e724ce16ebd453d0f7f7526f31dd1f244dfe10c2d5",
+        "example_id_sha256": "afc17ace5cacc56eb6c110e0929a910148b4b075540db263cf4dc5c87b05d81e",
+        "input_sha256": "a458eec767fec09b719eaf267ffffc08f2cc273b8c681d935f8c4f3626d08206",
+        "level": "Level 5",
+        "reference_sha256": "8166265af81edb9659d6541ee8ef92fd59feb1d1db83574c9419588c3d9866b3",
+        "subject": "algebra"
+      },
+      {
+        "content_sha256": "7cb736b20ea681926c4e6f8becf50bf1ff2333d6030fea871900eef9cb9d89b1",
+        "example_id_sha256": "d031418909b64db2a46f7d4a561fda9d766093ba17972365064e00a778934f71",
+        "input_sha256": "5ef0159b70adf39f25b8261ee8ed35f1b2a57dede3177436b5931efd6053d6cb",
+        "level": "Level 1",
+        "reference_sha256": "e54dc15ccafa608142ffa6340b035c327f972e24882052cfc3345f240f4ee237",
+        "subject": "algebra"
+      },
+      {
+        "content_sha256": "64f86ffaaf5e23f440c4676c213857d3211a924935f25f4c74b02d7ead5b38f6",
+        "example_id_sha256": "d54b69f0efe732cbdeab4ba9985147eaa45475ac4326d7483f1c0d494a679f66",
+        "input_sha256": "177a393a160282bc2c00fc3c50af857eb8923810b76616d937e4938601129611",
+        "level": "Level 3",
+        "reference_sha256": "5f9c4ab08cac7457e9111a30e4664920607ea2c115a1433d7be98e97e64244ca",
+        "subject": "algebra"
+      },
+      {
+        "content_sha256": "b9d8a7fd1706440ca2a271aa51c4459209f7243ac7646d7ef76daacd59ec49e5",
+        "example_id_sha256": "f27d9b940df7aa7805e5db140060cd66b6bd343335135efd5fafca1a9fd031ea",
+        "input_sha256": "11eaabb950fc03315844720591eb63c54bfa75570bf163e256e38ba74c13be99",
+        "level": "Level 4",
+        "reference_sha256": "ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d",
+        "subject": "algebra"
+      },
+      {
+        "content_sha256": "f6cf0deee937845b81d62eb9eef4f6b2240a69d11ba70767618acf9f5d9eeeeb",
+        "example_id_sha256": "e24a14459012d4e0487e60d3db50ced6c946ea4ccfc43dc1f316ea0fff4781b7",
+        "input_sha256": "2e0e38aa9c030208b313c2ddb5cf0cb0c96ad49823aa83e6805ad6031b4239df",
+        "level": "Level 2",
+        "reference_sha256": "7902699be42c8a8e46fbbb4501726517e86b22c56a189f7625a6da49081b2451",
+        "subject": "algebra"
+      },
+      {
+        "content_sha256": "2b455d02097b9102035971f5f3a095b62d6317b9d3af9222ca76056bf0c637ba",
+        "example_id_sha256": "4fe90d0233f5aadb049372541fbe249a7909d193384372a507aa77f8532984ac",
+        "input_sha256": "8ca7a992aaf60668b83ca7408754a30a83624701734f4e0bce77bb8afd952204",
+        "level": "Level 3",
+        "reference_sha256": "65a699905c02619370bcf9207f5a477c3d67130ca71ec6f750e07fe8d510b084",
+        "subject": "counting_and_probability"
+      },
+      {
+        "content_sha256": "8f02dfcd4e227b412c30da8b7c2dcd5acdf79e81dc3eb53c409d535e1a5befde",
+        "example_id_sha256": "9c19bcd0acfa3dcf428b6ed44bd7b896ff76145762c06bb4d1196a15827564d3",
+        "input_sha256": "4323fc1dc2063284fbfbcb93cf2b9060892a7b838b7175a81c18192f718ad63d",
+        "level": "Level 1",
+        "reference_sha256": "e7f6c011776e8db7cd330b54174fd76f7d0216b612387a5ffcfb81e6f0919683",
+        "subject": "counting_and_probability"
+      },
+      {
+        "content_sha256": "d6f5d696c9dce880f882c2034b7e8f2158f7e462b5b65e67a7333604c87b6f8d",
+        "example_id_sha256": "a551657c31324bfe41db8296a7f27afc91823a24840a4545ad864de9ea5e82b6",
+        "input_sha256": "32eb584a0367df7bb7ef4dc11b0eee74253efc9d4d70467257e82ec9b0eb6c6b",
+        "level": "Level 2",
+        "reference_sha256": "4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5",
+        "subject": "counting_and_probability"
+      },
+      {
+        "content_sha256": "295cadc85ccbb06ad5520b9390ee7aa447d42d599e0fcc1470cb2684da683e9a",
+        "example_id_sha256": "88777ed80bb729175cc36bb043f1d6b31f2d1b67eb497df54dd7fa5c4e09f617",
+        "input_sha256": "e2abd28b07048cda419f979cb76ac145d62ccb2ff27b1110885cc539713a16c4",
+        "level": "Level 5",
+        "reference_sha256": "2dfe70c43208f52b9ef4ea7e134705283947116491e81fbac05f0aedc25c5956",
+        "subject": "counting_and_probability"
+      },
+      {
+        "content_sha256": "837394580b95ffbc8bd51a01318700edc64f7925fa4421aedcd8977e86a5f1d2",
+        "example_id_sha256": "3ef0111a08e85887ae2b942f68ee4338bd80ef376817ff42cb876f4fe8f6af0f",
+        "input_sha256": "d98a33970e4dd127a947cec051a70205aec71f69c6cf8e65f507bc58a9d2818c",
+        "level": "Level 4",
+        "reference_sha256": "6f4b6612125fb3a0daecd2799dfd6c9c299424fd920f9b308110a2c1fbd8f443",
+        "subject": "counting_and_probability"
+      },
+      {
+        "content_sha256": "7be4e125299935547336e96f845cc8a60701783adc3d09e92b1602bcbfafaa28",
+        "example_id_sha256": "977cc7a11bcd8ddf3ecc0884e0c534c97b6959df917beae2fb3a46666cb44a0b",
+        "input_sha256": "952a0f103757b535c0098b89b207f8345c1dc0a227aaea7bbcf8547ccbf3fbf5",
+        "level": "Level 5",
+        "reference_sha256": "3ada92f28b4ceda38562ebf047c6ff05400d4c572352a1142eedfef67d21e662",
+        "subject": "counting_and_probability"
+      },
+      {
+        "content_sha256": "24717ef3858e56bd408038f63e9e9feae771497d663f6c1fa11fc1791fe1a9cc",
+        "example_id_sha256": "ca2cdb9dd8af3f4a26190f74e40a026527e86eb4c2e1752b975bcbe6dbd976bf",
+        "input_sha256": "8591ca32eba40cfce21f78cd4541be91d94044bc0b90520e829257d6e4410e6b",
+        "level": "Level 5",
+        "reference_sha256": "821de4f1df4ae8a0a439747acb765eeff5742528ddca3cf72f5b3cb2944f279e",
+        "subject": "counting_and_probability"
+      },
+      {
+        "content_sha256": "d746a8db4aa770b8191ca191c314e85d5f60db8963e50f4ea04d6f93c1e2f56d",
+        "example_id_sha256": "88782eca8aa707063d018fa84acd4c5814284635cb7840e3164825d4ad0ca4b3",
+        "input_sha256": "54d36c9a00a3df27c325acf9fd2063e27322b8e5210d9c810db58708c275889c",
+        "level": "Level 5",
+        "reference_sha256": "6b51d431df5d7f141cbececcf79edf3dd861c3b4069f0b11661a3eefacbba918",
+        "subject": "geometry"
+      },
+      {
+        "content_sha256": "5a896c6bb204e308316f7a9510cc5ae112da350673160a5e62be50a9ec7df300",
+        "example_id_sha256": "4a56e1c92933a1e0720f0d6f6775611014530f7eb8ced2c06797e9ed1f8e98a8",
+        "input_sha256": "c239a4d46fdd1d56b8714a3b3a36249d2dae5bb5c9a56c6b531ca031fbbea080",
+        "level": "Level 5",
+        "reference_sha256": "5d389f5e2e34c6b0bad96581c22cee0be36dcf627cd73af4d4cccacd9ef40cc3",
+        "subject": "geometry"
+      },
+      {
+        "content_sha256": "395690d4f14f39a8a7bed4fd64d52813b2ad7d020837465b283103cbe278fc57",
+        "example_id_sha256": "7399b714a5659774c2bddee46ba62e750fe98f849e6ca78502bf8e5b4b65dd94",
+        "input_sha256": "7b68848cc611f4eb5f43a8e1f2ba402caa32765bde2f9374bc0d0bde9cfd9aa1",
+        "level": "Level 5",
+        "reference_sha256": "6ea2fdb3399f4d2e806beb01e9a3371bd622bed6a409acf3151818d738c370ec",
+        "subject": "geometry"
+      },
+      {
+        "content_sha256": "0b5804efe03a9dc108f769114495ca5a1817c2381c39cec4b73d9259de007f28",
+        "example_id_sha256": "0fbd58c390431d82384d6f7e3b1a88f2a29afd5c3c677532d5893978ddfbf39b",
+        "input_sha256": "203d569e96cd2d4b41a19d71d8d47b090b71cc5462e84c495ec32dfb0bf03fbe",
+        "level": "Level 4",
+        "reference_sha256": "40ecc70cf4b171f2774a5b2ba89ed9fbf24ac9c1cde92fe73eb24a2d696c76b0",
+        "subject": "geometry"
+      },
+      {
+        "content_sha256": "4de5b0d5b1fc899824e2930bdf0b69b4ff2ea8e11bf602ad53eeedb142adc4c2",
+        "example_id_sha256": "4c8c0b4547532902e4734e527422bd09fdbf5ce0309529af45fd5cdf7dbb348a",
+        "input_sha256": "055acff0ae6d1abaa307f5f353d3e513ac63c561d83f0adc6843dd903b6db636",
+        "level": "Level 4",
+        "reference_sha256": "eb3be230bbd2844b1f5d8f2e4fab9ffba8ab22cfeeb69c4c1361993ba4f377b9",
+        "subject": "geometry"
+      },
+      {
+        "content_sha256": "3a9a198f3b3a7b77633479025b326c43b8dd2a72a1dc8628c01bafc3f22833b4",
+        "example_id_sha256": "c195c15966da10f3a6f0c7f0aee05491001e03efdb7afb1906cdf87048690197",
+        "input_sha256": "929dc77a80ca57d1429d5c5451383dff1e55545b778cc7e0c13e7f4799ac62c4",
+        "level": "Level 5",
+        "reference_sha256": "86bc00bf176c8b99e9cbdd89afdd2492de002c1dcce63606f711e0c04203c4da",
+        "subject": "geometry"
+      },
+      {
+        "content_sha256": "9db40a16a4b9026af3bd00dbaa5ba2467c063cc2acedb96ba5caa68351c1270e",
+        "example_id_sha256": "bd8551e580cbc0beaf3ba2d3026616902e78c069928270b1244dd8daeba732c7",
+        "input_sha256": "8c9b52493078162c219b973cdfe68d2382adfbfb2eef615334b2cacca8a3c571",
+        "level": "Level 2",
+        "reference_sha256": "624b60c58c9d8bfb6ff1886c2fd605d2adeb6ea4da576068201b6c6958ce93f4",
+        "subject": "geometry"
+      },
+      {
+        "content_sha256": "3e1d3660c2a1462127f78c10d87d245a45fbc5dc20bc5873175b08f9c9bf9c68",
+        "example_id_sha256": "136befb189b52f030ba3bbe5a192cc1dea5d6a4880c8d77eeb72e6394eb2fa68",
+        "input_sha256": "b2aa5563d0135cafe21d87e05a3bbdf8581b30ea805334d49eff67c2f25086d5",
+        "level": "Level 1",
+        "reference_sha256": "e7f6c011776e8db7cd330b54174fd76f7d0216b612387a5ffcfb81e6f0919683",
+        "subject": "intermediate_algebra"
+      },
+      {
+        "content_sha256": "dac7c53cf433c9aba74edb7b78500b1a024f2e9bd9a24c1a56aaa43ab9b1108e",
+        "example_id_sha256": "3ea3022b9060c99c0a0071f928cb018a537a3d4781fc5d77213e0f310473b479",
+        "input_sha256": "6e5d04e0e69de587bd374fdcc3a63e8f415e0ddc245c3740f341016782488e38",
+        "level": "Level 2",
+        "reference_sha256": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+        "subject": "intermediate_algebra"
+      },
+      {
+        "content_sha256": "0875ed5aa5d32cef6e56caa5aac35f810f4b2c6c1d657889a44d5906bb63284f",
+        "example_id_sha256": "c7a258c7350781563caed733488c672a5bf4dd11661b151fdb3a3cf87b85d8a8",
+        "input_sha256": "d926500f36e7f90bcd6979faad7f3e3fe409410c875da888c6c81d89275bbc68",
+        "level": "Level 2",
+        "reference_sha256": "7e660d36a7341a44fc4c6533f1f7e76ea01c91731dde4e594c5ce16922e57a77",
+        "subject": "intermediate_algebra"
+      },
+      {
+        "content_sha256": "4ebda1891c14aba219e309ae9291ea14d39083102a70eac0f593c23573aec91d",
+        "example_id_sha256": "faff8b267cf7fdd719a8a3f297aafdd25bab6ff5b33549919b8f6508abf21c97",
+        "input_sha256": "448d4c6814c5ba5987cc1f11c3f122ddc9b0b25f2308012b0c2e83033ce5418a",
+        "level": "Level 4",
+        "reference_sha256": "8a918b5bada61adca04e4522aaf832612fc3883b9a09ea5e98492cf05c2e191f",
+        "subject": "intermediate_algebra"
+      },
+      {
+        "content_sha256": "f2ed3c0afaa0cfc1bd35fe8908364ef12dc26764d79c78a69913242ade7ae3f4",
+        "example_id_sha256": "700a20c4576b304b79647999d3b89ed82887a1f73a34417884fb8ffd6378d128",
+        "input_sha256": "93fe1c493eb38d79714578a55c3d90c823ebab54e5380be47b5957e4e230f46a",
+        "level": "Level 5",
+        "reference_sha256": "65a699905c02619370bcf9207f5a477c3d67130ca71ec6f750e07fe8d510b084",
+        "subject": "intermediate_algebra"
+      },
+      {
+        "content_sha256": "eb1e0cb21b7ab8305a3199a21b9c9819ff0e8b1dac283acb214a01fca312f053",
+        "example_id_sha256": "7a55f93a2fc0ce0f1d1d9e53d1f81136dd69194642b691c411c23902683fe676",
+        "input_sha256": "f0b8b94bed038d147e6b9231c414e6d2450492d137dcb39d38b1006bf5ddc30a",
+        "level": "Level 4",
+        "reference_sha256": "f5ca38f748a1d6eaf726b8a42fb575c3c71f1864a8143301782de13da2d9202b",
+        "subject": "intermediate_algebra"
+      },
+      {
+        "content_sha256": "001fdf3c799ccee6cb5be3fc256f7b13befc3d881b92cda9415fe688ff7f007b",
+        "example_id_sha256": "114283fec17b8e2a9a5ebcb1e03869f321896f0c7287b532b2d89fed3b3a8702",
+        "input_sha256": "7898c41595e45d21f67a80f3e5e1f39defe8b529e6f5a71e575d6733ec9d29f4",
+        "level": "Level 5",
+        "reference_sha256": "02df15eefe27798a94a8b758aaa145470c709c63c6ca08926e9d2f22ffa4b5fa",
+        "subject": "intermediate_algebra"
+      },
+      {
+        "content_sha256": "dcbfd1e2c2c84416136ac7e58cb9988ebb2aa2065700a8d60db8326a218af389",
+        "example_id_sha256": "28397739e7a10f999723e149ea4c0f80118bb221a062fb74b44eea0918762819",
+        "input_sha256": "ac006c193f283ccf5e80f5973a778febd68d12184b9c2ac5fe2aa15e2cac533a",
+        "level": "Level 4",
+        "reference_sha256": "29db0c6782dbd5000559ef4d9e953e300e2b479eed26d887ef3f92b921c06a67",
+        "subject": "intermediate_algebra"
+      },
+      {
+        "content_sha256": "ec9c83d041484ea55b283d2dfab0cd64274c8c3a796c694ff1de6029cead0263",
+        "example_id_sha256": "033e0f3641a489d92995555c1182b1fc375e22c74db3d7313ea3cf7153c5619e",
+        "input_sha256": "a73ecdfb3b4b159a1315474df3b27a4b4f1652e67b8c2b6c443bd3892fb5a7e7",
+        "level": "Level 3",
+        "reference_sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+        "subject": "intermediate_algebra"
+      },
+      {
+        "content_sha256": "db1951792d31d6f9636f8a64e78c0449330f7af947304331630decc4f71dafe5",
+        "example_id_sha256": "9b7240b496a11695d351badc6d421150f8d0141b9500b0896cd54881deb4e130",
+        "input_sha256": "c6cdaf7aa42a8da316345f122d86be7143e38cb13ea81d0e28b19f311d3291d0",
+        "level": "Level 5",
+        "reference_sha256": "7f2253d7e228b22a08bda1f09c516f6fead81df6536eb02fa991a34bb38d9be8",
+        "subject": "intermediate_algebra"
+      },
+      {
+        "content_sha256": "bded3d3a0ea49750f088e7dd910607f29fc43aaea7d57b30064d07df94fa5679",
+        "example_id_sha256": "0a3735f8e7c82ae7765bcc63d663656e00a32002cf59a339af162d0365df41e4",
+        "input_sha256": "dff708567f3679b5dddce6e980771b03aa7e29b9683a8b87891bac34e4bf16d0",
+        "level": "Level 5",
+        "reference_sha256": "8527a891e224136950ff32ca212b45bc93f69fbb801c3b1ebedac52775f99e61",
+        "subject": "number_theory"
+      },
+      {
+        "content_sha256": "1ea942a2cd61488257184233c0b7fb0d1910842bf1e2a069c91000f17d2453a1",
+        "example_id_sha256": "3af23ddbc9855bd5f025d309d628d06a2b7d059646ea9800dbe6d1a484adc03d",
+        "input_sha256": "ca686f2497047cfc7f7223a29028820d8eddfd86bd61773990b03736ba69b59f",
+        "level": "Level 3",
+        "reference_sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+        "subject": "number_theory"
+      },
+      {
+        "content_sha256": "06e2000eade01eed37979a2dda196ece46b5956d710d4baa471cfc43c242c804",
+        "example_id_sha256": "6467124a65adb8c13bab6bdae89781dc50cbee5d5166ed875e26caeccc5a2f91",
+        "input_sha256": "c8b3d8f0457565eb27341e693234a0f28158e8646f7d1406b514ed4de7fb7b00",
+        "level": "Level 2",
+        "reference_sha256": "4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5",
+        "subject": "number_theory"
+      },
+      {
+        "content_sha256": "a0c412412c51797cdda0308a5ecfcfa2b50b9e70925f9ac67024d9792db0cee6",
+        "example_id_sha256": "eb4579dd0beb900f1078405ec54b94ba8ea5ab39001f7970c5e0861155732459",
+        "input_sha256": "84609f62adb1dbd5b7da0298bc4724e2ba9094445b463cda4831a551c2f2a169",
+        "level": "Level 2",
+        "reference_sha256": "7ba7d31bfa1ed86327ecfa9deb2dd8a44488fba943ca78c86c1e21f2d1be0a10",
+        "subject": "number_theory"
+      },
+      {
+        "content_sha256": "e6797e295f97f0fa6bb0c38121501d3d75aef2f7628ca1cc5072fece2556a1ac",
+        "example_id_sha256": "d8c3fb19ed5440579004db011b8835656e26fb607e59bfa9ab0003796838fb27",
+        "input_sha256": "58f27cf5c50adb979386d8059dd3dac9f8bc43ebf2cc1110534afaae208486f6",
+        "level": "Level 4",
+        "reference_sha256": "b8ea370775107e211da67802729795ca2972da168f2dfb5e1e40ec4ce28a5fbb",
+        "subject": "number_theory"
+      },
+      {
+        "content_sha256": "3de8b39df2b5ea78e281084e4d8a869c32f3fc5c4c6f438b57f01f511052b0b5",
+        "example_id_sha256": "5a84be8c4572e1841dda1317041d48a3f5437956d249c06e8a23d62eaa86c5d2",
+        "input_sha256": "20a349358551c9e193e9da05d8e4a36472f9536df36413d693856f427e9b735e",
+        "level": "Level 5",
+        "reference_sha256": "a4c6af0cb6f02dff01ba174e4cf11f24f73d9ed16ca7a1e3c9d831c0139faa5c",
+        "subject": "number_theory"
+      },
+      {
+        "content_sha256": "ae08da5062e2e144f4329de28d0cf043fffc9cea983ab1b8b3588759c1a6b75a",
+        "example_id_sha256": "bdb9db1b39a182cd2b4631fd62ef9623085b1915e164d5fc4128941187bc1014",
+        "input_sha256": "eedbeeb99fde23091935b208e9431d7b31af095c77f06829df0ba5c747384c22",
+        "level": "Level 4",
+        "reference_sha256": "4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a",
+        "subject": "number_theory"
+      },
+      {
+        "content_sha256": "587f11e39a0c1c6e41f973ce764f1c883900b7b579e6c71df63c845f771e722e",
+        "example_id_sha256": "f545de496360d1955756c852417b9821194d670c5112e7266972d5136997a947",
+        "input_sha256": "971b7330673758f00aa96f915ea7277785b57d0bf207ae8d1249384d19a8dc8e",
+        "level": "Level 3",
+        "reference_sha256": "cd70bea023f752a0564abb6ed08d42c1440f2e33e29914e55e0be1595e24f45a",
+        "subject": "prealgebra"
+      },
+      {
+        "content_sha256": "3750f02eb257498918e9cd4f66e3a6e07fc9c4557f63a297660d24e3763dbedc",
+        "example_id_sha256": "2071aac4f0d3de9c916f1e98b548472a0107b932b55a4c0f03d5a347850b59f6",
+        "input_sha256": "ecd1f2758677f87eb27f718b8044db30d39f02794f68fb17d8144f4ad9e7bff0",
+        "level": "Level 5",
+        "reference_sha256": "fa66df2f99cec3fe2cb72c2286083c4cbf0897f9697d0a63f142a46138610a86",
+        "subject": "prealgebra"
+      },
+      {
+        "content_sha256": "31c7b81ca42cea30ed41d8c26a90af2d4bf15b67c6ee2a19ca741b8da5a46759",
+        "example_id_sha256": "aa0bbc140215e16e29fc7155b7d16682f4275372538128772fbf8840e5573d3b",
+        "input_sha256": "7cf1e08524e8abde0a76c143879b69c72fefca0982baa0eed0d140010593acdd",
+        "level": "Level 4",
+        "reference_sha256": "fb3f13b35508b770ba46cc25401965a7c14ed4b3a78daa2be6b76486db6a5de0",
+        "subject": "prealgebra"
+      },
+      {
+        "content_sha256": "3ccadaca8a37044472c25bcdd32207fdbc09c7392315cfca6dc3c031615ec46e",
+        "example_id_sha256": "ad107f0755d842af3d63aed183a58a7bc09e7aaea04d9c3e5e036dce7c7159d6",
+        "input_sha256": "656a547d526bfc30360406fb18421b02bd245f0062ce1e48358b92487751ac44",
+        "level": "Level 3",
+        "reference_sha256": "265f9510efa365ac3587b7e618b22e270e13c7707401f26c5bde8d7ef691a3e3",
+        "subject": "prealgebra"
+      },
+      {
+        "content_sha256": "f28549e603445922e9b62c2431eeca760ba2a946acaca9b813c42afafbac56f5",
+        "example_id_sha256": "e933b38cbef2a3b42ef2c3ed875e7f6aedf891148bd65dab22a163be877bdbba",
+        "input_sha256": "a2a4f6e70d60f659fbc2ebc14b6e5001d35f08fa1f5a3efac0bbf18b61b281c9",
+        "level": "Level 2",
+        "reference_sha256": "d103bbf440f114321e1e4d51dbb213f9460e05f8400bd51fbc8118916c7ea7cf",
+        "subject": "prealgebra"
+      },
+      {
+        "content_sha256": "7efbd4fa47a606b13baa91434b41090219e0bc909d3104e8f5a1f48c6383839d",
+        "example_id_sha256": "40801135a6ab80e59c33072151b5e0e69d371a45a4317a7c7678d826af16d21f",
+        "input_sha256": "0d797653298bac649049a04f53bc6895ed7d7767f03413adb3db668e1e120078",
+        "level": "Level 2",
+        "reference_sha256": "5ec1a0c99d428601ce42b407ae9c675e0836a8ba591c8ca6e2a2cf5563d97ff0",
+        "subject": "prealgebra"
+      },
+      {
+        "content_sha256": "ad68d03db558dd34b71dd5684637e7fe3c473a426448c8b068d3a25c06837a3b",
+        "example_id_sha256": "68e3549bc76cf6036ed82697a175030f80406c1f2e7312e5957485814b30dc7d",
+        "input_sha256": "db70f03c888a4762e9ddddf625f90bfe69e619ee07c3f1f910dac2132a156894",
+        "level": "Level 4",
+        "reference_sha256": "3c15285c04fff40024bb8714b93e58178bf8d3bebe6943178e1c5412957b7aa1",
+        "subject": "prealgebra"
+      },
+      {
+        "content_sha256": "3d070cce83018e3fb0b623cea8a28f2e63891dead0d3055bf584782687924c26",
+        "example_id_sha256": "fc5273e323c0096f119b5c64e89fe19e6c43881269178e49a472481f59ee41f4",
+        "input_sha256": "25282bc929154305440cb20bfb3926df1e8de8efd8934388da37499a44ae6332",
+        "level": "Level 4",
+        "reference_sha256": "2c624232cdd221771294dfbb310aca000a0df6ac8b66b696d90ef06fdefb64a3",
+        "subject": "prealgebra"
+      },
+      {
+        "content_sha256": "65c0b7deff4cde39c54b786c32089f2211f1a4ca9b1e06f07e4d6e0553ac49ef",
+        "example_id_sha256": "3cee20c55addc71136a9ec28e372b3ef426191fc9f5fe6f12c6093a655636403",
+        "input_sha256": "9a235276a74854f46d6f3d58d776013504d7069ff360f02243b178b6ec48efdf",
+        "level": "Level 2",
+        "reference_sha256": "88f0a877f67267e5f9133d17af1af7c7a08894916678beb9cef796ab454f5d6e",
+        "subject": "prealgebra"
+      },
+      {
+        "content_sha256": "cee443a2ec5dcf73afd6cc10b2c6c21aa533193c3000d2a9adc1d68eca1b4059",
+        "example_id_sha256": "16083f9f47ae41c2f7ce1aed94905f97033b395efd09e24517c2b5a0a3ec66d8",
+        "input_sha256": "0bb00689b056f20a489e5563da9e0ff475ed7280a27027c42dc2df314fec3471",
+        "level": "Level 3",
+        "reference_sha256": "bfb3ad694dd664cbe734b03ceecb100a2972ffcb87c89cfe143b0a0054ad1dab",
+        "subject": "prealgebra"
+      },
+      {
+        "content_sha256": "cea5c49069025a8dcb59321864a37ef9c774c458ce0b46b20baa79ed4f34fb01",
+        "example_id_sha256": "e8e40bb8d48ab6bf8c01c1fc03692baea2ac6bd01cec3898cd445caa8ceb5272",
+        "input_sha256": "c4db7ea840375d0cf491336bcb96668190909fc0a0c879e273eeb9b7fe2687fe",
+        "level": "Level 3",
+        "reference_sha256": "05e5411ab78cb7663647186492ec4cf4be8f9e914d91cab99c390f513d6737d9",
+        "subject": "precalculus"
+      },
+      {
+        "content_sha256": "935eaffcdc99c8002c9eb93c534f4435fd40576206c7dc4add972a417b512ac5",
+        "example_id_sha256": "7c6f7c9cde95a59ec1445e37173f08efc88769fc3dbe6cf685c126344d2a7b18",
+        "input_sha256": "1ea38828df96dd2c0a9ad48bdb0616e0aade1bb33cb8a00035ebfca472240536",
+        "level": "Level 4",
+        "reference_sha256": "2c624232cdd221771294dfbb310aca000a0df6ac8b66b696d90ef06fdefb64a3",
+        "subject": "precalculus"
+      },
+      {
+        "content_sha256": "51f2429033a3a8adb492c6b8e18ff882235987e6fd098e30ad718136080218ef",
+        "example_id_sha256": "317c0458ab8abc7c84f8b215326098610f21b9314b8529569dd42940a10802c4",
+        "input_sha256": "a2d53dc664424a32fc52f1526dbef5200c5c5bcbea47f0d016526248f806a494",
+        "level": "Level 5",
+        "reference_sha256": "3fba64e1d1634cb8d0fdbb1e045d8c0c0f2784e9fa658eb41d82d8610bcc704f",
+        "subject": "precalculus"
+      },
+      {
+        "content_sha256": "5019a25e8403bfc2f194687261e05dfe1322bdff8fab29eb284f3bad2825895a",
+        "example_id_sha256": "96074ed7ebfdab2a0c6239c86778783c70d01b0fbabbc2b4b2d22ad143d731f8",
+        "input_sha256": "acb2b4f466442962a98730aa7ac61f65a48f936b58f0d43536d5a239d8f3c909",
+        "level": "Level 4",
+        "reference_sha256": "00158364ffb2be84d6fc9ce8b4c5aa1b145d4f69361e2faebbd30df10d69461e",
+        "subject": "precalculus"
+      },
+      {
+        "content_sha256": "81cdea6d67aad51abba34297d0963238b6e0bcdfe0a08d24970fc81dc94b42e6",
+        "example_id_sha256": "455397138b1eb7495bfa285f024b5e097f6a260b88ac15e5a0169eb61e8ad67d",
+        "input_sha256": "fe12f24480ba2dd94bfe11365fd2a82f465c4ec87c54c61bc2d94011c2180591",
+        "level": "Level 5",
+        "reference_sha256": "0483701d4453f8d71323a386206e52cf92a5cef26cca6b93eaec3802e2d11803",
+        "subject": "precalculus"
+      }
+    ],
+    "membership_sha256": "d3342da5cb0a53634d596ff5332cd65a92620aa0969f2f70b5c739ff19771583",
+    "previously_adaptive_development_pool": true,
+    "role": "optimize",
+    "selection": {
+      "actual_n": 60,
+      "available_after_exclusion": 138,
+      "available_optimize": 150,
+      "excluded_canary_ids": 12,
+      "level_counts": {
+        "Level 1": 4,
+        "Level 2": 12,
+        "Level 3": 12,
+        "Level 4": 14,
+        "Level 5": 18
+      },
+      "output_order": "FROZEN_OPTIMIZE_MEMBERSHIP_ORDER",
+      "population_strata": {
+        "algebra|Level 1": 5,
+        "algebra|Level 2": 6,
+        "algebra|Level 3": 11,
+        "algebra|Level 4": 2,
+        "algebra|Level 5": 6,
+        "counting_and_probability|Level 1": 2,
+        "counting_and_probability|Level 2": 1,
+        "counting_and_probability|Level 3": 1,
+        "counting_and_probability|Level 4": 3,
+        "counting_and_probability|Level 5": 7,
+        "geometry|Level 2": 3,
+        "geometry|Level 3": 1,
+        "geometry|Level 4": 4,
+        "geometry|Level 5": 8,
+        "intermediate_algebra|Level 1": 2,
+        "intermediate_algebra|Level 2": 5,
+        "intermediate_algebra|Level 3": 3,
+        "intermediate_algebra|Level 4": 6,
+        "intermediate_algebra|Level 5": 7,
+        "number_theory|Level 2": 5,
+        "number_theory|Level 3": 3,
+        "number_theory|Level 4": 5,
+        "number_theory|Level 5": 5,
+        "prealgebra|Level 1": 1,
+        "prealgebra|Level 2": 7,
+        "prealgebra|Level 3": 6,
+        "prealgebra|Level 4": 6,
+        "prealgebra|Level 5": 3,
+        "precalculus|Level 2": 1,
+        "precalculus|Level 3": 3,
+        "precalculus|Level 4": 5,
+        "precalculus|Level 5": 5
+      },
+      "requested_n": 60,
+      "seed": 81,
+      "selected_strata": {
+        "algebra|Level 1": 2,
+        "algebra|Level 2": 3,
+        "algebra|Level 3": 5,
+        "algebra|Level 4": 1,
+        "algebra|Level 5": 3,
+        "counting_and_probability|Level 1": 1,
+        "counting_and_probability|Level 2": 1,
+        "counting_and_probability|Level 3": 1,
+        "counting_and_probability|Level 4": 1,
+        "counting_and_probability|Level 5": 3,
+        "geometry|Level 2": 1,
+        "geometry|Level 3": 0,
+        "geometry|Level 4": 2,
+        "geometry|Level 5": 4,
+        "intermediate_algebra|Level 1": 1,
+        "intermediate_algebra|Level 2": 2,
+        "intermediate_algebra|Level 3": 1,
+        "intermediate_algebra|Level 4": 3,
+        "intermediate_algebra|Level 5": 3,
+        "number_theory|Level 2": 2,
+        "number_theory|Level 3": 1,
+        "number_theory|Level 4": 2,
+        "number_theory|Level 5": 2,
+        "prealgebra|Level 1": 0,
+        "prealgebra|Level 2": 3,
+        "prealgebra|Level 3": 3,
+        "prealgebra|Level 4": 3,
+        "prealgebra|Level 5": 1,
+        "precalculus|Level 2": 0,
+        "precalculus|Level 3": 1,
+        "precalculus|Level 4": 2,
+        "precalculus|Level 5": 2
+      },
+      "selection": "SUBJECT_LEVEL_LARGEST_REMAINDER_LEXICAL_TIES_THEN_SHA256_PLAN_SEED_ID",
+      "subject_counts": {
+        "algebra": 14,
+        "counting_and_probability": 7,
+        "geometry": 7,
+        "intermediate_algebra": 10,
+        "number_theory": 7,
+        "prealgebra": 10,
+        "precalculus": 5
+      },
+      "uncovered_population_strata": [
+        "geometry|Level 3",
+        "prealgebra|Level 1",
+        "precalculus|Level 2"
+      ],
+      "uses_model_outcomes": false
+    },
+    "shadow_raw_access": false,
+    "test_raw_access": false,
+    "validation_raw_access": false
+  },
+  "disabled_components": [
+    "responsibility",
+    "gradient",
+    "pattern",
+    "layer1",
+    "team_probe",
+    "full_commit",
+    "shadow_writeback",
+    "memory"
+  ],
+  "future_authorization_required": [
+    "new_source_commit",
+    "protocol_manifest_membership_hashes",
+    "models_and_provider_policy",
+    "stage_roles_seed_order",
+    "native_parsers_and_common_diagnostic",
+    "new_cache_namespace_and_accounting_scope",
+    "charged_plus_reserved_ceiling",
+    "retry_capacity_policy",
+    "no_validation_test_access",
+    "single_use_exact_scope"
+  ],
+  "identity": "MATH_BASELINE_PAIRED_CALIBRATION_PLAN_V1",
+  "incomplete_stage": "PUBLISH_FACTUAL_PARTIAL_COUNTERS_ONLY_NO_ARM_EFFICACY_COMPARISON",
+  "metrics": {
+    "primary": [
+      "FIRST_DRAW_FORMAT_VALID",
+      "FIRST_DRAW_NATIVE_CORRECT",
+      "RECOVERED_NATIVE_VALID",
+      "RECOVERED_NATIVE_CORRECT",
+      "TOKENS_PER_LOGICAL",
+      "COST_PER_CORRECT"
+    ],
+    "secondary": [
+      "COMMON_DIAGNOSTIC_STATUS",
+      "COMMON_DIAGNOSTIC_CORRECT",
+      "ERROR_CATEGORY",
+      "TRUNCATION",
+      "PAIRED_IMPROVED_REGRESSED",
+      "SUBJECT_LEVEL"
+    ]
+  },
+  "model": "qwen3-8b",
+  "pairing": {
+    "arm_order": "ABC_BCA_CAB_CYCLIC_BY_EXAMPLE_INDEX",
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 81,
+    "bootstrap_unit": "PAIRED_EXAMPLE_NOT_MEMBER",
+    "comparisons": [
+      "A_B_PROMPT_ONLY",
+      "A_C_OUTPUT_INTERFACE",
+      "B_C_OUTPUT_INTERFACE"
+    ],
+    "inference": "SMALL_DEVELOPMENT_DIAGNOSIS_NO_POPULATION_SIGNIFICANCE_CLAIM",
+    "optimizer_concurrency": 0,
+    "solver_concurrency": 1,
+    "unit": "EXAMPLE_ID",
+    "within_arm_example_order": "IDENTICAL"
+  },
+  "protocol_sha256": "e9aa5d6ed729a7b157740230c9326e1c09f21e500a2fc31234981576aaf6ec9b",
+  "real_api_authorized": false,
+  "real_execution_implementation": "NOT_PRESENT_FAKE_AND_DRY_RUN_ONLY",
+  "retry": {
+    "expansion": "ONLY_IMMEDIATELY_PREVIOUS_SUCCESS_FINISH_LENGTH",
+    "first_capacity": 3600,
+    "incomplete_recovery": "NOT_A_COMPLETED_LOGICAL_SCORE",
+    "same_messages_and_sampling": true,
+    "successful_semantic_draws": 4,
+    "transport_attempts_per_draw": 21,
+    "transport_failure_consumes_draw": false,
+    "transport_max_retries": 20,
+    "trigger": "NATIVE_OUTPUT_INVALID_ONLY_NEVER_MATH_INCORRECT",
+    "truncation_recovery_capacity": 6144
+  },
+  "sampling": {
+    "enable_thinking": false,
+    "frequency_penalty": 0,
+    "max_output_tokens": 3600,
+    "min_p": 0,
+    "presence_penalty": 0,
+    "temperature": 0.2,
+    "top_k": 20,
+    "top_p": 0.8
+  },
+  "schema_version": "math_baseline_calibration_plan_v1",
+  "scope": "INDEPENDENT_BASELINE_DIAGNOSIS_NOT_PROMPT_OPTIMIZATION",
+  "secondary": {
+    "gold_blind": true,
+    "identity": "MATH_BASELINE_COMMON_DIAGNOSTIC_V1",
+    "never_search_gold_matching_intermediates": true,
+    "primary_override": false,
+    "usage_scope": "DIAGNOSTIC_ONLY"
+  },
+  "solver_user_message": "EXACT_ORIGINAL_PROBLEM",
+  "source_identities": {
+    "audit_baseline_source_sha": "9bbe1b502a3c8c6d43b2da959b8b8b0f2256b985",
+    "diagnostic_tool_hashes": {
+      "multi_dataset_diverse_rl/diagnostics/math_baseline_audit.py": "d44b8ea6fb74235b9c04505069ac0590d9d21dadd790946d79625c437143aa64",
+      "multi_dataset_diverse_rl/diagnostics/math_baseline_calibration.py": "1ae5b6e97f562a093ff1e01e18c16ac46a41c6dae836aeda39ea0ecfa0e1ee8f",
+      "multi_dataset_diverse_rl/diagnostics/math_calibration_plan.py": "125b8544e0f804a19a61b20f7fead2284d27a80e220fe9d2cdb3973fbbafd413",
+      "scripts/audit_math_baseline_calibration.py": "d0386831f149d76f586d95c488b16921a55e7fe3b4e9be9917fa642b0ea68db9",
+      "tests/current/test_math_baseline_calibration.py": "c97543285ff08b2dd1fa3f867dcf8feed6778d2cfe1a3559cfe1fcd1e23aae5c"
+    },
+    "mathematical_equivalence_source_sha256": "c8db4d898dd2574ca84135ae38c2b48252f27b15ff1d5176c48d3f15d0353843",
+    "mathematical_validity_source_sha256": "6e868b4c73818d30c47039af8cb29b506da2d610e83c13cd5be77089bb6a05dc",
+    "native_extraction_source_sha256": "e96dbd03ed2a843757a96c29149877087886c8c6642a844ba23d1cecbcb7d67d",
+    "original_binding_sha256": "7a1f64167ef27c37594f69351cc024c8d0327afb5fbeb74c88b8efbb4277104b",
+    "original_execution_source_sha": "7217081d43fff2e94ab46ed28378717e3e912520",
+    "original_manifest_sha256": "fcdda11059e5da75a9776da0a3e6919d08c2b66b588c021600df6370f0ed4c22",
+    "split_manifest_sha256": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+    "startup_identity_sha256": "4cdba0f516bb33c1b8a4264edab191110a8cd2a2b60fdfcaa93f5dd3cb6bd775"
+  },
+  "stages": {
+    "stage1": {
+      "independent_scope": true,
+      "members": 1,
+      "n": 60
+    },
+    "stage2": {
+      "aggregation": "equal_equivalence_plurality_consistency_v1",
+      "independent_realizations": true,
+      "independent_scope": true,
+      "members": 5,
+      "n": 60,
+      "stage1_response_reuse": false,
+      "status": "DESIGN_ONLY_SEPARATE_REVIEW_AND_AUTHORIZATION_REQUIRED"
+    }
+  },
+  "status": "DESIGN_FROZEN_NO_PAID_RUNNER",
+  "stopping": "NATIVE_VALID_OR_FOUR_INVALID_PER_LOGICAL_FIXED_N_OR_OPERATIONAL_FAIL_CLOSED"
+}

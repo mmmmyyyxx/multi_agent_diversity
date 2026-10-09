@@ -1,0 +1,11 @@
+{
+  "calibration_selected_examples": 60,
+  "canary_unique_examples": 12,
+  "canonical_source_byte_hashing": true,
+  "canonical_source_hashing_not_heldout_semantic_access": true,
+  "new_evaluation_or_selection_using_heldout": false,
+  "optimize_rows_parsed": 150,
+  "shadow_rows_parsed": 0,
+  "test_rows_parsed": 0,
+  "validation_rows_parsed": 0
+}

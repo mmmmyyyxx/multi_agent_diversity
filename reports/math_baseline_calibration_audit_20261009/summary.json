@@ -1,0 +1,14 @@
+{
+  "diagnostic_correct": 28,
+  "diagnostic_explicit_parseable": 37,
+  "invalid_terminal_logical_count": 43,
+  "official_scores_unchanged": true,
+  "original_official_vote_correct": 5,
+  "original_official_vote_denominator": 12,
+  "production_changes": 0,
+  "real_api_calls": 0,
+  "stage1_executed": false,
+  "stage2_executed": false,
+  "status": "ZERO_API_AUDIT_COMPLETE_CALIBRATION_DESIGN_ONLY",
+  "task": "MATH Baseline Calibration Audit"
+}

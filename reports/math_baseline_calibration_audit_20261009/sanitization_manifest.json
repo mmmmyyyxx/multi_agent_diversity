@@ -1,0 +1,8 @@
+{
+  "api_calls": 0,
+  "findings": [],
+  "planned_protocol_instructions_user_requested": true,
+  "private_records_published": 0,
+  "scope": "REPORT_PROTOCOL_AND_NEW_DESIGN_MANIFESTS; EARLIER_LONG_EXACT_PRIVATE_CONTENT_LEAK_SCAN",
+  "status": "PASS"
+}

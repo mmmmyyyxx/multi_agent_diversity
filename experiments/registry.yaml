@@ -8967,3 +8967,49 @@ experiments:
   original_operational_status: EXECUTION_ABORTED
   terminal_recovery_status: EXECUTION_COMPLETE_RECOVERED_ZERO_API
   terminal_recovery_new_provider_calls: 0
+- experiment_id: math_baseline_calibration_audit_v1
+  kind: ZERO_API_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: INDEPENDENT_MATH_BASELINE_CALIBRATION
+  parent_ids:
+  - a4_v25_responsibility_repair_canary_v1
+  status: COMPLETED
+  scientific_status: AUDIT_VERIFIED_NO_OFFICIAL_RESCORE
+  implementation_commit: 9bbe1b502a3c8c6d43b2da959b8b8b0f2256b985
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_baseline_calibration_audit_v1.json
+  report: reports/math_baseline_calibration_audit_20261009
+  classifier: reports/math_baseline_calibration_audit_20261009/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Independent baseline audit/design only; production V2.5 and old scores are immutable.
+  - Zero new API authorization; no paid runner, no consumed scope reuse.
+  unavailable:
+    execution_commit: No new real experiment executed.
+    result_commit: Containing Git publication commit; no self-referential SHA.
+- experiment_id: math_baseline_calibration_v1
+  kind: PROTOCOL_FREEZE
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: INDEPENDENT_MATH_BASELINE_CALIBRATION
+  parent_ids:
+  - math_baseline_calibration_audit_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: DESIGN_ONLY_NOT_EXECUTION_ELIGIBLE
+  implementation_commit: 9bbe1b502a3c8c6d43b2da959b8b8b0f2256b985
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_baseline_calibration_v1.json
+  report: reports/math_baseline_calibration_audit_20261009
+  classifier: reports/math_baseline_calibration_audit_20261009/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Independent baseline audit/design only; production V2.5 and old scores are immutable.
+  - Zero new API authorization; no paid runner, no consumed scope reuse.
+  unavailable:
+    execution_commit: No new real experiment executed.
+    result_commit: Containing Git publication commit; no self-referential SHA.

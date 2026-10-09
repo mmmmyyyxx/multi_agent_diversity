@@ -911,6 +911,12 @@ nodes:
 - experiment_id: a4_v25_responsibility_repair_canary_v1
   kind: REAL_CANARY
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: math_baseline_calibration_audit_v1
+  kind: ZERO_API_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: math_baseline_calibration_v1
+  kind: PROTOCOL_FREEZE
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1924,4 +1930,16 @@ edges:
   evidence: docs/design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md
   scope: New scientific identity and one independent Canary; old run is diagnostic
     provenance only.
+- from: a4_v25_responsibility_repair_canary_v1
+  to: math_baseline_calibration_audit_v1
+  relation: audit_of
+  evidence: experiments/manifests/math_baseline_calibration_audit_v1.json
+  scope: Read-only baseline provenance or independent design; no optimization efficacy
+    claim.
+- from: math_baseline_calibration_audit_v1
+  to: math_baseline_calibration_v1
+  relation: followup_of
+  evidence: experiments/manifests/math_baseline_calibration_v1.json
+  scope: Read-only baseline provenance or independent design; no optimization efficacy
+    claim.
 current_frontier: experiments/current_frontier.yaml

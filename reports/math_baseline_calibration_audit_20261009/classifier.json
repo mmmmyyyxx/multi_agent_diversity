@@ -1,0 +1,12 @@
+{
+  "assessment": "SUBSTANTIAL_OBSERVED_OUTPUT_CONTRACT_LOSS; MODEL_ABILITY_AND_PROMPT_CAUSAL_EFFECT_NOT_IDENTIFIED",
+  "causal_labels": {
+    "backend_revision": "UNKNOWN",
+    "format_mismatch": "VERIFIED",
+    "prompt_specific_causality": "INFERRED_REQUIRES_PAIRED_AB"
+  },
+  "diagnostic_recoverability_is_new_baseline": false,
+  "efficacy": "NO_NEW_CALIBRATION_RESULTS",
+  "official_result_reclassification": false,
+  "validity": "OFFLINE_AUDIT_VERIFIED"
+}
