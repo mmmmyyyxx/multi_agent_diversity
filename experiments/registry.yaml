@@ -9019,14 +9019,14 @@ experiments:
   method_family: INDEPENDENT_MATH_BASELINE_CALIBRATION
   parent_ids:
   - math_baseline_calibration_v1
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: STAGE1_IMPLEMENTED_PENDING_SOURCE_FREEZE
-  implementation_commit: null
-  execution_commit: null
+  status: COMPLETED
+  scientific_status: VALID
+  implementation_commit: 6328e5a7e49a672f3da50d85b0245f29dc437f5f
+  execution_commit: 6328e5a7e49a672f3da50d85b0245f29dc437f5f
   result_commit: null
   manifest: experiments/manifests/math_baseline_calibration_stage1_v1.json
-  report: reports/math_baseline_calibration_stage1_preparation_20261010
-  classifier: reports/math_baseline_calibration_stage1_preparation_20261010/classifier.json
+  report: reports/math_baseline_calibration_stage1_execution_20261010
+  classifier: reports/math_baseline_calibration_stage1_execution_20261010/classifier.json
   active_for_new_work: false
   historical_replay: false
   superseded_by: []
@@ -9037,8 +9037,12 @@ experiments:
     implementation commit; Stage 2 remains unauthorized.
   - Independent diagnostic; current Unified production method and old reports are
     unchanged.
+  - Single-use Stage 1 scope consumed and closed; no paid resume, rerun or Stage 2
+    authorized.
+  - Execution EXECUTION_COMPLETE; completed 180/180 logical evaluations; charged 466575
+    tokens.
   unavailable:
-    implementation_commit: Exact implementation commit is the containing source-freeze
-      prerequisite publication; private execution manifest binds it after commit.
-    execution_commit: Not executed at preparation publication.
-    result_commit: No results at preparation publication.
+    result_commit: Containing publication commit; no self-referential SHA.
+  reports:
+  - reports/math_baseline_calibration_stage1_preparation_20261010
+  - reports/math_baseline_calibration_stage1_execution_20261010

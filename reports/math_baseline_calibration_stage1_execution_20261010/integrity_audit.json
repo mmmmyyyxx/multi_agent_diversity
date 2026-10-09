@@ -1,0 +1,30 @@
+{
+  "all_physical_receipts_audited": true,
+  "budget_admission_verified": true,
+  "capacity_replay_verified": true,
+  "checkpoint_sha256": "8986fe0158450e7986418a3a018f9d657d89e53a3a2fc45c70c64ca9501d8902",
+  "common_gold_blind_extraction_after_execution": true,
+  "current_suite": {
+    "omitted_historical_modules": 220,
+    "passed": 444,
+    "selected": 446,
+    "skipped": 2
+  },
+  "deterministic_membership_and_order_verified": true,
+  "execution_summary_sha256": "8feddc87670f776dce9a4b3613b0cb8e13422193842231f2629d65376338b0d1",
+  "immutable_receipts_checked": 478,
+  "ledger_event_count": 958,
+  "ledger_hash_chain_verified": true,
+  "ledger_terminal": "EXECUTION_COMPLETE",
+  "membership_sha256": "d3342da5cb0a53634d596ff5332cd65a92620aa0969f2f70b5c739ff19771583",
+  "native_semantic_retry_replay_verified": true,
+  "network_attempts_during_offline_verification": 0,
+  "protected_original_canary_and_audit_unchanged": true,
+  "protocol_sha256": "e9aa5d6ed729a7b157740230c9326e1c09f21e500a2fc31234981576aaf6ec9b",
+  "scoped_execution_tests_passed": 18,
+  "secondary_scoring_never_written_to_primary": true,
+  "source_sha": "6328e5a7e49a672f3da50d85b0245f29dc437f5f",
+  "startup_identity_sha256": "ad85131e1f3c637de2ebce7cdce331fde98c2008dbdf8061a08395ca3123577d",
+  "status": "PASS",
+  "zero_unresolved_reservation": true
+}

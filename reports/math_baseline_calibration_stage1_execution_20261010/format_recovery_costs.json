@@ -1,0 +1,151 @@
+{
+  "arms": {
+    "A": {
+      "additional_native_correct": 0,
+      "additional_native_valid": 0,
+      "extra_charged_tokens": 145859,
+      "extra_successful_draws": 111,
+      "rounds": [
+        {
+          "became_native_correct": 23,
+          "became_native_valid": 23,
+          "charged_tokens": 51572,
+          "eligible_logicals": 60,
+          "original_logical_denominator": 60,
+          "semantic_draw": 1,
+          "successful_responses": 60,
+          "truncated_responses": 2
+        },
+        {
+          "became_native_correct": 0,
+          "became_native_valid": 0,
+          "charged_tokens": 46728,
+          "eligible_logicals": 37,
+          "original_logical_denominator": 60,
+          "semantic_draw": 2,
+          "successful_responses": 37,
+          "truncated_responses": 3
+        },
+        {
+          "became_native_correct": 0,
+          "became_native_valid": 0,
+          "charged_tokens": 52043,
+          "eligible_logicals": 37,
+          "original_logical_denominator": 60,
+          "semantic_draw": 3,
+          "successful_responses": 37,
+          "truncated_responses": 4
+        },
+        {
+          "became_native_correct": 0,
+          "became_native_valid": 0,
+          "charged_tokens": 47088,
+          "eligible_logicals": 37,
+          "original_logical_denominator": 60,
+          "semantic_draw": 4,
+          "successful_responses": 37,
+          "truncated_responses": 2
+        }
+      ]
+    },
+    "B": {
+      "additional_native_correct": 1,
+      "additional_native_valid": 1,
+      "extra_charged_tokens": 28232,
+      "extra_successful_draws": 10,
+      "rounds": [
+        {
+          "became_native_correct": 48,
+          "became_native_valid": 56,
+          "charged_tokens": 43144,
+          "eligible_logicals": 60,
+          "original_logical_denominator": 60,
+          "semantic_draw": 1,
+          "successful_responses": 60,
+          "truncated_responses": 2
+        },
+        {
+          "became_native_correct": 1,
+          "became_native_valid": 1,
+          "charged_tokens": 12488,
+          "eligible_logicals": 4,
+          "original_logical_denominator": 60,
+          "semantic_draw": 2,
+          "successful_responses": 4,
+          "truncated_responses": 1
+        },
+        {
+          "became_native_correct": 0,
+          "became_native_valid": 0,
+          "charged_tokens": 7727,
+          "eligible_logicals": 3,
+          "original_logical_denominator": 60,
+          "semantic_draw": 3,
+          "successful_responses": 3,
+          "truncated_responses": 1
+        },
+        {
+          "became_native_correct": 0,
+          "became_native_valid": 0,
+          "charged_tokens": 8017,
+          "eligible_logicals": 3,
+          "original_logical_denominator": 60,
+          "semantic_draw": 4,
+          "successful_responses": 3,
+          "truncated_responses": 1
+        }
+      ]
+    },
+    "C": {
+      "additional_native_correct": 0,
+      "additional_native_valid": 0,
+      "extra_charged_tokens": 147945,
+      "extra_successful_draws": 177,
+      "rounds": [
+        {
+          "became_native_correct": 1,
+          "became_native_valid": 1,
+          "charged_tokens": 49823,
+          "eligible_logicals": 60,
+          "original_logical_denominator": 60,
+          "semantic_draw": 1,
+          "successful_responses": 60,
+          "truncated_responses": 1
+        },
+        {
+          "became_native_correct": 0,
+          "became_native_valid": 0,
+          "charged_tokens": 52696,
+          "eligible_logicals": 59,
+          "original_logical_denominator": 60,
+          "semantic_draw": 2,
+          "successful_responses": 59,
+          "truncated_responses": 2
+        },
+        {
+          "became_native_correct": 0,
+          "became_native_valid": 0,
+          "charged_tokens": 44935,
+          "eligible_logicals": 59,
+          "original_logical_denominator": 60,
+          "semantic_draw": 3,
+          "successful_responses": 59,
+          "truncated_responses": 0
+        },
+        {
+          "became_native_correct": 0,
+          "became_native_valid": 0,
+          "charged_tokens": 50314,
+          "eligible_logicals": 59,
+          "original_logical_denominator": 60,
+          "semantic_draw": 4,
+          "successful_responses": 59,
+          "truncated_responses": 2
+        }
+      ]
+    }
+  },
+  "first_draw_and_recovery_costs_separated": true,
+  "transport_retries": 0,
+  "zero_transport_error_usage": true
+}

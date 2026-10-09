@@ -1,0 +1,35 @@
+{
+  "common_diagnostic_is_not_a_superset_of_native_due_to_conflict_check": true,
+  "inferred": {
+    "B_prompt_math_ability_gain": "NOT_DEMONSTRATED_BY_COMMON_DIAGNOSTIC",
+    "main_observed_native_gap": "OUTPUT_CONTRACT_COMPATIBILITY_LOSS_CONSISTENT_WITH_COMMON_DIAGNOSTIC",
+    "next_step": "REVIEW_B_AS_INDEPENDENT_BASELINE_AND_REVIEW_C_BOUNDARY_BEFORE_A_LARGER_PAID_PANEL"
+  },
+  "observed": {
+    "A_first_native_correct": "23/60",
+    "B_first_native_correct": "48/60",
+    "B_minus_A_first_correct_percentage_points": 41.66666666666667,
+    "C_first_multiline_terminal_display_boxes": 54,
+    "C_first_native_correct": "1/60",
+    "first_common_diagnostic_correct": {
+      "A": 49,
+      "B": 47,
+      "C": 46
+    }
+  },
+  "subsequent_protocol_changes_require_fresh_identity_and_authorization": true,
+  "unknown": {
+    "V25_optimizer_efficacy": "NOT_TESTED",
+    "backend_weight_revision": "UNKNOWN",
+    "latent_math_ability": "NOT_IDENTIFIED",
+    "population_accuracy": "NOT_IDENTIFIED"
+  },
+  "verified": {
+    "A_B_same_native_parser": true,
+    "C_different_native_parser": true,
+    "all_requests_nonthinking_flag_false": true,
+    "integrity": "PASS",
+    "original_scores_unchanged": true,
+    "source_and_membership_frozen": true
+  }
+}

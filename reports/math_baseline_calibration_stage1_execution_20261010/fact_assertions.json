@@ -1,0 +1,12 @@
+{
+  "cap_respected": true,
+  "common_diagnostic_did_not_override_primary": true,
+  "integrity_passed": true,
+  "no_old_authorization_reuse": true,
+  "no_optimizer_calls": true,
+  "no_stage2": true,
+  "no_validation_test_shadow": true,
+  "original_canary_artifacts_unchanged": true,
+  "parent_protocol_unchanged": true,
+  "scope_and_source_frozen": true
+}

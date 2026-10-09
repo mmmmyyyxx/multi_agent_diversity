@@ -1,0 +1,13 @@
+{
+  "authorized_phase": "STAGE1_OPTIMIZE_ONLY",
+  "canary_memberships_excluded": 12,
+  "completed_logical_evaluations": 180,
+  "logical_panel_size": 180,
+  "members": 1,
+  "optimizer_calls": 0,
+  "selected_optimize_examples": 60,
+  "shadow_calls": 0,
+  "stage2_executed": false,
+  "test_calls": 0,
+  "validation_calls": 0
+}

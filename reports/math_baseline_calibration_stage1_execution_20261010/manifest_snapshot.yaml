@@ -1,0 +1,98 @@
+arms:
+- A
+- B
+- C
+authorization: USER_STAGE1_CONTEXT_ACCEPTANCE_FROZEN_TO_SINGLE_FRESH_ATTEMPT
+authorized_total: 1450000
+common_diagnostic: MATH_BASELINE_COMMON_DIAGNOSTIC_V1
+experiment_id: math_baseline_calibration_stage1_v1
+fail_closed_conditions:
+- SOURCE_OR_PROTOCOL_MISMATCH
+- PROVIDER_OR_IDENTITY_FAILURE
+- UNTRUSTED_USAGE_OR_OUTPUT_BOUND
+- PERSISTENCE_OR_LEDGER_FAILURE
+- BUDGET_EXHAUSTION
+- HELDOUT_ACCESS
+- NO_SCIENTIFIC_RESUME_OR_RERUN
+identity: MATH_BASELINE_STAGE1_EXECUTION_V1
+incomplete_stage: PUBLISH_FACTUAL_PARTIAL_COUNTERS_ONLY_NO_ARM_EFFICACY_COMPARISON
+members: 1
+membership_sha256: d3342da5cb0a53634d596ff5332cd65a92620aa0969f2f70b5c739ff19771583
+model: qwen3-8b
+n: 60
+native_parsers:
+  A: MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V2
+  B: MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V2
+  C: MATH_BASELINE_BOXED_TERMINAL_V1
+optimizer_components:
+- responsibility
+- gradient
+- pattern
+- layer1
+- team_probe
+- full_commit
+- shadow_writeback
+- memory
+pairing:
+  arm_order: ABC_BCA_CAB_CYCLIC_BY_EXAMPLE_INDEX
+  bootstrap_resamples: 10000
+  bootstrap_seed: 81
+  bootstrap_unit: PAIRED_EXAMPLE_NOT_MEMBER
+  comparisons:
+  - A_B_PROMPT_ONLY
+  - A_C_OUTPUT_INTERFACE
+  - B_C_OUTPUT_INTERFACE
+  inference: SMALL_DEVELOPMENT_DIAGNOSIS_NO_POPULATION_SIGNIFICANCE_CLAIM
+  optimizer_concurrency: 0
+  solver_concurrency: 1
+  unit: EXAMPLE_ID
+  within_arm_example_order: IDENTICAL
+parent_ids:
+- math_baseline_calibration_v1
+parent_protocol_path: experiments/protocols/math_baseline_calibration_v1/protocol.json
+parent_protocol_sha256: e9aa5d6ed729a7b157740230c9326e1c09f21e500a2fc31234981576aaf6ec9b
+physical_attempts_upper: 15120
+provider_policy:
+  exact_serialized_http_body: true
+  profile: lwj
+  retry_backoff_ceiling_seconds: 60
+  retry_categories:
+  - APIConnectionError
+  - APITimeoutError
+  - InternalServerError
+  - RateLimitError
+  retry_sleep_seconds: 1.5
+  returned_model_alias_required: qwen3-8b
+  sdk_retries: 0
+  timeout_seconds: 120
+  weight_revision: UNKNOWN_UNLESS_RETURNED
+retries:
+  expansion: ONLY_IMMEDIATELY_PREVIOUS_SUCCESS_FINISH_LENGTH
+  first_capacity: 3600
+  incomplete_recovery: NOT_A_COMPLETED_LOGICAL_SCORE
+  same_messages_and_sampling: true
+  successful_semantic_draws: 4
+  transport_attempts_per_draw: 21
+  transport_failure_consumes_draw: false
+  transport_max_retries: 20
+  trigger: NATIVE_OUTPUT_INVALID_ONLY_NEVER_MATH_INCORRECT
+  truncation_recovery_capacity: 6144
+sampling:
+  enable_thinking: false
+  frequency_penalty: 0
+  max_output_tokens: 3600
+  min_p: 0
+  presence_penalty: 0
+  temperature: 0.2
+  top_k: 20
+  top_p: 0.8
+schema_version: independent_math_baseline_stage1_preregistration_v1
+scientific_results_used_to_stop: false
+shadow_access: false
+source_freeze: EXACT_CLEAN_MAIN_HEAD_IN_PRIVATE_FROZEN_MANIFEST
+stage: stage1
+stage2_authorized: false
+stopping: NATIVE_VALID_OR_FOUR_INVALID_PER_LOGICAL_FIXED_N_OR_OPERATIONAL_FAIL_CLOSED
+successful_draws_upper: 720
+test_access: false
+validation_access: false

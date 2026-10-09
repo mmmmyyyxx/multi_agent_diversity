@@ -1,0 +1,442 @@
+{
+  "dependency_versions": {
+    "antlr4-python3-runtime": "4.13.2",
+    "httpx": "0.28.1",
+    "latex2sympy2_extended": "1.0.9",
+    "math-verify": "0.6.0",
+    "mpmath": "1.3.0",
+    "openai": "2.37.0",
+    "sympy": "1.14.0"
+  },
+  "frozen_manifest_sha256": "0004757891076e455bef5072d72a0e612e492378b460a81bc97f1f7fab5e65d2",
+  "handoff_sha256": "4693f2dd9b3e646fb5260ef154fb13f1a86f3252b228a0c6129f3f2310925cec",
+  "interpreter_sha256": "cec2fab4b3258900cc330346de8c664e57fa04227406920a6edb06f0efeeebb1",
+  "membership_sha256": "d3342da5cb0a53634d596ff5332cd65a92620aa0969f2f70b5c739ff19771583",
+  "parent_audit_commit": "4b08643e96a2c0226f216e46f2f40f33e24a5a63",
+  "preregistration_sha256": "0fdd383ab1547ff5cab74249c4aaf47572df18c91fa9484a61f8bdf2d3b18d56",
+  "protocol_file_sha256": "e8ca877fdf33343e4ce5e8a1116d2108c749651f4cee34e3bba5cf1d1fbac48c",
+  "protocol_sha256": "e9aa5d6ed729a7b157740230c9326e1c09f21e500a2fc31234981576aaf6ec9b",
+  "raw_private_artifacts_published": false,
+  "result_commit": "CONTAINING_PUBLICATION_COMMIT_NO_SELF_REFERENTIAL_HASH",
+  "source_file_hashes": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "3f3e0d9752e1c625f16ec456ddc5a8f96e4e1cf27a07ef5253450804ed189d90"
+    },
+    {
+      "path": "docs/workflows/MATH_BASELINE_STAGE1_EXECUTION_V1.md",
+      "sha256": "45c7bc21f3c621dcfeca5ce8c3da03626c8f1424bc5292471eb02c5d0d2cdeb8"
+    },
+    {
+      "path": "experiments/execution_bindings/a4_v25_seed81_canary_attempt1.json",
+      "sha256": "7a1f64167ef27c37594f69351cc024c8d0327afb5fbeb74c88b8efbb4277104b"
+    },
+    {
+      "path": "experiments/lineage.yaml",
+      "sha256": "f0ec21dda6acc606492e3135c6d0695f8a2b63959207339152f2ad0b10f6f434"
+    },
+    {
+      "path": "experiments/manifests/math_baseline_calibration_stage1_v1.json",
+      "sha256": "0fdd383ab1547ff5cab74249c4aaf47572df18c91fa9484a61f8bdf2d3b18d56"
+    },
+    {
+      "path": "experiments/protocols/math_baseline_calibration_v1/protocol.json",
+      "sha256": "e8ca877fdf33343e4ce5e8a1116d2108c749651f4cee34e3bba5cf1d1fbac48c"
+    },
+    {
+      "path": "experiments/registry.yaml",
+      "sha256": "7b47906f88770f399f8668f6770413b61fe4169587b327b263116b2bf30327db"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/__init__.py",
+      "sha256": "0914167b147917f0a4f20538cd2672624f5017f1d1e6c424872e0a8a0d3da975"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/answer_formats.py",
+      "sha256": "d5c3c274391bacd3bd2f473940a300a5f8d475e656dc363a3d82b93880c73863"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/__init__.py",
+      "sha256": "c2ae96f8ef182e8ce07247941ac07b28ed635b4717d632a6a5c49d46e2bd81fa"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/_vendor/__init__.py",
+      "sha256": "fec7612f74b33628284222cc44769ae1d578c4e613a1bfa2dc3ff71d78c4f452"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/__init__.py",
+      "sha256": "28c0a3ac28e8fb21ae3d857a97e84bdab2b898a35766f12976c1c00bfdcfb880"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions.py",
+      "sha256": "f7037bc1254eb84b42c72a6945f1f9c9623973fe4965adeba0c3b6bc7825cfcf"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_ifeval.py",
+      "sha256": "1df003c58f28797f6504f0b2c3aaa1146aaf1f032a4e9814724089f5e2e60c18"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_registry.py",
+      "sha256": "042422686d6ed61897fb0b25923f592ae1963956eba3561c2d04c2a1fd0ffec2"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_registry_ifeval.py",
+      "sha256": "f9dfa4b7a34bcd09044f0f84029110b80f01fdb59f9b0f6cef076a64ae10ea71"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_util.py",
+      "sha256": "f6cba0e6727975b7195298667dd18541fa9ed58fd76c3d65d18c5e8c40744867"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/instructions_util_ifeval.py",
+      "sha256": "67db27cbb7baa1d69a8bbf0938b6f49987c985c028936fc3b2949854fb6ff36e"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/_vendor/ifbench/offline.py",
+      "sha256": "81ee336c9de94694982f71df4f88b6e851f94216e6d1d86e767f707f3292459a"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/access.py",
+      "sha256": "b21037746e734193e76459db2cbe339b3e7431a79b355697ceaa7b50897beae1"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/blocked.py",
+      "sha256": "5bc7ce7276dc73fcc40348acd0a761b9f3b821b9dd6f54c23321632b7ea81d0b"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/data_freeze.py",
+      "sha256": "350eb87553227c950bb644b569597149d215bce2aead35b4b38cfc7bfb7821fe"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/evaluator_resources.py",
+      "sha256": "2669ce3fa186f1a314b82e32738e4e5b4bc29ca9037380dcb7b4007eb0cd19a1"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/experiment_splits.py",
+      "sha256": "32bf46318cff32cd96a6d74502760d34390960f3cb47d0c72162cc37fe924bb8"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/hotpotqa.py",
+      "sha256": "4b7d8d39252a3b4c9d99f249bd20c3d367d99246c74bbb2f4c363d059ad191e8"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/hover.py",
+      "sha256": "b0c6f4b96dc222b8efb29b837bb1407d39f1887ee840e02fa28ce17d062b0b19"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/ifbench.py",
+      "sha256": "bd058700ceacad6582aafe83da87802f182a4c2a9eae81b7b67df5ed40e99857"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/ifbench_checkers.py",
+      "sha256": "19ed4f09b5be4486e4d668e9a595f212527b8a6507f5a3ab6fb6163154957e65"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/math.py",
+      "sha256": "c13ded93b7c0db4f72d1df59766a6ceae24b7681cbee60d78aa8bbaef90a266d"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/math_domain_v2.py",
+      "sha256": "c8db4d898dd2574ca84135ae38c2b48252f27b15ff1d5176c48d3f15d0353843"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/math_optimizer_generation.py",
+      "sha256": "1d4cdce89e7858fd02cfa16504ad08568de3b870d90adfbbceafac1d5f6f1ad6"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+      "sha256": "6e868b4c73818d30c47039af8cb29b506da2d610e83c13cd5be77089bb6a05dc"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/math_response_evidence.py",
+      "sha256": "71d8ecce14fc7030f7492f404e6e174b5fad7a759405f8b5e1f1c92278c541de"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/math_structured_answer.py",
+      "sha256": "e96dbd03ed2a843757a96c29149877087886c8c6642a844ba23d1cecbcb7d67d"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/math_structured_interface.py",
+      "sha256": "97871949584b4cf42b89f260fa4a396f0a6605a79a93c44fc56b06055197b508"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/math_worker.py",
+      "sha256": "69eba7a1f54ddc147e7ee7d43a855fe81dc05b27c2a6584b65e5a2de1c5bc141"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/protocols.py",
+      "sha256": "40bdd3416951ddf719d089230fa867b9b8abb2359d8329019c1d9c275fef7c63"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/pupa.py",
+      "sha256": "54a07c7c97604af8d472390a7de52b1676effa8b8687cb39392748bd50416e39"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/registry.py",
+      "sha256": "5ef22b24dbcf7f7684863fa23674c0c1cbf13164f97e304a80a11ab89011763a"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/scorer_contracts.py",
+      "sha256": "25939e723558c38de86a22b069105196e59016c9e47f894ba088818843713155"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/current_contract.py",
+      "sha256": "6781fed6aa2649284a5a7291170ec8f4138a71543f9b721f6048e3cbfcaa7aad"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/diagnostics/__init__.py",
+      "sha256": "bf13e687300eb7b8f2601e7fe232127424b9f889d8801050e2c1e30fb58d9830"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/diagnostics/math_baseline_audit.py",
+      "sha256": "d44b8ea6fb74235b9c04505069ac0590d9d21dadd790946d79625c437143aa64"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/diagnostics/math_baseline_calibration.py",
+      "sha256": "1ae5b6e97f562a093ff1e01e18c16ac46a41c6dae836aeda39ea0ecfa0e1ee8f"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/diagnostics/math_calibration_accounting.py",
+      "sha256": "502aed388da3da2526a0a4956a0e756065a50a4ef191a80b93d4c03ac4572803"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/diagnostics/math_calibration_execution.py",
+      "sha256": "4651eea6e8348baba667dd797c1be3ad7a6eed0a7019cf95fa366473aea1c6ec"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/diagnostics/math_calibration_plan.py",
+      "sha256": "125b8544e0f804a19a61b20f7fead2284d27a80e220fe9d2cdb3973fbbafd413"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/diagnostics/math_calibration_results.py",
+      "sha256": "4af30a8190f167814df7da4c0c0d1068d2660848a285ae1dc3dbfb2a4da431a3"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/prompt_question.py",
+      "sha256": "7b99f99aac6ba88752da12d96ba142ff8a59e719d7c6e261429c5629123ca568"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/semantic_mutable_contract.py",
+      "sha256": "8ba0201b132bb58ae6c791972b3bc9f7e7aced5ba6b75a7c150b2a45b161eb3a"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/solver_output.py",
+      "sha256": "ed40c2de71fb0c9a1824fbc998a7ea22ba4473b07ac64e42b80eabbf31894f9b"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/__init__.py",
+      "sha256": "f491cea27d8ab20affa8bc3981198925e4e2bee27309dc63443e634c1fad0281"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/artifacts.py",
+      "sha256": "6499b620024370278a83490659dc7f04645936c5a7f171bc2c85377465e178db"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/authorization.py",
+      "sha256": "7c267977b03ed4ef4db0373e1f21a1810833d8c91c8d643f4cca582133fa38ac"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/manifest.py",
+      "sha256": "f34c3a5d0e658225dace3443d03aacf51bdcaf86009350ca301044c2eb16cff1"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/provenance.py",
+      "sha256": "de084e518e6769de8934dce775be6116bd83e4405bf37c6191e380faeddb6246"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/source_identity.py",
+      "sha256": "fb96b0b8047fbacfebf7b079d0be4b991ce9cd9449bf145ff7831b0c413a82e9"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/telemetry.py",
+      "sha256": "f3e5d742631f092074bac2ae3cd624eb0f7e43ca71d070ce3963047150b1a8aa"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/token_accounting.py",
+      "sha256": "dad4d326f3c6d2b3df218bd51771fe583cf2d45203dad28d1a250a1dfae237dc"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/__init__.py",
+      "sha256": "781490bbf21a884c8de56727560d37e33393f5e9a2a04e4c6112b79a4512a41d"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/example_text.py",
+      "sha256": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/schemas.py",
+      "sha256": "99661d70ad11727301405ec23c36dc0ee02126e77d2a2f9fa8f453c1626e6696"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/persistence/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/persistence/durable_io.py",
+      "sha256": "6c2f271545aff88cdadf41ac2cb5954ca6c95ff756e4e9bf3001947294dbf480"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/persistence/provider_receipts.py",
+      "sha256": "a72066dbcec59efc75f834e2a2b0a2b4455201ebbd6e9535e211895bb24560b5"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/provider_credentials.py",
+      "sha256": "41e7282cbe5dfb59a9e834931e70e4d651ad373f3670fb523dd33b910691c2cf"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/provider_factory.py",
+      "sha256": "e597253ec4354f20cd18bd28b917bb3c07c57ffa13abd0e68a5e8c9f21cbbf0e"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/__init__.py",
+      "sha256": "7f4d4325ff70328ea1303c185783cba7f88fbc6acb6df99c306a7c4dd73c0aa8"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/abstraction_content.py",
+      "sha256": "74fba097a94e1c99b207c44deb52b3aaf1f372a19d51aeab5c1774415403b7b7"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/action_vocabulary.py",
+      "sha256": "3f99d885e8bfaac0e35a047dccffbac087f955976345b3b4a81f470fb0ce9d2a"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/aggregation.py",
+      "sha256": "868521f7591b826156decbed4cc6d378abf1b260c79626b729c8c33ad7ce40dd"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/benchmark.py",
+      "sha256": "45bae80568b138afed13c5a7f6758f034a76d79b9a9da15d0ca0f2bfc8e021a9"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/bounded_layer1.py",
+      "sha256": "a16ebdd7de7cd9038662794bf5ea029eb3713d1ff8404b74233878c1e636157e"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/current_context.py",
+      "sha256": "1a8272a00b94799fcb3af41f3b247737cb7ddc5b36bb416c2380cdf24986ce97"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/current_layer1.py",
+      "sha256": "a0c1e656c293d291100b7cb28603b8c13a4f142e48e196bb8e4af85b6f933217"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/current_policy.py",
+      "sha256": "614873fd06463742cb2c664087cf9de73ad3fb6e71b0f41fc0bae78effc67ce1"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/evaluation.py",
+      "sha256": "52d7a572da7a9782ba3cd92dbcf758c602b2908006797b98d1824603689e1229"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/history.py",
+      "sha256": "ea84f3ea98b5bfc40b58548156189d9049f51d3873e34b3f82b7b33e4c826365"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/information_firewall.py",
+      "sha256": "7e5b224317a6e3e12c5389ea38e5b18e42f31c8a903de0d0473f06bed10bb485"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/memory_records.py",
+      "sha256": "217d59efe8cd7333fbbb340981b67135b2254e079a87ad833ff7725c16541d9e"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/memory_state.py",
+      "sha256": "9ae78968bad40836d7b8683907154f75750c65bd1cc86095581084ba27d1244d"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/numeric_provenance.py",
+      "sha256": "08a825c49c77ee9577222e66198d7eb1ef2ee757119662df71f582bffbcf993f"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/optimization_evidence.py",
+      "sha256": "c11c76c5a014fa500cffcc15cb4a0ac47e5f00ebf6bcb269c70e66a7af9fa0c7"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/orchestrator.py",
+      "sha256": "dd9aa8a444170dd53ff6c87b0d3d2133abf42267b875e8b8cc18018723789b20"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/partition_completion.py",
+      "sha256": "47a8b1c59ed28c496da7a10a571a56aaf252ad725057bf96e39246acaf8857f7"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/pattern_primitives.py",
+      "sha256": "486733c835556b5b413fa8382a6683e60448ea1abfab00c9d3a8fa0343b65e88"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/policies.py",
+      "sha256": "48a8179a549f44c055a91ca2ed548a83d7fd06af02f2d91f8c3cce5d68948f6e"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/private_action_memory.py",
+      "sha256": "4d6338885ca642d7ea9bd7e7f00c98e9043c9b3667d584d69d3865d5b2599535"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/responsibility_value.py",
+      "sha256": "72d6d1f8c81aff0845f7de9fdd3a6ff2a812fc27787cdf1940fe699c9d2f0637"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/rolling_risk_memory.py",
+      "sha256": "f304e87690273350d29df3902101a693b4800febf4ad3dc2753b5f4f83b0e672"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/schemas.py",
+      "sha256": "f10698452ad801425752dc0c30f2773b8fe734f314b0264aca47e269ea37a8d1"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/search_ports.py",
+      "sha256": "610975a62e2d5c1bbd120d65074bda317afb787c52b1f562f58dd2793328e249"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/selected_evidence.py",
+      "sha256": "2c4ccd3333d8b30d0020281aa976733e336949bddfd162f6cb41d2b857fb2464"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/solver_execution.py",
+      "sha256": "9fba3951ed19dc00fe52a4421d2268eeece99a1cb55162f1e867f22afb6c99d7"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/system_prompt.py",
+      "sha256": "93f3c78c85673e43f296dc7950e84bc7c20167f48d49f4f8007ef585309aaaf4"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/target_or_team_transition.py",
+      "sha256": "6be169ed921f347354ce2f392956240dd00600b419e3200d707c8b8429bd4698"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/textual_gradients.py",
+      "sha256": "1882985c613a405382339ca6ea0cf5e46d0e61d619e5b0fbb9f2558938cf5e14"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/transition.py",
+      "sha256": "cc3dcada1917d0d1cc406862421ddd8a9766e9a301330782c6c52e26f9e3db9f"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/tasks.py",
+      "sha256": "9410ba7bfe41860d751782a6ae488b980372c37bf192f407b9e86a47f0634dd9"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/versions.py",
+      "sha256": "92a5dd9cef90c3243438ccfdef2664495fa1a8609817424281b257253725731e"
+    },
+    {
+      "path": "scripts/run_math_baseline_calibration.py",
+      "sha256": "5eb0a044103b731bcdf792d4dede6b7a6f06c9dbd525e235e7401470213ab940"
+    },
+    {
+      "path": "scripts/tooling_classification.json",
+      "sha256": "95904c262e5e520c873108c1766d4db15868dd5d54d785de022640314e65331c"
+    },
+    {
+      "path": "tests/suite_classification.json",
+      "sha256": "c9475e6d88551f41236ebf43e9af2b4d1656a1ffeec44c8ab0e7ff47ba0e78d4"
+    }
+  ],
+  "source_sha": "6328e5a7e49a672f3da50d85b0245f29dc437f5f",
+  "startup_identity_sha256": "ad85131e1f3c637de2ebce7cdce331fde98c2008dbdf8061a08395ca3123577d",
+  "user_authorization_sha256": "e4ba413e4e6809afeec1447633889d940f4666a6b08b6b5ac0e61a4ebd5b25de"
+}

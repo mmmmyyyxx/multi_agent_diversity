@@ -1,0 +1,60 @@
+{
+  "A": {
+    "final": {
+      "BOXED_ONLY": 1,
+      "FINAL_LABEL_NOT_LAST": 31,
+      "MALFORMED_FINAL_PAYLOAD": 1,
+      "MARKDOWN_WRAPPED_LABEL": 2,
+      "OUTPUT_TRUNCATED": 2,
+      "VALID": 23
+    },
+    "first": {
+      "BOXED_ONLY": 1,
+      "FINAL_LABEL_NOT_LAST": 30,
+      "MALFORMED_FINAL_PAYLOAD": 1,
+      "MARKDOWN_WRAPPED_LABEL": 3,
+      "OUTPUT_TRUNCATED": 2,
+      "VALID": 23
+    }
+  },
+  "B": {
+    "final": {
+      "MALFORMED_FINAL_PAYLOAD": 1,
+      "MATH_PAYLOAD_PARSE_FAILURE": 1,
+      "OUTPUT_TRUNCATED": 1,
+      "VALID": 57
+    },
+    "first": {
+      "MALFORMED_FINAL_PAYLOAD": 1,
+      "MATH_PAYLOAD_PARSE_FAILURE": 1,
+      "OUTPUT_TRUNCATED": 2,
+      "VALID": 56
+    }
+  },
+  "C": {
+    "all": {
+      "BOX_PRESENT_WITH_OTHER_BOUNDARY": 17,
+      "OUTPUT_TRUNCATED": 5,
+      "TERMINAL_MULTILINE_DISPLAY_BOX": 214,
+      "VALID_NATIVE_TERMINAL_BOX": 1
+    },
+    "final": {
+      "BOX_PRESENT_WITH_OTHER_BOUNDARY": 4,
+      "OUTPUT_TRUNCATED": 2,
+      "TERMINAL_MULTILINE_DISPLAY_BOX": 53,
+      "VALID_NATIVE_TERMINAL_BOX": 1
+    },
+    "first": {
+      "BOX_PRESENT_WITH_OTHER_BOUNDARY": 4,
+      "OUTPUT_TRUNCATED": 1,
+      "TERMINAL_MULTILINE_DISPLAY_BOX": 54,
+      "VALID_NATIVE_TERMINAL_BOX": 1
+    }
+  },
+  "extraction_function": "FROZEN_DIAGNOSTIC_DECLARATIONS_AND_PRIMARY_REASON",
+  "identity": "POST_RUN_GOLD_BLIND_BOUNDARY_SHAPE_DIAGNOSIS",
+  "native_parser_changed": false,
+  "post_hoc_descriptive_categories": true,
+  "primary_override": false,
+  "tool_sha256": "5b81e8fb3995eb79ba2027f65954de9f1f619033a5dbafee7d6fc7b0ca11bc12"
+}

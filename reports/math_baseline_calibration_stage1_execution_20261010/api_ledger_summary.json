@@ -1,0 +1,23 @@
+{
+  "authorization_consumed_closed": true,
+  "authorized_total": 1450000,
+  "cap_including_reserved": 1450000,
+  "charged_plus_reserved": 466575,
+  "charged_total": 466575,
+  "conservative_unknown_usage_is_not_provider_billing": true,
+  "event_count": 958,
+  "incomplete_logical_charged_tokens": 0,
+  "last_event_sha256": "5559e8932a2f6a503e02f7e968d162aafb3d2f7b9db683e316f5d9c13e7f89fe",
+  "old_scope_reused": false,
+  "physical_attempts": 478,
+  "policy_identity": "FRESH_MATH_BASELINE_STAGE1_ACCOUNTING_V1",
+  "provider_calls": 478,
+  "provider_reported_reliable_tokens": 466575,
+  "remaining_allowance_reusable": false,
+  "reserved_total": 0,
+  "scope_sha256": "ad85131e1f3c637de2ebce7cdce331fde98c2008dbdf8061a08395ca3123577d",
+  "successful_responses": 478,
+  "terminal": "EXECUTION_COMPLETE",
+  "transport_error_categories": {},
+  "unknown_usage_charge": 0
+}

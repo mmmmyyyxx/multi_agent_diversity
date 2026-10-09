@@ -1,0 +1,18 @@
+{
+  "assessment": "PAIRED_STAGE1_DEVELOPMENT_BASELINE_OBSERVED",
+  "causal_claims": {
+    "A_B": "PROMPT_ONLY_ON_FROZEN_DEVELOPMENT_MEMBERSHIP",
+    "A_C_B_C": "OUTPUT_INTERFACE_WITH_DIFFERENT_PARSER",
+    "backend_revision": "UNKNOWN",
+    "generalization": "NOT_IDENTIFIED",
+    "math_ability": "OBSERVED_CONTRACTED_OUTPUT_ACCURACY_ONLY"
+  },
+  "common_diagnostic_primary_override": false,
+  "efficacy": "DESCRIPTIVE_PAIRED_BASELINE_ONLY",
+  "execution_status": "EXECUTION_COMPLETE",
+  "integrity": "PASS",
+  "official_old_score_reclassification": false,
+  "production_method_efficacy": "NOT_TESTED",
+  "stage2_executed": false,
+  "validity": "VALID"
+}

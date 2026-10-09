@@ -1,0 +1,61 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "948ad0288cdd3a331ed847b05f70c0e54f5d050a61d8a8c2a389c00f0d5c4859"
+    },
+    {
+      "file": "boundary_shape_diagnosis.json",
+      "sha256": "9d38bbda038218d0a85ea345fc33fe8ae43d3249583f964736a3015b3b53700c"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "0832e6c69a55ba0074ea70f84d6219459f9627dac245e30a1a711976cf6e4e5a"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "ff355622c9d060230dfedf176b8fa07d737b985737bec62bf4ca2a8834679675"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "00569e4955f8beaceeea6db8ccda667576503fb79eeb93b4d22694ba3baa6bf5"
+    },
+    {
+      "file": "format_recovery_costs.json",
+      "sha256": "ceec5a158bed227fe3fda719993c952071e988acef9f15933e9d6e434fd43b9b"
+    },
+    {
+      "file": "integrity_audit.json",
+      "sha256": "af9bb0d11e0f31d5006627956b46dca1fa148f28902840a528212233f3b87b03"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "25ab3f7f592ef689029dfe0fb73429aed48d6ccdc741954b80119d7095f31d94"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "1e38a859cb9e524f91ced38dbd6aba7c0016cffbfe536eee045c39664d7d83aa"
+    },
+    {
+      "file": "README.md",
+      "sha256": "8e5cb212fa1c258665afa070a30da53165c7ca3b402fe484fd066ce7adc1a865"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "1cf4249e2632767d51108948fd8415756562f94b0bf44ad986a44a5537d9fc30"
+    },
+    {
+      "file": "scientific_assessment.json",
+      "sha256": "bd485160e1b0d50aa8996e94bad319667e48ba418ffbf4829283688533d8d1e8"
+    },
+    {
+      "file": "solver_deployment_audit.json",
+      "sha256": "73fd84a223bbc9c10ec476438f4338be2fd1e787fb550b6947903bc09b7bd154"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "8821acdbb6ca2925d8fd58b147f11b022d90925283862816eb967f0622881aee"
+    }
+  ]
+}
