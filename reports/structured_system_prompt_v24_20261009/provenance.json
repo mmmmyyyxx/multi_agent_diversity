@@ -1,0 +1,24 @@
+{
+  "cleanup_inventory": "cleanup_inventory.json",
+  "current_suite_results": "tests_results.json",
+  "execution_roles": [
+    "solver",
+    "reflection",
+    "pattern_gradient",
+    "pattern_cluster"
+  ],
+  "execution_source_commit_bytes_verified": true,
+  "execution_source_sha": "1f74d4df2dc2591f58b31807264a1505370035fe",
+  "frozen_preparation": "preparation.json",
+  "governance_preflight": "governance_checks.json",
+  "model_dispatch_performed": false,
+  "preexisting_v24_work_integrated": true,
+  "previous_source_sha": "4119d75f135537ed610edae3919f5203116b91e3",
+  "private_original_patch_preserved": true,
+  "production_dependency_audit": "production_dependencies.json",
+  "protected_reports_and_manifests_modified": false,
+  "publishing_does_not_authorize_api": true,
+  "raw_worktree_source_receipts_verified": true,
+  "schema_version": "v24_refactor_provenance_v1",
+  "unrelated_untracked_reports_staged": false
+}

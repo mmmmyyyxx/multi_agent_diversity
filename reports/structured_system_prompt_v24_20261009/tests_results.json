@@ -1,0 +1,132 @@
+{
+  "command": "runs/math_v2_1/runtime/Scripts/python.exe tests/formal_zero_api_runner.py tests --suite current -q -r s --junitxml=runs/v24_refactor_private/final_current.xml",
+  "compileall": "PASS",
+  "counts": {
+    "passed": 368,
+    "skipped": 2
+  },
+  "deterministic_smokes": "PASS",
+  "evidence_policy": "AGGREGATED_COUNTS_AND_MODULE_IDENTITIES_ONLY_PRIVATE_JUNIT_NOT_PUBLISHED",
+  "exit_code": 0,
+  "final_entrypoint_cases": 10,
+  "final_entrypoint_cases_status": "PASS",
+  "git_diff_check": "PASS",
+  "governance_preflight": "PASS",
+  "historical_private_artifact_tests_executed": false,
+  "historical_replay_pass_claimed": false,
+  "late_governance_cli_schema_fix": "VERIFIED_BY_SEPARATE_GUARDED_PREFLIGHT",
+  "modules": [
+    {
+      "counts": {
+        "passed": 16
+      },
+      "module": "tests.current.test_current_admission"
+    },
+    {
+      "counts": {
+        "passed": 15
+      },
+      "module": "tests.current.test_current_generation"
+    },
+    {
+      "counts": {
+        "passed": 16
+      },
+      "module": "tests.current.test_current_math_domains"
+    },
+    {
+      "counts": {
+        "passed": 5
+      },
+      "module": "tests.current.test_parallel_solver_execution"
+    },
+    {
+      "counts": {
+        "passed": 10
+      },
+      "module": "tests.current.test_specialization_diagnostic"
+    },
+    {
+      "counts": {
+        "passed": 22
+      },
+      "module": "tests.current.test_structured_optimization_evidence"
+    },
+    {
+      "counts": {
+        "passed": 10
+      },
+      "module": "tests.current.test_structured_production_entrypoint"
+    },
+    {
+      "counts": {
+        "passed": 37
+      },
+      "module": "tests.current.test_structured_system_contract"
+    },
+    {
+      "counts": {
+        "passed": 29
+      },
+      "module": "tests.governance.test_governance"
+    },
+    {
+      "counts": {
+        "passed": 3
+      },
+      "module": "tests.test_agent_governance_docs"
+    },
+    {
+      "counts": {
+        "passed": 39,
+        "skipped": 2
+      },
+      "module": "tests.test_benchmark_data_freeze_v1"
+    },
+    {
+      "counts": {
+        "passed": 44
+      },
+      "module": "tests.test_benchmark_experiment_splits"
+    },
+    {
+      "counts": {
+        "passed": 55
+      },
+      "module": "tests.test_benchmark_scientific_contracts"
+    },
+    {
+      "counts": {
+        "passed": 3
+      },
+      "module": "tests.test_math_authorization_amendment"
+    },
+    {
+      "counts": {
+        "passed": 11
+      },
+      "module": "tests.test_math_proposal_postmortem"
+    },
+    {
+      "counts": {
+        "passed": 53
+      },
+      "module": "tests.test_repository_governance_alignment"
+    }
+  ],
+  "network_attempt_count": 0,
+  "network_guard_before_application_import": true,
+  "omitted_by_classification": {
+    "CURRENT_CONTRACT": 2,
+    "CURRENT_ZERO_API_E2E": 5,
+    "HISTORICAL_PRIVATE_ARTIFACT": 8,
+    "HISTORICAL_REPLAY": 205
+  },
+  "omitted_inventory": "tests/suite_classification.json",
+  "omitted_module_count": 220,
+  "real_provider_calls": 0,
+  "selected": 370,
+  "skipped_module": "tests/test_benchmark_data_freeze_v1.py",
+  "skipped_reason": "USER_DEFERRED_DOWNLOAD: no frozen real-data manifest",
+  "suite": "current"
+}

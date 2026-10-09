@@ -1,0 +1,16 @@
+{
+  "excluded_content": [
+    "paid_questions",
+    "answers",
+    "ordinary_response_content",
+    "provider_endpoints",
+    "host_paths",
+    "authentication_material",
+    "private_cache_content",
+    "private_junit"
+  ],
+  "findings": [],
+  "included_content": "SOURCE_AND_ATTEMPT_IDENTITIES_AGGREGATED_SYNTHETIC_TEST_COUNTS",
+  "policy": "ONLY_HASHES_COUNTERS_CATEGORIES_METRICS_AND_SOURCE_REFERENCES",
+  "status": "PASS"
+}

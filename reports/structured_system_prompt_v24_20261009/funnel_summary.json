@@ -1,0 +1,13 @@
+{
+  "all_correct_canary": "NO_FEASIBLE_OPPORTUNITY_WITH_ZERO_GRADIENT_CALLS",
+  "answer_format_repair_commit": "OBSERVED_IN_FAKE_PROVIDER_GRAPH",
+  "collateral_full_regression": "REJECTED_IN_FAKE_PROVIDER_GRAPH",
+  "complete_long_response": "LOSSLESS_GRADIENT_AND_MUTATION_INPUT",
+  "evidence": "SYNTHETIC_ONLY",
+  "four_invalid_outputs": "ZERO_SCORE_FIXED_DENOMINATOR",
+  "multi_block_accumulated_lineage": "OBSERVED_IN_FAKE_PROVIDER_GRAPH",
+  "no_safe_edit": "UNREACHED_PROBE_AND_FULL_NOT_FORCED",
+  "real_funnel": "NOT_EXECUTED",
+  "role_edit_commit": "OBSERVED_IN_FAKE_PROVIDER_GRAPH",
+  "strategy_edit_commit": "OBSERVED_IN_FAKE_PROVIDER_GRAPH"
+}

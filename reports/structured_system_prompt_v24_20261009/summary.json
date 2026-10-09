@@ -1,0 +1,23 @@
+{
+  "canary_status": "FROZEN_NOT_AUTHORIZED_NOT_EXECUTED",
+  "current_suite": {
+    "omitted_modules": 220,
+    "passed": 368,
+    "selected": 370,
+    "skipped": 2
+  },
+  "historical_raw_evidence_preserved": true,
+  "initial_real_performance": "UNMEASURED",
+  "method_identity": "unified_team_prompt_search_v2_4_structured_system_prompt",
+  "old_method_evidence_reuse": false,
+  "paid_tokens": 0,
+  "pilot_status": "FROZEN_NOT_AUTHORIZED_NOT_EXECUTED",
+  "production_dependency_module_count": 124,
+  "real_api_calls": 0,
+  "real_efficacy": "NOT_ESTABLISHED",
+  "retired_file_count": 183,
+  "source_sha": "1f74d4df2dc2591f58b31807264a1505370035fe",
+  "status": "READY_FOR_AUTHORIZATION",
+  "test_calls": 0,
+  "validation_calls": 0
+}

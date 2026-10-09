@@ -1,0 +1,10 @@
+{
+  "schema": "retirement_tombstone_v1",
+  "source": "4119d75f135537ed610edae3919f5203116b91e3",
+  "inventory": "cleanup_inventory.json",
+  "dry_run": "cleanup_dry_run.json",
+  "deleted_count": 183,
+  "protected_evidence_deleted": 0,
+  "recovery": "git show <recovery_source>:<path>",
+  "executed": true
+}

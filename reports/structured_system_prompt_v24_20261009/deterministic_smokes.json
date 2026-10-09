@@ -1,0 +1,10 @@
+{
+  "api_calls": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "synthetic_only": true,
+  "historical_manifest_current_execution_rejected": true,
+  "historical_prompt_state_rejected": true,
+  "historical_cache_rejected_without_mutation": true,
+  "active_invariants_and_failure_registry_valid": true
+}

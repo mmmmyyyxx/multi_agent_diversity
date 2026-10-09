@@ -1,0 +1,10 @@
+{
+  "efficacy_claim": false,
+  "evidence": "ZERO_API_SYNTHETIC_CONFORMANCE",
+  "real_api_authorized": false,
+  "real_execution_performed": false,
+  "scientific_status": "REAL_EFFICACY_UNMEASURED",
+  "status": "READY_FOR_AUTHORIZATION",
+  "test_access": "sealed",
+  "validation_authorized": false
+}

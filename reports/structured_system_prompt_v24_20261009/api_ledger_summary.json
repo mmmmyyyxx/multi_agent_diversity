@@ -1,0 +1,9 @@
+{
+  "by_role": {},
+  "call_count": 0,
+  "failure_categories": {},
+  "real_provider_calls": 0,
+  "schema_version": "api_ledger_summary_v1",
+  "synthetic_fixture_accounting": "SEPARATE_TEMPORARY_WORKSPACES_NOT_PAID_USAGE",
+  "total_tokens": 0
+}

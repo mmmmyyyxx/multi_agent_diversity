@@ -1,0 +1,17 @@
+{
+  "all_three_prompt_blocks_mutable": true,
+  "api_calls_zero": true,
+  "edit_lineage_reconstructable": true,
+  "full_ordinary_response_preserved": true,
+  "historical_evidence_not_deleted": true,
+  "initial_real_performance_unmeasured": true,
+  "invalid_exhaustion_scores_zero": true,
+  "network_guard_active_before_application_import": true,
+  "no_extra_solver_instructions": true,
+  "old_authorization_not_reused": true,
+  "old_runtime_ineligible": true,
+  "team_admission_and_shadow_rules_preserved": true,
+  "test_calls_zero": true,
+  "validation_calls_zero": true,
+  "wrong_parseable_answer_not_retried": true
+}

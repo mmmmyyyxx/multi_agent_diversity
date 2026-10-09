@@ -1,0 +1,13 @@
+{
+  "offline_graph_examples": "SYNTHETIC",
+  "optimization_data": "EXISTING_FROZEN_OPTIMIZE_AND_SHADOW_MEMBERSHIPS",
+  "schema_version": "evaluation_access_summary_v1",
+  "test_access": "sealed",
+  "test_access_count": 0,
+  "test_calls": 0,
+  "test_raw_reads": 0,
+  "validation_access_count": 0,
+  "validation_authorized": false,
+  "validation_calls": 0,
+  "validation_search_raw_reads": 0
+}

@@ -1,0 +1,49 @@
+{
+  "archives": {
+    "count": 9,
+    "errors": []
+  },
+  "compileall": "PASS",
+  "current_docs": {
+    "errors": []
+  },
+  "deterministic_smokes": "PASS",
+  "errors": [],
+  "frozen_canary_cli_preflight": "CANARY_READY_NOT_AUTHORIZED",
+  "frozen_pilot_cli_preflight": "PILOT_READY_NOT_AUTHORIZED",
+  "general_governance_counts": {
+    "active_invariants": 23,
+    "failure_records": 38,
+    "indexed_manifests": 174,
+    "lineage_nodes": 303
+  },
+  "general_governance_preflight": "PASS",
+  "generated_errors": [],
+  "git_diff_check": "PASS",
+  "historical_evidence_modified_count": 0,
+  "imports": {
+    "errors": []
+  },
+  "lineage": {
+    "edge_count": 198,
+    "errors": [],
+    "node_count": 303
+  },
+  "manifest": {
+    "historical_indexed_count": 174,
+    "historical_migrated": false
+  },
+  "ok": true,
+  "real_api_authorized": false,
+  "real_execution_ready": false,
+  "registry": {
+    "errors": [],
+    "node_count": 303
+  },
+  "reports": {
+    "errors": [],
+    "indexed_count": 311
+  },
+  "unauthenticated_execution_negative_control": "EXACT_SINGLE_USE_AUTHORIZATION_REQUIRED",
+  "unrelated_untracked_reports_published": false
+}
