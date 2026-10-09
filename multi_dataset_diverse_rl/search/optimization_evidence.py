@@ -7,15 +7,15 @@ import re
 
 from .schemas import SearchContractError
 
-METHOD = 'unified_team_prompt_search_v2_3'
-IDENTITY = 'OPTIMIZATION_EVIDENCE_POLICY_V1'
-INPUT = 'PATTERN_HYPOTHESIS_EDIT_EFFECT_INPUT_V6'
-LAYER1 = 'INDEPENDENT_OPTIMIZE_VALIDATION_SEARCH_V1'
+METHOD = 'unified_team_prompt_search_v2_4_structured_system_prompt'
+IDENTITY = 'STRUCTURED_SYSTEM_OPTIMIZATION_EVIDENCE_POLICY_V2'
+INPUT = 'STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V7'
+LAYER1 = 'STRUCTURED_BLOCK_INDEPENDENT_OPTIMIZE_SEARCH_V2'
 EVIDENCE = 'DISJOINT_ROTATING_OPTIMIZE_EVIDENCE_V1'
-MEMORY = 'BOOTSTRAPPED_EDIT_EFFECT_ROLLING_MEMORY_V1'
-GRADIENT_INPUT = 'REFERENCE_SOLUTION_GRADIENT_INPUT_V3'
-GRADIENT_PROMPT_ID = 'REFERENCE_SOLUTION_GRADIENT_PROMPT_V5'
-BINDING = 'MATH_OPTIMIZATION_EVIDENCE_BINDING_V1'
+MEMORY = 'BOOTSTRAPPED_BLOCK_EDIT_EFFECT_MEMORY_V2'
+GRADIENT_INPUT = 'STRUCTURED_SYSTEM_GRADIENT_INPUT_V4'
+GRADIENT_PROMPT_ID = 'STRUCTURED_SYSTEM_GRADIENT_PROMPT_V6'
+BINDING = 'MATH_STRUCTURED_SYSTEM_EVIDENCE_BINDING_V1'
 
 POLICY = dict(identity=IDENTITY, mutation_size=3, search_validation_size=3,
     minimum_current_wrong=4, minimum_current_correct=6,
@@ -26,12 +26,15 @@ POLICY = dict(identity=IDENTITY, mutation_size=3, search_validation_size=3,
     bootstrap='measured_initial_optimize_profiles_zero_llm',
     edit_memory='actual_diff_and_scope_bound_coverage_v1',
     no_safe_edit='no_candidate_no_success', reference_solution_split='optimize',
-    reference_solution_max_chars=4096, candidate_guard='optimizer_dependency_guard_v1')
+    reference_solution_max_chars=4096, candidate_guard='optimizer_dependency_guard_v1',
+    prompt_state='STRUCTURED_SYSTEM_PROMPT_V1', mutation='single_block_per_generation',
+    editable_blocks=['role','strategy','answer'], response_evidence='observed_content_optional_trajectory',
+    answer_extraction='MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V1')
 
 
 def frozen_policy(value):
     if value is None:
-        raise SearchContractError('CURRENT_V23_OPTIMIZATION_EVIDENCE_REQUIRED')
+        raise SearchContractError('CURRENT_V24_OPTIMIZATION_EVIDENCE_REQUIRED')
     if value != POLICY or any(type(value.get(k)) is not type(v) for k, v in POLICY.items()):
         raise SearchContractError('OPTIMIZATION_EVIDENCE_POLICY_MISMATCH')
     return deepcopy(POLICY)
@@ -43,6 +46,9 @@ def prompt_id(text):
 
 def actual_diff(parent, child):
     """Lossless deterministic character spans, private only. No clause attribution."""
+    from .system_prompt import SystemPrompt
+    if isinstance(parent, SystemPrompt): parent = parent.serialize()
+    if isinstance(child, SystemPrompt): child = child.serialize()
     return [dict(operation=op, parent_span=[a,b], child_span=[c,d],
         removed=parent[a:b], added=child[c:d])
         for op,a,b,c,d in SequenceMatcher(None,parent,child,autojunk=False).get_opcodes()
@@ -80,6 +86,8 @@ def rotated_correct(rows, *, seed, member, ordinal):
 
 def executability_checks(prompt, *, private_texts=()):
     """Bounded known dependency/leakage checks, not a semantic proof."""
+    from .system_prompt import SystemPrompt
+    if isinstance(prompt, SystemPrompt): prompt = prompt.render()
     checks=[]
     if re.search(r'\b(?:selected_gradient|solver_trajectory|retrieved_memory|reference_solution|'
             r'ground[_ -]?truth|gold[_ -]?answer)\b|\b(?:read|consult|copy|access|use)\b[^.;\n]{0,55}'

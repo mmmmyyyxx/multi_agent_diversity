@@ -78,7 +78,8 @@ class BinaryTeamStateStore:
         observations = tuple(observation_from_outputs(benchmark=self.benchmark, item=e.item,
             member_outputs=tuple(self.profiles[i][j] for i in range(5)), gold=e.reference)
             for j, e in enumerate(self.examples))
-        identity = hashlib.sha256(json.dumps(self.prompts, separators=(",", ":")).encode()).hexdigest()
+        from .system_prompt import team_identity
+        identity = team_identity(self.prompts)
         state = binary_plurality_snapshot(state_id=identity, member_prompts=self.prompts,
             observations=observations, capabilities=self.benchmark.capabilities)
         states = state.diagnostics["team_states"]
@@ -162,7 +163,7 @@ class BinaryEvidenceSource:
             output = state.member_outputs[member_id][index]
             trajectory = {}
             if getattr(self.store.benchmark, 'solver_trajectory_policy', None) is not None:
-                from ..benchmarks.math_visible_trajectory import adaptive_trajectory
+                from ..benchmarks.math_response_evidence import adaptive_trajectory
                 trajectory['solver_trajectory'] = adaptive_trajectory(
                     state.diagnostics['raw_profiles'][member_id][index], member_id=member_id,
                     prompt=state.member_prompts[member_id], example_id=example.item.input_id,

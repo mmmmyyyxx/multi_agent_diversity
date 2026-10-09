@@ -154,13 +154,14 @@ def test_current_suite_and_bbh_history_only():
     from multi_dataset_diverse_rl.governance.registries import load_yaml
     root = Path(__file__).resolve().parents[1]
     frontier = load_yaml(root / "experiments/current_frontier.yaml")
-    assert frontier["current_benchmark_suite"] == ["math", "ifbench", "hotpotqa"]
-    assert frontier["historical_benchmark_only"] is True
+    assert frontier["current_benchmark_suite"] == ["math"]
+    assert frontier["current_method"] == "unified_team_prompt_search_v2_4_structured_system_prompt"
+    assert frontier["old_evidence_reuse_allowed"] is False
     assert not frontier["real_api_authorized"]
     if frontier["real_execution_ready"] == "true_for_canary_only":
         # Versioned preexecution readiness supersedes the migration-time HOLD;
         # independent authorization and held-out locks remain closed.
-        from multi_dataset_diverse_rl.governance.legacy.unified_execution import bound_preflight
+        from multi_dataset_diverse_rl.governance.unified_execution import bound_preflight
         assert frontier["validation_access"] == "not_authorized" and frontier["test_access"] == "sealed"
         manifest = load_yaml(root / frontier["canary_manifest"])
         assert manifest["lifecycle"]["status"] == "PREEXECUTION_FROZEN"

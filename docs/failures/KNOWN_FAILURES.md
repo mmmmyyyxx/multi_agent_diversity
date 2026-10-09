@@ -2,6 +2,42 @@
 
 Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this file.
 
+## FAIL-V23-SOLVER-SERIAL-LOCK-AND-LENGTH-OUTPUT: Solver network calls were serialized and length failures mixed long derivation with repeated reasoning
+
+- Status: `MITIGATED`
+- Lifecycle: `MITIGATED`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `a4_v23_only_pilot_v1`
+- Root-cause status: CONFIRMED_SERIAL_LOCK_AND_OBSERVED_MIXED_OUTPUT_FAILURES
+- Symptom: A global lock covered the entire network call. Historical full and partial attempts include 26 and 32 length responses, all without a final marker.
+- Forbidden inference: Synthetic throughput is not provider throughput. More capacity is not proven to repair repeated reasoning, improve accuracy or generate commits. Old API scopes remain closed.
+- Mitigation: Explicit fresh eight-worker execution, immutable compatible initial prefixes and bounded truncation-only 6144 recovery. Keep scoring, instructions and four total draws unchanged.
+
+## FAIL-V23-CANARY-OWNER-REVIEW-TIMEOUT: Completed initial Solver profiles waited without an owner review decision
+
+- Status: `DIAGNOSED`
+- Lifecycle: `DIAGNOSED`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `a4_v23_only_pilot_v1`
+- Root-cause status: CONFIRMED_MISSING_OWNER_DECISION_BEFORE_FROZEN_DEADLINE
+- Symptom: All 300 initial profiles completed; no owner decision arrived within the frozen 3600-second deadline, so execution aborted before optimization.
+- Forbidden inference: No Gradient, mutation, Full, Shadow or commit was observed. Do not infer method failure, approve the terminated attempt retrospectively, or reuse the consumed scope/cache/remaining allowance. The monitor account-error timing is not established.
+- Mitigation: Direct owner supervision in a fresh explicitly approved handoff; bounded monitoring and immediate independent review. Keep timeout, receipt binding and consumed-scope rejection unchanged.
+
+## FAIL-A4-OPTIMIZE-ROLE-OVERLAP-EDIT-EVIDENCE-GAP: Local validation reused mutation examples and Full rejection lacked complete edit evidence
+
+- Status: `MITIGATED`
+- Lifecycle: `MITIGATED`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `math_v2_2_gradient_pattern_seed81_pilot_v2`
+- Root-cause status: CONFIRMED_ROLE_OVERLAP_AND_INFORMATION_OMISSION_NOT_OPTIMIZER_CAUSALITY
+- Symptom: Seven completed opportunities reused panel membership for Probe and the same correct anchor; measured Full losses were outside that panel.
+- Forbidden inference: Synthetic conformance does not show a real optimizer improvement, establish hidden Solver causes, or authorize any real API or protected split access.
+- Mitigation: Explicit V2.3 disjoint Optimize roles, rotating current-correct pool and scope-bound actual-diff Memory; historical execution unchanged.
+
 ## FAIL-GRADIENT-DIAGNOSTIC-ARCHIVE-IDENTITY-FIELD: Matched raw diagnostic confused archive schema identity with discovery policy identity
 
 - Status: `MITIGATED`
@@ -397,3 +433,27 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 - Symptom: V2.1 requires strict team Vote gain, preventing first commit when peer outcomes are identical; a target-only gain cannot outvote four peers.
 - Forbidden inference: Byte-identical prompts do not guarantee identical stochastic member outputs; zero-API conformance proves neither real efficacy nor generalization.
 - Mitigation: Fresh V2.2 OR-progress identity and target-second ranking; execution and Pilot bounds fail closed until separately frozen. Historical V2.1 is preserved.
+
+## FAIL-V22-PILOT-RESOURCE-BOUND-NOT-FROZEN: Commit finiteness does not establish a resource-realistic opportunity bound
+
+- Status: `MITIGATED`
+- Lifecycle: `MITIGATED`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `math_v2_2_a4_pilot_execution_audit_v1`
+- Root-cause status: Conservative carried-failure recurrence grows beyond realistic execution resources; tighter bound unresolved.
+- Symptom: A conservative finite commit bound did not establish a resource-realistic provider opportunity ceiling.
+- Forbidden inference: Not an empirical A4 failure or proof that no tighter bound exists.
+- Mitigation: Retain HOLD; do not guess a ceiling or change scientific allocation/stopping.
+
+## FAIL-V22-PATTERN-CLUSTER-1800-OUTPUT-TRUNCATION: First real fixed-horizon cluster response reached its frozen output cap
+
+- Status: `OPEN`
+- Lifecycle: `OPEN`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `math_v2_2_gradient_pattern_seed81_pilot_v1`
+- Root-cause status: Observed response reached the frozen 1800-token request cap; no claim that every cluster set needs a larger cap.
+- Symptom: 38 accepted Gradient records entered clustering; provider returned finish_reason=length at 1800 output tokens before opportunity creation.
+- Forbidden inference: Not a scientific zero-commit result, convergence, V2.2 transition failure, guard failure, or authorization to retry or increase generation limits.
+- Mitigation: Fail closed; preserve paid response and accounting; consumed one-attempt scope remains closed.

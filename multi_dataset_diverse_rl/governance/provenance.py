@@ -45,7 +45,7 @@ def source_tree_hash(
             continue
         path = root / relative
         digest.update(normalized.encode("utf-8") + b"\0")
-        digest.update(hashlib.sha256(path.read_bytes()).digest())
+        digest.update(hashlib.sha256(path.read_bytes()).digest() if path.is_file() else b"DELETED\0")
     return digest.hexdigest()
 
 

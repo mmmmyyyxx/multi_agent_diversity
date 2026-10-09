@@ -1,132 +1,12 @@
 {
-  "current_suite_policy": "Current Unified, benchmark, governance, production and source-identity compatibility contracts. Historical replay and eight private-artifact modules are explicitly deselected and reported; full historical suite is separately available.",
+  "current_suite_policy": "Current V2.4 Unified, benchmark, governance, production and source-identity contracts. Historical replay, eight private-artifact modules and retired runtime tests are explicitly omitted; replay requires their original Git source and private artifacts.",
   "schema_version": "suite_classification_v1",
   "tests": [
-    {
-      "path": "tests/current/test_matched_realization.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
-    },
-    {
-      "path": "tests/current/test_optimization_evidence_v23.py",
-      "classification": "CURRENT_CONTRACT",
-      "required_private_artifacts": [],
-      "current_suite_included": true
-    },
-    {
-      "path": "tests/current/test_visible_solver_trajectories.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
-    },
-    {
-      "classification": "HISTORICAL_REPLAY",
-      "current_suite_included": false,
-      "path": "tests/current/test_pattern_cluster_output_limit.py",
-      "reason": "Current cluster-only wire/accounting/truncation and end-to-end synthetic conformance",
-      "required_private_artifacts": [],
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
-    },
-    {
-      "path": "tests/current/test_v22_operational_pilot.py",
-      "classification": "HISTORICAL_REPLAY",
-      "current_suite_included": false,
-      "required_private_artifacts": [],
-      "reason": "Current V2.2 fixed-horizon resource admission and synthetic execution lifecycle",
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
-    },
-    {
-      "path": "tests/current/test_transition_reachability_v22.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
-    },
-    {
-      "path": "tests/current/test_manual_capacity_probe.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported.",
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
-    },
     {
       "path": "tests/current/test_specialization_diagnostic.py",
       "classification": "CURRENT_CONTRACT",
       "required_private_artifacts": [],
       "current_suite_included": true
-    },
-    {
-      "path": "tests/current/test_partition_completion.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported.",
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
-    },
-    {
-      "path": "tests/current/test_operational_persistence.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported.",
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
-    },
-    {
-      "path": "tests/current/test_numeric_provenance.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported.",
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
-    },
-    {
-      "path": "tests/current/test_identical_initial_team.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported.",
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
-    },
-    {
-      "path": "tests/current/test_gradient_pilot_audit.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
-    },
-    {
-      "path": "tests/current/test_gradient_pilot.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported.",
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
-    },
-    {
-      "path": "tests/current/test_current_runtime.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported.",
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
-    },
-    {
-      "path": "tests/test_unified_semantic_contract.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported.",
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
     },
     {
       "path": "tests/governance/test_governance.py",
@@ -1259,66 +1139,10 @@
       "current_suite_included": true
     },
     {
-      "path": "tests/test_unified_search_v2.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
-    },
-    {
       "path": "tests/test_benchmark_experiment_splits.py",
       "classification": "CURRENT_CONTRACT",
       "required_private_artifacts": [],
       "current_suite_included": true
-    },
-    {
-      "path": "tests/test_math_preexecution.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
-    },
-    {
-      "path": "tests/test_math_answer_domain_v2.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
-    },
-    {
-      "path": "tests/test_math_token_accounting.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
-    },
-    {
-      "path": "tests/test_math_v21_binding.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
-    },
-    {
-      "classification": "HISTORICAL_REPLAY",
-      "current_suite_included": false,
-      "path": "tests/test_math_solver_decoding.py",
-      "required_private_artifacts": [],
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
-    },
-    {
-      "path": "tests/test_math_prediction_validity.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
     },
     {
       "path": "tests/test_math_authorization_amendment.py",
@@ -1327,90 +1151,10 @@
       "current_suite_included": true
     },
     {
-      "path": "tests/test_math_output_reuse.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
-    },
-    {
-      "path": "tests/test_math_terminal_recovery.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
-    },
-    {
-      "path": "tests/test_math_optimizer_generation.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
-    },
-    {
-      "path": "tests/test_math_low_cost.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
-    },
-    {
       "path": "tests/test_math_proposal_postmortem.py",
       "classification": "CURRENT_CONTRACT",
       "current_suite_included": true,
       "required_private_artifacts": []
-    },
-    {
-      "path": "tests/test_layer1_responsibility_search.py",
-      "classification": "HISTORICAL_REPLAY",
-      "current_suite_included": false,
-      "required_private_artifacts": [],
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
-    },
-    {
-      "path": "tests/test_math_layer1_binding.py",
-      "classification": "HISTORICAL_REPLAY",
-      "current_suite_included": false,
-      "required_private_artifacts": [],
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
-    },
-    {
-      "classification": "HISTORICAL_REPLAY",
-      "current_suite_included": false,
-      "path": "tests/test_layer1_action_memory.py",
-      "required_private_artifacts": [],
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
-    },
-    {
-      "path": "tests/test_rolling_risk_memory.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
-    },
-    {
-      "classification": "HISTORICAL_REPLAY",
-      "current_suite_included": false,
-      "path": "tests/test_pattern_responsibility.py",
-      "required_private_artifacts": [],
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
-    },
-    {
-      "path": "tests/test_gradient_patterns.py",
-      "classification": "HISTORICAL_REPLAY",
-      "required_private_artifacts": [],
-      "current_suite_included": false,
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported.",
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
     },
     {
       "path": "tests/test_gradient_canary_diagnostic.py",
@@ -1421,71 +1165,379 @@
       "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
     },
     {
+      "path": "tests/current/test_parallel_solver_execution.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
+    },
+    {
+      "path": "tests/current/test_structured_optimization_evidence.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "current_suite_included": true,
+      "required_private_artifacts": []
+    },
+    {
+      "path": "tests/current/test_structured_system_contract.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "current_suite_included": true,
+      "required_private_artifacts": []
+    },
+    {
+      "path": "tests/current/test_current_admission.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "current_suite_included": true,
+      "required_private_artifacts": []
+    },
+    {
+      "path": "tests/current/test_current_generation.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "current_suite_included": true,
+      "required_private_artifacts": []
+    },
+    {
+      "path": "tests/current/test_current_math_domains.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "current_suite_included": true,
+      "required_private_artifacts": []
+    },
+    {
+      "path": "tests/current/test_structured_production_entrypoint.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "current_suite_included": true,
+      "required_private_artifacts": []
+    }
+  ],
+  "current_source_scope": "V23 only; historical replay requires original frozen source, not current constructors.",
+  "retired_git_only_modules": [
+    {
+      "path": "tests/current/test_matched_realization.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "path": "tests/current/test_optimization_evidence_v23.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "path": "tests/current/test_visible_solver_trajectories.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "current_suite_included": false,
+      "path": "tests/current/test_pattern_cluster_output_limit.py",
+      "reason": "Current cluster-only wire/accounting/truncation and end-to-end synthetic conformance",
+      "required_private_artifacts": [],
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "path": "tests/current/test_v22_operational_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "current_suite_included": false,
+      "required_private_artifacts": [],
+      "reason": "Current V2.2 fixed-horizon resource admission and synthetic execution lifecycle",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "path": "tests/current/test_transition_reachability_v22.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "path": "tests/current/test_manual_capacity_probe.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3"
+    },
+    {
+      "path": "tests/current/test_partition_completion.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3"
+    },
+    {
+      "path": "tests/current/test_operational_persistence.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3"
+    },
+    {
+      "path": "tests/current/test_numeric_provenance.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3"
+    },
+    {
+      "path": "tests/current/test_identical_initial_team.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3"
+    },
+    {
+      "path": "tests/current/test_gradient_pilot_audit.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "path": "tests/current/test_gradient_pilot.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3"
+    },
+    {
+      "path": "tests/current/test_current_runtime.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3"
+    },
+    {
+      "path": "tests/test_unified_semantic_contract.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3"
+    },
+    {
+      "path": "tests/test_unified_search_v2.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "path": "tests/test_math_preexecution.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "path": "tests/test_math_answer_domain_v2.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "path": "tests/test_math_token_accounting.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "path": "tests/test_math_v21_binding.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "current_suite_included": false,
+      "path": "tests/test_math_solver_decoding.py",
+      "required_private_artifacts": [],
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "path": "tests/test_math_prediction_validity.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "path": "tests/test_math_output_reuse.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "path": "tests/test_math_terminal_recovery.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "path": "tests/test_math_optimizer_generation.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "path": "tests/test_math_low_cost.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "path": "tests/test_layer1_responsibility_search.py",
+      "classification": "HISTORICAL_REPLAY",
+      "current_suite_included": false,
+      "required_private_artifacts": [],
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "path": "tests/test_math_layer1_binding.py",
+      "classification": "HISTORICAL_REPLAY",
+      "current_suite_included": false,
+      "required_private_artifacts": [],
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "current_suite_included": false,
+      "path": "tests/test_layer1_action_memory.py",
+      "required_private_artifacts": [],
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "path": "tests/test_rolling_risk_memory.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "current_suite_included": false,
+      "path": "tests/test_pattern_responsibility.py",
+      "required_private_artifacts": [],
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "path": "tests/test_gradient_patterns.py",
+      "classification": "HISTORICAL_REPLAY",
+      "required_private_artifacts": [],
+      "current_suite_included": false,
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3"
+    },
+    {
       "path": "tests/current/test_gradient_contract_recovery.py",
       "classification": "HISTORICAL_REPLAY",
       "required_private_artifacts": [],
       "current_suite_included": false,
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported.",
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3"
     },
     {
       "path": "tests/current/test_numeric_calibration.py",
       "classification": "HISTORICAL_REPLAY",
       "required_private_artifacts": [],
       "current_suite_included": false,
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported.",
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3"
     },
     {
       "path": "tests/current/test_pilot_terminal_execution.py",
       "classification": "HISTORICAL_REPLAY",
       "required_private_artifacts": [],
       "current_suite_included": false,
-      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported.",
-      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4"
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3"
     },
     {
       "path": "tests/current/test_v23_solver_contract.py",
       "classification": "CURRENT_ZERO_API_E2E",
       "required_private_artifacts": [],
-      "current_suite_included": true
+      "current_suite_included": false,
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
     },
     {
       "path": "tests/current/test_v23_admission.py",
       "classification": "CURRENT_ZERO_API_E2E",
       "required_private_artifacts": [],
-      "current_suite_included": true
+      "current_suite_included": false,
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
     },
     {
       "path": "tests/current/test_v23_generation.py",
       "classification": "CURRENT_ZERO_API_E2E",
       "required_private_artifacts": [],
-      "current_suite_included": true
+      "current_suite_included": false,
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
     },
     {
       "path": "tests/current/test_v23_only_runtime.py",
       "classification": "CURRENT_ZERO_API_E2E",
       "required_private_artifacts": [],
-      "current_suite_included": true
+      "current_suite_included": false,
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
     },
     {
       "path": "tests/current/test_v23_production_entrypoint.py",
       "classification": "CURRENT_ZERO_API_E2E",
       "required_private_artifacts": [],
-      "current_suite_included": true
+      "current_suite_included": false,
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
     },
     {
       "path": "tests/current/test_v23_math_domains.py",
       "classification": "CURRENT_CONTRACT",
-      "current_suite_included": true,
-      "required_private_artifacts": []
-    },
-    {
-      "path": "tests/current/test_parallel_solver_execution.py",
-      "classification": "CURRENT_CONTRACT",
+      "current_suite_included": false,
       "required_private_artifacts": [],
-      "current_suite_included": true
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
     }
-  ],
-  "current_source_scope": "V23 only; historical replay requires original frozen source, not current constructors."
+  ]
 }

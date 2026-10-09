@@ -1,9 +1,0 @@
-{
-  "identity": "MATH_OPTIMIZATION_EVIDENCE_BINDING_V1",
-  "method_identity": "unified_team_prompt_search_v2_3",
-  "readiness": "HOLD",
-  "blocker": "MATH_EVIDENCE_FRESH_FREEZE_REQUIRED",
-  "real_api_authorized": false,
-  "validation_authorized": false,
-  "test_authorized": false
-}

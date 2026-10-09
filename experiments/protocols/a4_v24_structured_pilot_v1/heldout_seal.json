@@ -1,0 +1,8 @@
+{
+  "heldout_accounting_reserve": 0,
+  "identity": "V24_HELDOUT_SEAL_NO_ACCESS_METADATA_V1",
+  "test_access": "sealed",
+  "test_model_calls": 0,
+  "validation_access": "not_authorized",
+  "validation_model_calls": 0
+}

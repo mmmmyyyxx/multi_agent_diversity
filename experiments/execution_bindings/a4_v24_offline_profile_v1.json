@@ -1,0 +1,8 @@
+{
+  "schema_version": "closed_offline_profile_v1",
+  "method_identity": "unified_team_prompt_search_v2_4_structured_system_prompt",
+  "execution_binding_identity": "MATH_STRUCTURED_SYSTEM_EVIDENCE_BINDING_V1",
+  "real_api_authorized": false,
+  "provider_attempts": 0,
+  "purpose": "Current fake-provider graph only; not a runnable real experiment."
+}

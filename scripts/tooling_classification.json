@@ -2,18 +2,6 @@
   "schema_version": "tooling_classification_v1",
   "scripts": [
     {
-      "path": "scripts/prepare_a4_v23_matched_comparison.py",
-      "classification": "HISTORICAL_REPLAY",
-      "move": false,
-      "reason": "Permanently cancelled paired execution. Guard stub; original Git source required."
-    },
-    {
-      "path": "scripts/replay_experiment.py",
-      "classification": "HISTORICAL_REPLAY",
-      "move": false,
-      "reason": "Explicit historical production execution; current CLI cannot select these semantics."
-    },
-    {
       "path": "scripts/admit_v18_hybrid_online_scientific_analysis.py",
       "classification": "ONE_OFF_AUDIT",
       "move": false,
@@ -1894,12 +1882,29 @@
       "path": "scripts/freeze_benchmark_experiment_splits.py",
       "classification": "CURRENT_TOOLING",
       "move": false
+    }
+  ],
+  "retired_git_only_tools": [
+    {
+      "path": "scripts/prepare_a4_v23_matched_comparison.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Permanently cancelled paired execution. Guard stub; original Git source required.",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3"
+    },
+    {
+      "path": "scripts/replay_experiment.py",
+      "classification": "HISTORICAL_REPLAY",
+      "move": false,
+      "reason": "Explicit historical production execution; current CLI cannot select these semantics.",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3"
     },
     {
       "path": "scripts/prepare_a4_v23_only.py",
       "classification": "CURRENT_TOOL",
       "move": false,
-      "reason": "Thin zero-API CLI for production fresh V23 single-arm preparation."
+      "reason": "Thin zero-API CLI for production fresh V23 single-arm preparation.",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3"
     }
   ]
 }

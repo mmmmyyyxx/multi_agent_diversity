@@ -1,11 +1,10 @@
-"""Versioned mathematical payload support; FINAL_ANSWER framing stays separate."""
+"""Shared pinned mathematical equivalence; no Solver instruction policy."""
 from functools import lru_cache
 import json
 import subprocess
 import sys
 from ..search.schemas import SearchContractError
-from .math import MATHBenchmarkAdapter
-from ..search.schemas import ParsedOutput
+from ..search.schemas import ParsedOutput, BenchmarkCapabilities
 from .protocols import MATH_PROTOCOL_V2
 
 SETTINGS = dict(identity='MATH_VERIFY_SETTINGS_V2',strict=True,float_rounding=6,
@@ -22,11 +21,9 @@ SETTINGS['maximum_expression_characters']=2048
 
 
 def final_payload(raw):
-    lines=[line.strip() for line in raw.splitlines() if line.strip()]
-    marked=[line for line in lines if line.startswith('FINAL_ANSWER:')]
-    if len(marked)!=1 or not lines or lines[-1]!=marked[0]:
-        return None
-    return marked[0].removeprefix('FINAL_ANSWER:').strip() or None
+    from .math_structured_answer import extract_answer
+    answer,reason=extract_answer(raw)
+    return answer if reason is None else None
 
 
 @lru_cache(maxsize=2048)
@@ -62,12 +59,21 @@ def require_scorable(reference):
         raise SearchContractError('REFERENCE_UNSCORABLE') from exc
 
 
-class MATHBenchmarkAdapterV2(MATHBenchmarkAdapter):
+class MATHBenchmarkAdapterV2:
+    benchmark_id='math'
+    preferred_aggregation='equivalence_plurality'
+    capabilities=BenchmarkCapabilities(True,True,True,True,True)
+    output_contract='MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V1'
     protocol=MATH_PROTOCOL_V2
     parser_identity='MATH_PAYLOAD_PARSER_V2'
     evaluator_identity='MATH_EQUIVALENCE_V2'
     final_payload=staticmethod(final_payload)
     require_scorable=staticmethod(require_scorable)
+
+    def format_input(self,item):return item.problem
+
+    def build_task_feedback(self,parsed,gold):
+        return 'correct' if self.score_member_output(parsed,gold) else 'incorrect'
 
     def parse_member_output(self,raw,item):
         expression=final_payload(raw)

@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 from .. import current_contract as versions
 from ..local_optimizers.schemas import LocalOptimizationTask, LocalEvidenceExample, LocalOptimizerBudget
-from ..evaluation.semantic_mutable_contract import candidate_failed_checks, mutation_shape, normalized_procedure
+from .system_prompt import candidate_failed_checks, require_prompt, block_lineage
 from ..persistence.durable_io import append_jsonl
 from .private_action_memory import edit_action
 from .schemas import SearchCandidate, SearchResult, SearchContractError
@@ -27,7 +27,7 @@ def observation_record(row,observation):
         role_and_lane=list(row.tags),evaluator_feedback=row.textual_feedback,
         visible_reasoning_required=False)
     if getattr(observation, 'solver_trajectory', None) is not None:
-        from ..benchmarks.math_visible_trajectory import validate_adaptive_trajectory
+        from ..benchmarks.math_response_evidence import validate_adaptive_trajectory
         record['solver_trajectory'] = validate_adaptive_trajectory(observation.solver_trajectory,
             example_id=row.example_id, problem=row.input_payload)
     return record
@@ -43,7 +43,7 @@ def build_optimizer_context(task,parent,observations,memory):
         raise SearchContractError('LAYER1_VISIBLE_TRAJECTORY_MISSING')
     trajectory_enabled = True
     if trajectory_enabled:
-        from ..benchmarks.math_visible_trajectory import validate_adaptive_trajectory
+        from ..benchmarks.math_response_evidence import validate_adaptive_trajectory
         for row, value in zip(observations, current, strict=True):
             if 'solver_trajectory' not in row:
                 raise SearchContractError('LAYER1_VISIBLE_TRAJECTORY_MISSING')
@@ -52,7 +52,7 @@ def build_optimizer_context(task,parent,observations,memory):
                 problem=row['problem'])
     from .optimization_evidence import INPUT
     return dict(schema=INPUT,
-        current_parent=parent,repair_objective=task.responsibility_lane+' failures',
+        current_parent=require_prompt(parent).to_dict(),repair_objective=task.responsibility_lane+' failures',
         current_panel_observations=current,retrieved_memory=memory)
 
 class BoundedMemoryOptimizer:
@@ -89,7 +89,7 @@ class BoundedMemoryOptimizer:
         if candidate_failed_checks(task.parent_prompt,parent_prompt='__root_contract_check__',examples=examples):
             raise SearchContractError('LAYER1_PARENT_CONTRACT_VIOLATION')
         before=dict(self.accounting_reader());metric=solver_calls=solver_tokens=0
-        events=[];pool=[];seen={normalized_procedure(task.parent_prompt)}
+        events=[];pool=[];seen={task.parent_prompt.serialize()};chains={task.parent_prompt.prompt_hash:[]}
         def evaluate(prompt,rows):
             nonlocal metric,solver_calls,solver_tokens
             if metric+len(rows)>42:raise SearchContractError('LAYER1_METRIC_LIMIT_PRE_SOLVER')
@@ -97,7 +97,7 @@ class BoundedMemoryOptimizer:
             batch=getattr(self.evaluator,'evaluate_batch',None)
             observations=(list(batch(prompt,rows)) if callable(batch)
                 else [self.evaluator.evaluate(prompt,row) for row in rows])
-            from ..benchmarks.math_visible_trajectory import validate_adaptive_trajectory
+            from ..benchmarks.math_response_evidence import validate_adaptive_trajectory
             for row,obs in zip(rows,observations,strict=True):
                 if getattr(obs,'solver_trajectory',None) is None:
                     raise SearchContractError('LAYER1_VISIBLE_TRAJECTORY_MISSING')
@@ -128,15 +128,20 @@ class BoundedMemoryOptimizer:
                 root_parent_hash=prompt_id(task.parent_prompt))
             if obj=={'decision':'NO_SAFE_EDIT'}:
                 journal(dict(common,status='NO_SAFE_EDIT',solver_evaluated=False));continue
-            if (not isinstance(obj,dict) or set(obj)!={'decision','decision_procedure','change_summary'}
-                    or obj.get('decision')!='PROPOSE_EDIT' or not isinstance(obj.get('decision_procedure'),str)
+            if (not isinstance(obj,dict) or set(obj)!={'decision','target_block','new_content','change_summary'}
+                    or obj.get('decision')!='PROPOSE_EDIT' or obj.get('target_block') not in ('role','strategy','answer')
+                    or not isinstance(obj.get('new_content'),str) or not obj['new_content'].strip()
                     or not isinstance(obj.get('change_summary'),str) or not 0<len(obj['change_summary'])<=240):
                 journal(dict(common,status='CONTRACT_INVALID',failed_checks=['invalid_structure'],solver_evaluated=False));continue
-            proposed=obj['decision_procedure'];h=prompt_id(proposed)
+            try:
+                proposed=selected_parent.edit(obj['target_block'],obj['new_content'])
+            except SearchContractError:
+                journal(dict(common,status='CONTRACT_INVALID',failed_checks=['invalid_block_or_length'],solver_evaluated=False));continue
+            h=prompt_id(proposed)
             checks=candidate_failed_checks(proposed,parent_prompt=selected_parent,examples=examples,max_chars=3000)
             checks=(*checks,*executability_checks(proposed,private_texts=(*task.private_feedback_texts,
-                *(r['solver_trajectory']['visible_solution'] for r in current_mut))))
-            norm=normalized_procedure(proposed)
+                *(r['solver_trajectory']['observed_response'] for r in current_mut))))
+            norm=proposed.serialize()
             if norm in seen:checks=(*checks,'duplicate_proposal')
             seen.add(norm);cid=f'layer1:{generation}:{h[:12]}'
             common.update(candidate_id=cid,prompt_hash=h)
@@ -147,17 +152,24 @@ class BoundedMemoryOptimizer:
             mut=coverage_effect(mapping(root_mut),mapping(child_mut),scope='mutation_root')
             val=coverage_effect(mapping(root_val),mapping(child_val),scope='search_validation_root')
             immediate=coverage_effect(mapping(current_val),mapping(child_val),scope='search_validation_actual_parent')
+            step=block_lineage(selected_parent,proposed)
+            chain=[*chains[selected_parent.prompt_hash],step];chains[h]=chain
             lineage=dict(candidate_id=cid,opportunity_id=opportunity_id,member=task.target_member,
                 parent_prompt_id=prompt_id(selected_parent),child_prompt_id=h,
                 full_parent_prompt_id=prompt_id(task.parent_prompt),pattern_id=pattern['pattern_id'],
                 supporting_example_ids=list(task.pattern_support),repair_hypothesis=pattern['generalized_gradient'],
                 intended_edit=obj['change_summary'],actual_diff=actual_diff(selected_parent,proposed),
-                action=edit_action(selected_parent,proposed),attribution='compound_edit_no_clause_causal_claim',
+                action=edit_action(selected_parent,proposed),attribution='complete_edit_chain_no_block_causal_claim',
+                structured_lineage=step,edit_chain=chain,edited_block=obj['target_block'],
+                parent_system_prompt_hash=selected_parent.prompt_hash,child_system_prompt_hash=h,
+                parent_block_hash=selected_parent.block_hash(obj['target_block']),
+                child_block_hash=proposed.block_hash(obj['target_block']),
+                actual_block_diff=step['block_edits'][0]['actual_block_diff'],
                 expected_behavior=pattern['generalized_gradient'],
                 effects=dict(mutation=mut,search_validation=val,actual_parent_validation=immediate),
                 status='LOCALLY_SUPPORTED' if val['member_delta']>0 and not val['broken_ids'] else 'INCONCLUSIVE',
                 status_history=['PROPOSED'],provenance=dict(split='optimize',generation=generation,
-                    evidence_packet_sha256=common['evidence_packet_hash'],solver_interface='MATH_SOLVER_INTERFACE_V6'))
+                    evidence_packet_sha256=common['evidence_packet_hash'],solver_interface='MATH_STRUCTURED_SYSTEM_INTERFACE_V7'))
             lineage['status_history'].append(lineage['status'])
             lineage['provenance']['local_request_identities']={name:{r['example_id']:
                 r['solver_trajectory']['source']['request_sha256'] for r in rows}
@@ -202,7 +214,7 @@ class BoundedMemoryOptimizer:
             len(events),len(candidates),0,0,sum(c.backend_details['locally_rejected'] for c in candidates))
 
 class LocalTaskEngine:
-    identity='INDEPENDENT_OPTIMIZE_VALIDATION_SEARCH_V1'
+    identity='STRUCTURED_BLOCK_INDEPENDENT_OPTIMIZE_SEARCH_V2'
     def __init__(self,optimizer,seed):self.optimizer=optimizer;self.seed=seed
 
     def make_task(self,opportunity,context):

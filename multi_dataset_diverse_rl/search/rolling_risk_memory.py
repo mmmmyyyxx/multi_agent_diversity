@@ -138,6 +138,7 @@ class EditExperience:
             **({'team_delta':e['team_delta']} if 'team_delta' in e else {}))
             for name,e in self.record['effects'].items() if name in {'search_validation','full'}}
         return dict(hypothesis=self.record['repair_hypothesis'][:100],status=self.record['status'],
+            edited_block=self.record['edited_block'],edit_chain_length=len(self.record['edit_chain']),
             actual_edit=(self.record['action'] or 'Changed instructions; semantic action unclassified.')[:110],
             diff_operations=sorted({d['operation'] for d in self.record['actual_diff']}),
             effects=effects,lesson='Compound edit; scope-specific, no causal claim.')
@@ -321,8 +322,8 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
         self.risk_counts=dict(delta.risk_counts)
         self.competence=delta.competence
 
-    def read_for_member(self,member,lane,*,pattern_id=None,hypothesis=None):
-        return self._read_evidence(member,pattern_id,hypothesis)
+    def read_for_member(self,member,lane,*,pattern_id=None,hypothesis=None,edited_block=None):
+        return self._read_evidence(member,pattern_id,hypothesis,edited_block)
 
     def audit(self):
         result=super().audit();groups=self._groups(self._recent(self.failure_events,self.clock+1))
@@ -371,6 +372,19 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
             raise SearchContractError('EDIT_MEMORY_SCOPE_INVALID')
         if record['provenance']['split']!='optimize' or not record['actual_diff']:
             raise SearchContractError('EDIT_MEMORY_PROVENANCE_INVALID')
+        from .system_prompt import SystemPrompt, block_lineage
+        chain=record.get('edit_chain')
+        if not chain:raise SearchContractError('STRUCTURED_EDIT_CHAIN_REQUIRED')
+        expected_parent=record['full_parent_prompt_id']
+        for step in chain:
+            parent=SystemPrompt.from_dict(step['parent_prompt']);child=SystemPrompt.from_dict(step['child_prompt'])
+            if (step!=block_lineage(parent,child) or len(step['edited_blocks'])!=1
+                    or parent.prompt_hash!=expected_parent):
+                raise SearchContractError('STRUCTURED_EDIT_CHAIN_MISMATCH')
+            expected_parent=child.prompt_hash
+        if (expected_parent!=record['child_prompt_id'] or chain[-1]!=record['structured_lineage']
+                or record['actual_block_diff']!=chain[-1]['block_edits'][0]['actual_block_diff']):
+            raise SearchContractError('STRUCTURED_EDIT_CHAIN_MISMATCH')
         self.sequence+=1
         entry=EditExperience(record['member'],self.sequence,json.loads(json.dumps(record)))
         others=tuple(e for e in self.private if e.owner_member!=entry.owner_member)
@@ -426,7 +440,7 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
         fields['private']=tuple(retained)
         return EvidenceMemoryDelta(**fields,competence=tuple(competence))
 
-    def _read_evidence(self,member,pattern_id,hypothesis):
+    def _read_evidence(self,member,pattern_id,hypothesis,edited_block=None):
         if member not in range(5):raise SearchContractError('EDIT_MEMORY_OWNER_REQUIRED')
         if len(self.competence)!=5:raise SearchContractError('INITIAL_MEMORY_NOT_BOOTSTRAPPED')
         c=self.competence[member]
@@ -435,6 +449,7 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
             invalid=len(c['invalid_ids']),newly_fixed=len(c['newly_fixed_ids']),newly_broken=len(c['newly_broken_ids']))
         own=sorted((e for e in self.private if e.owner_member==member),key=lambda e:(
             e.record['pattern_id']!=pattern_id,e.record['repair_hypothesis']!=hypothesis,
+            edited_block is not None and e.record['edited_block']!=edited_block,
             e.record['status']!='FULL_REFUTED',-e.created_update,e.memory_id))
         selected=own[:self.limits['top_k_private']]
         shared=sorted(self.shared,key=lambda e:-e.last_seen_update)[:self.limits['top_k_shared']]

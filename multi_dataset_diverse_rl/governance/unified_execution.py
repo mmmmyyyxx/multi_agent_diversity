@@ -1,4 +1,4 @@
-"""Fresh current V2.3 fixed-horizon admission; historical JSON is provenance only."""
+"""Fresh current V2.4 admission; historical JSON is provenance only."""
 from dataclasses import asdict
 import hashlib,json,subprocess
 from .source_identity import build_unified_source_identity,hash_scope
@@ -9,15 +9,11 @@ from ..search.schemas import SearchContractError
 from ..search.current_policy import CURRENT_POLICY_BUNDLE
 from ..benchmarks.math_domain_binding import BINDING_BLOCKER
 PREP_SCHEMA='unified_canary_prep_v1'
-CURRENT_OFFLINE_PROFILE='experiments/execution_bindings/a4_v23_only_offline_profile_v1.json'
+CURRENT_OFFLINE_PROFILE='experiments/execution_bindings/a4_v24_offline_profile_v1.json'
 
 def execution_identity(root,contract):
     CURRENT_POLICY_BUNDLE.validate_contract(contract)
-    # Imported private evidence is data, not publishable executable source.
-    # Its exact hash is in the tracked binding and startup/API scope; a separate
-    # read-only source audit verifies every referenced cache/receipt/ledger.
-    configs=[root/v for k,v in contract.items() if k.endswith('_path') and isinstance(v,str)
-        and k!='initial_evidence_reuse_manifest_path']
+    configs=[root/v for k,v in contract.items() if k.endswith('_path') and isinstance(v,str)]
     configs += [root/contract['split_directory']/'math.json']
     identity=build_unified_source_identity(root,root/contract['canonical_root']/'manifests/math.json',configs)
     files=[root/r['path'] for s in identity['scopes'].values() for r in s['files']]
@@ -28,7 +24,7 @@ def execution_identity(root,contract):
 def execution_scope(manifest,contract):
     CURRENT_POLICY_BUNDLE.validate_contract(contract)
     return dict(attempt_id=contract['execution_attempt_id'],cache_namespace=contract['cache_namespace'],
-        arm='A4',seed=81,phase='pilot_search_only',source_sha=manifest['source_sha'],
+        arm='A4',seed=81,phase=contract['execution_phase']+'_search_only',source_sha=manifest['source_sha'],
         preregistration_identity=manifest['preregistration_identity'],binding_sha256=manifest['execution_binding']['sha256'],
         method=contract['method_identity'],transition=contract['transition_policy'],models=contract['models'],
         provider=contract['provider'],roles=['solver','reflection','pattern_gradient','pattern_cluster'],
@@ -41,8 +37,7 @@ def execution_scope(manifest,contract):
         accounting_policy_sha256=contract['accounting_policy_sha256'],
         heldout_accounting_reserve=contract.get('heldout_accounting_reserve'),
         canary_review_policy=contract.get('canary_review_policy'),
-        **({k:contract[k] for k in ('solver_execution_policy','initial_evidence_reuse_policy',
-            'initial_evidence_reuse_manifest_sha256')} if contract.get('solver_execution_policy') else {}),
+        **({k:contract[k] for k in ('solver_execution_policy','system_prompt_policy','answer_extraction_policy')} if contract.get('solver_execution_policy') else {}),
         **({'optimization_evidence_policy':contract['optimization_evidence_policy']}
             if contract.get('optimization_evidence_policy') else {}),
         **({'pattern_cluster_generation_policy':contract['pattern_cluster_generation_policy']}
@@ -58,7 +53,7 @@ def bound_preflight(root, manifest):
     from ..benchmarks.math_domain_binding import execution_binding
     ref=manifest.get('execution_binding',{})
     from .. import versions
-    if ref.get('identity')!=versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION:
+    if ref.get('identity')!=versions.MATH_STRUCTURED_SYSTEM_BINDING_VERSION:
         return dict(gate='HOLD',blockers=[BINDING_BLOCKER],provider_attempts=0)
     errors=validate_manifest_v2(root,manifest)
     if manifest.get('lifecycle',{}).get('status')!='PREEXECUTION_FROZEN':errors.append('PREEXECUTION_NOT_FROZEN')
@@ -171,7 +166,7 @@ def inventory(run_root):
     return {"files": [{"path": p.relative_to(run_root).as_posix(), "sha256": hashlib.sha256(p.read_bytes()).hexdigest(), "bytes": p.stat().st_size}
                       for p in sorted(run_root.rglob("*")) if p.is_file() and p.name != "raw_evidence_inventory.json"]}
 
-def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, experiment_id="math_v2_pattern_memory_v1"):
+def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, experiment_id="a4_v24_structured_pilot_v1"):
     from ..benchmarks.math_domain_binding import execution_binding
     binding_path=binding_path or CURRENT_OFFLINE_PROFILE
     contract=read_json(root/binding_path)
@@ -213,15 +208,13 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
         manifest['runtime_persistence_policy']=contract['runtime_persistence_policy']
     if 'partition_completion_policy' in contract:
         manifest['partition_completion_policy']=contract['partition_completion_policy']
-    if 'gradient_recovery_policy' in contract:
-        manifest['gradient_recovery_policy']=contract['gradient_recovery_policy']
     if 'pattern_cluster_generation_policy' in contract:
         manifest['pattern_cluster_generation_policy']=contract['pattern_cluster_generation_policy']
     if 'solver_trajectory_policy' in contract:
         manifest['solver_trajectory_policy']=contract['solver_trajectory_policy']
     if 'optimization_evidence_policy' in contract:
         manifest['optimization_evidence_policy']=contract['optimization_evidence_policy']
-    for k in ('solver_execution_policy','initial_evidence_reuse_policy','initial_evidence_reuse_manifest_sha256',
+    for k in ('solver_execution_policy','system_prompt_policy','answer_extraction_policy',
             'canary_review_policy','accounting_scope_policy','accounting_policy_sha256',
             'heldout_accounting_reserve'):
         if k in contract:manifest[k]=contract[k]

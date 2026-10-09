@@ -1,10 +1,9 @@
-# V2.2 target-or-team deployment contract
+# Initial competence target-or-team transition V3
 
 The sole active research architecture is Unified Team Prompt Search.
-Method identity: `unified_team_prompt_search_v2_2`.
-Transition identity: `initial_competence_target_or_team_progress_v3`.
-This is a scientific method amendment. V2.1 retains
-`unified_team_prompt_search_v2_1` / `initial_competence_team_gain_v2` for replay.
+`initial_competence_target_or_team_progress_v3` is retained unchanged in V2.4.
+Historical V2.2 execution requires its original source; current admission uses
+the complete structured prompt policy bundle.
 
 For target member t, initial competence I, incumbent competence P, Full
 candidate competence C and Full team Vote V, deployment eligibility is:
@@ -54,21 +53,13 @@ progress paths; these fields have no scheduling or stopping read point.
 
 Scientific stopping remains `team_epoch_no_commit_v1`: any completed commit
 resets no-commit patience, independently of which progress path passed.
-Operational opportunity/provider/transport ceilings are distinct from this
-scientific stop. The V2.1 proof of at most N commits by strict integer Vote
-increase is invalid for V2.2. Its derivation is preserved only in explicit
-replay. A V2.2 Pilot derivation or builder fails before provider construction
-with `TARGET_OR_TEAM_PROGRESS_PILOT_BOUND_NOT_FROZEN` unless a separately frozen
-[operational horizon and coupled resource ceiling](V22_OPERATIONAL_PILOT_CEILING_V1.md)
-are bound. The horizon does not prove saturation; resource truncation is incomplete.
-
-Current MATH execution requires `MATH_V2_2_EXECUTION_BINDING_V1`. The new default
-offline profile declares HOLD and has no bound or authority. Current preflight,
-prep, scope and execution fail with `CURRENT_V2_2_EXECUTION_BINDING_NOT_FROZEN` without a fresh binding;
-old bindings and authorizations cannot be loaded as the current executor.
-Synthetic finite unit/fake-provider fixtures exercise code conformance only.
-Readiness never grants API authority; an exact user-authorized scope is still required.
-Validation and Test require separate authorization.
+Operational opportunity/provider/transport ceilings remain distinct from the
+scientific stop. The strict-Vote N-commit proof cannot establish saturation
+under target-or-team progress. Current preparation freezes a finite opportunity
+horizon with coupled token admission; resource truncation remains incomplete.
+V2.4 uses its fresh structured binding and exact single-use authorization, with
+no historical source, cache, competence or authorization fallback. Validation
+and Test remain independently locked. Synthetic fixtures establish conformance.
 
 WHO, raw overlapping D/N/C, V=max(4D,2N,C), failure discount, Pattern selection,
 Gradient generation, Layer1 budgets, five equal-weight plurality members,

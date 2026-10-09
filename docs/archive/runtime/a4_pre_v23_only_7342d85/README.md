@@ -1,10 +1,9 @@
-# Source archive before V2.3-only closure
+# Git recovery index before V2.3-only closure
 
-These non-importable text files preserve the original Git blobs from
-`7342d85a877880717b00cd19ddc4ab6e598e81e4`. `index.json` supplies the complete
-path and SHA-256 invariant index. No scientific evidence was deleted.
-
-Historical execution requires the original source checkout and its original
-frozen contracts, private artifacts and authorization. These snapshots are
-provenance, not a compatible runtime package and not a current execution path.
-New experiments must use the closed V2.3 production entrypoint.
+The original blobs are recoverable from source
+`7342d85a877880717b00cd19ddc4ab6e598e81e4`; `index.json` retains the original
+path and SHA-256 inventory. Redundant runtime text copies were retired in the
+[V2.4 cleanup tombstone](../../../../reports/structured_system_prompt_v24_20261009/cleanup_tombstone.json).
+No scientific reports, raw evidence, manifests or paid ledgers were deleted.
+Historical execution requires its original source checkout, frozen contracts,
+private artifacts and new applicable authorization. The current method is V2.4.

@@ -1,7 +1,9 @@
 schema_version: invariant_registry_v1
 invariants:
 - id: INV-V23-PREFIX-PARALLEL-001
-  description: Eight bounded Solver workers preserve ordered observations; exact historical initial prefixes keep original hashes and count toward four total draws, with only new transport charged.
+  description: Eight bounded Solver workers preserve ordered observations; exact historical
+    initial prefixes keep original hashes and count toward four total draws, with
+    only new transport charged.
   authority: docs/design/V23_PARALLEL_CAPACITY_REUSE_V1.md
   implementation_refs:
   - multi_dataset_diverse_rl/search/solver_execution.py
@@ -11,7 +13,8 @@ invariants:
   - tests/current/test_parallel_solver_execution.py
   failure_refs: []
   critical: true
-  status: ACTIVE
+  status: HISTORICAL_GIT_ONLY
+  recovery_source: 4119d75f135537ed610edae3919f5203116b91e3
 - id: INV-MATH-VISIBLE-SOLUTION-001
   description: V6 scores only final payload, retains complete private ordinary content
     and binds bounded Optimize solution feedback to its member and realization.
@@ -25,7 +28,8 @@ invariants:
   - tests/current/test_v23_solver_contract.py
   failure_refs: []
   critical: true
-  status: ACTIVE
+  status: HISTORICAL_GIT_ONLY
+  recovery_source: 4119d75f135537ed610edae3919f5203116b91e3
 - id: INV-INITIAL-COMPETENCE-003
   description: 'V3 transition retained in V23: immutable initial floor, non-regressing
     Vote and strict target OR team progress; Full team-first target-second ranking.'
@@ -34,7 +38,7 @@ invariants:
   - multi_dataset_diverse_rl/search/target_or_team_transition.py
   - multi_dataset_diverse_rl/search/current_composition.py
   tests:
-  - tests/current/test_v23_admission.py
+  - tests/current/test_current_admission.py
   failure_refs:
   - FAIL-IDENTICAL-INITIAL-STRICT-VOTE-DEADLOCK
   critical: true
@@ -48,7 +52,7 @@ invariants:
   - multi_dataset_diverse_rl/benchmarks/initial_condition_contract.py
   - multi_dataset_diverse_rl/search/provider_runtime.py
   tests:
-  - tests/current/test_v23_only_runtime.py
+  - tests/current/test_structured_system_contract.py
   failure_refs: []
   critical: true
   status: ACTIVE
@@ -77,7 +81,8 @@ invariants:
   failure_refs:
   - FAIL-UNIFIED-METHOD-SEMANTIC-DRIFT
   critical: true
-  status: ACTIVE
+  status: HISTORICAL_GIT_ONLY
+  recovery_source: 4119d75f135537ed610edae3919f5203116b91e3
 - id: INV-MATH-ANSWER-DOMAIN-002
   description: Versioned pinned mathematical payload parsing and directed correctness
     with strict marker extraction and container negative controls.
@@ -86,7 +91,7 @@ invariants:
   - multi_dataset_diverse_rl/benchmarks/math_domain_v2.py
   - multi_dataset_diverse_rl/benchmarks/math_domain_worker.py
   tests:
-  - tests/current/test_v23_math_domains.py
+  - tests/current/test_current_math_domains.py
   failure_refs:
   - FAIL-MATH-REFERENCE-PARSER-DOMAIN-MISMATCH
   critical: true
@@ -100,7 +105,7 @@ invariants:
   - multi_dataset_diverse_rl/data_preparation/math_scorable_split.py
   - multi_dataset_diverse_rl/benchmarks/math_domain_binding.py
   tests:
-  - tests/current/test_v23_math_domains.py
+  - tests/current/test_current_math_domains.py
   failure_refs:
   - FAIL-MATH-REFERENCE-PARSER-DOMAIN-MISMATCH
   critical: true
@@ -608,14 +613,15 @@ invariants:
   - tests/test_unified_search_v2.py
   failure_refs: []
   critical: true
-  status: ACTIVE
+  status: HISTORICAL_GIT_ONLY
+  recovery_source: 4119d75f135537ed610edae3919f5203116b91e3
 - id: INV-VARIABLE-EVIDENCE-001
   description: Active V2 mechanism contract; see normative specification.
   authority: docs/design/CURRENT_SPEC.md
   implementation_refs:
   - multi_dataset_diverse_rl/search/variable_evidence.py
   tests:
-  - tests/test_unified_search_v2.py
+  - tests/current/test_structured_optimization_evidence.py
   failure_refs: []
   critical: true
   status: ACTIVE
@@ -631,7 +637,8 @@ invariants:
   - tests/current/test_optimization_evidence_v23.py
   failure_refs: []
   critical: true
-  status: ACTIVE
+  status: HISTORICAL_GIT_ONLY
+  recovery_source: 4119d75f135537ed610edae3919f5203116b91e3
 - id: INV-LONG-TERM-MEMORY-001
   description: Grounded Situation-Action-Outcome-Lesson; private successful strategy
     and shared failed strategy.
@@ -644,14 +651,15 @@ invariants:
   - tests/current/test_optimization_evidence_v23.py
   failure_refs: []
   critical: true
-  status: ACTIVE
+  status: HISTORICAL_GIT_ONLY
+  recovery_source: 4119d75f135537ed610edae3919f5203116b91e3
 - id: INV-MATH-REFERENCE-VALIDITY-001
   description: MATH V1.1 preexecution contract; see normative specification.
   authority: docs/design/CURRENT_SPEC.md
   implementation_refs:
   - multi_dataset_diverse_rl/data_preparation/math_reference_split.py
   tests:
-  - tests/test_math_preexecution.py
+  - tests/current/test_current_math_domains.py
   failure_refs: []
   critical: true
   status: ACTIVE
@@ -665,7 +673,8 @@ invariants:
   - tests/test_math_preexecution.py
   failure_refs: []
   critical: true
-  status: ACTIVE
+  status: HISTORICAL_GIT_ONLY
+  recovery_source: 4119d75f135537ed610edae3919f5203116b91e3
 - id: INV-MATH-OUTPUT-INTERFACE-002
   description: Versioned immutable response formatting stays outside mutable prompt
     evolution and inside request/cache identity.
@@ -678,7 +687,8 @@ invariants:
   failure_refs:
   - FAIL-MATH-CANARY-FINAL-MARKER
   critical: true
-  status: ACTIVE
+  status: HISTORICAL_GIT_ONLY
+  recovery_source: 4119d75f135537ed610edae3919f5203116b91e3
 - id: INV-ACCOUNTING-RESERVATION-002
   description: User-bound operational per-transport reservations, monotonic full fallback
     charges and crash-safe single-owner accounting.
@@ -687,7 +697,7 @@ invariants:
   - multi_dataset_diverse_rl/governance/token_accounting.py
   - multi_dataset_diverse_rl/search/provider_runtime.py
   tests:
-  - tests/test_math_token_accounting.py
+  - tests/current/test_parallel_solver_execution.py
   failure_refs:
   - FAIL-MATH-AUTONOMOUS-TOKEN-ACCOUNTING-UNBOUND
   critical: true
@@ -699,7 +709,7 @@ invariants:
   implementation_refs:
   - multi_dataset_diverse_rl/benchmarks/math_accounting_prep.py
   tests:
-  - tests/test_math_token_accounting.py
+  - tests/current/test_parallel_solver_execution.py
   failure_refs: []
   critical: true
   status: ACTIVE
@@ -713,7 +723,8 @@ invariants:
   - tests/current/test_v23_only_runtime.py
   failure_refs: []
   critical: true
-  status: ACTIVE
+  status: HISTORICAL_GIT_ONLY
+  recovery_source: 4119d75f135537ed610edae3919f5203116b91e3
 - id: INV-V23-EVIDENCE-001
   description: Mutation, SearchValidation and Probe use independent Optimize memberships
     with post-generation validation.
@@ -724,7 +735,8 @@ invariants:
   - tests/current/test_optimization_evidence_v23.py
   failure_refs: []
   critical: true
-  status: ACTIVE
+  status: HISTORICAL_GIT_ONLY
+  recovery_source: 4119d75f135537ed610edae3919f5203116b91e3
 - id: INV-V23-MEMORY-001
   description: Initial measured competence is bootstrapped; only committed edits replace
     committed coverage.
@@ -735,7 +747,8 @@ invariants:
   - tests/current/test_optimization_evidence_v23.py
   failure_refs: []
   critical: true
-  status: ACTIVE
+  status: HISTORICAL_GIT_ONLY
+  recovery_source: 4119d75f135537ed610edae3919f5203116b91e3
 - id: INV-V23-AUTHORIZATION-001
   description: Fresh source, exact single-use approval and separate 2M accounting
     precede new API access.
@@ -744,6 +757,54 @@ invariants:
   - multi_dataset_diverse_rl/governance/unified_execution.py
   tests:
   - tests/current/test_v23_only_runtime.py
+  failure_refs: []
+  critical: true
+  status: HISTORICAL_GIT_ONLY
+  recovery_source: 4119d75f135537ed610edae3919f5203116b91e3
+- id: INV-V24-STRUCTURED-SYSTEM-001
+  description: Complete editable three-block system message and raw question-only
+    user message.
+  authority: docs/design/STRUCTURED_SYSTEM_PROMPT_V24.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/system_prompt.py
+  - multi_dataset_diverse_rl/search/provider_runtime.py
+  tests:
+  - tests/current/test_structured_system_contract.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-V24-GOLD-BLIND-RECOVERY-001
+  description: Frozen gold-blind extraction; first parseable draw stops recovery;
+    four invalid draws score zero in the fixed denominator.
+  authority: docs/design/STRUCTURED_SYSTEM_PROMPT_V24.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/benchmarks/math_structured_answer.py
+  tests:
+  - tests/current/test_structured_system_contract.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-V24-EDIT-LINEAGE-001
+  description: Single-block edits preserve other bytes and retain reconstructable
+    complete measured edit chains.
+  authority: docs/design/STRUCTURED_SYSTEM_PROMPT_V24.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/bounded_layer1.py
+  - multi_dataset_diverse_rl/search/rolling_risk_memory.py
+  tests:
+  - tests/current/test_structured_system_contract.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-V24-FRESH-ATTEMPT-001
+  description: No historical execution, response imports, cache, competence Memory
+    or authorization can initialize V2.4.
+  authority: docs/design/STRUCTURED_SYSTEM_PROMPT_V24.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/current_policy.py
+  - multi_dataset_diverse_rl/benchmarks/math_structured_binding.py
+  tests:
+  - tests/current/test_structured_system_contract.py
   failure_refs: []
   critical: true
   status: ACTIVE

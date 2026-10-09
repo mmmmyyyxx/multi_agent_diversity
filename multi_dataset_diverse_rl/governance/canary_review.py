@@ -4,24 +4,17 @@ import json
 import time
 
 from ..persistence.durable_io import atomic_write_json, read_json
-from ..benchmarks.math_v21_interface import interface_for_contract, solver_user_content
+from ..search.system_prompt import solver_messages
 from ..benchmarks.math_solver_decoding import generation_request_fields
 from .startup_identity import canonical_sha256
 from ..search.schemas import SearchContractError
 
-POLICY=dict(identity='V23_CONTINUOUS_CANARY_REVIEW_V1',
+STRUCTURED_POLICY=dict(identity='STRUCTURED_SYSTEM_CANARY_REVIEW_V3',
     stages=['INITIAL_SOLVER_PROFILE','FIRST_COMPLETE_OPPORTUNITY'],
     owner_review_required=True,maximum_wait_seconds=3600,
     extra_provider_calls=0,total_max_opportunities=5,
     scientific_state_reset=False,efficacy_based_stopping=False,
     unreached_branch='NOT_OBSERVED_NO_FORCED_GENERATION')
-
-CAPACITY_POLICY={**POLICY,'identity':'V23_PREFIX_CAPACITY_CANARY_REVIEW_V2',
-    'stages':['EARLY_SOLVER_CAPACITY','INITIAL_SOLVER_PROFILE','FIRST_COMPLETE_OPPORTUNITY'],
-    'early_membership':'FIRST_EIGHT_AFFECTED_INITIAL_OBSERVATIONS_IN_MEMBER_EXAMPLE_ORDER',
-    'early_result_reuse':'SAME_INITIAL_LOGICAL_KEYS_NO_EXTRA_DRAWS',
-    'supervision':'SCIENTIFIC_OWNER_INSPECTS_PENDING_RECEIPTS'}
-
 
 def trace_rows(run_root):
     path=run_root/'provider_trace_private.jsonl'
@@ -29,46 +22,21 @@ def trace_rows(run_root):
 
 
 def initial_audit(contract,composed,run_root):
-    if contract.get('solver_execution_policy'):
-        audit=profile_audit(contract,composed.state.solver,run_root,
-            ((member,composed.state.prompts[member],example,profile)
-                for member,profiles in composed.state.profiles.items()
-                for example,profile in zip(composed.state.examples,profiles,strict=True)))
-        state=composed.state.snapshot()
-        if len(composed.memory.competence)!=5:
-            raise SearchContractError('CANARY_INITIAL_COMPETENCE_MEMORY_MISSING')
-        return {**audit,'member_scores':state.member_scores,'initial_state_id':state.team_state_id,
-            'initial_memory_entries':5,'validation_calls':0,'test_calls':0}
-    state=composed.state.snapshot();raw=trace_rows(run_root)
-    bykey={row['request_sha256']:row for row in raw if row['role']=='solver' and row['stage']=='initial'}
-    statuses=Counter()
-    for member,profiles in composed.state.profiles.items():
-        for example,profile in zip(composed.state.examples,profiles,strict=True):
-            trajectory=profile['solver_trajectory'];source=trajectory['source']
-            if (source['member_id']!=member or source['example_id']!=example.item.input_id
-                    or source['split']!='optimize'):
-                raise SearchContractError('CANARY_INITIAL_PROVENANCE_MISMATCH')
-            request=bykey[source['request_sha256']]['request']
-            expected=dict(model=contract['models']['solver'],**generation_request_fields(contract,'solver'),
-                messages=[dict(role='system',content=interface_for_contract(contract)[0]),
-                    dict(role='user',content=solver_user_content(contract,state.member_prompts[member],
-                        composed.benchmark.format_input(example.item)))])
-            if request!=expected:raise SearchContractError('CANARY_INITIAL_DISPATCH_MISMATCH')
-            statuses[trajectory['solution_status']]+=1
+    audit=profile_audit(contract,composed.state.solver,run_root,
+        ((member,composed.state.prompts[member],example,profile)
+            for member,profiles in composed.state.profiles.items()
+            for example,profile in zip(composed.state.examples,profiles,strict=True)))
+    state=composed.state.snapshot()
     if len(composed.memory.competence)!=5:
         raise SearchContractError('CANARY_INITIAL_COMPETENCE_MEMORY_MISSING')
-    return dict(logical_profiles=sum(map(len,composed.state.profiles.values())),
-        physical_solver_requests=len(raw),solution_status_counts=dict(statuses),
-        member_scores=state.member_scores,initial_state_id=state.team_state_id,
-        initial_memory_entries=5,validation_calls=0,test_calls=0,
-        audit='EXACT_ACTUAL_V6_MESSAGES_AND_PROFILE_PROVENANCE')
+    return {**audit,'member_scores':state.member_scores,'initial_state_id':state.team_state_id,
+        'initial_memory_entries':5,'validation_calls':0,'test_calls':0}
 
 
 def profile_audit(contract,solver,run_root,profiles):
     """Verify every physical realization, including immutable imported prefixes."""
     from ..search.solver_execution import next_capacity, frozen_execution_policy
-    from ..benchmarks.math_prediction_validity import classify_prediction
-    from ..persistence.solver_evidence_reuse import sha, checked_path
+    from ..benchmarks.math_structured_answer import classify_prediction
     execution=frozen_execution_policy(contract)
     raw=trace_rows(run_root)
     bykey={(r['request_sha256'],r['semantic_attempt_no']):r for r in raw
@@ -85,17 +53,9 @@ def profile_audit(contract,solver,run_root,profiles):
         for ordinal,realization in enumerate(result['original_realizations'],1):
             cap=next_capacity(execution,previous)
             expected=dict(model=contract['models']['solver'],**generation_request_fields(contract,'solver'),
-                messages=[dict(role='system',content=interface_for_contract(contract)[0]),
-                    dict(role='user',content=solver_user_content(contract,prompt,solver.benchmark.format_input(example.item)))])
+                messages=solver_messages(prompt,solver.benchmark.format_input(example.item)))
             expected['max_tokens']=cap
-            ref=realization.get('evidence_reuse_source')
-            if ref:
-                path=checked_path(solver.broker.evidence_reuse.root,ref['receipt_path'])
-                if sha(path)!=ref['receipt_sha256'] or ref['member_id']!=member or ref['example_id']!=example.item.input_id:
-                    raise SearchContractError('CANARY_IMPORTED_RECEIPT_MISMATCH')
-                record=read_json(path)['record'];imported+=1
-            else:
-                record=bykey[(realization['request_sha256'],ordinal)];physical+=1
+            record=bykey[(realization['request_sha256'],ordinal)];physical+=1
             if (record['request']!=expected or record['response']['text']!=realization['text']
                     or record['response']['finish_reason']!=realization['finish_reason']
                     or realization['output_capacity_tokens']!=cap):
@@ -106,7 +66,7 @@ def profile_audit(contract,solver,run_root,profiles):
     return dict(logical_profiles=logical,new_physical_realizations=physical,
         reused_physical_realizations=imported,output_capacity_counts=dict(caps),
         solution_status_counts=dict(statuses),validation_calls=0,test_calls=0,
-        audit='EXACT_ACTUAL_V6_MESSAGES_CAPACITY_AND_ORIGINAL_RECEIPT_PROVENANCE')
+        audit='EXACT_STRUCTURED_SYSTEM_RAW_USER_MESSAGES_AND_PRIVATE_RECEIPTS')
 
 
 def opportunity_audit(contract,composed,run_root,opportunity):
@@ -122,7 +82,7 @@ def opportunity_audit(contract,composed,run_root,opportunity):
     observed=[]
     for row in diagnostics:
         packet=json.loads(row['request']['messages'][1]['content']);e=packet['example'];xid=e['example_id']
-        if (packet['current_member_procedure']!=opportunity.parent_prompt or xid not in wrong
+        if (packet['current_system_prompt']!=opportunity.parent_prompt.to_dict() or packet['target_member']!=opportunity.target_member or xid not in wrong
                 or e['reference_solution']['text']!=examples[xid].reference_solution[:4096]
                 or e['reference_solution']['source']!='dataset_worked_solution'
                 or e['solver_trajectory']['source']['member_id']!=opportunity.target_member):
@@ -150,7 +110,7 @@ def opportunity_audit(contract,composed,run_root,opportunity):
 
 def review(stage,audit,*,contract,payload,run_root):
     policy=contract.get('canary_review_policy')
-    if policy not in (POLICY,CAPACITY_POLICY) or stage not in policy['stages']:
+    if policy != STRUCTURED_POLICY or stage not in policy['stages']:
         raise SearchContractError('CANARY_REVIEW_POLICY_NOT_FROZEN')
     receipt=dict(stage=stage,attempt_id=contract['execution_attempt_id'],
         startup_identity_sha256=payload['startup_identity_sha256'],audit=audit,

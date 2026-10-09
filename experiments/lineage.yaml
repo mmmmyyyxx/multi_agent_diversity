@@ -899,6 +899,15 @@ nodes:
 - experiment_id: a4_v23_parallel_reuse_pilot_v1
   kind: PILOT
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: structured_system_prompt_v24
+  kind: ARCHITECTURE_REFACTOR
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: a4_v24_structured_canary_v1
+  kind: REAL_CANARY
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: a4_v24_structured_pilot_v1
+  kind: PILOT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1897,4 +1906,13 @@ edges:
   evidence: experiments/protocols/a4_v23_parallel_reuse_pilot_v1/protocol.json
   scope: Fresh V23 execution identity; verified initial realization prefix reference;
     no old scope transfer.
+- from: a4_v23_parallel_reuse_pilot_v1
+  to: structured_system_prompt_v24
+  relation: refactor_of
+- from: structured_system_prompt_v24
+  to: a4_v24_structured_canary_v1
+  relation: derived_from
+- from: structured_system_prompt_v24
+  to: a4_v24_structured_pilot_v1
+  relation: derived_from
 current_frontier: experiments/current_frontier.yaml

@@ -2,8 +2,6 @@
 from collections import Counter
 import re
 
-from ..evaluation.mutable_prompt_contract import mutable_prompt_violation_reasons
-from ..local_optimizers.gepa_proposer_contract import DECISION_PROCEDURE_REFLECTION_TEMPLATE
 from ..search.schemas import SearchContractError
 
 
@@ -11,7 +9,7 @@ DIAGNOSTIC_ID = 'OPTIMIZER_NONTHINKING_WIRE_WITNESS_V1'
 
 
 def nonthinking_evidence_contract():
-    from .. import versions
+    from .. import current_contract as versions
     return dict(identity=versions.MATH_OPTIMIZER_NONTHINKING_EVIDENCE_VERSION,
         direct='dispatched_false_and_actual_zero_without_contradiction',
         equivalent='dispatched_false_accepted_stop_no_reasoning_no_parser_loss',
@@ -36,35 +34,6 @@ def provider_thinking_indicators(body):
             for i,item in enumerate(value):walk(item,path+'['+str(i)+']')
     walk(body)
     return sorted(set(found))
-
-
-def reflection_input_anatomy(messages):
-    if len(messages) != 1 or messages[0]['role'] != 'user':
-        raise SearchContractError('REFLECTION_ANATOMY_UNSUPPORTED_MESSAGES')
-    text = messages[0]['content']
-    template = DECISION_PROCEDURE_REFLECTION_TEMPLATE
-    before, tail = template.split('<curr_param>')
-    middle, after = tail.split('<side_info>')
-    if not text.startswith(before) or not text.endswith(after):
-        raise SearchContractError('REFLECTION_ANATOMY_TEMPLATE_MISMATCH')
-    parent, sep, side = text[len(before):len(text)-len(after)].partition(middle)
-    if not sep:
-        raise SearchContractError('REFLECTION_ANATOMY_TEMPLATE_MISMATCH')
-    records = re.split(r'(?m)^# Example \d+\n', side)[1:]
-    summaries = []
-    for record in records:
-        parts = re.split(r'(?m)^## (Problem|Reasoning Evidence|Evaluation Outcome|Reasoning Focus|example_id)\n', record)
-        fields = {parts[i]:parts[i+1].strip() for i in range(1,len(parts),2)}
-        summaries.append(dict(record_chars=len(record), problem_chars=len(fields.get('Problem','')),
-            reasoning_evidence_chars=len(fields.get('Reasoning Evidence','')),
-            feedback_metadata_chars=sum(len(v) for k,v in fields.items() if k not in {'Problem','Reasoning Evidence'})))
-    return dict(total_message_chars=sum(len(m['content']) for m in messages),
-        current_parent_prompt_chars=len(parent), reflection_template_chars=len(template),
-        reflection_template_literal_chars=len(before)+len(middle)+len(after),
-        side_info_total_chars=len(side), reflective_examples=len(records), per_example=summaries,
-        side_info_max_record_chars=max((len(r) for r in records),default=0),
-        side_info_mean_record_chars=sum(map(len,records))/len(records) if records else 0,
-        reasoning_evidence_total_chars=sum(r['reasoning_evidence_chars'] for r in summaries))
 
 
 def generation_diagnostics(content, candidate_contract=None, input_schema=None):
@@ -105,14 +74,16 @@ def generation_diagnostics(content, candidate_contract=None, input_schema=None):
     candidate = fence.group(1).strip() if fence else None
     if candidate_contract is not None:
         import json
-        from .. import versions
+        from .. import current_contract as versions
         if candidate_contract != versions.SEMANTIC_MUTABLE_CONTRACT_VERSION:
             raise SearchContractError('OPTIMIZER_DIAGNOSTIC_CONTRACT_MISMATCH')
         try:
             obj=json.loads(text)
-            valid_envelope=(isinstance(obj,dict) and 'decision_procedure' in obj and
-                not set(obj)-{'decision_procedure','change_summary'}) if input_schema in {versions.LAYER1_INPUT_SCHEMA_VERSION,versions.PATTERN_OPTIMIZER_INPUT_VERSION} else isinstance(obj,dict) and set(obj)=={'decision_procedure'}
-            candidate=obj['decision_procedure'] if valid_envelope and isinstance(obj['decision_procedure'],str) else None
+            valid_envelope=(isinstance(obj,dict) and set(obj)=={'decision','target_block','new_content','change_summary'}
+                and obj['decision']=='PROPOSE_EDIT' and obj['target_block'] in {'role','strategy','answer'}
+                and isinstance(obj['new_content'],str) and isinstance(obj['change_summary'],str)
+                and 0<len(obj['change_summary'])<=240)
+            candidate=obj['new_content'] if valid_envelope else None
         except (ValueError,TypeError):candidate=None
     delimiters=text.count('```')
     first=text.find('```')
@@ -123,10 +94,10 @@ def generation_diagnostics(content, candidate_contract=None, input_schema=None):
         from ..evaluation.semantic_mutable_contract import semantic_violation_reasons
         violations=list(semantic_violation_reasons(candidate)) if candidate is not None else ['invalid_structure']
     else:
-        violations=list(mutable_prompt_violation_reasons(candidate)) if candidate is not None else []
+        violations=[]
     if candidate is not None and len(candidate)>3000:violations.append('over_length')
     if candidate is not None and not candidate:violations.append('empty')
-    return dict(**({'candidate_contract_identity':candidate_contract,'candidate_envelope':'json_procedure_optional_summary_v2' if input_schema in {versions.LAYER1_INPUT_SCHEMA_VERSION,versions.PATTERN_OPTIMIZER_INPUT_VERSION} else 'json_decision_procedure_v1',
+    return dict(**({'candidate_contract_identity':candidate_contract,'candidate_envelope':'json_single_structured_block_edit_v1',
             'diagnostic_scope':'structure_semantics_length_only; full admission belongs to Layer1'} if candidate_contract else {}),
         output_chars=len(text),output_lines=len(text.splitlines()),nonempty_lines=len(lines),
         unique_lines=len(counts),duplicate_lines=duplicates,duplicate_line_fraction=fraction,
@@ -143,7 +114,7 @@ def optimizer_response_telemetry(request,result,policy,evidence_policy=None):
     from ..governance.token_accounting import serialized_request
     import json
     body=json.loads(serialized_request(request))
-    from .. import versions
+    from .. import current_contract as versions
     candidate_contract=(versions.SEMANTIC_MUTABLE_CONTRACT_VERSION
         if policy['identity']==versions.MATH_OPTIMIZER_GENERATION_POLICY_V3_VERSION and len(body['messages'])==1 else None)
     input_schema=None

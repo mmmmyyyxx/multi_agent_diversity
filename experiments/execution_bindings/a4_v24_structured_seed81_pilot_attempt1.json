@@ -1,0 +1,626 @@
+{
+  "access": {
+    "optimize": "adaptive",
+    "shadow": "private_adaptive_gate",
+    "test": "sealed",
+    "validation": "post_freeze_read_only_not_authorized"
+  },
+  "accounting_policy_path": "experiments/protocols/a4_v24_structured_pilot_v1/accounting_policy.json",
+  "accounting_policy_sha256": "e16f9b6145633c17ff86045970e17faec3293fdb7232377f7851878046e0f734",
+  "accounting_scope_policy": "FRESH_V24_STRUCTURED_SINGLE_ARM_2M_V1",
+  "aggregation": "equal_equivalence_plurality_consistency_v1",
+  "allocation_policy": "responsibility_failure_discount_v1",
+  "answer_domain": "MATH_ANSWER_DOMAIN_V2",
+  "answer_extraction_policy": {
+    "boxed_suffix": "punctuation_only",
+    "conflicts": "all_explicit_markers_must_have_identical_normalized_payload",
+    "gold_access": false,
+    "identity": "MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V1",
+    "intermediate_selection": false,
+    "normalization": "strip_outer_math_delimiters_and_whitespace_only",
+    "payload_parser": "math_verify_no_fallback_v1",
+    "terminal_forms": [
+      "markdown_hash3",
+      "balanced_boxed",
+      "final_answer_label",
+      "standalone_expression"
+    ],
+    "terminal_line": "last_nonempty",
+    "truncated": "invalid_even_with_answer",
+    "unmarked_expression": "whole_response_single_line_math_syntax_only"
+  },
+  "arms": {
+    "A4": [
+      true,
+      true
+    ]
+  },
+  "benchmark_id": "math",
+  "benchmark_protocol_sha256": "23b5fe5874093f9b5f800be0b91db24b7833df2f30c7f23cf3c8580b012835a9",
+  "binding_path": "experiments/execution_bindings/a4_v24_structured_seed81_pilot_attempt1.json",
+  "budget": {
+    "local_patience": 3,
+    "metric_calls": 42,
+    "promotion": 2,
+    "reflection_minibatch_size": 3,
+    "team_patience": 2
+  },
+  "cache_namespace": "a4_v24_structured_seed81_pilot_attempt1",
+  "cache_policy": "STRUCTURED_SYSTEM_MEMBER_LANE_CACHE_V3",
+  "canary_attempt_id": "a4_v24_structured_seed81_pilot_attempt1",
+  "canary_phase": "initial_profile_first_opportunity",
+  "canary_review_policy": {
+    "efficacy_based_stopping": false,
+    "extra_provider_calls": 0,
+    "identity": "STRUCTURED_SYSTEM_CANARY_REVIEW_V3",
+    "maximum_wait_seconds": 3600,
+    "owner_review_required": true,
+    "scientific_state_reset": false,
+    "stages": [
+      "INITIAL_SOLVER_PROFILE",
+      "FIRST_COMPLETE_OPPORTUNITY"
+    ],
+    "total_max_opportunities": 5,
+    "unreached_branch": "NOT_OBSERVED_NO_FORCED_GENERATION"
+  },
+  "candidate_contract_identity": "STRUCTURED_SYSTEM_BLOCK_MUTATION_CONTRACT_V1",
+  "canonical_manifest_sha256": "7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f",
+  "canonical_root": "data/benchmark_suite_v1",
+  "concurrency": {
+    "optimizer_reflection": 1,
+    "pattern": 1,
+    "solver": 8
+  },
+  "continuation_authorization_sha256": "9358e0593064fcb0cc427934fb3ab53ecac75571f71fad18ea77bea0426c573b",
+  "current_user_scope_path": "experiments/protocols/a4_v24_structured_pilot_v1/preparation_scope.json",
+  "current_user_scope_sha256": "9358e0593064fcb0cc427934fb3ab53ecac75571f71fad18ea77bea0426c573b",
+  "decoding": {
+    "invalid_response_retries": 3,
+    "max_output_tokens": 1800,
+    "retry_backoff_ceiling_seconds": 60,
+    "retry_sleep_seconds": 1.5,
+    "sdk_retries": 0,
+    "solver_max_output_tokens": 3600,
+    "temperature": 0.0,
+    "timeout_seconds": 120,
+    "transport_retries": 20
+  },
+  "evaluator": "MATH_EQUIVALENCE_V2",
+  "evaluator_pins": {
+    "antlr4-python3-runtime": "4.13.2",
+    "latex2sympy2_extended": "1.0.9",
+    "math-verify": "0.6.0",
+    "mpmath": "1.3.0",
+    "sympy": "1.14.0"
+  },
+  "execution_arm": "A4",
+  "execution_attempt_id": "a4_v24_structured_seed81_pilot_attempt1",
+  "execution_phase": "pilot",
+  "gradient_prompt_path": "experiments/protocols/a4_v24_structured_pilot_v1/gradient.json",
+  "gradient_prompt_sha256": "e9856125be81aea36a08ae93deb99d6c97c6d797c28a59ad3842ed6b3903b3fa",
+  "heldout_accounting_reserve": 0,
+  "identity": "MATH_STRUCTURED_SYSTEM_EVIDENCE_BINDING_V1",
+  "initial_competence_binding": {
+    "aggregation_independent": true,
+    "candidate_support": "same_complete_optimize",
+    "count": 60,
+    "evaluator": "MATH_EQUIVALENCE_V2",
+    "identity": "MATH_INITIAL_COMPETENCE_LOW_COST_V1",
+    "immutable": true,
+    "metric": "binary_correct_count",
+    "role": "optimize",
+    "split_identity": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+    "support_identity": "f52c5f2a88337d187f5bf6fe7e9b419d92a96e6848dfeaae01b3f123f197b256"
+  },
+  "initial_team_artifact_sha256": "09e3aec94e0b5ad708af989fb51dc4e632faf1fb4fc4fe7497a377f6cc722bb5",
+  "initial_team_path": "experiments/initial_teams/math_structured_system_seed_v1.json",
+  "initial_team_sha256": "8ddc4a60246c092db10f6f344da95cd595ed1b7a6c7c2522f027b6fb2b1da594",
+  "initial_team_version": "MATH_IDENTICAL_STRUCTURED_SYSTEM_SEED_V1",
+  "invalid_recovery_policy": {
+    "answer_extraction": "MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V1",
+    "cache": "resolved_valid_or_exhausted_terminal_only",
+    "capacity_policy": "STRUCTURED_SOLVER_CAPACITY_EXECUTION_V2",
+    "first_valid_stops": true,
+    "identity": "MATH_STRUCTURED_INVALID_RECOVERY_V3",
+    "invalidity_weight": "none",
+    "logical_evaluation_count": 1,
+    "max_semantic_attempts": 4,
+    "retry_trigger": "extraction_or_frozen_invalidity_never_correctness",
+    "same_messages_and_sampling": true,
+    "same_request_bytes": false,
+    "solver_invalid_max_retries": 3,
+    "terminal_invalid": "incorrect_continue_no_vote",
+    "terminal_requires_completed_invalid_attempts": 4,
+    "transport_failures_consume_semantic_attempt": false
+  },
+  "layer1_search_policy": {
+    "candidate_contract": "STRUCTURED_SYSTEM_BLOCK_MUTATION_CONTRACT_V1",
+    "identity_version": "STRUCTURED_BLOCK_INDEPENDENT_OPTIMIZE_SEARCH_V2",
+    "k_local_return": 4,
+    "max_generations": 6,
+    "max_prompt_chars": 3000,
+    "metric_limit": 42,
+    "official_gepa_fidelity": false,
+    "optimizer_input_schema": "STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V7",
+    "panel_policy": "DISJOINT_ROTATING_OPTIMIZE_EVIDENCE_V1",
+    "panel_size": 6
+  },
+  "low_cost_protocol": {
+    "analysis_policy": {
+      "classification": "sign_of_final_minus_initial_VoteAcc",
+      "identity": "MATH_V2_1_PILOT_DEVELOPMENT_ANALYSIS_V1",
+      "paired_resampling_unit": "frozen_validation_example",
+      "resamples": 10000,
+      "scope": "development_uncertainty_only_no_formal_significance_no_search_feedback",
+      "seed": 81
+    },
+    "canary_stop": "one_complete_production_opportunity_v1",
+    "counts": {
+      "canary_optimize": 12,
+      "pilot_optimize": 60,
+      "pilot_shadow": 40,
+      "pilot_validation": 100
+    },
+    "identity": "MATH_V2_1_LOW_COST_DEV_PROTOCOL_V1",
+    "membership_hashes": {
+      "canary_optimize": "16ad84b5bb22a6aa10e23ef1e1a71ff6d54b7e8e4fcd749571808fba0b2f27ab",
+      "pilot_optimize": "f52c5f2a88337d187f5bf6fe7e9b419d92a96e6848dfeaae01b3f123f197b256",
+      "pilot_shadow": "9732600d0cc9d22c05fa2460738ba45804e23c82ed313ba5545ace5d42886857",
+      "pilot_validation": "c71c48a25ed0439e886481926fcdc6195abc9ab8997c74d4bde3eae712ee3adc"
+    },
+    "pilot_stop": "team_epoch_no_commit_v1",
+    "scientific_scope": "development_only",
+    "selection_policy": {
+      "apportionment": "integer_largest_remainder_lexical_tie",
+      "identity": "MATH_LOW_COST_SUBJECT_LEVEL_HASH_V1",
+      "minimum_per_stratum": 0,
+      "ordering": "sha256_identity_role_stable_id",
+      "output_order": "source_superset_order",
+      "performance_used": false,
+      "strata": [
+        "subject",
+        "level"
+      ]
+    },
+    "source_superset_sha256": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+    "test_access": "sealed"
+  },
+  "low_cost_subsets_path": "experiments/protocols/math_v2_1_low_cost_v1/subsets.json",
+  "low_cost_subsets_sha256": "b6ef5a287d91baa60a329b8a55f88db9e019f83ff2329cf8a62cbae5388d8f5b",
+  "membership_hashes": {
+    "optimize": "c2abe712782f0b673fb29a182883858c7466b79a66f2c323cae7903c976178fa",
+    "shadow": "4068cbda1117fdf70fdd37ed1ca5343992665f842c361699e2e580e02cd7dca4",
+    "test": "3d8af2d055316da986934025bcc4c6e2f3f39d1c25838a5f23e709b9b5da3c44",
+    "validation": "7112d452f99665e8a43b9e8a3b681c76aaff5b574103ed7663951a7f17570376"
+  },
+  "memory_limits": {
+    "max_context_chars": 1200,
+    "max_failure_entries_per_member": 5,
+    "private_storage_limit": 24,
+    "shared_storage_limit": 48,
+    "top_k_private": 3,
+    "top_k_shared": 3
+  },
+  "memory_policy_identity": "BOOTSTRAPPED_BLOCK_EDIT_EFFECT_MEMORY_V2",
+  "method_identity": "unified_team_prompt_search_v2_4_structured_system_prompt",
+  "models": {
+    "optimizer_reflection": "qwen3.7-flash",
+    "pattern": "qwen3.7-flash",
+    "solver": "qwen3-8b",
+    "solver_thinking": false
+  },
+  "operational_pilot": {
+    "guarantees_saturation": false,
+    "identity": "TARGET_OR_TEAM_PROGRESS_OPERATIONAL_PILOT_BOUND_V1",
+    "max_opportunities": 5,
+    "scientific_stopper": "team_epoch_no_commit_v1",
+    "token_ceiling": 2000000
+  },
+  "optimization_evidence_policy": {
+    "answer_extraction": "MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V1",
+    "bootstrap": "measured_initial_optimize_profiles_zero_llm",
+    "candidate_guard": "optimizer_dependency_guard_v1",
+    "edit_memory": "actual_diff_and_scope_bound_coverage_v1",
+    "editable_blocks": [
+      "role",
+      "strategy",
+      "answer"
+    ],
+    "identity": "STRUCTURED_SYSTEM_OPTIMIZATION_EVIDENCE_POLICY_V2",
+    "max_generations": 6,
+    "max_returned_candidates": 4,
+    "metric_limit": 42,
+    "minimum_current_correct": 6,
+    "minimum_current_wrong": 4,
+    "mutation": "single_block_per_generation",
+    "mutation_size": 3,
+    "no_safe_edit": "no_candidate_no_success",
+    "prompt_state": "STRUCTURED_SYSTEM_PROMPT_V1",
+    "reference_solution_max_chars": 4096,
+    "reference_solution_split": "optimize",
+    "response_evidence": "observed_content_optional_trajectory",
+    "sampling": "seeded_member_rotation_without_replacement_v1",
+    "search_validation_size": 3,
+    "selection": "validation_net_then_preservation_then_mutation_net_then_generation",
+    "team_probe_size": 3,
+    "validation_feedback": "measure_after_generation_counts_only_next_iteration"
+  },
+  "optimizer_generation_policy": {
+    "accounting_output_ceiling": 1810,
+    "enable_thinking": false,
+    "frequency_penalty": 0,
+    "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+    "max_completion_tokens": 1800,
+    "max_tokens": "NOT_SENT",
+    "measurement_tolerance_tokens": 10,
+    "model": "qwen3.7-flash",
+    "output_token_scope": "reasoning_plus_answer",
+    "presence_penalty": 1.5,
+    "roles": [
+      "reflection",
+      "pattern"
+    ],
+    "temperature": 0.7,
+    "top_k": 20,
+    "top_p": 0.8,
+    "truncation": "existing_operational_output_truncation"
+  },
+  "optimizer_input_schema": "STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V7",
+  "optimizer_nonthinking_evidence_policy": {
+    "contradiction": "provider_control_failure",
+    "diagnostic_candidate_rejection": "record_only_no_output_reuse",
+    "direct": "dispatched_false_and_actual_zero_without_contradiction",
+    "equivalent": "dispatched_false_accepted_stop_no_reasoning_no_parser_loss",
+    "identity": "OPTIMIZER_NONTHINKING_EQUIVALENT_EVIDENCE_V1",
+    "missing_tokens": "never_infer_zero"
+  },
+  "panel_evidence_policy": "DISJOINT_ROTATING_OPTIMIZE_EVIDENCE_V1",
+  "partition_completion_policy": "GRADIENT_PATTERN_PARTITION_COMPLETION_V1",
+  "pattern_abstraction_guard": "PATTERN_STRUCTURED_CONTENT_GUARD_V7",
+  "pattern_cluster_generation_policy": {
+    "accounting_output_ceiling": 8202,
+    "enable_thinking": false,
+    "frequency_penalty": 0,
+    "identity": "PATTERN_CLUSTER_GENERATION_POLICY_V1",
+    "max_completion_tokens": 8192,
+    "max_tokens": "NOT_SENT",
+    "measurement_tolerance_tokens": 10,
+    "model": "qwen3.7-flash",
+    "output_token_scope": "reasoning_plus_answer",
+    "presence_penalty": 1.5,
+    "roles": [
+      "pattern_cluster"
+    ],
+    "temperature": 0.7,
+    "top_k": 20,
+    "top_p": 0.8,
+    "truncation": "existing_operational_output_truncation"
+  },
+  "pattern_policy": {
+    "accounting": "wrong_universe_ceiling_plus_one_cluster_per_opportunity_v1",
+    "cluster_calls_per_opportunity": 1,
+    "context_limit_tokens": 1000000,
+    "correctness": "target_member_correctness_validity_v1",
+    "discovery": "gradient_cluster_pattern_discovery_v4",
+    "generalized_gradient_max_characters": 600,
+    "generation_contract_role": "pattern",
+    "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+    "gradient_policy": {
+      "abstraction_guard": "PATTERN_STRUCTURED_CONTENT_GUARD_V7",
+      "generation_contract_role": "pattern",
+      "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+      "identity": "PER_EXAMPLE_TEXTUAL_GRADIENT_V1",
+      "logical_calls_per_wrong": 1,
+      "max_characters": 400,
+      "nonactionable": "UNCERTAIN",
+      "output_cache": false,
+      "output_schema": "OBSERVATION_HYPOTHESIS_BLOCK_CORRECTION_EFFECT_V2",
+      "prompt_identity": "STRUCTURED_SYSTEM_GRADIENT_PROMPT_V6",
+      "provider_role": "pattern_gradient",
+      "reference_solution": "separate_optimize_only_4096_unicode_prefix",
+      "schema": "STRUCTURED_SYSTEM_GRADIENT_INPUT_V4",
+      "semantic_regeneration": false,
+      "successful_generations_per_wrong": 1,
+      "universe": "all_selected_member_wrong_optimize"
+    },
+    "identity": "GENERALIZED_CORRECTIVE_GRADIENT_IDENTITY_V1",
+    "input_estimate": "serialized_utf8_bytes_plus_1024",
+    "input_limit_tokens": 991808,
+    "optimization_evidence_policy": {
+      "answer_extraction": "MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V1",
+      "bootstrap": "measured_initial_optimize_profiles_zero_llm",
+      "candidate_guard": "optimizer_dependency_guard_v1",
+      "edit_memory": "actual_diff_and_scope_bound_coverage_v1",
+      "editable_blocks": [
+        "role",
+        "strategy",
+        "answer"
+      ],
+      "identity": "STRUCTURED_SYSTEM_OPTIMIZATION_EVIDENCE_POLICY_V2",
+      "max_generations": 6,
+      "max_returned_candidates": 4,
+      "metric_limit": 42,
+      "minimum_current_correct": 6,
+      "minimum_current_wrong": 4,
+      "mutation": "single_block_per_generation",
+      "mutation_size": 3,
+      "no_safe_edit": "no_candidate_no_success",
+      "prompt_state": "STRUCTURED_SYSTEM_PROMPT_V1",
+      "reference_solution_max_chars": 4096,
+      "reference_solution_split": "optimize",
+      "response_evidence": "observed_content_optional_trajectory",
+      "sampling": "seeded_member_rotation_without_replacement_v1",
+      "search_validation_size": 3,
+      "selection": "validation_net_then_preservation_then_mutation_net_then_generation",
+      "team_probe_size": 3,
+      "validation_feedback": "measure_after_generation_counts_only_next_iteration"
+    },
+    "output_cache": false,
+    "provider_role": "pattern_cluster",
+    "raw_value": "raw_responsibility_max_4D_2N_C_v1",
+    "responsibility": "same_raw_pattern_responsibility_v1",
+    "schema": "GRADIENT_PATTERN_PARTITION_V2",
+    "selection": "raw_responsibility_then_canonical_identity",
+    "solver_trajectory_policy": {
+      "adaptive_split": "optimize",
+      "final_only": "TRAJECTORY_UNAVAILABLE",
+      "gradient_input_schema": "STRUCTURED_SYSTEM_GRADIENT_INPUT_V4",
+      "gradient_prompt_identity": "STRUCTURED_SYSTEM_GRADIENT_PROMPT_V6",
+      "hidden_reasoning_claim": false,
+      "identity": "MATH_OBSERVED_RESPONSE_POLICY_V2",
+      "max_visible_solution_characters": 4096,
+      "memory_trajectory_writes": false,
+      "observed_response": "complete_ordinary_content",
+      "optimizer_input_schema": "STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V7",
+      "original_response_retention": "complete_private_resolved_prediction_and_attempts",
+      "profile_schema": "MATH_STRUCTURED_SOLVER_PROFILE_V1",
+      "source": "ordinary_assistant_content",
+      "trajectory_schema": "MATH_OBSERVED_RESPONSE_EVIDENCE_V1",
+      "truncation": "optional_solution_unicode_prefix_explicit_metadata",
+      "visible_trajectory_required": false
+    },
+    "universe": "all_selected_member_wrong_optimize"
+  },
+  "pattern_prompt_path": "experiments/protocols/a4_v24_structured_pilot_v1/pattern.json",
+  "pattern_prompt_sha256": "8cf4520cdfec76a19bed0383cc5127ce1032c8b09b353e225bec75b1c4d9db1a",
+  "pattern_support_id_transport": "PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1",
+  "payload_parser_identity": "MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V1",
+  "pilot_observation_policy": "PILOT_READ_ONLY_STATE_JOURNAL_V1",
+  "prediction_validity_policy": {
+    "answer_extraction": {
+      "boxed_suffix": "punctuation_only",
+      "conflicts": "all_explicit_markers_must_have_identical_normalized_payload",
+      "gold_access": false,
+      "identity": "MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V1",
+      "intermediate_selection": false,
+      "normalization": "strip_outer_math_delimiters_and_whitespace_only",
+      "payload_parser": "math_verify_no_fallback_v1",
+      "terminal_forms": [
+        "markdown_hash3",
+        "balanced_boxed",
+        "final_answer_label",
+        "standalone_expression"
+      ],
+      "terminal_line": "last_nonempty",
+      "truncated": "invalid_even_with_answer",
+      "unmarked_expression": "whole_response_single_line_math_syntax_only"
+    },
+    "denominator": "all_frozen_examples",
+    "fallback_extraction": false,
+    "identity": "MATH_STRUCTURED_PREDICTION_VALIDITY_V1",
+    "invalid_response_retries": 3,
+    "invalid_vote": "excluded_from_equivalence_classes",
+    "invalidity_telemetry": "observation_only",
+    "prediction_failure": "invalid_incorrect_continue",
+    "reference_failure": "hard_contract_failure",
+    "truncated_even_with_marker": "invalid_incorrect"
+  },
+  "provider": "lwj",
+  "provider_bounds": {
+    "attempt_charged_token_ceiling": 2000000,
+    "bound_proof": {
+      "bootstrap_logical_solver_calls": 500,
+      "gradient_semantic_multiplier": 1,
+      "guarantees_saturation": false,
+      "identity": "V24_STRUCTURED_RESOURCE_DERIVATION_V1",
+      "per_op_logical_solver": {
+        "full": 120,
+        "local": 42,
+        "probe": 12,
+        "shadow": 40
+      },
+      "scientific_stopper_unchanged": true,
+      "solver_semantic_multiplier": 4,
+      "token_bound": "PRE_TRANSPORT_EXACT_RESERVATION_AND_CUMULATIVE_ATTEMPT_ADMISSION",
+      "transport_multiplier": 21
+    },
+    "cumulative_charged_token_ceiling": 2000000,
+    "max_opportunities": 5,
+    "max_proposals_per_opportunity": 6,
+    "pattern_calls": 305,
+    "pattern_cluster_calls": 5,
+    "pattern_gradient_calls": 300,
+    "physical_solver_per_opportunity": 856,
+    "reflection_calls": 30,
+    "reservation_peak_upper_bound": 2000000,
+    "solver_calls": 6280,
+    "solver_per_opportunity": 214,
+    "successful_provider_calls": 6615,
+    "transport_attempts": 138915
+  },
+  "provider_sdk": {
+    "name": "openai",
+    "version": "2.37.0"
+  },
+  "reference_extractor": "MATH_REFERENCE_EXTRACTOR_V1",
+  "reference_validity": "MATH_SCORABLE_REFERENCE_V2",
+  "responsibility": "binary_plurality_raw_responsibility_v1",
+  "runtime_persistence_policy": {
+    "derived_token_snapshot": "best_effort_detach_on_io_failure",
+    "identity": "JOURNAL_FIRST_PROVIDER_DURABILITY_V1",
+    "response_before_charge": true,
+    "scientific_resume": false,
+    "unresolved_reservation": "CHARGE_FULL_RESERVATION"
+  },
+  "search_only_scope": {
+    "llm_judge_authorized": false,
+    "push_authorized": true,
+    "raw_diagnostic_authorized": false,
+    "test_authorized": false,
+    "validation_authorized": false
+  },
+  "seeds": [
+    81
+  ],
+  "shadow_count": 40,
+  "shared_risk_policy": {
+    "failure_evidence_capacity": 240,
+    "minimum_distinct_members": 2,
+    "promotion_timing": "opportunity_commit",
+    "recent_opportunity_window": 48,
+    "retention": "recent_opportunity_recurrence_retention_v1",
+    "retention_order": [
+      "recent_recurrence",
+      "recent_distinct_members",
+      "same_lane",
+      "last_seen",
+      "semantic_key"
+    ],
+    "retrieval_order": [
+      "same_lane",
+      "compatible_family",
+      "last_seen",
+      "recent_recurrence",
+      "semantic_key"
+    ],
+    "shared_event_capacity": 48,
+    "signature": "closed_action_outcome_failure_signature_v1"
+  },
+  "solver_decoding_policy": {
+    "enable_thinking": false,
+    "frequency_penalty": 0,
+    "identity": "SOLVER_DECODING_POLICY_V2",
+    "max_output_tokens": 3600,
+    "min_p": 0,
+    "presence_penalty": 0,
+    "temperature": 0.2,
+    "top_k": 20,
+    "top_p": 0.8
+  },
+  "solver_execution_policy": {
+    "batch_failure": "STOP_DISPATCH_DRAIN_PERSIST_THEN_RAISE",
+    "expansion_trigger": "IMMEDIATELY_PREVIOUS_RESPONSE_LENGTH_TRUNCATED",
+    "first_output_tokens": 3600,
+    "identity": "STRUCTURED_SOLVER_CAPACITY_EXECUTION_V2",
+    "inflight_identical_key": "SINGLE_OWNER_SHARED_FUTURE",
+    "length_recovery_output_tokens": 6144,
+    "max_semantic_attempts": 4,
+    "optimization_dependencies": "SERIAL",
+    "optimizer_max_concurrency": 1,
+    "result_order": "INPUT_ORDER",
+    "solver_max_concurrency": 8
+  },
+  "solver_output_interface": {
+    "answer_extraction_policy": {
+      "boxed_suffix": "punctuation_only",
+      "conflicts": "all_explicit_markers_must_have_identical_normalized_payload",
+      "gold_access": false,
+      "identity": "MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V1",
+      "intermediate_selection": false,
+      "normalization": "strip_outer_math_delimiters_and_whitespace_only",
+      "payload_parser": "math_verify_no_fallback_v1",
+      "terminal_forms": [
+        "markdown_hash3",
+        "balanced_boxed",
+        "final_answer_label",
+        "standalone_expression"
+      ],
+      "terminal_line": "last_nonempty",
+      "truncated": "invalid_even_with_answer",
+      "unmarked_expression": "whole_response_single_line_math_syntax_only"
+    },
+    "identity": "MATH_STRUCTURED_SYSTEM_INTERFACE_V7",
+    "parser_identity": "MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V1",
+    "reflection_max_output_tokens": 1800,
+    "solver_max_output_tokens": 3600,
+    "system_prompt_policy": {
+      "block_hash": "sha256_utf8",
+      "blocks": [
+        "role",
+        "strategy",
+        "answer"
+      ],
+      "deduplication": "canonical_structured_bytes",
+      "extra_solver_instructions": false,
+      "full_hash": "sha256_canonical_structured_bytes",
+      "identity": "STRUCTURED_SYSTEM_PROMPT_V1",
+      "max_rendered_characters": 3000,
+      "mutation": "STRUCTURED_SYSTEM_BLOCK_MUTATION_CONTRACT_V1",
+      "rendering": "role_double_newline_strategy_double_newline_answer",
+      "seed": {
+        "answer": "Put your final answer in the format '### <answer>'",
+        "role": "You are a helpful assistant.",
+        "strategy": "Answer the question."
+      },
+      "serialization": "ordered_role_strategy_answer_ascii_json_compact",
+      "single_block_per_generation": true,
+      "system_hash": "sha256_rendered_utf8",
+      "user_message": "raw_problem_only"
+    }
+  },
+  "solver_trajectory_policy": {
+    "adaptive_split": "optimize",
+    "final_only": "TRAJECTORY_UNAVAILABLE",
+    "gradient_input_schema": "STRUCTURED_SYSTEM_GRADIENT_INPUT_V4",
+    "gradient_prompt_identity": "STRUCTURED_SYSTEM_GRADIENT_PROMPT_V6",
+    "hidden_reasoning_claim": false,
+    "identity": "MATH_OBSERVED_RESPONSE_POLICY_V2",
+    "max_visible_solution_characters": 4096,
+    "memory_trajectory_writes": false,
+    "observed_response": "complete_ordinary_content",
+    "optimizer_input_schema": "STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V7",
+    "original_response_retention": "complete_private_resolved_prediction_and_attempts",
+    "profile_schema": "MATH_STRUCTURED_SOLVER_PROFILE_V1",
+    "source": "ordinary_assistant_content",
+    "trajectory_schema": "MATH_OBSERVED_RESPONSE_EVIDENCE_V1",
+    "truncation": "optional_solution_unicode_prefix_explicit_metadata",
+    "visible_trajectory_required": false
+  },
+  "split_directory": "experiments/data_splits/math_v2_1_scorable_v1",
+  "split_manifest_sha256": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+  "split_version": "benchmark_experiment_split_v2",
+  "stop_policy": "team_epoch_no_commit_v1",
+  "system_prompt_policy": {
+    "block_hash": "sha256_utf8",
+    "blocks": [
+      "role",
+      "strategy",
+      "answer"
+    ],
+    "deduplication": "canonical_structured_bytes",
+    "extra_solver_instructions": false,
+    "full_hash": "sha256_canonical_structured_bytes",
+    "identity": "STRUCTURED_SYSTEM_PROMPT_V1",
+    "max_rendered_characters": 3000,
+    "mutation": "STRUCTURED_SYSTEM_BLOCK_MUTATION_CONTRACT_V1",
+    "rendering": "role_double_newline_strategy_double_newline_answer",
+    "seed": {
+      "answer": "Put your final answer in the format '### <answer>'",
+      "role": "You are a helpful assistant.",
+      "strategy": "Answer the question."
+    },
+    "serialization": "ordered_role_strategy_answer_ascii_json_compact",
+    "single_block_per_generation": true,
+    "system_hash": "sha256_rendered_utf8",
+    "user_message": "raw_problem_only"
+  },
+  "task_authorization_sha256": "9358e0593064fcb0cc427934fb3ab53ecac75571f71fad18ea77bea0426c573b",
+  "token_ledger_directory": "runs/a4_v24_structured_seed81_pilot_attempt1/accounting",
+  "trajectory_parent_binding_path": "experiments/execution_bindings/a4_v23_parallel_seed81_20261009_attempt1.json",
+  "trajectory_parent_binding_sha256": "5bc0e34ff38faafb91875d6df89a6ac9e8f28b82fe5809fedf0192188fcb9ba8",
+  "transition_policy": "initial_competence_target_or_team_progress_v3",
+  "validation_accounting_metadata_path": "experiments/protocols/a4_v24_structured_pilot_v1/heldout_seal.json",
+  "validation_accounting_metadata_sha256": "df292d193149498230221648d547a2c1b5b7dfda8344d50489fdfa4bee62d6ce",
+  "verify_settings_path": "experiments/evaluators/math_verify_settings_v2_final.json",
+  "verify_settings_sha256": "4abc7cf513d2df5ea05018f3f7f24f164226c468ebcc1ddec13283165eacaad7"
+}

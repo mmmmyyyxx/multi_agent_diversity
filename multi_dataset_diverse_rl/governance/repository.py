@@ -153,10 +153,14 @@ def report_paths(root: Path) -> list[str]:
     tracked=subprocess.check_output(['git','ls-files','--','reports'],cwd=root,text=True).splitlines()
     paths={str(Path(p).parent).replace('\\','/') for p in tracked if Path(p).name=='README.md'}
     paths.update('/'.join(p.split('/')[:2]) for p in tracked if len(p.split('/'))>2)
-    # This milestone is the only new report allowed before staging. Untracked
-    # retry evidence and arbitrary local directories are never scanned.
-    own='reports/repository_hygiene_alignment_v1_20261001'
-    if (root/own/'README.md').is_file():paths.add(own)
+    # Registered evidence may be indexed before staging; unrelated local retry
+    # directories are never discovered by a filesystem scan.
+    for row in load_yaml(root/'experiments/registry.yaml')['experiments']:
+        if not row['active_for_new_work']:
+            continue
+        for relative in [row.get('report'),*row.get('reports',[])]:
+            if relative and (root/relative/'README.md').is_file():
+                paths.add(relative)
     return sorted(paths)
 
 

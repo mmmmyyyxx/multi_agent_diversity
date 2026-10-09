@@ -230,6 +230,7 @@ Reports are immutable evidence, never design authority. Unresolved metadata does
 | [strict_v2_s345_20260803/stage_a_v2_static_audit](strict_v2_s345_20260803/stage_a_v2_static_audit/README.md) | 20260803 | HISTORICAL_V15_V16_AND_EARLIER | SCIENTIFIC_RESULT | strict_v2_s345_20260803 | STATUS_UNRESOLVED |
 | [strict_v2_s345_20260803/stage_c_live_witness](strict_v2_s345_20260803/stage_c_live_witness/README.md) | 20260803 | HISTORICAL_V15_V16_AND_EARLIER | SCIENTIFIC_RESULT | strict_v2_s345_20260803 | STATUS_UNRESOLVED |
 | [strict_v2_s345_20260803/stage_c_live_witness/gate](strict_v2_s345_20260803/stage_c_live_witness/gate/README.md) | 20260803 | HISTORICAL_V15_V16_AND_EARLIER | SCIENTIFIC_RESULT | strict_v2_s345_20260803 | STATUS_UNRESOLVED |
+| [structured_system_prompt_v24_20261009](structured_system_prompt_v24_20261009/README.md) | 20261009 | UNIFIED_TEAM_PROMPT_SEARCH | ARCHITECTURE | structured_system_prompt_v24 | COMPLETED |
 | [transition_reachability_audit_v1_20261007](transition_reachability_audit_v1_20261007/README.md) | 20261007 | UNIFIED_TEAM_PROMPT_SEARCH | ZERO_API | transition_reachability_audit_v1 | COMPLETED |
 | [two_layer_gepa_grounded_refactor_20260910](two_layer_gepa_grounded_refactor_20260910/README.md) | 20260910 | GEPA_TWO_LAYER | ARCHITECTURE | two_layer_gepa_grounded_refactor_20260910 | STATUS_UNRESOLVED |
 | [unified_benchmark_migration_v1_20260930](unified_benchmark_migration_v1_20260930/README.md) | 20260930 | BENCHMARK_GENERALIZATION | MIGRATION | unified_benchmark_migration_v1 | COMPLETED |

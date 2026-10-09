@@ -1,4 +1,4 @@
-"""Current-only experiment entrypoint; historical execution uses replay_experiment.py."""
+"""V2.4-only experiment entrypoint; retired execution requires original Git source."""
 import argparse
 import asyncio
 import json

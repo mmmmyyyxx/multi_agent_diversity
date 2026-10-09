@@ -17,7 +17,7 @@ class GradientPatternLocalTask(MemoryLocalTask):
 
 @dataclass(frozen=True)
 class EvidenceLayer1Config:
-    identity_version: str = 'INDEPENDENT_OPTIMIZE_VALIDATION_SEARCH_V1'
+    identity_version: str = 'STRUCTURED_BLOCK_INDEPENDENT_OPTIMIZE_SEARCH_V2'
     metric_limit: int = 42
     panel_size: int = 6
     max_generations: int = 6
@@ -25,7 +25,7 @@ class EvidenceLayer1Config:
     max_prompt_chars: int = 3000
     candidate_contract: str = versions.SEMANTIC_MUTABLE_CONTRACT_VERSION
     official_gepa_fidelity: bool = False
-    optimizer_input_schema: str = 'PATTERN_HYPOTHESIS_EDIT_EFFECT_INPUT_V6'
+    optimizer_input_schema: str = 'STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V7'
     panel_policy: str = 'DISJOINT_ROTATING_OPTIMIZE_EVIDENCE_V1'
 
     def __post_init__(self):
@@ -46,8 +46,11 @@ The selected Pattern is a repair hypothesis, not a mandatory universal instructi
 Preserve existing successful behavior. Do not introduce dependencies on optimizer-only
 evidence. Prefer a small conditional generic edit when supported; otherwise abstain.
 Return {"decision":"NO_SAFE_EDIT"} or {"decision":"PROPOSE_EDIT",
-"decision_procedure":"complete standalone procedure, at most 3000 characters",
+"target_block":"role, strategy, or answer", "new_content":"complete replacement block",
 "change_summary":"intended change, at most 240 characters"}. No other keys.
+Choose the block from the evidence. All blocks, including presentation and reasoning
+preferences, are editable. Change exactly one block. The full rendered system
+prompt must remain at most 3000 characters. No fixed CoT or output format is required.
 SearchValidation is measured after generation; prior measurement counts may guide
 the next iteration but validation examples and answers are not supplied.
 Respect missing/truncated written evidence; do not infer hidden reasoning.

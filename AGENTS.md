@@ -36,14 +36,17 @@ active or canonical refer to the report's creation context.
 ## 3. Current project direction
 
 The sole active research architecture is Unified Team Prompt Search.
+The sole current scientific method is V2.4 Structured System Prompt Optimization.
+Member state is one Role/Strategy/Answer object; User content is the raw problem.
+All three blocks are editable. No immutable CoT or output-style instruction exists.
 `UnifiedSearchOrchestrator` owns the production graph. The current composition
 binds Gradient Pattern, Rolling Risk Memory and bounded Layer1 search through
 one complete current policy bundle. Aggregation remains benchmark-selected.
 Structured optimizer history is separate from LLM memory.
 New experiments use `scripts/run_experiment.py`, the sole current composition
 entrypoint and must compose through `build_current_team_prompt_search`.
-Do not import legacy classes into current runtime. Older Pattern, Memory and
-search implementations may only be used by explicit historical replay tooling.
+Do not import legacy classes into current runtime. Retired method implementations are recovered only from their frozen Git source;
+current production contains no compatibility execution modes.
 Historical manifest parsing does not grant current execution eligibility.
 Domain logic belongs in production modules, not scripts.
 Local search acceptance cannot silently gate outer team candidate admission.
@@ -182,7 +185,9 @@ prompts, questions, gold/model answers, raw responses, endpoints or host paths.
 ## 10. Historical replay policy
 
 Frozen historical contracts live in docs/archive/specs/ and original source
-commits. Keep original constants, manifests, reports and reproduction paths.
+commits. Keep original constants, manifests and scientific reports. Retired runnable
+code and redundant implementation snapshots may be removed after an inventory,
+dry-run plan and tombstone pin their Git recovery source.
 Do not silently promote historical runtime into the active method. Unknown,
 unique evidence and replay-required files are never cleanup deletion targets.
 Archive changes need provenance and an invariant index; deletion requires an

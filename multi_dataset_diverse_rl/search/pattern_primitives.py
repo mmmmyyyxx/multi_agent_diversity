@@ -66,7 +66,7 @@ def guard_abstraction(text, rows, *, abstraction_guard_version=None):
 def single_failure_example(row):
     example = dict(example_id=row.example_id,problem=row.signals['input_payload'],reference=row.signals['gold'],prediction=row.signals.get('target_output'),valid=row.signals['target_member_valid'],responsibility_labels=sample_labels(row),team_margin=row.signals.get('team_margin'),team_disagreement=row.signals.get('team_disagreement'))
     if 'solver_trajectory' in row.signals:
-        from ..benchmarks.math_visible_trajectory import validate_adaptive_trajectory
+        from ..benchmarks.math_response_evidence import validate_adaptive_trajectory
         example['solver_trajectory'] = validate_adaptive_trajectory(
             row.signals['solver_trajectory'], example_id=row.example_id,
             problem=row.signals['input_payload'])

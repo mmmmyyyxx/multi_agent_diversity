@@ -217,8 +217,8 @@ class GlobalStopConfig:
 
 @dataclass(frozen=True)
 class SearchMethodConfig:
-    method: str = versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_3_VERSION
-    search_engine: str = 'INDEPENDENT_OPTIMIZE_VALIDATION_SEARCH_V1'
+    method: str = versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_4_VERSION
+    search_engine: str = 'STRUCTURED_BLOCK_INDEPENDENT_OPTIMIZE_SEARCH_V2'
     diagnosis_policy: str = versions.BINARY_PLURALITY_RESPONSIBILITY_VERSION
     target_policy: str = versions.UNIFIED_TARGET_POLICY_VERSION
     feasibility_policy: str = 'variable_evidence_feasibility_v1'
@@ -227,7 +227,7 @@ class SearchMethodConfig:
     transition_policy: str = versions.UNIFIED_TARGET_OR_TEAM_TRANSITION_VERSION
     adaptive_gate_policy: str = versions.UNIFIED_ADAPTIVE_GATE_VERSION
     aggregation_policy: str = versions.UNIFIED_PLURALITY_AGGREGATION_VERSION
-    memory_policy: str = 'BOOTSTRAPPED_EDIT_EFFECT_ROLLING_MEMORY_V1'
+    memory_policy: str = 'BOOTSTRAPPED_BLOCK_EDIT_EFFECT_MEMORY_V2'
     pattern_policy: str = versions.GRADIENT_PATTERN_DISCOVERY_VERSION
     search_acceptance_policy: str = 'layer1_local_guidance_team_admission_v1'
     search_stop: SearchStopConfig = field(default_factory=SearchStopConfig)
@@ -239,11 +239,11 @@ class SearchMethodConfig:
 
 
     def __post_init__(self):
-        if self.method!=versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_3_VERSION:
+        if self.method!=versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_4_VERSION:
             raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
         # Bundle validation closes all policy combinations before composition.
         if not self.mechanism_config:
-            raise SearchContractError('CURRENT_V23_COMPLETE_POLICY_REQUIRED')
+            raise SearchContractError('CURRENT_V24_COMPLETE_POLICY_REQUIRED')
 
     def identity(self) -> str:
         from dataclasses import asdict
@@ -255,10 +255,10 @@ class SearchMethodConfig:
         allowed = {row.name for row in fields(cls)}
         if set(payload) - allowed:
             raise SearchContractError("unknown unified method component")
-        if payload.get('method')!=versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_3_VERSION:
+        if payload.get('method')!=versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_4_VERSION:
             raise SearchContractError('unsupported unified method identity')
         if not payload.get('mechanism_config'):
-            raise SearchContractError('CURRENT_V23_COMPLETE_POLICY_REQUIRED')
+            raise SearchContractError('CURRENT_V24_COMPLETE_POLICY_REQUIRED')
         values=dict(payload)
         for key, kind in (("search_stop", SearchStopConfig),
                           ("global_stop", GlobalStopConfig)):

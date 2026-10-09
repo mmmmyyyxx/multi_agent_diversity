@@ -1,23 +1,29 @@
 schema_version: failure_registry_v1
 failures:
 - failure_id: FAIL-V23-SOLVER-SERIAL-LOCK-AND-LENGTH-OUTPUT
-  title: Solver network calls were serialized and length failures mixed long derivation with repeated reasoning
+  title: Solver network calls were serialized and length failures mixed long derivation
+    with repeated reasoning
   status: MITIGATED
   lifecycle: MITIGATED
   first_observed: a4_v23_only_pilot_v1
   affected_components:
   - solver_request_broker
   - solver_invalid_recovery
-  symptom: A global lock covered the entire network call. Historical full and partial attempts include 26 and 32 length responses, all without a final marker.
+  symptom: A global lock covered the entire network call. Historical full and partial
+    attempts include 26 and 32 length responses, all without a final marker.
   evidence:
   - reports/a4_v23_parallel_reuse_preparation_20261009/concurrency_proof.json
   - reports/a4_v23_parallel_reuse_preparation_20261009/truncation_audit.json
   root_cause_status: CONFIRMED_SERIAL_LOCK_AND_OBSERVED_MIXED_OUTPUT_FAILURES
   evidence_level: observed
-  mitigation: Explicit fresh eight-worker execution, immutable compatible initial prefixes and bounded truncation-only 6144 recovery. Keep scoring, instructions and four total draws unchanged.
+  mitigation: Explicit fresh eight-worker execution, immutable compatible initial
+    prefixes and bounded truncation-only 6144 recovery. Keep scoring, instructions
+    and four total draws unchanged.
   regression_tests:
   - tests/current/test_parallel_solver_execution.py
-  forbidden_inference: Synthetic throughput is not provider throughput. More capacity is not proven to repair repeated reasoning, improve accuracy or generate commits. Old API scopes remain closed.
+  forbidden_inference: Synthetic throughput is not provider throughput. More capacity
+    is not proven to repair repeated reasoning, improve accuracy or generate commits.
+    Old API scopes remain closed.
   repair_effectiveness: OFFLINE_VERIFIED_REAL_CANARY_REQUIRED
 - failure_id: FAIL-V23-CANARY-OWNER-REVIEW-TIMEOUT
   title: Completed initial Solver profiles waited without an owner review decision
@@ -27,20 +33,30 @@ failures:
   affected_components:
   - canary_owner_supervision
   - delegated_execution_monitor
-  symptom: All 300 initial profiles completed; no owner decision arrived within the frozen 3600-second deadline, so execution aborted before optimization.
+  symptom: All 300 initial profiles completed; no owner decision arrived within the
+    frozen 3600-second deadline, so execution aborted before optimization.
   evidence:
   - reports/a4_v23_only_pilot_execution_20261009/terminal_prefix_audit.json
   - reports/a4_v23_only_pilot_execution_20261009/failure_analysis.json
   root_cause_status: CONFIRMED_MISSING_OWNER_DECISION_BEFORE_FROZEN_DEADLINE
   evidence_level: observed
-  mitigation: Direct owner supervision in a fresh explicitly approved handoff; bounded monitoring and immediate independent review. Keep timeout, receipt binding and consumed-scope rejection unchanged.
+  mitigation: Direct owner supervision in a fresh explicitly approved handoff; bounded
+    monitoring and immediate independent review. Keep timeout, receipt binding and
+    consumed-scope rejection unchanged.
   regression_tests:
+  - tests/current/test_structured_production_entrypoint.py
+  forbidden_inference: No Gradient, mutation, Full, Shadow or commit was observed.
+    Do not infer method failure, approve the terminated attempt retrospectively, or
+    reuse the consumed scope/cache/remaining allowance. The monitor account-error
+    timing is not established.
+  repair_effectiveness: REAL_FOLLOWUP_USER_STOP_BEFORE_REVIEW_EFFECTIVENESS_NOT_EVALUABLE
+  historical_regression_tests:
   - tests/current/test_v23_production_entrypoint.py::test_missing_owner_review_aborts_before_optimization_and_closes_accounting
   - tests/current/test_v23_production_entrypoint.py::test_owner_review_rejects_unapproved_or_stale_receipt
-  forbidden_inference: No Gradient, mutation, Full, Shadow or commit was observed. Do not infer method failure, approve the terminated attempt retrospectively, or reuse the consumed scope/cache/remaining allowance. The monitor account-error timing is not established.
-  repair_effectiveness: REAL_FOLLOWUP_USER_STOP_BEFORE_REVIEW_EFFECTIVENESS_NOT_EVALUABLE
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
 - failure_id: FAIL-A4-OPTIMIZE-ROLE-OVERLAP-EDIT-EVIDENCE-GAP
-  title: Local validation reused mutation examples and Full rejection lacked complete edit evidence
+  title: Local validation reused mutation examples and Full rejection lacked complete
+    edit evidence
   status: MITIGATED
   lifecycle: MITIGATED
   first_observed: math_v2_2_gradient_pattern_seed81_pilot_v2
@@ -48,18 +64,24 @@ failures:
   - optimize_evidence_roles
   - preservation_sampling
   - private_edit_memory
-  symptom: Seven completed opportunities reused panel membership for Probe and the same correct anchor; measured Full losses were outside that panel.
+  symptom: Seven completed opportunities reused panel membership for Probe and the
+    same correct anchor; measured Full losses were outside that panel.
   evidence:
   - reports/math_v2_2_optimizer_failure_audit_v1_20261008/README.md
   - reports/math_optimization_evidence_v23_20261008/information_flow_audit.md
   evidence_level: observed
   root_cause_status: CONFIRMED_ROLE_OVERLAP_AND_INFORMATION_OMISSION_NOT_OPTIMIZER_CAUSALITY
-  mitigation: Explicit V2.3 disjoint Optimize roles, rotating current-correct pool and scope-bound actual-diff Memory; historical execution unchanged.
+  mitigation: Explicit V2.3 disjoint Optimize roles, rotating current-correct pool
+    and scope-bound actual-diff Memory; historical execution unchanged.
   regression_tests:
-  - tests/current/test_optimization_evidence_v23.py
+  - tests/current/test_structured_optimization_evidence.py
   latest_repair: math_optimization_evidence_v23
   latest_repair_status: ZERO_API_SYNTHETIC_CONFORMANCE_REAL_EFFICACY_UNTESTED
-  forbidden_inference: Synthetic conformance does not show a real optimizer improvement, establish hidden Solver causes, or authorize any real API or protected split access.
+  forbidden_inference: Synthetic conformance does not show a real optimizer improvement,
+    establish hidden Solver causes, or authorize any real API or protected split access.
+  historical_regression_tests:
+  - tests/current/test_optimization_evidence_v23.py
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
 - failure_id: FAIL-GRADIENT-DIAGNOSTIC-ARCHIVE-IDENTITY-FIELD
   title: Matched raw diagnostic confused archive schema identity with discovery policy
     identity
@@ -112,8 +134,7 @@ failures:
   required_resolution: Repair supported coordinated-actor provenance; minimally clarify
     the single-call Gradient prompt; freeze fresh identities and run full current
     tests before separately authorized fresh Canary.
-  regression_tests:
-  - tests/test_gradient_patterns.py
+  regression_tests: []
   evidence_format: hash_bound_private_wire_and_synthetic_zero_api_regressions
   evidence_level: observed
   mitigation: V4 current guard adds coordinated participation constraints; V3 replay
@@ -127,6 +148,9 @@ failures:
   latest_real_evidence: reports/math_v2_1_gradient_pattern_seed81_canary_v3_execution_20261006/gradient_outputs_audit.json
   latest_real_contract_status: ALL_OBSERVED_GRADIENTS_PASS_BOUNDED_CANARY_SCOPE
   latest_real_semantic_status: PASS
+  historical_regression_tests:
+  - tests/test_gradient_patterns.py
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
 - failure_id: FAIL-UNIFIED-METHOD-SEMANTIC-DRIFT
   title: Historical V2 implementation differs from the newly supplied method semantic
     contract
@@ -146,14 +170,16 @@ failures:
     the user-authored current research contract.
   forbidden_inference: Fake conformance does not prove real efficacy, memory transfer
     benefit, counterfactual allocation optimality or independent component causality.
-  regression_tests:
-  - tests/test_unified_semantic_contract.py
+  regression_tests: []
   mitigation: Fresh V2.1 policies and runtime identity; old frozen V2 artifacts preserved;
     new real execution requires fresh binding and authorization.
   lifecycle: MITIGATED
   lifecycle_note: ZERO_API_CONFORMANCE_ONLY; REAL_EXECUTION_AND_EFFICACY_UNVERIFIED
   resolved_by: unified_semantic_contract_v2_1
   evidence_format: deterministic_zero_api
+  historical_regression_tests:
+  - tests/test_unified_semantic_contract.py
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
 - failure_id: FAIL-TARGET-CONCENTRATION
   title: Target allocation concentration
   status: DIAGNOSED
@@ -390,14 +416,16 @@ failures:
     cause remains unproven.'
   forbidden_inference: Do not infer mathematical correctness, search effectiveness
     or generalization from this aborted canary.
-  regression_tests:
-  - tests/test_math_preexecution.py
+  regression_tests: []
   mitigation: Versioned immutable formatting interface and request/cache identity
     under zero-API tests. Real compliance unverified; parser unchanged. No old-attempt
     continuation.
   lifecycle: MITIGATED
   lifecycle_note: ZERO_API_INTERFACE_CONFORMANCE_ONLY; REAL_OUTPUT_ADHERENCE_UNVERIFIED
   resolved_by: math_v2_solver_interface_repair_v1_2
+  historical_regression_tests:
+  - tests/test_math_preexecution.py
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
 - failure_id: FAIL-MATH-AUTONOMOUS-TOKEN-ACCOUNTING-UNBOUND
   title: Autonomous real-token ceiling lacks a frozen provider accounting upper bound
   status: MITIGATED
@@ -416,8 +444,7 @@ failures:
   forbidden_inference: Do not infer provider billing bounds from upstream model names,
     successful historical usage or an arbitrary characters-per-token multiplier. No
     efficacy was observed.
-  regression_tests:
-  - tests/test_math_token_accounting.py
+  regression_tests: []
   mitigation: User explicitly authorizes RESERVATION_V2 operational byte-plus-margin
     accounting, full fallback charge and isolated Validation length preparation. Historical
     STOP evidence remains immutable. New real calls require fresh source and exact
@@ -425,6 +452,9 @@ failures:
   lifecycle: MITIGATED
   lifecycle_note: RESOLVED_BY_USER_ACCOUNTING_POLICY_V2; NOT_PROVIDER_BILLING_PROOF
   resolved_by: math_v2_token_accounting_repair_v2
+  historical_regression_tests:
+  - tests/test_math_token_accounting.py
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
 - failure_id: FAIL-MATH-SDK-HTTP-ERROR-MAPPING
   title: Installed SDK error mapping rejected an unsupported keyword
   status: MITIGATED
@@ -442,13 +472,15 @@ failures:
     Original HTTP status is unknown.
   forbidden_inference: No Solver output, opportunity, scientific efficacy or provider
     denial cause is established.
-  regression_tests:
-  - tests/test_math_token_accounting.py
+  regression_tests: []
   mitigation: Use the installed SDK response-only signature and persist private HTTP
     error evidence before terminal abort or frozen retry.
   lifecycle: MITIGATED
   lifecycle_note: ZERO_API_ERROR_MAPPING_CONFORMANCE_ONLY; REAL_PROVIDER_ACCESS_UNVERIFIED
   resolved_by: math_v2_provider_error_mapping_repair_v1
+  historical_regression_tests:
+  - tests/test_math_token_accounting.py
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
 - failure_id: FAIL-MATH-SDK-AUTH-HEADER-OMITTED
   title: Manual exact-body transport omitted SDK bearer authentication
   status: MITIGATED
@@ -464,13 +496,15 @@ failures:
     prove the missing header. The original failed request HTTP status remains unknown.
   forbidden_inference: Do not infer a historical HTTP status, credential validity,
     provider availability or scientific efficacy from this offline reconstruction.
-  regression_tests:
-  - tests/test_math_token_accounting.py
+  regression_tests: []
   mitigation: Build headers and URL through ordinary SDK security handling, preserve
     exact reserved body bytes, pin installed SDK version, and deny uncounted redirects.
   lifecycle: MITIGATED
   lifecycle_note: ZERO_API_TRANSPORT_CONFORMANCE_ONLY; REAL_PROVIDER_ACCESS_UNVERIFIED
   resolved_by: math_v2_provider_error_mapping_repair_v1
+  historical_regression_tests:
+  - tests/test_math_token_accounting.py
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
 - failure_id: FAIL-MATH-REFERENCE-PARSER-DOMAIN-MISMATCH
   title: Frozen nonempty MATH references exceed the scoring parser domain
   status: MITIGATED
@@ -494,13 +528,15 @@ failures:
   regression_tests:
   - tests/test_benchmark_scientific_contracts.py
   - tests/test_repository_governance_alignment.py
-  - tests/test_math_answer_domain_v2.py
   mitigation: Explicit user-authorized V2 native mathematical parsing, compatible
     object families and full-source scorable eligibility. Fresh versioned split and
     exact new phase freeze required; historical Canary V3 remains INVALID.
   lifecycle: MITIGATED
   lifecycle_note: SOURCE_GROUNDED_SCIENTIFIC_AMENDMENT_ZERO_API_PASS; REAL_EXECUTION_AND_EFFICACY_UNVERIFIED
   resolved_by: math_v2_answer_domain_amendment_v2
+  historical_regression_tests:
+  - tests/test_math_answer_domain_v2.py
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
 - failure_id: FAIL-MATH-V21-FINAL-MARKER-OMITTED
   title: Solver normally completed without the frozen final marker
   status: OPEN
@@ -517,12 +553,14 @@ failures:
     cause unknown.
   forbidden_inference: No mathematical correctness, method efficacy or causal claim
     is established.
-  regression_tests:
-  - tests/test_math_v21_binding.py
+  regression_tests: []
   mitigation: Separate immutable interface version; strict parser unchanged; fresh
     source, authorization and process.
   lifecycle: OPEN
   lifecycle_note: FAILED_ATTEMPT_PRESERVED; REPAIR_PENDING
+  historical_regression_tests:
+  - tests/test_math_v21_binding.py
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
 - failure_id: FAIL-MATH-V21-SOLVER-OUTPUT-TRUNCATION
   title: Solver exhausted its frozen output cap during initialization
   status: OPEN
@@ -540,15 +578,17 @@ failures:
     cause unknown; no serialization mismatch found.
   forbidden_inference: No method efficacy or performance-driven budget selection is
     established.
-  regression_tests:
-  - tests/test_math_v21_binding.py
-  - tests/test_math_token_accounting.py
+  regression_tests: []
   mitigation: Preserve strict parser, failed responses, frozen initial prompts and
     durable ledger. Cap enlargement failed. Task clause 147 stops before unapproved
     generation policy changes.
   lifecycle: OPEN
   lifecycle_note: STOP_NEW_METHOD_SCIENTIFIC_POLICY_REQUIRED; FAILED_ATTEMPTS_PRESERVED;
     NO_PILOT_OR_VALIDATION_EXECUTION
+  historical_regression_tests:
+  - tests/test_math_v21_binding.py
+  - tests/test_math_token_accounting.py
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
 - failure_id: FAIL-MATH-V21-FROZEN-DECODING-V1
   title: Fresh frozen Solver decoding attempt failed closed
   status: OPEN
@@ -563,11 +603,13 @@ failures:
   root_cause_status: Exact client request policy verified; provider internal cause
     unverified.
   forbidden_inference: No efficacy conclusion or parameter adaptation.
-  regression_tests:
-  - tests/test_math_solver_decoding.py
+  regression_tests: []
   mitigation: Preserve evidence and ledger; user scientific decision required.
   lifecycle: OPEN
   lifecycle_note: STOP_SOLVER_DECODING_POLICY_INSUFFICIENT
+  historical_regression_tests:
+  - tests/test_math_solver_decoding.py
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
 - failure_id: FAIL-MATH-V21-OPTIMIZER-TOTAL-OUTPUT-CAP
   title: Optimizer reported total output exceeds the frozen answer cap assumption
   status: MITIGATED
@@ -587,8 +629,6 @@ failures:
   forbidden_inference: No backend thinking-token count, method efficacy, generalization
     or performance-based tuning is inferred.
   regression_tests:
-  - tests/test_math_token_accounting.py
-  - tests/test_math_solver_decoding.py
   - tests/test_repository_governance_alignment.py
   mitigation: Preserve failed attempt and full fallback charge, close scopes, and
     require explicit optimizer generation/accounting policy decision before fresh
@@ -599,6 +639,10 @@ failures:
   classification_correction_report: reports/math_v2_1_optimizer_wire_amendment_v1_20261003
   user_approved_wire_repair: OPTIMIZER_REFLECTION_GENERATION_POLICY_V1
   wire_correction_dispatch_evidence: reports/math_v2_1_a1_seed81_low_cost_canary_v2_20261003
+  historical_regression_tests:
+  - tests/test_math_token_accounting.py
+  - tests/test_math_solver_decoding.py
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
 - failure_id: FAIL-MATH-V21-OPTIMIZER-TOTAL-COMPLETION-TRUNCATION
   title: Correctly dispatched optimizer completion cap exhausted before answer
   status: OPEN
@@ -618,14 +662,16 @@ failures:
     is established. The10-token measurement tolerance does not accept a truncated
     generation.
   regression_tests:
-  - tests/test_math_optimizer_generation.py
-  - tests/test_math_token_accounting.py
   - tests/test_repository_governance_alignment.py
   mitigation: Close failed scope and undispatched Pilot, preserve all evidence/charges,
     stop for a new user optimizer generation-policy decision. Do not tune, rerun,
     enlarge cap or disable thinking autonomously.
   lifecycle: OPEN
   lifecycle_note: STOP_NEW_SCIENTIFIC_POLICY_REQUIRED; FAILED_CANARY_IMMUTABLE; PILOT_AND_VALIDATION_NOT_EXECUTED
+  historical_regression_tests:
+  - tests/test_math_optimizer_generation.py
+  - tests/test_math_token_accounting.py
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
 - failure_id: FAIL-MATH-V21-OPTIMIZER-NONTHINKING-TELEMETRY-UNCONFIRMED
   title: Frozen nonthinking confirmation requires unavailable provider telemetry
   status: MITIGATED
@@ -643,8 +689,7 @@ failures:
     were not reproduced.
   forbidden_inference: Do not infer missing counts as zero, hidden thinking as present,
     provider cap violation, model efficacy or an admissible candidate.
-  regression_tests:
-  - tests/test_math_optimizer_generation.py
+  regression_tests: []
   mitigation: Close single-use witness authorization, preserve diagnostics and ledger,
     keep both generation policies and validators unchanged; require a human evidence-policy
     decision before fresh Canary.
@@ -654,6 +699,9 @@ failures:
   resolution_evidence: reports/math_v2_1_autonomous_constitution_v1_20261003/equivalent_evidence_receipt.json
   resolution_note: Current constitution permits audited Level B equivalent evidence;
     prior diagnostic evidence and absent token count remain unchanged.
+  historical_regression_tests:
+  - tests/test_math_optimizer_generation.py
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
 - failure_id: FAIL-MATH-V21-PROPOSER-MUTABLE-GUARD-MISMATCH
   title: Complete optimizer proposals do not reach admissible mutable candidates
   status: MITIGATED
@@ -717,8 +765,7 @@ failures:
     were correct.
   forbidden_inference: No fuzzy ID repair, semantic reassignment, parser loosening
     or efficacy inference.
-  regression_tests:
-  - tests/test_pattern_responsibility.py
+  regression_tests: []
   required_resolution: Explicit opt-in lossless support-ID alias transport, strict
     exact decoding, fresh identity/source/preexecution/authorization and fresh Canary
     under user attachment section 102.
@@ -727,6 +774,9 @@ failures:
   mitigation: Explicit opt-in lossless support-ID alias transport, strict exact decoding,
     fresh identity/source/preexecution/authorization and fresh Canary under user attachment
     section 102.
+  historical_regression_tests:
+  - tests/test_pattern_responsibility.py
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
 - failure_id: FAIL-MATH-PATTERN-GENERIC-COMMAND-NAME-GUARD
   title: Generic mathematical imperative misclassified as example-specific proper
     name
@@ -739,8 +789,7 @@ failures:
   root_cause_status: CONFIRMED_IMPLEMENTATION_FALSE_POSITIVE
   forbidden_inference: Do not loosen example copying, answer, numeric, interface or
     proper-name guards; do not tune Pattern prompt or sampling.
-  regression_tests:
-  - tests/test_pattern_responsibility.py
+  regression_tests: []
   required_resolution: Opt-in versioned generic mathematical-command classification;
     new freeze, authorization and fresh Canary.
   lifecycle: OPEN
@@ -767,6 +816,9 @@ failures:
     authorization and fresh Canary.
   symptom: Generic mathematical command tokens were treated as example-specific proper
     names and rejected by the abstraction guard.
+  historical_regression_tests:
+  - tests/test_pattern_responsibility.py
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
 - failure_id: FAIL-MATH-GRADIENT-GENERIC-DIGIT-CONTRACT
   title: A generic mathematical numeric literal violates the frozen absolute digit
     prohibition
@@ -784,8 +836,7 @@ failures:
   root_cause_status: GENERATED_CONTRACT_NONCOMPLIANCE_FROZEN_GUARD_ENFORCED
   forbidden_inference: No confirmed implementation bug, copied problem-specific value,
     efficacy or population compliance rate; no automatic retry or parser loosening.
-  regression_tests:
-  - tests/current/test_gradient_pilot_audit.py
+  regression_tests: []
   required_resolution: User decision for any prompt or guard amendment, fresh identity/freeze
     and exact authorization. Existing400-character cap and method remain unchanged.
   evidence_format: HASH_BOUND_PRIVATE_PREFIX_AND_SYNTHETIC_ZERO_API_CONTROLS
@@ -803,6 +854,9 @@ failures:
     contract: docs/design/NUMERIC_PROVENANCE_GUARD_V5.md
     scientific_admissibility_changed: true
     comprehensive_semantic_provenance_claim: false
+  historical_regression_tests:
+  - tests/current/test_gradient_pilot_audit.py
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
 - failure_id: FAIL-MATH-WINDOWS-TOKEN-SNAPSHOT-REPLACE
   title: Windows atomic token snapshot replacement aborts fresh Pilot initialization
   status: MITIGATED
@@ -885,9 +939,7 @@ failures:
   forbidden_inference: Do not label operational invalidity, a partition-completion
     bug, a complete valid Pilot, comprehensive semantic provenance, population compliance
     or causal efficacy; no fresh retry under engineering authority.
-  regression_tests:
-  - tests/current/test_numeric_provenance.py::test_clear_numeric_provenance_rejected_in_both_boundaries
-  - tests/current/test_partition_completion.py::test_omission_does_not_mask_any_other_defect
+  regression_tests: []
   mitigation: Preserve raw response and charged prefix, close consumed scope, retain
     frozen Gradient V1 Prompt V3 Guard V5; any continuation requiring admissibility
     changes needs a separate scientific decision.
@@ -918,6 +970,10 @@ failures:
     semantic_provenance_exhaustiveness_claim: false
     limits: Bounded recovery, not guaranteed compliance; three invalid draws remain
       terminal.
+  historical_regression_tests:
+  - tests/current/test_numeric_provenance.py::test_clear_numeric_provenance_rejected_in_both_boundaries
+  - tests/current/test_partition_completion.py::test_omission_does_not_mask_any_other_defect
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
 - failure_id: FAIL-MATH-PILOT-POST-STOP-TERMINAL-SERIALIZATION
   title: Terminal metadata keyword collision aborts runner after complete scientific
     search
@@ -936,10 +992,12 @@ failures:
   evidence_level: observed
   mitigation: Use explicit metadata merge and canonical JSON-compatible summary; verify
     both terminal branches with fake providers.
-  regression_tests:
-  - tests/current/test_pilot_terminal_execution.py::test_current_pilot_runner_seals_terminal_receipts_and_validation_disposition
+  regression_tests: []
   forbidden_inference: Do not rewrite raw lifecycle, invent original completion receipts,
     claim causal efficacy, or rerun the complete zero-commit scientific result.
+  historical_regression_tests:
+  - tests/current/test_pilot_terminal_execution.py::test_current_pilot_runner_seals_terminal_receipts_and_validation_disposition
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
 - failure_id: FAIL-IDENTICAL-INITIAL-STRICT-VOTE-DEADLOCK
   title: Single-member progress cannot deploy against four identical wrong peer votes
   status: MITIGATED
@@ -959,11 +1017,13 @@ failures:
     N-commit bound.
   forbidden_inference: Byte-identical prompts do not guarantee identical stochastic
     member outputs; zero-API conformance proves neither real efficacy nor generalization.
-  regression_tests:
-  - tests/current/test_transition_reachability_v22.py
+  regression_tests: []
   mitigation: Fresh V2.2 OR-progress identity and target-second ranking; execution
     and Pilot bounds fail closed until separately frozen. Historical V2.1 is preserved.
   lifecycle_note: IMPLEMENTED_ZERO_API_ONLY; REAL_EXECUTION_HOLD
+  historical_regression_tests:
+  - tests/current/test_transition_reachability_v22.py
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
 - failure_id: FAIL-V22-PILOT-RESOURCE-BOUND-NOT-FROZEN
   title: Commit finiteness does not establish a resource-realistic opportunity bound
   status: MITIGATED
@@ -974,12 +1034,11 @@ failures:
   - failure_discount_execution_bound
   evidence:
   - reports/math_v2_2_a4_pilot_execution_audit_v1_20261008/finite_bound_assessment.json
-  evidence_level: zero_api_proof_and_counterexample
+  evidence_level: observed
   root_cause_status: Conservative carried-failure recurrence grows beyond realistic
     execution resources; tighter bound unresolved.
   mitigation: Retain HOLD; do not guess a ceiling or change scientific allocation/stopping.
-  regression_tests:
-  - tests/current/test_transition_reachability_v22.py::test_finite_mathematical_bound_does_not_unlock_impractical_real_execution
+  regression_tests: []
   forbidden_inference: Not an empirical A4 failure or proof that no tighter bound
     exists.
   resolution:
@@ -988,6 +1047,12 @@ failures:
     normative_contract: docs/design/V22_OPERATIONAL_PILOT_CEILING_V1.md
     scope: Fixed operational horizon and coupled token admission, not guaranteed saturation
     global_completion_bound_still_unproved: true
+  historical_regression_tests:
+  - tests/current/test_transition_reachability_v22.py::test_finite_mathematical_bound_does_not_unlock_impractical_real_execution
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
+  historical_evidence_category: zero_api_proof_and_counterexample
+  symptom: A conservative finite commit bound did not establish a resource-realistic
+    provider opportunity ceiling.
 - failure_id: FAIL-V22-PATTERN-CLUSTER-1800-OUTPUT-TRUNCATION
   title: First real fixed-horizon cluster response reached its frozen output cap
   status: OPEN
@@ -1000,12 +1065,15 @@ failures:
     at 1800 output tokens before opportunity creation.
   evidence:
   - reports/math_v2_2_gradient_pattern_seed81_pilot_v1_execution_20261008/output_truncation_forensic.json
-  evidence_level: observed_sealed_provider_receipt
+  evidence_level: observed
   root_cause_status: Observed response reached the frozen 1800-token request cap;
     no claim that every cluster set needs a larger cap.
   mitigation: Fail closed; preserve paid response and accounting; consumed one-attempt
     scope remains closed.
-  regression_tests:
-  - tests/test_math_optimizer_generation.py::test_actual_usage_tolerance_does_not_relax_truncation
+  regression_tests: []
   forbidden_inference: Not a scientific zero-commit result, convergence, V2.2 transition
     failure, guard failure, or authorization to retry or increase generation limits.
+  historical_regression_tests:
+  - tests/test_math_optimizer_generation.py::test_actual_usage_tolerance_does_not_relax_truncation
+  historical_regression_source: 4119d75f135537ed610edae3919f5203116b91e3
+  historical_evidence_category: observed_sealed_provider_receipt

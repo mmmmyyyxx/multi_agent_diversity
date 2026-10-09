@@ -1,44 +1,31 @@
 # Current Runtime Composition
 
 The sole active research architecture is Unified Team Prompt Search.
-V2.3 is the unique current method. `CURRENT_RUNTIME_COMPOSITION_V1` retains
-the existing builder boundary; scientific search, scoring and transition semantics
-are unchanged by closure cleanup.
+V2.4 is the only current executable method, composed through
+`build_current_team_prompt_search` and `CURRENT_STRUCTURED_SYSTEM_COMPOSITION_V2`.
 
 ```mermaid
 flowchart TD
-  B[Closed V2.3 binding] --> S[V6 visible Solver execution]
-  S --> R[Member responsibility and feasibility]
-  R --> G[Independent reference-grounded Gradients]
-  G --> P[Actionable clustering and unchanged Pattern selection]
-  P --> M[Bootstrapped bounded edit-effect Memory]
-  M --> L[Conservative Layer1 mutation]
+  B[Closed V2.4 binding] --> S[Structured System / raw problem User]
+  S --> A[Gold-blind extraction and bounded recovery]
+  A --> R[Member responsibility and feasibility]
+  R --> G[Per-example Gradient with optional written steps]
+  G --> P[Actionable clustering and Pattern responsibility]
+  P --> M[Measured competence and block edit Memory]
+  M --> L[Single-block bounded Layer1 search]
   L --> V[Independent Optimize SearchValidation]
   V --> T[Fixed-peer TeamProbe and Full Optimize]
-  T --> D[V3 initial floor and target or team progress]
+  T --> D[Initial floor and target or team progress]
   D --> H[Winner-only Shadow and atomic commit]
-  H --> E[Measured Memory transaction and scientific stop]
+  H --> E[Memory transaction and scientific stop]
 ```
 
-`scripts/run_experiment.py` resolves only `MATHEvidenceBinding`; this binding
-does not inherit a historical executor. Parent JSON supplies pinned data/settings
-provenance, never a factory. `CurrentPolicyBundle` requires non-null V2.3 and V6
-policies. Constructors, schemas, broker, local search, evidence and Memory have
-no executable historical fallback. The mutation request carries only its focused
-examples, selected hypothesis and bounded Memory.
+`scripts/run_experiment.py` resolves only `MATHStructuredBinding`. Every Solver
+stage uses the same two-message wire contract. Historical parent JSON supplies
+pinned dataset/settings provenance; it cannot select an executor or supply
+responses, competence or authorization. Full current policies and fresh exact
+single-use scopes are mandatory. Development and preparation remain zero API.
 
-Actual serialized requests and complete deterministic synthetic outcomes are
-compared against source `7342d85a877880717b00cd19ddc4ab6e598e81e4`.
-The historical V6 projection receipt retains legacy-named schema fields as inert
-provenance; current diagnostic/mutation schemas come exclusively from V2.3.
-These fields cannot select a Gradient or Layer1 path.
-
-Historical bodies are archived with exact Git-blob SHA-256 values and an invariant
-index under `docs/archive/runtime/a4_pre_v23_only_7342d85`. Replay requires the
-original source checkout. No reports, manifests, ledgers or raw traces are deleted.
-Cancelled comparison scopes remain immutable evidence and cannot authorize work.
-
-Current data dependencies preserve canonical/split/subset hashes, evaluator and
-SDK pins, generic-team hashes and length-only accounting metadata. No held-out
-content is projected into optimization. Execution remains HOLD until a fresh
-single-arm freeze and exact single-use approval pass all preflights.
+The active scientific authority is [CURRENT_SPEC.md](CURRENT_SPEC.md), with
+[the structured prompt contract](STRUCTURED_SYSTEM_PROMPT_V24.md). Retired method
+implementations are recoverable from the Git sources in the cleanup tombstone.

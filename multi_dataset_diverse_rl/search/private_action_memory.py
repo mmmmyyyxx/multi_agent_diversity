@@ -39,6 +39,9 @@ def action_features(text):
 
 
 def edit_action(parent, candidate):
+    from .system_prompt import SystemPrompt
+    if isinstance(parent, SystemPrompt): parent = parent.render()
+    if isinstance(candidate, SystemPrompt): candidate = candidate.render()
     old,new=action_features(parent),action_features(candidate)
     added,removed=new-old,old-new
     parts=[]

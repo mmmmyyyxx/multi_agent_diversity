@@ -101,3 +101,10 @@ reports/a4_v23_only_pilot_v2_user_stop_20261009/** -text whitespace=trailing-spa
 # Exact bytes for the new parallel/prefix-reuse preparation evidence.
 reports/a4_v23_parallel_reuse_preparation_20261009/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 docs/design/V23_PARALLEL_CAPACITY_REUSE_V1.md text eol=lf
+
+# V2.4 preparation and published receipts retain deterministic UTF-8 LF bytes.
+experiments/initial_teams/math_structured_system_seed_v1.json text eol=lf
+experiments/protocols/a4_v24_structured_canary_v1/** text eol=lf
+experiments/protocols/a4_v24_structured_pilot_v1/** text eol=lf
+experiments/manifests/a4_v24_structured_*.yaml text eol=lf
+reports/structured_system_prompt_v24_20261009/** text eol=lf

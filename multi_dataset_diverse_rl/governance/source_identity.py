@@ -108,16 +108,8 @@ def current_scientific_files(root: Path, *, execution_closure: bool = False) -> 
     cluster_output_contract = root/'docs/design/PATTERN_CLUSTER_OUTPUT_POLICY_V1.md'
     if cluster_output_contract.is_file():
         result.append(cluster_output_contract)
-    visible_solution_contract = root/'docs/design/MATH_VISIBLE_SOLUTION_FEEDBACK_V1.md'
-    if visible_solution_contract.is_file():
-        result.append(visible_solution_contract)
-    optimization_evidence_contract = root/'docs/design/OPTIMIZATION_EVIDENCE_V23.md'
-    if optimization_evidence_contract.is_file():
-        result.append(optimization_evidence_contract)
-    operational_contract=root/'docs/design/V23_ONLY_EXECUTION_SCOPE_V1.md'
-    if operational_contract.is_file():result.append(operational_contract)
-    parallel_contract=root/'docs/design/V23_PARALLEL_CAPACITY_REUSE_V1.md'
-    if parallel_contract.is_file():result.append(parallel_contract)
+    structured_contract=root/'docs/design/STRUCTURED_SYSTEM_PROMPT_V24.md'
+    if structured_contract.is_file():result.append(structured_contract)
     risk_contract = root/'docs/design/SHARED_RISK_MEMORY_V4.md'
     if risk_contract.is_file():
         result.append(risk_contract)

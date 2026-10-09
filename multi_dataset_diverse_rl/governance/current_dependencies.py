@@ -4,7 +4,7 @@ from .source_identity import local_imports
 
 CURRENT_ENTRYPOINTS=(
     'scripts/run_experiment.py',
-    'multi_dataset_diverse_rl/benchmarks/math_evidence_binding.py',
+    'multi_dataset_diverse_rl/benchmarks/math_structured_binding.py',
     'multi_dataset_diverse_rl/search/current_composition.py',
 )
 LEGACY_TREATMENT_CLASSES=frozenset({

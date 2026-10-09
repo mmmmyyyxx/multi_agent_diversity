@@ -37,7 +37,9 @@ def run(workspace: Path) -> dict:
     errors.extend(registry_errors)
 
     lineage = load_yaml(workspace / "experiments" / "lineage.yaml")
-    lineage_errors, order = validate_lineage(lineage, manifests)
+    known = ([row['experiment_id'] for row in registry['experiments']]
+        if registry.get('schema_version') == 'experiment_registry_v2' else manifests)
+    lineage_errors, order = validate_lineage(lineage, known)
     errors.extend(lineage_errors)
 
     failure_registry = load_yaml(workspace / "docs" / "failures" / "registry.yaml")

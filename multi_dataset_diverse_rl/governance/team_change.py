@@ -3,7 +3,8 @@ import hashlib
 from ..search.schemas import SearchContractError
 
 def team_change_receipt(initial,final):
-    if len(initial)!=5 or len(final)!=5 or any(not isinstance(p,str) for p in (*initial,*final)):
+    from ..search.system_prompt import SystemPrompt
+    if len(initial)!=5 or len(final)!=5 or any(not isinstance(p,SystemPrompt) for p in (*initial,*final)):
         raise SearchContractError('DEPLOYED_TEAM_CHANGE_IDENTITY_INVALID')
     a=[hashlib.sha256(p.encode()).hexdigest() for p in initial]
     b=[hashlib.sha256(p.encode()).hexdigest() for p in final]

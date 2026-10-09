@@ -7,7 +7,6 @@ from .experiment_splits import COUNTS, ROLES
 from .math_low_cost import read_subsets
 from .math_worker import PINS
 from ..search.schemas import SearchContractError
-from ..evaluation.mutable_prompt_contract import validate_mutable_decision_procedure
 from ..current_contract import MATH_INITIAL_TEAM_VERSION, MATH_INITIAL_PROMPT
 
 
@@ -21,13 +20,15 @@ def validate_current_initial_team(team, contract):
         and len(team['members'])==5
         and team['ordered_member_ids']==[m['member_id'] for m in team['members']]==list(range(5)),
         'INITIAL_TEAM_CONTRACT_MISMATCH')
-    require(team['semantic_contract']==['solve the problem']
-        and len({m['prompt'] for m in team['members']})==1
-        and all(m['prompt']==MATH_INITIAL_PROMPT for m in team['members']),
+    from ..search.system_prompt import SystemPrompt
+    require(team['semantic_contract']==['complete editable system prompt']
+        and all(SystemPrompt.from_dict(m['prompt'])==MATH_INITIAL_PROMPT for m in team['members']),
         'INITIAL_TEAM_SYMMETRY_MISMATCH')
     for member in team['members']:
-        validate_mutable_decision_procedure(member['prompt'])
-        require(hashlib.sha256(member['prompt'].encode('utf-8')).hexdigest()==member['prompt_sha256'],
+        prompt=SystemPrompt.from_dict(member['prompt'])
+        require(prompt.prompt_hash==member['prompt_sha256']
+            and member['block_hashes']=={k:prompt.block_hash(k) for k in ('role','strategy','answer')}
+            and member['rendered_system_sha256']==prompt.system_hash,
             'INITIAL_PROMPT_HASH_MISMATCH')
     require(digest([m['prompt_sha256'] for m in team['members']])==contract['initial_team_sha256']
         and team['ordered_team_sha256']==contract['initial_team_sha256'],'INITIAL_TEAM_HASH_MISMATCH')
@@ -72,11 +73,10 @@ def validate_effective_math_dependencies(binding):
     require(file_hash(team_path)==c['initial_team_artifact_sha256'],'INITIAL_TEAM_ARTIFACT_HASH_MISMATCH')
     validate_current_initial_team(json.loads(team_path.read_bytes()),c)
     metadata=json.loads(binding.path(c['validation_accounting_metadata_path']).read_bytes())
-    rows=subsets['memberships']['pilot_validation']
-    require([(r['example_id'],r['input_sha256']) for r in metadata['examples']]==[(r['stable_example_id'],r['input_sha256']) for r in rows]
-        and all(type(r['blank_prompt_serialized_request_bytes']) is int and r['blank_prompt_serialized_request_bytes']>0 for r in metadata['examples'])
-        and all(metadata.get(k)==c[k] for k in ('invalid_recovery_policy','prediction_validity_policy','solver_decoding_policy',
-            'decoding','solver_output_interface','low_cost_protocol')),'VALIDATION_ACCOUNTING_METADATA_MISMATCH')
+    require(metadata==dict(identity='V24_HELDOUT_SEAL_NO_ACCESS_METADATA_V1',
+        validation_model_calls=0,test_model_calls=0,heldout_accounting_reserve=0,
+        validation_access='not_authorized',test_access='sealed'),
+        'VALIDATION_ACCOUNTING_METADATA_MISMATCH')
     require(binding.path(c['token_ledger_directory']).is_relative_to(binding.root/'runs')
         and all(len(c[k])==64 for k in ('task_authorization_sha256','continuation_authorization_sha256')),
         'AUTHORIZATION_LEDGER_MISMATCH')

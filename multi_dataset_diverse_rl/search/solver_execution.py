@@ -5,7 +5,7 @@ from copy import deepcopy
 from .schemas import SearchContractError
 
 
-POLICY = dict(identity='BOUNDED_SOLVER_CAPACITY_EXECUTION_V1',
+POLICY = dict(identity='STRUCTURED_SOLVER_CAPACITY_EXECUTION_V2',
     solver_max_concurrency=8, optimizer_max_concurrency=1,
     first_output_tokens=3600, length_recovery_output_tokens=6144,
     expansion_trigger='IMMEDIATELY_PREVIOUS_RESPONSE_LENGTH_TRUNCATED',

@@ -1,0 +1,92 @@
+{
+  "initial_team_data_dependency": "NONE",
+  "members": [
+    {
+      "block_hashes": {
+        "answer": "ec83ad9c3dac45f9c2297fe8b7672aabeda014083d31d6a73a0d04eda110f13f",
+        "role": "75357d685f238b6afd7738be9786fdafde641eb6ca9a3be7471939715a68a4de",
+        "strategy": "afa6fac81c5121011fdbc4345b2e96360ac9310d9f5acbfdcc341ad1ae267ba6"
+      },
+      "member_id": 0,
+      "prompt": {
+        "answer": "Put your final answer in the format '### <answer>'",
+        "role": "You are a helpful assistant.",
+        "strategy": "Answer the question."
+      },
+      "prompt_sha256": "11777d37da06383b635224d7e2ec71b073536a7205736d401001e5a400c4cd4c",
+      "rendered_system_sha256": "1552c1fca79f483b4af183b39b52ba6fe58e21753fceab2c3054ea8829d9a590"
+    },
+    {
+      "block_hashes": {
+        "answer": "ec83ad9c3dac45f9c2297fe8b7672aabeda014083d31d6a73a0d04eda110f13f",
+        "role": "75357d685f238b6afd7738be9786fdafde641eb6ca9a3be7471939715a68a4de",
+        "strategy": "afa6fac81c5121011fdbc4345b2e96360ac9310d9f5acbfdcc341ad1ae267ba6"
+      },
+      "member_id": 1,
+      "prompt": {
+        "answer": "Put your final answer in the format '### <answer>'",
+        "role": "You are a helpful assistant.",
+        "strategy": "Answer the question."
+      },
+      "prompt_sha256": "11777d37da06383b635224d7e2ec71b073536a7205736d401001e5a400c4cd4c",
+      "rendered_system_sha256": "1552c1fca79f483b4af183b39b52ba6fe58e21753fceab2c3054ea8829d9a590"
+    },
+    {
+      "block_hashes": {
+        "answer": "ec83ad9c3dac45f9c2297fe8b7672aabeda014083d31d6a73a0d04eda110f13f",
+        "role": "75357d685f238b6afd7738be9786fdafde641eb6ca9a3be7471939715a68a4de",
+        "strategy": "afa6fac81c5121011fdbc4345b2e96360ac9310d9f5acbfdcc341ad1ae267ba6"
+      },
+      "member_id": 2,
+      "prompt": {
+        "answer": "Put your final answer in the format '### <answer>'",
+        "role": "You are a helpful assistant.",
+        "strategy": "Answer the question."
+      },
+      "prompt_sha256": "11777d37da06383b635224d7e2ec71b073536a7205736d401001e5a400c4cd4c",
+      "rendered_system_sha256": "1552c1fca79f483b4af183b39b52ba6fe58e21753fceab2c3054ea8829d9a590"
+    },
+    {
+      "block_hashes": {
+        "answer": "ec83ad9c3dac45f9c2297fe8b7672aabeda014083d31d6a73a0d04eda110f13f",
+        "role": "75357d685f238b6afd7738be9786fdafde641eb6ca9a3be7471939715a68a4de",
+        "strategy": "afa6fac81c5121011fdbc4345b2e96360ac9310d9f5acbfdcc341ad1ae267ba6"
+      },
+      "member_id": 3,
+      "prompt": {
+        "answer": "Put your final answer in the format '### <answer>'",
+        "role": "You are a helpful assistant.",
+        "strategy": "Answer the question."
+      },
+      "prompt_sha256": "11777d37da06383b635224d7e2ec71b073536a7205736d401001e5a400c4cd4c",
+      "rendered_system_sha256": "1552c1fca79f483b4af183b39b52ba6fe58e21753fceab2c3054ea8829d9a590"
+    },
+    {
+      "block_hashes": {
+        "answer": "ec83ad9c3dac45f9c2297fe8b7672aabeda014083d31d6a73a0d04eda110f13f",
+        "role": "75357d685f238b6afd7738be9786fdafde641eb6ca9a3be7471939715a68a4de",
+        "strategy": "afa6fac81c5121011fdbc4345b2e96360ac9310d9f5acbfdcc341ad1ae267ba6"
+      },
+      "member_id": 4,
+      "prompt": {
+        "answer": "Put your final answer in the format '### <answer>'",
+        "role": "You are a helpful assistant.",
+        "strategy": "Answer the question."
+      },
+      "prompt_sha256": "11777d37da06383b635224d7e2ec71b073536a7205736d401001e5a400c4cd4c",
+      "rendered_system_sha256": "1552c1fca79f483b4af183b39b52ba6fe58e21753fceab2c3054ea8829d9a590"
+    }
+  ],
+  "ordered_member_ids": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "ordered_team_sha256": "8ddc4a60246c092db10f6f344da95cd595ed1b7a6c7c2522f027b6fb2b1da594",
+  "semantic_contract": [
+    "complete editable system prompt"
+  ],
+  "team_version": "MATH_IDENTICAL_STRUCTURED_SYSTEM_SEED_V1"
+}

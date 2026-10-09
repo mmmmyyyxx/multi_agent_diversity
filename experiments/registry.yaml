@@ -8798,14 +8798,18 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Exact single-use API approval consumed; user stopped the owned process during initialization.
-  - 226 logical profiles, 284 started calls, 283 responses; 358930 charged including 8700 conservative unknown usage; inflight zero.
-  - No Canary review, optimization or held-out calls. Remaining 1641070 closed-scope tokens cannot be reused.
+  - Exact single-use API approval consumed; user stopped the owned process during
+    initialization.
+  - 226 logical profiles, 284 started calls, 283 responses; 358930 charged including
+    8700 conservative unknown usage; inflight zero.
+  - No Canary review, optimization or held-out calls. Remaining 1641070 closed-scope
+    tokens cannot be reused.
   reports:
   - reports/a4_v23_only_pilot_v2_user_stop_20261009
   - reports/a4_v23_only_pilot_v2_preparation_20261009
   unavailable:
-    result_commit: Containing user-stop publication commit, identified by Git history and remote verification.
+    result_commit: Containing user-stop publication commit, identified by Git history
+      and remote verification.
 - experiment_id: a4_v23_parallel_reuse_pilot_v1
   kind: PILOT
   era: UNIFIED_TEAM_PROMPT_SEARCH
@@ -8821,7 +8825,7 @@ experiments:
   manifest: experiments/manifests/a4_v23_parallel_reuse_pilot_v1.yaml
   report: reports/a4_v23_parallel_reuse_preparation_20261009
   classifier: reports/a4_v23_parallel_reuse_preparation_20261009/classifier.json
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -8834,3 +8838,79 @@ experiments:
       SHA.
     execution_commit: No API execution before exact post-freeze scope approval.
     result_commit: Real efficacy unmeasured.
+- experiment_id: structured_system_prompt_v24
+  kind: ARCHITECTURE_REFACTOR
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_4_structured_system_prompt
+  parent_ids:
+  - a4_v23_parallel_reuse_pilot_v1
+  status: COMPLETED
+  scientific_status: OFFLINE_VERIFIED_REAL_EFFICACY_UNKNOWN
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: null
+  report: reports/structured_system_prompt_v24_20261009
+  classifier: reports/structured_system_prompt_v24_20261009/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - New scientific treatment; no historical response, cache, competence or authorization
+    reuse.
+  unavailable:
+    manifest: Architecture refactor; two distinct child attempt manifests govern execution
+    implementation_commit: Execution-source freeze pinned by child manifests; no self-referential
+      SHA.
+    execution_commit: No real API execution authorized or performed.
+    result_commit: No real efficacy result; only synthetic offline verification.
+- experiment_id: a4_v24_structured_canary_v1
+  kind: REAL_CANARY
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_4_structured_system_prompt
+  parent_ids:
+  - structured_system_prompt_v24
+  status: PREEXECUTION_FROZEN
+  scientific_status: UNMEASURED_NOT_AUTHORIZED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/a4_v24_structured_canary_v1.yaml
+  report: reports/structured_system_prompt_v24_20261009
+  classifier: reports/structured_system_prompt_v24_20261009/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - New scientific treatment; no historical response, cache, competence or authorization
+    reuse.
+  unavailable:
+    implementation_commit: Execution-source freeze pinned by child manifests; no self-referential
+      SHA.
+    execution_commit: No real API execution authorized or performed.
+    result_commit: No real efficacy result; only synthetic offline verification.
+- experiment_id: a4_v24_structured_pilot_v1
+  kind: PILOT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_4_structured_system_prompt
+  parent_ids:
+  - structured_system_prompt_v24
+  status: PREEXECUTION_FROZEN
+  scientific_status: UNMEASURED_NOT_AUTHORIZED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/a4_v24_structured_pilot_v1.yaml
+  report: reports/structured_system_prompt_v24_20261009
+  classifier: reports/structured_system_prompt_v24_20261009/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - New scientific treatment; no historical response, cache, competence or authorization
+    reuse.
+  unavailable:
+    implementation_commit: Execution-source freeze pinned by child manifests; no self-referential
+      SHA.
+    execution_commit: No real API execution authorized or performed.
+    result_commit: No real efficacy result; only synthetic offline verification.

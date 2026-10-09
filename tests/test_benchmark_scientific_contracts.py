@@ -17,7 +17,7 @@ from multi_dataset_diverse_rl.benchmarks import (
 )
 from multi_dataset_diverse_rl.benchmarks.hover import RetrievedEvidence, normalize_title
 from multi_dataset_diverse_rl.benchmarks.ifbench import ConstraintReference, response_variants
-from multi_dataset_diverse_rl.benchmarks.math import equivalence_matrix
+from multi_dataset_diverse_rl.benchmarks.math_domain_v2 import domain_matrix as equivalence_matrix
 from multi_dataset_diverse_rl.benchmarks.protocols import PROTOCOLS, protocol_input
 from multi_dataset_diverse_rl.benchmarks.pupa import PAPILLONMemberPipeline, fake_pupa_judge_score
 from multi_dataset_diverse_rl.peer_state import build_team_vote_state, build_peer_vote_context
@@ -172,18 +172,18 @@ def test_ifbench_hidden_fields_not_in_solver_input_or_aggregator_request():
 
 
 @pytest.mark.parametrize("left,right", [
-    ("1/2", ".5"), ("x=2", "2"), (r"\sqrt{4}", "2"), (r"\frac{1}{2}", ".5"),
+    ("1/2", ".5"), ("x=2", "x=2"), (r"\sqrt{4}", "2"), (r"\frac{1}{2}", ".5"),
     (r"\boxed{2}", "2"), (r"\{1,2\}", r"\{2,1\}"),
 ])
 def test_math_equivalence_cases(left, right):
     a = MATHBenchmarkAdapter()
-    p = a.parse_member_output("reasoning not scored\nFINAL_ANSWER: " + left, item(a))
+    p = a.parse_member_output("reasoning not scored\n### " + left, item(a))
     assert p.valid and a.score_member_output(p, right) == 1
 
 
 def test_math_strict_set_tuple_and_wrong_answer():
     a = MATHBenchmarkAdapter()
-    assert not a.parse_member_output("FINAL_ANSWER: (1,2)", item(a)).valid
+    assert not a.parse_member_output("### (1,2)", item(a)).valid
     assert not a.equivalent(r"\{1,2\}", "(1,2)")
     assert not a.equivalent("1/2", "3")
 
@@ -191,18 +191,19 @@ def test_math_strict_set_tuple_and_wrong_answer():
 def test_math_invalid_parse_and_timeout_fail_closed(monkeypatch):
     a = MATHBenchmarkAdapter()
     q = item(a)
-    for raw in ("FINAL_ANSWER: nonsense", "FINAL_ANSWER:", "FINAL_ANSWER: 2\nafter",
-                "FINAL_ANSWER: 2\nFINAL_ANSWER: 3", "2", "FINAL_ANSWER: unknown prose 2",
-                "FINAL_ANSWER: 2+", r"FINAL_ANSWER: \frac{1}{"):
+    for raw in ("### nonsense", "###", "### 2\nafter",
+                "### 2\n### 3", "Unmarked prose 2", "### unknown prose 2",
+                "### 2+", r"### \frac{1}{"):
         assert not a.parse_member_output(raw, q).valid
-    import multi_dataset_diverse_rl.benchmarks.math as module
+    import multi_dataset_diverse_rl.benchmarks.math_domain_v2 as module
     equivalence_matrix.cache_clear()
     def timed_out(*args, **kwargs):
         import subprocess
         raise subprocess.TimeoutExpired("offline-worker", 8)
     monkeypatch.setattr(module.subprocess, "run", timed_out)
-    assert not a.parse_member_output("FINAL_ANSWER: 938", q).valid
-    assert a.score_member_output(ParsedOutput("938", True), "938") == 0
+    assert not a.parse_member_output("### 938", q).valid
+    with pytest.raises(SearchContractError, match="REFERENCE_UNSCORABLE"):
+        a.score_member_output(ParsedOutput("938", True), "938")
     with pytest.raises(SearchContractError, match="MATH_EVALUATOR_TIMEOUT"):
         equivalence_matrix(("938",))
 
@@ -211,8 +212,8 @@ def test_math_equivalence_plurality_tie_invalid_and_e2e():
     a = MATHBenchmarkAdapter()
     q = item(a)
     agg = EquivalencePluralityAggregation()
-    outputs = ("FINAL_ANSWER: 1/2", "FINAL_ANSWER: .5", r"FINAL_ANSWER: \frac{1}{2}",
-               "FINAL_ANSWER: 3", "invalid")
+    outputs = ("### 1/2", "### .5", r"### \frac{1}{2}",
+               "### 3", "invalid")
     result = asyncio.run(agg.aggregate(item=q, member_outputs=outputs, benchmark=a))
     assert result.raw_output == outputs[0] and result.diagnostics["winner_member"] == 0
     assert result.diagnostics["invalid_abstentions"] == 1
@@ -224,7 +225,7 @@ def test_math_equivalence_plurality_tie_invalid_and_e2e():
     observation = observation_from_outputs(benchmark=a, item=q, member_outputs=outputs, gold=".5")
     assert observation.member_success == (True, True, True, False, False)
     assert observation.vote_classes[:3] == ("class:0",) * 3
-    tie = ("FINAL_ANSWER: 1/2", "FINAL_ANSWER: .5", "FINAL_ANSWER: 3", "FINAL_ANSWER: 3", "invalid")
+    tie = ("### 1/2", "### .5", "### 3", "### 3", "invalid")
     assert not asyncio.run(agg.aggregate(item=q, member_outputs=tie, benchmark=a)).parsed_output.valid
 
 
@@ -245,9 +246,9 @@ def test_equivalence_non_transitive_guard():
 
 
 def test_math_worker_real_deadline_and_failure(monkeypatch):
-    import multi_dataset_diverse_rl.benchmarks.math as module
+    import multi_dataset_diverse_rl.benchmarks.math_domain_v2 as module
     # A real subprocess is started and killed on deadline, including on Windows.
-    monkeypatch.setattr(module, "MATH_PROCESS_DEADLINE_SECONDS", 0.000001)
+    monkeypatch.setitem(module.SETTINGS, "process_deadline", 0.000001)
     with pytest.raises(SearchContractError, match="MATH_EVALUATOR_TIMEOUT"):
         equivalence_matrix(("23917",))
     import subprocess

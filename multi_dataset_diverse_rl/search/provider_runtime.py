@@ -29,8 +29,8 @@ class RequestBroker:
         from .current_policy import CURRENT_POLICY_BUNDLE
         CURRENT_POLICY_BUNDLE.validate_contract(contract)
         if arm!='A4' or seed!=81 or validation_only:
-            raise SearchContractError('CURRENT_V23_ROLE_SEED_SPLIT_FORBIDDEN')
-        from ..benchmarks.math_visible_trajectory import frozen_trajectory_policy
+            raise SearchContractError('CURRENT_V24_ROLE_SEED_SPLIT_FORBIDDEN')
+        from ..benchmarks.math_response_evidence import frozen_trajectory_policy
         self.solver_trajectory_policy = frozen_trajectory_policy(contract)
         self.transport = transport
         self.arm = arm
@@ -47,7 +47,9 @@ class RequestBroker:
         self.lock = lock if lock is not None else threading.RLock()
         self.execution_policy = frozen_execution_policy(contract)
         self.shared_requests = shared_requests if shared_requests is not None else {}
-        self.evidence_reuse = evidence_reuse
+        if evidence_reuse is not None:
+            raise SearchContractError('V24_HISTORICAL_EVIDENCE_REUSE_FORBIDDEN')
+        self.evidence_reuse = None
         self.physical_inflight = self.shared_requests.setdefault('physical_inflight', {})
         self.requests_inflight = self.shared_requests.setdefault('logical_inflight', {})
         self.physical_slots = self.shared_requests.setdefault('physical_slots', threading.BoundedSemaphore(
@@ -63,13 +65,13 @@ class RequestBroker:
         self.gradient_pattern = contract.get('pattern_policy',{}).get('discovery') == versions.GRADIENT_PATTERN_DISCOVERY_VERSION
         if self.gradient_pattern:
             from .textual_gradients import pattern_policy_for_trajectory
-            if (contract.get('identity')!=versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION
+            if (contract.get('identity')!=versions.MATH_STRUCTURED_SYSTEM_BINDING_VERSION
                     or contract['pattern_policy']!=pattern_policy_for_trajectory(self.solver_trajectory_policy, contract.get('optimization_evidence_policy'))
                     or contract.get('pattern_abstraction_guard')!=CURRENT_CONTENT_GUARD
                     or not contract.get('gradient_prompt_sha256')):
                 raise SearchContractError('GRADIENT_PATTERN_PROVIDER_BINDING_MISMATCH')
             for role in ('pattern_gradient','pattern_cluster'):self.usage.setdefault(role,0)
-        self.member_lane_policy = contract.get('cache_policy') == versions.SOLVER_MEMBER_LANE_CACHE_VERSION
+        self.member_lane_policy = contract.get('cache_policy') == 'STRUCTURED_SYSTEM_MEMBER_LANE_CACHE_V3'
         if not self.member_lane_policy:
             raise SearchContractError('SOLVER_MEMBER_LANE_POLICY_BINDING_MISMATCH')
         self.durable_cache = durable_cache
@@ -114,9 +116,11 @@ class RequestBroker:
             request['max_tokens'] = output_capacity
         identity = {"provider": c["provider"], "role": role, "split": split, "request": request,
                     "cache_namespace": c["cache_namespace"]}
-        if c.get('identity')==versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION:
+        if c.get('identity')==versions.MATH_STRUCTURED_SYSTEM_BINDING_VERSION:
+            identity['system_prompt_policy'] = c['system_prompt_policy']
+            identity['answer_extraction_policy'] = c['answer_extraction_policy']
             identity['method_treatment'] = {k:c[k] for k in ('method_identity', 'transition_policy')}
-        if c.get('identity')==versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION:
+        if c.get('identity')==versions.MATH_STRUCTURED_SYSTEM_BINDING_VERSION:
             identity['memory_treatment']={k:c[k] for k in ('memory_policy_identity','memory_limits','layer1_search_policy','optimizer_input_schema','panel_evidence_policy')}
         if c.get('pattern_policy'):
             identity['pattern_treatment']={k:c[k] for k in ('pattern_policy','shared_risk_policy')}
@@ -207,22 +211,14 @@ class RequestBroker:
                 self.requests_inflight.pop(key, None)
 
     def _resolve_solver(self, *, role, split, stage, messages, member_slot, key):
-        from ..benchmarks.math_prediction_validity import classify_prediction,resolve_predictions
+        from ..benchmarks.math_structured_answer import classify_prediction
+        from ..benchmarks.math_prediction_validity import resolve_predictions
         predictions=[];realizations=[];transport_retries=0
-        request,_ = self._request_identity(role=role,split=split,messages=messages,member_slot=member_slot)
-        imported = (self.evidence_reuse.prefix(request, member_slot)
-            if self.evidence_reuse is not None and stage == 'initial' and split == 'optimize' else ())
         for semantic_attempt_no in range(1,5):
             try:
                 capacity=next_capacity(self.execution_policy,predictions[-1] if predictions else None)
-                if semantic_attempt_no <= len(imported):
-                    result=imported[semantic_attempt_no-1]
-                    self._write(dict(kind='EVIDENCE_REUSE',role=role,split=split,stage=stage,
-                        request_sha256=key,semantic_attempt_no=semantic_attempt_no,
-                        source=result['evidence_reuse_source']))
-                else:
-                    result=self._complete_one(role=role,split=split,stage=stage,messages=messages,
-                        semantic_attempt_no=semantic_attempt_no,member_slot=member_slot,output_capacity=capacity)
+                result=self._complete_one(role=role,split=split,stage=stage,messages=messages,
+                    semantic_attempt_no=semantic_attempt_no,member_slot=member_slot,output_capacity=capacity)
             except BaseException as exc:
                 if semantic_attempt_no>1 and 'TOKEN_BUDGET' in str(exc):
                     self.abort('STOP_TOKEN_BUDGET_INSUFFICIENT_FOR_INVALID_RECOVERY')
@@ -456,17 +452,14 @@ class BenchmarkSolver:
     def _request(self, prompt, item, *, stage, split):
         if item.benchmark_id != self.benchmark.benchmark_id:
             raise SearchContractError("SOLVER_BENCHMARK_INTERFACE_MISMATCH")
-        # Benchmark-owned immutable formatting is authoritative even if an
-        # evolved example or caller supplies a missing/stale per-item contract.
-        interface = self.benchmark.output_contract
+        # Only the complete member prompt supplies Solver instructions.
+        from .system_prompt import require_prompt, solver_messages
+        require_prompt(prompt)
         contract = self.benchmark.solver_interface_contract()
         if self.broker.contract.get("solver_output_interface") != contract:
             raise SearchContractError("SOLVER_INTERFACE_BINDING_MISMATCH")
         if self.broker.prompt_observer:
             self.broker.prompt_observer(prompt)
-        user_content = (self.benchmark.solver_user_content(prompt, item)
-            if hasattr(self.benchmark, "solver_user_content")
-            else prompt + "\n\n" + self.benchmark.format_input(item))
         effective_contract = dict(solver_interface=contract,
             mutable_prompt_sha256=hashlib.sha256(prompt.encode()).hexdigest(),
             benchmark_input_sha256=hashlib.sha256(self.benchmark.format_input(item).encode()).hexdigest(),
@@ -488,8 +481,7 @@ class BenchmarkSolver:
             solver_interface_identity=contract["identity"], mutable_prompt_sha256=hashlib.sha256(prompt.encode()).hexdigest(),
             effective_solver_request_contract_hash=effective))
         return self.broker.complete(role="solver", split=split, stage=stage,
-            messages=[{"role": "system", "content": interface},
-                      {"role": "user", "content": user_content}],member_slot=self.member_id)
+            messages=solver_messages(prompt, self.benchmark.format_input(item)),member_slot=self.member_id)
 
     def solve(self, prompt, item, *, stage, split):
         result = self._request(prompt, item, stage=stage, split=split)
@@ -506,7 +498,7 @@ class BenchmarkSolver:
         return result["text"]
 
     def _visible_profile(self, result, prediction, prompt, item, split):
-        from ..benchmarks.math_visible_trajectory import solver_profile
+        from ..benchmarks.math_response_evidence import solver_profile
         return solver_profile(result, prediction, member_id=self.member_id, prompt=prompt,
             example_id=item.input_id, split=split, policy=self.broker.solver_trajectory_policy,
             problem=self.benchmark.format_input(item))
@@ -551,7 +543,7 @@ class BenchmarkSolver:
             parsed = prediction.parsed()
             trajectory = None
             if self.broker.solver_trajectory_policy is not None:
-                from ..benchmarks.math_visible_trajectory import adaptive_trajectory
+                from ..benchmarks.math_response_evidence import adaptive_trajectory
                 profile = self._visible_profile(result, prediction, prompt, item, 'optimize')
                 trajectory = adaptive_trajectory(profile, member_id=self.member_id,
                     prompt=prompt, example_id=item.input_id, problem=self.benchmark.format_input(item))

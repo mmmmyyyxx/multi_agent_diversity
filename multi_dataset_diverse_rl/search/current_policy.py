@@ -1,4 +1,4 @@
-"""Closed V2.3 scientific bundle; no historical execution defaults."""
+"""Closed V2.4 scientific bundle; no historical execution defaults."""
 from dataclasses import asdict, dataclass
 from copy import deepcopy
 from .. import current_contract as identities
@@ -12,13 +12,22 @@ from .optimization_evidence import frozen_policy, METHOD, LAYER1, EVIDENCE, MEMO
 
 def require_current_contract(contract):
     """Check identity before data, provider, cache or parent construction."""
-    from ..benchmarks.math_visible_trajectory import trajectory_policy
+    from ..benchmarks.math_response_evidence import trajectory_policy
     from .optimization_evidence import BINDING
     if (contract.get('method_identity') != METHOD or contract.get('identity') != BINDING
             or contract.get('paired_realization_policy') is not None
             or contract.get('gradient_recovery_policy') is not None):
         raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
     frozen_policy(contract.get('optimization_evidence_policy'))
+    from ..benchmarks.math_structured_interface import SYSTEM_PROMPT_POLICY, system_interface_contract
+    from ..benchmarks.math_structured_answer import POLICY as extraction
+    if (contract.get('system_prompt_policy') != SYSTEM_PROMPT_POLICY
+            or contract.get('answer_extraction_policy') != extraction
+            or contract.get('solver_output_interface') != system_interface_contract()
+            or contract.get('cache_policy') != 'STRUCTURED_SYSTEM_MEMBER_LANE_CACHE_V3'
+            or any(contract.get(k) is not None for k in ('initial_evidence_reuse_policy',
+                'initial_evidence_reuse_manifest_path','initial_evidence_reuse_manifest_sha256'))):
+        raise SearchContractError('CURRENT_STRUCTURED_SYSTEM_POLICY_REQUIRED')
     if contract.get('solver_trajectory_policy') != trajectory_policy():
         raise SearchContractError('CURRENT_VISIBLE_TRAJECTORY_REQUIRED')
 
@@ -91,14 +100,11 @@ class CurrentPolicyBundle:
         require_current_contract(contract)
         from .solver_execution import frozen_execution_policy
         execution=frozen_execution_policy(contract)
-        if execution:
-            from ..persistence.solver_evidence_reuse import POLICY as reuse_policy
-            if (contract.get('initial_evidence_reuse_policy')!=reuse_policy
-                    or contract.get('accounting_scope_policy')!='FRESH_V23_PARALLEL_SINGLE_ARM_2M_V1'):
-                raise SearchContractError('V23_PARALLEL_REUSE_POLICY_MISMATCH')
+        if execution and contract.get('accounting_scope_policy')!='FRESH_V24_STRUCTURED_SINGLE_ARM_2M_V1':
+            raise SearchContractError('V24_ACCOUNTING_SCOPE_MISMATCH')
         from ..benchmarks.math_optimizer_generation import frozen_cluster_policy
         frozen_cluster_policy(contract)
-        from ..benchmarks.math_visible_trajectory import frozen_trajectory_policy
+        from ..benchmarks.math_response_evidence import frozen_trajectory_policy
         trajectory = frozen_trajectory_policy(contract)
         revised = frozen_policy(contract.get('optimization_evidence_policy'))
         if contract.get('partition_completion_policy') not in (None, self.partition_completion):
