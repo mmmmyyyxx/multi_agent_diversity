@@ -10,7 +10,7 @@ schema_version: current_frontier_v1
 current_architecture: Unified Team Prompt Search
 method_identity: unified_team_prompt_search_v2_3
 current_method: unified_team_prompt_search_v2_3
-current_experiment: a4_v23_only_pilot_v2
+current_experiment: a4_v23_parallel_reuse_pilot_v1
 current_implementation: Closed V23 production graph with V6 trajectories, disjoint
   evidence and measured competence/edit-effect Memory.
 current_benchmark_suite:
@@ -24,13 +24,13 @@ real_execution_ready: false
 real_api_authorized: false
 validation_access: not_authorized
 test_access: sealed
-current_execution_blocker: USER_REQUESTED_STOP_AUTHORIZATION_CLOSED
+current_execution_blocker: FRESH_EXACT_POST_FREEZE_AUTHORIZATION_REQUIRED
 current_execution_blockers:
-- USER_REQUESTED_STOP_AUTHORIZATION_CLOSED
+- FRESH_EXACT_POST_FREEZE_AUTHORIZATION_REQUIRED
 current_runtime_builder: build_current_team_prompt_search
 current_execution_entrypoint: scripts/run_experiment.py
 current_runtime_composition: CURRENT_RUNTIME_COMPOSITION_V1
-current_execution_binding: experiments/execution_bindings/a4_v23_only_seed81_20261009_attempt2.json
+current_execution_binding: experiments/execution_bindings/a4_v23_parallel_seed81_20261009_attempt1.json
 current_layer1_backend: INDEPENDENT_OPTIMIZE_VALIDATION_SEARCH_V1
 current_memory_policy: BOOTSTRAPPED_EDIT_EFFECT_ROLLING_MEMORY_V1
 current_pattern_policy: gradient_cluster_pattern_discovery_v4
@@ -43,12 +43,12 @@ current_transition_policy: initial_competence_target_or_team_progress_v3
 current_configuration_arm: A4
 current_pattern_enabled: true
 current_memory_enabled: true
-current_canary_status: STOPPED_BY_USER_INITIAL_PROFILE_INCOMPLETE
-current_pilot_status: NOT_ENTERED_USER_STOP
-current_pilot_report: reports/a4_v23_only_pilot_v2_user_stop_20261009
-current_canary_report: reports/a4_v23_only_pilot_v2_user_stop_20261009
+current_canary_status: NOT_EXECUTED
+current_pilot_status: NOT_EXECUTED
+current_pilot_report: reports/a4_v23_parallel_reuse_preparation_20261009
+current_canary_report: reports/a4_v23_parallel_reuse_preparation_20261009
 last_canary_milestone: math_v2_1_gradient_pattern_seed81_canary_v3
-next_canary_attempt_id: null
+next_canary_attempt_id: a4_v23_parallel_seed81_20261009_attempt1
 next_canary_milestone: null
 canary_manifest: null
 next_canary_authorized: false
@@ -56,10 +56,10 @@ next_pilot_authorized: false
 next_validation_authorized: false
 formal_a1_ready: false
 formal_a1_authorized: false
-pending_pilot_milestone: a4_v23_only_pilot_v2
-pending_pilot_manifest: experiments/manifests/a4_v23_only_pilot_v2.yaml
-pending_pilot_attempt_id: a4_v23_only_seed81_20261009_attempt2
-pending_pilot_status: CLOSED_USER_REQUESTED_STOP
+pending_pilot_milestone: a4_v23_parallel_reuse_pilot_v1
+pending_pilot_manifest: experiments/manifests/a4_v23_parallel_reuse_pilot_v1.yaml
+pending_pilot_attempt_id: a4_v23_parallel_seed81_20261009_attempt1
+pending_pilot_status: OFFLINE_VERIFIED_AUTHORIZATION_PENDING
 pending_pilot_operational_retry_limit: 0
 pending_pilot_validation_authorized: false
 pending_pilot_test_authorized: false
@@ -70,9 +70,9 @@ pilot_validation_complete: false
 finite_pilot_bound_frozen: true
 operational_horizon_K: 5
 operational_attempt_token_ceiling: 2000000
-accounting_scope_policy: FRESH_V23_SINGLE_ARM_2M_V1
-token_ledger_directory: runs/a4_v23_only_seed81_20261009_attempt2/accounting
-autonomous_authorization_status: CONSUMED_CLOSED_USER_STOP
+accounting_scope_policy: FRESH_V23_PARALLEL_SINGLE_ARM_2M_V1
+token_ledger_directory: runs/a4_v23_parallel_seed81_20261009_attempt1/accounting
+autonomous_authorization_status: PENDING_FRESH_FROZEN_SCOPE_BINDING
 future_execution_requires_new_frozen_single_use_scope: true
 next_matched_comparison_status: PERMANENTLY_CANCELLED_HISTORICAL_ONLY
 next_matched_comparison_real_api_authorized: false
@@ -414,7 +414,13 @@ last_v23_observed_commits: 0
 last_v23_scientific_status: NOT_EVALUABLE
 last_v23_initial_correct_counts: null
 last_v23_initial_profiles: 226
-proposed_followup_executor: NONE_USER_REQUESTED_STOP
+proposed_followup_executor: SCIENTIFIC_OWNER_DIRECT_EXECUTION
+solver_max_concurrency: 8
+solver_first_capacity: 3600
+solver_length_recovery_capacity: 6144
+initial_reuse_complete_profiles: 289
+initial_reuse_affected_profiles: 11
+initial_reuse_manifest_sha256: 7ec2af71539491eb67f01cf455ebdf11f7c7a90429144c8bbcdf7b331ccb5534
 ```
 
 ## Experiment and engineering DAG
@@ -697,6 +703,7 @@ flowchart TD
     n296["a4_v23_matched_comparison_v1_b<br/>PILOT<br/>ABANDONED"]
     n297["a4_v23_only_pilot_v1<br/>PILOT<br/>INVALID"]
     n298["a4_v23_only_pilot_v2<br/>PILOT<br/>ABANDONED"]
+    n299["a4_v23_parallel_reuse_pilot_v1<br/>PILOT<br/>PREEXECUTION_FROZEN"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -927,6 +934,8 @@ flowchart TD
   n293 -->|followup_of| n297
   n296 -->|followup_of| n297
   n297 -->|followup_of| n298
+  n298 -->|followup_of| n299
+  n297 -->|followup_of| n299
 ```
 
 ## Archived branches and unresolved evidence

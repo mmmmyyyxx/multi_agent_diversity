@@ -1,0 +1,30 @@
+{
+  "attempts": [
+    {
+      "attempt": "a4_v23_only_seed81_20261008_attempt1",
+      "finish_length": 26,
+      "finish_stop": 331,
+      "length_final_marker_present": 0,
+      "missing_final_marker": 45,
+      "substantive_repetition_indicator": 16,
+      "terminal_invalid": 14
+    },
+    {
+      "attempt": "a4_v23_only_seed81_20261009_attempt2",
+      "finish_length": 32,
+      "finish_stop": 251,
+      "length_final_marker_present": 0,
+      "missing_final_marker": 38,
+      "substantive_repetition_indicator": 19,
+      "terminal_invalid": 13
+    }
+  ],
+  "findings": [
+    "Repeated geometry identities and repeated formula corrections are observed.",
+    "Lengthy algebra enumeration and unfinished derivation are also observed.",
+    "Every historical length response reported 3600 output tokens; none had the final marker.",
+    "Lexical repetition excludes formatting delimiters and is an indicator, not a causal classifier."
+  ],
+  "larger_capacity_effect": "REQUIRES_REAL_CANARY_NO_ASSUMED_REPAIR",
+  "owner_review": "REPRESENTATIVE_PREFIX_AND_TAIL_FROM_ALL_FOUR_PRIMARY_AND_FIVE_SECONDARY_LENGTH_PROBLEM_GROUPS"
+}

@@ -1,0 +1,9 @@
+{
+  "frozen_source_sha": "81104adc10cfb2d2225e96e8553f2add4b7ecfdf",
+  "old_evidence_immutable": true,
+  "private_payloads_published": false,
+  "reuse_manifest_sha256": "7ec2af71539491eb67f01cf455ebdf11f7c7a90429144c8bbcdf7b331ccb5534",
+  "scope_sha256": "b03acab287703680c7d956e8ab0987f75588a580c3248f381ef11cc5dc9534f0",
+  "start_head": "746736923930a7ff0c9b47faf269e13245628d64",
+  "startup_identity_sha256": "93353e1d23dca3b7ed1507e7808cc960566374f46812a087c10ee9af17b4ae71"
+}

@@ -1,0 +1,20 @@
+{
+  "approval_reason": "Task section VIII requires one approval bound to the concrete post-freeze scope; proposed 2M is not automatically granted.",
+  "attempt_id": "a4_v23_parallel_seed81_20261009_attempt1",
+  "consumed": false,
+  "explicit_user_authorized": false,
+  "new_charged_plus_reserved_ceiling": 2000000,
+  "old_unused_scope_transfer": false,
+  "phase": "pilot_search_only",
+  "roles": [
+    "solver",
+    "reflection",
+    "pattern_gradient",
+    "pattern_cluster"
+  ],
+  "scope_sha256": "b03acab287703680c7d956e8ab0987f75588a580c3248f381ef11cc5dc9534f0",
+  "single_use": true,
+  "source_sha": "81104adc10cfb2d2225e96e8553f2add4b7ecfdf",
+  "startup_identity_sha256": "93353e1d23dca3b7ed1507e7808cc960566374f46812a087c10ee9af17b4ae71",
+  "status": "PENDING_EXACT_POST_FREEZE_APPROVAL"
+}

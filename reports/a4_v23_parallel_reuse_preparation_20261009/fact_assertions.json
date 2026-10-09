@@ -1,0 +1,9 @@
+{
+  "four_total_semantic_draws_preserved": true,
+  "old_api_scopes_not_reused": true,
+  "old_inventories_and_ledger_chains_verified": true,
+  "optimization_algorithm_and_full_guards_unchanged": true,
+  "primary_300_requests_and_sealed_realizations_verified": true,
+  "real_peak_concurrency_measured": true,
+  "source_selection_performance_blind": true
+}

@@ -1,0 +1,93 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "2677f0ebe0e547f516dc67a710a92259e2aa9631ac17b27536c7a8991c317c2c"
+    },
+    {
+      "file": "authorization_receipt.json",
+      "sha256": "1ac75135b533b4bc7464d889729bbef465b9daddcf3a300c6b0a5f5a39155532"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "3ebc731789941ffdeb6de38d60ca5da37c28c68fbc2ea29523fd01fd80e92d62"
+    },
+    {
+      "file": "concurrency_proof.json",
+      "sha256": "8706f16156b2396dee51996e5392384776ad45294f02f10c79bb41d897b59947"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "23888605f6f25bffd9306f356f66998b90f8bf9d338f92c43bece89f83e7e53e"
+    },
+    {
+      "file": "execution_handoff.yaml",
+      "sha256": "77aeae2237136ceb191208e5f826e44238a55ebe39ba7abae63ebbd61a5f3cc2"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "dfe781d253a4789fd7acaf3272ad39dab1e4d0b4b926599d8742ecf51d2f6eb0"
+    },
+    {
+      "file": "freeze.json",
+      "sha256": "a7608fd98a0f38c05b2d11d63fc9e7bf8b9bf6ebe4a0a5c26df74a9f83af2599"
+    },
+    {
+      "file": "governance.json",
+      "sha256": "a26acd460873d6b2970daad670ec1580bd38b90ad5ef2136acb1c2d37d2752a4"
+    },
+    {
+      "file": "historical_audit.json",
+      "sha256": "f984e32a76f0b026f5955567856bb8be34c8fe5b52375f710777204627482849"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "1c170d9955cb9497f3fd75472f14e5535a5d39e836336f283075eb8735c69128"
+    },
+    {
+      "file": "preflight.json",
+      "sha256": "9524624251d18e7f7b7e4713f4f3517ca11d574124def80967c65a87fb27b6d4"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "73ae9d704b0729166e173a92867255d2dc9e883d1f49540477a3b116ef7453d6"
+    },
+    {
+      "file": "README.md",
+      "sha256": "83ecc21fdd3f04194543888a19a23af49b0c860dcdbb76ca504ad3e9eb4edf8a"
+    },
+    {
+      "file": "real_execution_status.json",
+      "sha256": "bfde1d40b77daca63a6d0c0bd769a4e06eca6c707b76fc447f13087ecf19017c"
+    },
+    {
+      "file": "regression.json",
+      "sha256": "234cd9e41e8dd02d406810cf99a9a8a8fa5d12f4c34d29a9d7828d4a46060e42"
+    },
+    {
+      "file": "resource_bounds.json",
+      "sha256": "3c3e08c01535c7fb50452dde25bdaf00e6cce473b7995687f0a99ec484f504b5"
+    },
+    {
+      "file": "resource_estimate.md",
+      "sha256": "e7413b45d37dd96e329499eed49990be1c4c665cb824b764eb8edcde459e0f7c"
+    },
+    {
+      "file": "reuse_eligibility.json",
+      "sha256": "ef4804d73e580af04719e226d48700a0f9c5cc3353455dafef60290458314560"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "579c6eba52ffd164f8445aac62b5b2104bdb394a1f979fb83a454a76196305e5"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "6b8d6d5bcecc8a58ad6618b412a13c68980f9a8407099f9009eb51c89681e99d"
+    },
+    {
+      "file": "truncation_audit.json",
+      "sha256": "19f201ccf002c5cc7917581c09efb6a70a74d2b0920c28914c8976ed3252d252"
+    }
+  ]
+}

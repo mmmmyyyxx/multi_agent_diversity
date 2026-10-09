@@ -1,0 +1,21 @@
+{
+  "command": "runs/math_v2_1/runtime/Scripts/python.exe tests/formal_zero_api_runner.py tests --suite current -q",
+  "compileall": "PASS",
+  "compileall_verified_after_source_commit": true,
+  "concurrency_reuse_capacity_owner_barrier_smokes": "PASS",
+  "current_governance": "PASS",
+  "errors": 0,
+  "failed": 0,
+  "historical_replay_pass_claim": false,
+  "legacy_governance_cli": "PREEXISTING_39_LINEAGE_AND_3_FAILURE_METADATA_ERRORS_RECORDED_NOT_REPAIRED",
+  "log_sha256": "3a3bf0ca51ce77dd1cfe7fccfdd64e02132e0ef6732e6969b22f971b8c3162f9",
+  "network_attempts": 0,
+  "network_guard_active_before_import": true,
+  "new_api_calls": 0,
+  "omitted_modules": 213,
+  "omitted_private_modules": 8,
+  "passed": 400,
+  "selected": 402,
+  "skipped": 2,
+  "status": "PASS_CURRENT_SUITE"
+}

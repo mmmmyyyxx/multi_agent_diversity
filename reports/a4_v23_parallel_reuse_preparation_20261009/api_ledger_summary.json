@@ -1,0 +1,9 @@
+{
+  "cumulative_authorized_scope_upper_bound_if_approved": 2763607,
+  "historical_charged": 763607,
+  "new_charged": 0,
+  "new_reserved": 0,
+  "old_unused_allowance_transfer": false,
+  "proposed_new_ceiling": 2000000,
+  "real_api_authorized": false
+}

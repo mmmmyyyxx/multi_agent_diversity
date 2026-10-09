@@ -1,0 +1,19 @@
+{
+  "duplicate_physical_ids": 0,
+  "first_parallel_wave_synchronized_for_peak_measurement": true,
+  "inflight_remaining": 0,
+  "logical_observations": 300,
+  "lost_receipts": 0,
+  "ordered_score": 200,
+  "out_of_order": true,
+  "parallel_peak": 8,
+  "parallel_seconds": 5.186656399979256,
+  "physical_attempts": 276,
+  "same_costs": true,
+  "same_provenance": true,
+  "same_requests": true,
+  "serial_peak": 1,
+  "serial_seconds": 15.410481700091623,
+  "transport_failures_fully_reserved": 6,
+  "unique_keys": 270
+}

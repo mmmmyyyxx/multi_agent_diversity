@@ -1,0 +1,239 @@
+schema_version: sol_luna_experiment_handoff_v1
+experiment_id: a4_v23_parallel_reuse_pilot_v1
+source:
+  repository_commit: 81104adc10cfb2d2225e96e8553f2add4b7ecfdf
+  execution_source_sha: 81104adc10cfb2d2225e96e8553f2add4b7ecfdf
+  tracked_worktree_status: clean
+  startup_identity_sha256: 93353e1d23dca3b7ed1507e7808cc960566374f46812a087c10ee9af17b4ae71
+protocol:
+  name: TARGET_OR_TEAM_PROGRESS_OPERATIONAL_PILOT_BOUND_V1
+  version: 1
+  protocol_path: experiments/protocols/a4_v23_parallel_reuse_pilot_v1/protocol.json
+  protocol_sha256: 2e743bfaeb7408eedcd983ff7a4be386d7f70907519a7d0ae255dc445f9b486f
+  manifest_path: experiments/manifests/a4_v23_parallel_reuse_pilot_v1.yaml
+  manifest_sha256: 1c170d9955cb9497f3fd75472f14e5535a5d39e836336f283075eb8735c69128
+  preregistration_path: experiments/manifests/a4_v23_parallel_reuse_pilot_v1.yaml
+  preregistration_sha256: 3b9795a6e3012f56db7395325db39242cd372e65f69d5140161184db0764ac85
+  endpoint_structural_identifiability: NOT_APPLICABLE_TARGET_OR_TEAM_PROGRESS_ENDPOINT
+data:
+  dataset: math
+  split_identity: 196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507
+  split_sha256: 196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507
+models:
+  solver: qwen3-8b
+  optimizer_or_reflection: qwen3.7-flash
+  thinking: false
+  local_optimizer_backend: INDEPENDENT_OPTIMIZE_VALIDATION_SEARCH_V1
+  local_optimizer_version_or_sha256: 81104adc10cfb2d2225e96e8553f2add4b7ecfdf
+execution:
+  executor: SCIENTIFIC_OWNER_DIRECT_EXECUTION_REQUIRES_EXACT_APPROVAL
+  seeds:
+  - 81
+  opportunity_budget: 5
+  early_stop_rule: team_epoch_no_commit_v1_patience_2
+  charged_total_ceiling: 2000000
+  exact_runner_command: runs/math_v2_1/runtime/Scripts/python.exe scripts/run_experiment.py
+    --prep runs/a4_v23_parallel_seed81_20261009_attempt1/frozen_prep --run-root runs/a4_v23_parallel_seed81_20261009_attempt1/execution
+    --execute
+  expected_output_directory: runs/a4_v23_parallel_seed81_20261009_attempt1/execution
+  expected_checkpoint_path: NOT_RESUMABLE_PRIVATE_DURABLE_EVIDENCE_ONLY
+  expected_ledger_path: runs/a4_v23_parallel_seed81_20261009_attempt1/accounting/AUTONOMOUS_REAL_TOKEN_LEDGER_V2.json
+  allowed_retries:
+    experimental: 0
+    scientific_resume: false
+    solver_semantic_attempts: 4
+    transport_max_attempts: 21
+    sdk_retries: 0
+monitoring:
+  owner: SCIENTIFIC_OWNER
+  maximum_poll_interval_seconds: 60
+  review_required:
+  - EARLY_SOLVER_CAPACITY
+  - INITIAL_SOLVER_PROFILE
+  - FIRST_COMPLETE_OPPORTUNITY
+  review_deadline_seconds: 3600
+  automatic_approval: false
+  stdout_path: runs/a4_v23_parallel_seed81_20261009_attempt1/frozen_prep/runner_stdout.log
+  stderr_path: runs/a4_v23_parallel_seed81_20261009_attempt1/frozen_prep/runner_stderr.log
+  workflow: docs/workflows/V23_CANARY_OWNER_SUPERVISION.md
+  quiet_when_unchanged: true
+authorization:
+  api_scope:
+    accounting_policy_sha256: f97794c89cd2914cddc69ed7e2dc3c6bf7cac9635dd3f3746f22a42eda080417
+    accounting_scope_policy: FRESH_V23_PARALLEL_SINGLE_ARM_2M_V1
+    arm: A4
+    attempt_id: a4_v23_parallel_seed81_20261009_attempt1
+    binding_sha256: 5bc0e34ff38faafb91875d6df89a6ac9e8f28b82fe5809fedf0192188fcb9ba8
+    cache_namespace: a4_v23_parallel_seed81_20261009_attempt1
+    canary_review_policy:
+      early_membership: FIRST_EIGHT_AFFECTED_INITIAL_OBSERVATIONS_IN_MEMBER_EXAMPLE_ORDER
+      early_result_reuse: SAME_INITIAL_LOGICAL_KEYS_NO_EXTRA_DRAWS
+      efficacy_based_stopping: false
+      extra_provider_calls: 0
+      identity: V23_PREFIX_CAPACITY_CANARY_REVIEW_V2
+      maximum_wait_seconds: 3600
+      owner_review_required: true
+      scientific_state_reset: false
+      stages:
+      - EARLY_SOLVER_CAPACITY
+      - INITIAL_SOLVER_PROFILE
+      - FIRST_COMPLETE_OPPORTUNITY
+      supervision: SCIENTIFIC_OWNER_INSPECTS_PENDING_RECEIPTS
+      total_max_opportunities: 5
+      unreached_branch: NOT_OBSERVED_NO_FORCED_GENERATION
+    cumulative_token_ceiling: 2000000
+    heldout_accounting_reserve: 0
+    initial_evidence_reuse_manifest_sha256: 7ec2af71539491eb67f01cf455ebdf11f7c7a90429144c8bbcdf7b331ccb5534
+    initial_evidence_reuse_policy:
+      admission: EXACT_WIRE_BYTES_MEMBER_EXAMPLE_INTERFACE_AND_SEALED_RECEIPTS
+      correctness_selection: false
+      identity: VERIFIED_INITIAL_REALIZATION_PREFIX_REUSE_V1
+      initial_scores: RECOMPUTE_FROM_RECONSTRUCTED_PROFILES
+      new_charges: NEW_TRANSPORT_ONLY
+      old_cache_mutation: false
+      prefix: STOP_BEFORE_FIRST_CAPACITY_DIVERGENCE
+      retry_budget: FOUR_TOTAL_OLD_PLUS_NEW_SEMANTIC_DRAWS
+      scope: INITIAL_OPTIMIZE_ONLY
+      source_selection: SOLE_FROZEN_COMPLETE_ATTEMPT
+    initial_memory_entries: 5
+    initial_team_sha256: d1a04dbdd540371638e8271cca90469f0a8cf4d42a5f944eeee8c6dfcfca9110
+    method: unified_team_prompt_search_v2_3
+    models:
+      optimizer_reflection: qwen3.7-flash
+      pattern: qwen3.7-flash
+      solver: qwen3-8b
+      solver_thinking: false
+    operational_pilot:
+      guarantees_saturation: false
+      identity: TARGET_OR_TEAM_PROGRESS_OPERATIONAL_PILOT_BOUND_V1
+      max_opportunities: 5
+      scientific_stopper: team_epoch_no_commit_v1
+      token_ceiling: 2000000
+    optimization_evidence_policy:
+      bootstrap: measured_initial_optimize_profiles_zero_llm
+      candidate_guard: optimizer_dependency_guard_v1
+      edit_memory: actual_diff_and_scope_bound_coverage_v1
+      identity: OPTIMIZATION_EVIDENCE_POLICY_V1
+      max_generations: 6
+      max_returned_candidates: 4
+      metric_limit: 42
+      minimum_current_correct: 6
+      minimum_current_wrong: 4
+      mutation_size: 3
+      no_safe_edit: no_candidate_no_success
+      reference_solution_max_chars: 4096
+      reference_solution_split: optimize
+      sampling: seeded_member_rotation_without_replacement_v1
+      search_validation_size: 3
+      selection: validation_net_then_preservation_then_mutation_net_then_generation
+      team_probe_size: 3
+      validation_feedback: measure_after_generation_counts_only_next_iteration
+    pattern_cluster_generation_policy:
+      accounting_output_ceiling: 8202
+      enable_thinking: false
+      frequency_penalty: 0
+      identity: PATTERN_CLUSTER_GENERATION_POLICY_V1
+      max_completion_tokens: 8192
+      max_tokens: NOT_SENT
+      measurement_tolerance_tokens: 10
+      model: qwen3.7-flash
+      output_token_scope: reasoning_plus_answer
+      presence_penalty: 1.5
+      roles:
+      - pattern_cluster
+      temperature: 0.7
+      top_k: 20
+      top_p: 0.8
+      truncation: existing_operational_output_truncation
+    phase: pilot_search_only
+    preregistration_identity: 3b9795a6e3012f56db7395325db39242cd372e65f69d5140161184db0764ac85
+    provider: lwj
+    provider_bounds:
+      attempt_charged_token_ceiling: 2000000
+      bound_proof:
+        bootstrap_logical_solver_calls: 500
+        gradient_semantic_multiplier: 1
+        gross_reservations_are_not_spending: true
+        guarantees_saturation: false
+        identity: V2_3_OPTIMIZE_EVIDENCE_RESOURCE_DERIVATION_V1
+        per_op_logical_solver:
+          full: 120
+          local: 42
+          probe: 12
+          shadow: 40
+        scientific_stopper_unchanged: true
+        solver_semantic_multiplier: 4
+        token_bound: PRE_TRANSPORT_EXACT_RESERVATION_AND_CUMULATIVE_ATTEMPT_ADMISSION
+        transport_multiplier: 21
+      cumulative_charged_token_ceiling: 40000000
+      gross_reservation_upper_bound: 308070000000
+      max_opportunities: 5
+      max_proposals_per_opportunity: 6
+      pattern_calls: 305
+      pattern_cluster_calls: 5
+      pattern_gradient_calls: 300
+      physical_solver_per_opportunity: 856
+      reflection_calls: 30
+      reservation_peak_upper_bound: 2000000
+      shadow_solver_calls: 1600
+      solver_calls: 6280
+      solver_per_opportunity: 214
+      successful_provider_calls: 6615
+      transport_attempts: 138915
+    roles:
+    - solver
+    - reflection
+    - pattern_gradient
+    - pattern_cluster
+    seed: 81
+    solver_execution_policy:
+      batch_failure: STOP_DISPATCH_DRAIN_PERSIST_THEN_RAISE
+      expansion_trigger: IMMEDIATELY_PREVIOUS_RESPONSE_LENGTH_TRUNCATED
+      first_output_tokens: 3600
+      identity: BOUNDED_SOLVER_CAPACITY_EXECUTION_V1
+      inflight_identical_key: SINGLE_OWNER_SHARED_FUTURE
+      length_recovery_output_tokens: 6144
+      max_semantic_attempts: 4
+      optimization_dependencies: SERIAL
+      optimizer_max_concurrency: 1
+      result_order: INPUT_ORDER
+      solver_max_concurrency: 8
+    solver_output_interface:
+      identity: MATH_SOLVER_INTERFACE_V6
+      parser_identity: math_verify_no_fallback_v1
+      reflection_max_output_tokens: 1800
+      sha256: 0f8d3231716ba2ca0de72e3b0674431daa58949c76120da4b8add4de1b1eecee
+      solver_max_output_tokens: 3600
+    solver_trajectory_policy:
+      adaptive_split: optimize
+      gradient_input_schema: PER_EXAMPLE_TEXTUAL_GRADIENT_SCHEMA_V2
+      gradient_prompt_identity: PER_EXAMPLE_TEXTUAL_GRADIENT_PROMPT_V4
+      hidden_reasoning_claim: false
+      identity: MATH_VISIBLE_SOLUTION_FEEDBACK_POLICY_V1
+      max_visible_solution_characters: 4096
+      memory_trajectory_writes: false
+      optimizer_input_schema: PATTERN_GRADIENT_VISIBLE_SOLUTIONS_MEMORY_INPUT_V5
+      original_response_retention: complete_private_resolved_prediction_and_attempts
+      profile_schema: MATH_VISIBLE_SOLVER_PROFILE_V1
+      source: ordinary_assistant_content
+      trajectory_schema: MATH_VISIBLE_SOLVER_TRAJECTORY_V1
+      truncation: unicode_prefix_explicit_metadata
+    source_sha: 81104adc10cfb2d2225e96e8553f2add4b7ecfdf
+    test_calls: 0
+    token_ledger_directory: runs/a4_v23_parallel_seed81_20261009_attempt1/accounting
+    transition: initial_competence_target_or_team_progress_v3
+    user_scope_sha256: 0ad677bbe4e90c2492407066c53a7fd571d0218e291f596d4a8fb6d5eac17542
+    validation_calls: 0
+  api_scope_sha256: b03acab287703680c7d956e8ab0987f75588a580c3248f381ef11cc5dc9534f0
+  approval_status: PENDING_EXACT_NEW_HUMAN_APPROVAL
+  validation_access_policy: NOT_AUTHORIZED_ZERO_CALLS
+  test_access_policy: SEALED_ZERO_CALLS
+fail_closed_conditions:
+- frozen source/hash mismatch
+- source mutation
+- command/model/seed/split mismatch
+- budget/ledger/provider/persistence failure
+- unauthorized held-out access
+- owner review timeout or unapproved receipt
+- scientific change required
+READY_TO_RUN: false

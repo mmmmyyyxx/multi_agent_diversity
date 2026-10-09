@@ -1,0 +1,22 @@
+{
+  "affected": 11,
+  "complete": 289,
+  "manifest_sha256": "7ec2af71539491eb67f01cf455ebdf11f7c7a90429144c8bbcdf7b331ccb5534",
+  "maximum_new_successful_draws": 32,
+  "minimum_new_successful_draws": 11,
+  "physical_prefixes": 330,
+  "policy": {
+    "admission": "EXACT_WIRE_BYTES_MEMBER_EXAMPLE_INTERFACE_AND_SEALED_RECEIPTS",
+    "correctness_selection": false,
+    "identity": "VERIFIED_INITIAL_REALIZATION_PREFIX_REUSE_V1",
+    "initial_scores": "RECOMPUTE_FROM_RECONSTRUCTED_PROFILES",
+    "new_charges": "NEW_TRANSPORT_ONLY",
+    "old_cache_mutation": false,
+    "prefix": "STOP_BEFORE_FIRST_CAPACITY_DIVERGENCE",
+    "retry_budget": "FOUR_TOTAL_OLD_PLUS_NEW_SEMANTIC_DRAWS",
+    "scope": "INITIAL_OPTIMIZE_ONLY",
+    "source_selection": "SOLE_FROZEN_COMPLETE_ATTEMPT"
+  },
+  "rejected_later_historical_draws": 27,
+  "rejected_reason": "CAPACITY_DIVERGENCE_AFTER_LENGTH"
+}

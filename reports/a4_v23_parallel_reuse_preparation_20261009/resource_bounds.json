@@ -1,0 +1,11 @@
+{
+  "affected_observations": 11,
+  "all_remaining_draws_exact_conservative_reservation_bound": 362314,
+  "assumption": "Every remaining draw bounded by 6144; actual 3600 draws are lower; full 21-attempt envelope cannot fit proposed ceiling.",
+  "attempt_charged_plus_reserved_hard_ceiling": 2000000,
+  "conditional_one_new_draw_per_affected_exact_reservation_bound": 124681,
+  "expected_real_usage": "NOT_ESTABLISHED_BEFORE_CANARY",
+  "first_new_draw_output_tokens": 67584,
+  "including_maximum_21_transport_attempts_each": 7608594,
+  "maximum_new_semantic_responses": 32
+}

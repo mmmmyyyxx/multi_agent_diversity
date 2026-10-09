@@ -1,0 +1,15 @@
+{
+  "commits": "NOT_EVALUABLE_BEFORE_REAL_EXECUTION",
+  "initial_reconstruction_policy_changed": true,
+  "method_efficacy": "NOT_ESTIMATED",
+  "new_api_calls": 0,
+  "new_charged_tokens": 0,
+  "opportunities_completed": 0,
+  "optimization_algorithm_changed": false,
+  "real_canary": "NOT_EXECUTED",
+  "real_pilot": "NOT_EXECUTED",
+  "solver_execution_policy_changed": true,
+  "source_sha": "81104adc10cfb2d2225e96e8553f2add4b7ecfdf",
+  "startup_identity_sha256": "93353e1d23dca3b7ed1507e7808cc960566374f46812a087c10ee9af17b4ae71",
+  "status": "READY_FOR_AUTHORIZATION"
+}

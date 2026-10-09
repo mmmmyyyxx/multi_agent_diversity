@@ -1,0 +1,10 @@
+{
+  "commit_decisions": [],
+  "final_method_effectiveness": "NOT_EVALUABLE",
+  "full_gains_losses": "NOT_MEASURED",
+  "memory_retrieval_or_learning": "NOT_MEASURED",
+  "next_step": "EXACT_POST_FREEZE_API_SCOPE_APPROVAL_THEN_REAL_CANARY",
+  "opportunity_table": [],
+  "real_canary": "NOT_EXECUTED",
+  "real_pilot": "NOT_EXECUTED"
+}

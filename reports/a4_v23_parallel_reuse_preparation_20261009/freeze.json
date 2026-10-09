@@ -1,0 +1,17 @@
+{
+  "READY_TO_RUN": false,
+  "attempt_id": "a4_v23_parallel_seed81_20261009_attempt1",
+  "authorization_status": "PENDING_EXACT_POST_FREEZE_APPROVAL",
+  "binding_sha256": "5bc0e34ff38faafb91875d6df89a6ac9e8f28b82fe5809fedf0192188fcb9ba8",
+  "experiment_id": "a4_v23_parallel_reuse_pilot_v1",
+  "manifest_path": "experiments/manifests/a4_v23_parallel_reuse_pilot_v1.yaml",
+  "manifest_sha256": "1c170d9955cb9497f3fd75472f14e5535a5d39e836336f283075eb8735c69128",
+  "new_api_calls": 0,
+  "preregistration_identity": "3b9795a6e3012f56db7395325db39242cd372e65f69d5140161184db0764ac85",
+  "private_reuse_verified": true,
+  "reuse_manifest_sha256": "7ec2af71539491eb67f01cf455ebdf11f7c7a90429144c8bbcdf7b331ccb5534",
+  "scope_sha256": "b03acab287703680c7d956e8ab0987f75588a580c3248f381ef11cc5dc9534f0",
+  "source_closure_verified": true,
+  "source_sha": "81104adc10cfb2d2225e96e8553f2add4b7ecfdf",
+  "startup_identity_sha256": "93353e1d23dca3b7ed1507e7808cc960566374f46812a087c10ee9af17b4ae71"
+}

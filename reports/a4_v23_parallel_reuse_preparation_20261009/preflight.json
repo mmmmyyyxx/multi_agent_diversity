@@ -1,0 +1,20 @@
+{
+  "benchmark_id": "math",
+  "binding_sha256": "5bc0e34ff38faafb91875d6df89a6ac9e8f28b82fe5809fedf0192188fcb9ba8",
+  "blockers": [],
+  "gate": "PILOT_READY_NOT_AUTHORIZED",
+  "historical_evidence_reaudit": "PASS",
+  "negative_controls": {
+    "closed_old_approval_graft": "REJECTED_BEFORE_PROVIDER",
+    "default_pending_approval": "REJECTED_BEFORE_PROVIDER"
+  },
+  "new_execution_created": false,
+  "new_ledger_created": false,
+  "provider_attempts": 0,
+  "readiness_identity": "MATH_RUNTIME_READINESS_V1",
+  "ready_for_authorization": true,
+  "real_api_authorized": false,
+  "source_and_startup_integrity": "PASS",
+  "test_calls": 0,
+  "validation_calls": 0
+}
