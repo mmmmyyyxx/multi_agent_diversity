@@ -1,0 +1,74 @@
+{
+  "attempt_id": "a4_v23_parallel_seed81_20261009_attempt1",
+  "canary_review_policy": {
+    "early_membership": "FIRST_EIGHT_AFFECTED_INITIAL_OBSERVATIONS_IN_MEMBER_EXAMPLE_ORDER",
+    "early_result_reuse": "SAME_INITIAL_LOGICAL_KEYS_NO_EXTRA_DRAWS",
+    "efficacy_based_stopping": false,
+    "extra_provider_calls": 0,
+    "identity": "V23_PREFIX_CAPACITY_CANARY_REVIEW_V2",
+    "maximum_wait_seconds": 3600,
+    "owner_review_required": true,
+    "scientific_state_reset": false,
+    "stages": [
+      "EARLY_SOLVER_CAPACITY",
+      "INITIAL_SOLVER_PROFILE",
+      "FIRST_COMPLETE_OPPORTUNITY"
+    ],
+    "supervision": "SCIENTIFIC_OWNER_INSPECTS_PENDING_RECEIPTS",
+    "total_max_opportunities": 5,
+    "unreached_branch": "NOT_OBSERVED_NO_FORCED_GENERATION"
+  },
+  "fresh_single_use_exact_post_freeze_api_approval_required": true,
+  "identity": "V23_PARALLEL_CAPACITY_REUSE_PROTOCOL_V1",
+  "invalid_recovery_policy": {
+    "cache": "resolved_valid_or_exhausted_terminal_only",
+    "capacity_policy": "BOUNDED_SOLVER_CAPACITY_EXECUTION_V1",
+    "first_valid_stops": true,
+    "identity": "MATH_SOLVER_CAPACITY_INVALID_RECOVERY_V2",
+    "invalidity_weight": "none",
+    "logical_evaluation_count": 1,
+    "max_semantic_attempts": 4,
+    "same_messages_and_sampling": true,
+    "same_request_bytes": false,
+    "solver_invalid_max_retries": 3,
+    "terminal_invalid": "incorrect_continue_no_vote",
+    "terminal_requires_completed_invalid_attempts": 4,
+    "transport_failures_consume_semantic_attempt": false
+  },
+  "method": "unified_team_prompt_search_v2_3",
+  "operational_pilot": {
+    "guarantees_saturation": false,
+    "identity": "TARGET_OR_TEAM_PROGRESS_OPERATIONAL_PILOT_BOUND_V1",
+    "max_opportunities": 5,
+    "scientific_stopper": "team_epoch_no_commit_v1",
+    "token_ceiling": 2000000
+  },
+  "reuse_manifest_sha256": "7ec2af71539491eb67f01cf455ebdf11f7c7a90429144c8bbcdf7b331ccb5534",
+  "reuse_policy": {
+    "admission": "EXACT_WIRE_BYTES_MEMBER_EXAMPLE_INTERFACE_AND_SEALED_RECEIPTS",
+    "correctness_selection": false,
+    "identity": "VERIFIED_INITIAL_REALIZATION_PREFIX_REUSE_V1",
+    "initial_scores": "RECOMPUTE_FROM_RECONSTRUCTED_PROFILES",
+    "new_charges": "NEW_TRANSPORT_ONLY",
+    "old_cache_mutation": false,
+    "prefix": "STOP_BEFORE_FIRST_CAPACITY_DIVERGENCE",
+    "retry_budget": "FOUR_TOTAL_OLD_PLUS_NEW_SEMANTIC_DRAWS",
+    "scope": "INITIAL_OPTIMIZE_ONLY",
+    "source_selection": "SOLE_FROZEN_COMPLETE_ATTEMPT"
+  },
+  "solver_execution_policy": {
+    "batch_failure": "STOP_DISPATCH_DRAIN_PERSIST_THEN_RAISE",
+    "expansion_trigger": "IMMEDIATELY_PREVIOUS_RESPONSE_LENGTH_TRUNCATED",
+    "first_output_tokens": 3600,
+    "identity": "BOUNDED_SOLVER_CAPACITY_EXECUTION_V1",
+    "inflight_identical_key": "SINGLE_OWNER_SHARED_FUTURE",
+    "length_recovery_output_tokens": 6144,
+    "max_semantic_attempts": 4,
+    "optimization_dependencies": "SERIAL",
+    "optimizer_max_concurrency": 1,
+    "result_order": "INPUT_ORDER",
+    "solver_max_concurrency": 8
+  },
+  "test_access": "sealed",
+  "validation_access": "not_authorized"
+}

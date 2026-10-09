@@ -131,10 +131,18 @@ def invalid_recovery_contract():
 def frozen_recovery_policy(contract):
     if contract.get('identity')!=versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION:
         raise SearchContractError('MATH_INVALID_RECOVERY_REQUIRES_FRESH_BINDING')
-    expected=invalid_recovery_contract();policy=contract.get('invalid_recovery_policy')
+    expected=(capacity_recovery_contract() if contract.get('solver_execution_policy') else invalid_recovery_contract())
+    policy=contract.get('invalid_recovery_policy')
     if policy!=expected or any(type(policy[k]) is not type(v) for k,v in expected.items()):
         raise SearchContractError('MATH_INVALID_RECOVERY_BINDING_MISMATCH')
     return dict(policy)
+
+
+def capacity_recovery_contract():
+    from ..current_contract import MATH_CAPACITY_INVALID_RECOVERY_VERSION
+    return {**invalid_recovery_contract(), 'identity':MATH_CAPACITY_INVALID_RECOVERY_VERSION,
+        'same_request_bytes':False,'same_messages_and_sampling':True,
+        'capacity_policy':'BOUNDED_SOLVER_CAPACITY_EXECUTION_V1'}
 
 
 @dataclass(frozen=True)

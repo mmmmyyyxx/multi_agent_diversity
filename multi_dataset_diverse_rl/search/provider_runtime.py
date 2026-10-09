@@ -6,6 +6,9 @@ import hashlib
 import json
 import threading
 import time
+from concurrent.futures import Future
+from contextlib import nullcontext
+from .solver_execution import frozen_execution_policy, next_capacity, bounded_ordered_map
 
 from ..local_optimizers.base import LocalSolverObservation, VisibleLocalSolverObservation
 from ..benchmarks.protocols import PROTOCOLS
@@ -21,7 +24,7 @@ from ..current_contract import PATTERN_SPECIFIC_CONTENT_GUARD_VERSION as CURRENT
 class RequestBroker:
     def __init__(self, *, contract, transport, arm, seed, ledger_writer=None, raw_writer=None, usage=None, lock=None,
                  token_ledger=None, reserve_reader=None, validation_only=False, durable_cache=None,
-                 response_receipts=None):
+                 response_receipts=None, shared_requests=None, evidence_reuse=None):
         self.contract = contract
         from .current_policy import CURRENT_POLICY_BUNDLE
         CURRENT_POLICY_BUNDLE.validate_contract(contract)
@@ -42,6 +45,15 @@ class RequestBroker:
         self.usage = usage if usage is not None else dict(attempts=0, successes=0, failures=0, input_tokens=0, output_tokens=0,
             solver=0, reflection=0, pattern=0, validation=0, test=0)
         self.lock = lock if lock is not None else threading.RLock()
+        self.execution_policy = frozen_execution_policy(contract)
+        self.shared_requests = shared_requests if shared_requests is not None else {}
+        self.evidence_reuse = evidence_reuse
+        self.physical_inflight = self.shared_requests.setdefault('physical_inflight', {})
+        self.requests_inflight = self.shared_requests.setdefault('logical_inflight', {})
+        self.physical_slots = self.shared_requests.setdefault('physical_slots', threading.BoundedSemaphore(
+            self.execution_policy['solver_max_concurrency'] if self.execution_policy else 1))
+        self.optimizer_slots = self.shared_requests.setdefault('optimizer_slots', threading.BoundedSemaphore(
+            self.execution_policy['optimizer_max_concurrency'] if self.execution_policy else 1))
         self.token_ledger = token_ledger
         self.reserve_reader = reserve_reader or (lambda: 0)
         self.validation_only = validation_only
@@ -81,9 +93,10 @@ class RequestBroker:
         return RequestBroker(contract=self.contract, transport=self.transport, arm=self.arm, seed=self.seed,
             ledger_writer=self.ledger_writer, raw_writer=self.raw_writer, usage=self.usage, lock=self.lock,
             token_ledger=self.token_ledger, reserve_reader=self.reserve_reader, validation_only=self.validation_only,
-            durable_cache=self.durable_cache, response_receipts=self.response_receipts)
+            durable_cache=self.durable_cache, response_receipts=self.response_receipts,
+            shared_requests=self.shared_requests, evidence_reuse=self.evidence_reuse)
 
-    def _request_identity(self, *, role, split, messages, member_slot=None):
+    def _request_identity(self, *, role, split, messages, member_slot=None, output_capacity=None):
         pattern_roles={'pattern_gradient','pattern_cluster'}
         legal=(role in {'solver','reflection',*pattern_roles} and split in {'optimize','shadow'}
             and (role=='solver' or split=='optimize'))
@@ -94,6 +107,11 @@ class RequestBroker:
         c = self.contract
         model = c["models"]["solver" if role == "solver" else "optimizer_reflection" if role == "reflection" else "pattern"]
         request = dict(model=model, messages=messages, **generation_request_fields(c, role))
+        if output_capacity is not None:
+            allowed = {3600, 6144} if self.execution_policy else {3600}
+            if role != 'solver' or type(output_capacity) is not int or output_capacity not in allowed:
+                raise SearchContractError('SOLVER_OUTPUT_CAPACITY_NOT_FROZEN')
+            request['max_tokens'] = output_capacity
         identity = {"provider": c["provider"], "role": role, "split": split, "request": request,
                     "cache_namespace": c["cache_namespace"]}
         if c.get('identity')==versions.MATH_OPTIMIZATION_EVIDENCE_BINDING_VERSION:
@@ -120,6 +138,11 @@ class RequestBroker:
             if c.get('optimizer_nonthinking_evidence_policy'):
                 identity['optimizer_nonthinking_evidence_policy']=c['optimizer_nonthinking_evidence_policy']
         if role == "solver":
+            if self.execution_policy:
+                identity['solver_execution_policy'] = self.execution_policy
+            if c.get('initial_evidence_reuse_policy'):
+                identity['initial_evidence_reuse_policy'] = c['initial_evidence_reuse_policy']
+                identity['initial_evidence_reuse_manifest_sha256'] = c['initial_evidence_reuse_manifest_sha256']
             if self.member_lane_policy:
                 if type(member_slot) is not int or member_slot not in range(5):
                     raise SearchContractError('SOLVER_MEMBER_REALIZATION_LANE_REQUIRED')
@@ -158,66 +181,113 @@ class RequestBroker:
                 previous=self.durable_cache.get(key)
                 if previous is not None:self._store_cache(key,previous)
             if key in self.cache:return self._cache_hit(key,role,split,stage)
-            from ..benchmarks.math_prediction_validity import classify_prediction,resolve_predictions
-            predictions=[];realizations=[];transport_retries=0
-            for semantic_attempt_no in range(1,5):
-                try:
-                    result=self._complete_one(role=role,split=split,stage=stage,messages=messages,
-                        semantic_attempt_no=semantic_attempt_no,member_slot=member_slot)
-                except BaseException as exc:
-                    if semantic_attempt_no>1 and 'TOKEN_BUDGET' in str(exc):
-                        self.abort('STOP_TOKEN_BUDGET_INSUFFICIENT_FOR_INVALID_RECOVERY')
-                    raise
-                transport_retries+=result['transport_retry_attempts']
-                prediction=classify_prediction(result['text'],result.get('finish_reason'))
-                predictions.append(prediction);realizations.append(result)
-                self._write(dict(kind='SEMANTIC_ATTEMPT',role=role,split=split,stage=stage,
-                    request_sha256=key,semantic_attempt_no=semantic_attempt_no,
-                    prediction_valid=prediction.prediction_valid,invalid_reason=prediction.invalid_reason,
-                    finish_reason=prediction.finish_reason,transport_retry_attempts=result['transport_retry_attempts']))
-                if prediction.prediction_valid:break
-            resolved=resolve_predictions(predictions,transport_retries)
-            output={**result,'resolved_prediction':asdict(resolved),'original_realizations':realizations,
-                'input_tokens':sum(r['input_tokens'] for r in realizations),
-                'output_tokens':sum(r['output_tokens'] for r in realizations)}
-            if self.member_lane_policy:
-                hashes=[hashlib.sha256((r['text'] or '').encode()).hexdigest() for r in realizations]
-                retries=hashes[1:]
-                diversity=dict(raw_invalid_attempts=sum(not p.prediction_valid for p in predictions),
-                    recovered_logical_requests=int(resolved.recovered_invalid),terminal_invalids=int(resolved.terminal_invalid),
-                    identical_retry_response_count=sum(h in hashes[:i] for i,h in enumerate(hashes) if i>0),
-                    unique_retry_response_rate=len(set(retries))/len(retries) if retries else None,
-                    same_invalid_repeated_all_retries=resolved.terminal_invalid and len(set(hashes))==1)
-                output['retry_diversity']=diversity
-                self._write(dict(kind='SEMANTIC_RETRY_DIVERSITY',role=role,split=split,stage=stage,
-                    request_sha256=key,member_slot=member_slot,**diversity))
-            if self.durable_cache:self.durable_cache.put(key,output)
-            self._store_cache(key,output)
+            future = self.requests_inflight.get(key)
+            owner = future is None
+            if owner:
+                future = self.requests_inflight[key] = Future()
+        if not owner:
+            previous = future.result()
+            with self.lock:
+                self._store_cache(key, previous)
+                return self._cache_hit(key, role, split, stage)
+        try:
+            output = self._resolve_solver(role=role, split=split, stage=stage,
+                messages=messages, member_slot=member_slot, key=key)
+            with self.lock:
+                if self.durable_cache:self.durable_cache.put(key,output)
+                self._store_cache(key,output)
+                future.set_result(output)
             return output
+        except BaseException as exc:
+            with self.lock:
+                future.set_exception(exc)
+            raise
+        finally:
+            with self.lock:
+                self.requests_inflight.pop(key, None)
 
-    def _complete_one(self, *, role, split, stage, messages, semantic_attempt_no=None, member_slot=None):
+    def _resolve_solver(self, *, role, split, stage, messages, member_slot, key):
+        from ..benchmarks.math_prediction_validity import classify_prediction,resolve_predictions
+        predictions=[];realizations=[];transport_retries=0
+        request,_ = self._request_identity(role=role,split=split,messages=messages,member_slot=member_slot)
+        imported = (self.evidence_reuse.prefix(request, member_slot)
+            if self.evidence_reuse is not None and stage == 'initial' and split == 'optimize' else ())
+        for semantic_attempt_no in range(1,5):
+            try:
+                capacity=next_capacity(self.execution_policy,predictions[-1] if predictions else None)
+                if semantic_attempt_no <= len(imported):
+                    result=imported[semantic_attempt_no-1]
+                    self._write(dict(kind='EVIDENCE_REUSE',role=role,split=split,stage=stage,
+                        request_sha256=key,semantic_attempt_no=semantic_attempt_no,
+                        source=result['evidence_reuse_source']))
+                else:
+                    result=self._complete_one(role=role,split=split,stage=stage,messages=messages,
+                        semantic_attempt_no=semantic_attempt_no,member_slot=member_slot,output_capacity=capacity)
+            except BaseException as exc:
+                if semantic_attempt_no>1 and 'TOKEN_BUDGET' in str(exc):
+                    self.abort('STOP_TOKEN_BUDGET_INSUFFICIENT_FOR_INVALID_RECOVERY')
+                raise
+            transport_retries+=result['transport_retry_attempts']
+            prediction=classify_prediction(result['text'],result.get('finish_reason'))
+            predictions.append(prediction);realizations.append(result)
+            self._write(dict(kind='SEMANTIC_ATTEMPT',role=role,split=split,stage=stage,
+                request_sha256=key,semantic_attempt_no=semantic_attempt_no,
+                prediction_valid=prediction.prediction_valid,invalid_reason=prediction.invalid_reason,
+                finish_reason=prediction.finish_reason,transport_retry_attempts=result['transport_retry_attempts']))
+            if prediction.prediction_valid:break
+        resolved=resolve_predictions(predictions,transport_retries)
+        output={**result,'request_sha256':key,'resolved_prediction':asdict(resolved),'original_realizations':realizations,
+            'input_tokens':sum(r['input_tokens'] for r in realizations),
+            'output_tokens':sum(r['output_tokens'] for r in realizations),
+            'provider_called':any(r['provider_called'] for r in realizations)}
+        if self.member_lane_policy:
+            hashes=[hashlib.sha256((r['text'] or '').encode()).hexdigest() for r in realizations]
+            retries=hashes[1:]
+            diversity=dict(raw_invalid_attempts=sum(not p.prediction_valid for p in predictions),
+                recovered_logical_requests=int(resolved.recovered_invalid),terminal_invalids=int(resolved.terminal_invalid),
+                identical_retry_response_count=sum(h in hashes[:i] for i,h in enumerate(hashes) if i>0),
+                unique_retry_response_rate=len(set(retries))/len(retries) if retries else None,
+                same_invalid_repeated_all_retries=resolved.terminal_invalid and len(set(hashes))==1)
+            output['retry_diversity']=diversity
+            self._write(dict(kind='SEMANTIC_RETRY_DIVERSITY',role=role,split=split,stage=stage,
+                request_sha256=key,member_slot=member_slot,**diversity))
+        return output
+
+
+    def _complete_one(self, **kwargs):
+        with (nullcontext() if kwargs['role']=='solver' else self.optimizer_slots), self.physical_slots:
+            lane=threading.get_ident()
+            try:
+                return self._complete_one_with_slot(**kwargs)
+            finally:
+                with self.lock:
+                    self.physical_inflight.pop(lane, None)
+
+    def _complete_one_with_slot(self, *, role, split, stage, messages, semantic_attempt_no=None, member_slot=None, output_capacity=None):
         c=self.contract
-        request,key=self._request_identity(role=role,split=split,messages=messages,member_slot=member_slot)
+        request,key=self._request_identity(role=role,split=split,messages=messages,member_slot=member_slot,output_capacity=output_capacity)
         model=request['model']
         cacheable=(not self.member_lane_policy or role=='solver') and role not in {'pattern_gradient','pattern_cluster'}
         with self.lock:
             if cacheable and semantic_attempt_no is None and key in self.cache:
                 return self._cache_hit(key,role,split,stage)
-            for retry in range(c["decoding"]["transport_retries"] + 1):
+        for retry in range(c["decoding"]["transport_retries"] + 1):
+            with self.lock:
+                self.physical_inflight[threading.get_ident()]=role
                 bounds = c["provider_bounds"]
                 role_bound = bounds[role+'_calls']
                 if c.get('operational_pilot'):
                     if self.usage['attempts']>=bounds['transport_attempts']:
                         self.abort('TRANSPORT_CEILING')
-                    if self.successes>=bounds['successful_provider_calls'] or self.usage[role]>=role_bound:
+                    if self.successes+len(self.physical_inflight)>bounds['successful_provider_calls'] or self.usage[role]+sum(r==role for r in self.physical_inflight.values())>role_bound:
                         self.abort('PROVIDER_CALL_CEILING')
                     from ..governance.token_accounting import reservation
                     spent=(self.token_ledger.totals['charged_total'] if self.token_ledger
                         else self.usage['input_tokens']+self.usage['output_tokens'])
-                    if spent+reservation(request)['amount']>c['operational_pilot']['token_ceiling']:
+                    if spent+(self.token_ledger.reserved if self.token_ledger else 0)+reservation(request)['amount']>c['operational_pilot']['token_ceiling']:
                         self.abort('TOKEN_CEILING')
-                if (self.usage["attempts"] >= bounds["transport_attempts"] or self.successes >= bounds["successful_provider_calls"]
-                        or self.usage[role] >= role_bound or role in {'pattern_gradient','pattern_cluster'} and self.usage['pattern']>=bounds['pattern_calls']):
+                if (self.usage["attempts"] >= bounds["transport_attempts"] or self.successes+len(self.physical_inflight) > bounds["successful_provider_calls"]
+                        or self.usage[role]+sum(r==role for r in self.physical_inflight.values()) > role_bound or role in {'pattern_gradient','pattern_cluster'} and self.usage['pattern']>=bounds['pattern_calls']):
                     self.abort("PROVIDER_CEILING_PRE_TRANSPORT")
                 token_reservation = None
                 if self.token_ledger:
@@ -229,9 +299,12 @@ class RequestBroker:
                 self._write(dict(kind="ATTEMPT", role=role, split=split, stage=stage, request_sha256=key, attempt=self.usage["attempts"],
                     semantic_attempt_no=semantic_attempt_no,transport_retry_no=retry,
                     **({'member_realization_lane':member_slot} if self.member_lane_policy and role=='solver' else {})))
-                try:
-                    result = self.transport(request)
-                except Exception as exc:
+                physical_attempt_no=self.usage["attempts"]
+            try:
+                result = self.transport(request)
+            except Exception as exc:
+                with self.lock:
+                    self.physical_inflight.pop(threading.get_ident(), None)
                     receipt = None
                     if self.response_receipts is not None:
                         receipt = self.response_receipts.persist(token_reservation, dict(
@@ -240,7 +313,7 @@ class RequestBroker:
                             token_usage=getattr(exc, "token_usage", None),
                             provider_evidence=getattr(exc, "provider_evidence", None),
                             semantic_attempt_no=semantic_attempt_no,
-                            physical_attempt_no=self.usage["attempts"]))
+                            physical_attempt_no=physical_attempt_no))
                     if token_reservation is not None:
                         charge = self.token_ledger.reconcile(token_reservation, getattr(exc, "token_usage", None),
                             outcome=type(exc).__name__, **({"response_receipt": receipt} if receipt is not None else {}))
@@ -250,7 +323,7 @@ class RequestBroker:
                     self._write(dict(kind="FAILURE", role=role, split=split, stage=stage, request_sha256=key, error_category=type(exc).__name__))
                     if self.raw_writer:
                         self.raw_writer(dict(role=role, split=split, stage=stage, request_sha256=key,
-                            semantic_attempt_no=semantic_attempt_no,physical_attempt_no=self.usage['attempts'],
+                            semantic_attempt_no=semantic_attempt_no,physical_attempt_no=physical_attempt_no,
                             request=request, error_category=type(exc).__name__,
                             provider_evidence=getattr(exc, "provider_evidence", None)))
                     # Retry transport failures only. SDK retries are disabled.
@@ -259,14 +332,16 @@ class RequestBroker:
                         if self.token_ledger:
                             self.abort("PROVIDER_TERMINAL_" + type(exc).__name__)
                         raise
-                    time.sleep(min(c["decoding"]["retry_sleep_seconds"] * 2**retry, c["decoding"]["retry_backoff_ceiling_seconds"]))
-                    continue
+                time.sleep(min(c["decoding"]["retry_sleep_seconds"] * 2**retry, c["decoding"]["retry_backoff_ceiling_seconds"]))
+                continue
+            with self.lock:
+                self.physical_inflight.pop(threading.get_ident(), None)
                 receipt = None
                 if self.response_receipts is not None:
                     receipt = self.response_receipts.persist(token_reservation, dict(
                         role=role, split=split, stage=stage, request_sha256=key,
                         request=request, response=result, semantic_attempt_no=semantic_attempt_no,
-                        physical_attempt_no=self.usage["attempts"]))
+                        physical_attempt_no=physical_attempt_no))
                 if token_reservation is not None:
                     charge = self.token_ledger.reconcile(token_reservation, result, outcome="RESPONSE",
                         **({"response_receipt": receipt} if receipt is not None else {}))
@@ -296,7 +371,7 @@ class RequestBroker:
                         request_sha256=key,**telemetry))
                 if self.raw_writer:
                     self.raw_writer(dict(role=role, split=split, stage=stage, request_sha256=key, request=request, response=result,
-                        semantic_attempt_no=semantic_attempt_no,physical_attempt_no=self.usage['attempts']))
+                        semantic_attempt_no=semantic_attempt_no,physical_attempt_no=physical_attempt_no))
                 if role in {'reflection','pattern','pattern_gradient','pattern_cluster'} and self.optimizer_policy and self.optimizer_policy['enable_thinking'] is False:
                     reasoning=telemetry['reasoning_tokens']
                     if telemetry['nonthinking_evidence_level']=='CONTRADICTORY':
@@ -312,6 +387,8 @@ class RequestBroker:
                 if (self.token_ledger or role != 'solver' and self.optimizer_policy) and type(reported) is int and reported > ceiling:
                     self.abort("OPERATIONAL_OUTPUT_CAP_NOT_ENFORCED")
                 result = {**result, "provider_called": True}
+                if role == 'solver' and self.execution_policy:
+                    result['output_capacity_tokens'] = request['max_tokens']
                 if self.prediction_policy:
                     result["request_sha256"] = key
                 if semantic_attempt_no is None and cacheable:
@@ -319,6 +396,7 @@ class RequestBroker:
                 if semantic_attempt_no is not None:
                     result['transport_retry_attempts']=retry
                 return result
+
 
     def abort(self, reason):
         if self.token_ledger or (self.contract.get('operational_pilot') and reason in {
@@ -328,8 +406,9 @@ class RequestBroker:
         raise SearchContractError(reason)
 
     def _write(self, row):
-        if self.ledger_writer:
-            self.ledger_writer({**row, "arm": self.arm, "seed": self.seed})
+        with self.lock:
+            if self.ledger_writer:
+                self.ledger_writer({**row, "arm": self.arm, "seed": self.seed})
 
 
 class BenchmarkSolver:
@@ -350,6 +429,29 @@ class BenchmarkSolver:
         if type(member_id) is not int or member_id not in range(5):
             raise SearchContractError("SOLVER_TELEMETRY_MEMBER_INVALID")
         self.member_id = member_id
+
+    def _batch(self, function, rows):
+        policy=self.broker.execution_policy
+        return bounded_ordered_map(function, rows, policy['solver_max_concurrency'] if policy else 1)
+
+    def solve_team_batch(self, rows, *, stage, split):
+        def solve(row):
+            member,prompt,item=row
+            lane=BenchmarkSolver(self.benchmark,self.broker)
+            lane.observe_member(member)
+            return lane.solve(prompt,item,stage=stage,split=split)
+        return self._batch(solve, rows)
+
+    def solve_batch(self, prompt, items, *, stage, split):
+        return self.solve_team_batch(((self.member_id,prompt,item) for item in items),stage=stage,split=split)
+
+    def evaluate_batch(self, prompt, examples):
+        member=self.member_id
+        def evaluate(example):
+            lane=BenchmarkSolver(self.benchmark,self.broker)
+            lane.observe_member(member)
+            return lane.evaluate(prompt,example)
+        return self._batch(evaluate,examples)
 
     def _request(self, prompt, item, *, stage, split):
         if item.benchmark_id != self.benchmark.benchmark_id:
@@ -379,6 +481,8 @@ class BenchmarkSolver:
             effective_contract['cache_policy']=self.broker.contract['cache_policy']
         if self.broker.solver_trajectory_policy is not None:
             effective_contract['solver_trajectory_policy'] = self.broker.solver_trajectory_policy
+        if self.broker.execution_policy:
+            effective_contract['solver_execution_policy']=self.broker.execution_policy
         effective = hashlib.sha256(json.dumps(effective_contract, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
         self.broker._write(dict(kind="SOLVER_REQUEST_CONTRACT", role="solver", split=split, stage=stage,
             solver_interface_identity=contract["identity"], mutable_prompt_sha256=hashlib.sha256(prompt.encode()).hexdigest(),

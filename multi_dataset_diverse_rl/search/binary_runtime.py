@@ -53,11 +53,17 @@ class BinaryTeamStateStore:
         if self.freeze_initial_competence and self.initial_state_id is not None:
             raise SearchContractError("INITIAL_COMPETENCE_CANNOT_REBASE")
         self.profiles = {}
-        for i, p in enumerate(self.prompts):
-            if hasattr(self.solver, "observe_member"):
-                self.solver.observe_member(i)
-            self.profiles[i] = tuple(self.solver.solve(p, e.item, stage="initial", split="optimize")
-                                     for e in self.examples)
+        if callable(getattr(self.solver,'solve_team_batch',None)):
+            results=self.solver.solve_team_batch(((i,p,e.item) for i,p in enumerate(self.prompts)
+                for e in self.examples),stage='initial',split='optimize')
+            n=len(self.examples)
+            self.profiles={i:tuple(results[i*n:(i+1)*n]) for i in range(5)}
+        else:
+            for i, p in enumerate(self.prompts):
+                if hasattr(self.solver, "observe_member"):
+                    self.solver.observe_member(i)
+                self.profiles[i] = tuple(self.solver.solve(p, e.item, stage="initial", split="optimize")
+                                         for e in self.examples)
         initial = self.snapshot()  # Parse and audit the actual complete initial state.
         if self.freeze_initial_competence:
             self.initial_member_scores = initial.member_scores
@@ -210,7 +216,9 @@ class FixedPeerTeamEvaluationProvider:
         target = opportunity.target_member
         if hasattr(self.store.solver, "observe_member"):
             self.store.solver.observe_member(target)
-        profile = tuple(self.store.solver.solve(candidate.prompt, e.item, stage=stage, split="optimize") for _, e in selected)
+        batch=getattr(self.store.solver,'solve_batch',None)
+        profile = (tuple(batch(candidate.prompt,[e.item for _,e in selected],stage=stage,split='optimize'))
+            if callable(batch) else tuple(self.store.solver.solve(candidate.prompt, e.item, stage=stage, split="optimize") for _, e in selected))
         aggregates = tuple(self.store.aggregation.aggregate_sync(item=e.item,
             member_outputs=tuple(profile[j] if m == target else self.store.profiles[m][i] for m in range(5)), benchmark=self.store.benchmark)
             for j, (i, e) in enumerate(selected))

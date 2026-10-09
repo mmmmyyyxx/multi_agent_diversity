@@ -94,7 +94,9 @@ class BoundedMemoryOptimizer:
             nonlocal metric,solver_calls,solver_tokens
             if metric+len(rows)>42:raise SearchContractError('LAYER1_METRIC_LIMIT_PRE_SOLVER')
             metric+=len(rows)
-            observations=[self.evaluator.evaluate(prompt,row) for row in rows]
+            batch=getattr(self.evaluator,'evaluate_batch',None)
+            observations=(list(batch(prompt,rows)) if callable(batch)
+                else [self.evaluator.evaluate(prompt,row) for row in rows])
             from ..benchmarks.math_visible_trajectory import validate_adaptive_trajectory
             for row,obs in zip(rows,observations,strict=True):
                 if getattr(obs,'solver_trajectory',None) is None:

@@ -33,6 +33,9 @@ POLICY_40M = {**POLICY, "authorized_total": 40_000_000}
 # Fresh single-arm scope. Reservation, crash recovery and journal physics are
 # unchanged; this is a separate accounting ceiling, not an old allowance.
 POLICY_V23_2M = {**POLICY, "authorized_total": 2_000_000}
+# Separate opt-in identity; original serial journals cannot acquire parallelism.
+POLICY_V23_PARALLEL_2M = {**POLICY_V23_2M,
+    "identity": "MATH_PARALLEL_TOKEN_ACCOUNTING_V1", "concurrency": 8}
 
 
 class OperationalAbort(BaseException):
@@ -106,7 +109,7 @@ def _digest(value):
 class TokenLedger:
     def __init__(self, directory: Path, *, task_sha256: str, policy=POLICY,
                  best_effort_snapshots=False):
-        if policy not in (POLICY, POLICY_40M, POLICY_V23_2M) or len(task_sha256) != 64:
+        if policy not in (POLICY, POLICY_40M, POLICY_V23_2M, POLICY_V23_PARALLEL_2M) or len(task_sha256) != 64:
             raise OperationalAbort("TOKEN_ACCOUNTING_POLICY_IDENTITY_MISMATCH")
         self.directory = Path(directory)
         if type(best_effort_snapshots) is not bool:
@@ -136,7 +139,8 @@ class TokenLedger:
             raise OperationalAbort("TOKEN_LEDGER_ALREADY_OWNED") from exc
         self.task_sha256 = task_sha256
         self.policy = dict(policy)
-        self.authorized_total = policy['authorized_total'] if policy == POLICY_V23_2M else POLICY["authorized_total"]
+        fresh_policies=(POLICY, POLICY_V23_2M, POLICY_V23_PARALLEL_2M)
+        self.authorized_total = policy['authorized_total'] if policy in fresh_policies else POLICY["authorized_total"]
         self.authorization_amendments = []
         self.events = []
         self.inflight = {}
@@ -156,7 +160,7 @@ class TokenLedger:
                 if not self.events or self.events[0]["task_sha256"] != task_sha256:
                     raise OperationalAbort("TOKEN_LEDGER_AUTHORIZATION_MISMATCH")
             else:
-                if policy not in (POLICY, POLICY_V23_2M):
+                if policy not in fresh_policies:
                     raise OperationalAbort("TOKEN_LEDGER_EXTENSION_REQUIRES_ORIGINAL_JOURNAL")
                 self._append(dict(kind="AUTHORIZE", task_sha256=task_sha256, policy=policy))
             for key in tuple(self.inflight):
@@ -175,8 +179,8 @@ class TokenLedger:
                 or row.get("previous_sha256") != (self.events[-1]["event_sha256"] if self.events else None)):
             raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
         if row["kind"] == "AUTHORIZE":
-            if (self.events or row["policy"] not in (POLICY, POLICY_V23_2M)
-                    or (row['policy'] == POLICY_V23_2M) != (self.policy == POLICY_V23_2M)):
+            if (self.events or row["policy"] not in (POLICY, POLICY_V23_2M, POLICY_V23_PARALLEL_2M)
+                    or row['policy'] != (POLICY if self.policy == POLICY_40M else self.policy)):
                 raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
         elif row["kind"] == "AUTHORIZATION_AMENDMENT":
             if (self.inflight or self.authorization_amendments
@@ -225,6 +229,8 @@ class TokenLedger:
         else:
             raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
         self.events.append(row)
+        if len(self.inflight)>self.policy['concurrency']:
+            raise OperationalAbort('TOKEN_LEDGER_CORRUPTION')
         if self.totals["charged_total"] + self.reserved > self.authorized_total:
             raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
 
@@ -285,7 +291,7 @@ class TokenLedger:
     def reserve(self, request, *, attempt_id, stage, role, model, protected_validation=0):
         with self.mutex:
             bound = reservation(request)
-            if self.inflight:
+            if len(self.inflight) >= self.policy['concurrency']:
                 raise OperationalAbort("TOKEN_LEDGER_CONCURRENCY_VIOLATION")
             if bound["amount"] > self.remaining:
                 raise OperationalAbort("STOP_TOKEN_BUDGET_EXHAUSTED")

@@ -23,6 +23,57 @@ def evidence_gradient_prompt_artifact():
     return dict(identity='REFERENCE_SOLUTION_GRADIENT_PROMPT_V5',prompt=REFERENCE_GRADIENT_PROMPT)
 
 
+def prepare_parallel_reuse_inputs(root, *, attempt, experiment_id, user_task_sha256, reuse_manifest_path):
+    """Create a new unapproved execution freeze; never import an old API scope."""
+    from ..persistence.durable_io import atomic_write_json
+    from ..persistence.solver_evidence_reuse import SolverEvidenceReuse
+    from ..search.solver_execution import POLICY as execution_policy
+    from ..governance.token_accounting import POLICY_V23_PARALLEL_2M
+    from .math_prediction_validity import capacity_recovery_contract
+    if (not isinstance(attempt,str) or not attempt.startswith('a4_v23_parallel_')
+            or not isinstance(experiment_id,str) or not experiment_id.startswith('a4_v23_parallel_')
+            or not isinstance(user_task_sha256,str) or len(user_task_sha256)!=64):
+        raise SearchContractError('PARALLEL_REUSE_PREPARATION_IDENTITY_INVALID')
+    parent_path='experiments/execution_bindings/a4_v23_only_seed81_20261009_attempt2.json'
+    parent=json.loads((root/parent_path).read_bytes());parent_hash=file_hash(root/parent_path)
+    protocol='experiments/protocols/'+experiment_id
+    binding_path='experiments/execution_bindings/'+attempt+'.json'
+    paths=dict(scope=protocol+'/preparation_scope.json',gradient=protocol+'/gradient.json',
+        metadata=protocol+'/v6_accounting_metadata.json',accounting=protocol+'/accounting_policy.json')
+    if (root/binding_path).exists():raise SearchContractError('PARALLEL_REUSE_FRESH_PATH_REQUIRED')
+    atomic_write_json(root/paths['scope'],dict(schema_version='math_optimization_evidence_user_scope_v1',
+        attempt_id=attempt,one_attempt_only=True,user_authorized=True,real_api_authorized=False,
+        optimization_evidence_policy=POLICY,parent_binding_sha256=parent_hash,
+        user_task_sha256=user_task_sha256,validation_authorized=False,test_authorized=False,
+        preparation_only=True,exact_api_approval_required=True,push_authorized=True,
+        cancelled_paired_scope_reusable=False,historical_40m_authorization_reusable=False))
+    atomic_write_json(root/paths['gradient'],evidence_gradient_prompt_artifact())
+    metadata=json.loads((root/parent['validation_accounting_metadata_path']).read_bytes())
+    metadata['invalid_recovery_policy']=capacity_recovery_contract()
+    atomic_write_json(root/paths['metadata'],metadata)
+    atomic_write_json(root/paths['accounting'],POLICY_V23_PARALLEL_2M)
+    c=derive_evidence_contract(parent,attempt=attempt,binding_path=binding_path,parent_path=parent_path,
+        parent_sha256=parent_hash,authorization_path=paths['scope'],authorization_sha256=file_hash(root/paths['scope']),
+        gradient_prompt_path=paths['gradient'],gradient_prompt_sha256=file_hash(root/paths['gradient']),
+        validation_metadata_path=paths['metadata'],validation_metadata_sha256=file_hash(root/paths['metadata']),
+        max_opportunities=5,token_ceiling=2_000_000,accounting_scope='runs/'+attempt+'/accounting',
+        accounting_policy_path=paths['accounting'],accounting_policy_sha256=file_hash(root/paths['accounting']),
+        solver_execution_policy=execution_policy,reuse_manifest_path=reuse_manifest_path,
+        reuse_manifest_sha256=file_hash(root/reuse_manifest_path))
+    SolverEvidenceReuse(root,c) # All old private evidence must still verify before readiness.
+    binding=MATHEvidenceBinding(root,c)
+    if binding.blockers():raise SearchContractError('PARALLEL_REUSE_PREPARATION_HOLD:'+','.join(binding.blockers()))
+    atomic_write_json(root/binding_path,c)
+    atomic_write_json(root/(protocol+'/protocol.json'),dict(identity='V23_PARALLEL_CAPACITY_REUSE_PROTOCOL_V1',
+        attempt_id=attempt,method=METHOD,solver_execution_policy=c['solver_execution_policy'],
+        invalid_recovery_policy=c['invalid_recovery_policy'],reuse_policy=c['initial_evidence_reuse_policy'],
+        reuse_manifest_sha256=c['initial_evidence_reuse_manifest_sha256'],
+        canary_review_policy=c['canary_review_policy'],operational_pilot=c['operational_pilot'],
+        fresh_single_use_exact_post_freeze_api_approval_required=True,
+        validation_access='not_authorized',test_access='sealed'))
+    return c
+
+
 def prepare_v23_only_inputs(root,*,user_task_sha256):
     """Create one fresh preparation scope, without credentials or providers."""
     from ..persistence.durable_io import atomic_write_json
@@ -93,7 +144,8 @@ def derive_evidence_contract(parent, *, attempt, binding_path, parent_path,
         parent_sha256, authorization_path, authorization_sha256, gradient_prompt_path,
         gradient_prompt_sha256, validation_metadata_path, validation_metadata_sha256,
         paired_realization_policy=None, max_opportunities=None, token_ceiling=None,
-        accounting_scope=None, accounting_policy_path=None, accounting_policy_sha256=None):
+        accounting_scope=None, accounting_policy_path=None, accounting_policy_sha256=None,
+        solver_execution_policy=None, reuse_manifest_path=None, reuse_manifest_sha256=None):
     """Frozen parent is data provenance; it never selects an executable method."""
     from .math_v21_interface import v6_interface_contract
     from .math_visible_trajectory import trajectory_policy
@@ -172,6 +224,24 @@ def derive_evidence_contract(parent, *, attempt, binding_path, parent_path,
     proof.update(identity='V2_3_OPTIMIZE_EVIDENCE_RESOURCE_DERIVATION_V1',
         per_op_logical_solver=per_op,gradient_semantic_multiplier=1)
     c['provider_bounds']=bound
+    if solver_execution_policy is not None:
+        from ..search.solver_execution import POLICY as execution_policy
+        from ..persistence.solver_evidence_reuse import POLICY as reuse_policy
+        from ..governance.canary_review import CAPACITY_POLICY
+        if (solver_execution_policy!=execution_policy or max_opportunities is None
+                or not isinstance(reuse_manifest_path,str) or not reuse_manifest_path.startswith('runs/')
+                or not isinstance(reuse_manifest_sha256,str) or len(reuse_manifest_sha256)!=64):
+            raise SearchContractError('V23_PARALLEL_REUSE_FREEZE_REQUIRED')
+        c.update(solver_execution_policy=deepcopy(execution_policy),
+            concurrency=dict(solver=8,optimizer_reflection=1,pattern=1),
+            initial_evidence_reuse_policy=deepcopy(reuse_policy),
+            initial_evidence_reuse_manifest_path=reuse_manifest_path,
+            initial_evidence_reuse_manifest_sha256=reuse_manifest_sha256,
+            accounting_scope_policy='FRESH_V23_PARALLEL_SINGLE_ARM_2M_V1',
+            canary_review_policy=deepcopy(CAPACITY_POLICY),
+            canary_phase='early_capacity_initial_profile_first_opportunity_review_v2')
+        from .math_prediction_validity import capacity_recovery_contract
+        c['invalid_recovery_policy']=capacity_recovery_contract()
     return c
 
 
@@ -196,7 +266,10 @@ class MATHEvidenceBinding:
                 token_ceiling=(c['operational_pilot']['token_ceiling'] if c['operational_pilot']['identity']=='TARGET_OR_TEAM_PROGRESS_OPERATIONAL_PILOT_BOUND_V1' else None),
                 accounting_scope=(c['token_ledger_directory'] if c['token_ledger_directory']!=parent['token_ledger_directory'] else None),
                 accounting_policy_path=(c['accounting_policy_path'] if c.get('accounting_scope_policy') else None),
-                accounting_policy_sha256=(c['accounting_policy_sha256'] if c.get('accounting_scope_policy') else None))
+                accounting_policy_sha256=(c['accounting_policy_sha256'] if c.get('accounting_scope_policy') else None),
+                solver_execution_policy=c.get('solver_execution_policy'),
+                reuse_manifest_path=c.get('initial_evidence_reuse_manifest_path'),
+                reuse_manifest_sha256=c.get('initial_evidence_reuse_manifest_sha256'))
             if c!=expected:raise SearchContractError('MATH_EVIDENCE_FROZEN_SETTINGS_CHANGED')
             for p in sorted(k for k in c if k.endswith('_path')):
                 h=p[:-5]+'_sha256'
@@ -206,8 +279,9 @@ class MATHEvidenceBinding:
                     json.loads(self.path(c[p]).read_bytes())) if p=='verify_settings_path' else file_hash(self.path(c[p])))
                 if actual!=c[h]:raise SearchContractError('MATH_EVIDENCE_DEPENDENCY_HASH_MISMATCH:'+p)
             if c.get('accounting_scope_policy'):
-                from ..governance.token_accounting import POLICY_V23_2M
-                if json.loads(self.path(c['accounting_policy_path']).read_bytes())!=POLICY_V23_2M:
+                from ..governance.token_accounting import POLICY_V23_2M, POLICY_V23_PARALLEL_2M
+                accounting=POLICY_V23_PARALLEL_2M if c.get('solver_execution_policy') else POLICY_V23_2M
+                if json.loads(self.path(c['accounting_policy_path']).read_bytes())!=accounting:
                     raise SearchContractError('FRESH_V23_ACCOUNTING_POLICY_MISMATCH')
             if json.loads(self.path(c['gradient_prompt_path']).read_bytes())!=evidence_gradient_prompt_artifact():
                 raise SearchContractError('MATH_EVIDENCE_GRADIENT_PROMPT_MISMATCH')

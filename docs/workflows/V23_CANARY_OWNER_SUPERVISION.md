@@ -30,4 +30,13 @@ It retains the sole production command and both independent owner decisions.
 After a timeout, preserve the consumed approval and all paid evidence. A new
 attempt requires fresh registration, source/startup freeze, cache, accounting,
 preflight and exact single-use API approval under AGENTS.md section 8. Previous
-profiles and remaining allowance cannot be imported as a scientific restart.
+remaining allowance cannot be imported as a scientific restart. An explicit new
+prefix-reuse protocol may reference verified paid profiles under a fresh freeze
+and authorization; it grants no reuse of the old permission or checkpoint.
+
+Under `V23_PREFIX_CAPACITY_CANARY_REVIEW_V2`, the same owner also inspects the
+early affected-initial batch before the full initialization. The executor writes
+pending receipt files and waits; it cannot approve its own scientific evidence.
+The handoff must retain a live owner and bounded monitoring through these three
+barriers. Periodic monitoring remains quiet for unchanged ordinary progress and
+alerts immediately on a pending review, terminal failure or completion.

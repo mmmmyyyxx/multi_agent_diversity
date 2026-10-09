@@ -80,6 +80,12 @@ Historical 40M allowance and cancelled paired approvals grant no new authority.
 Operational repair must preserve evidence and re-freeze affected identities;
 scientific or ambiguous repairs require an explicit user decision.
 
+The optional [bounded execution and initial reuse revision](V23_PARALLEL_CAPACITY_REUSE_V1.md)
+freezes eight Solver workers, 3600/6144 truncation-only capacity recovery and
+uniform verified historical realization prefixes in a fresh attempt. It retains
+the optimization algorithm and four-draw limit. Imported and new draws jointly
+construct the initial V6 profiles; all competence floors are recomputed.
+
 Previous normative bodies and runtime blobs are preserved verbatim in the
 [source archive](../archive/runtime/a4_pre_v23_only_7342d85/README.md).
 Historical replay requires the original frozen Git checkout and authorization.

@@ -89,6 +89,13 @@ class CurrentPolicyBundle:
 
     def validate_contract(self, contract):
         require_current_contract(contract)
+        from .solver_execution import frozen_execution_policy
+        execution=frozen_execution_policy(contract)
+        if execution:
+            from ..persistence.solver_evidence_reuse import POLICY as reuse_policy
+            if (contract.get('initial_evidence_reuse_policy')!=reuse_policy
+                    or contract.get('accounting_scope_policy')!='FRESH_V23_PARALLEL_SINGLE_ARM_2M_V1'):
+                raise SearchContractError('V23_PARALLEL_REUSE_POLICY_MISMATCH')
         from ..benchmarks.math_optimizer_generation import frozen_cluster_policy
         frozen_cluster_policy(contract)
         from ..benchmarks.math_visible_trajectory import frozen_trajectory_policy

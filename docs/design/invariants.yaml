@@ -1,5 +1,17 @@
 schema_version: invariant_registry_v1
 invariants:
+- id: INV-V23-PREFIX-PARALLEL-001
+  description: Eight bounded Solver workers preserve ordered observations; exact historical initial prefixes keep original hashes and count toward four total draws, with only new transport charged.
+  authority: docs/design/V23_PARALLEL_CAPACITY_REUSE_V1.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/solver_execution.py
+  - multi_dataset_diverse_rl/persistence/solver_evidence_reuse.py
+  - multi_dataset_diverse_rl/governance/token_accounting.py
+  tests:
+  - tests/current/test_parallel_solver_execution.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
 - id: INV-MATH-VISIBLE-SOLUTION-001
   description: V6 scores only final payload, retains complete private ordinary content
     and binds bounded Optimize solution feedback to its member and realization.

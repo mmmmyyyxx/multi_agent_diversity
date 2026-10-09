@@ -97,3 +97,7 @@ reports/a4_v23_only_pilot_v2_preparation_20261009/** -text whitespace=trailing-s
 
 # Immutable user-stop evidence for the consumed V2.3 attempt2 scope.
 reports/a4_v23_only_pilot_v2_user_stop_20261009/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+
+# Exact bytes for the new parallel/prefix-reuse preparation evidence.
+reports/a4_v23_parallel_reuse_preparation_20261009/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+docs/design/V23_PARALLEL_CAPACITY_REUSE_V1.md text eol=lf

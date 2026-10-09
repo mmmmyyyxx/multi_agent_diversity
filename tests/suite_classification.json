@@ -1479,6 +1479,12 @@
       "classification": "CURRENT_CONTRACT",
       "current_suite_included": true,
       "required_private_artifacts": []
+    },
+    {
+      "path": "tests/current/test_parallel_solver_execution.py",
+      "classification": "CURRENT_CONTRACT",
+      "required_private_artifacts": [],
+      "current_suite_included": true
     }
   ],
   "current_source_scope": "V23 only; historical replay requires original frozen source, not current constructors."

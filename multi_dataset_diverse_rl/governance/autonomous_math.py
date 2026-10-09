@@ -5,7 +5,7 @@ import hashlib
 import json
 import os
 
-from .token_accounting import TokenLedger, OperationalAbort, serialized_request, POLICY_V23_2M
+from .token_accounting import TokenLedger, OperationalAbort, serialized_request, POLICY_V23_2M, POLICY_V23_PARALLEL_2M
 from .unified_execution import consumption_path, inventory
 from ..persistence.durable_io import atomic_write_json, append_jsonl, read_json
 from ..benchmarks.math_domain_binding import execution_binding
@@ -119,6 +119,10 @@ def initial_prompts(root, contract):
 
 
 def ledger_policy(contract):
+    if contract.get('accounting_scope_policy')=='FRESH_V23_PARALLEL_SINGLE_ARM_2M_V1':
+        from ..search.solver_execution import frozen_execution_policy
+        if not frozen_execution_policy(contract):raise SearchContractError('FRESH_PARALLEL_ACCOUNTING_UNBOUND')
+        return POLICY_V23_PARALLEL_2M
     if contract.get('accounting_scope_policy') != 'FRESH_V23_SINGLE_ARM_2M_V1':
         raise SearchContractError('FRESH_V23_ACCOUNTING_SCOPE_REQUIRED')
     return POLICY_V23_2M
@@ -151,12 +155,21 @@ async def execute_search(root, prep, run_root, payload):
             raise SearchContractError('UNAUTHORIZED_HELDOUT_ZERO_RESERVE_REQUIRED')
         consume(root,prep,run_root,payload)
         atomic_write_json(run_root / "accounting_start.json",budget.view())
+        reuse=None
+        if c.get('solver_execution_policy'):
+            from ..persistence.solver_evidence_reuse import SolverEvidenceReuse
+            reuse=SolverEvidenceReuse(root,c)
+            atomic_write_json(run_root/'initial_reuse_source_verified.json',dict(
+                manifest_sha256=c['initial_evidence_reuse_manifest_sha256'],
+                source_attempt=reuse.manifest['source_attempt'],logical_profiles=reuse.manifest['logical_profiles'],
+                reuse_complete_profiles=reuse.manifest['reuse_complete_profiles'],
+                affected_profiles=reuse.manifest['affected_profiles'],new_provider_calls=0))
         transport,client = create_transport(c)
         arm=c.get('execution_arm','A4')
         broker = RequestBroker(contract=c,transport=transport,arm=arm,seed=81,token_ledger=budget,
             reserve_reader=lambda:0,ledger_writer=lambda r:append_jsonl(run_root / "ledger.jsonl",r),
             raw_writer=lambda r:append_jsonl(run_root / "provider_trace_private.jsonl",r),
-            durable_cache=durable_output_cache(run_root,c,payload,root=root),
+            durable_cache=durable_output_cache(run_root,c,payload,root=root),evidence_reuse=reuse,
             response_receipts=(ProviderResponseReceipts(run_root/'provider_response_receipts_private',
                 attempt_id=c['execution_attempt_id'],startup_identity_sha256=payload['startup_identity_sha256'])
                 if durable is not None else None))
@@ -180,6 +193,17 @@ async def execute_search(root, prep, run_root, payload):
         if c['execution_phase']=='pilot':
             from .pilot_observation import attach_pilot_observer
             attach_pilot_observer(composed,run_root)
+        if reuse is not None:
+            from .canary_review import profile_audit,review
+            examples={e.item.input_id:e for e in composed.state.examples}
+            early=[r for r in reuse.manifest['observations'] if not r['resolves_without_new_call']][:8]
+            if not early:raise SearchContractError('CANARY_CAPACITY_NOT_OBSERVED')
+            jobs=[(r['member_id'],composed.state.prompts[r['member_id']],examples[r['example_id']].item) for r in early]
+            profiles=solver.solve_team_batch(jobs,stage='initial',split='optimize')
+            audit=profile_audit(c,solver,run_root,((member,prompt,examples[item.input_id],profile)
+                for (member,prompt,item),profile in zip(jobs,profiles,strict=True)))
+            atomic_write_json(run_root/'early_initial_profiles_private.json',plain(profiles))
+            review('EARLY_SOLVER_CAPACITY',audit,contract=c,payload=payload,run_root=run_root)
         composed.state.initialize()
         composed.memory.bootstrap(composed.state)
         from .canary_review import initial_audit, opportunity_audit, review

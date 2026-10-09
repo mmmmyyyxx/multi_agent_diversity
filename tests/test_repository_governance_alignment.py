@@ -422,7 +422,13 @@ def test_new_pending_pilot_has_separate_user_scope_without_inheriting_closed_aut
     manifest=load_yaml(ROOT/row['manifest']);c=load_yaml(ROOT/manifest['execution_binding']['path'])
     assert c['execution_attempt_id']==c['cache_namespace']==frontier['pending_pilot_attempt_id']
     assert manifest['authorization']['real_api_authorized'] is False
-    assert c['accounting_scope_policy']=='FRESH_V23_SINGLE_ARM_2M_V1' and c['heldout_accounting_reserve']==0
+    if c.get('solver_execution_policy'):
+        from multi_dataset_diverse_rl.search.solver_execution import POLICY
+        assert c['solver_execution_policy']==POLICY
+        assert c['accounting_scope_policy']=='FRESH_V23_PARALLEL_SINGLE_ARM_2M_V1'
+    else:
+        assert c['accounting_scope_policy']=='FRESH_V23_SINGLE_ARM_2M_V1'
+    assert c['heldout_accounting_reserve']==0
     assert c['operational_pilot']['max_opportunities']==5 and c['operational_pilot']['token_ceiling']==2_000_000
     assert 'paired_realization_policy' not in c
     parent=load_yaml(ROOT/c['trajectory_parent_binding_path'])

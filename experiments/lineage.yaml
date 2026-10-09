@@ -896,6 +896,9 @@ nodes:
   kind: PILOT
 - experiment_id: a4_v23_only_pilot_v2
   kind: PILOT
+- experiment_id: a4_v23_parallel_reuse_pilot_v1
+  kind: PILOT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1882,4 +1885,16 @@ edges:
   evidence: experiments/protocols/a4_v23_only_pilot_v2/protocol.json
   scope: Operational supervision followup, identical scientific method, independent
     source/startup/cache/accounting freeze and new exact approval.
+- from: a4_v23_only_pilot_v2
+  to: a4_v23_parallel_reuse_pilot_v1
+  relation: followup_of
+  evidence: experiments/protocols/a4_v23_parallel_reuse_pilot_v1/protocol.json
+  scope: Fresh V23 execution identity; verified initial realization prefix reference;
+    no old scope transfer.
+- from: a4_v23_only_pilot_v1
+  to: a4_v23_parallel_reuse_pilot_v1
+  relation: followup_of
+  evidence: experiments/protocols/a4_v23_parallel_reuse_pilot_v1/protocol.json
+  scope: Fresh V23 execution identity; verified initial realization prefix reference;
+    no old scope transfer.
 current_frontier: experiments/current_frontier.yaml

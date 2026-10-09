@@ -108,3 +108,9 @@ LLM Memory summarizer, prompt AST, extra controller or API guard agent is added.
 Synthetic conformance cannot establish real optimizer diagnostic quality,
 Solver stability, efficacy or generalization. Fresh V6 real-model baselines
 must be measured; historical 22/60 cannot serve as the V6 baseline.
+
+An explicitly frozen [initial prefix reconstruction](V23_PARALLEL_CAPACITY_REUSE_V1.md)
+may combine verified prior V6 physical realizations with newly measured capacity
+recovery draws. This requires its own policy, source manifest and authorization;
+it is not a resumed experiment. Recompute initial competence from the complete
+reconstructed profiles and disclose the historical/new realization mix.

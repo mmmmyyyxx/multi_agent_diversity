@@ -13,7 +13,11 @@ CURRENT_OFFLINE_PROFILE='experiments/execution_bindings/a4_v23_only_offline_prof
 
 def execution_identity(root,contract):
     CURRENT_POLICY_BUNDLE.validate_contract(contract)
-    configs=[root/v for k,v in contract.items() if k.endswith('_path') and isinstance(v,str)]
+    # Imported private evidence is data, not publishable executable source.
+    # Its exact hash is in the tracked binding and startup/API scope; a separate
+    # read-only source audit verifies every referenced cache/receipt/ledger.
+    configs=[root/v for k,v in contract.items() if k.endswith('_path') and isinstance(v,str)
+        and k!='initial_evidence_reuse_manifest_path']
     configs += [root/contract['split_directory']/'math.json']
     identity=build_unified_source_identity(root,root/contract['canonical_root']/'manifests/math.json',configs)
     files=[root/r['path'] for s in identity['scopes'].values() for r in s['files']]
@@ -37,6 +41,8 @@ def execution_scope(manifest,contract):
         accounting_policy_sha256=contract['accounting_policy_sha256'],
         heldout_accounting_reserve=contract.get('heldout_accounting_reserve'),
         canary_review_policy=contract.get('canary_review_policy'),
+        **({k:contract[k] for k in ('solver_execution_policy','initial_evidence_reuse_policy',
+            'initial_evidence_reuse_manifest_sha256')} if contract.get('solver_execution_policy') else {}),
         **({'optimization_evidence_policy':contract['optimization_evidence_policy']}
             if contract.get('optimization_evidence_policy') else {}),
         **({'pattern_cluster_generation_policy':contract['pattern_cluster_generation_policy']}
@@ -179,7 +185,7 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
         benchmark_id="math", benchmark_protocol_id=contract["benchmark_protocol_sha256"],
         dataset_manifest_identity=contract["canonical_manifest_sha256"], split_identity=contract["split_manifest_sha256"],
         seed=81, models=dict(solver="qwen3-8b", optimizer="qwen3.7-flash", solver_thinking=False),
-        concurrency=dict(solver=1, optimizer=1), provider_policy=dict(identity="lwj", frozen=True),
+        concurrency=dict(solver=contract.get('solver_execution_policy',{}).get('solver_max_concurrency',1), optimizer=1), provider_policy=dict(identity="lwj", frozen=True),
         cache_policy=dict(identity=contract["cache_policy"], frozen=True),
         solver_output_interface_identity=contract["solver_output_interface"]["identity"],
         parser_identity=contract.get("payload_parser_identity",contract["solver_output_interface"]["parser_identity"]),
@@ -215,7 +221,8 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
         manifest['solver_trajectory_policy']=contract['solver_trajectory_policy']
     if 'optimization_evidence_policy' in contract:
         manifest['optimization_evidence_policy']=contract['optimization_evidence_policy']
-    for k in ('canary_review_policy','accounting_scope_policy','accounting_policy_sha256',
+    for k in ('solver_execution_policy','initial_evidence_reuse_policy','initial_evidence_reuse_manifest_sha256',
+            'canary_review_policy','accounting_scope_policy','accounting_policy_sha256',
             'heldout_accounting_reserve'):
         if k in contract:manifest[k]=contract[k]
     for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256", "optimizer_nonthinking_evidence_policy", "layer1_search_policy", "candidate_contract_identity", "post_search_validation_policy", "pattern_support_id_transport", "pattern_abstraction_guard"):

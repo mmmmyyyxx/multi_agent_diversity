@@ -8806,3 +8806,31 @@ experiments:
   - reports/a4_v23_only_pilot_v2_preparation_20261009
   unavailable:
     result_commit: Containing user-stop publication commit, identified by Git history and remote verification.
+- experiment_id: a4_v23_parallel_reuse_pilot_v1
+  kind: PILOT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_3
+  parent_ids:
+  - a4_v23_only_pilot_v2
+  - a4_v23_only_pilot_v1
+  status: PREEXECUTION_FROZEN
+  scientific_status: OFFLINE_VERIFIED_REAL_EFFICACY_UNKNOWN
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/a4_v23_parallel_reuse_pilot_v1.yaml
+  report: reports/a4_v23_parallel_reuse_preparation_20261009
+  classifier: reports/a4_v23_parallel_reuse_preparation_20261009/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit bounded concurrency/capacity/prefix-reuse revision; unchanged V2.3 optimization
+    algorithm.
+  - 289 complete initial observations reusable; 11 affected; 330 historical physical
+    prefixes. Fresh exact approval required.
+  unavailable:
+    implementation_commit: Execution-source freeze identified by manifest; no self-referential
+      SHA.
+    execution_commit: No API execution before exact post-freeze scope approval.
+    result_commit: Real efficacy unmeasured.

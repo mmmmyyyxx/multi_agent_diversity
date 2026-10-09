@@ -20,6 +20,8 @@ contract and parent manifest, then the failure registry before changing code.
 | multi_dataset_diverse_rl/team_search/ | Mixed: shared schemas/evidence/physics are compatibility dependencies; old controllers are historical |
 | multi_dataset_diverse_rl/governance/ | Authorization, manifest, registry and offline governance support |
 | multi_dataset_diverse_rl/governance/canary_review.py | Read-only continuous Canary evidence barriers; no provider or selection authority |
+| multi_dataset_diverse_rl/search/solver_execution.py | Frozen bounded Solver batches and truncation-only capacity; no optimization decision authority |
+| multi_dataset_diverse_rl/persistence/solver_evidence_reuse.py | Read-only verified initial realization prefixes, original receipt/ledger references and new-attempt reconstruction |
 | experiments/registry.yaml | Experiment metadata authority, explicit eras/kinds |
 | experiments/lineage.yaml | Sole lineage authority |
 | experiments/manifests/ | Permanent current and historical freeze paths; historical identities not migrated |

@@ -34,7 +34,9 @@ def private_binary_gate(*, benchmark, load_examples, expected_count, solver, sto
                 if lane_key not in profiles:
                     if hasattr(solver, "observe_member"):
                         solver.observe_member(member)
-                    profiles[lane_key] = tuple(solver.solve(prompt, e.item, stage="adaptive_gate", split="shadow") for e in examples)
+                    batch=getattr(solver,'solve_batch',None)
+                    profiles[lane_key] = (tuple(batch(prompt,[e.item for e in examples],stage='adaptive_gate',split='shadow'))
+                        if callable(batch) else tuple(solver.solve(prompt, e.item, stage="adaptive_gate", split="shadow") for e in examples))
                 return profiles[lane_key]
             prompts = store.snapshot().member_prompts
             parent = tuple(profile(p, i) for i, p in enumerate(prompts))

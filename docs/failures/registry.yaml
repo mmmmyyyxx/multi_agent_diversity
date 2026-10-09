@@ -1,5 +1,24 @@
 schema_version: failure_registry_v1
 failures:
+- failure_id: FAIL-V23-SOLVER-SERIAL-LOCK-AND-LENGTH-OUTPUT
+  title: Solver network calls were serialized and length failures mixed long derivation with repeated reasoning
+  status: MITIGATED
+  lifecycle: MITIGATED
+  first_observed: a4_v23_only_pilot_v1
+  affected_components:
+  - solver_request_broker
+  - solver_invalid_recovery
+  symptom: A global lock covered the entire network call. Historical full and partial attempts include 26 and 32 length responses, all without a final marker.
+  evidence:
+  - reports/a4_v23_parallel_reuse_preparation_20261009/concurrency_proof.json
+  - reports/a4_v23_parallel_reuse_preparation_20261009/truncation_audit.json
+  root_cause_status: CONFIRMED_SERIAL_LOCK_AND_OBSERVED_MIXED_OUTPUT_FAILURES
+  evidence_level: observed
+  mitigation: Explicit fresh eight-worker execution, immutable compatible initial prefixes and bounded truncation-only 6144 recovery. Keep scoring, instructions and four total draws unchanged.
+  regression_tests:
+  - tests/current/test_parallel_solver_execution.py
+  forbidden_inference: Synthetic throughput is not provider throughput. More capacity is not proven to repair repeated reasoning, improve accuracy or generate commits. Old API scopes remain closed.
+  repair_effectiveness: OFFLINE_VERIFIED_REAL_CANARY_REQUIRED
 - failure_id: FAIL-V23-CANARY-OWNER-REVIEW-TIMEOUT
   title: Completed initial Solver profiles waited without an owner review decision
   status: DIAGNOSED

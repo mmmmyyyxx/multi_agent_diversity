@@ -116,6 +116,8 @@ def current_scientific_files(root: Path, *, execution_closure: bool = False) -> 
         result.append(optimization_evidence_contract)
     operational_contract=root/'docs/design/V23_ONLY_EXECUTION_SCOPE_V1.md'
     if operational_contract.is_file():result.append(operational_contract)
+    parallel_contract=root/'docs/design/V23_PARALLEL_CAPACITY_REUSE_V1.md'
+    if parallel_contract.is_file():result.append(parallel_contract)
     risk_contract = root/'docs/design/SHARED_RISK_MEMORY_V4.md'
     if risk_contract.is_file():
         result.append(risk_contract)
