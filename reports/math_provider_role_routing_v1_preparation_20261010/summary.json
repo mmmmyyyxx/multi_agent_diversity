@@ -55,5 +55,6 @@
     "prior_trace_sha256": "614827b156113f107e7e9c8584539e37c2bfb1b50f0b183cfedac52ed9204915",
     "selection_uses_outcomes": false
   },
-  "status": "OFFLINE_VERIFIED_PENDING_SOURCE_FREEZE"
+  "status": "EXACT_DUAL_SCOPE_FROZEN_READY_NOT_AUTHORIZED",
+  "source_sha": "01306fbf9cde002291ab21e2f93a2c02399f7e9e"
 }

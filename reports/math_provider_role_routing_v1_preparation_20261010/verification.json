@@ -26,7 +26,7 @@
   "governance_preflight": "PASS",
   "manifest_validation": "PASS",
   "network_attempt_count": 0,
-  "new_execution_scope_frozen": false,
+  "new_execution_scope_frozen": true,
   "new_real_api_authorized": false,
   "new_regression_cases": 13,
   "private_log_sha256": "c88b4047a7651a67b53da9110f866623c62429660d196b45541d2128ca2185df",
@@ -99,5 +99,29 @@
     "xml_sha256": "bbd5fbc82960071aa262908753c9a7884f2edf6449f9db90cadc4c06d665529e",
     "recheck_xml_sha256": "91a0c249b6fd1e7ade7458d4920a8574fc321ed9e964c007a3d5e92b478ebc1b",
     "network_attempt_count": 0
+  },
+  "final_frozen_preflight": [
+    {
+      "phase": "canary",
+      "status": "FROZEN_UNAPPROVED_FRESH_HASHES_PASS"
+    },
+    {
+      "phase": "pilot",
+      "status": "FROZEN_UNAPPROVED_FRESH_HASHES_PASS"
+    }
+  ],
+  "final_governance_preflight": {
+    "ok": true,
+    "mode": "zero_api_zero_dataset_evaluation",
+    "api_calls": 0,
+    "validation_calls": 0,
+    "test_calls": 0,
+    "experiment_count": 188,
+    "active_invariant_count": 27,
+    "failure_count": 43,
+    "lineage_node_count": 317,
+    "deterministic_hash_replay": "PASS",
+    "sanitization_fixture": "PASS",
+    "errors": []
   }
 }
