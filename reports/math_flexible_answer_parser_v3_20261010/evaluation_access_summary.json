@@ -1,0 +1,9 @@
+{
+  "historical_first_responses": 180,
+  "independent_generalization_claim": false,
+  "optimization_using_old_outcomes": false,
+  "optimize_historical_examples": 60,
+  "shadow_raw_access": 0,
+  "test_raw_access": 0,
+  "validation_raw_access": 0
+}

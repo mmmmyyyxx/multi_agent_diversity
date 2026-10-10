@@ -2,8 +2,10 @@
 
 The sole active research architecture is Unified Team Prompt Search.
 The sole executable method is
-`unified_team_prompt_search_v2_5_responsibility_fallback_repair_probe`.
-[The V2.5 scientific contract](RESPONSIBILITY_FALLBACK_REPAIR_V25.md) is normative.
+`unified_team_prompt_search_v2_5_flexible_answer_v1`.
+[The V2.5 scientific contract](RESPONSIBILITY_FALLBACK_REPAIR_V25.md) and
+[flexible answer extraction amendment](FLEXIBLE_ANSWER_EXTRACTION_V3.md) are normative.
+The amendment supersedes the strict terminal-line parser rule.
 New execution uses scripts/run_experiment.py, MATHStructuredBinding,
 CurrentPolicyBundle and build_current_team_prompt_search. Structured Role,
 Strategy and Answer are editable; System is exactly rendered blocks and User
@@ -28,12 +30,10 @@ contains closed generic categories only. No optimizer context enters Solver.
 Older runtime identities cannot execute through current production. Historical
 manifests and reports remain immutable evidence with their frozen source replay.
 No old scoring, response cache, competence, Memory or consumed scope is reusable.
-The latest user task authorizes one freshly frozen V2.5 Canary12, seed81, five
-members, one opportunity, at most eight Solver workers and charged plus reserved
-2M tokens. Validation, Test and Pilot are unauthorized. Readiness never grants
-execution authority; an exact fresh single-use scope is required. Real owner
-barriers audit integrity, not efficacy, and never manufacture a commit.
+Current readiness and authorization live in manifests and the frontier.
+The parser amendment requires a fresh source/protocol/cache identity before paid
+execution; no previously consumed or reviewed scope is reusable.
 
 Invariants: INV-UNIFIED-FLOW-001; INV-V25-RESPONSIBILITY-001;
-INV-V25-EXPLICIT-FINAL-001; INV-V25-SEEN-REPAIR-PROBE-001;
+INV-MATH-FLEXIBLE-ANSWER-001; INV-V25-SEEN-REPAIR-PROBE-001;
 INV-V25-EVALUATED-PARENT-001; INV-V24-FRESH-ATTEMPT-001.

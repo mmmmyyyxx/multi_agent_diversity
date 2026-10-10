@@ -14,7 +14,7 @@ from ..search.optimization_evidence import POLICY, BINDING, METHOD, MEMORY, EVID
 from ..search.textual_gradients import REFERENCE_GRADIENT_PROMPT, CLUSTER_PROMPT, pattern_policy_for_trajectory
 from ..search.schemas import SearchContractError
 from .math_structured_interface import MATHStructuredSystemBenchmark, SYSTEM_PROMPT_POLICY, system_interface_contract
-from .math_structured_answer import POLICY as EXTRACTION, validity_contract, IDENTITY as PARSER
+from .math_flexible_answer import POLICY as EXTRACTION, validity_contract, IDENTITY as PARSER
 from .math_response_evidence import trajectory_policy
 from .math_prediction_validity import structured_recovery_contract
 from .data_freeze import file_hash, digest
@@ -75,7 +75,7 @@ def prepare_structured_inputs(root,*,experiment_id,attempt,user_task_sha256,exec
     blockers=MATHStructuredBinding(root,c).blockers()
     if blockers:raise SearchContractError('V25_PREPARATION_HOLD:'+','.join(blockers))
     atomic_write_json(root/binding_path,c)
-    atomic_write_json(root/(protocol+'/protocol.json'),dict(identity='STRUCTURED_SYSTEM_V25_PROTOCOL_V1',
+    atomic_write_json(root/(protocol+'/protocol.json'),dict(identity='STRUCTURED_SYSTEM_FLEXIBLE_ANSWER_PROTOCOL_V2',
         attempt_id=attempt,method=METHOD,seed=81,members=5,phase=execution_phase,
         optimize=c['initial_competence_binding']['count'],shadow=40,models=c['models'],
         system_prompt_policy=SYSTEM_PROMPT_POLICY,answer_extraction_policy=EXTRACTION,
@@ -117,7 +117,7 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
     from ..governance.canary_review import STRUCTURED_POLICY
     c.update(identity=BINDING,method_identity=METHOD,execution_attempt_id=attempt,
         canary_attempt_id=attempt,cache_namespace=attempt,binding_path=binding_path,
-        execution_phase=execution_phase,cache_policy='STRUCTURED_SYSTEM_MEMBER_LANE_CACHE_V3',
+        execution_phase=execution_phase,cache_policy='FLEXIBLE_ANSWER_MEMBER_LANE_CACHE_V4',
         system_prompt_policy=deepcopy(SYSTEM_PROMPT_POLICY),answer_extraction_policy=deepcopy(EXTRACTION),
         solver_output_interface=system_interface_contract(),solver_trajectory_policy=trajectory_policy(),
         prediction_validity_policy=validity_contract(),invalid_recovery_policy=structured_recovery_contract(),
@@ -147,8 +147,8 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
     from ..current_contract import PATTERN_SPECIFIC_CONTENT_GUARD_VERSION, GRADIENT_PARTITION_COMPLETION_VERSION
     c['pattern_abstraction_guard']=PATTERN_SPECIFIC_CONTENT_GUARD_VERSION
     c['partition_completion_policy']=GRADIENT_PARTITION_COMPLETION_VERSION
-    from .protocols import MATH_PROTOCOL_REPAIR_V6
-    c['benchmark_protocol_sha256']=MATH_PROTOCOL_REPAIR_V6.identity()
+    from .protocols import MATH_PROTOCOL_FLEXIBLE_V7
+    c['benchmark_protocol_sha256']=MATH_PROTOCOL_FLEXIBLE_V7.identity()
     c['budget']['metric_calls']=42
     count=12 if execution_phase=='canary' else 60
     name='canary_optimize' if execution_phase=='canary' else 'pilot_optimize'

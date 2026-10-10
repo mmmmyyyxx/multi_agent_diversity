@@ -53,7 +53,7 @@ def bound_preflight(root, manifest):
     from ..benchmarks.math_domain_binding import execution_binding
     ref=manifest.get('execution_binding',{})
     from .. import versions
-    if ref.get('identity')!=versions.MATH_RESPONSIBILITY_REPAIR_BINDING_VERSION:
+    if ref.get('identity')!=versions.MATH_FLEXIBLE_ANSWER_BINDING_VERSION:
         return dict(gate='HOLD',blockers=[BINDING_BLOCKER],provider_attempts=0)
     errors=validate_manifest_v2(root,manifest)
     if manifest.get('lifecycle',{}).get('status')!='PREEXECUTION_FROZEN':errors.append('PREEXECUTION_NOT_FROZEN')

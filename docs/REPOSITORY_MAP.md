@@ -1,7 +1,8 @@
 # Repository Map
 
 Current authority: AGENTS.md, docs/design/CURRENT_SPEC.md and
-[Responsibility Fallback V2.5](design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md).
+[Responsibility Fallback V2.5](design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md) with
+[flexible extraction V3](design/FLEXIBLE_ANSWER_EXTRACTION_V3.md).
 
 | Path | Role |
 |---|---|
@@ -9,7 +10,8 @@ Current authority: AGENTS.md, docs/design/CURRENT_SPEC.md and
 | multi_dataset_diverse_rl/search/current_composition.py | Sole production graph |
 | multi_dataset_diverse_rl/current_contract.py | See package-root current_contract.py for closed identity imports |
 | multi_dataset_diverse_rl/benchmarks/math_structured_binding.py | Fresh V2.5 freeze and composition |
-| multi_dataset_diverse_rl/benchmarks/math_structured_answer.py | Frozen gold-blind extraction |
+| multi_dataset_diverse_rl/benchmarks/math_flexible_answer.py | Current gold-blind flexible extraction |
+| multi_dataset_diverse_rl/benchmarks/math_structured_answer.py | Frozen V2 baseline replay parser; not current extraction |
 | multi_dataset_diverse_rl/benchmarks/math_response_evidence.py | Private ordinary content with optional written steps |
 | multi_dataset_diverse_rl/governance/ | Authorization, source/startup freeze, accounting and registries |
 | multi_dataset_diverse_rl/persistence/ | Durable receipts, attempt-isolated cache and journals |

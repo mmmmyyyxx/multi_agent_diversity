@@ -171,7 +171,7 @@ class BoundedMemoryOptimizer:
                 failure_evidence_kind='FORMAT_AND_MATHEMATICS' if val['invalid_ids'] and val['valid_wrong_ids'] else 'FORMAT' if val['invalid_ids'] else 'MATHEMATICS',
                 status='LOCALLY_SUPPORTED' if val['member_delta']>0 and not val['broken_ids'] else 'INCONCLUSIVE',
                 status_history=['PROPOSED'],provenance=dict(split='optimize',generation=generation,
-                    evidence_packet_sha256=common['evidence_packet_hash'],solver_interface='MATH_EXPLICIT_FINAL_SYSTEM_INTERFACE_V8'))
+                    evidence_packet_sha256=common['evidence_packet_hash'],solver_interface='MATH_FLEXIBLE_ANSWER_SYSTEM_INTERFACE_V9'))
             lineage['status_history'].append(lineage['status'])
             lineage['provenance']['local_request_identities']={name:{r['example_id']:
                 r['solver_trajectory']['source']['request_sha256'] for r in rows}

@@ -1,0 +1,6 @@
+{
+  "baseline_stability": "NOT_EVALUATED",
+  "efficacy": "NO_NEW_MODEL_EXPERIMENT",
+  "experiment_id": "math_flexible_answer_parser_v3",
+  "validity": "VERIFIED_ZERO_API_IMPLEMENTATION"
+}

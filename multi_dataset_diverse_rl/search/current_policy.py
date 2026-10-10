@@ -21,11 +21,11 @@ def require_current_contract(contract):
         raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
     frozen_policy(contract.get('optimization_evidence_policy'))
     from ..benchmarks.math_structured_interface import SYSTEM_PROMPT_POLICY, system_interface_contract
-    from ..benchmarks.math_structured_answer import POLICY as extraction
+    from ..benchmarks.math_flexible_answer import POLICY as extraction
     if (contract.get('system_prompt_policy') != SYSTEM_PROMPT_POLICY
             or contract.get('answer_extraction_policy') != extraction
             or contract.get('solver_output_interface') != system_interface_contract()
-            or contract.get('cache_policy') != 'STRUCTURED_SYSTEM_MEMBER_LANE_CACHE_V3'
+            or contract.get('cache_policy') != 'FLEXIBLE_ANSWER_MEMBER_LANE_CACHE_V4'
             or any(contract.get(k) is not None for k in ('initial_evidence_reuse_policy',
                 'initial_evidence_reuse_manifest_path','initial_evidence_reuse_manifest_sha256'))):
         raise SearchContractError('CURRENT_STRUCTURED_SYSTEM_POLICY_REQUIRED')

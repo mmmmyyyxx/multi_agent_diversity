@@ -73,6 +73,7 @@ def graph(tmp_path,*,mode='both',uncertain=False,block='strategy',answer_only=Fa
             answer=('2' if correct else '3')
             if answer_only and answer_only_form=='underscore':return response('FINAL_ANSWER: '+answer)
             if answer_only and answer_only_form=='boxed_label':return response('Final answer: \\boxed{'+answer+'}')
+            if answer_only and answer_only_form=='natural_confirmation':return response('Final answer: '+answer+'\nTherefore, x = '+answer+'.')
             written='' if answer_only else 'ACTUAL_WRITTEN_OPERATION_'+str(i)+'.\n'
             if long_response:written+='A synthetic ordinary operation is written here.\n'*120
             return response(written+'Final answer: '+('\\boxed{'+answer+'}' if format_repair else answer))
@@ -377,7 +378,7 @@ def manifest():
     m.update(experiment_id='synthetic_evidence',method_family=method.method,method_identity=method.method,
         lifecycle={'status':'DRAFT','history':[]},search_engine_identity=method.search_engine,
         evidence_identity=method.evidence_policy,memory_identity=method.memory_policy,pattern_identity=method.pattern_policy,feasibility_identity=method.feasibility_policy,
-        solver_output_interface_identity='MATH_EXPLICIT_FINAL_SYSTEM_INTERFACE_V8',
+        solver_output_interface_identity='MATH_FLEXIBLE_ANSWER_SYSTEM_INTERFACE_V9',
         mechanism_config=method.mechanism_config,layer1_search_policy=c['layer1_search_policy'],
         optimization_evidence_policy=POLICY,solver_trajectory_policy=c['solver_trajectory_policy'],
         execution_binding={'identity':c['identity'],'path':c['binding_path'],'sha256':'0'*64})

@@ -36,7 +36,6 @@ active or canonical refer to the report's creation context.
 ## 3. Current project direction
 
 The sole active research architecture is Unified Team Prompt Search.
-The sole current scientific method is V2.4 Structured System Prompt Optimization.
 Member state is one Role/Strategy/Answer object; User content is the raw problem.
 All three blocks are editable. No immutable CoT or output-style instruction exists.
 `UnifiedSearchOrchestrator` owns the production graph. The current composition

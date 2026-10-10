@@ -1,0 +1,49 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "238a9db1a97baa2290ef1b4474d7990a38fa26c751c384d25d7c32ab34e080cf"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "1b26418c803dd7f7c44514b9028b7f5d898e30432fd2759b7a1fb1343db9ec56"
+    },
+    {
+      "file": "counterfactual_compatibility.json",
+      "sha256": "447ba1504c3e90c167a1867dc65a6756cef47d30c4a14dfc48aa68754b06ee51"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "189f5f91efa7baacbbfbdd8b93df80c09d2a4e9acfa725cc216145a2cdcae18a"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "8e07c1ff424cb8c2ed7456582d57f0cffd46554097bec104a5321741724d41d2"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "58d86b729300a919c9a1f68aeb80c78d2431e94985adb5a77de92baf6afa7141"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "ea75aab808008e44e62ed8c458be3a591af7601e7db7a1d3b58895c858d441a5"
+    },
+    {
+      "file": "README.md",
+      "sha256": "094613800734158f85ea62a54f06575cdb7bdc6f185314d76c9ce038e90fa800"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "af6ab78c38d6eeb3b87577053d4ad9d7a1a1cecf9f5436ddcae212aed119aaf4"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "49346aa3a14c830cc6891f0026b4802226f5c3db2cada2bfd45f1e580110ba75"
+    },
+    {
+      "file": "verification.json",
+      "sha256": "c9cefb98e967492a15ca69e47c5822c931e969f214996e1c0076c7c8c0a35c4b"
+    }
+  ]
+}

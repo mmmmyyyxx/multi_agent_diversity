@@ -1,0 +1,13 @@
+{
+  "api_calls_zero": true,
+  "conflicts_and_truncation_invalid": true,
+  "gradient_weights_unchanged": true,
+  "heldout_access_zero": true,
+  "historical_parser_unchanged": true,
+  "network_attempts_zero": true,
+  "official_scores_and_retries_unchanged": true,
+  "old_b5_protocol_immutable_and_review_requires_fresh_source": true,
+  "old_cache_and_profile_rejected": true,
+  "pinned_scoring_unchanged": true,
+  "wrong_parseable_answer_not_format_retry": true
+}

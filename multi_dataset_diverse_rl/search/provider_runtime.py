@@ -65,13 +65,13 @@ class RequestBroker:
         self.gradient_pattern = contract.get('pattern_policy',{}).get('discovery') == versions.RECOVERABLE_PATTERN_DISCOVERY_VERSION
         if self.gradient_pattern:
             from .textual_gradients import pattern_policy_for_trajectory
-            if (contract.get('identity')!=versions.MATH_RESPONSIBILITY_REPAIR_BINDING_VERSION
+            if (contract.get('identity')!=versions.MATH_FLEXIBLE_ANSWER_BINDING_VERSION
                     or contract['pattern_policy']!=pattern_policy_for_trajectory(self.solver_trajectory_policy, contract.get('optimization_evidence_policy'))
                     or contract.get('pattern_abstraction_guard')!=CURRENT_CONTENT_GUARD
                     or not contract.get('gradient_prompt_sha256')):
                 raise SearchContractError('GRADIENT_PATTERN_PROVIDER_BINDING_MISMATCH')
             for role in ('pattern_gradient','pattern_cluster'):self.usage.setdefault(role,0)
-        self.member_lane_policy = contract.get('cache_policy') == 'STRUCTURED_SYSTEM_MEMBER_LANE_CACHE_V3'
+        self.member_lane_policy = contract.get('cache_policy') == 'FLEXIBLE_ANSWER_MEMBER_LANE_CACHE_V4'
         if not self.member_lane_policy:
             raise SearchContractError('SOLVER_MEMBER_LANE_POLICY_BINDING_MISMATCH')
         self.durable_cache = durable_cache
@@ -116,11 +116,11 @@ class RequestBroker:
             request['max_tokens'] = output_capacity
         identity = {"provider": c["provider"], "role": role, "split": split, "request": request,
                     "cache_namespace": c["cache_namespace"]}
-        if c.get('identity')==versions.MATH_RESPONSIBILITY_REPAIR_BINDING_VERSION:
+        if c.get('identity')==versions.MATH_FLEXIBLE_ANSWER_BINDING_VERSION:
             identity['system_prompt_policy'] = c['system_prompt_policy']
             identity['answer_extraction_policy'] = c['answer_extraction_policy']
             identity['method_treatment'] = {k:c[k] for k in ('method_identity', 'transition_policy')}
-        if c.get('identity')==versions.MATH_RESPONSIBILITY_REPAIR_BINDING_VERSION:
+        if c.get('identity')==versions.MATH_FLEXIBLE_ANSWER_BINDING_VERSION:
             identity['memory_treatment']={k:c[k] for k in ('memory_policy_identity','memory_limits','layer1_search_policy','optimizer_input_schema','panel_evidence_policy')}
         if c.get('pattern_policy'):
             identity['pattern_treatment']={k:c[k] for k in ('pattern_policy','shared_risk_policy')}
@@ -211,7 +211,7 @@ class RequestBroker:
                 self.requests_inflight.pop(key, None)
 
     def _resolve_solver(self, *, role, split, stage, messages, member_slot, key):
-        from ..benchmarks.math_structured_answer import classify_prediction
+        from ..benchmarks.math_flexible_answer import classify_prediction
         from ..benchmarks.math_prediction_validity import resolve_predictions
         predictions=[];realizations=[];transport_retries=0
         for semantic_attempt_no in range(1,5):

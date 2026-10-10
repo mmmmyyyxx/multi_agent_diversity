@@ -9,7 +9,7 @@ from ..benchmarks.math_solver_decoding import generation_request_fields
 from .startup_identity import canonical_sha256
 from ..search.schemas import SearchContractError
 
-STRUCTURED_POLICY=dict(identity='RESPONSIBILITY_REPAIR_CANARY_REVIEW_V4',
+STRUCTURED_POLICY=dict(identity='FLEXIBLE_ANSWER_CANARY_REVIEW_V5',
     stages=['INITIAL_SOLVER_PROFILE','FIRST_COMPLETE_OPPORTUNITY'],
     owner_review_required=True,maximum_wait_seconds=3600,
     extra_provider_calls=0,total_max_opportunities=5,
@@ -36,7 +36,7 @@ def initial_audit(contract,composed,run_root):
 def profile_audit(contract,solver,run_root,profiles):
     """Verify every physical realization, including immutable imported prefixes."""
     from ..search.solver_execution import next_capacity, frozen_execution_policy
-    from ..benchmarks.math_structured_answer import classify_prediction
+    from ..benchmarks.math_flexible_answer import classify_prediction
     execution=frozen_execution_policy(contract)
     raw=trace_rows(run_root)
     bykey={(r['request_sha256'],r['semantic_attempt_no']):r for r in raw

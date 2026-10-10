@@ -1,0 +1,69 @@
+{
+  "actual_vote_oracle_coverage_cost_under_new_parser": "UNMEASURED",
+  "b5_under_new_parser": "NOT_EXECUTED_REQUIRES_NEW_VERSIONED_PROTOCOL_AND_SOURCE_FREEZE",
+  "b_interface_terminal_cases_recovered": 2,
+  "clear_wrong_answer": "VALID_WRONG_STOPS_FORMAT_RECOVERY_ENTERS_MATH_DIAGNOSIS",
+  "compatibility_usage": "COUNTERFACTUAL_ONLY_NOT_OFFICIAL_SCORES_OR_NEW_EXPERIMENT",
+  "conflicting_declarations": "INVALID_WITHOUT_GOLD_SELECTION",
+  "current_method": "unified_team_prompt_search_v2_5_flexible_answer_v1",
+  "experiment_id": "math_flexible_answer_parser_v3",
+  "first_response_compatibility": {
+    "A": {
+      "examples": 60,
+      "new_parser_correct": 51,
+      "new_parser_valid": 56,
+      "new_parser_valid_wrong": 5,
+      "old_native_valid": 23,
+      "remaining_invalid_categories": {
+        "CONFLICTING_FINAL_ANSWERS": 1,
+        "MALFORMED_FINAL_BOUNDARY": 1,
+        "OUTPUT_TRUNCATED": 2
+      }
+    },
+    "B": {
+      "examples": 60,
+      "new_parser_correct": 50,
+      "new_parser_valid": 58,
+      "new_parser_valid_wrong": 8,
+      "old_native_valid": 56,
+      "remaining_invalid_categories": {
+        "OUTPUT_TRUNCATED": 2
+      }
+    },
+    "C": {
+      "examples": 60,
+      "new_parser_correct": 47,
+      "new_parser_valid": 54,
+      "new_parser_valid_wrong": 7,
+      "old_native_valid": 1,
+      "remaining_invalid_categories": {
+        "AMBIGUOUS_FINAL_PAYLOAD": 2,
+        "CONFLICTING_FINAL_ANSWERS": 1,
+        "MISSING_EXPLICIT_FINAL_ANSWER": 2,
+        "OUTPUT_TRUNCATED": 1
+      }
+    }
+  },
+  "real_api_calls": 0,
+  "scope": "USER_REQUESTED_PRODUCTION_PARSER_AMENDMENT_ZERO_API",
+  "supported": [
+    "LABEL_PLUS_EQUIVALENT_CONFIRMATION",
+    "ANSWER_LABEL",
+    "MARKDOWN_LABEL",
+    "NATURAL_CONCLUSION",
+    "MULTILINE_DISPLAY_BOX",
+    "LABELED_MATH_FENCE",
+    "UNICODE_RADICAL",
+    "MATRIX_ENVIRONMENT",
+    "DUPLICATE_EMPTY_ANSWER_HEADING",
+    "NAMED_COORDINATE_TUPLE"
+  ],
+  "unchanged": [
+    "PINNED_MATHEMATICAL_SCORING",
+    "FIVE_MEMBER_PLURALITY",
+    "GRADIENT_FAILURE_WEIGHTING",
+    "FOUR_DRAW_BOUND",
+    "TRUNCATION_INVALIDITY",
+    "HISTORICAL_OFFICIAL_SCORES"
+  ]
+}

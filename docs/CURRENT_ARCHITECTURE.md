@@ -1,8 +1,8 @@
 # Current Architecture
 
 The sole active research architecture is Unified Team Prompt Search.
-The sole current method is V2.5 Responsibility Fallback and Repair Probe,
-`unified_team_prompt_search_v2_5_responsibility_fallback_repair_probe`.
+The sole current method is V2.5 with flexible mathematical answer extraction,
+`unified_team_prompt_search_v2_5_flexible_answer_v1`.
 
 [Current specification](design/CURRENT_SPEC.md) and
 [V2.5 scientific contract](design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md) define the
@@ -14,8 +14,8 @@ Full admission, plurality, Shadow, Memory transactions and atomic commit remain.
 
 Current execution uses `scripts/run_experiment.py` and
 `build_current_team_prompt_search`. Paid APIs require a fresh frozen exact
-single-use scope. The current user task authorizes one newly frozen V2.5 Canary;
-Validation, Test and Pilot are unauthorized. Initial V2.5 performance is unmeasured
-until that attempt completes. Synthetic improvements
-are test fixtures. Historical code is recovered from frozen Git sources;
+single-use scope. The [flexible extraction amendment](design/FLEXIBLE_ANSWER_EXTRACTION_V3.md)
+accepts clear equivalent answer presentations while keeping mathematical scoring
+unchanged. New paid execution remains gated; historical results retain their frozen
+parser. Synthetic improvements are test fixtures. Historical code is recovered from frozen Git sources;
 reports and manifests retain their original scientific meaning.

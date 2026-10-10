@@ -217,7 +217,7 @@ class GlobalStopConfig:
 
 @dataclass(frozen=True)
 class SearchMethodConfig:
-    method: str = versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_5_VERSION
+    method: str = versions.UNIFIED_TEAM_PROMPT_SEARCH_FLEXIBLE_ANSWER_VERSION
     search_engine: str = 'STRUCTURED_EVALUATED_PARENT_SEARCH_V3'
     diagnosis_policy: str = versions.BINARY_PLURALITY_RESPONSIBILITY_VERSION
     target_policy: str = versions.UNIFIED_FALLBACK_TARGET_VERSION
@@ -239,7 +239,7 @@ class SearchMethodConfig:
 
 
     def __post_init__(self):
-        if self.method!=versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_5_VERSION:
+        if self.method!=versions.UNIFIED_TEAM_PROMPT_SEARCH_FLEXIBLE_ANSWER_VERSION:
             raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
         # Bundle validation closes all policy combinations before composition.
         if not self.mechanism_config:
@@ -255,7 +255,7 @@ class SearchMethodConfig:
         allowed = {row.name for row in fields(cls)}
         if set(payload) - allowed:
             raise SearchContractError("unknown unified method component")
-        if payload.get('method')!=versions.UNIFIED_TEAM_PROMPT_SEARCH_V2_5_VERSION:
+        if payload.get('method')!=versions.UNIFIED_TEAM_PROMPT_SEARCH_FLEXIBLE_ANSWER_VERSION:
             raise SearchContractError('unsupported unified method identity')
         if not payload.get('mechanism_config'):
             raise SearchContractError('CURRENT_V25_COMPLETE_POLICY_REQUIRED')

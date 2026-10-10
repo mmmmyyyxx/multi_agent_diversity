@@ -191,7 +191,8 @@ def test_math_strict_set_tuple_and_wrong_answer():
 def test_math_invalid_parse_and_timeout_fail_closed(monkeypatch):
     a = MATHBenchmarkAdapter()
     q = item(a)
-    for raw in ("Final answer: nonsense", "Final answer:", "Final answer: 2\nafter",
+    assert a.parse_member_output("Final answer: 2\nafter", q).valid
+    for raw in ("Final answer: nonsense", "Final answer:", "Final answer: 2\nTherefore, x=3.",
                 "Final answer: 2\nFinal answer: 3", "Unmarked prose 2", "Final answer: unknown prose 2",
                 "Final answer: 2+", r"Final answer: \frac{1}{"):
         assert not a.parse_member_output(raw, q).valid

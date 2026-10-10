@@ -13,7 +13,7 @@ import re
 from .. import versions
 from ..search.schemas import SearchContractError
 
-from .math_structured_answer import prediction_from_persisted, extract_answer, boundaries
+from .math_flexible_answer import prediction_from_persisted, extract_answer, boundaries
 
 
 def digest(value):
@@ -29,9 +29,9 @@ def text_hash(text):
 
 
 def trajectory_policy():
-    return dict(identity='MATH_OBSERVED_RESPONSE_POLICY_V3',
-        profile_schema=versions.MATH_REPAIR_PROFILE_VERSION,
-        trajectory_schema=versions.MATH_REPAIR_RESPONSE_VERSION,
+    return dict(identity='MATH_FLEXIBLE_OBSERVED_RESPONSE_POLICY_V4',
+        profile_schema=versions.MATH_FLEXIBLE_PROFILE_VERSION,
+        trajectory_schema=versions.MATH_FLEXIBLE_RESPONSE_VERSION,
         gradient_input_schema='STRUCTURED_SYSTEM_GRADIENT_INPUT_V5',
         gradient_prompt_identity='STRUCTURED_SYSTEM_GRADIENT_PROMPT_V7',
         optimizer_input_schema='STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V8',
@@ -45,7 +45,7 @@ def trajectory_policy():
 
 def frozen_trajectory_policy(contract):
     policy = contract.get('solver_trajectory_policy')
-    if contract.get('identity')==versions.MATH_RESPONSIBILITY_REPAIR_BINDING_VERSION:
+    if contract.get('identity')==versions.MATH_FLEXIBLE_ANSWER_BINDING_VERSION:
         from ..search.optimization_evidence import frozen_policy
         frozen_policy(contract.get('optimization_evidence_policy'))
         from .math_structured_interface import system_interface_contract
@@ -56,7 +56,7 @@ def frozen_trajectory_policy(contract):
                 or contract.get('models', {}).get('solver_thinking') is not False):
             raise SearchContractError('MATH_VISIBLE_TRAJECTORY_BINDING_MISMATCH')
         return deepcopy(policy)
-    if policy is not None or contract.get('solver_output_interface', {}).get('identity') == versions.MATH_SOLVER_INTERFACE_V8_VERSION:
+    if policy is not None or contract.get('solver_output_interface', {}).get('identity') == versions.MATH_SOLVER_INTERFACE_V9_VERSION:
         raise SearchContractError('MATH_VISIBLE_TRAJECTORY_REQUIRES_FRESH_BINDING')
     raise SearchContractError('CURRENT_VISIBLE_TRAJECTORY_REQUIRED')
 
@@ -71,6 +71,7 @@ def _projection(prediction, source):
     terminal = [r for r in (records or ()) if r[3]]
     solution = raw[:min(r[1] for r in terminal)].rstrip() if terminal else '' if boundary_valid else raw
     solution = re.sub(r'(?im)(?:^|\n)\s*(?:###|Final answer:)\s*[$]*$', '', solution).rstrip()
+    solution = re.sub(r'(?im)(?:^|\n)\s*(?:#{1,6}\s+)?(?:\*\*|__)?(?:Final[ _]+answer|Answer)\s*[:=]\s*(?:\*\*|__)?\s*$', '', solution).rstrip()
     if re.fullmatch(r'\s*(?:\$+|\\[([]|(?:Final answer:|Thus[:,]?|Therefore[:,]?|The answer is)\s*)*', solution, re.I):
         solution = ''
     truncated = prediction.finish_reason in {'length', 'max_tokens', 'max_output_tokens'}
@@ -83,7 +84,7 @@ def _projection(prediction, source):
     retry_summary=dict(semantic_attempt_count=len(attempts),invalid_reasons=reasons,
         repeated_format_failure=len(attempts)==4 and all(not p.prediction_valid for p in attempts) and len(set(reasons))==1,
         distinct_response_count=len({p.text for p in attempts}))
-    return dict(schema=versions.MATH_REPAIR_RESPONSE_VERSION,retry_summary=retry_summary,
+    return dict(schema=versions.MATH_FLEXIBLE_RESPONSE_VERSION,retry_summary=retry_summary,
         observed_response=raw,observed_response_truncated=False,
         original_response_characters=len(raw),
         source=deepcopy(source), visible_solution=solution[:limit], solution_status=status,
@@ -104,14 +105,14 @@ def solver_profile(result, prediction, *, member_id, prompt, example_id, split, 
     source = dict(member_id=member_id, mutable_prompt_sha256=text_hash(prompt),
         benchmark_input_sha256=text_hash(problem),
         example_id=example_id, split=split, request_sha256=request_hash,
-        solver_interface_identity=versions.MATH_SOLVER_INTERFACE_V8_VERSION)
-    return dict(schema=versions.MATH_REPAIR_PROFILE_VERSION,
+        solver_interface_identity=versions.MATH_SOLVER_INTERFACE_V9_VERSION)
+    return dict(schema=versions.MATH_FLEXIBLE_PROFILE_VERSION,
         prediction=asdict(prediction), solver_trajectory=_projection(prediction, source))
 
 
 def profile_prediction(profile, *, example_id=None):
     if (not isinstance(profile, dict) or set(profile) != {'schema', 'prediction', 'solver_trajectory'}
-            or profile['schema'] != versions.MATH_REPAIR_PROFILE_VERSION):
+            or profile['schema'] != versions.MATH_FLEXIBLE_PROFILE_VERSION):
         raise SearchContractError('MATH_VISIBLE_PROFILE_SCHEMA_INVALID')
     prediction = prediction_from_persisted(profile['prediction'])
     trajectory = profile['solver_trajectory']
@@ -122,7 +123,7 @@ def profile_prediction(profile, *, example_id=None):
             or type(source['member_id']) is not int or source['member_id'] not in range(5)
             or not isinstance(source['example_id'], str) or not source['example_id']
             or source['split'] not in {'optimize', 'shadow', 'validation'}
-            or source['solver_interface_identity'] != versions.MATH_SOLVER_INTERFACE_V8_VERSION
+            or source['solver_interface_identity'] != versions.MATH_SOLVER_INTERFACE_V9_VERSION
             or any(not isinstance(source[k], str) or re.fullmatch('[0-9a-f]{64}', source[k]) is None
                 for k in ('mutable_prompt_sha256', 'benchmark_input_sha256', 'request_sha256'))
             or example_id is not None and source['example_id'] != example_id
@@ -167,10 +168,10 @@ def validate_adaptive_trajectory(trajectory, *, example_id, member_id=None, prom
             or not isinstance(source, dict) or set(source) != source_keys
             or type(source['member_id']) is not int or source['member_id'] not in range(5)
             or source['split'] != 'optimize' or source['example_id'] != example_id
-            or source['solver_interface_identity'] != versions.MATH_SOLVER_INTERFACE_V8_VERSION
+            or source['solver_interface_identity'] != versions.MATH_SOLVER_INTERFACE_V9_VERSION
             or any(not isinstance(source[k], str) or re.fullmatch('[0-9a-f]{64}', source[k]) is None
                 for k in ('mutable_prompt_sha256', 'benchmark_input_sha256', 'request_sha256'))
-            or trajectory.get('schema') != versions.MATH_REPAIR_RESPONSE_VERSION
+            or trajectory.get('schema') != versions.MATH_FLEXIBLE_RESPONSE_VERSION
             or not isinstance(trajectory.get('visible_solution'), str)
             or not isinstance(trajectory.get('observed_response'),str)
             or type(trajectory.get('observed_response_truncated')) is not bool

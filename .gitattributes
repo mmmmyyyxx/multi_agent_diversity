@@ -138,3 +138,10 @@ experiments/manifests/math_b_* text eol=lf
 experiments/protocols/math_b_five_member_calibration_v1/** text eol=lf
 reports/math_b_residual_boxed_compatibility_audit_20261010/** text eol=lf
 docs/workflows/MATH_B_FIVE_MEMBER_CALIBRATION_V1.md text eol=lf
+
+# Flexible answer parser amendment and sanitized evidence.
+multi_dataset_diverse_rl/benchmarks/math_flexible_answer.py text eol=lf
+tests/current/test_math_flexible_answer.py text eol=lf
+docs/design/FLEXIBLE_ANSWER_EXTRACTION_V3.md text eol=lf
+experiments/manifests/math_flexible_answer_parser_v3.yaml text eol=lf
+reports/math_flexible_answer_parser_v3_20261010/** text eol=lf

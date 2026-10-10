@@ -834,7 +834,8 @@ invariants:
   - tests/current/test_v25_repair_contract.py
   failure_refs: []
   critical: true
-  status: ACTIVE
+  status: HISTORICAL_GIT_ONLY
+  recovery_source: dc21942c8c45da79cd9b5ed1f9513f185d1a5e2b
 - id: INV-V25-SEEN-REPAIR-PROBE-001
   description: Seen assigned binary repair and disjoint Independent6 risk precede
     unchanged Full/Shadow.
@@ -856,6 +857,18 @@ invariants:
   - multi_dataset_diverse_rl/search/rolling_risk_memory.py
   tests:
   - tests/current/test_v25_repair_contract.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-MATH-FLEXIBLE-ANSWER-001
+  description: Clear mathematical declarations and consistent confirmations are valid independently of correctness; conflicts and truncation stay invalid.
+  authority: docs/design/FLEXIBLE_ANSWER_EXTRACTION_V3.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/benchmarks/math_flexible_answer.py
+  - multi_dataset_diverse_rl/benchmarks/math_structured_interface.py
+  - multi_dataset_diverse_rl/search/provider_runtime.py
+  tests:
+  - tests/current/test_math_flexible_answer.py
   failure_refs: []
   critical: true
   status: ACTIVE

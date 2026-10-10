@@ -1,0 +1,10 @@
+{
+  "current_scientific_sha256": "487a461d3d4a7047a3138e054253151a74dbed5e39aafe2110835b3d07c2a37e",
+  "historical_checkpoint_sha256": "8986fe0158450e7986418a3a018f9d657d89e53a3a2fc45c70c64ca9501d8902",
+  "historical_ledger_last_sha256": "5559e8932a2f6a503e02f7e968d162aafb3d2f7b9db683e316f5d9c13e7f89fe",
+  "implementation_commit": "CONTAINING_COMMIT",
+  "new_paid_source_freeze": false,
+  "normative_amendment_sha256": "21f1d84caea1e37dc2970bdf4f1caceb84974a293c85bd4431713327893f4337",
+  "parent_implementation_commit": "dc21942c8c45da79cd9b5ed1f9513f185d1a5e2b",
+  "parent_paid_results_commit": "f38ec47c86b990d94b2be7e1faf6c202b29ed01f"
+}

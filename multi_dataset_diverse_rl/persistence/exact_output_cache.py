@@ -39,7 +39,7 @@ class DurableExactOutputCache:
             if (digest(row)!=seal or row['context']!=self.context or row['request_sha256']!=key
                     or digest(row['result'])!=row['response_sha256']):
                 raise ValueError('seal mismatch')
-            from ..benchmarks.math_structured_answer import prediction_from_persisted
+            from ..benchmarks.math_flexible_answer import prediction_from_persisted
             prediction=prediction_from_persisted(row['result']['resolved_prediction'])
             result=row['result']
             if (result['request_sha256']!=key or result['text']!=prediction.text
@@ -55,7 +55,7 @@ class DurableExactOutputCache:
             raise SearchContractError('DURABLE_CACHE_CORRUPTION') from exc
 
     def put(self,key,result):
-        from ..benchmarks.math_structured_answer import prediction_from_persisted
+        from ..benchmarks.math_flexible_answer import prediction_from_persisted
         prediction_from_persisted(result['resolved_prediction'])
         row=dict(context=self.context,request_sha256=key,result=result,response_sha256=digest(result))
         row['integrity_seal']=digest(row)

@@ -9096,3 +9096,29 @@ experiments:
       source SHA.
     execution_commit: No new paid experiment executed.
     result_commit: Containing publication commit; no self-reference.
+- experiment_id: math_flexible_answer_parser_v3
+  kind: PROTOCOL_FREEZE
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_5_flexible_answer_v1
+  parent_ids:
+  - a4_v25_responsibility_repair_canary_v1
+  - math_b_residual_boxed_compatibility_audit_v1
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_PARSER_AMENDMENT
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_flexible_answer_parser_v3.yaml
+  report: reports/math_flexible_answer_parser_v3_20261010
+  classifier: reports/math_flexible_answer_parser_v3_20261010/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User-requested presentation amendment; pinned mathematics and Gradient ratios
+    unchanged.
+  - No paid experiment; historical scores and strict B5 protocol remain immutable.
+  unavailable:
+    implementation_commit: Containing implementation commit.
+    execution_commit: No paid execution.
+    result_commit: Containing implementation commit.

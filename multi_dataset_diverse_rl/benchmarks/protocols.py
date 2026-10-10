@@ -135,6 +135,13 @@ MATH_PROTOCOL_REPAIR_V6 = replace(MATH_PROTOCOL_STRUCTURED_V5,
     parser_contract_id='MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V2')
 
 
+MATH_PROTOCOL_FLEXIBLE_V7 = replace(MATH_PROTOCOL_REPAIR_V6,
+    system_contract_id='MATH_FLEXIBLE_ANSWER_SYSTEM_INTERFACE_V9',
+    output_contract_id='math_clear_answer_declarations_v4',
+    parser_contract_id='MATH_FLEXIBLE_ANSWER_EXTRACTION_V3',
+    member_success_semantics='Gold-blind clear declarations and equivalent confirmations; multiline boxed supported; pinned binary mathematical equivalence unchanged; first valid answer stops recovery even when mathematically wrong; truncation and conflicts remain invalid')
+
+
 def protocol_input(benchmark_id: str, input_id: str, row: Mapping[str, object],
                    output_contract: str, *, protocol: BenchmarkProtocolSpec | None = None) -> BenchmarkInput:
     """Allowlist projection. Evaluator fields never reach solver/aggregator inputs."""

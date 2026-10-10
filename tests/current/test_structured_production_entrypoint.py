@@ -18,22 +18,32 @@ ROOT=Path(__file__).resolve().parents[2]
 FRESH='experiments/execution_bindings/a4_v25_seed81_canary_attempt1.json'
 
 def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct=False,structural=False):
-    fresh=FRESH
-    c=read_json(ROOT/fresh);binding=execution_binding(ROOT,c);assert not binding.blockers()
-    if phase=='pilot':
-        from multi_dataset_diverse_rl.benchmarks.math_structured_binding import derive_structured_contract
-        parent=read_json(ROOT/c['trajectory_parent_binding_path'])
-        c=derive_structured_contract(parent,attempt='synthetic_v25_pilot',binding_path=fresh,
-            parent_path=c['trajectory_parent_binding_path'],parent_sha256=c['trajectory_parent_binding_sha256'],
-            authorization_path=c['current_user_scope_path'],authorization_sha256=c['current_user_scope_sha256'],
-            gradient_prompt_path=c['gradient_prompt_path'],gradient_prompt_sha256=c['gradient_prompt_sha256'],
-            pattern_prompt_path=c['pattern_prompt_path'],pattern_prompt_sha256=c['pattern_prompt_sha256'],
-            validation_metadata_path=c['validation_accounting_metadata_path'],validation_metadata_sha256=c['validation_accounting_metadata_sha256'],
-            initial_team_path=c['initial_team_path'],initial_team_artifact_sha256=c['initial_team_artifact_sha256'],
-            accounting_policy_path=c['accounting_policy_path'],accounting_policy_sha256=c['accounting_policy_sha256'],
-            execution_phase='pilot',max_opportunities=5)
-        binding=execution_binding(ROOT,c)
-        monkeypatch.setattr(binding,'blockers',lambda:())
+    from hashlib import sha256
+    from multi_dataset_diverse_rl.benchmarks.math_structured_binding import derive_structured_contract
+    from multi_dataset_diverse_rl.search.optimization_evidence import POLICY
+    old=read_json(ROOT/FRESH)
+    fresh='runs/synthetic_flexible_binding.json'
+    attempt='synthetic_flexible_'+phase
+    scope_path='runs/synthetic_flexible_scope.json'
+    scope=dict(schema_version='structured_system_preparation_scope_v1',attempt_id=attempt,
+        one_attempt_only=True,preparation_only=True,real_api_authorized=False,
+        validation_authorized=False,test_authorized=False,optimization_evidence_policy=POLICY,
+        parent_binding_sha256=old['trajectory_parent_binding_sha256'])
+    atomic_write_json(tmp_path/scope_path,scope)
+    c=derive_structured_contract(read_json(ROOT/old['trajectory_parent_binding_path']),
+        attempt=attempt,binding_path=fresh,parent_path=old['trajectory_parent_binding_path'],
+        parent_sha256=old['trajectory_parent_binding_sha256'],authorization_path=scope_path,
+        authorization_sha256=sha256((tmp_path/scope_path).read_bytes()).hexdigest(),
+        gradient_prompt_path=old['gradient_prompt_path'],gradient_prompt_sha256=old['gradient_prompt_sha256'],
+        pattern_prompt_path=old['pattern_prompt_path'],pattern_prompt_sha256=old['pattern_prompt_sha256'],
+        validation_metadata_path=old['validation_accounting_metadata_path'],validation_metadata_sha256=old['validation_accounting_metadata_sha256'],
+        initial_team_path=old['initial_team_path'],initial_team_artifact_sha256=old['initial_team_artifact_sha256'],
+        accounting_policy_path=old['accounting_policy_path'],accounting_policy_sha256=old['accounting_policy_sha256'],
+        execution_phase=phase,max_opportunities=5 if phase=='pilot' else 1)
+    binding=execution_binding(ROOT,c)
+    original_path=binding.path
+    monkeypatch.setattr(binding,'path',lambda relative: tmp_path/relative if relative==scope_path else original_path(relative))
+    assert not binding.blockers()
     subsets=read_subsets(ROOT,c)['memberships'];adapter=binding.benchmark()
     def synthetic_examples(role):
         return tuple(CorrectnessExample(protocol_input('math',r['stable_example_id'],
