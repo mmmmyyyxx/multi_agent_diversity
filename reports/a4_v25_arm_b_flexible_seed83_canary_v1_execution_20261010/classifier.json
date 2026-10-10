@@ -1,0 +1,11 @@
+{
+  "efficacy": "NOT_EVALUABLE",
+  "experiment_id": "a4_v25_arm_b_flexible_seed83_canary_v1",
+  "initial_observations": "VALID",
+  "integrity": "VERIFIED_FROZEN_IDENTITY_RECEIPTS_LEDGER",
+  "invalidity_scope": "INCOMPLETE_FULL_CANARY_NOT_INITIAL_MEASUREMENTS",
+  "operational_status": "EXECUTION_ABORTED",
+  "reason": "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE",
+  "rerun_authorized": false,
+  "validity": "INVALID_FULL_PIPELINE_INCOMPLETE"
+}

@@ -1,0 +1,53 @@
+{
+  "actual_example_sha256": "1ae0b10e06933366384c3d506ef56d46c79d31cc14aeabdaab2a075234c135ac",
+  "actual_response_sha256": "f32636cf2da3495fca5f5afc8093181a397efcc3fa21d4039cc4e1fe429beb6a",
+  "exact_production_response_replay": true,
+  "literal_rule": {
+    "categories": [
+      "SOURCE_MATH_SPAN_MATCH"
+    ],
+    "long_source_fragment": false,
+    "matches": [
+      {
+        "category": "SOURCE_MATH_SPAN_MATCH",
+        "characters": 7,
+        "has_case_values": false,
+        "mathematical_commands": [],
+        "numeric_literal_count": 1,
+        "operator_kinds": [
+          "+",
+          "="
+        ],
+        "surface_sha256": "1710efea7aa998a6caeeffcfe40c5e6d7580fceb025d2a2ffff9efad5d03d8ff"
+      }
+    ],
+    "no_raw_content_published": true,
+    "numeric_hard_reject": false,
+    "replay": "EXACT_V4_MATCH_RULES",
+    "semantic_leakage_or_generic_formula_false_positive": "REQUIRES_SEPARATE_SEMANTIC_REVIEW"
+  },
+  "production_guard_changed": false,
+  "semantic_false_positive_established": false,
+  "synthetic_zero_api_probe": {
+    "actual_canary_result_unchanged": true,
+    "api_calls": 0,
+    "cases": [
+      {
+        "case": "SAME_SYMBOL_NAMES",
+        "category": "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE",
+        "numeric_hard_reject": false,
+        "rejected": true
+      },
+      {
+        "case": "RENAMED_SYMBOL_NAMES",
+        "category": null,
+        "numeric_hard_reject": false,
+        "rejected": false
+      }
+    ],
+    "no_prompt_or_response_reuse_in_search": true,
+    "scope": "SYNTHETIC_ZERO_API_DIAGNOSTIC_ONLY",
+    "semantic_specificity_of_actual_correction": "NOT_ESTABLISHED_BY_LITERAL_MATCH_ALONE",
+    "source_match_is_symbol_surface_sensitive": true
+  }
+}

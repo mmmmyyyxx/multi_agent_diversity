@@ -1,0 +1,25 @@
+{
+  "attempts_by_role": {
+    "pattern_gradient": 7,
+    "solver": 71
+  },
+  "charged_by_role": {
+    "pattern_gradient": 27323,
+    "solver": 98878
+  },
+  "charged_plus_reserved_ceiling": 2000000,
+  "charged_tokens": 126201,
+  "conservative_timeout_fallback_tokens": 11201,
+  "ledger_last_sha256": "cc80549f672b5dd186d59a131b4069d5daacf301a559dbf4feb9fe448dee216a",
+  "max_charged_plus_reserved": 136729,
+  "max_inflight": 8,
+  "provider_attempts": 78,
+  "provider_reported_actual_tokens": 115000,
+  "provider_successes": 77,
+  "reserved_tokens": 0,
+  "retry_or_rerun_authorized": false,
+  "scope_closed": true,
+  "sealed_receipts_verified": 78,
+  "single_use_authorization_consumed": true,
+  "transport_timeouts": 1
+}

@@ -1,0 +1,18 @@
+{
+  "completed_gradient_diagnostics": 2,
+  "completed_gradient_dispositions": {
+    "ACTIONABLE": 1,
+    "NONACTIONABLE_EXHAUSTED": 1
+  },
+  "full_candidates": 0,
+  "gradient_draws": 7,
+  "initial_logical_profiles": 60,
+  "layer1_generations": 0,
+  "opportunities_created": 0,
+  "pattern_cluster_calls": 0,
+  "probe_candidates": 0,
+  "repair_loss_effects": "NOT_EVALUABLE",
+  "shadow_calls": 0,
+  "team_commits": 0,
+  "zero_downstream_counts_are_execution_absence_not_efficacy": true
+}

@@ -1,0 +1,90 @@
+{
+  "all_member_correct_intersection": 7,
+  "coverage_histogram_0_to_5": {
+    "0": 5,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 7
+  },
+  "first_draw_total": 60,
+  "first_draw_valid": 55,
+  "historical_scores_changed": false,
+  "interpretation": "DESCRIPTIVE_OPTIMIZE12_ONLY_NO_GENERALIZATION",
+  "logical_profiles": 60,
+  "member_correct": [
+    7.0,
+    7.0,
+    7.0,
+    7.0,
+    7.0
+  ],
+  "optimize_count": 12,
+  "oracle_correct": 7,
+  "pairwise_error_phi": [
+    [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  ],
+  "physical_solver_responses": 70,
+  "raw_invalid_reasons": {
+    "AMBIGUOUS_FINAL_PAYLOAD": 1,
+    "OUTPUT_TRUNCATED": 9,
+    "VALID": 60
+  },
+  "recovered_invalid": 5,
+  "resolved_invalid": 0,
+  "resolved_valid": 60,
+  "semantic_draw_distribution": {
+    "1": 55,
+    "2": 2,
+    "3": 1,
+    "4": 2
+  },
+  "semantic_recovery_calls": 10,
+  "semantic_recovery_tokens": 39195,
+  "terminal_invalid": 0,
+  "unique_member_coverage": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "valid_mathematical_wrong_profiles": 25.0,
+  "validity": "INDEPENDENTLY_VERIFIED_INITIAL_OBSERVATIONS",
+  "vote_correct": 7.0
+}

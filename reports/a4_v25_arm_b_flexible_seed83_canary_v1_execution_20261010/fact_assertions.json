@@ -1,0 +1,14 @@
+{
+  "abort_reproduced_with_zero_api": true,
+  "consumed_exact_user_scope_verified": true,
+  "frozen_source_verified": true,
+  "guard_unchanged": true,
+  "initial_scores_independently_recomputed": true,
+  "no_automatic_rerun": true,
+  "no_full_pipeline_efficacy_claim": true,
+  "original_reports_and_scores_immutable": true,
+  "scope_closed": true,
+  "sealed_receipts_and_ledger_verified": true,
+  "zero_reserved_tokens": true,
+  "zero_validation_test_access": true
+}

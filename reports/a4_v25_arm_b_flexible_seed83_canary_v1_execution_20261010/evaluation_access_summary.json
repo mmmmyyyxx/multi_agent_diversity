@@ -1,0 +1,11 @@
+{
+  "heldout_raw_access": 0,
+  "new_memberships_used_outcomes_for_selection": false,
+  "optimization_after_abort": false,
+  "optimize_examples_evaluated": 12,
+  "prior_actual_use_overlap": 0,
+  "shadow_examples_evaluated": 0,
+  "shadow_membership_frozen": 40,
+  "test_calls": 0,
+  "validation_calls": 0
+}

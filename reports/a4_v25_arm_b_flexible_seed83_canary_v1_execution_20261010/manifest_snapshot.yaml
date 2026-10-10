@@ -1,0 +1,26 @@
+schema_version: experiment_manifest_v2
+experiment_id: a4_v25_arm_b_flexible_seed83_canary_v1
+method_identity: unified_team_prompt_search_v2_5_flexible_answer_v1
+seed: 83
+models:
+  solver: qwen3-8b
+  optimizer: qwen3.7-flash
+  solver_thinking: false
+concurrency:
+  solver: 8
+  optimizer: 1
+parser_identity: MATH_FLEXIBLE_ANSWER_EXTRACTION_V3
+access:
+  search_access: frozen_search
+  shadow_access: frozen_adaptive_gate
+  validation_access: not_authorized
+  test_access: sealed
+budget:
+  regime: saturation
+  saturation_identity: team_epoch_no_commit_v1
+  successful_provider_call_ceiling: 1653
+  transport_attempt_ceiling: 34713
+projection: PROMPT_FREE_METADATA_ONLY
+source_sha: 7d0b420407563d9ed21b3b7d0def4ab561f546dd
+startup_identity_sha256: c3de78732a7ee8516cc955f73f8ef0c8e5b9bcd60b4e83c57430221b47d48339
+manifest_sha256: eab359eefd23cf9caa6008a6db5bebf2f59bc3670da33c81e008d02aa814b4b6

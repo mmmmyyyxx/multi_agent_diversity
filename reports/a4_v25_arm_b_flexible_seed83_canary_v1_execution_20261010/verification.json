@@ -1,0 +1,41 @@
+{
+  "compileall": "PASS",
+  "deterministic_governance_preflight": "PASS",
+  "exact_zero_api_abort_replay": true,
+  "full_historical_replay_claim": false,
+  "git_diff_check": "PASS",
+  "historical_modules_omitted": 220,
+  "manifest_preflight": "PASS",
+  "postmortem_api_calls": 0,
+  "postmortem_governance": "PASS",
+  "postmortem_governance_tests": {
+    "errors": 0,
+    "evidence_sha256": "2a633763a825c8cbb5c5e321c30fc46461c821f1b1a6bc8eb99219d7061fb0d2",
+    "failures": 0,
+    "passed": 53,
+    "skipped": 0,
+    "tests": 53
+  },
+  "postmortem_network_attempts": 0,
+  "pre_execution_current_suite": {
+    "errors": 0,
+    "failed_case_identity_set_exactly_rechecked": true,
+    "failures": 0,
+    "historical_modules_omitted": 220,
+    "original_current_passed": 531,
+    "original_failure_evidence_preserved": true,
+    "original_stale_metadata_fixture_failures": 11,
+    "passed": 542,
+    "scoped_metadata_recheck_passed": 11,
+    "skipped": 2,
+    "status": "PASS",
+    "tests": 544,
+    "verification_mode": "CLASSIFIED_CURRENT_SUITE_PLUS_SCOPED_METADATA_FIXTURE_RECHECK"
+  },
+  "qualification": "Scientific full pipeline efficacy is not evaluable despite integrity checks passing.",
+  "receipt_ledger_inventory_integrity": "PASS",
+  "report_contract": "PASS",
+  "sanitization": "PASS",
+  "status": "PASS_FOR_INTEGRITY_AND_ZERO_API_POSTMORTEM",
+  "targeted_pre_execution_passed": 15
+}

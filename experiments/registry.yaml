@@ -9129,21 +9129,32 @@ experiments:
   parent_ids:
   - math_flexible_answer_parser_v3
   - math_baseline_calibration_stage1_v1
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: NEW_INITIAL_CONDITION_FULL_PIPELINE_CANARY
-  implementation_commit: null
-  execution_commit: null
+  status: INVALID
+  scientific_status: INVALID_INCOMPLETE_CANARY_INITIAL_OBSERVATIONS_VALID
+  implementation_commit: 7d0b420407563d9ed21b3b7d0def4ab561f546dd
+  execution_commit: bd499f1a92ce23d8d2b2858d362344b753e7143f
   result_commit: null
   manifest: experiments/manifests/a4_v25_arm_b_flexible_seed83_canary_v1.yaml
-  report: reports/a4_v25_arm_b_flexible_seed83_canary_v1_preparation_20261010
-  classifier: reports/a4_v25_arm_b_flexible_seed83_canary_v1_preparation_20261010/classifier.json
-  active_for_new_work: true
+  report: reports/a4_v25_arm_b_flexible_seed83_canary_v1_execution_20261010
+  classifier: reports/a4_v25_arm_b_flexible_seed83_canary_v1_execution_20261010/classifier.json
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
   - User cancels the unexecuted B-only baseline and authorizes one fresh full pipeline
     canary.
+  - Attempt 1 EXECUTION_ABORTED at Gradient; frozen identity and ledger verified;
+    initial Vote and Oracle 7/12.
+  - Seven Gradient draws; two completed diagnostics; short source symbolic match caused
+    hard guard stop.
+  - Full pipeline incomplete and efficacy NOT_EVALUABLE; no Layer1, Full, Shadow or
+    commit.
+  - Single-use API scope consumed and closed; charged 126201, reserved zero; no retry
+    or rerun authorized.
   unavailable:
-    implementation_commit: Containing source freeze commit.
-    execution_commit: Pending new canary.
-    result_commit: Pending audited execution.
+    result_commit: Containing publication commit; no self-referential SHA.
+  authorization_consumed: true
+  authorization_scope_closed: true
+  reports:
+  - reports/a4_v25_arm_b_flexible_seed83_canary_v1_preparation_20261010
+  - reports/a4_v25_arm_b_flexible_seed83_canary_v1_execution_20261010

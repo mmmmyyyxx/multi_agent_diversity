@@ -1141,3 +1141,24 @@ failures:
     the consumed API scope, or treat recovered Optimize/Shadow evidence as independent
     Validation, Test, Pilot efficacy, convergence or causal proof.
   regression_tests: []
+- failure_id: FAIL-V25-ARM-B-CANARY-SHORT-SYMBOLIC-MATCH
+  title: Gradient canary halted on a short source symbolic expression
+  status: DIAGNOSED
+  lifecycle: OPEN
+  first_observed: a4_v25_arm_b_seed83_canary_attempt1
+  affected_components:
+  - gradient_abstraction_guard
+  - source_math_span_matching
+  symptom: Third example aborted on physical Gradient draw seven; no optimization
+    opportunity created.
+  evidence:
+  - reports/a4_v25_arm_b_flexible_seed83_canary_v1_execution_20261010/guard_diagnosis.json
+  - reports/a4_v25_arm_b_flexible_seed83_canary_v1_execution_20261010/api_ledger_summary.json
+  evidence_level: observed
+  root_cause_status: Exact literal-rule trigger reproduced; semantic false-positive
+    status remains undetermined.
+  mitigation: Preserve initial evidence and fail-closed abort; close consumed scope.
+    Any guard amendment requires a fresh identity and authorization.
+  forbidden_inference: Not numeric hard leakage, proof of semantic leakage or false
+    positive, optimizer inefficacy, or authorization to rerun.
+  regression_tests: []

@@ -481,3 +481,15 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 - Symptom: Initial profiling and one complete opportunity produced sealed evidence; the owner review was written, but the runner process terminated before consuming it and before writing execution_summary, final state or EXECUTION_COMPLETE.
 - Forbidden inference: Do not rewrite the original aborted lifecycle as uninterrupted completion, infer the process root cause or a repaired supervision defect, reuse the consumed API scope, or treat recovered Optimize/Shadow evidence as independent Validation, Test, Pilot efficacy, convergence or causal proof.
 - Mitigation: Preserve the sealed raw evidence, mark the attempt aborted and close the single-use API scope. Subsequent explicit user continuation authorized zero-API same-attempt production-graph reconstruction in a separate private directory. All original bytes, native scientific stages, local lineage, ledger and owner decisions were verified before persisting a qualified terminal recovery receipt. This is not an API resume capability or permission for another scientific attempt.
+
+## FAIL-V25-ARM-B-CANARY-SHORT-SYMBOLIC-MATCH: Gradient canary halted on a short source symbolic expression
+
+- Status: `DIAGNOSED`
+- Lifecycle: `OPEN`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `a4_v25_arm_b_seed83_canary_attempt1`
+- Root-cause status: Exact literal-rule trigger reproduced; semantic false-positive status remains undetermined.
+- Symptom: Third example aborted on physical Gradient draw seven; no optimization opportunity created.
+- Forbidden inference: Not numeric hard leakage, proof of semantic leakage or false positive, optimizer inefficacy, or authorization to rerun.
+- Mitigation: Preserve initial evidence and fail-closed abort; close consumed scope. Any guard amendment requires a fresh identity and authorization.

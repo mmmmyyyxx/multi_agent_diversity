@@ -271,7 +271,20 @@ def assert_closed_current_scope(frontier,registry):
                   'pilot_search_complete','pilot_validation_complete','old_evidence_reuse_allowed'):
         assert frontier[field] is False
     assert frontier['pending_pilot_operational_retry_limit']==0
-    assert frontier['initial_accuracy']=='UNMEASURED_UNDER_FLEXIBLE_PARSER'
+    assert frontier['initial_accuracy'] in {
+        'UNMEASURED_UNDER_FLEXIBLE_PARSER', 'MEASURED_IN_FROZEN_CANARY_NOT_REUSABLE'}
+    if frontier['initial_accuracy']=='MEASURED_IN_FROZEN_CANARY_NOT_REUSABLE':
+        assert frontier['authorization_scopes_closed'] is True
+        assert frontier['unresolved_reservations']==0
+        assert frontier['canary_manifest'] is None
+        evidence=frontier['initial_accuracy_report']
+        assert evidence==frontier['current_canary_report']+'/initial_metrics.json'
+        row=next(r for r in registry['experiments'] if r['report']==frontier['current_canary_report'])
+        assert row['active_for_new_work'] is False
+        assert row['authorization_consumed'] is True and row['authorization_scope_closed'] is True
+        metrics=json.loads((ROOT/evidence).read_text(encoding='utf-8'))
+        assert metrics['validity']=='INDEPENDENTLY_VERIFIED_INITIAL_OBSERVATIONS'
+        assert metrics['interpretation']=='DESCRIPTIVE_OPTIMIZE12_ONLY_NO_GENERALIZATION'
     active={r['experiment_id'] for r in registry['experiments'] if r['active_for_new_work']}
     if frontier['canary_manifest'] is None:
         assert frontier['current_experiment']=='NO_AUTHORIZED_REAL_EXPERIMENT'

@@ -1,0 +1,35 @@
+{
+  "attempt_id": "a4_v25_arm_b_seed83_canary_attempt1",
+  "charged_tokens": 126201,
+  "completed_diagnostics": 2,
+  "completed_dispositions": {
+    "ACTIONABLE": 1,
+    "NONACTIONABLE_EXHAUSTED": 1
+  },
+  "experiment_id": "a4_v25_arm_b_flexible_seed83_canary_v1",
+  "full_canary_efficacy": "NOT_EVALUABLE",
+  "full_pipeline_completed": false,
+  "gradient_draws": 7,
+  "initial_member_correct": [
+    7,
+    7,
+    7,
+    7,
+    7
+  ],
+  "initial_oracle_correct": 7,
+  "initial_total": 12,
+  "initial_vote_correct": 7,
+  "member_raw_responsibility": {
+    "0": 5,
+    "1": 5,
+    "2": 4,
+    "3": 4,
+    "4": 5
+  },
+  "operational_status": "EXECUTION_ABORTED",
+  "reserved_tokens": 0,
+  "stop_category": "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE",
+  "target_member": 0,
+  "target_selection": "POSITIVE_RESPONSIBILITY"
+}
