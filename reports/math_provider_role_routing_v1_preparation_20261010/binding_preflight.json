@@ -1,0 +1,87 @@
+{
+  "status": "PASS",
+  "controls": [
+    {
+      "phase": "canary",
+      "mutation": "solver_model",
+      "result": "HOLD_BEFORE_PROVIDER"
+    },
+    {
+      "phase": "canary",
+      "mutation": "solver_route",
+      "result": "HOLD_BEFORE_PROVIDER"
+    },
+    {
+      "phase": "canary",
+      "mutation": "optimizer_route",
+      "result": "HOLD_BEFORE_PROVIDER"
+    },
+    {
+      "phase": "canary",
+      "mutation": "cache_identity",
+      "result": "HOLD_BEFORE_PROVIDER"
+    },
+    {
+      "phase": "canary",
+      "mutation": "initial_hash",
+      "result": "HOLD_BEFORE_PROVIDER"
+    },
+    {
+      "phase": "canary",
+      "mutation": "budget",
+      "result": "HOLD_BEFORE_PROVIDER"
+    },
+    {
+      "phase": "canary",
+      "mutation": "heldout_access",
+      "result": "HOLD_BEFORE_PROVIDER"
+    },
+    {
+      "phase": "canary",
+      "mutation": "split_identity",
+      "result": "HOLD_BEFORE_PROVIDER"
+    },
+    {
+      "phase": "pilot",
+      "mutation": "solver_model",
+      "result": "HOLD_BEFORE_PROVIDER"
+    },
+    {
+      "phase": "pilot",
+      "mutation": "solver_route",
+      "result": "HOLD_BEFORE_PROVIDER"
+    },
+    {
+      "phase": "pilot",
+      "mutation": "optimizer_route",
+      "result": "HOLD_BEFORE_PROVIDER"
+    },
+    {
+      "phase": "pilot",
+      "mutation": "cache_identity",
+      "result": "HOLD_BEFORE_PROVIDER"
+    },
+    {
+      "phase": "pilot",
+      "mutation": "initial_hash",
+      "result": "HOLD_BEFORE_PROVIDER"
+    },
+    {
+      "phase": "pilot",
+      "mutation": "budget",
+      "result": "HOLD_BEFORE_PROVIDER"
+    },
+    {
+      "phase": "pilot",
+      "mutation": "heldout_access",
+      "result": "HOLD_BEFORE_PROVIDER"
+    },
+    {
+      "phase": "pilot",
+      "mutation": "split_identity",
+      "result": "HOLD_BEFORE_PROVIDER"
+    }
+  ],
+  "real_api_calls": 0,
+  "heldout_raw_reads": 0
+}

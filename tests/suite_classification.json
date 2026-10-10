@@ -1247,6 +1247,12 @@
       "classification": "CURRENT_ZERO_API_E2E",
       "current_suite_included": true,
       "required_private_artifacts": []
+    },
+    {
+      "path": "tests/current/test_provider_role_routing.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "required_private_artifacts": [],
+      "current_suite_included": true
     }
   ],
   "current_source_scope": "V23 only; historical replay requires original frozen source, not current constructors.",

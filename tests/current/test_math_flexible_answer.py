@@ -136,7 +136,7 @@ def test_natural_confirmation_reaches_gradient_and_full_commit_without_format_fa
     assert result.transitions
     gradients = []
     for request in requests:
-        if request['model'] == 'qwen3-8b' or len(request['messages']) != 2:
+        if request['model'] == 'gpt-4o-mini' or len(request['messages']) != 2:
             continue
         packet = json.loads(request['messages'][1]['content'])
         if 'example' in packet:

@@ -7,6 +7,10 @@ The sole executable method is
 [flexible answer extraction amendment](FLEXIBLE_ANSWER_EXTRACTION_V3.md) and
 [bounded output recovery amendment](GENERATED_OUTPUT_RECOVERY_V25.md) are normative.
 The amendment supersedes the strict terminal-line parser rule.
+The [role routing amendment](PROVIDER_ROLE_ROUTING_V1.md) binds current Solver
+requests to OpenLux `gpt-4o-mini`; Reflection, Gradient and Pattern retain
+`qwen3.7-flash` on `lwj`. It requires a fresh binding, cache and authorization
+scope and changes no search or transition rule.
 New execution uses scripts/run_experiment.py, MATHStructuredBinding,
 CurrentPolicyBundle and build_current_team_prompt_search. Structured Role,
 Strategy and Answer are editable; System is exactly rendered blocks and User

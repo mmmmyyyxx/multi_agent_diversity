@@ -3,10 +3,10 @@ from .. import versions
 from ..current_contract import MATH_STRUCTURED_SYSTEM_BINDING_VERSION
 from ..search.schemas import SearchContractError
 
-def solver_decoding_contract(identity=versions.MATH_SOLVER_DECODING_POLICY_V2_VERSION):
-    if identity!=versions.MATH_SOLVER_DECODING_POLICY_V2_VERSION:
+def solver_decoding_contract(identity=versions.MATH_OPENAI_SOLVER_DECODING_POLICY_VERSION):
+    if identity!=versions.MATH_OPENAI_SOLVER_DECODING_POLICY_VERSION:
         raise SearchContractError('SOLVER_DECODING_POLICY_IDENTITY_UNKNOWN')
-    return dict(identity=identity,enable_thinking=False,temperature=0.2,top_p=0.8,top_k=20,min_p=0,
+    return dict(identity=identity,enable_thinking=False,temperature=0.2,top_p=0.8,
         presence_penalty=0,frequency_penalty=0,max_output_tokens=3600)
 
 def frozen_solver_policy(contract):
@@ -30,6 +30,5 @@ def generation_request_fields(contract,role):
     if role=='solver':
         return dict(temperature=policy['temperature'],top_p=policy['top_p'],
             presence_penalty=policy['presence_penalty'],frequency_penalty=policy['frequency_penalty'],
-            max_tokens=policy['max_output_tokens'],
-            extra_body={k:policy[k] for k in ('enable_thinking','top_k','min_p')})
+            max_tokens=policy['max_output_tokens'])
     raise SearchContractError('CURRENT_PROVIDER_ROLE_FORBIDDEN')

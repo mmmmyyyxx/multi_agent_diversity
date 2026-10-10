@@ -1,0 +1,49 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "8805e037648c089b98e0a555d66284ee6d22d42e06662b1c4710853c00880035"
+    },
+    {
+      "file": "binding_preflight.json",
+      "sha256": "5eb299c33accfec17eb110f83d561e2d3a4b82cb04562f0730ff4dc6b5460428"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "5b67f3865acaecee2c7c1cfd4dd6a803f77e920d6303087a0dc1d7e286355c4e"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "53b0d40b8a9ce47ea7aa1c6e964e6080d4feb2cd5cbb101ccdc902378dd342fe"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "99ae910db655fbcbcd53f0e2589f392ee71b8ba0912576856f83e5e14d155fa1"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "7424b01c58bad2c790ac1a2cd2e6fec2eeb96afdae9ccb5a98a7b858fad571b3"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "3f050aa6990a28bd41c83ae4d8dee5b5d6c42d5d49617c985d5e447ac59c8212"
+    },
+    {
+      "file": "README.md",
+      "sha256": "0ec53ffbdfe18e200e97c7d50dc45d75209f7a389a6701431b94d0cd9ec91cda"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "ae51d1393527cbf2aa673bba00af6bcb616ff4d67a910aa10a472c3f95fd6fc2"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "f8b4c5c63cab2edb76e65783de6f618b34d952a62f833ed5c772385e46956ebd"
+    },
+    {
+      "file": "verification.json",
+      "sha256": "fb7956c8e39db7386f18c9ed415fb22d1b8e8b3baff58322ecf3d6d08d724822"
+    }
+  ]
+}

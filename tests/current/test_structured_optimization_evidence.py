@@ -63,7 +63,7 @@ def graph(tmp_path,*,mode='both',uncertain=False,block='strategy',answer_only=Fa
             for i in range(18 if split=='optimize' else 3))
     def transport(req):
         requests.append(deepcopy(req))
-        if req['model']=='qwen3-8b':
+        if req['model']=='gpt-4o-mini':
             text=req['messages'][1]['content'];i=int(re.search(r'case (\d+):',text)[1])
             prompt=req['messages'][0]['content']
             correct=i>=6
@@ -146,7 +146,7 @@ def test_complete_graph_independent_validation_full_refutation_and_commit(tmp_pa
         assert f'Synthetic case {i}:' not in wire
     assert not any(k in wire for k in ('responsibility_value','target_score','eligible_members','failure_counts'))
     for req in requests:
-        if req['model']=='qwen3-8b':
+        if req['model']=='gpt-4o-mini':
             assert not any(x in json.dumps(req) for x in ('DATASET_WORKED','ACTUAL_WRITTEN','edit_effects','reference_solution'))
         elif len(req['messages'])==2:
             p=json.loads(req['messages'][1]['content'])
@@ -232,7 +232,7 @@ def test_uncertain_gradient_is_an_accepted_nonactionable_outcome(tmp_path):
     run,_,requests,packets,_=graph(tmp_path,uncertain=True)
     result=asyncio.run(run.run(max_opportunities=1))
     assert not result.transitions and not result.trace[0].candidate_ids and not packets
-    assert len([r for r in requests if r['model']!='qwen3-8b'])==6
+    assert len([r for r in requests if r['model']!='gpt-4o-mini'])==6
     assert result.trace[0].evidence_audit['cluster_logical_calls']==0
 
 
@@ -240,7 +240,7 @@ def test_reference_feedback_split_and_id_tampering_stops_before_provider(tmp_pat
     run,broker,requests,_,_=graph(tmp_path)
     asyncio.run(run.run(max_opportunities=1))
     payload=next(json.loads(r['messages'][1]['content']) for r in requests
-        if r['model']!='qwen3-8b' and len(r['messages'])==2 and 'example' in json.loads(r['messages'][1]['content']))
+        if r['model']!='gpt-4o-mini' and len(r['messages'])==2 and 'example' in json.loads(r['messages'][1]['content']))
     provider=PerExampleGradientProvider(broker);before=broker.successes
     for key,value in [('split','validation'),('example_id','another_example')]:
         bad=deepcopy(payload);bad['example']['reference_solution'][key]=value
@@ -387,6 +387,10 @@ def manifest():
             'invalid_recovery_policy','canary_review_policy','parser_identity','accounting_scope_policy','candidate_contract_identity','pattern_abstraction_guard','partition_completion_policy','repair_probe_policy','generated_output_recovery_policy'):
         m[key]=c['payload_parser_identity'] if key=='parser_identity' else c[key]
     m['cache_policy']=dict(identity=c['cache_policy'],frozen=True)
+    m['models']=dict(solver=c['models']['solver'],optimizer=c['models']['optimizer_reflection'],solver_thinking=False)
+    m['provider_policy']=dict(identity=c['provider'],frozen=True)
+    m['provider_routing_policy']=c['provider_routing_policy']
+    m['solver_decoding_policy']=c['solver_decoding_policy']
     return m
 
 

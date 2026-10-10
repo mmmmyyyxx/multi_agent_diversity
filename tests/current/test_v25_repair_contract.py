@@ -203,7 +203,7 @@ def test_seen_assigned_repair_is_required_and_independent_collapse_rejects(tmp_p
     run,broker,_,_,membership=graph(tmp_path)
     original=broker.transport
     def transport(req):
-        if req['model']!='qwen3-8b' or req['messages'][0]['content']==BASE.render():return original(req)
+        if req['model']!='gpt-4o-mini' or req['messages'][0]['content']==BASE.render():return original(req)
         i=int(re.search(r'case (\d+):',req['messages'][1]['content'])[1]);xid=f'optimize{i}'
         assigned=set(membership['mutation'])
         correct=(xid in membership['team_probe']) if mode=='no_assigned' else xid in assigned
@@ -228,7 +228,7 @@ def test_assigned_repair_with_neutral_independent_probe_can_reach_full_and_commi
     run,broker,_,_,membership=graph(tmp_path)
     original=broker.transport
     def transport(req):
-        if req['model']!='qwen3-8b' or req['messages'][0]['content']==BASE.render():return original(req)
+        if req['model']!='gpt-4o-mini' or req['messages'][0]['content']==BASE.render():return original(req)
         i=int(re.search(r'case (\d+):',req['messages'][1]['content'])[1])
         correct=i>=6 or f'optimize{i}' in membership['mutation']
         return response('Final answer: '+('2' if correct else '3'))

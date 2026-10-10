@@ -66,7 +66,7 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
     def transport(req):
         nonlocal cluster_draws
         requests.append(req)
-        if req['model']=='qwen3-8b':
+        if req['model']=='gpt-4o-mini':
             problem=req['messages'][1]['content']
             answer,i,split=answer_by_problem[problem]
             return response('Synthetic visible calculation and constraint check.\nFinal answer: '+(answer if all_correct or i>=6 else '999999997'))
@@ -124,7 +124,7 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
         assert result['pilot_status']=='INCOMPLETE_OPERATIONAL_TRUNCATION'
     assert result['accounting']['authorized_total']==2_000_000 and not result['accounting']['reserved_inflight']
     assert result['validation_calls']==result['test_calls']==0 and result['memory_audit']['initial_memory_entries']==5
-    assert len([r for r in requests if r['model']=='qwen3-8b'])==initial_profiles
+    assert len([r for r in requests if r['model']=='gpt-4o-mini'])==initial_profiles
     assert result['pattern_gradient_calls']==6*opportunity_count*(2 if structural else 1)
     assert result['pattern_cluster_calls']==(0 if uncertain else opportunity_count+(1 if structural else 0))
     assert client.closed and read_json(run_root/'lifecycle.json')['status']=='EXECUTION_COMPLETE'

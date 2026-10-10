@@ -1,0 +1,10 @@
+{
+  "api_calls_zero": true,
+  "explicit_postfreeze_confirmation_pending": true,
+  "independent_member_lanes": true,
+  "old_response_reuse": false,
+  "previous_scopes_closed": true,
+  "push_authorized": false,
+  "test_calls_zero": true,
+  "validation_calls_zero": true
+}

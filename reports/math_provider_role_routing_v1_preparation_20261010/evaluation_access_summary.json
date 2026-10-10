@@ -1,0 +1,9 @@
+{
+  "heldout_raw_reads": 0,
+  "search": "frozen_optimize",
+  "shadow": "frozen_adaptive_gate",
+  "test": "sealed",
+  "test_calls": 0,
+  "validation": "not_authorized",
+  "validation_calls": 0
+}

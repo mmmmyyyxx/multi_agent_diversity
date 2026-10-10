@@ -9,17 +9,42 @@ dataset_manifest_identity: 7688acc214417677431dd34f63572740986c4dff32c70832274c6
 split_identity: 196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507
 seed: 84
 models:
-  solver: qwen3-8b
+  solver: gpt-4o-mini
   optimizer: qwen3.7-flash
   solver_thinking: false
 concurrency:
   solver: 8
   optimizer: 1
 provider_policy:
-  identity: lwj
+  identity: OPENLUX_SOLVER_LWJ_OPTIMIZER_V1
   frozen: true
+provider_routing_policy:
+  identity: OPENLUX_SOLVER_LWJ_OPTIMIZER_V1
+  unknown_role: REJECT
+  provider_fallback: false
+  routes:
+    solver:
+      provider_profile: openlux
+      model: gpt-4o-mini
+      api_key_env: OPENLUX_API_KEY
+      base_url_env: OPENLUX_BASE_URL
+    reflection:
+      provider_profile: lwj
+      model: qwen3.7-flash
+      api_key_env: LWJ_DASHSCOPE_API_KEY
+      base_url_env: LWJ_DASHSCOPE_BASE_URL
+    pattern_gradient:
+      provider_profile: lwj
+      model: qwen3.7-flash
+      api_key_env: LWJ_DASHSCOPE_API_KEY
+      base_url_env: LWJ_DASHSCOPE_BASE_URL
+    pattern_cluster:
+      provider_profile: lwj
+      model: qwen3.7-flash
+      api_key_env: LWJ_DASHSCOPE_API_KEY
+      base_url_env: LWJ_DASHSCOPE_BASE_URL
 cache_policy:
-  identity: GENERATION_RECOVERY_MEMBER_LANE_CACHE_V5
+  identity: ROLE_ROUTED_RECOVERY_MEMBER_LANE_CACHE_V6
   frozen: true
 solver_output_interface_identity: MATH_FLEXIBLE_ANSWER_SYSTEM_INTERFACE_V9
 parser_identity: MATH_FLEXIBLE_ANSWER_EXTRACTION_V3
@@ -45,13 +70,15 @@ lifecycle:
     event: ZERO_API_BLOCKER_CLOSURE
   - status: DRAFT
     event: AWAITING_SOURCE_COMMIT
+  - status: DRAFT
+    event: OPENLUX_SOLVER_ROLE_ROUTING_AMENDMENT_UNAPPROVED
 hash_closure:
-  scientific_source_hash: 0d6b203c1f7dc03e9fe3f4a0ccdacb626d21ab912db01ae046f67afd0a20f13e
-  governance_hash: 9b9429e7fde5454ca419ae0d1fcded6447264a4bcc30226b25e4b52a2d40d9e4
-  benchmark_contract_hash: ae1ff8021fb9ddadeb38fc17659dba537f6d1935560235878ffcaa771024f182
+  scientific_source_hash: e26fd66321bef6f1643cf7a415efcb3ba2016cb2d800b6a64dd5524ba007d5d2
+  governance_hash: eeaebfb3a732b7c6f1f09a7c755bfa70f828956fa12b504ea7b3de321c2e07f6
+  benchmark_contract_hash: f16075346ebf0e9028d55b79cec33caf17891cf1126c2990d7b1c43cde09fefa
   dataset_manifest_hash: d3c3f587bf9e08f5d9a12c8b777953c57cd30fc4c655e82e95f556b337119d81
 execution_binding:
-  identity: MATH_GENERATION_RECOVERY_EVIDENCE_BINDING_V4
+  identity: MATH_ROLE_ROUTED_GENERATION_RECOVERY_BINDING_V5
   path: null
   sha256: null
 mechanism_config:
@@ -198,7 +225,7 @@ mechanism_config:
     - candidate_id
     max_full: 2
     seen_repair_inference: SEEN_ASSIGNED_REPAIR_NOT_GENERALIZATION
-  pattern_provider_binding: 4d4cc8eebf3d6016e7428ed9565370e5288f465534a012b16f0b21e9bd9fdd44
+  pattern_provider_binding: 02780991ab98c4924a545a0b9f28863732beafa4f49708d403c99aafd5386f83
   generated_output_recovery_policy:
     identity: BOUNDED_GENERATED_OUTPUT_RECOVERY_V1
     gradient_draws_per_example: 3
@@ -303,12 +330,10 @@ initial_competence_binding:
 solver_decoding_policy:
   enable_thinking: false
   frequency_penalty: 0
-  identity: SOLVER_DECODING_POLICY_V2
+  identity: OPENAI_SOLVER_DECODING_POLICY_V3
   max_output_tokens: 3600
-  min_p: 0
   presence_penalty: 0
   temperature: 0.2
-  top_k: 20
   top_p: 0.8
 prediction_validity_policy:
   answer_extraction:

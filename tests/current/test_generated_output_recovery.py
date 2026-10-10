@@ -61,7 +61,7 @@ def test_error_message_alone_never_grants_recovery():
 def test_rejected_gradient_does_not_erase_valid_examples_or_block_layer1(tmp_path,bad_draws,bad_kind):
     run,broker,requests,_,_=graph(tmp_path);original=broker.transport;counts=Counter();first=[]
     def transport(req):
-        if req['model']!='qwen3-8b' and len(req['messages'])==2:
+        if req['model']!='gpt-4o-mini' and len(req['messages'])==2:
             packet=json.loads(req['messages'][1]['content'])
             if 'example' in packet:
                 xid=packet['example']['example_id'];counts[xid]+=1
@@ -87,7 +87,7 @@ def test_rejected_gradient_does_not_erase_valid_examples_or_block_layer1(tmp_pat
 def test_all_rejected_gradients_end_legitimately_without_clustering(tmp_path):
     run,broker,_,_,_=graph(tmp_path);original=broker.transport;counts=Counter()
     def transport(req):
-        if req['model']!='qwen3-8b' and len(req['messages'])==2:
+        if req['model']!='gpt-4o-mini' and len(req['messages'])==2:
             packet=json.loads(req['messages'][1]['content'])
             if 'example' in packet:
                 counts[packet['example']['example_id']]+=1
@@ -103,7 +103,7 @@ def test_all_rejected_gradients_end_legitimately_without_clustering(tmp_path):
 def test_invalid_pattern_drops_only_known_support_and_other_pattern_reaches_layer1(tmp_path):
     run,broker,_,_,_=graph(tmp_path);original=broker.transport
     def transport(req):
-        if req['model']!='qwen3-8b' and len(req['messages'])==2:
+        if req['model']!='gpt-4o-mini' and len(req['messages'])==2:
             packet=json.loads(req['messages'][1]['content'])
             if 'gradients' in packet:
                 ids=[g['example_id'] for g in packet['gradients']]
@@ -169,7 +169,7 @@ def test_truncated_reflection_is_charged_and_keeps_prior_successful_candidates(t
     def transport(req):
         nonlocal reflection_draws
         value=original(req)
-        if req['model']!='qwen3-8b' and len(req['messages'])==1:
+        if req['model']!='gpt-4o-mini' and len(req['messages'])==1:
             reflection_draws+=1
             if reflection_draws==3:return {**value,'finish_reason':'length'}
         return value
@@ -184,7 +184,7 @@ def test_truncated_reflection_is_charged_and_keeps_prior_successful_candidates(t
 def test_generation_recovery_does_not_hide_provider_integrity_failure(tmp_path):
     run,broker,_,_,_=graph(tmp_path);original=broker.transport
     def transport(req):
-        if req['model']!='qwen3-8b':raise SearchContractError('FROZEN_REQUEST_IDENTITY_MISMATCH')
+        if req['model']!='gpt-4o-mini':raise SearchContractError('FROZEN_REQUEST_IDENTITY_MISMATCH')
         return original(req)
     broker.transport=transport
     with pytest.raises(SearchContractError,match='FROZEN_REQUEST_IDENTITY_MISMATCH'):

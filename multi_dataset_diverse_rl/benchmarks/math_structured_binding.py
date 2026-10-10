@@ -123,7 +123,14 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
     from ..search.solver_execution import POLICY as execution
     from ..governance.canary_review import STRUCTURED_POLICY
     from ..search.generation_failures import POLICY as output_recovery
+    from ..provider_routing import IDENTITY as provider, SOLVER_MODEL, OPTIMIZER_MODEL, routing_contract
+    from .math_solver_decoding import solver_decoding_contract
+    c.pop('verify_settings_path', None)
+    c.pop('verify_settings_sha256', None)
     c.update(identity=BINDING,method_identity=METHOD,execution_attempt_id=attempt,
+        provider=provider,provider_routing_policy=routing_contract(),
+        models=dict(solver=SOLVER_MODEL,optimizer_reflection=OPTIMIZER_MODEL,
+            pattern=OPTIMIZER_MODEL,solver_thinking=False),solver_decoding_policy=solver_decoding_contract(),
         canary_attempt_id=attempt,cache_namespace=attempt,binding_path=binding_path,
         execution_phase=execution_phase,execution_seed=seed,seeds=[seed],cache_policy=CURRENT_CACHE_POLICY,
         generated_output_recovery_policy=deepcopy(output_recovery),
@@ -255,7 +262,7 @@ class MATHStructuredBinding:
         if arm!='A4':raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
         if self.blockers():raise SearchContractError(self.blockers()[0])
         c=self.contract
-        provider_binding=digest({k:c[k] for k in ('provider','models','gradient_prompt_sha256',
+        provider_binding=digest({k:c[k] for k in ('provider','provider_routing_policy','models','gradient_prompt_sha256',
             'pattern_prompt_sha256','optimizer_generation_policy','pattern_policy',
             'partition_completion_policy','pattern_cluster_generation_policy')})
         return CURRENT_POLICY_BUNDLE.method(aggregation=c['aggregation'],provider_binding=provider_binding,

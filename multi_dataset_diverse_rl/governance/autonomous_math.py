@@ -98,10 +98,26 @@ def create_transport(contract):
     from openai import OpenAI, APIConnectionError, APITimeoutError
     from openai._models import FinalRequestOptions
     import httpx
-    client = ProviderClientFactory.from_environment(provider_profile=contract["provider"], client_type=OpenAI,
-        max_retries=0, timeout=contract["decoding"]["timeout_seconds"])
+    from ..provider_routing import frozen_routing, route_for_role, ProviderClients, SOLVER_MODEL
+    routes = frozen_routing(contract)['routes']
+    clients = ProviderClients()
+    try:
+        for route in routes.values():
+            profile = route['provider_profile']
+            if profile not in clients.clients:
+                clients.clients[profile] = ProviderClientFactory.from_environment(
+                    provider_profile=profile, api_key_env=route['api_key_env'],
+                    base_url_env=route['base_url_env'], client_type=OpenAI,
+                    max_retries=0, timeout=contract['decoding']['timeout_seconds'])
+    except Exception:
+        clients.close()
+        raise
 
-    def transport(request):
+    def for_role(role, request):
+        route = route_for_role(contract, role)
+        if request.get('model') != route['model']:
+            raise SearchContractError('PROVIDER_REQUEST_MODEL_ROUTE_MISMATCH')
+        client = clients.clients[route['provider_profile']]
         # Count, hash and send exactly the same UTF-8 body bytes.
         options = FinalRequestOptions.construct(method="post", url="/chat/completions", security={"bearer_auth": True})
         wire = client._client.build_request("POST", client._prepare_url("/chat/completions"),
@@ -158,7 +174,10 @@ def create_transport(contract):
             return result
         finally:
             response.close()
-    return transport, client
+    def transport(request):
+        return for_role('solver' if request.get('model') == SOLVER_MODEL else 'reflection', request)
+    transport.for_role = for_role
+    return transport, clients
 
 
 def initial_prompts(root, contract):

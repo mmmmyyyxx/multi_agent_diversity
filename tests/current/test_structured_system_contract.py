@@ -95,7 +95,7 @@ def test_each_block_reaches_full_commit_with_unmodified_team_algorithm(tmp_path,
     if block!='answer':assert any(e.record['status']=='FULL_REFUTED' for e in run.memory.private)
     assert len(run.memory.competence)==5 and broker.usage['validation']==broker.usage['test']==0
     for request in requests:
-        if request['model']=='qwen3-8b':
+        if request['model']=='gpt-4o-mini':
             assert [m['role'] for m in request['messages']]==['system','user']
             assert request['messages'][1]['content'].startswith('Synthetic case ')
             assert 'FINAL_ANSWER' not in request['messages'][0]['content']
@@ -116,7 +116,7 @@ def test_no_written_steps_still_scores_and_produces_gradient_and_commit(tmp_path
     run,_,requests,_,_=graph(tmp_path,answer_only=True,answer_only_form=form)
     result=asyncio.run(run.run(max_opportunities=1));assert result.transitions
     packets=[json.loads(r['messages'][1]['content']) for r in requests
-        if r['model']!='qwen3-8b' and len(r['messages'])==2]
+        if r['model']!='gpt-4o-mini' and len(r['messages'])==2]
     diagnostics=[p for p in packets if 'example' in p]
     assert diagnostics
     assert all(p['example']['solver_trajectory']['solution_status']=='TRAJECTORY_UNAVAILABLE' for p in diagnostics)
@@ -128,7 +128,7 @@ def test_complete_long_ordinary_response_reaches_gradient_and_mutation(tmp_path)
     run,_,requests,mutation_packets,_=graph(tmp_path,long_response=True)
     result=asyncio.run(run.run(max_opportunities=1));assert result.transitions
     diagnostics=[json.loads(r['messages'][1]['content']) for r in requests
-        if r['model']!='qwen3-8b' and len(r['messages'])==2
+        if r['model']!='gpt-4o-mini' and len(r['messages'])==2
         and 'example' in json.loads(r['messages'][1]['content'])]
     assert diagnostics and mutation_packets
     for packet in diagnostics:

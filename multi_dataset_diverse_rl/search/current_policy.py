@@ -12,6 +12,10 @@ from .optimization_evidence import frozen_policy, METHOD, LAYER1, EVIDENCE, MEMO
 
 def require_current_contract(contract):
     """Check identity before data, provider, cache or parent construction."""
+    from ..provider_routing import frozen_routing
+    from ..benchmarks.math_solver_decoding import frozen_solver_policy
+    frozen_routing(contract)
+    frozen_solver_policy(contract)
     from ..benchmarks.math_response_evidence import trajectory_policy
     from .optimization_evidence import BINDING
     if (contract.get('method_identity') != METHOD or contract.get('identity') != BINDING

@@ -941,6 +941,15 @@ nodes:
 - experiment_id: a4_v25_arm_b_recovery_seed84_pilot_v1
   kind: PILOT
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: math_provider_role_routing_v1
+  kind: PROTOCOL_FREEZE
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: a4_v25_arm_b_openlux_seed84_canary_v1
+  kind: REAL_CANARY
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: a4_v25_arm_b_openlux_seed84_pilot_v1
+  kind: PILOT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2030,4 +2039,22 @@ edges:
   evidence: docs/design/GENERATED_OUTPUT_RECOVERY_V25.md
   scope: New recovery amendment and independent frozen development attempt; no prior
     responses or authorization transfer.
+- from: math_generated_output_recovery_v1
+  to: math_provider_role_routing_v1
+  relation: derived_from
+  evidence: docs/design/PROVIDER_ROLE_ROUTING_V1.md
+  scope: Fresh model/provider routing and independent attempts; no prior response
+    or authorization transfer.
+- from: math_provider_role_routing_v1
+  to: a4_v25_arm_b_openlux_seed84_canary_v1
+  relation: derived_from
+  evidence: docs/design/PROVIDER_ROLE_ROUTING_V1.md
+  scope: Fresh model/provider routing and independent attempts; no prior response
+    or authorization transfer.
+- from: math_provider_role_routing_v1
+  to: a4_v25_arm_b_openlux_seed84_pilot_v1
+  relation: derived_from
+  evidence: docs/design/PROVIDER_ROLE_ROUTING_V1.md
+  scope: Fresh model/provider routing and independent attempts; no prior response
+    or authorization transfer.
 current_frontier: experiments/current_frontier.yaml

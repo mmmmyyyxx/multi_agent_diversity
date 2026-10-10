@@ -115,7 +115,9 @@ class RequestBroker:
             if role != 'solver' or type(output_capacity) is not int or output_capacity not in allowed:
                 raise SearchContractError('SOLVER_OUTPUT_CAPACITY_NOT_FROZEN')
             request['max_tokens'] = output_capacity
-        identity = {"provider": c["provider"], "role": role, "split": split, "request": request,
+        from ..provider_routing import route_for_role
+        identity = {"provider": c["provider"], "provider_routing_policy": c['provider_routing_policy'],
+            "provider_route": route_for_role(c,role), "role": role, "split": split, "request": request,
                     "cache_namespace": c["cache_namespace"]}
         if c.get('identity')==MATH_STRUCTURED_SYSTEM_BINDING_VERSION:
             identity['system_prompt_policy'] = c['system_prompt_policy']
@@ -298,7 +300,8 @@ class RequestBroker:
                     **({'member_realization_lane':member_slot} if self.member_lane_policy and role=='solver' else {})))
                 physical_attempt_no=self.usage["attempts"]
             try:
-                result = self.transport(request)
+                role_transport = getattr(self.transport, 'for_role', None)
+                result = role_transport(role, request) if role_transport else self.transport(request)
             except Exception as exc:
                 with self.lock:
                     self.physical_inflight.pop(threading.get_ident(), None)

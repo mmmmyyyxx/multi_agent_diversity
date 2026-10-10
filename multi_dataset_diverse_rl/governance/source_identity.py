@@ -115,6 +115,8 @@ def current_scientific_files(root: Path, *, execution_closure: bool = False) -> 
     if flexible_contract.is_file():result.append(flexible_contract)
     recovery_contract=root/'docs/design/GENERATED_OUTPUT_RECOVERY_V25.md'
     if recovery_contract.is_file():result.append(recovery_contract)
+    routing_contract=root/'docs/design/PROVIDER_ROLE_ROUTING_V1.md'
+    if routing_contract.is_file():result.append(routing_contract)
     risk_contract = root/'docs/design/SHARED_RISK_MEMORY_V4.md'
     if risk_contract.is_file():
         result.append(risk_contract)
