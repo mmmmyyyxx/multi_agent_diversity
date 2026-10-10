@@ -1,0 +1,17 @@
+{
+  "authorization": "EXACT_DUAL_SCOPE_APPROVAL_PENDING",
+  "canary": "NOT_OBSERVED",
+  "fake_production_canary_and_pilot": "PASS",
+  "fatal_faults": "FAIL_CLOSED",
+  "limitations": [
+    "Bounded grammar is not a semantic leakage proof and conservatively rejects unsupported formulas.",
+    "Historical process-disappearance root cause remains undetermined.",
+    "Pilot contains 12 previously used Optimize examples because only 48 unseen examples remain.",
+    "Canary/Pilot prefreeze memberships overlap on 12 Optimize and one Shadow example; responses and learned state remain independent."
+  ],
+  "pilot": "NOT_OBSERVED",
+  "real_api_calls": 0,
+  "real_efficacy": "NOT_EVALUABLE_BEFORE_EXECUTION",
+  "repair": "OFFLINE_VERIFIED",
+  "source_freeze": "PENDING_LOCAL_SOURCE_COMMIT"
+}

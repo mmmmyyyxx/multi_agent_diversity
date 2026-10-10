@@ -4,7 +4,7 @@ from dataclasses import asdict
 import hashlib
 import json
 
-from ..current_contract import MATH_INITIAL_TEAM_VERSION
+from ..current_contract import MATH_INITIAL_TEAM_VERSION,CURRENT_CACHE_POLICY
 from ..search.system_prompt import SEED, SystemPrompt, CONTRACT
 from ..search.current_policy import CURRENT_POLICY_BUNDLE
 from ..search.current_layer1 import CurrentOptimizer, EvidenceLayer1Config
@@ -56,7 +56,7 @@ def prepare_structured_inputs(root,*,experiment_id,attempt,user_task_sha256,exec
         validation_authorized=False,test_authorized=False,optimization_evidence_policy=POLICY,
         parent_binding_sha256=parent_hash,user_task_sha256=user_task_sha256,
         exact_post_freeze_api_authorization_required=True,old_authorization_reusable=False,
-        old_responses_cache_and_competence_reusable=False,push_authorized=True)
+        old_responses_cache_and_competence_reusable=False,push_authorized=False)
     for path,value in ((paths['scope'],scope),(paths['gradient'],gradient_prompt_artifact()),
             (paths['pattern'],dict(identity='STRUCTURED_GRADIENT_CLUSTER_PROMPT_V2',prompt=CLUSTER_PROMPT)),
             (paths['accounting'],POLICY_V25_2M),(paths['team'],initial_team_artifact(team_version)),
@@ -79,11 +79,12 @@ def prepare_structured_inputs(root,*,experiment_id,attempt,user_task_sha256,exec
     blockers=MATHStructuredBinding(root,c).blockers()
     if blockers:raise SearchContractError('V25_PREPARATION_HOLD:'+','.join(blockers))
     atomic_write_json(root/binding_path,c)
-    atomic_write_json(root/(protocol+'/protocol.json'),dict(identity='STRUCTURED_SYSTEM_FLEXIBLE_ANSWER_PROTOCOL_V2',
+    atomic_write_json(root/(protocol+'/protocol.json'),dict(identity='STRUCTURED_GENERATED_OUTPUT_RECOVERY_PROTOCOL_V3',
         attempt_id=attempt,method=METHOD,seed=seed,members=5,phase=execution_phase,
         optimize=c['initial_competence_binding']['count'],shadow=40,models=c['models'],
         system_prompt_policy=c['system_prompt_policy'],answer_extraction_policy=EXTRACTION,
         optimization_evidence_policy=POLICY,provider_bounds=c['provider_bounds'],
+        generated_output_recovery_policy=c['generated_output_recovery_policy'],
         solver_execution_policy=c['solver_execution_policy'],invalid_recovery_policy=c['invalid_recovery_policy'],
         canary_review_policy=c['canary_review_policy'],initial_accuracy='UNMEASURED_NEW_REAL_REQUESTS_REQUIRED',
         real_api_authorized=False,validation_access='not_authorized',test_access='sealed'))
@@ -121,9 +122,11 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
             c.pop(key)
     from ..search.solver_execution import POLICY as execution
     from ..governance.canary_review import STRUCTURED_POLICY
+    from ..search.generation_failures import POLICY as output_recovery
     c.update(identity=BINDING,method_identity=METHOD,execution_attempt_id=attempt,
         canary_attempt_id=attempt,cache_namespace=attempt,binding_path=binding_path,
-        execution_phase=execution_phase,execution_seed=seed,seeds=[seed],cache_policy='FLEXIBLE_ANSWER_MEMBER_LANE_CACHE_V4',
+        execution_phase=execution_phase,execution_seed=seed,seeds=[seed],cache_policy=CURRENT_CACHE_POLICY,
+        generated_output_recovery_policy=deepcopy(output_recovery),
         system_prompt_policy=system_prompt_policy(team_version),answer_extraction_policy=deepcopy(EXTRACTION),
         solver_output_interface=system_interface_contract(team_version),solver_trajectory_policy=trajectory_policy(),
         prediction_validity_policy=validity_contract(),invalid_recovery_policy=structured_recovery_contract(),
@@ -150,7 +153,8 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
             max_opportunities=max_opportunities,token_ceiling=token_ceiling,
             scientific_stopper='team_epoch_no_commit_v1',guarantees_saturation=False))
     if development_subsets is not None:
-        if execution_phase!='canary' or set(development_subsets)!={'path','sha256','protocol'}:
+        if (set(development_subsets)!={'path','sha256','protocol'} or
+                (execution_phase!='canary' and development_subsets['protocol'].get('identity')!='MATH_FRESH_RECOVERY_DEVELOPMENT_MEMBERSHIP_V3')):
             raise SearchContractError('FRESH_CANARY_SUBSET_BINDING_INVALID')
         c.update(low_cost_subsets_path=development_subsets['path'],
             low_cost_subsets_sha256=development_subsets['sha256'],
@@ -213,7 +217,8 @@ class MATHStructuredBinding:
                 token_ceiling=c['operational_pilot']['token_ceiling'],execution_phase=c['execution_phase'],
                 seed=c['execution_seed'],team_version=c['initial_team_version'],
                 development_subsets=(dict(path=c['low_cost_subsets_path'],sha256=c['low_cost_subsets_sha256'],
-                    protocol=c['low_cost_protocol']) if c['low_cost_protocol']['identity']=='MATH_FRESH_CANARY_MEMBERSHIP_V2' else None))
+                    protocol=c['low_cost_protocol']) if c['low_cost_protocol']['identity'] in {
+                        'MATH_FRESH_CANARY_MEMBERSHIP_V2','MATH_FRESH_RECOVERY_DEVELOPMENT_MEMBERSHIP_V3'} else None))
             if c!=expected:raise SearchContractError('V25_FROZEN_SETTINGS_CHANGED')
             for key in sorted(k for k in c if k.endswith('_path')):
                 h='initial_team_artifact_sha256' if key=='initial_team_path' else key[:-5]+'_sha256'

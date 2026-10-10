@@ -17,6 +17,7 @@ from multi_dataset_diverse_rl.search.selected_evidence import compose_disjoint_e
 from multi_dataset_diverse_rl.search.textual_gradients import (
     GradientExtractor, PerExampleGradientProvider, GradientClusterProvider, score_gradient_partition)
 from multi_dataset_diverse_rl.search.partition_completion import complete_known_alias_partition
+from multi_dataset_diverse_rl.search.generation_failures import generation_failure
 from multi_dataset_diverse_rl.search.optimization_evidence import coverage_effect
 from multi_dataset_diverse_rl.search.rolling_risk_memory import failure_signature
 
@@ -143,7 +144,7 @@ def test_partial_partition_keeps_valid_patterns_without_guessing_and_conflicts_a
     raw=dict(patterns=[dict(generalized_gradient='valid',support_ids=['e1']),
         dict(generalized_gradient='',support_ids=['e2'])],unassigned_ids=[])
     def validate(text):
-        if not text:raise SearchContractError('PATTERN_GRADIENT_CLUSTER_INVALID')
+        if not text:raise generation_failure('PATTERN_GRADIENT_CLUSTER_INVALID')
     normalized,audit=complete_known_alias_partition(raw,('e1','e2','e3'),validate_generalized=validate)
     assert normalized['patterns']==raw['patterns'][:1]
     assert set(normalized['unassigned_ids'])=={'e2','e3'} and audit['discarded_pattern_count']==1
@@ -168,21 +169,21 @@ def test_cluster_malformed_json_recovers_and_all_malformed_returns_no_actionable
         if expected==3:assert value['patterns']==[] and value['unassigned_ids']==[rows[0].example_id]
 
 
-def test_gradient_provenance_and_example_leakage_never_recover(tmp_path):
+def test_gradient_leakage_exhausts_bounded_draws_but_provenance_never_recovers(tmp_path):
     run,broker,_,_,_=graph(tmp_path)
     state=run.state.snapshot();diagnosis=run.analyzer.analyze(state,run.history)
     row=run.opportunities.source.for_member(state,diagnosis,0)[0]
     calls=[]
     bad=output();bad['reusable_correction']='Copy the gold answer 2 from the supplied example.'
     broker.transport=lambda r:(calls.append(r) or response(json.dumps(bad)))
-    with pytest.raises(SearchContractError,match='LEAKAGE'):
-        GradientExtractor(PerExampleGradientProvider(broker)).extract(BASE,(row,))
-    assert len(calls)==1
+    extractor=GradientExtractor(PerExampleGradientProvider(broker))
+    assert extractor.extract(BASE,(row,))==()
+    assert len(calls)==3 and extractor.evidence_diagnostics[0]['disposition']=='NONACTIONABLE_EXHAUSTED'
     row=replace(row,signals={**row.signals,'solver_trajectory':{**row.signals['solver_trajectory'],
         'source':{**row.signals['solver_trajectory']['source'],'example_id':'wrong-id'}}})
     with pytest.raises(SearchContractError,match='PROVENANCE'):
         GradientExtractor(PerExampleGradientProvider(broker)).extract(BASE,(row,))
-    assert len(calls)==1
+    assert len(calls)==3
 
 
 def test_neutral_strategy_parent_then_answer_compound_edit_is_preserved(tmp_path):

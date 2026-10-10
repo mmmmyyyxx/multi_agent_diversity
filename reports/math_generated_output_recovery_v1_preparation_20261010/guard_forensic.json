@@ -1,0 +1,19 @@
+{
+  "current_generic_overlap_warnings": 1,
+  "current_hard_reject": false,
+  "forensic_receipts_sha256": {
+    "current_guard_forensic_summary.json": "282a54a9e064c0c2849a57e537b7673775de7cb3bf94ae9bc69c34b4dc259aed",
+    "original_guard_forensic_summary.json": "12a6aa0943173f3b641bc1873cb88f6133264d4ee35d1fbac2aaaddf52fff5d0"
+  },
+  "guard_amendment": "SOURCE_CONTEXT_SYMBOLIC_ABSTRACTION_GUARD_V1",
+  "independent_new_training_input_reuse": false,
+  "numeric_hard_rejection": false,
+  "original_literal_rule_reproduced": true,
+  "original_rejection": "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE",
+  "original_source": "9391740e2c674cbd6859e8fba70b2dad68c27a59",
+  "semantic_leakage_status": "NOT_PROVEN_BY_BOUNDED_STRUCTURAL_ADMISSION",
+  "source_expression_category": "SHORT_PARAMETERIZED_SYMBOLIC_RELATION",
+  "source_field": "input_payload",
+  "source_literal_characters": 7,
+  "source_literal_sha256": "1710efea7aa998a6caeeffcfe40c5e6d7580fceb025d2a2ffff9efad5d03d8ff"
+}

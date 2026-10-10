@@ -20,6 +20,45 @@ FRESH_SELECTION = dict(identity='MATH_FRESH_CANARY_MEMBERSHIP_V2',
     ordering_namespace='MATH_LOW_COST_SUBJECT_LEVEL_HASH_V1',
     exclusion='prior_actual_use_example_hashes', performance_used=False)
 FRESH_COUNTS = dict(canary_optimize=12, pilot_shadow=40)
+RECOVERY_SELECTION = {**FRESH_SELECTION, 'identity':'MATH_FRESH_RECOVERY_DEVELOPMENT_MEMBERSHIP_V3',
+    'phase_bound':True,'exclusion':'unseen_first_minimum_metadata_only_prior_use_if_insufficient',
+    'cross_attempt_memberships':'frozen_before_outcomes_independent_realizations'}
+
+
+def build_recovery_subsets(metadata, split_sha, *, seed, phase, excluded_example_hashes):
+    """Fresh development memberships only; no new split or outcome selection."""
+    from .math_low_cost import choose
+    if phase not in {'canary','pilot'}:
+        raise SearchContractError('RECOVERY_SELECTION_PHASE_INVALID')
+    # Reuse the historical selector's strict input checks, not its memberships.
+    build_fresh_canary_subsets(metadata,split_sha,seed=seed,excluded_example_hashes=excluded_example_hashes)
+    counts={phase+'_optimize':12 if phase=='canary' else 60,'pilot_shadow':40}
+    excluded=set(excluded_example_hashes);selected={};prior_counts={}
+    for name,count in counts.items():
+        role='shadow' if name=='pilot_shadow' else 'optimize'
+        pool=[r for r in metadata if r['project_split']==role and
+            hashlib.sha256(r['stable_example_id'].encode()).hexdigest() not in excluded]
+        namespace=RECOVERY_SELECTION['identity']+':'+str(seed)+':'+phase+':'+name
+        fresh=choose(pool,min(count,len(pool)),namespace+':unseen')
+        deficit=count-len(fresh)
+        used=[r for r in metadata if r['project_split']==role and
+            hashlib.sha256(r['stable_example_id'].encode()).hexdigest() in excluded]
+        if len(used)<deficit:
+            raise SearchContractError('RECOVERY_DEVELOPMENT_POOL_INSUFFICIENT:'+role)
+        reuse=choose(used,deficit,namespace+':prior_use') if deficit else []
+        ids={r['stable_example_id'] for r in fresh+reuse}
+        selected[name]=[r for r in metadata if r['stable_example_id'] in ids]
+        prior_counts[name]=len(reuse)
+    return dict(identity=RECOVERY_SELECTION['identity'],selection_policy=deepcopy(RECOVERY_SELECTION),
+        seed=seed,phase=phase,excluded_example_hashes=excluded_example_hashes,source_superset_sha256=split_sha,
+        counts=counts,prior_actual_use_counts=prior_counts,metadata_universe=metadata,memberships=selected,
+        membership_hashes={k:digest([r['stable_example_id'] for r in v]) for k,v in selected.items()},
+        validation_access='not_authorized',test_access='sealed')
+
+
+def recovery_protocol(subsets):
+    return {**fresh_canary_protocol(subsets),'phase':subsets['phase'],
+        'prior_actual_use_counts':deepcopy(subsets['prior_actual_use_counts'])}
 
 
 def initial_prompt(version):

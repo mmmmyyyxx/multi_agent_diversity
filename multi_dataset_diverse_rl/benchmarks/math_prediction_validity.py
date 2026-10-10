@@ -6,12 +6,13 @@ import subprocess
 import sys
 
 from .. import versions
+from ..current_contract import MATH_STRUCTURED_SYSTEM_BINDING_VERSION
 from ..search.schemas import ParsedOutput, SearchContractError
 from .math_domain_v2 import SETTINGS
 
 
 def frozen_prediction_policy(contract):
-    if contract.get('identity') == versions.MATH_FLEXIBLE_ANSWER_BINDING_VERSION:
+    if contract.get('identity') == MATH_STRUCTURED_SYSTEM_BINDING_VERSION:
         from .math_flexible_answer import validity_contract
         expected = validity_contract()
         if contract.get('prediction_validity_policy') != expected:
@@ -69,7 +70,7 @@ def invalid_recovery_contract():
 
 
 def frozen_recovery_policy(contract):
-    if contract.get('identity')!=versions.MATH_FLEXIBLE_ANSWER_BINDING_VERSION:
+    if contract.get('identity')!=MATH_STRUCTURED_SYSTEM_BINDING_VERSION:
         raise SearchContractError('MATH_INVALID_RECOVERY_REQUIRES_FRESH_BINDING')
     expected=structured_recovery_contract()
     policy=contract.get('invalid_recovery_policy')

@@ -1,0 +1,48 @@
+{
+  "available_development_counts": {
+    "optimize": 48,
+    "shadow": 260
+  },
+  "excluded_count": 142,
+  "heldout_raw_reads": 0,
+  "joint_prefreeze_overlap": {
+    "optimize": 12,
+    "shadow": 1
+  },
+  "panels": {
+    "canary": {
+      "counts": {
+        "canary_optimize": 12,
+        "pilot_shadow": 40
+      },
+      "membership_hashes": {
+        "canary_optimize": "1cfc8e3277ece98a38eb6b542caabd84e1848d233a2667ed26e08c421801db6a",
+        "pilot_shadow": "75ffe6e10ac9d00bbb11795e52121e680cf9db53fd1195e9053d789d195868c5"
+      }
+    },
+    "pilot": {
+      "counts": {
+        "pilot_optimize": 60,
+        "pilot_shadow": 40
+      },
+      "membership_hashes": {
+        "pilot_optimize": "e3c2d01693e7a9363f9a039bcc01688538da40eaeff7fbbcf457405cb05b95b3",
+        "pilot_shadow": "5817d9853255000143874989c1012f50013e0b9b12f30ed8d1a8a2bc18c6635c"
+      }
+    }
+  },
+  "prior_actual_overlap": {
+    "canary": {
+      "canary_optimize": 0,
+      "pilot_shadow": 0
+    },
+    "pilot": {
+      "pilot_optimize": 12,
+      "pilot_shadow": 0
+    }
+  },
+  "prior_provenance_sha256": "96143a730f5eff68f39ffd6e474de73ce6c45b77d84068986540974a9deda115",
+  "seed83_trace_sha256": "651fd96653e50ec68ca48a4f5f31805296f0fbefccf18c9dbaf8d6a2bb7e0c72",
+  "seed83_used_examples": 12,
+  "selection_uses_outcomes": false
+}

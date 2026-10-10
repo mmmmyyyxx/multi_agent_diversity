@@ -1,0 +1,30 @@
+{
+  "generated_output_recovery": {
+    "cluster_draws_per_opportunity": 3,
+    "exhausted_gradient": "NONACTIONABLE_EXHAUSTED",
+    "gradient_draws_per_example": 3,
+    "identity": "BOUNDED_GENERATED_OUTPUT_RECOVERY_V1",
+    "integrity_errors": "fatal_without_regeneration",
+    "invalid_pattern": "known_support_to_unassigned",
+    "reflection_draws_per_opportunity": 6,
+    "rejected_text_reusable": false,
+    "truncated_output": "charged_rejected_draw_no_capacity_change",
+    "unknown_errors": "fatal"
+  },
+  "method": "unified_team_prompt_search_v2_5_generation_recovery_v1",
+  "parser": "MATH_FLEXIBLE_ANSWER_EXTRACTION_V3",
+  "protected_scientific_files": 12,
+  "scoring_full_shadow_and_memory_semantics": "UNCHANGED",
+  "unchanged_limits": {
+    "exports": 4,
+    "full_promotions": 2,
+    "independent_probe": 6,
+    "layer1_generations": 6,
+    "local_metric_calls": 42,
+    "mutation": 3,
+    "search_validation": 3,
+    "solver_normal_tokens": 3600,
+    "solver_semantic_draws": 4,
+    "solver_truncation_tokens": 6144
+  }
+}

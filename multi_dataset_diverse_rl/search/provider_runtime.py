@@ -19,6 +19,7 @@ from ..benchmarks.math_prediction_validity import frozen_prediction_policy, froz
 from ..benchmarks.math_optimizer_generation import frozen_optimizer_policy, frozen_optimizer_role_policy
 from .. import versions
 from ..current_contract import PATTERN_SPECIFIC_CONTENT_GUARD_VERSION as CURRENT_CONTENT_GUARD
+from ..current_contract import MATH_STRUCTURED_SYSTEM_BINDING_VERSION,CURRENT_CACHE_POLICY,GRADIENT_PATTERN_DISCOVERY_VERSION
 
 
 class RequestBroker:
@@ -62,16 +63,16 @@ class RequestBroker:
         self.prediction_policy = frozen_prediction_policy(contract)
         self.recovery_policy = frozen_recovery_policy(contract)
         self.optimizer_policy = frozen_optimizer_policy(contract)
-        self.gradient_pattern = contract.get('pattern_policy',{}).get('discovery') == versions.RECOVERABLE_PATTERN_DISCOVERY_VERSION
+        self.gradient_pattern = contract.get('pattern_policy',{}).get('discovery') == GRADIENT_PATTERN_DISCOVERY_VERSION
         if self.gradient_pattern:
             from .textual_gradients import pattern_policy_for_trajectory
-            if (contract.get('identity')!=versions.MATH_FLEXIBLE_ANSWER_BINDING_VERSION
+            if (contract.get('identity')!=MATH_STRUCTURED_SYSTEM_BINDING_VERSION
                     or contract['pattern_policy']!=pattern_policy_for_trajectory(self.solver_trajectory_policy, contract.get('optimization_evidence_policy'))
                     or contract.get('pattern_abstraction_guard')!=CURRENT_CONTENT_GUARD
                     or not contract.get('gradient_prompt_sha256')):
                 raise SearchContractError('GRADIENT_PATTERN_PROVIDER_BINDING_MISMATCH')
             for role in ('pattern_gradient','pattern_cluster'):self.usage.setdefault(role,0)
-        self.member_lane_policy = contract.get('cache_policy') == 'FLEXIBLE_ANSWER_MEMBER_LANE_CACHE_V4'
+        self.member_lane_policy = contract.get('cache_policy') == CURRENT_CACHE_POLICY
         if not self.member_lane_policy:
             raise SearchContractError('SOLVER_MEMBER_LANE_POLICY_BINDING_MISMATCH')
         self.durable_cache = durable_cache
@@ -116,11 +117,11 @@ class RequestBroker:
             request['max_tokens'] = output_capacity
         identity = {"provider": c["provider"], "role": role, "split": split, "request": request,
                     "cache_namespace": c["cache_namespace"]}
-        if c.get('identity')==versions.MATH_FLEXIBLE_ANSWER_BINDING_VERSION:
+        if c.get('identity')==MATH_STRUCTURED_SYSTEM_BINDING_VERSION:
             identity['system_prompt_policy'] = c['system_prompt_policy']
             identity['answer_extraction_policy'] = c['answer_extraction_policy']
             identity['method_treatment'] = {k:c[k] for k in ('method_identity', 'transition_policy')}
-        if c.get('identity')==versions.MATH_FLEXIBLE_ANSWER_BINDING_VERSION:
+        if c.get('identity')==MATH_STRUCTURED_SYSTEM_BINDING_VERSION:
             identity['memory_treatment']={k:c[k] for k in ('memory_policy_identity','memory_limits','layer1_search_policy','optimizer_input_schema','panel_evidence_policy')}
         if c.get('pattern_policy'):
             identity['pattern_treatment']={k:c[k] for k in ('pattern_policy','shared_risk_policy')}
@@ -345,7 +346,11 @@ class RequestBroker:
                         result = {**result, "provider_reported_input_tokens":result.get("input_tokens"),
                                   "provider_reported_output_tokens":result.get("output_tokens"), **charge}
                 if not isinstance(result, dict) or (not isinstance(result.get("text"), str)
-                        and not (role == "solver" and self.prediction_policy and "text" in result and result["text"] is None)) or any(type(result.get(k)) is not int or result[k] < 0 for k in ("input_tokens", "output_tokens")):
+                        and not ("text" in result and result["text"] is None and
+                            (role == "solver" and self.prediction_policy or
+                             role in {'reflection','pattern_gradient','pattern_cluster'}
+                             and result.get('provider_response_accepted') is True
+                             and result.get('provider_metadata_loss_audited') is True))) or any(type(result.get(k)) is not int or result[k] < 0 for k in ("input_tokens", "output_tokens")):
                     self.usage["failures"] += 1
                     self._write(dict(kind="FAILURE", role=role, split=split, stage=stage, request_sha256=key, error_category="RESPONSE_ACCOUNTING_INVALID"))
                     self.abort("PROVIDER_RESPONSE_ACCOUNTING_INVALID")
@@ -372,8 +377,6 @@ class RequestBroker:
                     reasoning=telemetry['reasoning_tokens']
                     if telemetry['nonthinking_evidence_level']=='CONTRADICTORY':
                         self.abort('PROVIDER_NONTHINKING_CONTROL_NOT_HONORED')
-                if (self.token_ledger or role == "solver" and frozen_solver_policy(c) or role != 'solver' and self.optimizer_policy) and not (role == "solver" and self.prediction_policy) and result.get("finish_reason") in {"length", "max_tokens", "max_output_tokens"}:
-                    self.abort("STOP_SOLVER_DECODING_POLICY_INSUFFICIENT" if role == "solver" and frozen_solver_policy(c) else "OPERATIONAL_OUTPUT_TRUNCATION")
                 if 'max_completion_tokens' in request:
                     reported = result.get('provider_reported_output_tokens', result.get('output_tokens'))
                     ceiling = role_policy['accounting_output_ceiling']
@@ -382,6 +385,13 @@ class RequestBroker:
                     ceiling = request['max_tokens']
                 if (self.token_ledger or role != 'solver' and self.optimizer_policy) and type(reported) is int and reported > ceiling:
                     self.abort("OPERATIONAL_OUTPUT_CAP_NOT_ENFORCED")
+                if result.get('finish_reason') in {'length','max_tokens','max_output_tokens'}:
+                    if role in {'reflection','pattern_gradient','pattern_cluster'}:
+                        from .generation_failures import generation_failure,frozen_recovery
+                        frozen_recovery(c.get('generated_output_recovery_policy'))
+                        raise generation_failure('GENERATED_OUTPUT_TRUNCATED')
+                    if (self.token_ledger or role == 'solver' and frozen_solver_policy(c)) and not (role=='solver' and self.prediction_policy):
+                        self.abort('STOP_SOLVER_DECODING_POLICY_INSUFFICIENT' if role=='solver' and frozen_solver_policy(c) else 'OPERATIONAL_OUTPUT_TRUNCATION')
                 result = {**result, "provider_called": True}
                 if role == 'solver' and self.execution_policy:
                     result['output_capacity_tokens'] = request['max_tokens']

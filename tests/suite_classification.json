@@ -1201,6 +1201,12 @@
       "current_suite_included": true
     },
     {
+      "path": "tests/current/test_generated_output_recovery.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "current_suite_included": true,
+      "required_private_artifacts": []
+    },
+    {
       "path": "tests/current/test_structured_optimization_evidence.py",
       "classification": "CURRENT_ZERO_API_E2E",
       "current_suite_included": true,

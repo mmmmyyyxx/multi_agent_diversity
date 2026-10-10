@@ -20,12 +20,14 @@ def require_current_contract(contract):
             or contract.get('repair_probe_policy') != PROBE_POLICY):
         raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
     frozen_policy(contract.get('optimization_evidence_policy'))
+    from .generation_failures import frozen_recovery
+    frozen_recovery(contract.get('generated_output_recovery_policy'))
     from ..benchmarks.math_structured_interface import system_prompt_policy, system_interface_contract
     from ..benchmarks.math_flexible_answer import POLICY as extraction
     if (contract.get('system_prompt_policy') != system_prompt_policy(contract.get('initial_team_version'))
             or contract.get('answer_extraction_policy') != extraction
             or contract.get('solver_output_interface') != system_interface_contract(contract.get('initial_team_version'))
-            or contract.get('cache_policy') != 'FLEXIBLE_ANSWER_MEMBER_LANE_CACHE_V4'
+            or contract.get('cache_policy') != identities.CURRENT_CACHE_POLICY
             or any(contract.get(k) is not None for k in ('initial_evidence_reuse_policy',
                 'initial_evidence_reuse_manifest_path','initial_evidence_reuse_manifest_sha256'))):
         raise SearchContractError('CURRENT_STRUCTURED_SYSTEM_POLICY_REQUIRED')
@@ -59,6 +61,7 @@ class CurrentPolicyBundle:
         if gradient_recovery_policy is not None:
             raise SearchContractError('REFERENCE_GRADIENT_RECOVERY_UNBOUND')
         pattern_policy = pattern_policy_for_trajectory(solver_trajectory_policy, revised)
+        from .generation_failures import POLICY as recovery
         if not isinstance(provider_binding, str) or len(provider_binding) != 64:
             raise SearchContractError('CURRENT_GRADIENT_POLICY_MISMATCH')
         if partition_completion_policy not in (None, self.partition_completion):
@@ -72,7 +75,7 @@ class CurrentPolicyBundle:
             mechanism_config=dict(memory=deepcopy(LIMITS), shared_risk_policy=deepcopy(MEMORY_POLICY),
                 optimizer_input_schema=INPUT, panel_policy=self.evidence, pattern_policy=pattern_policy,
                 repair_probe_policy=deepcopy(PROBE_POLICY),
-                pattern_provider_binding=provider_binding,
+                pattern_provider_binding=provider_binding,generated_output_recovery_policy=deepcopy(recovery),
                 pattern_support_id_transport=identities.PATTERN_SUPPORT_ID_ALIAS_VERSION,
                 pattern_abstraction_guard=identities.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION))
         if partition_completion_policy is not None:

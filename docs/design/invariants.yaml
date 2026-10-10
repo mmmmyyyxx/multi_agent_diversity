@@ -872,3 +872,40 @@ invariants:
   failure_refs: []
   critical: true
   status: ACTIVE
+- id: INV-V25-GENERATED-OUTPUT-RECOVERY-001
+  description: Only typed post-response generation failures recover within frozen bounds; integrity and unknown failures remain fatal.
+  authority: docs/design/GENERATED_OUTPUT_RECOVERY_V25.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/generation_failures.py
+  - multi_dataset_diverse_rl/search/textual_gradients.py
+  - multi_dataset_diverse_rl/search/partition_completion.py
+  - multi_dataset_diverse_rl/search/bounded_layer1.py
+  tests:
+  - tests/current/test_generated_output_recovery.py
+  failure_refs:
+  - FAIL-V25-GENERATED-OUTPUT-LOCALIZATION
+  critical: true
+  status: ACTIVE
+- id: INV-V25-GENERIC-PROVENANCE-001
+  description: Symbolic overlap requires bounded structure and generic context; gold and specific-answer provenance remain protected.
+  authority: docs/design/GENERATED_OUTPUT_RECOVERY_V25.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/symbolic_provenance.py
+  - multi_dataset_diverse_rl/search/pattern_primitives.py
+  tests:
+  - tests/current/test_generated_output_recovery.py
+  failure_refs:
+  - FAIL-V25-ARM-B-CANARY-SHORT-SYMBOLIC-MATCH
+  critical: true
+  status: ACTIVE
+- id: INV-V25-TERMINAL-CLOSURE-001
+  description: Resource closure and verified durable evidence precede completion marker; milestones grant no resume authorization.
+  authority: docs/design/GENERATED_OUTPUT_RECOVERY_V25.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/governance/autonomous_math.py
+  tests:
+  - tests/current/test_structured_production_entrypoint.py
+  failure_refs:
+  - FAIL-V25-GENERATED-OUTPUT-LOCALIZATION
+  critical: true
+  status: ACTIVE

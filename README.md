@@ -1,8 +1,8 @@
 # Unified Team Prompt Search
 
 The sole active research architecture is Unified Team Prompt Search.
-The sole current method is V2.5 with flexible mathematical answer extraction,
-`unified_team_prompt_search_v2_5_flexible_answer_v1`.
+The sole current method is V2.5 with flexible answer extraction and bounded output recovery,
+`unified_team_prompt_search_v2_5_generation_recovery_v1`.
 
 [Current specification](docs/design/CURRENT_SPEC.md) and
 [V2.5 scientific contract](docs/design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md) define the
@@ -10,6 +10,8 @@ complete editable Role/Strategy/Answer System Prompt, raw-question User message,
 natural response evidence, gold-blind extraction and bounded invalid recovery.
 V2.5 adds seeded zero-responsibility fallback, quota-free evidence, structural
 recovery, evaluated local parents and assigned repair plus independent Probe.
+The [output recovery amendment](docs/design/GENERATED_OUTPUT_RECOVERY_V25.md) localizes
+typed generated-content failures and checks symbolic overlap with source context.
 Full admission, plurality, Shadow, Memory transactions and atomic commit remain.
 
 Current execution uses `scripts/run_experiment.py` and

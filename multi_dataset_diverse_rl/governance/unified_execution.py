@@ -1,4 +1,4 @@
-"""Fresh current V2.4 admission; historical JSON is provenance only."""
+"""Fresh current V2.5 admission; historical JSON is provenance only."""
 from dataclasses import asdict
 import hashlib,json,subprocess
 from .source_identity import build_unified_source_identity,hash_scope
@@ -9,7 +9,7 @@ from ..search.schemas import SearchContractError
 from ..search.current_policy import CURRENT_POLICY_BUNDLE
 from ..benchmarks.math_domain_binding import BINDING_BLOCKER
 PREP_SCHEMA='unified_canary_prep_v1'
-CURRENT_OFFLINE_PROFILE='experiments/execution_bindings/a4_v25_seed81_canary_attempt1.json'
+CURRENT_OFFLINE_PROFILE='experiments/execution_bindings/a4_v25_arm_b_recovery_seed84_canary_attempt1.json'
 
 def execution_identity(root,contract):
     CURRENT_POLICY_BUNDLE.validate_contract(contract)
@@ -40,6 +40,7 @@ def execution_scope(manifest,contract):
         **({k:contract[k] for k in ('solver_execution_policy','system_prompt_policy','answer_extraction_policy')} if contract.get('solver_execution_policy') else {}),
         **({'optimization_evidence_policy':contract['optimization_evidence_policy']}
             if contract.get('optimization_evidence_policy') else {}),
+        generated_output_recovery_policy=contract['generated_output_recovery_policy'],
         **({'pattern_cluster_generation_policy':contract['pattern_cluster_generation_policy']}
             if 'pattern_cluster_generation_policy' in contract else {}),
         **({'solver_output_interface':contract['solver_output_interface'],
@@ -52,8 +53,8 @@ def consumption_path(root, scope):
 def bound_preflight(root, manifest):
     from ..benchmarks.math_domain_binding import execution_binding
     ref=manifest.get('execution_binding',{})
-    from .. import versions
-    if ref.get('identity')!=versions.MATH_FLEXIBLE_ANSWER_BINDING_VERSION:
+    from ..current_contract import MATH_STRUCTURED_SYSTEM_BINDING_VERSION
+    if ref.get('identity')!=MATH_STRUCTURED_SYSTEM_BINDING_VERSION:
         return dict(gate='HOLD',blockers=[BINDING_BLOCKER],provider_attempts=0)
     errors=validate_manifest_v2(root,manifest)
     if manifest.get('lifecycle',{}).get('status')!='PREEXECUTION_FROZEN':errors.append('PREEXECUTION_NOT_FROZEN')
@@ -216,7 +217,7 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
         manifest['optimization_evidence_policy']=contract['optimization_evidence_policy']
     for k in ('solver_execution_policy','system_prompt_policy','answer_extraction_policy',
             'canary_review_policy','accounting_scope_policy','accounting_policy_sha256',
-            'heldout_accounting_reserve','repair_probe_policy'):
+            'heldout_accounting_reserve','repair_probe_policy','generated_output_recovery_policy'):
         if k in contract:manifest[k]=contract[k]
     for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256", "optimizer_nonthinking_evidence_policy", "layer1_search_policy", "candidate_contract_identity", "post_search_validation_policy", "pattern_support_id_transport", "pattern_abstraction_guard"):
         if k in contract:manifest[k]=contract[k]

@@ -1,0 +1,46 @@
+{
+  "classified_current_suite": {
+    "errors": 0,
+    "failures": 0,
+    "historical_replay_pass_claimed": false,
+    "omitted_historical_modules": 220,
+    "omitted_inventory": "tests/suite_classification.json",
+    "passed": 583,
+    "selected": 585,
+    "skip_details": [
+      {
+        "reason": "USER_DEFERRED_DOWNLOAD: no frozen real-data manifest",
+        "test": "tests.test_benchmark_data_freeze_v1::test_frozen_real_data_identity[hover]"
+      },
+      {
+        "reason": "USER_DEFERRED_DOWNLOAD: no frozen real-data manifest",
+        "test": "tests.test_benchmark_data_freeze_v1::test_frozen_real_data_identity[pupa]"
+      }
+    ],
+    "skipped": 2,
+    "xml_sha256": "1d47fea8583224542b646927edc77f2a3072eca6937f96f053e0a4a0bb3bd4a4"
+  },
+  "compileall": "PASS",
+  "deterministic_negative_controls": 16,
+  "diff_check": "PASS",
+  "governance_preflight": "PASS",
+  "manifest_preflight": "PASS",
+  "post_full_suite_http_envelope_controls": {
+    "cases": [
+      "tests.current.test_generated_output_recovery::test_actual_http_envelope_distinguishes_null_content_from_metadata_loss[True]",
+      "tests.current.test_generated_output_recovery::test_actual_http_envelope_distinguishes_null_content_from_metadata_loss[False]"
+    ],
+    "failures": 0,
+    "network_attempt_count": 0,
+    "passed": 2,
+    "scope": "Distinguishes valid null ordinary content from actual missing provider content field; all earlier fake transports bypass this normalization boundary."
+  },
+  "repository_preflight": "PASS",
+  "status": "PASS",
+  "verification_mode": "FULL_CLASSIFIED_CURRENT_SUITE_PLUS_TWO_POST_SUITE_HTTP_ENVELOPE_CONTROLS",
+  "zero_api_guard": {
+    "active_before_application_import": true,
+    "network_attempt_count": 0,
+    "real_environment_secrets_removed": true
+  }
+}

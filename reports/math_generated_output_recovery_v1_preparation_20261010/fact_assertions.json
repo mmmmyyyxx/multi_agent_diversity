@@ -1,0 +1,15 @@
+{
+  "classified_current_suite_passed": true,
+  "full_shadow_thresholds_unchanged": true,
+  "heldout_access_closed": true,
+  "historical_evidence_unchanged": true,
+  "independent_roots_ledgers_cache_and_initial_memory": true,
+  "membership_overlap_disclosed": true,
+  "no_formula_whitelist": true,
+  "output_recovery_bounded": true,
+  "parser_preserved": true,
+  "push_not_authorized": true,
+  "real_api_calls_zero": true,
+  "rejected_text_not_reused": true,
+  "unknown_errors_fatal": true
+}

@@ -9111,9 +9111,10 @@ experiments:
   manifest: experiments/manifests/math_flexible_answer_parser_v3.yaml
   report: reports/math_flexible_answer_parser_v3_20261010
   classifier: reports/math_flexible_answer_parser_v3_20261010/classifier.json
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
-  superseded_by: []
+  superseded_by:
+  - math_generated_output_recovery_v1
   notes:
   - User-requested presentation amendment; pinned mathematics and Gradient ratios
     unchanged.
@@ -9158,3 +9159,73 @@ experiments:
   reports:
   - reports/a4_v25_arm_b_flexible_seed83_canary_v1_preparation_20261010
   - reports/a4_v25_arm_b_flexible_seed83_canary_v1_execution_20261010
+- experiment_id: math_generated_output_recovery_v1
+  kind: PROTOCOL_FREEZE
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_5_generation_recovery_v1
+  parent_ids:
+  - math_flexible_answer_parser_v3
+  - a4_v25_arm_b_flexible_seed83_canary_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: ZERO_API_PREPARATION_EXACT_POST_FREEZE_SCOPE_REQUIRED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_generated_output_recovery_v1.yaml
+  report: reports/math_generated_output_recovery_v1_preparation_20261010
+  classifier: reports/math_generated_output_recovery_v1_preparation_20261010/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Fresh bounded recovery identity; no paid request or push authorized by preparation.
+  unavailable:
+    implementation_commit: Containing source commit; exact frozen manifests follow.
+    execution_commit: No paid execution yet.
+    result_commit: Preparation evidence only.
+- experiment_id: a4_v25_arm_b_recovery_seed84_canary_v1
+  kind: REAL_CANARY
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_5_generation_recovery_v1
+  parent_ids:
+  - math_generated_output_recovery_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: ZERO_API_PREPARATION_EXACT_POST_FREEZE_SCOPE_REQUIRED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/a4_v25_arm_b_recovery_seed84_canary_v1.yaml
+  report: reports/math_generated_output_recovery_v1_preparation_20261010
+  classifier: reports/math_generated_output_recovery_v1_preparation_20261010/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Fresh bounded recovery identity; no paid request or push authorized by preparation.
+  unavailable:
+    implementation_commit: Containing source commit; exact frozen manifests follow.
+    execution_commit: No paid execution yet.
+    result_commit: Preparation evidence only.
+- experiment_id: a4_v25_arm_b_recovery_seed84_pilot_v1
+  kind: PILOT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_5_generation_recovery_v1
+  parent_ids:
+  - math_generated_output_recovery_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: ZERO_API_PREPARATION_EXACT_POST_FREEZE_SCOPE_REQUIRED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/a4_v25_arm_b_recovery_seed84_pilot_v1.yaml
+  report: reports/math_generated_output_recovery_v1_preparation_20261010
+  classifier: reports/math_generated_output_recovery_v1_preparation_20261010/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Fresh bounded recovery identity; no paid request or push authorized by preparation.
+  unavailable:
+    implementation_commit: Containing source commit; exact frozen manifests follow.
+    execution_commit: No paid execution yet.
+    result_commit: Preparation evidence only.

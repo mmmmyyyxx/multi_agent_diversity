@@ -45,7 +45,14 @@ def read_subsets(root,contract):
         raise SearchContractError('LOW_COST_SUBSET_ARTIFACT_HASH_MISMATCH')
     data=json.loads(p.read_bytes())
     from .math_canary_inputs import FRESH_SELECTION, build_fresh_canary_subsets, fresh_canary_protocol
-    if data.get('identity') == FRESH_SELECTION['identity']:
+    from .math_canary_inputs import RECOVERY_SELECTION,build_recovery_subsets,recovery_protocol
+    if data.get('identity')==RECOVERY_SELECTION['identity']:
+        expected=build_recovery_subsets(data['metadata_universe'],contract['split_manifest_sha256'],
+            seed=contract['execution_seed'],phase=contract['execution_phase'],
+            excluded_example_hashes=data['excluded_example_hashes'])
+        if contract['low_cost_protocol']!=recovery_protocol(expected):
+            raise SearchContractError('RECOVERY_DEVELOPMENT_PROTOCOL_MISMATCH')
+    elif data.get('identity') == FRESH_SELECTION['identity']:
         expected=build_fresh_canary_subsets(data['metadata_universe'],contract['split_manifest_sha256'],
             seed=contract['execution_seed'],excluded_example_hashes=data['excluded_example_hashes'])
         if contract['low_cost_protocol'] != fresh_canary_protocol(expected):

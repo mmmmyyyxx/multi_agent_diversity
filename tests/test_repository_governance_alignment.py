@@ -262,7 +262,8 @@ def test_real_canary_is_execution_evidence_only(registry):
 
 
 def assert_closed_current_scope(frontier,registry):
-    assert frontier['current_method']=='unified_team_prompt_search_v2_5_flexible_answer_v1'
+    from multi_dataset_diverse_rl.current_contract import CURRENT_METHOD_VERSION,MATH_STRUCTURED_SYSTEM_BINDING_VERSION
+    assert frontier['current_method']==CURRENT_METHOD_VERSION
     assert frontier['real_execution_ready'] is False
     assert frontier['real_api_authorized'] is False
     assert frontier['validation_access']=='not_authorized' and frontier['test_access']=='sealed'
@@ -271,8 +272,7 @@ def assert_closed_current_scope(frontier,registry):
                   'pilot_search_complete','pilot_validation_complete','old_evidence_reuse_allowed'):
         assert frontier[field] is False
     assert frontier['pending_pilot_operational_retry_limit']==0
-    assert frontier['initial_accuracy'] in {
-        'UNMEASURED_UNDER_FLEXIBLE_PARSER', 'MEASURED_IN_FROZEN_CANARY_NOT_REUSABLE'}
+    assert frontier['initial_accuracy']=='UNMEASURED_NEW_CURRENT_SCOPE'
     if frontier['initial_accuracy']=='MEASURED_IN_FROZEN_CANARY_NOT_REUSABLE':
         assert frontier['authorization_scopes_closed'] is True
         assert frontier['unresolved_reservations']==0
@@ -289,15 +289,21 @@ def assert_closed_current_scope(frontier,registry):
     if frontier['canary_manifest'] is None:
         assert frontier['current_experiment']=='NO_AUTHORIZED_REAL_EXPERIMENT'
         assert frontier['current_execution_binding'] is None
-        assert active=={'math_flexible_answer_parser_v3'}
-        m=load_yaml(ROOT/'experiments/manifests/math_flexible_answer_parser_v3.yaml')
+        assert active=={'math_generated_output_recovery_v1'}
+        m=load_yaml(ROOT/'experiments/manifests/math_generated_output_recovery_v1.yaml')
         assert m['execution_binding']['path'] is None and m['execution_binding']['sha256'] is None
     else:
-        eid=frontier['current_experiment']
+        eid=load_yaml(ROOT/frontier['canary_manifest'])['experiment_id']
         row=next(r for r in registry['experiments'] if r['experiment_id']==eid)
-        assert active=={'math_flexible_answer_parser_v3',eid}
+        pilot=load_yaml(ROOT/frontier['pending_pilot_manifest'])
+        assert active=={'math_generated_output_recovery_v1',eid,pilot['experiment_id']}
+        assert pilot['method_identity']==CURRENT_METHOD_VERSION
+        assert pilot['authorization']['real_api_authorized'] is False
+        assert pilot['execution_binding']['path']!=frontier['current_execution_binding']
+        assert frontier['next_canary_attempt_id']!=frontier['pending_pilot_attempt_id']
         assert row['manifest']==frontier['canary_manifest']
         m=load_yaml(ROOT/row['manifest'])
+        assert pilot['generated_output_recovery_policy']==m['generated_output_recovery_policy']
         assert m['execution_binding']['path']==frontier['current_execution_binding']
         assert isinstance(m['execution_binding']['sha256'],str) and len(m['execution_binding']['sha256'])==64
     assert m['authorization']['real_api_authorized'] is False
@@ -306,7 +312,7 @@ def assert_closed_current_scope(frontier,registry):
         assert m['source_sha'] is None
     else:
         assert isinstance(m['source_sha'],str) and len(m['source_sha'])==40
-    assert m['execution_binding']['identity']=='MATH_FLEXIBLE_ANSWER_EVIDENCE_BINDING_V3'
+    assert m['execution_binding']['identity']==MATH_STRUCTURED_SYSTEM_BINDING_VERSION
     assert m['method_identity']==frontier['current_method']
 
 

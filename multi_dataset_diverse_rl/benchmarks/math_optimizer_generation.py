@@ -1,5 +1,6 @@
 """Explicit Qwen reflection/Pattern wire and measurement contract, opt-in only."""
 from .. import versions
+from ..current_contract import MATH_STRUCTURED_SYSTEM_BINDING_VERSION
 from ..search.schemas import SearchContractError
 
 
@@ -14,7 +15,7 @@ def optimizer_generation_contract(identity=versions.MATH_OPTIMIZER_GENERATION_PO
 
 def frozen_optimizer_policy(contract):
     frozen_cluster_policy(contract)
-    if contract.get('identity')!=versions.MATH_FLEXIBLE_ANSWER_BINDING_VERSION:
+    if contract.get('identity')!=MATH_STRUCTURED_SYSTEM_BINDING_VERSION:
         raise SearchContractError('OPTIMIZER_GENERATION_POLICY_REQUIRES_FRESH_BINDING')
     policy=contract.get('optimizer_generation_policy');expected=optimizer_generation_contract()
     if (policy!=expected or any(type(policy[k]) is not type(v) for k,v in expected.items())
@@ -36,7 +37,7 @@ def frozen_cluster_policy(contract):
     if policy is None:
         return None
     expected = pattern_cluster_generation_contract()
-    if (contract.get('identity')!=versions.MATH_FLEXIBLE_ANSWER_BINDING_VERSION
+    if (contract.get('identity')!=MATH_STRUCTURED_SYSTEM_BINDING_VERSION
             or contract.get('execution_phase') not in {'pilot','canary'}
             or policy != expected
             or any(type(policy.get(k)) is not type(v) for k, v in expected.items())):

@@ -117,16 +117,22 @@ class BoundedMemoryOptimizer:
             if self.observation_observer:
                 self.observation_observer('GENERATION_COMPLETE',dict(opportunity_id=opportunity_id,
                     target_member=task.target_member,generation=row['generation'],row=row))
-        for generation in range(1,7):
+        from .generation_failures import POLICY as output_recovery
+        for generation in range(1,output_recovery['reflection_draws_per_opportunity']+1):
             memory=self.memory.read_for_member(task.target_member,task.responsibility_lane,
                 pattern_id=pattern['pattern_id'],hypothesis=pattern['generalized_gradient'])
             packet=self.prompt_builder(task,selected_parent,current_mut,memory)
-            obj=None
-            try:obj=json.loads(self.reflection_lm(packet))
-            except (ValueError,TypeError):pass
             common=dict(generation=generation,opportunity_id=opportunity_id,target_member=task.target_member,
                 evidence_packet_hash=prompt_id(packet),parent_hash=prompt_id(selected_parent),
                 root_parent_hash=prompt_id(task.parent_prompt))
+            from .generation_failures import recoverable_output
+            try:response=self.reflection_lm(packet)
+            except SearchContractError as exc:
+                if not recoverable_output(exc,'reflection'):raise
+                journal(dict(common,status='GENERATION_REJECTED',failed_checks=[str(exc)],solver_evaluated=False));continue
+            obj=None
+            try:obj=json.loads(response)
+            except (ValueError,TypeError):pass
             if obj=={'decision':'NO_SAFE_EDIT'}:
                 journal(dict(common,status='NO_SAFE_EDIT',solver_evaluated=False));continue
             if (not isinstance(obj,dict) or set(obj)!={'decision','target_block','new_content','change_summary'}
@@ -136,7 +142,8 @@ class BoundedMemoryOptimizer:
                 journal(dict(common,status='CONTRACT_INVALID',failed_checks=['invalid_structure'],solver_evaluated=False));continue
             try:
                 proposed=selected_parent.edit(obj['target_block'],obj['new_content'])
-            except SearchContractError:
+            except SearchContractError as exc:
+                if str(exc) not in {'SYSTEM_PROMPT_BLOCK_INVALID','SYSTEM_PROMPT_OVER_LENGTH','SYSTEM_PROMPT_TARGET_BLOCK_INVALID'}:raise
                 journal(dict(common,status='CONTRACT_INVALID',failed_checks=['invalid_block_or_length'],solver_evaluated=False));continue
             h=prompt_id(proposed)
             checks=candidate_failed_checks(proposed,parent_prompt=selected_parent,examples=examples,max_chars=3000)
@@ -205,6 +212,7 @@ class BoundedMemoryOptimizer:
         telemetry=dict(proposal_count=len(events),local_metric_evaluations=metric,metric_limit=42,
             mutation_size=3,search_validation_size=3,local_solver_reached=len(pool),
             contract_rejects=sum(r['status']=='CONTRACT_INVALID' for r in events),
+            generation_rejects=sum(r['status']=='GENERATION_REJECTED' for r in events),
             no_safe_edits=sum(r['status']=='NO_SAFE_EDIT' for r in events),root_correct_count=root_score,
             team_candidate_count=len(candidates),local_positive=sum(c.backend_details['locally_positive'] for c in pool),
             memory=self.memory.audit())

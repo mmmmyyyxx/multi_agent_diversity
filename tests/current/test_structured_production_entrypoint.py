@@ -18,7 +18,7 @@ ROOT=Path(__file__).resolve().parents[2]
 FRESH='experiments/execution_bindings/a4_v25_seed81_canary_attempt1.json'
 
 def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct=False,structural=False,
-        seed=81,team_version=None,development_subsets=None):
+        seed=81,team_version=None,development_subsets=None,structural_kind='syntax'):
     from hashlib import sha256
     from multi_dataset_diverse_rl.benchmarks.math_structured_binding import derive_structured_contract
     from multi_dataset_diverse_rl.search.optimization_evidence import POLICY
@@ -74,14 +74,14 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
             p=json.loads(req['messages'][1]['content'])
             if 'example' in p:
                 gradient_draws[p['example']['example_id']]+=1
-                if structural and gradient_draws[p['example']['example_id']]==1:return response('malformed JSON')
+                if structural and gradient_draws[p['example']['example_id']]==1:return response(None if structural_kind=='null' else 'malformed JSON')
                 return response(json.dumps(dict(disposition='UNCERTAIN' if uncertain else 'ACTIONABLE',
                     observed_failure='The actual written operation differs from the labeled reference.',
                     diagnosis='The observed transformation may omit a constraint.',suggested_block='strategy',
                     reusable_correction=None if uncertain else HYPOTHESIS,
                     expected_effect=None if uncertain else 'Retain constraints during transformations.')))
             cluster_draws+=1
-            if structural and cluster_draws==1:return response('malformed JSON')
+            if structural and cluster_draws==1:return response(None if structural_kind=='null' else 'malformed JSON')
             return response(json.dumps(dict(patterns=[dict(generalized_gradient=HYPOTHESIS,
                 support_ids=[g['example_id'] for g in p['gradients']])],unassigned_ids=[])))
         return response('{"decision":"NO_SAFE_EDIT"}')
@@ -144,6 +144,15 @@ def test_final_entrypoint_accounts_structural_recovery_without_old_single_draw_v
     _entrypoint_fixture(tmp_path,monkeypatch,False,'canary',False,structural=True)
 
 
+def test_null_gradient_and_cluster_are_durably_charged_local_draws(tmp_path,monkeypatch):
+    result,requests,_,_=_entrypoint_fixture(tmp_path,monkeypatch,False,'canary',False,
+        structural=True,structural_kind='null')
+    assert result['ledger']['successes']==len(requests)
+    assert result['accounting']['charged_total']==4*len(requests)
+    assert len(list((tmp_path/'runs/execution/provider_response_receipts_private').glob('*.json')))==len(requests)
+    assert result['accounting']['reserved_inflight']==0
+
+
 def test_missing_owner_review_aborts_before_optimization_and_closes_accounting(tmp_path,monkeypatch):
     """A lost supervisor cannot turn paid initialization into Canary PASS."""
     from types import SimpleNamespace
@@ -170,6 +179,7 @@ def test_missing_owner_review_aborts_before_optimization_and_closes_accounting(t
     assert not (run_root/'execution_summary.json').exists()
     assert (run_root/'trajectory_private.jsonl').read_bytes()==b''
     assert (run_root/'raw_evidence_inventory.json').exists()
+    assert (run_root/'initial_state_private.json').exists()
 
 
 @pytest.mark.parametrize('wrong_field',['approved','review_identity_sha256','startup_identity_sha256'])
@@ -190,3 +200,89 @@ def test_owner_review_rejects_unapproved_or_stale_receipt(tmp_path,monkeypatch,w
             contract=dict(canary_review_policy=canary_review.STRUCTURED_POLICY,execution_attempt_id='synthetic'),
             payload=dict(startup_identity_sha256='a'*64),run_root=tmp_path)
     assert not (tmp_path/'INITIAL_SOLVER_PROFILE.review_pass.json').exists()
+
+
+@pytest.mark.parametrize('artifact',['raw_evidence_inventory.json','SEARCH_COMPLETE_RECEIPT.json','lifecycle.json'])
+def test_terminal_persistence_fault_cannot_publish_completion_or_reopen_scope(tmp_path,monkeypatch,artifact):
+    original=autonomous_math.atomic_write_json;failed=[]
+    def broken_once(path,value):
+        terminal=(path.name!='lifecycle.json' or value.get('status')=='EXECUTION_COMPLETE')
+        if path.name==artifact and terminal and not failed:
+            failed.append(path.name)
+            raise OSError('SYNTHETIC_TERMINAL_STORAGE_FAILURE')
+        original(path,value)
+    monkeypatch.setattr(autonomous_math,'atomic_write_json',broken_once)
+    with pytest.raises(OSError,match='SYNTHETIC_TERMINAL_STORAGE_FAILURE'):
+        _entrypoint_fixture(tmp_path,monkeypatch,False,'canary')
+    run_root=tmp_path/'runs/execution'
+    assert failed==[artifact]
+    assert read_json(run_root/'lifecycle.json')['status']=='EXECUTION_ABORTED'
+    assert read_json(run_root/'accounting_end.json')['reserved_inflight']==0
+    assert read_json(run_root/'consumed_authorization.json')['consumed'] is True
+    milestone=read_json(run_root/'scientific_compute_returned_private.json')
+    assert milestone['resume_authorized'] is False
+    assert (run_root/'final_state_private.json').exists()
+
+
+def test_resources_and_hash_readback_precede_terminal_marker(tmp_path,monkeypatch):
+    events=[];original_close=autonomous_math.TokenLedger.close
+    def close(ledger):
+        events.append('ledger_close');original_close(ledger)
+    monkeypatch.setattr(autonomous_math.TokenLedger,'close',close)
+    original_write=autonomous_math.atomic_write_json
+    def write(path,value):
+        if path.name=='lifecycle.json' and value['status']=='EXECUTION_COMPLETE':
+            assert events==['ledger_close']
+            receipt=read_json(path.parent/'SEARCH_COMPLETE_RECEIPT.json')
+            assert receipt['raw_inventory_sha256']==autonomous_math.file_sha(path.parent/'raw_evidence_inventory.json')
+            for record in read_json(path.parent/'raw_evidence_inventory.json')['files']:
+                assert autonomous_math.file_sha(path.parent/record['path'])==record['sha256']
+            events.append('terminal_marker')
+        original_write(path,value)
+    monkeypatch.setattr(autonomous_math,'atomic_write_json',write)
+    _entrypoint_fixture(tmp_path,monkeypatch,True,'canary',all_correct=True)
+    # Fixture also attempts forbidden reuse; its fresh ledger is closed on abort.
+    assert events==['ledger_close','terminal_marker','ledger_close']
+
+
+@pytest.mark.parametrize('phase',['canary','pilot'])
+def test_seed84_arm_b_frozen_panels_complete_with_fake_provider_only(tmp_path,monkeypatch,phase):
+    from multi_dataset_diverse_rl.benchmarks.math_canary_inputs import ARM_B_TEAM_VERSION
+    c=read_json(ROOT/('experiments/execution_bindings/a4_v25_arm_b_recovery_seed84_'+phase+'_attempt1.json'))
+    development=dict(path=c['low_cost_subsets_path'],sha256=c['low_cost_subsets_sha256'],protocol=c['low_cost_protocol'])
+    result,_,_,_= _entrypoint_fixture(tmp_path,monkeypatch,False,phase,
+        seed=84,team_version=ARM_B_TEAM_VERSION,development_subsets=development)
+    initial=read_json(tmp_path/'runs/execution/initial_state_private.json')
+    assert len(set(json.dumps(p,sort_keys=True) for p in initial['member_prompts']))==1
+    assert result['accounting']['reserved_inflight']==0 and result['memory_audit']['initial_memory_entries']==5
+
+
+@pytest.mark.parametrize('artifact',['final_team_private.json','final_state_private.json'])
+def test_corrupt_terminal_checkpoint_readback_remains_fatal(tmp_path,monkeypatch,artifact):
+    from multi_dataset_diverse_rl.governance.token_accounting import OperationalAbort
+    original=autonomous_math.atomic_write_json
+    def corrupt(path,value):
+        original(path,{**value,'state_id':'SYNTHETIC_CORRUPTION'} if path.name==artifact else value)
+    monkeypatch.setattr(autonomous_math,'atomic_write_json',corrupt)
+    with pytest.raises(OperationalAbort,match='EXECUTION_PERSISTENCE_MISMATCH'):
+        _entrypoint_fixture(tmp_path,monkeypatch,False,'canary')
+    run_root=tmp_path/'runs/execution'
+    assert read_json(run_root/'lifecycle.json')['status']=='EXECUTION_ABORTED'
+    assert read_json(run_root/'accounting_end.json')['reserved_inflight']==0
+    assert read_json(run_root/'consumed_authorization.json')['consumed'] is True
+    assert not (run_root/'SEARCH_COMPLETE_RECEIPT.json').exists()
+
+
+def test_resource_close_failure_cannot_follow_a_false_completion(tmp_path,monkeypatch):
+    original=autonomous_math.TokenLedger.close;failed=[]
+    def close(ledger):
+        original(ledger)
+        if not failed:
+            failed.append(True);raise OSError('SYNTHETIC_RESOURCE_CLOSE_FAILURE')
+    monkeypatch.setattr(autonomous_math.TokenLedger,'close',close)
+    with pytest.raises(OSError,match='SYNTHETIC_RESOURCE_CLOSE_FAILURE'):
+        _entrypoint_fixture(tmp_path,monkeypatch,True,'canary',all_correct=True)
+    run_root=tmp_path/'runs/execution'
+    assert read_json(run_root/'lifecycle.json')['status']=='EXECUTION_ABORTED'
+    assert (run_root/'scientific_compute_returned_private.json').exists()
+    assert not (run_root/'SEARCH_COMPLETE_RECEIPT.json').exists()

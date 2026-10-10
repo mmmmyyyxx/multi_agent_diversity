@@ -384,8 +384,9 @@ def manifest():
         execution_binding={'identity':c['identity'],'path':c['binding_path'],'sha256':'0'*64})
     for key in ('gradient_recovery_policy','post_search_validation_policy'):m.pop(key,None)
     for key in ('system_prompt_policy','answer_extraction_policy','solver_execution_policy','prediction_validity_policy',
-            'invalid_recovery_policy','canary_review_policy','parser_identity','accounting_scope_policy','candidate_contract_identity','pattern_abstraction_guard','partition_completion_policy','repair_probe_policy'):
+            'invalid_recovery_policy','canary_review_policy','parser_identity','accounting_scope_policy','candidate_contract_identity','pattern_abstraction_guard','partition_completion_policy','repair_probe_policy','generated_output_recovery_policy'):
         m[key]=c['payload_parser_identity'] if key=='parser_identity' else c[key]
+    m['cache_policy']=dict(identity=c['cache_policy'],frozen=True)
     return m
 
 
@@ -396,7 +397,7 @@ def test_new_manifest_is_strict_and_unfrozen_real_profile_holds():
     m=manifest();assert not validate_manifest_v2(ROOT,m)
     scope=execution_scope(m,contract());assert scope['initial_memory_entries']==5
     assert scope['optimization_evidence_policy']==POLICY
-    for key in ('optimization_evidence_policy','solver_trajectory_policy','layer1_search_policy'):
+    for key in ('optimization_evidence_policy','solver_trajectory_policy','layer1_search_policy','generated_output_recovery_policy'):
         bad=deepcopy(m);bad.pop(key);assert validate_manifest_v2(ROOT,bad)
     bad=deepcopy(m);bad['execution_binding']['identity']='MATH_V2_2_EXECUTION_BINDING_V1'
     assert validate_manifest_v2(ROOT,bad)

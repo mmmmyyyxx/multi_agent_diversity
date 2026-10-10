@@ -1,0 +1,8 @@
+{
+  "api_calls": 0,
+  "canary_efficacy": "NOT_EVALUABLE",
+  "engineering": "OFFLINE_VERIFIED",
+  "historical_scores": "IMMUTABLE",
+  "pilot_efficacy": "NOT_EVALUABLE",
+  "science": "NEW_REAL_EXECUTION_NOT_OBSERVED"
+}

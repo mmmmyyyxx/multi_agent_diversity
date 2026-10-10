@@ -11,6 +11,7 @@ import json
 import re
 
 from .. import versions
+from ..current_contract import MATH_STRUCTURED_SYSTEM_BINDING_VERSION
 from ..search.schemas import SearchContractError
 
 from .math_flexible_answer import prediction_from_persisted, extract_answer, boundaries
@@ -45,7 +46,7 @@ def trajectory_policy():
 
 def frozen_trajectory_policy(contract):
     policy = contract.get('solver_trajectory_policy')
-    if contract.get('identity')==versions.MATH_FLEXIBLE_ANSWER_BINDING_VERSION:
+    if contract.get('identity')==MATH_STRUCTURED_SYSTEM_BINDING_VERSION:
         from ..search.optimization_evidence import frozen_policy
         frozen_policy(contract.get('optimization_evidence_policy'))
         from .math_structured_interface import system_interface_contract

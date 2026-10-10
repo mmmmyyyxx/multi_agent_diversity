@@ -113,6 +113,8 @@ def current_scientific_files(root: Path, *, execution_closure: bool = False) -> 
     if structured_contract.is_file():result.append(structured_contract)
     flexible_contract=root/'docs/design/FLEXIBLE_ANSWER_EXTRACTION_V3.md'
     if flexible_contract.is_file():result.append(flexible_contract)
+    recovery_contract=root/'docs/design/GENERATED_OUTPUT_RECOVERY_V25.md'
+    if recovery_contract.is_file():result.append(recovery_contract)
     risk_contract = root/'docs/design/SHARED_RISK_MEMORY_V4.md'
     if risk_contract.is_file():
         result.append(risk_contract)

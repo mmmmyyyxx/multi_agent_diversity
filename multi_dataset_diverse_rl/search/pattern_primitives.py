@@ -6,8 +6,8 @@ from ..local_optimizers.example_text import contains_supplied_example_text
 from ..local_optimizers.schemas import LocalEvidenceExample
 from .responsibility_value import responsibility_value
 from .schemas import SearchContractError
-from .abstraction_content import current_specific_content_leaked
-from .numeric_provenance import numeric_guard_result
+from .generation_failures import generation_failure
+from .symbolic_provenance import abstraction_result
 
 @dataclass(frozen=True)
 class PatternResponsibilitySignal:
@@ -49,22 +49,23 @@ def guard_abstraction(text, rows, *, abstraction_guard_version=None):
         raise SearchContractError('PATTERN_ABSTRACTION_GUARD_NOT_BOUND')
     import re
     if isinstance(text,str) and re.search(r'\b(?:copy|return|output|use)\s+(?:the\s+)?(?:gold|ground\s*truth|reference)\s+(?:answer|solution)\b',text,re.I):
-        raise SearchContractError('PATTERN_DISCOVERY_EXAMPLE_LEAKAGE')
+        raise generation_failure('PATTERN_DISCOVERY_EXAMPLE_LEAKAGE')
     if (not isinstance(text,str) or not text.strip() or len(text)>600
             or semantic_violation_reasons(text)):
-        raise SearchContractError('PATTERN_DISCOVERY_INVALID_ABSTRACTION')
+        raise generation_failure('PATTERN_DISCOVERY_INVALID_ABSTRACTION')
     rows=tuple(rows)
     examples=tuple(LocalEvidenceExample(r.example_id,r.signals['input_payload'],r.signals['gold']) for r in rows)
     if contains_supplied_example_text(text,examples):
-        raise SearchContractError('PATTERN_DISCOVERY_EXAMPLE_LEAKAGE')
+        raise generation_failure('PATTERN_DISCOVERY_EXAMPLE_LEAKAGE')
     if abstraction_guard_version == versions.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION:
-        numeric=numeric_guard_result(text, rows)
-        if (current_specific_content_leaked(text, rows, numeric_gold=False)
-                or numeric['hard_reject']):
-            error=SearchContractError('PATTERN_DISCOVERY_EXAMPLE_LEAKAGE')
+        result=abstraction_result(text,rows)
+        numeric=result['numeric']
+        if result['hard_reject']:
+            error=generation_failure('PATTERN_DISCOVERY_EXAMPLE_LEAKAGE')
             error.numeric_guard_result=numeric
+            error.abstraction_result=result
             raise error
-        return numeric
+        return result
 
 def single_failure_example(row):
     example = dict(example_id=row.example_id,problem=row.signals['input_payload'],reference=row.signals['gold'],prediction=row.signals.get('target_output'),valid=row.signals['target_member_valid'],responsibility_labels=sample_labels(row),team_margin=row.signals.get('team_margin'),team_disagreement=row.signals.get('team_disagreement'))

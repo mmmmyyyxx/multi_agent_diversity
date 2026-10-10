@@ -1,4 +1,4 @@
-"""V2.4-only experiment entrypoint; retired execution requires original Git source."""
+"""Closed current experiment entrypoint; retired execution needs original source."""
 import argparse
 import asyncio
 import json

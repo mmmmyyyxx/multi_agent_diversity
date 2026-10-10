@@ -11,6 +11,7 @@ from multi_dataset_diverse_rl.benchmarks.math_optimizer_generation import patter
 from multi_dataset_diverse_rl.benchmarks.math_solver_decoding import generation_request_fields
 from multi_dataset_diverse_rl.governance.token_accounting import reservation,OperationalAbort
 from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker
+from multi_dataset_diverse_rl.search.generation_failures import GeneratedOutputFailure
 @pytest.mark.parametrize('field,value',[('max_completion_tokens',8191),('max_completion_tokens',True),
     ('accounting_output_ceiling',8192),('roles',['reflection']),('enable_thinking',True)])
 def test_role_policy_tampering_fails_closed(field,value):
@@ -41,6 +42,8 @@ def test_response_measurement_and_truncation_use_actual_role(tokens,finish,accep
         result=broker.complete(**kwargs)
         assert result['optimizer_generation_diagnostics']['max_completion_tokens']==8192
         assert result['optimizer_generation_diagnostics']['generation_policy_identity']==pattern_cluster_generation_contract()['identity']
+    elif finish!='stop':
+        with pytest.raises(GeneratedOutputFailure,match='^GENERATED_OUTPUT_TRUNCATED$'):broker.complete(**kwargs)
     else:
         with pytest.raises(SearchContractError,match='OPERATIONAL_OUTPUT'):broker.complete(**kwargs)
     assert len(calls)==1 and broker.usage['pattern_cluster']==1

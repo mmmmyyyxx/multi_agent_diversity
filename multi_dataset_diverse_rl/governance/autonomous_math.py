@@ -17,6 +17,54 @@ def file_sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def checked_json(path, value):
+    value=plain(value)
+    atomic_write_json(path,value)
+    if read_json(path)!=value:
+        raise OperationalAbort('EXECUTION_PERSISTENCE_MISMATCH')
+
+
+def persist_terminal(run_root, c, payload, summary, *, scientific_complete, stop_reason):
+    """Commit the terminal marker only after durable evidence and closure receipt.
+
+    The inventory excludes its own marker and receipts to avoid hash cycles.
+    A compute milestone is evidence only: it grants no resume or authorization.
+    """
+    summary=plain(summary)
+    for name,value in (('execution_summary.json',summary),('accounting_end.json',summary['accounting'])):
+        atomic_write_json(run_root/name,value)
+        if read_json(run_root/name)!=value:
+            raise OperationalAbort('EXECUTION_PERSISTENCE_MISMATCH')
+    excluded={'lifecycle.json','raw_evidence_inventory.json','SEARCH_COMPLETE_RECEIPT.json','SEARCH_CLOSED_RECEIPT.json'}
+    snapshot={'identity':'TERMINAL_EVIDENCE_INVENTORY_V2','excluded_terminal_markers':sorted(excluded),
+        'files':[r for r in inventory(run_root)['files'] if r['path'] not in excluded]}
+    atomic_write_json(run_root/'raw_evidence_inventory.json',snapshot)
+    if read_json(run_root/'raw_evidence_inventory.json')!=snapshot:
+        raise OperationalAbort('EXECUTION_PERSISTENCE_MISMATCH')
+    for record in snapshot['files']:
+        if file_sha(run_root/record['path'])!=record['sha256']:
+            raise OperationalAbort('TERMINAL_EVIDENCE_HASH_MISMATCH')
+    receipt_name='SEARCH_COMPLETE_RECEIPT' if scientific_complete else 'SEARCH_CLOSED_RECEIPT'
+    receipt=dict(identity=receipt_name,attempt_id=c['execution_attempt_id'],source_sha=payload['manifest']['source_sha'],
+        startup_identity_sha256=payload['startup_identity_sha256'],search_closed_forever=True,
+        scientific_complete=scientific_complete,stop_reason=stop_reason,
+        final_team_sha256=file_sha(run_root/'final_team_private.json'),
+        trajectory_sha256=file_sha(run_root/'trajectory_private.jsonl'),
+        raw_inventory_sha256=file_sha(run_root/'raw_evidence_inventory.json'),
+        execution_summary_sha256=file_sha(run_root/'execution_summary.json'),
+        validation_model_calls=0,test_model_calls=0)
+    atomic_write_json(run_root/(receipt_name+'.json'),receipt)
+    if read_json(run_root/(receipt_name+'.json'))!=receipt:
+        raise OperationalAbort('EXECUTION_PERSISTENCE_MISMATCH')
+    terminal=dict(status='EXECUTION_COMPLETE',attempt_id=c['execution_attempt_id'],
+        scientific_complete=scientific_complete,stop_reason=stop_reason,
+        closure_receipt_sha256=file_sha(run_root/(receipt_name+'.json')),
+        raw_inventory_sha256=receipt['raw_inventory_sha256'])
+    atomic_write_json(run_root/'lifecycle.json',terminal)
+    if read_json(run_root/'lifecycle.json')!=terminal:
+        raise OperationalAbort('EXECUTION_PERSISTENCE_MISMATCH')
+
+
 def plain(value):
     if is_dataclass(value):
         return {f.name: plain(getattr(value, f.name)) for f in fields(value)}
@@ -105,7 +153,7 @@ def create_transport(contract):
                 result.update(provider_usage_details=usage,
                     provider_reasoning_character_count=len(reasoning) if isinstance(reasoning,str) else None,
                     provider_reasoning_content_present='reasoning_content' in choice['message'],
-                    provider_response_accepted=True,provider_metadata_loss_audited=True,
+                    provider_response_accepted=True,provider_metadata_loss_audited='content' in choice['message'],
                     provider_thinking_indicators=provider_thinking_indicators(body))
             return result
         finally:
@@ -146,6 +194,17 @@ async def execute_search(root, prep, run_root, payload):
     budget = TokenLedger(root / c["token_ledger_directory"], task_sha256=c["task_authorization_sha256"],
         policy=ledger_policy(c), best_effort_snapshots=durable is not None)
     broker = client = None
+    client_close_attempted=budget_close_attempted=False
+    def close_resources():
+        nonlocal client_close_attempted,budget_close_attempted
+        try:
+            if client is not None and not client_close_attempted:
+                client_close_attempted=True
+                client.close()
+        finally:
+            if not budget_close_attempted:
+                budget_close_attempted=True
+                budget.close()
     try:
         if c.get('heldout_accounting_reserve') != 0:
             raise SearchContractError('UNAUTHORIZED_HELDOUT_ZERO_RESERVE_REQUIRED')
@@ -182,6 +241,13 @@ async def execute_search(root, prep, run_root, payload):
             attach_pilot_observer(composed,run_root)
         composed.state.initialize()
         composed.memory.bootstrap(composed.state)
+        checked_json(run_root / 'initial_state_private.json',composed.state.snapshot())
+        if 'initial_competence_binding' in c:
+            initial=composed.state.snapshot()
+            if initial.diagnostics['evaluation_support_identity']!=c['initial_competence_binding']['support_identity']:
+                raise OperationalAbort('INITIAL_COMPETENCE_SUPPORT_MISMATCH')
+            checked_json(run_root/'initial_competence_floor.json',dict(binding=c['initial_competence_binding'],
+                state_id=initial.team_state_id,member_scores=initial.member_scores))
         from .canary_review import initial_audit, opportunity_audit, review
         review('INITIAL_SOLVER_PROFILE',initial_audit(c,composed,run_root),
             contract=c,payload=payload,run_root=run_root)
@@ -192,18 +258,19 @@ async def execute_search(root, prep, run_root, payload):
             if stage=='OPPORTUNITY' and not canary_context:
                 canary_context['opportunity']=data['opportunity']
             if stage=='TRANSITION' and not canary_context.get('reviewed'):
+                checked_json(run_root/'first_opportunity_observed_private.json',dict(
+                    identity='OPPORTUNITY_MILESTONE_NOT_TERMINAL_V1',observation=plain(data),
+                    state=plain(composed.state.snapshot()),startup_identity_sha256=payload['startup_identity_sha256'],
+                    resume_authorized=False))
                 review('FIRST_COMPLETE_OPPORTUNITY',opportunity_audit(c,composed,run_root,
                     canary_context['opportunity']),contract=c,payload=payload,run_root=run_root)
                 canary_context['reviewed']=True
         composed.execution_observer=reviewed_observer
-        atomic_write_json(run_root / "initial_state_private.json",plain(composed.state.snapshot()))
-        if "initial_competence_binding" in c:
-            initial = composed.state.snapshot()
-            if initial.diagnostics["evaluation_support_identity"] != c["initial_competence_binding"]["support_identity"]:
-                raise OperationalAbort("INITIAL_COMPETENCE_SUPPORT_MISMATCH")
-            atomic_write_json(run_root / "initial_competence_floor.json",dict(binding=c["initial_competence_binding"],
-                state_id=initial.team_state_id, member_scores=initial.member_scores))
         result = await composed.run(max_opportunities=c["provider_bounds"]["max_opportunities"])
+        checked_json(run_root/'scientific_compute_returned_private.json',dict(
+            identity='COMPUTE_MILESTONE_NOT_TERMINAL_V1',result=plain(result),
+            state=plain(composed.state.snapshot()),startup_identity_sha256=payload['startup_identity_sha256'],
+            source_sha=payload['manifest']['source_sha'],resume_authorized=False))
         accepted = {"CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE","NO_REPAIR_SIGNAL"} if c["execution_phase"]=="canary" else {"SATURATION_REACHED","NO_REPAIR_SIGNAL"}
         scientific_complete=result.stop_reason in accepted
         operational_truncation=bool(c.get('operational_pilot')) and result.stop_reason in {
@@ -211,8 +278,8 @@ async def execute_search(root, prep, run_root, payload):
         if not scientific_complete and not operational_truncation:
             raise OperationalAbort("NONSCIENTIFIC_STOP_"+result.stop_reason)
         final = composed.state.snapshot()
-        atomic_write_json(run_root / "final_team_private.json",dict(prompts=plain(final.member_prompts),state_id=final.team_state_id))
-        atomic_write_json(run_root / "final_state_private.json",plain(final))
+        checked_json(run_root / "final_team_private.json",dict(prompts=plain(final.member_prompts),state_id=final.team_state_id))
+        checked_json(run_root / "final_state_private.json",final)
         summary = dict(result=plain(result),ledger=broker.usage,accounting=budget.view(),validation_reserve=0,
             validation_search_raw_reads=0,validation_calls=0,test_raw_reads=0,test_calls=0,pattern_calls=broker.usage['pattern'],memory_activity=0)
         if c.get('operational_pilot'):
@@ -256,20 +323,8 @@ async def execute_search(root, prep, run_root, payload):
                 'validation_status':('DEFERRED_BY_USER_SCOPE' if summary['deployed_team_change']['team_changed'] else 'SKIPPED_NO_TEAM_CHANGE'),
                 'VoteAccDelta':'NOT_AVAILABLE', 'OracleAccDelta':'NOT_AVAILABLE', 'bootstrap':'NOT_RUN'})
         summary = plain(summary)
-        atomic_write_json(run_root / "execution_summary.json",summary)
-        if read_json(run_root / "execution_summary.json")!=summary:
-            raise OperationalAbort("EXECUTION_PERSISTENCE_MISMATCH")
-        atomic_write_json(run_root / "accounting_end.json",budget.view())
-        atomic_write_json(run_root / "lifecycle.json",dict(status="EXECUTION_COMPLETE",attempt_id=c["execution_attempt_id"]))
-        atomic_write_json(run_root / "raw_evidence_inventory.json",inventory(run_root))
-        if c["execution_phase"]=="pilot":
-            receipt_name='SEARCH_COMPLETE_RECEIPT' if scientific_complete else 'SEARCH_CLOSED_RECEIPT'
-            atomic_write_json(run_root / (receipt_name+'.json'),dict(identity=receipt_name,attempt_id=c["execution_attempt_id"],
-                source_sha=payload["manifest"]["source_sha"],startup_identity_sha256=payload["startup_identity_sha256"],
-                final_team_sha256=file_sha(run_root / "final_team_private.json"),
-                trajectory_sha256=file_sha(run_root / "trajectory_private.jsonl") if (run_root / "trajectory_private.jsonl").exists() else None,
-                raw_inventory_sha256=file_sha(run_root / "raw_evidence_inventory.json"),execution_summary_sha256=file_sha(run_root / "execution_summary.json"),
-                stop_reason=result.stop_reason,search_closed_forever=True,validation_search_raw_reads=0,validation_model_calls=0,test_raw_reads=0,test_model_calls=0))
+        close_resources()
+        persist_terminal(run_root,c,payload,summary,scientific_complete=scientific_complete,stop_reason=result.stop_reason)
         return summary
     except BaseException as exc:
         for key in tuple(budget.inflight):
@@ -284,22 +339,22 @@ async def execute_search(root, prep, run_root, payload):
                     stop_reason=reason,operational_pilot=c['operational_pilot'],
                     ledger=broker.usage if broker else {},accounting=budget.view(),
                     validation_calls=0,test_calls=0,partial_opportunity_possible=True)
-                if ('composed' in locals() and composed.state.initial_state_id is not None):
-                    state=composed.state.snapshot()
-                    atomic_write_json(run_root/'final_state_private.json',plain(state))
-                    atomic_write_json(run_root/'final_team_private.json',dict(prompts=plain(state.member_prompts),state_id=state.team_state_id))
-                    from .pilot_observation import memory_snapshot
-                    atomic_write_json(run_root/'terminal_memory_private.json',memory_snapshot(composed.memory))
-                atomic_write_json(run_root/'execution_summary.json',plain(partial))
-                atomic_write_json(run_root/'accounting_end.json',budget.view())
-                atomic_write_json(run_root/'lifecycle.json',dict(status='EXECUTION_COMPLETE',
-                    scientific_complete=False,attempt_id=c['execution_attempt_id'],stop_category=reason))
-                atomic_write_json(run_root/'raw_evidence_inventory.json',inventory(run_root))
-                atomic_write_json(run_root/'SEARCH_CLOSED_RECEIPT.json',dict(identity='SEARCH_CLOSED_RECEIPT',
-                    attempt_id=c['execution_attempt_id'],search_closed_forever=True,pilot_completed=False,
-                    stop_reason=reason,execution_summary_sha256=file_sha(run_root/'execution_summary.json'),
-                    source_sha=payload['manifest']['source_sha'],startup_identity_sha256=payload['startup_identity_sha256'],
-                    validation_model_calls=0,test_model_calls=0))
+                try:
+                    if ('composed' in locals() and composed.state.initial_state_id is not None):
+                        state=composed.state.snapshot()
+                        checked_json(run_root/'final_state_private.json',state)
+                        checked_json(run_root/'final_team_private.json',dict(prompts=plain(state.member_prompts),state_id=state.team_state_id))
+                        from .pilot_observation import memory_snapshot
+                        checked_json(run_root/'terminal_memory_private.json',memory_snapshot(composed.memory))
+                    close_resources()
+                    persist_terminal(run_root,c,payload,partial,scientific_complete=False,stop_reason=reason)
+                except BaseException as terminal_error:
+                    atomic_write_json(run_root/'accounting_end.json',budget.view())
+                    atomic_write_json(run_root/'lifecycle.json',dict(status='EXECUTION_ABORTED',
+                        attempt_id=c['execution_attempt_id'],error_category=type(terminal_error).__name__,
+                        stop_category='TERMINAL_PERSISTENCE_FAILED_AFTER_BUDGET_STOP',provider_usage=broker.usage if broker else {}))
+                    atomic_write_json(run_root/'raw_evidence_inventory.json',inventory(run_root))
+                    raise
                 return partial
             pattern_failure=(isinstance(exc,SearchContractError) and str(exc).startswith(('PATTERN_','STOP_PATTERN_','FOCUSED_')))
             atomic_write_json(run_root / "accounting_end.json",budget.view())
@@ -308,6 +363,4 @@ async def execute_search(root, prep, run_root, payload):
             atomic_write_json(run_root / "raw_evidence_inventory.json",inventory(run_root))
         raise
     finally:
-        if client:
-            client.close()
-        budget.close()
+        close_resources()

@@ -1,0 +1,24 @@
+{
+  "combined_ceiling": 4000000,
+  "each_attempt_ceiling": 2000000,
+  "new_api_calls": 0,
+  "new_canary": "NOT_OBSERVED",
+  "new_charged_tokens": 0,
+  "new_pilot": "NOT_OBSERVED",
+  "new_reserved_tokens": 0,
+  "old_allowance_reusable": false,
+  "original_seed83": {
+    "actual_total": 115000,
+    "charged_total": 126201,
+    "event_count": 157,
+    "fallback_total": 11201,
+    "journal_sha256": "ec38172d78c39b72ed091c8237bd6744ed6c8a1729d4ea1cdd1d4101a7ee0b32",
+    "last_event_sha256": "cc80549f672b5dd186d59a131b4069d5daacf301a559dbf4feb9fe448dee216a",
+    "new_api_calls": 0,
+    "original_bytes_unchanged": true,
+    "original_scope_reusable": false,
+    "reserved_inflight": 0,
+    "source_attempt": "a4_v25_arm_b_seed83_canary_attempt1",
+    "status": "PASS_READ_ONLY_ORIGINAL_CHAIN"
+  }
+}

@@ -932,6 +932,15 @@ nodes:
 - experiment_id: a4_v25_arm_b_flexible_seed83_canary_v1
   kind: REAL_CANARY
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: math_generated_output_recovery_v1
+  kind: PROTOCOL_FREEZE
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: a4_v25_arm_b_recovery_seed84_canary_v1
+  kind: REAL_CANARY
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: a4_v25_arm_b_recovery_seed84_pilot_v1
+  kind: PILOT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1967,12 +1976,14 @@ edges:
   to: math_b_residual_boxed_compatibility_audit_v1
   relation: followup_of
   evidence: experiments/manifests/math_b_residual_boxed_compatibility_audit_v1.json
-  scope: Independent offline diagnosis or B-only baseline; new exact authorization required.
+  scope: Independent offline diagnosis or B-only baseline; new exact authorization
+    required.
 - from: math_baseline_calibration_stage1_v1
   to: math_b_five_member_calibration_v1
   relation: followup_of
   evidence: experiments/manifests/math_b_five_member_calibration_v1.json
-  scope: Independent offline diagnosis or B-only baseline; new exact authorization required.
+  scope: Independent offline diagnosis or B-only baseline; new exact authorization
+    required.
 - from: a4_v25_responsibility_repair_canary_v1
   to: math_flexible_answer_parser_v3
   relation: derived_from
@@ -1987,10 +1998,36 @@ edges:
   to: a4_v25_arm_b_flexible_seed83_canary_v1
   relation: derived_from
   evidence: experiments/protocols/a4_v25_arm_b_flexible_seed83_canary_v1/protocol.json
-  scope: New initial condition and memberships; old realization and authorization excluded.
+  scope: New initial condition and memberships; old realization and authorization
+    excluded.
 - from: math_baseline_calibration_stage1_v1
   to: a4_v25_arm_b_flexible_seed83_canary_v1
   relation: derived_from
   evidence: experiments/protocols/a4_v25_arm_b_flexible_seed83_canary_v1/protocol.json
-  scope: New initial condition and memberships; old realization and authorization excluded.
+  scope: New initial condition and memberships; old realization and authorization
+    excluded.
+- from: math_flexible_answer_parser_v3
+  to: math_generated_output_recovery_v1
+  relation: derived_from
+  evidence: docs/design/GENERATED_OUTPUT_RECOVERY_V25.md
+  scope: New recovery amendment and independent frozen development attempt; no prior
+    responses or authorization transfer.
+- from: a4_v25_arm_b_flexible_seed83_canary_v1
+  to: math_generated_output_recovery_v1
+  relation: derived_from
+  evidence: docs/design/GENERATED_OUTPUT_RECOVERY_V25.md
+  scope: New recovery amendment and independent frozen development attempt; no prior
+    responses or authorization transfer.
+- from: math_generated_output_recovery_v1
+  to: a4_v25_arm_b_recovery_seed84_canary_v1
+  relation: derived_from
+  evidence: docs/design/GENERATED_OUTPUT_RECOVERY_V25.md
+  scope: New recovery amendment and independent frozen development attempt; no prior
+    responses or authorization transfer.
+- from: math_generated_output_recovery_v1
+  to: a4_v25_arm_b_recovery_seed84_pilot_v1
+  relation: derived_from
+  evidence: docs/design/GENERATED_OUTPUT_RECOVERY_V25.md
+  scope: New recovery amendment and independent frozen development attempt; no prior
+    responses or authorization transfer.
 current_frontier: experiments/current_frontier.yaml

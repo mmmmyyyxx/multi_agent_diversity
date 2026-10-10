@@ -20,11 +20,14 @@ def test_five_identical_arm_b_hashes_and_original_seed_immutable():
  poisoned=deepcopy(team);poisoned['members'][0]['prompt']['strategy']='Changed strategy.'
  with pytest.raises(SearchContractError):validate_current_initial_team(poisoned,c)
 
-def test_seed83_binding_broker_and_wrong_seed_rejected():
- c=read_json(ROOT/BINDING);b=MATHStructuredBinding(ROOT,c)
+def test_seed84_binding_broker_wrong_seed_and_historical_execution_rejected():
+ old=read_json(ROOT/BINDING)
+ assert MATHStructuredBinding(ROOT,old).blockers()
+ with pytest.raises(SearchContractError):RequestBroker(contract=old,transport=lambda _:None,arm='A4',seed=83)
+ c=read_json(ROOT/'experiments/execution_bindings/a4_v25_arm_b_recovery_seed84_canary_attempt1.json');b=MATHStructuredBinding(ROOT,c)
  assert not b.blockers()
- assert c['execution_seed']==83 and c['seeds']==[83]
- assert RequestBroker(contract=c,transport=lambda _:None,arm='A4',seed=83).seed==83
+ assert c['execution_seed']==84 and c['seeds']==[84]
+ assert RequestBroker(contract=c,transport=lambda _:None,arm='A4',seed=84).seed==84
  with pytest.raises(SearchContractError):RequestBroker(contract=c,transport=lambda _:None,arm='A4',seed=81)
  poisoned=deepcopy(c);poisoned['execution_seed']=81
  assert MATHStructuredBinding(ROOT,poisoned).blockers()

@@ -493,3 +493,15 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 - Symptom: Third example aborted on physical Gradient draw seven; no optimization opportunity created.
 - Forbidden inference: Not numeric hard leakage, proof of semantic leakage or false positive, optimizer inefficacy, or authorization to rerun.
 - Mitigation: Preserve initial evidence and fail-closed abort; close consumed scope. Any guard amendment requires a fresh identity and authorization.
+
+## FAIL-V25-GENERATED-OUTPUT-LOCALIZATION: Generated-content rejection propagated as fatal instead of bounded local recovery
+
+- Status: `MITIGATED`
+- Lifecycle: `MITIGATED`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `a4_v25_arm_b_seed83_canary_attempt1`
+- Root-cause status: Literal rejection reproduced using original source; generated-output propagation and terminal ordering independently inspected and fault-injected.
+- Symptom: A short symbolic source overlap halted the opportunity; known persistence ordering windows could publish completion before closure evidence.
+- Forbidden inference: Offline compatibility is not semantic leakage proof, real optimization efficacy, repair of an undetermined process-disappearance cause, or paid rerun authorization.
+- Mitigation: Fresh typed bounded recovery policy, source-context symbolic guard, preserved legal partial evidence, and terminal evidence before completion marker.

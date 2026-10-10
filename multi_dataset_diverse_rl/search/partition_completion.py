@@ -6,6 +6,7 @@ import json
 
 from ..current_contract import GRADIENT_PARTITION_COMPLETION_VERSION
 from .schemas import SearchContractError
+from .generation_failures import generation_failure,recoverable_output
 
 IDENTITY = GRADIENT_PARTITION_COMPLETION_VERSION
 POLICY = dict(identity=IDENTITY, admissible_defect='KNOWN_ALIAS_OMISSION_OR_INVALID_PATTERN_CONTENT',
@@ -23,7 +24,7 @@ def partition_hash(value):
 def complete_known_alias_partition(raw, aliases, *, validate_generalized):
     """Validate every existing field first; append only absent supplied aliases.
 
-    The mandatory validator enforces the unchanged generalized-gradient guard
+    The mandatory validator enforces the current source-context gradient guard
     using controller-only provenance. No labels or scores are consulted here.
     """
     aliases = tuple(aliases)
@@ -33,11 +34,13 @@ def complete_known_alias_partition(raw, aliases, *, validate_generalized):
     audit = dict(policy=IDENTITY, raw_complete=False, completion_applied=False,
         missing_aliases=[], missing_count=0, duplicate_count=0, unknown_count=0,
         raw_partition_sha256=partition_hash(raw), normalized_partition_sha256=None,
-        status='FAIL', defect=None,discarded_pattern_count=0,discarded_support_count=0)
+        status='FAIL', defect=None,discarded_pattern_count=0,discarded_support_count=0,
+        discarded_patterns=[])
 
     def reject(category, defect):
         audit['defect'] = defect
-        exc = SearchContractError(category)
+        exc = (generation_failure(category) if category=='PATTERN_GRADIENT_CLUSTER_INVALID'
+            else SearchContractError(category))
         exc.partition_completion_audit = deepcopy(audit)
         raise exc
 
@@ -67,11 +70,13 @@ def complete_known_alias_partition(raw, aliases, *, validate_generalized):
     for pattern in raw['patterns']:
         try:
             if set(pattern)!={'generalized_gradient','support_ids'}:
-                raise SearchContractError('PATTERN_GRADIENT_CLUSTER_INVALID')
+                raise generation_failure('PATTERN_GRADIENT_CLUSTER_INVALID')
             validate_generalized(pattern['generalized_gradient'])
         except SearchContractError as exc:
-            if str(exc)=='PATTERN_DISCOVERY_EXAMPLE_LEAKAGE':raise
+            if not recoverable_output(exc,'pattern'):raise
             normalized['unassigned_ids'].extend(pattern['support_ids'])
+            audit['discarded_patterns'].append(dict(category=str(exc),support_ids=list(pattern['support_ids']),
+                pattern_sha256=partition_hash(pattern)))
             audit['discarded_pattern_count']+=1
             audit['discarded_support_count']+=len(pattern['support_ids'])
         else:normalized['patterns'].append(deepcopy(pattern))

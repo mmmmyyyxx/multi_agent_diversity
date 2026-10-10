@@ -15,6 +15,7 @@ from .. import current_contract as versions
 from .pattern_primitives import (guard_abstraction, wrong_universe, sample_labels,
     single_failure_example, PatternResponsibilitySignal)
 from .schemas import SearchContractError
+from .generation_failures import POLICY as OUTPUT_RECOVERY, generation_failure, recoverable_output
 
 
 REFERENCE_GRADIENT_PROMPT = '''Analyze only this one Optimize example. The written
@@ -53,7 +54,7 @@ GRADIENT_POLICY = dict(identity=versions.PER_EXAMPLE_GRADIENT_VERSION,
     schema='STRUCTURED_SYSTEM_GRADIENT_INPUT_V5', max_characters=versions.GRADIENT_MAX_CHARACTERS,
     universe='all_selected_member_wrong_optimize', logical_calls_per_wrong=1,
     successful_generations_per_wrong=3, output_cache=False, semantic_regeneration=True,
-    recovery_trigger='JSON_SCHEMA_OR_RECOVERABLE_CONTENT_ONLY', valid_uncertain_stops=True,
+    recovery_trigger='TYPED_GENERATED_OUTPUT_ONLY', output_recovery=OUTPUT_RECOVERY, valid_uncertain_stops=True,
     provider_role='pattern_gradient', generation_contract_role='pattern',
     generation_policy=versions.MATH_OPTIMIZER_GENERATION_POLICY_V3_VERSION,
     abstraction_guard=versions.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION)
@@ -93,21 +94,25 @@ def gradient_identity(text):
         ensure_ascii=False,separators=(',',':')).encode()).hexdigest()
 
 
-def validate_gradient(text, rows, *, generalized=False):
+def validate_gradient(text, rows, *, generalized=False, audit_writer=None):
     limit=versions.GENERALIZED_GRADIENT_MAX_CHARACTERS if generalized else versions.GRADIENT_MAX_CHARACTERS
     if not isinstance(text,str) or not text.strip() or len(text)>limit:
-        raise SearchContractError('PATTERN_GRADIENT_EXTRACTION_INVALID' if not generalized else 'PATTERN_GRADIENT_CLUSTER_INVALID')
+        raise generation_failure('PATTERN_GRADIENT_EXTRACTION_INVALID' if not generalized else 'PATTERN_GRADIENT_CLUSTER_INVALID')
     # Complete-role/replacement declarations are incompatible with a local signal.
     # This bounded check complements the shared content/interface guard; it is not
     # a claim to classify every possible semantic full-procedure paraphrase.
     if re.search(r'\b(?:(?:you are|act as) (?:an? )?(?:expert |math(?:ematical)? )?(?:solver|assistant)|complete (?:replacement |solver )?(?:prompt|procedure)|'
             r'(?:replace|rewrite) (?:the |your )?(?:entire|complete|full) (?:prompt|procedure)|'
             r'(?:solve|answer) (?:every|all) (?:math(?:ematical)? )?(?:problem|question)s?)\b',text,re.I):
-        raise SearchContractError('PATTERN_GRADIENT_EXTRACTION_INVALID' if not generalized else 'PATTERN_GRADIENT_CLUSTER_INVALID')
-    try:guard_abstraction(text,rows,abstraction_guard_version=versions.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION)
+        raise generation_failure('PATTERN_GRADIENT_EXTRACTION_INVALID' if not generalized else 'PATTERN_GRADIENT_CLUSTER_INVALID')
+    try:result=guard_abstraction(text,rows,abstraction_guard_version=versions.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION)
     except SearchContractError as exc:
-        if str(exc)=='PATTERN_DISCOVERY_EXAMPLE_LEAKAGE':raise
-        raise SearchContractError('PATTERN_GRADIENT_EXTRACTION_INVALID' if not generalized else 'PATTERN_GRADIENT_CLUSTER_INVALID') from None
+        if audit_writer is not None and hasattr(exc,'abstraction_result'):
+            audit_writer(exc.abstraction_result)
+        # Binding/provenance failures must keep their fatal identity; only the
+        # output boundary can attach the recoverable generated-content marker.
+        raise
+    if audit_writer is not None:audit_writer(result)
     return text.strip()
 
 
@@ -135,7 +140,7 @@ class _FreshSearchProvider:
         self.last_response=deepcopy(result)
         try:return json.loads(result['text'])
         except (ValueError,TypeError):
-            raise SearchContractError('PATTERN_GRADIENT_EXTRACTION_INVALID' if self.role=='pattern_gradient' else 'PATTERN_GRADIENT_CLUSTER_INVALID') from None
+            raise generation_failure('PATTERN_GRADIENT_EXTRACTION_INVALID' if self.role=='pattern_gradient' else 'PATTERN_GRADIENT_CLUSTER_INVALID') from None
 
 
 class PerExampleGradientProvider(_FreshSearchProvider):
@@ -197,10 +202,10 @@ class GradientClusterProvider(_FreshSearchProvider):
         self.partition_audit=[]
     def cluster(self,payload,*,evidence_rows=None):
         self.structural_errors=[]
-        for draw in range(1,4):
+        for draw in range(1,OUTPUT_RECOVERY['cluster_draws_per_opportunity']+1):
             try:return self._cluster_draw(payload,evidence_rows=evidence_rows)
             except SearchContractError as exc:
-                if str(exc)!='PATTERN_GRADIENT_CLUSTER_INVALID':raise
+                if not recoverable_output(exc,'cluster'):raise
                 self.structural_errors.append(str(exc))
         # No correction is fabricated after three malformed whole responses.
         return dict(patterns=[],unassigned_ids=[g['example_id'] for g in payload['gradients']])
@@ -232,13 +237,13 @@ class GradientClusterProvider(_FreshSearchProvider):
                 raise
             self._record_partition(raw,value,audit)
         if not isinstance(value,dict) or set(value)!={'patterns','unassigned_ids'} or not isinstance(value['patterns'],list):
-            raise SearchContractError('PATTERN_GRADIENT_CLUSTER_INVALID')
+            raise generation_failure('PATTERN_GRADIENT_CLUSTER_INVALID')
         def decode(ids):
             if not isinstance(ids,list) or any(not isinstance(x,str) or x not in mapping for x in ids):
                 raise SearchContractError('PATTERN_GRADIENT_CLUSTER_INVALID_MEMBERSHIP')
             return [mapping[x] for x in ids]
         for p in value['patterns']:
-            if not isinstance(p,dict) or 'support_ids' not in p:raise SearchContractError('PATTERN_GRADIENT_CLUSTER_INVALID')
+            if not isinstance(p,dict) or 'support_ids' not in p:raise generation_failure('PATTERN_GRADIENT_CLUSTER_INVALID')
             p['support_ids']=decode(p['support_ids'])
         value['unassigned_ids']=decode(value['unassigned_ids'])
         return value
@@ -282,7 +287,7 @@ class GradientExtractor:
             packet=dict(schema=GRADIENT_INPUT,current_system_prompt=procedure.to_dict(),
                 target_member=example['solver_trajectory']['source']['member_id'],example=example)
             errors=[];value=None
-            for draw in range(1,4):
+            for draw in range(1,OUTPUT_RECOVERY['gradient_draws_per_example']+1):
                 try:
                     value=self.provider.extract(packet)
                     if (not isinstance(value,dict) or set(value)!= {'disposition','observed_failure','diagnosis','reusable_correction','suggested_block','expected_effect'}
@@ -291,23 +296,27 @@ class GradientExtractor:
                             or value['suggested_block'] not in {None,'role','strategy','answer'}
                             or any(not isinstance(value[k],str) or not value[k].strip() or len(value[k])>240
                                 for k in ('observed_failure','diagnosis'))):
-                        raise SearchContractError('REFERENCE_GRADIENT_OUTPUT_INVALID')
+                        raise generation_failure('REFERENCE_GRADIENT_OUTPUT_INVALID')
                     if value['disposition']=='UNCERTAIN':
                         if value['reusable_correction'] is not None or value['expected_effect'] is not None:
-                            raise SearchContractError('REFERENCE_GRADIENT_OUTPUT_INVALID')
+                            raise generation_failure('REFERENCE_GRADIENT_OUTPUT_INVALID')
                     else:
                         if not isinstance(value['expected_effect'],str) or not value['expected_effect'].strip() or not 0<len(value['expected_effect'])<=240:
-                            raise SearchContractError('REFERENCE_GRADIENT_OUTPUT_INVALID')
-                        text=validate_gradient(value['reusable_correction'],(row,))
+                            raise generation_failure('REFERENCE_GRADIENT_OUTPUT_INVALID')
+                        writer=getattr(self.provider,'numeric_guard_writer',None)
+                        text=validate_gradient(value['reusable_correction'],(row,),
+                            audit_writer=(lambda result:writer(dict(example_id=row.example_id,
+                                draw=draw,abstraction=result))) if writer is not None else None)
                         gradients.append(dict(example_id=row.example_id,gradient=text))
                     break
                 except SearchContractError as exc:
-                    if str(exc) not in {'REFERENCE_GRADIENT_OUTPUT_INVALID','PATTERN_GRADIENT_EXTRACTION_INVALID'}:raise
+                    if not recoverable_output(exc,'gradient'):raise
                     errors.append(str(exc));value=None
             kind='FORMAT_FAILURE' if not row.signals['target_member_valid'] else 'MATHEMATICAL_FAILURE'
             self.evidence_diagnostics.append(dict(example_id=row.example_id,
                 **(value or dict(disposition='NONACTIONABLE_EXHAUSTED')),
                 evidence_kind=kind,structural_draws=draw,structural_errors=errors,
+                generation_draws=draw,generation_errors=list(errors),
                 recovery_succeeded=bool(errors and value),exhausted=value is None))
         return tuple(gradients)
 
@@ -416,6 +425,7 @@ class GradientPatternDiscovery:
                 selected_member_wrong_universe_count=len(diagnostics),
                 gradient_physical_calls=sum(d['structural_draws'] for d in diagnostics),
                 cluster_physical_calls=self.cluster_provider.calls-cluster_before,
+                cluster_generation_errors=list(self.cluster_provider.structural_errors),
                 total_pattern_meta_calls=sum(d['structural_draws'] for d in diagnostics)+self.cluster_provider.calls-cluster_before,
                 nonactionable_count=len(diagnostics)-len(gradients))
         if completion is not None:

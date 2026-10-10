@@ -1,5 +1,6 @@
 """Closed current sampling; optimizer generation has its own frozen policy."""
 from .. import versions
+from ..current_contract import MATH_STRUCTURED_SYSTEM_BINDING_VERSION
 from ..search.schemas import SearchContractError
 
 def solver_decoding_contract(identity=versions.MATH_SOLVER_DECODING_POLICY_V2_VERSION):
@@ -9,7 +10,7 @@ def solver_decoding_contract(identity=versions.MATH_SOLVER_DECODING_POLICY_V2_VE
         presence_penalty=0,frequency_penalty=0,max_output_tokens=3600)
 
 def frozen_solver_policy(contract):
-    if contract.get('identity')!=versions.MATH_FLEXIBLE_ANSWER_BINDING_VERSION:
+    if contract.get('identity')!=MATH_STRUCTURED_SYSTEM_BINDING_VERSION:
         raise SearchContractError('SOLVER_DECODING_POLICY_REQUIRES_FRESH_BINDING')
     policy=contract.get('solver_decoding_policy');expected=solver_decoding_contract()
     if policy!=expected or any(type(policy[k]) is not type(v) for k,v in expected.items()):

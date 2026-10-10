@@ -7,15 +7,15 @@ import re
 
 from .schemas import SearchContractError
 
-METHOD = 'unified_team_prompt_search_v2_5_flexible_answer_v1'
-IDENTITY = 'FLEXIBLE_ANSWER_OPTIMIZATION_EVIDENCE_POLICY_V4'
+METHOD = 'unified_team_prompt_search_v2_5_generation_recovery_v1'
+IDENTITY = 'GENERATED_OUTPUT_RECOVERY_EVIDENCE_POLICY_V5'
 INPUT = 'STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V8'
 LAYER1 = 'STRUCTURED_EVALUATED_PARENT_SEARCH_V3'
 EVIDENCE = 'DISJOINT_QUOTA_FREE_REPAIR_EVIDENCE_V2'
 MEMORY = 'BOOTSTRAPPED_FORMAT_BLOCK_EDIT_EFFECT_MEMORY_V3'
 GRADIENT_INPUT = 'STRUCTURED_SYSTEM_GRADIENT_INPUT_V5'
 GRADIENT_PROMPT_ID = 'STRUCTURED_SYSTEM_GRADIENT_PROMPT_V7'
-BINDING = 'MATH_FLEXIBLE_ANSWER_EVIDENCE_BINDING_V3'
+BINDING = 'MATH_GENERATION_RECOVERY_EVIDENCE_BINDING_V4'
 
 POLICY = dict(identity=IDENTITY, mutation_size=3, search_validation_size=3,
     team_probe_size=6, assigned_repair='selected_pattern_wrong_mutation_ids_seen',
@@ -32,7 +32,9 @@ POLICY = dict(identity=IDENTITY, mutation_size=3, search_validation_size=3,
     reference_solution_max_chars=4096, candidate_guard='optimizer_dependency_guard_v1',
     prompt_state='STRUCTURED_SYSTEM_PROMPT_V1', mutation='single_block_per_generation',
     editable_blocks=['role','strategy','answer'], response_evidence='observed_content_optional_trajectory',
-    answer_extraction='MATH_FLEXIBLE_ANSWER_EXTRACTION_V3')
+    answer_extraction='MATH_FLEXIBLE_ANSWER_EXTRACTION_V3',
+    generated_output_recovery='BOUNDED_GENERATED_OUTPUT_RECOVERY_V1',
+    abstraction='SOURCE_CONTEXT_SYMBOLIC_ABSTRACTION_GUARD_V1')
 
 # Six independent examples: losing at least half of this small panel is a
 # catastrophe. Lesser regression stays measurable; unchanged Full/Shadow decide.

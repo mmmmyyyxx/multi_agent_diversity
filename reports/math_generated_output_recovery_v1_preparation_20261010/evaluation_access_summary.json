@@ -1,0 +1,9 @@
+{
+  "canonical_seal_integrity_hashing": "HASH_ONLY_NOT_HELDOUT_PARSING",
+  "data_freeze_replaced": false,
+  "membership_selected_without_outcomes": true,
+  "new_heldout_raw_reads": 0,
+  "optimize_shadow_only": true,
+  "real_test_calls": 0,
+  "real_validation_calls": 0
+}
