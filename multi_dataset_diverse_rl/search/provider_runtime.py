@@ -28,7 +28,7 @@ class RequestBroker:
         self.contract = contract
         from .current_policy import CURRENT_POLICY_BUNDLE
         CURRENT_POLICY_BUNDLE.validate_contract(contract)
-        if arm!='A4' or seed!=81 or validation_only:
+        if arm!='A4' or seed!=contract.get('execution_seed',81) or validation_only:
             raise SearchContractError('CURRENT_V24_ROLE_SEED_SPLIT_FORBIDDEN')
         from ..benchmarks.math_response_evidence import frozen_trajectory_policy
         self.solver_trajectory_policy = frozen_trajectory_policy(contract)

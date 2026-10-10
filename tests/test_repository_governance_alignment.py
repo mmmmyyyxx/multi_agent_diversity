@@ -272,15 +272,28 @@ def assert_closed_current_scope(frontier,registry):
         assert frontier[field] is False
     assert frontier['pending_pilot_operational_retry_limit']==0
     assert frontier['initial_accuracy']=='UNMEASURED_UNDER_FLEXIBLE_PARSER'
-    assert frontier['current_experiment']=='NO_AUTHORIZED_REAL_EXPERIMENT'
-    assert frontier['current_execution_binding'] is None and frontier['canary_manifest'] is None
     active={r['experiment_id'] for r in registry['experiments'] if r['active_for_new_work']}
-    assert active=={'math_flexible_answer_parser_v3'}
-    m=load_yaml(ROOT/'experiments/manifests/math_flexible_answer_parser_v3.yaml')
+    if frontier['canary_manifest'] is None:
+        assert frontier['current_experiment']=='NO_AUTHORIZED_REAL_EXPERIMENT'
+        assert frontier['current_execution_binding'] is None
+        assert active=={'math_flexible_answer_parser_v3'}
+        m=load_yaml(ROOT/'experiments/manifests/math_flexible_answer_parser_v3.yaml')
+        assert m['execution_binding']['path'] is None and m['execution_binding']['sha256'] is None
+    else:
+        eid=frontier['current_experiment']
+        row=next(r for r in registry['experiments'] if r['experiment_id']==eid)
+        assert active=={'math_flexible_answer_parser_v3',eid}
+        assert row['manifest']==frontier['canary_manifest']
+        m=load_yaml(ROOT/row['manifest'])
+        assert m['execution_binding']['path']==frontier['current_execution_binding']
+        assert isinstance(m['execution_binding']['sha256'],str) and len(m['execution_binding']['sha256'])==64
     assert m['authorization']['real_api_authorized'] is False
-    assert m['lifecycle']['status']=='DRAFT' and m['source_sha'] is None
+    assert m['lifecycle']['status'] in {'DRAFT','PREEXECUTION_FROZEN'}
+    if m['lifecycle']['status']=='DRAFT':
+        assert m['source_sha'] is None
+    else:
+        assert isinstance(m['source_sha'],str) and len(m['source_sha'])==40
     assert m['execution_binding']['identity']=='MATH_FLEXIBLE_ANSWER_EVIDENCE_BINDING_V3'
-    assert m['execution_binding']['path'] is None and m['execution_binding']['sha256'] is None
     assert m['method_identity']==frontier['current_method']
 
 

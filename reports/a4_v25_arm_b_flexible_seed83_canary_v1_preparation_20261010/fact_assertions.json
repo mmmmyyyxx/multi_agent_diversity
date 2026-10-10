@@ -1,0 +1,11 @@
+{
+  "algorithm_parser_scoring_gradient_shadow_unchanged": true,
+  "api_calls_zero": true,
+  "arm_b_exact_stage1_prompt": true,
+  "budget_is_fresh_and_not_inherited": true,
+  "execution_seed83_bound_to_provider_composition_scope_and_manifest": true,
+  "five_identical_arm_b": true,
+  "new_memberships_have_zero_prior_actual_use_overlap": true,
+  "old_b_only_cancelled": true,
+  "validation_test_raw_access_zero": true
+}

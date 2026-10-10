@@ -14,9 +14,18 @@ SYSTEM_PROMPT_POLICY = dict(identity=IDENTITY, blocks=['role','strategy','answer
     full_hash='sha256_canonical_structured_bytes', system_hash='sha256_rendered_utf8')
 
 
-def system_interface_contract():
+def system_prompt_policy(team_version=None):
+    from copy import deepcopy
+    from ..current_contract import MATH_INITIAL_TEAM_VERSION
+    from .math_canary_inputs import initial_prompt
+    policy = deepcopy(SYSTEM_PROMPT_POLICY)
+    policy['seed'] = initial_prompt(team_version or MATH_INITIAL_TEAM_VERSION).to_dict()
+    return policy
+
+
+def system_interface_contract(team_version=None):
     return dict(identity=versions.MATH_SOLVER_INTERFACE_V9_VERSION,
-        parser_identity=PARSER, system_prompt_policy=SYSTEM_PROMPT_POLICY,
+        parser_identity=PARSER, system_prompt_policy=system_prompt_policy(team_version),
         answer_extraction_policy=POLICY, solver_max_output_tokens=3600, reflection_max_output_tokens=1800)
 
 
@@ -31,7 +40,7 @@ class MATHStructuredSystemBenchmark(MATHBenchmarkAdapterV2):
         from .math_prediction_validity import frozen_prediction_policy
         from .protocols import MATH_PROTOCOL_FLEXIBLE_V7
         require_current_contract(contract)
-        if contract.get('solver_output_interface') != system_interface_contract():
+        if contract.get('solver_output_interface') != system_interface_contract(contract.get('initial_team_version')):
             raise SearchContractError('MATH_STRUCTURED_INTERFACE_BINDING_MISMATCH')
         self._contract = contract
         # Metadata identity only; it is never sent as a Solver instruction.
@@ -41,7 +50,7 @@ class MATHStructuredSystemBenchmark(MATHBenchmarkAdapterV2):
         self.prediction_validity_policy = frozen_prediction_policy(contract)
 
     def solver_interface_contract(self):
-        return system_interface_contract()
+        return system_interface_contract(self._contract.get('initial_team_version'))
 
     def solver_user_content(self, prompt, item):
         return solver_messages(prompt, self.format_input(item))[1]['content']

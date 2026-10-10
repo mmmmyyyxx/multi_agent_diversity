@@ -15,14 +15,16 @@ def require(condition, category):
 
 
 def validate_current_initial_team(team, contract):
-    require(team['team_version']==contract['initial_team_version']==MATH_INITIAL_TEAM_VERSION
+    from .math_canary_inputs import initial_prompt
+    expected_prompt = initial_prompt(contract['initial_team_version'])
+    require(team['team_version']==contract['initial_team_version']
         and team['initial_team_data_dependency']=='NONE'
         and len(team['members'])==5
         and team['ordered_member_ids']==[m['member_id'] for m in team['members']]==list(range(5)),
         'INITIAL_TEAM_CONTRACT_MISMATCH')
     from ..search.system_prompt import SystemPrompt
     require(team['semantic_contract']==['complete editable system prompt']
-        and all(SystemPrompt.from_dict(m['prompt'])==MATH_INITIAL_PROMPT for m in team['members']),
+        and all(SystemPrompt.from_dict(m['prompt'])==expected_prompt for m in team['members']),
         'INITIAL_TEAM_SYMMETRY_MISMATCH')
     for member in team['members']:
         prompt=SystemPrompt.from_dict(member['prompt'])

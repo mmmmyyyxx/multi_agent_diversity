@@ -17,7 +17,8 @@ from multi_dataset_diverse_rl.search.binary_runtime import CorrectnessExample
 ROOT=Path(__file__).resolve().parents[2]
 FRESH='experiments/execution_bindings/a4_v25_seed81_canary_attempt1.json'
 
-def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct=False,structural=False):
+def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct=False,structural=False,
+        seed=81,team_version=None,development_subsets=None):
     from hashlib import sha256
     from multi_dataset_diverse_rl.benchmarks.math_structured_binding import derive_structured_contract
     from multi_dataset_diverse_rl.search.optimization_evidence import POLICY
@@ -37,9 +38,11 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
         gradient_prompt_path=old['gradient_prompt_path'],gradient_prompt_sha256=old['gradient_prompt_sha256'],
         pattern_prompt_path=old['pattern_prompt_path'],pattern_prompt_sha256=old['pattern_prompt_sha256'],
         validation_metadata_path=old['validation_accounting_metadata_path'],validation_metadata_sha256=old['validation_accounting_metadata_sha256'],
-        initial_team_path=old['initial_team_path'],initial_team_artifact_sha256=old['initial_team_artifact_sha256'],
+        initial_team_path=('experiments/initial_teams/math_arm_b_structured_seed_v3.json' if team_version else old['initial_team_path']),
+        initial_team_artifact_sha256=(sha256((ROOT/'experiments/initial_teams/math_arm_b_structured_seed_v3.json').read_bytes()).hexdigest() if team_version else old['initial_team_artifact_sha256']),
         accounting_policy_path=old['accounting_policy_path'],accounting_policy_sha256=old['accounting_policy_sha256'],
-        execution_phase=phase,max_opportunities=5 if phase=='pilot' else 1)
+        execution_phase=phase,max_opportunities=5 if phase=='pilot' else 1,seed=seed,
+        **({'team_version':team_version} if team_version else {}),development_subsets=development_subsets)
     binding=execution_binding(ROOT,c)
     original_path=binding.path
     monkeypatch.setattr(binding,'path',lambda relative: tmp_path/relative if relative==scope_path else original_path(relative))
@@ -128,6 +131,7 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
     if phase=='pilot':
         assert (run_root/'SEARCH_CLOSED_RECEIPT.json').exists()
     with pytest.raises(Exception):asyncio.run(autonomous_math.execute_search(tmp_path,prep,run_root,payload))
+    return result,requests,client,reviews
 
 
 @pytest.mark.parametrize('uncertain',[False,True])

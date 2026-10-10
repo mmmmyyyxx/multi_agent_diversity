@@ -1,0 +1,7 @@
+{
+  "charged_plus_reserved_ceiling": 2000000,
+  "charged_tokens": 0,
+  "execution_status": "PENDING_EXACT_FROZEN_SCOPE_DISPATCH",
+  "new_single_use_scope_required": true,
+  "real_api_calls": 0
+}

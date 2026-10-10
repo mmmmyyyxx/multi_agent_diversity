@@ -153,7 +153,7 @@ async def execute_search(root, prep, run_root, payload):
         atomic_write_json(run_root / "accounting_start.json",budget.view())
         transport,client = create_transport(c)
         arm=c.get('execution_arm','A4')
-        broker = RequestBroker(contract=c,transport=transport,arm=arm,seed=81,token_ledger=budget,
+        broker = RequestBroker(contract=c,transport=transport,arm=arm,seed=c['execution_seed'],token_ledger=budget,
             reserve_reader=lambda:0,ledger_writer=lambda r:append_jsonl(run_root / "ledger.jsonl",r),
             raw_writer=lambda r:append_jsonl(run_root / "provider_trace_private.jsonl",r),
             durable_cache=durable_output_cache(run_root,c,payload,root=root),
@@ -169,7 +169,7 @@ async def execute_search(root, prep, run_root, payload):
             partition_completion_policy=c.get('partition_completion_policy'),
             partition_writer=(lambda r:append_jsonl(run_root/'partition_completion_private.jsonl',r))
                 if c.get('partition_completion_policy') is not None else None)
-        composed = binding.compose(arm=arm,seed=81,solver=solver,reflection=ReflectionProvider(broker),pattern_provider=pattern_provider,run_root=run_root)
+        composed = binding.compose(arm=arm,seed=c['execution_seed'],solver=solver,reflection=ReflectionProvider(broker),pattern_provider=pattern_provider,run_root=run_root)
         if any(composed.memory.audit()[k] for k in ('success_writes','failure_writes','shared_writes')):
             raise OperationalAbort('FRESH_MEMORY_STATE_REQUIRED')
         # A naturally empty trajectory still needs a durable hashable receipt.

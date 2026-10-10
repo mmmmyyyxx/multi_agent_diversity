@@ -24,7 +24,7 @@ def execution_identity(root,contract):
 def execution_scope(manifest,contract):
     CURRENT_POLICY_BUNDLE.validate_contract(contract)
     return dict(attempt_id=contract['execution_attempt_id'],cache_namespace=contract['cache_namespace'],
-        arm='A4',seed=81,phase=contract['execution_phase']+'_search_only',source_sha=manifest['source_sha'],
+        arm='A4',seed=contract['execution_seed'],phase=contract['execution_phase']+'_search_only',source_sha=manifest['source_sha'],
         preregistration_identity=manifest['preregistration_identity'],binding_sha256=manifest['execution_binding']['sha256'],
         method=contract['method_identity'],transition=contract['transition_policy'],models=contract['models'],
         provider=contract['provider'],roles=['solver','reflection','pattern_gradient','pattern_cluster'],
@@ -107,8 +107,8 @@ def prepare_canary(root, manifest, *, destination, arm="A4", seed=81):
     if result["blockers"]:
         raise SearchContractError("HOLD_PRE_PROVIDER: " + ",".join(result["blockers"]))
     contract = read_json(root / manifest["execution_binding"]["path"])
-    if arm != contract.get('execution_arm','A4') or seed != 81:
-        raise SearchContractError("ONLY_BOUND_ARM_SEED81_CANARY_PHASE_IS_PREPARED")
+    if arm != contract.get('execution_arm','A4') or seed != contract['execution_seed']:
+        raise SearchContractError("ONLY_BOUND_ARM_SEED_CANARY_PHASE_IS_PREPARED")
     if destination.exists():
         raise SearchContractError("FRESH_PREP_DESTINATION_REQUIRED")
     contract = read_json(root / manifest["execution_binding"]["path"])
@@ -179,7 +179,7 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
         method_family=method.method, method_identity=method.method, source_sha=source_sha,
         benchmark_id="math", benchmark_protocol_id=contract["benchmark_protocol_sha256"],
         dataset_manifest_identity=contract["canonical_manifest_sha256"], split_identity=contract["split_manifest_sha256"],
-        seed=81, models=dict(solver="qwen3-8b", optimizer="qwen3.7-flash", solver_thinking=False),
+        seed=contract['execution_seed'], models=dict(solver="qwen3-8b", optimizer="qwen3.7-flash", solver_thinking=False),
         concurrency=dict(solver=contract.get('solver_execution_policy',{}).get('solver_max_concurrency',1), optimizer=1), provider_policy=dict(identity="lwj", frozen=True),
         cache_policy=dict(identity=contract["cache_policy"], frozen=True),
         solver_output_interface_identity=contract["solver_output_interface"]["identity"],

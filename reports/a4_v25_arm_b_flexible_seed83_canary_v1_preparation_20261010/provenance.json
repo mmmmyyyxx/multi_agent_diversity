@@ -1,0 +1,6 @@
+{
+  "parent_source_commit": "a2b3d28935dc9932f3574f24e1ea3e33c499d4b6",
+  "prior_b_only_status": "CANCELLED_BY_USER_NOT_EXECUTED",
+  "publication_commit": "CONTAINING_COMMIT",
+  "source_freeze": "NEXT_SOURCE_COMMIT_THEN_EXACT_FROZEN_MANIFEST_RECEIPT"
+}

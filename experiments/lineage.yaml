@@ -929,6 +929,9 @@ nodes:
 - experiment_id: math_flexible_answer_parser_v3
   kind: PROTOCOL_FREEZE
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: a4_v25_arm_b_flexible_seed83_canary_v1
+  kind: REAL_CANARY
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1980,4 +1983,14 @@ edges:
   relation: derived_from
   evidence: experiments/manifests/math_flexible_answer_parser_v3.yaml
   scope: Presentation amendment only; no retrospective efficacy or score replacement.
+- from: math_flexible_answer_parser_v3
+  to: a4_v25_arm_b_flexible_seed83_canary_v1
+  relation: derived_from
+  evidence: experiments/protocols/a4_v25_arm_b_flexible_seed83_canary_v1/protocol.json
+  scope: New initial condition and memberships; old realization and authorization excluded.
+- from: math_baseline_calibration_stage1_v1
+  to: a4_v25_arm_b_flexible_seed83_canary_v1
+  relation: derived_from
+  evidence: experiments/protocols/a4_v25_arm_b_flexible_seed83_canary_v1/protocol.json
+  scope: New initial condition and memberships; old realization and authorization excluded.
 current_frontier: experiments/current_frontier.yaml

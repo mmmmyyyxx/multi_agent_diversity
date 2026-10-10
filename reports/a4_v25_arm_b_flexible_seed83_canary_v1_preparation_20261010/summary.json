@@ -1,0 +1,39 @@
+{
+  "charged_plus_reserved_ceiling": 2000000,
+  "experiment_id": "a4_v25_arm_b_flexible_seed83_canary_v1",
+  "fresh_parser": "MATH_FLEXIBLE_ANSWER_EXTRACTION_V3",
+  "max_opportunities": 1,
+  "members": 5,
+  "old_b_only": "CANCELLED_BY_USER_NOT_EXECUTED",
+  "optimize": 12,
+  "phase": "PREPARATION",
+  "real_api_calls": 0,
+  "seed": 83,
+  "selection": {
+    "excluded_count": 130,
+    "heldout_raw_access": 0,
+    "initial_competence_binding": {
+      "aggregation_independent": true,
+      "candidate_support": "same_complete_optimize",
+      "count": 12,
+      "evaluator": "MATH_EQUIVALENCE_V2",
+      "identity": "MATH_INITIAL_COMPETENCE_LOW_COST_V1",
+      "immutable": true,
+      "metric": "binary_correct_count",
+      "role": "optimize",
+      "split_identity": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+      "support_identity": "f90d723427f76524a5d17fce7a95bb1abf40f0c4b94d574c52e5f80e3fbfcb4e"
+    },
+    "initial_team_sha256": "8a39ff1f52fc544d02931edc846728bcd3d67a6130b0b9683bcb3ef81cad3577",
+    "membership_hashes": {
+      "canary_optimize": "f90d723427f76524a5d17fce7a95bb1abf40f0c4b94d574c52e5f80e3fbfcb4e",
+      "pilot_shadow": "3b95fd16796a5438ae3f2f0c5baf89f87fe195b106db0472e350b752b90731d6"
+    },
+    "previously_used_overlap": 0,
+    "selected_counts": {
+      "canary_optimize": 12,
+      "pilot_shadow": 40
+    }
+  },
+  "shadow": 40
+}

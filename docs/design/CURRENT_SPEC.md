@@ -31,6 +31,13 @@ Older runtime identities cannot execute through current production. Historical
 manifests and reports remain immutable evidence with their frozen source replay.
 No old scoring, response cache, competence, Memory or consumed scope is reusable.
 Current readiness and authorization live in manifests and the frontier.
+The complete initial Role/Strategy/Answer artifact and execution seed are frozen
+inputs, read by binding, interface policy, provider lanes, composition and scope.
+The registered Arm B initial condition changes the Answer block only; initial
+members remain identical and every block remains editable. Fresh canary subsets
+are selected deterministically from development metadata after excluding prior
+actual-use hashes. Their seed, exclusion set and memberships enter run identity.
+These initial-condition and membership choices change no optimization rule.
 The parser amendment requires a fresh source/protocol/cache identity before paid
 execution; no previously consumed or reviewed scope is reusable.
 

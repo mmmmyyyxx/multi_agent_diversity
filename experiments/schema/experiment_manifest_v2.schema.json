@@ -6967,7 +6967,83 @@
       "$ref": "#/oneOf/1/properties/lifecycle"
     },
     "low_cost_protocol": {
-      "$ref": "#/oneOf/1/properties/low_cost_protocol"
+      "anyOf": [
+        {
+          "$ref": "#/oneOf/1/properties/low_cost_protocol"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "identity",
+            "selection_policy",
+            "seed",
+            "source_superset_sha256",
+            "counts",
+            "membership_hashes",
+            "validation_access",
+            "test_access"
+          ],
+          "properties": {
+            "identity": {
+              "const": "MATH_FRESH_CANARY_MEMBERSHIP_V2"
+            },
+            "selection_policy": {
+              "const": {
+                "identity": "MATH_FRESH_CANARY_MEMBERSHIP_V2",
+                "strata": [
+                  "subject",
+                  "level"
+                ],
+                "apportionment": "integer_largest_remainder_lexical_tie",
+                "ordering": "sha256_policy_seed_role_stable_id",
+                "output_order": "source_superset_order",
+                "ordering_namespace": "MATH_LOW_COST_SUBJECT_LEVEL_HASH_V1",
+                "exclusion": "prior_actual_use_example_hashes",
+                "performance_used": false
+              }
+            },
+            "seed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "source_superset_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "counts": {
+              "const": {
+                "canary_optimize": 12,
+                "pilot_shadow": 40
+              }
+            },
+            "membership_hashes": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "canary_optimize",
+                "pilot_shadow"
+              ],
+              "properties": {
+                "canary_optimize": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "pilot_shadow": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                }
+              }
+            },
+            "validation_access": {
+              "const": "not_authorized"
+            },
+            "test_access": {
+              "const": "sealed"
+            }
+          }
+        }
+      ]
     },
     "low_cost_subsets_sha256": {
       "$ref": "#/oneOf/1/properties/low_cost_subsets_sha256"
@@ -7412,7 +7488,37 @@
       "$ref": "#/oneOf/1/properties/split_identity"
     },
     "system_prompt_policy": {
-      "$ref": "#/oneOf/1/properties/system_prompt_policy"
+      "anyOf": [
+        {
+          "$ref": "#/oneOf/1/properties/system_prompt_policy"
+        },
+        {
+          "const": {
+            "identity": "STRUCTURED_SYSTEM_PROMPT_V1",
+            "blocks": [
+              "role",
+              "strategy",
+              "answer"
+            ],
+            "serialization": "ordered_role_strategy_answer_ascii_json_compact",
+            "rendering": "role_double_newline_strategy_double_newline_answer",
+            "mutation": "STRUCTURED_SYSTEM_BLOCK_MUTATION_CONTRACT_V1",
+            "single_block_per_generation": true,
+            "max_rendered_characters": 3000,
+            "seed": {
+              "role": "You are a helpful assistant.",
+              "strategy": "Answer the question.",
+              "answer": "End your response with a final answer on a separate line.\nThe line must start with the exact text \"Final answer: \"\nfollowed by only the mathematical result.\nDo not use a Markdown heading, bullet, or bold formatting\nfor this line. Do not write anything after it."
+            },
+            "user_message": "raw_problem_only",
+            "extra_solver_instructions": false,
+            "deduplication": "canonical_structured_bytes",
+            "block_hash": "sha256_utf8",
+            "full_hash": "sha256_canonical_structured_bytes",
+            "system_hash": "sha256_rendered_utf8"
+          }
+        }
+      ]
     },
     "transition_identity": {
       "$ref": "#/oneOf/1/properties/transition_identity"

@@ -44,7 +44,15 @@ def read_subsets(root,contract):
     if file_hash(p)!=contract['low_cost_subsets_sha256']:
         raise SearchContractError('LOW_COST_SUBSET_ARTIFACT_HASH_MISMATCH')
     data=json.loads(p.read_bytes())
-    if data != build_subsets(data['metadata_universe'],contract['split_manifest_sha256']):
+    from .math_canary_inputs import FRESH_SELECTION, build_fresh_canary_subsets, fresh_canary_protocol
+    if data.get('identity') == FRESH_SELECTION['identity']:
+        expected=build_fresh_canary_subsets(data['metadata_universe'],contract['split_manifest_sha256'],
+            seed=contract['execution_seed'],excluded_example_hashes=data['excluded_example_hashes'])
+        if contract['low_cost_protocol'] != fresh_canary_protocol(expected):
+            raise SearchContractError('FRESH_CANARY_PROTOCOL_MISMATCH')
+    else:
+        expected=build_subsets(data['metadata_universe'],contract['split_manifest_sha256'])
+    if data != expected:
         raise SearchContractError('LOW_COST_SUBSET_SELECTION_MISMATCH')
     return data
 

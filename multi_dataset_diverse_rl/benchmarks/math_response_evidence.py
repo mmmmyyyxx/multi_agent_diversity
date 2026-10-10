@@ -51,7 +51,7 @@ def frozen_trajectory_policy(contract):
         from .math_structured_interface import system_interface_contract
         expected = trajectory_policy()
         if (policy != expected or any(type(policy.get(k)) is not type(v) for k, v in expected.items())
-                or contract.get('solver_output_interface') != system_interface_contract()
+                or contract.get('solver_output_interface') != system_interface_contract(contract.get('initial_team_version'))
                 or contract.get('models', {}).get('solver') != 'qwen3-8b'
                 or contract.get('models', {}).get('solver_thinking') is not False):
             raise SearchContractError('MATH_VISIBLE_TRAJECTORY_BINDING_MISMATCH')

@@ -145,3 +145,11 @@ tests/current/test_math_flexible_answer.py text eol=lf
 docs/design/FLEXIBLE_ANSWER_EXTRACTION_V3.md text eol=lf
 experiments/manifests/math_flexible_answer_parser_v3.yaml text eol=lf
 reports/math_flexible_answer_parser_v3_20261010/** text eol=lf
+
+multi_dataset_diverse_rl/benchmarks/math_canary_inputs.py text eol=lf
+tests/current/test_arm_b_canary_inputs.py text eol=lf
+experiments/protocols/a4_v25_arm_b_flexible_seed83_canary_v1/** text eol=lf
+experiments/execution_bindings/a4_v25_arm_b_seed83_canary_attempt1.json text eol=lf
+experiments/manifests/a4_v25_arm_b_flexible_seed83_canary_v1.yaml text eol=lf
+reports/a4_v25_arm_b_flexible_seed83_canary_v1_*20261010/** text eol=lf
+experiments/initial_teams/math_arm_b_structured_seed_v3.json text eol=lf

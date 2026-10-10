@@ -9077,7 +9077,7 @@ experiments:
   method_family: INDEPENDENT_MATH_BASELINE_CALIBRATION
   parent_ids:
   - math_baseline_calibration_stage1_v1
-  status: PREPARED_NOT_EXECUTED
+  status: ABANDONED
   scientific_status: DESIGN_ONLY_NOT_EXECUTION_ELIGIBLE
   implementation_commit: null
   execution_commit: null
@@ -9122,3 +9122,28 @@ experiments:
     implementation_commit: Containing implementation commit.
     execution_commit: No paid execution.
     result_commit: Containing implementation commit.
+- experiment_id: a4_v25_arm_b_flexible_seed83_canary_v1
+  kind: REAL_CANARY
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_5_flexible_answer_v1
+  parent_ids:
+  - math_flexible_answer_parser_v3
+  - math_baseline_calibration_stage1_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: NEW_INITIAL_CONDITION_FULL_PIPELINE_CANARY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/a4_v25_arm_b_flexible_seed83_canary_v1.yaml
+  report: reports/a4_v25_arm_b_flexible_seed83_canary_v1_preparation_20261010
+  classifier: reports/a4_v25_arm_b_flexible_seed83_canary_v1_preparation_20261010/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User cancels the unexecuted B-only baseline and authorizes one fresh full pipeline
+    canary.
+  unavailable:
+    implementation_commit: Containing source freeze commit.
+    execution_commit: Pending new canary.
+    result_commit: Pending audited execution.

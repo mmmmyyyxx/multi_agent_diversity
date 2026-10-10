@@ -13,7 +13,7 @@ from ..search.scientific_aggregation import EquivalencePluralityAggregation
 from ..search.optimization_evidence import POLICY, BINDING, METHOD, MEMORY, EVIDENCE, INPUT, GRADIENT_PROMPT_ID, PROBE_POLICY
 from ..search.textual_gradients import REFERENCE_GRADIENT_PROMPT, CLUSTER_PROMPT, pattern_policy_for_trajectory
 from ..search.schemas import SearchContractError
-from .math_structured_interface import MATHStructuredSystemBenchmark, SYSTEM_PROMPT_POLICY, system_interface_contract
+from .math_structured_interface import MATHStructuredSystemBenchmark, SYSTEM_PROMPT_POLICY, system_interface_contract, system_prompt_policy
 from .math_flexible_answer import POLICY as EXTRACTION, validity_contract, IDENTITY as PARSER
 from .math_response_evidence import trajectory_policy
 from .math_prediction_validity import structured_recovery_contract
@@ -23,20 +23,23 @@ from .experiment_splits import ExperimentSplitReader
 from .access import DataPurpose
 
 
-def initial_team_artifact():
-    hashes=[SEED.prompt_hash]*5
-    return dict(team_version=MATH_INITIAL_TEAM_VERSION,initial_team_data_dependency='NONE',
+def initial_team_artifact(team_version=MATH_INITIAL_TEAM_VERSION):
+    from .math_canary_inputs import initial_prompt
+    prompt=initial_prompt(team_version)
+    hashes=[prompt.prompt_hash]*5
+    return dict(team_version=team_version,initial_team_data_dependency='NONE',
         semantic_contract=['complete editable system prompt'],ordered_member_ids=list(range(5)),
-        members=[dict(member_id=i,prompt=SEED.to_dict(),prompt_sha256=SEED.prompt_hash,
-            block_hashes={k:SEED.block_hash(k) for k in ('role','strategy','answer')},
-            rendered_system_sha256=SEED.system_hash) for i in range(5)],ordered_team_sha256=digest(hashes))
+        members=[dict(member_id=i,prompt=prompt.to_dict(),prompt_sha256=prompt.prompt_hash,
+            block_hashes={k:prompt.block_hash(k) for k in ('role','strategy','answer')},
+            rendered_system_sha256=prompt.system_hash) for i in range(5)],ordered_team_sha256=digest(hashes))
 
 
 def gradient_prompt_artifact():
     return dict(identity=GRADIENT_PROMPT_ID,prompt=REFERENCE_GRADIENT_PROMPT)
 
 
-def prepare_structured_inputs(root,*,experiment_id,attempt,user_task_sha256,execution_phase='pilot'):
+def prepare_structured_inputs(root,*,experiment_id,attempt,user_task_sha256,execution_phase='pilot',
+        seed=81,team_version=MATH_INITIAL_TEAM_VERSION,initial_team_path=None,development_subsets=None):
     """Prepare a fresh unapproved scope without loading examples or credentials."""
     from ..persistence.durable_io import atomic_write_json
     from ..governance.token_accounting import POLICY_V25_2M
@@ -46,7 +49,7 @@ def prepare_structured_inputs(root,*,experiment_id,attempt,user_task_sha256,exec
     binding_path='experiments/execution_bindings/'+attempt+'.json'
     paths=dict(scope=protocol+'/preparation_scope.json',gradient=protocol+'/gradient.json',
         pattern=protocol+'/pattern.json',metadata=protocol+'/heldout_seal.json',
-        accounting=protocol+'/accounting_policy.json',team='experiments/initial_teams/math_explicit_final_seed_v2.json')
+        accounting=protocol+'/accounting_policy.json',team=initial_team_path or 'experiments/initial_teams/math_explicit_final_seed_v2.json')
     if (root/binding_path).exists():raise SearchContractError('V25_FRESH_PATH_REQUIRED')
     scope=dict(schema_version='structured_system_preparation_scope_v1',attempt_id=attempt,
         one_attempt_only=True,preparation_only=True,real_api_authorized=False,
@@ -56,7 +59,7 @@ def prepare_structured_inputs(root,*,experiment_id,attempt,user_task_sha256,exec
         old_responses_cache_and_competence_reusable=False,push_authorized=True)
     for path,value in ((paths['scope'],scope),(paths['gradient'],gradient_prompt_artifact()),
             (paths['pattern'],dict(identity='STRUCTURED_GRADIENT_CLUSTER_PROMPT_V2',prompt=CLUSTER_PROMPT)),
-            (paths['accounting'],POLICY_V25_2M),(paths['team'],initial_team_artifact()),
+            (paths['accounting'],POLICY_V25_2M),(paths['team'],initial_team_artifact(team_version)),
             (paths['metadata'],dict(identity='V25_HELDOUT_SEAL_NO_ACCESS_METADATA_V1',
                 validation_model_calls=0,test_model_calls=0,heldout_accounting_reserve=0,
                 validation_access='not_authorized',test_access='sealed'))):
@@ -71,14 +74,15 @@ def prepare_structured_inputs(root,*,experiment_id,attempt,user_task_sha256,exec
         validation_metadata_sha256=file_hash(root/paths['metadata']),initial_team_path=paths['team'],
         initial_team_artifact_sha256=file_hash(root/paths['team']),accounting_policy_path=paths['accounting'],
         accounting_policy_sha256=file_hash(root/paths['accounting']),execution_phase=execution_phase,
-        max_opportunities=1 if execution_phase=='canary' else 5)
+        max_opportunities=1 if execution_phase=='canary' else 5,seed=seed,
+        team_version=team_version,development_subsets=development_subsets)
     blockers=MATHStructuredBinding(root,c).blockers()
     if blockers:raise SearchContractError('V25_PREPARATION_HOLD:'+','.join(blockers))
     atomic_write_json(root/binding_path,c)
     atomic_write_json(root/(protocol+'/protocol.json'),dict(identity='STRUCTURED_SYSTEM_FLEXIBLE_ANSWER_PROTOCOL_V2',
-        attempt_id=attempt,method=METHOD,seed=81,members=5,phase=execution_phase,
+        attempt_id=attempt,method=METHOD,seed=seed,members=5,phase=execution_phase,
         optimize=c['initial_competence_binding']['count'],shadow=40,models=c['models'],
-        system_prompt_policy=SYSTEM_PROMPT_POLICY,answer_extraction_policy=EXTRACTION,
+        system_prompt_policy=c['system_prompt_policy'],answer_extraction_policy=EXTRACTION,
         optimization_evidence_policy=POLICY,provider_bounds=c['provider_bounds'],
         solver_execution_policy=c['solver_execution_policy'],invalid_recovery_policy=c['invalid_recovery_policy'],
         canary_review_policy=c['canary_review_policy'],initial_accuracy='UNMEASURED_NEW_REAL_REQUESTS_REQUIRED',
@@ -91,17 +95,19 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
         validation_metadata_path, validation_metadata_sha256, initial_team_path,
         initial_team_artifact_sha256, pattern_prompt_path, pattern_prompt_sha256,
         accounting_policy_path, accounting_policy_sha256, max_opportunities=5,
-        token_ceiling=2_000_000, execution_phase='pilot'):
+        token_ceiling=2_000_000, execution_phase='pilot',seed=81,
+        team_version=MATH_INITIAL_TEAM_VERSION,development_subsets=None):
     if (not isinstance(attempt,str) or not attempt or execution_phase not in {'canary','pilot'}
             or attempt in {parent.get('execution_attempt_id'),parent.get('cache_namespace')}
             or type(max_opportunities) is not int or not 0<max_opportunities<=5
-            or token_ceiling!=2_000_000
+            or token_ceiling!=2_000_000 or type(seed) is not int or seed<0
             or any(new==parent.get(key) for new,key in (
                 (binding_path,'binding_path'),(authorization_path,'current_user_scope_path'),
                 (gradient_prompt_path,'gradient_prompt_path'),(initial_team_path,'initial_team_path'),
                 (pattern_prompt_path,'pattern_prompt_path'),(accounting_policy_path,'accounting_policy_path'),
                 (validation_metadata_path,'validation_accounting_metadata_path')))):
         raise SearchContractError('V25_FRESH_FREEZE_REQUIRED')
+    initial=initial_team_artifact(team_version)
     c=deepcopy(parent)
     # No historical authorization, response import, operational ancestry or
     # held-out evaluation can become a current execution policy.
@@ -117,9 +123,9 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
     from ..governance.canary_review import STRUCTURED_POLICY
     c.update(identity=BINDING,method_identity=METHOD,execution_attempt_id=attempt,
         canary_attempt_id=attempt,cache_namespace=attempt,binding_path=binding_path,
-        execution_phase=execution_phase,cache_policy='FLEXIBLE_ANSWER_MEMBER_LANE_CACHE_V4',
-        system_prompt_policy=deepcopy(SYSTEM_PROMPT_POLICY),answer_extraction_policy=deepcopy(EXTRACTION),
-        solver_output_interface=system_interface_contract(),solver_trajectory_policy=trajectory_policy(),
+        execution_phase=execution_phase,execution_seed=seed,seeds=[seed],cache_policy='FLEXIBLE_ANSWER_MEMBER_LANE_CACHE_V4',
+        system_prompt_policy=system_prompt_policy(team_version),answer_extraction_policy=deepcopy(EXTRACTION),
+        solver_output_interface=system_interface_contract(team_version),solver_trajectory_policy=trajectory_policy(),
         prediction_validity_policy=validity_contract(),invalid_recovery_policy=structured_recovery_contract(),
         payload_parser_identity=PARSER,optimization_evidence_policy=deepcopy(POLICY),repair_probe_policy=deepcopy(PROBE_POLICY),
         optimizer_input_schema=INPUT,layer1_search_policy=asdict(EvidenceLayer1Config()),
@@ -131,9 +137,9 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
         task_authorization_sha256=authorization_sha256,continuation_authorization_sha256=authorization_sha256,
         validation_accounting_metadata_path=validation_metadata_path,
         validation_accounting_metadata_sha256=validation_metadata_sha256,
-        initial_team_path=initial_team_path,initial_team_version=MATH_INITIAL_TEAM_VERSION,
+        initial_team_path=initial_team_path,initial_team_version=team_version,
         initial_team_artifact_sha256=initial_team_artifact_sha256,
-        initial_team_sha256=initial_team_artifact()['ordered_team_sha256'],
+        initial_team_sha256=initial['ordered_team_sha256'],
         solver_execution_policy=deepcopy(execution),
         concurrency=dict(solver=8,optimizer_reflection=1,pattern=1),
         accounting_policy_path=accounting_policy_path,accounting_policy_sha256=accounting_policy_sha256,
@@ -143,6 +149,12 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
         operational_pilot=dict(identity='TARGET_OR_TEAM_PROGRESS_OPERATIONAL_PILOT_BOUND_V1',
             max_opportunities=max_opportunities,token_ceiling=token_ceiling,
             scientific_stopper='team_epoch_no_commit_v1',guarantees_saturation=False))
+    if development_subsets is not None:
+        if execution_phase!='canary' or set(development_subsets)!={'path','sha256','protocol'}:
+            raise SearchContractError('FRESH_CANARY_SUBSET_BINDING_INVALID')
+        c.update(low_cost_subsets_path=development_subsets['path'],
+            low_cost_subsets_sha256=development_subsets['sha256'],
+            low_cost_protocol=deepcopy(development_subsets['protocol']))
     c['pattern_policy']=pattern_policy_for_trajectory(c['solver_trajectory_policy'],POLICY)
     from ..current_contract import PATTERN_SPECIFIC_CONTENT_GUARD_VERSION, GRADIENT_PARTITION_COMPLETION_VERSION
     c['pattern_abstraction_guard']=PATTERN_SPECIFIC_CONTENT_GUARD_VERSION
@@ -198,7 +210,10 @@ class MATHStructuredBinding:
                 pattern_prompt_path=c['pattern_prompt_path'],pattern_prompt_sha256=c['pattern_prompt_sha256'],
                 accounting_policy_path=c['accounting_policy_path'],accounting_policy_sha256=c['accounting_policy_sha256'],
                 max_opportunities=c['operational_pilot']['max_opportunities'],
-                token_ceiling=c['operational_pilot']['token_ceiling'],execution_phase=c['execution_phase'])
+                token_ceiling=c['operational_pilot']['token_ceiling'],execution_phase=c['execution_phase'],
+                seed=c['execution_seed'],team_version=c['initial_team_version'],
+                development_subsets=(dict(path=c['low_cost_subsets_path'],sha256=c['low_cost_subsets_sha256'],
+                    protocol=c['low_cost_protocol']) if c['low_cost_protocol']['identity']=='MATH_FRESH_CANARY_MEMBERSHIP_V2' else None))
             if c!=expected:raise SearchContractError('V25_FROZEN_SETTINGS_CHANGED')
             for key in sorted(k for k in c if k.endswith('_path')):
                 h='initial_team_artifact_sha256' if key=='initial_team_path' else key[:-5]+'_sha256'
@@ -246,7 +261,7 @@ class MATHStructuredBinding:
 
     def compose(self,*,arm,seed,solver,reflection,pattern_provider,run_root,optimize_fn=None):
         if self.blockers():raise SearchContractError(self.blockers()[0])
-        if seed!=81 or optimize_fn is not None:raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
+        if seed!=self.contract['execution_seed'] or optimize_fn is not None:raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
         if (pattern_provider is None or pattern_provider.gradient_provider is None
                 or solver.broker.contract!=self.contract or reflection.broker is not solver.broker
                 or pattern_provider.broker is not solver.broker

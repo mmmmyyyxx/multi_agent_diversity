@@ -1,0 +1,9 @@
+{
+  "no_generalization_claim": true,
+  "optimize": 12,
+  "prior_actual_use_overlap": 0,
+  "selection_uses_metadata_only": true,
+  "shadow": 40,
+  "test_raw_access": 0,
+  "validation_raw_access": 0
+}
