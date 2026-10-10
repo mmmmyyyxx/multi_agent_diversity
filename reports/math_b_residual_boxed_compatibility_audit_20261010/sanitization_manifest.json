@@ -1,0 +1,7 @@
+{
+  "endpoints_credentials_host_paths": false,
+  "private_artifacts_untracked": true,
+  "prompts_in_report": false,
+  "raw_questions_answers_responses": false,
+  "status": "PASS"
+}

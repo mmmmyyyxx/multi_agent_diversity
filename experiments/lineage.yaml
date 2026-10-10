@@ -920,6 +920,12 @@ nodes:
 - experiment_id: math_baseline_calibration_stage1_v1
   kind: DIAGNOSTIC
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: math_b_residual_boxed_compatibility_audit_v1
+  kind: DIAGNOSTIC
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: math_b_five_member_calibration_v1
+  kind: DIAGNOSTIC
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -1951,4 +1957,14 @@ edges:
   evidence: experiments/manifests/math_baseline_calibration_stage1_v1.json
   scope: Independent Stage 1 realization of the frozen baseline protocol; no Unified
     optimization or Stage 2.
+- from: math_baseline_calibration_stage1_v1
+  to: math_b_residual_boxed_compatibility_audit_v1
+  relation: followup_of
+  evidence: experiments/manifests/math_b_residual_boxed_compatibility_audit_v1.json
+  scope: Independent offline diagnosis or B-only baseline; new exact authorization required.
+- from: math_baseline_calibration_stage1_v1
+  to: math_b_five_member_calibration_v1
+  relation: followup_of
+  evidence: experiments/manifests/math_b_five_member_calibration_v1.json
+  scope: Independent offline diagnosis or B-only baseline; new exact authorization required.
 current_frontier: experiments/current_frontier.yaml

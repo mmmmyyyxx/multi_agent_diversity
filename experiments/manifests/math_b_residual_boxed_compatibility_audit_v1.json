@@ -1,0 +1,15 @@
+{
+  "experiment_id": "math_b_residual_boxed_compatibility_audit_v1",
+  "future_baseline_manifest": "experiments/manifests/math_b_five_member_calibration_v1.json",
+  "gradient_ratio_unchanged": true,
+  "historical_scores_immutable": true,
+  "parent_ids": [
+    "math_baseline_calibration_stage1_v1"
+  ],
+  "parent_result_commit": "f38ec47c86b990d94b2be7e1faf6c202b29ed01f",
+  "production_method_unchanged": true,
+  "real_api_calls": 0,
+  "report": "reports/math_b_residual_boxed_compatibility_audit_20261010",
+  "schema_version": "independent_math_baseline_followup_audit_v1",
+  "scope": "READ_ONLY_POSTMORTEM_AND_FRESH_B5_DESIGN"
+}

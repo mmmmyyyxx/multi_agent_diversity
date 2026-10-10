@@ -1,0 +1,34 @@
+{
+  "authorization": "NONE_NEW_B5_SCOPE_REQUIRED",
+  "closed_b5_design_and_membership_smoke": "PASS",
+  "compileall": "PASS",
+  "current_suite": {
+    "errors": 0,
+    "failures": 0,
+    "passed": 468,
+    "skipped": 2,
+    "tests": 470
+  },
+  "focused_followup_tests": {
+    "errors": 0,
+    "failures": 0,
+    "passed": 24,
+    "skipped": 0,
+    "tests": 24
+  },
+  "full_historical_replay_claim": false,
+  "intentional_metadata_changes": [
+    "experiments/lineage.yaml",
+    "experiments/registry.yaml"
+  ],
+  "manifest_preflight": "PASS",
+  "network_attempt_count": 0,
+  "omitted_historical_modules": 220,
+  "original_protected_inventory_count": 1666,
+  "original_protected_unchanged_count": 1664,
+  "parent_checkpoint_receipt_ledger_seals": "PASS",
+  "private_data_or_provider_evidence_published": false,
+  "real_api_calls": 0,
+  "repository_governance": "PASS",
+  "status": "PASS"
+}

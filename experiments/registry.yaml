@@ -9046,3 +9046,53 @@ experiments:
   reports:
   - reports/math_baseline_calibration_stage1_preparation_20261010
   - reports/math_baseline_calibration_stage1_execution_20261010
+- experiment_id: math_b_residual_boxed_compatibility_audit_v1
+  kind: DIAGNOSTIC
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: INDEPENDENT_MATH_BASELINE_CALIBRATION
+  parent_ids:
+  - math_baseline_calibration_stage1_v1
+  status: COMPLETED
+  scientific_status: VERIFIED_OFFLINE
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_b_residual_boxed_compatibility_audit_v1.json
+  report: reports/math_b_residual_boxed_compatibility_audit_20261010
+  classifier: reports/math_b_residual_boxed_compatibility_audit_20261010/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - New offline followup; no production or historical scoring change.
+  - Fresh B-only scope remains unauthorized; Stage 1 authorization is closed.
+  unavailable:
+    implementation_commit: Containing preparation commit; frozen review records exact
+      source SHA.
+    execution_commit: No new paid experiment executed.
+    result_commit: Containing publication commit; no self-reference.
+- experiment_id: math_b_five_member_calibration_v1
+  kind: DIAGNOSTIC
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: INDEPENDENT_MATH_BASELINE_CALIBRATION
+  parent_ids:
+  - math_baseline_calibration_stage1_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: DESIGN_ONLY_NOT_EXECUTION_ELIGIBLE
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_b_five_member_calibration_v1.json
+  report: reports/math_b_residual_boxed_compatibility_audit_20261010
+  classifier: reports/math_b_residual_boxed_compatibility_audit_20261010/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - New offline followup; no production or historical scoring change.
+  - Fresh B-only scope remains unauthorized; Stage 1 authorization is closed.
+  unavailable:
+    implementation_commit: Containing preparation commit; frozen review records exact
+      source SHA.
+    execution_commit: No new paid experiment executed.
+    result_commit: Containing publication commit; no self-reference.

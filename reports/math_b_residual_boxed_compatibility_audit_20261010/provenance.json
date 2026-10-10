@@ -1,0 +1,11 @@
+{
+  "b5_protocol_sha256": "68c91dd077789a4e5c56d1d3e39ca8f1de662eb7645d0d46a112076c099d5b2b",
+  "compatibility_rows_sha256": "f3e453d4f1c7ca1c6e193b8a843e0625e4e9382386dc07de8b6b09d0894e65ce",
+  "membership_sha256": "091cbcbd48a85fbb5806169009b68a03772cd1f3c5e8eaadaf699c8aba8fc954",
+  "no_raw_content_published": true,
+  "parent_checkpoint_sha256": "8986fe0158450e7986418a3a018f9d657d89e53a3a2fc45c70c64ca9501d8902",
+  "parent_ledger_last_sha256": "5559e8932a2f6a503e02f7e968d162aafb3d2f7b9db683e316f5d9c13e7f89fe",
+  "parent_result_commit": "f38ec47c86b990d94b2be7e1faf6c202b29ed01f",
+  "publication_commit": "CONTAINING_COMMIT",
+  "residual_catalog_sha256": "b343b1998de4753399347c98a3707c1d8b947bf8e598599653fd90d28295af3b"
+}

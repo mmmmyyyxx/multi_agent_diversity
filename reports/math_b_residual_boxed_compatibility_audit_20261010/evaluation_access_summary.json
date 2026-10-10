@@ -1,0 +1,13 @@
+{
+  "adaptive_pool": true,
+  "independent_generalization_claim": false,
+  "new_development_membership": 60,
+  "optimize_development_only": true,
+  "overlap_original_canary": 0,
+  "overlap_stage1": 0,
+  "remaining_optimize_pool": 78,
+  "shadow_raw_access": 0,
+  "stage1_examples_read": 60,
+  "test_raw_access": 0,
+  "validation_raw_access": 0
+}

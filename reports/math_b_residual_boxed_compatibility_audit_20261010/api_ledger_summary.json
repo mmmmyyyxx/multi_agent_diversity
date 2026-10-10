@@ -1,0 +1,7 @@
+{
+  "b5_authorization": "PENDING_FRESH_EXACT_SCOPE",
+  "new_provider_tokens": 0,
+  "proposed_b5_charged_plus_reserved_cap": 1000000,
+  "real_api_calls": 0,
+  "stage1_scope": "CONSUMED_CLOSED_NOT_REUSABLE"
+}

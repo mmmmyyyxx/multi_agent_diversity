@@ -1,0 +1,123 @@
+[
+  {
+    "evidence": "OWNER_REVIEW_OF_SEALED_RESPONSE_AND_REFERENCE",
+    "example_id_sha256": "977cc7a11bcd8ddf3ecc0884e0c534c97b6959df917beae2fb3a46666cb44a0b",
+    "first_error_category": "COMBINATORIAL_OVERCOUNT_AND_GEOMETRIC_EXISTENCE",
+    "level": "Level 5",
+    "native_invalid_reason": null,
+    "native_valid": true,
+    "repair_effectiveness": "UNTESTED",
+    "repair_group": "STRUCTURAL_STRATEGY",
+    "subject": "Counting & Probability"
+  },
+  {
+    "evidence": "OWNER_REVIEW_OF_SEALED_RESPONSE_AND_REFERENCE",
+    "example_id_sha256": "4a56e1c92933a1e0720f0d6f6775611014530f7eb8ced2c06797e9ed1f8e98a8",
+    "first_error_category": "COORDINATE_CONSTRAINT_SUBSTITUTION",
+    "level": "Level 5",
+    "native_invalid_reason": null,
+    "native_valid": true,
+    "repair_effectiveness": "UNTESTED",
+    "repair_group": "STRUCTURAL_STRATEGY",
+    "subject": "Geometry"
+  },
+  {
+    "evidence": "OWNER_REVIEW_OF_SEALED_RESPONSE_AND_REFERENCE",
+    "example_id_sha256": "0fbd58c390431d82384d6f7e3b1a88f2a29afd5c3c677532d5893978ddfbf39b",
+    "first_error_category": "GEOMETRIC_INCIDENCE_CONSTRAINT",
+    "level": "Level 4",
+    "native_invalid_reason": null,
+    "native_valid": true,
+    "repair_effectiveness": "UNTESTED",
+    "repair_group": "STRUCTURAL_STRATEGY",
+    "subject": "Geometry"
+  },
+  {
+    "evidence": "OWNER_REVIEW_OF_SEALED_RESPONSE_AND_REFERENCE",
+    "example_id_sha256": "c195c15966da10f3a6f0c7f0aee05491001e03efdb7afb1906cdf87048690197",
+    "first_error_category": "FORMULA_PRECONDITION_AND_NUMERIC_CHECK",
+    "level": "Level 5",
+    "native_invalid_reason": null,
+    "native_valid": true,
+    "repair_effectiveness": "UNTESTED",
+    "repair_group": "STRUCTURAL_STRATEGY",
+    "subject": "Geometry"
+  },
+  {
+    "evidence": "OWNER_REVIEW_OF_SEALED_RESPONSE_AND_REFERENCE",
+    "example_id_sha256": "700a20c4576b304b79647999d3b89ed82887a1f73a34417884fb8ffd6378d128",
+    "first_error_category": "INVARIANT_LOSS_AND_REPEATED_REASONING",
+    "level": "Level 5",
+    "native_invalid_reason": "OUTPUT_TRUNCATED",
+    "native_valid": false,
+    "repair_effectiveness": "UNTESTED",
+    "repair_group": "MIXED_STRATEGY_AND_TRUNCATION",
+    "subject": "Intermediate Algebra"
+  },
+  {
+    "evidence": "OWNER_REVIEW_OF_SEALED_RESPONSE_AND_REFERENCE",
+    "example_id_sha256": "114283fec17b8e2a9a5ebcb1e03869f321896f0c7287b532b2d89fed3b3a8702",
+    "first_error_category": "QUANTIFIER_AND_NECESSARY_SUFFICIENT_ROOTS",
+    "level": "Level 5",
+    "native_invalid_reason": null,
+    "native_valid": true,
+    "repair_effectiveness": "UNTESTED",
+    "repair_group": "STRUCTURAL_STRATEGY",
+    "subject": "Intermediate Algebra"
+  },
+  {
+    "evidence": "OWNER_REVIEW_OF_SEALED_RESPONSE_AND_REFERENCE",
+    "example_id_sha256": "5a84be8c4572e1841dda1317041d48a3f5437956d249c06e8a23d62eaa86c5d2",
+    "first_error_category": "POSITION_DEPENDENT_COUNTING_WITH_LEADING_ZERO",
+    "level": "Level 5",
+    "native_invalid_reason": null,
+    "native_valid": true,
+    "repair_effectiveness": "UNTESTED",
+    "repair_group": "STRUCTURAL_STRATEGY",
+    "subject": "Number Theory"
+  },
+  {
+    "evidence": "OWNER_REVIEW_OF_SEALED_RESPONSE_AND_REFERENCE",
+    "example_id_sha256": "aa0bbc140215e16e29fc7155b7d16682f4275372538128772fbf8840e5573d3b",
+    "first_error_category": "UNICODE_RADICAL_SERIALIZATION_COMPATIBILITY",
+    "level": "Level 4",
+    "native_invalid_reason": "PAYLOAD_PARSE_FAILURE",
+    "native_valid": false,
+    "repair_effectiveness": "UNTESTED",
+    "repair_group": "INTERFACE_ONLY",
+    "subject": "Prealgebra"
+  },
+  {
+    "evidence": "OWNER_REVIEW_OF_SEALED_RESPONSE_AND_REFERENCE",
+    "example_id_sha256": "7c6f7c9cde95a59ec1445e37173f08efc88769fc3dbe6cf685c126344d2a7b18",
+    "first_error_category": "ENUMERATED_SET_CARDINALITY_CHECK",
+    "level": "Level 4",
+    "native_invalid_reason": null,
+    "native_valid": true,
+    "repair_effectiveness": "UNTESTED",
+    "repair_group": "LOCAL_VERIFICATION",
+    "subject": "Precalculus"
+  },
+  {
+    "evidence": "OWNER_REVIEW_OF_SEALED_RESPONSE_AND_REFERENCE",
+    "example_id_sha256": "96074ed7ebfdab2a0c6239c86778783c70d01b0fbabbc2b4b2d22ad143d731f8",
+    "first_error_category": "NUMERIC_FUNCTION_EVALUATION_AND_EXACT_IDENTITY",
+    "level": "Level 4",
+    "native_invalid_reason": null,
+    "native_valid": true,
+    "repair_effectiveness": "UNTESTED",
+    "repair_group": "LOCAL_VERIFICATION",
+    "subject": "Precalculus"
+  },
+  {
+    "evidence": "OWNER_REVIEW_OF_SEALED_RESPONSE_AND_REFERENCE",
+    "example_id_sha256": "455397138b1eb7495bfa285f024b5e097f6a260b88ac15e5a0169eb61e8ad67d",
+    "first_error_category": "LATEX_MATRIX_ENVIRONMENT_LEXICAL_GUARD",
+    "level": "Level 5",
+    "native_invalid_reason": "AMBIGUOUS_FINAL_PAYLOAD",
+    "native_valid": false,
+    "repair_effectiveness": "UNTESTED",
+    "repair_group": "INTERFACE_ONLY",
+    "subject": "Precalculus"
+  }
+]

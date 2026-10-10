@@ -83,6 +83,7 @@ Reports are immutable evidence, never design authority. Unresolved metadata does
 | [local_gepa_acceptance_rate_pilot_v1_prep_20260918](local_gepa_acceptance_rate_pilot_v1_prep_20260918/README.md) | 20260918 | GEPA_TWO_LAYER | PREEXECUTION | local_gepa_acceptance_rate_pilot_v1 | STATUS_UNRESOLVED |
 | [local_gepa_parent_acquisition_v1](local_gepa_parent_acquisition_v1/README.md) | Unknown | GEPA_TWO_LAYER | SCIENTIFIC_RESULT | local_gepa_parent_acquisition_v1 | COMPLETED |
 | [matched_gpt4omini_seed42_20260725](matched_gpt4omini_seed42_20260725/README.md) | 20260725 | HISTORICAL_V15_V16_AND_EARLIER | SCIENTIFIC_RESULT | matched_gpt4omini_seed42_20260725 | STATUS_UNRESOLVED |
+| [math_b_residual_boxed_compatibility_audit_20261010](math_b_residual_boxed_compatibility_audit_20261010/README.md) | 20261010 | UNIFIED_TEAM_PROMPT_SEARCH | DIAGNOSTIC | math_b_residual_boxed_compatibility_audit_v1 | COMPLETED |
 | [math_baseline_calibration_audit_20261009](math_baseline_calibration_audit_20261009/README.md) | 20261009 | UNIFIED_TEAM_PROMPT_SEARCH | ZERO_API | math_baseline_calibration_audit_v1 | COMPLETED |
 | [math_baseline_calibration_stage1_execution_20261010](math_baseline_calibration_stage1_execution_20261010/README.md) | 20261010 | UNIFIED_TEAM_PROMPT_SEARCH | DIAGNOSTIC | math_baseline_calibration_stage1_v1 | COMPLETED |
 | [math_baseline_calibration_stage1_preparation_20261010](math_baseline_calibration_stage1_preparation_20261010/README.md) | 20261010 | UNIFIED_TEAM_PROMPT_SEARCH | PREEXECUTION | math_baseline_calibration_stage1_v1 | COMPLETED |

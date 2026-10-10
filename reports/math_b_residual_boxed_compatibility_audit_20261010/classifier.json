@@ -1,0 +1,7 @@
+{
+  "baseline_stability": "NOT_EVALUATED",
+  "efficacy": "NO_NEW_PAID_EXPERIMENT",
+  "experiment_id": "math_b_residual_boxed_compatibility_audit_v1",
+  "gradient_ratio_change": "DEFERRED",
+  "validity": "VERIFIED_OFFLINE"
+}

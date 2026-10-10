@@ -1,0 +1,677 @@
+{
+  "READY_TO_RUN": false,
+  "access": {
+    "optimize": true,
+    "shadow": false,
+    "test": false,
+    "validation": false
+  },
+  "aggregation": "equal_equivalence_plurality_consistency_v1",
+  "amendment": "B_ONLY_FIVE_MEMBER_FRESH_MEMBERSHIP_REPLACES_UNEXECUTED_ABC_STAGE2_DESIGN",
+  "arms": [
+    "B"
+  ],
+  "cap": 1000000,
+  "excluded_example_hashes": [
+    "031f204ecaf0bf8095934b9bfb81ba81f766acf85a8b8cbe2622eda44d8340c9",
+    "033e0f3641a489d92995555c1182b1fc375e22c74db3d7313ea3cf7153c5619e",
+    "06650af8dd237d6868de1d7812824ced6a83f7d42f941c15377cb6ecc4441e8c",
+    "0a3735f8e7c82ae7765bcc63d663656e00a32002cf59a339af162d0365df41e4",
+    "0b74c2c7114057d66a99c8d5a519af4a8611de766a22d0329c406c02c97ae6e3",
+    "0fbd58c390431d82384d6f7e3b1a88f2a29afd5c3c677532d5893978ddfbf39b",
+    "114283fec17b8e2a9a5ebcb1e03869f321896f0c7287b532b2d89fed3b3a8702",
+    "136befb189b52f030ba3bbe5a192cc1dea5d6a4880c8d77eeb72e6394eb2fa68",
+    "16083f9f47ae41c2f7ce1aed94905f97033b395efd09e24517c2b5a0a3ec66d8",
+    "2071aac4f0d3de9c916f1e98b548472a0107b932b55a4c0f03d5a347850b59f6",
+    "28397739e7a10f999723e149ea4c0f80118bb221a062fb74b44eea0918762819",
+    "2ba014128ca16fff2ede90fb87bbc4dd995245db889115b18b1b78232bd4aa35",
+    "2ddaaef4f5bceb4a9690be4a5d58b8729267a30532b19e241860778c7aefeca3",
+    "317c0458ab8abc7c84f8b215326098610f21b9314b8529569dd42940a10802c4",
+    "34ce8da32719874e6df94fca8bce1157f02e09756cdffde899be3c2c5c0939bd",
+    "3af23ddbc9855bd5f025d309d628d06a2b7d059646ea9800dbe6d1a484adc03d",
+    "3cee20c55addc71136a9ec28e372b3ef426191fc9f5fe6f12c6093a655636403",
+    "3dbf527d6b18933f6d00f8154526a70742fc11afb0c9e9f29264f4b6fbda5c01",
+    "3ea3022b9060c99c0a0071f928cb018a537a3d4781fc5d77213e0f310473b479",
+    "3ef0111a08e85887ae2b942f68ee4338bd80ef376817ff42cb876f4fe8f6af0f",
+    "40801135a6ab80e59c33072151b5e0e69d371a45a4317a7c7678d826af16d21f",
+    "455397138b1eb7495bfa285f024b5e097f6a260b88ac15e5a0169eb61e8ad67d",
+    "4a56e1c92933a1e0720f0d6f6775611014530f7eb8ced2c06797e9ed1f8e98a8",
+    "4c8c0b4547532902e4734e527422bd09fdbf5ce0309529af45fd5cdf7dbb348a",
+    "4fe90d0233f5aadb049372541fbe249a7909d193384372a507aa77f8532984ac",
+    "5a84be8c4572e1841dda1317041d48a3f5437956d249c06e8a23d62eaa86c5d2",
+    "62c46e0670a2b2d6ec1a9d292b45cb41aa78aba903d397939f839481b106d132",
+    "6467124a65adb8c13bab6bdae89781dc50cbee5d5166ed875e26caeccc5a2f91",
+    "68e3549bc76cf6036ed82697a175030f80406c1f2e7312e5957485814b30dc7d",
+    "700a20c4576b304b79647999d3b89ed82887a1f73a34417884fb8ffd6378d128",
+    "7399b714a5659774c2bddee46ba62e750fe98f849e6ca78502bf8e5b4b65dd94",
+    "7a55f93a2fc0ce0f1d1d9e53d1f81136dd69194642b691c411c23902683fe676",
+    "7c6f7c9cde95a59ec1445e37173f08efc88769fc3dbe6cf685c126344d2a7b18",
+    "7d9e8d7237b8beecbae032cd7131b3ba073fb9861ff0424da03dcbc892ea6b5e",
+    "7ff6e14283d9791bf62c80085942d80d25c8b69f4ad5b107f8281d0c7c3c17e9",
+    "88777ed80bb729175cc36bb043f1d6b31f2d1b67eb497df54dd7fa5c4e09f617",
+    "88782eca8aa707063d018fa84acd4c5814284635cb7840e3164825d4ad0ca4b3",
+    "92dd6e54d3d602ec1a471e0bdfd369a41f8b0500769f5300dad52b8b36bd62e6",
+    "96074ed7ebfdab2a0c6239c86778783c70d01b0fbabbc2b4b2d22ad143d731f8",
+    "977cc7a11bcd8ddf3ecc0884e0c534c97b6959df917beae2fb3a46666cb44a0b",
+    "9986b0f78cecb02703ea81f662fd848769b10be8ec2d1348c16b362e755e3293",
+    "9b7240b496a11695d351badc6d421150f8d0141b9500b0896cd54881deb4e130",
+    "9c19bcd0acfa3dcf428b6ed44bd7b896ff76145762c06bb4d1196a15827564d3",
+    "9ec23575d5a250a9cc09f0a6e784a4409901589e58d21aeb95cb269c39448ac2",
+    "a551657c31324bfe41db8296a7f27afc91823a24840a4545ad864de9ea5e82b6",
+    "aa0bbc140215e16e29fc7155b7d16682f4275372538128772fbf8840e5573d3b",
+    "ad107f0755d842af3d63aed183a58a7bc09e7aaea04d9c3e5e036dce7c7159d6",
+    "ada848d3be33231756edaacdcd7ec744fbfb36eea0d5ec843c7b4603a07729c4",
+    "afc17ace5cacc56eb6c110e0929a910148b4b075540db263cf4dc5c87b05d81e",
+    "b47be6dbf973002b6635bd795d946179dd5e5f27e58ed622c66b4d131617e099",
+    "bd8551e580cbc0beaf3ba2d3026616902e78c069928270b1244dd8daeba732c7",
+    "bdb9db1b39a182cd2b4631fd62ef9623085b1915e164d5fc4128941187bc1014",
+    "c195c15966da10f3a6f0c7f0aee05491001e03efdb7afb1906cdf87048690197",
+    "c5f08afe390655e6abb19c74b191fbd57c02f3bb26552c41dff0793d4c145cf7",
+    "c7a258c7350781563caed733488c672a5bf4dd11661b151fdb3a3cf87b85d8a8",
+    "c9a002c9049dfde7a52c9ed625ecad7413bd5b6659f86c351f0122310d94b221",
+    "ca2cdb9dd8af3f4a26190f74e40a026527e86eb4c2e1752b975bcbe6dbd976bf",
+    "cec73cdefc2e9423b74147f08a621432e2d7c0664abe43fae73b47704e74d645",
+    "d031418909b64db2a46f7d4a561fda9d766093ba17972365064e00a778934f71",
+    "d54b69f0efe732cbdeab4ba9985147eaa45475ac4326d7483f1c0d494a679f66",
+    "d8c3fb19ed5440579004db011b8835656e26fb607e59bfa9ab0003796838fb27",
+    "d9d6be19ea1405cadf7c6054f9b6e0fa74c3b6e9de7405c8401ec2c4af7de994",
+    "e24a14459012d4e0487e60d3db50ced6c946ea4ccfc43dc1f316ea0fff4781b7",
+    "e5b31f749755045d8c64d63b4e6a781d79a330a161c180e9062a4254908259a7",
+    "e8e40bb8d48ab6bf8c01c1fc03692baea2ac6bd01cec3898cd445caa8ceb5272",
+    "e933b38cbef2a3b42ef2c3ed875e7f6aedf891148bd65dab22a163be877bdbba",
+    "eb4579dd0beb900f1078405ec54b94ba8ea5ab39001f7970c5e0861155732459",
+    "f27d9b940df7aa7805e5db140060cd66b6bd343335135efd5fafca1a9fd031ea",
+    "f545de496360d1955756c852417b9821194d670c5112e7266972d5136997a947",
+    "f6f7350e3117eb6ab7b3b2ff23ae9febf22d41d88a5dd0d28ee2fa4c4d19aed2",
+    "faff8b267cf7fdd719a8a3f297aafdd25bab6ff5b33549919b8f6508abf21c97",
+    "fc5273e323c0096f119b5c64e89fe19e6c43881269178e49a472481f59ee41f4"
+  ],
+  "experiment_id": "math_b_five_member_calibration_v1",
+  "frozen_answer_block_only_change_no_strategy_repair": true,
+  "globally_unseen_or_generalization_claim": false,
+  "gradient_ratio_decision": "DEFERRED_SEPARATE_FUTURE_DESIGN",
+  "identity": "MATH_B_FIVE_MEMBER_CALIBRATION_V1",
+  "members": 5,
+  "membership": [
+    {
+      "content_sha256": "15f5432638f38c89308d15012a4b9eab964dd6e9654e41d74a4e6c260dcd8094",
+      "example_id_sha256": "82cca665feee74224c5deb14ddbdebec13a25b014287867faf36636030358c42",
+      "input_sha256": "b53294b8138b5686f944c15d4720a239e83f2c8af6629e0b9b7abd22430ac3a8",
+      "level": "Level 3",
+      "reference_sha256": "6b51d431df5d7f141cbececcf79edf3dd861c3b4069f0b11661a3eefacbba918",
+      "subject": "algebra"
+    },
+    {
+      "content_sha256": "cbd2f20ecb69d6062c9f51a4fbceb5004c479697bb3c68efe89b57f8b128fe60",
+      "example_id_sha256": "ac6d60f64b2ace828dfd9c1e55a8c9c687c28b1b4144e6d2df52ab15c33c2dc1",
+      "input_sha256": "4e1879d7905d5a4a9f642136261215152cf0fac97839e6141283ac97009d9032",
+      "level": "Level 1",
+      "reference_sha256": "624b60c58c9d8bfb6ff1886c2fd605d2adeb6ea4da576068201b6c6958ce93f4",
+      "subject": "algebra"
+    },
+    {
+      "content_sha256": "7772c4665280b0e90d67105ac6c162683cde68b1c319364173e0f00ff72919ce",
+      "example_id_sha256": "d3de50a16a675e44ffa2dfdc588336f9321c1e9fc17bccef34578a20d9a047dc",
+      "input_sha256": "1f1ef616ad3cb183c1aa9449868259fbfde1f726131277ebb47d7c124498191c",
+      "level": "Level 5",
+      "reference_sha256": "44bfb49aea3326ab17aba17a146e792cb5a391ab403851cf7fc8920e8a2b1d10",
+      "subject": "algebra"
+    },
+    {
+      "content_sha256": "6f2ae36518a84be38c94e869a5ff3830fa7d77dd66119c6613c79c48ceecac46",
+      "example_id_sha256": "3edc4bf279143a2f3acf6a26c3b0aafe0541c9f5a3c43ba4ad0754c162fd2dbe",
+      "input_sha256": "20cb60ee6c0f09ce54e4ab1a8eea69d443df386b4bfbefee8e295e308e515d41",
+      "level": "Level 3",
+      "reference_sha256": "5e37b37c842d8df7106ee92e2e45beefef71ca60f51f7bb5cb50cb1e81c355a8",
+      "subject": "algebra"
+    },
+    {
+      "content_sha256": "f219cdfbd673a35666c07c7127a1a5bcc80ab0806ef83cf4fbb7ffe77f542771",
+      "example_id_sha256": "32f210cadde88f108499a6ac5027ce661a624fba51c3ee234eb053b8eb2d6600",
+      "input_sha256": "85e79411dd8b8db0e90bec158047eec425a961c4eaa0c952d0455f0460fb44e8",
+      "level": "Level 1",
+      "reference_sha256": "2c624232cdd221771294dfbb310aca000a0df6ac8b66b696d90ef06fdefb64a3",
+      "subject": "algebra"
+    },
+    {
+      "content_sha256": "66f19c1094df766d9cc8b7c1c40ab25abf3c9f3987b51f39fe06e14811a54ac2",
+      "example_id_sha256": "9d16b94cb5aec6a07b44071fe75b7d2f7082224a7fb309321750a7ed901610a7",
+      "input_sha256": "f89117025099892a005b1db505d4274a45901e33e6b114ed2806f12d9486b328",
+      "level": "Level 5",
+      "reference_sha256": "cf3bae39dd692048a8bf961182e6a34dfd323eeb0748e162eaf055107f1cb873",
+      "subject": "algebra"
+    },
+    {
+      "content_sha256": "aaad1a52dd8e4cf4f7cc2a2857e2e77d93718dba0317f61b8fd3bda65c2d9b88",
+      "example_id_sha256": "2572bd4cb0596caef918a16cd027dda1b572f253fa747f629f73349d129ba817",
+      "input_sha256": "03e94462a279028a18d3c6118fb3f0ae183436a30d7215aaa5f687a35ff262ee",
+      "level": "Level 3",
+      "reference_sha256": "4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5",
+      "subject": "algebra"
+    },
+    {
+      "content_sha256": "252ad336a0db7a040e055da20279964b38c380a482065b2636ae6eebb31e4c5a",
+      "example_id_sha256": "a7f59567a6fb7dd4d7ffaa7e30dd39d0555dde82b2025767c372ceba463ca691",
+      "input_sha256": "74d761027f9691c8b3c8a153900ddae0004adb0425b1764a7dc712340ba0d12e",
+      "level": "Level 2",
+      "reference_sha256": "e629fa6598d732768f7c726b4b621285f9c3b85303900aa912017db7617d8bdb",
+      "subject": "algebra"
+    },
+    {
+      "content_sha256": "65ad7e779d9c3a944e35707cb620aa60a054d874021baacfb3a65f0f4f89d1e1",
+      "example_id_sha256": "efb40a1070d68e1f804857ef02c00777afc72219b03c84472daa3aa1e0f9b3c8",
+      "input_sha256": "290862191af479193dff810267e6e6b9ad0b98293761f1efac3ec4556d02250c",
+      "level": "Level 4",
+      "reference_sha256": "4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a",
+      "subject": "algebra"
+    },
+    {
+      "content_sha256": "b57beb71863aad0593585fcecc755da872a46bc67319afa0e06fd98a72c3e149",
+      "example_id_sha256": "0be3631e71cb25b0effd5d67e4bd78a8ea3a69e3f9b3d78a3ba55a47e710a6de",
+      "input_sha256": "bfe272567b7a38cf047a92657e6e53c8e93df782d9734e4c9ba98a4529dad53b",
+      "level": "Level 3",
+      "reference_sha256": "e629fa6598d732768f7c726b4b621285f9c3b85303900aa912017db7617d8bdb",
+      "subject": "algebra"
+    },
+    {
+      "content_sha256": "7c8f13026176c8c42565d3331a5b788f7d9a7bb43e8cf9a1b49e29d753a44b2d",
+      "example_id_sha256": "ea629360f68e425884521aea03135ae88208fa7e4702d8381a78fd3afcdd048d",
+      "input_sha256": "e922708f18fed91863df7220bc8c735bc1bc1a430426ac0edacb501084aa0aa3",
+      "level": "Level 2",
+      "reference_sha256": "e29c9c180c6279b0b02abd6a1801c7c04082cf486ec027aa13515e4f3884bb6b",
+      "subject": "algebra"
+    },
+    {
+      "content_sha256": "d53eaad707d21211be3ae8c78ba476781ebf78b9b23863e1ae049f374df173c8",
+      "example_id_sha256": "712c4b3afb51c672d6e270d50c9d7bcba7db9cf27a772a3b8dcb9169bbfe1ed9",
+      "input_sha256": "05f747f7831ebc340d4373368dd03ed279b647cd5016efbb515e93256bea961d",
+      "level": "Level 3",
+      "reference_sha256": "615bdd17c2556f82f384392ea8557f8cc88b03501c759e23093ab0b2a9b5cd48",
+      "subject": "algebra"
+    },
+    {
+      "content_sha256": "c22d97d245058469c2162dc1fee26563ec2631d1c0fdf9205859ff06015d4840",
+      "example_id_sha256": "207da44c5dc93b68366b187dd1b4c7d7325f453e02fcd3c36df0a19b8fb15019",
+      "input_sha256": "01dd89e215d79d8649c487c08624eadca3194a100afda8ccb048891e7283df92",
+      "level": "Level 4",
+      "reference_sha256": "782f40acb7eac46a02ab85dcfcaa4735b06c98442b659706c2b12d266578a1aa",
+      "subject": "counting_and_probability"
+    },
+    {
+      "content_sha256": "10ca53a1b734fc8a4eecc98f53b002a21860b69f6690521ec606d27215b42130",
+      "example_id_sha256": "db05ca75507160cfe83a9dba7b2f95b3e51321fc7e2dd50a708335bd1e4c76a2",
+      "input_sha256": "5871c9863f147b63cfb87df1ab196108bb6687a5130726662442538781aaf6b6",
+      "level": "Level 1",
+      "reference_sha256": "552230819632e772e0fd75dacfb823b1d73d628d95f6bac7f238894f2fda96bd",
+      "subject": "counting_and_probability"
+    },
+    {
+      "content_sha256": "827d117cbf8986d0b692fb09e248c32c84b0a5911c1f0114482ce5208a1de4f5",
+      "example_id_sha256": "4d8b96d2a1acf06cebc0e9e7256b0c7c9108a41172697f8d2c9df49ecb7c897f",
+      "input_sha256": "9c29608fb22039265c8d24eca29b46165c71ac263102095aa35451fca6d03417",
+      "level": "Level 5",
+      "reference_sha256": "1b8704832a26b865f692e296fa3aa3bbc53fb7a06c21957e7f54cdfde4b08fa8",
+      "subject": "counting_and_probability"
+    },
+    {
+      "content_sha256": "94c7b0ec8e17dc2333c1f960c3fc376ad880015fdca1cc59aaf12f411fe1e499",
+      "example_id_sha256": "b5ef5594a16d6fdc6219c5e2dbaf9d1c44a02eda666c72b1fc573e556e2735af",
+      "input_sha256": "690228d3c1579fedc7cedacc97ca1079fdf19457a486852451e2f970e1a9b683",
+      "level": "Level 4",
+      "reference_sha256": "1dfacb2ea5a03e0a915999e03b5a56196f1b1664d2f768d1b7eff60ac059789d",
+      "subject": "counting_and_probability"
+    },
+    {
+      "content_sha256": "e25eb34bd2f4ed0fa331f65594d23fdbd59d51f5963e4d7c3a34198d6ce06916",
+      "example_id_sha256": "b22b605cf0ce65d5d39b3260b28fc49daecc28e61b3e440b0797a42c53b954b6",
+      "input_sha256": "b2120cc08e13dc5aa8d4d4f82d24d01f3b537c5af97e3287ebe0c36d2cfa2661",
+      "level": "Level 5",
+      "reference_sha256": "19581e27de7ced00ff1ce50b2047e7a567c76b1cbaebabe5ef03f7c3017bb5b7",
+      "subject": "counting_and_probability"
+    },
+    {
+      "content_sha256": "593c9bdb3377ff48ec8e18af25d2e494b28ffff1bda09c6f76c74aec98e85354",
+      "example_id_sha256": "473c2cd20c148d52b704ee6826eb0ff687da2663f4dd535c89ca0c3aa85f7805",
+      "input_sha256": "6235c72cb1c8d10cbc2adeb33e190784b4abea4eb6c5f05a906c8c8e93409ca7",
+      "level": "Level 5",
+      "reference_sha256": "27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf",
+      "subject": "counting_and_probability"
+    },
+    {
+      "content_sha256": "b193195905c07c0aca81c6b6cce1cf06e9f06429fae8f789986022158c2ba350",
+      "example_id_sha256": "d16990c9364899b9bd91e9b9b3f4ea446808713386069f3069a343ef0c656ed1",
+      "input_sha256": "d6d87e84e76e76abd6e3ab916371538d0cd67ed45a787fd996b742af6656fcb2",
+      "level": "Level 4",
+      "reference_sha256": "7dfa57eaba0458f518998de5ac32561f32abbfc02b8adfdd0deea9ba8b6dbfcf",
+      "subject": "geometry"
+    },
+    {
+      "content_sha256": "abdd821080f8b81d86c122c34dadfde711db02254a23e251f131dfd3376efd8f",
+      "example_id_sha256": "e260df8d977d7c1fceb8d7a8e6272789bf6db51c698301b45b500510503ebfdf",
+      "input_sha256": "9fd8cf7bc60c2f2297d9be6894f43267bc511b5b62d1a5221681fc2969d967cb",
+      "level": "Level 2",
+      "reference_sha256": "a9dee27eba8cb8bcdd46d1536ccbc2489747975af39c7778d8e02369139ca2d8",
+      "subject": "geometry"
+    },
+    {
+      "content_sha256": "d66c3f8b5430e16fea6d9cbfb3a47fa4f9b491c8d94b04469cb2b8f53d866a4f",
+      "example_id_sha256": "0ff76e22d1d0d9109a0396f898a7dd99e7d94ead95908c7e4af4cdd6be4d0452",
+      "input_sha256": "b3a582fcb070b14954f4fa1edb5b16d38c51b2d1b3337402ed1f1edc19d4d67d",
+      "level": "Level 3",
+      "reference_sha256": "d81d7cfd91cb2342b3b697bee96c26c40aaf973c4776ed4618eacedf90879267",
+      "subject": "geometry"
+    },
+    {
+      "content_sha256": "cd6333a9832f06d6d8400523236a3db9b631f6711245a4a67f82e1393b42ebb4",
+      "example_id_sha256": "8739ba4019c4006973418fae185d2a7a52d8f3243d37ff8806c14746b4841c67",
+      "input_sha256": "ed76289f1d9f72db4bee6b4d72ecfd6610203d971ae6ca2d5b32a9213ef60370",
+      "level": "Level 5",
+      "reference_sha256": "377adeb4cd4096adc7ca64b533938cffc6294a9b3534f883b2336a26252cda9a",
+      "subject": "geometry"
+    },
+    {
+      "content_sha256": "4cfef27732b40aeb33e12d58485c46f05c7259752215dc74483772d96fdd3f70",
+      "example_id_sha256": "000f9de59981c203a66b3a77af4e2c84c52d9abb988e513cb8bca46ebe57ef95",
+      "input_sha256": "135ef4e5686bc9fe6531dc6fc4827448f834eece555293d49538da494fc2ad79",
+      "level": "Level 2",
+      "reference_sha256": "76a50887d8f1c2e9301755428990ad81479ee21c25b43215cf524541e0503269",
+      "subject": "geometry"
+    },
+    {
+      "content_sha256": "13af19dff1c1418898f0edde362f67221763b431361ddb1a9d46e5e33e8f5ef9",
+      "example_id_sha256": "833cdcc7c287eb33447fefb8c887d8e81ddf2ad40e42c1e483759310e2d0b04c",
+      "input_sha256": "88d5cc45059f8ac30205440b09ea7033061695614666bc60afa7f9c5f89732f6",
+      "level": "Level 5",
+      "reference_sha256": "9bdb2af6799204a299c603994b8e400e4b1fd625efdb74066cc869fee42c9df3",
+      "subject": "geometry"
+    },
+    {
+      "content_sha256": "c85c56dd9aaaf2bfe55c16aad03a8f38d94781b62d48f85035e199674ac3f06c",
+      "example_id_sha256": "9e42609dfd3ea8f75b1b1f48d0785832b9774914f2a6b497a21836499d7ee522",
+      "input_sha256": "a9554fac229dc96d61dbe0b206994fbfa997ca37a2e122968d13386f2f2e2cca",
+      "level": "Level 5",
+      "reference_sha256": "d68f84b49c8a65dd31d8340e50bb1ecfaa2c66484303424c63763343d82be3ac",
+      "subject": "geometry"
+    },
+    {
+      "content_sha256": "cf08bedae193f1d41ef1889a73ed6721727b4ea6ec388be7b14b53c999147c78",
+      "example_id_sha256": "97dc5137bdda276d50171b57d74a0c7eedd7ef1d76c3934d950063f40abd32b3",
+      "input_sha256": "327ae996fded072eb7ecd36af12008ad66a54214467f1b8d9dafeb190c58da41",
+      "level": "Level 4",
+      "reference_sha256": "e7e9536310cdba7ff948771f791cefe32f99b73c608778c9660db79e4926e9f9",
+      "subject": "geometry"
+    },
+    {
+      "content_sha256": "e1c8e71e3313d3a240688e0e68926215febda99611f8d3871474a00f49ce944d",
+      "example_id_sha256": "0421b7b2c1b1aee72b733226e5da76fa0d20a9fb61ef1a530897212d22fbefaa",
+      "input_sha256": "4d9425a1c4aebec9f4cca71e447fbb754fade0dd1a84e8a989552c476cc28632",
+      "level": "Level 5",
+      "reference_sha256": "d536a8c1664fec0bc85615cf3cb2645871e8b2935c9642c534c67ac85315cd35",
+      "subject": "intermediate_algebra"
+    },
+    {
+      "content_sha256": "f868957e5404f1cacecf1a26c1444f5f1a7ab12f88e1b3eef4343ac4d03a2185",
+      "example_id_sha256": "f6d3aa48521d0e18da480c6ae980a2e21f9d68046e23dccaa7fb3ab51126fff1",
+      "input_sha256": "8e09c77e91eef24d15ba62a9e0fa69b85c2c8a36e1acbea008980ebd4c7d388c",
+      "level": "Level 4",
+      "reference_sha256": "773c7575b68b022be831e8754221f7bd31c7c4fe52a6bb31e6636afb8c55206c",
+      "subject": "intermediate_algebra"
+    },
+    {
+      "content_sha256": "f0dcc2c0ef94985d4a0d9c5b24d604f985b2ad4050b01e8230bb2a7c67b519b2",
+      "example_id_sha256": "569a876058104c3fc9545934581e7932e5ecc4c34173b0774104639484e9d946",
+      "input_sha256": "ecd3dbab24736cc1f78f4e4705b8fa37185143d4e9c266198274f30db1a70e0c",
+      "level": "Level 3",
+      "reference_sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "subject": "intermediate_algebra"
+    },
+    {
+      "content_sha256": "5dd86c12a34b68c150eaabb9165297661ccd6d0799c731d7905595a500d00bd2",
+      "example_id_sha256": "fb9d418305b0609b364ec590bc59e1bf75ee645570dcf1e3752bd53123344f92",
+      "input_sha256": "f73c80fd8fa8e05e742ed264d3d5339245798f786c16ef151d016aaec32ed175",
+      "level": "Level 4",
+      "reference_sha256": "fa3bbad460cdc94dff15b07d2420d6ca657f7e944f7205257b79053fcbfb899e",
+      "subject": "intermediate_algebra"
+    },
+    {
+      "content_sha256": "4eb4639815488e587722a8e148851a441dbf9c29dc5ab26836785679236b8490",
+      "example_id_sha256": "efa4112e1b93c366c31de3ef812b1536953da9b92e0412d5657314379c83ce5e",
+      "input_sha256": "b2f42ecce18c8dc545d722d1bc6db0cea7f40d425b192348b452437c850f2bf0",
+      "level": "Level 5",
+      "reference_sha256": "ad3b26a8c50e3bf6c13596334dc0c26548a0faae1c0294e9e65af05d0e7ceb7e",
+      "subject": "intermediate_algebra"
+    },
+    {
+      "content_sha256": "d6697fab9794f6c1b6682189a5deb63cf4f655bceea15f9beb830d9410163af8",
+      "example_id_sha256": "1fd8939111b59db7f6c0de3a5f0f5ae3e695271e3e287b7b8e7d3325c662291c",
+      "input_sha256": "cf635caa034c456154e04d0529077c5600114bb7b6c2edbc77793114179379ac",
+      "level": "Level 3",
+      "reference_sha256": "b7a56873cd771f2c446d369b649430b65a756ba278ff97ec81bb6f55b2e73569",
+      "subject": "intermediate_algebra"
+    },
+    {
+      "content_sha256": "2699d85ecabccd5e4f62db1de520f5f56b1c069574e4033cf42578c7df76200c",
+      "example_id_sha256": "68b5ddfcf79213c0be12861d8c80b9d9ff0cec1a04201e864ee9a9842ebdda1a",
+      "input_sha256": "a7218ab58b1f29a223e35cdf4e2387f5879fba7db7ccdfc3ad590401d54a5237",
+      "level": "Level 2",
+      "reference_sha256": "6b51d431df5d7f141cbececcf79edf3dd861c3b4069f0b11661a3eefacbba918",
+      "subject": "intermediate_algebra"
+    },
+    {
+      "content_sha256": "1d70f16f897f93518aeaa184565458fe6a0988fe9f0eed0f31f5b52517c4672c",
+      "example_id_sha256": "4ef64fe323dce474f526152a27730de3a4f4583cabb41b8b202bc1943617b43b",
+      "input_sha256": "c3306daf78d0a9a4cc73258668591411add271d3203d99d691505ab2a678571b",
+      "level": "Level 5",
+      "reference_sha256": "ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d",
+      "subject": "intermediate_algebra"
+    },
+    {
+      "content_sha256": "95ee9b41303fb62a8c2fee225737f5dddc36c4adcc32b9754dd185b16371dcd0",
+      "example_id_sha256": "1609a905a273e57bc117dc62521f1de71e0be8861ce5bf75bfbc215474a8c446",
+      "input_sha256": "7184c29404c771a645d84364fdd35594e4644afab2b17b13e0ac9796ea0855f8",
+      "level": "Level 2",
+      "reference_sha256": "4523540f1504cd17100c4835e85b7eefd49911580f8efff0599a8f283be6b9e3",
+      "subject": "intermediate_algebra"
+    },
+    {
+      "content_sha256": "6af2000137db35339d8f834ebc58c6e8f0c31e019d01f97dd69efd3e841f1353",
+      "example_id_sha256": "7988310be5cac77aa517b17708500c9e39999488dc64980672d9ba1608cf12cc",
+      "input_sha256": "61e6d96c5b66d864989fa4ffc549fbdf8b431aa54c7e859e6f48778897477601",
+      "level": "Level 1",
+      "reference_sha256": "103561d6b01aa9d21125dc73eef8d8440a1d3a762ab624d57ee63f922feec194",
+      "subject": "intermediate_algebra"
+    },
+    {
+      "content_sha256": "c7dff78774667dc82930bec3943ad5b53bc68325bd89930f15bd2f010d463478",
+      "example_id_sha256": "f36dedd04c7631c9d37bddfab8b5abba6640fde6fcac2444dd712c566e236b29",
+      "input_sha256": "a5b409ca8aba80a6b1a9ef327e6db186e8e8b6df73e60dfde46aa79b5780d23c",
+      "level": "Level 5",
+      "reference_sha256": "ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d",
+      "subject": "number_theory"
+    },
+    {
+      "content_sha256": "eadcf928ea2327964905c25247eb8b92e1470dc9339d99fb9356339fa9c7d7e6",
+      "example_id_sha256": "b940fdd671c0468d4de9dbc74f5bc49aa5b4884e87dc62b2f15c2c82d0d38ef3",
+      "input_sha256": "b6c776e1c0586aaa6defd34c759a573b5e68d1d40184ee5e839b483b9c0ea2b8",
+      "level": "Level 3",
+      "reference_sha256": "98010bd9270f9b100b6214a21754fd33bdc8d41b2bc9f9dd16ff54d3c34ffd71",
+      "subject": "number_theory"
+    },
+    {
+      "content_sha256": "fdd83b0ef8126ca15935b3220371a94ee3057316c5888de9c935c3c3445e9c85",
+      "example_id_sha256": "4dd423fb5cb3be206c368ef0e0202a8b62cd28ef7c5d56d79d66d5cdd6028844",
+      "input_sha256": "c573c16619459cab2e471c29a28a8ebd1726be6c4679b36875dcc80b24ae3ff0",
+      "level": "Level 3",
+      "reference_sha256": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+      "subject": "number_theory"
+    },
+    {
+      "content_sha256": "6efa029fdab7fc6cf2296e8568b7cb5989e7d74626ca3e5cc0960561612fa693",
+      "example_id_sha256": "914d6b1e32c55b57be0fa8053f3691dd47def180972cd503e04c9e9a21c6c6d5",
+      "input_sha256": "c62c7f816674cad9e5c796ada920622e65439230ebff15369edd3780eab1edb4",
+      "level": "Level 4",
+      "reference_sha256": "679b0ecadd205e5143506d637aaec6849987ae11c8c8280fb79f4d1080326eec",
+      "subject": "number_theory"
+    },
+    {
+      "content_sha256": "205faf9795553b92ee6d46bf8fed75344352d4dc9dbab267b171e4b988ac8be5",
+      "example_id_sha256": "516f5c191af08bee77c03be001b45e6e1fe3cf79836c3f382c4f471e53be1c40",
+      "input_sha256": "bad5d5cb6cb675ff5222583f628af087296e2024986334cb977658905fc7b6e7",
+      "level": "Level 4",
+      "reference_sha256": "51054b8a03281fd02034378a5570ae0c970fb1d5d64246e0eb981481c228c108",
+      "subject": "number_theory"
+    },
+    {
+      "content_sha256": "78e1d8479fac1826d989c467071039e60e686bb652661a3f317c1b3e131ff109",
+      "example_id_sha256": "183b8890292691302d6e2d327b5e708af1a6df34cca21de44c0c404d17e6ba18",
+      "input_sha256": "9335ea3c1d4321ce2d64dd4eb1acda77c8ac113cfa47f348d70e98b3cdba0207",
+      "level": "Level 2",
+      "reference_sha256": "5f9c4ab08cac7457e9111a30e4664920607ea2c115a1433d7be98e97e64244ca",
+      "subject": "number_theory"
+    },
+    {
+      "content_sha256": "4b3d581def295e57b1b4f06e5e68ea8091fc17ac161b8df78fd3840b29ea0e32",
+      "example_id_sha256": "c1d28e592fe5693d7ab69acec20ba784730c42b309756067d0c26f99e5e9dcc8",
+      "input_sha256": "c4436e09d452bc520d3db745818127b39b117c0587e3995065e888c31287cc8a",
+      "level": "Level 2",
+      "reference_sha256": "ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d",
+      "subject": "number_theory"
+    },
+    {
+      "content_sha256": "1363f2bd573cd2952f1ffc31636c7acc5bb96bd661d221b2931bad94b39006c9",
+      "example_id_sha256": "ce6c92b198582cd5db497d7bd4ad30cff73dbd96e996df17bdde3c897d077503",
+      "input_sha256": "d36f0566078849e9bd58c467abdcf2d774ad12aea5eae8c3cdc36bacb1b073df",
+      "level": "Level 5",
+      "reference_sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "subject": "number_theory"
+    },
+    {
+      "content_sha256": "a62226ac615ddebc6f4aa13c6ee178c71d58f9b55a6bf75838a0ae9f326c1b50",
+      "example_id_sha256": "fbfdb256bde90bdcacfa468fc486bd4da3439b90e86322e129b1d94c929ea9b9",
+      "input_sha256": "0fc7fd177f22410932cf231e341cf0bec6b54ede54515b5a21d2893e7953b39e",
+      "level": "Level 2",
+      "reference_sha256": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+      "subject": "prealgebra"
+    },
+    {
+      "content_sha256": "ebb8b25ccfe680e1329c1ea70cab7f2cd3ae30e053a9d38f11eaf92590e26ae4",
+      "example_id_sha256": "6363c2e8216280951e912fe9b6bdc71b277f9a973a09e0c4e519bec0389c2913",
+      "input_sha256": "45b558850d06e01a5522811a6246569d0f6b3235117549b6cc7eac89202baa5e",
+      "level": "Level 1",
+      "reference_sha256": "4fc82b26aecb47d2868c4efbe3581732a3e7cbcc6c2efb32062c08170a05eeb8",
+      "subject": "prealgebra"
+    },
+    {
+      "content_sha256": "326cf3791e90095963c88187bb9df582306e3f63e05e2d3dfad6369a91912b63",
+      "example_id_sha256": "ffcb64888b9e042cb74aa25c0e3d8c39034f4ea6ac9f4d0f675af11f9795b9f4",
+      "input_sha256": "66e778cc659dd53df7ec1d3b4da9b5721740eed621b27a3849b7421c8cca2809",
+      "level": "Level 4",
+      "reference_sha256": "a512db2741cd20693e4b16f19891e72b9ff12cead72761fc5e92d2aaf34740c1",
+      "subject": "prealgebra"
+    },
+    {
+      "content_sha256": "f8afa3e9e350b0159eeac3b5b5e5302ac7c95163d1136df72354f8613830d6d9",
+      "example_id_sha256": "bb919fa06d573b0f74bb52ff21fe60b661f09bb8077e4ac4db5a70c1effd3f05",
+      "input_sha256": "d7a5a35adad3d24039d4cd8a754527be4c5f9f8eb0e8587766fe58924dadbce1",
+      "level": "Level 2",
+      "reference_sha256": "0c322a8d4177fb5f6181ff75ddee3c8003c9965037c6026a87291230e4358e8a",
+      "subject": "prealgebra"
+    },
+    {
+      "content_sha256": "69dba86f2cef13e6dab90943bddc43edc4af932f91bd70f4809d1960e68fd5e3",
+      "example_id_sha256": "f22c0c3273046b0959347b982fc0152769485906dc9618ee7db2af953c283c3c",
+      "input_sha256": "4d4fedbe8ed3a2d5182bff8880611b47e1dc5b1aab92a6af8953e245aeea8f72",
+      "level": "Level 2",
+      "reference_sha256": "e7f6c011776e8db7cd330b54174fd76f7d0216b612387a5ffcfb81e6f0919683",
+      "subject": "prealgebra"
+    },
+    {
+      "content_sha256": "cd3dd05efca6432d6a6832e6d9942bab68241a8a6005926514de0e607a5f1952",
+      "example_id_sha256": "d411074f1c8d320fafa17202a1f4f634981c18c1a3ee145815ec1391731878bc",
+      "input_sha256": "0416a81e93fee3838b544e0329ccbdf377922f4076d98a08a3c669f5495af783",
+      "level": "Level 3",
+      "reference_sha256": "e629fa6598d732768f7c726b4b621285f9c3b85303900aa912017db7617d8bdb",
+      "subject": "prealgebra"
+    },
+    {
+      "content_sha256": "6c06412249a1acc0d4e75fdb71108be8a0e906101e37ef02a52abd85a8c6ce5a",
+      "example_id_sha256": "350723546f5be66862129e6c0efd71c13fe6a892c7cb88ae1da8e9245b592e25",
+      "input_sha256": "8c1667e96394915b52c956a74a98a39bb39e0d842fe2e65b91fe4b59b27f371c",
+      "level": "Level 5",
+      "reference_sha256": "8527a891e224136950ff32ca212b45bc93f69fbb801c3b1ebedac52775f99e61",
+      "subject": "prealgebra"
+    },
+    {
+      "content_sha256": "3d2b09c5f070970b425ce81e70f15589d94679cf89bdd9fd65ea6c66c6c019fc",
+      "example_id_sha256": "1d96bbc40710c19a796d09823cb43984154eadc92cb04d8e360287fa9cd4f0b7",
+      "input_sha256": "927ae62e898e52e7cbb36808236b6f6246596742028019d4c271890ee844a28f",
+      "level": "Level 5",
+      "reference_sha256": "e29c9c180c6279b0b02abd6a1801c7c04082cf486ec027aa13515e4f3884bb6b",
+      "subject": "prealgebra"
+    },
+    {
+      "content_sha256": "c4f3b4afb0d6bdff641ed84951768182f593fd0319d7a5e4e92772ed5aca3f0c",
+      "example_id_sha256": "ad4aff6bfa69d4cd05c7b918c1ecbd6990e6c6533aa12d2fbb6618852afc48c9",
+      "input_sha256": "18ebe04a2bb7b9eefe8b41599e77cc8cde494f9fbd6d3d885ab892b1e9c78ad1",
+      "level": "Level 4",
+      "reference_sha256": "a77bf37f77be81875a2a229f22dd178a9951e8cee26305344b07bedc14f55384",
+      "subject": "prealgebra"
+    },
+    {
+      "content_sha256": "82e22bd23250622f4d7b4b0766dbe3f520728b725a5925e4724f67004b8bd757",
+      "example_id_sha256": "3d569f66287891b53917746f62df4515a08ea230afd340a363cbd8984c2a48c2",
+      "input_sha256": "aa021f18caae4787da9e79589264fbeaa11e76755aec052c67d5d05fc4fa9957",
+      "level": "Level 3",
+      "reference_sha256": "e29c9c180c6279b0b02abd6a1801c7c04082cf486ec027aa13515e4f3884bb6b",
+      "subject": "prealgebra"
+    },
+    {
+      "content_sha256": "3faa2993cd0909c942cdd8004db720e37c580f2f736e6800afc5e3d382f5cf05",
+      "example_id_sha256": "f4449cd74f25ea617cd5a98192c7ba45a3828607a41444f6b028b069a7ade95c",
+      "input_sha256": "0996448314d1d6a8a25ad3c6b3a551a25d98e4d1261d8898382b6e75bf197453",
+      "level": "Level 5",
+      "reference_sha256": "0e6523810856a138a75dec70a9cf3778a5c70b83ac915f22c33f05db97cb3e68",
+      "subject": "precalculus"
+    },
+    {
+      "content_sha256": "e71859aaeeb5b5ceff0755ae45947e2cbd6df5cbc452d4f62d2edc5f5526e8c3",
+      "example_id_sha256": "65d9207411b853d2d1dbaa87e035a516c0e7c2d8f99242fb1f17a5dd3c5e6452",
+      "input_sha256": "4e602e89e03027c6fe05566da44e1555b49ccd38a5c9a0d418ded3d443c4779e",
+      "level": "Level 2",
+      "reference_sha256": "a8f3a6eb644214cd997610a7dc5313302bd62c08c111f99ddeea684c31480b34",
+      "subject": "precalculus"
+    },
+    {
+      "content_sha256": "7dcfde099eb29476252833a7704cbee73a90c9fb6ed8eb726d07ac2547359d9f",
+      "example_id_sha256": "5193738bcf134bfe259b7ab614f81e2cf1d3671c4108a020dea57200c1b6da26",
+      "input_sha256": "7e461247c7758791ec15738e238bde9bdf092d214deb3e524ef7bfce49fc885a",
+      "level": "Level 4",
+      "reference_sha256": "fa02d7771e21254a3fda6e8e1c37856dc834463448cd4e2432aee857687934e9",
+      "subject": "precalculus"
+    },
+    {
+      "content_sha256": "53924841a8aa01b9f28b3018f2a55ae5b867f021cb6e58fb168025b8caf24c36",
+      "example_id_sha256": "28d44740de281800b596bb1a12fda6adb391f118e056d882367de138bdc89fda",
+      "input_sha256": "c48b9625c4d42bc5725d30a933a52bfd5c5c3a9fb57c248cfc79d524baf8a4a9",
+      "level": "Level 4",
+      "reference_sha256": "349caf8afdd65fe4488d396c4951c65d6f0c4e331e881e2c8994e19393d17f0a",
+      "subject": "precalculus"
+    },
+    {
+      "content_sha256": "a1ac293281bba5d6f8d7347452dc9fe9842fa6bf73afa86f5a6206fabfb0e503",
+      "example_id_sha256": "00c26b995cb72315948a738fb8cfae17497fceb936dd456c388e972824ebca17",
+      "input_sha256": "d812945600d26ae260921feaced3356920f50d0117607f27f6e97ad8d173feb8",
+      "level": "Level 3",
+      "reference_sha256": "76a50887d8f1c2e9301755428990ad81479ee21c25b43215cf524541e0503269",
+      "subject": "precalculus"
+    },
+    {
+      "content_sha256": "527c15374aa682d3e6b5c05fe2ccab55cf6d756d38c172a9e826e4a4e66347c3",
+      "example_id_sha256": "9d99d8ea7511c48f00aac3889b9f0adc53744d17e7b39432227f45b4f743251b",
+      "input_sha256": "171ff0780ced51f91d45d9ba5a90e3e0943b39933192916c57a41ce794f83edc",
+      "level": "Level 5",
+      "reference_sha256": "baf9056766de83f90bab0767f4996e49783e03bdb89788c6306b72b772d0a276",
+      "subject": "precalculus"
+    }
+  ],
+  "membership_sha256": "091cbcbd48a85fbb5806169009b68a03772cd1f3c5e8eaadaf699c8aba8fc954",
+  "metrics": [
+    "FIRST_AND_RECOVERED_VOTE",
+    "FIRST_AND_RECOVERED_ORACLE",
+    "FIVE_MEMBER_VALIDITY_ACCURACY",
+    "COVERAGE_HISTOGRAM_0_TO_5",
+    "UNIQUE_MEMBER_COVERAGE",
+    "ORACLE_MINUS_VOTE_GAP",
+    "FORMAT_RECOVERY_CHARGED_TOKENS",
+    "TRUNCATION",
+    "INTEGRITY_AND_STABILITY_GATE"
+  ],
+  "n": 60,
+  "native_parser": "MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V2",
+  "old_cache_ledger_checkpoint_authorization_reuse": false,
+  "original_binding_sha256": "7a1f64167ef27c37594f69351cc024c8d0327afb5fbeb74c88b8efbb4277104b",
+  "parent_experiment_id": "math_baseline_calibration_stage1_v1",
+  "policy": {
+    "cache": "FRESH_NAMESPACE_NO_RESPONSE_REUSE_MEMBER_DRAW_PHYSICAL_DISTINCT",
+    "incomplete": "PARTIAL_FACTS_ONLY_NO_EFFICACY_COMPARISON",
+    "optimizer_concurrency": 0,
+    "order": "ROTATE_01234_BY_EXAMPLE_INDEX",
+    "provider": {
+      "backoff_ceiling_seconds": 60,
+      "profile": "lwj",
+      "retry_categories": [
+        "APIConnectionError",
+        "APITimeoutError",
+        "InternalServerError",
+        "RateLimitError"
+      ],
+      "returned_alias": "qwen3-8b",
+      "sdk_retries": 0,
+      "sleep_seconds": 1.5,
+      "timeout_seconds": 120,
+      "weight_revision": "UNKNOWN_UNLESS_RETURNED"
+    },
+    "retries": {
+      "expansion": "IMMEDIATELY_PREVIOUS_SUCCESS_LENGTH_ONLY",
+      "first_capacity": 3600,
+      "physical_attempts_per_draw": 21,
+      "same_body_per_transport_retry": true,
+      "successful_draws": 4,
+      "trigger": "NATIVE_INVALID_ONLY",
+      "truncation_capacity": 6144
+    },
+    "sampling": {
+      "enable_thinking": false,
+      "frequency_penalty": 0,
+      "max_output_tokens": 3600,
+      "min_p": 0,
+      "presence_penalty": 0,
+      "temperature": 0.2,
+      "top_k": 20,
+      "top_p": 0.8
+    },
+    "scientific_results_used_to_stop": false,
+    "solver_concurrency": 1,
+    "stability_gate": {
+      "first_valid_min": 0.9,
+      "recovered_valid_member_min": 0.9,
+      "recovered_valid_min": 0.95,
+      "recovery_charge_fraction_max": 0.5
+    },
+    "stopping": "FIXED_60_BY_5_OR_NATIVE_INVALID_FOUR_DRAW_RECOVERY_OR_OPERATIONAL_FAIL_CLOSED"
+  },
+  "previously_adaptive_development_pool": true,
+  "protocol_sha256": "68c91dd077789a4e5c56d1d3e39ca8f1de662eb7645d0d46a112076c099d5b2b",
+  "real_api_authorized": false,
+  "schema_version": "independent_math_b5_protocol_v1",
+  "seed": 82,
+  "selection": {
+    "available_after_exclusion": 78,
+    "level_counts": {
+      "Level 1": 5,
+      "Level 2": 12,
+      "Level 3": 13,
+      "Level 4": 13,
+      "Level 5": 17
+    },
+    "n": 60,
+    "order": "ORIGINAL_OPTIMIZE_ORDER",
+    "outcome_dependent": false,
+    "seed": 82,
+    "selection": "SUBJECT_LEVEL_LARGEST_REMAINDER_LEXICAL_TIES_SHA256_PLAN_SEED_ID",
+    "subject_counts": {
+      "algebra": 12,
+      "counting_and_probability": 6,
+      "geometry": 8,
+      "intermediate_algebra": 10,
+      "number_theory": 8,
+      "prealgebra": 10,
+      "precalculus": 6
+    },
+    "uncovered_strata": []
+  },
+  "team_file_sha256": "4cdc2a6856a2559d7152cdd8a91339d6194fbc06b11eb0d86ad1005b9c0e871a",
+  "team_path": "experiments/initial_teams/math_b_calibrated_team_seed_v1.json",
+  "team_sha256": "c08819ef33ead5297003d0795babc7686de009455c0f30d177abcda64f078263",
+  "uncertainty": "EXAMPLE_UNIT_ONLY_NO_MEMBER_PSEUDOREPLICATION_NO_SIGNIFICANCE_CLAIM"
+}

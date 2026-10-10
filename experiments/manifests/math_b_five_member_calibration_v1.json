@@ -1,0 +1,14 @@
+{
+  "READY_TO_RUN": false,
+  "experiment_id": "math_b_five_member_calibration_v1",
+  "membership_sha256": "091cbcbd48a85fbb5806169009b68a03772cd1f3c5e8eaadaf699c8aba8fc954",
+  "parent_ids": [
+    "math_baseline_calibration_stage1_v1"
+  ],
+  "protocol_path": "experiments/protocols/math_b_five_member_calibration_v1/protocol.json",
+  "protocol_sha256": "68c91dd077789a4e5c56d1d3e39ca8f1de662eb7645d0d46a112076c099d5b2b",
+  "real_api_authorized": false,
+  "schema_version": "independent_math_b5_preregistration_v1",
+  "status": "FROZEN_AWAITING_FRESH_AUTHORIZATION",
+  "team_sha256": "c08819ef33ead5297003d0795babc7686de009455c0f30d177abcda64f078263"
+}

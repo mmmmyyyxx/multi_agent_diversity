@@ -1,0 +1,149 @@
+{
+  "b": {
+    "annotation_scope": "OWNER_FIRST_ERROR_REVIEW_REPAIR_EFFICACY_UNTESTED",
+    "category_counts": {
+      "COMBINATORIAL_OVERCOUNT_AND_GEOMETRIC_EXISTENCE": 1,
+      "COORDINATE_CONSTRAINT_SUBSTITUTION": 1,
+      "ENUMERATED_SET_CARDINALITY_CHECK": 1,
+      "FORMULA_PRECONDITION_AND_NUMERIC_CHECK": 1,
+      "GEOMETRIC_INCIDENCE_CONSTRAINT": 1,
+      "INVARIANT_LOSS_AND_REPEATED_REASONING": 1,
+      "LATEX_MATRIX_ENVIRONMENT_LEXICAL_GUARD": 1,
+      "NUMERIC_FUNCTION_EVALUATION_AND_EXACT_IDENTITY": 1,
+      "POSITION_DEPENDENT_COUNTING_WITH_LEADING_ZERO": 1,
+      "QUANTIFIER_AND_NECESSARY_SUFFICIENT_ROOTS": 1,
+      "UNICODE_RADICAL_SERIALIZATION_COMPATIBILITY": 1
+    },
+    "interface_only_count": 2,
+    "interface_probes": {
+      "matrix_domain_parse_and_equivalence_verified": true,
+      "matrix_lexical_guard_rejection_replayed": true,
+      "original_native_invalidity_preserved": true,
+      "production_parser_unchanged": true,
+      "strict_gold_blind_radical_translation_verified": true,
+      "unicode_radical_literal_preserved": true
+    },
+    "local_verification_count": 2,
+    "native_invalid": 3,
+    "native_valid_math_wrong": 8,
+    "official_remaining_errors": 11,
+    "repair_groups": {
+      "INTERFACE_ONLY": 2,
+      "LOCAL_VERIFICATION": 2,
+      "MIXED_STRATEGY_AND_TRUNCATION": 1,
+      "STRUCTURAL_STRATEGY": 6
+    },
+    "strategy_priority_count": 7
+  },
+  "c": {
+    "all": {
+      "diagnostic_correct": 180,
+      "diagnostic_valid": 208,
+      "old_native_valid": 1,
+      "rejection_categories": {
+        "COMPETING_OR_UNPARSEABLE_DECLARATION": 7,
+        "NON_STOP_FINISH": 5,
+        "NO_COMPLETE_TERMINAL_BOX": 17
+      },
+      "responses": 237
+    },
+    "final": {
+      "diagnostic_correct": 48,
+      "diagnostic_valid": 53,
+      "old_native_valid": 1,
+      "rejection_categories": {
+        "COMPETING_OR_UNPARSEABLE_DECLARATION": 1,
+        "NON_STOP_FINISH": 2,
+        "NO_COMPLETE_TERMINAL_BOX": 4
+      },
+      "responses": 60
+    },
+    "first": {
+      "diagnostic_correct": 46,
+      "diagnostic_valid": 53,
+      "old_native_valid": 1,
+      "rejection_categories": {
+        "COMPETING_OR_UNPARSEABLE_DECLARATION": 2,
+        "NON_STOP_FINISH": 1,
+        "NO_COMPLETE_TERMINAL_BOX": 4
+      },
+      "responses": 60
+    },
+    "hypothetical_future_parser_only": true,
+    "identity": "MATH_TERMINAL_DISPLAY_BOX_COMPAT_DIAGNOSTIC_V1",
+    "not_rerun_or_recovered_scores": true,
+    "official_scores_unchanged": true,
+    "production_parser_unchanged": true
+  },
+  "gradient_ratio_decision": "DEFERRED_UNTIL_FIVE_MEMBER_BASELINE_INTEGRITY_AND_STABILITY_AUDIT",
+  "integrity": {
+    "catalog_sha256": "b343b1998de4753399347c98a3707c1d8b947bf8e598599653fd90d28295af3b",
+    "checkpoint_seal_verified": true,
+    "checkpoint_sha256": "8986fe0158450e7986418a3a018f9d657d89e53a3a2fc45c70c64ca9501d8902",
+    "compatibility_rows_sha256": "f3e453d4f1c7ca1c6e193b8a843e0625e4e9382386dc07de8b6b09d0894e65ce",
+    "immutable_receipts_checked": 478,
+    "ledger_hash_chain_verified": true,
+    "ledger_last_sha256": "5559e8932a2f6a503e02f7e968d162aafb3d2f7b9db683e316f5d9c13e7f89fe",
+    "parent_public_seals_verified": true
+  },
+  "next_baseline": {
+    "actual_vote_oracle_coverage": "NOT_EVALUATED_NEW_AUTHORIZATION_REQUIRED",
+    "budget": {
+      "all_transport_attempts_conservatively_charged_envelope": 260939280,
+      "authorization": "PENDING_FRESH_EXACT_SCOPE",
+      "complete_panel_guaranteed": false,
+      "currency_cost": "UNKNOWN_NO_BILLING_QUERY",
+      "derivation": "ROUND_2X_PARENT_B_CHARGED_RATE_TO_1M_WITH_RESERVATION_HEADROOM",
+      "first_draw_output_upper": 1080000,
+      "input_bound": "SERIALIZED_UTF8_BYTES_PLUS_4096",
+      "logical_requests": 300,
+      "no_transport_failure_reserved_envelope": 12425680,
+      "old_balance_reusable": false,
+      "parent_b_first_draw_scenario_tokens": 215720,
+      "parent_b_rate_scenario_tokens": 356880,
+      "physical_attempts_upper": 25200,
+      "proposed_charged_plus_reserved_cap": 1000000,
+      "successful_draws_upper": 1200,
+      "successful_input_reservation_upper": 5816080,
+      "successful_output_upper": 6609600
+    },
+    "disjoint_from_stage1_and_canary": true,
+    "globally_unseen_claim": false,
+    "heldout_generalization_claim": false,
+    "identity": "MATH_B_FIVE_MEMBER_CALIBRATION_V1",
+    "members": 5,
+    "membership_sha256": "091cbcbd48a85fbb5806169009b68a03772cd1f3c5e8eaadaf699c8aba8fc954",
+    "n": 60,
+    "previously_adaptive_optimize_pool": true,
+    "protocol_sha256": "68c91dd077789a4e5c56d1d3e39ca8f1de662eb7645d0d46a112076c099d5b2b",
+    "seed": 82,
+    "selection": {
+      "available_after_exclusion": 78,
+      "level_counts": {
+        "Level 1": 5,
+        "Level 2": 12,
+        "Level 3": 13,
+        "Level 4": 13,
+        "Level 5": 17
+      },
+      "n": 60,
+      "order": "ORIGINAL_OPTIMIZE_ORDER",
+      "outcome_dependent": false,
+      "seed": 82,
+      "selection": "SUBJECT_LEVEL_LARGEST_REMAINDER_LEXICAL_TIES_SHA256_PLAN_SEED_ID",
+      "subject_counts": {
+        "algebra": 12,
+        "counting_and_probability": 6,
+        "geometry": 8,
+        "intermediate_algebra": 10,
+        "number_theory": 8,
+        "prealgebra": 10,
+        "precalculus": 6
+      },
+      "uncovered_strata": []
+    },
+    "team_sha256": "c08819ef33ead5297003d0795babc7686de009455c0f30d177abcda64f078263"
+  },
+  "real_api_calls": 0,
+  "status": "VERIFIED_OFFLINE"
+}

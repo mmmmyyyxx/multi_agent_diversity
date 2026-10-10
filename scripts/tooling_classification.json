@@ -2,6 +2,18 @@
   "schema_version": "tooling_classification_v1",
   "scripts": [
     {
+      "path": "scripts/run_math_b_five_member_calibration.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Independent baseline diagnostic; not a Unified composition entrypoint."
+    },
+    {
+      "path": "scripts/audit_math_baseline_followup.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Independent baseline diagnostic; not a Unified composition entrypoint."
+    },
+    {
       "path": "scripts/run_math_baseline_calibration.py",
       "classification": "ONE_OFF_AUDIT",
       "move": false,
