@@ -1,0 +1,15 @@
+{
+  "both_scopes_closed": true,
+  "canary_aborted_without_completion_marker": true,
+  "exact_initial_request_envelopes_verified": true,
+  "explicit_dual_scope_authorization_verified": true,
+  "frozen_source_and_startup_verified": true,
+  "ledger_chain_failure_receipts_and_inventory_verified": true,
+  "no_extra_provider_probes_or_reruns": true,
+  "original_preparation_and_historical_reports_immutable": true,
+  "pilot_not_started": true,
+  "publication_sanitized": true,
+  "scientific_efficacy_not_claimed": true,
+  "terminal_reservations_zero": true,
+  "validation_and_test_untouched": true
+}

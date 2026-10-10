@@ -18,17 +18,18 @@ current_benchmark_suite:
 last_governance_milestone: math_generated_output_recovery_v1
 real_execution_ready: false
 real_api_authorized: false
-ready_for_authorization: true
-current_preparation_status: OFFLINE_VERIFIED_DUAL_SCOPE_AWAITING_EXACT_APPROVAL
+ready_for_authorization: false
+current_preparation_status: OFFLINE_REPAIR_VERIFIED_CANARY_PROVIDER_ABORT_PILOT_BLOCKED
 validation_access: not_authorized
 test_access: sealed
-current_execution_blocker: EXACT_DUAL_SCOPE_POST_FREEZE_APPROVAL_REQUIRED
+current_execution_blocker: PROVIDER_MODEL_OR_CHANNEL_UNAVAILABLE_HTTP_404
 current_execution_blockers:
-- EXACT_DUAL_SCOPE_POST_FREEZE_APPROVAL_REQUIRED
+- PROVIDER_MODEL_OR_CHANNEL_UNAVAILABLE_HTTP_404
+- CANARY_ENGINEERING_GATE_FAILED
 current_runtime_builder: build_current_team_prompt_search
 current_execution_entrypoint: scripts/run_experiment.py
 current_runtime_composition: CURRENT_GENERATION_RECOVERY_COMPOSITION_V5
-current_execution_binding: experiments/execution_bindings/a4_v25_arm_b_recovery_seed84_canary_attempt1.json
+current_execution_binding: null
 current_layer1_backend: STRUCTURED_EVALUATED_PARENT_SEARCH_V3
 current_memory_policy: BOOTSTRAPPED_FORMAT_BLOCK_EDIT_EFFECT_MEMORY_V3
 current_pattern_policy: gradient_output_recovery_partial_partition_v6
@@ -40,23 +41,23 @@ current_transition_policy: initial_competence_target_or_team_progress_v3
 current_configuration_arm: A4
 current_pattern_enabled: true
 current_memory_enabled: true
-current_canary_status: NOT_OBSERVED_NEW_ATTEMPT
+current_canary_status: EXECUTION_ABORTED_BEFORE_INITIAL_PROFILE
 current_canary_original_operational_status: EXECUTION_ABORTED
-current_canary_recovery_status: NOT_ATTEMPTED
+current_canary_recovery_status: NOT_ATTEMPTED_NO_RERUN_AUTHORIZED
 current_canary_recovery_api_calls: 0
-current_pilot_status: NOT_OBSERVED_NEW_ATTEMPT
-current_pilot_report: reports/math_generated_output_recovery_v1_preparation_20261010
-current_canary_report: reports/math_generated_output_recovery_v1_preparation_20261010
-current_canary_interruption_report: reports/a4_v25_arm_b_flexible_seed83_canary_v1_execution_20261010
-canary_manifest: experiments/manifests/a4_v25_arm_b_recovery_seed84_canary_v1.yaml
-next_canary_attempt_id: a4_v25_arm_b_recovery_seed84_canary_attempt1
-next_canary_milestone: NEW_FROZEN_SINGLE_USE_SCOPE_REQUIRED
+current_pilot_status: NOT_STARTED_CANARY_ENGINEERING_GATE_BLOCKED
+current_pilot_report: reports/a4_v25_arm_b_recovery_seed84_dual_scope_execution_20261010
+current_canary_report: reports/a4_v25_arm_b_recovery_seed84_dual_scope_execution_20261010
+current_canary_interruption_report: reports/a4_v25_arm_b_recovery_seed84_dual_scope_execution_20261010
+canary_manifest: null
+next_canary_attempt_id: null
+next_canary_milestone: PROVIDER_AVAILABILITY_AND_NEW_FROZEN_SCOPE_REQUIRED
 next_canary_authorized: false
 next_pilot_authorized: false
 next_validation_authorized: false
 formal_a1_ready: false
 formal_a1_authorized: false
-pending_pilot_milestone: EXACT_DUAL_SCOPE_POST_FREEZE_APPROVAL_REQUIRED
+pending_pilot_milestone: BLOCKED_CANARY_PROVIDER_ABORT_SCOPE_CLOSED
 pending_pilot_manifest: experiments/manifests/a4_v25_arm_b_recovery_seed84_pilot_v1.yaml
 pending_pilot_attempt_id: a4_v25_arm_b_recovery_seed84_pilot_attempt1
 pending_pilot_operational_retry_limit: 0
@@ -75,12 +76,21 @@ initial_accuracy: UNMEASURED_NEW_CURRENT_SCOPE
 this_task_scientific_method_changed: true
 v23_active: false
 v22_active: false
-last_canary_attempt_id: a4_v25_arm_b_seed83_canary_attempt1
+last_canary_attempt_id: a4_v25_arm_b_recovery_seed84_canary_attempt1
 last_pilot_attempt_id: a4_v24_structured_seed81_pilot_attempt1
 authorization_scopes_closed: true
 unresolved_reservations: 0
 parser_identity: MATH_FLEXIBLE_ANSWER_EXTRACTION_V3
 baseline_b5_strict_review_compatible_with_current_source: false
+exact_dual_scope_user_authorization_received: true
+current_task_charged_tokens: 67355
+current_task_provider_attempts: 8
+current_task_provider_responses: 0
+current_task_pilot_calls: 0
+last_canary_manifest: experiments/manifests/a4_v25_arm_b_recovery_seed84_canary_v1.yaml
+last_canary_execution_binding: experiments/execution_bindings/a4_v25_arm_b_recovery_seed84_canary_attempt1.json
+last_canary_initial_accuracy: NOT_OBSERVED_NO_ACCEPTED_PROVIDER_RESPONSE
+no_current_executable_scope: true
 ```
 
 ## Experiment and engineering DAG
@@ -375,9 +385,9 @@ flowchart TD
     n308["math_b_five_member_calibration_v1<br/>DIAGNOSTIC<br/>ABANDONED"]
     n309["math_flexible_answer_parser_v3<br/>PROTOCOL_FREEZE<br/>IMPLEMENTED_NOT_EXECUTED"]
     n310["a4_v25_arm_b_flexible_seed83_canary_v1<br/>REAL_CANARY<br/>INVALID"]
-    n311["math_generated_output_recovery_v1<br/>PROTOCOL_FREEZE<br/>PREPARED_NOT_EXECUTED"]
-    n312["a4_v25_arm_b_recovery_seed84_canary_v1<br/>REAL_CANARY<br/>PREPARED_NOT_EXECUTED"]
-    n313["a4_v25_arm_b_recovery_seed84_pilot_v1<br/>PILOT<br/>PREPARED_NOT_EXECUTED"]
+    n311["math_generated_output_recovery_v1<br/>PROTOCOL_FREEZE<br/>COMPLETED"]
+    n312["a4_v25_arm_b_recovery_seed84_canary_v1<br/>REAL_CANARY<br/>INVALID"]
+    n313["a4_v25_arm_b_recovery_seed84_pilot_v1<br/>PILOT<br/>HOLD"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -825,3 +835,4 @@ flowchart TD
 | math_v2_2_gradient_pattern_seed81_pilot_v1 | UNIFIED_TEAM_PROMPT_SEARCH | INVALID | V22_SCIENTIFIC_COMPLETION_VS_OPERATIONAL_TRUNCATION_V1 |
 | a4_v23_only_pilot_v1 | UNIFIED_TEAM_PROMPT_SEARCH | INVALID | reports/a4_v23_only_pilot_execution_20261009/classifier.json |
 | a4_v25_arm_b_flexible_seed83_canary_v1 | UNIFIED_TEAM_PROMPT_SEARCH | INVALID | reports/a4_v25_arm_b_flexible_seed83_canary_v1_execution_20261010/classifier.json |
+| a4_v25_arm_b_recovery_seed84_canary_v1 | UNIFIED_TEAM_PROMPT_SEARCH | INVALID | reports/a4_v25_arm_b_recovery_seed84_dual_scope_execution_20261010/classifier.json |

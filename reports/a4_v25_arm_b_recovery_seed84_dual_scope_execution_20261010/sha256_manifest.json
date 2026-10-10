@@ -1,0 +1,61 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "a11731a31bf7de5042e0daf6baf38adf0a3827ffe7591c4f2d61ba9ee313d129"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "6441dc1b2f460893c9fc114e545c956d376d64cb25d257f03f9970734e1a577f"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "004bb71d24a4a20a86f6725ab00ca5eee9787a6bedde362c3528984925d75a45"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "5690c21529444a4f3ecd35b2f673cd84d43f9035a75dc2c2d343577f755919b7"
+    },
+    {
+      "file": "funnel_summary.json",
+      "sha256": "690e859fb52c4a1c8a1fb0ad5079f9a60d5278a2f492b88ef4cee9bbe4b2af28"
+    },
+    {
+      "file": "integrity_audit.json",
+      "sha256": "b72bb1d015849f8c15838cfb51dea1b1e15faaed40d10a7120a90969a9dc333e"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "2ef170f538b9e2bc0b5c0004a785e9fb3eef27b5bf19711047fd25440fe88248"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "98ef93c7eb5ecdfd59238027ac71bbf1b1f8e36b14c0c66ae61c86eeeaa1b2de"
+    },
+    {
+      "file": "provider_diagnosis.json",
+      "sha256": "03b927e17e73d35d4fd118ea761545191711ffbad26360e42bd8b843bf171702"
+    },
+    {
+      "file": "provider_error_facts.json",
+      "sha256": "6016cf2f4c25cce26545db282eb1fdd64ed08eb104546750763a831e5d7f60ee"
+    },
+    {
+      "file": "README.md",
+      "sha256": "25220f7c15e7f154afea7c78efee1ef9c05ec93822ac1f9d43cd480ff636b3aa"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "a95186f259d8d4a1fbe5a184ffa6e53f1487d1e0c706bcb48e914d8606bcc647"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "c7b8e0bd5ad2d23b64a8a807419f045fdeaff4f2b8ded8e869b138c17e3d835e"
+    },
+    {
+      "file": "verification.json",
+      "sha256": "1a83c675a5adee69849e88b766564468a1fbdea55b5499c0fb431e84f95c6bc3"
+    }
+  ]
+}

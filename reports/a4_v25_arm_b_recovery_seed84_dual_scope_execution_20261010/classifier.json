@@ -1,0 +1,10 @@
+{
+  "canary_efficacy": "NOT_EVALUABLE",
+  "canary_integrity": "PASS_FROZEN_SOURCE_SCOPE_REQUEST_RECEIPT_LEDGER_AND_ABORT_INVENTORY",
+  "canary_validity": "INVALID_INCOMPLETE_BEFORE_INITIAL_PROFILE",
+  "cause_category": "PROVIDER_MODEL_OR_CHANNEL_UNAVAILABLE_HTTP_404",
+  "pilot_gate": "BLOCKED_CANARY_PROVIDER_ABORT",
+  "pilot_validity": "NOT_EVALUABLE_NOT_STARTED",
+  "repair_efficacy": "NOT_OBSERVED",
+  "scientific_failure_inferred": false
+}

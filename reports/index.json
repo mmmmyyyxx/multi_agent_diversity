@@ -133,6 +133,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/a4_v25_arm_b_recovery_seed84_dual_scope_execution_20261010",
+      "document": "reports/a4_v25_arm_b_recovery_seed84_dual_scope_execution_20261010/README.md",
+      "date": "20261010",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "ZERO_API",
+      "experiment_id": "math_generated_output_recovery_v1",
+      "status": "COMPLETED",
+      "source_commit": "26b9ffed416470aabbc18477b65c8874a166e454",
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/a4_v25_responsibility_repair_canary_interrupted_20261009",
       "document": "reports/a4_v25_responsibility_repair_canary_interrupted_20261009/README.md",
       "date": "20261009",
@@ -1203,8 +1217,8 @@
       "era": "UNIFIED_TEAM_PROMPT_SEARCH",
       "kind": "PREEXECUTION",
       "experiment_id": "math_generated_output_recovery_v1",
-      "status": "PREPARED_NOT_EXECUTED",
-      "source_commit": null,
+      "status": "COMPLETED",
+      "source_commit": "26b9ffed416470aabbc18477b65c8874a166e454",
       "historical_current": "historical_evidence",
       "registry_referenced": true,
       "registry_ref": "experiments/registry.yaml",

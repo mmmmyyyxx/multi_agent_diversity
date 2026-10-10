@@ -1182,3 +1182,25 @@ failures:
   regression_tests:
   - tests/current/test_generated_output_recovery.py
   - tests/current/test_structured_production_entrypoint.py
+- failure_id: FAIL-V25-RECOVERY-CANARY-PROVIDER-404
+  title: Recovery Canary rejected by provider before initial profile
+  status: OPEN
+  lifecycle: OBSERVED
+  first_observed: a4_v25_arm_b_recovery_seed84_canary_attempt1
+  affected_components:
+  - provider_model_channel_availability
+  - canary_initial_solver_dispatch
+  symptom: Eight first-batch Solver requests returned HTTP 404 / NotFoundError; no
+    accepted model response.
+  evidence:
+  - reports/a4_v25_arm_b_recovery_seed84_dual_scope_execution_20261010/README.md
+  - reports/a4_v25_arm_b_recovery_seed84_dual_scope_execution_20261010/integrity_audit.json
+  - reports/a4_v25_arm_b_recovery_seed84_dual_scope_execution_20261010/api_ledger_summary.json
+  evidence_level: observed
+  root_cause_status: Provider error points to model/channel availability; upstream
+    root cause not determined.
+  mitigation: Fail-closed Canary abort, full-reservation fallback with zero unresolved
+    reservations, Pilot progression blocked, both scopes closed.
+  forbidden_inference: Not optimizer inefficacy, parser failure, actual provider billing,
+    permission to change models/endpoints, retry or run blocked Pilot.
+  regression_tests: []

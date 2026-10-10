@@ -1,0 +1,21 @@
+{
+  "accepted_provider_responses": 0,
+  "additional_diagnostic_provider_calls": 0,
+  "api_authorization_received": true,
+  "both_scopes_closed": true,
+  "canary_operational_status": "EXECUTION_ABORTED_BEFORE_INITIAL_PROFILE",
+  "canary_stop_category": "PROVIDER_TERMINAL_NotFoundError",
+  "charged_tokens": 67355,
+  "experiment_ids": [
+    "a4_v25_arm_b_recovery_seed84_canary_v1",
+    "a4_v25_arm_b_recovery_seed84_pilot_v1"
+  ],
+  "initial_accuracy": "NOT_OBSERVED",
+  "parser": "MATH_FLEXIBLE_ANSWER_EXTRACTION_V3",
+  "pilot_operational_status": "NOT_STARTED_CANARY_INTEGRITY_GATE_FAILED",
+  "pilot_scope_consumed": false,
+  "provider_attempts": 8,
+  "reruns": 0,
+  "reserved_tokens": 0,
+  "scientific_efficacy": "NOT_EVALUABLE"
+}

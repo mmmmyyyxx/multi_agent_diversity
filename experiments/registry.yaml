@@ -9166,9 +9166,9 @@ experiments:
   parent_ids:
   - math_flexible_answer_parser_v3
   - a4_v25_arm_b_flexible_seed83_canary_v1
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: ZERO_API_PREPARATION_EXACT_POST_FREEZE_SCOPE_REQUIRED
-  implementation_commit: null
+  status: COMPLETED
+  scientific_status: OFFLINE_ENGINEERING_VERIFIED_REAL_EFFICACY_UNOBSERVED
+  implementation_commit: 26b9ffed416470aabbc18477b65c8874a166e454
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_generated_output_recovery_v1.yaml
@@ -9179,53 +9179,74 @@ experiments:
   superseded_by: []
   notes:
   - Fresh bounded recovery identity; no paid request or push authorized by preparation.
+  - Exact dual scopes were authorized; Canary failed on initial provider HTTP 404
+    before any model response; Pilot engineering gate blocked.
+  - No scientific efficacy observed; no rerun, extra provider diagnosis, held-out
+    access or push.
   unavailable:
-    implementation_commit: Containing source commit; exact frozen manifests follow.
-    execution_commit: No paid execution yet.
-    result_commit: Preparation evidence only.
+    execution_commit: Method repair node; real attempt is separately registered.
+    result_commit: Containing local evidence commit; no self-referential SHA.
+  reports:
+  - reports/math_generated_output_recovery_v1_preparation_20261010
+  - reports/a4_v25_arm_b_recovery_seed84_dual_scope_execution_20261010
 - experiment_id: a4_v25_arm_b_recovery_seed84_canary_v1
   kind: REAL_CANARY
   era: UNIFIED_TEAM_PROMPT_SEARCH
   method_family: unified_team_prompt_search_v2_5_generation_recovery_v1
   parent_ids:
   - math_generated_output_recovery_v1
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: ZERO_API_PREPARATION_EXACT_POST_FREEZE_SCOPE_REQUIRED
-  implementation_commit: null
-  execution_commit: null
+  status: INVALID
+  scientific_status: INVALID_PROVIDER_ABORT_NO_INITIAL_OBSERVATIONS
+  implementation_commit: 26b9ffed416470aabbc18477b65c8874a166e454
+  execution_commit: c07b0e31c58d9e37381baa29062b361a4d5d946b
   result_commit: null
   manifest: experiments/manifests/a4_v25_arm_b_recovery_seed84_canary_v1.yaml
-  report: reports/math_generated_output_recovery_v1_preparation_20261010
-  classifier: reports/math_generated_output_recovery_v1_preparation_20261010/classifier.json
-  active_for_new_work: true
+  report: reports/a4_v25_arm_b_recovery_seed84_dual_scope_execution_20261010
+  classifier: reports/a4_v25_arm_b_recovery_seed84_dual_scope_execution_20261010/classifier.json
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
   - Fresh bounded recovery identity; no paid request or push authorized by preparation.
+  - Exact dual scopes were authorized; Canary failed on initial provider HTTP 404
+    before any model response; Pilot engineering gate blocked.
+  - No scientific efficacy observed; no rerun, extra provider diagnosis, held-out
+    access or push.
   unavailable:
-    implementation_commit: Containing source commit; exact frozen manifests follow.
-    execution_commit: No paid execution yet.
-    result_commit: Preparation evidence only.
+    result_commit: Containing local evidence commit; no self-referential SHA.
+  reports:
+  - reports/math_generated_output_recovery_v1_preparation_20261010
+  - reports/a4_v25_arm_b_recovery_seed84_dual_scope_execution_20261010
+  authorization_consumed: true
+  authorization_scope_closed: true
 - experiment_id: a4_v25_arm_b_recovery_seed84_pilot_v1
   kind: PILOT
   era: UNIFIED_TEAM_PROMPT_SEARCH
   method_family: unified_team_prompt_search_v2_5_generation_recovery_v1
   parent_ids:
   - math_generated_output_recovery_v1
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: ZERO_API_PREPARATION_EXACT_POST_FREEZE_SCOPE_REQUIRED
-  implementation_commit: null
+  status: HOLD
+  scientific_status: NOT_EXECUTED_CANARY_ENGINEERING_GATE_BLOCKED
+  implementation_commit: 26b9ffed416470aabbc18477b65c8874a166e454
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/a4_v25_arm_b_recovery_seed84_pilot_v1.yaml
-  report: reports/math_generated_output_recovery_v1_preparation_20261010
-  classifier: reports/math_generated_output_recovery_v1_preparation_20261010/classifier.json
-  active_for_new_work: true
+  report: reports/a4_v25_arm_b_recovery_seed84_dual_scope_execution_20261010
+  classifier: reports/a4_v25_arm_b_recovery_seed84_dual_scope_execution_20261010/classifier.json
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
   - Fresh bounded recovery identity; no paid request or push authorized by preparation.
+  - Exact dual scopes were authorized; Canary failed on initial provider HTTP 404
+    before any model response; Pilot engineering gate blocked.
+  - No scientific efficacy observed; no rerun, extra provider diagnosis, held-out
+    access or push.
   unavailable:
-    implementation_commit: Containing source commit; exact frozen manifests follow.
-    execution_commit: No paid execution yet.
-    result_commit: Preparation evidence only.
+    execution_commit: Pilot was not launched; Canary provider abort blocked progression.
+    result_commit: Containing local evidence commit; no self-referential SHA.
+  reports:
+  - reports/math_generated_output_recovery_v1_preparation_20261010
+  - reports/a4_v25_arm_b_recovery_seed84_dual_scope_execution_20261010
+  authorization_consumed: false
+  authorization_scope_closed: true

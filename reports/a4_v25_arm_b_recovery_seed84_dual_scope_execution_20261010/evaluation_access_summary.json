@@ -1,0 +1,14 @@
+{
+  "completed_initial_profiles": 0,
+  "initial_response_requests": 8,
+  "optimize_membership_count": 12,
+  "pilot_provider_calls": 0,
+  "pilot_raw_reads": 0,
+  "selection_used_outcomes": false,
+  "shadow_membership_count": 40,
+  "shadow_provider_calls": 0,
+  "test_calls": 0,
+  "test_raw_reads": 0,
+  "validation_calls": 0,
+  "validation_raw_reads": 0
+}

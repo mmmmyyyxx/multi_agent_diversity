@@ -505,3 +505,15 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 - Symptom: A short symbolic source overlap halted the opportunity; known persistence ordering windows could publish completion before closure evidence.
 - Forbidden inference: Offline compatibility is not semantic leakage proof, real optimization efficacy, repair of an undetermined process-disappearance cause, or paid rerun authorization.
 - Mitigation: Fresh typed bounded recovery policy, source-context symbolic guard, preserved legal partial evidence, and terminal evidence before completion marker.
+
+## FAIL-V25-RECOVERY-CANARY-PROVIDER-404: Recovery Canary rejected by provider before initial profile
+
+- Status: `OPEN`
+- Lifecycle: `OBSERVED`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `a4_v25_arm_b_recovery_seed84_canary_attempt1`
+- Root-cause status: Provider error points to model/channel availability; upstream root cause not determined.
+- Symptom: Eight first-batch Solver requests returned HTTP 404 / NotFoundError; no accepted model response.
+- Forbidden inference: Not optimizer inefficacy, parser failure, actual provider billing, permission to change models/endpoints, retry or run blocked Pilot.
+- Mitigation: Fail-closed Canary abort, full-reservation fallback with zero unresolved reservations, Pilot progression blocked, both scopes closed.

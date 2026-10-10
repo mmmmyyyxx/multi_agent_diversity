@@ -1,0 +1,94 @@
+{
+  "execution_source_unchanged": true,
+  "postmortem_api_calls": 0,
+  "postmortem_governance": "PASS",
+  "postmortem_metadata_tests": {
+    "correction": "Closed frontier has no executable binding; unknown accuracy retains canonical fresh-scope metadata.",
+    "exact_recheck_passed": 11,
+    "exact_recheck_xml_sha256": "428ae57949c773ccf64b5ffc4a6302ac2f630e87b4779fab44917e4a5bc226cb",
+    "failed": 0,
+    "first_campaign_failed": 11,
+    "first_campaign_passed": 115,
+    "initial_failures_preserved": true,
+    "network_attempt_count": 0,
+    "passed": 126,
+    "skipped": 0,
+    "test_code_changed": false,
+    "verification_mode": "FIRST_CAMPAIGN_PLUS_EXACT_FAILURE_IDENTITY_SET_RECHECK",
+    "xml_sha256": "47124552e74d341e90ae7d5fd5396d54fede1859d23fcff25e20f7e0f7eba954"
+  },
+  "postmortem_preflight": {
+    "compileall": "PASS",
+    "diff_check": "PASS",
+    "frozen_manifests_immutable": true,
+    "frozen_preparation_and_historical_reports_immutable": true,
+    "governance": "PASS",
+    "manifest_schema": "PASS",
+    "postmortem_api_calls": 0,
+    "report_contract": "PASS",
+    "report_hashes": "PASS",
+    "repository": "PASS",
+    "sanitization": "PASS",
+    "status": "PASS",
+    "test_calls": 0,
+    "tracked_execution_source_unchanged": true,
+    "validation_calls": 0
+  },
+  "preexecution": {
+    "classified_current_suite": {
+      "errors": 0,
+      "failures": 0,
+      "historical_replay_pass_claimed": false,
+      "omitted_historical_modules": 220,
+      "omitted_inventory": "tests/suite_classification.json",
+      "passed": 583,
+      "selected": 585,
+      "skip_details": [
+        {
+          "reason": "USER_DEFERRED_DOWNLOAD: no frozen real-data manifest",
+          "test": "tests.test_benchmark_data_freeze_v1::test_frozen_real_data_identity[hover]"
+        },
+        {
+          "reason": "USER_DEFERRED_DOWNLOAD: no frozen real-data manifest",
+          "test": "tests.test_benchmark_data_freeze_v1::test_frozen_real_data_identity[pupa]"
+        }
+      ],
+      "skipped": 2,
+      "xml_sha256": "1d47fea8583224542b646927edc77f2a3072eca6937f96f053e0a4a0bb3bd4a4"
+    },
+    "compileall": "PASS",
+    "deterministic_negative_controls": 16,
+    "diff_check": "PASS",
+    "governance_preflight": "PASS",
+    "manifest_preflight": "PASS",
+    "post_full_suite_http_envelope_controls": {
+      "cases": [
+        "tests.current.test_generated_output_recovery::test_actual_http_envelope_distinguishes_null_content_from_metadata_loss[True]",
+        "tests.current.test_generated_output_recovery::test_actual_http_envelope_distinguishes_null_content_from_metadata_loss[False]"
+      ],
+      "failures": 0,
+      "network_attempt_count": 0,
+      "passed": 2,
+      "scope": "Distinguishes valid null ordinary content from actual missing provider content field; all earlier fake transports bypass this normalization boundary."
+    },
+    "postfreeze_metadata_checks": {
+      "failures": 0,
+      "network_attempt_count": 0,
+      "passed": 126,
+      "scope": "Governance, repository alignment and benchmark split contracts after exact manifest freeze.",
+      "skipped": 0,
+      "xml_sha256": "ecb3c2995174137e6f793dda8afa38eba030ee8406653033b6bedf636b32c5db"
+    },
+    "repository_preflight": "PASS",
+    "status": "PASS",
+    "verification_mode": "FULL_CLASSIFIED_CURRENT_SUITE_PLUS_TWO_POST_SUITE_HTTP_ENVELOPE_CONTROLS",
+    "zero_api_guard": {
+      "active_before_application_import": true,
+      "network_attempt_count": 0,
+      "real_environment_secrets_removed": true
+    }
+  },
+  "real_optimization_efficacy": "NOT_EVALUABLE",
+  "receipt_ledger_inventory_checks": "PASS",
+  "status": "PASS_EXECUTION_INTEGRITY_ABORT_AUDIT"
+}

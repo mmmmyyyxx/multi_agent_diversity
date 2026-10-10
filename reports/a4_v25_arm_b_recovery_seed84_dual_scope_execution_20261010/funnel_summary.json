@@ -1,0 +1,14 @@
+{
+  "full": "NOT_OBSERVED",
+  "gradient": "NOT_OBSERVED",
+  "initial_profiles_completed": 0,
+  "initial_scores": "NOT_OBSERVED",
+  "layer1": "NOT_OBSERVED",
+  "pattern": "NOT_OBSERVED",
+  "pilot": "NOT_STARTED",
+  "probe": "NOT_OBSERVED",
+  "provider_response_count": 0,
+  "shadow": "NOT_OBSERVED",
+  "team_commit": "NOT_OBSERVED",
+  "unobserved_stages_are_not_zero_efficacy": true
+}

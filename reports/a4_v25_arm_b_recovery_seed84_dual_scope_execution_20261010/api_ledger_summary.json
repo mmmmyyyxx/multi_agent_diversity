@@ -1,0 +1,33 @@
+{
+  "accepted_provider_responses": 0,
+  "accounting_interpretation": "FULL_RESERVATION_FALLBACK_IS_NOT_PROVIDER_BILLING_PROOF",
+  "actual_peak_charged_plus_reserved": 67355,
+  "additional_diagnostic_calls": 0,
+  "attempts_by_role": {
+    "solver": 8
+  },
+  "both_scopes_closed": true,
+  "canary_scope_consumed": true,
+  "charged_by_role": {
+    "solver": 67355
+  },
+  "charged_tokens": 67355,
+  "combined_scope_ceiling": 4000000,
+  "each_scope_ceiling": 2000000,
+  "fallback_charged_tokens": 67355,
+  "ledger_event_count": 17,
+  "ledger_last_sha256": "1a71e713aacd1a7f46f55f0abc9b4d85cdbc6acea3a7777148b7d4874890b43f",
+  "ledger_sha256": "4820aace6a825dae7b0d4fa3a0a7c74d16c2e8a5cf8ab4277225a0fe9e7bae73",
+  "max_inflight": 8,
+  "pilot_calls": 0,
+  "pilot_scope_consumed": false,
+  "provider_attempts": 8,
+  "provider_reported_actual_tokens": 0,
+  "provider_usage_available": false,
+  "reruns": 0,
+  "reserved_tokens": 0,
+  "transport_failure_categories": {
+    "NotFoundError": 8
+  },
+  "transport_failure_receipts_verified": 8
+}

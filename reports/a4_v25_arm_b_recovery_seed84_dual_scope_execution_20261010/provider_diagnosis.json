@@ -1,0 +1,12 @@
+{
+  "additional_provider_calls": 0,
+  "confirmed_error_code_count": 8,
+  "error_code": "model_not_found",
+  "exception": "NotFoundError",
+  "http_status": 404,
+  "model": "qwen3-8b",
+  "provider_reported_usage_available": false,
+  "reason_category": "MODEL_OR_CHANNEL_AVAILABILITY",
+  "stderr_sha256": "1f805fa80e7387537104ffdca550d5c1fffb19cee525156c14b8508778e19a61",
+  "upstream_root_cause": "UNDETERMINED"
+}

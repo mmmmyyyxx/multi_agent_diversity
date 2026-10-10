@@ -1,0 +1,24 @@
+{
+  "additional_provider_calls": 0,
+  "closed_error_code_counts": {
+    "model_not_found": 8
+  },
+  "http_status_counts": {
+    "404": 8
+  },
+  "message_categories": {
+    "MODEL_NOT_FOUND": 8
+  },
+  "model": "qwen3-8b",
+  "response_error_hashes": [
+    "3233df81da41e61368daddcf6dca6bd7f3bc5e59c61f09539fa5f038594aa75a",
+    "454bb8d087218a8439265b214744df02cfdc4f51ba5bbdbfdc759be444050a29",
+    "6336e3daa4d85971a8ab11b16ef24da82beefa9780c9ac8e71196aad0eb2bbce",
+    "753b55e6d4f01f30c766f4426e949a655d3f0743b9d4c4f8a48aa8d9b016fa56",
+    "78e1d49ffb5663f1c1776e693140288f82a0a4a3149571a99d9498746df4f50d",
+    "98c0449f1b5eeba85652b75e66f0b7e950369fe346c879c0004c686583fd243f",
+    "c5f94a367647c7170547132719388c7f2696d0a497e6166bb0061d92503c9fe7",
+    "c72c81aebf18def45a68ab75308b2a17642fb0cbb6be0ef1de550d7a8505d80b"
+  ],
+  "upstream_root_cause": "UNDETERMINED"
+}
