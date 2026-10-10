@@ -14,4 +14,6 @@ Seed84 Canary Optimize12/Shadow40/最多一次机会；Pilot Optimize60/Shadow40
 
 开发池剩余 48 道未用 Optimize：Canary 12 道全新，Pilot 用 48 道全新加最少 12 道已用开发题。两次预冻结面板重叠 12 道 Optimize 和 1 道 Shadow；provider realization、cache、账本和 Memory 独立，选择不使用成绩。
 
-源码及两个精确 Scope 在本地提交后冻结；附件第 7.3 节要求冻结后一次确认，之后可以连续执行两阶段。未观察的真实阶段均为 NOT_OBSERVED。
+源码 `26b9ffed416470aabbc18477b65c8874a166e454` 及两个精确 Scope 已冻结；附件第 7.3 节要求冻结后一次确认，之后可以连续执行两阶段。未观察的真实阶段均为 NOT_OBSERVED。
+
+精确 Scope、哈希和预算见 [授权清单](AUTHORIZATION_CHECKLIST.md)。

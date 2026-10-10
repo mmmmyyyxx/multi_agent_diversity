@@ -1,0 +1,37 @@
+{
+  "diff_check": "PASS",
+  "exact_postfreeze_approval_pending": true,
+  "governance_preflight": "PASS",
+  "real_api_calls": 0,
+  "report_hashes": "PASS",
+  "repository_preflight": "PASS",
+  "sanitization": "PASS",
+  "scope_checks": [
+    {
+      "READY_TO_RUN": false,
+      "attempt_id": "a4_v25_arm_b_recovery_seed84_canary_attempt1",
+      "explicit_user_authorized": false,
+      "fresh_execution_cache_and_ledger_roots": "PASS",
+      "manifest_and_source_closure": "PASS",
+      "phase": "canary",
+      "protocol_and_command": "PASS",
+      "scope_sha256": "e3f3296fe02f212ccde65fd2054e46927b0f24568739afcdc8d78b6b2af089e0",
+      "startup_identity_sha256": "eaf697eee21945f200c4cb1fce9ac855e97fe3cf4e81fcd3952166e0b0f050f6",
+      "unconsumed_authorization": "PASS"
+    },
+    {
+      "READY_TO_RUN": false,
+      "attempt_id": "a4_v25_arm_b_recovery_seed84_pilot_attempt1",
+      "explicit_user_authorized": false,
+      "fresh_execution_cache_and_ledger_roots": "PASS",
+      "manifest_and_source_closure": "PASS",
+      "phase": "pilot",
+      "protocol_and_command": "PASS",
+      "scope_sha256": "5a66f703677a767664d916c271a273fcd34591051904e1e777e3881f798776d1",
+      "startup_identity_sha256": "94f852ef31357ffa0435ae95897115eca3a64d839d5522c50ec830e1db7ebc7d",
+      "unconsumed_authorization": "PASS"
+    }
+  ],
+  "source_sha": "26b9ffed416470aabbc18477b65c8874a166e454",
+  "status": "PASS"
+}

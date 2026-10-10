@@ -13,5 +13,6 @@
   "real_api_calls": 0,
   "real_efficacy": "NOT_EVALUABLE_BEFORE_EXECUTION",
   "repair": "OFFLINE_VERIFIED",
-  "source_freeze": "PENDING_LOCAL_SOURCE_COMMIT"
+  "source_freeze": "FROZEN_BOTH_SCOPES_READY_NOT_AUTHORIZED",
+  "source_sha": "26b9ffed416470aabbc18477b65c8874a166e454"
 }

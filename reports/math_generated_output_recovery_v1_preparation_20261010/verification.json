@@ -35,6 +35,14 @@
     "passed": 2,
     "scope": "Distinguishes valid null ordinary content from actual missing provider content field; all earlier fake transports bypass this normalization boundary."
   },
+  "postfreeze_metadata_checks": {
+    "failures": 0,
+    "network_attempt_count": 0,
+    "passed": 126,
+    "scope": "Governance, repository alignment and benchmark split contracts after exact manifest freeze.",
+    "skipped": 0,
+    "xml_sha256": "ecb3c2995174137e6f793dda8afa38eba030ee8406653033b6bedf636b32c5db"
+  },
   "repository_preflight": "PASS",
   "status": "PASS",
   "verification_mode": "FULL_CLASSIFIED_CURRENT_SUITE_PLUS_TWO_POST_SUITE_HTTP_ENVELOPE_CONTROLS",
