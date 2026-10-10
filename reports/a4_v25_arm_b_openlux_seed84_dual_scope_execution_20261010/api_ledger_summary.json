@@ -1,0 +1,82 @@
+{
+  "additional_provider_probes": 0,
+  "both_scopes_closed": true,
+  "combined_ceiling": 4000000,
+  "phases": {
+    "canary": {
+      "charged_by_role": {
+        "pattern_cluster": 396,
+        "pattern_gradient": 31323,
+        "reflection": 40974,
+        "solver": 210611
+      },
+      "charged_by_stage": {
+        "canary": 283304
+      },
+      "charged_tokens": 283304,
+      "fallback_charged_tokens": 0,
+      "fine_grained_solver_stage_cost": "NOT_SEPARATELY_OBSERVED_SHARED_EXACT_REQUEST_CACHE",
+      "max_charged_plus_reserved": 341875,
+      "max_inflight": 8,
+      "physical_attempts_by_role": {
+        "pattern_cluster": 1,
+        "pattern_gradient": 8,
+        "reflection": 6,
+        "solver": 325
+      },
+      "provider_reported_actual_tokens": 283304,
+      "receipts_verified": 340,
+      "reserved_tokens": 0,
+      "responses_by_role": {
+        "pattern_cluster": 1,
+        "pattern_gradient": 8,
+        "reflection": 6,
+        "solver": 325
+      },
+      "solver_usage_by_split": {
+        "optimize": 44969,
+        "shadow": 165642
+      },
+      "transport_failure_categories": {}
+    },
+    "pilot": {
+      "charged_by_role": {
+        "pattern_cluster": 3732,
+        "pattern_gradient": 672547,
+        "reflection": 203214,
+        "solver": 800733
+      },
+      "charged_by_stage": {
+        "pilot": 1680226
+      },
+      "charged_tokens": 1680226,
+      "fallback_charged_tokens": 0,
+      "fine_grained_solver_stage_cost": "NOT_SEPARATELY_OBSERVED_SHARED_EXACT_REQUEST_CACHE",
+      "max_charged_plus_reserved": 1738373,
+      "max_inflight": 8,
+      "physical_attempts_by_role": {
+        "pattern_cluster": 5,
+        "pattern_gradient": 164,
+        "reflection": 24,
+        "solver": 974
+      },
+      "provider_reported_actual_tokens": 1680226,
+      "receipts_verified": 1167,
+      "reserved_tokens": 0,
+      "responses_by_role": {
+        "pattern_cluster": 5,
+        "pattern_gradient": 164,
+        "reflection": 24,
+        "solver": 974
+      },
+      "solver_usage_by_split": {
+        "optimize": 517442,
+        "shadow": 283291
+      },
+      "transport_failure_categories": {}
+    }
+  },
+  "reruns": 0,
+  "reserved_tokens": 0,
+  "total_charged_tokens": 1963530
+}

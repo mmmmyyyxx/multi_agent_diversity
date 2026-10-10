@@ -1,0 +1,232 @@
+{
+  "additional_provider_probes": 0,
+  "binding_identity": "MATH_ROLE_ROUTED_GENERATION_RECOVERY_BINDING_V5",
+  "both_scopes_closed": true,
+  "cache_policy": "ROLE_ROUTED_RECOVERY_MEMBER_LANE_CACHE_V6",
+  "evidence_scope": "DESCRIPTIVE_OPTIMIZE_AND_ADAPTIVE_SHADOW_ONLY_NO_GENERALIZATION_CLAIM",
+  "method_identity": "unified_team_prompt_search_v2_5_generation_recovery_v1",
+  "parser_identity": "MATH_FLEXIBLE_ANSWER_EXTRACTION_V3",
+  "phases": {
+    "canary": {
+      "attempt_id": "a4_v25_arm_b_openlux_seed84_canary_attempt1",
+      "audit_provider_calls": 0,
+      "charged_by_stage": {
+        "canary": 283304
+      },
+      "charged_tokens": 283304,
+      "commits": 1,
+      "exported_candidates": 1,
+      "fallback_charged_tokens": 0,
+      "full_candidates": 1,
+      "lifecycle": {
+        "attempt_id": "a4_v25_arm_b_openlux_seed84_canary_attempt1",
+        "closure_receipt_sha256": "c6dd2c5c42705a785609e3b753d8be9b88f555bd1fde10f6860888c4886ef0d2",
+        "raw_inventory_sha256": "2422ad22685c9974d314af946f35b5f1a0e75a921abde3223bd96df0c2ca434f",
+        "scientific_complete": true,
+        "status": "EXECUTION_COMPLETE",
+        "stop_reason": "CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE"
+      },
+      "max_charged_plus_reserved": 341875,
+      "max_inflight": 8,
+      "metrics": {
+        "final": {
+          "coverage_histogram_0_to_5": {
+            "0": 1,
+            "1": 1,
+            "2": 0,
+            "3": 0,
+            "4": 1,
+            "5": 9
+          },
+          "invalid_profiles": 0,
+          "member_correct": [
+            10.0,
+            10.0,
+            11.0,
+            9.0,
+            10.0
+          ],
+          "oracle_correct": 11,
+          "sample_count": 12,
+          "unique_member_coverage": [
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "valid_profiles": 60,
+          "vote_correct": 10.0
+        },
+        "initial": {
+          "coverage_histogram_0_to_5": {
+            "0": 1,
+            "1": 1,
+            "2": 0,
+            "3": 0,
+            "4": 2,
+            "5": 8
+          },
+          "invalid_profiles": 0,
+          "member_correct": [
+            9.0,
+            10.0,
+            11.0,
+            9.0,
+            10.0
+          ],
+          "oracle_correct": 11,
+          "sample_count": 12,
+          "unique_member_coverage": [
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "valid_profiles": 60,
+          "vote_correct": 10.0
+        }
+      },
+      "opportunities_completed": 1,
+      "phase": "canary",
+      "physical_attempts_by_role": {
+        "pattern_cluster": 1,
+        "pattern_gradient": 8,
+        "reflection": 6,
+        "solver": 325
+      },
+      "probe_candidates": 1,
+      "provider_reported_actual_tokens": 283304,
+      "receipts_verified": 340,
+      "reserved_tokens": 0,
+      "responses_by_role": {
+        "pattern_cluster": 1,
+        "pattern_gradient": 8,
+        "reflection": 6,
+        "solver": 325
+      },
+      "shadow_gates": 1,
+      "source_startup_wire_inventory_and_ledger_verified": true,
+      "status": "OWNER_TERMINAL_INTEGRITY_AUDIT_PASS",
+      "test_calls": 0,
+      "transport_failure_categories": {},
+      "validation_calls": 0
+    },
+    "pilot": {
+      "attempt_id": "a4_v25_arm_b_openlux_seed84_pilot_attempt1",
+      "audit_provider_calls": 0,
+      "charged_by_stage": {
+        "pilot": 1680226
+      },
+      "charged_tokens": 1680226,
+      "commits": 2,
+      "exported_candidates": 6,
+      "fallback_charged_tokens": 0,
+      "full_candidates": 5,
+      "lifecycle": {
+        "attempt_id": "a4_v25_arm_b_openlux_seed84_pilot_attempt1",
+        "closure_receipt_sha256": "ce49040d6a542882e2bdfe3f3e510dddb0c0fac7b386545855a9564704035135",
+        "raw_inventory_sha256": "4bb86941ca4092441b8e77eb56bddb4501dda95be976a34e0ec0692043293033",
+        "scientific_complete": false,
+        "status": "EXECUTION_COMPLETE",
+        "stop_reason": "OPERATIONAL_OPPORTUNITY_CEILING"
+      },
+      "max_charged_plus_reserved": 1738373,
+      "max_inflight": 8,
+      "metrics": {
+        "final": {
+          "coverage_histogram_0_to_5": {
+            "0": 7,
+            "1": 4,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 43
+          },
+          "invalid_profiles": 1,
+          "member_correct": [
+            48.0,
+            49.0,
+            46.0,
+            47.0,
+            47.0
+          ],
+          "oracle_correct": 53,
+          "sample_count": 60,
+          "unique_member_coverage": [
+            1,
+            2,
+            1,
+            0,
+            0
+          ],
+          "valid_profiles": 299,
+          "vote_correct": 49.0
+        },
+        "initial": {
+          "coverage_histogram_0_to_5": {
+            "0": 10,
+            "1": 3,
+            "2": 1,
+            "3": 2,
+            "4": 0,
+            "5": 44
+          },
+          "invalid_profiles": 0,
+          "member_correct": [
+            46.0,
+            45.0,
+            46.0,
+            47.0,
+            47.0
+          ],
+          "oracle_correct": 50,
+          "sample_count": 60,
+          "unique_member_coverage": [
+            0,
+            0,
+            2,
+            1,
+            0
+          ],
+          "valid_profiles": 300,
+          "vote_correct": 47.0
+        }
+      },
+      "opportunities_completed": 5,
+      "phase": "pilot",
+      "physical_attempts_by_role": {
+        "pattern_cluster": 5,
+        "pattern_gradient": 164,
+        "reflection": 24,
+        "solver": 974
+      },
+      "probe_candidates": 6,
+      "provider_reported_actual_tokens": 1680226,
+      "receipts_verified": 1167,
+      "reserved_tokens": 0,
+      "responses_by_role": {
+        "pattern_cluster": 5,
+        "pattern_gradient": 164,
+        "reflection": 24,
+        "solver": 974
+      },
+      "shadow_gates": 3,
+      "source_startup_wire_inventory_and_ledger_verified": true,
+      "status": "OWNER_TERMINAL_INTEGRITY_AUDIT_PASS",
+      "test_calls": 0,
+      "transport_failure_categories": {},
+      "validation_calls": 0
+    }
+  },
+  "preparation_sha": "95dae24e27f8a6af19da84ca832669470d160123",
+  "provider_routing_policy": "OPENLUX_SOLVER_LWJ_OPTIMIZER_V1",
+  "recovery_policy": "BOUNDED_GENERATED_OUTPUT_RECOVERY_V1",
+  "reruns": 0,
+  "reserved_tokens": 0,
+  "source_sha": "01306fbf9cde002291ab21e2f93a2c02399f7e9e",
+  "test_calls": 0,
+  "total_charged_tokens": 1963530,
+  "validation_calls": 0
+}

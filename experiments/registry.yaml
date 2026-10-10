@@ -9256,9 +9256,9 @@ experiments:
   method_family: unified_team_prompt_search_v2_5_generation_recovery_v1
   parent_ids:
   - math_generated_output_recovery_v1
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: OFFLINE_ROLE_ROUTING_VERIFIED_EXACT_SCOPES_PENDING
-  implementation_commit: null
+  status: COMPLETED
+  scientific_status: ROLE_ROUTING_OFFLINE_VERIFIED_LIVE_REQUESTS_OBSERVED
+  implementation_commit: 01306fbf9cde002291ab21e2f93a2c02399f7e9e
   execution_commit: null
   result_commit: null
   manifest: experiments/manifests/math_provider_role_routing_v1.yaml
@@ -9270,55 +9270,67 @@ experiments:
   notes:
   - OpenLux Solver and lwj optimizer; independent Arm B attempts; prior scopes closed.
   - No API authorization granted by preparation; exact post-freeze confirmation required.
+  - Live requests observed in separately registered attempts; both exact scopes closed.
   unavailable:
-    implementation_commit: Containing source commit; exact frozen scopes follow.
     execution_commit: No execution yet.
     result_commit: Containing preparation commit.
+  reports:
+  - reports/math_provider_role_routing_v1_preparation_20261010
 - experiment_id: a4_v25_arm_b_openlux_seed84_canary_v1
   kind: REAL_CANARY
   era: UNIFIED_TEAM_PROMPT_SEARCH
   method_family: unified_team_prompt_search_v2_5_generation_recovery_v1
   parent_ids:
   - math_provider_role_routing_v1
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: OFFLINE_ROLE_ROUTING_VERIFIED_EXACT_SCOPES_PENDING
-  implementation_commit: null
-  execution_commit: null
+  status: COMPLETED
+  scientific_status: VALID_FROZEN_SEARCH_ONLY
+  implementation_commit: 01306fbf9cde002291ab21e2f93a2c02399f7e9e
+  execution_commit: 95dae24e27f8a6af19da84ca832669470d160123
   result_commit: null
   manifest: experiments/manifests/a4_v25_arm_b_openlux_seed84_canary_v1.yaml
-  report: reports/math_provider_role_routing_v1_preparation_20261010
-  classifier: reports/math_provider_role_routing_v1_preparation_20261010/classifier.json
-  active_for_new_work: true
+  report: reports/a4_v25_arm_b_openlux_seed84_dual_scope_execution_20261010
+  classifier: reports/a4_v25_arm_b_openlux_seed84_dual_scope_execution_20261010/classifier.json
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
   - OpenLux Solver and lwj optimizer; independent Arm B attempts; prior scopes closed.
   - No API authorization granted by preparation; exact post-freeze confirmation required.
+  - Exact authorized scope closed; sanitized development evidence; no held-out claim
+    or rerun.
   unavailable:
-    implementation_commit: Containing source commit; exact frozen scopes follow.
-    execution_commit: No execution yet.
-    result_commit: Containing preparation commit.
+    result_commit: Containing sanitized evidence commit; no self-referential SHA.
+  authorization_consumed: true
+  authorization_scope_closed: true
+  reports:
+  - reports/math_provider_role_routing_v1_preparation_20261010
+  - reports/a4_v25_arm_b_openlux_seed84_dual_scope_execution_20261010
 - experiment_id: a4_v25_arm_b_openlux_seed84_pilot_v1
   kind: PILOT
   era: UNIFIED_TEAM_PROMPT_SEARCH
   method_family: unified_team_prompt_search_v2_5_generation_recovery_v1
   parent_ids:
   - math_provider_role_routing_v1
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: OFFLINE_ROLE_ROUTING_VERIFIED_EXACT_SCOPES_PENDING
-  implementation_commit: null
-  execution_commit: null
+  status: COMPLETED
+  scientific_status: VALID_OBSERVATIONS_OPERATIONALLY_TRUNCATED
+  implementation_commit: 01306fbf9cde002291ab21e2f93a2c02399f7e9e
+  execution_commit: 95dae24e27f8a6af19da84ca832669470d160123
   result_commit: null
   manifest: experiments/manifests/a4_v25_arm_b_openlux_seed84_pilot_v1.yaml
-  report: reports/math_provider_role_routing_v1_preparation_20261010
-  classifier: reports/math_provider_role_routing_v1_preparation_20261010/classifier.json
-  active_for_new_work: true
+  report: reports/a4_v25_arm_b_openlux_seed84_dual_scope_execution_20261010
+  classifier: reports/a4_v25_arm_b_openlux_seed84_dual_scope_execution_20261010/classifier.json
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
   - OpenLux Solver and lwj optimizer; independent Arm B attempts; prior scopes closed.
   - No API authorization granted by preparation; exact post-freeze confirmation required.
+  - Exact authorized scope closed; sanitized development evidence; no held-out claim
+    or rerun.
   unavailable:
-    implementation_commit: Containing source commit; exact frozen scopes follow.
-    execution_commit: No execution yet.
-    result_commit: Containing preparation commit.
+    result_commit: Containing sanitized evidence commit; no self-referential SHA.
+  authorization_consumed: true
+  authorization_scope_closed: true
+  reports:
+  - reports/math_provider_role_routing_v1_preparation_20261010
+  - reports/a4_v25_arm_b_openlux_seed84_dual_scope_execution_20261010

@@ -1,0 +1,69 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "all_opportunity_guard_audit.json",
+      "sha256": "8d0bfb7f4aa7de8219fc0d6074c05ff9338cbadf9272beac0fcc341628e24041"
+    },
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "c0e710a3e5c11fa92218a6625813c47fdf816601ec4a242427f0ffc05cdf37f2"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "4fcd8403da92809cd7dfcc4abca129649622264aac20349e91321d686a8fb897"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "ade6965209e5ea0b37cf123a74cceeeb433fb2b8fad60d9807dc92a833f79356"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "3eec24c108236da7c1a15d9b5584bb5c7376a828999309056c3dc7d7099e1998"
+    },
+    {
+      "file": "first_opportunity_audit.json",
+      "sha256": "0425a8530de83de6ef0a256e24431e8de7c53cdcde1ddca969c8975ab8b4911e"
+    },
+    {
+      "file": "funnel_summary.json",
+      "sha256": "4e27e0159e2b3ed4049e089dd38275f93c6bea3096e9732f7cc353a47598c734"
+    },
+    {
+      "file": "initial_metrics.json",
+      "sha256": "fb16168bd1c6c8b319a64100f7f997fbdacdc3fcdcf6378699f62d18d57410dd"
+    },
+    {
+      "file": "integrity_audit.json",
+      "sha256": "4b8bd9a3bf0f4a2454922cb8000c45450101849760021b8807dd3d1508cd24b1"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "5ee0c03a6acf6f0cc62728dc279a1818d05131ff1605f85a242117617615f9df"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "9313b3a43aa2ecb8fc1f91bfadb673c12fd30fd1746ebf969483b41d0e9e31de"
+    },
+    {
+      "file": "README.md",
+      "sha256": "35217acd8b21c6fe8bebe857ad91541af23aab3e0059b8a64e448bcdcc415fc9"
+    },
+    {
+      "file": "recovery_costs.json",
+      "sha256": "e22553df0b5eae7803306f2f9884a833e59c3279233c7791e253d09f5b1ac927"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "5b7246232cffa98adf4c87bb589e183362c38c3e81ee0d073a3bfd82d43ee5df"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "e57b1d278252e4cba93d7537ad62f0c90450c9616c3dc43720750c595358ba93"
+    },
+    {
+      "file": "verification.json",
+      "sha256": "0878da911f62c7eae738779d37ee28b20e918a8488cf5e51f91b24216d4d8fac"
+    }
+  ]
+}

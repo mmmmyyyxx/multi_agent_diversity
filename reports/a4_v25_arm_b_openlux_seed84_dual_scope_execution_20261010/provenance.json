@@ -1,0 +1,99 @@
+{
+  "approval_sha256": "80abc2955844e09557dcd05b422ff131d20b8dd6d7188364ea5eee06a6044590",
+  "metadata_freeze_commit": "95dae24e27f8a6af19da84ca832669470d160123",
+  "prepared_evidence_hashes": {
+    "algorithm": "sha256",
+    "files": [
+      {
+        "file": "api_ledger_summary.json",
+        "sha256": "8805e037648c089b98e0a555d66284ee6d22d42e06662b1c4710853c00880035"
+      },
+      {
+        "file": "AUTHORIZATION_CHECKLIST.md",
+        "sha256": "bc350aaff3b5befdcfd760fb745dd0085d68dbca686473a7ce47afb9e9a11383"
+      },
+      {
+        "file": "binding_preflight.json",
+        "sha256": "5eb299c33accfec17eb110f83d561e2d3a4b82cb04562f0730ff4dc6b5460428"
+      },
+      {
+        "file": "classifier.json",
+        "sha256": "5b67f3865acaecee2c7c1cfd4dd6a803f77e920d6303087a0dc1d7e286355c4e"
+      },
+      {
+        "file": "dual_scope_authorization.json",
+        "sha256": "dfc64faac04883ba628873fff2725a4e80acd0330c07fb8326585e8b3ceab07d"
+      },
+      {
+        "file": "evaluation_access_summary.json",
+        "sha256": "53b0d40b8a9ce47ea7aa1c6e964e6080d4feb2cd5cbb101ccdc902378dd342fe"
+      },
+      {
+        "file": "fact_assertions.json",
+        "sha256": "99ae910db655fbcbcd53f0e2589f392ee71b8ba0912576856f83e5e14d155fa1"
+      },
+      {
+        "file": "manifest_snapshot.yaml",
+        "sha256": "7424b01c58bad2c790ac1a2cd2e6fec2eeb96afdae9ccb5a98a7b858fad571b3"
+      },
+      {
+        "file": "provenance.json",
+        "sha256": "496b8fe289eb9a6a6be0d310d72dbd1da9f1fd892503638baf354f4201330d32"
+      },
+      {
+        "file": "README.md",
+        "sha256": "dee76c7f1edd484b95c9eed2bd2446ed8e72cac59f4d7dfe254233dc81dcc890"
+      },
+      {
+        "file": "sanitization_manifest.json",
+        "sha256": "ae51d1393527cbf2aa673bba00af6bcb616ff4d67a910aa10a472c3f95fd6fc2"
+      },
+      {
+        "file": "summary.json",
+        "sha256": "211cda3e74a08b646824531a636306c5e4f313e91d5ab872f7dbcbebdd7e01b9"
+      },
+      {
+        "file": "verification.json",
+        "sha256": "80bc6798c0c2b8828260880e43f9f492edd36fedd3bdd0bb7b339fd7e13011da"
+      }
+    ]
+  },
+  "publication_commit": "CONTAINING_COMMIT",
+  "scopes": [
+    {
+      "attempt_id": "a4_v25_arm_b_openlux_seed84_canary_attempt1",
+      "binding_sha256": "67b4a8ba3c76b8e46263701f467f23267703d4adfd12008365e68a442c2ca8cd",
+      "experiment_id": "a4_v25_arm_b_openlux_seed84_canary_v1",
+      "hash_closure": {
+        "benchmark_contract_hash": "f16075346ebf0e9028d55b79cec33caf17891cf1126c2990d7b1c43cde09fefa",
+        "dataset_manifest_hash": "d3c3f587bf9e08f5d9a12c8b777953c57cd30fc4c655e82e95f556b337119d81",
+        "governance_hash": "fa339ade2be73690284397d0ea7306a143c14e175205791bd376c5071a4687d0",
+        "scientific_source_hash": "cdceccccce7fd195d1af8b2e47a82735dcb5bdfcb1b58a0ab091793b4ba46d05"
+      },
+      "manifest_path": "experiments/manifests/a4_v25_arm_b_openlux_seed84_canary_v1.yaml",
+      "manifest_sha256": "44926d9177fcc4aa824c6c252b18100265a6842610a3e51d2245f1140f8aa100",
+      "scope_sha256": "bde46ead1b30b60c63b311781f13e4a513f9fd9e864a60de34da59672af13e22",
+      "source_closure_sha256": "39473f9ab6aac3ccd055a86fe3efe405ffb5e2119d47f6095e234e5d81c3f3e0",
+      "source_sha": "01306fbf9cde002291ab21e2f93a2c02399f7e9e",
+      "startup_identity_sha256": "4e99f0502d0c59f591e2b088778f5cf1104a7ca02b9f05f8c58be0d54fe8cf39"
+    },
+    {
+      "attempt_id": "a4_v25_arm_b_openlux_seed84_pilot_attempt1",
+      "binding_sha256": "6bacb5c9564d83e67a4b13d789da60ce51a57dfc2dc1398dcd40acffa19b4221",
+      "experiment_id": "a4_v25_arm_b_openlux_seed84_pilot_v1",
+      "hash_closure": {
+        "benchmark_contract_hash": "f16075346ebf0e9028d55b79cec33caf17891cf1126c2990d7b1c43cde09fefa",
+        "dataset_manifest_hash": "d3c3f587bf9e08f5d9a12c8b777953c57cd30fc4c655e82e95f556b337119d81",
+        "governance_hash": "fa339ade2be73690284397d0ea7306a143c14e175205791bd376c5071a4687d0",
+        "scientific_source_hash": "9cb0a4d1c00c0c54843fcc28ec9d162d5488610bae0bca4507559d37f0f61f4f"
+      },
+      "manifest_path": "experiments/manifests/a4_v25_arm_b_openlux_seed84_pilot_v1.yaml",
+      "manifest_sha256": "dfa3099c99df2212e5b4d452008a8182c940a657ef2642bb9c5704574686a14d",
+      "scope_sha256": "53280eb4ff6f785a2be6163bc53d6a81c254e10b591b93b9d0df7b85856d5122",
+      "source_closure_sha256": "f57b8f1da873f7429079b8dcf5cab5d00d77af867bddd9e79b3103ddf1dc728f",
+      "source_sha": "01306fbf9cde002291ab21e2f93a2c02399f7e9e",
+      "startup_identity_sha256": "2529d5689f51ce8fc8db99c8693f2e7b47de5e457671904d79ba47db066544d8"
+    }
+  ],
+  "source_sha": "01306fbf9cde002291ab21e2f93a2c02399f7e9e"
+}

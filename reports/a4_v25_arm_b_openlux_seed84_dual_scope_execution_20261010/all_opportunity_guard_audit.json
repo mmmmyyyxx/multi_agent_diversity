@@ -1,0 +1,60 @@
+{
+  "canary": {
+    "audit_provider_calls": 0,
+    "opportunities": [
+      {
+        "commit_gate_and_state_transition_verified": true,
+        "committed": true,
+        "fixed_peers_unchanged": true,
+        "probe_ranking_and_full_initial_floor_verified": true,
+        "target_member": 0
+      }
+    ],
+    "phase": "canary",
+    "scope": "ALL_OBSERVED_GUARD_ARITHMETIC_AND_TRANSITIONS; FIRST_COMPLETE_OPPORTUNITY_AND_FINAL_SCORES_HAVE_SEPARATE_NATIVE_RECOMPUTATION",
+    "status": "PASS"
+  },
+  "pilot": {
+    "audit_provider_calls": 0,
+    "opportunities": [
+      {
+        "commit_gate_and_state_transition_verified": true,
+        "committed": true,
+        "fixed_peers_unchanged": true,
+        "probe_ranking_and_full_initial_floor_verified": true,
+        "target_member": 0
+      },
+      {
+        "commit_gate_and_state_transition_verified": true,
+        "committed": true,
+        "fixed_peers_unchanged": true,
+        "probe_ranking_and_full_initial_floor_verified": true,
+        "target_member": 1
+      },
+      {
+        "commit_gate_and_state_transition_verified": true,
+        "committed": false,
+        "fixed_peers_unchanged": true,
+        "probe_ranking_and_full_initial_floor_verified": true,
+        "target_member": 2
+      },
+      {
+        "commit_gate_and_state_transition_verified": true,
+        "committed": false,
+        "fixed_peers_unchanged": true,
+        "probe_ranking_and_full_initial_floor_verified": true,
+        "target_member": 0
+      },
+      {
+        "commit_gate_and_state_transition_verified": true,
+        "committed": false,
+        "fixed_peers_unchanged": true,
+        "probe_ranking_and_full_initial_floor_verified": true,
+        "target_member": 3
+      }
+    ],
+    "phase": "pilot",
+    "scope": "ALL_OBSERVED_GUARD_ARITHMETIC_AND_TRANSITIONS; FIRST_COMPLETE_OPPORTUNITY_AND_FINAL_SCORES_HAVE_SEPARATE_NATIVE_RECOMPUTATION",
+    "status": "PASS"
+  }
+}

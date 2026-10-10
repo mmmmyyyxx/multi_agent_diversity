@@ -1,0 +1,155 @@
+{
+  "audit_provider_calls": 0,
+  "postexecution_governance": "PASS",
+  "preexecution": {
+    "checks": {
+      "current_solver_model_bindings": "PASS",
+      "independent_member_lanes_fixed_peers_and_exact_cache": "PASS",
+      "initial_arm_b_through_local_probe_full_shadow_commit": "PASS",
+      "role_scoped_request_identity": "PASS",
+      "standard_chat_usage_and_fallback_reconciliation": "PASS_OFFLINE"
+    },
+    "classification": "OFFLINE_CONFORMANCE_PASS_LIVE_PROVIDER_UNVERIFIED",
+    "compileall": "PASS",
+    "current_suite": {
+      "passed": 606,
+      "scope": {
+        "deselected": 0,
+        "historical_replay_test_cases": 0,
+        "mode": "current",
+        "omitted_module_count": 220,
+        "omitted_module_inventory": "tests/suite_classification.json",
+        "private_artifact_test_cases": 0,
+        "selected": 608
+      },
+      "skipped": 2
+    },
+    "diff_check": "PASS",
+    "final_frozen_preflight": [
+      {
+        "phase": "canary",
+        "status": "FROZEN_UNAPPROVED_FRESH_HASHES_PASS"
+      },
+      {
+        "phase": "pilot",
+        "status": "FROZEN_UNAPPROVED_FRESH_HASHES_PASS"
+      }
+    ],
+    "final_governance_preflight": {
+      "active_invariant_count": 27,
+      "api_calls": 0,
+      "deterministic_hash_replay": "PASS",
+      "errors": [],
+      "experiment_count": 188,
+      "failure_count": 43,
+      "lineage_node_count": 317,
+      "mode": "zero_api_zero_dataset_evaluation",
+      "ok": true,
+      "sanitization_fixture": "PASS",
+      "test_calls": 0,
+      "validation_calls": 0
+    },
+    "governance_check_generated": "PASS",
+    "governance_preflight": "PASS",
+    "manifest_validation": "PASS",
+    "network_attempt_count": 0,
+    "new_execution_scope_frozen": true,
+    "new_metadata_checks": {
+      "correction": "Preserve the active search method; register role routing as a provenance amendment.",
+      "exact_failure_identity_set_recheck": {
+        "failed": 0,
+        "passed": 11
+      },
+      "first_campaign": {
+        "failed": 11,
+        "passed": 71
+      },
+      "network_attempt_count": 0,
+      "recheck_xml_sha256": "91a0c249b6fd1e7ade7458d4920a8574fc321ed9e964c007a3d5e92b478ebc1b",
+      "resolved": 82,
+      "skipped": 0,
+      "verification_mode": "FIRST_CAMPAIGN_PLUS_EXACT_FAILURE_IDENTITY_SET_RECHECK",
+      "xml_sha256": "bbd5fbc82960071aa262908753c9a7884f2edf6449f9db90cadc4c06d665529e"
+    },
+    "new_real_api_authorized": false,
+    "new_regression_cases": 13,
+    "private_log_sha256": "c88b4047a7651a67b53da9110f866623c62429660d196b45541d2128ca2185df",
+    "production_changes_in_this_review": false,
+    "real_api_calls": 0,
+    "real_usage_verified": false,
+    "reviewed_files": [
+      {
+        "path": "multi_dataset_diverse_rl/provider_routing.py",
+        "sha256": "69be8c5705a56acb40457bd5c453db91a035bc542350b4cfe4809b26c438a327"
+      },
+      {
+        "path": "multi_dataset_diverse_rl/search/provider_runtime.py",
+        "sha256": "6c533ac7fb5c1d1c6a75497a157829e3ed1b25d5fcd821f33612bf219828987e"
+      },
+      {
+        "path": "multi_dataset_diverse_rl/benchmarks/math_response_evidence.py",
+        "sha256": "a9186a6d7fd4e2507eda06848e7282c8daaeea8dde00e39d44ca2452f6231512"
+      },
+      {
+        "path": "multi_dataset_diverse_rl/benchmarks/math_structured_binding.py",
+        "sha256": "6ea74885a855b9fc14eb86e5c8ed3714946caeae904c4f019a05a2456fcd9874"
+      },
+      {
+        "path": "multi_dataset_diverse_rl/governance/unified_execution.py",
+        "sha256": "d8c37635a61659443e5ecc64f94fa71149c75a3b018c35e2ec59cf68673cb720"
+      },
+      {
+        "path": "multi_dataset_diverse_rl/governance/autonomous_math.py",
+        "sha256": "06354be40e04e744d4666d7a7f03409e50f27c1b0194d4efcbeb074ed760dc08"
+      },
+      {
+        "path": "multi_dataset_diverse_rl/governance/token_accounting.py",
+        "sha256": "dad4d326f3c6d2b3df218bd51771fe583cf2d45203dad28d1a250a1dfae237dc"
+      },
+      {
+        "path": "multi_dataset_diverse_rl/search/binary_runtime.py",
+        "sha256": "ae5a55ace0b40946b4a804f95be40d922d76c6275d40a64ee41a9cceea709d08"
+      },
+      {
+        "path": "multi_dataset_diverse_rl/search/private_gate.py",
+        "sha256": "75c7cb7bf7b858655d7b2316f6648f409219d9b9b789cd0818fb41cd20c65ea3"
+      },
+      {
+        "path": "tests/current/test_provider_role_routing.py",
+        "sha256": "2ec61307c006b95306b7378ec64df39e4dc1c8fa5f57d0f0a0b36923e12bd77d"
+      },
+      {
+        "path": "tests/current/test_arm_b_canary_inputs.py",
+        "sha256": "5db31b2a5da27b67f06c5eb3085552865d6428e11a82f1f7463ce38f3e07db50"
+      }
+    ],
+    "runtime_model_availability_verified": false,
+    "schema_version": "a4_provider_migration_offline_review_v1",
+    "test_calls": 0,
+    "validation_calls": 0
+  },
+  "terminal_integrity": "PASS",
+  "postexecution_governance_tests": {
+    "passed": 82,
+    "failed": 0,
+    "skipped": 0,
+    "junit_sha256": "94cc4e00a59e00d3392b1cbdbfd8db54d6c56eb1c9698f17a10c0df6e52ab18b"
+  },
+  "required_checks": {
+    "status": "PASS",
+    "compileall": "PASS",
+    "governance": "PASS",
+    "manifest_and_generated_views": "PASS",
+    "sanitization": "PASS",
+    "diff_check": "PASS",
+    "real_api_calls": 0,
+    "source_commit": "01306fbf9cde002291ab21e2f93a2c02399f7e9e"
+  },
+  "final_generated_index_audit": {
+    "status": "PASS",
+    "audit_sha256": "46d7b1b861ad58a6d2ea79e85967a33e3992ae04778685645721f1062c6757e3",
+    "report_kind": "REAL_CANARY",
+    "report_status": "COMPLETED",
+    "real_api_calls": 0
+  }
+}

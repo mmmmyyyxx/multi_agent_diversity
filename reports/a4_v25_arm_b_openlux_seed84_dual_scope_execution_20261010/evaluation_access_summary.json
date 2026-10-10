@@ -1,0 +1,63 @@
+{
+  "optimize_counts": {
+    "canary": 12,
+    "pilot": 60
+  },
+  "selection": {
+    "available_development_counts": {
+      "optimize": 40,
+      "shadow": 260
+    },
+    "excluded_count": 150,
+    "heldout_raw_reads": 0,
+    "joint_prefreeze_overlap": {
+      "optimize": 12,
+      "shadow": 1
+    },
+    "newly_excluded_dispatched_examples": 8,
+    "panels": {
+      "canary": {
+        "counts": {
+          "canary_optimize": 12,
+          "pilot_shadow": 40
+        },
+        "membership_hashes": {
+          "canary_optimize": "f0783569d3ed2420dab628397b3c36f0252329cb988c02d0e020d0d8204b9d53",
+          "pilot_shadow": "75ffe6e10ac9d00bbb11795e52121e680cf9db53fd1195e9053d789d195868c5"
+        }
+      },
+      "pilot": {
+        "counts": {
+          "pilot_optimize": 60,
+          "pilot_shadow": 40
+        },
+        "membership_hashes": {
+          "pilot_optimize": "69911c054c523fd29630d4e0ee85100159d62b970ae52ae5b2e99481f125dab8",
+          "pilot_shadow": "5817d9853255000143874989c1012f50013e0b9b12f30ed8d1a8a2bc18c6635c"
+        }
+      }
+    },
+    "prior_actual_overlap": {
+      "canary": {
+        "canary_optimize": 0,
+        "pilot_shadow": 0
+      },
+      "pilot": {
+        "pilot_optimize": 20,
+        "pilot_shadow": 0
+      }
+    },
+    "prior_binding_sha256": "8df72c8c4df4980ff9a074b978473f0936a43ada40dfa10ffdce3b014ba72b91",
+    "prior_trace_sha256": "614827b156113f107e7e9c8584539e37c2bfb1b50f0b183cfedac52ed9204915",
+    "selection_uses_outcomes": false
+  },
+  "shadow_counts": {
+    "canary": 40,
+    "pilot": 40
+  },
+  "shadow_role": "PRIVATE_ADAPTIVE_GATE_NOT_INDEPENDENT_VALIDATION",
+  "test_calls": 0,
+  "test_raw_reads": 0,
+  "validation_calls": 0,
+  "validation_raw_reads": 0
+}

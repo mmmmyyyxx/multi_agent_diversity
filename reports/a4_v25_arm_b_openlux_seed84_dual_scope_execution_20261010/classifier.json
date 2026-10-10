@@ -1,0 +1,20 @@
+{
+  "canary": {
+    "engineering": "TERMINAL_INTEGRITY_PASS",
+    "frozen_phase_scientific_completion": true,
+    "generalization": "NOT_EVALUABLE_NO_VALIDATION_OR_TEST",
+    "local_search": "OBSERVED",
+    "scientific_validity": "VALID_FROZEN_SEARCH_ONLY",
+    "stop_reason": "CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE",
+    "team_level": "DESCRIPTIVE_DEVELOPMENT_METRICS_ONLY"
+  },
+  "pilot": {
+    "engineering": "TERMINAL_INTEGRITY_PASS",
+    "frozen_phase_scientific_completion": false,
+    "generalization": "NOT_EVALUABLE_NO_VALIDATION_OR_TEST",
+    "local_search": "OBSERVED",
+    "scientific_validity": "VALID_OBSERVATIONS_OPERATIONALLY_TRUNCATED",
+    "stop_reason": "OPERATIONAL_OPPORTUNITY_CEILING",
+    "team_level": "DESCRIPTIVE_DEVELOPMENT_METRICS_ONLY"
+  }
+}

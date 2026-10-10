@@ -1,0 +1,21 @@
+source_sha: 01306fbf9cde002291ab21e2f93a2c02399f7e9e
+scopes:
+- experiment_id: a4_v25_arm_b_openlux_seed84_canary_v1
+  attempt_id: a4_v25_arm_b_openlux_seed84_canary_attempt1
+  manifest_path: experiments/manifests/a4_v25_arm_b_openlux_seed84_canary_v1.yaml
+  manifest_sha256: 44926d9177fcc4aa824c6c252b18100265a6842610a3e51d2245f1140f8aa100
+  scope_sha256: bde46ead1b30b60c63b311781f13e4a513f9fd9e864a60de34da59672af13e22
+  startup_identity_sha256: 4e99f0502d0c59f591e2b088778f5cf1104a7ca02b9f05f8c58be0d54fe8cf39
+- experiment_id: a4_v25_arm_b_openlux_seed84_pilot_v1
+  attempt_id: a4_v25_arm_b_openlux_seed84_pilot_attempt1
+  manifest_path: experiments/manifests/a4_v25_arm_b_openlux_seed84_pilot_v1.yaml
+  manifest_sha256: dfa3099c99df2212e5b4d452008a8182c940a657ef2642bb9c5704574686a14d
+  scope_sha256: 53280eb4ff6f785a2be6163bc53d6a81c254e10b591b93b9d0df7b85856d5122
+  startup_identity_sha256: 2529d5689f51ce8fc8db99c8693f2e7b47de5e457671904d79ba47db066544d8
+model_routes:
+  solver: openlux/gpt-4o-mini
+  optimizer: lwj/qwen3.7-flash
+seed: 84
+token_ceiling_per_phase: 2000000
+validation_calls: 0
+test_calls: 0

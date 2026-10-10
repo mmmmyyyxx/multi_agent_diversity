@@ -1,0 +1,287 @@
+{
+  "canary": {
+    "actual_max_reserved_inflight_requests": 8,
+    "all_member_correct_intersection": 8,
+    "cache_and_first_valid_recovery_verified": true,
+    "charged_tokens": 35705,
+    "conservative_format_rejections_observed": false,
+    "coverage_histogram_0_to_5": {
+      "0": 1,
+      "1": 1,
+      "2": 0,
+      "3": 0,
+      "4": 2,
+      "5": 8
+    },
+    "fallback_charged_tokens": 0,
+    "independent_scores_match_runtime": true,
+    "interface_review_status": "OWNER_CONFORMANCE_REVIEW_PASS",
+    "logical_profiles": 60,
+    "max_charged_plus_reserved_exposure": 97660,
+    "member_correct": [
+      9.0,
+      10.0,
+      11.0,
+      9.0,
+      10.0
+    ],
+    "optimize_count": 12,
+    "oracle_correct": 11,
+    "owner_review_sha256": "0227bb7e5f0f20052743abdbf26b397fc3ec6823aaa356028142e16d1f83416d",
+    "pairwise_correct_overlap": [
+      [
+        9,
+        9,
+        9,
+        8,
+        9
+      ],
+      [
+        9,
+        10,
+        10,
+        9,
+        10
+      ],
+      [
+        9,
+        10,
+        11,
+        9,
+        10
+      ],
+      [
+        8,
+        9,
+        9,
+        9,
+        9
+      ],
+      [
+        9,
+        10,
+        10,
+        9,
+        10
+      ]
+    ],
+    "pairwise_error_phi": [
+      [
+        1.0,
+        0.7745966692414834,
+        0.5222329678670935,
+        0.5555555555555556,
+        0.7745966692414834
+      ],
+      [
+        0.7745966692414834,
+        1.0,
+        0.674199862463242,
+        0.7745966692414834,
+        1.0
+      ],
+      [
+        0.5222329678670935,
+        0.674199862463242,
+        1.0,
+        0.5222329678670935,
+        0.674199862463242
+      ],
+      [
+        0.5555555555555556,
+        0.7745966692414834,
+        0.5222329678670935,
+        1.0,
+        0.7745966692414834
+      ],
+      [
+        0.7745966692414834,
+        1.0,
+        0.674199862463242,
+        0.7745966692414834,
+        1.0
+      ]
+    ],
+    "physical_solver_responses": 60,
+    "preapproval_interface_review_status": "AWAITING_SCIENTIFIC_OWNER_TEXT_REVIEW",
+    "provider_reported_actual_tokens": 35705,
+    "raw_invalid_reasons": {
+      "VALID": 60
+    },
+    "real_provider_calls_by_audit": 0,
+    "reasoning_metadata_contradictions": 0,
+    "recovered_invalid": 0,
+    "repeated_format_failure_profiles": 0,
+    "reserved_tokens": 0,
+    "resolved_invalid": 0,
+    "resolved_valid": 60,
+    "sealed_receipts_verified": 60,
+    "semantic_draw_distribution": {
+      "1": 60
+    },
+    "semantic_recovery_calls": 0,
+    "semantic_recovery_tokens": 0,
+    "solution_status_counts": {
+      "WRITTEN_SOLUTION_PRESENT": 60
+    },
+    "terminal_invalid": 0,
+    "test_calls": 0,
+    "transport_failures": {},
+    "unique_member_coverage": [
+      0,
+      0,
+      1,
+      0,
+      0
+    ],
+    "unknown_charged_without_receipt": 0,
+    "valid_mathematical_wrong_profiles": 11.0,
+    "validation_calls": 0,
+    "vote_correct": 10.0,
+    "wire_all_exact": true
+  },
+  "pilot": {
+    "actual_max_reserved_inflight_requests": 8,
+    "all_member_correct_intersection": 44,
+    "cache_and_first_valid_recovery_verified": true,
+    "charged_tokens": 227949,
+    "conservative_format_rejections_observed": false,
+    "coverage_histogram_0_to_5": {
+      "0": 10,
+      "1": 3,
+      "2": 1,
+      "3": 2,
+      "4": 0,
+      "5": 44
+    },
+    "fallback_charged_tokens": 0,
+    "independent_scores_match_runtime": true,
+    "interface_review_status": "OWNER_CONFORMANCE_REVIEW_PASS",
+    "logical_profiles": 300,
+    "max_charged_plus_reserved_exposure": 286351,
+    "member_correct": [
+      46.0,
+      45.0,
+      46.0,
+      47.0,
+      47.0
+    ],
+    "optimize_count": 60,
+    "oracle_correct": 50,
+    "owner_review_sha256": "dfeee08b983de878395b8813cb9172fa8bcdaaa4d89a9e2e3e1acb0e03867358",
+    "pairwise_correct_overlap": [
+      [
+        46,
+        44,
+        44,
+        45,
+        46
+      ],
+      [
+        44,
+        45,
+        44,
+        45,
+        45
+      ],
+      [
+        44,
+        44,
+        46,
+        44,
+        44
+      ],
+      [
+        45,
+        45,
+        44,
+        47,
+        46
+      ],
+      [
+        46,
+        45,
+        44,
+        46,
+        47
+      ]
+    ],
+    "pairwise_error_phi": [
+      [
+        1.0,
+        0.8645299348672512,
+        0.8136645962732919,
+        0.8576670722507359,
+        0.9533176751039778
+      ],
+      [
+        0.8645299348672512,
+        1.0,
+        0.8645299348672512,
+        0.9109265799407509,
+        0.9109265799407509
+      ],
+      [
+        0.8136645962732919,
+        0.8645299348672512,
+        1.0,
+        0.7620164693974939,
+        0.7620164693974939
+      ],
+      [
+        0.8576670722507359,
+        0.9109265799407509,
+        0.7620164693974939,
+        1.0,
+        0.9018003273322422
+      ],
+      [
+        0.9533176751039778,
+        0.9109265799407509,
+        0.7620164693974939,
+        0.9018003273322422,
+        1.0
+      ]
+    ],
+    "physical_solver_responses": 310,
+    "preapproval_interface_review_status": "AWAITING_SCIENTIFIC_OWNER_TEXT_REVIEW",
+    "provider_reported_actual_tokens": 227949,
+    "raw_invalid_reasons": {
+      "PAYLOAD_PARSE_FAILURE": 10,
+      "VALID": 300
+    },
+    "real_provider_calls_by_audit": 0,
+    "reasoning_metadata_contradictions": 0,
+    "recovered_invalid": 4,
+    "repeated_format_failure_profiles": 0,
+    "reserved_tokens": 0,
+    "resolved_invalid": 0,
+    "resolved_valid": 300,
+    "sealed_receipts_verified": 310,
+    "semantic_draw_distribution": {
+      "1": 296,
+      "3": 2,
+      "4": 2
+    },
+    "semantic_recovery_calls": 10,
+    "semantic_recovery_tokens": 12009,
+    "solution_status_counts": {
+      "WRITTEN_SOLUTION_PRESENT": 300
+    },
+    "terminal_invalid": 0,
+    "test_calls": 0,
+    "transport_failures": {},
+    "unique_member_coverage": [
+      0,
+      0,
+      2,
+      1,
+      0
+    ],
+    "unknown_charged_without_receipt": 0,
+    "valid_mathematical_wrong_profiles": 69.0,
+    "validation_calls": 0,
+    "vote_correct": 47.0,
+    "wire_all_exact": true
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "canary": {
+    "cost_scope": "STRUCTURAL_RETRY_FROM_PER_OPPORTUNITY_DRAW_ORDER; IDENTICAL_DRAWS_REPORTED_SEPARATELY; EXCLUDES_PROVIDER_BILLING_INFERENCE",
+    "distinct_solver_requests": 312,
+    "gradient_responses_outside_completed_opportunity_diagnostics": 0,
+    "gradient_structural_retry_responses": 5,
+    "gradient_structural_retry_usage_tokens": 19890,
+    "gradient_usage_outside_completed_opportunity_diagnostics": 0,
+    "raw_invalid_attempts": 15,
+    "reasons_and_exhaustion": [
+      {
+        "cluster_generation_errors": [],
+        "cluster_physical_calls": 1,
+        "gradient_exhausted": 2,
+        "gradient_recovery_reasons": {
+          "PATTERN_GRADIENT_EXTRACTION_INVALID": 2,
+          "REFERENCE_GRADIENT_OUTPUT_INVALID": 5
+        },
+        "gradient_recovery_success": 1
+      }
+    ],
+    "recovered_invalid_requests": 6,
+    "repeated_identical_gradient_draw_usage_tokens": 19890,
+    "repeated_identical_gradient_draws": 5,
+    "resolved_invalid": 2,
+    "resolved_invalid_reasons": {
+      "PAYLOAD_PARSE_FAILURE": 2
+    },
+    "resolved_valid": 310,
+    "solver_extra_semantic_responses": 13,
+    "solver_extra_semantic_usage_tokens": 10594,
+    "solver_finish_reasons": {
+      "length": 1,
+      "stop": 324
+    },
+    "terminal_invalid_requests": 2
+  },
+  "pilot": {
+    "cost_scope": "STRUCTURAL_RETRY_FROM_PER_OPPORTUNITY_DRAW_ORDER; IDENTICAL_DRAWS_REPORTED_SEPARATELY; EXCLUDES_PROVIDER_BILLING_INFERENCE",
+    "distinct_solver_requests": 932,
+    "gradient_responses_outside_completed_opportunity_diagnostics": 0,
+    "gradient_structural_retry_responses": 96,
+    "gradient_structural_retry_usage_tokens": 394485,
+    "gradient_usage_outside_completed_opportunity_diagnostics": 0,
+    "raw_invalid_attempts": 43,
+    "reasons_and_exhaustion": [
+      {
+        "cluster_generation_errors": [],
+        "cluster_physical_calls": 1,
+        "gradient_exhausted": 9,
+        "gradient_recovery_reasons": {
+          "PATTERN_GRADIENT_EXTRACTION_INVALID": 4,
+          "REFERENCE_GRADIENT_OUTPUT_INVALID": 27
+        },
+        "gradient_recovery_success": 3
+      },
+      {
+        "cluster_generation_errors": [],
+        "cluster_physical_calls": 1,
+        "gradient_exhausted": 6,
+        "gradient_recovery_reasons": {
+          "PATTERN_GRADIENT_EXTRACTION_INVALID": 5,
+          "REFERENCE_GRADIENT_OUTPUT_INVALID": 18
+        },
+        "gradient_recovery_success": 4
+      },
+      {
+        "cluster_generation_errors": [],
+        "cluster_physical_calls": 1,
+        "gradient_exhausted": 5,
+        "gradient_recovery_reasons": {
+          "PATTERN_GRADIENT_EXTRACTION_INVALID": 5,
+          "REFERENCE_GRADIENT_OUTPUT_INVALID": 15
+        },
+        "gradient_recovery_success": 4
+      },
+      {
+        "cluster_generation_errors": [],
+        "cluster_physical_calls": 1,
+        "gradient_exhausted": 9,
+        "gradient_recovery_reasons": {
+          "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1,
+          "PATTERN_GRADIENT_EXTRACTION_INVALID": 4,
+          "REFERENCE_GRADIENT_OUTPUT_INVALID": 24
+        },
+        "gradient_recovery_success": 1
+      },
+      {
+        "cluster_generation_errors": [],
+        "cluster_physical_calls": 1,
+        "gradient_exhausted": 9,
+        "gradient_recovery_reasons": {
+          "PATTERN_GRADIENT_EXTRACTION_INVALID": 6,
+          "REFERENCE_GRADIENT_OUTPUT_INVALID": 25
+        },
+        "gradient_recovery_success": 3
+      }
+    ],
+    "recovered_invalid_requests": 29,
+    "repeated_identical_gradient_draw_usage_tokens": 394485,
+    "repeated_identical_gradient_draws": 96,
+    "resolved_invalid": 1,
+    "resolved_invalid_reasons": {
+      "MALFORMED_FINAL_BOUNDARY": 1
+    },
+    "resolved_valid": 931,
+    "solver_extra_semantic_responses": 42,
+    "solver_extra_semantic_usage_tokens": 48496,
+    "solver_finish_reasons": {
+      "length": 1,
+      "stop": 973
+    },
+    "terminal_invalid_requests": 1
+  }
+}

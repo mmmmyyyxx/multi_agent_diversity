@@ -1,0 +1,12 @@
+{
+  "exact_dual_scope_approval_verified": true,
+  "frozen_source_unchanged_through_both_attempts": true,
+  "historical_evidence_immutable": true,
+  "independent_arm_b_initialization": true,
+  "ledger_receipts_and_terminal_inventory_verified": true,
+  "no_generalization_claim": true,
+  "no_unapproved_retry_or_rerun": true,
+  "no_validation_or_test": true,
+  "push_explicitly_authorized": true,
+  "unresolved_reservations_zero": true
+}
