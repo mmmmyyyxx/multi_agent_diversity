@@ -1,0 +1,7 @@
+{
+  "optimize": "SEALED_HISTORICAL_GRADIENT_AND_TRAJECTORY_EVIDENCE_ONLY",
+  "shadow": "EXISTING_SANITIZED_REPORT_METRICS_ONLY",
+  "validation_raw_reads": 0,
+  "test_raw_reads": 0,
+  "new_model_evaluations": 0
+}

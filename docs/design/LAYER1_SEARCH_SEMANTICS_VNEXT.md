@@ -1,5 +1,9 @@
 # Responsibility-conditioned Layer1 search V1
 
+Scope: the original V2.1 local backend contract. Current evaluated-parent,
+promotion and target-or-team admission semantics are defined by CURRENT_SPEC.md
+and its V2.5/V3 amendments; strict team gain below is historical.
+
 Authority: user amendment SHA256
 `76630550500117515c4eb999362e0c7ce0b70a6ca6d1d01ea7dfb7ce48a6dc68`.
 Phase A evidence: `reports/math_v2_1_layer1_gepa_flow_audit_v1_20261004`.

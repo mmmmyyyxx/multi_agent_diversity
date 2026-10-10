@@ -1,7 +1,9 @@
 # Initial competence target-or-team transition V3
 
 The sole active research architecture is Unified Team Prompt Search.
-`initial_competence_target_or_team_progress_v3` is retained unchanged in V2.4.
+`initial_competence_target_or_team_progress_v3` is retained in the current V2.5
+composition. [Global principles](SCIENTIFIC_PRINCIPLES.md) and the
+[MATH clarification](MATH_SCIENTIFIC_CONTRACT.md) separate interpretation from gates.
 Historical V2.2 execution requires its original source; current admission uses
 the complete structured prompt policy bundle.
 
@@ -31,9 +33,11 @@ below-floor or a violation of the bound safety policy cannot deploy.
 
 Deployment ranking uses Full team Vote, then Full target competence, then
 existing newly-broken, soft-vote and invalidity metrics and deterministic prompt
-hash. No Layer1/GEPA local score enters this key. Promotion remains the existing
-TeamProbe rule: any positive responsibility, target, Vote, broad or net-team
-signal may promote subject to its catastrophe guards, with at most two Fulls.
+hash. No Layer1/GEPA local score enters this key. Full promotion is separately
+versioned. The current V2.5 contract requires seen assigned binary repair plus
+independent Probe risk admission, with at most two Fulls. The earlier positive
+responsibility/target/Vote/broad/net-team promotion rule is historical, superseded
+for current execution by RESPONSIBILITY_FALLBACK_REPAIR_V25.md.
 Eligibility is reachability, not a guarantee that every positive candidate
 wins the two-slot budget. Full diagnostics and final selection call the same
 versioned transition policy; there is no second strict-Vote gate.
@@ -41,8 +45,10 @@ versioned transition policy; there is no second strict-Vote gate.
 Only the selected Full winner enters private Shadow. Shadow retains Vote delta
 >= 0 and target loss >= -2; target-only Full progress may commit with zero or
 bounded negative Shadow target gain. Requiring target gain replication on
-Shadow is a separate scientific decision. No held-out sample or target metric
-feeds search, Memory or allocation.
+Shadow is a separate scientific decision. Shadow raw samples and profiles remain
+private to its adaptive gate; permitted aggregate feedback and commit outcomes
+may enter bounded optimizer records. Shadow is not independent held-out validation.
+Validation/Test samples and outcomes cannot feed search, Memory or allocation.
 
 Completed atomic commit is Memory success, including TARGET progress with
 team delta zero. Transaction preparation/validation precedes commit and memory
@@ -57,11 +63,13 @@ Operational opportunity/provider/transport ceilings remain distinct from the
 scientific stop. The strict-Vote N-commit proof cannot establish saturation
 under target-or-team progress. Current preparation freezes a finite opportunity
 horizon with coupled token admission; resource truncation remains incomplete.
-V2.4 uses its fresh structured binding and exact single-use authorization, with
+Current execution uses its fresh structured binding and exact single-use
+authorization, with
 no historical source, cache, competence or authorization fallback. Validation
 and Test remain independently locked. Synthetic fixtures establish conformance.
 
-WHO, raw overlapping D/N/C, V=max(4D,2N,C), failure discount, Pattern selection,
-Gradient generation, Layer1 budgets, five equal-weight plurality members,
-fixed peers, two promotions, winner-only Shadow and atomic one-member commit
-remain unchanged. Efficacy and generalization require future governed evidence.
+Responsibility, allocation, Pattern, Gradient and Layer1 follow the complete
+current policy bundle and its separately versioned amendments. This transition
+retains five equal-weight plurality members, fixed peers, two Full promotions,
+winner-only Shadow and atomic one-member commit. Efficacy and generalization
+require separate governed evidence.

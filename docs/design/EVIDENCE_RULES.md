@@ -16,3 +16,8 @@ These rules constrain report classifiers and scientific claims.
    `retrospective`, `prospective`, `causal_fixed_parent`, or `online`.
 
 These constraints govern interpretation, not candidate selection.
+Current cross-benchmark claim boundaries are in
+[SCIENTIFIC_PRINCIPLES.md](SCIENTIFIC_PRINCIPLES.md); concrete MATH measurement,
+preservation and admission semantics are in
+[MATH_SCIENTIFIC_CONTRACT.md](MATH_SCIENTIFIC_CONTRACT.md). Historical stage names
+in the examples above do not define the current production graph.

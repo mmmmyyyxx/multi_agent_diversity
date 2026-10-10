@@ -2,7 +2,9 @@
 
 The original user-authored V2.1 contract below is retained for replay.
 Current deployment semantics are defined in
-[the V2.2 transition contract](TRANSITION_TARGET_OR_TEAM_PROGRESS_V3.md).
+[CURRENT_SPEC](CURRENT_SPEC.md), [scientific principles](SCIENTIFIC_PRINCIPLES.md)
+and [the retained V3 transition contract](TRANSITION_TARGET_OR_TEAM_PROGRESS_V3.md).
+The text below is not current authority for strict team gain or versioned settings.
 The exact original is archived with provenance and invariant index.
 
 # Unified Team Prompt Search：方法语义契约

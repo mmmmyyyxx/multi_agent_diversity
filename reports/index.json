@@ -483,6 +483,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/current_scientific_semantics_pilot_diagnostic_20261011",
+      "document": "reports/current_scientific_semantics_pilot_diagnostic_20261011/README.md",
+      "date": "20261011",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "FORENSIC",
+      "experiment_id": "current_scientific_semantics_pilot_diagnostic_v1",
+      "status": "COMPLETED",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/diversity_matrix_d0_d5_combined_validation175_20260904",
       "document": "reports/diversity_matrix_d0_d5_combined_validation175_20260904/README.md",
       "date": "20260904",

@@ -1,5 +1,8 @@
 # MATH visible solution feedback V1
 
+Scope: historical V2.2 interface V6 and its frozen model. Current optional written
+steps, editable presentation, parser and provider routing are in CURRENT_SPEC.md.
+
 This is an explicitly bound Solver execution and feedback-interface correction
 within Unified Team Prompt Search V2.2. It changes provider-visible instructions
 and optimizer evidence, so scientific/runtime/request identities change. It does

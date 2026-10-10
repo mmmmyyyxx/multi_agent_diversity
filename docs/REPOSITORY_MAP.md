@@ -17,7 +17,8 @@ Current authority: AGENTS.md, docs/design/CURRENT_SPEC.md and
 | multi_dataset_diverse_rl/persistence/ | Durable receipts, attempt-isolated cache and journals |
 | multi_dataset_diverse_rl/team_search/ | Shared value types and evidence physics; no current historical controller |
 | experiments/manifests/ | Permanent immutable historical and fresh current experiment contracts |
-| experiments/execution_bindings/ | Current V2.4 bindings and non-executable historical evidence |
+| experiments/execution_bindings/ | Current versioned bindings and non-executable historical evidence |
+| multi_dataset_diverse_rl/diagnostics/pilot_observations.py | Offline opportunity streaks and Gradient failure/cost observations; no runtime read point |
 | reports/ | Immutable scientific evidence; current cleanup inventory and tombstone |
 | scripts/run_experiment.py | Sole current runner |
 | tests/suite_classification.json | Current, excluded and Git-only historical test inventory |

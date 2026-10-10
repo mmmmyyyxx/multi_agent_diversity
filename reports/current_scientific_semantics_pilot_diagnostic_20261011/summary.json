@@ -1,0 +1,114 @@
+{
+  "scope": "DOCUMENTATION_CLARIFICATION_AND_EXACT_SOURCE_OFFLINE_DIAGNOSTICS",
+  "scientific_method_changed": false,
+  "production_runtime_changed": false,
+  "formal_stop_changed": false,
+  "historical_results_changed": false,
+  "gradient": {
+    "canary": {
+      "logical_gradients": 3,
+      "physical_draws": 8,
+      "accepted": 1,
+      "first_pass_accepted": 0,
+      "recovered": 1,
+      "exhausted": 2,
+      "extra_draws": 5,
+      "total_usage_tokens": 31323,
+      "extra_usage_tokens": 19890,
+      "extra_input_tokens": 18231,
+      "extra_output_tokens": 1659,
+      "primary_rejections": {
+        "JSON_INVALID_BACKSLASH_ESCAPE": 2,
+        "OBSERVED_FAILURE_OVER_240": 2,
+        "DIAGNOSIS_OVER_240": 2,
+        "SCHEMA_BLOCK": 1
+      },
+      "exhausted_total_usage_tokens": 24887,
+      "exhausted_extra_usage_tokens": 16696,
+      "successful_recovery_extra_usage_tokens": 3194,
+      "overlapping_shape_issues": {
+        "JSON_INVALID_BACKSLASH_ESCAPE": 2,
+        "OBSERVED_FAILURE_OVER_240": 3,
+        "DIAGNOSIS_OVER_240": 5,
+        "REUSABLE_CORRECTION_OVER_400": 1,
+        "SCHEMA_BLOCK": 1
+      },
+      "rejected_usage_by_category": {
+        "JSON_INVALID_BACKSLASH_ESCAPE": 8258,
+        "OBSERVED_FAILURE_OVER_240": 7471,
+        "DIAGNOSIS_OVER_240": 8182,
+        "SCHEMA_BLOCK": 4218
+      },
+      "retry_usage_by_preceding_rejection": {
+        "JSON_INVALID_BACKSLASH_ESCAPE": 8391,
+        "OBSERVED_FAILURE_OVER_240": 3194,
+        "DIAGNOSIS_OVER_240": 4218,
+        "SCHEMA_BLOCK": 4087
+      },
+      "finish_reasons": {
+        "stop": 8
+      }
+    },
+    "pilot": {
+      "logical_gradients": 68,
+      "physical_draws": 164,
+      "accepted": 30,
+      "first_pass_accepted": 15,
+      "recovered": 15,
+      "exhausted": 38,
+      "extra_draws": 96,
+      "total_usage_tokens": 672547,
+      "extra_usage_tokens": 394485,
+      "extra_input_tokens": 365902,
+      "extra_output_tokens": 28583,
+      "primary_rejections": {
+        "DIAGNOSIS_OVER_240": 41,
+        "OBSERVED_FAILURE_OVER_240": 55,
+        "SCHEMA_OBSERVED_FAILURE": 1,
+        "SCHEMA_BLOCK": 12,
+        "JSON_INVALID_BACKSLASH_ESCAPE": 20,
+        "JSON_SYNTAX_OR_ENVELOPE": 3,
+        "REUSABLE_CORRECTION_OVER_400": 1,
+        "FROZEN_CONTENT_PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1
+      },
+      "exhausted_total_usage_tokens": 472318,
+      "exhausted_extra_usage_tokens": 314401,
+      "successful_recovery_extra_usage_tokens": 80084,
+      "overlapping_shape_issues": {
+        "DIAGNOSIS_OVER_240": 97,
+        "OBSERVED_FAILURE_OVER_240": 59,
+        "SCHEMA_OBSERVED_FAILURE": 1,
+        "REUSABLE_CORRECTION_OVER_400": 18,
+        "SCHEMA_BLOCK": 12,
+        "JSON_INVALID_BACKSLASH_ESCAPE": 20,
+        "JSON_SYNTAX_OR_ENVELOPE": 3,
+        "EXPECTED_EFFECT_OVER_240": 8
+      },
+      "rejected_usage_by_category": {
+        "DIAGNOSIS_OVER_240": 173994,
+        "OBSERVED_FAILURE_OVER_240": 221128,
+        "SCHEMA_OBSERVED_FAILURE": 2575,
+        "SCHEMA_BLOCK": 50531,
+        "JSON_INVALID_BACKSLASH_ESCAPE": 85638,
+        "JSON_SYNTAX_OR_ENVELOPE": 11808,
+        "REUSABLE_CORRECTION_OVER_400": 3917,
+        "FROZEN_CONTENT_PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 4094
+      },
+      "retry_usage_by_preceding_rejection": {
+        "DIAGNOSIS_OVER_240": 125746,
+        "OBSERVED_FAILURE_OVER_240": 156806,
+        "SCHEMA_BLOCK": 42498,
+        "JSON_INVALID_BACKSLASH_ESCAPE": 58587,
+        "JSON_SYNTAX_OR_ENVELOPE": 6696,
+        "FROZEN_CONTENT_PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 4152
+      },
+      "finish_reasons": {
+        "stop": 164
+      }
+    }
+  },
+  "future_questions": [
+    "Gradient length compliance, JSON escape and block schema reliability with frozen scientific guards.",
+    "Whether Oracle coverage converts to Vote gains over a longer governed optimization trajectory."
+  ]
+}

@@ -517,3 +517,15 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 - Symptom: Eight first-batch Solver requests returned HTTP 404 / NotFoundError; no accepted model response.
 - Forbidden inference: Not optimizer inefficacy, parser failure, actual provider billing, permission to change models/endpoints, retry or run blocked Pilot.
 - Mitigation: Fail-closed Canary abort, full-reservation fallback with zero unresolved reservations, Pilot progression blocked, both scopes closed.
+
+## FAIL-V25-GRADIENT-STRUCTURAL-RETRY-COST: Gradient diagnostic fields and JSON repeatedly violate the frozen output contract
+
+- Status: `DIAGNOSED`
+- Lifecycle: `OPEN`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `a4_v25_arm_b_openlux_seed84_pilot_attempt1`
+- Root-cause status: Frozen field limits, JSON escapes and block schema reproduced using exact source; upstream instruction nonconformance cause undetermined.
+- Symptom: Pilot: 134 rejected physical draws; 96 extra draws and 394485 usage tokens; 38 logical diagnoses exhausted.
+- Forbidden inference: Not experiment invalidity, provider truncation, component efficacy, mathematical incapacity or permission to loosen guards/rerun.
+- Mitigation: Offline diagnostic only; generation, source guards, schema, scoring and recovery bounds unchanged.

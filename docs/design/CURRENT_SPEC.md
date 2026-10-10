@@ -1,6 +1,9 @@
 # Current Implementation Specification
 
 The sole active research architecture is Unified Team Prompt Search.
+The [scientific principles](SCIENTIFIC_PRINCIPLES.md) constrain interpretation;
+the [MATH scientific contract](MATH_SCIENTIFIC_CONTRACT.md) clarifies benchmark
+measurement and admission. These clarifications add no algorithm or threshold.
 The sole executable method is
 `unified_team_prompt_search_v2_5_generation_recovery_v1`.
 [The V2.5 scientific contract](RESPONSIBILITY_FALLBACK_REPAIR_V25.md) and
@@ -31,6 +34,11 @@ risk. Every safe evaluated local edit advances the temporary parent. Six generat
 The [V3 transition contract](TRANSITION_TARGET_OR_TEAM_PROGRESS_V3.md) remains
 normative: immutable initial competence floor, nonregressing Vote, target-or-team
 progress, winner-only Shadow and atomic commit. Team epoch stopping is unchanged.
+The floor is an aggregate initial Optimize correct count, not per-question
+monotonicity. Current MATH invalidity remains observation-only apart from binary
+incorrectness and vote eligibility; no extra zero-format-regression gate exists.
+Oracle coverage and deployed Vote gains are separate observations. Local, Full,
+Shadow, formal stopping and independent generalization have distinct evidence roles.
 Private measured Memory includes mathematical and format failures; shared risk
 contains closed generic categories only. No optimizer context enters Solver.
 

@@ -49,7 +49,7 @@ Mutation3, independent SearchValidation3 and disjoint TeamProbe6; two Full promo
 assigned repair 0-to-1; capability floor, Vote, Shadow and commit thresholds are unchanged.
 No efficacy-based retry or Canary-to-Pilot gate is permitted.
 
-## Lifecycle and frozen execution
+## Lifecycle
 
 Initial state is persisted before owner review. A compute-return milestone is private
 evidence only and does not authorize replay or resume. Resource closure, summary and
@@ -59,7 +59,14 @@ receipts to avoid hash cycles; the terminal marker binds the inventory and recei
 Persistence failure is fatal. This repairs known ordering windows, not the undetermined
 historical process-disappearance root cause.
 
-New seed-84 Canary and Pilot start independently with the registered five identical
+## Historical dual-scope execution instance
+
+The following seed84 panel, budget and phase settings describe that frozen
+experiment only; they are not cross-benchmark or future-run defaults. Its exact
+source and approvals, including separately authorized publication, remain in
+the manifests and evidence. This section grants no current execution or push.
+
+The seed-84 Canary and Pilot start independently with the registered five identical
 Arm B prompts and five bootstrap Memory entries. They freeze independent attempts,
 cache namespaces, manifests, receipts, ledgers and roots. No prior responses or learned
 state transfer. Both development memberships freeze before either outcome: unseen-first
@@ -70,7 +77,8 @@ and Pilot Optimize60/Shadow40/up to five opportunities each bind a 2,000,000 cha
 reserved token ceiling, combined at most 4,000,000. Four Solver semantic draws and all
 existing generation caps remain unchanged. Real API authorization requires both exact
 post-freeze scopes; one approval covers engineering-gated Canary then Pilot, no reruns.
-Validation and Test remain unauthorized. Local commits only; no push authorization.
+Validation and Test remain unauthorized by that scope. Publication requires its
+own explicit user authorization; preparation itself granted none.
 
 Invariants: INV-V25-GENERATED-OUTPUT-RECOVERY-001; INV-V25-GENERIC-PROVENANCE-001;
 INV-V25-TERMINAL-CLOSURE-001; INV-V24-FRESH-ATTEMPT-001.

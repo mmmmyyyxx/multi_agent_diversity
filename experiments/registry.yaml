@@ -9334,3 +9334,31 @@ experiments:
   reports:
   - reports/math_provider_role_routing_v1_preparation_20261010
   - reports/a4_v25_arm_b_openlux_seed84_dual_scope_execution_20261010
+- experiment_id: current_scientific_semantics_pilot_diagnostic_v1
+  kind: FORENSIC_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: offline_scientific_semantics_audit_v1
+  parent_ids:
+  - a4_v25_arm_b_openlux_seed84_canary_v1
+  - a4_v25_arm_b_openlux_seed84_pilot_v1
+  status: COMPLETED
+  scientific_status: OFFLINE_DIAGNOSTIC_NO_NEW_EFFICACY_MEASUREMENT
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/current_scientific_semantics_pilot_diagnostic_v1.json
+  report: reports/current_scientific_semantics_pilot_diagnostic_20261011
+  classifier: reports/current_scientific_semantics_pilot_diagnostic_20261011/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Documentation and observation-only diagnostics; no runtime/generation/score/admission/stop
+    changes.
+  - Historical source and sealed reports stay immutable; no real APIs, held-out raw
+    access or push authorized.
+  unavailable:
+    implementation_commit: Containing local documentation and diagnostic commit.
+    execution_commit: Zero-API diagnostic only; historical execution source is separately
+      pinned.
+    result_commit: Containing local evidence commit; no self-referential SHA.

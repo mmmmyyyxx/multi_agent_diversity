@@ -1,0 +1,10 @@
+{
+  "evidence_type": "retrospective",
+  "engineering": "EXACT_FROZEN_SOURCE_REPLAY_PASS",
+  "scientific_validity": "VALID_OFFLINE_DESCRIPTIVE_DIAGNOSTIC",
+  "causality": "NOT_ESTABLISHED",
+  "efficacy": "NO_NEW_EFFICACY_MEASUREMENT",
+  "generalization": "NOT_EVALUABLE_NO_HELDOUT_ACCESS",
+  "historical_classification": "UNCHANGED",
+  "convergence": "NOT_ESTABLISHED"
+}

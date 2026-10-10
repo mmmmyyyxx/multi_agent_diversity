@@ -1,0 +1,76 @@
+{
+  "canary": {
+    "rows": [
+      {
+        "ordinal": 1,
+        "committed": true,
+        "deployed_vote_delta": 0.0,
+        "consecutive_no_commit_opportunities": 0,
+        "consecutive_no_vote_improvement_opportunities": 1
+      }
+    ],
+    "final_no_commit": 0,
+    "final_no_vote_improvement": 1,
+    "max_no_commit": 0,
+    "max_no_vote_improvement": 1,
+    "scientific_stop_inference": "NONE_DIAGNOSTIC_OPPORTUNITIES_ARE_NOT_ELIGIBLE_MEMBER_EPOCHS",
+    "frozen_epoch_stop_observation": {
+      "completed_no_commit_epochs": 0,
+      "seen_members_in_current_epoch": 0,
+      "eligible_members_in_current_epoch": 0,
+      "scientific_stop_reached": false,
+      "local_update": "NOT_NEEDED_BY_FROZEN_STOP_DECISION"
+    }
+  },
+  "pilot": {
+    "rows": [
+      {
+        "ordinal": 1,
+        "committed": true,
+        "deployed_vote_delta": 1.0,
+        "consecutive_no_commit_opportunities": 0,
+        "consecutive_no_vote_improvement_opportunities": 0
+      },
+      {
+        "ordinal": 2,
+        "committed": true,
+        "deployed_vote_delta": 1.0,
+        "consecutive_no_commit_opportunities": 0,
+        "consecutive_no_vote_improvement_opportunities": 0
+      },
+      {
+        "ordinal": 3,
+        "committed": false,
+        "deployed_vote_delta": 0.0,
+        "consecutive_no_commit_opportunities": 1,
+        "consecutive_no_vote_improvement_opportunities": 1
+      },
+      {
+        "ordinal": 4,
+        "committed": false,
+        "deployed_vote_delta": 0.0,
+        "consecutive_no_commit_opportunities": 2,
+        "consecutive_no_vote_improvement_opportunities": 2
+      },
+      {
+        "ordinal": 5,
+        "committed": false,
+        "deployed_vote_delta": 0.0,
+        "consecutive_no_commit_opportunities": 3,
+        "consecutive_no_vote_improvement_opportunities": 3
+      }
+    ],
+    "final_no_commit": 3,
+    "final_no_vote_improvement": 3,
+    "max_no_commit": 3,
+    "max_no_vote_improvement": 3,
+    "scientific_stop_inference": "NONE_DIAGNOSTIC_OPPORTUNITIES_ARE_NOT_ELIGIBLE_MEMBER_EPOCHS",
+    "frozen_epoch_stop_observation": {
+      "completed_no_commit_epochs": 0,
+      "seen_members_in_current_epoch": 3,
+      "eligible_members_in_current_epoch": 5,
+      "scientific_stop_reached": false,
+      "local_update": "NOT_NEEDED_BY_FROZEN_STOP_DECISION"
+    }
+  }
+}

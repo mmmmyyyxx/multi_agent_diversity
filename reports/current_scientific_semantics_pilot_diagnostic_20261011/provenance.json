@@ -1,0 +1,30 @@
+{
+  "parent_result_sha": "30a57d82213fb7788581e3fe8fd9ba7903dfb302",
+  "historical_scientific_source_sha": "01306fbf9cde002291ab21e2f93a2c02399f7e9e",
+  "parent_report_manifest_sha256": "385b6e8858fe22da04025ae46428c05bbb234f565b10b2ec007feb408730b89c",
+  "replay_package_archive_sha256": "ee271dc8c9eedf1f8d543a4effd46ac1e81e37425194afc6fc3b3636b746083e",
+  "runner_path": "scripts/audit_openlux_pilot_diagnostics.py",
+  "runner_sha256": "3cea9203fdaa8e965c1572e8e9f93cad559a19b2fe121e5476ac7c839792c9af",
+  "diagnostic_helper_sha256": "7ed361c2384399db07b5f8f1e0f15ecb4bed82a7fcee7c35d68e44ce24535fae",
+  "publication_commit": "CONTAINING_LOCAL_COMMIT",
+  "historical_report_eol_projection": [
+    {
+      "file": "README.md",
+      "local_sha256": "35217acd8b21c6fe8bebe857ad91541af23aab3e0059b8a64e448bcdcc415fc9",
+      "git_blob_sha256": "4e1c17630178ae72a5b3155c918c2ca54757dea035a034b39eb88a14ad964713",
+      "difference": "CRLF_TO_LF_ONLY"
+    },
+    {
+      "file": "sha256_manifest.json",
+      "local_sha256": "385b6e8858fe22da04025ae46428c05bbb234f565b10b2ec007feb408730b89c",
+      "git_blob_sha256": "24941d2da87dd6497f85523bfd81b9239dbd45ca9e5dda83f024477aca6ec7a7",
+      "difference": "CRLF_TO_LF_ONLY"
+    },
+    {
+      "file": "verification.json",
+      "local_sha256": "0878da911f62c7eae738779d37ee28b20e918a8488cf5e51f91b24216d4d8fac",
+      "git_blob_sha256": "ea82ba585963cdef4362a92d070c1f4f88adeb6b05c6c560a39df610397a1876",
+      "difference": "CRLF_TO_LF_ONLY"
+    }
+  ]
+}

@@ -1,5 +1,8 @@
 # Structured System Prompt Optimization V2.4
 
+Scope: the original V2.4 contract. Current initial conditions, flexible extraction,
+evaluated parents and generated-output recovery are resolved by CURRENT_SPEC.md.
+
 The only current executable method is
 `unified_team_prompt_search_v2_4_structured_system_prompt`.
 Each member owns one immutable `SystemPrompt(role, strategy, answer)` object.

@@ -1,5 +1,9 @@
 # Gradient Pattern discovery V4 in V2.4
 
+Scope: preserved V2.4 contract. Current V2.5 eligibility, structural recovery,
+partition handling and symbolic provenance are resolved by CURRENT_SPEC.md and
+its amendments. The no-semantic-regeneration rule below is historical.
+
 This shared clustering and responsibility contract is active through the complete
 V2.4 policy bundle. The structured diagnostic and mutation contracts are defined
 in [STRUCTURED_SYSTEM_PROMPT_V24.md](STRUCTURED_SYSTEM_PROMPT_V24.md).

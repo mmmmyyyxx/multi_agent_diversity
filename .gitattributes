@@ -153,3 +153,6 @@ experiments/execution_bindings/a4_v25_arm_b_seed83_canary_attempt1.json text eol
 experiments/manifests/a4_v25_arm_b_flexible_seed83_canary_v1.yaml text eol=lf
 reports/a4_v25_arm_b_flexible_seed83_canary_v1_*20261010/** text eol=lf
 experiments/initial_teams/math_arm_b_structured_seed_v3.json text eol=lf
+
+# New offline audit seals use canonical LF publication bytes.
+reports/current_scientific_semantics_pilot_diagnostic_20261011/** text eol=lf

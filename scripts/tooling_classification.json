@@ -2,6 +2,12 @@
   "schema_version": "tooling_classification_v1",
   "scripts": [
     {
+      "path": "scripts/audit_openlux_pilot_diagnostics.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Exact-source zero-API postmortem of sealed OpenLux Canary/Pilot Gradient evidence; no experiment runner."
+    },
+    {
       "path": "scripts/run_math_b_five_member_calibration.py",
       "classification": "ONE_OFF_AUDIT",
       "move": false,

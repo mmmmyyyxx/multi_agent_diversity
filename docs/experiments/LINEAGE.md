@@ -98,6 +98,9 @@ last_canary_execution_binding: experiments/execution_bindings/a4_v25_arm_b_openl
 last_canary_initial_accuracy: MEASURED_FROZEN_ATTEMPT_NOT_REUSABLE
 no_current_executable_scope: true
 prior_authorization_scopes_closed: true
+last_semantic_diagnostic_report: reports/current_scientific_semantics_pilot_diagnostic_20261011
+last_semantic_diagnostic_method_changed: false
+last_semantic_diagnostic_real_api_calls: 0
 ```
 
 ## Experiment and engineering DAG
@@ -398,6 +401,7 @@ flowchart TD
     n314["math_provider_role_routing_v1<br/>PROTOCOL_FREEZE<br/>COMPLETED"]
     n315["a4_v25_arm_b_openlux_seed84_canary_v1<br/>REAL_CANARY<br/>COMPLETED"]
     n316["a4_v25_arm_b_openlux_seed84_pilot_v1<br/>PILOT<br/>COMPLETED"]
+    n317["current_scientific_semantics_pilot_diagnostic_v1<br/>FORENSIC_AUDIT<br/>COMPLETED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -650,6 +654,8 @@ flowchart TD
   n311 -->|derived_from| n314
   n314 -->|derived_from| n315
   n314 -->|derived_from| n316
+  n315 -->|audit_of| n317
+  n316 -->|audit_of| n317
 ```
 
 ## Archived branches and unresolved evidence

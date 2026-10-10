@@ -950,6 +950,9 @@ nodes:
 - experiment_id: a4_v25_arm_b_openlux_seed84_pilot_v1
   kind: PILOT
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: current_scientific_semantics_pilot_diagnostic_v1
+  kind: FORENSIC_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2057,4 +2060,16 @@ edges:
   evidence: docs/design/PROVIDER_ROLE_ROUTING_V1.md
   scope: Fresh model/provider routing and independent attempts; no prior response
     or authorization transfer.
+- from: a4_v25_arm_b_openlux_seed84_canary_v1
+  to: current_scientific_semantics_pilot_diagnostic_v1
+  relation: audit_of
+  evidence: reports/current_scientific_semantics_pilot_diagnostic_20261011/README.md
+  scope: Read-only exact-source diagnostic; historical scores and classifications
+    unchanged.
+- from: a4_v25_arm_b_openlux_seed84_pilot_v1
+  to: current_scientific_semantics_pilot_diagnostic_v1
+  relation: audit_of
+  evidence: reports/current_scientific_semantics_pilot_diagnostic_20261011/README.md
+  scope: Read-only exact-source diagnostic; historical scores and classifications
+    unchanged.
 current_frontier: experiments/current_frontier.yaml

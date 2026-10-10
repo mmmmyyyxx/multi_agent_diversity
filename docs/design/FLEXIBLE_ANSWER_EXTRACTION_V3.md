@@ -1,15 +1,18 @@
 # Flexible mathematical answer extraction V3
 
-This user-requested presentation amendment is normative for
-`unified_team_prompt_search_v2_5_flexible_answer_v1`. It supersedes only the
+This user-requested presentation amendment originated with
+`unified_team_prompt_search_v2_5_flexible_answer_v1` and remains normative in
+the current `unified_team_prompt_search_v2_5_generation_recovery_v1` composition.
+It supersedes only the
 terminal-line extraction rule in RESPONSIBILITY_FALLBACK_REPAIR_V25.md.
 The optimization architecture, Gradient weighting, five members, equal
 equivalence plurality, pinned mathematical domain and split governance remain
 those of that contract. No Solver message or immutable output instruction is added.
 
 The current parser is MATH_FLEXIBLE_ANSWER_EXTRACTION_V3, with interface
-MATH_FLEXIBLE_ANSWER_SYSTEM_INTERFACE_V9 and binding
-MATH_FLEXIBLE_ANSWER_EVIDENCE_BINDING_V3. Its complete POLICY enters the binding;
+MATH_FLEXIBLE_ANSWER_SYSTEM_INTERFACE_V9. Current bindings are resolved through
+PROVIDER_ROLE_ROUTING_V1.md; MATH_FLEXIBLE_ANSWER_EVIDENCE_BINDING_V3 is the
+original amendment's preserved binding identity. Its complete POLICY enters the binding;
 protocol, validity, recovery, response profiles, evidence, composition and cache
 identities change together. Historical V2 extraction remains frozen for baseline
 replay. Old caches, measured competence, profiles and authorizations cannot enter

@@ -1,6 +1,9 @@
 # Current Method
 
 The sole active research architecture is Unified Team Prompt Search.
+The endpoint is useful correct coverage and team task performance under the
+frozen aggregation. [Scientific principles](docs/design/SCIENTIFIC_PRINCIPLES.md)
+separate those measurements from textual diversity, validity and commit counts.
 The sole current method is V2.5 with flexible answer extraction and bounded output recovery,
 `unified_team_prompt_search_v2_5_generation_recovery_v1`.
 

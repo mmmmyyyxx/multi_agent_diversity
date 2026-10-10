@@ -1,7 +1,13 @@
 {
-  "current_suite_policy": "Current V2.4 Unified, benchmark, governance, production and source-identity contracts. Historical replay, eight private-artifact modules and retired runtime tests are explicitly omitted; replay requires their original Git source and private artifacts.",
+  "current_suite_policy": "Current V2.5 Unified, benchmark, governance, production and source-identity contracts. Historical replay, eight private-artifact modules and retired runtime tests are explicitly omitted; replay requires their original Git source and private artifacts.",
   "schema_version": "suite_classification_v1",
   "tests": [
+    {
+      "path": "tests/current/test_pilot_observations.py",
+      "classification": "CURRENT_CONTRACT",
+      "current_suite_included": true,
+      "required_private_artifacts": []
+    },
     {
       "path": "tests/current/test_arm_b_canary_inputs.py",
       "classification": "CURRENT_ZERO_API_E2E",

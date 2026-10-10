@@ -1204,3 +1204,26 @@ failures:
   forbidden_inference: Not optimizer inefficacy, parser failure, actual provider billing,
     permission to change models/endpoints, retry or run blocked Pilot.
   regression_tests: []
+- failure_id: FAIL-V25-GRADIENT-STRUCTURAL-RETRY-COST
+  title: Gradient diagnostic fields and JSON repeatedly violate the frozen output
+    contract
+  status: DIAGNOSED
+  lifecycle: OPEN
+  first_observed: a4_v25_arm_b_openlux_seed84_pilot_attempt1
+  affected_components:
+  - gradient_structured_output
+  - bounded_gradient_recovery_usage
+  symptom: 'Pilot: 134 rejected physical draws; 96 extra draws and 394485 usage tokens;
+    38 logical diagnoses exhausted.'
+  evidence:
+  - reports/current_scientific_semantics_pilot_diagnostic_20261011/gradient_diagnostic.json
+  - reports/current_scientific_semantics_pilot_diagnostic_20261011/README.md
+  evidence_level: observed
+  root_cause_status: Frozen field limits, JSON escapes and block schema reproduced
+    using exact source; upstream instruction nonconformance cause undetermined.
+  mitigation: Offline diagnostic only; generation, source guards, schema, scoring
+    and recovery bounds unchanged.
+  forbidden_inference: Not experiment invalidity, provider truncation, component efficacy,
+    mathematical incapacity or permission to loosen guards/rerun.
+  regression_tests:
+  - tests/current/test_pilot_observations.py

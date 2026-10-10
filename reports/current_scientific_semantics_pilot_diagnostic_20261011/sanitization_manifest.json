@@ -1,0 +1,10 @@
+{
+  "published": [
+    "hashes",
+    "counters",
+    "closed_categories",
+    "metrics",
+    "interpretation"
+  ],
+  "private_evidence_exported": false
+}

@@ -1,0 +1,24 @@
+{
+  "schema_version": "offline_scientific_semantics_audit_v1",
+  "experiment_id": "current_scientific_semantics_pilot_diagnostic_v1",
+  "parent_ids": [
+    "a4_v25_arm_b_openlux_seed84_canary_v1",
+    "a4_v25_arm_b_openlux_seed84_pilot_v1"
+  ],
+  "parent_result_sha": "30a57d82213fb7788581e3fe8fd9ba7903dfb302",
+  "historical_scientific_source_sha": "01306fbf9cde002291ab21e2f93a2c02399f7e9e",
+  "production_method_unchanged": true,
+  "formal_stop_unchanged": true,
+  "official_results_immutable": true,
+  "scope": "DOCUMENTATION_CLARIFICATION_AND_EXACT_SOURCE_OFFLINE_DIAGNOSTICS",
+  "interpretation": "RETROSPECTIVE_NO_CAUSAL_OR_GENERALIZATION_CLAIM",
+  "real_api_calls": 0,
+  "validation_raw_reads": 0,
+  "test_raw_reads": 0,
+  "authorization": {
+    "real_api_authorized": false,
+    "push_authorized": false
+  },
+  "analysis_command": "python tests/formal_zero_api_runner.py --offline-command scripts/audit_openlux_pilot_diagnostics.py",
+  "report": "reports/current_scientific_semantics_pilot_diagnostic_20261011"
+}

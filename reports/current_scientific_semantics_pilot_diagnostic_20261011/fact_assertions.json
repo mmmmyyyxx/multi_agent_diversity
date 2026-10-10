@@ -1,0 +1,12 @@
+{
+  "parent_reports_preserved": true,
+  "frozen_native_replay_all_gradient_draws_pass": true,
+  "native_failures_match_recorded_errors": true,
+  "raw_inventory_seals_match_published_receipts": true,
+  "formal_stopper_unchanged": true,
+  "opportunity_counters_observation_only": true,
+  "production_generation_scoring_and_admission_unchanged": true,
+  "zero_real_api_calls": true,
+  "no_validation_test_raw_access": true,
+  "no_push_authorized": true
+}

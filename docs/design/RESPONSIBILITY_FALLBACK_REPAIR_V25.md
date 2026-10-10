@@ -1,21 +1,25 @@
 # Responsibility fallback and repair evidence V2.5
 
-The current method is `unified_team_prompt_search_v2_5_responsibility_fallback_repair_probe`.
+The current composed method is `unified_team_prompt_search_v2_5_generation_recovery_v1`.
+This base contract is read with [flexible extraction V3](FLEXIBLE_ANSWER_EXTRACTION_V3.md),
+[bounded output recovery](GENERATED_OUTPUT_RECOVERY_V25.md),
+[provider routing](PROVIDER_ROLE_ROUTING_V1.md) and
+[MATH measurement semantics](MATH_SCIENTIFIC_CONTRACT.md).
+The original `unified_team_prompt_search_v2_5_responsibility_fallback_repair_probe`
+identity and its initial contracts remain reproducible from their frozen Git source.
 This amendment changes eligibility, diagnostic recovery, evidence allocation,
 local evolution and Probe admission. Full transition and Shadow remain unchanged.
 Historical V2.4 contracts and reports retain their original meaning.
 
-Five identical structured prompts start with Role `You are a helpful assistant.`,
-Strategy `Answer the question.`, and Answer `On the last line, write "Final answer:"
-followed by your mathematical answer.` All blocks are editable. System contains
+The initial five-member structured team is the complete artifact frozen by its
+experiment. Arm B and the earlier default seed are distinct initial conditions;
+no phase may substitute a default for the frozen artifact. All blocks are editable. System contains
 exactly their rendering; User contains exactly the original problem. No extra
 reasoning or presentation instruction is added, and written reasoning is optional.
 
-The gold-blind V2 extractor accepts a last nonempty line labeled Final answer
-or FINAL_ANSWER, case insensitive with common spaces, including a balanced boxed
-payload inside that label. Headings and intermediate boxes are ordinary text.
-Standalone expressions and prose guesses are forbidden. Multiple explicit labels
-must agree under the pinned mathematical relation, without consulting gold.
+The current gold-blind flexible V3 extractor follows its amendment, including
+clear final declarations, equivalent concluding confirmations and multiline boxes.
+The strict terminal-line V2 rule belongs to earlier frozen source only.
 Only pinned binary mathematical equivalence rewards a response. First valid wrong
 stops recovery; at most four successful semantic draws recover invalid output.
 Exhaustion is incorrect in the fixed denominator. All responses and retry reasons
@@ -82,8 +86,9 @@ closed generic risk observations, without raw questions, answers or edits.
 Retrieval remains bounded and member-private for edit evidence.
 
 Fresh source, manifest, startup, provider, cache, accounting and single-use scope
-are mandatory. The user authorizes exactly one Canary12, seed81, five members,
-one opportunity, Solver concurrency up to eight and charged plus reserved <=2M.
-No Validation, Test or Pilot is authorized. V2.4's 195 outputs may be replayed
-offline for parser diagnosis only; no historical realization enters new scoring.
+are mandatory. Phase, seed, model, panel, opportunity and token limits are frozen
+experiment settings, never authorization granted by this scientific contract.
+The original seed81 Canary-only scope is historical; later dual scopes have their
+own manifests and recorded approvals. Historical outputs may be replayed offline
+under exact source for diagnosis only; no historical realization enters new scoring.
 Owner review barriers audit real evidence and never force an efficacy outcome.
