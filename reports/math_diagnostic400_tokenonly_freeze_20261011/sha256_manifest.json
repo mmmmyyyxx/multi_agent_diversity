@@ -18,8 +18,12 @@
       "sha256": "d653982ab93643592a5886c681944f59de8858b2c0d73043146803e5d51d4032"
     },
     {
+      "file": "frozen_phase_scopes.json",
+      "sha256": "0a7be745afc82a8c79f14ea45ddd3fe68512f92177c0ea7f906c681fe3efe9c1"
+    },
+    {
       "file": "manifest_snapshot.yaml",
-      "sha256": "3c61fb225ff5ce7dfa9c3901d28f420d4335c4a34ea2e151985284688f4353eb"
+      "sha256": "7d1e425fec850a03302f640d81e67a1181e1381a5571ed84764ff9b4ba057cde"
     },
     {
       "file": "provenance.json",

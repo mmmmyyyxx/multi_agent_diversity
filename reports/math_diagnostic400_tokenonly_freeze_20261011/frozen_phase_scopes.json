@@ -1,0 +1,128 @@
+{
+  "actual_test_access": 0,
+  "actual_validation_access": 0,
+  "execution_source_sha": "b6e1526839d5847fe6ab69d2f373dbe033f67630",
+  "permission_chain": {
+    "canary_tokens": 2000000,
+    "canary_user": "授权进行canary的api调用",
+    "formal_condition": "Canary engineering/integrity gate; no efficacy veto",
+    "formal_tokens": 30000000,
+    "formal_user": "如果前面都已完成且无问题，授权进行正式实验的api调用",
+    "push_authorized": false,
+    "resource_user": "不需要计费，统计token就行",
+    "test_access": "sealed",
+    "validation_tokens": 6000000
+  },
+  "phases": {
+    "canary": {
+      "attempt_id": "a4_diagnostic400_tokenonly_seed85_canary_attempt1",
+      "exact_scope_sha256": "56f12d2ed0cdbb22b201b52938db688cab7597391726d5124217064a7441e17a",
+      "full_scope_private": true,
+      "scope_projection": {
+        "arm": "A4",
+        "attempt_id": "a4_diagnostic400_tokenonly_seed85_canary_attempt1",
+        "cache_namespace": "a4_diagnostic400_tokenonly_seed85_canary_attempt1",
+        "cumulative_token_ceiling": 2000000,
+        "models": {
+          "optimizer_reflection": "qwen3.7-flash",
+          "pattern": "qwen3.7-flash",
+          "solver": "gpt-4o-mini",
+          "solver_thinking": false
+        },
+        "phase": "canary_search_only",
+        "roles": [
+          "solver",
+          "reflection",
+          "pattern_gradient",
+          "pattern_cluster"
+        ],
+        "seed": 85,
+        "source_sha": "b6e1526839d5847fe6ab69d2f373dbe033f67630",
+        "test_calls": 0,
+        "token_reporting_policy": {
+          "authority": "EXPLICIT_USER_TOKEN_ONLY_INSTRUCTION",
+          "identity": "USER_SELECTED_TOKEN_ONLY_RESOURCE_CONTROL_V1",
+          "missing_usage": "CONSERVATIVE_FULL_RESERVATION_CHARGE",
+          "monetary_tracking": false,
+          "token_limits": "FROZEN_PHASE_LEDGER_HARD_LIMITS"
+        },
+        "validation_calls": 0
+      },
+      "startup_identity_sha256": "a74472aa9213809b10a6aa33f4c3d5d5708be010ce5668aee78b9852194e9ca4"
+    },
+    "formal": {
+      "attempt_id": "a4_diagnostic400_tokenonly_seed86_formal_attempt1",
+      "exact_scope_sha256": "deccb1e04094970de83bfeb88dec2f9e6841727ca94a8d477c25a0648ef22124",
+      "full_scope_private": true,
+      "scope_projection": {
+        "arm": "A4",
+        "attempt_id": "a4_diagnostic400_tokenonly_seed86_formal_attempt1",
+        "cache_namespace": "a4_diagnostic400_tokenonly_seed86_formal_attempt1",
+        "cumulative_token_ceiling": 30000000,
+        "models": {
+          "optimizer_reflection": "qwen3.7-flash",
+          "pattern": "qwen3.7-flash",
+          "solver": "gpt-4o-mini",
+          "solver_thinking": false
+        },
+        "phase": "formal_search_only",
+        "roles": [
+          "solver",
+          "reflection",
+          "pattern_gradient",
+          "pattern_cluster"
+        ],
+        "seed": 86,
+        "source_sha": "b6e1526839d5847fe6ab69d2f373dbe033f67630",
+        "test_calls": 0,
+        "token_reporting_policy": {
+          "authority": "EXPLICIT_USER_TOKEN_ONLY_INSTRUCTION",
+          "identity": "USER_SELECTED_TOKEN_ONLY_RESOURCE_CONTROL_V1",
+          "missing_usage": "CONSERVATIVE_FULL_RESERVATION_CHARGE",
+          "monetary_tracking": false,
+          "token_limits": "FROZEN_PHASE_LEDGER_HARD_LIMITS"
+        },
+        "validation_calls": 0
+      },
+      "startup_identity_sha256": "68101ee09839879fb0f1f0d0f90bde7f80dd3a519dfd9b4a6250e1170cec6235"
+    },
+    "validation": {
+      "attempt_id": "a4_diagnostic400_tokenonly_seed86_validation_attempt1",
+      "exact_scope_sha256": "cb8c020b961f1926c5df510132abc92ea95d828791b351f7d928798cc5857c1d",
+      "full_scope_private": true,
+      "scope_projection": {
+        "arm": "A4",
+        "attempt_id": "a4_diagnostic400_tokenonly_seed86_validation_attempt1",
+        "cache_namespace": "a4_diagnostic400_tokenonly_seed86_validation_attempt1",
+        "cumulative_token_ceiling": 6000000,
+        "models": {
+          "optimizer_reflection": "qwen3.7-flash",
+          "pattern": "qwen3.7-flash",
+          "solver": "gpt-4o-mini",
+          "solver_thinking": false
+        },
+        "parent_search_attempt_id": "a4_diagnostic400_tokenonly_seed86_formal_attempt1",
+        "parent_search_startup_sha256": "68101ee09839879fb0f1f0d0f90bde7f80dd3a519dfd9b4a6250e1170cec6235",
+        "phase": "post_freeze_paired_validation_only",
+        "roles": [
+          "solver"
+        ],
+        "seed": 86,
+        "source_sha": "b6e1526839d5847fe6ab69d2f373dbe033f67630",
+        "split_sha256": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507",
+        "test_calls": 0,
+        "token_reporting_policy": {
+          "authority": "EXPLICIT_USER_TOKEN_ONLY_INSTRUCTION",
+          "identity": "USER_SELECTED_TOKEN_ONLY_RESOURCE_CONTROL_V1",
+          "missing_usage": "CONSERVATIVE_FULL_RESERVATION_CHARGE",
+          "monetary_tracking": false,
+          "token_limits": "FROZEN_PHASE_LEDGER_HARD_LIMITS"
+        },
+        "validation_calls": "POST_SEARCH_ONLY",
+        "validation_membership_sha256": "7112d452f99665e8a43b9e8a3b681c76aaff5b574103ed7663951a7f17570376"
+      },
+      "startup_identity_sha256": "14fbe11ad714f188a5e414a840c80bf3157010f687b7ba9f5d3ce8b8eeda0179"
+    }
+  },
+  "real_api_calls": 0
+}

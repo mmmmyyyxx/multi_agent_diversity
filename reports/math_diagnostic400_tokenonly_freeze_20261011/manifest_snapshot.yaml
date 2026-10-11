@@ -464,22 +464,11 @@ system_prompt_policy:
   max_rendered_characters: 3000
   mutation: STRUCTURED_SYSTEM_BLOCK_MUTATION_CONTRACT_V1
   rendering: role_double_newline_strategy_double_newline_answer
-  seed:
-    answer: 'End your response with a final answer on a separate line.
-
-      The line must start with the exact text "Final answer: "
-
-      followed by only the mathematical result.
-
-      Do not use a Markdown heading, bullet, or bold formatting
-
-      for this line. Do not write anything after it.'
-    role: You are a helpful assistant.
-    strategy: Answer the question.
   serialization: ordered_role_strategy_answer_ascii_json_compact
   single_block_per_generation: true
   system_hash: sha256_rendered_utf8
   user_message: raw_problem_only
+  seed_sha256: 50e07f850167180204a1e0fce8c4800ae8cc776a00017ea7a0b8a6ff24051e74
 answer_extraction_policy:
   confirmations: all_labels_and_conclusions_after_selected_label_must_agree_gold_blind
   coordinate_assignment: distinct_named_coordinates_same_arity_pinned_tuple_rhs
@@ -609,3 +598,4 @@ token_reporting_policy:
   token_limits: FROZEN_PHASE_LEDGER_HARD_LIMITS
   missing_usage: CONSERVATIVE_FULL_RESERVATION_CHARGE
   authority: EXPLICIT_USER_TOKEN_ONLY_INSTRUCTION
+sanitized_evidence_projection: true
