@@ -9,14 +9,18 @@ failures:
   - gradient_output_schema
   - reflection_output_instruction
   - bounded_output_recovery_feedback
-  symptom: Nine Gradient draws across three examples were rejected; seven block mappings, one JSON escape and one diagnosis-only length violation.
+  symptom: Nine Gradient draws across three examples were rejected; seven block mappings,
+    one JSON escape and one diagnosis-only length violation.
   evidence:
   - reports/math_optimizer_output_contract_repair_20261011/README.md
   - reports/math_optimizer_output_contract_repair_20261011/diagnosis.json
   evidence_level: observed
-  root_cause_status: Exact frozen replay reproduces schema and syntax rejection; upstream model-compliance cause and new prompt efficacy remain unmeasured.
-  mitigation: Explicit single-value examples, JSON escaping guidance and source-free last-failure feedback under a new version; validators and draw limits retained.
-  forbidden_inference: No historical output repair, accepted correction safety claim, model efficacy proof or old-scope replay authorization.
+  root_cause_status: Exact frozen replay reproduces schema and syntax rejection; upstream
+    model-compliance cause and new prompt efficacy remain unmeasured.
+  mitigation: Explicit single-value examples, JSON escaping guidance and source-free
+    last-failure feedback under a new version; validators and draw limits retained.
+  forbidden_inference: No historical output repair, accepted correction safety claim,
+    model efficacy proof or old-scope replay authorization.
   regression_tests:
   - tests/current/test_optimizer_output_contract_feedback.py
 - failure_id: FAIL-V26-OPTIMIZER-INTERVAL-READABILITY
@@ -1145,22 +1149,22 @@ failures:
   forbidden_inference: Not optimizer failure, convergence, missing visible reasoning,
     a gate implementation defect, or evidence that only three mathematical answers
     were intrinsically correct. No full Pilot result or permission to rerun follows.
-
 - failure_id: FAIL-V25-CANARY-RUNNER-TERMINATED-BEFORE-FINAL-PERSISTENCE
-  title: Fresh V2.5 Canary runner terminated after Shadow evidence but before terminal persistence
+  title: Fresh V2.5 Canary runner terminated after Shadow evidence but before terminal
+    persistence
   status: MITIGATED
   lifecycle: MITIGATED
   lifecycle_note: The measured attempt has a separately audited zero-API terminal
-    recovery after explicit user continuation. The original abort is preserved;
-    runner-supervision root cause and prevention remain unresolved.
+    recovery after explicit user continuation. The original abort is preserved; runner-supervision
+    root cause and prevention remain unresolved.
   first_observed: a4_v25_seed81_canary_attempt1
   affected_components:
   - canary_runner_lifecycle
   - terminal_execution_persistence
   - owner_review_supervision
-  symptom: Initial profiling and one complete opportunity produced sealed evidence; the
-    owner review was written, but the runner process terminated before consuming it and
-    before writing execution_summary, final state or EXECUTION_COMPLETE.
+  symptom: Initial profiling and one complete opportunity produced sealed evidence;
+    the owner review was written, but the runner process terminated before consuming
+    it and before writing execution_summary, final state or EXECUTION_COMPLETE.
   evidence:
   - reports/a4_v25_responsibility_repair_canary_interrupted_20261009/README.md
   - reports/a4_v25_responsibility_repair_canary_interrupted_20261009/owner_review_audit.json
@@ -1170,8 +1174,8 @@ failures:
   - reports/a4_v25_responsibility_repair_canary_recovered_20261009/owner_completion_audit.json
   evidence_level: observed
   root_cause_status: PROCESS_DISAPPEARANCE_OBSERVED_ROOT_CAUSE_UNDETERMINED
-  mitigation: Preserve the sealed raw evidence, mark the attempt aborted and close the
-    single-use API scope. Subsequent explicit user continuation authorized zero-API
+  mitigation: Preserve the sealed raw evidence, mark the attempt aborted and close
+    the single-use API scope. Subsequent explicit user continuation authorized zero-API
     same-attempt production-graph reconstruction in a separate private directory.
     All original bytes, native scientific stages, local lineage, ledger and owner
     decisions were verified before persisting a qualified terminal recovery receipt.
@@ -1203,7 +1207,8 @@ failures:
     positive, optimizer inefficacy, or authorization to rerun.
   regression_tests: []
 - failure_id: FAIL-V25-GENERATED-OUTPUT-LOCALIZATION
-  title: Generated-content rejection propagated as fatal instead of bounded local recovery
+  title: Generated-content rejection propagated as fatal instead of bounded local
+    recovery
   status: MITIGATED
   lifecycle: MITIGATED
   first_observed: a4_v25_arm_b_seed83_canary_attempt1
@@ -1212,13 +1217,18 @@ failures:
   - pattern_partial_partition
   - reflection_generation_boundary
   - terminal_execution_persistence
-  symptom: A short symbolic source overlap halted the opportunity; known persistence ordering windows could publish completion before closure evidence.
+  symptom: A short symbolic source overlap halted the opportunity; known persistence
+    ordering windows could publish completion before closure evidence.
   evidence:
   - reports/math_generated_output_recovery_v1_preparation_20261010/README.md
   evidence_level: observed
-  root_cause_status: Literal rejection reproduced using original source; generated-output propagation and terminal ordering independently inspected and fault-injected.
-  mitigation: Fresh typed bounded recovery policy, source-context symbolic guard, preserved legal partial evidence, and terminal evidence before completion marker.
-  forbidden_inference: Offline compatibility is not semantic leakage proof, real optimization efficacy, repair of an undetermined process-disappearance cause, or paid rerun authorization.
+  root_cause_status: Literal rejection reproduced using original source; generated-output
+    propagation and terminal ordering independently inspected and fault-injected.
+  mitigation: Fresh typed bounded recovery policy, source-context symbolic guard,
+    preserved legal partial evidence, and terminal evidence before completion marker.
+  forbidden_inference: Offline compatibility is not semantic leakage proof, real optimization
+    efficacy, repair of an undetermined process-disappearance cause, or paid rerun
+    authorization.
   regression_tests:
   - tests/current/test_generated_output_recovery.py
   - tests/current/test_structured_production_entrypoint.py
@@ -1314,3 +1324,26 @@ failures:
     score revision or rerun permission.
   regression_tests:
   - tests/current/test_formal_execution_scope.py
+- failure_id: FAIL-V27-GENERATED-CLUSTER-MEMBERSHIP-FATAL
+  title: Generated duplicate support alias bypassed bounded draw recovery
+  status: MITIGATED
+  lifecycle: REAL_OBSERVED_OFFLINE_REPRODUCED
+  first_observed: math_v27_direct_seed86_formal_v1
+  affected_components:
+  - generated_cluster_membership_classifier
+  - bounded_cluster_draw_recovery
+  symptom: A generated duplicate support alias ended execution after one Cluster draw
+    and before an opportunity completed.
+  evidence:
+  - reports/math_v27_precluster_abort_audit_20261012/README.md
+  - reports/math_v27_precluster_continuation_20261012/README.md
+  evidence_level: observed
+  root_cause_status: Frozen classifier excluded typed model membership faults; exact
+    earlier source reproduced it.
+  mitigation: Fresh identity rejects the whole generated response, retries within
+    existing three draws and uses existing legal exhausted fallback. No alias rewriting
+    or guard relaxation.
+  forbidden_inference: No historical result revision, automatic rerun permission,
+    mathematical incapacity or component efficacy.
+  regression_tests:
+  - tests/current/test_v27_request_recovery_continuation.py

@@ -2,7 +2,7 @@
 from copy import deepcopy
 from .schemas import SearchContractError
 
-IDENTITY = 'BOUNDED_OUTPUT_CONTRACT_FEEDBACK_RECOVERY_V2'
+IDENTITY = 'BOUNDED_REQUEST_OUTPUT_RECOVERY_V3'
 POLICY = dict(identity=IDENTITY, gradient_draws_per_example=3,
     cluster_draws_per_opportunity=3, reflection_draws_per_opportunity=6,
     rejected_text_reusable=False, exhausted_gradient='NONACTIONABLE_EXHAUSTED',
@@ -19,7 +19,7 @@ _CATEGORIES = {
     'gradient': frozenset({'REFERENCE_GRADIENT_OUTPUT_INVALID',
         'PATTERN_GRADIENT_EXTRACTION_INVALID', 'PATTERN_DISCOVERY_EXAMPLE_LEAKAGE',
         'PATTERN_DISCOVERY_INVALID_ABSTRACTION', 'GENERATED_OUTPUT_TRUNCATED'}),
-    'cluster': frozenset({'PATTERN_GRADIENT_CLUSTER_INVALID',
+    'cluster': frozenset({'PATTERN_GRADIENT_CLUSTER_INVALID','PATTERN_GRADIENT_CLUSTER_INVALID_MEMBERSHIP',
         'GENERATED_OUTPUT_TRUNCATED'}),
     'pattern': frozenset({'PATTERN_GRADIENT_CLUSTER_INVALID',
         'PATTERN_DISCOVERY_EXAMPLE_LEAKAGE', 'PATTERN_DISCOVERY_INVALID_ABSTRACTION'}),

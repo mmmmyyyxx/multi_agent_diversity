@@ -5,7 +5,7 @@ The [scientific principles](SCIENTIFIC_PRINCIPLES.md) constrain interpretation;
 the [MATH scientific contract](MATH_SCIENTIFIC_CONTRACT.md) clarifies benchmark
 measurement and admission. These clarifications add no algorithm or threshold.
 The sole executable method is
-`unified_team_prompt_search_v2_7_output_contract_feedback_v1`.
+`unified_team_prompt_search_v2_7_request_recovery_v2`.
 [The V2.5 scientific contract](RESPONSIBILITY_FALLBACK_REPAIR_V25.md) and
 [flexible answer extraction amendment](FLEXIBLE_ANSWER_EXTRACTION_V3.md) and
 [bounded output recovery amendment](GENERATED_OUTPUT_RECOVERY_V25.md) are normative.
@@ -44,7 +44,15 @@ contains closed generic categories only. No optimizer context enters Solver.
 
 Older runtime identities cannot execute through current production. Historical
 manifests and reports remain immutable evidence with their frozen source replay.
-No old scoring, response cache, competence, Memory or consumed scope is reusable.
+No old scoring, response cache, competence, Memory or consumed scope is silently reusable.
+The [request recovery and explicit continuation amendment](V27_REQUEST_RECOVERY_CONTINUATION_V2.md)
+permits only an authorized, sealed zero-opportunity pre-cluster prefix under a
+fresh identity. Exact Solver lanes and optimizer wire responses retain parent
+provenance and draw positions; adaptive Memory and completed opportunities cannot
+be imported. Generated alias conflicts now consume the existing bounded Cluster
+retry budget. Current formal scopes allow a null cumulative Token ceiling with
+finite opportunities/calls and durable per-request accounting. Epoch patience is
+frozen in each experiment; the authorized seed86 continuation uses four epochs.
 Current readiness and authorization live in manifests and the frontier.
 The [formal execution extension](FORMAL_EXECUTION_AND_PAIRED_VALIDATION_V1.md)
 adds a frozen finite formal resource scope, optional independent Gradient

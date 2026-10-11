@@ -1,0 +1,61 @@
+{
+  "adaptive_memory_completed_opportunities_or_consumed_authorization_imported": false,
+  "amendment": [
+    "TYPED_GENERATED_MEMBERSHIP_RETRY_WITHIN_EXISTING_THREE_DRAWS",
+    "FOUR_COMPLETE_NO_COMMIT_EPOCHS",
+    "NULL_CUMULATIVE_TOKEN_CEILING"
+  ],
+  "causal_component_claims": false,
+  "costs": "PARENT_AND_NEW_SEPARATE_AND_COMBINED_NO_IMPORT_RECHARGE",
+  "efficacy_based_rerun": false,
+  "historical_comparison": "DESCRIPTIVE_ONLY",
+  "identity": "V27_AUTHORIZED_PRECLUSTER_CONTINUATION_PREREG_V1",
+  "independent_generalization": "NOT_EVALUABLE_NO_VALIDATION_TEST",
+  "initial_competence": "EXACT_PARENT_AGGREGATE_FULL_OPTIMIZE_INITIAL_COUNTS",
+  "method": "unified_team_prompt_search_v2_7_request_recovery_v2",
+  "monitor": {
+    "anomalies_and_owner_reviews": "IMMEDIATE",
+    "eta_min_complete_opportunities": 3,
+    "interval_seconds": 3600
+  },
+  "owner_reviews": "INITIAL_PROFILE_AND_FIRST_OPPORTUNITY_REQUIRED",
+  "parent_experiment": "math_v27_direct_seed86_formal_v1",
+  "parent_initial_state_and_optimizer_draws": "EXACT_WIRE_PREFIX_IMPORT_REVALIDATED_NOT_RESAMPLED",
+  "parent_status": "SEALED_PRECLUSTER_ENGINEERING_ABORT",
+  "patience": 4,
+  "primary_search": "DEPLOYED_TEAM_VOTE",
+  "secondary": [
+    "ORACLE_COVERAGE",
+    "MEMBER_CORRECTNESS",
+    "VALIDITY"
+  ],
+  "source_freeze": "PENDING",
+  "stopping": "team_epoch_no_commit_v1",
+  "task": {
+    "gradient_concurrency": 8,
+    "max_opportunities": 50,
+    "members": 5,
+    "method": "unified_team_prompt_search_v2_7_request_recovery_v2",
+    "monetary_tracking": false,
+    "monitor_interval_seconds": 3600,
+    "no_commit_patience": 4,
+    "precluster_continuation_policy": {
+      "identity": "AUTHORIZED_V27_PRECLUSTER_PREFIX_CONTINUATION_V1",
+      "parent_attempt_id": "a4_v27_direct_seed86_formal_attempt1",
+      "parent_charged_tokens": 1055236,
+      "parent_inventory_sha256": "42414db8aec50852889a2635b54eed1acf85c5d9052efb3c3e08d0096bcc04a7",
+      "parent_prep_path": "runs/a4_v27_direct_seed86_formal_attempt1/prep",
+      "parent_run_path": "runs/a4_v27_direct_seed86_formal_attempt1/execution",
+      "parent_source_sha": "def2eaf935573cae495285df215c2a5b0d2c5887",
+      "user_instruction_sha256": "0915b242cf4373ca57935774a70976a164a444538b99558935c812cec731429b"
+    },
+    "push_authorized": true,
+    "scope": "FORMAL_SEARCH_ONLY",
+    "seed": 86,
+    "solver_concurrency": 16,
+    "test_access": "SEALED",
+    "token_ceiling": null,
+    "user_instruction_sha256": "0915b242cf4373ca57935774a70976a164a444538b99558935c812cec731429b",
+    "validation_access": "NOT_AUTHORIZED"
+  }
+}

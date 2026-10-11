@@ -186,9 +186,16 @@ def initial_prompts(root, contract):
 
 
 def ledger_policy(contract):
-    from ..benchmarks.math_formal_scope import ACCOUNTING_SCOPE, require_bound
+    from ..benchmarks.math_formal_scope import ACCOUNTING_SCOPE,ACCOUNTING_SCOPE_V1,BOUND_V1,require_bound
+    if contract.get('accounting_scope_policy')==ACCOUNTING_SCOPE_V1:
+        if contract.get('operational_pilot')!=BOUND_V1:raise SearchContractError('HISTORICAL_FORMAL_BOUND_MISMATCH')
+        from .token_accounting import POLICY_V26_FORMAL_30M
+        return POLICY_V26_FORMAL_30M
     if contract.get('accounting_scope_policy')==ACCOUNTING_SCOPE:
         require_bound(contract.get('operational_pilot'))
+        if contract.get('operational_pilot',{}).get('token_ceiling') is None:
+            from .token_accounting import POLICY_V27_FORMAL_UNCAPPED
+            return POLICY_V27_FORMAL_UNCAPPED
         from .token_accounting import POLICY_V26_FORMAL_30M
         return POLICY_V26_FORMAL_30M
     if contract.get('accounting_scope_policy')!='FRESH_V25_REPAIR_SINGLE_ARM_2M_V2':
@@ -215,6 +222,10 @@ async def execute_search(root, prep, run_root, payload):
     binding = execution_binding(root, c)
     if binding.blockers():
         raise SearchContractError("AUTONOMOUS_BINDING_NOT_READY")
+    continuation=None
+    if c.get('precluster_continuation_policy') is not None:
+        from .precluster_continuation import PreclusterContinuation
+        continuation=PreclusterContinuation(root,c,run_root)
     if c['execution_phase']=='formal' or c['solver_execution_policy'].get('gradient_max_concurrency',1)>1:
         from .cost_accounting import require_resource_control
         require_resource_control(c)
@@ -250,13 +261,14 @@ async def execute_search(root, prep, run_root, payload):
         atomic_write_json(run_root / "accounting_start.json",budget.view())
         transport,client = create_transport(c)
         arm=c.get('execution_arm','A4')
-        broker = RequestBroker(contract=c,transport=transport,arm=arm,seed=c['execution_seed'],token_ledger=budget,
+        broker = RequestBroker(contract=c,transport=transport,arm=arm,seed=c['execution_seed'],token_ledger=budget,continuation=continuation,
             reserve_reader=lambda:0,ledger_writer=lambda r:append_jsonl(run_root / "ledger.jsonl",r),
             raw_writer=lambda r:append_jsonl(run_root / "provider_trace_private.jsonl",r),
             durable_cache=durable_output_cache(run_root,c,payload,root=root),
             response_receipts=(ProviderResponseReceipts(run_root/'provider_response_receipts_private',
                 attempt_id=c['execution_attempt_id'],startup_identity_sha256=payload['startup_identity_sha256'])
                 if durable is not None else None))
+        if continuation is not None:continuation.bind(broker)
         solver = BenchmarkSolver(binding.benchmark(),broker)
         from ..search.textual_gradients import PerExampleGradientProvider, GradientClusterProvider
         pattern_provider=GradientClusterProvider(broker,read_json(root/c['pattern_prompt_path'])['prompt'],
@@ -277,7 +289,8 @@ async def execute_search(root, prep, run_root, payload):
         if c['execution_phase'] in {'pilot','formal'}:
             from .pilot_observation import attach_pilot_observer
             attach_pilot_observer(composed,run_root)
-        composed.state.initialize()
+        if continuation is None:composed.state.initialize()
+        else:continuation.restore_initial(composed.state)
         composed.memory.bootstrap(composed.state)
         checked_json(run_root / 'initial_state_private.json',composed.state.snapshot())
         if 'initial_competence_binding' in c:
@@ -338,8 +351,16 @@ async def execute_search(root, prep, run_root, payload):
         gradient_multiplier=c['optimization_evidence_policy']['structural_recovery_draws']
         summary.update(pattern_gradient_calls=broker.usage['pattern_gradient'],
             pattern_cluster_calls=broker.usage['pattern_cluster'],gradient_input_audit=gradients.input_audit)
-        if (gradients.calls!=broker.usage['pattern_gradient'] or pattern_provider.calls!=broker.usage['pattern_cluster']
-                or broker.usage['pattern']!=gradients.calls+pattern_provider.calls):
+        imported=continuation.imported_by_role if continuation is not None else {}
+        if continuation is not None:
+            if continuation.remaining:raise OperationalAbort('CONTINUATION_PREFIX_NOT_DRAINED')
+            summary['precluster_continuation']=dict(policy=continuation.policy,
+                parent_usage=continuation.parent_usage,imported_optimizer_responses=continuation.imported,
+                imported_by_role=imported,new_charged_tokens=budget.view()['charged_total'],
+                combined_charged_tokens=continuation.policy['parent_charged_tokens']+budget.view()['charged_total'])
+        if (gradients.calls!=broker.usage['pattern_gradient']+imported.get('pattern_gradient',0)
+                or pattern_provider.calls!=broker.usage['pattern_cluster']+imported.get('pattern_cluster',0)
+                or broker.usage['pattern']+sum(imported.values())!=gradients.calls+pattern_provider.calls):
             raise OperationalAbort('PATTERN_GRADIENT_ACCOUNTING_INCOMPLETE')
         if c['execution_phase']=='canary' and not len(result.trace)<=gradients.calls<=gradient_multiplier*c['initial_competence_binding']['count']:
             raise OperationalAbort('PATTERN_GRADIENT_CANARY_ACCOUNTING_INCOMPLETE')

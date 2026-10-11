@@ -1027,8 +1027,18 @@ nodes:
 - experiment_id: math_v27_direct_seed86_formal_v1
   kind: FORMAL_EXPERIMENT
   era: UNIFIED_TEAM_PROMPT_SEARCH
-  status: PREPARED_NOT_EXECUTED
+  status: HOLD
   manifest: experiments/manifests/math_v27_direct_seed86_formal_v1.yaml
+- experiment_id: math_v27_seed86_precluster_continuation_v1
+  kind: FORMAL_EXPERIMENT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  status: PREPARED_NOT_EXECUTED
+  manifest: experiments/manifests/math_v27_seed86_precluster_continuation_v1.yaml
+- experiment_id: math_v27_request_recovery_preparation_v1
+  kind: PROTOCOL_FREEZE
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  status: IMPLEMENTED_NOT_EXECUTED
+  manifest: experiments/manifests/math_v27_request_recovery_preparation_v1.yaml
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2255,4 +2265,14 @@ edges:
   relation: derived_from
   evidence: reports/math_v27_direct_formal_freeze_20261011/README.md
   scope: V2.7 fresh direct formal; no historical execution state.
+- from: math_v27_direct_seed86_formal_v1
+  to: math_v27_seed86_precluster_continuation_v1
+  relation: derived_from
+  evidence: reports/math_v27_precluster_continuation_20261012/README.md
+  scope: Explicit sealed zero-op prefix migration; no adaptive state.
+- from: math_optimizer_output_contract_feedback_preparation_v1
+  to: math_v27_request_recovery_preparation_v1
+  relation: derived_from
+  evidence: reports/math_v27_precluster_continuation_20261012/README.md
+  scope: Non-executable current draft; historical drafts unchanged.
 current_frontier: experiments/current_frontier.yaml

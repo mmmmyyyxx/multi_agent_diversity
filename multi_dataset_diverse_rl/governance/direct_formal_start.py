@@ -4,7 +4,7 @@ from ..search.schemas import SearchContractError
 from ..persistence.durable_io import read_json
 
 IDENTITY = 'USER_SELECTED_V27_DIRECT_FORMAL_OFFLINE_PREREQUISITE_V1'
-METHOD = 'unified_team_prompt_search_v2_7_output_contract_feedback_v1'
+from ..current_contract import CURRENT_METHOD_VERSION as METHOD
 
 def require_policy(value):
     keys={'identity','offline_verification_path','offline_verification_sha256','user_instruction_sha256'}

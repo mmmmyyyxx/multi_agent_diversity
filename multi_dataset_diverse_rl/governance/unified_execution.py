@@ -48,6 +48,9 @@ def execution_scope(manifest,contract):
         **({'optimization_evidence_policy':contract['optimization_evidence_policy']}
             if contract.get('optimization_evidence_policy') else {}),
         generated_output_recovery_policy=contract['generated_output_recovery_policy'],
+        scientific_no_commit_patience=contract.get('scientific_no_commit_patience',2),
+        **({'precluster_continuation_policy':contract['precluster_continuation_policy']}
+            if contract.get('precluster_continuation_policy') else {}),
         **({'pattern_cluster_generation_policy':contract['pattern_cluster_generation_policy']}
             if 'pattern_cluster_generation_policy' in contract else {}),
         **({'solver_output_interface':contract['solver_output_interface'],
@@ -246,6 +249,9 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
         manifest['canary_prerequisite']=contract['canary_prerequisite']
     if 'token_reporting_policy' in contract:
         manifest['token_reporting_policy']=contract['token_reporting_policy']
+    manifest['scientific_no_commit_patience']=contract.get('scientific_no_commit_patience',2)
+    if 'precluster_continuation_policy' in contract:
+        manifest['precluster_continuation_policy']=contract['precluster_continuation_policy']
     for k in ('solver_execution_policy','system_prompt_policy','answer_extraction_policy',
             'canary_review_policy','accounting_scope_policy','accounting_policy_sha256',
             'heldout_accounting_reserve','repair_probe_policy','generated_output_recovery_policy'):

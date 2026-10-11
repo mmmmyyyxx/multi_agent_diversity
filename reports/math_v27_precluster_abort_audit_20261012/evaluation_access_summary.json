@@ -1,0 +1,6 @@
+{
+  "optimize_only": true,
+  "shadow_calls": 0,
+  "test_calls": 0,
+  "validation_calls": 0
+}

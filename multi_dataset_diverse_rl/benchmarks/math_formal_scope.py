@@ -3,10 +3,14 @@ from copy import deepcopy
 from .data_freeze import digest
 from ..search.schemas import SearchContractError
 
-BOUND = dict(identity='MATH_FORMAL_SEARCH_RESOURCE_BOUND_V1',
+BOUND_V1 = dict(identity='MATH_FORMAL_SEARCH_RESOURCE_BOUND_V1',
     max_opportunities=50, token_ceiling=30_000_000,
     scientific_stopper='team_epoch_no_commit_v1', guarantees_saturation=False)
-ACCOUNTING_SCOPE = 'FRESH_V25_FORMAL_SINGLE_ARM_30M_V1'
+ACCOUNTING_SCOPE_V1 = 'FRESH_V25_FORMAL_SINGLE_ARM_30M_V1'
+BOUND = dict(identity='MATH_FORMAL_SEARCH_UNCAPPED_TOKEN_SCOPE_V2',
+    max_opportunities=50, token_ceiling=None,
+    scientific_stopper='team_epoch_no_commit_v1', guarantees_saturation=False)
+ACCOUNTING_SCOPE = 'FRESH_V27_FORMAL_SINGLE_ARM_UNCAPPED_V2'
 SELECTION = dict(identity='MATH_FORMAL_FULL_OPTIMIZE_METADATA_MEMBERSHIP_V1',
     optimize='all_frozen_optimize_150', shadow='metadata_stratified_seed_hash_40',
     validation='all_frozen_validation_300_post_search_only',

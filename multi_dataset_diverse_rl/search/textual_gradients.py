@@ -279,7 +279,7 @@ class GradientClusterProvider(_FreshSearchProvider):
             raise generation_failure('PATTERN_GRADIENT_CLUSTER_INVALID')
         def decode(ids):
             if not isinstance(ids,list) or any(not isinstance(x,str) or x not in mapping for x in ids):
-                raise SearchContractError('PATTERN_GRADIENT_CLUSTER_INVALID_MEMBERSHIP')
+                raise generation_failure('PATTERN_GRADIENT_CLUSTER_INVALID_MEMBERSHIP')
             return [mapping[x] for x in ids]
         for p in value['patterns']:
             if not isinstance(p,dict) or 'support_ids' not in p:raise generation_failure('PATTERN_GRADIENT_CLUSTER_INVALID')

@@ -20,7 +20,13 @@ FORMAL_POLICY=dict(STRUCTURED_POLICY,identity='FORMAL_FIRST_OPPORTUNITY_OWNER_RE
 
 def trace_rows(run_root):
     path=run_root/'provider_trace_private.jsonl'
-    return [json.loads(line) for line in path.read_text(encoding='utf-8').splitlines() if line]
+    rows=[json.loads(line) for line in path.read_text(encoding='utf-8').splitlines() if line] if path.exists() else []
+    imported=run_root/'imported_provider_trace_private.jsonl'
+    if imported.exists():
+        receipt=read_json(run_root/'precluster_continuation_receipt.json')
+        rows=[dict(json.loads(line),imported_parent_attempt=receipt['policy']['parent_attempt_id'])
+            for line in imported.read_text(encoding='utf-8').splitlines() if line]+rows
+    return rows
 
 
 def initial_audit(contract,composed,run_root):
@@ -57,7 +63,9 @@ def profile_audit(contract,solver,run_root,profiles):
             expected=dict(model=contract['models']['solver'],**generation_request_fields(contract,'solver'),
                 messages=solver_messages(prompt,solver.benchmark.format_input(example.item)))
             expected['max_tokens']=cap
-            record=bykey[(realization['request_sha256'],ordinal)];physical+=1
+            record=bykey[(realization['request_sha256'],ordinal)]
+            if record.get('imported_parent_attempt'):imported+=1
+            else:physical+=1
             if (record['request']!=expected or record['response']['text']!=realization['text']
                     or record['response']['finish_reason']!=realization['finish_reason']
                     or realization['output_capacity_tokens']!=cap):
@@ -96,7 +104,7 @@ def opportunity_audit(contract,composed,run_root,opportunity):
     mutations=[row for row in rows if row['role']=='reflection']
     for row in mutations:
         text=row['request']['messages'][0]['content']
-        packet=json.loads('{'+text.split('\n{',1)[1])
+        packet=json.loads('{'+text.rsplit('\n{',1)[1])
         if [r['problem'] for r in packet['current_panel_observations']]!=mutation_problems:
             raise SearchContractError('CANARY_MUTATION_MEMBERSHIP_MISMATCH')
     statuses=Counter(e.record['status'] for e in composed.memory.private)

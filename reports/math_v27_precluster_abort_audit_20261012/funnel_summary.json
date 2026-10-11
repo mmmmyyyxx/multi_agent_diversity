@@ -1,0 +1,16 @@
+{
+  "cluster_calls": 1,
+  "completed_opportunities": 0,
+  "engineering_abort": true,
+  "full_candidates": 0,
+  "gradient_examples": 38,
+  "initial_logical_profiles": 750,
+  "local_candidates": 0,
+  "memory_search_updates": 0,
+  "prepared_opportunities": 0,
+  "reflection_generations": 0,
+  "resource_truncation": false,
+  "scientific_stopping": "NOT_REACHED",
+  "shadow_candidates": 0,
+  "team_commits": 0
+}

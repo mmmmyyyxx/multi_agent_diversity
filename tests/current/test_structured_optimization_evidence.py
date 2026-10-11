@@ -393,6 +393,12 @@ def manifest():
     m['provider_policy']=dict(identity=c['provider'],frozen=True)
     m['provider_routing_policy']=c['provider_routing_policy']
     m['solver_decoding_policy']=c['solver_decoding_policy']
+    m['scientific_no_commit_patience']=c['scientific_no_commit_patience']
+    from multi_dataset_diverse_rl.search.solver_execution import OUTPUT_FEEDBACK_POLICY
+    from multi_dataset_diverse_rl.governance.cost_accounting import TOKEN_ONLY_POLICY
+    m['solver_execution_policy']=deepcopy(OUTPUT_FEEDBACK_POLICY)
+    m['concurrency']=dict(solver=16,optimizer=8)
+    m['cost_policy']=None;m['token_reporting_policy']=deepcopy(TOKEN_ONLY_POLICY)
     return m
 
 

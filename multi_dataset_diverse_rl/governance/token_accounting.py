@@ -51,6 +51,8 @@ POLICY_V26_FORMAL_30M = {**POLICY_V26_2M,
     "identity": "MATH_PARALLEL_COMPACT_FORMAL_TOKEN_ACCOUNTING_V5", "authorized_total": 30_000_000}
 POLICY_V26_VALIDATION_6M = {**POLICY_V26_2M,
     "identity": "MATH_PARALLEL_COMPACT_VALIDATION_TOKEN_ACCOUNTING_V5", "authorized_total": 6_000_000}
+POLICY_V27_FORMAL_UNCAPPED = {**POLICY_V26_FORMAL_30M,
+    "identity": "MATH_FORMAL_UNCAPPED_TOKEN_ACCOUNTING_V6", "authorized_total": None}
 
 
 class OperationalAbort(BaseException):
@@ -125,7 +127,7 @@ class TokenLedger:
     def __init__(self, directory: Path, *, task_sha256: str, policy=POLICY,
                  best_effort_snapshots=False, cost_policy=None):
         if policy not in (POLICY, POLICY_40M, POLICY_V23_2M, POLICY_V23_PARALLEL_2M, POLICY_V24_2M, POLICY_V25_2M,
-                POLICY_V25_FORMAL_30M, POLICY_V25_VALIDATION_6M, POLICY_V26_2M, POLICY_V26_FORMAL_30M, POLICY_V26_VALIDATION_6M) or len(task_sha256) != 64:
+                POLICY_V25_FORMAL_30M, POLICY_V25_VALIDATION_6M, POLICY_V26_2M, POLICY_V26_FORMAL_30M, POLICY_V26_VALIDATION_6M, POLICY_V27_FORMAL_UNCAPPED) or len(task_sha256) != 64:
             raise OperationalAbort("TOKEN_ACCOUNTING_POLICY_IDENTITY_MISMATCH")
         self.directory = Path(directory)
         from .cost_accounting import frozen_policy as frozen_cost_policy
@@ -159,7 +161,7 @@ class TokenLedger:
         self.task_sha256 = task_sha256
         self.policy = dict(policy)
         fresh_policies=(POLICY, POLICY_V23_2M, POLICY_V23_PARALLEL_2M, POLICY_V24_2M, POLICY_V25_2M,
-            POLICY_V25_FORMAL_30M, POLICY_V25_VALIDATION_6M, POLICY_V26_2M, POLICY_V26_FORMAL_30M, POLICY_V26_VALIDATION_6M)
+            POLICY_V25_FORMAL_30M, POLICY_V25_VALIDATION_6M, POLICY_V26_2M, POLICY_V26_FORMAL_30M, POLICY_V26_VALIDATION_6M, POLICY_V27_FORMAL_UNCAPPED)
         self.authorized_total = policy['authorized_total'] if policy in fresh_policies else POLICY["authorized_total"]
         self.authorization_amendments = []
         self.events = []
@@ -201,7 +203,7 @@ class TokenLedger:
             raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
         if row["kind"] == "AUTHORIZE":
             if (self.events or row["policy"] not in (POLICY, POLICY_V23_2M, POLICY_V23_PARALLEL_2M, POLICY_V24_2M, POLICY_V25_2M,
-                    POLICY_V25_FORMAL_30M, POLICY_V25_VALIDATION_6M, POLICY_V26_2M, POLICY_V26_FORMAL_30M, POLICY_V26_VALIDATION_6M)
+                    POLICY_V25_FORMAL_30M, POLICY_V25_VALIDATION_6M, POLICY_V26_2M, POLICY_V26_FORMAL_30M, POLICY_V26_VALIDATION_6M, POLICY_V27_FORMAL_UNCAPPED)
                     or row['policy'] != (POLICY if self.policy == POLICY_40M else self.policy)
                     or row.get('cost_policy') != self.cost_policy):
                 raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
@@ -265,7 +267,7 @@ class TokenLedger:
         self.events.append(row)
         if len(self.inflight)>self.policy['concurrency']:
             raise OperationalAbort('TOKEN_LEDGER_CORRUPTION')
-        if self.totals["charged_total"] + self.reserved > self.authorized_total:
+        if self.authorized_total is not None and self.totals["charged_total"] + self.reserved > self.authorized_total:
             raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
         if self.cost_policy is not None:
             from .cost_accounting import micros
@@ -286,7 +288,7 @@ class TokenLedger:
 
     @property
     def remaining(self):
-        return self.authorized_total - self.totals["charged_total"] - self.reserved
+        return None if self.authorized_total is None else self.authorized_total - self.totals["charged_total"] - self.reserved
 
     @property
     def cost_reserved_micros(self):
@@ -339,11 +341,11 @@ class TokenLedger:
             bound = reservation(request)
             if len(self.inflight) >= self.policy['concurrency']:
                 raise OperationalAbort("TOKEN_LEDGER_CONCURRENCY_VIOLATION")
-            if bound["amount"] > self.remaining:
+            if self.remaining is not None and bound["amount"] > self.remaining:
                 raise OperationalAbort("STOP_TOKEN_BUDGET_EXHAUSTED")
             if type(protected_validation) is not int or protected_validation < 0:
                 raise OperationalAbort("VALIDATION_RESERVE_INVALID")
-            if self.remaining - bound["amount"] < protected_validation:
+            if self.remaining is not None and self.remaining - bound["amount"] < protected_validation:
                 raise OperationalAbort("STOP_TOKEN_BUDGET_INSUFFICIENT_FOR_VALIDATION")
             cost={}
             if self.cost_policy is not None:

@@ -1,0 +1,41 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "8c0ad1a7536880379065a7229f9b937e85992009805219d75181e042f7c93091"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "db57f9f64e30a0967eefbe2d06ce20b1e5cb0d36f6cc4522565ff464b743ae10"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "d75957d0e6b05fcb6d1453a55239de54ed91fae34100c4f7e688f1cf918d5806"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "8503a48f3d93e5e7427f5354427d2142cea59922a556b7f5f110c2276bdd4f9c"
+    },
+    {
+      "file": "funnel_summary.json",
+      "sha256": "37128240ae6d034e5e62410cb784ea8652faf8d5e376babf699c473729e5b18b"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "be8810d031ea6b121a8ae1f16abbe0a665bde22659aa5aae00375b2b0e19543e"
+    },
+    {
+      "file": "README.md",
+      "sha256": "1bb34c0bcbb982db4ad037df4f70a5481f0a0acf1dba79544b61b1f5cd51c1ee"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "ff9c9fad82662fc12754bd8f6714c7d329754d5a483e2aaa948566861f333170"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "997fc00d93f3ecb6e7a02f326820b6e8b09106a055dfcef0c711f16ed0e3e0bb"
+    }
+  ]
+}

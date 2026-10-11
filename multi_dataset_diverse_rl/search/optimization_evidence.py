@@ -33,7 +33,7 @@ POLICY = dict(identity=IDENTITY, mutation_size=3, search_validation_size=3,
     prompt_state='STRUCTURED_SYSTEM_PROMPT_V1', mutation='single_block_per_generation',
     editable_blocks=['role','strategy','answer'], response_evidence='observed_content_optional_trajectory',
     answer_extraction='MATH_FLEXIBLE_ANSWER_EXTRACTION_V3',
-    generated_output_recovery='BOUNDED_OUTPUT_CONTRACT_FEEDBACK_RECOVERY_V2',
+    generated_output_recovery='BOUNDED_REQUEST_OUTPUT_RECOVERY_V3',
     optimizer_output_feedback='TYPED_OPTIMIZER_OUTPUT_FEEDBACK_V1',
     abstraction='SOURCE_CONTEXT_SYMBOLIC_ABSTRACTION_GUARD_V1',
     optimizer_input_encoding='DIRECT_READABLE_OPTIMIZER_EVIDENCE_V2')

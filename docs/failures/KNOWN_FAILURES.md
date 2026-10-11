@@ -577,3 +577,15 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 - Symptom: An insufficient unseen Optimize pool failed before the frozen minimum-prior-use supplement could run.
 - Forbidden inference: No performance-based selection, new split, relaxed guard, historical score revision or rerun permission.
 - Mitigation: Separate seed/exclusion validation; preserve strict fresh-only rejection and execute the existing metadata-only minimum supplement contract.
+
+## FAIL-V27-GENERATED-CLUSTER-MEMBERSHIP-FATAL: Generated duplicate support alias bypassed bounded draw recovery
+
+- Status: `MITIGATED`
+- Lifecycle: `REAL_OBSERVED_OFFLINE_REPRODUCED`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `math_v27_direct_seed86_formal_v1`
+- Root-cause status: Frozen classifier excluded typed model membership faults; exact earlier source reproduced it.
+- Symptom: A generated duplicate support alias ended execution after one Cluster draw and before an opportunity completed.
+- Forbidden inference: No historical result revision, automatic rerun permission, mathematical incapacity or component efficacy.
+- Mitigation: Fresh identity rejects the whole generated response, retries within existing three draws and uses existing legal exhausted fallback. No alias rewriting or guard relaxation.

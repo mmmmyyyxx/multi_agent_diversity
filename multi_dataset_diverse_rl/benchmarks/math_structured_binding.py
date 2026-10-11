@@ -40,12 +40,13 @@ def gradient_prompt_artifact():
 
 def prepare_structured_inputs(root,*,experiment_id,attempt,user_task_sha256,execution_phase='pilot',
         seed=81,team_version=MATH_INITIAL_TEAM_VERSION,initial_team_path=None,development_subsets=None,
-        execution_policy=None,cost_policy=None,canary_prerequisite=None,token_reporting_policy=None):
+        execution_policy=None,cost_policy=None,canary_prerequisite=None,token_reporting_policy=None,
+        precluster_continuation_policy=None,no_commit_patience=2):
     """Prepare a fresh unapproved scope without loading examples or credentials."""
     from ..persistence.durable_io import atomic_write_json
-    from ..governance.token_accounting import POLICY_V26_2M, POLICY_V26_FORMAL_30M
+    from ..governance.token_accounting import POLICY_V26_2M, POLICY_V27_FORMAL_UNCAPPED
     from .math_formal_scope import BOUND as formal_bound
-    accounting=POLICY_V26_FORMAL_30M if execution_phase=='formal' else POLICY_V26_2M
+    accounting=POLICY_V27_FORMAL_UNCAPPED if execution_phase=='formal' else POLICY_V26_2M
     parent_path='experiments/execution_bindings/a4_v24_structured_seed81_canary_attempt1.json'
     parent=json.loads((root/parent_path).read_bytes());parent_hash=file_hash(root/parent_path)
     protocol='experiments/protocols/'+experiment_id
@@ -80,7 +81,8 @@ def prepare_structured_inputs(root,*,experiment_id,attempt,user_task_sha256,exec
         max_opportunities=1 if execution_phase=='canary' else formal_bound['max_opportunities'] if execution_phase=='formal' else 5,
         token_ceiling=accounting['authorized_total'],seed=seed,
         team_version=team_version,development_subsets=development_subsets,execution_policy=execution_policy,
-        cost_policy=cost_policy,canary_prerequisite=canary_prerequisite,token_reporting_policy=token_reporting_policy)
+        cost_policy=cost_policy,canary_prerequisite=canary_prerequisite,token_reporting_policy=token_reporting_policy,
+        precluster_continuation_policy=precluster_continuation_policy,no_commit_patience=no_commit_patience)
     blockers=MATHStructuredBinding(root,c).blockers()
     if blockers:raise SearchContractError('V25_PREPARATION_HOLD:'+','.join(blockers))
     atomic_write_json(root/binding_path,c)
@@ -90,6 +92,8 @@ def prepare_structured_inputs(root,*,experiment_id,attempt,user_task_sha256,exec
         system_prompt_policy=c['system_prompt_policy'],answer_extraction_policy=EXTRACTION,
         optimization_evidence_policy=POLICY,provider_bounds=c['provider_bounds'],
         generated_output_recovery_policy=c['generated_output_recovery_policy'],
+        scientific_no_commit_patience=c['scientific_no_commit_patience'],
+        precluster_continuation_policy=c.get('precluster_continuation_policy'),
         solver_execution_policy=c['solver_execution_policy'],invalid_recovery_policy=c['invalid_recovery_policy'],
         canary_review_policy=c['canary_review_policy'],initial_accuracy='UNMEASURED_NEW_REAL_REQUESTS_REQUIRED',
         real_api_authorized=False,validation_access='not_authorized',test_access='sealed'))
@@ -103,14 +107,15 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
         accounting_policy_path, accounting_policy_sha256, max_opportunities=5,
         token_ceiling=2_000_000, execution_phase='pilot',seed=81,
         team_version=MATH_INITIAL_TEAM_VERSION,development_subsets=None,execution_policy=None,
-        cost_policy=None,canary_prerequisite=None,token_reporting_policy=None):
+        cost_policy=None,canary_prerequisite=None,token_reporting_policy=None,
+        precluster_continuation_policy=None,no_commit_patience=2):
     from .math_formal_scope import BOUND as formal_bound, ACCOUNTING_SCOPE as formal_accounting, SELECTION as formal_selection
     formal=execution_phase=='formal'
     if (not isinstance(attempt,str) or not attempt or execution_phase not in {'canary','pilot','formal'}
             or attempt in {parent.get('execution_attempt_id'),parent.get('cache_namespace')}
             or type(max_opportunities) is not int
             or (max_opportunities!=formal_bound['max_opportunities'] if formal else not 0<max_opportunities<=5)
-            or type(token_ceiling) is not int
+            or (type(token_ceiling) is not int if not formal else token_ceiling is not None)
             or token_ceiling!=(formal_bound['token_ceiling'] if formal else 2_000_000)
             or type(seed) is not int or seed<0
             or any(new==parent.get(key) for new,key in (
@@ -148,7 +153,7 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
             pattern=OPTIMIZER_MODEL,solver_thinking=False),solver_decoding_policy=solver_decoding_contract(),
         canary_attempt_id=attempt,cache_namespace=attempt,binding_path=binding_path,
         execution_phase=execution_phase,execution_seed=seed,seeds=[seed],cache_policy=CURRENT_CACHE_POLICY,
-        generated_output_recovery_policy=deepcopy(output_recovery),
+        generated_output_recovery_policy=deepcopy(output_recovery),scientific_no_commit_patience=no_commit_patience,
         system_prompt_policy=system_prompt_policy(team_version),answer_extraction_policy=deepcopy(EXTRACTION),
         solver_output_interface=system_interface_contract(team_version),solver_trajectory_policy=trajectory_policy(),
         prediction_validity_policy=validity_contract(),invalid_recovery_policy=structured_recovery_contract(),
@@ -183,6 +188,12 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
     c.pop('cost_policy',None)
     c.pop('token_reporting_policy',None)
     c.pop('canary_prerequisite',None)
+    c.pop('precluster_continuation_policy',None)
+    if precluster_continuation_policy is not None:
+        from ..governance.precluster_continuation import require_policy
+        require_policy(precluster_continuation_policy)
+        if not formal:raise SearchContractError('PRECLUSTER_CONTINUATION_REQUIRES_FORMAL')
+        c['precluster_continuation_policy']=deepcopy(precluster_continuation_policy)
     if canary_prerequisite is not None:
         from ..governance.canary_progression import require_policy
         require_policy(canary_prerequisite)
@@ -229,7 +240,8 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
             bootstrap_logical_solver_calls=bootstrap,per_op_logical_solver=per_op,
             solver_semantic_multiplier=4,gradient_semantic_multiplier=3,cluster_semantic_multiplier=3,transport_multiplier=transport,
             scientific_stopper_unchanged=True,guarantees_saturation=False,
-            token_bound='PRE_TRANSPORT_EXACT_RESERVATION_AND_CUMULATIVE_ATTEMPT_ADMISSION'))
+            token_bound=('PRE_TRANSPORT_EXACT_RESERVATION_AND_FINITE_CALL_ADMISSION' if formal
+                else 'PRE_TRANSPORT_EXACT_RESERVATION_AND_CUMULATIVE_ATTEMPT_ADMISSION')))
     return c
 
 
@@ -266,6 +278,8 @@ class MATHStructuredBinding:
                 cost_policy=c.get('cost_policy'),
                 token_reporting_policy=c.get('token_reporting_policy'),
                 canary_prerequisite=c.get('canary_prerequisite'),
+                precluster_continuation_policy=c.get('precluster_continuation_policy'),
+                no_commit_patience=c.get('scientific_no_commit_patience',2),
                 development_subsets=(dict(path=c['low_cost_subsets_path'],sha256=c['low_cost_subsets_sha256'],
                     protocol=c['low_cost_protocol']) if c['low_cost_protocol']['identity'] in {
                         'MATH_FRESH_CANARY_MEMBERSHIP_V2','MATH_FRESH_RECOVERY_DEVELOPMENT_MEMBERSHIP_V3',
@@ -310,7 +324,7 @@ class MATHStructuredBinding:
             'pattern_prompt_sha256','optimizer_generation_policy','pattern_policy',
             'partition_completion_policy','pattern_cluster_generation_policy')})
         return CURRENT_POLICY_BUNDLE.method(aggregation=c['aggregation'],provider_binding=provider_binding,
-            successful_provider_calls=c['provider_bounds']['successful_provider_calls'],
+            successful_provider_calls=c['provider_bounds']['successful_provider_calls'],no_commit_patience=c['scientific_no_commit_patience'],
             partition_completion_policy=c['partition_completion_policy'],
             pattern_cluster_generation_policy=c['pattern_cluster_generation_policy'],
             solver_trajectory_policy=c['solver_trajectory_policy'],optimization_evidence_policy=POLICY)

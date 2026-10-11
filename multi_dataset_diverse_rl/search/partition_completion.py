@@ -39,7 +39,7 @@ def complete_known_alias_partition(raw, aliases, *, validate_generalized):
 
     def reject(category, defect):
         audit['defect'] = defect
-        exc = (generation_failure(category) if category=='PATTERN_GRADIENT_CLUSTER_INVALID'
+        exc = (generation_failure(category) if category in {'PATTERN_GRADIENT_CLUSTER_INVALID','PATTERN_GRADIENT_CLUSTER_INVALID_MEMBERSHIP'}
             else SearchContractError(category))
         exc.partition_completion_audit = deepcopy(audit)
         raise exc

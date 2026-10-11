@@ -286,7 +286,19 @@ def assert_closed_current_scope(frontier,registry):
         assert metrics['validity']=='INDEPENDENTLY_VERIFIED_INITIAL_OBSERVATIONS'
         assert metrics['interpretation']=='DESCRIPTIVE_OPTIMIZE12_ONLY_NO_GENERALIZATION'
     active={r['experiment_id'] for r in registry['experiments'] if r['active_for_new_work']}
-    if frontier['canary_manifest'] is None:
+    if frontier.get('formal_manifest'):
+        m=load_yaml(ROOT/frontier['formal_manifest'])
+        assert frontier['current_experiment']==m['experiment_id']
+        assert frontier['current_execution_binding']==m['execution_binding']['path']
+        assert active=={frontier['current_preparation_experiment']}
+        assert m['method_identity']==CURRENT_METHOD_VERSION
+        assert m['execution_binding']['identity']==MATH_STRUCTURED_SYSTEM_BINDING_VERSION
+        assert m['scientific_no_commit_patience']==4
+        binding=json.loads((ROOT/m['execution_binding']['path']).read_bytes())
+        assert binding['execution_phase']=='formal' and binding['operational_pilot']['token_ceiling'] is None
+        assert binding['operational_pilot']['max_opportunities']==50
+        assert binding['precluster_continuation_policy']['identity']=='AUTHORIZED_V27_PRECLUSTER_PREFIX_CONTINUATION_V1'
+    elif frontier['canary_manifest'] is None:
         assert frontier['current_experiment']=='NO_AUTHORIZED_REAL_EXPERIMENT'
         assert frontier['current_execution_binding'] is None
         assert active=={frontier['current_preparation_experiment']}

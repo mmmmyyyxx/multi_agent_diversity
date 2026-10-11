@@ -43,15 +43,15 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
         execution_policy=serial_reference
     if phase=='formal':
         from multi_dataset_diverse_rl.benchmarks.math_formal_scope import build_subsets,protocol
-        from multi_dataset_diverse_rl.governance.token_accounting import POLICY_V26_FORMAL_30M
+        from multi_dataset_diverse_rl.governance.token_accounting import POLICY_V27_FORMAL_UNCAPPED
         from tests.current.test_formal_execution_scope import tariff
         from multi_dataset_diverse_rl.governance import canary_progression
         from multi_dataset_diverse_rl.benchmarks import math_low_cost,current_math_dependencies
         data=build_subsets(read_json(ROOT/old['low_cost_subsets_path'])['metadata_universe'],old['split_manifest_sha256'],seed=seed)
         subset_path='runs/synthetic_formal_subsets.json';accounting_path='runs/synthetic_formal_accounting.json'
-        atomic_write_json(tmp_path/subset_path,data);atomic_write_json(tmp_path/accounting_path,POLICY_V26_FORMAL_30M)
+        atomic_write_json(tmp_path/subset_path,data);atomic_write_json(tmp_path/accounting_path,POLICY_V27_FORMAL_UNCAPPED)
         development_subsets=dict(path=subset_path,sha256=sha256((tmp_path/subset_path).read_bytes()).hexdigest(),protocol=protocol(data))
-        extras=dict(token_ceiling=30_000_000,cost_policy=tariff('1000000.000000'),
+        extras=dict(token_ceiling=None,cost_policy=tariff('1000000.000000'),
             canary_prerequisite=dict(identity=canary_progression.IDENTITY,canary_prep='runs/synthetic_canary_prep',
                 canary_run='runs/synthetic_canary_run',canary_binding_path='runs/synthetic_canary_binding.json',
                 canary_binding_sha256='a'*64,canary_attempt_id='synthetic_canary'))
@@ -163,7 +163,7 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
         'SATURATION_REACHED' if phase=='formal' else 'OPERATIONAL_OPPORTUNITY_CEILING' if phase=='pilot' else 'CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE')
     if phase=='pilot':
         assert result['pilot_status']=='INCOMPLETE_OPERATIONAL_TRUNCATION'
-    assert result['accounting']['authorized_total']==(30_000_000 if phase=='formal' else 2_000_000) and not result['accounting']['reserved_inflight']
+    assert result['accounting']['authorized_total']==(None if phase=='formal' else 2_000_000) and not result['accounting']['reserved_inflight']
     assert result['validation_calls']==result['test_calls']==0 and result['memory_audit']['initial_memory_entries']==5
     assert len([r for r in requests if r['model']=='gpt-4o-mini'])==initial_profiles
     assert result['pattern_gradient_calls']==6*opportunity_count*(2 if structural else 1)

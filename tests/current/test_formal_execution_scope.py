@@ -28,7 +28,7 @@ def test_draft_is_strict_nonexecutable_and_old_default_binding_cannot_be_used():
     assert not validate_manifest_v2(fixture.ROOT,m)
     assert m['lifecycle']['status']=='DRAFT' and m['cost_policy'] is None
     result=bound_preflight(fixture.ROOT,m)
-    assert result['gate']=='HOLD' and not result['ready_for_authorization'] and result['provider_attempts']==0
+    assert result['gate']=='HOLD' and not result.get('ready_for_authorization',False) and result['provider_attempts']==0
     with pytest.raises(SearchContractError,match='EXPLICIT_CURRENT_EXECUTION_BINDING'):
         preexecution_manifest(fixture.ROOT,source_sha='0'*40)
     frozen=deepcopy(m);frozen['lifecycle']['status']='PREEXECUTION_FROZEN'
@@ -281,7 +281,7 @@ def test_real_formal_entrypoint_exceeds_pilot_horizon_and_uses_scientific_epoch_
         team_version=ARM_B_TEAM_VERSION,execution_policy=GRADIENT_PARALLEL_POLICY,token_only=token_only)
     assert 5<len(result['result']['trace'])<=50
     assert result['formal_status']=='SCIENTIFIC_COMPLETION' and 'pilot_status' not in result
-    assert result['accounting']['authorized_total']==30_000_000
+    assert result['accounting']['authorized_total'] is None
     if token_only:assert 'cost' not in result['accounting']
     else:assert result['accounting']['cost']['reserved_micros']==0
     assert all(r['messages'][0]['content']==ARM_B_SEED.render() for r in requests if r['model']=='gpt-4o-mini')

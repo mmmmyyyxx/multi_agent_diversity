@@ -1,0 +1,7 @@
+# V2.7 explicit pre-cluster continuation
+
+The parent aborted before its first opportunity because a generated Cluster response assigned one support alias twice. Its immutable terminal audit passed. Parent charges were 1,055,236 Token across 889 attempts; initial Vote118/150, Oracle124/150. No Commit or mathematical optimization had completed.
+
+The user authorized bounded engineering recovery, continued real APIs, hourly monitoring and publication. This new identity revalidates exact paid initial Solver lanes and optimizer draws, preserving historical scores and retry positions. Five Arm B members, seed86, Optimize150/Shadow40, Solver16/Gradient8, fifty opportunities and existing scientific gates remain. Four complete no-commit epochs stop search; cumulative Token is uncapped. Per-request limits, bounded recovery, finite call ceilings and durable accounting remain. No Validation/Test. Parent/new costs will be disclosed separately and together. No efficacy or independent generalization is established by preparation.
+
+Offline verification: the full current run had 785 passes, 1 stale derived-LINEAGE failure and 2 skips. Regenerating that metadata and rerunning the failed governance check passed; 786 selected cases are verified, with no unresolved failure. Original JUnit remains preserved. 220 historical/private modules omitted. Targeted feedback, direct-start integrity and formal execution checks passed. Compileall, repository governance, sanitization and whitespace checks passed with zero real API/Validation/Test access.

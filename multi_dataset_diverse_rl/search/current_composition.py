@@ -18,7 +18,7 @@ from .schemas import SearchContractError
 
 
 class OneProductionOpportunityStop(GlobalStopPolicy):
-    """Frozen phase boundary; scientific no-commit patience remains two."""
+    """Frozen phase boundary; scientific patience is bound by the method."""
     def observe_opportunity(self, **kwargs):
         super().observe_opportunity(**kwargs)
         return 'CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE'
@@ -89,7 +89,8 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
         engine=CurrentEngine(optimizer,seed),evaluation=CandidateEvaluationPipeline(provider,
             FixedPeerPromotion(invalid_predictions_are_incorrect=invalidity)),
         transition=transition,gate=gate,committer=TeamStateCommitter(store),history=history,memory=memory,
-        stop=(OneProductionOpportunityStop(2) if execution_phase == 'canary' else GlobalStopPolicy(2)),runtime_readiness=runtime_readiness,
+        stop=(OneProductionOpportunityStop(method.global_stop.no_commit_patience) if execution_phase == 'canary'
+            else GlobalStopPolicy(method.global_stop.no_commit_patience)),runtime_readiness=runtime_readiness,
         provider_call_reader=provider_call_reader)
     composed.operational_bound=operational_bound
     return composed

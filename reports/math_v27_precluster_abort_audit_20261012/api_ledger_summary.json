@@ -1,0 +1,29 @@
+{
+  "attempts": 889,
+  "calls_by_role": {
+    "pattern_cluster": 1,
+    "pattern_gradient": 53,
+    "solver": 835
+  },
+  "calls_by_split": {
+    "optimize": 889
+  },
+  "charged_tokens": 1055236,
+  "charged_tokens_by_role": {
+    "pattern_cluster": 3722,
+    "pattern_gradient": 240965,
+    "solver": 810549
+  },
+  "failure_categories": {
+    "APIConnectionError": 20
+  },
+  "fallback_charged": 172349,
+  "monetary_tracking": false,
+  "provider_reported_actual": 882887,
+  "provider_reported_input_tokens": 346886,
+  "provider_reported_output_tokens": 536001,
+  "reserved_inflight": 0,
+  "successful_responses": 869,
+  "token_ceiling": 30000000,
+  "transport_failures": 20
+}

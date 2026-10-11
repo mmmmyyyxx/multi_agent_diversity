@@ -24,6 +24,10 @@ def require_current_contract(contract):
             or contract.get('repair_probe_policy') != PROBE_POLICY):
         raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
     frozen_policy(contract.get('optimization_evidence_policy'))
+    from ..governance.precluster_continuation import require_policy
+    require_policy(contract.get('precluster_continuation_policy'))
+    if type(contract.get('scientific_no_commit_patience',2)) is not int or contract.get('scientific_no_commit_patience',2)<=0:
+        raise SearchContractError('SCIENTIFIC_NO_COMMIT_PATIENCE_INVALID')
     from .generation_failures import frozen_recovery
     frozen_recovery(contract.get('generated_output_recovery_policy'))
     from ..benchmarks.math_structured_interface import system_prompt_policy, system_interface_contract
@@ -60,7 +64,7 @@ class CurrentPolicyBundle:
     def method(self, *, aggregation, provider_binding, successful_provider_calls,
             partition_completion_policy=None, gradient_recovery_policy=None,
             pattern_cluster_generation_policy=None, solver_trajectory_policy=None,
-            optimization_evidence_policy=None):
+            optimization_evidence_policy=None,no_commit_patience=2):
         revised = frozen_policy(optimization_evidence_policy)
         if gradient_recovery_policy is not None:
             raise SearchContractError('REFERENCE_GRADIENT_RECOVERY_UNBOUND')
@@ -75,7 +79,7 @@ class CurrentPolicyBundle:
             evidence_policy=self.evidence, feasibility_policy=identities.UNIFIED_VARIABLE_FEASIBILITY_VERSION,
             transition_policy=self.transition, pattern_policy=self.clustering,
             memory_policy=self.memory, search_acceptance_policy='layer1_local_guidance_team_admission_v1',
-            global_stop=GlobalStopConfig(emergency_max_provider_calls=successful_provider_calls),
+            global_stop=GlobalStopConfig(no_commit_patience=no_commit_patience,emergency_max_provider_calls=successful_provider_calls),
             mechanism_config=dict(memory=deepcopy(LIMITS), shared_risk_policy=deepcopy(MEMORY_POLICY),
                 optimizer_input_schema=INPUT, panel_policy=self.evidence, pattern_policy=pattern_policy,
                 repair_probe_policy=deepcopy(PROBE_POLICY),
@@ -101,7 +105,8 @@ class CurrentPolicyBundle:
             gradient_recovery_policy=method.mechanism_config.get('gradient_recovery_policy'),
             pattern_cluster_generation_policy=method.mechanism_config.get('pattern_cluster_generation_policy'),
             solver_trajectory_policy=method.mechanism_config.get('solver_trajectory_policy'),
-            optimization_evidence_policy=method.mechanism_config.get('optimization_evidence_policy'))
+            optimization_evidence_policy=method.mechanism_config.get('optimization_evidence_policy'),
+            no_commit_patience=method.global_stop.no_commit_patience)
         if method.identity() != expected.identity():
             raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
 

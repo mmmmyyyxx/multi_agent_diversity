@@ -5,7 +5,7 @@ The endpoint is useful correct coverage and team task performance under the
 frozen aggregation. [Scientific principles](docs/design/SCIENTIFIC_PRINCIPLES.md)
 separate those measurements from textual diversity, validity and commit counts.
 The sole current method is V2.5 with flexible answer extraction and bounded output recovery,
-`unified_team_prompt_search_v2_7_output_contract_feedback_v1`.
+`unified_team_prompt_search_v2_7_request_recovery_v2`.
 
 [Current specification](docs/design/CURRENT_SPEC.md) and
 [V2.5 scientific contract](docs/design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md) define the

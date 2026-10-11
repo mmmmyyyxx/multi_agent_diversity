@@ -25,10 +25,15 @@ from ..current_contract import MATH_STRUCTURED_SYSTEM_BINDING_VERSION,CURRENT_CA
 class RequestBroker:
     def __init__(self, *, contract, transport, arm, seed, ledger_writer=None, raw_writer=None, usage=None, lock=None,
                  token_ledger=None, reserve_reader=None, validation_only=False, durable_cache=None,
-                 response_receipts=None, shared_requests=None, evidence_reuse=None):
+                 response_receipts=None, shared_requests=None, evidence_reuse=None,continuation=None):
         self.contract = contract
         from .current_policy import CURRENT_POLICY_BUNDLE
         CURRENT_POLICY_BUNDLE.validate_contract(contract)
+        if (continuation is None)!=(contract.get('precluster_continuation_policy') is None):
+            raise SearchContractError('CONTINUATION_PROVIDER_BINDING_REQUIRED')
+        if continuation is not None and continuation.policy!=contract['precluster_continuation_policy']:
+            raise SearchContractError('CONTINUATION_PROVIDER_POLICY_MISMATCH')
+        self.continuation=continuation
         if (arm!='A4' or seed!=contract.get('execution_seed',81)
                 or type(validation_only) is not bool
                 or validation_only!=(contract.get('execution_phase')=='validation')):
@@ -102,7 +107,7 @@ class RequestBroker:
             ledger_writer=self.ledger_writer, raw_writer=self.raw_writer, usage=self.usage, lock=self.lock,
             token_ledger=self.token_ledger, reserve_reader=self.reserve_reader, validation_only=self.validation_only,
             durable_cache=self.durable_cache, response_receipts=self.response_receipts,
-            shared_requests=self.shared_requests, evidence_reuse=self.evidence_reuse)
+            shared_requests=self.shared_requests, evidence_reuse=self.evidence_reuse,continuation=self.continuation)
 
     def _request_identity(self, *, role, split, messages, member_slot=None, output_capacity=None):
         pattern_roles={'pattern_gradient','pattern_cluster'}
@@ -129,6 +134,9 @@ class RequestBroker:
             identity['system_prompt_policy'] = c['system_prompt_policy']
             identity['answer_extraction_policy'] = c['answer_extraction_policy']
             identity['method_treatment'] = {k:c[k] for k in ('method_identity', 'transition_policy')}
+            identity['method_treatment']['scientific_no_commit_patience']=c.get('scientific_no_commit_patience',2)
+            if c.get('precluster_continuation_policy'):
+                identity['precluster_continuation_policy']=c['precluster_continuation_policy']
         if c.get('identity')==MATH_STRUCTURED_SYSTEM_BINDING_VERSION:
             identity['memory_treatment']={k:c[k] for k in ('memory_policy_identity','memory_limits','layer1_search_policy','optimizer_input_schema','panel_evidence_policy')}
         if c.get('pattern_policy'):
@@ -194,6 +202,9 @@ class RequestBroker:
             self.cache_seals[key]=hashlib.sha256(json.dumps(result,sort_keys=True,separators=(',',':')).encode()).hexdigest()
 
     def complete(self, *, role, split, stage, messages, member_slot=None):
+        if self.continuation is not None:
+            previous=self.continuation.take(self,role=role,split=split,stage=stage,messages=messages,member_slot=member_slot)
+            if previous is not None:return previous
         if role != 'solver' or not self.recovery_policy:
             return self._complete_one(role=role,split=split,stage=stage,messages=messages,member_slot=member_slot)
         _,key=self._request_identity(role=role,split=split,messages=messages,member_slot=member_slot)
@@ -302,18 +313,23 @@ class RequestBroker:
                 self.physical_inflight[threading.get_ident()]=role
                 bounds = c["provider_bounds"]
                 role_bound = bounds[role+'_calls']
+                prior=self.continuation.parent_usage if self.continuation is not None else {}
+                attempts_now=self.usage['attempts']+prior.get('attempts',0)
+                successes_now=self.successes+prior.get('successes',0)
+                role_now=self.usage[role]+prior.get(role,0)
+                pattern_now=self.usage.get('pattern',0)+prior.get('pattern',0)
                 if c.get('operational_pilot'):
-                    if self.usage['attempts']>=bounds['transport_attempts']:
+                    if attempts_now>=bounds['transport_attempts']:
                         self.abort('TRANSPORT_CEILING')
-                    if self.successes+len(self.physical_inflight)>bounds['successful_provider_calls'] or self.usage[role]+sum(r==role for r in self.physical_inflight.values())>role_bound:
+                    if successes_now+len(self.physical_inflight)>bounds['successful_provider_calls'] or role_now+sum(r==role for r in self.physical_inflight.values())>role_bound:
                         self.abort('PROVIDER_CALL_CEILING')
                     from ..governance.token_accounting import reservation
                     spent=(self.token_ledger.totals['charged_total'] if self.token_ledger
                         else self.usage['input_tokens']+self.usage['output_tokens'])
-                    if spent+(self.token_ledger.reserved if self.token_ledger else 0)+reservation(request)['amount']>c['operational_pilot']['token_ceiling']:
+                    if c['operational_pilot']['token_ceiling'] is not None and spent+(self.token_ledger.reserved if self.token_ledger else 0)+reservation(request)['amount']>c['operational_pilot']['token_ceiling']:
                         self.abort('TOKEN_CEILING')
-                if (self.usage["attempts"] >= bounds["transport_attempts"] or self.successes+len(self.physical_inflight) > bounds["successful_provider_calls"]
-                        or self.usage[role]+sum(r==role for r in self.physical_inflight.values()) > role_bound or role in {'pattern_gradient','pattern_cluster'} and self.usage['pattern']>=bounds['pattern_calls']):
+                if (attempts_now >= bounds["transport_attempts"] or successes_now+len(self.physical_inflight) > bounds["successful_provider_calls"]
+                        or role_now+sum(r==role for r in self.physical_inflight.values()) > role_bound or role in {'pattern_gradient','pattern_cluster'} and pattern_now>=bounds['pattern_calls']):
                     self.abort("PROVIDER_CEILING_PRE_TRANSPORT")
                 token_reservation = None
                 if self.token_ledger:

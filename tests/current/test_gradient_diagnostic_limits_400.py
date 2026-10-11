@@ -171,7 +171,7 @@ def test_closed_identity_imports_work_in_either_entry_order(module):
 
 def preparation_manifest():
     from multi_dataset_diverse_rl.governance.registries import load_yaml
-    return load_yaml(ROOT/'experiments/manifests/math_optimizer_output_contract_feedback_preparation_v1.yaml')
+    return load_yaml(ROOT/'experiments/manifests/math_v27_request_recovery_preparation_v1.yaml')
 
 
 def test_current_preparation_is_strict_and_cannot_import_historical_measurement():
@@ -202,6 +202,8 @@ def test_historical_manifest_schema_branches_keep_their_original_contracts():
     assert now['oneOf'][1:len(old['oneOf'])] == old['oneOf'][1:]
     fallback = deepcopy(now['oneOf'][0])
     fallback['allOf'][0]['not']['properties']['method_family']['enum'].remove(current.CURRENT_METHOD_VERSION)
+    fallback['allOf'][0]['not']['properties']['method_family']['enum'].remove(
+        versions.UNIFIED_OUTPUT_CONTRACT_FEEDBACK_VERSION)
     fallback['allOf'][0]['not']['properties']['method_family']['enum'].remove(
         'unified_team_prompt_search_v2_5_diagnostic_limits_400_v2')
     fallback['allOf'][0]['not']['properties']['method_family']['enum'].remove(
