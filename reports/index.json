@@ -959,6 +959,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/gradient_diagnostic_limits_400_v2_preparation_20261011",
+      "document": "reports/gradient_diagnostic_limits_400_v2_preparation_20261011/README.md",
+      "date": "20261011",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "PREEXECUTION",
+      "experiment_id": "math_gradient_diagnostic_limits_400_v2",
+      "status": "IMPLEMENTED_NOT_EXECUTED",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/gradient_diagnostic_threshold_replay_20261011",
       "document": "reports/gradient_diagnostic_threshold_replay_20261011/README.md",
       "date": "20261011",

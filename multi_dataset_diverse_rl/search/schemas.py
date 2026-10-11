@@ -14,6 +14,11 @@ class SearchContractError(ValueError):
     """A scientific or access contract cannot be satisfied."""
 
 
+# The current identity module also exports the structured seed, which imports
+# SearchContractError. Define that dependency before resolving closed identities.
+from ..current_contract import CURRENT_METHOD_VERSION, GRADIENT_PATTERN_DISCOVERY_VERSION
+
+
 @dataclass(frozen=True)
 class BenchmarkCapabilities:
     supports_plurality: bool
@@ -217,7 +222,7 @@ class GlobalStopConfig:
 
 @dataclass(frozen=True)
 class SearchMethodConfig:
-    method: str = versions.UNIFIED_GENERATION_RECOVERY_VERSION
+    method: str = CURRENT_METHOD_VERSION
     search_engine: str = 'STRUCTURED_EVALUATED_PARENT_SEARCH_V3'
     diagnosis_policy: str = versions.BINARY_PLURALITY_RESPONSIBILITY_VERSION
     target_policy: str = versions.UNIFIED_FALLBACK_TARGET_VERSION
@@ -228,7 +233,7 @@ class SearchMethodConfig:
     adaptive_gate_policy: str = versions.UNIFIED_ADAPTIVE_GATE_VERSION
     aggregation_policy: str = versions.UNIFIED_PLURALITY_AGGREGATION_VERSION
     memory_policy: str = 'BOOTSTRAPPED_FORMAT_BLOCK_EDIT_EFFECT_MEMORY_V3'
-    pattern_policy: str = versions.OUTPUT_RECOVERY_PATTERN_DISCOVERY_VERSION
+    pattern_policy: str = GRADIENT_PATTERN_DISCOVERY_VERSION
     search_acceptance_policy: str = 'layer1_local_guidance_team_admission_v1'
     search_stop: SearchStopConfig = field(default_factory=SearchStopConfig)
     global_stop: GlobalStopConfig = field(default_factory=GlobalStopConfig)
@@ -239,7 +244,7 @@ class SearchMethodConfig:
 
 
     def __post_init__(self):
-        if self.method!=versions.UNIFIED_GENERATION_RECOVERY_VERSION:
+        if self.method!=CURRENT_METHOD_VERSION:
             raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
         # Bundle validation closes all policy combinations before composition.
         if not self.mechanism_config:
@@ -255,7 +260,7 @@ class SearchMethodConfig:
         allowed = {row.name for row in fields(cls)}
         if set(payload) - allowed:
             raise SearchContractError("unknown unified method component")
-        if payload.get('method')!=versions.UNIFIED_GENERATION_RECOVERY_VERSION:
+        if payload.get('method')!=CURRENT_METHOD_VERSION:
             raise SearchContractError('unsupported unified method identity')
         if not payload.get('mechanism_config'):
             raise SearchContractError('CURRENT_V25_COMPLETE_POLICY_REQUIRED')

@@ -31,3 +31,5 @@ artifacts remain protected. The current closure includes no retired namespace.
 Run the current suite with `python tests/formal_zero_api_runner.py tests --suite=current`.
 Historical/private-artifact tests require the original frozen source and assets;
 excluded or retired modules are not claimed to pass in the current checkout.
+
+Current diagnostic limits and identity amendment: [Gradient 400 V2](design/GRADIENT_DIAGNOSTIC_LIMITS_400_V2.md).

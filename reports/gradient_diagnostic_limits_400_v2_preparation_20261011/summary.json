@@ -1,0 +1,17 @@
+{
+  "experiment_id": "math_gradient_diagnostic_limits_400_v2",
+  "method_identity": "unified_team_prompt_search_v2_5_diagnostic_limits_400_v2",
+  "output_limits": {
+    "identity": "GRADIENT_DIAGNOSTIC_FIELD_LIMITS_V2",
+    "observed_failure": 400,
+    "diagnosis": 400,
+    "reusable_correction": 400,
+    "expected_effect": 240
+  },
+  "policy_amendment": true,
+  "architecture_changed": false,
+  "real_experiment_executed": false,
+  "prospective_cost": "UNMEASURED",
+  "prospective_efficacy": "UNMEASURED",
+  "planning_values": "INHERITED_UNFROZEN_TEMPLATE_ONLY"
+}

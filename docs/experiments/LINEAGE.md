@@ -8,25 +8,25 @@ Registry provides node metadata; current_frontier.yaml provides readiness only.
 ```yaml
 schema_version: current_frontier_v1
 current_architecture: Unified Team Prompt Search
-method_identity: unified_team_prompt_search_v2_5_generation_recovery_v1
-current_method: unified_team_prompt_search_v2_5_generation_recovery_v1
+method_identity: unified_team_prompt_search_v2_5_diagnostic_limits_400_v2
+current_method: unified_team_prompt_search_v2_5_diagnostic_limits_400_v2
 current_experiment: NO_AUTHORIZED_REAL_EXPERIMENT
-current_implementation: V2.5 typed bounded output recovery and source-context symbolic
-  provenance; flexible parser retained; OpenLux Solver and lwj optimizer routing.
+current_implementation: V2.5 two diagnostic caps 400; bounded recovery and source guards retained; no
+  new real execution.
 current_solver_model: gpt-4o-mini
 current_solver_provider_profile: openlux
 current_optimizer_model: qwen3.7-flash
 current_optimizer_provider_profile: lwj
 current_provider_routing_policy: OPENLUX_SOLVER_LWJ_OPTIMIZER_V1
-current_binding_identity: MATH_ROLE_ROUTED_GENERATION_RECOVERY_BINDING_V5
-current_cache_policy: ROLE_ROUTED_RECOVERY_MEMBER_LANE_CACHE_V6
+current_binding_identity: MATH_DIAGNOSTIC_400_ROLE_ROUTED_BINDING_V6
+current_cache_policy: ROLE_ROUTED_DIAGNOSTIC_400_MEMBER_LANE_CACHE_V7
 current_benchmark_suite:
 - math
-last_governance_milestone: math_provider_role_routing_v1
+last_governance_milestone: math_gradient_diagnostic_limits_400_v2
 real_execution_ready: false
 real_api_authorized: false
 ready_for_authorization: false
-current_preparation_status: DUAL_SCOPE_EXECUTION_AUDITED_SCOPES_CLOSED
+current_preparation_status: OFFLINE_400_POLICY_ADOPTED_NO_ATTEMPT
 validation_access: not_authorized
 test_access: sealed
 current_execution_blocker: NEW_EXACT_FROZEN_SCOPE_REQUIRED
@@ -34,12 +34,12 @@ current_execution_blockers:
 - NEW_EXACT_FROZEN_SCOPE_REQUIRED
 current_runtime_builder: build_current_team_prompt_search
 current_execution_entrypoint: scripts/run_experiment.py
-current_runtime_composition: CURRENT_GENERATION_RECOVERY_COMPOSITION_V5
+current_runtime_composition: CURRENT_DIAGNOSTIC_400_COMPOSITION_V6
 current_execution_binding: null
 current_layer1_backend: STRUCTURED_EVALUATED_PARENT_SEARCH_V3
 current_memory_policy: BOOTSTRAPPED_FORMAT_BLOCK_EDIT_EFFECT_MEMORY_V3
-current_pattern_policy: gradient_output_recovery_partial_partition_v6
-current_gradient_prompt_identity: STRUCTURED_SYSTEM_GRADIENT_PROMPT_V7
+current_pattern_policy: gradient_diagnostic_400_partial_partition_v7
+current_gradient_prompt_identity: STRUCTURED_SYSTEM_GRADIENT_PROMPT_V8
 current_initial_team_version: MATH_IDENTICAL_ARM_B_STRUCTURED_SEED_V3
 current_initial_team_path: experiments/initial_teams/math_arm_b_structured_seed_v3.json
 current_solver_interface: MATH_FLEXIBLE_ANSWER_SYSTEM_INTERFACE_V9
@@ -47,11 +47,11 @@ current_transition_policy: initial_competence_target_or_team_progress_v3
 current_configuration_arm: A4
 current_pattern_enabled: true
 current_memory_enabled: true
-current_canary_status: TERMINAL_INTEGRITY_PASS
+current_canary_status: UNMEASURED_NEW_VERSION
 current_canary_original_operational_status: EXECUTION_ABORTED
 current_canary_recovery_status: NOT_ATTEMPTED_NO_RERUN_AUTHORIZED
 current_canary_recovery_api_calls: 0
-current_pilot_status: TERMINAL_INTEGRITY_PASS
+current_pilot_status: UNMEASURED_NEW_VERSION
 current_pilot_report: reports/a4_v25_arm_b_openlux_seed84_dual_scope_execution_20261010
 current_canary_report: reports/a4_v25_arm_b_openlux_seed84_dual_scope_execution_20261010
 current_canary_interruption_report: reports/a4_v25_arm_b_recovery_seed84_dual_scope_execution_20261010
@@ -89,10 +89,10 @@ unresolved_reservations: 0
 parser_identity: MATH_FLEXIBLE_ANSWER_EXTRACTION_V3
 baseline_b5_strict_review_compatible_with_current_source: false
 exact_dual_scope_user_authorization_received: true
-current_task_charged_tokens: 1963530
-current_task_provider_attempts: 1507
-current_task_provider_responses: 1507
-current_task_pilot_calls: 1167
+current_task_charged_tokens: 0
+current_task_provider_attempts: 0
+current_task_provider_responses: 0
+current_task_pilot_calls: 0
 last_canary_manifest: experiments/manifests/a4_v25_arm_b_openlux_seed84_canary_v1.yaml
 last_canary_execution_binding: experiments/execution_bindings/a4_v25_arm_b_openlux_seed84_canary_attempt1.json
 last_canary_initial_accuracy: MEASURED_FROZEN_ATTEMPT_NOT_REUSABLE
@@ -104,6 +104,17 @@ last_semantic_diagnostic_real_api_calls: 0
 last_gradient_threshold_report: reports/gradient_diagnostic_threshold_replay_20261011
 last_gradient_threshold_recommended_future_cap: 400
 last_gradient_threshold_runtime_changed: false
+current_gradient_output_limits:
+  identity: GRADIENT_DIAGNOSTIC_FIELD_LIMITS_V2
+  observed_failure: 400
+  diagnosis: 400
+  reusable_correction: 400
+  expected_effect: 240
+current_optimization_evidence_policy: DIAGNOSTIC_400_EVIDENCE_POLICY_V6
+current_preparation_experiment: math_gradient_diagnostic_limits_400_v2
+current_preparation_manifest: experiments/manifests/math_gradient_diagnostic_limits_400_v2.yaml
+last_gradient_limit_adoption_report: reports/gradient_diagnostic_limits_400_v2_preparation_20261011
+last_gradient_limit_adoption_real_api_calls: 0
 ```
 
 ## Experiment and engineering DAG
@@ -406,6 +417,7 @@ flowchart TD
     n316["a4_v25_arm_b_openlux_seed84_pilot_v1<br/>PILOT<br/>COMPLETED"]
     n317["current_scientific_semantics_pilot_diagnostic_v1<br/>FORENSIC_AUDIT<br/>COMPLETED"]
     n318["gradient_diagnostic_threshold_replay_v1<br/>FORENSIC_AUDIT<br/>COMPLETED"]
+    n319["math_gradient_diagnostic_limits_400_v2<br/>PROTOCOL_FREEZE<br/>IMPLEMENTED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -661,6 +673,8 @@ flowchart TD
   n315 -->|audit_of| n317
   n316 -->|audit_of| n317
   n317 -->|audit_of| n318
+  n311 -->|derived_from| n319
+  n318 -->|followup_of| n319
 ```
 
 ## Archived branches and unresolved evidence

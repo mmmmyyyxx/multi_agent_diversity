@@ -1219,12 +1219,16 @@ failures:
   - reports/current_scientific_semantics_pilot_diagnostic_20261011/gradient_diagnostic.json
   - reports/current_scientific_semantics_pilot_diagnostic_20261011/README.md
   - reports/gradient_diagnostic_threshold_replay_20261011/threshold_comparison.json
+  - reports/gradient_diagnostic_limits_400_v2_preparation_20261011/README.md
   evidence_level: observed
   root_cause_status: Frozen field limits, JSON escapes and block schema reproduced
     using exact source; upstream instruction nonconformance cause undetermined.
-  mitigation: Offline diagnostic only; generation, source guards, schema, scoring
-    and recovery bounds unchanged.
+  mitigation: User-selected two diagnostic caps 400 in a fresh formal identity, verified
+    offline; correction/effect limits, JSON schema, source and leakage guards and
+    recovery bounds unchanged. JSON failures and prospective cost remain unresolved;
+    no paid run.
   forbidden_inference: Not experiment invalidity, provider truncation, component efficacy,
     mathematical incapacity or permission to loosen guards/rerun.
   regression_tests:
   - tests/current/test_pilot_observations.py
+  - tests/current/test_gradient_diagnostic_limits_400.py

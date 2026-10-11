@@ -20,7 +20,7 @@ FRESH='experiments/execution_bindings/a4_v25_seed81_canary_attempt1.json'
 def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct=False,structural=False,
         seed=81,team_version=None,development_subsets=None,structural_kind='syntax'):
     from hashlib import sha256
-    from multi_dataset_diverse_rl.benchmarks.math_structured_binding import derive_structured_contract
+    from multi_dataset_diverse_rl.benchmarks.math_structured_binding import derive_structured_contract, gradient_prompt_artifact
     from multi_dataset_diverse_rl.search.optimization_evidence import POLICY
     old=read_json(ROOT/FRESH)
     fresh='runs/synthetic_flexible_binding.json'
@@ -31,11 +31,13 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
         validation_authorized=False,test_authorized=False,optimization_evidence_policy=POLICY,
         parent_binding_sha256=old['trajectory_parent_binding_sha256'])
     atomic_write_json(tmp_path/scope_path,scope)
+    gradient_path='runs/synthetic_current_gradient.json'
+    atomic_write_json(tmp_path/gradient_path,gradient_prompt_artifact())
     c=derive_structured_contract(read_json(ROOT/old['trajectory_parent_binding_path']),
         attempt=attempt,binding_path=fresh,parent_path=old['trajectory_parent_binding_path'],
         parent_sha256=old['trajectory_parent_binding_sha256'],authorization_path=scope_path,
         authorization_sha256=sha256((tmp_path/scope_path).read_bytes()).hexdigest(),
-        gradient_prompt_path=old['gradient_prompt_path'],gradient_prompt_sha256=old['gradient_prompt_sha256'],
+        gradient_prompt_path=gradient_path,gradient_prompt_sha256=sha256((tmp_path/gradient_path).read_bytes()).hexdigest(),
         pattern_prompt_path=old['pattern_prompt_path'],pattern_prompt_sha256=old['pattern_prompt_sha256'],
         validation_metadata_path=old['validation_accounting_metadata_path'],validation_metadata_sha256=old['validation_accounting_metadata_sha256'],
         initial_team_path=('experiments/initial_teams/math_arm_b_structured_seed_v3.json' if team_version else old['initial_team_path']),
@@ -45,7 +47,7 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
         **({'team_version':team_version} if team_version else {}),development_subsets=development_subsets)
     binding=execution_binding(ROOT,c)
     original_path=binding.path
-    monkeypatch.setattr(binding,'path',lambda relative: tmp_path/relative if relative==scope_path else original_path(relative))
+    monkeypatch.setattr(binding,'path',lambda relative: tmp_path/relative if relative in {scope_path,gradient_path} else original_path(relative))
     assert not binding.blockers()
     subsets=read_subsets(ROOT,c)['memberships'];adapter=binding.benchmark()
     def synthetic_examples(role):
@@ -57,7 +59,7 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
     optimize=binding.examples('optimize');shadow=binding.examples('shadow')
     answer_by_problem={binding.benchmark().format_input(e.item):(e.reference,i,split)
         for split,examples in [('optimize',optimize),('shadow',shadow)] for i,e in enumerate(examples)}
-    for key in ('initial_team_path','pattern_prompt_path','gradient_prompt_path','validation_accounting_metadata_path'):
+    for key in ('initial_team_path','pattern_prompt_path','validation_accounting_metadata_path'):
         p=tmp_path/c[key];p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes((ROOT/c[key]).read_bytes())
     atomic_write_json(tmp_path/fresh,c)
     requests=[]

@@ -1,6 +1,7 @@
 # V2.5 bounded generated-output recovery
 
-This amendment is normative for `unified_team_prompt_search_v2_5_generation_recovery_v1`.
+This recovery amendment originated with `unified_team_prompt_search_v2_5_generation_recovery_v1`
+and remains normative in the current [diagnostic limits 400 composition](GRADIENT_DIAGNOSTIC_LIMITS_400_V2.md).
 It supersedes generated-content failure handling and the literal-only symbolic
 overlap decision in the V2.5 contract. All other scientific rules remain binding.
 Flexible answer extraction V3 and pinned equivalence remain current. Historical

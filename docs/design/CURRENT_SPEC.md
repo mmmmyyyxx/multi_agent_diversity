@@ -5,7 +5,7 @@ The [scientific principles](SCIENTIFIC_PRINCIPLES.md) constrain interpretation;
 the [MATH scientific contract](MATH_SCIENTIFIC_CONTRACT.md) clarifies benchmark
 measurement and admission. These clarifications add no algorithm or threshold.
 The sole executable method is
-`unified_team_prompt_search_v2_5_generation_recovery_v1`.
+`unified_team_prompt_search_v2_5_diagnostic_limits_400_v2`.
 [The V2.5 scientific contract](RESPONSIBILITY_FALLBACK_REPAIR_V25.md) and
 [flexible answer extraction amendment](FLEXIBLE_ANSWER_EXTRACTION_V3.md) and
 [bounded output recovery amendment](GENERATED_OUTPUT_RECOVERY_V25.md) are normative.
@@ -60,3 +60,8 @@ execution; no previously consumed or reviewed scope is reusable.
 Invariants: INV-UNIFIED-FLOW-001; INV-V25-RESPONSIBILITY-001;
 INV-MATH-FLEXIBLE-ANSWER-001; INV-V25-SEEN-REPAIR-PROBE-001;
 INV-V25-EVALUATED-PARENT-001; INV-V24-FRESH-ATTEMPT-001.
+
+The [diagnostic limit amendment](GRADIENT_DIAGNOSTIC_LIMITS_400_V2.md) sets observed_failure and diagnosis
+to 400 characters each, with a fresh policy identity. Correction, provenance,
+leakage guards, Solver, aggregation, team gates and stopping remain unchanged.
+No paid execution or efficacy is established by this offline adoption.

@@ -528,4 +528,4 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 - Root-cause status: Frozen field limits, JSON escapes and block schema reproduced using exact source; upstream instruction nonconformance cause undetermined.
 - Symptom: Pilot: 134 rejected physical draws; 96 extra draws and 394485 usage tokens; 38 logical diagnoses exhausted.
 - Forbidden inference: Not experiment invalidity, provider truncation, component efficacy, mathematical incapacity or permission to loosen guards/rerun.
-- Mitigation: Offline diagnostic only; generation, source guards, schema, scoring and recovery bounds unchanged.
+- Mitigation: User-selected two diagnostic caps 400 in a fresh formal identity, verified offline; correction/effect limits, JSON schema, source and leakage guards and recovery bounds unchanged. JSON failures and prospective cost remain unresolved; no paid run.

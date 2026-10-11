@@ -7,8 +7,9 @@ Reflection, per-example Gradient and Pattern clustering retain `qwen3.7-flash`
 on `lwj`. Both clients share the existing broker, ledger, bounds and retry policy.
 Unknown roles or model-route mismatches are rejected; provider fallback is forbidden.
 
-Current bindings use `MATH_ROLE_ROUTED_GENERATION_RECOVERY_BINDING_V5` and
-`ROLE_ROUTED_RECOVERY_MEMBER_LANE_CACHE_V6`. Full routing policy, model names,
+Current bindings use `MATH_DIAGNOSTIC_400_ROLE_ROUTED_BINDING_V6` and
+`ROLE_ROUTED_DIAGNOSTIC_400_MEMBER_LANE_CACHE_V7` under the
+[diagnostic limits amendment](GRADIENT_DIAGNOSTIC_LIMITS_400_V2.md). Full routing policy, model names,
 environment variable names and `OPENAI_SOLVER_DECODING_POLICY_V3` enter frozen
 run, scope and request identities. Solver retains temperature 0.2, top_p 0.8,
 zero presence/frequency penalties and bounded 3600/6144 output capacity; its

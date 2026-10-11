@@ -2,7 +2,7 @@
 
 This user-requested presentation amendment originated with
 `unified_team_prompt_search_v2_5_flexible_answer_v1` and remains normative in
-the current `unified_team_prompt_search_v2_5_generation_recovery_v1` composition.
+the current `unified_team_prompt_search_v2_5_diagnostic_limits_400_v2` composition.
 It supersedes only the
 terminal-line extraction rule in RESPONSIBILITY_FALLBACK_REPAIR_V25.md.
 The optimization architecture, Gradient weighting, five members, equal
@@ -69,3 +69,8 @@ against changed source. A future baseline requires a separately frozen amended
 protocol/source and exact authorization. This implementation task has zero API calls.
 
 Invariants: INV-MATH-FLEXIBLE-ANSWER-001; INV-V24-FRESH-ATTEMPT-001.
+
+The [diagnostic limit amendment](GRADIENT_DIAGNOSTIC_LIMITS_400_V2.md) sets observed_failure and diagnosis
+to 400 characters each, with a fresh policy identity. Correction, provenance,
+leakage guards, Solver, aggregation, team gates and stopping remain unchanged.
+No paid execution or efficacy is established by this offline adoption.

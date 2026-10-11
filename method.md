@@ -5,7 +5,7 @@ The endpoint is useful correct coverage and team task performance under the
 frozen aggregation. [Scientific principles](docs/design/SCIENTIFIC_PRINCIPLES.md)
 separate those measurements from textual diversity, validity and commit counts.
 The sole current method is V2.5 with flexible answer extraction and bounded output recovery,
-`unified_team_prompt_search_v2_5_generation_recovery_v1`.
+`unified_team_prompt_search_v2_5_diagnostic_limits_400_v2`.
 
 [Current specification](docs/design/CURRENT_SPEC.md) and
 [V2.5 scientific contract](docs/design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md) define the
@@ -24,3 +24,8 @@ accepts clear equivalent answer presentations while keeping mathematical scoring
 unchanged. New paid execution remains gated; historical results retain their frozen
 parser. Synthetic improvements are test fixtures. Historical code is recovered from frozen Git sources;
 reports and manifests retain their original scientific meaning.
+
+The [diagnostic limit amendment](docs/design/GRADIENT_DIAGNOSTIC_LIMITS_400_V2.md) sets observed_failure and diagnosis
+to 400 characters each, with a fresh policy identity. Correction, provenance,
+leakage guards, Solver, aggregation, team gates and stopping remain unchanged.
+No paid execution or efficacy is established by this offline adoption.

@@ -909,3 +909,16 @@ invariants:
   - FAIL-V25-GENERATED-OUTPUT-LOCALIZATION
   critical: true
   status: ACTIVE
+- id: INV-V25-DIAGNOSTIC-LIMITS-400-001
+  description: Two diagnostic caps 400 enter Prompt, Validator and fresh current identity;
+    correction/effect limits and all provenance/content guards stay frozen.
+  authority: docs/design/GRADIENT_DIAGNOSTIC_LIMITS_400_V2.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/textual_gradients.py
+  - multi_dataset_diverse_rl/current_contract.py
+  tests:
+  - tests/current/test_gradient_diagnostic_limits_400.py
+  failure_refs:
+  - FAIL-V25-GRADIENT-STRUCTURAL-RETRY-COST
+  critical: true
+  status: ACTIVE

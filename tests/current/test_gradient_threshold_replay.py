@@ -1,6 +1,7 @@
 """Counterfactual isolation and local retry accounting, without private inputs."""
 import ast
 from pathlib import Path
+import subprocess
 import pytest
 
 from multi_dataset_diverse_rl.diagnostics.gradient_threshold_replay import (
@@ -59,9 +60,10 @@ def test_only_registered_caps_can_be_evaluated(limit):
         threshold_tree(SOURCE, limit, 400)
 
 
-def test_real_source_changes_only_the_registered_comparison():
-    path = Path(__file__).resolve().parents[2]/'multi_dataset_diverse_rl/search/textual_gradients.py'
-    source = path.read_text(encoding='utf-8')
+def test_frozen_source_changes_only_the_registered_comparison():
+    root = Path(__file__).resolve().parents[2]
+    source = subprocess.check_output(['git', 'show',
+        '01306fbf9cde002291ab21e2f93a2c02399f7e9e:multi_dataset_diverse_rl/search/textual_gradients.py'], cwd=root).decode()
     revised = threshold_tree(source, 320, 480)
     # Removing the one substituted lookup must recover the entire original AST.
     substituted = [n for n in ast.walk(revised) if isinstance(n, ast.Compare)
@@ -71,6 +73,12 @@ def test_real_source_changes_only_the_registered_comparison():
     assert len(substituted) == 1
     substituted[0].comparators[0] = ast.Constant(value=240)
     assert ast.dump(revised, include_attributes=False) == ast.dump(ast.parse(source), include_attributes=False)
+
+
+def test_current_formal_policy_cannot_be_mistaken_for_the_frozen_240_source():
+    source = (Path(__file__).resolve().parents[2]/'multi_dataset_diverse_rl/search/textual_gradients.py').read_text(encoding='utf-8')
+    with pytest.raises(ValueError, match='FROZEN_TWO_FIELD_COMPARISON_MISMATCH'):
+        threshold_tree(source, 400, 400)
 
 
 def draw(original=False, accepted=False, cost=100, disposition='ACTIONABLE'):

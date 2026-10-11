@@ -1,0 +1,39 @@
+{
+  "status": "PASS",
+  "current_suite": {
+    "tests": 689,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 2,
+    "passed": 687
+  },
+  "new_policy_and_entrypoint": {
+    "tests": 38,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 38
+  },
+  "targeted_regressions": {
+    "tests": 171,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 171
+  },
+  "historical_private_module_omissions": 220,
+  "all_historical_replay_claimed": false,
+  "compileall": "PASS",
+  "governance": "PASS",
+  "manifest_preflight": "PASS",
+  "sanitization": "PASS",
+  "diff_check": "PASS",
+  "historical_exact_source_threshold_replay": "PASS",
+  "real_api_calls": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "policy_amendment": true,
+  "prospective_efficacy": "UNMEASURED",
+  "prior_trial_classifications": "UNCHANGED",
+  "guard": "NETWORK_BLOCKED_AND_CREDENTIAL_FREE_WITH_BOOTSTRAP_AND_NEGATIVE_CONTROL"
+}

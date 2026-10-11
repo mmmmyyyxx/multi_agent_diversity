@@ -1,9 +1,11 @@
 # Gradient diagnostic field length feasibility
 
 This is a retrospective research recommendation, not a current scientific
-contract or an execution amendment. The production limits remain 240 characters
+contract or an execution amendment. At study creation, production limits were 240 characters
 for observed_failure and diagnosis, 400 for reusable_correction and 240 for
-expected_effect. No policy, prompt, guard, scoring or stopping identity changes.
+expected_effect. The study changed no policy, prompt, guard, scoring or stopping identity.
+The subsequent user-selected [400 adoption](../design/GRADIENT_DIAGNOSTIC_LIMITS_400_V2.md)
+is a separate formal amendment; these replay observations remain retrospective.
 
 The [sealed threshold replay](../../reports/gradient_diagnostic_threshold_replay_20261011/README.md)
 pins original source 01306fbf and diagnostic parent 79828718. A registered 5 by 5

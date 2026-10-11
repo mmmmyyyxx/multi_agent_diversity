@@ -1,0 +1,7 @@
+{
+  "validation_reads": 0,
+  "test_reads": 0,
+  "real_dataset_evaluation_count": 0,
+  "optimize_evidence_access": "PRIOR_SANITIZED_REPLAY_REPORT_ONLY",
+  "test_access": "sealed"
+}

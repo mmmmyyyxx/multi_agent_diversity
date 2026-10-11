@@ -1,0 +1,8 @@
+{
+  "api_calls_zero": true,
+  "heldout_access_zero": true,
+  "historical_evidence_immutable": true,
+  "fresh_policy_identity": true,
+  "no_execution_scope": true,
+  "correction_effect_and_guards_preserved": true
+}

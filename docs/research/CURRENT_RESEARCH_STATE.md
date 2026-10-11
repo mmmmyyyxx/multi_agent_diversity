@@ -4,7 +4,7 @@ The sole active research architecture is Unified Team Prompt Search.
 Research claims follow [scientific principles](../design/SCIENTIFIC_PRINCIPLES.md)
 and the [MATH measurement contract](../design/MATH_SCIENTIFIC_CONTRACT.md).
 The sole current method is V2.5 with flexible answer extraction and bounded output recovery,
-`unified_team_prompt_search_v2_5_generation_recovery_v1`.
+`unified_team_prompt_search_v2_5_diagnostic_limits_400_v2`.
 
 [Current specification](../design/CURRENT_SPEC.md) and
 [V2.5 scientific contract](../design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md) define the
@@ -46,3 +46,8 @@ replays original responses with all remaining validators intact. It recommends
 400 characters for both diagnostic fields as a future version candidate; current
 production remains at 240. Recorded local retry savings do not establish future
 cost, safety, mathematical or team gains. Correction remains limited to 400.
+
+The [diagnostic limit amendment](../design/GRADIENT_DIAGNOSTIC_LIMITS_400_V2.md) sets observed_failure and diagnosis
+to 400 characters each, with a fresh policy identity. Correction, provenance,
+leakage guards, Solver, aggregation, team gates and stopping remain unchanged.
+No paid execution or efficacy is established by this offline adoption.

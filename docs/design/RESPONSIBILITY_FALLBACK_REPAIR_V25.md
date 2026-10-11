@@ -1,6 +1,6 @@
 # Responsibility fallback and repair evidence V2.5
 
-The current composed method is `unified_team_prompt_search_v2_5_generation_recovery_v1`.
+The current composed method is `unified_team_prompt_search_v2_5_diagnostic_limits_400_v2`.
 This base contract is read with [flexible extraction V3](FLEXIBLE_ANSWER_EXTRACTION_V3.md),
 [bounded output recovery](GENERATED_OUTPUT_RECOVERY_V25.md),
 [provider routing](PROVIDER_ROLE_ROUTING_V1.md) and
@@ -92,3 +92,8 @@ The original seed81 Canary-only scope is historical; later dual scopes have thei
 own manifests and recorded approvals. Historical outputs may be replayed offline
 under exact source for diagnosis only; no historical realization enters new scoring.
 Owner review barriers audit real evidence and never force an efficacy outcome.
+
+The [diagnostic limit amendment](GRADIENT_DIAGNOSTIC_LIMITS_400_V2.md) sets observed_failure and diagnosis
+to 400 characters each, with a fresh policy identity. Correction, provenance,
+leakage guards, Solver, aggregation, team gates and stopping remain unchanged.
+No paid execution or efficacy is established by this offline adoption.

@@ -18,20 +18,26 @@ from .schemas import SearchContractError
 from .generation_failures import POLICY as OUTPUT_RECOVERY, generation_failure, recoverable_output
 
 
+GRADIENT_OUTPUT_LIMITS = dict(identity=versions.GRADIENT_OUTPUT_LIMITS_VERSION,
+    observed_failure=400, diagnosis=400, reusable_correction=versions.GRADIENT_MAX_CHARACTERS,
+    expected_effect=240)
+
 REFERENCE_GRADIENT_PROMPT = '''Analyze only this one Optimize example. The written
 Solver trajectory is an observation, not hidden reasoning. The separately labeled
 reference_solution is the dataset's worked solution, not the Solver's response.
 Compare observable steps, final prediction, reference answer, validity and correctness.
 Return one JSON object: disposition (ACTIONABLE or UNCERTAIN), observed_failure,
 diagnosis, reusable_correction, suggested_block (role, strategy, answer, or null),
-expected_effect. The block suggestion is advisory. Each text is at most 240 characters;
-reusable_correction at most 400. A diagnosis is a hypothesis, not a proven cause.
+expected_effect. The block suggestion is advisory. observed_failure is at most
+{observed_failure} characters; diagnosis at most {diagnosis}; reusable_correction
+at most {reusable_correction}; expected_effect at most {expected_effect}.
+A diagnosis is a hypothesis, not a proven cause.
 If the evidence cannot support a safe reusable repair, use UNCERTAIN with null
 reusable_correction and null expected_effect. Otherwise supply an abstract correction
 and expected behavior. Do not copy example constants, answers or solution fragments
 into the correction or infer other examples. Any of the three prompt blocks,
 including answer presentation, may be improved. Written steps are optional;
-use limited answer/reference evidence or UNCERTAIN when no steps are observable.'''
+use limited answer/reference evidence or UNCERTAIN when no steps are observable.'''.format(**GRADIENT_OUTPUT_LIMITS)
 
 CLUSTER_PROMPT = '''Compare the entire gradient set before forming clusters.
 Group gradients when they express the same reusable corrective reasoning behavior,
@@ -50,7 +56,8 @@ answers, constants, entities or example fragments.
 The controller computes responsibility and selects which correction receives budget.'''
 
 GRADIENT_POLICY = dict(identity=versions.PER_EXAMPLE_GRADIENT_VERSION,
-    prompt_identity='STRUCTURED_SYSTEM_GRADIENT_PROMPT_V7',
+    prompt_identity=versions.GRADIENT_PROMPT_VERSION,
+    output_limits=deepcopy(GRADIENT_OUTPUT_LIMITS),
     schema='STRUCTURED_SYSTEM_GRADIENT_INPUT_V5', max_characters=versions.GRADIENT_MAX_CHARACTERS,
     universe='all_selected_member_wrong_optimize', logical_calls_per_wrong=1,
     successful_generations_per_wrong=3, output_cache=False, semantic_regeneration=True,
@@ -81,7 +88,7 @@ def pattern_policy_for_trajectory(policy=None, optimization_evidence_policy=None
     value=deepcopy(POLICY)
     value['solver_trajectory_policy']=deepcopy(policy)
     value['gradient_policy'].update(schema=GRADIENT_INPUT,prompt_identity=GRADIENT_PROMPT_ID,
-        output_schema='OBSERVATION_HYPOTHESIS_BLOCK_CORRECTION_EFFECT_V2',nonactionable='UNCERTAIN',
+        output_schema=versions.GRADIENT_OUTPUT_SCHEMA_VERSION,nonactionable='UNCERTAIN',
         reference_solution='separate_optimize_only_4096_unicode_prefix')
     value['optimization_evidence_policy']=revised
     return value
@@ -294,14 +301,14 @@ class GradientExtractor:
                             or not isinstance(value['disposition'],str) or value['disposition'] not in {'ACTIONABLE','UNCERTAIN'}
                             or value['suggested_block'] is not None and not isinstance(value['suggested_block'],str)
                             or value['suggested_block'] not in {None,'role','strategy','answer'}
-                            or any(not isinstance(value[k],str) or not value[k].strip() or len(value[k])>240
+                            or any(not isinstance(value[k],str) or not value[k].strip() or len(value[k])>GRADIENT_OUTPUT_LIMITS[k]
                                 for k in ('observed_failure','diagnosis'))):
                         raise generation_failure('REFERENCE_GRADIENT_OUTPUT_INVALID')
                     if value['disposition']=='UNCERTAIN':
                         if value['reusable_correction'] is not None or value['expected_effect'] is not None:
                             raise generation_failure('REFERENCE_GRADIENT_OUTPUT_INVALID')
                     else:
-                        if not isinstance(value['expected_effect'],str) or not value['expected_effect'].strip() or not 0<len(value['expected_effect'])<=240:
+                        if not isinstance(value['expected_effect'],str) or not value['expected_effect'].strip() or not 0<len(value['expected_effect'])<=GRADIENT_OUTPUT_LIMITS['expected_effect']:
                             raise generation_failure('REFERENCE_GRADIENT_OUTPUT_INVALID')
                         writer=getattr(self.provider,'numeric_guard_writer',None)
                         text=validate_gradient(value['reusable_correction'],(row,),

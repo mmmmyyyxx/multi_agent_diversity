@@ -1,4 +1,4 @@
-"""Closed V2.4 scientific bundle; no historical execution defaults."""
+"""Closed current scientific bundle; no historical execution defaults."""
 from dataclasses import asdict, dataclass
 from copy import deepcopy
 from .. import current_contract as identities

@@ -1,0 +1,5 @@
+{
+  "policy": "COUNTERS_HASHES_CATEGORIES_IDENTITIES_ONLY",
+  "includes_private_content": false,
+  "findings": []
+}

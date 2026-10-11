@@ -289,14 +289,15 @@ def assert_closed_current_scope(frontier,registry):
     if frontier['canary_manifest'] is None:
         assert frontier['current_experiment']=='NO_AUTHORIZED_REAL_EXPERIMENT'
         assert frontier['current_execution_binding'] is None
-        assert active=={'math_generated_output_recovery_v1'}
-        m=load_yaml(ROOT/'experiments/manifests/math_generated_output_recovery_v1.yaml')
+        assert active=={frontier['current_preparation_experiment']}
+        m=load_yaml(ROOT/frontier['current_preparation_manifest'])
+        assert m['experiment_id']==frontier['current_preparation_experiment']
         assert m['execution_binding']['path'] is None and m['execution_binding']['sha256'] is None
     else:
         eid=load_yaml(ROOT/frontier['canary_manifest'])['experiment_id']
         row=next(r for r in registry['experiments'] if r['experiment_id']==eid)
         pilot=load_yaml(ROOT/frontier['pending_pilot_manifest'])
-        assert active=={'math_generated_output_recovery_v1',eid,pilot['experiment_id']}
+        assert active=={frontier['current_preparation_experiment'],eid,pilot['experiment_id']}
         assert pilot['method_identity']==CURRENT_METHOD_VERSION
         assert pilot['authorization']['real_api_authorized'] is False
         assert pilot['execution_binding']['path']!=frontier['current_execution_binding']

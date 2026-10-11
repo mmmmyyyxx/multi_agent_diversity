@@ -1,0 +1,7 @@
+{
+  "parent_source_commit": "cb4e19bca664c9ea5d8aad0ba9396ae3fe266592",
+  "original_experiment_source_commit": "01306fbf9cde002291ab21e2f93a2c02399f7e9e",
+  "evidence_report": "reports/gradient_diagnostic_threshold_replay_20261011",
+  "historical_scores_rewritten": false,
+  "policy_source_commit": "CONTAINING_COMMIT_NO_SELF_REFERENCE"
+}
