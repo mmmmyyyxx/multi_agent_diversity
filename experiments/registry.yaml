@@ -9454,9 +9454,10 @@ experiments:
   manifest: experiments/manifests/math_diagnostic400_tokenonly_preparation_v1.yaml
   report: reports/math_diagnostic400_tokenonly_freeze_20261011
   classifier: reports/math_diagnostic400_tokenonly_freeze_20261011/classifier.json
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
-  superseded_by: []
+  superseded_by:
+  - math_parallel_compact_preparation_v1
   notes:
   - Fresh single-use phase; no historical outputs/cache or authorization reuse.
   - Explicit user Token-only amendment; monetary accounting disabled, Token limits
@@ -9545,3 +9546,30 @@ experiments:
       will be frozen in phase manifest.
     execution_commit: Not executed at registration.
     result_commit: No execution results at registration.
+- experiment_id: math_parallel_compact_preparation_v1
+  kind: PROTOCOL_FREEZE
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_6_parallel_compact_v1
+  parent_ids:
+  - math_gradient_diagnostic_limits_400_v2
+  - math_diagnostic400_tokenonly_preparation_v1
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: OFFLINE_PARALLEL_COMPACT_IMPLEMENTATION_NO_REAL_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_parallel_compact_preparation_v1.yaml
+  report: reports/math_parallel_compact_preparation_20261011
+  classifier: reports/math_parallel_compact_preparation_20261011/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Default Solver16/Gradient8; lossless optimizer packet encoding and durable request
+    timing.
+  - New current method; stopped formal evidence and all prior API scopes remain closed.
+  - 'DRAFT only: no source freeze, paid experiment or held-out access.'
+  unavailable:
+    implementation_commit: Containing implementation change; no self-reference.
+    execution_commit: Zero-API engineering only.
+    result_commit: Containing sanitized engineering report.

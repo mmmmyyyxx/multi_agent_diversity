@@ -1,0 +1,40 @@
+{
+  "evidence_type": "OFFLINE_ENGINEERING_NOT_MODEL_EFFICACY",
+  "current_pytest": {
+    "tests": 723,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 2,
+    "passed": 721,
+    "initial_full_campaign_failures": 11,
+    "corrected_registration_rechecks": 11,
+    "exact_failed_case_identity_match": true,
+    "status": "PASS_AFTER_TARGETED_REGISTRY_RECHECK"
+  },
+  "targeted_entrypoint_pytest": {
+    "passed": 112
+  },
+  "final_capacity_timing_pytest": {
+    "passed": 19
+  },
+  "compileall": "PASS",
+  "governance": "PASS",
+  "manifest": "PASS_DRAFT_NOT_EXECUTABLE",
+  "closed_experiment_files_byte_verified": 3784,
+  "sanitization": "PASS",
+  "diff_check": "PASS",
+  "network_guard": "ACTIVE_BEFORE_APPLICATION_IMPORT",
+  "real_api_calls": 0,
+  "validation_real_calls": 0,
+  "test_real_calls": 0,
+  "execution_resumed": false,
+  "historical_private_replay": "NOT_EXECUTED",
+  "omitted_modules": 220,
+  "source_hashes": {
+    "scientific_source_hash": "65818bb0e57225fe62b0d9bbdbc58f838329d940f207de6ffa58316f6be71026",
+    "governance_hash": "aed2ee3885de1304ee8c15a4420e825c98009539bb9c75cdca6e4b57531a794e",
+    "benchmark_contract_hash": "7a7c26287e4d3a61441a9bdb2b7e961b61768a93b4b03eef84a461249a406ec8"
+  },
+  "source_freeze": false,
+  "api_authorized": false
+}

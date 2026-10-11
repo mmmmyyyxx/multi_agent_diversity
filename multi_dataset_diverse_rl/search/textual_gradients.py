@@ -16,13 +16,14 @@ from .pattern_primitives import (guard_abstraction, wrong_universe, sample_label
     single_failure_example, PatternResponsibilitySignal)
 from .schemas import SearchContractError
 from .generation_failures import POLICY as OUTPUT_RECOVERY, generation_failure, recoverable_output
+from .optimizer_encoding import encode, INSTRUCTION
 
 
 GRADIENT_OUTPUT_LIMITS = dict(identity=versions.GRADIENT_OUTPUT_LIMITS_VERSION,
     observed_failure=400, diagnosis=400, reusable_correction=versions.GRADIENT_MAX_CHARACTERS,
     expected_effect=240)
 
-REFERENCE_GRADIENT_PROMPT = '''Analyze only this one Optimize example. The written
+REFERENCE_GRADIENT_PROMPT = INSTRUCTION + '''Analyze only this one Optimize example. The written
 Solver trajectory is an observation, not hidden reasoning. The separately labeled
 reference_solution is the dataset's worked solution, not the Solver's response.
 Compare observable steps, final prediction, reference answer, validity and correctness.
@@ -37,7 +38,9 @@ reusable_correction and null expected_effect. Otherwise supply an abstract corre
 and expected behavior. Do not copy example constants, answers or solution fragments
 into the correction or infer other examples. Any of the three prompt blocks,
 including answer presentation, may be improved. Written steps are optional;
-use limited answer/reference evidence or UNCERTAIN when no steps are observable.'''.format(**GRADIENT_OUTPUT_LIMITS)
+use limited answer/reference evidence or UNCERTAIN when no steps are observable.
+Return JSON only, without markdown fences or extra keys. Keep every diagnostic
+concise and within its stated character limit; use JSON null, not the string "null".'''.format(**GRADIENT_OUTPUT_LIMITS)
 
 CLUSTER_PROMPT = '''Compare the entire gradient set before forming clusters.
 Group gradients when they express the same reusable corrective reasoning behavior,
@@ -58,7 +61,7 @@ The controller computes responsibility and selects which correction receives bud
 GRADIENT_POLICY = dict(identity=versions.PER_EXAMPLE_GRADIENT_VERSION,
     prompt_identity=versions.GRADIENT_PROMPT_VERSION,
     output_limits=deepcopy(GRADIENT_OUTPUT_LIMITS),
-    schema='STRUCTURED_SYSTEM_GRADIENT_INPUT_V5', max_characters=versions.GRADIENT_MAX_CHARACTERS,
+    schema='STRUCTURED_SYSTEM_GRADIENT_INPUT_V6', max_characters=versions.GRADIENT_MAX_CHARACTERS,
     universe='all_selected_member_wrong_optimize', logical_calls_per_wrong=1,
     successful_generations_per_wrong=3, output_cache=False, semantic_regeneration=True,
     recovery_trigger='TYPED_GENERATED_OUTPUT_ONLY', output_recovery=OUTPUT_RECOVERY, valid_uncertain_stops=True,
@@ -131,7 +134,7 @@ class _FreshSearchProvider:
 
     def _call(self,payload):
         from ..governance.token_accounting import serialized_request
-        messages=[dict(role='system',content=self.prompt),dict(role='user',content=json.dumps(payload,
+        messages=[dict(role='system',content=self.prompt),dict(role='user',content=json.dumps(encode(payload),
             sort_keys=True,separators=(',',':'),ensure_ascii=True))]
         request,_=self.broker._request_identity(role=self.role,split='optimize',messages=messages)
         estimate=len(serialized_request(request))+1024

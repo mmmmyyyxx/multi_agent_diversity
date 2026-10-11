@@ -1,0 +1,26 @@
+{
+  "evidence_type": "OFFLINE_EXACT_PACKET_REENCODING",
+  "roles": {
+    "pattern_gradient": {
+      "physical_messages": 429,
+      "original_message_characters": 4167309,
+      "compact_message_characters": 3360965,
+      "lossless_packets": 429,
+      "character_reduction": 806344,
+      "character_reduction_fraction": 0.19349273116056429
+    },
+    "reflection": {
+      "physical_messages": 36,
+      "original_message_characters": 872876,
+      "compact_message_characters": 622072,
+      "lossless_packets": 36,
+      "character_reduction": 250804,
+      "character_reduction_fraction": 0.2873306174072835
+    }
+  },
+  "real_api_calls": 0,
+  "provider_speed_claim": false,
+  "token_billing_savings_claim": false,
+  "old_artifacts_modified": false,
+  "new_solver_outcomes_generated": false
+}

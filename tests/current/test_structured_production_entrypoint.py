@@ -34,15 +34,22 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
     gradient_path='runs/synthetic_current_gradient.json'
     atomic_write_json(tmp_path/gradient_path,gradient_prompt_artifact())
     extras={};local_files={scope_path,gradient_path}
+    from multi_dataset_diverse_rl.governance.token_accounting import POLICY_V26_2M
+    accounting_path='runs/synthetic_compact_accounting.json'
+    atomic_write_json(tmp_path/accounting_path,POLICY_V26_2M)
+    local_files.add(accounting_path)
+    if execution_policy is None and phase!='formal':
+        from multi_dataset_diverse_rl.search.solver_execution import POLICY as serial_reference
+        execution_policy=serial_reference
     if phase=='formal':
         from multi_dataset_diverse_rl.benchmarks.math_formal_scope import build_subsets,protocol
-        from multi_dataset_diverse_rl.governance.token_accounting import POLICY_V25_FORMAL_30M
+        from multi_dataset_diverse_rl.governance.token_accounting import POLICY_V26_FORMAL_30M
         from tests.current.test_formal_execution_scope import tariff
         from multi_dataset_diverse_rl.governance import canary_progression
         from multi_dataset_diverse_rl.benchmarks import math_low_cost,current_math_dependencies
         data=build_subsets(read_json(ROOT/old['low_cost_subsets_path'])['metadata_universe'],old['split_manifest_sha256'],seed=seed)
         subset_path='runs/synthetic_formal_subsets.json';accounting_path='runs/synthetic_formal_accounting.json'
-        atomic_write_json(tmp_path/subset_path,data);atomic_write_json(tmp_path/accounting_path,POLICY_V25_FORMAL_30M)
+        atomic_write_json(tmp_path/subset_path,data);atomic_write_json(tmp_path/accounting_path,POLICY_V26_FORMAL_30M)
         development_subsets=dict(path=subset_path,sha256=sha256((tmp_path/subset_path).read_bytes()).hexdigest(),protocol=protocol(data))
         extras=dict(token_ceiling=30_000_000,cost_policy=tariff('1000000.000000'),
             canary_prerequisite=dict(identity=canary_progression.IDENTITY,canary_prep='runs/synthetic_canary_prep',
@@ -56,7 +63,7 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
         monkeypatch.setattr(math_low_cost,'read_subsets',subsets)
         monkeypatch.setattr(current_math_dependencies,'read_subsets',subsets)
         local_files.update({subset_path,accounting_path})
-    elif execution_policy is not None:
+    elif execution_policy is not None and execution_policy.get('gradient_max_concurrency',1)>1:
         from tests.current.test_formal_execution_scope import tariff
         extras=dict(cost_policy=tariff('1000000.000000'))
     if token_only:
@@ -72,8 +79,8 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
         validation_metadata_path=old['validation_accounting_metadata_path'],validation_metadata_sha256=old['validation_accounting_metadata_sha256'],
         initial_team_path=('experiments/initial_teams/math_arm_b_structured_seed_v3.json' if team_version else old['initial_team_path']),
         initial_team_artifact_sha256=(sha256((ROOT/'experiments/initial_teams/math_arm_b_structured_seed_v3.json').read_bytes()).hexdigest() if team_version else old['initial_team_artifact_sha256']),
-        accounting_policy_path=accounting_path if phase=='formal' else old['accounting_policy_path'],
-        accounting_policy_sha256=sha256((tmp_path/accounting_path).read_bytes()).hexdigest() if phase=='formal' else old['accounting_policy_sha256'],
+        accounting_policy_path=accounting_path,
+        accounting_policy_sha256=sha256((tmp_path/accounting_path).read_bytes()).hexdigest(),
         execution_phase=phase,max_opportunities=50 if phase=='formal' else 5 if phase=='pilot' else 1,seed=seed,
         **({'team_version':team_version} if team_version else {}),development_subsets=development_subsets,
         execution_policy=execution_policy,**extras)

@@ -5,7 +5,7 @@ import hashlib
 import json
 import os
 
-from .token_accounting import TokenLedger, OperationalAbort, serialized_request, POLICY_V25_2M
+from .token_accounting import TokenLedger, OperationalAbort, serialized_request, POLICY_V26_2M
 from .unified_execution import consumption_path, inventory
 from ..persistence.durable_io import atomic_write_json, append_jsonl, read_json
 from ..benchmarks.math_domain_binding import execution_binding
@@ -189,11 +189,11 @@ def ledger_policy(contract):
     from ..benchmarks.math_formal_scope import ACCOUNTING_SCOPE, require_bound
     if contract.get('accounting_scope_policy')==ACCOUNTING_SCOPE:
         require_bound(contract.get('operational_pilot'))
-        from .token_accounting import POLICY_V25_FORMAL_30M
-        return POLICY_V25_FORMAL_30M
+        from .token_accounting import POLICY_V26_FORMAL_30M
+        return POLICY_V26_FORMAL_30M
     if contract.get('accounting_scope_policy')!='FRESH_V25_REPAIR_SINGLE_ARM_2M_V2':
         raise SearchContractError('FRESH_V25_ACCOUNTING_SCOPE_REQUIRED')
-    return POLICY_V25_2M
+    return POLICY_V26_2M
 
 
 def durable_output_cache(run_root,contract,payload,root=None):
@@ -215,7 +215,7 @@ async def execute_search(root, prep, run_root, payload):
     binding = execution_binding(root, c)
     if binding.blockers():
         raise SearchContractError("AUTONOMOUS_BINDING_NOT_READY")
-    if c['execution_phase']=='formal' or c['solver_execution_policy'].get('gradient_max_concurrency')==2:
+    if c['execution_phase']=='formal' or c['solver_execution_policy'].get('gradient_max_concurrency',1)>1:
         from .cost_accounting import require_resource_control
         require_resource_control(c)
     progression=None

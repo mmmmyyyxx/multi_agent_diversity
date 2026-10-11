@@ -60,6 +60,9 @@ class RequestBroker:
         self.optimizer_slots = self.shared_requests.setdefault('optimizer_slots', threading.BoundedSemaphore(
             self.execution_policy['optimizer_max_concurrency'] if self.execution_policy else 1))
         self.token_ledger = token_ledger
+        if (token_ledger is not None and self.execution_policy is not None
+                and token_ledger.policy['concurrency'] < self.execution_policy['solver_max_concurrency']):
+            raise SearchContractError('EXECUTION_ACCOUNTING_CONCURRENCY_MISMATCH')
         self.reserve_reader = reserve_reader or (lambda: 0)
         self.validation_only = validation_only
         self.prediction_policy = frozen_prediction_policy(contract)
@@ -265,15 +268,28 @@ class RequestBroker:
 
 
     def _complete_one(self, **kwargs):
+        from datetime import datetime, timezone
+        from uuid import uuid4
+        slot_id=uuid4().hex
+        queued_at=time.monotonic()
         with (nullcontext() if kwargs['role']=='solver' else self.optimizer_slots), self.physical_slots:
             lane=threading.get_ident()
+            acquired_at=time.monotonic()
+            acquired_utc=datetime.now(timezone.utc).isoformat()
             try:
-                return self._complete_one_with_slot(**kwargs)
+                return self._complete_one_with_slot(**kwargs, slot_wait_seconds=acquired_at-queued_at,
+                    slot_id=slot_id)
             finally:
                 with self.lock:
                     self.physical_inflight.pop(lane, None)
+                    self._write(dict(kind='PROVIDER_SLOT_TIMING', identity='MONOTONIC_PROVIDER_TIMING_V1',
+                        role=kwargs['role'],split=kwargs['split'],stage=kwargs['stage'],
+                        slot_id=slot_id,acquired_monotonic=acquired_at,acquired_utc=acquired_utc,
+                        released_utc=datetime.now(timezone.utc).isoformat(),
+                        member_slot=kwargs.get('member_slot'),slot_wait_seconds=acquired_at-queued_at,
+                        slot_occupied_seconds=time.monotonic()-acquired_at))
 
-    def _complete_one_with_slot(self, *, role, split, stage, messages, semantic_attempt_no=None, member_slot=None, output_capacity=None):
+    def _complete_one_with_slot(self, *, role, split, stage, messages, semantic_attempt_no=None, member_slot=None, output_capacity=None, slot_wait_seconds=0, slot_id=None):
         c=self.contract
         request,key=self._request_identity(role=role,split=split,messages=messages,member_slot=member_slot,output_capacity=output_capacity)
         model=request['model']
@@ -310,10 +326,19 @@ class RequestBroker:
                     semantic_attempt_no=semantic_attempt_no,transport_retry_no=retry,
                     **({'member_realization_lane':member_slot} if self.member_lane_policy and role=='solver' else {})))
                 physical_attempt_no=self.usage["attempts"]
+            from datetime import datetime, timezone
+            started_utc=datetime.now(timezone.utc).isoformat()
+            transport_started=time.monotonic()
+            timing=dict(identity='MONOTONIC_PROVIDER_TIMING_V1',started_utc=started_utc,
+                started_monotonic=transport_started,slot_id=slot_id,
+                slot_wait_seconds=slot_wait_seconds if retry==0 else 0,
+                transport_retry_no=retry)
             try:
                 role_transport = getattr(self.transport, 'for_role', None)
                 result = role_transport(role, request) if role_transport else self.transport(request)
             except Exception as exc:
+                timing.update(completed_utc=datetime.now(timezone.utc).isoformat(),
+                    transport_seconds=time.monotonic()-transport_started)
                 with self.lock:
                     self.physical_inflight.pop(threading.get_ident(), None)
                     receipt = None
@@ -324,7 +349,7 @@ class RequestBroker:
                             token_usage=getattr(exc, "token_usage", None),
                             provider_evidence=getattr(exc, "provider_evidence", None),
                             semantic_attempt_no=semantic_attempt_no,
-                            physical_attempt_no=physical_attempt_no))
+                            physical_attempt_no=physical_attempt_no,request_timing=timing))
                     if token_reservation is not None:
                         charge = self.token_ledger.reconcile(token_reservation, getattr(exc, "token_usage", None),
                             outcome=type(exc).__name__, **({"response_receipt": receipt} if receipt is not None else {}))
@@ -332,6 +357,9 @@ class RequestBroker:
                             self.usage[k] += charge[k]
                     self.usage["failures"] += 1
                     self._write(dict(kind="FAILURE", role=role, split=split, stage=stage, request_sha256=key, error_category=type(exc).__name__))
+                    self._write(dict(kind='PROVIDER_REQUEST_TIMING',role=role,split=split,stage=stage,
+                        request_sha256=key,physical_attempt_no=physical_attempt_no,
+                        outcome=type(exc).__name__,request_timing=timing))
                     if self.raw_writer:
                         self.raw_writer(dict(role=role, split=split, stage=stage, request_sha256=key,
                             semantic_attempt_no=semantic_attempt_no,physical_attempt_no=physical_attempt_no,
@@ -343,8 +371,15 @@ class RequestBroker:
                         if self.token_ledger:
                             self.abort("PROVIDER_TERMINAL_" + type(exc).__name__)
                         raise
-                time.sleep(min(c["decoding"]["retry_sleep_seconds"] * 2**retry, c["decoding"]["retry_backoff_ceiling_seconds"]))
+                backoff=min(c["decoding"]["retry_sleep_seconds"] * 2**retry, c["decoding"]["retry_backoff_ceiling_seconds"])
+                backoff_started=time.monotonic()
+                time.sleep(backoff)
+                self._write(dict(kind='PROVIDER_RETRY_WAIT',role=role,split=split,stage=stage,
+                    request_sha256=key,physical_attempt_no=physical_attempt_no,
+                    configured_seconds=backoff,elapsed_seconds=time.monotonic()-backoff_started))
                 continue
+            timing.update(completed_utc=datetime.now(timezone.utc).isoformat(),
+                transport_seconds=time.monotonic()-transport_started)
             with self.lock:
                 self.physical_inflight.pop(threading.get_ident(), None)
                 receipt = None
@@ -352,7 +387,7 @@ class RequestBroker:
                     receipt = self.response_receipts.persist(token_reservation, dict(
                         role=role, split=split, stage=stage, request_sha256=key,
                         request=request, response=result, semantic_attempt_no=semantic_attempt_no,
-                        physical_attempt_no=physical_attempt_no))
+                        physical_attempt_no=physical_attempt_no,request_timing=timing))
                 if token_reservation is not None:
                     charge = self.token_ledger.reconcile(token_reservation, result, outcome="RESPONSE",
                         **({"response_receipt": receipt} if receipt is not None else {}))
@@ -377,6 +412,9 @@ class RequestBroker:
                     self.usage[k] += result[k]
                 self._write(dict(kind="SUCCESS", role=role, split=split, stage=stage, request_sha256=key,
                     response_sha256=hashlib.sha256(result["text"].encode() if result["text"] is not None else b"null").hexdigest(), input_tokens=result["input_tokens"], output_tokens=result["output_tokens"]))
+                self._write(dict(kind='PROVIDER_REQUEST_TIMING',role=role,split=split,stage=stage,
+                    request_sha256=key,physical_attempt_no=physical_attempt_no,
+                    outcome='RESPONSE',request_timing=timing))
                 if role in {'reflection','pattern','pattern_gradient','pattern_cluster'} and self.optimizer_policy:
                     from ..benchmarks.math_optimizer_diagnostics import optimizer_response_telemetry
                     role_policy=frozen_optimizer_role_policy(c, role)

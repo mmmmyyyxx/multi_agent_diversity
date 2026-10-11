@@ -984,6 +984,11 @@ nodes:
   era: UNIFIED_TEAM_PROMPT_SEARCH
   status: PREPARED_NOT_EXECUTED
   manifest: experiments/manifests/math_diagnostic400_tokenonly_preparation_v1.yaml
+- experiment_id: math_parallel_compact_preparation_v1
+  kind: PROTOCOL_FREEZE
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  status: IMPLEMENTED_NOT_EXECUTED
+  manifest: experiments/manifests/math_parallel_compact_preparation_v1.yaml
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2146,4 +2151,16 @@ edges:
   relation: derived_from
   evidence: reports/math_diagnostic400_tokenonly_freeze_20261011/README.md
   scope: Preregistered Token-only phase dependency; no efficacy result.
+- from: math_gradient_diagnostic_limits_400_v2
+  to: math_parallel_compact_preparation_v1
+  relation: derived_from
+  evidence: docs/design/PARALLEL_COMPACT_OPTIMIZER_V1.md
+  scope: Fresh version and zero-API engineering only; prior evidence and consumed
+    scopes unchanged.
+- from: math_diagnostic400_tokenonly_preparation_v1
+  to: math_parallel_compact_preparation_v1
+  relation: derived_from
+  evidence: docs/design/PARALLEL_COMPACT_OPTIMIZER_V1.md
+  scope: Fresh version and zero-API engineering only; prior evidence and consumed
+    scopes unchanged.
 current_frontier: experiments/current_frontier.yaml

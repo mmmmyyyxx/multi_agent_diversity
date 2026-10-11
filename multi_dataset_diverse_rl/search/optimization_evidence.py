@@ -9,11 +9,11 @@ from .schemas import SearchContractError
 
 from ..current_contract import CURRENT_METHOD_VERSION as METHOD
 from ..current_contract import OPTIMIZATION_EVIDENCE_POLICY_VERSION as IDENTITY
-INPUT = 'STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V8'
+INPUT = 'STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V9'
 LAYER1 = 'STRUCTURED_EVALUATED_PARENT_SEARCH_V3'
 EVIDENCE = 'DISJOINT_QUOTA_FREE_REPAIR_EVIDENCE_V2'
 MEMORY = 'BOOTSTRAPPED_FORMAT_BLOCK_EDIT_EFFECT_MEMORY_V3'
-GRADIENT_INPUT = 'STRUCTURED_SYSTEM_GRADIENT_INPUT_V5'
+GRADIENT_INPUT = 'STRUCTURED_SYSTEM_GRADIENT_INPUT_V6'
 from ..current_contract import GRADIENT_PROMPT_VERSION as GRADIENT_PROMPT_ID
 from ..current_contract import MATH_STRUCTURED_SYSTEM_BINDING_VERSION as BINDING
 
@@ -34,7 +34,8 @@ POLICY = dict(identity=IDENTITY, mutation_size=3, search_validation_size=3,
     editable_blocks=['role','strategy','answer'], response_evidence='observed_content_optional_trajectory',
     answer_extraction='MATH_FLEXIBLE_ANSWER_EXTRACTION_V3',
     generated_output_recovery='BOUNDED_GENERATED_OUTPUT_RECOVERY_V1',
-    abstraction='SOURCE_CONTEXT_SYMBOLIC_ABSTRACTION_GUARD_V1')
+    abstraction='SOURCE_CONTEXT_SYMBOLIC_ABSTRACTION_GUARD_V1',
+    optimizer_input_encoding='LOSSLESS_OPTIMIZER_TRAJECTORY_ENCODING_V1')
 
 # Six independent examples: losing at least half of this small panel is a
 # catastrophe. Lesser regression stays measurable; unchanged Full/Shadow decide.

@@ -166,7 +166,7 @@ class ValidationAccess:
 
 async def execute(root,prep,run_root):
     from .autonomous_math import consume,create_transport,initial_prompts,checked_json,file_sha
-    from .token_accounting import TokenLedger,POLICY_V25_VALIDATION_6M
+    from .token_accounting import TokenLedger,POLICY_V26_VALIDATION_6M
     from ..benchmarks.math_domain_binding import execution_binding
     from ..search.provider_runtime import RequestBroker,BenchmarkSolver
     from ..search.system_prompt import SystemPrompt,team_identity
@@ -196,7 +196,7 @@ async def execute(root,prep,run_root):
         pattern_gradient_calls=0,pattern_cluster_calls=0,pattern_calls=0,successful_provider_calls=calls,
         transport_attempts=calls*(c['decoding']['transport_retries']+1))
     budget=TokenLedger(local_path(root,s['accounting_directory']),task_sha256=canonical_sha256(s),
-        policy=POLICY_V25_VALIDATION_6M,cost_policy=s['cost_policy'],best_effort_snapshots=True)
+        policy=POLICY_V26_VALIDATION_6M,cost_policy=s['cost_policy'],best_effort_snapshots=True)
     client=None;broker=None
     consumed=False
     try:

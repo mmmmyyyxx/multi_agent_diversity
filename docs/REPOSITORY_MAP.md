@@ -38,3 +38,5 @@ Historical/private-artifact tests require the original frozen source and assets;
 excluded or retired modules are not claimed to pass in the current checkout.
 
 Current diagnostic limits and identity amendment: [Gradient 400 V2](design/GRADIENT_DIAGNOSTIC_LIMITS_400_V2.md).
+
+Current parallel/compact encoding and timing contract: [Parallel compact V1](design/PARALLEL_COMPACT_OPTIMIZER_V1.md).

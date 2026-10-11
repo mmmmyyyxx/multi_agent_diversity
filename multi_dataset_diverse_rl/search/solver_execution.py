@@ -24,13 +24,20 @@ GRADIENT_PARALLEL_POLICY = dict(POLICY,
     cluster_barrier='ALL_GRADIENT_WORKERS_DRAINED',
     reflection_and_team_admission='SERIAL')
 
+PARALLEL_COMPACT_POLICY = dict(GRADIENT_PARALLEL_POLICY,
+    identity='STRUCTURED_PARALLEL_COMPACT_EXECUTION_V4',
+    solver_max_concurrency=16, optimizer_max_concurrency=8,
+    gradient_max_concurrency=8,
+    optimizer_input_encoding='LOSSLESS_OPTIMIZER_TRAJECTORY_ENCODING_V1',
+    request_timing='MONOTONIC_PROVIDER_TIMING_V1')
+
 
 def frozen_execution_policy(contract):
     policy = contract.get('solver_execution_policy')
     # Existing immutable freezes retain their original serial execution physics.
     if policy is None:
         return None
-    expected = next((p for p in (POLICY, GRADIENT_PARALLEL_POLICY) if policy == p), None)
+    expected = next((p for p in (POLICY, PARALLEL_COMPACT_POLICY) if policy == p), None)
     if expected is None or any(type(policy[k]) is not type(v) for k, v in expected.items()):
         raise SearchContractError('SOLVER_EXECUTION_POLICY_MISMATCH')
     return deepcopy(policy)
@@ -51,7 +58,7 @@ def bounded_ordered_map(function, items, concurrency):
     This synchronous pool also serves synchronous initialization ports.
     """
     items = tuple(items)
-    if type(concurrency) is not int or not 1 <= concurrency <= 8:
+    if type(concurrency) is not int or not 1 <= concurrency <= 16:
         raise SearchContractError('SOLVER_BATCH_CONCURRENCY_INVALID')
     if concurrency == 1:
         return tuple(function(item) for item in items)

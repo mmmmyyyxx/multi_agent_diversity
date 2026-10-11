@@ -13,7 +13,7 @@ from tests.current import test_structured_optimization_evidence as fixture
 from tests.current.test_gradient_diagnostic_limits_400 import output
 from multi_dataset_diverse_rl.search.schemas import SearchContractError
 from multi_dataset_diverse_rl.search.textual_gradients import GradientExtractor,PerExampleGradientProvider
-from multi_dataset_diverse_rl.search.solver_execution import GRADIENT_PARALLEL_POLICY,frozen_execution_policy
+from multi_dataset_diverse_rl.search.solver_execution import PARALLEL_COMPACT_POLICY as GRADIENT_PARALLEL_POLICY,frozen_execution_policy
 from multi_dataset_diverse_rl.governance.token_accounting import (
     TokenLedger,POLICY_V25_FORMAL_30M,POLICY_V25_VALIDATION_6M,OperationalAbort,reservation)
 from multi_dataset_diverse_rl.governance.cost_accounting import IDENTITY,amount,frozen_policy,TOKEN_ONLY_POLICY,require_resource_control
@@ -24,7 +24,7 @@ def test_draft_is_strict_nonexecutable_and_old_default_binding_cannot_be_used():
     from multi_dataset_diverse_rl.governance.registries import load_yaml
     from multi_dataset_diverse_rl.governance.repository import validate_manifest_v2
     from multi_dataset_diverse_rl.governance.unified_execution import bound_preflight,preexecution_manifest
-    m=load_yaml(fixture.ROOT/'experiments/manifests/math_diagnostic400_canary_formal_preparation_v1.yaml')
+    m=load_yaml(fixture.ROOT/'experiments/manifests/math_parallel_compact_preparation_v1.yaml')
     assert not validate_manifest_v2(fixture.ROOT,m)
     assert m['lifecycle']['status']=='DRAFT' and m['cost_policy'] is None
     result=bound_preflight(fixture.ROOT,m)
@@ -74,7 +74,7 @@ def test_token_only_is_explicit_exclusive_and_enters_all_role_request_identities
 def test_token_only_manifest_schema_does_not_allow_unfrozen_or_mixed_resource_mode():
     from multi_dataset_diverse_rl.governance.registries import load_yaml
     from multi_dataset_diverse_rl.governance.repository import validate_manifest_v2
-    m=load_yaml(fixture.ROOT/'experiments/manifests/math_diagnostic400_canary_formal_preparation_v1.yaml')
+    m=load_yaml(fixture.ROOT/'experiments/manifests/math_parallel_compact_preparation_v1.yaml')
     m['token_reporting_policy']=deepcopy(TOKEN_ONLY_POLICY)
     assert not validate_manifest_v2(fixture.ROOT,m)
     m['cost_policy']=tariff()
@@ -112,7 +112,7 @@ def parallel_graph(tmp_path,monkeypatch):
     original=fixture.contract
     def contract():
         c=original();c['solver_execution_policy']=deepcopy(GRADIENT_PARALLEL_POLICY)
-        c['concurrency']=dict(solver=8,optimizer_reflection=2,pattern=2)
+        c['concurrency']=dict(solver=16,optimizer_reflection=8,pattern=8)
         return c
     monkeypatch.setattr(fixture,'contract',contract)
     run,broker,*_=fixture.graph(tmp_path)
@@ -124,21 +124,21 @@ def parallel_graph(tmp_path,monkeypatch):
 
 def test_parallel_gradient_orders_rows_preserves_per_row_recovery_and_caps(tmp_path,monkeypatch):
     _,broker,rows=parallel_graph(tmp_path,monkeypatch)
-    lock=threading.Lock();barrier=threading.Barrier(2);draws=Counter();active=peak=0
+    lock=threading.Lock();barrier=threading.Barrier(len(rows));draws=Counter();active=peak=0
     packets=[]
     def transport(request):
         nonlocal active,peak
         packet=json.loads(request['messages'][1]['content']);xid=packet['example']['example_id']
         with lock:
             active+=1;peak=max(peak,active);draws[xid]+=1;draw=draws[xid];packets.append(packet)
-        if xid in {rows[0].example_id,rows[1].example_id} and draw==1:barrier.wait(timeout=10)
+        if draw==1:barrier.wait(timeout=10)
         time.sleep(.02 if xid==rows[0].example_id else .005)
         with lock:active-=1
         return fixture.response('invalid JSON' if draw==1 else json.dumps(output(diagnosis='A'*350)))
     broker.transport=transport
     provider=PerExampleGradientProvider(broker);extractor=GradientExtractor(provider)
     results=extractor.extract(fixture.BASE,rows)
-    assert peak==2 and active==0
+    assert peak==len(rows) and active==0
     assert [r['example_id'] for r in results]==[r.example_id for r in rows]
     assert [r['example_id'] for r in extractor.evidence_diagnostics]==[r.example_id for r in rows]
     assert all(r['generation_draws']==2 and r['recovery_succeeded'] for r in extractor.evidence_diagnostics)
@@ -167,10 +167,11 @@ def test_parallel_fatal_provenance_stops_dispatch_and_drains_issued_work(tmp_pat
     provider=PerExampleGradientProvider(broker);extractor=GradientExtractor(provider)
     with pytest.raises(SearchContractError,match='SYNTHETIC_FATAL_PROVENANCE'):
         extractor.extract(fixture.BASE,rows)
-    assert set(issued)==first and len(issued)==2
-    assert provider.calls==len(provider.input_audit)==1
+    assert first <= set(issued) and len(issued)<=8
+    assert provider.calls==len(provider.input_audit)==len(issued)-1
     assert not broker.physical_inflight and not broker.requests_inflight
-    assert [d['example_id'] for d in extractor.evidence_diagnostics]==[rows[1].example_id]
+    assert [d['example_id'] for d in extractor.evidence_diagnostics]==[
+        r.example_id for r in rows if r.example_id in set(issued)-{rows[0].example_id}]
 
 
 @pytest.mark.parametrize('policy',[POLICY_V25_FORMAL_30M,POLICY_V25_VALIDATION_6M])

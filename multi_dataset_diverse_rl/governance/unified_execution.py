@@ -73,7 +73,7 @@ def bound_preflight(root, manifest):
     try:
         binding=execution_binding(root,read_json(path));errors.extend(binding.blockers())
         c=binding.contract
-        if c['execution_phase']=='formal' or c['solver_execution_policy'].get('gradient_max_concurrency')==2:
+        if c['execution_phase']=='formal' or c['solver_execution_policy'].get('gradient_max_concurrency',1)>1:
             from .cost_accounting import require_resource_control
             require_resource_control(c)
         if c['execution_phase']=='formal' and not c.get('canary_prerequisite'):
@@ -236,7 +236,7 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
         manifest['optimization_evidence_policy']=contract['optimization_evidence_policy']
     if 'cost_policy' in contract:
         manifest['cost_policy']=contract['cost_policy']
-    elif contract['solver_execution_policy'].get('gradient_max_concurrency')==2:
+    elif contract['solver_execution_policy'].get('gradient_max_concurrency',1)>1:
         manifest['cost_policy']=None
     if 'canary_prerequisite' in contract:
         manifest['canary_prerequisite']=contract['canary_prerequisite']

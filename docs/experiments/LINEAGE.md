@@ -8,25 +8,25 @@ Registry provides node metadata; current_frontier.yaml provides readiness only.
 ```yaml
 schema_version: current_frontier_v1
 current_architecture: Unified Team Prompt Search
-method_identity: unified_team_prompt_search_v2_5_diagnostic_limits_400_v2
-current_method: unified_team_prompt_search_v2_5_diagnostic_limits_400_v2
+method_identity: unified_team_prompt_search_v2_6_parallel_compact_v1
+current_method: unified_team_prompt_search_v2_6_parallel_compact_v1
 current_experiment: NO_AUTHORIZED_REAL_EXPERIMENT
-current_implementation: Diagnostic 400; optional Gradient concurrency two, formal
-  resource scope and separate paired Validation; zero new real execution.
+current_implementation: Parallel compact; Solver concurrency 16, Gradient concurrency
+  8, lossless optimizer evidence encoding and request timing; zero real execution.
 current_solver_model: gpt-4o-mini
 current_solver_provider_profile: openlux
 current_optimizer_model: qwen3.7-flash
 current_optimizer_provider_profile: lwj
 current_provider_routing_policy: OPENLUX_SOLVER_LWJ_OPTIMIZER_V1
-current_binding_identity: MATH_DIAGNOSTIC_400_ROLE_ROUTED_BINDING_V6
-current_cache_policy: ROLE_ROUTED_DIAGNOSTIC_400_MEMBER_LANE_CACHE_V7
+current_binding_identity: MATH_PARALLEL_COMPACT_ROLE_ROUTED_BINDING_V7
+current_cache_policy: ROLE_ROUTED_PARALLEL_COMPACT_MEMBER_LANE_CACHE_V8
 current_benchmark_suite:
 - math
-last_governance_milestone: math_gradient_diagnostic_limits_400_v2
+last_governance_milestone: math_parallel_compact_preparation_v1
 real_execution_ready: false
 real_api_authorized: false
 ready_for_authorization: false
-current_preparation_status: TOKEN_ONLY_USER_PERMISSION_RECEIVED_SOURCE_FREEZE_PENDING
+current_preparation_status: PARALLEL_COMPACT_OFFLINE_IMPLEMENTATION_NOT_FROZEN
 validation_access: not_authorized
 test_access: sealed
 current_execution_blocker: NEW_SOURCE_AND_PHASE_SCOPE_FREEZE_REQUIRED
@@ -34,12 +34,12 @@ current_execution_blockers:
 - NEW_SOURCE_AND_PHASE_SCOPE_FREEZE_REQUIRED
 current_runtime_builder: build_current_team_prompt_search
 current_execution_entrypoint: scripts/run_experiment.py
-current_runtime_composition: CURRENT_DIAGNOSTIC_400_COMPOSITION_V6
+current_runtime_composition: CURRENT_PARALLEL_COMPACT_COMPOSITION_V7
 current_execution_binding: null
 current_layer1_backend: STRUCTURED_EVALUATED_PARENT_SEARCH_V3
 current_memory_policy: BOOTSTRAPPED_FORMAT_BLOCK_EDIT_EFFECT_MEMORY_V3
-current_pattern_policy: gradient_diagnostic_400_partial_partition_v7
-current_gradient_prompt_identity: STRUCTURED_SYSTEM_GRADIENT_PROMPT_V8
+current_pattern_policy: gradient_compact_partial_partition_v8
+current_gradient_prompt_identity: STRUCTURED_SYSTEM_GRADIENT_PROMPT_V9
 current_initial_team_version: MATH_IDENTICAL_ARM_B_STRUCTURED_SEED_V3
 current_initial_team_path: experiments/initial_teams/math_arm_b_structured_seed_v3.json
 current_solver_interface: MATH_FLEXIBLE_ANSWER_SYSTEM_INTERFACE_V9
@@ -75,7 +75,7 @@ pilot_validation_complete: false
 future_execution_requires_new_frozen_single_use_scope: true
 old_evidence_reuse_allowed: false
 initial_accuracy: UNMEASURED_NEW_CURRENT_SCOPE
-this_task_scientific_method_changed: false
+this_task_scientific_method_changed: true
 v23_active: false
 v22_active: false
 last_canary_attempt_id: a4_v25_arm_b_openlux_seed84_canary_attempt1
@@ -106,19 +106,19 @@ current_gradient_output_limits:
   diagnosis: 400
   reusable_correction: 400
   expected_effect: 240
-current_optimization_evidence_policy: DIAGNOSTIC_400_EVIDENCE_POLICY_V6
-current_preparation_experiment: math_diagnostic400_tokenonly_preparation_v1
-current_preparation_manifest: experiments/manifests/math_diagnostic400_tokenonly_preparation_v1.yaml
+current_optimization_evidence_policy: PARALLEL_COMPACT_EVIDENCE_POLICY_V7
+current_preparation_experiment: math_parallel_compact_preparation_v1
+current_preparation_manifest: experiments/manifests/math_parallel_compact_preparation_v1.yaml
 last_gradient_limit_adoption_report: reports/gradient_diagnostic_limits_400_v2_preparation_20261011
 last_gradient_limit_adoption_real_api_calls: 0
 proposed_canary_token_ceiling: 2000000
 proposed_formal_search_token_ceiling: 30000000
 proposed_post_search_validation_token_ceiling: 6000000
 proposed_formal_max_opportunities: 50
-proposed_solver_concurrency: 8
-proposed_gradient_concurrency: 2
-proposed_protocol: experiments/protocols/math_diagnostic400_canary_formal_v1/proposal.yaml
-current_formal_status: CONDITIONALLY_AUTHORIZED_CANARY_INTEGRITY_GATE_REQUIRED
+proposed_solver_concurrency: 16
+proposed_gradient_concurrency: 8
+proposed_protocol: null
+current_formal_status: NOT_AUTHORIZED_NEW_SOURCE_AND_SCOPE_REQUIRED
 last_formal_preparation_report: reports/math_diagnostic400_formal_preparation_20261011
 token_reporting_policy:
   identity: USER_SELECTED_TOKEN_ONLY_RESOURCE_CONTROL_V1
@@ -435,6 +435,7 @@ flowchart TD
     n322["math_diagnostic400_tokenonly_seed85_canary_v1<br/>REAL_CANARY<br/>PREPARED_NOT_EXECUTED"]
     n323["math_diagnostic400_tokenonly_seed86_formal_v1<br/>FORMAL_EXPERIMENT<br/>PREPARED_NOT_EXECUTED"]
     n324["math_diagnostic400_tokenonly_seed86_validation_v1<br/>DIAGNOSTIC<br/>PREPARED_NOT_EXECUTED"]
+    n325["math_parallel_compact_preparation_v1<br/>PROTOCOL_FREEZE<br/>IMPLEMENTED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -698,6 +699,8 @@ flowchart TD
   n321 -->|derived_from| n323
   n322 -->|derived_from| n323
   n323 -->|derived_from| n324
+  n319 -->|derived_from| n325
+  n321 -->|derived_from| n325
 ```
 
 ## Archived branches and unresolved evidence

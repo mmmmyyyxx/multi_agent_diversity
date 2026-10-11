@@ -5,6 +5,7 @@ from .. import current_contract as versions
 from ..local_optimizers.schemas import LocalEvidenceExample
 from .bounded_layer1 import BoundedMemoryOptimizer, LocalTaskEngine, MemoryLocalTask, build_optimizer_context, digest
 from .schemas import SearchContractError
+from .optimizer_encoding import encode, INSTRUCTION
 
 
 @dataclass(frozen=True)
@@ -25,7 +26,7 @@ class EvidenceLayer1Config:
     max_prompt_chars: int = 3000
     candidate_contract: str = versions.SEMANTIC_MUTABLE_CONTRACT_VERSION
     official_gepa_fidelity: bool = False
-    optimizer_input_schema: str = 'STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V8'
+    optimizer_input_schema: str = 'STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V9'
     panel_policy: str = 'DISJOINT_QUOTA_FREE_REPAIR_EVIDENCE_V2'
 
     def __post_init__(self):
@@ -41,7 +42,7 @@ def gradient_pattern_input(task,parent,observations,memory):
     value=build_optimizer_context(task,parent,observations,memory)
     value.update(schema=INPUT,selected_pattern=json.loads(task.selected_pattern),
         repair_objective='Test the selected repair hypothesis with the smallest safe edit.')
-    return ('''Use only the supplied mutation examples and bounded measured Memory.
+    return (INSTRUCTION + '''Use only the supplied mutation examples and bounded measured Memory.
 The selected Pattern is a repair hypothesis, not a mandatory universal instruction.
 Preserve existing successful behavior. Do not introduce dependencies on optimizer-only
 evidence. Prefer a small conditional generic edit when supported; otherwise abstain.
@@ -54,7 +55,7 @@ prompt must remain at most 3000 characters. No fixed CoT or output format is req
 SearchValidation is measured after generation; prior measurement counts may guide
 the next iteration but validation examples and answers are not supplied.
 Respect missing/truncated written evidence; do not infer hidden reasoning.
-''' + json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=True))
+''' + json.dumps(encode(value),sort_keys=True,separators=(',',':'),ensure_ascii=True))
 
 class GradientPatternMemoryOptimizer(BoundedMemoryOptimizer):
     config_factory=EvidenceLayer1Config

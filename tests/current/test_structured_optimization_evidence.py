@@ -42,7 +42,9 @@ def contract():
         validation_metadata_path='runs/synthetic_evidence_metadata.json',validation_metadata_sha256='c'*64,
         initial_team_path='runs/v24_team.json',initial_team_artifact_sha256='d'*64,
         pattern_prompt_path='runs/v24_pattern.json',pattern_prompt_sha256='e'*64,
-        accounting_policy_path='runs/v24_accounting.json',accounting_policy_sha256='f'*64)
+        accounting_policy_path='runs/v24_accounting.json',accounting_policy_sha256='f'*64,
+        execution_policy=__import__('multi_dataset_diverse_rl.search.solver_execution',
+            fromlist=['POLICY']).POLICY)
 
 
 def response(text):

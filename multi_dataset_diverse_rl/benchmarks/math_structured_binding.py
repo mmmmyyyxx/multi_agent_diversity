@@ -43,9 +43,9 @@ def prepare_structured_inputs(root,*,experiment_id,attempt,user_task_sha256,exec
         execution_policy=None,cost_policy=None,canary_prerequisite=None,token_reporting_policy=None):
     """Prepare a fresh unapproved scope without loading examples or credentials."""
     from ..persistence.durable_io import atomic_write_json
-    from ..governance.token_accounting import POLICY_V25_2M, POLICY_V25_FORMAL_30M
+    from ..governance.token_accounting import POLICY_V26_2M, POLICY_V26_FORMAL_30M
     from .math_formal_scope import BOUND as formal_bound
-    accounting=POLICY_V25_FORMAL_30M if execution_phase=='formal' else POLICY_V25_2M
+    accounting=POLICY_V26_FORMAL_30M if execution_phase=='formal' else POLICY_V26_2M
     parent_path='experiments/execution_bindings/a4_v24_structured_seed81_canary_attempt1.json'
     parent=json.loads((root/parent_path).read_bytes());parent_hash=file_hash(root/parent_path)
     protocol='experiments/protocols/'+experiment_id
@@ -131,11 +131,10 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
                     'validation_accounting_metadata_path','validation_accounting_metadata_sha256',
                     'rolling_memory_freeze_path','rolling_memory_freeze_sha256'}):
             c.pop(key)
-    from ..search.solver_execution import POLICY as execution
-    from ..search.solver_execution import frozen_execution_policy, GRADIENT_PARALLEL_POLICY
-    if formal and execution_policy is None:execution=GRADIENT_PARALLEL_POLICY
+    from ..search.solver_execution import PARALLEL_COMPACT_POLICY as execution
+    from ..search.solver_execution import frozen_execution_policy, PARALLEL_COMPACT_POLICY
     execution=frozen_execution_policy({'solver_execution_policy':execution_policy or execution})
-    if formal and execution!=GRADIENT_PARALLEL_POLICY:
+    if formal and execution!=PARALLEL_COMPACT_POLICY:
         raise SearchContractError('FORMAL_EXECUTION_POLICY_NOT_FROZEN')
     from ..governance.canary_review import STRUCTURED_POLICY
     from ..search.generation_failures import POLICY as output_recovery
