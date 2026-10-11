@@ -18,12 +18,20 @@
       "sha256": "f71e9a2c04304ec920d07343a27c003000dafcabd57ed2228ccf6d0391c0791f"
     },
     {
+      "file": "frozen_phase_scopes.json",
+      "sha256": "3d92fc89bd116b65ec5ac4be912e940f6a399df9977c35b8b79a473d749ed832"
+    },
+    {
+      "file": "frozen_preflight.json",
+      "sha256": "a85ecc69b594d4b06f87eb6ac63793b4ad1590d09082e354e0ee5cea5b298613"
+    },
+    {
       "file": "funnel_summary.json",
       "sha256": "b2c8d60419a5180b2de0e10d04e4f498f904568d0b97aff01369bb47e915c833"
     },
     {
       "file": "manifest_snapshot.yaml",
-      "sha256": "c08d1ac205233220693a65f2fd5553d447d2e2153f5c90e7153f29ba6f4b963f"
+      "sha256": "e43a9617feccc914cc328d5a63fda74f3601175e70622cd10a5d4f5c4a7c5ef3"
     },
     {
       "file": "offline_verification.json",
@@ -31,11 +39,11 @@
     },
     {
       "file": "provenance.json",
-      "sha256": "990613c66336a7095f0acf2e61ad10282dc42a5710bc418378316982dbf7f4cc"
+      "sha256": "fc6ae1b6cdd8c7202bccf540fafd1820959d365fc73de87e35236ab0291ee9be"
     },
     {
       "file": "README.md",
-      "sha256": "26d1d87315502b0912c934b14271d8f3505b97023fa824d757c341a4c8b9a806"
+      "sha256": "d2a87257d64b190145448dfce93799c586b8b97e7f3504ae28e0f4d3af406f81"
     },
     {
       "file": "sanitization_manifest.json",
@@ -43,7 +51,7 @@
     },
     {
       "file": "summary.json",
-      "sha256": "9c161c6510033894235f9dc79a13cdc0b94e2adfa58c731b40b7f3fbb3d3077e"
+      "sha256": "f40fba3c36f297a1642d6351cb955d74fee03cbe74a9258a56ff749b6a6a5a05"
     }
   ]
 }

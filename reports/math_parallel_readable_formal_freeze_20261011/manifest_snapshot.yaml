@@ -77,8 +77,8 @@ hash_closure:
   dataset_manifest_hash: d3c3f587bf9e08f5d9a12c8b777953c57cd30fc4c655e82e95f556b337119d81
 execution_binding:
   identity: MATH_PARALLEL_READABLE_ROLE_ROUTED_BINDING_V8
-  path: experiments/execution_bindings/a4_parallel_readable_seed86_formal_attempt1.json
-  sha256: e41262b4031724bfc17c841d643f24610ed0e86bda65976fe33fe1a8f817dbd9
+  path: null
+  sha256: null
 mechanism_config:
   memory:
     top_k_private: 3
@@ -500,7 +500,7 @@ system_prompt_policy:
   single_block_per_generation: true
   system_hash: sha256_rendered_utf8
   user_message: raw_problem_only
-  seed_sha256: 771ab8014114441d08e27b03cd1a091640ee4e90d387a7b15d4e1f2f2a5ab020
+  seed_sha256: 50e07f850167180204a1e0fce8c4800ae8cc776a00017ea7a0b8a6ff24051e74
 answer_extraction_policy:
   confirmations: all_labels_and_conclusions_after_selected_label_must_agree_gold_blind
   coordinate_assignment: distinct_named_coordinates_same_arity_pinned_tuple_rhs
@@ -644,4 +644,4 @@ layer1_search_policy:
 candidate_contract_identity: STRUCTURED_SYSTEM_BLOCK_MUTATION_CONTRACT_V1
 pattern_support_id_transport: PATTERN_SUPPORT_ID_ALIAS_TRANSPORT_V1
 pattern_abstraction_guard: PATTERN_SOURCE_CONTEXT_CONTENT_GUARD_V8
-preregistration_identity: ccee555055ade32ff83caecf0dfb7fa34a0a6faccca378ddc8c62a6151efc68b
+preregistration_identity: 0a87dfbd02712d4bce4fe28a1ee6bdbe47c5320e75dca2f9f50a3afd2997966d

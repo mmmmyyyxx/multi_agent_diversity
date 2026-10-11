@@ -52,7 +52,7 @@
   "scientific_stop_vs_resource_truncation_vs_user_stop_vs_engineering_abort": "SEPARATE_CLASSIFICATIONS",
   "solver": "gpt-4o-mini",
   "solver_concurrency": 16,
-  "source_freeze": "PENDING_EXACT_SHA",
+  "source_freeze": "b35a48e99d1bc36c31e19c1c5494626827c371ab",
   "stopped_run_imports": false,
   "test_access": "SEALED",
   "training_compute_matched_control": false,

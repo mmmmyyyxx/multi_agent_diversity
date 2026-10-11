@@ -1,5 +1,11 @@
 {
+  "execution_source_sha": "b35a48e99d1bc36c31e19c1c5494626827c371ab",
   "method": "unified_team_prompt_search_v2_6_readable_evidence_v2",
+  "phase_startups": {
+    "canary": "13fcef74f04cd747eeba99874d34fd5b6447478f55315cc567cc7f9601e42f3f",
+    "formal": "bea6dfaec458c832e15df89278cf0c7fbd787a8e3586ac6c15f97161c3cc0531",
+    "validation": "a81072acd784120f143303434e5914f2b3e8b684ad8645111e9058fafdc392d2"
+  },
   "preregistration": {
     "attempts": {
       "canary": "a4_parallel_readable_seed85_canary_attempt1",
@@ -54,7 +60,7 @@
     "scientific_stop_vs_resource_truncation_vs_user_stop_vs_engineering_abort": "SEPARATE_CLASSIFICATIONS",
     "solver": "gpt-4o-mini",
     "solver_concurrency": 16,
-    "source_freeze": "PENDING_EXACT_SHA",
+    "source_freeze": "b35a48e99d1bc36c31e19c1c5494626827c371ab",
     "stopped_run_imports": false,
     "test_access": "SEALED",
     "training_compute_matched_control": false,
@@ -70,7 +76,7 @@
     }
   },
   "real_api_calls": 0,
-  "status": "PREEXECUTION_PREPARATION",
+  "status": "FROZEN_AWAITING_EXACT_USER_AUTHORIZATION",
   "verification": {
     "compileall": "PASS",
     "current_suite": {

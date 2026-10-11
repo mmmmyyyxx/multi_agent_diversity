@@ -1,5 +1,7 @@
 {
+  "manifest_snapshot_scope": "NON_EXECUTABLE_PREPARATION_DRAFT; EXACT_EXECUTION_PHASES_IN_FROZEN_PHASE_SCOPES",
   "parent_preparation": "math_parallel_readable_preparation_v2",
   "prior_stopped_run": "IMMUTABLE_NOT_IMPORTED",
-  "source_sha": "PENDING"
+  "source_freeze": "EXACT_EXECUTION_SOURCE_AND_PHASE_STARTUPS",
+  "source_sha": "b35a48e99d1bc36c31e19c1c5494626827c371ab"
 }

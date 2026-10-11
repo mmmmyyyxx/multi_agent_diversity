@@ -1,0 +1,31 @@
+{
+  "execution_source_sha": "b35a48e99d1bc36c31e19c1c5494626827c371ab",
+  "phases": {
+    "canary": {
+      "api_calls": 0,
+      "authorization_consumed": false,
+      "gate": "READY_NOT_AUTHORIZED",
+      "startup_identity_sha256": "13fcef74f04cd747eeba99874d34fd5b6447478f55315cc567cc7f9601e42f3f",
+      "token_ceiling": 2000000
+    },
+    "formal": {
+      "api_calls": 0,
+      "authorization_consumed": false,
+      "gate": "READY_NOT_AUTHORIZED",
+      "startup_identity_sha256": "bea6dfaec458c832e15df89278cf0c7fbd787a8e3586ac6c15f97161c3cc0531",
+      "token_ceiling": 30000000
+    },
+    "validation": {
+      "api_calls": 0,
+      "authorization_consumed": false,
+      "gate": "READY_NOT_AUTHORIZED",
+      "startup_identity_sha256": "a81072acd784120f143303434e5914f2b3e8b684ad8645111e9058fafdc392d2",
+      "token_ceiling": 6000000
+    }
+  },
+  "real_api_calls": 0,
+  "sanitization": "PASS",
+  "status": "PASS",
+  "test_access": 0,
+  "validation_access": 0
+}
