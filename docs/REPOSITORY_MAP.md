@@ -14,6 +14,11 @@ Current authority: AGENTS.md, docs/design/CURRENT_SPEC.md and
 | multi_dataset_diverse_rl/benchmarks/math_structured_answer.py | Frozen V2 baseline replay parser; not current extraction |
 | multi_dataset_diverse_rl/benchmarks/math_response_evidence.py | Private ordinary content with optional written steps |
 | multi_dataset_diverse_rl/governance/ | Authorization, source/startup freeze, accounting and registries |
+| multi_dataset_diverse_rl/benchmarks/math_formal_scope.py | Versioned formal resource bound and metadata-only memberships |
+| multi_dataset_diverse_rl/governance/cost_accounting.py | Supplier tariff validation and integer monetary reservations |
+| multi_dataset_diverse_rl/governance/canary_progression.py | Engineering-only Canary prerequisite for frozen formal search |
+| multi_dataset_diverse_rl/governance/postfreeze_validation.py | Separate single-use post-search Solver-only Validation capability |
+| multi_dataset_diverse_rl/governance/paired_validation_analysis.py | Frozen paired team measurements; no search read point |
 | multi_dataset_diverse_rl/persistence/ | Durable receipts, attempt-isolated cache and journals |
 | multi_dataset_diverse_rl/team_search/ | Shared value types and evidence physics; no current historical controller |
 | experiments/manifests/ | Permanent immutable historical and fresh current experiment contracts |

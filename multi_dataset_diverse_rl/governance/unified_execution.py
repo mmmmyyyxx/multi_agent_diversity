@@ -9,7 +9,6 @@ from ..search.schemas import SearchContractError
 from ..search.current_policy import CURRENT_POLICY_BUNDLE
 from ..benchmarks.math_domain_binding import BINDING_BLOCKER
 PREP_SCHEMA='unified_canary_prep_v1'
-CURRENT_OFFLINE_PROFILE='experiments/execution_bindings/a4_v25_arm_b_recovery_seed84_canary_attempt1.json'
 
 def execution_identity(root,contract):
     CURRENT_POLICY_BUNDLE.validate_contract(contract)
@@ -38,6 +37,8 @@ def execution_scope(manifest,contract):
         accounting_policy_sha256=contract['accounting_policy_sha256'],
         heldout_accounting_reserve=contract.get('heldout_accounting_reserve'),
         canary_review_policy=contract.get('canary_review_policy'),
+        **({'cost_policy':contract['cost_policy']} if 'cost_policy' in contract else {}),
+        **({'canary_prerequisite':contract['canary_prerequisite']} if 'canary_prerequisite' in contract else {}),
         **({k:contract[k] for k in ('solver_execution_policy','system_prompt_policy','answer_extraction_policy')} if contract.get('solver_execution_policy') else {}),
         **({'optimization_evidence_policy':contract['optimization_evidence_policy']}
             if contract.get('optimization_evidence_policy') else {}),
@@ -59,12 +60,22 @@ def bound_preflight(root, manifest):
         return dict(gate='HOLD',blockers=[BINDING_BLOCKER],provider_attempts=0)
     errors=validate_manifest_v2(root,manifest)
     if manifest.get('lifecycle',{}).get('status')!='PREEXECUTION_FROZEN':errors.append('PREEXECUTION_NOT_FROZEN')
-    path=(root/ref.get('path','')).resolve()
+    relative=ref.get('path')
+    if not isinstance(relative,str) or not relative:
+        return dict(gate='HOLD',blockers=errors+['EXECUTION_BINDING_NOT_FROZEN'],
+            provider_attempts=0,ready_for_authorization=False,real_api_authorized=False,
+            validation_calls=0,test_calls=0)
+    path=(root/relative).resolve()
     if (not path.is_relative_to(root.resolve()) or not path.is_file()
             or hashlib.sha256(path.read_bytes()).hexdigest()!=ref.get('sha256')):
         return dict(gate='HOLD',blockers=errors+['EXECUTION_BINDING_HASH_MISMATCH'],provider_attempts=0)
     try:
         binding=execution_binding(root,read_json(path));errors.extend(binding.blockers())
+        c=binding.contract
+        if ((c['execution_phase']=='formal' or c['solver_execution_policy'].get('gradient_max_concurrency')==2)
+                and not c.get('cost_policy')):errors.append('SUPPLIER_TARIFF_AND_MONETARY_CEILING_NOT_FROZEN')
+        if c['execution_phase']=='formal' and not c.get('canary_prerequisite'):
+            errors.append('FORMAL_CANARY_PREREQUISITE_NOT_FROZEN')
         method=binding.method('A4')
         expected=preexecution_manifest(root,source_sha=manifest.get('source_sha'),frozen=False,
             binding_path=ref['path'],experiment_id=manifest.get('experiment_id'))
@@ -83,7 +94,7 @@ def bound_preflight(root, manifest):
             try:verify_source_commit(root,manifest['source_sha'],identity)
             except (SearchContractError,subprocess.CalledProcessError):errors.append('EXECUTION_SOURCE_COMMIT_BYTE_MISMATCH')
     phase=binding.contract['execution_phase'] if binding is not None else 'canary'
-    return dict(gate='HOLD' if errors else ('PILOT_READY_NOT_AUTHORIZED' if phase=='pilot' else 'CANARY_READY_NOT_AUTHORIZED'),blockers=errors,
+    return dict(gate='HOLD' if errors else phase.upper()+'_READY_NOT_AUTHORIZED',blockers=errors,
         benchmark_id='math',readiness_identity='MATH_RUNTIME_READINESS_V1',provider_attempts=0,
         validation_calls=0,test_calls=0,real_api_authorized=False,binding_sha256=ref.get('sha256'),ready_for_authorization=not errors)
 
@@ -170,7 +181,8 @@ def inventory(run_root):
 
 def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, experiment_id="a4_v25_responsibility_repair_canary_v1"):
     from ..benchmarks.math_domain_binding import execution_binding
-    binding_path=binding_path or CURRENT_OFFLINE_PROFILE
+    if binding_path is None:
+        raise SearchContractError('EXPLICIT_CURRENT_EXECUTION_BINDING_REQUIRED')
     contract=read_json(root/binding_path)
     b=execution_binding(root,contract)
     if b.blockers():
@@ -183,7 +195,8 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
         dataset_manifest_identity=contract["canonical_manifest_sha256"], split_identity=contract["split_manifest_sha256"],
         seed=contract['execution_seed'], models=dict(solver=contract['models']['solver'],
             optimizer=contract['models']['optimizer_reflection'],solver_thinking=contract['models']['solver_thinking']),
-        concurrency=dict(solver=contract.get('solver_execution_policy',{}).get('solver_max_concurrency',1), optimizer=1),
+        concurrency=dict(solver=contract.get('solver_execution_policy',{}).get('solver_max_concurrency',1),
+            optimizer=contract.get('solver_execution_policy',{}).get('optimizer_max_concurrency',1)),
         provider_policy=dict(identity=contract['provider'], frozen=True),
         provider_routing_policy=contract['provider_routing_policy'],
         cache_policy=dict(identity=contract["cache_policy"], frozen=True),
@@ -219,6 +232,12 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
         manifest['solver_trajectory_policy']=contract['solver_trajectory_policy']
     if 'optimization_evidence_policy' in contract:
         manifest['optimization_evidence_policy']=contract['optimization_evidence_policy']
+    if 'cost_policy' in contract:
+        manifest['cost_policy']=contract['cost_policy']
+    elif contract['solver_execution_policy'].get('gradient_max_concurrency')==2:
+        manifest['cost_policy']=None
+    if 'canary_prerequisite' in contract:
+        manifest['canary_prerequisite']=contract['canary_prerequisite']
     for k in ('solver_execution_policy','system_prompt_policy','answer_extraction_policy',
             'canary_review_policy','accounting_scope_policy','accounting_policy_sha256',
             'heldout_accounting_reserve','repair_probe_policy','generated_output_recovery_policy'):

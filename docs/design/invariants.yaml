@@ -922,3 +922,39 @@ invariants:
   - FAIL-V25-GRADIENT-STRUCTURAL-RETRY-COST
   critical: true
   status: ACTIVE
+- id: INV-FORMAL-GRADIENT-PARALLEL-001
+  description: Independent Gradient workers retain input order, per-row recovery,
+    guards and failure drain; scientific decisions stay serial.
+  authority: docs/design/FORMAL_EXECUTION_AND_PAIRED_VALIDATION_V1.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/textual_gradients.py
+  - multi_dataset_diverse_rl/search/solver_execution.py
+  tests:
+  - tests/current/test_formal_execution_scope.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-FORMAL-MONETARY-BOUND-001
+  description: Supplier tariff and concurrent monetary reservations share the durable
+    Token journal and exact single-use scope.
+  authority: docs/design/FORMAL_EXECUTION_AND_PAIRED_VALIDATION_V1.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/governance/cost_accounting.py
+  - multi_dataset_diverse_rl/governance/token_accounting.py
+  tests:
+  - tests/current/test_formal_execution_scope.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-FORMAL-POST-SEARCH-VALIDATION-001
+  description: Separate authorization, verified closure and sealed teams precede complete
+    paired Validation; held-out outcomes never enter search and Test stays sealed.
+  authority: docs/design/FORMAL_EXECUTION_AND_PAIRED_VALIDATION_V1.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/governance/postfreeze_validation.py
+  - multi_dataset_diverse_rl/benchmarks/experiment_splits.py
+  tests:
+  - tests/current/test_formal_execution_scope.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE

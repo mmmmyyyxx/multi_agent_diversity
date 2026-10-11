@@ -1,0 +1,8 @@
+{
+  "inspected_reference_sha": "784191f9cb2647662efa745ab169bef484bf51b3",
+  "historical_paid_source_sha": "01306fbf9cde002291ab21e2f93a2c02399f7e9e",
+  "historical_paid_report_commit": "30a57d82213fb7788581e3fe8fd9ba7903dfb302",
+  "implementation_commit": "Containing local engineering commit; no self-reference.",
+  "frozen_current_execution_source_sha": null,
+  "history_rewritten": false
+}

@@ -1232,3 +1232,25 @@ failures:
   regression_tests:
   - tests/current/test_pilot_observations.py
   - tests/current/test_gradient_diagnostic_limits_400.py
+- failure_id: FAIL-FORMAL-DUPLICATE-ROOT-TERMINAL-MUTATION
+  title: Lower-level duplicate execution could overwrite a completed lifecycle
+  status: MITIGATED
+  lifecycle: OFFLINE_REPRODUCED
+  first_observed: math_diagnostic400_canary_formal_preparation_v1
+  affected_components:
+  - search_destination_preflight
+  - terminal_lifecycle_preservation
+  symptom: Synthetic duplicate invocation after completion could enter the abort lifecycle
+    writer.
+  evidence:
+  - reports/math_diagnostic400_formal_preparation_20261011/README.md
+  evidence_level: observed
+  root_cause_status: Existing-root check occurred inside the lifecycle-writing exception
+    boundary.
+  mitigation: Reject existing/foreign run roots before journal opening; restrict writes
+    to the newly consumed attempt; assert immutable terminal and journal bytes.
+  forbidden_inference: No evidence of historical paid result mutation, invalidity
+    or authorization for a retry.
+  regression_tests:
+  - tests/current/test_structured_production_entrypoint.py
+  - tests/current/test_formal_execution_scope.py

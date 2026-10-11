@@ -9402,7 +9402,7 @@ experiments:
   manifest: experiments/manifests/math_gradient_diagnostic_limits_400_v2.yaml
   report: reports/gradient_diagnostic_limits_400_v2_preparation_20261011
   classifier: reports/gradient_diagnostic_limits_400_v2_preparation_20261011/classifier.json
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -9415,3 +9415,28 @@ experiments:
     implementation_commit: Containing local policy adoption commit; no self-reference.
     execution_commit: No real experiment executed.
     result_commit: Containing local offline evidence commit.
+- experiment_id: math_diagnostic400_canary_formal_preparation_v1
+  kind: PROTOCOL_FREEZE
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_5_diagnostic_limits_400_v2
+  parent_ids:
+  - math_gradient_diagnostic_limits_400_v2
+  status: DRAFT
+  scientific_status: OFFLINE_ENGINEERING_AND_DESIGN_NO_REAL_EXECUTION
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_diagnostic400_canary_formal_preparation_v1.yaml
+  report: reports/math_diagnostic400_formal_preparation_20261011
+  classifier: reports/math_diagnostic400_formal_preparation_20261011/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Draft Canary/formal proposal; missing supplier billing terms and monetary caps.
+  - No frozen source, executable attempt, phase authorization or real held-out access.
+  - Current method unchanged; versioned execution and separate paired final evaluation.
+  unavailable:
+    implementation_commit: Containing engineering commit; no self-reference.
+    execution_commit: No real experiment executed.
+    result_commit: Containing zero-API preparation evidence commit.

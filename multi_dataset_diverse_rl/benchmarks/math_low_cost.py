@@ -46,7 +46,12 @@ def read_subsets(root,contract):
     data=json.loads(p.read_bytes())
     from .math_canary_inputs import FRESH_SELECTION, build_fresh_canary_subsets, fresh_canary_protocol
     from .math_canary_inputs import RECOVERY_SELECTION,build_recovery_subsets,recovery_protocol
-    if data.get('identity')==RECOVERY_SELECTION['identity']:
+    from .math_formal_scope import SELECTION as FORMAL_SELECTION, build_subsets as formal_subsets, protocol as formal_protocol
+    if data.get('identity')==FORMAL_SELECTION['identity']:
+        expected=formal_subsets(data['metadata_universe'],contract['split_manifest_sha256'],seed=contract['execution_seed'])
+        if contract['execution_phase']!='formal' or contract['low_cost_protocol']!=formal_protocol(expected):
+            raise SearchContractError('FORMAL_DEVELOPMENT_PROTOCOL_MISMATCH')
+    elif data.get('identity')==RECOVERY_SELECTION['identity']:
         expected=build_recovery_subsets(data['metadata_universe'],contract['split_manifest_sha256'],
             seed=contract['execution_seed'],phase=contract['execution_phase'],
             excluded_example_hashes=data['excluded_example_hashes'])

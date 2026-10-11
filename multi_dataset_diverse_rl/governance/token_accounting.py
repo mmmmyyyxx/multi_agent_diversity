@@ -40,6 +40,10 @@ POLICY_V24_2M = {**POLICY_V23_PARALLEL_2M,
     "identity": "MATH_STRUCTURED_TOKEN_ACCOUNTING_V2"}
 
 POLICY_V25_2M = {**POLICY_V24_2M, "identity": "MATH_RESPONSIBILITY_REPAIR_TOKEN_ACCOUNTING_V3"}
+POLICY_V25_FORMAL_30M = {**POLICY_V25_2M,
+    "identity": "MATH_FORMAL_SEARCH_TOKEN_ACCOUNTING_V4", "authorized_total": 30_000_000}
+POLICY_V25_VALIDATION_6M = {**POLICY_V25_2M,
+    "identity": "MATH_POST_FREEZE_VALIDATION_TOKEN_ACCOUNTING_V4", "authorized_total": 6_000_000}
 
 
 class OperationalAbort(BaseException):
@@ -112,10 +116,14 @@ def _digest(value):
 
 class TokenLedger:
     def __init__(self, directory: Path, *, task_sha256: str, policy=POLICY,
-                 best_effort_snapshots=False):
-        if policy not in (POLICY, POLICY_40M, POLICY_V23_2M, POLICY_V23_PARALLEL_2M, POLICY_V24_2M, POLICY_V25_2M) or len(task_sha256) != 64:
+                 best_effort_snapshots=False, cost_policy=None):
+        if policy not in (POLICY, POLICY_40M, POLICY_V23_2M, POLICY_V23_PARALLEL_2M, POLICY_V24_2M, POLICY_V25_2M,
+                POLICY_V25_FORMAL_30M, POLICY_V25_VALIDATION_6M) or len(task_sha256) != 64:
             raise OperationalAbort("TOKEN_ACCOUNTING_POLICY_IDENTITY_MISMATCH")
         self.directory = Path(directory)
+        from .cost_accounting import frozen_policy as frozen_cost_policy
+        self.cost_policy=frozen_cost_policy(cost_policy)
+        self.cost_charged_micros=0
         if type(best_effort_snapshots) is not bool:
             raise OperationalAbort("TOKEN_SNAPSHOT_POLICY_INVALID")
         self.best_effort_snapshots = best_effort_snapshots
@@ -143,7 +151,8 @@ class TokenLedger:
             raise OperationalAbort("TOKEN_LEDGER_ALREADY_OWNED") from exc
         self.task_sha256 = task_sha256
         self.policy = dict(policy)
-        fresh_policies=(POLICY, POLICY_V23_2M, POLICY_V23_PARALLEL_2M, POLICY_V24_2M, POLICY_V25_2M)
+        fresh_policies=(POLICY, POLICY_V23_2M, POLICY_V23_PARALLEL_2M, POLICY_V24_2M, POLICY_V25_2M,
+            POLICY_V25_FORMAL_30M, POLICY_V25_VALIDATION_6M)
         self.authorized_total = policy['authorized_total'] if policy in fresh_policies else POLICY["authorized_total"]
         self.authorization_amendments = []
         self.events = []
@@ -166,7 +175,8 @@ class TokenLedger:
             else:
                 if policy not in fresh_policies:
                     raise OperationalAbort("TOKEN_LEDGER_EXTENSION_REQUIRES_ORIGINAL_JOURNAL")
-                self._append(dict(kind="AUTHORIZE", task_sha256=task_sha256, policy=policy))
+                self._append(dict(kind="AUTHORIZE", task_sha256=task_sha256, policy=policy,
+                    **({'cost_policy':self.cost_policy} if self.cost_policy is not None else {})))
             for key in tuple(self.inflight):
                 self.reconcile(key, None, outcome="CRASH_RECOVERY_FULL_CHARGE")
             if self.authorized_total != self.policy["authorized_total"]:
@@ -183,8 +193,10 @@ class TokenLedger:
                 or row.get("previous_sha256") != (self.events[-1]["event_sha256"] if self.events else None)):
             raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
         if row["kind"] == "AUTHORIZE":
-            if (self.events or row["policy"] not in (POLICY, POLICY_V23_2M, POLICY_V23_PARALLEL_2M, POLICY_V24_2M, POLICY_V25_2M)
-                    or row['policy'] != (POLICY if self.policy == POLICY_40M else self.policy)):
+            if (self.events or row["policy"] not in (POLICY, POLICY_V23_2M, POLICY_V23_PARALLEL_2M, POLICY_V24_2M, POLICY_V25_2M,
+                    POLICY_V25_FORMAL_30M, POLICY_V25_VALIDATION_6M)
+                    or row['policy'] != (POLICY if self.policy == POLICY_40M else self.policy)
+                    or row.get('cost_policy') != self.cost_policy):
                 raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
         elif row["kind"] == "AUTHORIZATION_AMENDMENT":
             if (self.inflight or self.authorization_amendments
@@ -202,12 +214,23 @@ class TokenLedger:
             if row["reservation_id"] in self.inflight or row["bound"]["amount"] <= 0:
                 raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
             self.inflight[row["reservation_id"]] = row
+            if self.cost_policy is not None:
+                from .cost_accounting import amount
+                if row.get('cost_reserved_micros')!=amount(self.cost_policy,row['role'],
+                        row['bound']['input_upper_bound'],row['bound']['output_hard_cap']):
+                    raise OperationalAbort('SUPPLIER_COST_LEDGER_CORRUPTION')
         elif row["kind"] == "CHARGE":
             old = self.inflight.pop(row["reservation_id"], None)
             if old is None or row["charged"] < 0 or row["charged"] > old["bound"]["amount"]:
                 raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
             if row["input_tokens"] + row["output_tokens"] != row["charged"]:
                 raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
+            if self.cost_policy is not None:
+                from .cost_accounting import amount
+                expected=amount(self.cost_policy,old['role'],row['input_tokens'],row['output_tokens'])
+                if row.get('cost_charged_micros')!=expected or expected>old['cost_reserved_micros']:
+                    raise OperationalAbort('SUPPLIER_COST_LEDGER_CORRUPTION')
+                self.cost_charged_micros+=expected
             receipt = row.get('response_receipt')
             if receipt is not None:
                 from ..persistence.provider_receipts import IDENTITY
@@ -237,6 +260,10 @@ class TokenLedger:
             raise OperationalAbort('TOKEN_LEDGER_CORRUPTION')
         if self.totals["charged_total"] + self.reserved > self.authorized_total:
             raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
+        if self.cost_policy is not None:
+            from .cost_accounting import micros
+            if self.cost_charged_micros+self.cost_reserved_micros>micros(self.cost_policy['hard_limit']):
+                raise OperationalAbort('SUPPLIER_COST_LEDGER_CORRUPTION')
 
     def _append(self, payload):
         row = {**payload, "sequence": len(self.events),
@@ -254,6 +281,10 @@ class TokenLedger:
     def remaining(self):
         return self.authorized_total - self.totals["charged_total"] - self.reserved
 
+    @property
+    def cost_reserved_micros(self):
+        return sum(r.get('cost_reserved_micros',0) for r in self.inflight.values())
+
     def view(self):
         return dict(identity=POLICY["ledger_identity"], task_sha256=self.task_sha256,
                     authorized_total=self.authorized_total, **self.totals,
@@ -261,7 +292,11 @@ class TokenLedger:
                     **self.groups, last_event_sha256=self.events[-1]["event_sha256"],
                     authorization_amendments=[dict(authorization_sha256=r["authorization_sha256"],
                         authorized_total=r["authorized_total"], event_sha256=r["event_sha256"])
-                        for r in self.authorization_amendments])
+                        for r in self.authorization_amendments],
+                    **({'cost':dict(currency=self.cost_policy['currency'],hard_limit=self.cost_policy['hard_limit'],
+                        charged_micros=self.cost_charged_micros,reserved_micros=self.cost_reserved_micros,
+                        interpretation='CONSERVATIVE_TARIFF_ACCOUNTING_NOT_PROVIDER_INVOICE')}
+                        if self.cost_policy is not None else {}))
 
     def amend_authorization_40m(self, *, authorization_sha256, expected_charged_total):
         """Append the human-authorized ceiling extension without altering charges."""
@@ -303,11 +338,22 @@ class TokenLedger:
                 raise OperationalAbort("VALIDATION_RESERVE_INVALID")
             if self.remaining - bound["amount"] < protected_validation:
                 raise OperationalAbort("STOP_TOKEN_BUDGET_INSUFFICIENT_FOR_VALIDATION")
+            cost={}
+            if self.cost_policy is not None:
+                from .cost_accounting import amount, micros
+                from .cost_accounting import ROLE_PROFILE
+                if (role not in ROLE_PROFILE or model!=request.get('model')
+                        or model!=self.cost_policy['tariffs'][ROLE_PROFILE[role]]['model']):
+                    raise OperationalAbort('SUPPLIER_COST_MODEL_ROUTE_MISMATCH')
+                reserved=amount(self.cost_policy,role,bound['input_upper_bound'],bound['output_hard_cap'])
+                if self.cost_charged_micros+self.cost_reserved_micros+reserved>micros(self.cost_policy['hard_limit']):
+                    raise OperationalAbort('COST_CEILING')
+                cost=dict(cost_reserved_micros=reserved)
             key = str(len(self.events))
             self._append(dict(kind="RESERVE", reservation_id=key, bound=bound,
                 request_sha256=hashlib.sha256(serialized_request(request)).hexdigest(),
                 attempt_id=attempt_id, stage=stage, role=role, model=model,
-                protected_validation=protected_validation))
+                protected_validation=protected_validation,**cost))
             return key
 
     def reconcile(self, key, result, *, outcome, response_receipt=None):
@@ -316,8 +362,13 @@ class TokenLedger:
             reliable = reliable_usage(result, bound)
             inp = result["input_tokens"] if reliable else bound["input_upper_bound"]
             out = result["output_tokens"] if reliable else bound["output_hard_cap"]
+            cost={}
+            if self.cost_policy is not None:
+                from .cost_accounting import amount
+                cost=dict(cost_charged_micros=amount(self.cost_policy,self.inflight[key]['role'],inp,out))
             self._append(dict(kind="CHARGE", reservation_id=key, reliable_usage=reliable,
                 input_tokens=inp, output_tokens=out, charged=inp + out, outcome=outcome,
+                **cost,
                 **({"response_receipt": response_receipt} if response_receipt is not None else {})))
             return dict(input_tokens=inp, output_tokens=out, usage_reliable=reliable)
 
@@ -329,3 +380,24 @@ class TokenLedger:
 
     def __exit__(self, *_):
         self.close()
+
+
+def audit_journal(directory,*,task_sha256,policy,cost_policy=None):
+    """Replay the authoritative journal without locks, recovery or snapshot writes."""
+    from .cost_accounting import frozen_policy
+    audit=TokenLedger.__new__(TokenLedger)
+    audit.policy=dict(policy);audit.task_sha256=task_sha256
+    audit.cost_policy=frozen_policy(cost_policy);audit.cost_charged_micros=0
+    audit.authorized_total=policy['authorized_total'];audit.authorization_amendments=[]
+    audit.events=[];audit.inflight={}
+    audit.totals=dict(charged_total=0,provider_reported_actual=0,fallback_charged=0,input_tokens=0,output_tokens=0)
+    audit.groups={k:{} for k in ('by_stage','by_attempt','by_role','by_model')}
+    data=(Path(directory)/'events.jsonl').read_bytes()
+    if not data or not data.endswith(b'\n'):raise OperationalAbort('TOKEN_LEDGER_CORRUPTION')
+    try:
+        for line in data.splitlines():audit._apply(json.loads(line))
+    except (ValueError,KeyError,TypeError) as exc:
+        raise OperationalAbort('TOKEN_LEDGER_CORRUPTION') from exc
+    if audit.events[0].get('task_sha256')!=task_sha256 or audit.inflight:
+        raise OperationalAbort('TOKEN_LEDGER_AUTHORIZATION_OR_CLOSURE_MISMATCH')
+    return audit.view(),tuple(audit.events)

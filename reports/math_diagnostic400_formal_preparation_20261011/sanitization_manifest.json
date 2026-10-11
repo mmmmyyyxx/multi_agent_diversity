@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "findings": [],
+  "raw_private_content_published": false,
+  "absolute_host_paths_published": false,
+  "credentials_or_endpoints_published": false,
+  "real_held_out_content_published": false,
+  "allowed_content": "Hashes, counters, categories, public configuration and unmeasured status only."
+}

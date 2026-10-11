@@ -1,0 +1,8 @@
+{
+  "real_api_calls": 0,
+  "reported_tokens": 0,
+  "charged_tokens": 0,
+  "real_money_spent": 0,
+  "grants_consumed": 0,
+  "synthetic_test_transports": "SEPARATE_FROM_REAL_PROVIDER_COUNTS"
+}

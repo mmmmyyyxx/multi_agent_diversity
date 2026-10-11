@@ -1,0 +1,15 @@
+{
+  "status": "PREPARATION_ONLY",
+  "real_api_calls": 0,
+  "validation_model_calls": 0,
+  "test_model_calls": 0,
+  "formal_method_changed": false,
+  "prospective_efficacy": "UNMEASURED",
+  "canary_token_proposal": 2000000,
+  "formal_search_token_proposal": 30000000,
+  "post_search_validation_token_proposal": 6000000,
+  "proposed_opportunity_ceiling": 50,
+  "monetary_caps": null,
+  "billing_terms": "MISSING",
+  "exact_grants_received": false
+}

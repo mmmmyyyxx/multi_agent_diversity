@@ -529,3 +529,15 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 - Symptom: Pilot: 134 rejected physical draws; 96 extra draws and 394485 usage tokens; 38 logical diagnoses exhausted.
 - Forbidden inference: Not experiment invalidity, provider truncation, component efficacy, mathematical incapacity or permission to loosen guards/rerun.
 - Mitigation: User-selected two diagnostic caps 400 in a fresh formal identity, verified offline; correction/effect limits, JSON schema, source and leakage guards and recovery bounds unchanged. JSON failures and prospective cost remain unresolved; no paid run.
+
+## FAIL-FORMAL-DUPLICATE-ROOT-TERMINAL-MUTATION: Lower-level duplicate execution could overwrite a completed lifecycle
+
+- Status: `MITIGATED`
+- Lifecycle: `OFFLINE_REPRODUCED`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `math_diagnostic400_canary_formal_preparation_v1`
+- Root-cause status: Existing-root check occurred inside the lifecycle-writing exception boundary.
+- Symptom: Synthetic duplicate invocation after completion could enter the abort lifecycle writer.
+- Forbidden inference: No evidence of historical paid result mutation, invalidity or authorization for a retry.
+- Mitigation: Reject existing/foreign run roots before journal opening; restrict writes to the newly consumed attempt; assert immutable terminal and journal bytes.

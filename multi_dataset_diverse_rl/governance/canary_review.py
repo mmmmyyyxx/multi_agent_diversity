@@ -15,6 +15,8 @@ STRUCTURED_POLICY=dict(identity='FLEXIBLE_ANSWER_CANARY_REVIEW_V5',
     extra_provider_calls=0,total_max_opportunities=5,
     scientific_state_reset=False,efficacy_based_stopping=False,
     unreached_branch='NOT_OBSERVED_NO_FORCED_GENERATION')
+FORMAL_POLICY=dict(STRUCTURED_POLICY,identity='FORMAL_FIRST_OPPORTUNITY_OWNER_REVIEW_V6',
+    total_max_opportunities=50)
 
 def trace_rows(run_root):
     path=run_root/'provider_trace_private.jsonl'
@@ -110,7 +112,8 @@ def opportunity_audit(contract,composed,run_root,opportunity):
 
 def review(stage,audit,*,contract,payload,run_root):
     policy=contract.get('canary_review_policy')
-    if policy != STRUCTURED_POLICY or stage not in policy['stages']:
+    expected=FORMAL_POLICY if contract.get('execution_phase')=='formal' else STRUCTURED_POLICY
+    if policy != expected or stage not in policy['stages']:
         raise SearchContractError('CANARY_REVIEW_POLICY_NOT_FROZEN')
     receipt=dict(stage=stage,attempt_id=contract['execution_attempt_id'],
         startup_identity_sha256=payload['startup_identity_sha256'],audit=audit,

@@ -1,0 +1,84 @@
+schema_version: formal_experiment_proposal_v1
+status: DRAFT_BILLING_INFORMATION_REQUIRED
+method: unified_team_prompt_search_v2_5_diagnostic_limits_400_v2
+source_sha: null
+api_authorized: false
+proposal_is_execution_authorization: false
+initial_team: MATH_IDENTICAL_ARM_B_STRUCTURED_SEED_V3
+solver: {provider_profile: openlux, model: gpt-4o-mini}
+optimizer: {provider_profile: lwj, model: qwen3.7-flash}
+execution_policy: STRUCTURED_INDEPENDENT_GRADIENT_EXECUTION_V3
+concurrency:
+  solver: 8
+  per_example_gradient: 2
+  cluster: 1
+  reflection_generations: 1
+  local_search_steps: 1
+  optimization_opportunities: 1
+  full_shadow_admission: 1
+canary:
+  planned_experiment_id: math_diagnostic400_seed85_canary_v1
+  planned_attempt_id: a4_diagnostic400_g2_seed85_canary_attempt1
+  seed: 85
+  optimize: 12
+  shadow: 40
+  membership: metadata_only_unseen_first_minimum_prior_use_supplement
+  maximum_opportunities: 1
+  charged_token_ceiling: 2000000
+  supplier_currency: null
+  monetary_hard_limit: null
+  engineering_gate: INTEGRITY_COMPLETE_CANARY_TO_FROZEN_FORMAL_V1
+  positive_vote_or_commit_required: false
+  legal_nonactionability: pass_if_integrity_complete_unreached_branches_disclosed
+  validation: not_authorized
+  test: sealed
+formal:
+  planned_experiment_id: math_diagnostic400_seed86_formal_v1
+  planned_search_attempt_id: a4_diagnostic400_g2_seed86_formal_attempt1
+  planned_validation_attempt_id: a4_diagnostic400_seed86_validation_attempt1
+  seed: 86
+  optimize: 150
+  shadow: 40
+  validation: 300
+  test: sealed
+  optimize_membership: all_frozen_optimize
+  shadow_membership: metadata_only_proportional_subject_level_seed_hash
+  initial_state: fresh_B5_no_canary_prompt_memory_response_or_cache_transfer
+  scientific_stop: {identity: team_epoch_no_commit_v1, no_commit_epoch_patience: 2}
+  maximum_opportunities: 50
+  search_charged_token_ceiling: 30000000
+  validation_charged_token_ceiling: 6000000
+  total_charged_token_ceiling: 36000000
+  supplier_currency: null
+  search_monetary_hard_limit: null
+  validation_monetary_hard_limit: null
+  total_monetary_hard_limit: null
+  validation_access: separately_authorized_after_integrity_complete_search_closure
+  resource_stop: operational_truncation_not_scientific_completion
+  valid_resource_truncated_team_evaluation: last_committed_team_only_no_resume
+  engineering_abort: no_progression_no_retry_preserve_evidence
+  validation_truncation: NOT_EVALUABLE_no_partial_subset_scores
+control:
+  identity: unoptimized_frozen_Arm_B_five_member_team
+  evaluation: same_validation_examples_models_parser_vote_and_member_lanes
+  paired_cache: exact_request_same_member_slot_shared_realization
+  inference_budget: same_five_members_per_team
+  training_compute_matched: false
+  additional_ablation: none
+  causal_component_claims: not_supported_by_this_design
+analysis:
+  primary: final_minus_initial_Validation_VoteAcc
+  secondary: [Validation_OracleAcc, member_accuracy, output_validity, token_and_fee_cost]
+  uncertainty: exact_two_sided_McNemar_and_paired_example_bootstrap_10000_seed86
+  search_trajectory: [Vote, Oracle, member_scores, opportunity_allocation, Pattern, Memory, Full, Shadow, Commit]
+  diagnostics: [no_commit_opportunity_streak, no_vote_improvement_opportunity_streak, gradient_field_validity, json_schema_retries, charged_cost]
+  stopping_from_diagnostic_streaks: false
+  frozen_before_canary_outcomes: required
+  outcome_based_method_or_budget_change: forbidden
+  inference_limits: one_seed_one_team_no_component_causality_no_Test_or_cross_benchmark_claim
+blocking_requirements:
+- actual_supplier_tariffs_currencies_failure_and_cache_billing_terms
+- declared_provider_rate_limits_or_disclosed_unknown_limits
+- final_currency_and_monetary_caps
+- registered_phase_manifests_frozen_source_memberships_hashes_and_single_use_handoffs
+- exact_new_user_API_authorization_for_canary_formal_search_and_post_search_validation

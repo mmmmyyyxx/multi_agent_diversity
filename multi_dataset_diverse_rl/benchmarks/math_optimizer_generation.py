@@ -38,7 +38,7 @@ def frozen_cluster_policy(contract):
         return None
     expected = pattern_cluster_generation_contract()
     if (contract.get('identity')!=MATH_STRUCTURED_SYSTEM_BINDING_VERSION
-            or contract.get('execution_phase') not in {'pilot','canary'}
+            or contract.get('execution_phase') not in {'pilot','canary','formal','validation'}
             or policy != expected
             or any(type(policy.get(k)) is not type(v) for k, v in expected.items())):
         raise SearchContractError('PATTERN_CLUSTER_GENERATION_POLICY_BINDING_MISMATCH')

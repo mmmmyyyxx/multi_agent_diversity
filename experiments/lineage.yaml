@@ -959,6 +959,11 @@ nodes:
 - experiment_id: math_gradient_diagnostic_limits_400_v2
   kind: PROTOCOL_FREEZE
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: math_diagnostic400_canary_formal_preparation_v1
+  kind: PROTOCOL_FREEZE
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  status: DRAFT
+  manifest: experiments/manifests/math_diagnostic400_canary_formal_preparation_v1.yaml
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2091,4 +2096,9 @@ edges:
   to: math_gradient_diagnostic_limits_400_v2
   relation: followup_of
   evidence: reports/gradient_diagnostic_limits_400_v2_preparation_20261011/README.md
+- from: math_gradient_diagnostic_limits_400_v2
+  to: math_diagnostic400_canary_formal_preparation_v1
+  relation: derived_from
+  evidence: reports/math_diagnostic400_formal_preparation_20261011/README.md
+  scope: Engineering/formal design only; no API authorization or efficacy result.
 current_frontier: experiments/current_frontier.yaml

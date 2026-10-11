@@ -29,7 +29,9 @@ class RequestBroker:
         self.contract = contract
         from .current_policy import CURRENT_POLICY_BUNDLE
         CURRENT_POLICY_BUNDLE.validate_contract(contract)
-        if arm!='A4' or seed!=contract.get('execution_seed',81) or validation_only:
+        if (arm!='A4' or seed!=contract.get('execution_seed',81)
+                or type(validation_only) is not bool
+                or validation_only!=(contract.get('execution_phase')=='validation')):
             raise SearchContractError('CURRENT_V24_ROLE_SEED_SPLIT_FORBIDDEN')
         from ..benchmarks.math_response_evidence import frozen_trajectory_policy
         self.solver_trajectory_policy = frozen_trajectory_policy(contract)
@@ -101,8 +103,9 @@ class RequestBroker:
 
     def _request_identity(self, *, role, split, messages, member_slot=None, output_capacity=None):
         pattern_roles={'pattern_gradient','pattern_cluster'}
-        legal=(role in {'solver','reflection',*pattern_roles} and split in {'optimize','shadow'}
-            and (role=='solver' or split=='optimize'))
+        legal=((role=='solver' and split=='validation') if self.validation_only else
+            (role in {'solver','reflection',*pattern_roles} and split in {'optimize','shadow'}
+            and (role=='solver' or split=='optimize')))
         if not legal:
             raise SearchContractError("PROVIDER_ROLE_SPLIT_FORBIDDEN")
         if role in pattern_roles and not self.contract["arms"][self.arm][0]:
@@ -138,6 +141,12 @@ class RequestBroker:
                     cluster_prompt_sha256=c['pattern_prompt_sha256'])
         if c.get('optimization_evidence_policy'):
             identity['optimization_evidence_policy']=c['optimization_evidence_policy']
+        if self.execution_policy:
+            identity['execution_policy'] = self.execution_policy
+        if c.get('cost_policy'):
+            identity['cost_policy']=c['cost_policy']
+        if self.validation_only:
+            identity['validation_treatment']={k:c[k] for k in ('post_freeze_validation_policy','validation_scope_identity')}
         if self.solver_trajectory_policy is not None:
             identity['solver_trajectory_policy'] = self.solver_trajectory_policy
         if role in {'reflection','pattern','pattern_gradient','pattern_cluster'} and self.optimizer_policy:

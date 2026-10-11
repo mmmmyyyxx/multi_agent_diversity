@@ -14,13 +14,24 @@ POLICY = dict(identity='STRUCTURED_SOLVER_CAPACITY_EXECUTION_V2',
     batch_failure='STOP_DISPATCH_DRAIN_PERSIST_THEN_RAISE',
     optimization_dependencies='SERIAL')
 
+# A separate execution identity; model parameters and scientific decisions are
+# unchanged. Only independent per-example diagnoses can overlap.
+GRADIENT_PARALLEL_POLICY = dict(POLICY,
+    identity='STRUCTURED_INDEPENDENT_GRADIENT_EXECUTION_V3',
+    optimizer_max_concurrency=2, gradient_max_concurrency=2,
+    gradient_result_order='WRONG_UNIVERSE_INPUT_ORDER',
+    gradient_recovery='SERIAL_PER_EXAMPLE_THREE_FROZEN_DRAWS',
+    cluster_barrier='ALL_GRADIENT_WORKERS_DRAINED',
+    reflection_and_team_admission='SERIAL')
+
 
 def frozen_execution_policy(contract):
     policy = contract.get('solver_execution_policy')
     # Existing immutable freezes retain their original serial execution physics.
     if policy is None:
         return None
-    if policy != POLICY or any(type(policy[k]) is not type(v) for k, v in POLICY.items()):
+    expected = next((p for p in (POLICY, GRADIENT_PARALLEL_POLICY) if policy == p), None)
+    if expected is None or any(type(policy[k]) is not type(v) for k, v in expected.items()):
         raise SearchContractError('SOLVER_EXECUTION_POLICY_MISMATCH')
     return deepcopy(policy)
 

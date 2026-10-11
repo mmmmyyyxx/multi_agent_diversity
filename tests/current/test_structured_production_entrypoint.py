@@ -18,7 +18,7 @@ ROOT=Path(__file__).resolve().parents[2]
 FRESH='experiments/execution_bindings/a4_v25_seed81_canary_attempt1.json'
 
 def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct=False,structural=False,
-        seed=81,team_version=None,development_subsets=None,structural_kind='syntax'):
+        seed=81,team_version=None,development_subsets=None,structural_kind='syntax',execution_policy=None):
     from hashlib import sha256
     from multi_dataset_diverse_rl.benchmarks.math_structured_binding import derive_structured_contract, gradient_prompt_artifact
     from multi_dataset_diverse_rl.search.optimization_evidence import POLICY
@@ -33,6 +33,32 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
     atomic_write_json(tmp_path/scope_path,scope)
     gradient_path='runs/synthetic_current_gradient.json'
     atomic_write_json(tmp_path/gradient_path,gradient_prompt_artifact())
+    extras={};local_files={scope_path,gradient_path}
+    if phase=='formal':
+        from multi_dataset_diverse_rl.benchmarks.math_formal_scope import build_subsets,protocol
+        from multi_dataset_diverse_rl.governance.token_accounting import POLICY_V25_FORMAL_30M
+        from tests.current.test_formal_execution_scope import tariff
+        from multi_dataset_diverse_rl.governance import canary_progression
+        from multi_dataset_diverse_rl.benchmarks import math_low_cost,current_math_dependencies
+        data=build_subsets(read_json(ROOT/old['low_cost_subsets_path'])['metadata_universe'],old['split_manifest_sha256'],seed=seed)
+        subset_path='runs/synthetic_formal_subsets.json';accounting_path='runs/synthetic_formal_accounting.json'
+        atomic_write_json(tmp_path/subset_path,data);atomic_write_json(tmp_path/accounting_path,POLICY_V25_FORMAL_30M)
+        development_subsets=dict(path=subset_path,sha256=sha256((tmp_path/subset_path).read_bytes()).hexdigest(),protocol=protocol(data))
+        extras=dict(token_ceiling=30_000_000,cost_policy=tariff('1000000.000000'),
+            canary_prerequisite=dict(identity=canary_progression.IDENTITY,canary_prep='runs/synthetic_canary_prep',
+                canary_run='runs/synthetic_canary_run',canary_binding_path='runs/synthetic_canary_binding.json',
+                canary_binding_sha256='a'*64,canary_attempt_id='synthetic_canary'))
+        # Source/grant/Canary integrity is covered separately. This fixture
+        # supplies a fixed offline gate and routes only temporary metadata files.
+        monkeypatch.setattr(canary_progression,'verify',lambda *args:dict(identity=canary_progression.IDENTITY,synthetic=True,efficacy_gate=False))
+        real_subsets=math_low_cost.read_subsets
+        def subsets(root,contract):return real_subsets(tmp_path if contract['execution_phase']=='formal' else root,contract)
+        monkeypatch.setattr(math_low_cost,'read_subsets',subsets)
+        monkeypatch.setattr(current_math_dependencies,'read_subsets',subsets)
+        local_files.update({subset_path,accounting_path})
+    elif execution_policy is not None:
+        from tests.current.test_formal_execution_scope import tariff
+        extras=dict(cost_policy=tariff('1000000.000000'))
     c=derive_structured_contract(read_json(ROOT/old['trajectory_parent_binding_path']),
         attempt=attempt,binding_path=fresh,parent_path=old['trajectory_parent_binding_path'],
         parent_sha256=old['trajectory_parent_binding_sha256'],authorization_path=scope_path,
@@ -42,19 +68,21 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
         validation_metadata_path=old['validation_accounting_metadata_path'],validation_metadata_sha256=old['validation_accounting_metadata_sha256'],
         initial_team_path=('experiments/initial_teams/math_arm_b_structured_seed_v3.json' if team_version else old['initial_team_path']),
         initial_team_artifact_sha256=(sha256((ROOT/'experiments/initial_teams/math_arm_b_structured_seed_v3.json').read_bytes()).hexdigest() if team_version else old['initial_team_artifact_sha256']),
-        accounting_policy_path=old['accounting_policy_path'],accounting_policy_sha256=old['accounting_policy_sha256'],
-        execution_phase=phase,max_opportunities=5 if phase=='pilot' else 1,seed=seed,
-        **({'team_version':team_version} if team_version else {}),development_subsets=development_subsets)
+        accounting_policy_path=accounting_path if phase=='formal' else old['accounting_policy_path'],
+        accounting_policy_sha256=sha256((tmp_path/accounting_path).read_bytes()).hexdigest() if phase=='formal' else old['accounting_policy_sha256'],
+        execution_phase=phase,max_opportunities=50 if phase=='formal' else 5 if phase=='pilot' else 1,seed=seed,
+        **({'team_version':team_version} if team_version else {}),development_subsets=development_subsets,
+        execution_policy=execution_policy,**extras)
     binding=execution_binding(ROOT,c)
     original_path=binding.path
-    monkeypatch.setattr(binding,'path',lambda relative: tmp_path/relative if relative in {scope_path,gradient_path} else original_path(relative))
+    monkeypatch.setattr(binding,'path',lambda relative: tmp_path/relative if relative in local_files else original_path(relative))
     assert not binding.blockers()
-    subsets=read_subsets(ROOT,c)['memberships'];adapter=binding.benchmark()
+    subsets=read_subsets(tmp_path if phase=='formal' else ROOT,c)['memberships'];adapter=binding.benchmark()
     def synthetic_examples(role):
         return tuple(CorrectnessExample(protocol_input('math',r['stable_example_id'],
             dict(problem=f'Synthetic {role} case {i}: find the result.'),adapter.output_contract,protocol=adapter.protocol),
             '2',f'Synthetic reference operation for case {i}.' if role=='optimize' else None)
-            for i,r in enumerate(subsets[(phase if role=='optimize' else 'pilot')+'_'+role]))
+            for i,r in enumerate(subsets[(phase if role=='optimize' or phase=='formal' else 'pilot')+'_'+role]))
     monkeypatch.setattr(binding,'examples',synthetic_examples)
     optimize=binding.examples('optimize');shadow=binding.examples('shadow')
     answer_by_problem={binding.benchmark().format_input(e.item):(e.reference,i,split)
@@ -113,18 +141,18 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
     result=asyncio.run(autonomous_math.execute_search(tmp_path,prep,run_root,payload))
     assert [r['stage'] for r in reviews]==(['INITIAL_SOLVER_PROFILE'] if all_correct else
         ['INITIAL_SOLVER_PROFILE','FIRST_COMPLETE_OPPORTUNITY'])
-    initial_profiles=300 if phase=='pilot' else 60
+    initial_profiles=750 if phase=='formal' else 300 if phase=='pilot' else 60
     assert reviews[0]['audit']['logical_profiles']==initial_profiles and reviews[0]['audit']['initial_memory_entries']==5
     if not all_correct:
         assert reviews[1]['audit']['gradient_diagnostics']==6
         assert reviews[1]['audit']['branch_observation']['full']=='NOT_OBSERVED'
-    opportunity_count=0 if all_correct else (5 if phase=='pilot' else 1)
+    opportunity_count=0 if all_correct else (len(result['result']['trace']) if phase=='formal' else 5 if phase=='pilot' else 1)
     assert len(result['result']['trace'])==opportunity_count
     assert result['result']['stop_reason']==('NO_REPAIR_SIGNAL' if all_correct else
-        'OPERATIONAL_OPPORTUNITY_CEILING' if phase=='pilot' else 'CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE')
+        'SATURATION_REACHED' if phase=='formal' else 'OPERATIONAL_OPPORTUNITY_CEILING' if phase=='pilot' else 'CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE')
     if phase=='pilot':
         assert result['pilot_status']=='INCOMPLETE_OPERATIONAL_TRUNCATION'
-    assert result['accounting']['authorized_total']==2_000_000 and not result['accounting']['reserved_inflight']
+    assert result['accounting']['authorized_total']==(30_000_000 if phase=='formal' else 2_000_000) and not result['accounting']['reserved_inflight']
     assert result['validation_calls']==result['test_calls']==0 and result['memory_audit']['initial_memory_entries']==5
     assert len([r for r in requests if r['model']=='gpt-4o-mini'])==initial_profiles
     assert result['pattern_gradient_calls']==6*opportunity_count*(2 if structural else 1)
@@ -132,7 +160,11 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
     assert client.closed and read_json(run_root/'lifecycle.json')['status']=='EXECUTION_COMPLETE'
     if phase=='pilot':
         assert (run_root/'SEARCH_CLOSED_RECEIPT.json').exists()
+    closed_lifecycle=(run_root/'lifecycle.json').read_bytes()
+    closed_ledger=(tmp_path/c['token_ledger_directory']/'events.jsonl').read_bytes()
     with pytest.raises(Exception):asyncio.run(autonomous_math.execute_search(tmp_path,prep,run_root,payload))
+    assert (run_root/'lifecycle.json').read_bytes()==closed_lifecycle
+    assert (tmp_path/c['token_ledger_directory']/'events.jsonl').read_bytes()==closed_ledger
     return result,requests,client,reviews
 
 
@@ -243,8 +275,8 @@ def test_resources_and_hash_readback_precede_terminal_marker(tmp_path,monkeypatc
         original_write(path,value)
     monkeypatch.setattr(autonomous_math,'atomic_write_json',write)
     _entrypoint_fixture(tmp_path,monkeypatch,True,'canary',all_correct=True)
-    # Fixture also attempts forbidden reuse; its fresh ledger is closed on abort.
-    assert events==['ledger_close','terminal_marker','ledger_close']
+    # Forbidden reuse fails before opening the completed attempt's journal.
+    assert events==['ledger_close','terminal_marker']
 
 
 @pytest.mark.parametrize('phase',['canary','pilot'])

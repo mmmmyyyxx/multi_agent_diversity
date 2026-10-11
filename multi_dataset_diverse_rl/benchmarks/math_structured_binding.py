@@ -39,10 +39,13 @@ def gradient_prompt_artifact():
 
 
 def prepare_structured_inputs(root,*,experiment_id,attempt,user_task_sha256,execution_phase='pilot',
-        seed=81,team_version=MATH_INITIAL_TEAM_VERSION,initial_team_path=None,development_subsets=None):
+        seed=81,team_version=MATH_INITIAL_TEAM_VERSION,initial_team_path=None,development_subsets=None,
+        execution_policy=None,cost_policy=None,canary_prerequisite=None):
     """Prepare a fresh unapproved scope without loading examples or credentials."""
     from ..persistence.durable_io import atomic_write_json
-    from ..governance.token_accounting import POLICY_V25_2M
+    from ..governance.token_accounting import POLICY_V25_2M, POLICY_V25_FORMAL_30M
+    from .math_formal_scope import BOUND as formal_bound
+    accounting=POLICY_V25_FORMAL_30M if execution_phase=='formal' else POLICY_V25_2M
     parent_path='experiments/execution_bindings/a4_v24_structured_seed81_canary_attempt1.json'
     parent=json.loads((root/parent_path).read_bytes());parent_hash=file_hash(root/parent_path)
     protocol='experiments/protocols/'+experiment_id
@@ -59,7 +62,7 @@ def prepare_structured_inputs(root,*,experiment_id,attempt,user_task_sha256,exec
         old_responses_cache_and_competence_reusable=False,push_authorized=False)
     for path,value in ((paths['scope'],scope),(paths['gradient'],gradient_prompt_artifact()),
             (paths['pattern'],dict(identity='STRUCTURED_GRADIENT_CLUSTER_PROMPT_V2',prompt=CLUSTER_PROMPT)),
-            (paths['accounting'],POLICY_V25_2M),(paths['team'],initial_team_artifact(team_version)),
+            (paths['accounting'],accounting),(paths['team'],initial_team_artifact(team_version)),
             (paths['metadata'],dict(identity='V25_HELDOUT_SEAL_NO_ACCESS_METADATA_V1',
                 validation_model_calls=0,test_model_calls=0,heldout_accounting_reserve=0,
                 validation_access='not_authorized',test_access='sealed'))):
@@ -74,8 +77,10 @@ def prepare_structured_inputs(root,*,experiment_id,attempt,user_task_sha256,exec
         validation_metadata_sha256=file_hash(root/paths['metadata']),initial_team_path=paths['team'],
         initial_team_artifact_sha256=file_hash(root/paths['team']),accounting_policy_path=paths['accounting'],
         accounting_policy_sha256=file_hash(root/paths['accounting']),execution_phase=execution_phase,
-        max_opportunities=1 if execution_phase=='canary' else 5,seed=seed,
-        team_version=team_version,development_subsets=development_subsets)
+        max_opportunities=1 if execution_phase=='canary' else formal_bound['max_opportunities'] if execution_phase=='formal' else 5,
+        token_ceiling=accounting['authorized_total'],seed=seed,
+        team_version=team_version,development_subsets=development_subsets,execution_policy=execution_policy,
+        cost_policy=cost_policy,canary_prerequisite=canary_prerequisite)
     blockers=MATHStructuredBinding(root,c).blockers()
     if blockers:raise SearchContractError('V25_PREPARATION_HOLD:'+','.join(blockers))
     atomic_write_json(root/binding_path,c)
@@ -97,11 +102,17 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
         initial_team_artifact_sha256, pattern_prompt_path, pattern_prompt_sha256,
         accounting_policy_path, accounting_policy_sha256, max_opportunities=5,
         token_ceiling=2_000_000, execution_phase='pilot',seed=81,
-        team_version=MATH_INITIAL_TEAM_VERSION,development_subsets=None):
-    if (not isinstance(attempt,str) or not attempt or execution_phase not in {'canary','pilot'}
+        team_version=MATH_INITIAL_TEAM_VERSION,development_subsets=None,execution_policy=None,
+        cost_policy=None,canary_prerequisite=None):
+    from .math_formal_scope import BOUND as formal_bound, ACCOUNTING_SCOPE as formal_accounting, SELECTION as formal_selection
+    formal=execution_phase=='formal'
+    if (not isinstance(attempt,str) or not attempt or execution_phase not in {'canary','pilot','formal'}
             or attempt in {parent.get('execution_attempt_id'),parent.get('cache_namespace')}
-            or type(max_opportunities) is not int or not 0<max_opportunities<=5
-            or token_ceiling!=2_000_000 or type(seed) is not int or seed<0
+            or type(max_opportunities) is not int
+            or (max_opportunities!=formal_bound['max_opportunities'] if formal else not 0<max_opportunities<=5)
+            or type(token_ceiling) is not int
+            or token_ceiling!=(formal_bound['token_ceiling'] if formal else 2_000_000)
+            or type(seed) is not int or seed<0
             or any(new==parent.get(key) for new,key in (
                 (binding_path,'binding_path'),(authorization_path,'current_user_scope_path'),
                 (gradient_prompt_path,'gradient_prompt_path'),(initial_team_path,'initial_team_path'),
@@ -121,6 +132,11 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
                     'rolling_memory_freeze_path','rolling_memory_freeze_sha256'}):
             c.pop(key)
     from ..search.solver_execution import POLICY as execution
+    from ..search.solver_execution import frozen_execution_policy, GRADIENT_PARALLEL_POLICY
+    if formal and execution_policy is None:execution=GRADIENT_PARALLEL_POLICY
+    execution=frozen_execution_policy({'solver_execution_policy':execution_policy or execution})
+    if formal and execution!=GRADIENT_PARALLEL_POLICY:
+        raise SearchContractError('FORMAL_EXECUTION_POLICY_NOT_FROZEN')
     from ..governance.canary_review import STRUCTURED_POLICY
     from ..search.generation_failures import POLICY as output_recovery
     from ..provider_routing import IDENTITY as provider, SOLVER_MODEL, OPTIMIZER_MODEL, routing_contract
@@ -151,7 +167,9 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
         initial_team_artifact_sha256=initial_team_artifact_sha256,
         initial_team_sha256=initial['ordered_team_sha256'],
         solver_execution_policy=deepcopy(execution),
-        concurrency=dict(solver=8,optimizer_reflection=1,pattern=1),
+        concurrency=dict(solver=execution['solver_max_concurrency'],
+            optimizer_reflection=execution['optimizer_max_concurrency'],
+            pattern=execution.get('gradient_max_concurrency',1)),
         accounting_policy_path=accounting_policy_path,accounting_policy_sha256=accounting_policy_sha256,
         accounting_scope_policy='FRESH_V25_REPAIR_SINGLE_ARM_2M_V2',heldout_accounting_reserve=0,
         token_ledger_directory='runs/'+attempt+'/accounting',execution_arm='A4',arms={'A4':[True,True]},
@@ -159,9 +177,26 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
         operational_pilot=dict(identity='TARGET_OR_TEAM_PROGRESS_OPERATIONAL_PILOT_BOUND_V1',
             max_opportunities=max_opportunities,token_ceiling=token_ceiling,
             scientific_stopper='team_epoch_no_commit_v1',guarantees_saturation=False))
+    if formal:
+        c.update(accounting_scope_policy=formal_accounting,operational_pilot=deepcopy(formal_bound))
+        from ..governance.canary_review import FORMAL_POLICY
+        c['canary_review_policy']=deepcopy(FORMAL_POLICY)
+    c.pop('cost_policy',None)
+    c.pop('canary_prerequisite',None)
+    if canary_prerequisite is not None:
+        from ..governance.canary_progression import require_policy
+        require_policy(canary_prerequisite)
+        if not formal:raise SearchContractError('CANARY_PREREQUISITE_REQUIRES_FORMAL_PHASE')
+        c['canary_prerequisite']=deepcopy(canary_prerequisite)
+    if cost_policy is not None:
+        from ..governance.cost_accounting import frozen_policy
+        from ..governance.token_accounting import OperationalAbort
+        try:c['cost_policy']=frozen_policy(cost_policy)
+        except OperationalAbort as exc:raise SearchContractError(str(exc)) from None
     if development_subsets is not None:
         if (set(development_subsets)!={'path','sha256','protocol'} or
-                (execution_phase!='canary' and development_subsets['protocol'].get('identity')!='MATH_FRESH_RECOVERY_DEVELOPMENT_MEMBERSHIP_V3')):
+                (execution_phase!='canary' and development_subsets['protocol'].get('identity')!=
+                    (formal_selection['identity'] if formal else 'MATH_FRESH_RECOVERY_DEVELOPMENT_MEMBERSHIP_V3'))):
             raise SearchContractError('FRESH_CANARY_SUBSET_BINDING_INVALID')
         c.update(low_cost_subsets_path=development_subsets['path'],
             low_cost_subsets_sha256=development_subsets['sha256'],
@@ -173,8 +208,8 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
     from .protocols import MATH_PROTOCOL_FLEXIBLE_V7
     c['benchmark_protocol_sha256']=MATH_PROTOCOL_FLEXIBLE_V7.identity()
     c['budget']['metric_calls']=42
-    count=12 if execution_phase=='canary' else 60
-    name='canary_optimize' if execution_phase=='canary' else 'pilot_optimize'
+    count=12 if execution_phase=='canary' else 150 if formal else 60
+    name=execution_phase+'_optimize'
     c['initial_competence_binding'].update(count=count,support_identity=c['low_cost_protocol']['membership_hashes'][name])
     bootstrap=5*(count+c['shadow_count']);per_op=dict(local=42,probe=36,full=2*count,shadow=c['shadow_count'])
     solver=4*(bootstrap+max_opportunities*sum(per_op.values()))
@@ -223,9 +258,13 @@ class MATHStructuredBinding:
                 max_opportunities=c['operational_pilot']['max_opportunities'],
                 token_ceiling=c['operational_pilot']['token_ceiling'],execution_phase=c['execution_phase'],
                 seed=c['execution_seed'],team_version=c['initial_team_version'],
+                execution_policy=c['solver_execution_policy'],
+                cost_policy=c.get('cost_policy'),
+                canary_prerequisite=c.get('canary_prerequisite'),
                 development_subsets=(dict(path=c['low_cost_subsets_path'],sha256=c['low_cost_subsets_sha256'],
                     protocol=c['low_cost_protocol']) if c['low_cost_protocol']['identity'] in {
-                        'MATH_FRESH_CANARY_MEMBERSHIP_V2','MATH_FRESH_RECOVERY_DEVELOPMENT_MEMBERSHIP_V3'} else None))
+                        'MATH_FRESH_CANARY_MEMBERSHIP_V2','MATH_FRESH_RECOVERY_DEVELOPMENT_MEMBERSHIP_V3',
+                        'MATH_FORMAL_FULL_OPTIMIZE_METADATA_MEMBERSHIP_V1'} else None))
             if c!=expected:raise SearchContractError('V25_FROZEN_SETTINGS_CHANGED')
             for key in sorted(k for k in c if k.endswith('_path')):
                 h='initial_team_artifact_sha256' if key=='initial_team_path' else key[:-5]+'_sha256'
@@ -236,8 +275,8 @@ class MATHStructuredBinding:
                 raise SearchContractError('V25_GRADIENT_PROMPT_MISMATCH')
             if json.loads(self.path(c['pattern_prompt_path']).read_bytes())['prompt']!=CLUSTER_PROMPT:
                 raise SearchContractError('V25_CLUSTER_PROMPT_MISMATCH')
-            from ..governance.token_accounting import POLICY_V25_2M
-            if json.loads(self.path(c['accounting_policy_path']).read_bytes())!=POLICY_V25_2M:
+            from ..governance.autonomous_math import ledger_policy
+            if json.loads(self.path(c['accounting_policy_path']).read_bytes())!=ledger_policy(c):
                 raise SearchContractError('V25_ACCOUNTING_POLICY_MISMATCH')
             scope=json.loads(self.path(c['current_user_scope_path']).read_bytes())
             required=dict(schema_version='structured_system_preparation_scope_v1',
@@ -296,7 +335,7 @@ class MATHStructuredBinding:
         from .math_low_cost import read_subsets
         from ..search.binary_runtime import CorrectnessExample
         reader=self.reader();c=self.contract
-        name='pilot_shadow' if role=='shadow' else 'canary_optimize' if c['execution_phase']=='canary' else 'pilot_optimize'
+        name=('formal_shadow' if c['execution_phase']=='formal' else 'pilot_shadow') if role=='shadow' else c['execution_phase']+'_optimize'
         members=read_subsets(self.root,c)['memberships'][name];wanted={r['stable_example_id'] for r in members}
         reader.members=[r for r in reader.members if r['project_split']!=role or r['stable_example_id'] in wanted]
         reader.manifest=dict(reader.manifest,counts={**reader.manifest['counts'],role:len(members)})

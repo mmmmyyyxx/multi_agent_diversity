@@ -28,8 +28,11 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
         optimizer, method, seed, shadow_loader, shadow_count, runtime_readiness,
         pattern_provider, provider_call_reader=None, policy_bundle=CURRENT_POLICY_BUNDLE,
         execution_phase='canary', operational_bound=None):
-    if execution_phase not in {'canary', 'pilot'}:
+    if execution_phase not in {'canary', 'pilot', 'formal'}:
         raise SearchContractError('CURRENT_EXECUTION_PHASE_UNBOUND')
+    if execution_phase == 'formal':
+        from ..benchmarks.math_formal_scope import require_bound
+        require_bound(operational_bound)
     if execution_phase == 'pilot':
         OPERATIONAL_BOUND_ID='TARGET_OR_TEAM_PROGRESS_OPERATIONAL_PILOT_BOUND_V1'
         if (not isinstance(operational_bound,dict) or operational_bound.get('identity')!=OPERATIONAL_BOUND_ID

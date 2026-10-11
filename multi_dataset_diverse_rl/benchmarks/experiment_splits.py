@@ -202,6 +202,7 @@ class ExperimentSplitReader:
         if benchmark not in COUNTS:
             raise SearchContractError("BENCHMARK_UNKNOWN")
         self.root, self.benchmark = canonical_root, benchmark
+        self.manifest_sha256=expected_manifest_sha256
         path = destination / (benchmark + ".json")
         if not expected_manifest_sha256 or file_hash(path) != expected_manifest_sha256:
             raise SearchContractError("EXPERIMENT_MANIFEST_IDENTITY_MISMATCH")
@@ -246,6 +247,16 @@ class ExperimentSplitReader:
             raise SearchContractError("HELDOUT_SEARCH_ACCESS_FORBIDDEN")
         if (role == "shadow") != (purpose == DataPurpose.ADAPTIVE_GATE):
             raise SearchContractError("SHADOW_CONTENT_SEARCH_VISIBILITY_FORBIDDEN")
+        return self._read_rows(role)
+
+    def validation_rows(self,access):
+        from ..governance.postfreeze_validation import ValidationAccess
+        if type(access) is not ValidationAccess:
+            raise SearchContractError('POST_FREEZE_VALIDATION_ACCESS_REQUIRED')
+        access.require(self)
+        return self._read_rows('validation')
+
+    def _read_rows(self,role):
         selected = [r for r in self.members if r["project_split"] == role]
         result = {}
         for source_split in {r["source_split"] for r in selected}:

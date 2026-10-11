@@ -166,6 +166,17 @@ class PerExampleGradientProvider(_FreshSearchProvider):
         super().__init__(broker,REFERENCE_GRADIENT_PROMPT)
         self.numeric_guard_writer=numeric_guard_writer
         self.recovery_policy=None
+        import threading
+        self._numeric_guard_lock=threading.RLock()
+
+    def independent_provider(self):
+        """One worker owns counters/response; the broker owns shared accounting."""
+        writer=self.numeric_guard_writer
+        def serialized_writer(value):
+            with self._numeric_guard_lock:
+                writer(value)
+        return PerExampleGradientProvider(self.broker, self.prompt,
+            numeric_guard_writer=serialized_writer if writer is not None else None)
     def extract(self,payload):
         expected={'example_id','problem','reference','reference_solution','prediction','valid','correct','solver_trajectory'}
         if (not isinstance(payload,dict) or set(payload)!={'schema','current_system_prompt','target_member','example'}
@@ -277,7 +288,25 @@ class GradientExtractor:
         if wrong_universe(rows)!=rows:raise SearchContractError('PATTERN_GRADIENT_WRONG_UNIVERSE_REQUIRED')
         if not rows or len({r.example_id for r in rows})!=len(rows):
             raise SearchContractError('PATTERN_GRADIENT_WRONG_UNIVERSE_REQUIRED')
-        return self._extract_reference(procedure,rows)
+        execution=getattr(getattr(self.provider,'broker',None),'execution_policy',None)
+        concurrency=(execution or {}).get('gradient_max_concurrency',1)
+        if concurrency == 1:
+            return self._extract_reference(procedure,rows)
+        from .solver_execution import bounded_ordered_map
+        workers=tuple(GradientExtractor(self.provider.independent_provider()) for _ in rows)
+        self.evidence_diagnostics=[]
+        try:
+            parts=bounded_ordered_map(lambda index:workers[index]._extract_reference(
+                procedure,(rows[index],)),range(len(rows)),concurrency)
+            return tuple(record for part in parts for record in part)
+        finally:
+            # Map drains issued work even on fatal/budget failures. Persisted
+            # provider receipts remain authoritative; merge audit views in input
+            # order only after no worker can modify them.
+            for worker in workers:
+                self.provider.calls+=worker.provider.calls
+                self.provider.input_audit.extend(worker.provider.input_audit)
+                self.evidence_diagnostics.extend(getattr(worker,'evidence_diagnostics',()))
 
     def _extract_reference(self,procedure,rows):
         from .optimization_evidence import GRADIENT_INPUT

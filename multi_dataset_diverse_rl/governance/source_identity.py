@@ -117,6 +117,8 @@ def current_scientific_files(root: Path, *, execution_closure: bool = False) -> 
     if recovery_contract.is_file():result.append(recovery_contract)
     diagnostic_limits_contract=root/'docs/design/GRADIENT_DIAGNOSTIC_LIMITS_400_V2.md'
     if diagnostic_limits_contract.is_file():result.append(diagnostic_limits_contract)
+    formal_execution_contract=root/'docs/design/FORMAL_EXECUTION_AND_PAIRED_VALIDATION_V1.md'
+    if formal_execution_contract.is_file():result.append(formal_execution_contract)
     routing_contract=root/'docs/design/PROVIDER_ROLE_ROUTING_V1.md'
     if routing_contract.is_file():result.append(routing_contract)
     risk_contract = root/'docs/design/SHARED_RISK_MEMORY_V4.md'

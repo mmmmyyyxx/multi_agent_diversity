@@ -46,6 +46,11 @@ Older runtime identities cannot execute through current production. Historical
 manifests and reports remain immutable evidence with their frozen source replay.
 No old scoring, response cache, competence, Memory or consumed scope is reusable.
 Current readiness and authorization live in manifests and the frontier.
+The [formal execution extension](FORMAL_EXECUTION_AND_PAIRED_VALIDATION_V1.md)
+adds a frozen finite formal resource scope, optional independent Gradient
+parallelism, supplier-tariff reservations and separately authorized post-search
+paired Validation. It changes no optimizer, admission, aggregation or scientific
+stop rule; the fifty-opportunity/300-Validation choices are experiment settings.
 The complete initial Role/Strategy/Answer artifact and execution seed are frozen
 inputs, read by binding, interface policy, provider lanes, composition and scope.
 The registered Arm B initial condition changes the Answer block only; initial

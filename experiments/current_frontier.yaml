@@ -3,8 +3,8 @@ current_architecture: Unified Team Prompt Search
 method_identity: unified_team_prompt_search_v2_5_diagnostic_limits_400_v2
 current_method: unified_team_prompt_search_v2_5_diagnostic_limits_400_v2
 current_experiment: NO_AUTHORIZED_REAL_EXPERIMENT
-current_implementation: V2.5 two diagnostic caps 400; bounded recovery and source guards retained; no
-  new real execution.
+current_implementation: Diagnostic 400; optional Gradient concurrency two, formal
+  resource scope and separate paired Validation; zero new real execution.
 current_solver_model: gpt-4o-mini
 current_solver_provider_profile: openlux
 current_optimizer_model: qwen3.7-flash
@@ -18,12 +18,14 @@ last_governance_milestone: math_gradient_diagnostic_limits_400_v2
 real_execution_ready: false
 real_api_authorized: false
 ready_for_authorization: false
-current_preparation_status: OFFLINE_400_POLICY_ADOPTED_NO_ATTEMPT
+current_preparation_status: OFFLINE_FORMAL_ENGINEERING_PENDING_BILLING_FREEZE_AND_AUTHORIZATION
 validation_access: not_authorized
 test_access: sealed
-current_execution_blocker: NEW_EXACT_FROZEN_SCOPE_REQUIRED
+current_execution_blocker: SUPPLIER_BILLING_TERMS_MISSING
 current_execution_blockers:
-- NEW_EXACT_FROZEN_SCOPE_REQUIRED
+- SUPPLIER_BILLING_TERMS_MISSING
+- NEW_SOURCE_AND_PHASE_SCOPE_FREEZE_REQUIRED
+- NEW_EXACT_SINGLE_USE_AUTHORIZATION_REQUIRED
 current_runtime_builder: build_current_team_prompt_search
 current_execution_entrypoint: scripts/run_experiment.py
 current_runtime_composition: CURRENT_DIAGNOSTIC_400_COMPOSITION_V6
@@ -64,14 +66,10 @@ pending_pilot_test_authorized: false
 pending_pilot_push_authorized: false
 pilot_search_complete: false
 pilot_validation_complete: false
-finite_pilot_bound_frozen: true
-operational_horizon_K: 1
-operational_attempt_token_ceiling: 2000000
-accounting_scope_policy: FRESH_INDEPENDENT_ROLE_ROUTED_DUAL_SCOPE_2M_EACH
 future_execution_requires_new_frozen_single_use_scope: true
 old_evidence_reuse_allowed: false
 initial_accuracy: UNMEASURED_NEW_CURRENT_SCOPE
-this_task_scientific_method_changed: true
+this_task_scientific_method_changed: false
 v23_active: false
 v22_active: false
 last_canary_attempt_id: a4_v25_arm_b_openlux_seed84_canary_attempt1
@@ -103,7 +101,16 @@ current_gradient_output_limits:
   reusable_correction: 400
   expected_effect: 240
 current_optimization_evidence_policy: DIAGNOSTIC_400_EVIDENCE_POLICY_V6
-current_preparation_experiment: math_gradient_diagnostic_limits_400_v2
-current_preparation_manifest: experiments/manifests/math_gradient_diagnostic_limits_400_v2.yaml
+current_preparation_experiment: math_diagnostic400_canary_formal_preparation_v1
+current_preparation_manifest: experiments/manifests/math_diagnostic400_canary_formal_preparation_v1.yaml
 last_gradient_limit_adoption_report: reports/gradient_diagnostic_limits_400_v2_preparation_20261011
 last_gradient_limit_adoption_real_api_calls: 0
+proposed_canary_token_ceiling: 2000000
+proposed_formal_search_token_ceiling: 30000000
+proposed_post_search_validation_token_ceiling: 6000000
+proposed_formal_max_opportunities: 50
+proposed_solver_concurrency: 8
+proposed_gradient_concurrency: 2
+proposed_protocol: experiments/protocols/math_diagnostic400_canary_formal_v1/proposal.yaml
+current_formal_status: UNMEASURED_PENDING_BILLING_FREEZE_AUTHORIZATION
+last_formal_preparation_report: reports/math_diagnostic400_formal_preparation_20261011

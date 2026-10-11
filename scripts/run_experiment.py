@@ -23,14 +23,24 @@ def preflight(manifest):
 
 
 def governed_preflight(prep):
+    from multi_dataset_diverse_rl.governance import postfreeze_validation
+    if _load(prep/'prep.json').get('schema_version')==postfreeze_validation.PREP_SCHEMA:
+        value,_=postfreeze_validation.validate_prep(ROOT,prep)
+        return dict(gate='VALIDATION_READY_NOT_AUTHORIZED',ready_for_authorization=True,
+            attempt_id=value['scope']['attempt_id'],startup_identity_sha256=value['startup_identity_sha256'],
+            provider_attempts=0,validation_calls=0,test_calls=0)
     value=validate_prep(ROOT,prep)
-    return dict(gate=('PILOT_READY_NOT_AUTHORIZED' if value['scope'].get('phase')=='pilot_search_only'
-        else 'CANARY_READY_NOT_AUTHORIZED'),ready_for_authorization=True,
+    phase=value['scope']['phase'].removesuffix('_search_only').upper()
+    return dict(gate=phase+'_READY_NOT_AUTHORIZED',ready_for_authorization=True,
         attempt_id=value['scope']['attempt_id'],startup_identity_sha256=value['startup_identity_sha256'],
         provider_attempts=0,validation_calls=0,test_calls=0)
 
 
-async def execute_frozen(prep,run_root):return await execute_canary(ROOT,prep,run_root)
+async def execute_frozen(prep,run_root):
+    from multi_dataset_diverse_rl.governance import postfreeze_validation
+    if _load(prep/'prep.json').get('schema_version')==postfreeze_validation.PREP_SCHEMA:
+        return await postfreeze_validation.execute(ROOT,prep,run_root)
+    return await execute_canary(ROOT,prep,run_root)
 
 
 async def _execute(manifest):

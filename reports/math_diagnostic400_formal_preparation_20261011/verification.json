@@ -1,0 +1,39 @@
+{
+  "status": "PASS_WITH_TARGETED_RECHECK_AFTER_METADATA_AND_TEST_CORRECTION",
+  "current_suite": {
+    "selected": 703,
+    "original_passed": 689,
+    "original_failures": 12,
+    "original_errors": 0,
+    "skipped": 2,
+    "corrected_scope_passed": 54,
+    "original_failure_categories": [
+      "stale_duplicate_destination_close_expectation",
+      "two_preparation_registry_entries_marked_active"
+    ],
+    "correction": "Reject old destination before journal opening; only current preparation is active.",
+    "production_code_unchanged_after_complete_suite": true,
+    "complete_suite_repeated_after_metadata_and_test_correction": false
+  },
+  "compileall": "PASS",
+  "governance": "PASS",
+  "manifest_preflight": "PASS",
+  "deterministic_smokes": "PASS_IN_CURRENT_SUITE",
+  "diff_check": "PASS",
+  "real_api_calls": 0,
+  "actual_validation_content_reads": 0,
+  "actual_test_content_reads": 0,
+  "network_attempt_count": 0,
+  "network_guard_bootstrap": "PASS",
+  "network_guard_negative_control": "PASS",
+  "omitted_historical_private_or_retired_modules": 220,
+  "omitted_inventory": "tests/suite_classification.json",
+  "full_historical_replay_pass_claimed": false,
+  "source_grant_freeze": "NOT_PERFORMED_PENDING_SUPPLIER_TERMS",
+  "verification_evidence_sha256": {
+    "current_suite.xml": "41421d7553aaafebfd482de365db0121907e06764fdc0f7585330c306c81b922",
+    "current_suite.log": "5cd2e4e895200f6a2b0095fc05023896eaba722aa79a9ad61538c8ebcfb88913",
+    "corrected_scope.xml": "43a21e5e1303ace5e887725d8d2eaed734b9aac2f29de8229e5412ffc0e24b96",
+    "corrected_scope.log": "bddd5fc185f06cf8b61a2a9f06c77789ec6569e0687fa49bdc90ef614b9a764e"
+  }
+}

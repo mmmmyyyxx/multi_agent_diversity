@@ -1,0 +1,8 @@
+{
+  "actual_validation_content_reads": 0,
+  "actual_validation_calls": 0,
+  "actual_test_content_reads": 0,
+  "actual_test_calls": 0,
+  "metadata_hashing_only": true,
+  "synthetic_heldout_tests": true
+}

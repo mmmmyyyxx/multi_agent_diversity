@@ -186,6 +186,11 @@ def initial_prompts(root, contract):
 
 
 def ledger_policy(contract):
+    from ..benchmarks.math_formal_scope import ACCOUNTING_SCOPE, require_bound
+    if contract.get('accounting_scope_policy')==ACCOUNTING_SCOPE:
+        require_bound(contract.get('operational_pilot'))
+        from .token_accounting import POLICY_V25_FORMAL_30M
+        return POLICY_V25_FORMAL_30M
     if contract.get('accounting_scope_policy')!='FRESH_V25_REPAIR_SINGLE_ARM_2M_V2':
         raise SearchContractError('FRESH_V25_ACCOUNTING_SCOPE_REQUIRED')
     return POLICY_V25_2M
@@ -202,17 +207,29 @@ def durable_output_cache(run_root,contract,payload,root=None):
 
 
 async def execute_search(root, prep, run_root, payload):
+    # Reject a duplicate/foreign destination before opening an existing journal
+    # or entering the exception handler that writes this attempt's lifecycle.
+    if run_root.exists() or not run_root.resolve().is_relative_to((root/'runs').resolve()):
+        raise SearchContractError('FRESH_LOCAL_RUN_ROOT_REQUIRED')
     c = read_json(root / payload["manifest"]["execution_binding"]["path"])
     binding = execution_binding(root, c)
     if binding.blockers():
         raise SearchContractError("AUTONOMOUS_BINDING_NOT_READY")
+    if ((c['execution_phase']=='formal' or c['solver_execution_policy'].get('gradient_max_concurrency')==2)
+            and not c.get('cost_policy')):
+        raise SearchContractError('SUPPLIER_TARIFF_AND_MONETARY_CEILING_NOT_FROZEN')
+    progression=None
+    if c['execution_phase']=='formal':
+        from .canary_progression import verify
+        progression=verify(root,c,payload)
     from ..persistence.provider_receipts import POLICY as durability_policy, ProviderResponseReceipts
     durable = c.get("runtime_persistence_policy")
     if durable is not None and durable != durability_policy:
         raise SearchContractError("RUNTIME_PERSISTENCE_POLICY_MISMATCH")
     budget = TokenLedger(root / c["token_ledger_directory"], task_sha256=c["task_authorization_sha256"],
-        policy=ledger_policy(c), best_effort_snapshots=durable is not None)
+        policy=ledger_policy(c), best_effort_snapshots=durable is not None,cost_policy=c.get('cost_policy'))
     broker = client = None
+    execution_started=False
     client_close_attempted=budget_close_attempted=False
     def close_resources():
         nonlocal client_close_attempted,budget_close_attempted
@@ -228,6 +245,8 @@ async def execute_search(root, prep, run_root, payload):
         if c.get('heldout_accounting_reserve') != 0:
             raise SearchContractError('UNAUTHORIZED_HELDOUT_ZERO_RESERVE_REQUIRED')
         consume(root,prep,run_root,payload)
+        execution_started=True
+        if progression is not None:checked_json(run_root/'CANARY_ENGINEERING_PROGRESSION.json',progression)
         atomic_write_json(run_root / "accounting_start.json",budget.view())
         transport,client = create_transport(c)
         arm=c.get('execution_arm','A4')
@@ -255,7 +274,7 @@ async def execute_search(root, prep, run_root, payload):
             stream.flush()
             os.fsync(stream.fileno())
         composed.execution_observer = lambda stage,data:append_jsonl(run_root / "trajectory_private.jsonl",{"stage":stage,**plain(data)})
-        if c['execution_phase']=='pilot':
+        if c['execution_phase'] in {'pilot','formal'}:
             from .pilot_observation import attach_pilot_observer
             attach_pilot_observer(composed,run_root)
         composed.state.initialize()
@@ -302,9 +321,10 @@ async def execute_search(root, prep, run_root, payload):
         summary = dict(result=plain(result),ledger=broker.usage,accounting=budget.view(),validation_reserve=0,
             validation_search_raw_reads=0,validation_calls=0,test_raw_reads=0,test_calls=0,pattern_calls=broker.usage['pattern'],memory_activity=0)
         if c.get('operational_pilot'):
-            summary.update(pilot_completed=scientific_complete,
-                pilot_status='SCIENTIFIC_COMPLETION' if scientific_complete else 'INCOMPLETE_OPERATIONAL_TRUNCATION',
-                operational_pilot=c['operational_pilot'])
+            phase='formal' if c['execution_phase']=='formal' else 'pilot'
+            summary.update({phase+'_completed':scientific_complete,
+                phase+'_status':'SCIENTIFIC_COMPLETION' if scientific_complete else 'INCOMPLETE_OPERATIONAL_TRUNCATION',
+                'operational_pilot':c['operational_pilot']})
         summary['pattern_input_audit']=pattern_provider.input_audit
         if c.get('partition_completion_policy') is not None:
             from ..search.partition_completion import completion_statistics
@@ -328,15 +348,15 @@ async def execute_search(root, prep, run_root, payload):
                 or gradients.calls!=len(gradients.input_audit)
                 or (any(t.candidate_ids for t in result.trace) and not composed.evaluation.provider.probed)):
             raise OperationalAbort('PATTERN_CANARY_FLOW_INCOMPLETE')
-        if c['execution_phase']=='pilot' and (pattern_provider.calls!=expected_clusters
+        if c['execution_phase'] in {'pilot','formal'} and (pattern_provider.calls!=expected_clusters
                 or gradients.calls!=len(gradients.input_audit)
-                or not len(result.trace)<=gradients.calls<=gradient_multiplier*60*len(result.trace)):
+                or not len(result.trace)<=gradients.calls<=gradient_multiplier*c['initial_competence_binding']['count']*len(result.trace)):
             raise OperationalAbort('PATTERN_PILOT_FLOW_INCOMPLETE')
         summary['memory_activity']=composed.memory.audit()['stateful_write_count']
         summary['memory_audit']=composed.memory.audit()
         from .team_change import team_change_receipt
         summary['deployed_team_change']=team_change_receipt(initial_prompts(root,c),final.member_prompts)
-        if c['execution_phase']=='pilot':
+        if c['execution_phase'] in {'pilot','formal'}:
             atomic_write_json(run_root/'VALIDATION_DISPOSITION.json',{
                 **summary['deployed_team_change'], 'validation_model_calls':0, 'validation_provider_calls':0,
                 'validation_status':('DEFERRED_BY_USER_SCOPE' if summary['deployed_team_change']['team_changed'] else 'SKIPPED_NO_TEAM_CHANGE'),
@@ -348,13 +368,14 @@ async def execute_search(root, prep, run_root, payload):
     except BaseException as exc:
         for key in tuple(budget.inflight):
             budget.reconcile(key,None,outcome="ABORT_UNKNOWN_FULL_CHARGE")
-        if run_root.exists():
+        if execution_started:
             truncation=(bool(c.get('operational_pilot')) and isinstance(exc,OperationalAbort)
-                and (str(exc) in {'TOKEN_CEILING','PROVIDER_CALL_CEILING','TRANSPORT_CEILING'}
+                and (str(exc) in {'TOKEN_CEILING','COST_CEILING','PROVIDER_CALL_CEILING','TRANSPORT_CEILING'}
                     or str(exc).startswith('STOP_TOKEN_BUDGET_')))
             if truncation:
                 reason=('TOKEN_CEILING' if str(exc).startswith('STOP_TOKEN_BUDGET_') else str(exc))
-                partial=dict(pilot_completed=False,pilot_status='INCOMPLETE_OPERATIONAL_TRUNCATION',
+                phase='formal' if c['execution_phase']=='formal' else 'pilot'
+                partial=dict(**{phase+'_completed':False,phase+'_status':'INCOMPLETE_OPERATIONAL_TRUNCATION'},
                     stop_reason=reason,operational_pilot=c['operational_pilot'],
                     ledger=broker.usage if broker else {},accounting=budget.view(),
                     validation_calls=0,test_calls=0,partial_opportunity_possible=True)
