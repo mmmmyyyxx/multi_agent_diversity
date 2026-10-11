@@ -1,5 +1,6 @@
 {
   "historical_results_changed": false,
   "parent_experiment": "math_v27_direct_seed86_formal_v1",
-  "parent_source_sha": "def2eaf935573cae495285df215c2a5b0d2c5887"
+  "parent_source_sha": "def2eaf935573cae495285df215c2a5b0d2c5887",
+  "source_sha": "a8985eef7f15f82ae29bf8000cccf12b0ad39b2a"
 }

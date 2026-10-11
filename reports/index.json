@@ -1421,6 +1421,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/math_v27_precluster_abort_audit_20261012",
+      "document": "reports/math_v27_precluster_abort_audit_20261012/README.md",
+      "date": "20261012",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "FORENSIC",
+      "experiment_id": "math_v27_direct_seed86_formal_v1",
+      "status": "HOLD",
+      "source_commit": "def2eaf935573cae495285df215c2a5b0d2c5887",
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/math_v27_precluster_continuation_20261012",
       "document": "reports/math_v27_precluster_continuation_20261012/README.md",
       "date": "20261012",

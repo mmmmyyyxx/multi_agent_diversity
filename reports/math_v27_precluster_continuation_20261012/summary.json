@@ -1,6 +1,8 @@
 {
+  "execution_source_sha": "a8985eef7f15f82ae29bf8000cccf12b0ad39b2a",
   "method": "unified_team_prompt_search_v2_7_request_recovery_v2",
   "new_api_calls": 0,
+  "phase_startup": "4f1acda3cea48932e285f0d6fa85953effdda08ed22c61b4b4c48e6feb973b81",
   "preregistration": {
     "adaptive_memory_completed_opportunities_or_consumed_authorization_imported": false,
     "amendment": [
@@ -32,7 +34,7 @@
       "MEMBER_CORRECTNESS",
       "VALIDITY"
     ],
-    "source_freeze": "PENDING",
+    "source_freeze": "a8985eef7f15f82ae29bf8000cccf12b0ad39b2a",
     "stopping": "team_epoch_no_commit_v1",
     "task": {
       "gradient_concurrency": 8,
@@ -62,7 +64,7 @@
       "validation_access": "NOT_AUTHORIZED"
     }
   },
-  "status": "PREEXECUTION_PREPARATION",
+  "status": "FROZEN",
   "verification": {
     "attempt_id": "a4_v27_seed86_continuation_attempt1",
     "canary_execution": "NOT_RUN_CURRENT_VERSION",
