@@ -5,7 +5,7 @@ from .. import current_contract as versions
 from ..local_optimizers.schemas import LocalEvidenceExample
 from .bounded_layer1 import BoundedMemoryOptimizer, LocalTaskEngine, MemoryLocalTask, build_optimizer_context, digest
 from .schemas import SearchContractError
-from .optimizer_encoding import encode, INSTRUCTION
+from .readable_evidence import INSTRUCTION
 
 
 @dataclass(frozen=True)
@@ -26,7 +26,7 @@ class EvidenceLayer1Config:
     max_prompt_chars: int = 3000
     candidate_contract: str = versions.SEMANTIC_MUTABLE_CONTRACT_VERSION
     official_gepa_fidelity: bool = False
-    optimizer_input_schema: str = 'STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V9'
+    optimizer_input_schema: str = 'STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V10'
     panel_policy: str = 'DISJOINT_QUOTA_FREE_REPAIR_EVIDENCE_V2'
 
     def __post_init__(self):
@@ -55,7 +55,7 @@ prompt must remain at most 3000 characters. No fixed CoT or output format is req
 SearchValidation is measured after generation; prior measurement counts may guide
 the next iteration but validation examples and answers are not supplied.
 Respect missing/truncated written evidence; do not infer hidden reasoning.
-''' + json.dumps(encode(value),sort_keys=True,separators=(',',':'),ensure_ascii=True))
+''' + json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=True))
 
 class GradientPatternMemoryOptimizer(BoundedMemoryOptimizer):
     config_factory=EvidenceLayer1Config

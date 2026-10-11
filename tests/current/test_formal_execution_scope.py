@@ -13,7 +13,7 @@ from tests.current import test_structured_optimization_evidence as fixture
 from tests.current.test_gradient_diagnostic_limits_400 import output
 from multi_dataset_diverse_rl.search.schemas import SearchContractError
 from multi_dataset_diverse_rl.search.textual_gradients import GradientExtractor,PerExampleGradientProvider
-from multi_dataset_diverse_rl.search.solver_execution import PARALLEL_COMPACT_POLICY as GRADIENT_PARALLEL_POLICY,frozen_execution_policy
+from multi_dataset_diverse_rl.search.solver_execution import PARALLEL_READABLE_POLICY as GRADIENT_PARALLEL_POLICY,frozen_execution_policy
 from multi_dataset_diverse_rl.governance.token_accounting import (
     TokenLedger,POLICY_V25_FORMAL_30M,POLICY_V25_VALIDATION_6M,OperationalAbort,reservation)
 from multi_dataset_diverse_rl.governance.cost_accounting import IDENTITY,amount,frozen_policy,TOKEN_ONLY_POLICY,require_resource_control
@@ -24,7 +24,7 @@ def test_draft_is_strict_nonexecutable_and_old_default_binding_cannot_be_used():
     from multi_dataset_diverse_rl.governance.registries import load_yaml
     from multi_dataset_diverse_rl.governance.repository import validate_manifest_v2
     from multi_dataset_diverse_rl.governance.unified_execution import bound_preflight,preexecution_manifest
-    m=load_yaml(fixture.ROOT/'experiments/manifests/math_parallel_compact_preparation_v1.yaml')
+    m=load_yaml(fixture.ROOT/'experiments/manifests/math_parallel_readable_preparation_v2.yaml')
     assert not validate_manifest_v2(fixture.ROOT,m)
     assert m['lifecycle']['status']=='DRAFT' and m['cost_policy'] is None
     result=bound_preflight(fixture.ROOT,m)
@@ -74,7 +74,7 @@ def test_token_only_is_explicit_exclusive_and_enters_all_role_request_identities
 def test_token_only_manifest_schema_does_not_allow_unfrozen_or_mixed_resource_mode():
     from multi_dataset_diverse_rl.governance.registries import load_yaml
     from multi_dataset_diverse_rl.governance.repository import validate_manifest_v2
-    m=load_yaml(fixture.ROOT/'experiments/manifests/math_parallel_compact_preparation_v1.yaml')
+    m=load_yaml(fixture.ROOT/'experiments/manifests/math_parallel_readable_preparation_v2.yaml')
     m['token_reporting_policy']=deepcopy(TOKEN_ONLY_POLICY)
     assert not validate_manifest_v2(fixture.ROOT,m)
     m['cost_policy']=tariff()

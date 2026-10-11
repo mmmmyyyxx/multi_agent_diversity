@@ -1,0 +1,7 @@
+{
+  "historical_evidence_preserved": true,
+  "new_exact_authorization_required": true,
+  "no_real_api": true,
+  "no_stopped_state_import": true,
+  "no_test_access": true
+}

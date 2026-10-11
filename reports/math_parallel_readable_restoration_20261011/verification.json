@@ -1,0 +1,51 @@
+{
+  "evidence_type": "OFFLINE_ENGINEERING_NOT_MODEL_CAPABILITY",
+  "current_pytest": {
+    "tests": 727,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 2,
+    "passed": 725
+  },
+  "actual_role_boundary_pytest": {
+    "tests": 18,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 18
+  },
+  "initial_targeted_failures": 2,
+  "exact_failed_case_rechecks": 2,
+  "targeted_final_coverage": 118,
+  "compileall": "PASS",
+  "governance": "PASS",
+  "manifest": "PASS_DRAFT_NOT_EXECUTABLE",
+  "historical_schema_preservation": "PASS",
+  "source_excludes_interval_codec": "PASS",
+  "closed_experiment_files_byte_verified": 3784,
+  "solver_concurrency": 16,
+  "gradient_concurrency": 8,
+  "private_request_timing": "RETAINED",
+  "gradient_full_response": "DIRECT_TEXT",
+  "reflection_full_response": "DIRECT_TEXT",
+  "solution_preview": "ORIGINAL_DIRECT_TEXT",
+  "model_slice_task_removed": true,
+  "diagnostic_limits": "UNCHANGED_400_400_400_240",
+  "sanitization": "PASS",
+  "network_guard": "ACTIVE_BEFORE_APPLICATION_IMPORT",
+  "real_api_calls": 0,
+  "validation_real_calls": 0,
+  "test_real_calls": 0,
+  "execution_resumed": false,
+  "role_model_capability": "UNMEASURED",
+  "efficacy": "NOT_EVALUABLE",
+  "omitted_historical_private_modules": 220,
+  "historical_private_replay": "NOT_EXECUTED",
+  "source_hashes": {
+    "scientific_source_hash": "036aed490693382a577bfb4cfab32063a521b3b8a0e9e60d881176cda01d40d9",
+    "governance_hash": "9326b55c31c1f3d2f2ff9f0dcdcfcb3b85b9c20dbdb79d08c22123738966e6e6",
+    "benchmark_contract_hash": "3fb50bfdd1913c784ff866fe80a0935c9c748f647965be828223e660ab4c3e30"
+  },
+  "source_freeze": false,
+  "api_authorized": false
+}

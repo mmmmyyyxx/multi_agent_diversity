@@ -1,0 +1,105 @@
+{
+  "method": "unified_team_prompt_search_v2_6_readable_evidence_v2",
+  "preregistration": {
+    "attempts": {
+      "canary": "a4_parallel_readable_seed85_canary_attempt1",
+      "formal": "a4_parallel_readable_seed86_formal_attempt1",
+      "validation": "a4_parallel_readable_seed86_validation_attempt1"
+    },
+    "canary": {
+      "opportunities": 1,
+      "optimize": 12,
+      "progression": "INTEGRITY_ONLY_NO_EFFICACY_VETO",
+      "seed": 85,
+      "shadow": 40,
+      "token_ceiling": 2000000
+    },
+    "canary_prior_use_counts": {
+      "canary_optimize": 12,
+      "pilot_shadow": 0
+    },
+    "component_causality": false,
+    "efficacy_based_rerun": false,
+    "formal": {
+      "max_opportunities": 50,
+      "optimize": 150,
+      "patience": 2,
+      "seed": 86,
+      "shadow": 40,
+      "stop": "team_epoch_no_commit_v1",
+      "token_ceiling": 30000000
+    },
+    "gradient_concurrency": 8,
+    "historical_comparison": "DESCRIPTIVE_ONLY_UNPAIRED_PROVIDER_REALIZATIONS",
+    "identity": "READABLE_ARM_B_CANARY_FORMAL_PAIRED_VALIDATION_PREREG_V1",
+    "inference_matched_baseline": true,
+    "initial_condition": "FRESH_IDENTICAL_ARM_B5",
+    "method": "unified_team_prompt_search_v2_6_readable_evidence_v2",
+    "monetary_tracking": false,
+    "monitoring": {
+      "eta": "READ_ONLY_ROLLING_COMPLETED_OPPORTUNITY_DURATION_AND_TOKEN_USAGE; SCIENTIFIC_STOP_NOT_PREDICTED",
+      "exception_and_owner_review": "IMMEDIATE",
+      "interval_seconds": 3600
+    },
+    "old_development_prior_use_disclosed": true,
+    "optimizer": "qwen3.7-flash",
+    "phases": {
+      "canary": "math_parallel_readable_seed85_canary_v1",
+      "formal": "math_parallel_readable_seed86_formal_v1",
+      "prep": "math_parallel_readable_formal_preparation_v1",
+      "validation": "math_parallel_readable_seed86_validation_v1"
+    },
+    "provider_policy": "OPENLUX_SOLVER_LWJ_OPTIMIZER_V1",
+    "push_authorized": false,
+    "scientific_stop_vs_resource_truncation_vs_user_stop_vs_engineering_abort": "SEPARATE_CLASSIFICATIONS",
+    "solver": "gpt-4o-mini",
+    "solver_concurrency": 16,
+    "source_freeze": "PENDING_EXACT_SHA",
+    "stopped_run_imports": false,
+    "test_access": "SEALED",
+    "training_compute_matched_control": false,
+    "validation": {
+      "access": "SEPARATE_POST_SEARCH_ONLY",
+      "analysis": "EXACT_MCNEMAR_AND_PAIRED_BOOTSTRAP_10000_SEED86",
+      "baseline": "INITIAL_UNOPTIMIZED_ARM_B5",
+      "count": 300,
+      "paired_realizations": "EXACT_REQUEST_SHARED_WITHIN_SAME_MEMBER_SLOT",
+      "partial_scores": false,
+      "primary": "FINAL_MINUS_INITIAL_TEAM_VOTE",
+      "token_ceiling": 6000000
+    }
+  },
+  "real_api_calls": 0,
+  "status": "PREEXECUTION_PREPARATION",
+  "verification": {
+    "compileall": "PASS",
+    "current_suite": {
+      "affected_recheck_passed": 11,
+      "errors": 0,
+      "evidence_strategy": "FULL_CLASSIFIED_SUITE_PLUS_EXACT_FAILED_CASE_RECHECK",
+      "final_verified_unique_passed": 725,
+      "full_historical_replay_claim": false,
+      "initial_full_run": {
+        "failed": 11,
+        "passed": 714,
+        "skipped": 2
+      },
+      "junit_sha256": "87a3c805a350531a9e53906e0158b6875477ceaa69a326be07a1f4049c332070",
+      "omitted_historical_private_modules": 220,
+      "recheck_junit_sha256": "fa8ffd90c0ac81b27736e51b15258c30bcc3acbeb981c5fae0e7f898d67aa676",
+      "repair": "PREPARATION_MANIFEST_EXECUTION_BINDING_NULL_AND_PREREGISTRATION_CHECKSUM; NO_ALGORITHM_OR_TEST_CHANGE",
+      "skipped": 2,
+      "unresolved_failures": 0
+    },
+    "diff_check": "PASS",
+    "governance": "PASS",
+    "independently_verified_handoff_files": 1635,
+    "manifest_preflight": "PASS",
+    "offline_network_guard": "ACTIVE_BEFORE_IMPORT",
+    "real_api_calls": 0,
+    "sanitization": "PASS",
+    "test_access": 0,
+    "validation_access": 0,
+    "verification_scope": "CURRENT_CLASSIFIED_SUITE_AND_REGISTERED_PROTOCOLS; HISTORICAL_PRIVATE_REPLAY_EXPLICITLY_OMITTED"
+  }
+}

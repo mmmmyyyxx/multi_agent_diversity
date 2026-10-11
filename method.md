@@ -5,7 +5,7 @@ The endpoint is useful correct coverage and team task performance under the
 frozen aggregation. [Scientific principles](docs/design/SCIENTIFIC_PRINCIPLES.md)
 separate those measurements from textual diversity, validity and commit counts.
 The sole current method is V2.5 with flexible answer extraction and bounded output recovery,
-`unified_team_prompt_search_v2_6_parallel_compact_v1`.
+`unified_team_prompt_search_v2_6_readable_evidence_v2`.
 
 [Current specification](docs/design/CURRENT_SPEC.md) and
 [V2.5 scientific contract](docs/design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md) define the
@@ -30,8 +30,7 @@ to 400 characters each, with a fresh policy identity. Correction, provenance,
 leakage guards, Solver, aggregation, team gates and stopping remain unchanged.
 No paid execution or efficacy is established by this offline adoption.
 
-The [parallel compact amendment](docs/design/PARALLEL_COMPACT_OPTIMIZER_V1.md)
-sets default Solver concurrency to 16 and independent Gradient concurrency to 8.
-Optimizer evidence uses lossless view references; request timing is private and
-nonadaptive. This new version is offline-verified preparation, with no paid efficacy
-result or reusable execution authorization.
+The [direct readable evidence amendment](docs/design/DIRECT_READABLE_OPTIMIZER_EVIDENCE_V2.md)
+restores original complete response and preview strings for Gradient and Reflection.
+Solver concurrency 16, Gradient concurrency 8 and private request timing remain.
+This version has no real execution or model capability result; old scopes stay closed.

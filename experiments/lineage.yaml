@@ -989,6 +989,31 @@ nodes:
   era: UNIFIED_TEAM_PROMPT_SEARCH
   status: IMPLEMENTED_NOT_EXECUTED
   manifest: experiments/manifests/math_parallel_compact_preparation_v1.yaml
+- experiment_id: math_parallel_readable_preparation_v2
+  kind: PROTOCOL_FREEZE
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  status: IMPLEMENTED_NOT_EXECUTED
+  manifest: experiments/manifests/math_parallel_readable_preparation_v2.yaml
+- experiment_id: math_parallel_readable_formal_preparation_v1
+  kind: PROTOCOL_FREEZE
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  status: PREPARED_NOT_EXECUTED
+  manifest: experiments/manifests/math_parallel_readable_formal_preparation_v1.yaml
+- experiment_id: math_parallel_readable_seed85_canary_v1
+  kind: REAL_CANARY
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  status: PREPARED_NOT_EXECUTED
+  manifest: experiments/manifests/math_parallel_readable_seed85_canary_v1.yaml
+- experiment_id: math_parallel_readable_seed86_formal_v1
+  kind: FORMAL_EXPERIMENT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  status: PREPARED_NOT_EXECUTED
+  manifest: experiments/manifests/math_parallel_readable_seed86_formal_v1.yaml
+- experiment_id: math_parallel_readable_seed86_validation_v1
+  kind: DIAGNOSTIC
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  status: PREPARED_NOT_EXECUTED
+  manifest: experiments/manifests/math_parallel_readable_formal_preparation_v1.yaml
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2163,4 +2188,40 @@ edges:
   evidence: docs/design/PARALLEL_COMPACT_OPTIMIZER_V1.md
   scope: Fresh version and zero-API engineering only; prior evidence and consumed
     scopes unchanged.
+- from: math_parallel_compact_preparation_v1
+  to: math_parallel_readable_preparation_v2
+  relation: derived_from
+  evidence: docs/design/DIRECT_READABLE_OPTIMIZER_EVIDENCE_V2.md
+  scope: Restore directly readable role evidence while preserving concurrency and
+    timing; no real execution.
+- from: math_parallel_readable_preparation_v2
+  to: math_parallel_readable_formal_preparation_v1
+  relation: derived_from
+  evidence: reports/math_parallel_readable_formal_freeze_20261011/README.md
+  scope: Independent readable-version fresh Arm B preregistration; no historical evidence
+    reuse.
+- from: math_parallel_readable_formal_preparation_v1
+  to: math_parallel_readable_seed85_canary_v1
+  relation: derived_from
+  evidence: reports/math_parallel_readable_formal_freeze_20261011/README.md
+  scope: Independent readable-version fresh Arm B preregistration; no historical evidence
+    reuse.
+- from: math_parallel_readable_formal_preparation_v1
+  to: math_parallel_readable_seed86_formal_v1
+  relation: derived_from
+  evidence: reports/math_parallel_readable_formal_freeze_20261011/README.md
+  scope: Independent readable-version fresh Arm B preregistration; no historical evidence
+    reuse.
+- from: math_parallel_readable_seed85_canary_v1
+  to: math_parallel_readable_seed86_formal_v1
+  relation: derived_from
+  evidence: reports/math_parallel_readable_formal_freeze_20261011/README.md
+  scope: Independent readable-version fresh Arm B preregistration; no historical evidence
+    reuse.
+- from: math_parallel_readable_seed86_formal_v1
+  to: math_parallel_readable_seed86_validation_v1
+  relation: derived_from
+  evidence: reports/math_parallel_readable_formal_freeze_20261011/README.md
+  scope: Independent readable-version fresh Arm B preregistration; no historical evidence
+    reuse.
 current_frontier: experiments/current_frontier.yaml

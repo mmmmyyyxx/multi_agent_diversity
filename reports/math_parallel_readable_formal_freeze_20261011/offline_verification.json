@@ -1,0 +1,31 @@
+{
+  "compileall": "PASS",
+  "current_suite": {
+    "affected_recheck_passed": 11,
+    "errors": 0,
+    "evidence_strategy": "FULL_CLASSIFIED_SUITE_PLUS_EXACT_FAILED_CASE_RECHECK",
+    "final_verified_unique_passed": 725,
+    "full_historical_replay_claim": false,
+    "initial_full_run": {
+      "failed": 11,
+      "passed": 714,
+      "skipped": 2
+    },
+    "junit_sha256": "87a3c805a350531a9e53906e0158b6875477ceaa69a326be07a1f4049c332070",
+    "omitted_historical_private_modules": 220,
+    "recheck_junit_sha256": "fa8ffd90c0ac81b27736e51b15258c30bcc3acbeb981c5fae0e7f898d67aa676",
+    "repair": "PREPARATION_MANIFEST_EXECUTION_BINDING_NULL_AND_PREREGISTRATION_CHECKSUM; NO_ALGORITHM_OR_TEST_CHANGE",
+    "skipped": 2,
+    "unresolved_failures": 0
+  },
+  "diff_check": "PASS",
+  "governance": "PASS",
+  "independently_verified_handoff_files": 1635,
+  "manifest_preflight": "PASS",
+  "offline_network_guard": "ACTIVE_BEFORE_IMPORT",
+  "real_api_calls": 0,
+  "sanitization": "PASS",
+  "test_access": 0,
+  "validation_access": 0,
+  "verification_scope": "CURRENT_CLASSIFIED_SUITE_AND_REGISTERED_PROTOCOLS; HISTORICAL_PRIVATE_REPLAY_EXPLICITLY_OMITTED"
+}

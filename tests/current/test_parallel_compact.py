@@ -1,4 +1,8 @@
-"""Measured current concurrency, exact optimizer evidence, durable timing; zero API."""
+"""Readable current role inputs and retained concurrency/timing; zero API.
+
+The interval utility tests below are offline historical representation checks,
+not evidence that a model can use an encoded trajectory.
+"""
 from collections import Counter
 from copy import deepcopy
 from dataclasses import replace
@@ -12,14 +16,14 @@ from tests.current.test_structured_optimization_evidence import contract, respon
 from tests.current.test_parallel_solver_execution import broker_fixture, call
 from tests.current.test_gradient_diagnostic_limits_400 import output
 from multi_dataset_diverse_rl.search.optimizer_encoding import encode, decode, IDENTITY
-from multi_dataset_diverse_rl.search.solver_execution import PARALLEL_COMPACT_POLICY, bounded_ordered_map
+from multi_dataset_diverse_rl.search.solver_execution import PARALLEL_READABLE_POLICY, PARALLEL_COMPACT_POLICY, bounded_ordered_map
 from multi_dataset_diverse_rl.search.textual_gradients import PerExampleGradientProvider, GradientExtractor
 from multi_dataset_diverse_rl.search.schemas import SearchContractError
 from multi_dataset_diverse_rl.governance.token_accounting import TokenLedger, POLICY_V26_2M
 
 
 def parallel_contract():
-    c=contract();c['solver_execution_policy']=deepcopy(PARALLEL_COMPACT_POLICY)
+    c=contract();c['solver_execution_policy']=deepcopy(PARALLEL_READABLE_POLICY)
     c['concurrency']=dict(solver=16,optimizer_reflection=8,pattern=8)
     return c
 
@@ -73,7 +77,7 @@ def test_sixteen_actual_solver_requests_and_reservations_drain_with_timing(tmp_p
     assert len({r['physical_attempt_no'] for r in timings})==16
 
 
-def test_eight_gradient_workers_ordered_serial_per_example_recovery_and_lossless_packets(tmp_path):
+def test_eight_gradient_workers_ordered_serial_per_example_recovery_and_readable_packets(tmp_path):
     run,original,_,_,_=graph(tmp_path,long_response=True)
     state=run.state.snapshot();diagnosis=run.analyzer.analyze(state,run.history)
     template=next(r for r in run.opportunities.source.for_member(state,diagnosis,0)
@@ -107,9 +111,74 @@ def test_eight_gradient_workers_ordered_serial_per_example_recovery_and_lossless
     assert not broker.physical_inflight
     for p in packets:
         trajectory=p['example']['solver_trajectory']
-        assert isinstance(trajectory['visible_solution'],dict)
+        assert isinstance(trajectory['visible_solution'],str)
         expected=next(r.signals['solver_trajectory'] for r in rows if r.example_id==p['example']['example_id'])
-        assert decode(trajectory)==expected
+        assert trajectory==expected
+
+
+@pytest.mark.parametrize('options', [dict(long_response=True), dict(answer_only=True), dict(format_repair=True)])
+def test_actual_gradient_and_reflection_boundaries_have_direct_readable_evidence(tmp_path, options):
+    import asyncio
+    from multi_dataset_diverse_rl.search.system_prompt import SystemPrompt
+    from multi_dataset_diverse_rl.search.readable_evidence import INSTRUCTION
+    run,broker,requests,packets,_=graph(tmp_path,**options)
+    asyncio.run(run.run(max_opportunities=1))
+    gradient_packets=[]
+    for request in requests:
+        if request['model']=='gpt-4o-mini':
+            assert 'Unicode slice' not in json.dumps(request)
+            continue
+        text=request['messages'][0]['content']
+        assert 'Unicode slice' not in text and 'LOSSLESS_OPTIMIZER_TRAJECTORY_ENCODING_V1' not in json.dumps(request)
+        if len(request['messages'])==2:
+            packet=json.loads(request['messages'][1]['content'])
+            if 'example' not in packet:
+                assert set(packet)=={'gradients'}
+                continue
+            assert text.startswith(INSTRUCTION)
+            gradient_packets.append(packet)
+            example=packet['example'];trajectory=example['solver_trajectory']
+            assert isinstance(trajectory['visible_solution'],str)
+            assert isinstance(trajectory['observed_response'],str)
+            assert trajectory['source']['mutable_prompt_sha256']==SystemPrompt.from_dict(packet['current_system_prompt']).prompt_hash
+            assert example['reference_solution']['source']=='dataset_worked_solution'
+            assert 'DATASET_WORKED_SOLUTION_' in example['reference_solution']['text']
+    assert gradient_packets and packets
+    for packet in packets:
+        assert packet['selected_pattern']['generalized_gradient']
+        assert set(packet['retrieved_memory'])=={'initial_coverage','edit_effects','shared_risk'}
+        for example in packet['current_panel_observations']:
+            trajectory=example['solver_trajectory']
+            assert isinstance(trajectory['visible_solution'],str)
+            assert trajectory['source']['mutable_prompt_sha256']==SystemPrompt.from_dict(packet['current_parent']).prompt_hash
+            assert isinstance(trajectory['observed_response'],str) and trajectory['observed_response']
+            if trajectory['prediction_valid']:
+                assert 'Final answer:' in trajectory['observed_response']
+            else:
+                assert trajectory['invalid_reason'] and trajectory['solution_status']=='FINAL_BOUNDARY_INVALID'
+            if options.get('long_response'):
+                assert trajectory['observed_response'].count('Unicode数学核验 π。')==120
+                assert trajectory['feedback_truncated'] is True
+                assert len(trajectory['observed_response'])>len(trajectory['visible_solution'])==4096
+            if options.get('answer_only'):
+                assert trajectory['visible_solution']==''
+                assert trajectory['solution_status']=='TRAJECTORY_UNAVAILABLE'
+    assert broker.usage['validation']==broker.usage['test']==0
+
+
+def test_current_source_closure_excludes_interval_codec_and_rejects_old_execution_policy():
+    from pathlib import Path
+    from multi_dataset_diverse_rl.search.solver_execution import frozen_execution_policy
+    from multi_dataset_diverse_rl.governance.source_identity import current_scientific_files
+    root=Path(__file__).resolve().parents[2]
+    for execution_closure in (False,True):
+        paths=current_scientific_files(root,execution_closure=execution_closure)
+        assert root/'multi_dataset_diverse_rl/search/optimizer_encoding.py' not in paths
+        assert root/'multi_dataset_diverse_rl/search/readable_evidence.py' in paths
+        assert root/'docs/design/DIRECT_READABLE_OPTIMIZER_EVIDENCE_V2.md' in paths
+        assert root/'docs/design/PARALLEL_COMPACT_OPTIMIZER_V1.md' in paths
+    with pytest.raises(SearchContractError,match='SOLVER_EXECUTION_POLICY_MISMATCH'):
+        frozen_execution_policy({'solver_execution_policy':PARALLEL_COMPACT_POLICY})
 
 
 def test_old_eight_slot_journal_cannot_be_reopened_as_sixteen_slot(tmp_path):

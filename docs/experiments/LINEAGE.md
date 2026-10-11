@@ -8,25 +8,25 @@ Registry provides node metadata; current_frontier.yaml provides readiness only.
 ```yaml
 schema_version: current_frontier_v1
 current_architecture: Unified Team Prompt Search
-method_identity: unified_team_prompt_search_v2_6_parallel_compact_v1
-current_method: unified_team_prompt_search_v2_6_parallel_compact_v1
+method_identity: unified_team_prompt_search_v2_6_readable_evidence_v2
+current_method: unified_team_prompt_search_v2_6_readable_evidence_v2
 current_experiment: NO_AUTHORIZED_REAL_EXPERIMENT
-current_implementation: Parallel compact; Solver concurrency 16, Gradient concurrency
-  8, lossless optimizer evidence encoding and request timing; zero real execution.
+current_implementation: Direct readable full Solver evidence and preview; Solver16,
+  Gradient8 and private request timing; zero real execution.
 current_solver_model: gpt-4o-mini
 current_solver_provider_profile: openlux
 current_optimizer_model: qwen3.7-flash
 current_optimizer_provider_profile: lwj
 current_provider_routing_policy: OPENLUX_SOLVER_LWJ_OPTIMIZER_V1
-current_binding_identity: MATH_PARALLEL_COMPACT_ROLE_ROUTED_BINDING_V7
-current_cache_policy: ROLE_ROUTED_PARALLEL_COMPACT_MEMBER_LANE_CACHE_V8
+current_binding_identity: MATH_PARALLEL_READABLE_ROLE_ROUTED_BINDING_V8
+current_cache_policy: ROLE_ROUTED_PARALLEL_READABLE_MEMBER_LANE_CACHE_V9
 current_benchmark_suite:
 - math
-last_governance_milestone: math_parallel_compact_preparation_v1
+last_governance_milestone: math_parallel_readable_preparation_v2
 real_execution_ready: false
 real_api_authorized: false
 ready_for_authorization: false
-current_preparation_status: PARALLEL_COMPACT_OFFLINE_IMPLEMENTATION_NOT_FROZEN
+current_preparation_status: READABLE_NEW_INDEPENDENT_ARM_B_SOURCE_FREEZE_PENDING
 validation_access: not_authorized
 test_access: sealed
 current_execution_blocker: NEW_SOURCE_AND_PHASE_SCOPE_FREEZE_REQUIRED
@@ -34,12 +34,12 @@ current_execution_blockers:
 - NEW_SOURCE_AND_PHASE_SCOPE_FREEZE_REQUIRED
 current_runtime_builder: build_current_team_prompt_search
 current_execution_entrypoint: scripts/run_experiment.py
-current_runtime_composition: CURRENT_PARALLEL_COMPACT_COMPOSITION_V7
+current_runtime_composition: CURRENT_PARALLEL_READABLE_COMPOSITION_V8
 current_execution_binding: null
 current_layer1_backend: STRUCTURED_EVALUATED_PARENT_SEARCH_V3
 current_memory_policy: BOOTSTRAPPED_FORMAT_BLOCK_EDIT_EFFECT_MEMORY_V3
-current_pattern_policy: gradient_compact_partial_partition_v8
-current_gradient_prompt_identity: STRUCTURED_SYSTEM_GRADIENT_PROMPT_V9
+current_pattern_policy: gradient_readable_partial_partition_v9
+current_gradient_prompt_identity: STRUCTURED_SYSTEM_GRADIENT_PROMPT_V10
 current_initial_team_version: MATH_IDENTICAL_ARM_B_STRUCTURED_SEED_V3
 current_initial_team_path: experiments/initial_teams/math_arm_b_structured_seed_v3.json
 current_solver_interface: MATH_FLEXIBLE_ANSWER_SYSTEM_INTERFACE_V9
@@ -106,9 +106,9 @@ current_gradient_output_limits:
   diagnosis: 400
   reusable_correction: 400
   expected_effect: 240
-current_optimization_evidence_policy: PARALLEL_COMPACT_EVIDENCE_POLICY_V7
-current_preparation_experiment: math_parallel_compact_preparation_v1
-current_preparation_manifest: experiments/manifests/math_parallel_compact_preparation_v1.yaml
+current_optimization_evidence_policy: PARALLEL_READABLE_EVIDENCE_POLICY_V8
+current_preparation_experiment: math_parallel_readable_formal_preparation_v1
+current_preparation_manifest: experiments/manifests/math_parallel_readable_formal_preparation_v1.yaml
 last_gradient_limit_adoption_report: reports/gradient_diagnostic_limits_400_v2_preparation_20261011
 last_gradient_limit_adoption_real_api_calls: 0
 proposed_canary_token_ceiling: 2000000
@@ -117,8 +117,8 @@ proposed_post_search_validation_token_ceiling: 6000000
 proposed_formal_max_opportunities: 50
 proposed_solver_concurrency: 16
 proposed_gradient_concurrency: 8
-proposed_protocol: null
-current_formal_status: NOT_AUTHORIZED_NEW_SOURCE_AND_SCOPE_REQUIRED
+proposed_protocol: experiments/protocols/math_parallel_readable_formal_preparation_v1/preregistration.json
+current_formal_status: PENDING_EXACT_POST_FREEZE_AUTHORIZATION
 last_formal_preparation_report: reports/math_diagnostic400_formal_preparation_20261011
 token_reporting_policy:
   identity: USER_SELECTED_TOKEN_ONLY_RESOURCE_CONTROL_V1
@@ -127,6 +127,9 @@ token_reporting_policy:
   missing_usage: CONSERVATIVE_FULL_RESERVATION_CHARGE
   authority: EXPLICIT_USER_TOKEN_ONLY_INSTRUCTION
 monetary_tracking: false
+user_selected_fresh_arm_b: true
+monitor_interval_seconds: 3600
+estimated_remaining_time_policy: READ_ONLY_COMPLETED_OPPORTUNITY_ROLLING_COST_AND_DURATION
 ```
 
 ## Experiment and engineering DAG
@@ -436,6 +439,11 @@ flowchart TD
     n323["math_diagnostic400_tokenonly_seed86_formal_v1<br/>FORMAL_EXPERIMENT<br/>PREPARED_NOT_EXECUTED"]
     n324["math_diagnostic400_tokenonly_seed86_validation_v1<br/>DIAGNOSTIC<br/>PREPARED_NOT_EXECUTED"]
     n325["math_parallel_compact_preparation_v1<br/>PROTOCOL_FREEZE<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n326["math_parallel_readable_preparation_v2<br/>PROTOCOL_FREEZE<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n327["math_parallel_readable_formal_preparation_v1<br/>PROTOCOL_FREEZE<br/>PREPARED_NOT_EXECUTED"]
+    n328["math_parallel_readable_seed85_canary_v1<br/>REAL_CANARY<br/>PREPARED_NOT_EXECUTED"]
+    n329["math_parallel_readable_seed86_formal_v1<br/>FORMAL_EXPERIMENT<br/>PREPARED_NOT_EXECUTED"]
+    n330["math_parallel_readable_seed86_validation_v1<br/>DIAGNOSTIC<br/>PREPARED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -701,6 +709,12 @@ flowchart TD
   n323 -->|derived_from| n324
   n319 -->|derived_from| n325
   n321 -->|derived_from| n325
+  n325 -->|derived_from| n326
+  n326 -->|derived_from| n327
+  n327 -->|derived_from| n328
+  n327 -->|derived_from| n329
+  n328 -->|derived_from| n329
+  n329 -->|derived_from| n330
 ```
 
 ## Archived branches and unresolved evidence

@@ -4,7 +4,7 @@ The sole active research architecture is Unified Team Prompt Search.
 Research interpretation follows [scientific principles](design/SCIENTIFIC_PRINCIPLES.md)
 and the [MATH measurement contract](design/MATH_SCIENTIFIC_CONTRACT.md).
 The sole current method is V2.5 with flexible answer extraction and bounded output recovery,
-`unified_team_prompt_search_v2_6_parallel_compact_v1`.
+`unified_team_prompt_search_v2_6_readable_evidence_v2`.
 
 [Current specification](design/CURRENT_SPEC.md) and
 [V2.5 scientific contract](design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md) define the
@@ -29,8 +29,7 @@ to 400 characters each, with a fresh policy identity. Correction, provenance,
 leakage guards, Solver, aggregation, team gates and stopping remain unchanged.
 No paid execution or efficacy is established by this offline adoption.
 
-The [parallel compact amendment](design/PARALLEL_COMPACT_OPTIMIZER_V1.md)
-sets default Solver concurrency to 16 and independent Gradient concurrency to 8.
-Optimizer evidence uses lossless view references; request timing is private and
-nonadaptive. This new version is offline-verified preparation, with no paid efficacy
-result or reusable execution authorization.
+The [direct readable evidence amendment](design/DIRECT_READABLE_OPTIMIZER_EVIDENCE_V2.md)
+restores original complete response and preview strings for Gradient and Reflection.
+Solver concurrency 16, Gradient concurrency 8 and private request timing remain.
+This version has no real execution or model capability result; old scopes stay closed.

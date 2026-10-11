@@ -8952,9 +8952,9 @@ experiments:
   - The original runner terminated before terminal persistence. Its aborted lifecycle
     and interruption publication remain immutable.
   - After explicit user continuation authorization, the same frozen production graph
-    reconstructed exactly 336 same-attempt Solver cache entries and 24 optimizer
-    receipts, reached the native one-opportunity stop, and persisted derived terminal
-    state and Memory separately. No new API call, charge, opportunity or attempt.
+    reconstructed exactly 336 same-attempt Solver cache entries and 24 optimizer receipts,
+    reached the native one-opportunity stop, and persisted derived terminal state
+    and Memory separately. No new API call, charge, opportunity or attempt.
   - Initial/final Vote and Oracle remain 5/12; the Shadow-rejected winner was not
     committed. Validity explicitly qualifies terminal recovery and the scope is closed.
   unavailable:
@@ -9561,9 +9561,10 @@ experiments:
   manifest: experiments/manifests/math_parallel_compact_preparation_v1.yaml
   report: reports/math_parallel_compact_preparation_20261011
   classifier: reports/math_parallel_compact_preparation_20261011/classifier.json
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
-  superseded_by: []
+  superseded_by:
+  - math_parallel_readable_preparation_v2
   notes:
   - Default Solver16/Gradient8; lossless optimizer packet encoding and durable request
     timing.
@@ -9573,3 +9574,137 @@ experiments:
     implementation_commit: Containing implementation change; no self-reference.
     execution_commit: Zero-API engineering only.
     result_commit: Containing sanitized engineering report.
+- experiment_id: math_parallel_readable_preparation_v2
+  kind: PROTOCOL_FREEZE
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_6_readable_evidence_v2
+  parent_ids:
+  - math_parallel_compact_preparation_v1
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: DIRECT_READABLE_EVIDENCE_RESTORED_ZERO_API_MODEL_CAPABILITY_UNMEASURED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_parallel_readable_preparation_v2.yaml
+  report: reports/math_parallel_readable_restoration_20261011
+  classifier: reports/math_parallel_readable_restoration_20261011/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Direct full response and preview strings; no model character slicing.
+  - Solver16 and Gradient8 with durable private timing retained.
+  - DRAFT only; fresh source and exact API scope required.
+  unavailable:
+    implementation_commit: Containing implementation change; no self-reference.
+    execution_commit: Zero-API engineering only.
+    result_commit: Containing engineering report.
+- experiment_id: math_parallel_readable_formal_preparation_v1
+  kind: PROTOCOL_FREEZE
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_6_readable_evidence_v2
+  parent_ids:
+  - math_parallel_readable_preparation_v2
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: REGISTERED_READABLE_FRESH_ARM_B_NO_REAL_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_parallel_readable_formal_preparation_v1.yaml
+  report: reports/math_parallel_readable_formal_freeze_20261011
+  classifier: reports/math_parallel_readable_formal_freeze_20261011/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Fresh Arm B5; stopped V2.5 outputs, scores, memory, cache and API grants are not
+    imported.
+  - Gradient8/Solver16; readable full response and preview; no interval decoding.
+  - Requires exact new post-freeze single-use phase authorization; no Push authorization.
+  unavailable:
+    implementation_commit: Containing source freeze; execution manifest pins exact
+      SHA.
+    execution_commit: Not executed.
+    result_commit: No real execution at preregistration.
+- experiment_id: math_parallel_readable_seed85_canary_v1
+  kind: REAL_CANARY
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_6_readable_evidence_v2
+  parent_ids:
+  - math_parallel_readable_formal_preparation_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: REGISTERED_READABLE_FRESH_ARM_B_NO_REAL_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_parallel_readable_seed85_canary_v1.yaml
+  report: reports/math_parallel_readable_formal_freeze_20261011
+  classifier: reports/math_parallel_readable_formal_freeze_20261011/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Fresh Arm B5; stopped V2.5 outputs, scores, memory, cache and API grants are not
+    imported.
+  - Gradient8/Solver16; readable full response and preview; no interval decoding.
+  - Requires exact new post-freeze single-use phase authorization; no Push authorization.
+  unavailable:
+    implementation_commit: Containing source freeze; execution manifest pins exact
+      SHA.
+    execution_commit: Not executed.
+    result_commit: No real execution at preregistration.
+- experiment_id: math_parallel_readable_seed86_formal_v1
+  kind: FORMAL_EXPERIMENT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_6_readable_evidence_v2
+  parent_ids:
+  - math_parallel_readable_formal_preparation_v1
+  - math_parallel_readable_seed85_canary_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: REGISTERED_READABLE_FRESH_ARM_B_NO_REAL_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_parallel_readable_seed86_formal_v1.yaml
+  report: reports/math_parallel_readable_formal_freeze_20261011
+  classifier: reports/math_parallel_readable_formal_freeze_20261011/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Fresh Arm B5; stopped V2.5 outputs, scores, memory, cache and API grants are not
+    imported.
+  - Gradient8/Solver16; readable full response and preview; no interval decoding.
+  - Requires exact new post-freeze single-use phase authorization; no Push authorization.
+  unavailable:
+    implementation_commit: Containing source freeze; execution manifest pins exact
+      SHA.
+    execution_commit: Not executed.
+    result_commit: No real execution at preregistration.
+- experiment_id: math_parallel_readable_seed86_validation_v1
+  kind: DIAGNOSTIC
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_6_readable_evidence_v2
+  parent_ids:
+  - math_parallel_readable_seed86_formal_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: REGISTERED_READABLE_FRESH_ARM_B_NO_REAL_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_parallel_readable_formal_preparation_v1.yaml
+  report: reports/math_parallel_readable_formal_freeze_20261011
+  classifier: reports/math_parallel_readable_formal_freeze_20261011/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Fresh Arm B5; stopped V2.5 outputs, scores, memory, cache and API grants are not
+    imported.
+  - Gradient8/Solver16; readable full response and preview; no interval decoding.
+  - Requires exact new post-freeze single-use phase authorization; no Push authorization.
+  unavailable:
+    implementation_commit: Containing source freeze; execution manifest pins exact
+      SHA.
+    execution_commit: Not executed.
+    result_commit: No real execution at preregistration.

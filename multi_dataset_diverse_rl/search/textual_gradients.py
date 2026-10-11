@@ -16,7 +16,7 @@ from .pattern_primitives import (guard_abstraction, wrong_universe, sample_label
     single_failure_example, PatternResponsibilitySignal)
 from .schemas import SearchContractError
 from .generation_failures import POLICY as OUTPUT_RECOVERY, generation_failure, recoverable_output
-from .optimizer_encoding import encode, INSTRUCTION
+from .readable_evidence import INSTRUCTION
 
 
 GRADIENT_OUTPUT_LIMITS = dict(identity=versions.GRADIENT_OUTPUT_LIMITS_VERSION,
@@ -61,7 +61,7 @@ The controller computes responsibility and selects which correction receives bud
 GRADIENT_POLICY = dict(identity=versions.PER_EXAMPLE_GRADIENT_VERSION,
     prompt_identity=versions.GRADIENT_PROMPT_VERSION,
     output_limits=deepcopy(GRADIENT_OUTPUT_LIMITS),
-    schema='STRUCTURED_SYSTEM_GRADIENT_INPUT_V6', max_characters=versions.GRADIENT_MAX_CHARACTERS,
+    schema='STRUCTURED_SYSTEM_GRADIENT_INPUT_V7', max_characters=versions.GRADIENT_MAX_CHARACTERS,
     universe='all_selected_member_wrong_optimize', logical_calls_per_wrong=1,
     successful_generations_per_wrong=3, output_cache=False, semantic_regeneration=True,
     recovery_trigger='TYPED_GENERATED_OUTPUT_ONLY', output_recovery=OUTPUT_RECOVERY, valid_uncertain_stops=True,
@@ -134,7 +134,7 @@ class _FreshSearchProvider:
 
     def _call(self,payload):
         from ..governance.token_accounting import serialized_request
-        messages=[dict(role='system',content=self.prompt),dict(role='user',content=json.dumps(encode(payload),
+        messages=[dict(role='system',content=self.prompt),dict(role='user',content=json.dumps(payload,
             sort_keys=True,separators=(',',':'),ensure_ascii=True))]
         request,_=self.broker._request_identity(role=self.role,split='optimize',messages=messages)
         estimate=len(serialized_request(request))+1024

@@ -2,6 +2,18 @@
 
 Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this file.
 
+## FAIL-V26-OPTIMIZER-INTERVAL-READABILITY: Optimizer trajectory references required model-side character slicing
+
+- Status: `MITIGATED`
+- Lifecycle: `MITIGATED`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `math_parallel_readable_preparation_v2`
+- Root-cause status: CONFIRMED_INPUT_REPRESENTATION_CHANGE_MODEL_CAPABILITY_UNMEASURED
+- Symptom: Complete response text remained available but the readable solution preview was replaced by an interval object without a decoder tool at the model boundary.
+- Forbidden inference: Programmatic losslessness does not establish model usability. Direct text restoration does not establish real diagnostic or repair improvement.
+- Mitigation: Restore complete response and preview strings with explicit source and truncation labels; retain Solver16, Gradient8 and private request timing.
+
 ## FAIL-V23-SOLVER-SERIAL-LOCK-AND-LENGTH-OUTPUT: Solver network calls were serialized and length failures mixed long derivation with repeated reasoning
 
 - Status: `MITIGATED`

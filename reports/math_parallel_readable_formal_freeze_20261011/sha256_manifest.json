@@ -1,0 +1,49 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "2125181838758bc072aaf6d4e6456b54e4b1cd3aa6cb0d0176babff902429fb9"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "cc4ea42dcc2a163d7c68fb93f943dba018a1b4936dcb469c933db7bee17db9fd"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "937413a0bfce4ce4c3e7cd9894ec4f1957a99e32a05c44a8d8870cc1dfb9274e"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "f71e9a2c04304ec920d07343a27c003000dafcabd57ed2228ccf6d0391c0791f"
+    },
+    {
+      "file": "funnel_summary.json",
+      "sha256": "b2c8d60419a5180b2de0e10d04e4f498f904568d0b97aff01369bb47e915c833"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "c08d1ac205233220693a65f2fd5553d447d2e2153f5c90e7153f29ba6f4b963f"
+    },
+    {
+      "file": "offline_verification.json",
+      "sha256": "0eee304a3bbf00ecc37fa54d586a9c45833e90cfffaf307a013a1c1b6eced43f"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "990613c66336a7095f0acf2e61ad10282dc42a5710bc418378316982dbf7f4cc"
+    },
+    {
+      "file": "README.md",
+      "sha256": "26d1d87315502b0912c934b14271d8f3505b97023fa824d757c341a4c8b9a806"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "ff9c9fad82662fc12754bd8f6714c7d329754d5a483e2aaa948566861f333170"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "9c161c6510033894235f9dc79a13cdc0b94e2adfa58c731b40b7f3fbb3d3077e"
+    }
+  ]
+}

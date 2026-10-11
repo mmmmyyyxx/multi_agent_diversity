@@ -30,12 +30,12 @@ def text_hash(text):
 
 
 def trajectory_policy():
-    return dict(identity='MATH_PARALLEL_COMPACT_OBSERVED_RESPONSE_POLICY_V6',
+    return dict(identity='MATH_PARALLEL_READABLE_OBSERVED_RESPONSE_POLICY_V7',
         profile_schema=versions.MATH_FLEXIBLE_PROFILE_VERSION,
         trajectory_schema=versions.MATH_FLEXIBLE_RESPONSE_VERSION,
-        gradient_input_schema='STRUCTURED_SYSTEM_GRADIENT_INPUT_V6',
+        gradient_input_schema='STRUCTURED_SYSTEM_GRADIENT_INPUT_V7',
         gradient_prompt_identity=GRADIENT_PROMPT_VERSION,
-        optimizer_input_schema='STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V9',
+        optimizer_input_schema='STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V10',
         max_visible_solution_characters=4096, observed_response='complete_ordinary_content',
         truncation='optional_solution_unicode_prefix_explicit_metadata',
         original_response_retention='complete_private_resolved_prediction_and_attempts',

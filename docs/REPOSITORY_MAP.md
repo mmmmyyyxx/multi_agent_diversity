@@ -39,4 +39,5 @@ excluded or retired modules are not claimed to pass in the current checkout.
 
 Current diagnostic limits and identity amendment: [Gradient 400 V2](design/GRADIENT_DIAGNOSTIC_LIMITS_400_V2.md).
 
-Current parallel/compact encoding and timing contract: [Parallel compact V1](design/PARALLEL_COMPACT_OPTIMIZER_V1.md).
+Current readable evidence and retained parallel timing contract: [Direct readable V2](design/DIRECT_READABLE_OPTIMIZER_EVIDENCE_V2.md).
+The interval codec `search/optimizer_encoding.py` is an offline historical analysis utility, outside current runtime; its original execution source is commit `74e2e0b7818b4cc307e6bcf0aa7d713558113f91`.

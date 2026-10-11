@@ -1,5 +1,26 @@
 schema_version: failure_registry_v1
 failures:
+- failure_id: FAIL-V26-OPTIMIZER-INTERVAL-READABILITY
+  title: Optimizer trajectory references required model-side character slicing
+  status: MITIGATED
+  lifecycle: MITIGATED
+  first_observed: math_parallel_readable_preparation_v2
+  affected_components:
+  - per_example_gradient_input
+  - reflection_mutation_input
+  symptom: Complete response text remained available but the readable solution preview
+    was replaced by an interval object without a decoder tool at the model boundary.
+  evidence:
+  - reports/math_parallel_readable_restoration_20261011/README.md
+  root_cause_status: CONFIRMED_INPUT_REPRESENTATION_CHANGE_MODEL_CAPABILITY_UNMEASURED
+  evidence_level: observed
+  mitigation: Restore complete response and preview strings with explicit source and
+    truncation labels; retain Solver16, Gradient8 and private request timing.
+  regression_tests:
+  - tests/current/test_parallel_compact.py
+  forbidden_inference: Programmatic losslessness does not establish model usability.
+    Direct text restoration does not establish real diagnostic or repair improvement.
+  repair_effectiveness: DIRECT_TEXT_BOUNDARY_VERIFIED_MODEL_CAPABILITY_UNMEASURED
 - failure_id: FAIL-V23-SOLVER-SERIAL-LOCK-AND-LENGTH-OUTPUT
   title: Solver network calls were serialized and length failures mixed long derivation
     with repeated reasoning

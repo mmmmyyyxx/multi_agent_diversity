@@ -5,7 +5,7 @@ The [scientific principles](SCIENTIFIC_PRINCIPLES.md) constrain interpretation;
 the [MATH scientific contract](MATH_SCIENTIFIC_CONTRACT.md) clarifies benchmark
 measurement and admission. These clarifications add no algorithm or threshold.
 The sole executable method is
-`unified_team_prompt_search_v2_6_parallel_compact_v1`.
+`unified_team_prompt_search_v2_6_readable_evidence_v2`.
 [The V2.5 scientific contract](RESPONSIBILITY_FALLBACK_REPAIR_V25.md) and
 [flexible answer extraction amendment](FLEXIBLE_ANSWER_EXTRACTION_V3.md) and
 [bounded output recovery amendment](GENERATED_OUTPUT_RECOVERY_V25.md) are normative.
@@ -71,8 +71,9 @@ to 400 characters each, with a fresh policy identity. Correction, provenance,
 leakage guards, Solver, aggregation, team gates and stopping remain unchanged.
 No paid execution or efficacy is established by this offline adoption.
 
-The [parallel compact amendment](PARALLEL_COMPACT_OPTIMIZER_V1.md) is normative.
-New preparations default to sixteen Solver slots and eight independent Gradient
-workers. Optimizer-only lossless trajectory references, explicit JSON guidance
-and durable request timing require the fresh V2.6 identity and accounting scope.
-Diagnostic caps, mathematical scoring, repair gates and stopping remain unchanged.
+The [direct readable evidence amendment](DIRECT_READABLE_OPTIMIZER_EVIDENCE_V2.md)
+supersedes interval references. Gradient and Reflection receive original complete
+Solver response and preview strings, with clear source labels and no character
+slicing task. Solver16, independent Gradient8 and private request timing remain.
+Fresh identities and scope are required. Scoring, evidence split boundaries,
+output limits, strict guards, recovery and stopping remain unchanged.
