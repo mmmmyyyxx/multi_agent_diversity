@@ -118,33 +118,40 @@ class BoundedMemoryOptimizer:
                 self.observation_observer('GENERATION_COMPLETE',dict(opportunity_id=opportunity_id,
                     target_member=task.target_member,generation=row['generation'],row=row))
         from .generation_failures import POLICY as output_recovery
+        from .optimizer_output_contract import (parse_output, validate_reflection_output,
+            reflection_feedback_prefix, feedback_for_error, issue, IDENTITY as OUTPUT_FEEDBACK)
+        output_feedback=None
         for generation in range(1,output_recovery['reflection_draws_per_opportunity']+1):
             memory=self.memory.read_for_member(task.target_member,task.responsibility_lane,
                 pattern_id=pattern['pattern_id'],hypothesis=pattern['generalized_gradient'])
-            packet=self.prompt_builder(task,selected_parent,current_mut,memory)
+            packet=reflection_feedback_prefix(output_feedback)+self.prompt_builder(task,selected_parent,current_mut,memory)
             common=dict(generation=generation,opportunity_id=opportunity_id,target_member=task.target_member,
                 evidence_packet_hash=prompt_id(packet),parent_hash=prompt_id(selected_parent),
                 root_parent_hash=prompt_id(task.parent_prompt))
             from .generation_failures import recoverable_output
-            try:response=self.reflection_lm(packet)
+            try:
+                response=self.reflection_lm(packet)
+                obj=validate_reflection_output(parse_output(response,stage='reflection'))
             except SearchContractError as exc:
                 if not recoverable_output(exc,'reflection'):raise
-                journal(dict(common,status='GENERATION_REJECTED',failed_checks=[str(exc)],solver_evaluated=False));continue
-            obj=None
-            try:obj=json.loads(response)
-            except (ValueError,TypeError):pass
+                output_feedback=feedback_for_error(exc,stage='reflection')
+                journal(dict(common,status='CONTRACT_INVALID' if str(exc)=='REFLECTION_OUTPUT_CONTRACT_INVALID' else 'GENERATION_REJECTED',
+                    failed_checks=['invalid_structure'] if str(exc)=='REFLECTION_OUTPUT_CONTRACT_INVALID' else [str(exc)],
+                    output_contract_feedback=output_feedback,solver_evaluated=False));continue
+            output_feedback=None
             if obj=={'decision':'NO_SAFE_EDIT'}:
                 journal(dict(common,status='NO_SAFE_EDIT',solver_evaluated=False));continue
-            if (not isinstance(obj,dict) or set(obj)!={'decision','target_block','new_content','change_summary'}
-                    or obj.get('decision')!='PROPOSE_EDIT' or obj.get('target_block') not in ('role','strategy','answer')
-                    or not isinstance(obj.get('new_content'),str) or not obj['new_content'].strip()
-                    or not isinstance(obj.get('change_summary'),str) or not 0<len(obj['change_summary'])<=240):
-                journal(dict(common,status='CONTRACT_INVALID',failed_checks=['invalid_structure'],solver_evaluated=False));continue
             try:
                 proposed=selected_parent.edit(obj['target_block'],obj['new_content'])
             except SearchContractError as exc:
                 if str(exc) not in {'SYSTEM_PROMPT_BLOCK_INVALID','SYSTEM_PROMPT_OVER_LENGTH','SYSTEM_PROMPT_TARGET_BLOCK_INVALID'}:raise
-                journal(dict(common,status='CONTRACT_INVALID',failed_checks=['invalid_block_or_length'],solver_evaluated=False));continue
+                if str(exc)=='SYSTEM_PROMPT_OVER_LENGTH':
+                    total=sum(len(obj['new_content']) if k==obj['target_block'] else len(getattr(selected_parent,k)) for k in ('role','strategy','answer'))+4
+                    output_feedback=dict(identity=OUTPUT_FEEDBACK,stage='reflection',category=str(exc),
+                        issues=[dict(issue('rendered_system_prompt','OVER_LIMIT',limit=3000),
+                            actual_type='string',actual_characters=total)])
+                journal(dict(common,status='CONTRACT_INVALID',failed_checks=['invalid_block_or_length'],
+                    output_contract_feedback=output_feedback,solver_evaluated=False));continue
             h=prompt_id(proposed)
             checks=candidate_failed_checks(proposed,parent_prompt=selected_parent,examples=examples,max_chars=3000)
             checks=(*checks,*executability_checks(proposed,private_texts=(*task.private_feedback_texts,

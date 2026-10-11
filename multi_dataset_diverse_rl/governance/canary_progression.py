@@ -6,6 +6,9 @@ IDENTITY='INTEGRITY_COMPLETE_CANARY_TO_FROZEN_FORMAL_V1'
 
 
 def require_policy(value):
+    from . import direct_formal_start
+    if isinstance(value,dict) and value.get('identity')==direct_formal_start.IDENTITY:
+        return direct_formal_start.require_policy(value)
     if (not isinstance(value,dict) or set(value)!={'identity','canary_prep','canary_run',
             'canary_binding_path','canary_binding_sha256','canary_attempt_id'}
             or value['identity']!=IDENTITY or
@@ -17,6 +20,9 @@ def verify(root,contract,payload):
     from .unified_execution import validate_prep
     from .postfreeze_validation import closed_search,local_path
     value=contract.get('canary_prerequisite');require_policy(value)
+    from . import direct_formal_start
+    if value['identity']==direct_formal_start.IDENTITY:
+        return direct_formal_start.verify(root,contract,payload)
     canary=validate_prep(root,local_path(root,value['canary_prep']))
     ref=canary['manifest']['execution_binding']
     if (ref['path']!=value['canary_binding_path'] or ref['sha256']!=value['canary_binding_sha256']

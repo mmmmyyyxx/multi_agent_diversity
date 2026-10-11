@@ -123,6 +123,10 @@ def current_scientific_files(root: Path, *, execution_closure: bool = False) -> 
     if compact_contract.is_file():result.append(compact_contract)
     readable_contract=root/'docs/design/DIRECT_READABLE_OPTIMIZER_EVIDENCE_V2.md'
     if readable_contract.is_file():result.append(readable_contract)
+    output_contract=root/'docs/design/OPTIMIZER_OUTPUT_CONTRACT_FEEDBACK_V1.md'
+    if output_contract.is_file():result.append(output_contract)
+    direct_start_contract=root/'docs/design/V27_DIRECT_FORMAL_START_V1.md'
+    if direct_start_contract.is_file():result.append(direct_start_contract)
     routing_contract=root/'docs/design/PROVIDER_ROLE_ROUTING_V1.md'
     if routing_contract.is_file():result.append(routing_contract)
     risk_contract = root/'docs/design/SHARED_RISK_MEMORY_V4.md'

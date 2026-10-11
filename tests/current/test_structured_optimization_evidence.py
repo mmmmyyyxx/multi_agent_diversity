@@ -89,7 +89,7 @@ def graph(tmp_path,*,mode='both',uncertain=False,block='strategy',answer_only=Fa
                     expected_effect=None if uncertain else 'Retain constraints in transformed expressions.')))
             return response(json.dumps({'patterns':[{'generalized_gradient':HYPOTHESIS,
                 'support_ids':[g['example_id'] for g in p['gradients']]}],'unassigned_ids':[]}))
-        p=json.loads('{'+req['messages'][0]['content'].split('\n{',1)[1])
+        p=json.loads(req['messages'][0]['content'].splitlines()[-1])
         packets.append(p);n=len(packets)
         if mode=='all_six':
             return response(json.dumps(dict(decision='PROPOSE_EDIT',target_block=block,new_content=bad_prompt.to_dict()[block]+' Apply general review '+ 'ABCDEF'[n-1]+'.',

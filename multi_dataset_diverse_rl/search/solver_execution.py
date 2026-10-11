@@ -36,13 +36,16 @@ PARALLEL_READABLE_POLICY = dict(PARALLEL_COMPACT_POLICY,
     identity='STRUCTURED_PARALLEL_READABLE_EXECUTION_V5',
     optimizer_input_encoding='DIRECT_READABLE_OPTIMIZER_EVIDENCE_V2')
 
+OUTPUT_FEEDBACK_POLICY = dict(PARALLEL_READABLE_POLICY,
+    identity='STRUCTURED_OUTPUT_CONTRACT_FEEDBACK_EXECUTION_V6')
+
 
 def frozen_execution_policy(contract):
     policy = contract.get('solver_execution_policy')
     # Existing immutable freezes retain their original serial execution physics.
     if policy is None:
         return None
-    expected = next((p for p in (POLICY, PARALLEL_READABLE_POLICY) if policy == p), None)
+    expected = next((p for p in (POLICY, OUTPUT_FEEDBACK_POLICY) if policy == p), None)
     if expected is None or any(type(policy[k]) is not type(v) for k, v in expected.items()):
         raise SearchContractError('SOLVER_EXECUTION_POLICY_MISMATCH')
     return deepcopy(policy)

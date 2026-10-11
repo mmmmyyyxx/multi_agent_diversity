@@ -5,7 +5,7 @@ The [scientific principles](SCIENTIFIC_PRINCIPLES.md) constrain interpretation;
 the [MATH scientific contract](MATH_SCIENTIFIC_CONTRACT.md) clarifies benchmark
 measurement and admission. These clarifications add no algorithm or threshold.
 The sole executable method is
-`unified_team_prompt_search_v2_6_readable_evidence_v2`.
+`unified_team_prompt_search_v2_7_output_contract_feedback_v1`.
 [The V2.5 scientific contract](RESPONSIBILITY_FALLBACK_REPAIR_V25.md) and
 [flexible answer extraction amendment](FLEXIBLE_ANSWER_EXTRACTION_V3.md) and
 [bounded output recovery amendment](GENERATED_OUTPUT_RECOVERY_V25.md) are normative.
@@ -77,3 +77,18 @@ Solver response and preview strings, with clear source labels and no character
 slicing task. Solver16, independent Gradient8 and private request timing remain.
 Fresh identities and scope are required. Scoring, evidence split boundaries,
 output limits, strict guards, recovery and stopping remain unchanged.
+
+The [optimizer output contract amendment](OPTIMIZER_OUTPUT_CONTRACT_FEEDBACK_V1.md)
+specifies single-value block fields, valid JSON shape examples and escaping rules.
+Typed failures supply bounded metadata-only last-draw feedback to Gradient and
+Reflection. All decoded character limits, content guards, complete readable
+evidence, concurrency, timing and generation counts remain. Generation behavior
+has a fresh identity; old scopes and results are not reusable. This offline
+repair establishes no model-compliance or efficacy improvement.
+
+The [V2.7 direct formal start](V27_DIRECT_FORMAL_START_V1.md) is an explicitly
+user-selected experiment prerequisite. It requires a fresh frozen offline
+verification record and exact single-use formal authorization. Current-version
+Canary reliability remains unobserved; no earlier Canary is represented as V2.7.
+Initial-profile and first-opportunity owner reviews, resource control and all
+scientific rules remain mandatory.

@@ -117,9 +117,9 @@ class CurrentPolicyBundle:
             require_validation_contract(contract)
         elif contract.get('execution_phase') == 'formal':
             from ..benchmarks.math_formal_scope import require_bound, ACCOUNTING_SCOPE
-            from .solver_execution import PARALLEL_READABLE_POLICY
+            from .solver_execution import OUTPUT_FEEDBACK_POLICY
             require_bound(contract.get('operational_pilot'))
-            if contract.get('accounting_scope_policy') != ACCOUNTING_SCOPE or execution!=PARALLEL_READABLE_POLICY:
+            if contract.get('accounting_scope_policy') != ACCOUNTING_SCOPE or execution!=OUTPUT_FEEDBACK_POLICY:
                 raise SearchContractError('FORMAL_ACCOUNTING_SCOPE_MISMATCH')
         elif execution and contract.get('accounting_scope_policy')!='FRESH_V25_REPAIR_SINGLE_ARM_2M_V2':
             raise SearchContractError('V24_ACCOUNTING_SCOPE_MISMATCH')

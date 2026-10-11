@@ -16,14 +16,14 @@ from tests.current.test_structured_optimization_evidence import contract, respon
 from tests.current.test_parallel_solver_execution import broker_fixture, call
 from tests.current.test_gradient_diagnostic_limits_400 import output
 from multi_dataset_diverse_rl.search.optimizer_encoding import encode, decode, IDENTITY
-from multi_dataset_diverse_rl.search.solver_execution import PARALLEL_READABLE_POLICY, PARALLEL_COMPACT_POLICY, bounded_ordered_map
+from multi_dataset_diverse_rl.search.solver_execution import OUTPUT_FEEDBACK_POLICY, PARALLEL_COMPACT_POLICY, bounded_ordered_map
 from multi_dataset_diverse_rl.search.textual_gradients import PerExampleGradientProvider, GradientExtractor
 from multi_dataset_diverse_rl.search.schemas import SearchContractError
 from multi_dataset_diverse_rl.governance.token_accounting import TokenLedger, POLICY_V26_2M
 
 
 def parallel_contract():
-    c=contract();c['solver_execution_policy']=deepcopy(PARALLEL_READABLE_POLICY)
+    c=contract();c['solver_execution_policy']=deepcopy(OUTPUT_FEEDBACK_POLICY)
     c['concurrency']=dict(solver=16,optimizer_reflection=8,pattern=8)
     return c
 

@@ -2,6 +2,18 @@
 
 Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this file.
 
+## FAIL-V27-OPTIMIZER-OUTPUT-CONTRACT-AMBIGUITY: Gradient block mappings and JSON syntax repeatedly exhaust output recovery
+
+- Status: `MITIGATED`
+- Lifecycle: `OFFLINE_VERIFICATION`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `math_parallel_readable_seed85_canary_v1`
+- Root-cause status: Exact frozen replay reproduces schema and syntax rejection; upstream model-compliance cause and new prompt efficacy remain unmeasured.
+- Symptom: Nine Gradient draws across three examples were rejected; seven block mappings, one JSON escape and one diagnosis-only length violation.
+- Forbidden inference: No historical output repair, accepted correction safety claim, model efficacy proof or old-scope replay authorization.
+- Mitigation: Explicit single-value examples, JSON escaping guidance and source-free last-failure feedback under a new version; validators and draw limits retained.
+
 ## FAIL-V26-OPTIMIZER-INTERVAL-READABILITY: Optimizer trajectory references required model-side character slicing
 
 - Status: `MITIGATED`

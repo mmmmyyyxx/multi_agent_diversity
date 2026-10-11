@@ -6,6 +6,7 @@ from ..local_optimizers.schemas import LocalEvidenceExample
 from .bounded_layer1 import BoundedMemoryOptimizer, LocalTaskEngine, MemoryLocalTask, build_optimizer_context, digest
 from .schemas import SearchContractError
 from .readable_evidence import INSTRUCTION
+from .optimizer_output_contract import JSON_INSTRUCTION
 
 
 @dataclass(frozen=True)
@@ -26,7 +27,7 @@ class EvidenceLayer1Config:
     max_prompt_chars: int = 3000
     candidate_contract: str = versions.SEMANTIC_MUTABLE_CONTRACT_VERSION
     official_gepa_fidelity: bool = False
-    optimizer_input_schema: str = 'STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V10'
+    optimizer_input_schema: str = 'STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V11'
     panel_policy: str = 'DISJOINT_QUOTA_FREE_REPAIR_EVIDENCE_V2'
 
     def __post_init__(self):
@@ -47,15 +48,20 @@ The selected Pattern is a repair hypothesis, not a mandatory universal instructi
 Preserve existing successful behavior. Do not introduce dependencies on optimizer-only
 evidence. Prefer a small conditional generic edit when supported; otherwise abstain.
 Return {"decision":"NO_SAFE_EDIT"} or {"decision":"PROPOSE_EDIT",
-"target_block":"role, strategy, or answer", "new_content":"complete replacement block",
+"target_block":"strategy", "new_content":"complete replacement block",
 "change_summary":"intended change, at most 240 characters"}. No other keys.
-Choose the block from the evidence. All blocks, including presentation and reasoning
-preferences, are editable. Change exactly one block. The full rendered system
+Choose the block from the evidence.
+target_block must be ONE string: "role", "strategy", or "answer"; never an object,
+array, or comma-separated list. decision and new_content are strings, and
+change_summary is a nonempty string of at most 240 decoded characters.
+The example shows shape only; choose the appropriate block independently.
+All blocks, including presentation and reasoning preferences, are editable.
+Change exactly one block. The full rendered system
 prompt must remain at most 3000 characters. No fixed CoT or output format is required.
 SearchValidation is measured after generation; prior measurement counts may guide
 the next iteration but validation examples and answers are not supplied.
 Respect missing/truncated written evidence; do not infer hidden reasoning.
-''' + json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=True))
+''' + JSON_INSTRUCTION + json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=True))
 
 class GradientPatternMemoryOptimizer(BoundedMemoryOptimizer):
     config_factory=EvidenceLayer1Config

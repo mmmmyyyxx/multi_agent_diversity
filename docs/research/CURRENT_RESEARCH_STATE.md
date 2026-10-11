@@ -4,7 +4,7 @@ The sole active research architecture is Unified Team Prompt Search.
 Research claims follow [scientific principles](../design/SCIENTIFIC_PRINCIPLES.md)
 and the [MATH measurement contract](../design/MATH_SCIENTIFIC_CONTRACT.md).
 The sole current method is V2.5 with flexible answer extraction and bounded output recovery,
-`unified_team_prompt_search_v2_6_readable_evidence_v2`.
+`unified_team_prompt_search_v2_7_output_contract_feedback_v1`.
 
 [Current specification](../design/CURRENT_SPEC.md) and
 [V2.5 scientific contract](../design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md) define the
@@ -55,4 +55,8 @@ No paid execution or efficacy is established by this offline adoption.
 The [direct readable evidence amendment](../design/DIRECT_READABLE_OPTIMIZER_EVIDENCE_V2.md)
 restores original complete response and preview strings for Gradient and Reflection.
 Solver concurrency 16, Gradient concurrency 8 and private request timing remain.
-This version has no real execution or model capability result; old scopes stay closed.
+The current [output contract amendment](../design/OPTIMIZER_OUTPUT_CONTRACT_FEEDBACK_V1.md)
+adds explicit single-value output types and metadata-only last-failure feedback.
+The preceding readable Canary supplied nine rejected Gradient draws; schema,
+JSON and diagnostic-length failures are observed, not mathematical incapacity.
+Current V2.7 has no real execution or model capability result; old scopes stay closed.

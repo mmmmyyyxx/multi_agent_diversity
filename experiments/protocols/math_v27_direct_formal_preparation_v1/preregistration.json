@@ -1,0 +1,57 @@
+{
+  "attempts": {
+    "formal": "a4_v27_direct_seed86_formal_attempt1"
+  },
+  "canary": "NOT_RUN_CURRENT_VERSION_USER_SELECTED_DIRECT_FORMAL",
+  "causal_component_claims": false,
+  "efficacy_based_rerun": false,
+  "historical_comparison": "DESCRIPTIVE_ONLY",
+  "identity": "V27_USER_SELECTED_DIRECT_ARM_B_FORMAL_PREREG_V1",
+  "independent_generalization": "NOT_EVALUABLE_WITHOUT_SEPARATE_AUTHORIZED_VALIDATION",
+  "initial_competence": "AGGREGATE_FROZEN_INITIAL_FULL_OPTIMIZE",
+  "method": "unified_team_prompt_search_v2_7_output_contract_feedback_v1",
+  "monitor": {
+    "anomalies_and_owner_reviews": "IMMEDIATE",
+    "eta_min_complete_opportunities": 3,
+    "interval_seconds": 3600
+  },
+  "old_source_responses_scores_memory_cache_or_grants_reused": false,
+  "owner_reviews": "INITIAL_PROFILE_AND_FIRST_OPPORTUNITY_REQUIRED",
+  "patience": 2,
+  "phases": {
+    "formal": "math_v27_direct_seed86_formal_v1",
+    "prep": "math_v27_direct_formal_preparation_v1"
+  },
+  "primary_search": "DEPLOYED_TEAM_VOTE",
+  "scientific_stop_resource_truncation_user_stop_engineering_abort": "SEPARATE",
+  "secondary": [
+    "ORACLE_COVERAGE",
+    "MEMBER_CORRECTNESS",
+    "VALIDITY"
+  ],
+  "source_freeze": "PENDING",
+  "stopping": "team_epoch_no_commit_v1",
+  "task": {
+    "gradient_concurrency": 8,
+    "initial": "FRESH_IDENTICAL_ARM_B5",
+    "max_opportunities": 50,
+    "method": "unified_team_prompt_search_v2_7_output_contract_feedback_v1",
+    "models": {
+      "optimizer": "qwen3.7-flash",
+      "solver": "gpt-4o-mini"
+    },
+    "monetary_tracking": false,
+    "monitor_interval_seconds": 3600,
+    "optimize": 150,
+    "push_authorized": false,
+    "scope": "FORMAL_SEARCH_ONLY",
+    "seed": 86,
+    "shadow": 40,
+    "solver_concurrency": 16,
+    "test_access": "SEALED",
+    "token_ceiling": 30000000,
+    "user_instruction_sha256": "8aaf6c6906c210c69a3faca7ba97b7f7881a62fb888b1895103dc8fc258f6fca",
+    "user_selected_direct_formal": true,
+    "validation_access": "NOT_AUTHORIZED"
+  }
+}

@@ -9,11 +9,11 @@ from .schemas import SearchContractError
 
 from ..current_contract import CURRENT_METHOD_VERSION as METHOD
 from ..current_contract import OPTIMIZATION_EVIDENCE_POLICY_VERSION as IDENTITY
-INPUT = 'STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V10'
+INPUT = 'STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V11'
 LAYER1 = 'STRUCTURED_EVALUATED_PARENT_SEARCH_V3'
 EVIDENCE = 'DISJOINT_QUOTA_FREE_REPAIR_EVIDENCE_V2'
 MEMORY = 'BOOTSTRAPPED_FORMAT_BLOCK_EDIT_EFFECT_MEMORY_V3'
-GRADIENT_INPUT = 'STRUCTURED_SYSTEM_GRADIENT_INPUT_V7'
+GRADIENT_INPUT = 'STRUCTURED_SYSTEM_GRADIENT_INPUT_V8'
 from ..current_contract import GRADIENT_PROMPT_VERSION as GRADIENT_PROMPT_ID
 from ..current_contract import MATH_STRUCTURED_SYSTEM_BINDING_VERSION as BINDING
 
@@ -33,7 +33,8 @@ POLICY = dict(identity=IDENTITY, mutation_size=3, search_validation_size=3,
     prompt_state='STRUCTURED_SYSTEM_PROMPT_V1', mutation='single_block_per_generation',
     editable_blocks=['role','strategy','answer'], response_evidence='observed_content_optional_trajectory',
     answer_extraction='MATH_FLEXIBLE_ANSWER_EXTRACTION_V3',
-    generated_output_recovery='BOUNDED_GENERATED_OUTPUT_RECOVERY_V1',
+    generated_output_recovery='BOUNDED_OUTPUT_CONTRACT_FEEDBACK_RECOVERY_V2',
+    optimizer_output_feedback='TYPED_OPTIMIZER_OUTPUT_FEEDBACK_V1',
     abstraction='SOURCE_CONTEXT_SYMBOLIC_ABSTRACTION_GUARD_V1',
     optimizer_input_encoding='DIRECT_READABLE_OPTIMIZER_EVIDENCE_V2')
 
@@ -110,7 +111,7 @@ def executability_checks(prompt, *, private_texts=()):
     from .system_prompt import SystemPrompt
     if isinstance(prompt, SystemPrompt): prompt = prompt.render()
     checks=[]
-    if re.search(r'\b(?:selected_gradient|solver_trajectory|retrieved_memory|reference_solution|'
+    if re.search(r'\b(?:selected_gradient|solver_trajectory|retrieved_memory|reference_solution|output_contract_feedback|'
             r'ground[_ -]?truth|gold[_ -]?answer)\b|\b(?:read|consult|copy|access|use)\b[^.;\n]{0,55}'
             r'\b(?:gradient|memory|reference answer|correct answer key)\b',prompt,re.I):
         checks.append('optimizer_only_dependency')

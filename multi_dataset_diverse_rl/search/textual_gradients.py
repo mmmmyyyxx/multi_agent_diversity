@@ -17,6 +17,8 @@ from .pattern_primitives import (guard_abstraction, wrong_universe, sample_label
 from .schemas import SearchContractError
 from .generation_failures import POLICY as OUTPUT_RECOVERY, generation_failure, recoverable_output
 from .readable_evidence import INSTRUCTION
+from .optimizer_output_contract import (JSON_INSTRUCTION, parse_output,
+    validate_gradient_output, feedback_for_error, validate_feedback, reject, issue)
 
 
 GRADIENT_OUTPUT_LIMITS = dict(identity=versions.GRADIENT_OUTPUT_LIMITS_VERSION,
@@ -39,8 +41,19 @@ and expected behavior. Do not copy example constants, answers or solution fragme
 into the correction or infer other examples. Any of the three prompt blocks,
 including answer presentation, may be improved. Written steps are optional;
 use limited answer/reference evidence or UNCERTAIN when no steps are observable.
-Return JSON only, without markdown fences or extra keys. Keep every diagnostic
-concise and within its stated character limit; use JSON null, not the string "null".'''.format(**GRADIENT_OUTPUT_LIMITS)
+suggested_block must be ONE string chosen from "role", "strategy", "answer", or
+JSON null. Never return an object, array, multiple block suggestions, or replacement
+block text in this field. observed_failure and diagnosis are nonempty strings.
+For ACTIONABLE, reusable_correction and expected_effect are nonempty strings.
+For UNCERTAIN, both are JSON null. Keep all original decoded string lengths within
+the listed inclusive limits; target shorter diagnostics rather than the boundary.
+An output_contract_feedback field, if present, describes only the previous rejected
+draw's contract errors. Correct those errors without copying rejected text or changing
+the mathematical evidence. A generic valid shape is:
+{{"disposition":"ACTIONABLE","observed_failure":"Brief observation.",
+"diagnosis":"Brief hypothesis.","reusable_correction":"Abstract reusable repair.",
+"suggested_block":"strategy","expected_effect":"Expected behavior."}}
+'''.format(**GRADIENT_OUTPUT_LIMITS) + JSON_INSTRUCTION
 
 CLUSTER_PROMPT = '''Compare the entire gradient set before forming clusters.
 Group gradients when they express the same reusable corrective reasoning behavior,
@@ -61,7 +74,7 @@ The controller computes responsibility and selects which correction receives bud
 GRADIENT_POLICY = dict(identity=versions.PER_EXAMPLE_GRADIENT_VERSION,
     prompt_identity=versions.GRADIENT_PROMPT_VERSION,
     output_limits=deepcopy(GRADIENT_OUTPUT_LIMITS),
-    schema='STRUCTURED_SYSTEM_GRADIENT_INPUT_V7', max_characters=versions.GRADIENT_MAX_CHARACTERS,
+    schema='STRUCTURED_SYSTEM_GRADIENT_INPUT_V8', max_characters=versions.GRADIENT_MAX_CHARACTERS,
     universe='all_selected_member_wrong_optimize', logical_calls_per_wrong=1,
     successful_generations_per_wrong=3, output_cache=False, semantic_regeneration=True,
     recovery_trigger='TYPED_GENERATED_OUTPUT_ONLY', output_recovery=OUTPUT_RECOVERY, valid_uncertain_stops=True,
@@ -107,7 +120,10 @@ def gradient_identity(text):
 def validate_gradient(text, rows, *, generalized=False, audit_writer=None):
     limit=versions.GENERALIZED_GRADIENT_MAX_CHARACTERS if generalized else versions.GRADIENT_MAX_CHARACTERS
     if not isinstance(text,str) or not text.strip() or len(text)>limit:
-        raise generation_failure('PATTERN_GRADIENT_EXTRACTION_INVALID' if not generalized else 'PATTERN_GRADIENT_CLUSTER_INVALID')
+        if not generalized:
+            code='TYPE' if not isinstance(text,str) else 'EMPTY' if not text.strip() else 'OVER_LIMIT'
+            reject('PATTERN_GRADIENT_EXTRACTION_INVALID','gradient',[issue('reusable_correction',code,text,limit)])
+        raise generation_failure('PATTERN_GRADIENT_CLUSTER_INVALID')
     # Complete-role/replacement declarations are incompatible with a local signal.
     # This bounded check complements the shared content/interface guard; it is not
     # a claim to classify every possible semantic full-procedure paraphrase.
@@ -148,9 +164,9 @@ class _FreshSearchProvider:
         self.calls+=1
         result=self.broker.complete(role=self.role,split='optimize',stage=self.stage,messages=messages)
         self.last_response=deepcopy(result)
+        if self.role=='pattern_gradient':return parse_output(result['text'],stage='gradient')
         try:return json.loads(result['text'])
-        except (ValueError,TypeError):
-            raise generation_failure('PATTERN_GRADIENT_EXTRACTION_INVALID' if self.role=='pattern_gradient' else 'PATTERN_GRADIENT_CLUSTER_INVALID') from None
+        except (ValueError,TypeError):raise generation_failure('PATTERN_GRADIENT_CLUSTER_INVALID') from None
 
 
 class PerExampleGradientProvider(_FreshSearchProvider):
@@ -182,11 +198,13 @@ class PerExampleGradientProvider(_FreshSearchProvider):
             numeric_guard_writer=serialized_writer if writer is not None else None)
     def extract(self,payload):
         expected={'example_id','problem','reference','reference_solution','prediction','valid','correct','solver_trajectory'}
-        if (not isinstance(payload,dict) or set(payload)!={'schema','current_system_prompt','target_member','example'}
+        if (not isinstance(payload,dict) or set(payload) not in ({'schema','current_system_prompt','target_member','example'},
+                {'schema','current_system_prompt','target_member','example','output_contract_feedback'})
                 or payload['schema']!=self.input_schema
                 or type(payload['target_member']) is not int or payload['target_member'] not in range(5)
                 or not isinstance(payload['example'],dict) or set(payload['example'])!=expected):
             raise SearchContractError('PATTERN_GRADIENT_INPUT_INVALID')
+        if 'output_contract_feedback' in payload:validate_feedback(payload['output_contract_feedback'],stage='gradient')
         from .system_prompt import SystemPrompt
         prompt=SystemPrompt.from_dict(payload['current_system_prompt'])
         if self.solver_trajectory_policy is not None:
@@ -325,23 +343,14 @@ class GradientExtractor:
                 original_characters=len(solution),truncated=len(solution)>4096))
             packet=dict(schema=GRADIENT_INPUT,current_system_prompt=procedure.to_dict(),
                 target_member=example['solver_trajectory']['source']['member_id'],example=example)
-            errors=[];value=None
+            errors=[];feedbacks=[];value=None
             for draw in range(1,OUTPUT_RECOVERY['gradient_draws_per_example']+1):
                 try:
                     value=self.provider.extract(packet)
-                    if (not isinstance(value,dict) or set(value)!= {'disposition','observed_failure','diagnosis','reusable_correction','suggested_block','expected_effect'}
-                            or not isinstance(value['disposition'],str) or value['disposition'] not in {'ACTIONABLE','UNCERTAIN'}
-                            or value['suggested_block'] is not None and not isinstance(value['suggested_block'],str)
-                            or value['suggested_block'] not in {None,'role','strategy','answer'}
-                            or any(not isinstance(value[k],str) or not value[k].strip() or len(value[k])>GRADIENT_OUTPUT_LIMITS[k]
-                                for k in ('observed_failure','diagnosis'))):
-                        raise generation_failure('REFERENCE_GRADIENT_OUTPUT_INVALID')
+                    validate_gradient_output(value,GRADIENT_OUTPUT_LIMITS)
                     if value['disposition']=='UNCERTAIN':
-                        if value['reusable_correction'] is not None or value['expected_effect'] is not None:
-                            raise generation_failure('REFERENCE_GRADIENT_OUTPUT_INVALID')
+                        pass
                     else:
-                        if not isinstance(value['expected_effect'],str) or not value['expected_effect'].strip() or not 0<len(value['expected_effect'])<=GRADIENT_OUTPUT_LIMITS['expected_effect']:
-                            raise generation_failure('REFERENCE_GRADIENT_OUTPUT_INVALID')
                         writer=getattr(self.provider,'numeric_guard_writer',None)
                         text=validate_gradient(value['reusable_correction'],(row,),
                             audit_writer=(lambda result:writer(dict(example_id=row.example_id,
@@ -351,11 +360,14 @@ class GradientExtractor:
                 except SearchContractError as exc:
                     if not recoverable_output(exc,'gradient'):raise
                     errors.append(str(exc));value=None
+                    feedback=feedback_for_error(exc,stage='gradient')
+                    feedbacks.append(feedback)
+                    packet['output_contract_feedback']=feedback
             kind='FORMAT_FAILURE' if not row.signals['target_member_valid'] else 'MATHEMATICAL_FAILURE'
             self.evidence_diagnostics.append(dict(example_id=row.example_id,
                 **(value or dict(disposition='NONACTIONABLE_EXHAUSTED')),
                 evidence_kind=kind,structural_draws=draw,structural_errors=errors,
-                generation_draws=draw,generation_errors=list(errors),
+                generation_draws=draw,generation_errors=list(errors),output_contract_errors=feedbacks,
                 recovery_succeeded=bool(errors and value),exhausted=value is None))
         return tuple(gradients)
 

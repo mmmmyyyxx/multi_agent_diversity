@@ -8,6 +8,7 @@ Current authority: AGENTS.md, docs/design/CURRENT_SPEC.md and
 |---|---|
 | multi_dataset_diverse_rl/search/system_prompt.py | Sole structured member prompt state and block identity |
 | multi_dataset_diverse_rl/search/current_composition.py | Sole production graph |
+| multi_dataset_diverse_rl/search/optimizer_output_contract.py | Strict optimizer types and source-free bounded retry feedback |
 | multi_dataset_diverse_rl/current_contract.py | See package-root current_contract.py for closed identity imports |
 | multi_dataset_diverse_rl/benchmarks/math_structured_binding.py | Fresh V2.5 freeze and composition |
 | multi_dataset_diverse_rl/benchmarks/math_flexible_answer.py | Current gold-blind flexible extraction |

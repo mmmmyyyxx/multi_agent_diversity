@@ -2,13 +2,15 @@
 from copy import deepcopy
 from .schemas import SearchContractError
 
-IDENTITY = 'BOUNDED_GENERATED_OUTPUT_RECOVERY_V1'
+IDENTITY = 'BOUNDED_OUTPUT_CONTRACT_FEEDBACK_RECOVERY_V2'
 POLICY = dict(identity=IDENTITY, gradient_draws_per_example=3,
     cluster_draws_per_opportunity=3, reflection_draws_per_opportunity=6,
     rejected_text_reusable=False, exhausted_gradient='NONACTIONABLE_EXHAUSTED',
     invalid_pattern='known_support_to_unassigned',
     integrity_errors='fatal_without_regeneration', unknown_errors='fatal',
-    truncated_output='charged_rejected_draw_no_capacity_change')
+    truncated_output='charged_rejected_draw_no_capacity_change',
+    output_feedback='TYPED_OPTIMIZER_OUTPUT_FEEDBACK_V1',
+    feedback_history='LAST_FAILURE_ONLY_NO_REJECTED_TEXT')
 
 class GeneratedOutputFailure(SearchContractError):
     """A provider response was accounted for but cannot enter optimizer state."""
@@ -21,7 +23,7 @@ _CATEGORIES = {
         'GENERATED_OUTPUT_TRUNCATED'}),
     'pattern': frozenset({'PATTERN_GRADIENT_CLUSTER_INVALID',
         'PATTERN_DISCOVERY_EXAMPLE_LEAKAGE', 'PATTERN_DISCOVERY_INVALID_ABSTRACTION'}),
-    'reflection': frozenset({'GENERATED_OUTPUT_TRUNCATED'}),
+    'reflection': frozenset({'GENERATED_OUTPUT_TRUNCATED','REFLECTION_OUTPUT_CONTRACT_INVALID'}),
     'block': frozenset({'SYSTEM_PROMPT_BLOCK_INVALID', 'SYSTEM_PROMPT_OVER_LENGTH',
         'SYSTEM_PROMPT_TARGET_BLOCK_INVALID'}),
 }

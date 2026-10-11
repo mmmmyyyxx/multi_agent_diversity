@@ -1,0 +1,18 @@
+{
+  "historical_source_sha": "b35a48e99d1bc36c31e19c1c5494626827c371ab",
+  "logical_gradient_examples": 3,
+  "physical_gradient_draws": 9,
+  "primary_rejections": {
+    "SUGGESTED_BLOCK_OBJECT": 7,
+    "JSON_INVALID_ESCAPE": 1,
+    "DIAGNOSIS_ONLY_OVER_400": 1
+  },
+  "diagnosis_over_400_including_overlap": 2,
+  "all_finish_reason_stop": true,
+  "output_tokens_minimum": 298,
+  "output_tokens_maximum": 405,
+  "frozen_output_limit_tokens": 1800,
+  "exact_frozen_offline_replay": "NINE_REJECTIONS_AND_THREE_EXHAUSTIONS_REPRODUCED",
+  "real_api_calls_during_diagnosis": 0,
+  "correction_content_validation_reached": false
+}

@@ -1,0 +1,118 @@
+{
+  "evidence_type": "OFFLINE_ENGINEERING_NOT_MODEL_COMPLIANCE",
+  "current_pytest": {
+    "tests": 745,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 2,
+    "passed": 743,
+    "verification_basis": "FULL_CLASSIFIED_RUN_PLUS_EXACT_TWO_FAILED_CASE_RECHECKS"
+  },
+  "current_initial_pytest": {
+    "tests": 745,
+    "failures": 2,
+    "errors": 0,
+    "skipped": 2,
+    "passed": 741
+  },
+  "exact_failed_case_recheck": {
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 2
+  },
+  "role_final_pytest": {
+    "tests": 18,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 18
+  },
+  "final_role_and_dependency_pytest": {
+    "tests": 40,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 40
+  },
+  "targeted_pytest": {
+    "tests": 95,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 95
+  },
+  "initial_targeted_failures": 4,
+  "initial_targeted_failure_resolution": "ONE_TEST_FIXTURE_CALL_ONE_HISTORICAL_EXCLUSION_ASSERTION_TWO_SCHEMA_REFERENCE_ERRORS_FIXED",
+  "final_rendered_length_feedback_clarification": "VERIFIED_IN_CURRENT_AND_FINAL_ROLE_TESTS",
+  "final_new_reserved_feedback_dependency_check": "VERIFIED_BY_FINAL_ROLE_AND_DEPENDENCY_TESTS",
+  "initial_full_collection": "ROOT_SCOPE_ERROR_ABORTED_BEFORE_TEST_EXECUTION_THEN_CORRECTED_TO_TESTS_DIRECTORY",
+  "omitted_historical_private_modules": 220,
+  "historical_private_replay": "NOT_EXECUTED",
+  "preflight": {
+    "manifest": "PASS_DRAFT_HOLD_NO_AUTHORIZATION",
+    "historical_schema_branches": "PRESERVED",
+    "historical_manifest_repository_content": "PRESERVED_NORMALIZED_LINE_ENDINGS",
+    "new_feedback_and_draw_tamper_rejected": true,
+    "unchanged_concurrency_and_timing": true,
+    "complete_readable_source_closure": true,
+    "sealed_canary_files_byte_verified": 167,
+    "compileall": {
+      "multi_dataset_diverse_rl": true,
+      "scripts": true,
+      "tests": true
+    },
+    "sanitization": "PASS",
+    "failure_registry": "PASS",
+    "real_api_calls": 0,
+    "validation_calls": 0,
+    "test_calls": 0,
+    "network_attempt_count": 0
+  },
+  "governance": "PASS",
+  "historical_response_rejection_replay": {
+    "physical_responses": 9,
+    "all_historical_rejections_retained": true,
+    "rejection_categories": {
+      "PATTERN_GRADIENT_EXTRACTION_INVALID": 1,
+      "REFERENCE_GRADIENT_OUTPUT_INVALID": 8
+    },
+    "overlapping_feedback_issues": {
+      "output:JSON_INVALID_ESCAPE": 1,
+      "suggested_block:TYPE": 7,
+      "diagnosis:OVER_LIMIT": 2
+    },
+    "historical_input_contract_executed": false,
+    "real_api_calls": 0,
+    "network_attempt_count": 0
+  },
+  "decoded_limits": [
+    400,
+    400,
+    400,
+    240
+  ],
+  "gradient_draws": 3,
+  "reflection_generations": 6,
+  "solver_concurrency": 16,
+  "gradient_concurrency": 8,
+  "complete_readable_evidence": "RETAINED",
+  "source_hashes": {
+    "scientific_source_hash": "f74c8c000fdd8b4c48b0d06373c928190d446ed931f74eeb2b00de0faa4ce33b",
+    "governance_hash": "8214cbd0ec4738dc98a9004fd8adb7577d05a7a7305daba29e0eb9e1c7a6e697",
+    "benchmark_contract_hash": "7d7bb259c091a6d6f2530d2611b74da71adb876677a18aef9dfac6d142420669"
+  },
+  "scientific_generation_behavior_changed": true,
+  "search_and_transition_rules_changed": false,
+  "fresh_source_freeze": false,
+  "real_api_authorized": false,
+  "real_api_calls": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "experiment_started": false,
+  "experiment_resumed": false,
+  "provider_structured_output_mode": "UNCHANGED_NOT_ASSUMED",
+  "model_compliance": "UNMEASURED",
+  "efficacy": "NOT_EVALUABLE"
+}

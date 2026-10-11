@@ -9613,9 +9613,10 @@ experiments:
   manifest: experiments/manifests/math_parallel_readable_formal_preparation_v1.yaml
   report: reports/math_parallel_readable_formal_freeze_20261011
   classifier: reports/math_parallel_readable_formal_freeze_20261011/classifier.json
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
-  superseded_by: []
+  superseded_by:
+  - math_optimizer_output_contract_feedback_preparation_v1
   notes:
   - Fresh Arm B5; stopped V2.5 outputs, scores, memory, cache and API grants are not
     imported.
@@ -9708,3 +9709,81 @@ experiments:
       SHA.
     execution_commit: Not executed.
     result_commit: No real execution at preregistration.
+- experiment_id: math_optimizer_output_contract_feedback_preparation_v1
+  kind: PROTOCOL_FREEZE
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_7_output_contract_feedback_v1
+  parent_ids:
+  - math_parallel_readable_seed85_canary_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: OUTPUT_CONTRACT_FEEDBACK_ENGINEERING_ONLY_MODEL_COMPLIANCE_UNMEASURED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_optimizer_output_contract_feedback_preparation_v1.yaml
+  report: reports/math_optimizer_output_contract_repair_20261011
+  classifier: reports/math_optimizer_output_contract_repair_20261011/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit single-value schemas and source-free last-failure feedback.
+  - Gradient3 and Reflection6 remain bounded; direct evidence, concurrency and timing
+    retained.
+  - DRAFT only; no real API or prior-scope reuse.
+  unavailable:
+    implementation_commit: Containing implementation change; no self-reference.
+    execution_commit: Zero-API engineering only.
+    result_commit: Containing engineering report.
+- experiment_id: math_v27_direct_formal_preparation_v1
+  kind: PROTOCOL_FREEZE
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_7_output_contract_feedback_v1
+  parent_ids:
+  - math_optimizer_output_contract_feedback_preparation_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: DIRECT_FORMAL_REGISTERED_NO_REAL_V27_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v27_direct_formal_preparation_v1.yaml
+  report: reports/math_v27_direct_formal_freeze_20261011
+  classifier: reports/math_v27_direct_formal_freeze_20261011/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit user direct formal instruction; V2.7 Canary not run.
+  - Fresh Arm B5, full150Optimize and40Shadow, seed86, 50 opportunities or30M Token;
+    no Validation/Test or Push.
+  - Source/phase authorization frozen independently; no old scope or output reuse.
+  unavailable:
+    implementation_commit: Source freeze pending.
+    execution_commit: Not executed.
+    result_commit: No real results at registration.
+- experiment_id: math_v27_direct_seed86_formal_v1
+  kind: FORMAL_EXPERIMENT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_7_output_contract_feedback_v1
+  parent_ids:
+  - math_v27_direct_formal_preparation_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: DIRECT_FORMAL_REGISTERED_NO_REAL_V27_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v27_direct_seed86_formal_v1.yaml
+  report: reports/math_v27_direct_formal_freeze_20261011
+  classifier: reports/math_v27_direct_formal_freeze_20261011/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit user direct formal instruction; V2.7 Canary not run.
+  - Fresh Arm B5, full150Optimize and40Shadow, seed86, 50 opportunities or30M Token;
+    no Validation/Test or Push.
+  - Source/phase authorization frozen independently; no old scope or output reuse.
+  unavailable:
+    implementation_commit: Source freeze pending.
+    execution_commit: Not executed.
+    result_commit: No real results at registration.

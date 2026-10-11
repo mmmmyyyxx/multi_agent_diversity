@@ -131,10 +131,10 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
                     'validation_accounting_metadata_path','validation_accounting_metadata_sha256',
                     'rolling_memory_freeze_path','rolling_memory_freeze_sha256'}):
             c.pop(key)
-    from ..search.solver_execution import PARALLEL_READABLE_POLICY as execution
-    from ..search.solver_execution import frozen_execution_policy, PARALLEL_READABLE_POLICY
+    from ..search.solver_execution import OUTPUT_FEEDBACK_POLICY as execution
+    from ..search.solver_execution import frozen_execution_policy, OUTPUT_FEEDBACK_POLICY
     execution=frozen_execution_policy({'solver_execution_policy':execution_policy or execution})
-    if formal and execution!=PARALLEL_READABLE_POLICY:
+    if formal and execution!=OUTPUT_FEEDBACK_POLICY:
         raise SearchContractError('FORMAL_EXECUTION_POLICY_NOT_FROZEN')
     from ..governance.canary_review import STRUCTURED_POLICY
     from ..search.generation_failures import POLICY as output_recovery

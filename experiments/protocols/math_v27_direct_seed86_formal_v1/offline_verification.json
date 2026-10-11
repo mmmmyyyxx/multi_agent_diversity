@@ -1,0 +1,30 @@
+{
+  "attempt_id": "a4_v27_direct_seed86_formal_attempt1",
+  "canary_execution": "NOT_RUN_CURRENT_VERSION",
+  "compileall": "PASS",
+  "current_suite": {
+    "errors": 0,
+    "failed": 0,
+    "full_historical_replay": false,
+    "historical_private_modules_omitted": 220,
+    "junit_sha256": "9a1279776531a0fd1b1f00eb585f742d67ea0c9b738c24b48521043255f77281",
+    "passed": 768,
+    "skipped": 2
+  },
+  "deterministic_output_feedback_smokes": "PASS",
+  "governance": "PASS",
+  "identity": "USER_SELECTED_V27_DIRECT_FORMAL_OFFLINE_PREREQUISITE_V1",
+  "method": "unified_team_prompt_search_v2_7_output_contract_feedback_v1",
+  "network_attempts": 0,
+  "new_real_api_calls": 0,
+  "targeted_suite": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 63
+  },
+  "test_access": "SEALED",
+  "user_instruction_sha256": "8aaf6c6906c210c69a3faca7ba97b7f7881a62fb888b1895103dc8fc258f6fca",
+  "user_selected_direct_formal": true,
+  "validation_access": "NOT_AUTHORIZED"
+}

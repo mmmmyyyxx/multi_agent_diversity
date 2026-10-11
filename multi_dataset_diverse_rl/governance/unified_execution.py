@@ -13,6 +13,10 @@ PREP_SCHEMA='unified_canary_prep_v1'
 def execution_identity(root,contract):
     CURRENT_POLICY_BUNDLE.validate_contract(contract)
     configs=[root/v for k,v in contract.items() if k.endswith('_path') and isinstance(v,str)]
+    from .direct_formal_start import IDENTITY as DIRECT_START
+    prerequisite=contract.get('canary_prerequisite',{})
+    if prerequisite.get('identity')==DIRECT_START:
+        configs.append(root/prerequisite['offline_verification_path'])
     configs += [root/contract['split_directory']/'math.json']
     identity=build_unified_source_identity(root,root/contract['canonical_root']/'manifests/math.json',configs)
     files=[root/r['path'] for s in identity['scopes'].values() for r in s['files']]

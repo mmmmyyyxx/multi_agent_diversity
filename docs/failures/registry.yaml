@@ -1,5 +1,24 @@
 schema_version: failure_registry_v1
 failures:
+- failure_id: FAIL-V27-OPTIMIZER-OUTPUT-CONTRACT-AMBIGUITY
+  title: Gradient block mappings and JSON syntax repeatedly exhaust output recovery
+  status: MITIGATED
+  lifecycle: OFFLINE_VERIFICATION
+  first_observed: math_parallel_readable_seed85_canary_v1
+  affected_components:
+  - gradient_output_schema
+  - reflection_output_instruction
+  - bounded_output_recovery_feedback
+  symptom: Nine Gradient draws across three examples were rejected; seven block mappings, one JSON escape and one diagnosis-only length violation.
+  evidence:
+  - reports/math_optimizer_output_contract_repair_20261011/README.md
+  - reports/math_optimizer_output_contract_repair_20261011/diagnosis.json
+  evidence_level: observed
+  root_cause_status: Exact frozen replay reproduces schema and syntax rejection; upstream model-compliance cause and new prompt efficacy remain unmeasured.
+  mitigation: Explicit single-value examples, JSON escaping guidance and source-free last-failure feedback under a new version; validators and draw limits retained.
+  forbidden_inference: No historical output repair, accepted correction safety claim, model efficacy proof or old-scope replay authorization.
+  regression_tests:
+  - tests/current/test_optimizer_output_contract_feedback.py
 - failure_id: FAIL-V26-OPTIMIZER-INTERVAL-READABILITY
   title: Optimizer trajectory references required model-side character slicing
   status: MITIGATED
