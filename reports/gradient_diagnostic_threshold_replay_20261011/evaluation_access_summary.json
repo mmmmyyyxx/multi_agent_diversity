@@ -1,0 +1,9 @@
+{
+  "optimize": "SEALED_HISTORICAL_GRADIENT_AND_PROVENANCE_EVIDENCE_ONLY",
+  "mixed_trace_scan": "HISTORICAL_TRACE_SCANNED_TO_SELECT_OPTIMIZE_GRADIENT_ONLY",
+  "shadow_responses_used_as_diagnostic_inputs": 0,
+  "shadow_reevaluations": 0,
+  "validation_raw_reads": 0,
+  "test_raw_reads": 0,
+  "new_model_evaluations": 0
+}

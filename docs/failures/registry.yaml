@@ -1218,6 +1218,7 @@ failures:
   evidence:
   - reports/current_scientific_semantics_pilot_diagnostic_20261011/gradient_diagnostic.json
   - reports/current_scientific_semantics_pilot_diagnostic_20261011/README.md
+  - reports/gradient_diagnostic_threshold_replay_20261011/threshold_comparison.json
   evidence_level: observed
   root_cause_status: Frozen field limits, JSON escapes and block schema reproduced
     using exact source; upstream instruction nonconformance cause undetermined.

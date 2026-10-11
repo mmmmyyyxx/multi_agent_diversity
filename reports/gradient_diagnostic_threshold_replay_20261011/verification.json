@@ -1,0 +1,55 @@
+{
+  "targeted_tests": {
+    "passed": 25,
+    "failed": 0
+  },
+  "native_baseline_and_matrix": "PASS",
+  "native_negative_controls": {
+    "correction_over_400": "REJECTED_BY_UNCHANGED_NATIVE_VALIDATOR",
+    "expected_effect_over_240": "REJECTED_BY_UNCHANGED_NATIVE_VALIDATOR",
+    "illegal_block": "REJECTED_BY_UNCHANGED_NATIVE_VALIDATOR",
+    "unsafe_correction": "REJECTED_BY_UNCHANGED_NATIVE_VALIDATOR",
+    "uncertain_nonnull": "REJECTED_BY_UNCHANGED_NATIVE_VALIDATOR",
+    "extra_schema_key": "REJECTED_BY_UNCHANGED_NATIVE_VALIDATOR",
+    "malformed_json": "REJECTED_BY_UNCHANGED_NATIVE_DECODER",
+    "reference_source_provenance": "REJECTED_BEFORE_RESPONSE_DECODING"
+  },
+  "full_current_suite": {
+    "passed": 649,
+    "skipped": 2,
+    "failed": 0,
+    "omitted_historical_private_modules": 220,
+    "junit_sha256": "2e442b4f41f1457c09f5d7e1d741351d2c83c170a390ace4eb6ea123536bcb2a"
+  },
+  "governance": "PASS",
+  "compileall": "PASS",
+  "real_api_calls": 0,
+  "offline_checks": {
+    "status": "PASS",
+    "compileall": "PASS",
+    "manifest_and_governance": {
+      "ok": true,
+      "mode": "zero_api_zero_dataset_evaluation",
+      "api_calls": 0,
+      "validation_calls": 0,
+      "test_calls": 0,
+      "experiment_count": 190,
+      "active_invariant_count": 27,
+      "failure_count": 44,
+      "lineage_node_count": 319,
+      "deterministic_hash_replay": "PASS",
+      "sanitization_fixture": "PASS",
+      "errors": []
+    },
+    "sanitization": "PASS",
+    "historical_reports_unchanged": "PASS",
+    "production_policies_and_frozen_experiments_unchanged": "PASS",
+    "report_canonical_lf": "PASS",
+    "diff_check": "PASS",
+    "real_api_calls": 0,
+    "validation_raw_reads": 0,
+    "test_raw_reads": 0
+  },
+  "generated_views": "PASS",
+  "generated_audit_sha256": "886e7dae73e3a1b348b0fe14e865f8f03a0de7fa99b0f81a57197683541e73f1"
+}

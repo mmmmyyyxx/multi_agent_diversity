@@ -1,0 +1,46 @@
+schema_version: offline_gradient_threshold_replay_v1
+experiment_id: gradient_diagnostic_threshold_replay_v1
+parent_ids:
+- current_scientific_semantics_pilot_diagnostic_v1
+parent_diagnostic_commit: 7982871850756457b092a5c83ae60347871cdc46
+historical_scientific_source_sha: 01306fbf9cde002291ab21e2f93a2c02399f7e9e
+historical_result_commit: 30a57d82213fb7788581e3fe8fd9ba7903dfb302
+scope: RETROSPECTIVE_TWO_FIELD_THRESHOLD_SENSITIVITY_ONLY
+matrix:
+  observed_failure:
+  - 240
+  - 320
+  - 400
+  - 480
+  - 640
+  diagnosis:
+  - 240
+  - 320
+  - 400
+  - 480
+  - 640
+  unit: PYTHON_LEN_OF_ORIGINAL_DECODED_UNICODE_STRING_NO_TRIMMING
+unchanged:
+  reusable_correction_max_characters: 400
+  expected_effect_max_characters: 240
+  json_schema: true
+  source_and_leakage_guards: true
+  input_provenance: true
+  historical_generation_prompt: true
+  production_policy: true
+  solver_aggregation_full_shadow_and_formal_stopping: true
+  historical_results: true
+savings_estimator: RECORDED_LOCAL_SEQUENCE_SUFFIX_AFTER_FIRST_FULL_NATIVE_VALIDATOR_PASS
+limits_of_inference:
+- No new generation, downstream trajectory, efficacy or billing estimate.
+- All-response pass counts include recorded suffix draws not reached under earlier
+  acceptance.
+- Retrospective threshold selection is not independent validation or execution authorization.
+authorization:
+  real_api_authorized: false
+  push_authorized: false
+real_api_calls: 0
+validation_raw_reads: 0
+test_raw_reads: 0
+analysis_command: python tests/formal_zero_api_runner.py --offline-command scripts/audit_gradient_diagnostic_thresholds.py
+report: reports/gradient_diagnostic_threshold_replay_20261011

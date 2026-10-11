@@ -959,6 +959,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/gradient_diagnostic_threshold_replay_20261011",
+      "document": "reports/gradient_diagnostic_threshold_replay_20261011/README.md",
+      "date": "20261011",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "FORENSIC",
+      "experiment_id": "gradient_diagnostic_threshold_replay_v1",
+      "status": "COMPLETED",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/layer2_pre_pilot_repository_audit_20260921",
       "document": "reports/layer2_pre_pilot_repository_audit_20260921/README.md",
       "date": "20260921",

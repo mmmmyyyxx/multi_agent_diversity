@@ -9362,3 +9362,27 @@ experiments:
     execution_commit: Zero-API diagnostic only; historical execution source is separately
       pinned.
     result_commit: Containing local evidence commit; no self-referential SHA.
+- experiment_id: gradient_diagnostic_threshold_replay_v1
+  kind: FORENSIC_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: offline_gradient_threshold_replay_v1
+  parent_ids:
+  - current_scientific_semantics_pilot_diagnostic_v1
+  status: COMPLETED
+  scientific_status: OFFLINE_THRESHOLD_SENSITIVITY_NO_NEW_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/gradient_diagnostic_threshold_replay_v1.json
+  report: reports/gradient_diagnostic_threshold_replay_20261011
+  classifier: reports/gradient_diagnostic_threshold_replay_20261011/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Two-field in-memory counterfactual; all other native validators retained.
+  - Recommendation only; production policy, scientific results and authorization unchanged.
+  unavailable:
+    implementation_commit: Containing local offline diagnostic commit.
+    execution_commit: No experiment executed; exact historical source separately pinned.
+    result_commit: Containing local sanitized evidence commit; no self-reference.

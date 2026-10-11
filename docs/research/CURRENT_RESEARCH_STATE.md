@@ -40,3 +40,9 @@ unresolved. It does not currently justify new aggregation, mechanisms or gates.
 Prioritize offline diagnosis of Gradient field-length/JSON failures and repeated
 input cost. Any future generation change needs a fresh version freeze and exact
 authorization; this diagnostic work grants neither a new experiment nor API access.
+
+The [diagnostic field-length feasibility study](GRADIENT_DIAGNOSTIC_LENGTH_FEASIBILITY_V1.md)
+replays original responses with all remaining validators intact. It recommends
+400 characters for both diagnostic fields as a future version candidate; current
+production remains at 240. Recorded local retry savings do not establish future
+cost, safety, mathematical or team gains. Correction remains limited to 400.

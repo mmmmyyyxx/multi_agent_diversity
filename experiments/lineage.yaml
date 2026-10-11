@@ -953,6 +953,9 @@ nodes:
 - experiment_id: current_scientific_semantics_pilot_diagnostic_v1
   kind: FORENSIC_AUDIT
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: gradient_diagnostic_threshold_replay_v1
+  kind: FORENSIC_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2072,4 +2075,9 @@ edges:
   evidence: reports/current_scientific_semantics_pilot_diagnostic_20261011/README.md
   scope: Read-only exact-source diagnostic; historical scores and classifications
     unchanged.
+- from: current_scientific_semantics_pilot_diagnostic_v1
+  to: gradient_diagnostic_threshold_replay_v1
+  relation: audit_of
+  evidence: reports/gradient_diagnostic_threshold_replay_20261011/README.md
+  scope: Counterfactual threshold sensitivity only; no new policy or efficacy result.
 current_frontier: experiments/current_frontier.yaml

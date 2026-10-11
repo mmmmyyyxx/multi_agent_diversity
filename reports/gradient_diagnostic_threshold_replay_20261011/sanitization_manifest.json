@@ -1,0 +1,11 @@
+{
+  "published": [
+    "hashes",
+    "counts",
+    "aggregate_lengths",
+    "closed_categories",
+    "metrics",
+    "interpretation"
+  ],
+  "prompts_questions_answers_and_raw_responses_exported": false
+}

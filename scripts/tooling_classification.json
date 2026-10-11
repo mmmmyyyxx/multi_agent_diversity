@@ -2,6 +2,12 @@
   "schema_version": "tooling_classification_v1",
   "scripts": [
     {
+      "path": "scripts/audit_gradient_diagnostic_thresholds.py",
+      "classification": "ONE_OFF_AUDIT",
+      "move": false,
+      "reason": "Sealed Optimize two-field counterfactual replay with exact frozen validators; no execution policy."
+    },
+    {
       "path": "scripts/audit_openlux_pilot_diagnostics.py",
       "classification": "ONE_OFF_AUDIT",
       "move": false,

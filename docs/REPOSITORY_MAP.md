@@ -19,6 +19,7 @@ Current authority: AGENTS.md, docs/design/CURRENT_SPEC.md and
 | experiments/manifests/ | Permanent immutable historical and fresh current experiment contracts |
 | experiments/execution_bindings/ | Current versioned bindings and non-executable historical evidence |
 | multi_dataset_diverse_rl/diagnostics/pilot_observations.py | Offline opportunity streaks and Gradient failure/cost observations; no runtime read point |
+| multi_dataset_diverse_rl/diagnostics/gradient_threshold_replay.py | Offline two-field counterfactual isolation and local retry accounting; no runtime policy |
 | reports/ | Immutable scientific evidence; current cleanup inventory and tombstone |
 | scripts/run_experiment.py | Sole current runner |
 | tests/suite_classification.json | Current, excluded and Git-only historical test inventory |

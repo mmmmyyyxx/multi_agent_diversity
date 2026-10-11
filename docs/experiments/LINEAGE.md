@@ -101,6 +101,9 @@ prior_authorization_scopes_closed: true
 last_semantic_diagnostic_report: reports/current_scientific_semantics_pilot_diagnostic_20261011
 last_semantic_diagnostic_method_changed: false
 last_semantic_diagnostic_real_api_calls: 0
+last_gradient_threshold_report: reports/gradient_diagnostic_threshold_replay_20261011
+last_gradient_threshold_recommended_future_cap: 400
+last_gradient_threshold_runtime_changed: false
 ```
 
 ## Experiment and engineering DAG
@@ -402,6 +405,7 @@ flowchart TD
     n315["a4_v25_arm_b_openlux_seed84_canary_v1<br/>REAL_CANARY<br/>COMPLETED"]
     n316["a4_v25_arm_b_openlux_seed84_pilot_v1<br/>PILOT<br/>COMPLETED"]
     n317["current_scientific_semantics_pilot_diagnostic_v1<br/>FORENSIC_AUDIT<br/>COMPLETED"]
+    n318["gradient_diagnostic_threshold_replay_v1<br/>FORENSIC_AUDIT<br/>COMPLETED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -656,6 +660,7 @@ flowchart TD
   n314 -->|derived_from| n316
   n315 -->|audit_of| n317
   n316 -->|audit_of| n317
+  n317 -->|audit_of| n318
 ```
 
 ## Archived branches and unresolved evidence

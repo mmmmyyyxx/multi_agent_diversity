@@ -1,0 +1,13 @@
+{
+  "original_172_response_baseline_matches": true,
+  "all_25_combinations_fully_validated": true,
+  "native_input_schema_provenance_and_output_guards_preserved": true,
+  "correction_400_unchanged": true,
+  "expected_effect_240_unchanged": true,
+  "negative_controls_pass": true,
+  "no_text_truncation_or_json_repair": true,
+  "original_reports_scores_identities_and_raw_evidence_preserved": true,
+  "no_new_api_or_heldout_access": true,
+  "no_runtime_policy_change": true,
+  "push_not_authorized": true
+}

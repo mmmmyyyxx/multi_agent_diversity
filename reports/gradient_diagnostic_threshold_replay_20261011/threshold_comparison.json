@@ -1,0 +1,1973 @@
+{
+  "schema_version": "gradient_two_field_counterfactual_v1",
+  "parent_diagnostic_commit": "7982871850756457b092a5c83ae60347871cdc46",
+  "historical_source_sha": "01306fbf9cde002291ab21e2f93a2c02399f7e9e",
+  "historical_result_commit": "30a57d82213fb7788581e3fe8fd9ba7903dfb302",
+  "fields_varied": [
+    "observed_failure",
+    "diagnosis"
+  ],
+  "limits": [
+    240,
+    320,
+    400,
+    480,
+    640
+  ],
+  "phases": {
+    "canary": {
+      "matrix": [
+        {
+          "observed_limit": 240,
+          "diagnosis_limit": 240,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 1,
+          "newly_full_pass_responses": 0,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 2,
+          "accepted_diagnoses": 1,
+          "first_pass_diagnoses": 0,
+          "actionable_diagnoses": 1,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 0,
+          "earlier_acceptance_diagnoses": 0,
+          "avoidable_historical_retry_responses": 0,
+          "avoidable_input_tokens": 0,
+          "avoidable_output_tokens": 0,
+          "avoidable_usage_tokens": 0,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 5
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 240,
+          "diagnosis_limit": 320,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 3,
+          "newly_full_pass_responses": 2,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 1,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 1,
+          "avoidable_historical_retry_responses": 2,
+          "avoidable_input_tokens": 7600,
+          "avoidable_output_tokens": 705,
+          "avoidable_usage_tokens": 8305,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 3
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 240,
+          "diagnosis_limit": 400,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 3,
+          "newly_full_pass_responses": 2,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 1,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 1,
+          "avoidable_historical_retry_responses": 2,
+          "avoidable_input_tokens": 7600,
+          "avoidable_output_tokens": 705,
+          "avoidable_usage_tokens": 8305,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 3
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 240,
+          "diagnosis_limit": 480,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 3,
+          "newly_full_pass_responses": 2,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 1,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 1,
+          "avoidable_historical_retry_responses": 2,
+          "avoidable_input_tokens": 7600,
+          "avoidable_output_tokens": 705,
+          "avoidable_usage_tokens": 8305,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 3
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 240,
+          "diagnosis_limit": 640,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 3,
+          "newly_full_pass_responses": 2,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 1,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 1,
+          "avoidable_historical_retry_responses": 2,
+          "avoidable_input_tokens": 7600,
+          "avoidable_output_tokens": 705,
+          "avoidable_usage_tokens": 8305,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 3
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 320,
+          "diagnosis_limit": 240,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 1,
+          "newly_full_pass_responses": 0,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 2,
+          "accepted_diagnoses": 1,
+          "first_pass_diagnoses": 0,
+          "actionable_diagnoses": 1,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 0,
+          "earlier_acceptance_diagnoses": 0,
+          "avoidable_historical_retry_responses": 0,
+          "avoidable_input_tokens": 0,
+          "avoidable_output_tokens": 0,
+          "avoidable_usage_tokens": 0,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 5
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 320,
+          "diagnosis_limit": 320,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 4,
+          "newly_full_pass_responses": 3,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 2,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 2,
+          "avoidable_historical_retry_responses": 3,
+          "avoidable_input_tokens": 10551,
+          "avoidable_output_tokens": 948,
+          "avoidable_usage_tokens": 11499,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 2
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 320,
+          "diagnosis_limit": 400,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 4,
+          "newly_full_pass_responses": 3,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 2,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 2,
+          "avoidable_historical_retry_responses": 3,
+          "avoidable_input_tokens": 10551,
+          "avoidable_output_tokens": 948,
+          "avoidable_usage_tokens": 11499,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 3,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 1
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 1
+          }
+        },
+        {
+          "observed_limit": 320,
+          "diagnosis_limit": 480,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 4,
+          "newly_full_pass_responses": 3,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 2,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 2,
+          "avoidable_historical_retry_responses": 3,
+          "avoidable_input_tokens": 10551,
+          "avoidable_output_tokens": 948,
+          "avoidable_usage_tokens": 11499,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 3,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 1
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 1
+          }
+        },
+        {
+          "observed_limit": 320,
+          "diagnosis_limit": 640,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 4,
+          "newly_full_pass_responses": 3,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 2,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 2,
+          "avoidable_historical_retry_responses": 3,
+          "avoidable_input_tokens": 10551,
+          "avoidable_output_tokens": 948,
+          "avoidable_usage_tokens": 11499,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 3,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 1
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 1
+          }
+        },
+        {
+          "observed_limit": 400,
+          "diagnosis_limit": 240,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 1,
+          "newly_full_pass_responses": 0,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 2,
+          "accepted_diagnoses": 1,
+          "first_pass_diagnoses": 0,
+          "actionable_diagnoses": 1,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 0,
+          "earlier_acceptance_diagnoses": 0,
+          "avoidable_historical_retry_responses": 0,
+          "avoidable_input_tokens": 0,
+          "avoidable_output_tokens": 0,
+          "avoidable_usage_tokens": 0,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 5
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 400,
+          "diagnosis_limit": 320,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 4,
+          "newly_full_pass_responses": 3,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 2,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 2,
+          "avoidable_historical_retry_responses": 3,
+          "avoidable_input_tokens": 10551,
+          "avoidable_output_tokens": 948,
+          "avoidable_usage_tokens": 11499,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 2
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 400,
+          "diagnosis_limit": 400,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 4,
+          "newly_full_pass_responses": 3,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 2,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 2,
+          "avoidable_historical_retry_responses": 3,
+          "avoidable_input_tokens": 10551,
+          "avoidable_output_tokens": 948,
+          "avoidable_usage_tokens": 11499,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 3,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 1
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 1
+          }
+        },
+        {
+          "observed_limit": 400,
+          "diagnosis_limit": 480,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 4,
+          "newly_full_pass_responses": 3,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 2,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 2,
+          "avoidable_historical_retry_responses": 3,
+          "avoidable_input_tokens": 10551,
+          "avoidable_output_tokens": 948,
+          "avoidable_usage_tokens": 11499,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 3,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 1
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 1
+          }
+        },
+        {
+          "observed_limit": 400,
+          "diagnosis_limit": 640,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 4,
+          "newly_full_pass_responses": 3,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 2,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 2,
+          "avoidable_historical_retry_responses": 3,
+          "avoidable_input_tokens": 10551,
+          "avoidable_output_tokens": 948,
+          "avoidable_usage_tokens": 11499,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 3,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 1
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 1
+          }
+        },
+        {
+          "observed_limit": 480,
+          "diagnosis_limit": 240,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 1,
+          "newly_full_pass_responses": 0,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 2,
+          "accepted_diagnoses": 1,
+          "first_pass_diagnoses": 0,
+          "actionable_diagnoses": 1,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 0,
+          "earlier_acceptance_diagnoses": 0,
+          "avoidable_historical_retry_responses": 0,
+          "avoidable_input_tokens": 0,
+          "avoidable_output_tokens": 0,
+          "avoidable_usage_tokens": 0,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 5
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 480,
+          "diagnosis_limit": 320,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 4,
+          "newly_full_pass_responses": 3,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 2,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 2,
+          "avoidable_historical_retry_responses": 3,
+          "avoidable_input_tokens": 10551,
+          "avoidable_output_tokens": 948,
+          "avoidable_usage_tokens": 11499,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 2
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 480,
+          "diagnosis_limit": 400,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 4,
+          "newly_full_pass_responses": 3,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 2,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 2,
+          "avoidable_historical_retry_responses": 3,
+          "avoidable_input_tokens": 10551,
+          "avoidable_output_tokens": 948,
+          "avoidable_usage_tokens": 11499,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 3,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 1
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 1
+          }
+        },
+        {
+          "observed_limit": 480,
+          "diagnosis_limit": 480,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 4,
+          "newly_full_pass_responses": 3,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 2,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 2,
+          "avoidable_historical_retry_responses": 3,
+          "avoidable_input_tokens": 10551,
+          "avoidable_output_tokens": 948,
+          "avoidable_usage_tokens": 11499,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 3,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 1
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 1
+          }
+        },
+        {
+          "observed_limit": 480,
+          "diagnosis_limit": 640,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 4,
+          "newly_full_pass_responses": 3,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 2,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 2,
+          "avoidable_historical_retry_responses": 3,
+          "avoidable_input_tokens": 10551,
+          "avoidable_output_tokens": 948,
+          "avoidable_usage_tokens": 11499,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 3,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 1
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 1
+          }
+        },
+        {
+          "observed_limit": 640,
+          "diagnosis_limit": 240,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 1,
+          "newly_full_pass_responses": 0,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 2,
+          "accepted_diagnoses": 1,
+          "first_pass_diagnoses": 0,
+          "actionable_diagnoses": 1,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 0,
+          "earlier_acceptance_diagnoses": 0,
+          "avoidable_historical_retry_responses": 0,
+          "avoidable_input_tokens": 0,
+          "avoidable_output_tokens": 0,
+          "avoidable_usage_tokens": 0,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 5
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 640,
+          "diagnosis_limit": 320,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 4,
+          "newly_full_pass_responses": 3,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 2,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 2,
+          "avoidable_historical_retry_responses": 3,
+          "avoidable_input_tokens": 10551,
+          "avoidable_output_tokens": 948,
+          "avoidable_usage_tokens": 11499,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 2
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 640,
+          "diagnosis_limit": 400,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 4,
+          "newly_full_pass_responses": 3,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 2,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 2,
+          "avoidable_historical_retry_responses": 3,
+          "avoidable_input_tokens": 10551,
+          "avoidable_output_tokens": 948,
+          "avoidable_usage_tokens": 11499,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 3,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 1
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 1
+          }
+        },
+        {
+          "observed_limit": 640,
+          "diagnosis_limit": 480,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 4,
+          "newly_full_pass_responses": 3,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 2,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 2,
+          "avoidable_historical_retry_responses": 3,
+          "avoidable_input_tokens": 10551,
+          "avoidable_output_tokens": 948,
+          "avoidable_usage_tokens": 11499,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 3,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 1
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 1
+          }
+        },
+        {
+          "observed_limit": 640,
+          "diagnosis_limit": 640,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 4,
+          "newly_full_pass_responses": 3,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 2,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 2,
+          "avoidable_historical_retry_responses": 3,
+          "avoidable_input_tokens": 10551,
+          "avoidable_output_tokens": 948,
+          "avoidable_usage_tokens": 11499,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 3,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 1
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 1
+          }
+        }
+      ],
+      "equal_cap_comparison": [
+        {
+          "observed_limit": 240,
+          "diagnosis_limit": 240,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 1,
+          "newly_full_pass_responses": 0,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 2,
+          "accepted_diagnoses": 1,
+          "first_pass_diagnoses": 0,
+          "actionable_diagnoses": 1,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 0,
+          "earlier_acceptance_diagnoses": 0,
+          "avoidable_historical_retry_responses": 0,
+          "avoidable_input_tokens": 0,
+          "avoidable_output_tokens": 0,
+          "avoidable_usage_tokens": 0,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 5
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 320,
+          "diagnosis_limit": 320,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 4,
+          "newly_full_pass_responses": 3,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 2,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 2,
+          "avoidable_historical_retry_responses": 3,
+          "avoidable_input_tokens": 10551,
+          "avoidable_output_tokens": 948,
+          "avoidable_usage_tokens": 11499,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 2
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 400,
+          "diagnosis_limit": 400,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 4,
+          "newly_full_pass_responses": 3,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 2,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 2,
+          "avoidable_historical_retry_responses": 3,
+          "avoidable_input_tokens": 10551,
+          "avoidable_output_tokens": 948,
+          "avoidable_usage_tokens": 11499,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 3,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 1
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 1
+          }
+        },
+        {
+          "observed_limit": 480,
+          "diagnosis_limit": 480,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 4,
+          "newly_full_pass_responses": 3,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 2,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 2,
+          "avoidable_historical_retry_responses": 3,
+          "avoidable_input_tokens": 10551,
+          "avoidable_output_tokens": 948,
+          "avoidable_usage_tokens": 11499,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 3,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 1
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 1
+          }
+        },
+        {
+          "observed_limit": 640,
+          "diagnosis_limit": 640,
+          "logical_diagnoses": 3,
+          "physical_responses": 8,
+          "all_response_full_pass": 4,
+          "newly_full_pass_responses": 3,
+          "historical_input_tokens": 28822,
+          "historical_output_tokens": 2501,
+          "remaining_exhausted_diagnoses": 1,
+          "accepted_diagnoses": 2,
+          "first_pass_diagnoses": 2,
+          "actionable_diagnoses": 2,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 1,
+          "earlier_acceptance_diagnoses": 2,
+          "avoidable_historical_retry_responses": 3,
+          "avoidable_input_tokens": 10551,
+          "avoidable_output_tokens": 948,
+          "avoidable_usage_tokens": 11499,
+          "historical_usage_tokens": 31323,
+          "all_response_native_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 3,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 1
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 1
+          }
+        }
+      ],
+      "length_distributions": {
+        "observed_failure": {
+          "string_responses": 6,
+          "maximum": 394,
+          "over_limit_counts": {
+            "240": 3,
+            "320": 1,
+            "400": 0,
+            "480": 0,
+            "640": 0
+          },
+          "percentiles": {
+            "50": 240,
+            "75": 251,
+            "90": 394,
+            "95": 394,
+            "100": 394
+          }
+        },
+        "diagnosis": {
+          "string_responses": 6,
+          "maximum": 363,
+          "over_limit_counts": {
+            "240": 5,
+            "320": 1,
+            "400": 0,
+            "480": 0,
+            "640": 0
+          },
+          "percentiles": {
+            "50": 275,
+            "75": 314,
+            "90": 363,
+            "95": 363,
+            "100": 363
+          }
+        },
+        "reusable_correction": {
+          "string_responses": 6,
+          "maximum": 469,
+          "over_limit_counts": {
+            "240": 5,
+            "320": 2,
+            "400": 1,
+            "480": 0,
+            "640": 0
+          },
+          "percentiles": {
+            "50": 274,
+            "75": 334,
+            "90": 469,
+            "95": 469,
+            "100": 469
+          }
+        },
+        "expected_effect": {
+          "string_responses": 6,
+          "maximum": 202,
+          "over_limit_counts": {
+            "240": 0,
+            "320": 0,
+            "400": 0,
+            "480": 0,
+            "640": 0
+          },
+          "percentiles": {
+            "50": 165,
+            "75": 186,
+            "90": 202,
+            "95": 202,
+            "100": 202
+          }
+        }
+      },
+      "historical_extra_draws": 5,
+      "historical_extra_usage_tokens": 19890,
+      "historical_phase_usage_tokens": 283304,
+      "raw_inventory_sha256": "2422ad22685c9974d314af946f35b5f1a0e75a921abde3223bd96df0c2ca434f",
+      "original_native_rejections": {
+        "PATTERN_GRADIENT_EXTRACTION_INVALID": 2,
+        "REFERENCE_GRADIENT_OUTPUT_INVALID": 5
+      }
+    },
+    "pilot": {
+      "matrix": [
+        {
+          "observed_limit": 240,
+          "diagnosis_limit": 240,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 30,
+          "newly_full_pass_responses": 0,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "remaining_exhausted_diagnoses": 38,
+          "accepted_diagnoses": 30,
+          "first_pass_diagnoses": 15,
+          "actionable_diagnoses": 30,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 0,
+          "earlier_acceptance_diagnoses": 0,
+          "avoidable_historical_retry_responses": 0,
+          "avoidable_input_tokens": 0,
+          "avoidable_output_tokens": 0,
+          "avoidable_usage_tokens": 0,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 109,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 24,
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 240,
+          "diagnosis_limit": 320,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 59,
+          "newly_full_pass_responses": 29,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "remaining_exhausted_diagnoses": 22,
+          "accepted_diagnoses": 46,
+          "first_pass_diagnoses": 26,
+          "actionable_diagnoses": 46,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 16,
+          "earlier_acceptance_diagnoses": 21,
+          "avoidable_historical_retry_responses": 27,
+          "avoidable_input_tokens": 107346,
+          "avoidable_output_tokens": 7357,
+          "avoidable_usage_tokens": 114703,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 80,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 24,
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 240,
+          "diagnosis_limit": 400,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 66,
+          "newly_full_pass_responses": 36,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "remaining_exhausted_diagnoses": 18,
+          "accepted_diagnoses": 50,
+          "first_pass_diagnoses": 29,
+          "actionable_diagnoses": 50,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 20,
+          "earlier_acceptance_diagnoses": 24,
+          "avoidable_historical_retry_responses": 33,
+          "avoidable_input_tokens": 127735,
+          "avoidable_output_tokens": 9109,
+          "avoidable_usage_tokens": 136844,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 72,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 24
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1
+          }
+        },
+        {
+          "observed_limit": 240,
+          "diagnosis_limit": 480,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 68,
+          "newly_full_pass_responses": 38,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "remaining_exhausted_diagnoses": 17,
+          "accepted_diagnoses": 51,
+          "first_pass_diagnoses": 30,
+          "actionable_diagnoses": 51,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 21,
+          "earlier_acceptance_diagnoses": 24,
+          "avoidable_historical_retry_responses": 34,
+          "avoidable_input_tokens": 132109,
+          "avoidable_output_tokens": 9328,
+          "avoidable_usage_tokens": 141437,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 70,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 24
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1
+          }
+        },
+        {
+          "observed_limit": 240,
+          "diagnosis_limit": 640,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 68,
+          "newly_full_pass_responses": 38,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "remaining_exhausted_diagnoses": 17,
+          "accepted_diagnoses": 51,
+          "first_pass_diagnoses": 30,
+          "actionable_diagnoses": 51,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 21,
+          "earlier_acceptance_diagnoses": 24,
+          "avoidable_historical_retry_responses": 34,
+          "avoidable_input_tokens": 132109,
+          "avoidable_output_tokens": 9328,
+          "avoidable_usage_tokens": 141437,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 70,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 24
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1
+          }
+        },
+        {
+          "observed_limit": 320,
+          "diagnosis_limit": 240,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 34,
+          "newly_full_pass_responses": 4,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "remaining_exhausted_diagnoses": 35,
+          "accepted_diagnoses": 33,
+          "first_pass_diagnoses": 18,
+          "actionable_diagnoses": 33,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 3,
+          "earlier_acceptance_diagnoses": 3,
+          "avoidable_historical_retry_responses": 6,
+          "avoidable_input_tokens": 22806,
+          "avoidable_output_tokens": 2016,
+          "avoidable_usage_tokens": 24822,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 105,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 24,
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 320,
+          "diagnosis_limit": 320,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 77,
+          "newly_full_pass_responses": 47,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "accepted_diagnoses": 56,
+          "first_pass_diagnoses": 34,
+          "actionable_diagnoses": 56,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 26,
+          "earlier_acceptance_diagnoses": 31,
+          "avoidable_historical_retry_responses": 45,
+          "avoidable_input_tokens": 170931,
+          "avoidable_output_tokens": 12746,
+          "remaining_exhausted_diagnoses": 12,
+          "avoidable_usage_tokens": 183677,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 62,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 24,
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 320,
+          "diagnosis_limit": 400,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 89,
+          "newly_full_pass_responses": 59,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "accepted_diagnoses": 60,
+          "first_pass_diagnoses": 37,
+          "actionable_diagnoses": 60,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 30,
+          "earlier_acceptance_diagnoses": 35,
+          "avoidable_historical_retry_responses": 52,
+          "avoidable_input_tokens": 197978,
+          "avoidable_output_tokens": 14777,
+          "remaining_exhausted_diagnoses": 8,
+          "avoidable_usage_tokens": 212755,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 48,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 25
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 1
+          }
+        },
+        {
+          "observed_limit": 320,
+          "diagnosis_limit": 480,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 93,
+          "newly_full_pass_responses": 63,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "accepted_diagnoses": 61,
+          "first_pass_diagnoses": 38,
+          "actionable_diagnoses": 61,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 31,
+          "earlier_acceptance_diagnoses": 35,
+          "avoidable_historical_retry_responses": 53,
+          "avoidable_input_tokens": 202352,
+          "avoidable_output_tokens": 14996,
+          "remaining_exhausted_diagnoses": 7,
+          "avoidable_usage_tokens": 217348,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 43,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 26
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 2
+          }
+        },
+        {
+          "observed_limit": 320,
+          "diagnosis_limit": 640,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 94,
+          "newly_full_pass_responses": 64,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "accepted_diagnoses": 61,
+          "first_pass_diagnoses": 38,
+          "actionable_diagnoses": 61,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 31,
+          "earlier_acceptance_diagnoses": 35,
+          "avoidable_historical_retry_responses": 53,
+          "avoidable_input_tokens": 202352,
+          "avoidable_output_tokens": 14996,
+          "remaining_exhausted_diagnoses": 7,
+          "avoidable_usage_tokens": 217348,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 40,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 28
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 4
+          }
+        },
+        {
+          "observed_limit": 400,
+          "diagnosis_limit": 240,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 35,
+          "newly_full_pass_responses": 5,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "remaining_exhausted_diagnoses": 34,
+          "accepted_diagnoses": 34,
+          "first_pass_diagnoses": 18,
+          "actionable_diagnoses": 34,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 4,
+          "earlier_acceptance_diagnoses": 3,
+          "avoidable_historical_retry_responses": 6,
+          "avoidable_input_tokens": 22806,
+          "avoidable_output_tokens": 2016,
+          "avoidable_usage_tokens": 24822,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 104,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 24,
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 400,
+          "diagnosis_limit": 320,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 78,
+          "newly_full_pass_responses": 48,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "accepted_diagnoses": 56,
+          "first_pass_diagnoses": 34,
+          "actionable_diagnoses": 56,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 26,
+          "earlier_acceptance_diagnoses": 31,
+          "avoidable_historical_retry_responses": 45,
+          "avoidable_input_tokens": 170931,
+          "avoidable_output_tokens": 12746,
+          "remaining_exhausted_diagnoses": 12,
+          "avoidable_usage_tokens": 183677,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 61,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 24,
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 400,
+          "diagnosis_limit": 400,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 94,
+          "newly_full_pass_responses": 64,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "accepted_diagnoses": 60,
+          "first_pass_diagnoses": 39,
+          "actionable_diagnoses": 60,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 30,
+          "earlier_acceptance_diagnoses": 36,
+          "avoidable_historical_retry_responses": 55,
+          "avoidable_input_tokens": 208252,
+          "avoidable_output_tokens": 15923,
+          "remaining_exhausted_diagnoses": 8,
+          "avoidable_usage_tokens": 224175,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 40,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 28
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 4
+          }
+        },
+        {
+          "observed_limit": 400,
+          "diagnosis_limit": 480,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 98,
+          "newly_full_pass_responses": 68,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "accepted_diagnoses": 61,
+          "first_pass_diagnoses": 40,
+          "actionable_diagnoses": 61,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 31,
+          "earlier_acceptance_diagnoses": 36,
+          "avoidable_historical_retry_responses": 56,
+          "avoidable_input_tokens": 212626,
+          "avoidable_output_tokens": 16142,
+          "remaining_exhausted_diagnoses": 7,
+          "avoidable_usage_tokens": 228768,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 34,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 30
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 6
+          }
+        },
+        {
+          "observed_limit": 400,
+          "diagnosis_limit": 640,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 100,
+          "newly_full_pass_responses": 70,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "accepted_diagnoses": 61,
+          "first_pass_diagnoses": 40,
+          "actionable_diagnoses": 61,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 31,
+          "earlier_acceptance_diagnoses": 37,
+          "avoidable_historical_retry_responses": 57,
+          "avoidable_input_tokens": 216707,
+          "avoidable_output_tokens": 16376,
+          "remaining_exhausted_diagnoses": 7,
+          "avoidable_usage_tokens": 233083,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 29,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 33
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 9
+          }
+        },
+        {
+          "observed_limit": 480,
+          "diagnosis_limit": 240,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 35,
+          "newly_full_pass_responses": 5,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "remaining_exhausted_diagnoses": 34,
+          "accepted_diagnoses": 34,
+          "first_pass_diagnoses": 18,
+          "actionable_diagnoses": 34,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 4,
+          "earlier_acceptance_diagnoses": 3,
+          "avoidable_historical_retry_responses": 6,
+          "avoidable_input_tokens": 22806,
+          "avoidable_output_tokens": 2016,
+          "avoidable_usage_tokens": 24822,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 104,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 24,
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 480,
+          "diagnosis_limit": 320,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 78,
+          "newly_full_pass_responses": 48,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "accepted_diagnoses": 56,
+          "first_pass_diagnoses": 34,
+          "actionable_diagnoses": 56,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 26,
+          "earlier_acceptance_diagnoses": 31,
+          "avoidable_historical_retry_responses": 45,
+          "avoidable_input_tokens": 170931,
+          "avoidable_output_tokens": 12746,
+          "remaining_exhausted_diagnoses": 12,
+          "avoidable_usage_tokens": 183677,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 61,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 24,
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 480,
+          "diagnosis_limit": 400,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 94,
+          "newly_full_pass_responses": 64,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "accepted_diagnoses": 60,
+          "first_pass_diagnoses": 39,
+          "actionable_diagnoses": 60,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 30,
+          "earlier_acceptance_diagnoses": 36,
+          "avoidable_historical_retry_responses": 55,
+          "avoidable_input_tokens": 208252,
+          "avoidable_output_tokens": 15923,
+          "remaining_exhausted_diagnoses": 8,
+          "avoidable_usage_tokens": 224175,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 40,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 28
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 4
+          }
+        },
+        {
+          "observed_limit": 480,
+          "diagnosis_limit": 480,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 99,
+          "newly_full_pass_responses": 69,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "accepted_diagnoses": 61,
+          "first_pass_diagnoses": 40,
+          "actionable_diagnoses": 61,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 31,
+          "earlier_acceptance_diagnoses": 36,
+          "avoidable_historical_retry_responses": 56,
+          "avoidable_input_tokens": 212626,
+          "avoidable_output_tokens": 16142,
+          "remaining_exhausted_diagnoses": 7,
+          "avoidable_usage_tokens": 228768,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 31,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 32
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 8
+          }
+        },
+        {
+          "observed_limit": 480,
+          "diagnosis_limit": 640,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 101,
+          "newly_full_pass_responses": 71,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "accepted_diagnoses": 61,
+          "first_pass_diagnoses": 40,
+          "actionable_diagnoses": 61,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 31,
+          "earlier_acceptance_diagnoses": 37,
+          "avoidable_historical_retry_responses": 57,
+          "avoidable_input_tokens": 216707,
+          "avoidable_output_tokens": 16376,
+          "remaining_exhausted_diagnoses": 7,
+          "avoidable_usage_tokens": 233083,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 26,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 35
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 11
+          }
+        },
+        {
+          "observed_limit": 640,
+          "diagnosis_limit": 240,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 35,
+          "newly_full_pass_responses": 5,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "remaining_exhausted_diagnoses": 34,
+          "accepted_diagnoses": 34,
+          "first_pass_diagnoses": 18,
+          "actionable_diagnoses": 34,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 4,
+          "earlier_acceptance_diagnoses": 3,
+          "avoidable_historical_retry_responses": 6,
+          "avoidable_input_tokens": 22806,
+          "avoidable_output_tokens": 2016,
+          "avoidable_usage_tokens": 24822,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 104,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 24,
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 640,
+          "diagnosis_limit": 320,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 78,
+          "newly_full_pass_responses": 48,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "accepted_diagnoses": 56,
+          "first_pass_diagnoses": 34,
+          "actionable_diagnoses": 56,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 26,
+          "earlier_acceptance_diagnoses": 31,
+          "avoidable_historical_retry_responses": 45,
+          "avoidable_input_tokens": 170931,
+          "avoidable_output_tokens": 12746,
+          "remaining_exhausted_diagnoses": 12,
+          "avoidable_usage_tokens": 183677,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 61,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 24,
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 640,
+          "diagnosis_limit": 400,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 94,
+          "newly_full_pass_responses": 64,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "accepted_diagnoses": 60,
+          "first_pass_diagnoses": 39,
+          "actionable_diagnoses": 60,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 30,
+          "earlier_acceptance_diagnoses": 36,
+          "avoidable_historical_retry_responses": 55,
+          "avoidable_input_tokens": 208252,
+          "avoidable_output_tokens": 15923,
+          "remaining_exhausted_diagnoses": 8,
+          "avoidable_usage_tokens": 224175,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 40,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 28
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 4
+          }
+        },
+        {
+          "observed_limit": 640,
+          "diagnosis_limit": 480,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 99,
+          "newly_full_pass_responses": 69,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "accepted_diagnoses": 61,
+          "first_pass_diagnoses": 40,
+          "actionable_diagnoses": 61,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 31,
+          "earlier_acceptance_diagnoses": 36,
+          "avoidable_historical_retry_responses": 56,
+          "avoidable_input_tokens": 212626,
+          "avoidable_output_tokens": 16142,
+          "remaining_exhausted_diagnoses": 7,
+          "avoidable_usage_tokens": 228768,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 31,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 32
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 8
+          }
+        },
+        {
+          "observed_limit": 640,
+          "diagnosis_limit": 640,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 101,
+          "newly_full_pass_responses": 71,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "accepted_diagnoses": 61,
+          "first_pass_diagnoses": 40,
+          "actionable_diagnoses": 61,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 31,
+          "earlier_acceptance_diagnoses": 37,
+          "avoidable_historical_retry_responses": 57,
+          "avoidable_input_tokens": 216707,
+          "avoidable_output_tokens": 16376,
+          "remaining_exhausted_diagnoses": 7,
+          "avoidable_usage_tokens": 233083,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 25,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 36
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 12
+          }
+        }
+      ],
+      "equal_cap_comparison": [
+        {
+          "observed_limit": 240,
+          "diagnosis_limit": 240,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 30,
+          "newly_full_pass_responses": 0,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "remaining_exhausted_diagnoses": 38,
+          "accepted_diagnoses": 30,
+          "first_pass_diagnoses": 15,
+          "actionable_diagnoses": 30,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 0,
+          "earlier_acceptance_diagnoses": 0,
+          "avoidable_historical_retry_responses": 0,
+          "avoidable_input_tokens": 0,
+          "avoidable_output_tokens": 0,
+          "avoidable_usage_tokens": 0,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 109,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 24,
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 320,
+          "diagnosis_limit": 320,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 77,
+          "newly_full_pass_responses": 47,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "accepted_diagnoses": 56,
+          "first_pass_diagnoses": 34,
+          "actionable_diagnoses": 56,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 26,
+          "earlier_acceptance_diagnoses": 31,
+          "avoidable_historical_retry_responses": 45,
+          "avoidable_input_tokens": 170931,
+          "avoidable_output_tokens": 12746,
+          "remaining_exhausted_diagnoses": 12,
+          "avoidable_usage_tokens": 183677,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 62,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 24,
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1
+          },
+          "newly_exposed_correction_rejections": {}
+        },
+        {
+          "observed_limit": 400,
+          "diagnosis_limit": 400,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 94,
+          "newly_full_pass_responses": 64,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "accepted_diagnoses": 60,
+          "first_pass_diagnoses": 39,
+          "actionable_diagnoses": 60,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 30,
+          "earlier_acceptance_diagnoses": 36,
+          "avoidable_historical_retry_responses": 55,
+          "avoidable_input_tokens": 208252,
+          "avoidable_output_tokens": 15923,
+          "remaining_exhausted_diagnoses": 8,
+          "avoidable_usage_tokens": 224175,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 40,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 28
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 4
+          }
+        },
+        {
+          "observed_limit": 480,
+          "diagnosis_limit": 480,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 99,
+          "newly_full_pass_responses": 69,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "accepted_diagnoses": 61,
+          "first_pass_diagnoses": 40,
+          "actionable_diagnoses": 61,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 31,
+          "earlier_acceptance_diagnoses": 36,
+          "avoidable_historical_retry_responses": 56,
+          "avoidable_input_tokens": 212626,
+          "avoidable_output_tokens": 16142,
+          "remaining_exhausted_diagnoses": 7,
+          "avoidable_usage_tokens": 228768,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 31,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 32
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 8
+          }
+        },
+        {
+          "observed_limit": 640,
+          "diagnosis_limit": 640,
+          "logical_diagnoses": 68,
+          "physical_responses": 164,
+          "all_response_full_pass": 101,
+          "newly_full_pass_responses": 71,
+          "historical_input_tokens": 623420,
+          "historical_output_tokens": 49127,
+          "accepted_diagnoses": 61,
+          "first_pass_diagnoses": 40,
+          "actionable_diagnoses": 61,
+          "uncertain_diagnoses": 0,
+          "rescued_exhausted_diagnoses": 31,
+          "earlier_acceptance_diagnoses": 37,
+          "avoidable_historical_retry_responses": 57,
+          "avoidable_input_tokens": 216707,
+          "avoidable_output_tokens": 16376,
+          "remaining_exhausted_diagnoses": 7,
+          "avoidable_usage_tokens": 233083,
+          "historical_usage_tokens": 672547,
+          "all_response_native_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 2,
+            "REFERENCE_GRADIENT_OUTPUT_INVALID": 25,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 36
+          },
+          "newly_exposed_correction_rejections": {
+            "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1,
+            "PATTERN_GRADIENT_EXTRACTION_INVALID": 12
+          }
+        }
+      ],
+      "length_distributions": {
+        "observed_failure": {
+          "string_responses": 140,
+          "maximum": 639,
+          "over_limit_counts": {
+            "240": 59,
+            "320": 24,
+            "400": 7,
+            "480": 3,
+            "640": 0
+          },
+          "percentiles": {
+            "50": 223,
+            "75": 284,
+            "90": 336,
+            "95": 391,
+            "100": 639
+          }
+        },
+        "diagnosis": {
+          "string_responses": 141,
+          "maximum": 1307,
+          "over_limit_counts": {
+            "240": 97,
+            "320": 50,
+            "400": 23,
+            "480": 10,
+            "640": 4
+          },
+          "percentiles": {
+            "50": 278,
+            "75": 361,
+            "90": 451,
+            "95": 531,
+            "100": 1307
+          }
+        },
+        "reusable_correction": {
+          "string_responses": 140,
+          "maximum": 885,
+          "over_limit_counts": {
+            "240": 103,
+            "320": 57,
+            "400": 18,
+            "480": 5,
+            "640": 2
+          },
+          "percentiles": {
+            "50": 292,
+            "75": 350,
+            "90": 416,
+            "95": 466,
+            "100": 885
+          }
+        },
+        "expected_effect": {
+          "string_responses": 140,
+          "maximum": 355,
+          "over_limit_counts": {
+            "240": 8,
+            "320": 2,
+            "400": 0,
+            "480": 0,
+            "640": 0
+          },
+          "percentiles": {
+            "50": 163,
+            "75": 194,
+            "90": 219,
+            "95": 244,
+            "100": 355
+          }
+        }
+      },
+      "historical_extra_draws": 96,
+      "historical_extra_usage_tokens": 394485,
+      "historical_phase_usage_tokens": 1680226,
+      "raw_inventory_sha256": "4bb86941ca4092441b8e77eb56bddb4501dda95be976a34e0ec0692043293033",
+      "original_native_rejections": {
+        "REFERENCE_GRADIENT_OUTPUT_INVALID": 109,
+        "PATTERN_GRADIENT_EXTRACTION_INVALID": 24,
+        "PATTERN_DISCOVERY_EXAMPLE_LEAKAGE": 1
+      }
+    }
+  },
+  "correction_limit_unchanged": 400,
+  "expected_effect_limit_unchanged": 240,
+  "original_prompt_preserved": true,
+  "schema_and_content_guards_preserved": true,
+  "production_policy_changed": false,
+  "historical_results_changed": false,
+  "real_api_calls": 0,
+  "validation_raw_reads": 0,
+  "test_raw_reads": 0,
+  "provenance": {
+    "frozen_package_archive_sha256": "ee271dc8c9eedf1f8d543a4effd46ac1e81e37425194afc6fc3b3636b746083e",
+    "historical_report_eol_projection": [
+      {
+        "file": "README.md",
+        "local_sha256": "35217acd8b21c6fe8bebe857ad91541af23aab3e0059b8a64e448bcdcc415fc9",
+        "git_blob_sha256": "4e1c17630178ae72a5b3155c918c2ca54757dea035a034b39eb88a14ad964713",
+        "difference": "CRLF_TO_LF_ONLY"
+      },
+      {
+        "file": "sha256_manifest.json",
+        "local_sha256": "385b6e8858fe22da04025ae46428c05bbb234f565b10b2ec007feb408730b89c",
+        "git_blob_sha256": "24941d2da87dd6497f85523bfd81b9239dbd45ca9e5dda83f024477aca6ec7a7",
+        "difference": "CRLF_TO_LF_ONLY"
+      },
+      {
+        "file": "verification.json",
+        "local_sha256": "0878da911f62c7eae738779d37ee28b20e918a8488cf5e51f91b24216d4d8fac",
+        "git_blob_sha256": "ea82ba585963cdef4362a92d070c1f4f88adeb6b05c6c560a39df610397a1876",
+        "difference": "CRLF_TO_LF_ONLY"
+      }
+    ],
+    "native_validator_ast_sha256": "8063ae445ce4838cb2df1dd0e42dca27ce77f892e04873d146090b5e5fc135c8",
+    "runner_sha256": "ef0e2e1427a4444d349faed9c5596721bcc831e9e9caeb95f03914ea1fe6ade9",
+    "diagnostic_helper_sha256": "647bbfc29cb212f4c3c9e01718561964e8915e7bba354365d48139ef1a032d70"
+  },
+  "negative_controls": {
+    "correction_over_400": "REJECTED_BY_UNCHANGED_NATIVE_VALIDATOR",
+    "expected_effect_over_240": "REJECTED_BY_UNCHANGED_NATIVE_VALIDATOR",
+    "illegal_block": "REJECTED_BY_UNCHANGED_NATIVE_VALIDATOR",
+    "unsafe_correction": "REJECTED_BY_UNCHANGED_NATIVE_VALIDATOR",
+    "uncertain_nonnull": "REJECTED_BY_UNCHANGED_NATIVE_VALIDATOR",
+    "extra_schema_key": "REJECTED_BY_UNCHANGED_NATIVE_VALIDATOR",
+    "malformed_json": "REJECTED_BY_UNCHANGED_NATIVE_DECODER",
+    "reference_source_provenance": "REJECTED_BEFORE_RESPONSE_DECODING"
+  },
+  "replay_import_source_verified": true
+}

@@ -1,0 +1,9 @@
+{
+  "evidence_type": "retrospective",
+  "engineering": "EXACT_SOURCE_COUNTERFACTUAL_REPLAY_PASS",
+  "scientific_validity": "VALID_OFFLINE_THRESHOLD_SENSITIVITY",
+  "efficacy": "NOT_EVALUABLE_NO_NEW_EXPERIMENT",
+  "generalization": "NOT_EVALUABLE_NO_HELDOUT_ACCESS",
+  "semantic_safety": "FROZEN_GUARDS_PRESERVED_NOT_A_PROOF",
+  "historical_classification": "UNCHANGED"
+}
