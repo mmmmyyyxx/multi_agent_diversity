@@ -57,6 +57,16 @@ outcomes, and its five initial Arm B prompts and cache remain fresh.
 
 ## Monetary control
 
+`USER_SELECTED_TOKEN_ONLY_RESOURCE_CONTROL_V1` is a separately frozen,
+explicitly user-selected resource mode. It retains every phase's hard Token
+ceiling, pre-transport reservations, conservative missing-usage charges,
+role/model audit and independent journals. It reports no price or monetary cap.
+The explicit `token_reporting_policy` enters binding reconstruction, manifest,
+startup scope, every role's request identity and the separate Validation scope.
+It is mutually exclusive with tariff accounting; missing both is not permission
+to execute a new parallel or formal scope. Historical priced/draft evidence keeps
+its original source identity. This mode changes no scientific or generation rule.
+
 `ROLE_ROUTED_SUPPLIER_COST_RESERVATION_V1` requires supplied OpenLux and lwj
 tariffs in one declared currency, input/output prices per million Token and any
 physical-request fee. Model-vendor prices are not substituted for reseller prices.
@@ -70,14 +80,16 @@ requests. Tariff/ceiling changes cannot reopen an existing journal.
 
 The charged amount is conservative accounting under the supplied tariff, not an
 invoice or proof of undocumented upstream billing. Unexpected usage remains fatal.
-Tariffs, currency and separate phase hard limits enter startup authorization and
-request identity. New parallel Canary and formal attempts cannot execute without
-these values. `COST_CEILING` is resource truncation, never scientific saturation.
+In tariff mode, prices, currency and separate phase hard limits enter startup
+authorization and request identity. New parallel Canary and formal attempts must
+freeze one explicit resource mode. `COST_CEILING` is resource truncation, never
+scientific saturation.
 
 ## Post-search evidence boundary
 
 `CURRENT_PAIRED_VALIDATION_300_V1` is a distinct, fresh, single-use authorization
-and cache namespace with a six-million-Token ceiling and its own monetary cap.
+and cache namespace with a six-million-Token ceiling and the explicitly frozen
+resource mode (its own monetary cap when tariff accounting is selected).
 It is part of the same formal experiment, not a new search or method selection.
 Source and split metadata freeze with search. The phase cannot open any Validation
 content until exact authorization and a verified search closure seal the frozen

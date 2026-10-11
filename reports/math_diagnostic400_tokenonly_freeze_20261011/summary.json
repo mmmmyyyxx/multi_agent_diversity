@@ -1,0 +1,23 @@
+{
+  "method_changed": false,
+  "monetary_tracking": false,
+  "phase_ids": {
+    "canary": "math_diagnostic400_tokenonly_seed85_canary_v1",
+    "formal": "math_diagnostic400_tokenonly_seed86_formal_v1",
+    "prep": "math_diagnostic400_tokenonly_preparation_v1",
+    "validation": "math_diagnostic400_tokenonly_seed86_validation_v1"
+  },
+  "real_api_calls": 0,
+  "status": "SOURCE_FREEZE_PREPARATION",
+  "token_limits": {
+    "canary_tokens": 2000000,
+    "canary_user": "授权进行canary的api调用",
+    "formal_condition": "Canary engineering/integrity gate; no efficacy veto",
+    "formal_tokens": 30000000,
+    "formal_user": "如果前面都已完成且无问题，授权进行正式实验的api调用",
+    "push_authorized": false,
+    "resource_user": "不需要计费，统计token就行",
+    "test_access": "sealed",
+    "validation_tokens": 6000000
+  }
+}

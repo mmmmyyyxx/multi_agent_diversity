@@ -40,7 +40,7 @@ def gradient_prompt_artifact():
 
 def prepare_structured_inputs(root,*,experiment_id,attempt,user_task_sha256,execution_phase='pilot',
         seed=81,team_version=MATH_INITIAL_TEAM_VERSION,initial_team_path=None,development_subsets=None,
-        execution_policy=None,cost_policy=None,canary_prerequisite=None):
+        execution_policy=None,cost_policy=None,canary_prerequisite=None,token_reporting_policy=None):
     """Prepare a fresh unapproved scope without loading examples or credentials."""
     from ..persistence.durable_io import atomic_write_json
     from ..governance.token_accounting import POLICY_V25_2M, POLICY_V25_FORMAL_30M
@@ -80,7 +80,7 @@ def prepare_structured_inputs(root,*,experiment_id,attempt,user_task_sha256,exec
         max_opportunities=1 if execution_phase=='canary' else formal_bound['max_opportunities'] if execution_phase=='formal' else 5,
         token_ceiling=accounting['authorized_total'],seed=seed,
         team_version=team_version,development_subsets=development_subsets,execution_policy=execution_policy,
-        cost_policy=cost_policy,canary_prerequisite=canary_prerequisite)
+        cost_policy=cost_policy,canary_prerequisite=canary_prerequisite,token_reporting_policy=token_reporting_policy)
     blockers=MATHStructuredBinding(root,c).blockers()
     if blockers:raise SearchContractError('V25_PREPARATION_HOLD:'+','.join(blockers))
     atomic_write_json(root/binding_path,c)
@@ -103,7 +103,7 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
         accounting_policy_path, accounting_policy_sha256, max_opportunities=5,
         token_ceiling=2_000_000, execution_phase='pilot',seed=81,
         team_version=MATH_INITIAL_TEAM_VERSION,development_subsets=None,execution_policy=None,
-        cost_policy=None,canary_prerequisite=None):
+        cost_policy=None,canary_prerequisite=None,token_reporting_policy=None):
     from .math_formal_scope import BOUND as formal_bound, ACCOUNTING_SCOPE as formal_accounting, SELECTION as formal_selection
     formal=execution_phase=='formal'
     if (not isinstance(attempt,str) or not attempt or execution_phase not in {'canary','pilot','formal'}
@@ -182,6 +182,7 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
         from ..governance.canary_review import FORMAL_POLICY
         c['canary_review_policy']=deepcopy(FORMAL_POLICY)
     c.pop('cost_policy',None)
+    c.pop('token_reporting_policy',None)
     c.pop('canary_prerequisite',None)
     if canary_prerequisite is not None:
         from ..governance.canary_progression import require_policy
@@ -193,6 +194,10 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
         from ..governance.token_accounting import OperationalAbort
         try:c['cost_policy']=frozen_policy(cost_policy)
         except OperationalAbort as exc:raise SearchContractError(str(exc)) from None
+    if token_reporting_policy is not None:
+        from ..governance.cost_accounting import require_resource_control
+        c['token_reporting_policy']=deepcopy(token_reporting_policy)
+        require_resource_control(c)
     if development_subsets is not None:
         if (set(development_subsets)!={'path','sha256','protocol'} or
                 (execution_phase!='canary' and development_subsets['protocol'].get('identity')!=
@@ -260,6 +265,7 @@ class MATHStructuredBinding:
                 seed=c['execution_seed'],team_version=c['initial_team_version'],
                 execution_policy=c['solver_execution_policy'],
                 cost_policy=c.get('cost_policy'),
+                token_reporting_policy=c.get('token_reporting_policy'),
                 canary_prerequisite=c.get('canary_prerequisite'),
                 development_subsets=(dict(path=c['low_cost_subsets_path'],sha256=c['low_cost_subsets_sha256'],
                     protocol=c['low_cost_protocol']) if c['low_cost_protocol']['identity'] in {

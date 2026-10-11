@@ -9429,7 +9429,7 @@ experiments:
   manifest: experiments/manifests/math_diagnostic400_canary_formal_preparation_v1.yaml
   report: reports/math_diagnostic400_formal_preparation_20261011
   classifier: reports/math_diagnostic400_formal_preparation_20261011/classifier.json
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -9440,3 +9440,108 @@ experiments:
     implementation_commit: Containing engineering commit; no self-reference.
     execution_commit: No real experiment executed.
     result_commit: Containing zero-API preparation evidence commit.
+- experiment_id: math_diagnostic400_tokenonly_preparation_v1
+  kind: PROTOCOL_FREEZE
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_5_diagnostic_limits_400_v2
+  parent_ids:
+  - math_diagnostic400_canary_formal_preparation_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: REGISTERED_TOKEN_ONLY_NO_CURRENT_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_diagnostic400_tokenonly_preparation_v1.yaml
+  report: reports/math_diagnostic400_tokenonly_freeze_20261011
+  classifier: reports/math_diagnostic400_tokenonly_freeze_20261011/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Fresh single-use phase; no historical outputs/cache or authorization reuse.
+  - Explicit user Token-only amendment; monetary accounting disabled, Token limits
+    unchanged.
+  unavailable:
+    implementation_commit: Containing source freeze commit; exact execution source
+      will be frozen in phase manifest.
+    execution_commit: Not executed at registration.
+    result_commit: No execution results at registration.
+- experiment_id: math_diagnostic400_tokenonly_seed85_canary_v1
+  kind: REAL_CANARY
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_5_diagnostic_limits_400_v2
+  parent_ids:
+  - math_diagnostic400_tokenonly_preparation_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: REGISTERED_TOKEN_ONLY_NO_CURRENT_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_diagnostic400_tokenonly_seed85_canary_v1.yaml
+  report: reports/math_diagnostic400_tokenonly_freeze_20261011
+  classifier: reports/math_diagnostic400_tokenonly_freeze_20261011/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Fresh single-use phase; no historical outputs/cache or authorization reuse.
+  - Explicit user Token-only amendment; monetary accounting disabled, Token limits
+    unchanged.
+  unavailable:
+    implementation_commit: Containing source freeze commit; exact execution source
+      will be frozen in phase manifest.
+    execution_commit: Not executed at registration.
+    result_commit: No execution results at registration.
+- experiment_id: math_diagnostic400_tokenonly_seed86_formal_v1
+  kind: FORMAL_EXPERIMENT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_5_diagnostic_limits_400_v2
+  parent_ids:
+  - math_diagnostic400_tokenonly_preparation_v1
+  - math_diagnostic400_tokenonly_seed85_canary_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: REGISTERED_TOKEN_ONLY_NO_CURRENT_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_diagnostic400_tokenonly_seed86_formal_v1.yaml
+  report: reports/math_diagnostic400_tokenonly_freeze_20261011
+  classifier: reports/math_diagnostic400_tokenonly_freeze_20261011/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Fresh single-use phase; no historical outputs/cache or authorization reuse.
+  - Explicit user Token-only amendment; monetary accounting disabled, Token limits
+    unchanged.
+  unavailable:
+    implementation_commit: Containing source freeze commit; exact execution source
+      will be frozen in phase manifest.
+    execution_commit: Not executed at registration.
+    result_commit: No execution results at registration.
+- experiment_id: math_diagnostic400_tokenonly_seed86_validation_v1
+  kind: DIAGNOSTIC
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_5_diagnostic_limits_400_v2
+  parent_ids:
+  - math_diagnostic400_tokenonly_seed86_formal_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: REGISTERED_TOKEN_ONLY_NO_CURRENT_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_diagnostic400_tokenonly_preparation_v1.yaml
+  report: reports/math_diagnostic400_tokenonly_freeze_20261011
+  classifier: reports/math_diagnostic400_tokenonly_freeze_20261011/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Fresh single-use phase; no historical outputs/cache or authorization reuse.
+  - Explicit user Token-only amendment; monetary accounting disabled, Token limits
+    unchanged.
+  unavailable:
+    implementation_commit: Containing source freeze commit; exact execution source
+      will be frozen in phase manifest.
+    execution_commit: Not executed at registration.
+    result_commit: No execution results at registration.

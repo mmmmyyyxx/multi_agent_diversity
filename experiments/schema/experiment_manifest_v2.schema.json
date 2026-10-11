@@ -12206,104 +12206,132 @@
         }
       },
       "else": {
-        "properties": {
-          "cost_policy": {
-            "additionalProperties": false,
+        "anyOf": [
+          {
             "properties": {
-              "currency": {
-                "enum": [
-                  "CNY",
-                  "USD"
-                ]
-              },
-              "hard_limit": {
-                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,6})?$",
-                "type": "string"
-              },
-              "identity": {
-                "const": "ROLE_ROUTED_SUPPLIER_COST_RESERVATION_V1"
-              },
-              "price_basis": {
-                "const": "CONSERVATIVE_NO_CACHE_DISCOUNT_ALL_PHYSICAL_ATTEMPTS"
-              },
-              "pricing_source": {
-                "minLength": 1,
-                "type": "string"
-              },
-              "tariffs": {
+              "cost_policy": {
                 "additionalProperties": false,
                 "properties": {
-                  "lwj": {
-                    "additionalProperties": false,
-                    "properties": {
-                      "input_per_million": {
-                        "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,6})?$",
-                        "type": "string"
-                      },
-                      "model": {
-                        "const": "qwen3.7-flash"
-                      },
-                      "output_per_million": {
-                        "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,6})?$",
-                        "type": "string"
-                      },
-                      "physical_request_fee": {
-                        "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,6})?$",
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "model",
-                      "input_per_million",
-                      "output_per_million",
-                      "physical_request_fee"
-                    ],
-                    "type": "object"
+                  "currency": {
+                    "enum": [
+                      "CNY",
+                      "USD"
+                    ]
                   },
-                  "openlux": {
+                  "hard_limit": {
+                    "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,6})?$",
+                    "type": "string"
+                  },
+                  "identity": {
+                    "const": "ROLE_ROUTED_SUPPLIER_COST_RESERVATION_V1"
+                  },
+                  "price_basis": {
+                    "const": "CONSERVATIVE_NO_CACHE_DISCOUNT_ALL_PHYSICAL_ATTEMPTS"
+                  },
+                  "pricing_source": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "tariffs": {
                     "additionalProperties": false,
                     "properties": {
-                      "input_per_million": {
-                        "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,6})?$",
-                        "type": "string"
+                      "lwj": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "input_per_million": {
+                            "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,6})?$",
+                            "type": "string"
+                          },
+                          "model": {
+                            "const": "qwen3.7-flash"
+                          },
+                          "output_per_million": {
+                            "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,6})?$",
+                            "type": "string"
+                          },
+                          "physical_request_fee": {
+                            "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,6})?$",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "model",
+                          "input_per_million",
+                          "output_per_million",
+                          "physical_request_fee"
+                        ],
+                        "type": "object"
                       },
-                      "model": {
-                        "const": "gpt-4o-mini"
-                      },
-                      "output_per_million": {
-                        "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,6})?$",
-                        "type": "string"
-                      },
-                      "physical_request_fee": {
-                        "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,6})?$",
-                        "type": "string"
+                      "openlux": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "input_per_million": {
+                            "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,6})?$",
+                            "type": "string"
+                          },
+                          "model": {
+                            "const": "gpt-4o-mini"
+                          },
+                          "output_per_million": {
+                            "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,6})?$",
+                            "type": "string"
+                          },
+                          "physical_request_fee": {
+                            "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,6})?$",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "model",
+                          "input_per_million",
+                          "output_per_million",
+                          "physical_request_fee"
+                        ],
+                        "type": "object"
                       }
                     },
                     "required": [
-                      "model",
-                      "input_per_million",
-                      "output_per_million",
-                      "physical_request_fee"
+                      "openlux",
+                      "lwj"
                     ],
                     "type": "object"
                   }
                 },
                 "required": [
-                  "openlux",
-                  "lwj"
+                  "identity",
+                  "currency",
+                  "hard_limit",
+                  "price_basis",
+                  "pricing_source",
+                  "tariffs"
                 ],
                 "type": "object"
               }
-            },
+            }
+          },
+          {
             "required": [
-              "identity",
-              "currency",
-              "hard_limit",
-              "price_basis",
-              "pricing_source",
-              "tariffs"
+              "token_reporting_policy"
             ],
-            "type": "object"
+            "properties": {
+              "cost_policy": {
+                "type": "null"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "token_reporting_policy"
+        ]
+      },
+      "then": {
+        "properties": {
+          "cost_policy": {
+            "type": "null"
           }
         }
       }
@@ -13841,6 +13869,15 @@
         "canary_attempt_id"
       ],
       "type": "object"
+    },
+    "token_reporting_policy": {
+      "const": {
+        "identity": "USER_SELECTED_TOKEN_ONLY_RESOURCE_CONTROL_V1",
+        "monetary_tracking": false,
+        "token_limits": "FROZEN_PHASE_LEDGER_HARD_LIMITS",
+        "missing_usage": "CONSERVATIVE_FULL_RESERVATION_CHARGE",
+        "authority": "EXPLICIT_USER_TOKEN_ONLY_INSTRUCTION"
+      }
     }
   },
   "required": [

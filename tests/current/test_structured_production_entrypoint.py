@@ -18,7 +18,7 @@ ROOT=Path(__file__).resolve().parents[2]
 FRESH='experiments/execution_bindings/a4_v25_seed81_canary_attempt1.json'
 
 def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct=False,structural=False,
-        seed=81,team_version=None,development_subsets=None,structural_kind='syntax',execution_policy=None):
+        seed=81,team_version=None,development_subsets=None,structural_kind='syntax',execution_policy=None,token_only=False):
     from hashlib import sha256
     from multi_dataset_diverse_rl.benchmarks.math_structured_binding import derive_structured_contract, gradient_prompt_artifact
     from multi_dataset_diverse_rl.search.optimization_evidence import POLICY
@@ -59,6 +59,10 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
     elif execution_policy is not None:
         from tests.current.test_formal_execution_scope import tariff
         extras=dict(cost_policy=tariff('1000000.000000'))
+    if token_only:
+        from multi_dataset_diverse_rl.governance.cost_accounting import TOKEN_ONLY_POLICY
+        extras.pop('cost_policy',None)
+        extras['token_reporting_policy']=TOKEN_ONLY_POLICY
     c=derive_structured_contract(read_json(ROOT/old['trajectory_parent_binding_path']),
         attempt=attempt,binding_path=fresh,parent_path=old['trajectory_parent_binding_path'],
         parent_sha256=old['trajectory_parent_binding_sha256'],authorization_path=scope_path,

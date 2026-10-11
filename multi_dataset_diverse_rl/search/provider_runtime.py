@@ -145,6 +145,8 @@ class RequestBroker:
             identity['execution_policy'] = self.execution_policy
         if c.get('cost_policy'):
             identity['cost_policy']=c['cost_policy']
+        if c.get('token_reporting_policy'):
+            identity['token_reporting_policy']=c['token_reporting_policy']
         if self.validation_only:
             identity['validation_treatment']={k:c[k] for k in ('post_freeze_validation_policy','validation_scope_identity')}
         if self.solver_trajectory_policy is not None:

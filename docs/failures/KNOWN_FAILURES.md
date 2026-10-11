@@ -541,3 +541,15 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 - Symptom: Synthetic duplicate invocation after completion could enter the abort lifecycle writer.
 - Forbidden inference: No evidence of historical paid result mutation, invalidity or authorization for a retry.
 - Mitigation: Reject existing/foreign run roots before journal opening; restrict writes to the newly consumed attempt; assert immutable terminal and journal bytes.
+
+## FAIL-RECOVERY-FRESH-POOL-PREVALIDATION: Recovery selector inherited an unintended fresh-pool requirement
+
+- Status: `MITIGATED`
+- Lifecycle: `OFFLINE_REPRODUCED`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `math_diagnostic400_tokenonly_preparation_v1`
+- Root-cause status: Input checks called the complete strict fresh-only selector instead of just input validation.
+- Symptom: An insufficient unseen Optimize pool failed before the frozen minimum-prior-use supplement could run.
+- Forbidden inference: No performance-based selection, new split, relaxed guard, historical score revision or rerun permission.
+- Mitigation: Separate seed/exclusion validation; preserve strict fresh-only rejection and execute the existing metadata-only minimum supplement contract.

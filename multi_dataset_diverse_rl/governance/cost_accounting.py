@@ -11,6 +11,25 @@ from .token_accounting import OperationalAbort
 IDENTITY='ROLE_ROUTED_SUPPLIER_COST_RESERVATION_V1'
 ROLE_PROFILE=dict(solver='openlux',reflection='lwj',pattern_gradient='lwj',pattern_cluster='lwj')
 SCALE=1_000_000
+TOKEN_ONLY_POLICY=dict(identity='USER_SELECTED_TOKEN_ONLY_RESOURCE_CONTROL_V1',
+    monetary_tracking=False,token_limits='FROZEN_PHASE_LEDGER_HARD_LIMITS',
+    missing_usage='CONSERVATIVE_FULL_RESERVATION_CHARGE',
+    authority='EXPLICIT_USER_TOKEN_ONLY_INSTRUCTION')
+
+
+def require_resource_control(contract):
+    from ..search.schemas import SearchContractError
+    token_only=contract.get('token_reporting_policy')
+    if token_only is not None:
+        if (token_only!=TOKEN_ONLY_POLICY or not isinstance(token_only,dict)
+                or any(type(token_only[k]) is not type(v) for k,v in TOKEN_ONLY_POLICY.items())
+                or contract.get('cost_policy') is not None):
+            raise SearchContractError('TOKEN_ONLY_RESOURCE_POLICY_MISMATCH')
+        return
+    if not contract.get('cost_policy'):
+        raise SearchContractError('EXPLICIT_RESOURCE_CONTROL_POLICY_NOT_FROZEN')
+    try:frozen_policy(contract['cost_policy'])
+    except OperationalAbort as exc:raise SearchContractError(str(exc)) from None
 
 
 def micros(value):

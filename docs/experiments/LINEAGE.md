@@ -26,14 +26,12 @@ last_governance_milestone: math_gradient_diagnostic_limits_400_v2
 real_execution_ready: false
 real_api_authorized: false
 ready_for_authorization: false
-current_preparation_status: OFFLINE_FORMAL_ENGINEERING_PENDING_BILLING_FREEZE_AND_AUTHORIZATION
+current_preparation_status: TOKEN_ONLY_USER_PERMISSION_RECEIVED_SOURCE_FREEZE_PENDING
 validation_access: not_authorized
 test_access: sealed
-current_execution_blocker: SUPPLIER_BILLING_TERMS_MISSING
+current_execution_blocker: NEW_SOURCE_AND_PHASE_SCOPE_FREEZE_REQUIRED
 current_execution_blockers:
-- SUPPLIER_BILLING_TERMS_MISSING
 - NEW_SOURCE_AND_PHASE_SCOPE_FREEZE_REQUIRED
-- NEW_EXACT_SINGLE_USE_AUTHORIZATION_REQUIRED
 current_runtime_builder: build_current_team_prompt_search
 current_execution_entrypoint: scripts/run_experiment.py
 current_runtime_composition: CURRENT_DIAGNOSTIC_400_COMPOSITION_V6
@@ -109,8 +107,8 @@ current_gradient_output_limits:
   reusable_correction: 400
   expected_effect: 240
 current_optimization_evidence_policy: DIAGNOSTIC_400_EVIDENCE_POLICY_V6
-current_preparation_experiment: math_diagnostic400_canary_formal_preparation_v1
-current_preparation_manifest: experiments/manifests/math_diagnostic400_canary_formal_preparation_v1.yaml
+current_preparation_experiment: math_diagnostic400_tokenonly_preparation_v1
+current_preparation_manifest: experiments/manifests/math_diagnostic400_tokenonly_preparation_v1.yaml
 last_gradient_limit_adoption_report: reports/gradient_diagnostic_limits_400_v2_preparation_20261011
 last_gradient_limit_adoption_real_api_calls: 0
 proposed_canary_token_ceiling: 2000000
@@ -120,8 +118,15 @@ proposed_formal_max_opportunities: 50
 proposed_solver_concurrency: 8
 proposed_gradient_concurrency: 2
 proposed_protocol: experiments/protocols/math_diagnostic400_canary_formal_v1/proposal.yaml
-current_formal_status: UNMEASURED_PENDING_BILLING_FREEZE_AUTHORIZATION
+current_formal_status: CONDITIONALLY_AUTHORIZED_CANARY_INTEGRITY_GATE_REQUIRED
 last_formal_preparation_report: reports/math_diagnostic400_formal_preparation_20261011
+token_reporting_policy:
+  identity: USER_SELECTED_TOKEN_ONLY_RESOURCE_CONTROL_V1
+  monetary_tracking: false
+  token_limits: FROZEN_PHASE_LEDGER_HARD_LIMITS
+  missing_usage: CONSERVATIVE_FULL_RESERVATION_CHARGE
+  authority: EXPLICIT_USER_TOKEN_ONLY_INSTRUCTION
+monetary_tracking: false
 ```
 
 ## Experiment and engineering DAG
@@ -426,6 +431,10 @@ flowchart TD
     n318["gradient_diagnostic_threshold_replay_v1<br/>FORENSIC_AUDIT<br/>COMPLETED"]
     n319["math_gradient_diagnostic_limits_400_v2<br/>PROTOCOL_FREEZE<br/>IMPLEMENTED_NOT_EXECUTED"]
     n320["math_diagnostic400_canary_formal_preparation_v1<br/>PROTOCOL_FREEZE<br/>DRAFT"]
+    n321["math_diagnostic400_tokenonly_preparation_v1<br/>PROTOCOL_FREEZE<br/>PREPARED_NOT_EXECUTED"]
+    n322["math_diagnostic400_tokenonly_seed85_canary_v1<br/>REAL_CANARY<br/>PREPARED_NOT_EXECUTED"]
+    n323["math_diagnostic400_tokenonly_seed86_formal_v1<br/>FORMAL_EXPERIMENT<br/>PREPARED_NOT_EXECUTED"]
+    n324["math_diagnostic400_tokenonly_seed86_validation_v1<br/>DIAGNOSTIC<br/>PREPARED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -684,6 +693,11 @@ flowchart TD
   n311 -->|derived_from| n319
   n318 -->|followup_of| n319
   n319 -->|derived_from| n320
+  n320 -->|derived_from| n321
+  n321 -->|derived_from| n322
+  n321 -->|derived_from| n323
+  n322 -->|derived_from| n323
+  n323 -->|derived_from| n324
 ```
 
 ## Archived branches and unresolved evidence

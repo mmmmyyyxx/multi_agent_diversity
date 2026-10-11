@@ -215,9 +215,9 @@ async def execute_search(root, prep, run_root, payload):
     binding = execution_binding(root, c)
     if binding.blockers():
         raise SearchContractError("AUTONOMOUS_BINDING_NOT_READY")
-    if ((c['execution_phase']=='formal' or c['solver_execution_policy'].get('gradient_max_concurrency')==2)
-            and not c.get('cost_policy')):
-        raise SearchContractError('SUPPLIER_TARIFF_AND_MONETARY_CEILING_NOT_FROZEN')
+    if c['execution_phase']=='formal' or c['solver_execution_policy'].get('gradient_max_concurrency')==2:
+        from .cost_accounting import require_resource_control
+        require_resource_control(c)
     progression=None
     if c['execution_phase']=='formal':
         from .canary_progression import verify

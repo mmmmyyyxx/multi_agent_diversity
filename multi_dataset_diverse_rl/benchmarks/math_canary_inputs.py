@@ -31,7 +31,7 @@ def build_recovery_subsets(metadata, split_sha, *, seed, phase, excluded_example
     if phase not in {'canary','pilot'}:
         raise SearchContractError('RECOVERY_SELECTION_PHASE_INVALID')
     # Reuse the historical selector's strict input checks, not its memberships.
-    build_fresh_canary_subsets(metadata,split_sha,seed=seed,excluded_example_hashes=excluded_example_hashes)
+    _validate_selection_inputs(seed,excluded_example_hashes)
     counts={phase+'_optimize':12 if phase=='canary' else 60,'pilot_shadow':40}
     excluded=set(excluded_example_hashes);selected={};prior_counts={}
     for name,count in counts.items():
@@ -70,14 +70,18 @@ def initial_prompt(version):
     raise SearchContractError('CURRENT_INITIAL_TEAM_VERSION_UNKNOWN')
 
 
-def build_fresh_canary_subsets(metadata, split_sha, *, seed, excluded_example_hashes):
-    from .math_low_cost import choose
+def _validate_selection_inputs(seed,excluded_example_hashes):
     if type(seed) is not int or seed < 0 or not isinstance(excluded_example_hashes, list):
         raise SearchContractError('FRESH_CANARY_SELECTION_INPUT_INVALID')
     if (excluded_example_hashes != sorted(set(excluded_example_hashes)) or
             any(not isinstance(v, str) or re.fullmatch('[0-9a-f]{64}', v) is None
                 for v in excluded_example_hashes)):
         raise SearchContractError('FRESH_CANARY_EXCLUSION_INVALID')
+
+
+def build_fresh_canary_subsets(metadata, split_sha, *, seed, excluded_example_hashes):
+    from .math_low_cost import choose
+    _validate_selection_inputs(seed,excluded_example_hashes)
     excluded = set(excluded_example_hashes)
     selected = {}
     for name, role in [('canary_optimize', 'optimize'), ('pilot_shadow', 'shadow')]:

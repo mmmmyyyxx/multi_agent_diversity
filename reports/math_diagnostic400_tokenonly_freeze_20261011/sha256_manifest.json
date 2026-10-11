@@ -1,0 +1,45 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "0e535429817bf7355236f6777356c10db8acb104057d791fbd7c9f41d5907de6"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "cc4ea42dcc2a163d7c68fb93f943dba018a1b4936dcb469c933db7bee17db9fd"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "937413a0bfce4ce4c3e7cd9894ec4f1957a99e32a05c44a8d8870cc1dfb9274e"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "d653982ab93643592a5886c681944f59de8858b2c0d73043146803e5d51d4032"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "3c61fb225ff5ce7dfa9c3901d28f420d4335c4a34ea2e151985284688f4353eb"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "fd702701be9e3078681fa74edc747451bf14a1dda59c050d604b030e39e25565"
+    },
+    {
+      "file": "README.md",
+      "sha256": "c428184639921ed39e5aaf0aed4d11acc0d0dfef0f94799d4d83d7f3070a08b5"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "bacc4ce1e7955e8fec41f5b69086ceee3acfcd8b2f1bbc0a0021a76d8f7252c0"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "d857c002610744783e0e973da3721440076b58bf66bbcdd323e0c576e3d2d673"
+    },
+    {
+      "file": "verification.json",
+      "sha256": "f5317fc3b846d12ebfce4fb6318bcd23ebeafdeea852951fe2e6c248d36c3005"
+    }
+  ]
+}

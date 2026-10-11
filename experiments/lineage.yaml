@@ -964,6 +964,26 @@ nodes:
   era: UNIFIED_TEAM_PROMPT_SEARCH
   status: DRAFT
   manifest: experiments/manifests/math_diagnostic400_canary_formal_preparation_v1.yaml
+- experiment_id: math_diagnostic400_tokenonly_preparation_v1
+  kind: PROTOCOL_FREEZE
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  status: PREPARED_NOT_EXECUTED
+  manifest: experiments/manifests/math_diagnostic400_tokenonly_preparation_v1.yaml
+- experiment_id: math_diagnostic400_tokenonly_seed85_canary_v1
+  kind: REAL_CANARY
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  status: PREPARED_NOT_EXECUTED
+  manifest: experiments/manifests/math_diagnostic400_tokenonly_seed85_canary_v1.yaml
+- experiment_id: math_diagnostic400_tokenonly_seed86_formal_v1
+  kind: FORMAL_EXPERIMENT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  status: PREPARED_NOT_EXECUTED
+  manifest: experiments/manifests/math_diagnostic400_tokenonly_seed86_formal_v1.yaml
+- experiment_id: math_diagnostic400_tokenonly_seed86_validation_v1
+  kind: DIAGNOSTIC
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  status: PREPARED_NOT_EXECUTED
+  manifest: experiments/manifests/math_diagnostic400_tokenonly_preparation_v1.yaml
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2101,4 +2121,29 @@ edges:
   relation: derived_from
   evidence: reports/math_diagnostic400_formal_preparation_20261011/README.md
   scope: Engineering/formal design only; no API authorization or efficacy result.
+- from: math_diagnostic400_canary_formal_preparation_v1
+  to: math_diagnostic400_tokenonly_preparation_v1
+  relation: derived_from
+  evidence: reports/math_diagnostic400_tokenonly_freeze_20261011/README.md
+  scope: Preregistered Token-only phase dependency; no efficacy result.
+- from: math_diagnostic400_tokenonly_preparation_v1
+  to: math_diagnostic400_tokenonly_seed85_canary_v1
+  relation: derived_from
+  evidence: reports/math_diagnostic400_tokenonly_freeze_20261011/README.md
+  scope: Preregistered Token-only phase dependency; no efficacy result.
+- from: math_diagnostic400_tokenonly_preparation_v1
+  to: math_diagnostic400_tokenonly_seed86_formal_v1
+  relation: derived_from
+  evidence: reports/math_diagnostic400_tokenonly_freeze_20261011/README.md
+  scope: Preregistered Token-only phase dependency; no efficacy result.
+- from: math_diagnostic400_tokenonly_seed85_canary_v1
+  to: math_diagnostic400_tokenonly_seed86_formal_v1
+  relation: derived_from
+  evidence: reports/math_diagnostic400_tokenonly_freeze_20261011/README.md
+  scope: Preregistered Token-only phase dependency; no efficacy result.
+- from: math_diagnostic400_tokenonly_seed86_formal_v1
+  to: math_diagnostic400_tokenonly_seed86_validation_v1
+  relation: derived_from
+  evidence: reports/math_diagnostic400_tokenonly_freeze_20261011/README.md
+  scope: Preregistered Token-only phase dependency; no efficacy result.
 current_frontier: experiments/current_frontier.yaml

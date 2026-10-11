@@ -1,0 +1,6 @@
+{
+  "no_historical_scores_revised": true,
+  "no_real_api_at_registration": true,
+  "test_sealed": true,
+  "user_token_only_override": true
+}

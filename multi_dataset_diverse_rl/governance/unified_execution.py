@@ -38,6 +38,7 @@ def execution_scope(manifest,contract):
         heldout_accounting_reserve=contract.get('heldout_accounting_reserve'),
         canary_review_policy=contract.get('canary_review_policy'),
         **({'cost_policy':contract['cost_policy']} if 'cost_policy' in contract else {}),
+        **({'token_reporting_policy':contract['token_reporting_policy']} if 'token_reporting_policy' in contract else {}),
         **({'canary_prerequisite':contract['canary_prerequisite']} if 'canary_prerequisite' in contract else {}),
         **({k:contract[k] for k in ('solver_execution_policy','system_prompt_policy','answer_extraction_policy')} if contract.get('solver_execution_policy') else {}),
         **({'optimization_evidence_policy':contract['optimization_evidence_policy']}
@@ -72,8 +73,9 @@ def bound_preflight(root, manifest):
     try:
         binding=execution_binding(root,read_json(path));errors.extend(binding.blockers())
         c=binding.contract
-        if ((c['execution_phase']=='formal' or c['solver_execution_policy'].get('gradient_max_concurrency')==2)
-                and not c.get('cost_policy')):errors.append('SUPPLIER_TARIFF_AND_MONETARY_CEILING_NOT_FROZEN')
+        if c['execution_phase']=='formal' or c['solver_execution_policy'].get('gradient_max_concurrency')==2:
+            from .cost_accounting import require_resource_control
+            require_resource_control(c)
         if c['execution_phase']=='formal' and not c.get('canary_prerequisite'):
             errors.append('FORMAL_CANARY_PREREQUISITE_NOT_FROZEN')
         method=binding.method('A4')
@@ -238,6 +240,8 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
         manifest['cost_policy']=None
     if 'canary_prerequisite' in contract:
         manifest['canary_prerequisite']=contract['canary_prerequisite']
+    if 'token_reporting_policy' in contract:
+        manifest['token_reporting_policy']=contract['token_reporting_policy']
     for k in ('solver_execution_policy','system_prompt_policy','answer_extraction_policy',
             'canary_review_policy','accounting_scope_policy','accounting_policy_sha256',
             'heldout_accounting_reserve','repair_probe_policy','generated_output_recovery_policy'):

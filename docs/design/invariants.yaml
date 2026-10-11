@@ -935,8 +935,8 @@ invariants:
   critical: true
   status: ACTIVE
 - id: INV-FORMAL-MONETARY-BOUND-001
-  description: Supplier tariff and concurrent monetary reservations share the durable
-    Token journal and exact single-use scope.
+  description: When tariff mode is selected, supplier prices and concurrent monetary
+    reservations share the durable Token journal and exact single-use scope.
   authority: docs/design/FORMAL_EXECUTION_AND_PAIRED_VALIDATION_V1.md
   implementation_refs:
   - multi_dataset_diverse_rl/governance/cost_accounting.py

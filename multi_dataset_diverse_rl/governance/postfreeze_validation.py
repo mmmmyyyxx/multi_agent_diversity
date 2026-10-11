@@ -23,15 +23,13 @@ POLICY=dict(identity='CURRENT_PAIRED_VALIDATION_300_V1',count=300,
 
 
 def require_validation_contract(c):
-    from .cost_accounting import frozen_policy
-    from .token_accounting import OperationalAbort
+    from .cost_accounting import require_resource_control
     if (c.get('post_freeze_validation_policy')!=POLICY or c.get('operational_pilot')!=BOUND
             or c.get('accounting_scope_policy')!=ACCOUNTING_SCOPE
             or not isinstance(c.get('validation_scope_identity'),str)
-            or len(c['validation_scope_identity'])!=64 or not c.get('cost_policy')):
+            or len(c['validation_scope_identity'])!=64):
         raise SearchContractError('POST_FREEZE_VALIDATION_CAPABILITY_NOT_BOUND')
-    try:frozen_policy(c['cost_policy'])
-    except OperationalAbort as exc:raise SearchContractError(str(exc)) from None
+    require_resource_control(c)
 
 
 def local_path(root,relative):
@@ -40,8 +38,9 @@ def local_path(root,relative):
     return path
 
 
-def scope(root,search_payload,*,attempt,cost_policy,search_run):
-    from .cost_accounting import frozen_policy
+def scope(root,search_payload,*,attempt,cost_policy,search_run,token_reporting_policy=None):
+    from .cost_accounting import frozen_policy,require_resource_control
+    require_resource_control(dict(cost_policy=cost_policy,token_reporting_policy=token_reporting_policy))
     c=read_json(root/search_payload['manifest']['execution_binding']['path'])
     if (c['execution_phase']!='formal' or not isinstance(attempt,str)
             or re.fullmatch('[A-Za-z0-9_-]+',attempt) is None
@@ -55,18 +54,20 @@ def scope(root,search_payload,*,attempt,cost_policy,search_run):
         search_run=search_run,method=c['method_identity'],models=c['models'],
         provider_routing_policy=c['provider_routing_policy'],roles=['solver'],
         cumulative_token_ceiling=BOUND['token_ceiling'],cost_policy=frozen_policy(cost_policy),
+        **({'token_reporting_policy':deepcopy(token_reporting_policy)} if token_reporting_policy is not None else {}),
         policy=deepcopy(POLICY),initial_team_artifact_sha256=c['initial_team_artifact_sha256'],
         split_sha256=c['split_manifest_sha256'],validation_membership_sha256=c['membership_hashes']['validation'],
         accounting_directory='runs/'+attempt+'/accounting',
         validation_calls='POST_SEARCH_ONLY',test_calls=0,search_resume_authorized=False)
 
 
-def prepare(root,search_prep,destination,*,attempt,cost_policy,search_run):
+def prepare(root,search_prep,destination,*,attempt,cost_policy,search_run,token_reporting_policy=None):
     from .unified_execution import validate_prep
     search=validate_prep(root,search_prep)
     if destination.exists():raise SearchContractError('FRESH_VALIDATION_PREP_REQUIRED')
     relative=search_prep.resolve().relative_to(root.resolve()).as_posix()
-    frozen_scope=scope(root,search,attempt=attempt,cost_policy=cost_policy,search_run=search_run)
+    frozen_scope=scope(root,search,attempt=attempt,cost_policy=cost_policy,search_run=search_run,
+        token_reporting_policy=token_reporting_policy)
     payload=dict(schema_version=PREP_SCHEMA,parent_search_prep=relative,
         source_identity=search['source_identity'],scope=frozen_scope)
     payload['startup_identity_sha256']=canonical_sha256(payload)
@@ -85,7 +86,8 @@ def validate_prep(root,prep,*,require_authorized=False):
         raise SearchContractError('VALIDATION_STARTUP_IDENTITY_MISMATCH')
     search=validate_search(root,local_path(root,payload['parent_search_prep']))
     s=payload['scope']
-    if (s!=scope(root,search,attempt=s['attempt_id'],cost_policy=s['cost_policy'],search_run=s['search_run'])
+    if (s!=scope(root,search,attempt=s['attempt_id'],cost_policy=s['cost_policy'],search_run=s['search_run'],
+            token_reporting_policy=s.get('token_reporting_policy'))
             or payload['source_identity']!=search['source_identity']):
         raise SearchContractError('VALIDATION_FROZEN_SCOPE_MISMATCH')
     if require_authorized:
@@ -188,6 +190,8 @@ async def execute(root,prep,run_root):
         operational_pilot=deepcopy(BOUND),post_freeze_validation_policy=deepcopy(POLICY),
         validation_scope_identity=canonical_sha256(s),execution_attempt_id=s['attempt_id'],
         cache_namespace=s['cache_namespace'],cost_policy=s['cost_policy'])
+    c.pop('token_reporting_policy',None)
+    if 'token_reporting_policy' in s:c['token_reporting_policy']=deepcopy(s['token_reporting_policy'])
     c['provider_bounds']=dict(original['provider_bounds'],solver_calls=calls,reflection_calls=0,
         pattern_gradient_calls=0,pattern_cluster_calls=0,pattern_calls=0,successful_provider_calls=calls,
         transport_attempts=calls*(c['decoding']['transport_retries']+1))

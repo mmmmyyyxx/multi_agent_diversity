@@ -16,7 +16,7 @@ from multi_dataset_diverse_rl.search.textual_gradients import GradientExtractor,
 from multi_dataset_diverse_rl.search.solver_execution import GRADIENT_PARALLEL_POLICY,frozen_execution_policy
 from multi_dataset_diverse_rl.governance.token_accounting import (
     TokenLedger,POLICY_V25_FORMAL_30M,POLICY_V25_VALIDATION_6M,OperationalAbort,reservation)
-from multi_dataset_diverse_rl.governance.cost_accounting import IDENTITY,amount,frozen_policy
+from multi_dataset_diverse_rl.governance.cost_accounting import IDENTITY,amount,frozen_policy,TOKEN_ONLY_POLICY,require_resource_control
 from multi_dataset_diverse_rl.benchmarks.math_formal_scope import BOUND,build_subsets,require_bound
 
 
@@ -49,6 +49,63 @@ def tariff(limit='100.000000'):
         pricing_source='SYNTHETIC_OFFLINE_ONLY',tariffs={
             'openlux':dict(model='gpt-4o-mini',input_per_million='2.000000',output_per_million='6.000000',physical_request_fee='0.001000'),
             'lwj':dict(model='qwen3.7-flash',input_per_million='1.000000',output_per_million='3.000000',physical_request_fee='0.001000')})
+
+
+def test_token_only_is_explicit_exclusive_and_enters_all_role_request_identities():
+    from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker
+    for bad in ({},dict(token_reporting_policy={}),
+            dict(token_reporting_policy={**TOKEN_ONLY_POLICY,'monetary_tracking':True}),
+            dict(token_reporting_policy=TOKEN_ONLY_POLICY,cost_policy=tariff())):
+        with pytest.raises(SearchContractError):require_resource_control(bad)
+    c=fixture.contract();c['token_reporting_policy']=deepcopy(TOKEN_ONLY_POLICY)
+    require_resource_control(c)
+    broker=RequestBroker(contract=c,transport=lambda _:None,arm='A4',seed=81)
+    baseline=RequestBroker(contract=fixture.contract(),transport=lambda _:None,arm='A4',seed=81)
+    messages=[dict(role='system',content=fixture.BASE.render()),dict(role='user',content='Synthetic input.')]
+    for role in ('solver','reflection','pattern_gradient','pattern_cluster'):
+        request,key=broker._request_identity(role=role,split='optimize',messages=messages,
+            member_slot=0 if role=='solver' else None)
+        old_request,old_key=baseline._request_identity(role=role,split='optimize',messages=messages,
+            member_slot=0 if role=='solver' else None)
+        assert request==old_request and key!=old_key
+        assert 'token_reporting_policy' not in request
+
+
+def test_token_only_manifest_schema_does_not_allow_unfrozen_or_mixed_resource_mode():
+    from multi_dataset_diverse_rl.governance.registries import load_yaml
+    from multi_dataset_diverse_rl.governance.repository import validate_manifest_v2
+    m=load_yaml(fixture.ROOT/'experiments/manifests/math_diagnostic400_canary_formal_preparation_v1.yaml')
+    m['token_reporting_policy']=deepcopy(TOKEN_ONLY_POLICY)
+    assert not validate_manifest_v2(fixture.ROOT,m)
+    m['cost_policy']=tariff()
+    assert validate_manifest_v2(fixture.ROOT,m)
+    m['cost_policy']=None;m['token_reporting_policy']['missing_usage']='NO_CHARGE'
+    assert validate_manifest_v2(fixture.ROOT,m)
+
+
+def test_token_only_canary_entrypoint_keeps_fresh_two_million_token_ledger(tmp_path,monkeypatch):
+    from tests.current.test_structured_production_entrypoint import _entrypoint_fixture
+    result,_,_,_=_entrypoint_fixture(tmp_path,monkeypatch,False,phase='canary',
+        seed=85,execution_policy=GRADIENT_PARALLEL_POLICY,token_only=True)
+    assert result['result']['stop_reason']=='CANARY_ONE_PRODUCTION_OPPORTUNITY_COMPLETE'
+    assert result['accounting']['authorized_total']==2_000_000
+    assert result['accounting']['reserved_inflight']==0 and 'cost' not in result['accounting']
+    assert result['validation_calls']==result['test_calls']==0
+
+
+def test_recovery_membership_uses_contract_minimum_prior_use_when_fresh_pool_is_empty():
+    import hashlib
+    from multi_dataset_diverse_rl.benchmarks.math_canary_inputs import build_recovery_subsets,build_fresh_canary_subsets
+    from multi_dataset_diverse_rl.persistence.durable_io import read_json
+    parent=fixture.contract();data=read_json(fixture.ROOT/parent['low_cost_subsets_path'])
+    metadata=data['metadata_universe']
+    excluded=sorted(hashlib.sha256(r['stable_example_id'].encode()).hexdigest() for r in metadata)
+    with pytest.raises(SearchContractError,match='UNSEEN_POOL_INSUFFICIENT'):
+        build_fresh_canary_subsets(metadata,parent['split_manifest_sha256'],seed=85,excluded_example_hashes=excluded)
+    recovered=build_recovery_subsets(metadata,parent['split_manifest_sha256'],seed=85,phase='canary',excluded_example_hashes=excluded)
+    assert recovered['prior_actual_use_counts']==dict(canary_optimize=12,pilot_shadow=40)
+    assert all(len(recovered['memberships'][k])==n for k,n in recovered['counts'].items())
+    assert recovered==build_recovery_subsets(metadata,parent['split_manifest_sha256'],seed=85,phase='canary',excluded_example_hashes=excluded)
 
 
 def parallel_graph(tmp_path,monkeypatch):
@@ -212,15 +269,17 @@ def test_paired_statistics_measure_vote_separately_from_oracle_and_reject_partia
     with pytest.raises(SearchContractError):analyze(rows[:-1])
 
 
-def test_real_formal_entrypoint_exceeds_pilot_horizon_and_uses_scientific_epoch_stop(tmp_path,monkeypatch):
+@pytest.mark.parametrize('token_only',[False,True])
+def test_real_formal_entrypoint_exceeds_pilot_horizon_and_uses_scientific_epoch_stop(tmp_path,monkeypatch,token_only):
     from tests.current.test_structured_production_entrypoint import _entrypoint_fixture
     from multi_dataset_diverse_rl.benchmarks.math_canary_inputs import ARM_B_TEAM_VERSION,ARM_B_SEED
     result,requests,_,_=_entrypoint_fixture(tmp_path,monkeypatch,False,phase='formal',seed=86,
-        team_version=ARM_B_TEAM_VERSION,execution_policy=GRADIENT_PARALLEL_POLICY)
+        team_version=ARM_B_TEAM_VERSION,execution_policy=GRADIENT_PARALLEL_POLICY,token_only=token_only)
     assert 5<len(result['result']['trace'])<=50
     assert result['formal_status']=='SCIENTIFIC_COMPLETION' and 'pilot_status' not in result
     assert result['accounting']['authorized_total']==30_000_000
-    assert result['accounting']['cost']['reserved_micros']==0
+    if token_only:assert 'cost' not in result['accounting']
+    else:assert result['accounting']['cost']['reserved_micros']==0
     assert all(r['messages'][0]['content']==ARM_B_SEED.render() for r in requests if r['model']=='gpt-4o-mini')
     assert result['validation_calls']==result['test_calls']==0
 
@@ -240,12 +299,13 @@ def test_closed_search_rejects_changed_terminal_evidence_before_validation(tmp_p
     with pytest.raises(SearchContractError,match='EVIDENCE_HASH_MISMATCH'):closed_search(tmp_path,'runs/execution',payload)
 
 
-def test_post_search_validation_real_wrapper_is_single_use_and_gold_never_enters_requests(tmp_path,monkeypatch):
+@pytest.mark.parametrize('token_only',[False,True])
+def test_post_search_validation_real_wrapper_is_single_use_and_gold_never_enters_requests(tmp_path,monkeypatch,token_only):
     from tests.current.test_structured_production_entrypoint import _entrypoint_fixture
     from multi_dataset_diverse_rl.governance import autonomous_math,unified_execution,postfreeze_validation as evaluation
     from multi_dataset_diverse_rl.benchmarks import math_domain_binding
     from multi_dataset_diverse_rl.persistence.durable_io import read_json,atomic_write_json
-    _entrypoint_fixture(tmp_path,monkeypatch,False,phase='formal',seed=86,execution_policy=GRADIENT_PARALLEL_POLICY)
+    _entrypoint_fixture(tmp_path,monkeypatch,False,phase='formal',seed=86,execution_policy=GRADIENT_PARALLEL_POLICY,token_only=token_only)
     c=read_json(tmp_path/'runs/synthetic_flexible_binding.json')
     binding=autonomous_math.execution_binding(tmp_path,c)
     search=dict(scope=dict(attempt_id=c['execution_attempt_id']),
@@ -277,7 +337,8 @@ def test_post_search_validation_real_wrapper_is_single_use_and_gold_never_enters
     monkeypatch.setattr(autonomous_math,'create_transport',lambda _: (transport,Client()))
     prep=tmp_path/'runs/validation_prep';run=tmp_path/'runs/validation_execution'
     payload=evaluation.prepare(tmp_path,tmp_path/'runs/prep',prep,attempt='synthetic_validation',
-        cost_policy=tariff('1000000.000000'),search_run='runs/execution')
+        cost_policy=None if token_only else tariff('1000000.000000'),search_run='runs/execution',
+        token_reporting_policy=TOKEN_ONLY_POLICY if token_only else None)
     with pytest.raises(SearchContractError,match='EXACT_SINGLE_USE_VALIDATION'):
         asyncio.run(evaluation.execute(tmp_path,prep,run))
     assert not reads and not requests and not run.exists()
@@ -290,7 +351,8 @@ def test_post_search_validation_real_wrapper_is_single_use_and_gold_never_enters
     assert result['analysis']['VoteAccDelta']==result['analysis']['OracleAccDelta']==0
     assert result['provider_usage']['validation']==1500 and result['test_calls']==0
     assert result['accounting']['authorized_total']==6_000_000 and result['accounting']['reserved_inflight']==0
-    assert result['accounting']['cost']['reserved_micros']==0
+    if token_only:assert 'cost' not in result['accounting']
+    else:assert result['accounting']['cost']['reserved_micros']==0
     lifecycle=(run/'lifecycle.json').read_bytes()
     with pytest.raises(SearchContractError,match='EXACT_SINGLE_USE_VALIDATION'):
         asyncio.run(evaluation.execute(tmp_path,prep,run))

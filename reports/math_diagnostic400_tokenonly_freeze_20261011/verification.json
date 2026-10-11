@@ -1,0 +1,25 @@
+{
+  "actual_test_access": 0,
+  "actual_validation_access": 0,
+  "compileall": "PASS",
+  "current_suite": {
+    "errors": 0,
+    "failures": 0,
+    "full_historical_replay_claim": false,
+    "junit_sha256": "1d2faebfa4044aade2dd6bd71b36eeccf37339ecd2e199ea348b284f2f19ee97",
+    "omitted_module_count": 220,
+    "omitted_module_inventory": "tests/suite_classification.json",
+    "passed": 707,
+    "skipped": 2,
+    "tests": 709
+  },
+  "diff_check": "PASS",
+  "frozen_file_verification": {
+    "changed": [],
+    "count": 1608
+  },
+  "governance": "PASS",
+  "manifest_governance_preflight": "PASS",
+  "real_api_calls": 0,
+  "zero_api_network_guard": "PASS"
+}

@@ -107,6 +107,9 @@ class CurrentPolicyBundle:
 
     def validate_contract(self, contract):
         require_current_contract(contract)
+        if 'token_reporting_policy' in contract:
+            from ..governance.cost_accounting import require_resource_control
+            require_resource_control(contract)
         from .solver_execution import frozen_execution_policy
         execution=frozen_execution_policy(contract)
         if contract.get('execution_phase') == 'validation':
