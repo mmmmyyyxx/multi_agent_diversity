@@ -7,3 +7,5 @@ Fresh identical Arm B five-member initial team; OpenLux gpt-4o-mini Solver16 and
 Vote, Oracle, member correctness and validity are distinct observations. No independent generalization or component causality can be established by this search-only run. No efficacy-based early stop or rerun; historical state, scores, Memory, responses, cache and grants remain excluded. Hourly monitoring and observational duration estimates do not control search.
 
 Offline verification: 768 current cases passed, 2 skipped, zero failures/errors; 220 historical/private modules omitted. Targeted feedback, direct-start integrity and formal execution checks passed. Compileall, repository governance, sanitization and whitespace checks passed with zero real API/Validation/Test access.
+
+Execution source: `def2eaf935573cae495285df215c2a5b0d2c5887`. Fresh single-use formal scope and startup are recorded in frozen_phase_scope.json.

@@ -1,0 +1,359 @@
+{
+  "attempt_id": "a4_v27_direct_seed86_formal_attempt1",
+  "authorization": "USER_GRANTED_CURRENT_V27_DIRECT_FORMAL_PENDING_EXACT_BINDING",
+  "execution_source_sha": "def2eaf935573cae495285df215c2a5b0d2c5887",
+  "method": "unified_team_prompt_search_v2_7_output_contract_feedback_v1",
+  "phase": "FORMAL_SEARCH_ONLY",
+  "prerequisite": {
+    "current_canary": "NOT_RUN",
+    "efficacy_gate": false,
+    "identity": "USER_SELECTED_V27_DIRECT_FORMAL_OFFLINE_PREREQUISITE_V1",
+    "offline_verification_sha256": "328eb2839111f732c97806235aeb42f8d5f42fab2dacdd3b6d61828bb81828e4",
+    "user_instruction_sha256": "8aaf6c6906c210c69a3faca7ba97b7f7881a62fb888b1895103dc8fc258f6fca"
+  },
+  "real_api_calls": 0,
+  "scope_projection": {
+    "accounting_policy_sha256": "7a9d4fd21e514072389726142429b1624cae9e6a4179ebf91f2cee1bc97931a3",
+    "accounting_scope_policy": "FRESH_V25_FORMAL_SINGLE_ARM_30M_V1",
+    "answer_extraction_policy": {
+      "confirmations": "all_labels_and_conclusions_after_selected_label_must_agree_gold_blind",
+      "coordinate_assignment": "distinct_named_coordinates_same_arity_pinned_tuple_rhs",
+      "declaration_forms": [
+        "final_answer_label",
+        "answer_label",
+        "markdown_label",
+        "natural_conclusion",
+        "terminal_balanced_boxed"
+      ],
+      "empty_heading": "skip_when_followed_by_another_answer_declaration",
+      "gold_access": false,
+      "identity": "MATH_FLEXIBLE_ANSWER_EXTRACTION_V3",
+      "intermediate_selection": false,
+      "maximum_declarations": 16,
+      "maximum_payload_characters": 2048,
+      "maximum_wrapped_declaration_characters": 4096,
+      "multiline": "balanced_display_boxed_matrix_or_labeled_math_fence",
+      "normalization": "outer_math_markdown_sentence_period_unicode_radical_minus_pi_v1",
+      "payload_parser": "math_verify_no_fallback_v1",
+      "scalar_confirmation": "single_variable_constant_assignment_rhs_only",
+      "selection": "last_explicit_label_else_last_terminal_conclusion",
+      "trailing_prose": "permitted_after_explicit_label_without_conflicting_declaration",
+      "truncated": "invalid_even_with_answer",
+      "unmarked_expression": "forbidden"
+    },
+    "arm": "A4",
+    "attempt_id": "a4_v27_direct_seed86_formal_attempt1",
+    "binding_sha256": "e0c7c6618416d4ca149c18aa75cfbc837a9f0055857c800f7cd02b93d88b9d5a",
+    "cache_namespace": "a4_v27_direct_seed86_formal_attempt1",
+    "canary_prerequisite": {
+      "identity": "USER_SELECTED_V27_DIRECT_FORMAL_OFFLINE_PREREQUISITE_V1",
+      "offline_verification_path": "experiments/protocols/math_v27_direct_seed86_formal_v1/offline_verification.json",
+      "offline_verification_sha256": "328eb2839111f732c97806235aeb42f8d5f42fab2dacdd3b6d61828bb81828e4",
+      "user_instruction_sha256": "8aaf6c6906c210c69a3faca7ba97b7f7881a62fb888b1895103dc8fc258f6fca"
+    },
+    "canary_review_policy": {
+      "efficacy_based_stopping": false,
+      "extra_provider_calls": 0,
+      "identity": "FORMAL_FIRST_OPPORTUNITY_OWNER_REVIEW_V6",
+      "maximum_wait_seconds": 3600,
+      "owner_review_required": true,
+      "scientific_state_reset": false,
+      "stages": [
+        "INITIAL_SOLVER_PROFILE",
+        "FIRST_COMPLETE_OPPORTUNITY"
+      ],
+      "total_max_opportunities": 50,
+      "unreached_branch": "NOT_OBSERVED_NO_FORCED_GENERATION"
+    },
+    "cumulative_token_ceiling": 30000000,
+    "generated_output_recovery_policy": {
+      "cluster_draws_per_opportunity": 3,
+      "exhausted_gradient": "NONACTIONABLE_EXHAUSTED",
+      "feedback_history": "LAST_FAILURE_ONLY_NO_REJECTED_TEXT",
+      "gradient_draws_per_example": 3,
+      "identity": "BOUNDED_OUTPUT_CONTRACT_FEEDBACK_RECOVERY_V2",
+      "integrity_errors": "fatal_without_regeneration",
+      "invalid_pattern": "known_support_to_unassigned",
+      "output_feedback": "TYPED_OPTIMIZER_OUTPUT_FEEDBACK_V1",
+      "reflection_draws_per_opportunity": 6,
+      "rejected_text_reusable": false,
+      "truncated_output": "charged_rejected_draw_no_capacity_change",
+      "unknown_errors": "fatal"
+    },
+    "heldout_accounting_reserve": 0,
+    "initial_memory_entries": 5,
+    "initial_team_sha256": "8a39ff1f52fc544d02931edc846728bcd3d67a6130b0b9683bcb3ef81cad3577",
+    "method": "unified_team_prompt_search_v2_7_output_contract_feedback_v1",
+    "models": {
+      "optimizer_reflection": "qwen3.7-flash",
+      "pattern": "qwen3.7-flash",
+      "solver": "gpt-4o-mini",
+      "solver_thinking": false
+    },
+    "operational_pilot": {
+      "guarantees_saturation": false,
+      "identity": "MATH_FORMAL_SEARCH_RESOURCE_BOUND_V1",
+      "max_opportunities": 50,
+      "scientific_stopper": "team_epoch_no_commit_v1",
+      "token_ceiling": 30000000
+    },
+    "optimization_evidence_policy": {
+      "abstraction": "SOURCE_CONTEXT_SYMBOLIC_ABSTRACTION_GUARD_V1",
+      "answer_extraction": "MATH_FLEXIBLE_ANSWER_EXTRACTION_V3",
+      "assigned_repair": "selected_pattern_wrong_mutation_ids_seen",
+      "bootstrap": "measured_initial_optimize_profiles_zero_llm",
+      "candidate_guard": "optimizer_dependency_guard_v1",
+      "edit_memory": "actual_diff_and_scope_bound_coverage_v1",
+      "editable_blocks": [
+        "role",
+        "strategy",
+        "answer"
+      ],
+      "generated_output_recovery": "BOUNDED_OUTPUT_CONTRACT_FEEDBACK_RECOVERY_V2",
+      "identity": "OUTPUT_CONTRACT_FEEDBACK_EVIDENCE_POLICY_V9",
+      "local_parent": "every_contract_legal_evaluated_edit",
+      "max_generations": 6,
+      "max_returned_candidates": 4,
+      "metric_limit": 42,
+      "mutation": "single_block_per_generation",
+      "mutation_size": 3,
+      "no_safe_edit": "no_candidate_no_success",
+      "opportunity_eligibility": "any_member_wrong_no_accuracy_quota",
+      "optimizer_input_encoding": "DIRECT_READABLE_OPTIMIZER_EVIDENCE_V2",
+      "optimizer_output_feedback": "TYPED_OPTIMIZER_OUTPUT_FEEDBACK_V1",
+      "prompt_state": "STRUCTURED_SYSTEM_PROMPT_V1",
+      "reference_solution_max_chars": 4096,
+      "reference_solution_split": "optimize",
+      "response_evidence": "observed_content_optional_trajectory",
+      "responsibility_fallback": "seed_team_state_opportunity_ordinal_random_legal",
+      "sampling": "seeded_disjoint_no_correct_wrong_quota_v2",
+      "search_validation_size": 3,
+      "selection": "validation_net_then_preservation_then_mutation_net_then_generation",
+      "structural_recovery_draws": 3,
+      "team_probe_size": 6,
+      "validation_feedback": "measure_after_generation_counts_only_next_iteration"
+    },
+    "pattern_cluster_generation_policy": {
+      "accounting_output_ceiling": 8202,
+      "enable_thinking": false,
+      "frequency_penalty": 0,
+      "identity": "PATTERN_CLUSTER_GENERATION_POLICY_V1",
+      "max_completion_tokens": 8192,
+      "max_tokens": "NOT_SENT",
+      "measurement_tolerance_tokens": 10,
+      "model": "qwen3.7-flash",
+      "output_token_scope": "reasoning_plus_answer",
+      "presence_penalty": 1.5,
+      "roles": [
+        "pattern_cluster"
+      ],
+      "temperature": 0.7,
+      "top_k": 20,
+      "top_p": 0.8,
+      "truncation": "existing_operational_output_truncation"
+    },
+    "phase": "formal_search_only",
+    "preregistration_identity": "77fca429c1b918f6b25af252c3f403f01f8138783bf7ec1d16989f9d37b1b584",
+    "provider": "OPENLUX_SOLVER_LWJ_OPTIMIZER_V1",
+    "provider_bounds": {
+      "attempt_charged_token_ceiling": 30000000,
+      "bound_proof": {
+        "bootstrap_logical_solver_calls": 950,
+        "cluster_semantic_multiplier": 3,
+        "gradient_semantic_multiplier": 3,
+        "guarantees_saturation": false,
+        "identity": "V25_STRUCTURED_RESOURCE_DERIVATION_V1",
+        "per_op_logical_solver": {
+          "full": 300,
+          "local": 42,
+          "probe": 36,
+          "shadow": 40
+        },
+        "scientific_stopper_unchanged": true,
+        "solver_semantic_multiplier": 4,
+        "token_bound": "PRE_TRANSPORT_EXACT_RESERVATION_AND_CUMULATIVE_ATTEMPT_ADMISSION",
+        "transport_multiplier": 21
+      },
+      "cumulative_charged_token_ceiling": 30000000,
+      "max_opportunities": 50,
+      "max_proposals_per_opportunity": 6,
+      "pattern_calls": 22650,
+      "pattern_cluster_calls": 150,
+      "pattern_gradient_calls": 22500,
+      "physical_solver_per_opportunity": 1672,
+      "reflection_calls": 300,
+      "reservation_peak_upper_bound": 30000000,
+      "solver_calls": 87400,
+      "solver_per_opportunity": 418,
+      "successful_provider_calls": 110350,
+      "transport_attempts": 2317350
+    },
+    "provider_routing_policy": {
+      "identity": "OPENLUX_SOLVER_LWJ_OPTIMIZER_V1",
+      "provider_fallback": false,
+      "routes": {
+        "pattern_cluster": {
+          "api_key_env": "LWJ_DASHSCOPE_API_KEY",
+          "base_url_env": "LWJ_DASHSCOPE_BASE_URL",
+          "model": "qwen3.7-flash",
+          "provider_profile": "lwj"
+        },
+        "pattern_gradient": {
+          "api_key_env": "LWJ_DASHSCOPE_API_KEY",
+          "base_url_env": "LWJ_DASHSCOPE_BASE_URL",
+          "model": "qwen3.7-flash",
+          "provider_profile": "lwj"
+        },
+        "reflection": {
+          "api_key_env": "LWJ_DASHSCOPE_API_KEY",
+          "base_url_env": "LWJ_DASHSCOPE_BASE_URL",
+          "model": "qwen3.7-flash",
+          "provider_profile": "lwj"
+        },
+        "solver": {
+          "api_key_env": "OPENLUX_API_KEY",
+          "base_url_env": "OPENLUX_BASE_URL",
+          "model": "gpt-4o-mini",
+          "provider_profile": "openlux"
+        }
+      },
+      "unknown_role": "REJECT"
+    },
+    "roles": [
+      "solver",
+      "reflection",
+      "pattern_gradient",
+      "pattern_cluster"
+    ],
+    "seed": 86,
+    "solver_execution_policy": {
+      "batch_failure": "STOP_DISPATCH_DRAIN_PERSIST_THEN_RAISE",
+      "cluster_barrier": "ALL_GRADIENT_WORKERS_DRAINED",
+      "expansion_trigger": "IMMEDIATELY_PREVIOUS_RESPONSE_LENGTH_TRUNCATED",
+      "first_output_tokens": 3600,
+      "gradient_max_concurrency": 8,
+      "gradient_recovery": "SERIAL_PER_EXAMPLE_THREE_FROZEN_DRAWS",
+      "gradient_result_order": "WRONG_UNIVERSE_INPUT_ORDER",
+      "identity": "STRUCTURED_OUTPUT_CONTRACT_FEEDBACK_EXECUTION_V6",
+      "inflight_identical_key": "SINGLE_OWNER_SHARED_FUTURE",
+      "length_recovery_output_tokens": 6144,
+      "max_semantic_attempts": 4,
+      "optimization_dependencies": "SERIAL",
+      "optimizer_input_encoding": "DIRECT_READABLE_OPTIMIZER_EVIDENCE_V2",
+      "optimizer_max_concurrency": 8,
+      "reflection_and_team_admission": "SERIAL",
+      "request_timing": "MONOTONIC_PROVIDER_TIMING_V1",
+      "result_order": "INPUT_ORDER",
+      "solver_max_concurrency": 16
+    },
+    "solver_output_interface": {
+      "answer_extraction_policy": {
+        "confirmations": "all_labels_and_conclusions_after_selected_label_must_agree_gold_blind",
+        "coordinate_assignment": "distinct_named_coordinates_same_arity_pinned_tuple_rhs",
+        "declaration_forms": [
+          "final_answer_label",
+          "answer_label",
+          "markdown_label",
+          "natural_conclusion",
+          "terminal_balanced_boxed"
+        ],
+        "empty_heading": "skip_when_followed_by_another_answer_declaration",
+        "gold_access": false,
+        "identity": "MATH_FLEXIBLE_ANSWER_EXTRACTION_V3",
+        "intermediate_selection": false,
+        "maximum_declarations": 16,
+        "maximum_payload_characters": 2048,
+        "maximum_wrapped_declaration_characters": 4096,
+        "multiline": "balanced_display_boxed_matrix_or_labeled_math_fence",
+        "normalization": "outer_math_markdown_sentence_period_unicode_radical_minus_pi_v1",
+        "payload_parser": "math_verify_no_fallback_v1",
+        "scalar_confirmation": "single_variable_constant_assignment_rhs_only",
+        "selection": "last_explicit_label_else_last_terminal_conclusion",
+        "trailing_prose": "permitted_after_explicit_label_without_conflicting_declaration",
+        "truncated": "invalid_even_with_answer",
+        "unmarked_expression": "forbidden"
+      },
+      "identity": "MATH_FLEXIBLE_ANSWER_SYSTEM_INTERFACE_V9",
+      "parser_identity": "MATH_FLEXIBLE_ANSWER_EXTRACTION_V3",
+      "reflection_max_output_tokens": 1800,
+      "solver_max_output_tokens": 3600,
+      "system_prompt_policy": {
+        "block_hash": "sha256_utf8",
+        "blocks": [
+          "role",
+          "strategy",
+          "answer"
+        ],
+        "deduplication": "canonical_structured_bytes",
+        "extra_solver_instructions": false,
+        "full_hash": "sha256_canonical_structured_bytes",
+        "identity": "STRUCTURED_SYSTEM_PROMPT_V1",
+        "max_rendered_characters": 3000,
+        "mutation": "STRUCTURED_SYSTEM_BLOCK_MUTATION_CONTRACT_V1",
+        "rendering": "role_double_newline_strategy_double_newline_answer",
+        "seed": {
+          "answer": "End your response with a final answer on a separate line.\nThe line must start with the exact text \"Final answer: \"\nfollowed by only the mathematical result.\nDo not use a Markdown heading, bullet, or bold formatting\nfor this line. Do not write anything after it.",
+          "role": "You are a helpful assistant.",
+          "strategy": "Answer the question."
+        },
+        "serialization": "ordered_role_strategy_answer_ascii_json_compact",
+        "single_block_per_generation": true,
+        "system_hash": "sha256_rendered_utf8",
+        "user_message": "raw_problem_only"
+      }
+    },
+    "solver_trajectory_policy": {
+      "adaptive_split": "optimize",
+      "final_only": "TRAJECTORY_UNAVAILABLE",
+      "gradient_input_schema": "STRUCTURED_SYSTEM_GRADIENT_INPUT_V8",
+      "gradient_prompt_identity": "STRUCTURED_SYSTEM_GRADIENT_PROMPT_V11",
+      "hidden_reasoning_claim": false,
+      "identity": "MATH_OUTPUT_FEEDBACK_OBSERVED_RESPONSE_POLICY_V8",
+      "max_visible_solution_characters": 4096,
+      "memory_trajectory_writes": false,
+      "observed_response": "complete_ordinary_content",
+      "optimizer_input_schema": "STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V11",
+      "original_response_retention": "complete_private_resolved_prediction_and_attempts",
+      "profile_schema": "MATH_FLEXIBLE_SOLVER_PROFILE_V3",
+      "source": "ordinary_assistant_content",
+      "trajectory_schema": "MATH_FLEXIBLE_RESPONSE_EVIDENCE_V3",
+      "truncation": "optional_solution_unicode_prefix_explicit_metadata",
+      "visible_trajectory_required": false
+    },
+    "source_sha": "def2eaf935573cae495285df215c2a5b0d2c5887",
+    "system_prompt_policy": {
+      "block_hash": "sha256_utf8",
+      "blocks": [
+        "role",
+        "strategy",
+        "answer"
+      ],
+      "deduplication": "canonical_structured_bytes",
+      "extra_solver_instructions": false,
+      "full_hash": "sha256_canonical_structured_bytes",
+      "identity": "STRUCTURED_SYSTEM_PROMPT_V1",
+      "max_rendered_characters": 3000,
+      "mutation": "STRUCTURED_SYSTEM_BLOCK_MUTATION_CONTRACT_V1",
+      "rendering": "role_double_newline_strategy_double_newline_answer",
+      "seed_sha256": "50e07f850167180204a1e0fce8c4800ae8cc776a00017ea7a0b8a6ff24051e74",
+      "serialization": "ordered_role_strategy_answer_ascii_json_compact",
+      "single_block_per_generation": true,
+      "system_hash": "sha256_rendered_utf8",
+      "user_message": "raw_problem_only"
+    },
+    "test_calls": 0,
+    "token_ledger_directory": "runs/a4_v27_direct_seed86_formal_attempt1/accounting",
+    "token_reporting_policy": {
+      "authority": "EXPLICIT_USER_TOKEN_ONLY_INSTRUCTION",
+      "identity": "USER_SELECTED_TOKEN_ONLY_RESOURCE_CONTROL_V1",
+      "missing_usage": "CONSERVATIVE_FULL_RESERVATION_CHARGE",
+      "monetary_tracking": false,
+      "token_limits": "FROZEN_PHASE_LEDGER_HARD_LIMITS"
+    },
+    "transition": "initial_competence_target_or_team_progress_v3",
+    "user_scope_sha256": "9c80a19b4f5d91703d26bb625fdad649d8c7cc5a5f0901c782bff009f322c336",
+    "validation_calls": 0
+  },
+  "scope_sha256": "a72a282b5956919c1cdb68dc0c44ff792d4199060b4ba364671d41b7cc8f31fe",
+  "startup_identity_sha256": "4934002ba8519382c49d1651b1bd7bc65d322c08432487ecaa3b1bcbd01d192c"
+}

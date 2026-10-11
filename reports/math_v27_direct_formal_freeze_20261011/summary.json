@@ -1,5 +1,7 @@
 {
+  "execution_source_sha": "def2eaf935573cae495285df215c2a5b0d2c5887",
   "method": "unified_team_prompt_search_v2_7_output_contract_feedback_v1",
+  "phase_startup": "4934002ba8519382c49d1651b1bd7bc65d322c08432487ecaa3b1bcbd01d192c",
   "preregistration": {
     "attempts": {
       "formal": "a4_v27_direct_seed86_formal_attempt1"
@@ -31,7 +33,7 @@
       "MEMBER_CORRECTNESS",
       "VALIDITY"
     ],
-    "source_freeze": "PENDING",
+    "source_freeze": "def2eaf935573cae495285df215c2a5b0d2c5887",
     "stopping": "team_epoch_no_commit_v1",
     "task": {
       "gradient_concurrency": 8,
@@ -58,7 +60,7 @@
     }
   },
   "real_api_calls": 0,
-  "status": "PREEXECUTION_PREPARATION",
+  "status": "FROZEN",
   "verification": {
     "attempt_id": "a4_v27_direct_seed86_formal_attempt1",
     "canary_execution": "NOT_RUN_CURRENT_VERSION",

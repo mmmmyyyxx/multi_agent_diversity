@@ -29,7 +29,7 @@
     "MEMBER_CORRECTNESS",
     "VALIDITY"
   ],
-  "source_freeze": "PENDING",
+  "source_freeze": "def2eaf935573cae495285df215c2a5b0d2c5887",
   "stopping": "team_epoch_no_commit_v1",
   "task": {
     "gradient_concurrency": 8,
