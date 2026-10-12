@@ -1463,6 +1463,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/math_v27_seed86_performance_forensic_20261012",
+      "document": "reports/math_v27_seed86_performance_forensic_20261012/README.md",
+      "date": "20261012",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "FORENSIC",
+      "experiment_id": "math_v27_seed86_precluster_continuation_v1",
+      "status": "COMPLETED",
+      "source_commit": "1070a95d1ba1fa2e8b308798c659cb6d5967afb7",
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/math_v2_1_a1_seed81_low_cost_canary_v1_20261003",
       "document": "reports/math_v2_1_a1_seed81_low_cost_canary_v1_20261003/README.md",
       "date": "20261003",

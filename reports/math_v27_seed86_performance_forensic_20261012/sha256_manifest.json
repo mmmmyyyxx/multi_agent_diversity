@@ -1,0 +1,25 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "audit_summary.json",
+      "sha256": "fd8c801eefa70b253e19040c3d99d21d8c0c6f4edcbefad70ac438380e68679e"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "5fc1958f4af6ce338ffcafcfbfb3bce3a0e802dbe1da1bbe898650a66b874ca0"
+    },
+    {
+      "file": "README.md",
+      "sha256": "a952bb816802f5738726c6bfd3a33e2017a1a84678e40e6c1ce536b76336217a"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "44ca24764896b56c10a97a0f8df84d4bc1d46ff34ec0f87c0c8d1fb5de75f98b"
+    },
+    {
+      "file": "verification.json",
+      "sha256": "d4f2778d6816e5fed75087f019f5fe34001df97535daea0f0810783bec955021"
+    }
+  ]
+}

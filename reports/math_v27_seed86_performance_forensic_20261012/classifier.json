@@ -1,0 +1,13 @@
+{
+  "additive_repair": "NONE_OF_FIVE_COMMITS_PRESERVED_ALL_TARGET_CORRECTNESS",
+  "component_causality": "NOT_IDENTIFIED",
+  "efficacy": "POSITIVE_ADAPTIVE_DEVELOPMENT_OBSERVATION",
+  "execution_integrity": "PASS",
+  "gradient_output_contract": "TYPE_FAILURE_NOT_OBSERVED_LENGTH_AND_ESCAPE_FAILURES_PERSIST",
+  "independent_generalization": "NOT_EVALUABLE",
+  "local_rank_implementation": "CONFORMANT_50_OPPORTUNITIES",
+  "next_model_call_authorized": false,
+  "probe_promotion_and_full_winner": "CONFORMANT_50_OPPORTUNITIES",
+  "real_api_calls": 0,
+  "scientific_completion": "RESOURCE_TRUNCATED_NOT_SATURATED"
+}

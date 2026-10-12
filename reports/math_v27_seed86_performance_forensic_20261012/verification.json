@@ -1,0 +1,62 @@
+{
+  "adaptive_shadow_frozen_gate_replay": "PASS",
+  "artifact_integrity": "PASS",
+  "audit_scripts_sha256": {
+    "analyze.py": "c62a6260a335632a58cd55be193a1ca05c183a825649ae0b727ab68742f4a7f1",
+    "extra.py": "e5ff74d0f9b7d9b30e5743800dec3e9805e80c4089519c988f2bbdecbb2a6ac5",
+    "integrity_recheck.py": "7f76866ef23522ff32f9efc3e1c55f3e957caf9320cd7bf16da5550914e77647",
+    "phase.py": "17ab636d9f4cd7c2694ffaf361a488c42b53296d813bcdeba8614d5f59155c4c",
+    "publish_audit.py": "083d99315756aca39ce05d8d598a94ac169530a3c550b90e54934b074d6ab378",
+    "shadow.py": "b01caf2bbe829d7ebeb4d16894013a5bcdfd3dd7186d2c00e996d713ba9eb480"
+  },
+  "endpoint_and_cost_reconciliation": "PASS",
+  "evidence_mutated": false,
+  "network_attempt_count": 0,
+  "original_report_hashes": "PASS",
+  "production_source_changed": false,
+  "publication_artifacts": "TEXT_AND_SANITIZED_JSON_ONLY",
+  "publication_checks": {
+    "baseline_failures": {
+      "baseline_commit": "00f235a2861ce413f09ab7fb8d12a2bf5dfadf3b",
+      "cause": "Preparation-only assertion expects completed experiment active_for_new_work=true; actual baseline active set is empty.",
+      "common_assertion_line": 293,
+      "failed_cases": [
+        "test_current_scope_is_fresh_and_unapproved",
+        "test_preparation_cannot_authorize_or_import_results[real_api_authorized-True]",
+        "test_preparation_cannot_authorize_or_import_results[next_canary_authorized-True]",
+        "test_preparation_cannot_authorize_or_import_results[next_pilot_authorized-True]",
+        "test_preparation_cannot_authorize_or_import_results[next_validation_authorized-True]",
+        "test_preparation_cannot_authorize_or_import_results[pending_pilot_test_authorized-True]",
+        "test_preparation_cannot_authorize_or_import_results[pending_pilot_operational_retry_limit-1]",
+        "test_preparation_cannot_authorize_or_import_results[old_evidence_reuse_allowed-True]",
+        "test_preparation_cannot_authorize_or_import_results[current_method-unified_team_prompt_search_v2_3_optimization_evidence]",
+        "test_preparation_cannot_authorize_or_import_results[initial_accuracy-0.8]",
+        "test_preparation_cannot_authorize_or_import_results[pilot_search_complete-True]"
+      ],
+      "failures_reproduced": 11,
+      "frontier_and_test_source_unchanged": true,
+      "production_source_unchanged": true,
+      "real_api_calls": 0,
+      "registry_diff_is_report_reference_only": true
+    },
+    "compileall": "PASS",
+    "current_classified_governance_tests": {
+      "errors": 0,
+      "failures": 11,
+      "passed": 45,
+      "skipped": 0,
+      "tests": 56
+    },
+    "full_current_suite": "NOT_RERUN_REPORT_METADATA_ONLY",
+    "governance": "PASS",
+    "historical_private_tests": "EXCLUDED_BY_CURRENT_CLASSIFICATION",
+    "network_attempt_count": 0,
+    "original_public_artifacts": "UNCHANGED_HASH_PASS"
+  },
+  "pytest": "NOT_RERUN_NO_PRODUCTION_CHANGE",
+  "real_api_calls": 0,
+  "repository_governance": "PASS",
+  "test_calls": 0,
+  "three_stage_rank_conformance": "PASS",
+  "validation_calls": 0
+}

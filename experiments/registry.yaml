@@ -9800,6 +9800,8 @@ experiments:
   manifest: experiments/manifests/math_v27_seed86_precluster_continuation_v1.yaml
   report: reports/math_v27_seed86_continuation_execution_20261012
   classifier: reports/math_v27_seed86_continuation_execution_20261012/classifier.json
+  reports:
+  - reports/math_v27_seed86_performance_forensic_20261012
   active_for_new_work: false
   historical_replay: false
   superseded_by: []
