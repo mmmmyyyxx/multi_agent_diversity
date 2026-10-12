@@ -9796,7 +9796,7 @@ experiments:
   scientific_status: VALID_RESOURCE_TRUNCATED_DESCRIPTIVE_DEVELOPMENT_EVIDENCE
   implementation_commit: a8985eef7f15f82ae29bf8000cccf12b0ad39b2a
   execution_commit: 1070a95d1ba1fa2e8b308798c659cb6d5967afb7
-  result_commit: null
+  result_commit: 4df5056327ed6d39b6fa5bec666cba2357e2dfe7
   manifest: experiments/manifests/math_v27_seed86_precluster_continuation_v1.yaml
   report: reports/math_v27_seed86_continuation_execution_20261012
   classifier: reports/math_v27_seed86_continuation_execution_20261012/classifier.json
