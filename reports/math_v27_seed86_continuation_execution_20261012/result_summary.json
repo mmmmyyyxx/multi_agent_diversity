@@ -1,0 +1,164 @@
+{
+  "attempt_id": "a4_v27_seed86_continuation_attempt1",
+  "classification": "VALID_EXECUTION_RESOURCE_TRUNCATED_SINGLE_ARM_DEVELOPMENT_EVIDENCE",
+  "evidence_limits": {
+    "causal_component_effects": "NOT_IDENTIFIED",
+    "data": "single frozen Optimize/Shadow attempt; adaptive development evidence",
+    "historical_comparison": "DESCRIPTIVE_ONLY",
+    "independent_generalization": "NOT_EVALUABLE",
+    "no_efficacy_based_rerun": true,
+    "scientific_saturation": "NOT_REACHED_RESOURCE_CEILING_50_OPPORTUNITIES"
+  },
+  "execution_source_sha": "a8985eef7f15f82ae29bf8000cccf12b0ad39b2a",
+  "experiment_id": "math_v27_seed86_precluster_continuation_v1",
+  "historical_scores_changed": false,
+  "integrity": {
+    "Test": "SEALED",
+    "Validation": "NOT_AUTHORIZED",
+    "parent_trace": "BYTE_IDENTICAL",
+    "source_and_startup": "MATCH",
+    "test_calls": 0,
+    "unresolved_reservations": 0,
+    "validation_calls": 0,
+    "wire_receipt_journal": "MATCH"
+  },
+  "launch_commit_sha": "1070a95d1ba1fa2e8b308798c659cb6d5967afb7",
+  "lifecycle": "EXECUTION_COMPLETE",
+  "method_identity": "unified_team_prompt_search_v2_7_request_recovery_v2",
+  "parent_experiment": "math_v27_direct_seed86_formal_v1",
+  "parent_initial_state": "EXACT_MATCH",
+  "performance": {
+    "allocation_count_by_member": {
+      "0": 8,
+      "1": 9,
+      "2": 10,
+      "3": 7,
+      "4": 16
+    },
+    "commit_count_by_member": {
+      "0": 0,
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 3
+    },
+    "commit_opportunities": [
+      2,
+      7,
+      11,
+      24,
+      27
+    ],
+    "commit_targets": [
+      1,
+      4,
+      2,
+      4,
+      4
+    ],
+    "commits": 5,
+    "completed_no_commit_epochs": 3,
+    "consecutive_no_commit_opportunities": 23,
+    "consecutive_no_vote_improvement_opportunities": 23,
+    "member_correct_final": [
+      111,
+      116,
+      122,
+      115,
+      124
+    ],
+    "member_correct_initial": [
+      111,
+      115,
+      113,
+      115,
+      112
+    ],
+    "member_valid_final": [
+      147,
+      149,
+      149,
+      149,
+      149
+    ],
+    "member_valid_initial": [
+      147,
+      148,
+      147,
+      149,
+      147
+    ],
+    "opportunities": 50,
+    "oracle_final": 131,
+    "oracle_initial": 124,
+    "oracle_only_improvement_opportunities": [
+      24
+    ],
+    "patience_epochs": 4,
+    "vote_final": 125,
+    "vote_initial": 118,
+    "vote_only_improvement_opportunities": [
+      27
+    ]
+  },
+  "resource_usage": {
+    "combined_attempts": 9712,
+    "combined_charged": 21078471,
+    "cumulative_ceiling": null,
+    "monetary_tracking": false,
+    "new_attempts": 8823,
+    "new_calls_by_split": {
+      "optimize": 8377,
+      "shadow": 446
+    },
+    "new_charged": 20023235,
+    "new_conservative_fallback": 0,
+    "new_provider_reported": 20023235,
+    "parent_charged": 1055236,
+    "parent_conservative_fallback": 172349,
+    "parent_provider_reported": 882887,
+    "reserved_at_close": 0
+  },
+  "scientific_stop_reached": false,
+  "scientific_stopping": {
+    "completed_eligible_member_epochs": 3,
+    "consecutive_no_commit_opportunities": 23,
+    "consecutive_no_vote_improvement_opportunities": 23,
+    "identity": "team_epoch_no_commit_v1",
+    "patience_complete_eligible_member_epochs": 4
+  },
+  "search_funnel": {
+    "cluster_calls": 58,
+    "cluster_duplicate_partition_failures_recovered": 4,
+    "full_records": 31,
+    "gate_pass_and_commit": 5,
+    "generated_proposals": 300,
+    "gradient_dispositions": {
+      "ACTIONABLE": 1472,
+      "NONACTIONABLE_EXHAUSTED": 142,
+      "UNCERTAIN": 4
+    },
+    "gradient_draws_including_parent_prefix": 2441,
+    "gradient_examples": 1618,
+    "local_survival_updates": 0,
+    "memory_activity_events": 126,
+    "memory_shared_risk_final": 10,
+    "missing_aliases_completed": 37,
+    "new_cluster_calls": 58,
+    "new_gradient_calls": 2388,
+    "new_reflection_calls": 300,
+    "new_solver_calls": 6077,
+    "no_outer_gate_candidate": 45,
+    "optimizer_search_meta_calls": 300,
+    "partition_completion_events": 19,
+    "team_candidates": 70,
+    "team_probes": 70,
+    "test_calls": 0,
+    "unknown_alias_failures": 0,
+    "validation_calls": 0
+  },
+  "startup_identity_sha256": "4f1acda3cea48932e285f0d6fa85953effdda08ed22c61b4b4c48e6feb973b81",
+  "stop_reason": "OPERATIONAL_OPPORTUNITY_CEILING",
+  "terminal_audit": "PASS",
+  "terminal_inventory_sha256": "5be0b9aa431700cb22ab14850b3470c9d6d12d53deb94a901475465a913003ce"
+}

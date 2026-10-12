@@ -1032,7 +1032,7 @@ nodes:
 - experiment_id: math_v27_seed86_precluster_continuation_v1
   kind: FORMAL_EXPERIMENT
   era: UNIFIED_TEAM_PROMPT_SEARCH
-  status: PREPARED_NOT_EXECUTED
+  status: COMPLETED
   manifest: experiments/manifests/math_v27_seed86_precluster_continuation_v1.yaml
 - experiment_id: math_v27_request_recovery_preparation_v1
   kind: PROTOCOL_FREEZE

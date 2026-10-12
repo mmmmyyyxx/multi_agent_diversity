@@ -9792,25 +9792,21 @@ experiments:
   method_family: unified_team_prompt_search_v2_7_request_recovery_v2
   parent_ids:
   - math_v27_direct_seed86_formal_v1
-  status: PREPARED_NOT_EXECUTED
-  scientific_status: AUTHORIZED_MIGRATION_UNMEASURED
-  implementation_commit: null
-  execution_commit: null
+  status: COMPLETED
+  scientific_status: VALID_RESOURCE_TRUNCATED_DESCRIPTIVE_DEVELOPMENT_EVIDENCE
+  implementation_commit: a8985eef7f15f82ae29bf8000cccf12b0ad39b2a
+  execution_commit: 1070a95d1ba1fa2e8b308798c659cb6d5967afb7
   result_commit: null
   manifest: experiments/manifests/math_v27_seed86_precluster_continuation_v1.yaml
-  report: reports/math_v27_precluster_continuation_20261012
-  classifier: reports/math_v27_precluster_continuation_20261012/classifier.json
-  active_for_new_work: true
+  report: reports/math_v27_seed86_continuation_execution_20261012
+  classifier: reports/math_v27_seed86_continuation_execution_20261012/classifier.json
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
-  - Explicit pre-cluster prefix migration; four no-commit epochs and uncapped cumulative
-    Token.
-  - Five members; no Validation/Test.
-  unavailable:
-    implementation_commit: Source freeze pending.
-    execution_commit: Not executed.
-    result_commit: No continuation results.
+  - Explicit pre-cluster prefix migration; four no-commit epochs and uncapped cumulative Token.
+  - Five members; no Validation/Test. Resource-truncated at 50 opportunities after five Commits; three full no-commit epochs.
+  - Single-run adaptive Optimize/Shadow gains are descriptive; independent generalization and component causality are not evaluable.
 - experiment_id: math_v27_request_recovery_preparation_v1
   kind: PROTOCOL_FREEZE
   era: UNIFIED_TEAM_PROMPT_SEARCH

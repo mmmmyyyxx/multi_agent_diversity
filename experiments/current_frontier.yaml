@@ -78,9 +78,6 @@ unresolved_reservations: 0
 parser_identity: MATH_FLEXIBLE_ANSWER_EXTRACTION_V3
 baseline_b5_strict_review_compatible_with_current_source: false
 exact_dual_scope_user_authorization_received: true
-current_task_charged_tokens: 0
-current_task_provider_attempts: 0
-current_task_provider_responses: 0
 current_task_pilot_calls: 0
 last_canary_manifest: experiments/manifests/a4_v25_arm_b_openlux_seed84_canary_v1.yaml
 last_canary_execution_binding: experiments/execution_bindings/a4_v25_arm_b_openlux_seed84_canary_attempt1.json
@@ -111,7 +108,17 @@ proposed_formal_max_opportunities: 50
 proposed_solver_concurrency: 16
 proposed_gradient_concurrency: 8
 proposed_protocol: experiments/protocols/math_v27_seed86_precluster_continuation_v1/preregistration.json
-current_formal_status: PREEXECUTION_OFFLINE_CHECKS_RUNNING
+current_formal_status: EXECUTION_COMPLETE_RESOURCE_TRUNCATED_AWAITING_PUBLICATION
+current_task_provider_attempts: 8823
+current_task_provider_responses: 8823
+current_task_charged_tokens: 20023235
+current_task_parent_charged_tokens: 1055236
+current_task_combined_charged_tokens: 21078471
+current_task_team_commits: 5
+current_task_opportunities: 50
+current_task_scientific_stop_reached: false
+current_task_validation_calls: 0
+current_task_test_calls: 0
 last_formal_preparation_report: reports/math_diagnostic400_formal_preparation_20261011
 token_reporting_policy:
   identity: USER_SELECTED_TOKEN_ONLY_RESOURCE_CONTROL_V1
