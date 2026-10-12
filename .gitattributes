@@ -160,3 +160,8 @@ reports/gradient_diagnostic_threshold_replay_20261011/** text eol=lf
 
 reports/gradient_diagnostic_limits_400_v2_preparation_20261011/** text eol=lf
 experiments/manifests/math_gradient_diagnostic_limits_400_v2.yaml text eol=lf
+
+# Canonical bytes for the read-only local evaluation/promotion audit.
+reports/local_evaluation_promotion_feasibility_audit_20261012/** text eol=lf
+scripts/audit_local_evaluation_promotion.py text eol=lf
+tests/current/test_local_promotion_feasibility_audit.py text eol=lf

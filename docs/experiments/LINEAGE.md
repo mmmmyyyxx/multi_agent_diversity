@@ -467,6 +467,7 @@ flowchart TD
     n335["math_v27_request_recovery_preparation_v1<br/>PROTOCOL_FREEZE<br/>IMPLEMENTED_NOT_EXECUTED"]
     n336["math_v27_seed86_evolution_bottleneck_audit_20261012<br/>FORENSIC_AUDIT<br/>COMPLETED"]
     n337["scoped_edit_experience_layer1_v28_preparation_v1<br/>PROTOCOL_FREEZE<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n338["local_evaluation_promotion_feasibility_audit_v1_20261012<br/>FORENSIC_AUDIT<br/>COMPLETED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -746,6 +747,9 @@ flowchart TD
   n334 -->|audit_of| n336
   n334 -->|derived_from| n337
   n336 -->|derived_from| n337
+  n334 -->|audit_of| n338
+  n336 -->|audit_of| n338
+  n337 -->|audit_of| n338
 ```
 
 ## Archived branches and unresolved evidence

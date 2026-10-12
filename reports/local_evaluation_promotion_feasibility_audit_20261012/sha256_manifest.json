@@ -1,0 +1,25 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "analysis_summary.json",
+      "sha256": "ce8b7be0ef20ba48829ecd12ac3080ccfe4927eb6a66a4c275a7b24ea435ae3f"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "758fb7c8dd63707d4edaab76c284da70062da7205da4cc28d4fb18a5a9843bba"
+    },
+    {
+      "file": "README.md",
+      "sha256": "27eeb0df5fced329f4df1ae72ac46534f1b462bab0aa5424dad4d50b034aae04"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "c1f784f80446fbc0c64101452df526ef735035551ab9827d851ff60642181af6"
+    },
+    {
+      "file": "verification.json",
+      "sha256": "24460a426cb6edb4bb9ceac17e674c77606d501c323b05ca0a67c8873fe3cbce"
+    }
+  ]
+}

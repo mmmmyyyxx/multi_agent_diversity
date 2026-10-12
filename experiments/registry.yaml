@@ -9888,3 +9888,35 @@ experiments:
     implementation_commit: Containing implementation commit; no self-referential SHA.
     execution_commit: No model experiment executed.
     result_commit: Containing offline evidence commit; no real-model efficacy result.
+- experiment_id: local_evaluation_promotion_feasibility_audit_v1_20261012
+  kind: FORENSIC_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: offline_local_evaluation_promotion_feasibility_v1
+  parent_ids:
+  - math_v27_seed86_precluster_continuation_v1
+  - math_v27_seed86_evolution_bottleneck_audit_20261012
+  - scoped_edit_experience_layer1_v28_preparation_v1
+  status: COMPLETED
+  scientific_status: ZERO_API_SELECTED_CATALOG_FEASIBILITY_CAUSAL_AND_CENSORED_VALUES_UNIDENTIFIED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: null
+  report: reports/local_evaluation_promotion_feasibility_audit_20261012
+  classifier: reports/local_evaluation_promotion_feasibility_audit_20261012/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Read-only candidate/cache/cost audit; no production, frozen result, readiness
+    or authorization change.
+  - Alternative choices and panel sampling use only pre-Full or parent features; missing
+    Full is never imputed.
+  - Real APIs, new experiments and push remain unperformed and require separate explicit
+    authorization.
+  unavailable:
+    manifest: No new model experiment; immutable parent manifests govern original
+      evidence.
+    implementation_commit: Containing audit-tool commit; no production algorithm implementation.
+    execution_commit: No model experiment executed.
+    result_commit: Containing sanitized audit commit; no self-referential SHA.

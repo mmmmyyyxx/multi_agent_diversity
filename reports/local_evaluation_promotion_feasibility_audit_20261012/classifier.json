@@ -1,0 +1,15 @@
+{
+  "research_decision": "GATHER_EVIDENCE_RETAIN_CURRENT_PRODUCTION",
+  "v29_local_evaluation_promotion_change": "NOT_JUSTIFIED_FOR_IMMEDIATE_DEPLOYMENT",
+  "confirmed_false_rejection_of_known_high_value_candidate": "NOT_OBSERVED",
+  "assigned_zero_candidate_full_value": "UNMEASURED",
+  "candidate_selection_causality": "NOT_IDENTIFIED",
+  "panel_stratification": "RISK_DETECTION_IMPROVES_WITH_HIGHER_FALSE_NEGATIVE_AND_MISRANKING_RATES_IN_SELECTED_CATALOG",
+  "parent_greedy_positive_only": "WOULD_TRUNCATE_OBSERVED_PATHS_NO_ALTERNATE_TRAJECTORY_CLAIM",
+  "scientific_method_changed": false,
+  "production_algorithm_edits": 0,
+  "real_model_api_calls": 0,
+  "validation_test_raw_reads": 0,
+  "real_experiments_started": 0,
+  "push_performed": false
+}
