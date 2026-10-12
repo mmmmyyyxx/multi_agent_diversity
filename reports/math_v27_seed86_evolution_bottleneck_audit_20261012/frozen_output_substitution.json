@@ -1,0 +1,135 @@
+{
+  "equivalence_batches": 24,
+  "limits": [
+    "No resampling",
+    "No alternative search trajectory",
+    "No generalization or optimizer component causal effect",
+    "Correctness labels are sealed same-support observations"
+  ],
+  "real_api_calls": 0,
+  "rollback": [
+    {
+      "final_oracle_marginal": 1,
+      "final_vote_marginal": 4,
+      "member": 2,
+      "oracle_without_final_update": 130,
+      "vote_without_final_update": 121
+    },
+    {
+      "final_oracle_marginal": 0,
+      "final_vote_marginal": 2,
+      "member": 3,
+      "oracle_without_final_update": 131,
+      "vote_without_final_update": 123
+    },
+    {
+      "final_oracle_marginal": 2,
+      "final_vote_marginal": 6,
+      "member": 5,
+      "oracle_without_final_update": 129,
+      "vote_without_final_update": 119
+    }
+  ],
+  "scope": "FROZEN_OUTPUT_SUBSTITUTION_DIAGNOSTIC_NOT_SEARCH_OR_MODEL_ABLATION",
+  "teams": [
+    {
+      "binary_selector": [
+        0,
+        0,
+        0
+      ],
+      "final_members": [],
+      "oracle": 124,
+      "vote": 118
+    },
+    {
+      "binary_selector": [
+        0,
+        0,
+        1
+      ],
+      "final_members": [
+        5
+      ],
+      "oracle": 129,
+      "vote": 119
+    },
+    {
+      "binary_selector": [
+        0,
+        1,
+        0
+      ],
+      "final_members": [
+        3
+      ],
+      "oracle": 128,
+      "vote": 118
+    },
+    {
+      "binary_selector": [
+        0,
+        1,
+        1
+      ],
+      "final_members": [
+        3,
+        5
+      ],
+      "oracle": 130,
+      "vote": 121
+    },
+    {
+      "binary_selector": [
+        1,
+        0,
+        0
+      ],
+      "final_members": [
+        2
+      ],
+      "oracle": 129,
+      "vote": 120
+    },
+    {
+      "binary_selector": [
+        1,
+        0,
+        1
+      ],
+      "final_members": [
+        2,
+        5
+      ],
+      "oracle": 131,
+      "vote": 123
+    },
+    {
+      "binary_selector": [
+        1,
+        1,
+        0
+      ],
+      "final_members": [
+        2,
+        3
+      ],
+      "oracle": 129,
+      "vote": 119
+    },
+    {
+      "binary_selector": [
+        1,
+        1,
+        1
+      ],
+      "final_members": [
+        2,
+        3,
+        5
+      ],
+      "oracle": 131,
+      "vote": 125
+    }
+  ]
+}

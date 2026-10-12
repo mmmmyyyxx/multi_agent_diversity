@@ -1,0 +1,3676 @@
+{
+  "candidate_funnel": {
+    "ASSIGNED_REPAIR_FAILED": 33,
+    "FULL_PASS": 6,
+    "PROBE_PASS": 6,
+    "PROBE_PASS_FULL_REJECT": 25
+  },
+  "committed_loss_outside_mutation_types": [
+    {
+      "mutation_types": [
+        "Intermediate Algebra",
+        "Precalculus"
+      ],
+      "opportunity": 2,
+      "target_loss_outside_mutation_types": 3,
+      "vote_loss_outside_mutation_types": 1
+    },
+    {
+      "mutation_types": [
+        "Intermediate Algebra",
+        "Prealgebra"
+      ],
+      "opportunity": 7,
+      "target_loss_outside_mutation_types": 2,
+      "vote_loss_outside_mutation_types": 1
+    },
+    {
+      "mutation_types": [
+        "Intermediate Algebra"
+      ],
+      "opportunity": 11,
+      "target_loss_outside_mutation_types": 1,
+      "vote_loss_outside_mutation_types": 1
+    },
+    {
+      "mutation_types": [
+        "Counting & Probability",
+        "Geometry",
+        "Precalculus"
+      ],
+      "opportunity": 24,
+      "target_loss_outside_mutation_types": 5,
+      "vote_loss_outside_mutation_types": 2
+    },
+    {
+      "mutation_types": [
+        "Intermediate Algebra"
+      ],
+      "opportunity": 27,
+      "target_loss_outside_mutation_types": 5,
+      "vote_loss_outside_mutation_types": 1
+    }
+  ],
+  "committed_prompt_changes": [
+    {
+      "added_characters": 304,
+      "chain_length": 1,
+      "opportunity": 2,
+      "strategy_keeps_old_prefix": true
+    },
+    {
+      "added_characters": 659,
+      "chain_length": 2,
+      "opportunity": 7,
+      "strategy_keeps_old_prefix": true
+    },
+    {
+      "added_characters": 451,
+      "chain_length": 4,
+      "opportunity": 11,
+      "strategy_keeps_old_prefix": true
+    },
+    {
+      "added_characters": 818,
+      "chain_length": 4,
+      "opportunity": 24,
+      "strategy_keeps_old_prefix": true
+    },
+    {
+      "added_characters": 702,
+      "chain_length": 2,
+      "opportunity": 27,
+      "strategy_keeps_old_prefix": true
+    }
+  ],
+  "conditional_signal_diagnostics": {
+    "full_vote_positive": 3,
+    "full_vote_positive_with_positive_probe": 0,
+    "full_vote_positive_with_positive_validation": 0,
+    "probe_vote_hist_full": {
+      "-1": 2,
+      "0": 27,
+      "1": 2
+    },
+    "probe_vote_positive_full": 2
+  },
+  "cost_summary": {
+    "cache_hit_events": 858,
+    "first_27_tokens": 10768035,
+    "input_tokens": 15173295,
+    "last_23_requests": 3839,
+    "last_23_tokens": 9255200,
+    "new_tokens": 20023235,
+    "output_tokens": 4849940,
+    "prediction_validity_events": 6412,
+    "request_finish_reason_counts": {
+      "length": 36,
+      "stop": 8787
+    },
+    "roles": {
+      "pattern_cluster": {
+        "charged_total": 177939,
+        "fallback_charged": 0,
+        "input_tokens": 135335,
+        "latency_median_seconds": 5.447338900001341,
+        "latency_p95_seconds": 10.945377600000938,
+        "latency_total_seconds": 359.8132846000299,
+        "output_tokens": 42604,
+        "physical_attempts": 58,
+        "provider_reported_actual": 177939,
+        "requests": 58,
+        "slot_wait_max_seconds": 7.299997378140688e-06,
+        "slot_wait_total_seconds": 0.00023019998479867354
+      },
+      "pattern_gradient": {
+        "charged_total": 11067148,
+        "fallback_charged": 0,
+        "input_tokens": 10233936,
+        "latency_median_seconds": 3.443675300000905,
+        "latency_p95_seconds": 7.061196899994684,
+        "latency_total_seconds": 9396.828027600051,
+        "output_tokens": 833212,
+        "physical_attempts": 2388,
+        "provider_reported_actual": 11067148,
+        "requests": 2388,
+        "slot_wait_max_seconds": 9.059999865712598e-05,
+        "slot_wait_total_seconds": 0.009432800179638434
+      },
+      "reflection": {
+        "charged_total": 2835680,
+        "fallback_charged": 0,
+        "input_tokens": 2801045,
+        "latency_median_seconds": 0.9666773999997531,
+        "latency_p95_seconds": 3.8868087000009837,
+        "latency_total_seconds": 443.74108940007136,
+        "output_tokens": 34635,
+        "physical_attempts": 300,
+        "provider_reported_actual": 2835680,
+        "requests": 300,
+        "slot_wait_max_seconds": 2.2100000933278352e-05,
+        "slot_wait_total_seconds": 0.0018109999291482382
+      },
+      "solver": {
+        "charged_total": 5942468,
+        "fallback_charged": 0,
+        "input_tokens": 2002979,
+        "latency_median_seconds": 6.1582162999984575,
+        "latency_p95_seconds": 13.741226899997855,
+        "latency_total_seconds": 43424.354101800345,
+        "output_tokens": 3939489,
+        "physical_attempts": 6077,
+        "provider_reported_actual": 5942468,
+        "requests": 6077,
+        "slot_wait_max_seconds": 0.0006049000003258698,
+        "slot_wait_total_seconds": 0.030024499872524757
+      }
+    },
+    "semantic_attempts": 6077,
+    "transport_retry_count": 0
+  },
+  "full_candidates": [
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "98f3b470addfb72b58f5728c90d9a99372d51bb807d6ba83a62508caa38fe039",
+      "committed": true,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 2,
+        "dropout_pivotal_target_loss": 2,
+        "other_member_still_correct_loss": 7,
+        "redundant_correct_gain": 3,
+        "repairs_on_already_vote_correct": 1,
+        "repairs_still_vote_wrong": 5,
+        "sole_correct_loss": 1,
+        "unique_coverage_gain": 6,
+        "vote_pivotal_repairs": 3
+      },
+      "fixed_types": {
+        "Counting & Probability": 2,
+        "Geometry": 1,
+        "Intermediate Algebra": 3,
+        "Precalculus": 3
+      },
+      "full_evaluated": true,
+      "full_target_delta": 1.0,
+      "full_vote_delta": 2.0,
+      "generation": 4,
+      "lost_types": {
+        "Geometry": 1,
+        "Intermediate Algebra": 3,
+        "Number Theory": 2,
+        "Precalculus": 2
+      },
+      "member": 2,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 2,
+      "probe_lost": 1,
+      "probe_target_delta": -1,
+      "probe_vote_delta": -1,
+      "status": "FULL_PASS",
+      "target_fixed": 9,
+      "target_lost": 8,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 1
+      },
+      "validation_delta": 0,
+      "validation_fixed": 0,
+      "validation_lost": 0,
+      "vote_fixed": 4,
+      "vote_lost": 2,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 1
+      },
+      "vote_lost_types": {
+        "Number Theory": 1,
+        "Precalculus": 1
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 3,
+        "gain_wrong_answer_cluster_change": 1,
+        "loss_target_correctness_change": 2
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "49e0e67e2b14e428062faf9cf827d21cabf135f8e0393c207e3b721ad80782f6",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 4,
+        "dropout_pivotal_target_loss": 4,
+        "other_member_still_correct_loss": 6,
+        "redundant_correct_gain": 7,
+        "repairs_on_already_vote_correct": 7,
+        "repairs_still_vote_wrong": 2,
+        "unique_coverage_gain": 2,
+        "vote_pivotal_repairs": 0
+      },
+      "fixed_types": {
+        "Counting & Probability": 3,
+        "Intermediate Algebra": 4,
+        "Number Theory": 1,
+        "Precalculus": 1
+      },
+      "full_evaluated": true,
+      "full_target_delta": 3.0,
+      "full_vote_delta": -4.0,
+      "generation": 2,
+      "lost_types": {
+        "Geometry": 1,
+        "Intermediate Algebra": 4,
+        "Precalculus": 1
+      },
+      "member": 3,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 4,
+      "probe_lost": 0,
+      "probe_target_delta": 1,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 9,
+      "target_lost": 6,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "validation_delta": 0,
+      "validation_fixed": 0,
+      "validation_lost": 0,
+      "vote_fixed": 0,
+      "vote_lost": 4,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Geometry": 1,
+        "Intermediate Algebra": 3
+      },
+      "vote_mechanisms": {
+        "loss_target_correctness_change": 4
+      }
+    },
+    {
+      "assigned_repairs": 2,
+      "candidate_hash": "b39da8f7b998b512a1c9948d8133dc7776c826aac3b2c3f6d0feb5210d858488",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 3,
+        "dropout_pivotal_target_loss": 3,
+        "other_member_still_correct_loss": 6,
+        "redundant_correct_gain": 8,
+        "repairs_on_already_vote_correct": 7,
+        "repairs_still_vote_wrong": 5,
+        "sole_correct_loss": 3,
+        "unique_coverage_gain": 4,
+        "vote_pivotal_repairs": 0
+      },
+      "fixed_types": {
+        "Algebra": 1,
+        "Geometry": 1,
+        "Intermediate Algebra": 6,
+        "Number Theory": 1,
+        "Precalculus": 3
+      },
+      "full_evaluated": true,
+      "full_target_delta": 3.0,
+      "full_vote_delta": -3.0,
+      "generation": 4,
+      "lost_types": {
+        "Counting & Probability": 1,
+        "Geometry": 1,
+        "Intermediate Algebra": 2,
+        "Number Theory": 1,
+        "Precalculus": 4
+      },
+      "member": 2,
+      "mutation_delta": 2,
+      "mutation_fixed": 2,
+      "mutation_lost": 0,
+      "opportunity": 6,
+      "probe_lost": 0,
+      "probe_target_delta": 0,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 12,
+      "target_lost": 9,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "validation_delta": 0,
+      "validation_fixed": 0,
+      "validation_lost": 0,
+      "vote_fixed": 0,
+      "vote_lost": 3,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Counting & Probability": 1,
+        "Geometry": 1,
+        "Intermediate Algebra": 1
+      },
+      "vote_mechanisms": {
+        "loss_target_correctness_change": 3
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "9935a3798cbb90d14f8e06aca8488e89516d8c7c502e1b56e0ff282c242e96cf",
+      "committed": true,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 1,
+        "dropout_pivotal_target_loss": 1,
+        "other_member_still_correct_loss": 2,
+        "redundant_correct_gain": 8,
+        "repairs_on_already_vote_correct": 3,
+        "repairs_still_vote_wrong": 3,
+        "unique_coverage_gain": 2,
+        "vote_pivotal_repairs": 4
+      },
+      "fixed_types": {
+        "Algebra": 1,
+        "Counting & Probability": 1,
+        "Intermediate Algebra": 3,
+        "Prealgebra": 1,
+        "Precalculus": 4
+      },
+      "full_evaluated": true,
+      "full_target_delta": 8.0,
+      "full_vote_delta": 3.0,
+      "generation": 2,
+      "lost_types": {
+        "Counting & Probability": 1,
+        "Number Theory": 1
+      },
+      "member": 5,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 7,
+      "probe_lost": 0,
+      "probe_target_delta": 1,
+      "probe_vote_delta": 0,
+      "status": "FULL_PASS",
+      "target_fixed": 10,
+      "target_lost": 2,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "validation_delta": 0,
+      "validation_fixed": 0,
+      "validation_lost": 0,
+      "vote_fixed": 4,
+      "vote_lost": 1,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Counting & Probability": 1
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 4,
+        "loss_target_correctness_change": 1
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "7102b8b9e182a20868f6974dcf633cadab373a6cb8ab7cfa5f3706bcafb3d659",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 2,
+        "dropout_pivotal_target_loss": 1,
+        "other_member_still_correct_loss": 6,
+        "redundant_correct_gain": 8,
+        "repairs_on_already_vote_correct": 4,
+        "repairs_still_vote_wrong": 4,
+        "unique_coverage_gain": 3,
+        "vote_pivotal_repairs": 3
+      },
+      "fixed_types": {
+        "Algebra": 1,
+        "Counting & Probability": 1,
+        "Geometry": 1,
+        "Intermediate Algebra": 3,
+        "Number Theory": 1,
+        "Prealgebra": 1,
+        "Precalculus": 3
+      },
+      "full_evaluated": true,
+      "full_target_delta": 5.0,
+      "full_vote_delta": 0.0,
+      "generation": 3,
+      "lost_types": {
+        "Counting & Probability": 1,
+        "Number Theory": 3,
+        "Prealgebra": 1,
+        "Precalculus": 1
+      },
+      "member": 5,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 7,
+      "probe_lost": 0,
+      "probe_target_delta": 2,
+      "probe_vote_delta": 1,
+      "status": "FULL_PASS",
+      "target_fixed": 11,
+      "target_lost": 6,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "validation_delta": 0,
+      "validation_fixed": 0,
+      "validation_lost": 0,
+      "vote_fixed": 3,
+      "vote_lost": 3,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Counting & Probability": 1,
+        "Intermediate Algebra": 1,
+        "Number Theory": 1
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 3,
+        "loss_target_correctness_change": 2,
+        "loss_wrong_answer_cluster_change": 1
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "c38e511678dcf8b05edd1ff3f8ded7afd5e5ea1350478397a229a7536d83cf2a",
+      "committed": true,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 1,
+        "dropout_pivotal_target_loss": 0,
+        "other_member_still_correct_loss": 1,
+        "redundant_correct_gain": 10,
+        "repairs_on_already_vote_correct": 7,
+        "repairs_still_vote_wrong": 3,
+        "sole_correct_loss": 1,
+        "unique_coverage_gain": 1,
+        "vote_pivotal_repairs": 1
+      },
+      "fixed_types": {
+        "Algebra": 1,
+        "Counting & Probability": 3,
+        "Intermediate Algebra": 2,
+        "Precalculus": 5
+      },
+      "full_evaluated": true,
+      "full_target_delta": 9.0,
+      "full_vote_delta": 0.0,
+      "generation": 5,
+      "lost_types": {
+        "Intermediate Algebra": 1,
+        "Number Theory": 1
+      },
+      "member": 3,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 11,
+      "probe_lost": 0,
+      "probe_target_delta": 0,
+      "probe_vote_delta": 0,
+      "status": "FULL_PASS",
+      "target_fixed": 11,
+      "target_lost": 2,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "validation_delta": 1,
+      "validation_fixed": 1,
+      "validation_lost": 0,
+      "vote_fixed": 1,
+      "vote_lost": 1,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Number Theory": 1
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 1,
+        "loss_target_correctness_change": 1
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "7d9ba9b1ef280023b1b0e8a8b9bb0e99bbe6ada0b3ff20fc028341f5681d8e7d",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 5,
+        "dropout_pivotal_target_loss": 4,
+        "other_member_still_correct_loss": 6,
+        "redundant_correct_gain": 9,
+        "repairs_on_already_vote_correct": 6,
+        "repairs_still_vote_wrong": 3,
+        "sole_correct_loss": 1,
+        "unique_coverage_gain": 1,
+        "vote_pivotal_repairs": 1
+      },
+      "fixed_types": {
+        "Algebra": 1,
+        "Counting & Probability": 3,
+        "Intermediate Algebra": 2,
+        "Precalculus": 4
+      },
+      "full_evaluated": true,
+      "full_target_delta": 3.0,
+      "full_vote_delta": -4.0,
+      "generation": 6,
+      "lost_types": {
+        "Geometry": 3,
+        "Intermediate Algebra": 4
+      },
+      "member": 3,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 11,
+      "probe_lost": 0,
+      "probe_target_delta": 0,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 10,
+      "target_lost": 7,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "validation_delta": 1,
+      "validation_fixed": 1,
+      "validation_lost": 0,
+      "vote_fixed": 1,
+      "vote_lost": 5,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Geometry": 2,
+        "Intermediate Algebra": 3
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 1,
+        "loss_target_correctness_change": 5
+      }
+    },
+    {
+      "assigned_repairs": 2,
+      "candidate_hash": "4571954c402aa8fdd000b641d6b5318cc1b47edc086cabce6be75512cb3aac54",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 1,
+        "dropout_pivotal_target_loss": 1,
+        "other_member_still_correct_loss": 7,
+        "redundant_correct_gain": 3,
+        "repairs_on_already_vote_correct": 1,
+        "repairs_still_vote_wrong": 3,
+        "sole_correct_loss": 1,
+        "unique_coverage_gain": 2,
+        "vote_pivotal_repairs": 1
+      },
+      "fixed_types": {
+        "Intermediate Algebra": 2,
+        "Number Theory": 1,
+        "Prealgebra": 1,
+        "Precalculus": 1
+      },
+      "full_evaluated": true,
+      "full_target_delta": -3.0,
+      "full_vote_delta": 0.0,
+      "generation": 4,
+      "lost_types": {
+        "Algebra": 1,
+        "Counting & Probability": 1,
+        "Geometry": 1,
+        "Intermediate Algebra": 3,
+        "Number Theory": 1,
+        "Precalculus": 1
+      },
+      "member": 3,
+      "mutation_delta": 2,
+      "mutation_fixed": 2,
+      "mutation_lost": 0,
+      "opportunity": 15,
+      "probe_lost": 0,
+      "probe_target_delta": 0,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 5,
+      "target_lost": 8,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "validation_delta": 0,
+      "validation_fixed": 0,
+      "validation_lost": 0,
+      "vote_fixed": 1,
+      "vote_lost": 1,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Intermediate Algebra": 1
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 1,
+        "loss_target_correctness_change": 1
+      }
+    },
+    {
+      "assigned_repairs": 3,
+      "candidate_hash": "be598d8e6f03bcce9f73b06b63a46ea047119430c1aab8fe33ecfea37b4ee71c",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 3,
+        "dropout_pivotal_target_loss": 2,
+        "other_member_still_correct_loss": 6,
+        "redundant_correct_gain": 9,
+        "repairs_on_already_vote_correct": 6,
+        "repairs_still_vote_wrong": 1,
+        "vote_pivotal_repairs": 2
+      },
+      "fixed_types": {
+        "Algebra": 1,
+        "Counting & Probability": 1,
+        "Intermediate Algebra": 3,
+        "Number Theory": 1,
+        "Precalculus": 3
+      },
+      "full_evaluated": true,
+      "full_target_delta": 3.0,
+      "full_vote_delta": -1.0,
+      "generation": 1,
+      "lost_types": {
+        "Algebra": 1,
+        "Intermediate Algebra": 2,
+        "Number Theory": 1,
+        "Prealgebra": 1,
+        "Precalculus": 1
+      },
+      "member": 1,
+      "mutation_delta": 3,
+      "mutation_fixed": 3,
+      "mutation_lost": 0,
+      "opportunity": 16,
+      "probe_lost": 0,
+      "probe_target_delta": 0,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 9,
+      "target_lost": 6,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "validation_delta": 0,
+      "validation_fixed": 0,
+      "validation_lost": 0,
+      "vote_fixed": 3,
+      "vote_lost": 4,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Intermediate Algebra": 3,
+        "Number Theory": 1
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 2,
+        "gain_wrong_answer_cluster_change": 1,
+        "loss_target_correctness_change": 3,
+        "loss_wrong_answer_cluster_change": 1
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "c7dc2f00b4bf11ecfce98b8b2b58dadf4b7d1118c279a43394bb2fa267e1c5c7",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 4,
+        "dropout_pivotal_target_loss": 3,
+        "other_member_still_correct_loss": 11,
+        "redundant_correct_gain": 5,
+        "repairs_on_already_vote_correct": 4,
+        "repairs_still_vote_wrong": 1,
+        "unique_coverage_gain": 1,
+        "vote_pivotal_repairs": 1
+      },
+      "fixed_types": {
+        "Counting & Probability": 1,
+        "Geometry": 1,
+        "Intermediate Algebra": 2,
+        "Number Theory": 1,
+        "Precalculus": 1
+      },
+      "full_evaluated": true,
+      "full_target_delta": -5.0,
+      "full_vote_delta": -3.0,
+      "generation": 1,
+      "lost_types": {
+        "Algebra": 2,
+        "Counting & Probability": 1,
+        "Intermediate Algebra": 4,
+        "Number Theory": 2,
+        "Precalculus": 2
+      },
+      "member": 4,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 17,
+      "probe_lost": 0,
+      "probe_target_delta": 0,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 6,
+      "target_lost": 11,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "validation_delta": 0,
+      "validation_fixed": 0,
+      "validation_lost": 0,
+      "vote_fixed": 1,
+      "vote_lost": 4,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Counting & Probability": 1,
+        "Intermediate Algebra": 1,
+        "Number Theory": 1,
+        "Precalculus": 1
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 1,
+        "loss_target_correctness_change": 4
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "b6b7f8f98868fd55c758209ec414d651fb811e0746871d84e758ed6d1ecb879d",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 4,
+        "dropout_pivotal_target_loss": 4,
+        "other_member_still_correct_loss": 5,
+        "redundant_correct_gain": 8,
+        "repairs_on_already_vote_correct": 7,
+        "repairs_still_vote_wrong": 3,
+        "sole_correct_loss": 2,
+        "unique_coverage_gain": 3,
+        "vote_pivotal_repairs": 1
+      },
+      "fixed_types": {
+        "Counting & Probability": 1,
+        "Geometry": 3,
+        "Intermediate Algebra": 5,
+        "Number Theory": 1,
+        "Precalculus": 1
+      },
+      "full_evaluated": true,
+      "full_target_delta": 4.0,
+      "full_vote_delta": -4.0,
+      "generation": 1,
+      "lost_types": {
+        "Geometry": 1,
+        "Intermediate Algebra": 3,
+        "Number Theory": 1,
+        "Precalculus": 2
+      },
+      "member": 2,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 19,
+      "probe_lost": 0,
+      "probe_target_delta": 0,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 11,
+      "target_lost": 7,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "validation_delta": 0,
+      "validation_fixed": 0,
+      "validation_lost": 0,
+      "vote_fixed": 1,
+      "vote_lost": 5,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Geometry": 1,
+        "Intermediate Algebra": 4
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 1,
+        "loss_target_correctness_change": 4,
+        "loss_wrong_answer_cluster_change": 1
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "8ec162cbfe93f9f05f89ed49002eb1472439e0521a1a6326bd8d2d7d7e4a340c",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 3,
+        "dropout_pivotal_target_loss": 2,
+        "other_member_still_correct_loss": 10,
+        "redundant_correct_gain": 2,
+        "repairs_on_already_vote_correct": 0,
+        "repairs_still_vote_wrong": 2,
+        "sole_correct_loss": 1,
+        "vote_pivotal_repairs": 0
+      },
+      "fixed_types": {
+        "Prealgebra": 1,
+        "Precalculus": 1
+      },
+      "full_evaluated": true,
+      "full_target_delta": -9.0,
+      "full_vote_delta": -3.0,
+      "generation": 1,
+      "lost_types": {
+        "Algebra": 1,
+        "Counting & Probability": 2,
+        "Geometry": 2,
+        "Intermediate Algebra": 3,
+        "Number Theory": 1,
+        "Precalculus": 2
+      },
+      "member": 3,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 21,
+      "probe_lost": 0,
+      "probe_target_delta": 1,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 2,
+      "target_lost": 11,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "validation_delta": 0,
+      "validation_fixed": 0,
+      "validation_lost": 0,
+      "vote_fixed": 0,
+      "vote_lost": 3,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Counting & Probability": 1,
+        "Geometry": 1,
+        "Precalculus": 1
+      },
+      "vote_mechanisms": {
+        "loss_target_correctness_change": 3
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "0aea14a0e3532df36fac056957dede415c4a7805f7cb216c55c1a838c5e0bf1f",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 3,
+        "dropout_pivotal_target_loss": 1,
+        "other_member_still_correct_loss": 4,
+        "redundant_correct_gain": 7,
+        "repairs_on_already_vote_correct": 4,
+        "repairs_still_vote_wrong": 4,
+        "sole_correct_loss": 1,
+        "unique_coverage_gain": 3,
+        "vote_pivotal_repairs": 2
+      },
+      "fixed_types": {
+        "Counting & Probability": 2,
+        "Geometry": 1,
+        "Intermediate Algebra": 4,
+        "Number Theory": 2,
+        "Precalculus": 1
+      },
+      "full_evaluated": true,
+      "full_target_delta": 5.0,
+      "full_vote_delta": -1.0,
+      "generation": 6,
+      "lost_types": {
+        "Intermediate Algebra": 2,
+        "Prealgebra": 1,
+        "Precalculus": 2
+      },
+      "member": 5,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 24,
+      "probe_lost": 1,
+      "probe_target_delta": 0,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 10,
+      "target_lost": 5,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 1
+      },
+      "validation_delta": 1,
+      "validation_fixed": 1,
+      "validation_lost": 0,
+      "vote_fixed": 2,
+      "vote_lost": 3,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Intermediate Algebra": 1,
+        "Precalculus": 2
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 2,
+        "loss_target_correctness_change": 3
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "277d2f963c00628aa2ca6d6b7b60889563ae1e5e95b0887984d5be33ac7c7f05",
+      "committed": true,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 2,
+        "dropout_pivotal_target_loss": 2,
+        "other_member_still_correct_loss": 7,
+        "redundant_correct_gain": 8,
+        "repairs_on_already_vote_correct": 5,
+        "repairs_still_vote_wrong": 3,
+        "sole_correct_loss": 1,
+        "unique_coverage_gain": 2,
+        "vote_pivotal_repairs": 2
+      },
+      "fixed_types": {
+        "Counting & Probability": 2,
+        "Geometry": 1,
+        "Intermediate Algebra": 3,
+        "Number Theory": 2,
+        "Precalculus": 2
+      },
+      "full_evaluated": true,
+      "full_target_delta": 2.0,
+      "full_vote_delta": 0.0,
+      "generation": 4,
+      "lost_types": {
+        "Algebra": 1,
+        "Counting & Probability": 1,
+        "Intermediate Algebra": 3,
+        "Prealgebra": 1,
+        "Precalculus": 2
+      },
+      "member": 5,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 24,
+      "probe_lost": 1,
+      "probe_target_delta": 0,
+      "probe_vote_delta": 0,
+      "status": "FULL_PASS",
+      "target_fixed": 10,
+      "target_lost": 8,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 1
+      },
+      "validation_delta": 0,
+      "validation_fixed": 0,
+      "validation_lost": 0,
+      "vote_fixed": 2,
+      "vote_lost": 2,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Intermediate Algebra": 2
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 2,
+        "loss_target_correctness_change": 2
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "380909680fc3c1836889fccefef9913bd9fd8a1fdc618f15c0e8b5ce167fe705",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 1,
+        "dropout_pivotal_target_loss": 1,
+        "other_member_still_correct_loss": 5,
+        "redundant_correct_gain": 3,
+        "repairs_on_already_vote_correct": 2,
+        "repairs_still_vote_wrong": 0,
+        "sole_correct_loss": 1,
+        "vote_pivotal_repairs": 1
+      },
+      "fixed_types": {
+        "Counting & Probability": 1,
+        "Intermediate Algebra": 1,
+        "Number Theory": 1
+      },
+      "full_evaluated": true,
+      "full_target_delta": -3.0,
+      "full_vote_delta": 0.0,
+      "generation": 5,
+      "lost_types": {
+        "Geometry": 2,
+        "Intermediate Algebra": 2,
+        "Number Theory": 1,
+        "Precalculus": 1
+      },
+      "member": 3,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 26,
+      "probe_lost": 1,
+      "probe_target_delta": -1,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 3,
+      "target_lost": 6,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 1
+      },
+      "validation_delta": 0,
+      "validation_fixed": 0,
+      "validation_lost": 0,
+      "vote_fixed": 1,
+      "vote_lost": 1,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Precalculus": 1
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 1,
+        "loss_target_correctness_change": 1
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "a55f95232e4710018b84a494965693e569d41f1af9f185f3571ca2f9dcc8a37d",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 0,
+        "dropout_pivotal_target_loss": 0,
+        "other_member_still_correct_loss": 7,
+        "redundant_correct_gain": 3,
+        "repairs_on_already_vote_correct": 3,
+        "repairs_still_vote_wrong": 1,
+        "sole_correct_loss": 2,
+        "unique_coverage_gain": 1,
+        "vote_pivotal_repairs": 0
+      },
+      "fixed_types": {
+        "Algebra": 1,
+        "Counting & Probability": 2,
+        "Intermediate Algebra": 1
+      },
+      "full_evaluated": true,
+      "full_target_delta": -5.0,
+      "full_vote_delta": -1.0,
+      "generation": 1,
+      "lost_types": {
+        "Counting & Probability": 1,
+        "Geometry": 2,
+        "Intermediate Algebra": 2,
+        "Number Theory": 2,
+        "Precalculus": 2
+      },
+      "member": 5,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 27,
+      "probe_lost": 0,
+      "probe_target_delta": 0,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 4,
+      "target_lost": 9,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 1,
+        "team_probe": 0
+      },
+      "validation_delta": -1,
+      "validation_fixed": 0,
+      "validation_lost": 1,
+      "vote_fixed": 0,
+      "vote_lost": 1,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Precalculus": 1
+      },
+      "vote_mechanisms": {
+        "loss_wrong_answer_cluster_change": 1
+      }
+    },
+    {
+      "assigned_repairs": 2,
+      "candidate_hash": "e022a0de05533c9b417927df35865328664ade4edc8b174f03a2af819dcdfc4b",
+      "committed": true,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 1,
+        "dropout_pivotal_target_loss": 0,
+        "other_member_still_correct_loss": 3,
+        "redundant_correct_gain": 6,
+        "repairs_on_already_vote_correct": 3,
+        "repairs_still_vote_wrong": 1,
+        "sole_correct_loss": 2,
+        "unique_coverage_gain": 1,
+        "vote_pivotal_repairs": 3
+      },
+      "fixed_types": {
+        "Counting & Probability": 2,
+        "Intermediate Algebra": 4,
+        "Precalculus": 1
+      },
+      "full_evaluated": true,
+      "full_target_delta": 2.0,
+      "full_vote_delta": 2.0,
+      "generation": 2,
+      "lost_types": {
+        "Counting & Probability": 1,
+        "Geometry": 1,
+        "Number Theory": 1,
+        "Precalculus": 2
+      },
+      "member": 5,
+      "mutation_delta": 2,
+      "mutation_fixed": 2,
+      "mutation_lost": 0,
+      "opportunity": 27,
+      "probe_lost": 0,
+      "probe_target_delta": 0,
+      "probe_vote_delta": 0,
+      "status": "FULL_PASS",
+      "target_fixed": 7,
+      "target_lost": 5,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 2,
+        "team_probe": 0
+      },
+      "validation_delta": -2,
+      "validation_fixed": 0,
+      "validation_lost": 2,
+      "vote_fixed": 3,
+      "vote_lost": 1,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Counting & Probability": 1
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 3,
+        "loss_target_correctness_change": 1
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "e4229f7dc725d44a4b4e11cc6e9d892f668e5adcc6fa1c454d5d47575ae09f1b",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 3,
+        "dropout_pivotal_target_loss": 2,
+        "other_member_still_correct_loss": 7,
+        "redundant_correct_gain": 3,
+        "repairs_on_already_vote_correct": 2,
+        "repairs_still_vote_wrong": 0,
+        "sole_correct_loss": 1,
+        "vote_pivotal_repairs": 1
+      },
+      "fixed_types": {
+        "Algebra": 1,
+        "Counting & Probability": 1,
+        "Geometry": 1
+      },
+      "full_evaluated": true,
+      "full_target_delta": -5.0,
+      "full_vote_delta": -2.0,
+      "generation": 2,
+      "lost_types": {
+        "Counting & Probability": 2,
+        "Intermediate Algebra": 3,
+        "Number Theory": 2,
+        "Precalculus": 1
+      },
+      "member": 5,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 31,
+      "probe_lost": 0,
+      "probe_target_delta": 0,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 3,
+      "target_lost": 8,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "validation_delta": 0,
+      "validation_fixed": 0,
+      "validation_lost": 0,
+      "vote_fixed": 1,
+      "vote_lost": 3,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Intermediate Algebra": 2,
+        "Precalculus": 1
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 1,
+        "loss_target_correctness_change": 3
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "8c7ef99d56dcb9616fa88071ec5ae1483df68c7277baabae6b0d7497f975f483",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 3,
+        "dropout_pivotal_target_loss": 3,
+        "other_member_still_correct_loss": 9,
+        "redundant_correct_gain": 3,
+        "repairs_on_already_vote_correct": 2,
+        "repairs_still_vote_wrong": 2,
+        "sole_correct_loss": 2,
+        "unique_coverage_gain": 2,
+        "vote_pivotal_repairs": 1
+      },
+      "fixed_types": {
+        "Algebra": 1,
+        "Counting & Probability": 1,
+        "Geometry": 1,
+        "Intermediate Algebra": 1,
+        "Precalculus": 1
+      },
+      "full_evaluated": true,
+      "full_target_delta": -6.0,
+      "full_vote_delta": -2.0,
+      "generation": 2,
+      "lost_types": {
+        "Algebra": 1,
+        "Counting & Probability": 2,
+        "Intermediate Algebra": 6,
+        "Number Theory": 1,
+        "Precalculus": 1
+      },
+      "member": 5,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 32,
+      "probe_lost": 1,
+      "probe_target_delta": -1,
+      "probe_vote_delta": -1,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 5,
+      "target_lost": 11,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 1,
+        "team_probe": 1
+      },
+      "validation_delta": -1,
+      "validation_fixed": 0,
+      "validation_lost": 1,
+      "vote_fixed": 1,
+      "vote_lost": 3,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 1
+      },
+      "vote_lost_types": {
+        "Intermediate Algebra": 3
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 1,
+        "loss_target_correctness_change": 3
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "0abedf53ddecb0488506647c92926d7ecd002709e8bdb0aef9792789418a1cce",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 4,
+        "dropout_pivotal_target_loss": 3,
+        "other_member_still_correct_loss": 9,
+        "redundant_correct_gain": 2,
+        "repairs_on_already_vote_correct": 1,
+        "repairs_still_vote_wrong": 1,
+        "unique_coverage_gain": 1,
+        "vote_pivotal_repairs": 1
+      },
+      "fixed_types": {
+        "Geometry": 1,
+        "Intermediate Algebra": 1,
+        "Number Theory": 1
+      },
+      "full_evaluated": true,
+      "full_target_delta": -6.0,
+      "full_vote_delta": -3.0,
+      "generation": 1,
+      "lost_types": {
+        "Algebra": 1,
+        "Counting & Probability": 1,
+        "Geometry": 1,
+        "Intermediate Algebra": 3,
+        "Precalculus": 3
+      },
+      "member": 3,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 34,
+      "probe_lost": 1,
+      "probe_target_delta": -1,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 3,
+      "target_lost": 9,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 1
+      },
+      "validation_delta": 0,
+      "validation_fixed": 0,
+      "validation_lost": 0,
+      "vote_fixed": 1,
+      "vote_lost": 4,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Geometry": 1,
+        "Intermediate Algebra": 1,
+        "Precalculus": 2
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 1,
+        "loss_target_correctness_change": 4
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "cc4a182ca1b27d2bbfbaf0685e6130c7fac95d034f3af6ed3412927c0fd0f749",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 3,
+        "dropout_pivotal_target_loss": 3,
+        "other_member_still_correct_loss": 8,
+        "redundant_correct_gain": 4,
+        "repairs_on_already_vote_correct": 3,
+        "repairs_still_vote_wrong": 1,
+        "unique_coverage_gain": 1,
+        "vote_pivotal_repairs": 1
+      },
+      "fixed_types": {
+        "Counting & Probability": 1,
+        "Intermediate Algebra": 3,
+        "Precalculus": 1
+      },
+      "full_evaluated": true,
+      "full_target_delta": -3.0,
+      "full_vote_delta": -1.0,
+      "generation": 4,
+      "lost_types": {
+        "Counting & Probability": 1,
+        "Intermediate Algebra": 4,
+        "Precalculus": 3
+      },
+      "member": 3,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 34,
+      "probe_lost": 1,
+      "probe_target_delta": -1,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 5,
+      "target_lost": 8,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 1
+      },
+      "validation_delta": 0,
+      "validation_fixed": 0,
+      "validation_lost": 0,
+      "vote_fixed": 2,
+      "vote_lost": 3,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Intermediate Algebra": 1,
+        "Precalculus": 2
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 1,
+        "gain_wrong_answer_cluster_change": 1,
+        "loss_target_correctness_change": 3
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "a735c129596b085e16e1cd67c271a0e9acedbfd3d6fc0f91ea99553436398d5f",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 3,
+        "dropout_pivotal_target_loss": 3,
+        "other_member_still_correct_loss": 12,
+        "redundant_correct_gain": 4,
+        "repairs_on_already_vote_correct": 2,
+        "repairs_still_vote_wrong": 4,
+        "sole_correct_loss": 2,
+        "unique_coverage_gain": 3,
+        "vote_pivotal_repairs": 1
+      },
+      "fixed_types": {
+        "Algebra": 1,
+        "Counting & Probability": 1,
+        "Geometry": 1,
+        "Number Theory": 1,
+        "Precalculus": 3
+      },
+      "full_evaluated": true,
+      "full_target_delta": -7.0,
+      "full_vote_delta": -2.0,
+      "generation": 1,
+      "lost_types": {
+        "Counting & Probability": 2,
+        "Intermediate Algebra": 7,
+        "Number Theory": 2,
+        "Precalculus": 3
+      },
+      "member": 5,
+      "mutation_delta": 0,
+      "mutation_fixed": 1,
+      "mutation_lost": 1,
+      "opportunity": 36,
+      "probe_lost": 1,
+      "probe_target_delta": -1,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 7,
+      "target_lost": 14,
+      "target_lost_seen_in": {
+        "mutation": 1,
+        "search_validation": 0,
+        "team_probe": 1
+      },
+      "validation_delta": 0,
+      "validation_fixed": 0,
+      "validation_lost": 0,
+      "vote_fixed": 1,
+      "vote_lost": 3,
+      "vote_lost_seen_in": {
+        "mutation": 1,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Intermediate Algebra": 3
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 1,
+        "loss_target_correctness_change": 3
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "b4ebb5039c8e7afe0d5f411ff6802f95de9f05c1efde29d3ee614f2614c2d682",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 4,
+        "dropout_pivotal_target_loss": 2,
+        "other_member_still_correct_loss": 7,
+        "redundant_correct_gain": 1,
+        "repairs_on_already_vote_correct": 0,
+        "repairs_still_vote_wrong": 0,
+        "vote_pivotal_repairs": 1
+      },
+      "fixed_types": {
+        "Number Theory": 1
+      },
+      "full_evaluated": true,
+      "full_target_delta": -6.0,
+      "full_vote_delta": -3.0,
+      "generation": 1,
+      "lost_types": {
+        "Algebra": 1,
+        "Intermediate Algebra": 4,
+        "Precalculus": 2
+      },
+      "member": 3,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 39,
+      "probe_lost": 0,
+      "probe_target_delta": 0,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 1,
+      "target_lost": 7,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "validation_delta": 0,
+      "validation_fixed": 0,
+      "validation_lost": 0,
+      "vote_fixed": 1,
+      "vote_lost": 4,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Intermediate Algebra": 3,
+        "Precalculus": 1
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 1,
+        "loss_target_correctness_change": 4
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "0f811378f2cf4ca7624b953ec422467dff366be161b3ee52e54486ed47ad4053",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 2,
+        "dropout_pivotal_target_loss": 1,
+        "other_member_still_correct_loss": 4,
+        "redundant_correct_gain": 2,
+        "repairs_on_already_vote_correct": 1,
+        "repairs_still_vote_wrong": 1,
+        "sole_correct_loss": 1,
+        "unique_coverage_gain": 1,
+        "vote_pivotal_repairs": 1
+      },
+      "fixed_types": {
+        "Algebra": 1,
+        "Counting & Probability": 1,
+        "Precalculus": 1
+      },
+      "full_evaluated": true,
+      "full_target_delta": -2.0,
+      "full_vote_delta": -2.0,
+      "generation": 1,
+      "lost_types": {
+        "Counting & Probability": 2,
+        "Geometry": 1,
+        "Intermediate Algebra": 2
+      },
+      "member": 5,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 41,
+      "probe_lost": 0,
+      "probe_target_delta": 0,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 3,
+      "target_lost": 5,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "validation_delta": 0,
+      "validation_fixed": 0,
+      "validation_lost": 0,
+      "vote_fixed": 1,
+      "vote_lost": 3,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Geometry": 1,
+        "Intermediate Algebra": 1,
+        "Precalculus": 1
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 1,
+        "loss_target_correctness_change": 2,
+        "loss_wrong_answer_cluster_change": 1
+      }
+    },
+    {
+      "assigned_repairs": 2,
+      "candidate_hash": "c8a64d4c32f3c2a027b9dbf13744cc22805aa567b7ec1061706db9faaa6b50cc",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 3,
+        "dropout_pivotal_target_loss": 3,
+        "other_member_still_correct_loss": 6,
+        "redundant_correct_gain": 10,
+        "repairs_on_already_vote_correct": 9,
+        "repairs_still_vote_wrong": 2,
+        "sole_correct_loss": 2,
+        "unique_coverage_gain": 2,
+        "vote_pivotal_repairs": 1
+      },
+      "fixed_types": {
+        "Algebra": 1,
+        "Geometry": 1,
+        "Intermediate Algebra": 5,
+        "Number Theory": 2,
+        "Precalculus": 3
+      },
+      "full_evaluated": true,
+      "full_target_delta": 4.0,
+      "full_vote_delta": -2.0,
+      "generation": 3,
+      "lost_types": {
+        "Counting & Probability": 2,
+        "Intermediate Algebra": 3,
+        "Number Theory": 1,
+        "Precalculus": 2
+      },
+      "member": 2,
+      "mutation_delta": 2,
+      "mutation_fixed": 2,
+      "mutation_lost": 0,
+      "opportunity": 44,
+      "probe_lost": 0,
+      "probe_target_delta": 0,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 12,
+      "target_lost": 8,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 1,
+        "team_probe": 0
+      },
+      "validation_delta": -1,
+      "validation_fixed": 0,
+      "validation_lost": 1,
+      "vote_fixed": 1,
+      "vote_lost": 3,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 1,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Intermediate Algebra": 2,
+        "Precalculus": 1
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 1,
+        "loss_target_correctness_change": 3
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "358c26259326d5a7a9004e286a21a8df0223124398e01684fd3416637ac2d926",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 4,
+        "dropout_pivotal_target_loss": 4,
+        "other_member_still_correct_loss": 12,
+        "redundant_correct_gain": 2,
+        "repairs_on_already_vote_correct": 0,
+        "repairs_still_vote_wrong": 2,
+        "unique_coverage_gain": 2,
+        "vote_pivotal_repairs": 2
+      },
+      "fixed_types": {
+        "Intermediate Algebra": 1,
+        "Number Theory": 1,
+        "Prealgebra": 1,
+        "Precalculus": 1
+      },
+      "full_evaluated": true,
+      "full_target_delta": -8.0,
+      "full_vote_delta": -2.0,
+      "generation": 4,
+      "lost_types": {
+        "Algebra": 3,
+        "Counting & Probability": 1,
+        "Geometry": 1,
+        "Intermediate Algebra": 3,
+        "Number Theory": 1,
+        "Precalculus": 3
+      },
+      "member": 3,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 45,
+      "probe_lost": 0,
+      "probe_target_delta": 1,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 4,
+      "target_lost": 12,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "validation_delta": 0,
+      "validation_fixed": 0,
+      "validation_lost": 0,
+      "vote_fixed": 2,
+      "vote_lost": 4,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Geometry": 1,
+        "Intermediate Algebra": 1,
+        "Precalculus": 2
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 2,
+        "loss_target_correctness_change": 4
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "92ad43d45106f9f930c2c26d3faf6bc8164f748920c87cea6676fe500113ecf0",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 2,
+        "dropout_pivotal_target_loss": 1,
+        "other_member_still_correct_loss": 8,
+        "redundant_correct_gain": 2,
+        "repairs_on_already_vote_correct": 1,
+        "repairs_still_vote_wrong": 1,
+        "unique_coverage_gain": 1,
+        "vote_pivotal_repairs": 1
+      },
+      "fixed_types": {
+        "Intermediate Algebra": 1,
+        "Number Theory": 1,
+        "Precalculus": 1
+      },
+      "full_evaluated": true,
+      "full_target_delta": -5.0,
+      "full_vote_delta": -1.0,
+      "generation": 3,
+      "lost_types": {
+        "Geometry": 2,
+        "Intermediate Algebra": 2,
+        "Number Theory": 2,
+        "Precalculus": 2
+      },
+      "member": 3,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 45,
+      "probe_lost": 0,
+      "probe_target_delta": 1,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 3,
+      "target_lost": 8,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 1,
+        "team_probe": 0
+      },
+      "validation_delta": -1,
+      "validation_fixed": 0,
+      "validation_lost": 1,
+      "vote_fixed": 1,
+      "vote_lost": 2,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 1,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Geometry": 1,
+        "Intermediate Algebra": 1
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 1,
+        "loss_target_correctness_change": 2
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "a9dcf0c9385d87cfe92faeb5386a7ddbe3191316023806052b1b8a7a65f4afe7",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 2,
+        "dropout_pivotal_target_loss": 2,
+        "other_member_still_correct_loss": 5,
+        "redundant_correct_gain": 10,
+        "repairs_on_already_vote_correct": 10,
+        "repairs_still_vote_wrong": 1,
+        "sole_correct_loss": 1,
+        "unique_coverage_gain": 1,
+        "vote_pivotal_repairs": 0
+      },
+      "fixed_types": {
+        "Algebra": 1,
+        "Geometry": 1,
+        "Intermediate Algebra": 6,
+        "Precalculus": 3
+      },
+      "full_evaluated": true,
+      "full_target_delta": 5.0,
+      "full_vote_delta": -2.0,
+      "generation": 4,
+      "lost_types": {
+        "Geometry": 1,
+        "Number Theory": 1,
+        "Prealgebra": 1,
+        "Precalculus": 3
+      },
+      "member": 2,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 49,
+      "probe_lost": 0,
+      "probe_target_delta": 0,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 11,
+      "target_lost": 6,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "validation_delta": 0,
+      "validation_fixed": 0,
+      "validation_lost": 0,
+      "vote_fixed": 0,
+      "vote_lost": 2,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Geometry": 1,
+        "Precalculus": 1
+      },
+      "vote_mechanisms": {
+        "loss_target_correctness_change": 2
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "0ec26e11d0684a722e0e46039c3b3f26d8e24d4e462669f8aed010e2b28aff79",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 3,
+        "dropout_pivotal_target_loss": 3,
+        "other_member_still_correct_loss": 10,
+        "redundant_correct_gain": 10,
+        "repairs_on_already_vote_correct": 9,
+        "repairs_still_vote_wrong": 0,
+        "sole_correct_loss": 2,
+        "vote_pivotal_repairs": 1
+      },
+      "fixed_types": {
+        "Algebra": 1,
+        "Geometry": 1,
+        "Intermediate Algebra": 5,
+        "Number Theory": 2,
+        "Precalculus": 1
+      },
+      "full_evaluated": true,
+      "full_target_delta": -2.0,
+      "full_vote_delta": -2.0,
+      "generation": 5,
+      "lost_types": {
+        "Algebra": 1,
+        "Counting & Probability": 2,
+        "Geometry": 2,
+        "Intermediate Algebra": 1,
+        "Number Theory": 3,
+        "Precalculus": 3
+      },
+      "member": 2,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 49,
+      "probe_lost": 0,
+      "probe_target_delta": 0,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 10,
+      "target_lost": 12,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 1,
+        "team_probe": 0
+      },
+      "validation_delta": -1,
+      "validation_fixed": 0,
+      "validation_lost": 1,
+      "vote_fixed": 1,
+      "vote_lost": 3,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Geometry": 1,
+        "Intermediate Algebra": 1,
+        "Precalculus": 1
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 1,
+        "loss_target_correctness_change": 3
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "2deb4e625b0dba5963b12a0321ed821b717c06da93eb93b57032ddd13e8ca613",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 4,
+        "dropout_pivotal_target_loss": 3,
+        "other_member_still_correct_loss": 10,
+        "redundant_correct_gain": 4,
+        "repairs_on_already_vote_correct": 2,
+        "repairs_still_vote_wrong": 1,
+        "unique_coverage_gain": 1,
+        "vote_pivotal_repairs": 2
+      },
+      "fixed_types": {
+        "Counting & Probability": 1,
+        "Intermediate Algebra": 2,
+        "Number Theory": 1,
+        "Precalculus": 1
+      },
+      "full_evaluated": true,
+      "full_target_delta": -5.0,
+      "full_vote_delta": -2.0,
+      "generation": 2,
+      "lost_types": {
+        "Algebra": 1,
+        "Intermediate Algebra": 5,
+        "Precalculus": 4
+      },
+      "member": 3,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 50,
+      "probe_lost": 0,
+      "probe_target_delta": 1,
+      "probe_vote_delta": 1,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 5,
+      "target_lost": 10,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "validation_delta": 0,
+      "validation_fixed": 0,
+      "validation_lost": 0,
+      "vote_fixed": 2,
+      "vote_lost": 4,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Intermediate Algebra": 2,
+        "Precalculus": 2
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 2,
+        "loss_target_correctness_change": 4
+      }
+    },
+    {
+      "assigned_repairs": 1,
+      "candidate_hash": "0b11210292ed50a1705c2e44b3bc6bd2358d00b363fb3cdc4bfb21cd499d0105",
+      "committed": false,
+      "coverage_roles": {
+        "actual_vote_critical_target_loss": 4,
+        "dropout_pivotal_target_loss": 4,
+        "other_member_still_correct_loss": 12,
+        "redundant_correct_gain": 4,
+        "repairs_on_already_vote_correct": 3,
+        "repairs_still_vote_wrong": 1,
+        "unique_coverage_gain": 1,
+        "vote_pivotal_repairs": 1
+      },
+      "fixed_types": {
+        "Counting & Probability": 1,
+        "Intermediate Algebra": 3,
+        "Precalculus": 1
+      },
+      "full_evaluated": true,
+      "full_target_delta": -7.0,
+      "full_vote_delta": -3.0,
+      "generation": 4,
+      "lost_types": {
+        "Algebra": 1,
+        "Counting & Probability": 1,
+        "Geometry": 1,
+        "Intermediate Algebra": 4,
+        "Number Theory": 1,
+        "Precalculus": 4
+      },
+      "member": 3,
+      "mutation_delta": 1,
+      "mutation_fixed": 1,
+      "mutation_lost": 0,
+      "opportunity": 50,
+      "probe_lost": 0,
+      "probe_target_delta": 1,
+      "probe_vote_delta": 0,
+      "status": "PROBE_PASS_FULL_REJECT",
+      "target_fixed": 5,
+      "target_lost": 12,
+      "target_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "validation_delta": 0,
+      "validation_fixed": 0,
+      "validation_lost": 0,
+      "vote_fixed": 1,
+      "vote_lost": 4,
+      "vote_lost_seen_in": {
+        "mutation": 0,
+        "search_validation": 0,
+        "team_probe": 0
+      },
+      "vote_lost_types": {
+        "Geometry": 1,
+        "Intermediate Algebra": 1,
+        "Precalculus": 2
+      },
+      "vote_mechanisms": {
+        "gain_target_correctness_change": 1,
+        "loss_target_correctness_change": 4
+      }
+    }
+  ],
+  "gradient_control_summary": {
+    "actionable_correction_with_controls": 6,
+    "actionable_with_decoded_controls": 12,
+    "correction_control_in_deployed_prompt": 0,
+    "interpretation": "Decoded control characters are confirmed; mathematical semantic distortion and causal downstream effect remain unmeasured.",
+    "selected_generalized_pattern_with_control": 0,
+    "selected_support_control_examples": 1
+  },
+  "gradient_duplicate_requests": {
+    "first_wire_definition": "Canonical serialized provider request, including imported prefix; request identity differs across authorization scopes.",
+    "logical_error_diagnoses": 1618,
+    "new_physical_draws": 2388,
+    "repeated_logical_first_wire": 1288,
+    "repeated_new_physical_draws": 1346,
+    "same_first_input_multiple_opportunities": 295,
+    "unique_first_wire": 330,
+    "unique_new_physical_wire": 1042
+  },
+  "gradient_overshoot": {
+    "diagnosis": {
+      "events": 452,
+      "max": 4827,
+      "median": 92.0,
+      "min": 1,
+      "within_50": 152
+    },
+    "expected_effect": {
+      "events": 50,
+      "max": 598,
+      "median": 27.5,
+      "min": 1,
+      "within_50": 34
+    },
+    "observed_failure": {
+      "events": 303,
+      "max": 3858,
+      "median": 85,
+      "min": 1,
+      "within_50": 103
+    },
+    "reusable_correction": {
+      "events": 98,
+      "max": 1205,
+      "median": 44.0,
+      "min": 1,
+      "within_50": 58
+    }
+  },
+  "gradient_repeat_tokens": 6228336,
+  "last23_full_candidates": 14,
+  "local_records": [
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 4,
+      "local_parent_delta": 0,
+      "member": 2,
+      "mutation_delta": 1,
+      "opportunity": 2,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 2,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 1,
+      "opportunity": 4,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 4,
+      "local_parent_delta": 0,
+      "member": 2,
+      "mutation_delta": 2,
+      "opportunity": 6,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": 0,
+      "member": 5,
+      "mutation_delta": 0,
+      "opportunity": 7,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 2,
+      "exported": true,
+      "generation": 2,
+      "local_parent_delta": 0,
+      "member": 5,
+      "mutation_delta": 1,
+      "opportunity": 7,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 3,
+      "exported": true,
+      "generation": 3,
+      "local_parent_delta": 0,
+      "member": 5,
+      "mutation_delta": 1,
+      "opportunity": 7,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 4,
+      "exported": true,
+      "generation": 4,
+      "local_parent_delta": 0,
+      "member": 5,
+      "mutation_delta": 0,
+      "opportunity": 7,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 5,
+      "exported": false,
+      "generation": 5,
+      "local_parent_delta": 0,
+      "member": 5,
+      "mutation_delta": 0,
+      "opportunity": 7,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": 0,
+      "member": 5,
+      "mutation_delta": 1,
+      "opportunity": 8,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 2,
+      "exported": true,
+      "generation": 2,
+      "local_parent_delta": -1,
+      "member": 5,
+      "mutation_delta": 1,
+      "opportunity": 8,
+      "validation_delta": -1
+    },
+    {
+      "chain_length": 1,
+      "exported": false,
+      "generation": 2,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 1,
+      "opportunity": 11,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 2,
+      "exported": true,
+      "generation": 3,
+      "local_parent_delta": 1,
+      "member": 3,
+      "mutation_delta": 0,
+      "opportunity": 11,
+      "validation_delta": 1
+    },
+    {
+      "chain_length": 3,
+      "exported": true,
+      "generation": 4,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 0,
+      "opportunity": 11,
+      "validation_delta": 1
+    },
+    {
+      "chain_length": 4,
+      "exported": true,
+      "generation": 5,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 1,
+      "opportunity": 11,
+      "validation_delta": 1
+    },
+    {
+      "chain_length": 5,
+      "exported": true,
+      "generation": 6,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 1,
+      "opportunity": 11,
+      "validation_delta": 1
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 0,
+      "opportunity": 12,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": 1,
+      "member": 4,
+      "mutation_delta": 0,
+      "opportunity": 13,
+      "validation_delta": 1
+    },
+    {
+      "chain_length": 2,
+      "exported": true,
+      "generation": 2,
+      "local_parent_delta": 0,
+      "member": 4,
+      "mutation_delta": 0,
+      "opportunity": 13,
+      "validation_delta": 1
+    },
+    {
+      "chain_length": 3,
+      "exported": true,
+      "generation": 3,
+      "local_parent_delta": -1,
+      "member": 4,
+      "mutation_delta": 0,
+      "opportunity": 13,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 3,
+      "local_parent_delta": 0,
+      "member": 2,
+      "mutation_delta": 0,
+      "opportunity": 14,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 2,
+      "exported": true,
+      "generation": 6,
+      "local_parent_delta": 0,
+      "member": 2,
+      "mutation_delta": 0,
+      "opportunity": 14,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 4,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 2,
+      "opportunity": 15,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": 0,
+      "member": 1,
+      "mutation_delta": 3,
+      "opportunity": 16,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": 0,
+      "member": 4,
+      "mutation_delta": 1,
+      "opportunity": 17,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": -1,
+      "member": 5,
+      "mutation_delta": 0,
+      "opportunity": 18,
+      "validation_delta": -1
+    },
+    {
+      "chain_length": 2,
+      "exported": true,
+      "generation": 3,
+      "local_parent_delta": 1,
+      "member": 5,
+      "mutation_delta": 0,
+      "opportunity": 18,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 3,
+      "exported": true,
+      "generation": 4,
+      "local_parent_delta": 0,
+      "member": 5,
+      "mutation_delta": 0,
+      "opportunity": 18,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 4,
+      "exported": true,
+      "generation": 6,
+      "local_parent_delta": 0,
+      "member": 5,
+      "mutation_delta": 0,
+      "opportunity": 18,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": 0,
+      "member": 2,
+      "mutation_delta": 1,
+      "opportunity": 19,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 1,
+      "opportunity": 21,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": false,
+      "generation": 1,
+      "local_parent_delta": 0,
+      "member": 5,
+      "mutation_delta": 0,
+      "opportunity": 24,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 2,
+      "exported": true,
+      "generation": 2,
+      "local_parent_delta": 0,
+      "member": 5,
+      "mutation_delta": 1,
+      "opportunity": 24,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 3,
+      "exported": true,
+      "generation": 3,
+      "local_parent_delta": 0,
+      "member": 5,
+      "mutation_delta": 1,
+      "opportunity": 24,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 4,
+      "exported": true,
+      "generation": 4,
+      "local_parent_delta": 0,
+      "member": 5,
+      "mutation_delta": 1,
+      "opportunity": 24,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 5,
+      "exported": true,
+      "generation": 6,
+      "local_parent_delta": 1,
+      "member": 5,
+      "mutation_delta": 1,
+      "opportunity": 24,
+      "validation_delta": 1
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": 0,
+      "member": 5,
+      "mutation_delta": 0,
+      "opportunity": 25,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 0,
+      "opportunity": 26,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 2,
+      "exported": true,
+      "generation": 2,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 0,
+      "opportunity": 26,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 3,
+      "exported": true,
+      "generation": 5,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 1,
+      "opportunity": 26,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 4,
+      "exported": true,
+      "generation": 6,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 0,
+      "opportunity": 26,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": -1,
+      "member": 5,
+      "mutation_delta": 1,
+      "opportunity": 27,
+      "validation_delta": -1
+    },
+    {
+      "chain_length": 2,
+      "exported": true,
+      "generation": 2,
+      "local_parent_delta": -1,
+      "member": 5,
+      "mutation_delta": 2,
+      "opportunity": 27,
+      "validation_delta": -2
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": 0,
+      "member": 5,
+      "mutation_delta": 0,
+      "opportunity": 28,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 3,
+      "local_parent_delta": 0,
+      "member": 5,
+      "mutation_delta": 0,
+      "opportunity": 29,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": 0,
+      "member": 5,
+      "mutation_delta": 0,
+      "opportunity": 30,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": 0,
+      "member": 5,
+      "mutation_delta": 0,
+      "opportunity": 31,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 2,
+      "exported": true,
+      "generation": 2,
+      "local_parent_delta": 0,
+      "member": 5,
+      "mutation_delta": 1,
+      "opportunity": 31,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 2,
+      "local_parent_delta": -1,
+      "member": 5,
+      "mutation_delta": 1,
+      "opportunity": 32,
+      "validation_delta": -1
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 1,
+      "opportunity": 34,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 2,
+      "exported": true,
+      "generation": 2,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 0,
+      "opportunity": 34,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 3,
+      "exported": true,
+      "generation": 3,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 0,
+      "opportunity": 34,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 4,
+      "exported": true,
+      "generation": 4,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 1,
+      "opportunity": 34,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 5,
+      "exported": false,
+      "generation": 5,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 0,
+      "opportunity": 34,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": 0,
+      "member": 5,
+      "mutation_delta": 0,
+      "opportunity": 36,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 1,
+      "opportunity": 39,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": 0,
+      "member": 5,
+      "mutation_delta": 1,
+      "opportunity": 41,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 2,
+      "exported": true,
+      "generation": 3,
+      "local_parent_delta": 0,
+      "member": 5,
+      "mutation_delta": 0,
+      "opportunity": 41,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 5,
+      "local_parent_delta": -1,
+      "member": 1,
+      "mutation_delta": 0,
+      "opportunity": 43,
+      "validation_delta": -1
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": -1,
+      "member": 2,
+      "mutation_delta": 0,
+      "opportunity": 44,
+      "validation_delta": -1
+    },
+    {
+      "chain_length": 2,
+      "exported": true,
+      "generation": 2,
+      "local_parent_delta": 0,
+      "member": 2,
+      "mutation_delta": 0,
+      "opportunity": 44,
+      "validation_delta": -1
+    },
+    {
+      "chain_length": 3,
+      "exported": true,
+      "generation": 3,
+      "local_parent_delta": 0,
+      "member": 2,
+      "mutation_delta": 2,
+      "opportunity": 44,
+      "validation_delta": -1
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 1,
+      "opportunity": 45,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 2,
+      "exported": true,
+      "generation": 2,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 2,
+      "opportunity": 45,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 3,
+      "exported": true,
+      "generation": 3,
+      "local_parent_delta": -1,
+      "member": 3,
+      "mutation_delta": 1,
+      "opportunity": 45,
+      "validation_delta": -1
+    },
+    {
+      "chain_length": 4,
+      "exported": true,
+      "generation": 4,
+      "local_parent_delta": 1,
+      "member": 3,
+      "mutation_delta": 1,
+      "opportunity": 45,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 5,
+      "exported": false,
+      "generation": 6,
+      "local_parent_delta": -1,
+      "member": 3,
+      "mutation_delta": 1,
+      "opportunity": 45,
+      "validation_delta": -1
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": 0,
+      "member": 5,
+      "mutation_delta": 0,
+      "opportunity": 47,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": -1,
+      "member": 2,
+      "mutation_delta": 0,
+      "opportunity": 49,
+      "validation_delta": -1
+    },
+    {
+      "chain_length": 2,
+      "exported": true,
+      "generation": 3,
+      "local_parent_delta": 0,
+      "member": 2,
+      "mutation_delta": 1,
+      "opportunity": 49,
+      "validation_delta": -1
+    },
+    {
+      "chain_length": 3,
+      "exported": true,
+      "generation": 4,
+      "local_parent_delta": 1,
+      "member": 2,
+      "mutation_delta": 1,
+      "opportunity": 49,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 4,
+      "exported": true,
+      "generation": 5,
+      "local_parent_delta": -1,
+      "member": 2,
+      "mutation_delta": 1,
+      "opportunity": 49,
+      "validation_delta": -1
+    },
+    {
+      "chain_length": 5,
+      "exported": false,
+      "generation": 6,
+      "local_parent_delta": 0,
+      "member": 2,
+      "mutation_delta": 0,
+      "opportunity": 49,
+      "validation_delta": -1
+    },
+    {
+      "chain_length": 1,
+      "exported": true,
+      "generation": 1,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 0,
+      "opportunity": 50,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 2,
+      "exported": true,
+      "generation": 2,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 1,
+      "opportunity": 50,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 3,
+      "exported": true,
+      "generation": 3,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 1,
+      "opportunity": 50,
+      "validation_delta": 0
+    },
+    {
+      "chain_length": 4,
+      "exported": true,
+      "generation": 4,
+      "local_parent_delta": 0,
+      "member": 3,
+      "mutation_delta": 1,
+      "opportunity": 50,
+      "validation_delta": 0
+    }
+  ],
+  "member_stats": [
+    {
+      "all_no_safe": 6,
+      "commits": 0,
+      "exports": 2,
+      "full_pass": 0,
+      "fulls": 1,
+      "generation_status": {
+        "LOCALLY_EVALUATED": 2,
+        "NO_SAFE_EDIT": 46
+      },
+      "generations": 48,
+      "local_edits": 2,
+      "local_positive": 0,
+      "member": 1,
+      "opportunities": 8,
+      "positive_target_negative_vote": 1,
+      "unique_gains": 0,
+      "unique_losses": 0
+    },
+    {
+      "all_no_safe": 3,
+      "commits": 1,
+      "exports": 12,
+      "full_pass": 1,
+      "fulls": 6,
+      "generation_status": {
+        "LOCALLY_EVALUATED": 13,
+        "NO_SAFE_EDIT": 41
+      },
+      "generations": 54,
+      "local_edits": 13,
+      "local_positive": 0,
+      "member": 2,
+      "opportunities": 9,
+      "positive_target_negative_vote": 4,
+      "unique_gains": 16,
+      "unique_losses": 11
+    },
+    {
+      "all_no_safe": 0,
+      "commits": 1,
+      "exports": 25,
+      "full_pass": 1,
+      "fulls": 13,
+      "generation_status": {
+        "CONTRACT_INVALID": 8,
+        "LOCALLY_EVALUATED": 28,
+        "NO_SAFE_EDIT": 24
+      },
+      "generations": 60,
+      "local_edits": 28,
+      "local_positive": 4,
+      "member": 3,
+      "opportunities": 10,
+      "positive_target_negative_vote": 2,
+      "unique_gains": 13,
+      "unique_losses": 5
+    },
+    {
+      "all_no_safe": 5,
+      "commits": 0,
+      "exports": 4,
+      "full_pass": 0,
+      "fulls": 1,
+      "generation_status": {
+        "LOCALLY_EVALUATED": 4,
+        "NO_SAFE_EDIT": 38
+      },
+      "generations": 42,
+      "local_edits": 4,
+      "local_positive": 2,
+      "member": 4,
+      "opportunities": 7,
+      "positive_target_negative_vote": 0,
+      "unique_gains": 1,
+      "unique_losses": 0
+    },
+    {
+      "all_no_safe": 2,
+      "commits": 3,
+      "exports": 27,
+      "full_pass": 4,
+      "fulls": 10,
+      "generation_status": {
+        "CONTRACT_INVALID": 26,
+        "LOCALLY_EVALUATED": 29,
+        "NO_SAFE_EDIT": 41
+      },
+      "generations": 96,
+      "local_edits": 29,
+      "local_positive": 1,
+      "member": 5,
+      "opportunities": 16,
+      "positive_target_negative_vote": 1,
+      "unique_gains": 18,
+      "unique_losses": 12
+    }
+  ],
+  "memory": {
+    "bank_full_available": 240,
+    "delivered_full": 113,
+    "edit_delivery_hist": {
+      "0": 33,
+      "1": 267
+    },
+    "full_omitted_by_budget": 93,
+    "full_omitted_by_priority": 34,
+    "full_omitted_despite_bank": 127,
+    "full_status_delivered": {
+      "COMMITTED": 4,
+      "FULL_REFUTED": 109
+    },
+    "full_view_size": {
+      "max": 876,
+      "median": 797,
+      "min": 740
+    },
+    "interop_pattern_matches": 0,
+    "only_initial": 18,
+    "shared_bank_available": 276,
+    "shared_delivered": 22,
+    "wires": 300
+  },
+  "no_safe_summary": {
+    "all_no_safe_at_root_unchanged": [
+      1,
+      3,
+      5,
+      9,
+      10,
+      20,
+      22,
+      23,
+      33,
+      35,
+      37,
+      38,
+      40,
+      42,
+      46,
+      48
+    ],
+    "all_no_safe_opportunities": 16,
+    "all_no_safe_same_wire": 16,
+    "draws": 190,
+    "no_safe_after_prior_legal_edit": 76,
+    "panel_correct_hist": {
+      "0": 131,
+      "1": 19,
+      "2": 20,
+      "3": 20
+    },
+    "root_panel_already_all_correct": 0,
+    "tokens": 1791842
+  },
+  "opportunity_terminal_counts": {
+    "COMMITTED": 5,
+    "FULL_NO_PASS": 18,
+    "LOCAL_EDIT_NO_FULL": 11,
+    "NO_EVALUABLE_EDIT": 16
+  },
+  "prompt_morphology": {
+    "edited_answer": 2,
+    "edited_strategy": 74,
+    "evaluated": 76,
+    "keeps_entire_parent_block_prefix": 66,
+    "length_growing": 74
+  },
+  "publication_base": "ac37919629f053a444a37dfd8eb49b18a893a935",
+  "role_summary": {
+    "coverage_roles": {
+      "actual_vote_critical_target_loss": 84,
+      "dropout_pivotal_target_loss": 68,
+      "other_member_still_correct_loss": 218,
+      "redundant_correct_gain": 168,
+      "repairs_on_already_vote_correct": 115,
+      "repairs_still_vote_wrong": 61,
+      "sole_correct_loss": 28,
+      "unique_coverage_gain": 48,
+      "vote_pivotal_repairs": 40
+    },
+    "full_loss_types": {
+      "Algebra": 15,
+      "Counting & Probability": 26,
+      "Geometry": 24,
+      "Intermediate Algebra": 85,
+      "Number Theory": 32,
+      "Prealgebra": 5,
+      "Precalculus": 59
+    },
+    "full_target_fixed": 216,
+    "full_target_lost": 246,
+    "full_vote_fixed": 43,
+    "full_vote_lost": 89,
+    "recurring_vote_losses": [
+      {
+        "events": 13,
+        "question_hash": "f4449cd74f25ea617cd5a98192c7ba45a3828607a41444f6b028b069a7ade95c",
+        "type": "Precalculus"
+      },
+      {
+        "events": 10,
+        "question_hash": "d9d6be19ea1405cadf7c6054f9b6e0fa74c3b6e9de7405c8401ec2c4af7de994",
+        "type": "Geometry"
+      },
+      {
+        "events": 10,
+        "question_hash": "9b7240b496a11695d351badc6d421150f8d0141b9500b0896cd54881deb4e130",
+        "type": "Intermediate Algebra"
+      },
+      {
+        "events": 9,
+        "question_hash": "114283fec17b8e2a9a5ebcb1e03869f321896f0c7287b532b2d89fed3b3a8702",
+        "type": "Intermediate Algebra"
+      },
+      {
+        "events": 6,
+        "question_hash": "b3128168cf527cc625fc6060690301145ca0856177c7ddfdfe2970212d9a9ac5",
+        "type": "Precalculus"
+      },
+      {
+        "events": 5,
+        "question_hash": "faff8b267cf7fdd719a8a3f297aafdd25bab6ff5b33549919b8f6508abf21c97",
+        "type": "Intermediate Algebra"
+      },
+      {
+        "events": 5,
+        "question_hash": "28397739e7a10f999723e149ea4c0f80118bb221a062fb74b44eea0918762819",
+        "type": "Intermediate Algebra"
+      },
+      {
+        "events": 5,
+        "question_hash": "1ae0b10e06933366384c3d506ef56d46c79d31cc14aeabdaab2a075234c135ac",
+        "type": "Intermediate Algebra"
+      },
+      {
+        "events": 4,
+        "question_hash": "9986b0f78cecb02703ea81f662fd848769b10be8ec2d1348c16b362e755e3293",
+        "type": "Counting & Probability"
+      },
+      {
+        "events": 4,
+        "question_hash": "455397138b1eb7495bfa285f024b5e097f6a260b88ac15e5a0169eb61e8ad67d",
+        "type": "Precalculus"
+      },
+      {
+        "events": 3,
+        "question_hash": "7399b714a5659774c2bddee46ba62e750fe98f849e6ca78502bf8e5b4b65dd94",
+        "type": "Geometry"
+      },
+      {
+        "events": 3,
+        "question_hash": "1fd8939111b59db7f6c0de3a5f0f5ae3e695271e3e287b7b8e7d3325c662291c",
+        "type": "Intermediate Algebra"
+      },
+      {
+        "events": 3,
+        "question_hash": "7988310be5cac77aa517b17708500c9e39999488dc64980672d9ba1608cf12cc",
+        "type": "Intermediate Algebra"
+      },
+      {
+        "events": 2,
+        "question_hash": "7a55f93a2fc0ce0f1d1d9e53d1f81136dd69194642b691c411c23902683fe676",
+        "type": "Intermediate Algebra"
+      },
+      {
+        "events": 2,
+        "question_hash": "5a84be8c4572e1841dda1317041d48a3f5437956d249c06e8a23d62eaa86c5d2",
+        "type": "Number Theory"
+      },
+      {
+        "events": 2,
+        "question_hash": "6467124a65adb8c13bab6bdae89781dc50cbee5d5166ed875e26caeccc5a2f91",
+        "type": "Number Theory"
+      },
+      {
+        "events": 1,
+        "question_hash": "be78d433ec59e498bffb8f277f2a0e3b633edef3aedb3e26cc1fd8b8579e2c7e",
+        "type": "Number Theory"
+      },
+      {
+        "events": 1,
+        "question_hash": "88777ed80bb729175cc36bb043f1d6b31f2d1b67eb497df54dd7fa5c4e09f617",
+        "type": "Counting & Probability"
+      },
+      {
+        "events": 1,
+        "question_hash": "db05ca75507160cfe83a9dba7b2f95b3e51321fc7e2dd50a708335bd1e4c76a2",
+        "type": "Counting & Probability"
+      }
+    ],
+    "unique_vote_loss_questions": 19,
+    "vote_loss_seen": {
+      "mutation": 1,
+      "search_validation": 2,
+      "team_probe": 2
+    },
+    "vote_loss_seen_union": 5,
+    "vote_loss_types": {
+      "Counting & Probability": 6,
+      "Geometry": 13,
+      "Intermediate Algebra": 42,
+      "Number Theory": 5,
+      "Precalculus": 23
+    },
+    "vote_mechanisms": {
+      "gain_target_correctness_change": 40,
+      "gain_wrong_answer_cluster_change": 3,
+      "loss_target_correctness_change": 84,
+      "loss_wrong_answer_cluster_change": 5
+    }
+  },
+  "sampling": {
+    "mutation": {
+      "zero_at_risk": 49,
+      "zero_correct": 39,
+      "zero_pivotal": 49
+    },
+    "search_validation": {
+      "zero_at_risk": 40,
+      "zero_correct": 1,
+      "zero_pivotal": 47
+    },
+    "team_probe": {
+      "zero_at_risk": 35,
+      "zero_correct": 0,
+      "zero_pivotal": 45
+    }
+  },
+  "schema": "v27_evolution_mechanism_audit_v1",
+  "scope": "SEALED_OPTIMIZE_AND_EXISTING_CODE_ZERO_API",
+  "selected_full_correlations": {
+    "assigned_repairs__full_target_delta": {
+      "n": 31,
+      "pearson": 0.24396670668354542,
+      "spearman": 0.23854834860330515
+    },
+    "assigned_repairs__full_vote_delta": {
+      "n": 31,
+      "pearson": 0.1558305644677375,
+      "spearman": 0.17232083559669997
+    },
+    "mutation_delta__full_target_delta": {
+      "n": 31,
+      "pearson": 0.2983918771055392,
+      "spearman": 0.3100152321118416
+    },
+    "mutation_delta__full_vote_delta": {
+      "n": 31,
+      "pearson": 0.1611903034292721,
+      "spearman": 0.17042662677915893
+    },
+    "probe_target_delta__full_target_delta": {
+      "n": 31,
+      "pearson": 0.12186298355655013,
+      "spearman": 0.08638105510344062
+    },
+    "probe_target_delta__full_vote_delta": {
+      "n": 31,
+      "pearson": -0.039546819480705875,
+      "spearman": -0.09858165800932531
+    },
+    "probe_vote_delta__full_target_delta": {
+      "n": 31,
+      "pearson": 0.08957365011041489,
+      "spearman": 0.14121975762272057
+    },
+    "probe_vote_delta__full_vote_delta": {
+      "n": 31,
+      "pearson": -0.10440373866378586,
+      "spearman": -0.03587150269897197
+    },
+    "validation_delta__full_target_delta": {
+      "n": 31,
+      "pearson": 0.24454206379952434,
+      "spearman": 0.2652328129624685
+    },
+    "validation_delta__full_vote_delta": {
+      "n": 31,
+      "pearson": -0.2136725165062617,
+      "spearman": -0.1361616037789228
+    }
+  },
+  "source": "a8985eef7f15f82ae29bf8000cccf12b0ad39b2a",
+  "team_features": {
+    "final": {
+      "at_risk_by_member": [
+        5,
+        7,
+        12,
+        5,
+        13
+      ],
+      "correct_vote_count_histogram": {
+        "0": 19,
+        "1": 5,
+        "2": 6,
+        "3": 12,
+        "4": 5,
+        "5": 103
+      },
+      "dropout_pivotal_by_member": [
+        1,
+        5,
+        6,
+        3,
+        6
+      ],
+      "pairwise": [
+        {
+          "both_wrong": 27,
+          "correctness_disagreement": 19,
+          "members": [
+            1,
+            2
+          ]
+        },
+        {
+          "both_wrong": 26,
+          "correctness_disagreement": 15,
+          "members": [
+            1,
+            3
+          ]
+        },
+        {
+          "both_wrong": 32,
+          "correctness_disagreement": 10,
+          "members": [
+            1,
+            4
+          ]
+        },
+        {
+          "both_wrong": 25,
+          "correctness_disagreement": 15,
+          "members": [
+            1,
+            5
+          ]
+        },
+        {
+          "both_wrong": 24,
+          "correctness_disagreement": 14,
+          "members": [
+            2,
+            3
+          ]
+        },
+        {
+          "both_wrong": 26,
+          "correctness_disagreement": 17,
+          "members": [
+            2,
+            4
+          ]
+        },
+        {
+          "both_wrong": 20,
+          "correctness_disagreement": 20,
+          "members": [
+            2,
+            5
+          ]
+        },
+        {
+          "both_wrong": 25,
+          "correctness_disagreement": 13,
+          "members": [
+            3,
+            4
+          ]
+        },
+        {
+          "both_wrong": 22,
+          "correctness_disagreement": 10,
+          "members": [
+            3,
+            5
+          ]
+        },
+        {
+          "both_wrong": 23,
+          "correctness_disagreement": 15,
+          "members": [
+            4,
+            5
+          ]
+        }
+      ],
+      "unique_correct_by_member": [
+        0,
+        2,
+        0,
+        1,
+        2
+      ]
+    },
+    "initial": {
+      "at_risk_by_member": [
+        4,
+        6,
+        4,
+        5,
+        6
+      ],
+      "correct_vote_count_histogram": {
+        "0": 26,
+        "1": 4,
+        "2": 6,
+        "3": 7,
+        "4": 6,
+        "5": 101
+      },
+      "dropout_pivotal_by_member": [
+        2,
+        3,
+        1,
+        4,
+        3
+      ],
+      "pairwise": [
+        {
+          "both_wrong": 30,
+          "correctness_disagreement": 14,
+          "members": [
+            1,
+            2
+          ]
+        },
+        {
+          "both_wrong": 33,
+          "correctness_disagreement": 10,
+          "members": [
+            1,
+            3
+          ]
+        },
+        {
+          "both_wrong": 32,
+          "correctness_disagreement": 10,
+          "members": [
+            1,
+            4
+          ]
+        },
+        {
+          "both_wrong": 33,
+          "correctness_disagreement": 11,
+          "members": [
+            1,
+            5
+          ]
+        },
+        {
+          "both_wrong": 31,
+          "correctness_disagreement": 10,
+          "members": [
+            2,
+            3
+          ]
+        },
+        {
+          "both_wrong": 28,
+          "correctness_disagreement": 14,
+          "members": [
+            2,
+            4
+          ]
+        },
+        {
+          "both_wrong": 32,
+          "correctness_disagreement": 9,
+          "members": [
+            2,
+            5
+          ]
+        },
+        {
+          "both_wrong": 28,
+          "correctness_disagreement": 16,
+          "members": [
+            3,
+            4
+          ]
+        },
+        {
+          "both_wrong": 32,
+          "correctness_disagreement": 11,
+          "members": [
+            3,
+            5
+          ]
+        },
+        {
+          "both_wrong": 30,
+          "correctness_disagreement": 13,
+          "members": [
+            4,
+            5
+          ]
+        }
+      ],
+      "unique_correct_by_member": [
+        0,
+        1,
+        1,
+        2,
+        0
+      ]
+    }
+  },
+  "who_summary": [
+    {
+      "final_raw": 13,
+      "initial_raw": 16,
+      "member": 1,
+      "selected": 8,
+      "selected_immediately_after_own_commit": 0,
+      "suffix_selections": 4
+    },
+    {
+      "final_raw": 13,
+      "initial_raw": 19,
+      "member": 2,
+      "selected": 9,
+      "selected_immediately_after_own_commit": 0,
+      "suffix_selections": 3
+    },
+    {
+      "final_raw": 13,
+      "initial_raw": 15,
+      "member": 3,
+      "selected": 10,
+      "selected_immediately_after_own_commit": 1,
+      "suffix_selections": 4
+    },
+    {
+      "final_raw": 13,
+      "initial_raw": 16,
+      "member": 4,
+      "selected": 7,
+      "selected_immediately_after_own_commit": 0,
+      "suffix_selections": 3
+    },
+    {
+      "final_raw": 15,
+      "initial_raw": 20,
+      "member": 5,
+      "selected": 16,
+      "selected_immediately_after_own_commit": 3,
+      "suffix_selections": 9
+    }
+  ]
+}

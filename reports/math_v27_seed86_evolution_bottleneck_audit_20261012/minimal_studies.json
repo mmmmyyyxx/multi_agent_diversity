@@ -1,0 +1,81 @@
+{
+  "selection_rule": "Research value first; confidence separates observed mechanisms from untested causal benefits.",
+  "status": "DESIGN_PROPOSALS_ONLY_NO_AUTHORIZATION_NO_EXECUTION",
+  "studies": [
+    {
+      "complexity": "MEDIUM",
+      "evidence": "STRONG_MECHANISM_AND_TRACE; CAUSAL_BENEFIT_UNTESTED",
+      "minimum_live": "Paired fixed-parent 2x2: existing evidence vs two additional complete preservation anchors; target-only vs team-vote risk feedback. Preserve existing full evidence and outer gates. Preregister expanded evidence accounting and fresh identities.",
+      "minimum_offline": "Use the fixed 31 Full candidates as a retrospective panel assay; select panels from parent-only risk features, compare uniform and risk-stratified coverage, group by opportunity/parent for evaluation. This is a selected catalog diagnostic, not optimizer efficacy.",
+      "name": "Team-vote and preservation evidence",
+      "rank": 1,
+      "status": "PROPOSED_NOT_EXECUTED",
+      "token_cost": "Offline zero API. Two extra questions on 50 roots and 76 evaluated edits would add 252 logical Solver evaluations, roughly 0.25M tokens using observed physical-call mean; added optimizer input, recovery and new baseline costs are separate. Illustrative rather than a ceiling.",
+      "value": "VERY_HIGH"
+    },
+    {
+      "complexity": "MEDIUM",
+      "evidence": "STRONG_DELIVERY_DEFICIT; EFFECT_ON_BEHAVIOR_UNTESTED",
+      "minimum_live": "Two fixed parent states x two target members x two delivery policies = eight opportunities, with equal role evidence and generation budgets. If needed use a separate ranking-by-capacity factorial. Compare delivered records, recurring critical losses and Full Vote per token.",
+      "minimum_offline": "Replay retrieval only and assert a relevant Full record survives serialization with explicit scopes; preserve all mathematical evidence. Separate ranking and capacity effects.",
+      "name": "Actual delivery and reuse of Full Memory",
+      "rank": 2,
+      "status": "PROPOSED_NOT_EXECUTED",
+      "token_cost": "Offline zero API. Eight opportunities around 3.2M tokens at this run mean, excluding bootstrap; additional Memory input and role latency must be measured, not assumed.",
+      "value": "VERY_HIGH"
+    },
+    {
+      "complexity": "MEDIUM",
+      "evidence": "MATH_ERRORS_OBSERVED; PROMPT_VS_REALIZATION_UNIDENTIFIED",
+      "minimum_live": "Four frozen parent-child pairs x twenty preregistered Optimize questions x two prompts x three independent provider realizations = 480 logical evaluations. Include repairs, pivotal preservation, sole coverage and unaffected controls. Two manually written conditional repair prompts add 120 evaluations. Never treat cached same-identity predictions as independent draws.",
+      "name": "Solver stability and additive-repair positive control",
+      "rank": 3,
+      "status": "PROPOSED_NOT_EXECUTED",
+      "token_cost": "Roughly 0.47M plus 0.12M tokens at observed physical Solver-call mean, before recovery and bootstrap. This is a mechanism study with fresh authorization, not a formal-run rerun or generalization claim.",
+      "value": "VERY_HIGH"
+    },
+    {
+      "complexity": "LOW_TO_MEDIUM",
+      "evidence": "STRONG_FORMAT_DEFECT; SUCCESSFUL_DIAGNOSIS_QUALITY_UNVALIDATED",
+      "minimum_live": "One hundred frozen wrong-example/prompt pairs x two instruction variants, each retaining full evidence, with at most three draws. Blindly score mathematical diagnosis and implementability as well as format success.",
+      "minimum_offline": "Byte-preservation and strict schema tests for mathematical symbols, escapes and unintended decoded controls; no parser loosening or fabricated response repair.",
+      "name": "Gradient serialization and bounded semantic quality",
+      "rank": 4,
+      "status": "PROPOSED_NOT_EXECUTED",
+      "token_cost": "At observed 1.5 draws per example, about 300 Gradient calls or 1.4M tokens; maximum 600 draws requires its own frozen token ceiling. Successful but impoverished diagnoses do not count as improvement.",
+      "value": "HIGH"
+    },
+    {
+      "complexity": "MEDIUM_TO_HIGH",
+      "evidence": "STRONG_INPUT_REPETITION; LOST_EXPLORATION_VALUE_UNKNOWN",
+      "minimum_live": "Within one newly authorized attempt compare fresh extraction with accepted-only reuse; never reuse rejected outputs to replace recovery, and invalidate on any required-context change. Measure useful candidate production and Full Vote per token.",
+      "minimum_offline": "Classify exact complete-context identities and accepted-diagnosis novelty, with parent prompt, ordinary response, reference, lane, policy and provenance all included. Do not drop information to increase hits.",
+      "name": "Context-complete accepted diagnosis reuse and stable mechanism identities",
+      "rank": 5,
+      "status": "PROPOSED_NOT_EXECUTED",
+      "token_cost": "Observed repeated new physical Gradient requests cost 6,228,336 tokens; this is a gross exposure, not a guaranteed saving. Live A/B cost needs scope-specific freeze.",
+      "value": "HIGH_COST_VALUE; SCIENTIFIC_VALUE_CONDITIONAL"
+    },
+    {
+      "complexity": "MEDIUM_TO_HIGH",
+      "evidence": "NO_STARVATION_OR_RULE_BUG; COUNTERFACTUAL_MEMBER_QUALITY_UNKNOWN",
+      "minimum_live": "One common frozen parent, one equal-budget opportunity for each of five target members; optionally replicate at a second parent. Compare stage-specific failures, useful Full proposals and cost with the member selected by current WHO. Do not make updating all five members a success condition.",
+      "name": "Stage-aware opportunity allocation",
+      "rank": 6,
+      "status": "PROPOSED_NOT_EXECUTED",
+      "token_cost": "Five opportunities about 2M tokens; ten about 4M, excluding common bootstrap. Small diagnostic only; insufficient by itself to establish an optimal scheduler.",
+      "value": "MEDIUM_TO_HIGH"
+    },
+    {
+      "complexity": "LOW_TO_MEDIUM",
+      "evidence": "LATE_LENGTH_PRESSURE_CONFIRMED; ABSTRACTION_OR_NO_SAFE_CAUSE_UNIDENTIFIED",
+      "minimum_live": "Fixed-parent append vs conditional rewrite with equal cap and information; a separate intervention passes diagnosis detail and worked references. A closed NO_SAFE reason field is observational self-report and changes the generation contract, so preregister it separately.",
+      "minimum_offline": "Compute the exact remaining rendered-prompt budget; review which detailed Gradient diagnosis is lost before Reflection. Test preservation of complete readable evidence.",
+      "name": "Conditional prompt rewrite and diagnosis-to-edit observability",
+      "rank": 7,
+      "status": "PROPOSED_NOT_EXECUTED",
+      "token_cost": "Offline zero API first. Live paired opportunities incur ordinary optimizer/Solver costs; rewrite must not remove useful rules merely to fit a cap.",
+      "value": "MEDIUM"
+    }
+  ]
+}

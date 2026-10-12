@@ -9833,3 +9833,29 @@ experiments:
     implementation_commit: Source freeze pending.
     execution_commit: Non-executable template.
     result_commit: No scientific experiment.
+- experiment_id: math_v27_seed86_evolution_bottleneck_audit_20261012
+  kind: FORENSIC_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: offline_v27_evolution_mechanism_audit_v1
+  parent_ids:
+  - math_v27_seed86_precluster_continuation_v1
+  status: COMPLETED
+  scientific_status: ZERO_API_DESCRIPTIVE_MECHANISM_AUDIT_NO_NEW_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: null
+  report: reports/math_v27_seed86_evolution_bottleneck_audit_20261012
+  classifier: reports/math_v27_seed86_evolution_bottleneck_audit_20261012/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Read-only audit of sealed Optimize trajectories and existing code; zero model API and no Validation/Test raw access.
+  - No method, protocol, historical experiment or result changes; proposed studies are not implemented or authorized.
+  - Frozen-output substitution is a diagnostic, not a new experiment or causal search ablation.
+  unavailable:
+    manifest: No new experiment; frozen parent manifest remains the execution authority.
+    implementation_commit: Containing documentation publication; no runtime implementation.
+    execution_commit: No model experiment executed; parent source is pinned in the report.
+    result_commit: Containing sanitized evidence commit; no self-referential SHA.

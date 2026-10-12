@@ -1039,6 +1039,11 @@ nodes:
   era: UNIFIED_TEAM_PROMPT_SEARCH
   status: IMPLEMENTED_NOT_EXECUTED
   manifest: experiments/manifests/math_v27_request_recovery_preparation_v1.yaml
+- experiment_id: math_v27_seed86_evolution_bottleneck_audit_20261012
+  kind: FORENSIC_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  status: COMPLETED
+  manifest: null
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2275,4 +2280,9 @@ edges:
   relation: derived_from
   evidence: reports/math_v27_precluster_continuation_20261012/README.md
   scope: Non-executable current draft; historical drafts unchanged.
+- from: math_v27_seed86_precluster_continuation_v1
+  to: math_v27_seed86_evolution_bottleneck_audit_20261012
+  relation: audit_of
+  evidence: reports/math_v27_seed86_evolution_bottleneck_audit_20261012/README.md
+  scope: Zero-API mechanism diagnosis; no new method, model execution or causal efficacy claim.
 current_frontier: experiments/current_frontier.yaml

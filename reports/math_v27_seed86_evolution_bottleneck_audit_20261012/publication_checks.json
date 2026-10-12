@@ -1,0 +1,38 @@
+{
+  "authorization": "EXPLICIT_USER_PUSH",
+  "compileall": "PASS",
+  "current_pytest": {
+    "classification": "UNMODIFIED_PREPUBLICATION_BASELINE_FAILURES",
+    "failed": 11,
+    "failures": [
+      "tests/test_repository_governance_alignment.py::test_current_scope_is_fresh_and_unapproved",
+      "tests/test_repository_governance_alignment.py::test_preparation_cannot_authorize_or_import_results[real_api_authorized-True]",
+      "tests/test_repository_governance_alignment.py::test_preparation_cannot_authorize_or_import_results[next_canary_authorized-True]",
+      "tests/test_repository_governance_alignment.py::test_preparation_cannot_authorize_or_import_results[next_pilot_authorized-True]",
+      "tests/test_repository_governance_alignment.py::test_preparation_cannot_authorize_or_import_results[next_validation_authorized-True]",
+      "tests/test_repository_governance_alignment.py::test_preparation_cannot_authorize_or_import_results[pending_pilot_test_authorized-True]",
+      "tests/test_repository_governance_alignment.py::test_preparation_cannot_authorize_or_import_results[pending_pilot_operational_retry_limit-1]",
+      "tests/test_repository_governance_alignment.py::test_preparation_cannot_authorize_or_import_results[old_evidence_reuse_allowed-True]",
+      "tests/test_repository_governance_alignment.py::test_preparation_cannot_authorize_or_import_results[current_method-unified_team_prompt_search_v2_3_optimization_evidence]",
+      "tests/test_repository_governance_alignment.py::test_preparation_cannot_authorize_or_import_results[initial_accuracy-0.8]",
+      "tests/test_repository_governance_alignment.py::test_preparation_cannot_authorize_or_import_results[pilot_search_complete-True]"
+    ],
+    "omitted_historical_private_modules": 220,
+    "passed": 775,
+    "private_artifact_test_cases": 0,
+    "reason": "Legacy preparation-state assertions require the completed formal experiment to remain active; reproduced before publication metadata edits.",
+    "selected": 788,
+    "skipped": 2
+  },
+  "frozen_protocol_or_manifest_changes": 0,
+  "historical_replay": "NOT_EXECUTED_NOT_CLAIMED",
+  "manifest_preflight": "PASS_BEFORE_PUBLICATION_UNCHANGED_MANIFESTS",
+  "model_api_calls": 0,
+  "network_attempts_in_guarded_checks": 0,
+  "original_audit_verification": "verification.json",
+  "publication_metadata": "FORENSIC_AUDIT_PARENT_LINK_AND_DERIVED_INDEX_ONLY",
+  "raw_runtime_evidence": "REMAINS_PRIVATE_UNTRACKED",
+  "repository_governance_generated_views": "PASS",
+  "schema": "zero_api_forensic_publication_checks_v1",
+  "scientific_source_changes": 0
+}

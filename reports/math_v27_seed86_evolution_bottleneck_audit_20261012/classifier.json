@@ -1,0 +1,16 @@
+{
+  "gate_overstrictness": "NOT_SUPPORTED_BY_AVAILABLE_FULLS",
+  "generalization": "NOT_EVALUATED",
+  "live_experiments": "NOT_STARTED",
+  "local_preservation_coverage_deficit": "OBSERVED",
+  "local_target_vs_team_value_mismatch": "OBSERVED",
+  "memory_delivery_deficit": "OBSERVED",
+  "mutation_capacity_limit": "INCONCLUSIVE",
+  "new_method": "NOT_IMPLEMENTED",
+  "optimizer_component_causality": "NOT_IDENTIFIED",
+  "scientific_convergence": "NOT_ESTABLISHED",
+  "solver_realization_stability": "UNMEASURED",
+  "useful_conditional_complementarity_of_three_updated_members": "OBSERVED_FIXED_OUTPUT_ONLY",
+  "validity": "USES_PREVIOUS_VALID_RESOURCE_TRUNCATED_EXECUTION",
+  "who_optimality": "INCONCLUSIVE"
+}

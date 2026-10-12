@@ -1,0 +1,46 @@
+{
+  "excludes_self": true,
+  "files": {
+    "FULL_CANDIDATES.md": {
+      "bytes": 2856,
+      "sha256": "30a09f5518177c49113b434c400fdf0aecbe79082c71562cf153c675ae2285eb"
+    },
+    "README.md": {
+      "bytes": 36279,
+      "sha256": "c0779b399fe98755492126754ac5fd053e6e48ac059ab459802fe81ec891fbd7"
+    },
+    "case_review.json": {
+      "bytes": 8443,
+      "sha256": "f16d2e8d873ef33e7709ef5bf1e25b40eb095fdc1f60094db42ad8fca08a6d68"
+    },
+    "classifier.json": {
+      "bytes": 710,
+      "sha256": "5c927e68e62e37b93ca2cc0494ec99e9f4a9aa1d28a72ee648266a4e622beb56"
+    },
+    "diagnosis_summary.json": {
+      "bytes": 94838,
+      "sha256": "2d96269720d22b1282d9a97abc5d4fa434bd2e617726f7a4ce3805f6c5ade361"
+    },
+    "frozen_output_substitution.json": {
+      "bytes": 2264,
+      "sha256": "e9dcfef9f07629438a5249b7fca574bae985d454fb660935747e54fc9b490f3a"
+    },
+    "minimal_studies.json": {
+      "bytes": 6892,
+      "sha256": "4207558a4e99740ee7c4f052aeefe1817253cf2505e3a088d50be94349b81dcc"
+    },
+    "publication_checks.json": {
+      "bytes": 2591,
+      "sha256": "f32279422b77cd8d773cc95dc97a6cac28806d97d7c8208bc247cd3225e5fb71"
+    },
+    "sanitization_manifest.json": {
+      "bytes": 782,
+      "sha256": "e6c6566b197c8aa62f02b1cb59fbad309f395ee063cb10ed20250c8c70514254"
+    },
+    "verification.json": {
+      "bytes": 5816,
+      "sha256": "58684a908bdd8aba6cf2eb0c40e7ceee0dcbe7492a0ab700dc472c190de916ac"
+    }
+  },
+  "schema": "sha256_bytes_v1"
+}

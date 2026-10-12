@@ -1,0 +1,120 @@
+{
+  "algorithm_edits": 0,
+  "checks": {
+    "allocation_rule_matches": true,
+    "full_vote_counts_match_all": true,
+    "fulls_reconstructed": 31,
+    "local_probe_full_same_realizations": true,
+    "offline_equivalence_calls": 52,
+    "real_api_calls": 0,
+    "test_raw_reads": 0,
+    "validation_raw_reads": 0
+  },
+  "compileall_private_helpers_and_production": "PASS",
+  "current_pytest_and_governance": "Previous classified-suite/governance findings reused for unchanged code and manifests; new report-only arithmetic, subset, source and sanitization checks run. No claim of rerunning the full suite.",
+  "current_source_no_tracked_diff": true,
+  "experiment_restarts": 0,
+  "historical_report_edits": 0,
+  "integrity_scope": "Existing full integrity audit reused; trajectory digest rechecked and selected mechanisms compared with frozen source. No full historical/private suite rerun.",
+  "manual_cases": 16,
+  "manual_unique_questions": 14,
+  "network_attempt_count": 0,
+  "network_guard_active_before_application_import": true,
+  "new_report_consistency_assertions": "PASS",
+  "prior_integrity_audit": "reports/math_v27_seed86_performance_forensic_20261012/audit_summary.json",
+  "probe_vote_subset_matches": 31,
+  "protocol_edits": 0,
+  "real_api_calls": 0,
+  "sanitization": "PASS",
+  "schema": "v27_mechanism_verification_v1",
+  "selected_frozen_source_checks": [
+    {
+      "current_file_sha256": "2c4ccd3333d8b30d0020281aa976733e336949bddfd162f6cb41d2b857fb2464",
+      "file": "multi_dataset_diverse_rl/search/selected_evidence.py",
+      "frozen_blob_sha256": "2c4ccd3333d8b30d0020281aa976733e336949bddfd162f6cb41d2b857fb2464",
+      "lf_normalized_matches": true
+    },
+    {
+      "current_file_sha256": "ae5a55ace0b40946b4a804f95be40d922d76c6275d40a64ee41a9cceea709d08",
+      "file": "multi_dataset_diverse_rl/search/binary_runtime.py",
+      "frozen_blob_sha256": "ae5a55ace0b40946b4a804f95be40d922d76c6275d40a64ee41a9cceea709d08",
+      "lf_normalized_matches": true
+    },
+    {
+      "current_file_sha256": "d32f7dea8a03627b2e05f3e295fd9813e55704b838310cf78b800005e558d439",
+      "file": "multi_dataset_diverse_rl/search/bounded_layer1.py",
+      "frozen_blob_sha256": "d32f7dea8a03627b2e05f3e295fd9813e55704b838310cf78b800005e558d439",
+      "lf_normalized_matches": true
+    },
+    {
+      "current_file_sha256": "d3410fb297f961a28104b8b607f484db9623f05832a6f759d0bc8955147bb247",
+      "file": "multi_dataset_diverse_rl/search/textual_gradients.py",
+      "frozen_blob_sha256": "d3410fb297f961a28104b8b607f484db9623f05832a6f759d0bc8955147bb247",
+      "lf_normalized_matches": true
+    },
+    {
+      "current_file_sha256": "48a8179a549f44c055a91ca2ed548a83d7fd06af02f2d91f8c3cce5d68948f6e",
+      "file": "multi_dataset_diverse_rl/search/policies.py",
+      "frozen_blob_sha256": "48a8179a549f44c055a91ca2ed548a83d7fd06af02f2d91f8c3cce5d68948f6e",
+      "lf_normalized_matches": true
+    },
+    {
+      "current_file_sha256": "f304e87690273350d29df3902101a693b4800febf4ad3dc2753b5f4f83b0e672",
+      "file": "multi_dataset_diverse_rl/search/rolling_risk_memory.py",
+      "frozen_blob_sha256": "f304e87690273350d29df3902101a693b4800febf4ad3dc2753b5f4f83b0e672",
+      "lf_normalized_matches": true
+    },
+    {
+      "current_file_sha256": "6be169ed921f347354ce2f392956240dd00600b419e3200d707c8b8429bd4698",
+      "file": "multi_dataset_diverse_rl/search/target_or_team_transition.py",
+      "frozen_blob_sha256": "6be169ed921f347354ce2f392956240dd00600b419e3200d707c8b8429bd4698",
+      "lf_normalized_matches": true
+    },
+    {
+      "current_file_sha256": "93f3c78c85673e43f296dc7950e84bc7c20167f48d49f4f8007ef585309aaaf4",
+      "file": "multi_dataset_diverse_rl/search/system_prompt.py",
+      "frozen_blob_sha256": "93f3c78c85673e43f296dc7950e84bc7c20167f48d49f4f8007ef585309aaaf4",
+      "lf_normalized_matches": true
+    },
+    {
+      "current_file_sha256": "30f6cfd5585b378371fec0a52c4a338b3c5b469d31acca171597cbf36da96aba",
+      "file": "multi_dataset_diverse_rl/search/current_composition.py",
+      "frozen_blob_sha256": "30f6cfd5585b378371fec0a52c4a338b3c5b469d31acca171597cbf36da96aba",
+      "lf_normalized_matches": true
+    },
+    {
+      "current_file_sha256": "dd9aa8a444170dd53ff6c87b0d3d2133abf42267b875e8b8cc18018723789b20",
+      "file": "multi_dataset_diverse_rl/search/orchestrator.py",
+      "frozen_blob_sha256": "dd9aa8a444170dd53ff6c87b0d3d2133abf42267b875e8b8cc18018723789b20",
+      "lf_normalized_matches": true
+    },
+    {
+      "current_file_sha256": "3ffaff14073b1744b9ec84226b4fd3dca9759ba2e7ec320a941bc6a9b86d29d4",
+      "file": "multi_dataset_diverse_rl/search/pattern_primitives.py",
+      "frozen_blob_sha256": "3ffaff14073b1744b9ec84226b4fd3dca9759ba2e7ec320a941bc6a9b86d29d4",
+      "lf_normalized_matches": true
+    }
+  ],
+  "subset_consistency": {
+    "mutation_broken_ids": 93,
+    "mutation_fixed_ids": 93,
+    "mutation_invalid_ids": 93,
+    "probe_broken_ids": 186,
+    "probe_fixed_ids": 186,
+    "probe_invalid_ids": 186,
+    "validation_broken_ids": 93,
+    "validation_fixed_ids": 93,
+    "validation_invalid_ids": 93
+  },
+  "test_raw_reads": 0,
+  "validation_raw_reads": 0,
+  "zero_network_logs": {
+    "assurance.log": "9224b64a97dd6b09152cb24e11366420f19b9ded3f845340534da67c310407b6",
+    "casebook.log": "93e0f8cbcad1d2a36ebb79578f374c4c589563ab3b403b1d4e6c89b31b073817",
+    "inspect_wire.log": "73541019b847f2c8beafa722228f9629594599de81c70626fb46035b6a4565cb",
+    "interaction.log": "b6eea767fa10205ad2e6352ff9b0e270583667c91949b67fe94b4a4878c21cae",
+    "metrics.log": "973cd3d0ec977a3f47dafcb0f97f11c206a4c5c710774d18cc73887914f1c1cb",
+    "summary.log": "9bf9ad712806277f031bb71282033937492e88d807c3f9a29b474beb9117e65b",
+    "wire_memory.log": "97c895607d03dc29bb6b2475fa3f0c2b1a12c848eced68bd753258022c6579d2"
+  }
+}

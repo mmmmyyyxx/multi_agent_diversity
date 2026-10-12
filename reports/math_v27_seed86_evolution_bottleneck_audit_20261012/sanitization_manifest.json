@@ -1,0 +1,27 @@
+{
+  "allowed_content": [
+    "hashes",
+    "counters",
+    "categories",
+    "metrics",
+    "code_mechanisms",
+    "proposed_studies"
+  ],
+  "charts_created": 0,
+  "content_files_checked": 9,
+  "credentials_endpoints_or_host_paths_published": false,
+  "lf_bytes": true,
+  "methods": [
+    "JSON forbidden-key traversal",
+    "credential/endpoint/host-path patterns",
+    "80-character private-text fragment comparison across complete request packets and parent/pattern text"
+  ],
+  "private_fragments_checked": 90516,
+  "publication_checks_included": true,
+  "raw_gold_or_model_answers_published": false,
+  "raw_prompt_text_published": false,
+  "raw_question_text_published": false,
+  "raw_responses_published": false,
+  "schema": "v27_report_sanitization_v1",
+  "status": "PASS"
+}
