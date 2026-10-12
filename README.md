@@ -1,8 +1,9 @@
 # Unified Team Prompt Search
 
 The sole active research architecture is Unified Team Prompt Search.
-The sole current method is V2.5 with flexible answer extraction and bounded output recovery,
-`unified_team_prompt_search_v2_7_request_recovery_v2`.
+The sole current method is V2.8 scoped edit experience and Layer1 evidence feedback,
+`unified_team_prompt_search_v2_8_scoped_experience_v1`.
+See the [V2.8 experience and Layer1 amendment](docs/design/SCOPED_EDIT_EXPERIENCE_LAYER1_V28.md).
 
 [Current specification](docs/design/CURRENT_SPEC.md) and
 [V2.5 scientific contract](docs/design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md) define the

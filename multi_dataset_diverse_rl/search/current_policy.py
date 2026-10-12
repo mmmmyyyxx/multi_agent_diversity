@@ -24,6 +24,8 @@ def require_current_contract(contract):
             or contract.get('repair_probe_policy') != PROBE_POLICY):
         raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
     frozen_policy(contract.get('optimization_evidence_policy'))
+    if contract.get('precluster_continuation_policy') is not None:
+        raise SearchContractError('CURRENT_EXPERIENCE_REQUIRES_FRESH_ATTEMPT')
     from ..governance.precluster_continuation import require_policy
     require_policy(contract.get('precluster_continuation_policy'))
     if type(contract.get('scientific_no_commit_patience',2)) is not int or contract.get('scientific_no_commit_patience',2)<=0:

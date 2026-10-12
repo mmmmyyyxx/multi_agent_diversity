@@ -3,6 +3,12 @@
   "schema_version": "suite_classification_v1",
   "tests": [
     {
+      "path": "tests/current/test_scoped_experience_layer1.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "current_suite_included": true,
+      "required_private_artifacts": []
+    },
+    {
       "path": "tests/current/test_v27_request_recovery_continuation.py",
       "classification": "CURRENT_ZERO_API_E2E",
       "current_suite_included": true,

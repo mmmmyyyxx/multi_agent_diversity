@@ -16,7 +16,8 @@ class SearchContractError(ValueError):
 
 # The current identity module also exports the structured seed, which imports
 # SearchContractError. Define that dependency before resolving closed identities.
-from ..current_contract import CURRENT_METHOD_VERSION, GRADIENT_PATTERN_DISCOVERY_VERSION
+from ..current_contract import (CURRENT_METHOD_VERSION, GRADIENT_PATTERN_DISCOVERY_VERSION,
+    CURRENT_LAYER1_SEARCH_VERSION, CURRENT_EDIT_MEMORY_VERSION)
 
 
 @dataclass(frozen=True)
@@ -223,7 +224,7 @@ class GlobalStopConfig:
 @dataclass(frozen=True)
 class SearchMethodConfig:
     method: str = CURRENT_METHOD_VERSION
-    search_engine: str = 'STRUCTURED_EVALUATED_PARENT_SEARCH_V3'
+    search_engine: str = CURRENT_LAYER1_SEARCH_VERSION
     diagnosis_policy: str = versions.BINARY_PLURALITY_RESPONSIBILITY_VERSION
     target_policy: str = versions.UNIFIED_FALLBACK_TARGET_VERSION
     feasibility_policy: str = versions.UNIFIED_REPAIR_FEASIBILITY_VERSION
@@ -232,7 +233,7 @@ class SearchMethodConfig:
     transition_policy: str = versions.UNIFIED_TARGET_OR_TEAM_TRANSITION_VERSION
     adaptive_gate_policy: str = versions.UNIFIED_ADAPTIVE_GATE_VERSION
     aggregation_policy: str = versions.UNIFIED_PLURALITY_AGGREGATION_VERSION
-    memory_policy: str = 'BOOTSTRAPPED_FORMAT_BLOCK_EDIT_EFFECT_MEMORY_V3'
+    memory_policy: str = CURRENT_EDIT_MEMORY_VERSION
     pattern_policy: str = GRADIENT_PATTERN_DISCOVERY_VERSION
     search_acceptance_policy: str = 'layer1_local_guidance_team_admission_v1'
     search_stop: SearchStopConfig = field(default_factory=SearchStopConfig)

@@ -5,7 +5,14 @@ The [scientific principles](SCIENTIFIC_PRINCIPLES.md) constrain interpretation;
 the [MATH scientific contract](MATH_SCIENTIFIC_CONTRACT.md) clarifies benchmark
 measurement and admission. These clarifications add no algorithm or threshold.
 The sole executable method is
-`unified_team_prompt_search_v2_7_request_recovery_v2`.
+`unified_team_prompt_search_v2_8_scoped_experience_v1`.
+The [scoped edit experience and Layer1 feedback amendment](SCOPED_EDIT_EXPERIENCE_LAYER1_V28.md)
+adds relevance-aware, budgeted Full experience delivery and Mutation-only root
+diagnostics/worked references plus measured preceding-attempt feedback. It keeps
+the 1200-character Memory bound, local budgets, evaluated-parent search, selection,
+WHO, Gradient semantics, Solver/scoring, Full/Shadow and stopping unchanged.
+No Preservation Gradient, panel or new hard constraint is introduced. Current
+contracts require fresh identities and cannot import the historical V2.7 prefix.
 [The V2.5 scientific contract](RESPONSIBILITY_FALLBACK_REPAIR_V25.md) and
 [flexible answer extraction amendment](FLEXIBLE_ANSWER_EXTRACTION_V3.md) and
 [bounded output recovery amendment](GENERATED_OUTPUT_RECOVERY_V25.md) are normative.
@@ -46,8 +53,8 @@ Older runtime identities cannot execute through current production. Historical
 manifests and reports remain immutable evidence with their frozen source replay.
 No old scoring, response cache, competence, Memory or consumed scope is silently reusable.
 The [request recovery and explicit continuation amendment](V27_REQUEST_RECOVERY_CONTINUATION_V2.md)
-permits only an authorized, sealed zero-opportunity pre-cluster prefix under a
-fresh identity. Exact Solver lanes and optimizer wire responses retain parent
+permitted only a historical V2.7 authorized, sealed zero-opportunity pre-cluster
+prefix. It does not grant V2.8 execution eligibility. Exact Solver lanes and optimizer wire responses retain parent
 provenance and draw positions; adaptive Memory and completed opportunities cannot
 be imported. Generated alias conflicts now consume the existing bounded Cluster
 retry budget. Current formal scopes allow a null cumulative Token ceiling with

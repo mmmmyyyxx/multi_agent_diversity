@@ -578,6 +578,30 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 - Forbidden inference: No performance-based selection, new split, relaxed guard, historical score revision or rerun permission.
 - Mitigation: Separate seed/exclusion validation; preserve strict fresh-only rejection and execute the existing metadata-only minimum supplement contract.
 
+## FAIL-V27-FULL-EXPERIENCE-DELIVERY: Recorded Full edits were omitted from Reflection Memory views
+
+- Status: `MITIGATED`
+- Lifecycle: `REAL_OBSERVED_OFFLINE_REPRODUCED`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `math_v27_seed86_precluster_continuation_v1`
+- Root-cause status: Exact-pattern and local priority plus oversized coarse records displaced Full observations.
+- Symptom: Full records existed in 240 Reflection-time banks but appeared in only 113 old wire views.
+- Forbidden inference: Offline delivery does not prove LLM utilization, candidate quality, causal effect or team gains.
+- Mitigation: Scoped relevance, compact actual-edit outcomes and protected primary Full instruction within the unchanged context budget.
+
+## FAIL-V27-LAYER1-EVIDENCE-LOSS: Accepted diagnosis and local abstention feedback did not reach generation
+
+- Status: `MITIGATED`
+- Lifecycle: `REAL_OBSERVED_OFFLINE_REPRODUCED`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `math_v27_seed86_precluster_continuation_v1`
+- Root-cause status: Input projection omitted available Mutation diagnostics and prior abstention metadata.
+- Symptom: Reflection saw generalized Pattern but lacked accepted per-example repair diagnostics; unchanged abstentions repeated the same inputs.
+- Forbidden inference: These omissions do not identify the cause of NO_SAFE_EDIT or prove improvements in real candidate efficacy.
+- Mitigation: Supply scoped root diagnosis, separately labeled Optimize reference, exact capacity and bounded preceding-attempt metadata.
+
 ## FAIL-V27-GENERATED-CLUSTER-MEMBERSHIP-FATAL: Generated duplicate support alias bypassed bounded draw recovery
 
 - Status: `MITIGATED`

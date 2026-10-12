@@ -1,0 +1,29 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "classifier.json",
+      "sha256": "de86eb9a38428b76f3f9a04ca79e6abdbddf39a84d6be2ea1ece6acf7964488d"
+    },
+    {
+      "file": "layer1_projection.json",
+      "sha256": "9531add9f7a7831366e437e3a5f83eb4c5f31140fcea0e87dab7ff255f6ca6f9"
+    },
+    {
+      "file": "memory_projection.json",
+      "sha256": "38e4655b0054ca622927b6eef55b85dd372e3b26fd006608402331c60b7ae92b"
+    },
+    {
+      "file": "README.md",
+      "sha256": "8d3f791dbf520c55001e28e95e22104575ee095f752dca4e2e4d14dcead4c7ed"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "34d356c57d064fa28a768e18c1cf32ac67229b1cf9191ce8b882ecd55dbaf37d"
+    },
+    {
+      "file": "verification.json",
+      "sha256": "d7b5b39c27288ebd3ce8b84e55c17c0e6007f6c6eeb8bd93a186812be59a9183"
+    }
+  ]
+}

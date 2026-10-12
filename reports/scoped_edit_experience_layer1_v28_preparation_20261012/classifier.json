@@ -1,0 +1,20 @@
+{
+  "experiment_id": "scoped_edit_experience_layer1_v28_preparation_v1",
+  "classifier": "IMPLEMENTED_OFFLINE_VERIFIED_REAL_UTILIZATION_AND_EFFICACY_UNMEASURED",
+  "scientific_method_changed": true,
+  "memory_delivery": "STATIC_ARCHIVAL_PROJECTION_IMPROVED",
+  "actionable_content": "ACTUAL_LAST_STEP_INSTRUCTIONS_AND_SCOPED_MEASUREMENTS_DELIVERED",
+  "reflection_utilization": "MOCK_WIRING_ONLY_REAL_MODEL_UNMEASURED",
+  "candidate_quality": "REAL_MODEL_UNMEASURED",
+  "team_effectiveness": "NOT_EVALUATED",
+  "generalization": "NOT_EVALUATED",
+  "component_causality": "NOT_IDENTIFIED",
+  "real_model_api_calls": 0,
+  "validation_real_calls": 0,
+  "test_real_calls": 0,
+  "real_api_authorized": false,
+  "ready_to_run": false,
+  "real_experiments": "NOT_STARTED",
+  "historical_results": "UNCHANGED",
+  "push_authorized": false
+}

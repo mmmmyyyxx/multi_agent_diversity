@@ -245,6 +245,7 @@ Reports are immutable evidence, never design authority. Unresolved metadata does
 | [rg_gepa_hypothesis_interface_v2_qualification_execution](rg_gepa_hypothesis_interface_v2_qualification_execution/README.md) | Unknown | GEPA_TWO_LAYER | SCIENTIFIC_RESULT | rg_gepa_hypothesis_interface_v2_qualification | STATUS_UNRESOLVED |
 | [saturation_mode_prep](saturation_mode_prep) | Unknown | GEPA_TWO_LAYER | PREEXECUTION | saturation_mode_prep | STATUS_UNRESOLVED |
 | [saturation_mode_refactor_20260922](saturation_mode_refactor_20260922/README.md) | 20260922 | HISTORICAL_V15_V16_AND_EARLIER | ARCHITECTURE | saturation_mode_refactor_20260922 | STATUS_UNRESOLVED |
+| [scoped_edit_experience_layer1_v28_preparation_20261012](scoped_edit_experience_layer1_v28_preparation_20261012/README.md) | 20261012 | UNIFIED_TEAM_PROMPT_SEARCH | PREEXECUTION | scoped_edit_experience_layer1_v28_preparation_v1 | IMPLEMENTED_NOT_EXECUTED |
 | [seed78_gepa_differential_audit_20260914](seed78_gepa_differential_audit_20260914/README.md) | 20260914 | GEPA_TWO_LAYER | ZERO_API | seed78_gepa_differential_audit_20260914 | STATUS_UNRESOLVED |
 | [seed78_gepa_teamminibatch_postmortem_20260913](seed78_gepa_teamminibatch_postmortem_20260913/README.md) | 20260913 | GEPA_TWO_LAYER | FORENSIC | seed78_gepa_teamminibatch_postmortem_20260913 | STATUS_UNRESOLVED |
 | [seed78_precanary_interface_closure_20260914](seed78_precanary_interface_closure_20260914/README.md) | 20260914 | HISTORICAL_V15_V16_AND_EARLIER | PREEXECUTION | seed78_precanary_interface_closure_20260914 | STATUS_UNRESOLVED |

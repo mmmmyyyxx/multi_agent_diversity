@@ -43,8 +43,8 @@ authorization; this diagnostic work grants neither a new experiment nor API acce
 
 The [diagnostic field-length feasibility study](GRADIENT_DIAGNOSTIC_LENGTH_FEASIBILITY_V1.md)
 replays original responses with all remaining validators intact. It recommends
-400 characters for both diagnostic fields as a future version candidate; current
-production remains at 240. Recorded local retry savings do not establish future
+400 characters for both diagnostic fields as a future version candidate; the study preceded the 400-character
+adoption below. Recorded local retry savings do not establish future
 cost, safety, mathematical or team gains. Correction remains limited to 400.
 
 The [diagnostic limit amendment](../design/GRADIENT_DIAGNOSTIC_LIMITS_400_V2.md) sets observed_failure and diagnosis
@@ -59,4 +59,14 @@ The current [output contract amendment](../design/OPTIMIZER_OUTPUT_CONTRACT_FEED
 adds explicit single-value output types and metadata-only last-failure feedback.
 The preceding readable Canary supplied nine rejected Gradient draws; schema,
 JSON and diagnostic-length failures are observed, not mathematical incapacity.
-Current V2.7 has no real execution or model capability result; old scopes stay closed.
+The subsequent [V2.7 Seed86 continuation](../../reports/math_v27_seed86_continuation_execution_20261012/README.md)
+completed 50 opportunities and five Commits with Optimize Vote 118 to 125/150.
+This is resource-truncated descriptive development evidence, not independent
+generalization or component causality. Old scopes stay closed.
+
+The current [V2.8 amendment](../design/SCOPED_EDIT_EXPERIENCE_LAYER1_V28.md)
+improves scoped actual-edit Memory delivery and Mutation-only Layer1 evidence
+feedback. Its [offline preparation report](../../reports/scoped_edit_experience_layer1_v28_preparation_20261012/README.md)
+separates delivery, actionable content and Mock wiring from real-model utilization
+and efficacy. No real V2.8 execution is authorized or evaluated.
+Full/Shadow admission and the formal stopper remain unchanged.

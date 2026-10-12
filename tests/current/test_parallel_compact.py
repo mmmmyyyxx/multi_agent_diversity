@@ -146,7 +146,9 @@ def test_actual_gradient_and_reflection_boundaries_have_direct_readable_evidence
     assert gradient_packets and packets
     for packet in packets:
         assert packet['selected_pattern']['generalized_gradient']
-        assert set(packet['retrieved_memory'])=={'initial_coverage','edit_effects','shared_risk'}
+        assert set(packet['retrieved_memory'])=={'schema','initial_coverage','edit_effects','shared_risk','interpretation'}
+        assert packet['retrieved_memory']['schema']=='SCOPED_EDIT_EXPERIENCE_VIEW_V1'
+        assert 'not causal' in packet['retrieved_memory']['interpretation']
         for example in packet['current_panel_observations']:
             trajectory=example['solver_trajectory']
             assert isinstance(trajectory['visible_solution'],str)

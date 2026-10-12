@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "findings": [],
+  "private_instruction_fragment_length": 80,
+  "private_instruction_fragments_checked": 435,
+  "private_instruction_fragments_in_public": 0
+}

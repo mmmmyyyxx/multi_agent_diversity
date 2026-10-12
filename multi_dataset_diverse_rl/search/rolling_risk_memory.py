@@ -171,6 +171,8 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
         self.observation_observer=None
         self.risk_counts=dict(failure_to_shared_promotions=0,shared_risk_created=0,
             shared_risk_updated=0,shared_risk_evicted=0,shared_risk_storage_peak=0)
+        self.delivery_counts=Counter()
+        self.last_delivery_audit={}
 
     def _recent(self, events, clock):
         window=self.risk_policy['recent_opportunity_window']
@@ -295,7 +297,8 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
         super().validate_delta(delta)
         if (not isinstance(delta,EvidenceMemoryDelta) or len(delta.competence)!=5
                 or any(not isinstance(e,EditExperience) or e.owner_member not in range(5)
-                    or e.record['provenance']['split']!='optimize' for e in delta.private)
+                    or e.record['provenance']['split']!='optimize'
+                    or e.record.get('experience_schema')!='SCOPED_EDIT_EXPERIENCE_RECORD_V1' for e in delta.private)
                 or any(sum(e.owner_member==i for e in delta.private)>24 for i in range(5))
                 or any(sum(e.owner_member==i and e.record['status']=='FULL_REFUTED' for e in delta.private)
                     >self.limits['max_failure_entries_per_member'] for i in range(5))
@@ -329,8 +332,18 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
         self.risk_counts=dict(delta.risk_counts)
         self.competence=delta.competence
 
-    def read_for_member(self,member,lane,*,pattern_id=None,hypothesis=None,edited_block=None):
-        return self._read_evidence(member,pattern_id,hypothesis,edited_block)
+    def read_for_member(self,member,lane,*,pattern_id=None,hypothesis=None,edited_block=None,query_context=None):
+        return self._read_evidence(member,pattern_id,hypothesis,edited_block,query_context)
+
+    def read_for_opportunity(self,opportunity):
+        self._search_only(opportunity)
+        context=opportunity.pattern_context
+        p=next((p for p in context.get('patterns',()) if p['pattern_id']==context.get('focus_mechanism_id')),None)
+        query=dict(root_prompt_id=opportunity.parent_prompt.prompt_hash,parent_state_id=opportunity.parent_state_id,
+            task_types=sorted({r.signals['task_metadata']['type'] for r in opportunity.evidence.mutation_evidence
+                if isinstance(r.signals.get('task_metadata',{}).get('type'),str)}))
+        return self.read_for_member(opportunity.target_member,'general',
+            pattern_id=p['pattern_id'] if p else None,hypothesis=p['generalized_gradient'] if p else None,query_context=query)
 
     def audit(self):
         result=super().audit();groups=self._groups(self._recent(self.failure_events,self.clock+1))
@@ -349,6 +362,7 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
             private_edit_count_by_member=[sum(e.owner_member==i for e in self.private) for i in range(5)],
             edit_status_counts=dict(Counter(e.record['status'] for e in self.private)),
             memory_policy_identity=self.identity)
+        result['experience_delivery']=dict(self.delivery_counts)
         return result
 
     def bootstrap(self,store):
@@ -377,6 +391,8 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
                 member_records=5,source='measured_initial_optimize_profiles',llm_calls=0))
 
     def observe_edit(self,record):
+        if record.get('experience_schema')!='SCOPED_EDIT_EXPERIENCE_RECORD_V1':
+            raise SearchContractError('CURRENT_EDIT_EXPERIENCE_RECORD_REQUIRED')
         if record['member'] not in range(5):
             raise SearchContractError('EDIT_MEMORY_SCOPE_INVALID')
         if record['provenance']['split']!='optimize' or not record['actual_diff']:
@@ -460,7 +476,7 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
         fields['private']=tuple(retained)
         return EvidenceMemoryDelta(**fields,competence=tuple(competence))
 
-    def _read_evidence(self,member,pattern_id,hypothesis,edited_block=None):
+    def _read_evidence(self,member,pattern_id,hypothesis,edited_block=None,query_context=None):
         if member not in range(5):raise SearchContractError('EDIT_MEMORY_OWNER_REQUIRED')
         if len(self.competence)!=5:raise SearchContractError('INITIAL_MEMORY_NOT_BOOTSTRAPPED')
         c=self.competence[member]
@@ -468,28 +484,18 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
             current_correct=len(c['current_correct_ids']),incorrect=len(c['all_ids'])-len(c['current_correct_ids']),
             invalid=len(c['invalid_ids']),repeated_format_failure=len(c['repeated_format_failure_ids']),
             newly_fixed=len(c['newly_fixed_ids']),newly_broken=len(c['newly_broken_ids']))
-        own=sorted((e for e in self.private if e.owner_member==member),key=lambda e:(
-            e.record['pattern_id']!=pattern_id,e.record['repair_hypothesis']!=hypothesis,
-            edited_block is not None and e.record['edited_block']!=edited_block,
-            e.record['status']!='FULL_REFUTED',-e.created_update,e.memory_id))
-        selected=own[:self.limits['top_k_private']]
-        shared=sorted(self.shared,key=lambda e:-e.last_seen_update)[:self.limits['top_k_shared']]
-        def view():return dict(initial_coverage=[initial],edit_effects=[e.visible() for e in selected],
-            shared_risk=[e.visible() for e in shared])
-        def size():return len(json.dumps(view(),sort_keys=True,separators=(',',':'),ensure_ascii=True))
-        while size()>1200:
-            if shared:shared.pop()
-            elif len(selected)>1:selected.pop()
-            elif selected:
-                # Keep the most relevant scope and Full outcome within the old bound.
-                v=selected[0].visible();v['effects']={k:e for k,e in v['effects'].items()
-                    if k in {'search_validation','full'}}
-                result=dict(initial_coverage=[initial],edit_effects=[v],shared_risk=[])
-                if len(json.dumps(result,separators=(',',':'),ensure_ascii=True))<=1200:
-                    return self._evidence_read_record(member,result,selected,shared)
-                selected.pop()
-            else:raise SearchContractError('EDIT_MEMORY_CONTEXT_LIMIT')
-        result=view()
+        from .scoped_edit_experience import pack_experience_view
+        own=tuple(e for e in self.private if e.owner_member==member)
+        shared=tuple(sorted(self.shared,key=lambda e:-e.last_seen_update))
+        query={**(query_context or {}),'pattern_id':pattern_id,'hypothesis':hypothesis,'edited_block':edited_block}
+        result,selected,shared,audit=pack_experience_view(own,shared,initial,
+            context=query,metadata=c['task_metadata'],limits=self.limits)
+        self.last_delivery_audit=audit
+        self.delivery_counts['reads']+=1
+        self.delivery_counts['related_full_available_reads']+=bool(audit['related_full_available'])
+        self.delivery_counts['full_delivered_reads']+=bool(audit['full_delivered'])
+        self.delivery_counts['whole_instruction_delivered_reads']+=bool(audit['instruction_delivered'])
+        self.delivery_counts['duplicate_observations_filtered']+=audit['duplicate_observations']
         return self._evidence_read_record(member,result,selected,shared)
 
     def _evidence_read_record(self,member,result,selected,shared):
@@ -500,6 +506,7 @@ class StructuredRollingRiskMemoryV4(PrivateActionMemory):
         self.counts['shared_reads']+=len(shared)
         if self.observation_observer:
             self.observation_observer('MEMORY_READ',dict(member=member,lane='general',visible=result,
-                entries=dict(edit_effects=[dict(memory_id=e.memory_id,visible=e.visible()) for e in selected]),
+                entries=dict(edit_effects=[dict(memory_id=e.memory_id,visible=card)
+                    for e,card in zip(selected,result['edit_effects'],strict=True)]),delivery_audit=self.last_delivery_audit,
                 context_chars=self.context_lengths[-1]))
         return result

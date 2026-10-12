@@ -1044,6 +1044,9 @@ nodes:
   era: UNIFIED_TEAM_PROMPT_SEARCH
   status: COMPLETED
   manifest: null
+- experiment_id: scoped_edit_experience_layer1_v28_preparation_v1
+  kind: PROTOCOL_FREEZE
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2285,4 +2288,16 @@ edges:
   relation: audit_of
   evidence: reports/math_v27_seed86_evolution_bottleneck_audit_20261012/README.md
   scope: Zero-API mechanism diagnosis; no new method, model execution or causal efficacy claim.
+- from: math_v27_seed86_precluster_continuation_v1
+  to: scoped_edit_experience_layer1_v28_preparation_v1
+  relation: derived_from
+  evidence: docs/design/SCOPED_EDIT_EXPERIENCE_LAYER1_V28.md
+  scope: New optimizer-visible scoped experience and Layer1 input identities; no historical
+    result or checkpoint modification.
+- from: math_v27_seed86_evolution_bottleneck_audit_20261012
+  to: scoped_edit_experience_layer1_v28_preparation_v1
+  relation: derived_from
+  evidence: docs/design/SCOPED_EDIT_EXPERIENCE_LAYER1_V28.md
+  scope: New optimizer-visible scoped experience and Layer1 input identities; no historical
+    result or checkpoint modification.
 current_frontier: experiments/current_frontier.yaml

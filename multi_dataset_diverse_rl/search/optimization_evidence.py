@@ -9,10 +9,10 @@ from .schemas import SearchContractError
 
 from ..current_contract import CURRENT_METHOD_VERSION as METHOD
 from ..current_contract import OPTIMIZATION_EVIDENCE_POLICY_VERSION as IDENTITY
-INPUT = 'STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V11'
-LAYER1 = 'STRUCTURED_EVALUATED_PARENT_SEARCH_V3'
+from ..current_contract import CURRENT_OPTIMIZER_INPUT_SCHEMA as INPUT
+from ..current_contract import CURRENT_LAYER1_SEARCH_VERSION as LAYER1
 EVIDENCE = 'DISJOINT_QUOTA_FREE_REPAIR_EVIDENCE_V2'
-MEMORY = 'BOOTSTRAPPED_FORMAT_BLOCK_EDIT_EFFECT_MEMORY_V3'
+from ..current_contract import CURRENT_EDIT_MEMORY_VERSION as MEMORY
 GRADIENT_INPUT = 'STRUCTURED_SYSTEM_GRADIENT_INPUT_V8'
 from ..current_contract import GRADIENT_PROMPT_VERSION as GRADIENT_PROMPT_ID
 from ..current_contract import MATH_STRUCTURED_SYSTEM_BINDING_VERSION as BINDING
@@ -24,19 +24,26 @@ POLICY = dict(identity=IDENTITY, mutation_size=3, search_validation_size=3,
     local_parent='every_contract_legal_evaluated_edit',
     structural_recovery_draws=3, max_generations=6, max_returned_candidates=4,
     metric_limit=42, sampling='seeded_disjoint_no_correct_wrong_quota_v2',
-    validation_feedback='measure_after_generation_counts_only_next_iteration',
+    validation_feedback='measured_root_and_actual_parent_counts_next_iteration_v2',
     selection='validation_net_then_preservation_then_mutation_net_then_generation',
     bootstrap='measured_initial_optimize_profiles_zero_llm',
-    edit_memory='actual_diff_and_scope_bound_coverage_v1',
+    edit_memory='scoped_actual_edit_budgeted_delivery_v2',
     no_safe_edit='no_candidate_no_success', reference_solution_split='optimize',
-    reference_solution_max_chars=4096, candidate_guard='optimizer_dependency_guard_v1',
+    reference_solution_max_chars=4096, candidate_guard='scoped_optimizer_dependency_guard_v2',
     prompt_state='STRUCTURED_SYSTEM_PROMPT_V1', mutation='single_block_per_generation',
     editable_blocks=['role','strategy','answer'], response_evidence='observed_content_optional_trajectory',
     answer_extraction='MATH_FLEXIBLE_ANSWER_EXTRACTION_V3',
     generated_output_recovery='BOUNDED_REQUEST_OUTPUT_RECOVERY_V3',
     optimizer_output_feedback='TYPED_OPTIMIZER_OUTPUT_FEEDBACK_V1',
     abstraction='SOURCE_CONTEXT_SYMBOLIC_ABSTRACTION_GUARD_V1',
-    optimizer_input_encoding='DIRECT_READABLE_OPTIMIZER_EVIDENCE_V2')
+    optimizer_input_encoding='DIRECT_READABLE_OPTIMIZER_EVIDENCE_V2',
+    layer1_diagnosis='accepted_mutation_root_diagnostics_and_worked_reference_v1',
+    layer1_attempt_feedback='last_three_attempts_metadata_only_v1',
+    layer1_prompt_budget='exact_remaining_block_characters_v1',
+    memory_retrieval='related_full_then_complementary_outcome_then_local_v1',
+    memory_budget='protected_primary_full_action_then_complementary_cards_v1',
+    memory_whole_instruction_limit=600,
+    memory_relevance='pattern_terms_edit_concepts_types_block_and_parent_v1')
 
 # Six independent examples: losing at least half of this small panel is a
 # catastrophe. Lesser regression stays measurable; unchanged Full/Shadow decide.
@@ -112,6 +119,8 @@ def executability_checks(prompt, *, private_texts=()):
     if isinstance(prompt, SystemPrompt): prompt = prompt.render()
     checks=[]
     if re.search(r'\b(?:selected_gradient|solver_trajectory|retrieved_memory|reference_solution|output_contract_feedback|'
+            r'root_repair_diagnostic|worked_reference|preceding_attempts|edit_capacity|'
+            r'last_step_instruction|delivered_experience_ids|memory_input_sha256|'
             r'ground[_ -]?truth|gold[_ -]?answer)\b|\b(?:read|consult|copy|access|use)\b[^.;\n]{0,55}'
             r'\b(?:gradient|memory|reference answer|correct answer key)\b',prompt,re.I):
         checks.append('optimizer_only_dependency')

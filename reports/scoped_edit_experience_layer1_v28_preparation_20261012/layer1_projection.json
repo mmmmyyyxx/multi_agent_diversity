@@ -1,0 +1,1833 @@
+{
+  "scope": "ARCHIVAL_FIELD_AVAILABILITY_PROJECTION_NOT_CURRENT_RUNTIME_OR_MODEL_EFFICACY",
+  "counts": {
+    "worked_reference_deliveries": 900,
+    "truncated_worked_references": 0,
+    "accepted_mutation_diagnostic_deliveries": 786,
+    "reflection_inputs": 300,
+    "attempt_feedback_present": 250,
+    "all_no_safe_opportunities": 16,
+    "old_identical_all_no_safe_wires": 16,
+    "projected_changed_all_no_safe_inputs": 16
+  },
+  "opportunities_with_mutation_diagnostics": 50,
+  "packet_json_character_increase": {
+    "min": 2998,
+    "median": 6896.5,
+    "max": 9779,
+    "sum": 2003060
+  },
+  "rows": [
+    {
+      "opportunity": 1,
+      "generation": 1,
+      "old_packet_json_characters": 25851,
+      "projected_json_characters": 34123
+    },
+    {
+      "opportunity": 1,
+      "generation": 2,
+      "old_packet_json_characters": 25851,
+      "projected_json_characters": 34149
+    },
+    {
+      "opportunity": 1,
+      "generation": 3,
+      "old_packet_json_characters": 25851,
+      "projected_json_characters": 34176
+    },
+    {
+      "opportunity": 1,
+      "generation": 4,
+      "old_packet_json_characters": 25851,
+      "projected_json_characters": 34203
+    },
+    {
+      "opportunity": 1,
+      "generation": 5,
+      "old_packet_json_characters": 25851,
+      "projected_json_characters": 34203
+    },
+    {
+      "opportunity": 1,
+      "generation": 6,
+      "old_packet_json_characters": 25851,
+      "projected_json_characters": 34203
+    },
+    {
+      "opportunity": 2,
+      "generation": 1,
+      "old_packet_json_characters": 26106,
+      "projected_json_characters": 30972
+    },
+    {
+      "opportunity": 2,
+      "generation": 2,
+      "old_packet_json_characters": 26106,
+      "projected_json_characters": 30998
+    },
+    {
+      "opportunity": 2,
+      "generation": 3,
+      "old_packet_json_characters": 26106,
+      "projected_json_characters": 31025
+    },
+    {
+      "opportunity": 2,
+      "generation": 4,
+      "old_packet_json_characters": 26106,
+      "projected_json_characters": 31052
+    },
+    {
+      "opportunity": 2,
+      "generation": 5,
+      "old_packet_json_characters": 29409,
+      "projected_json_characters": 34657
+    },
+    {
+      "opportunity": 2,
+      "generation": 6,
+      "old_packet_json_characters": 29409,
+      "projected_json_characters": 34657
+    },
+    {
+      "opportunity": 3,
+      "generation": 1,
+      "old_packet_json_characters": 20372,
+      "projected_json_characters": 30071
+    },
+    {
+      "opportunity": 3,
+      "generation": 2,
+      "old_packet_json_characters": 20372,
+      "projected_json_characters": 30097
+    },
+    {
+      "opportunity": 3,
+      "generation": 3,
+      "old_packet_json_characters": 20372,
+      "projected_json_characters": 30124
+    },
+    {
+      "opportunity": 3,
+      "generation": 4,
+      "old_packet_json_characters": 20372,
+      "projected_json_characters": 30151
+    },
+    {
+      "opportunity": 3,
+      "generation": 5,
+      "old_packet_json_characters": 20372,
+      "projected_json_characters": 30151
+    },
+    {
+      "opportunity": 3,
+      "generation": 6,
+      "old_packet_json_characters": 20372,
+      "projected_json_characters": 30151
+    },
+    {
+      "opportunity": 4,
+      "generation": 1,
+      "old_packet_json_characters": 11739,
+      "projected_json_characters": 15648
+    },
+    {
+      "opportunity": 4,
+      "generation": 2,
+      "old_packet_json_characters": 11739,
+      "projected_json_characters": 15674
+    },
+    {
+      "opportunity": 4,
+      "generation": 3,
+      "old_packet_json_characters": 11863,
+      "projected_json_characters": 16099
+    },
+    {
+      "opportunity": 4,
+      "generation": 4,
+      "old_packet_json_characters": 11863,
+      "projected_json_characters": 16168
+    },
+    {
+      "opportunity": 4,
+      "generation": 5,
+      "old_packet_json_characters": 11863,
+      "projected_json_characters": 16226
+    },
+    {
+      "opportunity": 4,
+      "generation": 6,
+      "old_packet_json_characters": 11863,
+      "projected_json_characters": 16000
+    },
+    {
+      "opportunity": 5,
+      "generation": 1,
+      "old_packet_json_characters": 20505,
+      "projected_json_characters": 28497
+    },
+    {
+      "opportunity": 5,
+      "generation": 2,
+      "old_packet_json_characters": 20505,
+      "projected_json_characters": 28523
+    },
+    {
+      "opportunity": 5,
+      "generation": 3,
+      "old_packet_json_characters": 20505,
+      "projected_json_characters": 28550
+    },
+    {
+      "opportunity": 5,
+      "generation": 4,
+      "old_packet_json_characters": 20505,
+      "projected_json_characters": 28577
+    },
+    {
+      "opportunity": 5,
+      "generation": 5,
+      "old_packet_json_characters": 20505,
+      "projected_json_characters": 28577
+    },
+    {
+      "opportunity": 5,
+      "generation": 6,
+      "old_packet_json_characters": 20505,
+      "projected_json_characters": 28577
+    },
+    {
+      "opportunity": 6,
+      "generation": 1,
+      "old_packet_json_characters": 27884,
+      "projected_json_characters": 35034
+    },
+    {
+      "opportunity": 6,
+      "generation": 2,
+      "old_packet_json_characters": 27884,
+      "projected_json_characters": 35060
+    },
+    {
+      "opportunity": 6,
+      "generation": 3,
+      "old_packet_json_characters": 27884,
+      "projected_json_characters": 35087
+    },
+    {
+      "opportunity": 6,
+      "generation": 4,
+      "old_packet_json_characters": 27884,
+      "projected_json_characters": 35114
+    },
+    {
+      "opportunity": 6,
+      "generation": 5,
+      "old_packet_json_characters": 26983,
+      "projected_json_characters": 34807
+    },
+    {
+      "opportunity": 6,
+      "generation": 6,
+      "old_packet_json_characters": 26983,
+      "projected_json_characters": 34807
+    },
+    {
+      "opportunity": 7,
+      "generation": 1,
+      "old_packet_json_characters": 19784,
+      "projected_json_characters": 24639
+    },
+    {
+      "opportunity": 7,
+      "generation": 2,
+      "old_packet_json_characters": 20435,
+      "projected_json_characters": 25422
+    },
+    {
+      "opportunity": 7,
+      "generation": 3,
+      "old_packet_json_characters": 19457,
+      "projected_json_characters": 25017
+    },
+    {
+      "opportunity": 7,
+      "generation": 4,
+      "old_packet_json_characters": 19342,
+      "projected_json_characters": 25190
+    },
+    {
+      "opportunity": 7,
+      "generation": 5,
+      "old_packet_json_characters": 22238,
+      "projected_json_characters": 28060
+    },
+    {
+      "opportunity": 7,
+      "generation": 6,
+      "old_packet_json_characters": 20938,
+      "projected_json_characters": 26753
+    },
+    {
+      "opportunity": 8,
+      "generation": 1,
+      "old_packet_json_characters": 25788,
+      "projected_json_characters": 31149
+    },
+    {
+      "opportunity": 8,
+      "generation": 2,
+      "old_packet_json_characters": 25213,
+      "projected_json_characters": 30915
+    },
+    {
+      "opportunity": 8,
+      "generation": 3,
+      "old_packet_json_characters": 23369,
+      "projected_json_characters": 29453
+    },
+    {
+      "opportunity": 8,
+      "generation": 4,
+      "old_packet_json_characters": 23369,
+      "projected_json_characters": 29480
+    },
+    {
+      "opportunity": 8,
+      "generation": 5,
+      "old_packet_json_characters": 23369,
+      "projected_json_characters": 29210
+    },
+    {
+      "opportunity": 8,
+      "generation": 6,
+      "old_packet_json_characters": 23369,
+      "projected_json_characters": 28938
+    },
+    {
+      "opportunity": 9,
+      "generation": 1,
+      "old_packet_json_characters": 21316,
+      "projected_json_characters": 27765
+    },
+    {
+      "opportunity": 9,
+      "generation": 2,
+      "old_packet_json_characters": 21316,
+      "projected_json_characters": 27791
+    },
+    {
+      "opportunity": 9,
+      "generation": 3,
+      "old_packet_json_characters": 21316,
+      "projected_json_characters": 27818
+    },
+    {
+      "opportunity": 9,
+      "generation": 4,
+      "old_packet_json_characters": 21316,
+      "projected_json_characters": 27845
+    },
+    {
+      "opportunity": 9,
+      "generation": 5,
+      "old_packet_json_characters": 21316,
+      "projected_json_characters": 27845
+    },
+    {
+      "opportunity": 9,
+      "generation": 6,
+      "old_packet_json_characters": 21316,
+      "projected_json_characters": 27845
+    },
+    {
+      "opportunity": 10,
+      "generation": 1,
+      "old_packet_json_characters": 28495,
+      "projected_json_characters": 36322
+    },
+    {
+      "opportunity": 10,
+      "generation": 2,
+      "old_packet_json_characters": 28495,
+      "projected_json_characters": 36348
+    },
+    {
+      "opportunity": 10,
+      "generation": 3,
+      "old_packet_json_characters": 28495,
+      "projected_json_characters": 36375
+    },
+    {
+      "opportunity": 10,
+      "generation": 4,
+      "old_packet_json_characters": 28495,
+      "projected_json_characters": 36402
+    },
+    {
+      "opportunity": 10,
+      "generation": 5,
+      "old_packet_json_characters": 28495,
+      "projected_json_characters": 36402
+    },
+    {
+      "opportunity": 10,
+      "generation": 6,
+      "old_packet_json_characters": 28495,
+      "projected_json_characters": 36402
+    },
+    {
+      "opportunity": 11,
+      "generation": 1,
+      "old_packet_json_characters": 18178,
+      "projected_json_characters": 24468
+    },
+    {
+      "opportunity": 11,
+      "generation": 2,
+      "old_packet_json_characters": 18178,
+      "projected_json_characters": 24494
+    },
+    {
+      "opportunity": 11,
+      "generation": 3,
+      "old_packet_json_characters": 23040,
+      "projected_json_characters": 29996
+    },
+    {
+      "opportunity": 11,
+      "generation": 4,
+      "old_packet_json_characters": 21608,
+      "projected_json_characters": 28808
+    },
+    {
+      "opportunity": 11,
+      "generation": 5,
+      "old_packet_json_characters": 23082,
+      "projected_json_characters": 30541
+    },
+    {
+      "opportunity": 11,
+      "generation": 6,
+      "old_packet_json_characters": 22245,
+      "projected_json_characters": 29745
+    },
+    {
+      "opportunity": 12,
+      "generation": 1,
+      "old_packet_json_characters": 28548,
+      "projected_json_characters": 35886
+    },
+    {
+      "opportunity": 12,
+      "generation": 2,
+      "old_packet_json_characters": 26793,
+      "projected_json_characters": 34665
+    },
+    {
+      "opportunity": 12,
+      "generation": 3,
+      "old_packet_json_characters": 26793,
+      "projected_json_characters": 34692
+    },
+    {
+      "opportunity": 12,
+      "generation": 4,
+      "old_packet_json_characters": 26793,
+      "projected_json_characters": 34719
+    },
+    {
+      "opportunity": 12,
+      "generation": 5,
+      "old_packet_json_characters": 26793,
+      "projected_json_characters": 34449
+    },
+    {
+      "opportunity": 12,
+      "generation": 6,
+      "old_packet_json_characters": 26793,
+      "projected_json_characters": 34449
+    },
+    {
+      "opportunity": 13,
+      "generation": 1,
+      "old_packet_json_characters": 24210,
+      "projected_json_characters": 31028
+    },
+    {
+      "opportunity": 13,
+      "generation": 2,
+      "old_packet_json_characters": 25694,
+      "projected_json_characters": 32732
+    },
+    {
+      "opportunity": 13,
+      "generation": 3,
+      "old_packet_json_characters": 26754,
+      "projected_json_characters": 34527
+    },
+    {
+      "opportunity": 13,
+      "generation": 4,
+      "old_packet_json_characters": 26099,
+      "projected_json_characters": 34189
+    },
+    {
+      "opportunity": 13,
+      "generation": 5,
+      "old_packet_json_characters": 26099,
+      "projected_json_characters": 33919
+    },
+    {
+      "opportunity": 13,
+      "generation": 6,
+      "old_packet_json_characters": 26099,
+      "projected_json_characters": 33649
+    },
+    {
+      "opportunity": 14,
+      "generation": 1,
+      "old_packet_json_characters": 23346,
+      "projected_json_characters": 30173
+    },
+    {
+      "opportunity": 14,
+      "generation": 2,
+      "old_packet_json_characters": 23346,
+      "projected_json_characters": 30199
+    },
+    {
+      "opportunity": 14,
+      "generation": 3,
+      "old_packet_json_characters": 23346,
+      "projected_json_characters": 30226
+    },
+    {
+      "opportunity": 14,
+      "generation": 4,
+      "old_packet_json_characters": 23876,
+      "projected_json_characters": 31209
+    },
+    {
+      "opportunity": 14,
+      "generation": 5,
+      "old_packet_json_characters": 23876,
+      "projected_json_characters": 31209
+    },
+    {
+      "opportunity": 14,
+      "generation": 6,
+      "old_packet_json_characters": 23876,
+      "projected_json_characters": 31209
+    },
+    {
+      "opportunity": 15,
+      "generation": 1,
+      "old_packet_json_characters": 28240,
+      "projected_json_characters": 36293
+    },
+    {
+      "opportunity": 15,
+      "generation": 2,
+      "old_packet_json_characters": 28240,
+      "projected_json_characters": 36319
+    },
+    {
+      "opportunity": 15,
+      "generation": 3,
+      "old_packet_json_characters": 28240,
+      "projected_json_characters": 36346
+    },
+    {
+      "opportunity": 15,
+      "generation": 4,
+      "old_packet_json_characters": 28240,
+      "projected_json_characters": 36373
+    },
+    {
+      "opportunity": 15,
+      "generation": 5,
+      "old_packet_json_characters": 26382,
+      "projected_json_characters": 35022
+    },
+    {
+      "opportunity": 15,
+      "generation": 6,
+      "old_packet_json_characters": 26382,
+      "projected_json_characters": 35022
+    },
+    {
+      "opportunity": 16,
+      "generation": 1,
+      "old_packet_json_characters": 18517,
+      "projected_json_characters": 24617
+    },
+    {
+      "opportunity": 16,
+      "generation": 2,
+      "old_packet_json_characters": 17958,
+      "projected_json_characters": 24524
+    },
+    {
+      "opportunity": 16,
+      "generation": 3,
+      "old_packet_json_characters": 17958,
+      "projected_json_characters": 24551
+    },
+    {
+      "opportunity": 16,
+      "generation": 4,
+      "old_packet_json_characters": 17958,
+      "projected_json_characters": 24578
+    },
+    {
+      "opportunity": 16,
+      "generation": 5,
+      "old_packet_json_characters": 17958,
+      "projected_json_characters": 24310
+    },
+    {
+      "opportunity": 16,
+      "generation": 6,
+      "old_packet_json_characters": 17958,
+      "projected_json_characters": 24310
+    },
+    {
+      "opportunity": 17,
+      "generation": 1,
+      "old_packet_json_characters": 20982,
+      "projected_json_characters": 26364
+    },
+    {
+      "opportunity": 17,
+      "generation": 2,
+      "old_packet_json_characters": 22664,
+      "projected_json_characters": 28431
+    },
+    {
+      "opportunity": 17,
+      "generation": 3,
+      "old_packet_json_characters": 22664,
+      "projected_json_characters": 28458
+    },
+    {
+      "opportunity": 17,
+      "generation": 4,
+      "old_packet_json_characters": 22664,
+      "projected_json_characters": 28485
+    },
+    {
+      "opportunity": 17,
+      "generation": 5,
+      "old_packet_json_characters": 22664,
+      "projected_json_characters": 28215
+    },
+    {
+      "opportunity": 17,
+      "generation": 6,
+      "old_packet_json_characters": 22664,
+      "projected_json_characters": 28215
+    },
+    {
+      "opportunity": 18,
+      "generation": 1,
+      "old_packet_json_characters": 24837,
+      "projected_json_characters": 33500
+    },
+    {
+      "opportunity": 18,
+      "generation": 2,
+      "old_packet_json_characters": 25664,
+      "projected_json_characters": 34611
+    },
+    {
+      "opportunity": 18,
+      "generation": 3,
+      "old_packet_json_characters": 25664,
+      "projected_json_characters": 34638
+    },
+    {
+      "opportunity": 18,
+      "generation": 4,
+      "old_packet_json_characters": 26851,
+      "projected_json_characters": 36043
+    },
+    {
+      "opportunity": 18,
+      "generation": 5,
+      "old_packet_json_characters": 25423,
+      "projected_json_characters": 34582
+    },
+    {
+      "opportunity": 18,
+      "generation": 6,
+      "old_packet_json_characters": 25423,
+      "projected_json_characters": 34582
+    },
+    {
+      "opportunity": 19,
+      "generation": 1,
+      "old_packet_json_characters": 21173,
+      "projected_json_characters": 24821
+    },
+    {
+      "opportunity": 19,
+      "generation": 2,
+      "old_packet_json_characters": 20327,
+      "projected_json_characters": 24401
+    },
+    {
+      "opportunity": 19,
+      "generation": 3,
+      "old_packet_json_characters": 20327,
+      "projected_json_characters": 24428
+    },
+    {
+      "opportunity": 19,
+      "generation": 4,
+      "old_packet_json_characters": 20327,
+      "projected_json_characters": 24455
+    },
+    {
+      "opportunity": 19,
+      "generation": 5,
+      "old_packet_json_characters": 20327,
+      "projected_json_characters": 24185
+    },
+    {
+      "opportunity": 19,
+      "generation": 6,
+      "old_packet_json_characters": 20327,
+      "projected_json_characters": 24185
+    },
+    {
+      "opportunity": 20,
+      "generation": 1,
+      "old_packet_json_characters": 20398,
+      "projected_json_characters": 26054
+    },
+    {
+      "opportunity": 20,
+      "generation": 2,
+      "old_packet_json_characters": 20398,
+      "projected_json_characters": 26080
+    },
+    {
+      "opportunity": 20,
+      "generation": 3,
+      "old_packet_json_characters": 20398,
+      "projected_json_characters": 26107
+    },
+    {
+      "opportunity": 20,
+      "generation": 4,
+      "old_packet_json_characters": 20398,
+      "projected_json_characters": 26134
+    },
+    {
+      "opportunity": 20,
+      "generation": 5,
+      "old_packet_json_characters": 20398,
+      "projected_json_characters": 26134
+    },
+    {
+      "opportunity": 20,
+      "generation": 6,
+      "old_packet_json_characters": 20398,
+      "projected_json_characters": 26134
+    },
+    {
+      "opportunity": 21,
+      "generation": 1,
+      "old_packet_json_characters": 23173,
+      "projected_json_characters": 29806
+    },
+    {
+      "opportunity": 21,
+      "generation": 2,
+      "old_packet_json_characters": 21725,
+      "projected_json_characters": 28835
+    },
+    {
+      "opportunity": 21,
+      "generation": 3,
+      "old_packet_json_characters": 21725,
+      "projected_json_characters": 28862
+    },
+    {
+      "opportunity": 21,
+      "generation": 4,
+      "old_packet_json_characters": 21725,
+      "projected_json_characters": 28889
+    },
+    {
+      "opportunity": 21,
+      "generation": 5,
+      "old_packet_json_characters": 21725,
+      "projected_json_characters": 28619
+    },
+    {
+      "opportunity": 21,
+      "generation": 6,
+      "old_packet_json_characters": 21725,
+      "projected_json_characters": 28619
+    },
+    {
+      "opportunity": 22,
+      "generation": 1,
+      "old_packet_json_characters": 27978,
+      "projected_json_characters": 35565
+    },
+    {
+      "opportunity": 22,
+      "generation": 2,
+      "old_packet_json_characters": 27978,
+      "projected_json_characters": 35591
+    },
+    {
+      "opportunity": 22,
+      "generation": 3,
+      "old_packet_json_characters": 27978,
+      "projected_json_characters": 35618
+    },
+    {
+      "opportunity": 22,
+      "generation": 4,
+      "old_packet_json_characters": 27978,
+      "projected_json_characters": 35645
+    },
+    {
+      "opportunity": 22,
+      "generation": 5,
+      "old_packet_json_characters": 27978,
+      "projected_json_characters": 35645
+    },
+    {
+      "opportunity": 22,
+      "generation": 6,
+      "old_packet_json_characters": 27978,
+      "projected_json_characters": 35645
+    },
+    {
+      "opportunity": 23,
+      "generation": 1,
+      "old_packet_json_characters": 24966,
+      "projected_json_characters": 32713
+    },
+    {
+      "opportunity": 23,
+      "generation": 2,
+      "old_packet_json_characters": 24966,
+      "projected_json_characters": 32739
+    },
+    {
+      "opportunity": 23,
+      "generation": 3,
+      "old_packet_json_characters": 24966,
+      "projected_json_characters": 32766
+    },
+    {
+      "opportunity": 23,
+      "generation": 4,
+      "old_packet_json_characters": 24966,
+      "projected_json_characters": 32793
+    },
+    {
+      "opportunity": 23,
+      "generation": 5,
+      "old_packet_json_characters": 24966,
+      "projected_json_characters": 32793
+    },
+    {
+      "opportunity": 23,
+      "generation": 6,
+      "old_packet_json_characters": 24966,
+      "projected_json_characters": 32793
+    },
+    {
+      "opportunity": 24,
+      "generation": 1,
+      "old_packet_json_characters": 27041,
+      "projected_json_characters": 34813
+    },
+    {
+      "opportunity": 24,
+      "generation": 2,
+      "old_packet_json_characters": 28033,
+      "projected_json_characters": 36217
+    },
+    {
+      "opportunity": 24,
+      "generation": 3,
+      "old_packet_json_characters": 29870,
+      "projected_json_characters": 38258
+    },
+    {
+      "opportunity": 24,
+      "generation": 4,
+      "old_packet_json_characters": 25353,
+      "projected_json_characters": 34018
+    },
+    {
+      "opportunity": 24,
+      "generation": 5,
+      "old_packet_json_characters": 29572,
+      "projected_json_characters": 38235
+    },
+    {
+      "opportunity": 24,
+      "generation": 6,
+      "old_packet_json_characters": 29572,
+      "projected_json_characters": 37965
+    },
+    {
+      "opportunity": 25,
+      "generation": 1,
+      "old_packet_json_characters": 23639,
+      "projected_json_characters": 30545
+    },
+    {
+      "opportunity": 25,
+      "generation": 2,
+      "old_packet_json_characters": 23165,
+      "projected_json_characters": 30634
+    },
+    {
+      "opportunity": 25,
+      "generation": 3,
+      "old_packet_json_characters": 23165,
+      "projected_json_characters": 30661
+    },
+    {
+      "opportunity": 25,
+      "generation": 4,
+      "old_packet_json_characters": 23165,
+      "projected_json_characters": 30688
+    },
+    {
+      "opportunity": 25,
+      "generation": 5,
+      "old_packet_json_characters": 23165,
+      "projected_json_characters": 30476
+    },
+    {
+      "opportunity": 25,
+      "generation": 6,
+      "old_packet_json_characters": 23165,
+      "projected_json_characters": 30534
+    },
+    {
+      "opportunity": 26,
+      "generation": 1,
+      "old_packet_json_characters": 24607,
+      "projected_json_characters": 31136
+    },
+    {
+      "opportunity": 26,
+      "generation": 2,
+      "old_packet_json_characters": 21934,
+      "projected_json_characters": 28965
+    },
+    {
+      "opportunity": 26,
+      "generation": 3,
+      "old_packet_json_characters": 21561,
+      "projected_json_characters": 28878
+    },
+    {
+      "opportunity": 26,
+      "generation": 4,
+      "old_packet_json_characters": 21561,
+      "projected_json_characters": 28963
+    },
+    {
+      "opportunity": 26,
+      "generation": 5,
+      "old_packet_json_characters": 21561,
+      "projected_json_characters": 28751
+    },
+    {
+      "opportunity": 26,
+      "generation": 6,
+      "old_packet_json_characters": 23925,
+      "projected_json_characters": 31104
+    },
+    {
+      "opportunity": 27,
+      "generation": 1,
+      "old_packet_json_characters": 24042,
+      "projected_json_characters": 30387
+    },
+    {
+      "opportunity": 27,
+      "generation": 2,
+      "old_packet_json_characters": 23055,
+      "projected_json_characters": 29934
+    },
+    {
+      "opportunity": 27,
+      "generation": 3,
+      "old_packet_json_characters": 22501,
+      "projected_json_characters": 29667
+    },
+    {
+      "opportunity": 27,
+      "generation": 4,
+      "old_packet_json_characters": 22501,
+      "projected_json_characters": 29694
+    },
+    {
+      "opportunity": 27,
+      "generation": 5,
+      "old_packet_json_characters": 22501,
+      "projected_json_characters": 29480
+    },
+    {
+      "opportunity": 27,
+      "generation": 6,
+      "old_packet_json_characters": 22501,
+      "projected_json_characters": 29266
+    },
+    {
+      "opportunity": 28,
+      "generation": 1,
+      "old_packet_json_characters": 17298,
+      "projected_json_characters": 20347
+    },
+    {
+      "opportunity": 28,
+      "generation": 2,
+      "old_packet_json_characters": 17459,
+      "projected_json_characters": 20998
+    },
+    {
+      "opportunity": 28,
+      "generation": 3,
+      "old_packet_json_characters": 17459,
+      "projected_json_characters": 21073
+    },
+    {
+      "opportunity": 28,
+      "generation": 4,
+      "old_packet_json_characters": 17459,
+      "projected_json_characters": 21100
+    },
+    {
+      "opportunity": 28,
+      "generation": 5,
+      "old_packet_json_characters": 17459,
+      "projected_json_characters": 20830
+    },
+    {
+      "opportunity": 28,
+      "generation": 6,
+      "old_packet_json_characters": 17459,
+      "projected_json_characters": 20782
+    },
+    {
+      "opportunity": 29,
+      "generation": 1,
+      "old_packet_json_characters": 22815,
+      "projected_json_characters": 27945
+    },
+    {
+      "opportunity": 29,
+      "generation": 2,
+      "old_packet_json_characters": 22815,
+      "projected_json_characters": 27971
+    },
+    {
+      "opportunity": 29,
+      "generation": 3,
+      "old_packet_json_characters": 22815,
+      "projected_json_characters": 28040
+    },
+    {
+      "opportunity": 29,
+      "generation": 4,
+      "old_packet_json_characters": 23770,
+      "projected_json_characters": 29486
+    },
+    {
+      "opportunity": 29,
+      "generation": 5,
+      "old_packet_json_characters": 23770,
+      "projected_json_characters": 29534
+    },
+    {
+      "opportunity": 29,
+      "generation": 6,
+      "old_packet_json_characters": 23770,
+      "projected_json_characters": 29540
+    },
+    {
+      "opportunity": 30,
+      "generation": 1,
+      "old_packet_json_characters": 27269,
+      "projected_json_characters": 33978
+    },
+    {
+      "opportunity": 30,
+      "generation": 2,
+      "old_packet_json_characters": 27763,
+      "projected_json_characters": 35078
+    },
+    {
+      "opportunity": 30,
+      "generation": 3,
+      "old_packet_json_characters": 27763,
+      "projected_json_characters": 35105
+    },
+    {
+      "opportunity": 30,
+      "generation": 4,
+      "old_packet_json_characters": 27763,
+      "projected_json_characters": 35174
+    },
+    {
+      "opportunity": 30,
+      "generation": 5,
+      "old_packet_json_characters": 27763,
+      "projected_json_characters": 34904
+    },
+    {
+      "opportunity": 30,
+      "generation": 6,
+      "old_packet_json_characters": 27763,
+      "projected_json_characters": 34904
+    },
+    {
+      "opportunity": 31,
+      "generation": 1,
+      "old_packet_json_characters": 22768,
+      "projected_json_characters": 27891
+    },
+    {
+      "opportunity": 31,
+      "generation": 2,
+      "old_packet_json_characters": 21553,
+      "projected_json_characters": 27166
+    },
+    {
+      "opportunity": 31,
+      "generation": 3,
+      "old_packet_json_characters": 22403,
+      "projected_json_characters": 28261
+    },
+    {
+      "opportunity": 31,
+      "generation": 4,
+      "old_packet_json_characters": 22403,
+      "projected_json_characters": 28288
+    },
+    {
+      "opportunity": 31,
+      "generation": 5,
+      "old_packet_json_characters": 22403,
+      "projected_json_characters": 28018
+    },
+    {
+      "opportunity": 31,
+      "generation": 6,
+      "old_packet_json_characters": 22403,
+      "projected_json_characters": 27796
+    },
+    {
+      "opportunity": 32,
+      "generation": 1,
+      "old_packet_json_characters": 20316,
+      "projected_json_characters": 23453
+    },
+    {
+      "opportunity": 32,
+      "generation": 2,
+      "old_packet_json_characters": 20316,
+      "projected_json_characters": 23527
+    },
+    {
+      "opportunity": 32,
+      "generation": 3,
+      "old_packet_json_characters": 19513,
+      "projected_json_characters": 23236
+    },
+    {
+      "opportunity": 32,
+      "generation": 4,
+      "old_packet_json_characters": 19513,
+      "projected_json_characters": 23263
+    },
+    {
+      "opportunity": 32,
+      "generation": 5,
+      "old_packet_json_characters": 19513,
+      "projected_json_characters": 23215
+    },
+    {
+      "opportunity": 32,
+      "generation": 6,
+      "old_packet_json_characters": 19513,
+      "projected_json_characters": 22943
+    },
+    {
+      "opportunity": 33,
+      "generation": 1,
+      "old_packet_json_characters": 23077,
+      "projected_json_characters": 29744
+    },
+    {
+      "opportunity": 33,
+      "generation": 2,
+      "old_packet_json_characters": 23077,
+      "projected_json_characters": 29770
+    },
+    {
+      "opportunity": 33,
+      "generation": 3,
+      "old_packet_json_characters": 23077,
+      "projected_json_characters": 29797
+    },
+    {
+      "opportunity": 33,
+      "generation": 4,
+      "old_packet_json_characters": 23077,
+      "projected_json_characters": 29824
+    },
+    {
+      "opportunity": 33,
+      "generation": 5,
+      "old_packet_json_characters": 23077,
+      "projected_json_characters": 29824
+    },
+    {
+      "opportunity": 33,
+      "generation": 6,
+      "old_packet_json_characters": 23077,
+      "projected_json_characters": 29824
+    },
+    {
+      "opportunity": 34,
+      "generation": 1,
+      "old_packet_json_characters": 21412,
+      "projected_json_characters": 27170
+    },
+    {
+      "opportunity": 34,
+      "generation": 2,
+      "old_packet_json_characters": 19746,
+      "projected_json_characters": 26080
+    },
+    {
+      "opportunity": 34,
+      "generation": 3,
+      "old_packet_json_characters": 20525,
+      "projected_json_characters": 27220
+    },
+    {
+      "opportunity": 34,
+      "generation": 4,
+      "old_packet_json_characters": 21389,
+      "projected_json_characters": 28288
+    },
+    {
+      "opportunity": 34,
+      "generation": 5,
+      "old_packet_json_characters": 20804,
+      "projected_json_characters": 27774
+    },
+    {
+      "opportunity": 34,
+      "generation": 6,
+      "old_packet_json_characters": 20563,
+      "projected_json_characters": 27440
+    },
+    {
+      "opportunity": 35,
+      "generation": 1,
+      "old_packet_json_characters": 24806,
+      "projected_json_characters": 32634
+    },
+    {
+      "opportunity": 35,
+      "generation": 2,
+      "old_packet_json_characters": 24806,
+      "projected_json_characters": 32660
+    },
+    {
+      "opportunity": 35,
+      "generation": 3,
+      "old_packet_json_characters": 24806,
+      "projected_json_characters": 32687
+    },
+    {
+      "opportunity": 35,
+      "generation": 4,
+      "old_packet_json_characters": 24806,
+      "projected_json_characters": 32714
+    },
+    {
+      "opportunity": 35,
+      "generation": 5,
+      "old_packet_json_characters": 24806,
+      "projected_json_characters": 32714
+    },
+    {
+      "opportunity": 35,
+      "generation": 6,
+      "old_packet_json_characters": 24806,
+      "projected_json_characters": 32714
+    },
+    {
+      "opportunity": 36,
+      "generation": 1,
+      "old_packet_json_characters": 24620,
+      "projected_json_characters": 29723
+    },
+    {
+      "opportunity": 36,
+      "generation": 2,
+      "old_packet_json_characters": 23950,
+      "projected_json_characters": 29637
+    },
+    {
+      "opportunity": 36,
+      "generation": 3,
+      "old_packet_json_characters": 23950,
+      "projected_json_characters": 29664
+    },
+    {
+      "opportunity": 36,
+      "generation": 4,
+      "old_packet_json_characters": 23950,
+      "projected_json_characters": 29739
+    },
+    {
+      "opportunity": 36,
+      "generation": 5,
+      "old_packet_json_characters": 23950,
+      "projected_json_characters": 29517
+    },
+    {
+      "opportunity": 36,
+      "generation": 6,
+      "old_packet_json_characters": 23950,
+      "projected_json_characters": 29565
+    },
+    {
+      "opportunity": 37,
+      "generation": 1,
+      "old_packet_json_characters": 19965,
+      "projected_json_characters": 26687
+    },
+    {
+      "opportunity": 37,
+      "generation": 2,
+      "old_packet_json_characters": 19965,
+      "projected_json_characters": 26713
+    },
+    {
+      "opportunity": 37,
+      "generation": 3,
+      "old_packet_json_characters": 19965,
+      "projected_json_characters": 26740
+    },
+    {
+      "opportunity": 37,
+      "generation": 4,
+      "old_packet_json_characters": 19965,
+      "projected_json_characters": 26767
+    },
+    {
+      "opportunity": 37,
+      "generation": 5,
+      "old_packet_json_characters": 19965,
+      "projected_json_characters": 26767
+    },
+    {
+      "opportunity": 37,
+      "generation": 6,
+      "old_packet_json_characters": 19965,
+      "projected_json_characters": 26767
+    },
+    {
+      "opportunity": 38,
+      "generation": 1,
+      "old_packet_json_characters": 25487,
+      "projected_json_characters": 31537
+    },
+    {
+      "opportunity": 38,
+      "generation": 2,
+      "old_packet_json_characters": 25487,
+      "projected_json_characters": 31563
+    },
+    {
+      "opportunity": 38,
+      "generation": 3,
+      "old_packet_json_characters": 25487,
+      "projected_json_characters": 31590
+    },
+    {
+      "opportunity": 38,
+      "generation": 4,
+      "old_packet_json_characters": 25487,
+      "projected_json_characters": 31617
+    },
+    {
+      "opportunity": 38,
+      "generation": 5,
+      "old_packet_json_characters": 25487,
+      "projected_json_characters": 31617
+    },
+    {
+      "opportunity": 38,
+      "generation": 6,
+      "old_packet_json_characters": 25487,
+      "projected_json_characters": 31617
+    },
+    {
+      "opportunity": 39,
+      "generation": 1,
+      "old_packet_json_characters": 18497,
+      "projected_json_characters": 21577
+    },
+    {
+      "opportunity": 39,
+      "generation": 2,
+      "old_packet_json_characters": 18829,
+      "projected_json_characters": 22358
+    },
+    {
+      "opportunity": 39,
+      "generation": 3,
+      "old_packet_json_characters": 18829,
+      "projected_json_characters": 22385
+    },
+    {
+      "opportunity": 39,
+      "generation": 4,
+      "old_packet_json_characters": 18829,
+      "projected_json_characters": 22412
+    },
+    {
+      "opportunity": 39,
+      "generation": 5,
+      "old_packet_json_characters": 18829,
+      "projected_json_characters": 22142
+    },
+    {
+      "opportunity": 39,
+      "generation": 6,
+      "old_packet_json_characters": 18829,
+      "projected_json_characters": 22142
+    },
+    {
+      "opportunity": 40,
+      "generation": 1,
+      "old_packet_json_characters": 32021,
+      "projected_json_characters": 40446
+    },
+    {
+      "opportunity": 40,
+      "generation": 2,
+      "old_packet_json_characters": 32021,
+      "projected_json_characters": 40472
+    },
+    {
+      "opportunity": 40,
+      "generation": 3,
+      "old_packet_json_characters": 32021,
+      "projected_json_characters": 40499
+    },
+    {
+      "opportunity": 40,
+      "generation": 4,
+      "old_packet_json_characters": 32021,
+      "projected_json_characters": 40526
+    },
+    {
+      "opportunity": 40,
+      "generation": 5,
+      "old_packet_json_characters": 32021,
+      "projected_json_characters": 40526
+    },
+    {
+      "opportunity": 40,
+      "generation": 6,
+      "old_packet_json_characters": 32021,
+      "projected_json_characters": 40526
+    },
+    {
+      "opportunity": 41,
+      "generation": 1,
+      "old_packet_json_characters": 17277,
+      "projected_json_characters": 20275
+    },
+    {
+      "opportunity": 41,
+      "generation": 2,
+      "old_packet_json_characters": 18168,
+      "projected_json_characters": 21563
+    },
+    {
+      "opportunity": 41,
+      "generation": 3,
+      "old_packet_json_characters": 18168,
+      "projected_json_characters": 21590
+    },
+    {
+      "opportunity": 41,
+      "generation": 4,
+      "old_packet_json_characters": 17646,
+      "projected_json_characters": 21354
+    },
+    {
+      "opportunity": 41,
+      "generation": 5,
+      "old_packet_json_characters": 17646,
+      "projected_json_characters": 21132
+    },
+    {
+      "opportunity": 41,
+      "generation": 6,
+      "old_packet_json_characters": 17646,
+      "projected_json_characters": 21180
+    },
+    {
+      "opportunity": 42,
+      "generation": 1,
+      "old_packet_json_characters": 22835,
+      "projected_json_characters": 28347
+    },
+    {
+      "opportunity": 42,
+      "generation": 2,
+      "old_packet_json_characters": 22835,
+      "projected_json_characters": 28373
+    },
+    {
+      "opportunity": 42,
+      "generation": 3,
+      "old_packet_json_characters": 22835,
+      "projected_json_characters": 28400
+    },
+    {
+      "opportunity": 42,
+      "generation": 4,
+      "old_packet_json_characters": 22835,
+      "projected_json_characters": 28427
+    },
+    {
+      "opportunity": 42,
+      "generation": 5,
+      "old_packet_json_characters": 22835,
+      "projected_json_characters": 28427
+    },
+    {
+      "opportunity": 42,
+      "generation": 6,
+      "old_packet_json_characters": 22835,
+      "projected_json_characters": 28427
+    },
+    {
+      "opportunity": 43,
+      "generation": 1,
+      "old_packet_json_characters": 20857,
+      "projected_json_characters": 29579
+    },
+    {
+      "opportunity": 43,
+      "generation": 2,
+      "old_packet_json_characters": 20857,
+      "projected_json_characters": 29605
+    },
+    {
+      "opportunity": 43,
+      "generation": 3,
+      "old_packet_json_characters": 20857,
+      "projected_json_characters": 29632
+    },
+    {
+      "opportunity": 43,
+      "generation": 4,
+      "old_packet_json_characters": 20857,
+      "projected_json_characters": 29659
+    },
+    {
+      "opportunity": 43,
+      "generation": 5,
+      "old_packet_json_characters": 20857,
+      "projected_json_characters": 29659
+    },
+    {
+      "opportunity": 43,
+      "generation": 6,
+      "old_packet_json_characters": 25838,
+      "projected_json_characters": 35069
+    },
+    {
+      "opportunity": 44,
+      "generation": 1,
+      "old_packet_json_characters": 23694,
+      "projected_json_characters": 30870
+    },
+    {
+      "opportunity": 44,
+      "generation": 2,
+      "old_packet_json_characters": 21097,
+      "projected_json_characters": 28773
+    },
+    {
+      "opportunity": 44,
+      "generation": 3,
+      "old_packet_json_characters": 22981,
+      "projected_json_characters": 30945
+    },
+    {
+      "opportunity": 44,
+      "generation": 4,
+      "old_packet_json_characters": 24167,
+      "projected_json_characters": 32418
+    },
+    {
+      "opportunity": 44,
+      "generation": 5,
+      "old_packet_json_characters": 24167,
+      "projected_json_characters": 32146
+    },
+    {
+      "opportunity": 44,
+      "generation": 6,
+      "old_packet_json_characters": 24167,
+      "projected_json_characters": 31875
+    },
+    {
+      "opportunity": 45,
+      "generation": 1,
+      "old_packet_json_characters": 28447,
+      "projected_json_characters": 35559
+    },
+    {
+      "opportunity": 45,
+      "generation": 2,
+      "old_packet_json_characters": 26333,
+      "projected_json_characters": 34003
+    },
+    {
+      "opportunity": 45,
+      "generation": 3,
+      "old_packet_json_characters": 31177,
+      "projected_json_characters": 39052
+    },
+    {
+      "opportunity": 45,
+      "generation": 4,
+      "old_packet_json_characters": 26537,
+      "projected_json_characters": 34700
+    },
+    {
+      "opportunity": 45,
+      "generation": 5,
+      "old_packet_json_characters": 27434,
+      "projected_json_characters": 35586
+    },
+    {
+      "opportunity": 45,
+      "generation": 6,
+      "old_packet_json_characters": 27434,
+      "projected_json_characters": 35316
+    },
+    {
+      "opportunity": 46,
+      "generation": 1,
+      "old_packet_json_characters": 21935,
+      "projected_json_characters": 29197
+    },
+    {
+      "opportunity": 46,
+      "generation": 2,
+      "old_packet_json_characters": 21935,
+      "projected_json_characters": 29223
+    },
+    {
+      "opportunity": 46,
+      "generation": 3,
+      "old_packet_json_characters": 21935,
+      "projected_json_characters": 29250
+    },
+    {
+      "opportunity": 46,
+      "generation": 4,
+      "old_packet_json_characters": 21935,
+      "projected_json_characters": 29277
+    },
+    {
+      "opportunity": 46,
+      "generation": 5,
+      "old_packet_json_characters": 21935,
+      "projected_json_characters": 29277
+    },
+    {
+      "opportunity": 46,
+      "generation": 6,
+      "old_packet_json_characters": 21935,
+      "projected_json_characters": 29277
+    },
+    {
+      "opportunity": 47,
+      "generation": 1,
+      "old_packet_json_characters": 26624,
+      "projected_json_characters": 31826
+    },
+    {
+      "opportunity": 47,
+      "generation": 2,
+      "old_packet_json_characters": 27796,
+      "projected_json_characters": 33487
+    },
+    {
+      "opportunity": 47,
+      "generation": 3,
+      "old_packet_json_characters": 27796,
+      "projected_json_characters": 33572
+    },
+    {
+      "opportunity": 47,
+      "generation": 4,
+      "old_packet_json_characters": 27796,
+      "projected_json_characters": 33657
+    },
+    {
+      "opportunity": 47,
+      "generation": 5,
+      "old_packet_json_characters": 27796,
+      "projected_json_characters": 33445
+    },
+    {
+      "opportunity": 47,
+      "generation": 6,
+      "old_packet_json_characters": 27796,
+      "projected_json_characters": 33445
+    },
+    {
+      "opportunity": 48,
+      "generation": 1,
+      "old_packet_json_characters": 21084,
+      "projected_json_characters": 26888
+    },
+    {
+      "opportunity": 48,
+      "generation": 2,
+      "old_packet_json_characters": 21084,
+      "projected_json_characters": 26914
+    },
+    {
+      "opportunity": 48,
+      "generation": 3,
+      "old_packet_json_characters": 21084,
+      "projected_json_characters": 26941
+    },
+    {
+      "opportunity": 48,
+      "generation": 4,
+      "old_packet_json_characters": 21084,
+      "projected_json_characters": 26968
+    },
+    {
+      "opportunity": 48,
+      "generation": 5,
+      "old_packet_json_characters": 21084,
+      "projected_json_characters": 26968
+    },
+    {
+      "opportunity": 48,
+      "generation": 6,
+      "old_packet_json_characters": 21084,
+      "projected_json_characters": 26968
+    },
+    {
+      "opportunity": 49,
+      "generation": 1,
+      "old_packet_json_characters": 25047,
+      "projected_json_characters": 32442
+    },
+    {
+      "opportunity": 49,
+      "generation": 2,
+      "old_packet_json_characters": 24022,
+      "projected_json_characters": 31929
+    },
+    {
+      "opportunity": 49,
+      "generation": 3,
+      "old_packet_json_characters": 24022,
+      "projected_json_characters": 31956
+    },
+    {
+      "opportunity": 49,
+      "generation": 4,
+      "old_packet_json_characters": 23986,
+      "projected_json_characters": 32208
+    },
+    {
+      "opportunity": 49,
+      "generation": 5,
+      "old_packet_json_characters": 22522,
+      "projected_json_characters": 30731
+    },
+    {
+      "opportunity": 49,
+      "generation": 6,
+      "old_packet_json_characters": 25196,
+      "projected_json_characters": 33667
+    },
+    {
+      "opportunity": 50,
+      "generation": 1,
+      "old_packet_json_characters": 23963,
+      "projected_json_characters": 31408
+    },
+    {
+      "opportunity": 50,
+      "generation": 2,
+      "old_packet_json_characters": 23261,
+      "projected_json_characters": 31237
+    },
+    {
+      "opportunity": 50,
+      "generation": 3,
+      "old_packet_json_characters": 23631,
+      "projected_json_characters": 31894
+    },
+    {
+      "opportunity": 50,
+      "generation": 4,
+      "old_packet_json_characters": 22525,
+      "projected_json_characters": 31074
+    },
+    {
+      "opportunity": 50,
+      "generation": 5,
+      "old_packet_json_characters": 23647,
+      "projected_json_characters": 32185
+    },
+    {
+      "opportunity": 50,
+      "generation": 6,
+      "old_packet_json_characters": 23647,
+      "projected_json_characters": 31973
+    }
+  ],
+  "checks": {
+    "complete_observed_response_preserved": true,
+    "mutation_only_diagnostics": true,
+    "no_validation_test_raw_access": true
+  },
+  "caveats": [
+    "Field availability only; no hypothetical Reflection output or candidate quality measured.",
+    "Character cost excludes changed instruction prose; not billed Tokens or provider latency.",
+    "Historical responses retain original source identity; projection is not checkpoint import."
+  ],
+  "model_api_calls": 0
+}

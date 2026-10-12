@@ -11,7 +11,8 @@ import json
 import re
 
 from .. import versions
-from ..current_contract import MATH_STRUCTURED_SYSTEM_BINDING_VERSION, GRADIENT_PROMPT_VERSION
+from ..current_contract import (MATH_STRUCTURED_SYSTEM_BINDING_VERSION, GRADIENT_PROMPT_VERSION,
+    CURRENT_OPTIMIZER_INPUT_SCHEMA)
 from ..search.schemas import SearchContractError
 
 from .math_flexible_answer import prediction_from_persisted, extract_answer, boundaries
@@ -30,12 +31,12 @@ def text_hash(text):
 
 
 def trajectory_policy():
-    return dict(identity='MATH_OUTPUT_FEEDBACK_OBSERVED_RESPONSE_POLICY_V8',
+    return dict(identity='MATH_SCOPED_OPTIMIZER_OBSERVED_RESPONSE_POLICY_V9',
         profile_schema=versions.MATH_FLEXIBLE_PROFILE_VERSION,
         trajectory_schema=versions.MATH_FLEXIBLE_RESPONSE_VERSION,
         gradient_input_schema='STRUCTURED_SYSTEM_GRADIENT_INPUT_V8',
         gradient_prompt_identity=GRADIENT_PROMPT_VERSION,
-        optimizer_input_schema='STRUCTURED_SYSTEM_PATTERN_EDIT_INPUT_V11',
+        optimizer_input_schema=CURRENT_OPTIMIZER_INPUT_SCHEMA,
         max_visible_solution_characters=4096, observed_response='complete_ordinary_content',
         truncation='optional_solution_unicode_prefix_explicit_metadata',
         original_response_retention='complete_private_resolved_prediction_and_attempts',

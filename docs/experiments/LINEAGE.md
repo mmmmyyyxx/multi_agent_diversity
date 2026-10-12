@@ -8,26 +8,26 @@ Registry provides node metadata; current_frontier.yaml provides readiness only.
 ```yaml
 schema_version: current_frontier_v1
 current_architecture: Unified Team Prompt Search
-method_identity: unified_team_prompt_search_v2_7_request_recovery_v2
-current_method: unified_team_prompt_search_v2_7_request_recovery_v2
-current_experiment: math_v27_seed86_precluster_continuation_v1
-formal_manifest: experiments/manifests/math_v27_seed86_precluster_continuation_v1.yaml
-current_implementation: Strict bounded generated membership retries and explicitly
-  audited zero-op prefix continuation.
+method_identity: unified_team_prompt_search_v2_8_scoped_experience_v1
+current_method: unified_team_prompt_search_v2_8_scoped_experience_v1
+current_experiment: NO_AUTHORIZED_REAL_EXPERIMENT
+formal_manifest: null
+current_implementation: Scoped actual-edit experience delivery and Mutation-only diagnostic/reference/attempt
+  feedback.
 current_solver_model: gpt-4o-mini
 current_solver_provider_profile: openlux
 current_optimizer_model: qwen3.7-flash
 current_optimizer_provider_profile: lwj
 current_provider_routing_policy: OPENLUX_SOLVER_LWJ_OPTIMIZER_V1
-current_binding_identity: MATH_REQUEST_RECOVERY_BINDING_V10
-current_cache_policy: ROLE_ROUTED_OUTPUT_FEEDBACK_MEMBER_LANE_CACHE_V10
+current_binding_identity: MATH_SCOPED_EXPERIENCE_BINDING_V11
+current_cache_policy: ROLE_ROUTED_SCOPED_EXPERIENCE_MEMBER_LANE_CACHE_V11
 current_benchmark_suite:
 - math
-last_governance_milestone: math_optimizer_output_contract_feedback_preparation_v1
+last_governance_milestone: scoped_edit_experience_layer1_v28_preparation_v1
 real_execution_ready: false
 real_api_authorized: false
 ready_for_authorization: false
-current_preparation_status: CONTINUATION_OFFLINE_FREEZE_PENDING
+current_preparation_status: IMPLEMENTED_OFFLINE_UNFROZEN
 validation_access: not_authorized
 test_access: sealed
 current_execution_blocker: NEW_SOURCE_PHASE_FREEZE_AND_EXACT_AUTHORIZATION_REQUIRED
@@ -35,10 +35,10 @@ current_execution_blockers:
 - NEW_SOURCE_PHASE_FREEZE_AND_EXACT_AUTHORIZATION_REQUIRED
 current_runtime_builder: build_current_team_prompt_search
 current_execution_entrypoint: scripts/run_experiment.py
-current_runtime_composition: CURRENT_REQUEST_RECOVERY_COMPOSITION_V10
-current_execution_binding: experiments/execution_bindings/a4_v27_seed86_continuation_attempt1.json
-current_layer1_backend: STRUCTURED_EVALUATED_PARENT_SEARCH_V3
-current_memory_policy: BOOTSTRAPPED_FORMAT_BLOCK_EDIT_EFFECT_MEMORY_V3
+current_runtime_composition: CURRENT_SCOPED_EXPERIENCE_COMPOSITION_V11
+current_execution_binding: null
+current_layer1_backend: STRUCTURED_EVIDENCE_FEEDBACK_SEARCH_V4
+current_memory_policy: SCOPED_EDIT_EXPERIENCE_MEMORY_V4
 current_pattern_policy: gradient_output_contract_feedback_partition_v10
 current_gradient_prompt_identity: STRUCTURED_SYSTEM_GRADIENT_PROMPT_V11
 current_initial_team_version: MATH_IDENTICAL_ARM_B_STRUCTURED_SEED_V3
@@ -70,7 +70,7 @@ pending_pilot_attempt_id: null
 pending_pilot_operational_retry_limit: 0
 pending_pilot_validation_authorized: false
 pending_pilot_test_authorized: false
-pending_pilot_push_authorized: true
+pending_pilot_push_authorized: false
 pilot_search_complete: false
 pilot_validation_complete: false
 future_execution_requires_new_frozen_single_use_scope: true
@@ -85,7 +85,7 @@ authorization_scopes_closed: true
 unresolved_reservations: 0
 parser_identity: MATH_FLEXIBLE_ANSWER_EXTRACTION_V3
 baseline_b5_strict_review_compatible_with_current_source: false
-exact_dual_scope_user_authorization_received: true
+exact_dual_scope_user_authorization_received: false
 current_task_pilot_calls: 0
 last_canary_manifest: experiments/manifests/a4_v25_arm_b_openlux_seed84_canary_v1.yaml
 last_canary_execution_binding: experiments/execution_bindings/a4_v25_arm_b_openlux_seed84_canary_attempt1.json
@@ -104,26 +104,26 @@ current_gradient_output_limits:
   diagnosis: 400
   reusable_correction: 400
   expected_effect: 240
-current_optimization_evidence_policy: REQUEST_RECOVERY_EVIDENCE_POLICY_V10
-current_preparation_experiment: math_v27_seed86_precluster_continuation_v1
-current_preparation_manifest: experiments/manifests/math_v27_seed86_precluster_continuation_v1.yaml
+current_optimization_evidence_policy: SCOPED_EXPERIENCE_EVIDENCE_POLICY_V11
+current_preparation_experiment: scoped_edit_experience_layer1_v28_preparation_v1
+current_preparation_manifest: experiments/manifests/scoped_edit_experience_layer1_v28_preparation_v1.yaml
 last_gradient_limit_adoption_report: reports/gradient_diagnostic_limits_400_v2_preparation_20261011
 last_gradient_limit_adoption_real_api_calls: 0
-proposed_canary_token_ceiling: 2000000
+proposed_canary_token_ceiling: null
 proposed_formal_search_token_ceiling: null
-proposed_post_search_validation_token_ceiling: 6000000
-proposed_formal_max_opportunities: 50
+proposed_post_search_validation_token_ceiling: null
+proposed_formal_max_opportunities: null
 proposed_solver_concurrency: 16
 proposed_gradient_concurrency: 8
-proposed_protocol: experiments/protocols/math_v27_seed86_precluster_continuation_v1/preregistration.json
-current_formal_status: EXECUTION_COMPLETE_RESOURCE_TRUNCATED_AWAITING_PUBLICATION
-current_task_provider_attempts: 8823
-current_task_provider_responses: 8823
-current_task_charged_tokens: 20023235
-current_task_parent_charged_tokens: 1055236
-current_task_combined_charged_tokens: 21078471
-current_task_team_commits: 5
-current_task_opportunities: 50
+proposed_protocol: null
+current_formal_status: NO_CURRENT_FORMAL_ATTEMPT
+current_task_provider_attempts: 0
+current_task_provider_responses: 0
+current_task_charged_tokens: 0
+current_task_parent_charged_tokens: 0
+current_task_combined_charged_tokens: 0
+current_task_team_commits: 0
+current_task_opportunities: 0
 current_task_scientific_stop_reached: false
 current_task_validation_calls: 0
 current_task_test_calls: 0
@@ -139,9 +139,13 @@ user_selected_fresh_arm_b: true
 monitor_interval_seconds: 3600
 estimated_remaining_time_policy: READ_ONLY_COMPLETED_OPPORTUNITY_ROLLING_COST_AND_DURATION
 proposed_scientific_no_commit_patience: 4
-current_task_parent_charged_tokens: 1055236
-current_task_parent_provider_attempts: 889
-explicit_zero_op_prefix_continuation_policy: AUTHORIZED_V27_PRECLUSTER_PREFIX_CONTINUATION_V1
+current_task_parent_provider_attempts: 0
+explicit_zero_op_prefix_continuation_policy: null
+current_optimizer_input_schema: STRUCTURED_SYSTEM_SCOPED_EDIT_INPUT_V12
+last_formal_manifest: experiments/manifests/math_v27_seed86_precluster_continuation_v1.yaml
+last_formal_report: reports/math_v27_seed86_continuation_execution_20261012
+last_evolution_bottleneck_audit: reports/math_v27_seed86_evolution_bottleneck_audit_20261012
+last_scoped_experience_preparation_report: reports/scoped_edit_experience_layer1_v28_preparation_20261012
 ```
 
 ## Experiment and engineering DAG
@@ -462,6 +466,7 @@ flowchart TD
     n334["math_v27_seed86_precluster_continuation_v1<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
     n335["math_v27_request_recovery_preparation_v1<br/>PROTOCOL_FREEZE<br/>IMPLEMENTED_NOT_EXECUTED"]
     n336["math_v27_seed86_evolution_bottleneck_audit_20261012<br/>FORENSIC_AUDIT<br/>COMPLETED"]
+    n337["scoped_edit_experience_layer1_v28_preparation_v1<br/>PROTOCOL_FREEZE<br/>IMPLEMENTED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -739,6 +744,8 @@ flowchart TD
   n333 -->|derived_from| n334
   n331 -->|derived_from| n335
   n334 -->|audit_of| n336
+  n334 -->|derived_from| n337
+  n336 -->|derived_from| n337
 ```
 
 ## Archived branches and unresolved evidence

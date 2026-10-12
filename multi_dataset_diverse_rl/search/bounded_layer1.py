@@ -121,13 +121,31 @@ class BoundedMemoryOptimizer:
         from .optimizer_output_contract import (parse_output, validate_reflection_output,
             reflection_feedback_prefix, feedback_for_error, issue, IDENTITY as OUTPUT_FEEDBACK)
         output_feedback=None
+        def preceding_attempts():
+            from .scoped_edit_experience import effect_view
+            summaries=[]
+            for event in events[-3:]:
+                value=dict(outcome=event['status'])
+                if event.get('failed_checks'):value['failed_checks']=event['failed_checks']
+                lineage=event.get('edit_lineage')
+                if lineage:
+                    value['edited_block']=lineage['edited_block']
+                    value['measured']={scope:effect_view(lineage['effects'][scope])
+                        for scope in ('mutation','search_validation','actual_parent_validation')}
+                summaries.append(value)
+            return tuple(summaries)
         for generation in range(1,output_recovery['reflection_draws_per_opportunity']+1):
             memory=self.memory.read_for_member(task.target_member,task.responsibility_lane,
-                pattern_id=pattern['pattern_id'],hypothesis=pattern['generalized_gradient'])
-            packet=reflection_feedback_prefix(output_feedback)+self.prompt_builder(task,selected_parent,current_mut,memory)
+                pattern_id=pattern['pattern_id'],hypothesis=pattern['generalized_gradient'],
+                query_context=dict(root_prompt_id=task.parent_prompt.prompt_hash,parent_state_id=task.parent_state_id,
+                    task_types=list(task.task_types)))
+            packet=reflection_feedback_prefix(output_feedback)+self.prompt_builder(task,selected_parent,current_mut,memory,
+                attempt_feedback=preceding_attempts())
             common=dict(generation=generation,opportunity_id=opportunity_id,target_member=task.target_member,
                 evidence_packet_hash=prompt_id(packet),parent_hash=prompt_id(selected_parent),
-                root_parent_hash=prompt_id(task.parent_prompt))
+                root_parent_hash=prompt_id(task.parent_prompt),
+                delivered_experience_ids=[c['id'] for c in memory['edit_effects']],
+                memory_input_sha256=digest(memory),memory_delivery_audit=dict(self.memory.last_delivery_audit))
             from .generation_failures import recoverable_output
             try:
                 response=self.reflection_lm(packet)
@@ -170,6 +188,10 @@ class BoundedMemoryOptimizer:
             step=block_lineage(selected_parent,proposed)
             chain=[*chains[selected_parent.prompt_hash],step];chains[h]=chain
             lineage=dict(candidate_id=cid,opportunity_id=opportunity_id,member=task.target_member,
+                experience_schema='SCOPED_EDIT_EXPERIENCE_RECORD_V1',parent_state_id=task.parent_state_id,
+                repair_context=dict(task_types=list(task.task_types),source='mutation_optimize_metadata'),
+                delivered_experience_ids=list(common['delivered_experience_ids']),
+                memory_input_sha256=common['memory_input_sha256'],memory_utilization='not_inferred_from_delivery',
                 parent_prompt_id=prompt_id(selected_parent),child_prompt_id=h,
                 full_parent_prompt_id=prompt_id(task.parent_prompt),pattern_id=pattern['pattern_id'],
                 supporting_example_ids=list(task.pattern_support),repair_hypothesis=pattern['generalized_gradient'],
@@ -230,7 +252,7 @@ class BoundedMemoryOptimizer:
             len(events),len(candidates),0,0,sum(c.backend_details['locally_rejected'] for c in candidates))
 
 class LocalTaskEngine:
-    identity='STRUCTURED_EVALUATED_PARENT_SEARCH_V3'
+    identity=versions.CURRENT_LAYER1_SEARCH_VERSION
     def __init__(self,optimizer,seed):self.optimizer=optimizer;self.seed=seed
 
     def make_task(self,opportunity,context):

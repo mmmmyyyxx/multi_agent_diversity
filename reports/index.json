@@ -3367,6 +3367,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/scoped_edit_experience_layer1_v28_preparation_20261012",
+      "document": "reports/scoped_edit_experience_layer1_v28_preparation_20261012/README.md",
+      "date": "20261012",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "PREEXECUTION",
+      "experiment_id": "scoped_edit_experience_layer1_v28_preparation_v1",
+      "status": "IMPLEMENTED_NOT_EXECUTED",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/seed78_gepa_differential_audit_20260914",
       "document": "reports/seed78_gepa_differential_audit_20260914/README.md",
       "date": "20260914",

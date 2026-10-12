@@ -1324,6 +1324,42 @@ failures:
     score revision or rerun permission.
   regression_tests:
   - tests/current/test_formal_execution_scope.py
+- failure_id: FAIL-V27-FULL-EXPERIENCE-DELIVERY
+  title: Recorded Full edits were omitted from Reflection Memory views
+  status: MITIGATED
+  lifecycle: REAL_OBSERVED_OFFLINE_REPRODUCED
+  first_observed: math_v27_seed86_precluster_continuation_v1
+  affected_components:
+  - same_member_experience_retrieval
+  - bounded_memory_serialization
+  symptom: Full records existed in 240 Reflection-time banks but appeared in only 113 old wire views.
+  evidence:
+  - reports/math_v27_seed86_evolution_bottleneck_audit_20261012/README.md
+  - reports/scoped_edit_experience_layer1_v28_preparation_20261012/README.md
+  evidence_level: observed
+  root_cause_status: Exact-pattern and local priority plus oversized coarse records displaced Full observations.
+  mitigation: Scoped relevance, compact actual-edit outcomes and protected primary Full instruction within the unchanged context budget.
+  forbidden_inference: Offline delivery does not prove LLM utilization, candidate quality, causal effect or team gains.
+  regression_tests:
+  - tests/current/test_scoped_experience_layer1.py
+- failure_id: FAIL-V27-LAYER1-EVIDENCE-LOSS
+  title: Accepted diagnosis and local abstention feedback did not reach generation
+  status: MITIGATED
+  lifecycle: REAL_OBSERVED_OFFLINE_REPRODUCED
+  first_observed: math_v27_seed86_precluster_continuation_v1
+  affected_components:
+  - reflection_input
+  - local_iteration_feedback
+  symptom: Reflection saw generalized Pattern but lacked accepted per-example repair diagnostics; unchanged abstentions repeated the same inputs.
+  evidence:
+  - reports/math_v27_seed86_evolution_bottleneck_audit_20261012/README.md
+  - reports/scoped_edit_experience_layer1_v28_preparation_20261012/README.md
+  evidence_level: observed
+  root_cause_status: Input projection omitted available Mutation diagnostics and prior abstention metadata.
+  mitigation: Supply scoped root diagnosis, separately labeled Optimize reference, exact capacity and bounded preceding-attempt metadata.
+  forbidden_inference: These omissions do not identify the cause of NO_SAFE_EDIT or prove improvements in real candidate efficacy.
+  regression_tests:
+  - tests/current/test_scoped_experience_layer1.py
 - failure_id: FAIL-V27-GENERATED-CLUSTER-MEMBERSHIP-FATAL
   title: Generated duplicate support alias bypassed bounded draw recovery
   status: MITIGATED

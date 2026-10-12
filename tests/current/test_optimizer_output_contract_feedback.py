@@ -117,7 +117,10 @@ def test_reflection_feedback_consumes_existing_slots_and_clears_after_valid_outp
     assert '"target_block":"strategy"' in texts[0] and '"target_block":"role, strategy, or answer"' not in texts[0]
     # Rejected draws do not change parent, observations or measured Memory.
     evidence=[json.loads(t.splitlines()[-1]) for t in texts]
-    assert evidence[:4]==[evidence[0]]*4
+    assert [{k:v for k,v in p.items() if k!='preceding_attempts'} for p in evidence[:4]]==[
+        {k:v for k,v in evidence[0].items() if k!='preceding_attempts'}]*4
+    assert [len(p['preceding_attempts']) for p in evidence[:4]]==[0,1,2,3]
+    assert all(x['outcome']=='CONTRACT_INVALID' for x in evidence[3]['preceding_attempts'])
     lineage=[json.loads(s) for p in tmp_path.glob('*.lineage.jsonl') for s in p.read_text().splitlines()]
     assert [r['status'] for r in lineage[:3]]==['CONTRACT_INVALID']*3
     assert lineage[3]['status']=='LOCALLY_EVALUATED'

@@ -1,0 +1,164 @@
+{
+  "source_before_task": "9929a306bb10fdb09f8e34895b7540afb0f10770",
+  "current_method": "unified_team_prompt_search_v2_8_scoped_experience_v1",
+  "current_scientific_source_hash": "e0e31f51e42335d461b28ab4001b945028d3f839daa362c26ddf3cac4c930651",
+  "current_governance_hash": "fdc789e9c7757ba080c5f1ef26cf6346e906e014cb870d24cd6eb3c31800f5c2",
+  "benchmark_contract_hash": "d88a9b9aee8ad5f95894cf454ab478e4acddb768c92a782977f1d42afb13e094",
+  "scientific_source_unchanged_since_complete_test_run": true,
+  "draft_unfrozen_and_unauthorized": true,
+  "full_current_suite": {
+    "selected": 810,
+    "passed": 803,
+    "failed": 5,
+    "skipped": 2,
+    "duration_seconds": 1476.06
+  },
+  "resolved_failures": [
+    "tests/current/test_gradient_diagnostic_limits_400.py::test_current_preparation_is_strict_and_cannot_import_historical_measurement",
+    "tests/current/test_gradient_diagnostic_limits_400.py::test_historical_manifest_schema_branches_keep_their_original_contracts",
+    "tests/current/test_parallel_compact.py::test_actual_gradient_and_reflection_boundaries_have_direct_readable_evidence[options0]",
+    "tests/current/test_parallel_compact.py::test_actual_gradient_and_reflection_boundaries_have_direct_readable_evidence[options1]",
+    "tests/current/test_parallel_compact.py::test_actual_gradient_and_reflection_boundaries_have_direct_readable_evidence[options2]"
+  ],
+  "affected_final_regression": {
+    "passed": 95,
+    "failed": 0,
+    "duration_seconds": 33.4
+  },
+  "final_covered_scope": {
+    "passed": 808,
+    "skipped": 2,
+    "basis": "COMPLETE_RUN_PLUS_AFFECTED_FINAL_REGRESSION_NOT_SECOND_FULL_RUN"
+  },
+  "excluded_historical_private_modules": 220,
+  "production_compileall": true,
+  "current_governance": {
+    "ok": true,
+    "errors": [],
+    "registered_nodes": 338,
+    "indexed_manifests": 208,
+    "generated_views": "PASS"
+  },
+  "draft_manifest_errors": [],
+  "legacy_governance": {
+    "ok": true,
+    "errors": [],
+    "reused": true
+  },
+  "deterministic_smokes": "CURRENT_FAKE_PRODUCTION_GRAPH_AND_INFORMATION_BOUNDARY_REGRESSIONS_PASSED",
+  "historical_schema": {
+    "old_branches": 14,
+    "new_branches": 15,
+    "old_specialized_branches_unchanged": true,
+    "generic_fallback_change": "Exclude only the new V2.8 method family; existing family contracts unchanged"
+  },
+  "historical_manifest_and_report_hashes": [
+    {
+      "path": "experiments/manifests/math_v27_seed86_precluster_continuation_v1.yaml",
+      "sha256_lf": "ead27180155fd88f03b2293e773d0d4975969693ec313909cab5ab3d57006c59"
+    },
+    {
+      "path": "reports/math_v27_seed86_continuation_execution_20261012/README.md",
+      "sha256_lf": "0084f1fb622ee1fad30311286e580e415feeeaa0d76ba317873894388ccfac8a"
+    },
+    {
+      "path": "reports/math_v27_seed86_continuation_execution_20261012/classifier.json",
+      "sha256_lf": "71e2746c93c46f20659db4f3e05dde4b69df85bbdbc1abdec91b43309e92b03d"
+    },
+    {
+      "path": "reports/math_v27_seed86_continuation_execution_20261012/performance.svg",
+      "sha256_lf": "3e99dd1a203f3cef5809255eae02a8eae7faf3e9f0245b44f8cbd296f42d3463"
+    },
+    {
+      "path": "reports/math_v27_seed86_continuation_execution_20261012/result_summary.json",
+      "sha256_lf": "fe5915e2e8d7a3a64e3c1404f6b6cc0db7132c70c28aa67652451c032beecc36"
+    },
+    {
+      "path": "reports/math_v27_seed86_continuation_execution_20261012/sanitization_manifest.json",
+      "sha256_lf": "44ca24764896b56c10a97a0f8df84d4bc1d46ff34ec0f87c0c8d1fb5de75f98b"
+    },
+    {
+      "path": "reports/math_v27_seed86_continuation_execution_20261012/sha256_manifest.json",
+      "sha256_lf": "5d96bc6a7bde79320d286ae0317ec44db43e70f7e39c3f193eb5e55e130769b5"
+    },
+    {
+      "path": "reports/math_v27_seed86_performance_forensic_20261012/README.md",
+      "sha256_lf": "a952bb816802f5738726c6bfd3a33e2017a1a84678e40e6c1ce536b76336217a"
+    },
+    {
+      "path": "reports/math_v27_seed86_performance_forensic_20261012/audit_summary.json",
+      "sha256_lf": "fd8c801eefa70b253e19040c3d99d21d8c0c6f4edcbefad70ac438380e68679e"
+    },
+    {
+      "path": "reports/math_v27_seed86_performance_forensic_20261012/classifier.json",
+      "sha256_lf": "5fc1958f4af6ce338ffcafcfbfb3bce3a0e802dbe1da1bbe898650a66b874ca0"
+    },
+    {
+      "path": "reports/math_v27_seed86_performance_forensic_20261012/sanitization_manifest.json",
+      "sha256_lf": "44ca24764896b56c10a97a0f8df84d4bc1d46ff34ec0f87c0c8d1fb5de75f98b"
+    },
+    {
+      "path": "reports/math_v27_seed86_performance_forensic_20261012/sha256_manifest.json",
+      "sha256_lf": "1c43a955c8a5f372eb9c0a55cad3c43af008435746914931ff57f2ae6fbf4f47"
+    },
+    {
+      "path": "reports/math_v27_seed86_performance_forensic_20261012/verification.json",
+      "sha256_lf": "d4f2778d6816e5fed75087f019f5fe34001df97535daea0f0810783bec955021"
+    },
+    {
+      "path": "reports/math_v27_seed86_evolution_bottleneck_audit_20261012/FULL_CANDIDATES.md",
+      "sha256_lf": "30a09f5518177c49113b434c400fdf0aecbe79082c71562cf153c675ae2285eb"
+    },
+    {
+      "path": "reports/math_v27_seed86_evolution_bottleneck_audit_20261012/README.md",
+      "sha256_lf": "c0779b399fe98755492126754ac5fd053e6e48ac059ab459802fe81ec891fbd7"
+    },
+    {
+      "path": "reports/math_v27_seed86_evolution_bottleneck_audit_20261012/case_review.json",
+      "sha256_lf": "f16d2e8d873ef33e7709ef5bf1e25b40eb095fdc1f60094db42ad8fca08a6d68"
+    },
+    {
+      "path": "reports/math_v27_seed86_evolution_bottleneck_audit_20261012/classifier.json",
+      "sha256_lf": "5c927e68e62e37b93ca2cc0494ec99e9f4a9aa1d28a72ee648266a4e622beb56"
+    },
+    {
+      "path": "reports/math_v27_seed86_evolution_bottleneck_audit_20261012/diagnosis_summary.json",
+      "sha256_lf": "2d96269720d22b1282d9a97abc5d4fa434bd2e617726f7a4ce3805f6c5ade361"
+    },
+    {
+      "path": "reports/math_v27_seed86_evolution_bottleneck_audit_20261012/frozen_output_substitution.json",
+      "sha256_lf": "e9dcfef9f07629438a5249b7fca574bae985d454fb660935747e54fc9b490f3a"
+    },
+    {
+      "path": "reports/math_v27_seed86_evolution_bottleneck_audit_20261012/minimal_studies.json",
+      "sha256_lf": "4207558a4e99740ee7c4f052aeefe1817253cf2505e3a088d50be94349b81dcc"
+    },
+    {
+      "path": "reports/math_v27_seed86_evolution_bottleneck_audit_20261012/publication_checks.json",
+      "sha256_lf": "f32279422b77cd8d773cc95dc97a6cac28806d97d7c8208bc247cd3225e5fb71"
+    },
+    {
+      "path": "reports/math_v27_seed86_evolution_bottleneck_audit_20261012/sanitization_manifest.json",
+      "sha256_lf": "e6c6566b197c8aa62f02b1cb59fbad309f395ee063cb10ed20250c8c70514254"
+    },
+    {
+      "path": "reports/math_v27_seed86_evolution_bottleneck_audit_20261012/sha256_manifest.json",
+      "sha256_lf": "be0d3adaebb8adb9b72107b2278cb2ed37dd762dc47deaeb62ccabd247d578c4"
+    },
+    {
+      "path": "reports/math_v27_seed86_evolution_bottleneck_audit_20261012/verification.json",
+      "sha256_lf": "58684a908bdd8aba6cf2eb0c40e7ceee0dcbe7492a0ab700dc472c190de916ac"
+    }
+  ],
+  "sealed_trajectory_sha256": "8a7d39af0ab963209b11bee80d3a6339f095fff575cc1e0eb2761c407cebea14",
+  "historical_integrity_checks_reused": true,
+  "real_model_api_calls": 0,
+  "validation_real_calls": 0,
+  "test_real_calls": 0,
+  "network_attempt_count": 0,
+  "real_validation_test_raw_access": false,
+  "synthetic_validation_contract_tests_executed": true,
+  "source_record_and_card_schema": "CURRENT_ONLY_ARCHIVAL_PROJECTION_DOES_NOT_IMPORT_CHECKPOINTS",
+  "publication": "LOCAL_ONLY_NO_PUSH",
+  "git_diff_check": "PASS"
+}

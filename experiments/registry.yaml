@@ -9859,3 +9859,32 @@ experiments:
     implementation_commit: Containing documentation publication; no runtime implementation.
     execution_commit: No model experiment executed; parent source is pinned in the report.
     result_commit: Containing sanitized evidence commit; no self-referential SHA.
+- experiment_id: scoped_edit_experience_layer1_v28_preparation_v1
+  kind: PROTOCOL_FREEZE
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_8_scoped_experience_v1
+  parent_ids:
+  - math_v27_seed86_precluster_continuation_v1
+  - math_v27_seed86_evolution_bottleneck_audit_20261012
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_OFFLINE_VERIFIED_REAL_UTILIZATION_AND_EFFICACY_UNMEASURED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/scoped_edit_experience_layer1_v28_preparation_v1.yaml
+  report: reports/scoped_edit_experience_layer1_v28_preparation_20261012
+  classifier: reports/scoped_edit_experience_layer1_v28_preparation_20261012/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Fresh scoped experience and Layer1 evidence interfaces; existing WHO, Solver,
+    scoring, aggregation and team admission unchanged.
+  - No Preservation Gradient/Panel/veto, extra generations, new model call or historical
+    replay execution.
+  - Draft only; fresh source/protocol/data/access/budget binding and exact single-use
+    authorization required before real execution.
+  unavailable:
+    implementation_commit: Containing implementation commit; no self-referential SHA.
+    execution_commit: No model experiment executed.
+    result_commit: Containing offline evidence commit; no real-model efficacy result.

@@ -958,3 +958,29 @@ invariants:
   failure_refs: []
   critical: true
   status: ACTIVE
+- id: INV-V28-EXPERIENCE-SCOPE-001
+  description: Related measured Full experience is delivered within the existing context bound;
+    actual edits, applicability and measurement scope do not establish causal rules.
+  authority: docs/design/SCOPED_EDIT_EXPERIENCE_LAYER1_V28.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/scoped_edit_experience.py
+  - multi_dataset_diverse_rl/search/rolling_risk_memory.py
+  tests:
+  - tests/current/test_scoped_experience_layer1.py
+  failure_refs:
+  - FAIL-V27-FULL-EXPERIENCE-DELIVERY
+  critical: true
+  status: ACTIVE
+- id: INV-V28-LAYER1-EVIDENCE-001
+  description: Mutation-only root diagnostics and worked references plus measured preceding-attempt
+    feedback reach Reflection; no held-out or optimizer-only evidence enters Solver.
+  authority: docs/design/SCOPED_EDIT_EXPERIENCE_LAYER1_V28.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/current_layer1.py
+  - multi_dataset_diverse_rl/search/bounded_layer1.py
+  tests:
+  - tests/current/test_scoped_experience_layer1.py
+  failure_refs:
+  - FAIL-V27-LAYER1-EVIDENCE-LOSS
+  critical: true
+  status: ACTIVE
