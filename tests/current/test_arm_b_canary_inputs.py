@@ -26,7 +26,7 @@ def test_seed84_binding_broker_wrong_seed_and_historical_execution_rejected():
  with pytest.raises(SearchContractError):RequestBroker(contract=old,transport=lambda _:None,arm='A4',seed=83)
  c=read_json(ROOT/'experiments/execution_bindings/a4_v25_arm_b_recovery_seed84_canary_attempt1.json');b=MATHStructuredBinding(ROOT,c)
  assert b.blockers()  # Frozen pre-migration source remains historical evidence.
- from tests.current.test_structured_optimization_evidence import contract
+ from tests.current.population_support import contract
  c=contract();c['execution_seed']=84;c['seeds']=[84]
  assert c['execution_seed']==84 and c['seeds']==[84]
  assert RequestBroker(contract=c,transport=lambda _:None,arm='A4',seed=84).seed==84
@@ -58,7 +58,7 @@ def test_real_entrypoint_uses_arm_b_and_seed83_with_fake_transport(tmp_path,monk
 def test_arm_b_complete_search_keeps_member_lanes_fixed_peers_and_shadow(tmp_path,monkeypatch):
  import asyncio
  from multi_dataset_diverse_rl.benchmarks.math_structured_interface import system_prompt_policy,system_interface_contract
- from tests.current import test_structured_optimization_evidence as fixture
+ from tests.current import population_support as fixture
  original_contract=fixture.contract
  def arm_b_contract():
   c=original_contract()
@@ -69,15 +69,11 @@ def test_arm_b_complete_search_keeps_member_lanes_fixed_peers_and_shadow(tmp_pat
   return c
  monkeypatch.setattr(fixture,'contract',arm_b_contract)
  monkeypatch.setattr(fixture,'BASE',ARM_B_SEED)
- bad=ARM_B_SEED.edit('strategy','Use case analysis to check signs.')
- good=ARM_B_SEED.edit('strategy','Check signs and substitute the result to verify constraints.')
- monkeypatch.setattr(fixture,'BAD',bad)
- monkeypatch.setattr(fixture,'GOOD',good)
  events=[];original_write=RequestBroker._write
  def write(broker,row):
   events.append(deepcopy(row));original_write(broker,row)
  monkeypatch.setattr(RequestBroker,'_write',write)
- run,broker,requests,packets,_=fixture.graph(tmp_path)
+ run,broker,requests,packets=fixture.graph(tmp_path)
  original_profiles=deepcopy(run.state.profiles)
  assert run.state.prompts==(ARM_B_SEED,)*5
  for j in range(len(run.state.examples)):
@@ -87,17 +83,18 @@ def test_arm_b_complete_search_keeps_member_lanes_fixed_peers_and_shadow(tmp_pat
  result=asyncio.run(run.run(max_opportunities=1))
  target=result.trace[0].target_member
  assert result.trace[0].committed_candidate_id and len(result.transitions)==1
- assert run.state.prompts[target]==good
+ assert run.state.prompts[target]==run.finalizer.proposed_prompts[target]
  for m in range(5):
   if m!=target:
    assert run.state.prompts[m]==ARM_B_SEED and run.state.profiles[m]==original_profiles[m]
  solver_requests=[r for r in requests if r['model']=='gpt-4o-mini']
- assert all(r['messages'][0]['content'] in {p.render() for p in (ARM_B_SEED,bad,good)} for r in solver_requests)
+ assert all(r['messages'][0]['content'] in {p.render() for p in run.evaluation.provider.known_prompts.values()} for r in solver_requests)
  assert len(solver_requests[:90])==90
  assert all(r['messages'][0]['content']==ARM_B_SEED.render() for r in solver_requests[:90])
  stages={e['stage'] for e in events if e['kind']=='SOLVER_REQUEST_CONTRACT'}
- assert {'initial','gepa_local','assigned_repair_check','independent_team_probe','full','adaptive_gate'}<=stages
+ assert {'initial','full','adaptive_gate'}<=stages
+ assert not stages&{'gepa_local','assigned_repair_check','independent_team_probe'}
  shadow=[e for e in events if e['kind']=='PREDICTION_VALIDITY' and e['split']=='shadow']
  assert {e['member_id'] for e in shadow}==set(range(5))
- assert len({e['request_sha256'] for e in shadow})==18  # Five original lanes plus one edited lane, three cases each.
- assert run.gate.winner_count==1 and packets
+ assert 18<=len({e['request_sha256'] for e in shadow})<=21
+ assert run.gate.winner_count==2 and len(packets)==3

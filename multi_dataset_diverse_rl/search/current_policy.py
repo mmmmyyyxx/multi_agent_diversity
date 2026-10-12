@@ -4,10 +4,11 @@ from copy import deepcopy
 from .. import current_contract as identities
 from .schemas import SearchContractError, SearchMethodConfig, GlobalStopConfig
 from .textual_gradients import pattern_policy_for_trajectory
-from .rolling_risk_memory import POLICY as MEMORY_POLICY
-from .private_action_memory import LIMITS
-from .current_layer1 import EvidenceLayer1Config
-from .optimization_evidence import frozen_policy, METHOD, LAYER1, EVIDENCE, MEMORY, INPUT, PROBE_POLICY
+from .population_memory import POLICY as MEMORY_POLICY, LIMITS
+from .current_layer1 import PopulationSearchConfig
+from .parent_population import POLICY as POPULATION_POLICY
+from .population_evaluation import FINAL_POLICY
+from .optimization_evidence import frozen_policy, METHOD, LAYER1, EVIDENCE, MEMORY, INPUT
 
 
 def require_current_contract(contract):
@@ -21,7 +22,9 @@ def require_current_contract(contract):
     if (contract.get('method_identity') != METHOD or contract.get('identity') != BINDING
             or contract.get('paired_realization_policy') is not None
             or contract.get('gradient_recovery_policy') is not None
-            or contract.get('repair_probe_policy') != PROBE_POLICY):
+            or contract.get('repair_probe_policy') is not None
+            or contract.get('parent_population_policy') != POPULATION_POLICY
+            or contract.get('final_team_policy') != FINAL_POLICY):
         raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
     frozen_policy(contract.get('optimization_evidence_policy'))
     if contract.get('precluster_continuation_policy') is not None:
@@ -80,11 +83,12 @@ class CurrentPolicyBundle:
             diagnosis_policy=self.responsibility, aggregation_policy=aggregation,
             evidence_policy=self.evidence, feasibility_policy=identities.UNIFIED_VARIABLE_FEASIBILITY_VERSION,
             transition_policy=self.transition, pattern_policy=self.clustering,
-            memory_policy=self.memory, search_acceptance_policy='layer1_local_guidance_team_admission_v1',
+            memory_policy=self.memory, search_acceptance_policy='population_retention_separate_joint_team_admission_v2',
+            evaluation_policy='ALL_LEGAL_THREE_COMPLETE_OPTIMIZE',
             global_stop=GlobalStopConfig(no_commit_patience=no_commit_patience,emergency_max_provider_calls=successful_provider_calls),
             mechanism_config=dict(memory=deepcopy(LIMITS), shared_risk_policy=deepcopy(MEMORY_POLICY),
                 optimizer_input_schema=INPUT, panel_policy=self.evidence, pattern_policy=pattern_policy,
-                repair_probe_policy=deepcopy(PROBE_POLICY),
+                parent_population_policy=deepcopy(POPULATION_POLICY),final_team_policy=deepcopy(FINAL_POLICY),
                 pattern_provider_binding=provider_binding,generated_output_recovery_policy=deepcopy(recovery),
                 pattern_support_id_transport=identities.PATTERN_SUPPORT_ID_ALIAS_VERSION,
                 pattern_abstraction_guard=identities.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION))
@@ -139,7 +143,7 @@ class CurrentPolicyBundle:
             raise SearchContractError('PATTERN_PARTITION_COMPLETION_POLICY_MISMATCH')
         expected = dict(pattern_policy=pattern_policy_for_trajectory(trajectory, revised),
             memory_policy_identity=self.memory, shared_risk_policy=MEMORY_POLICY,
-            layer1_search_policy=asdict(EvidenceLayer1Config()), optimizer_input_schema=INPUT,
+            layer1_search_policy=asdict(PopulationSearchConfig()), optimizer_input_schema=INPUT,
             panel_evidence_policy=self.evidence, candidate_contract_identity=identities.SEMANTIC_MUTABLE_CONTRACT_VERSION,
             responsibility=self.responsibility, transition_policy=self.transition,
             pattern_support_id_transport=identities.PATTERN_SUPPORT_ID_ALIAS_VERSION,

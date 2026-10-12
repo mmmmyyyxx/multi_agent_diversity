@@ -3,7 +3,7 @@ import asyncio
 from copy import deepcopy
 import json
 import pytest
-from tests.current.test_structured_optimization_evidence import graph,response,HYPOTHESIS,contract
+from tests.current.population_support import graph,response,HYPOTHESIS,contract
 from multi_dataset_diverse_rl.search.schemas import SearchContractError
 from multi_dataset_diverse_rl.search.generation_failures import generation_failure,recoverable_output
 from multi_dataset_diverse_rl.governance.token_accounting import TokenLedger,POLICY_V27_FORMAL_UNCAPPED,POLICY_V26_FORMAL_30M,OperationalAbort,audit_journal
@@ -13,7 +13,7 @@ from multi_dataset_diverse_rl.governance.precluster_continuation import compatib
 @pytest.mark.parametrize('bad_draws',[1,2,3])
 @pytest.mark.parametrize('kind',['duplicate','unknown'])
 def test_generated_membership_rejection_is_bounded_whole_response_retry(tmp_path,bad_draws,kind):
-    run,broker,_,_,_=graph(tmp_path);original=broker.transport;calls=[]
+    run,broker,_,_=graph(tmp_path);original=broker.transport;calls=[]
     def transport(req):
         if req['model']!='gpt-4o-mini' and len(req['messages'])==2:
             packet=json.loads(req['messages'][1]['content'])

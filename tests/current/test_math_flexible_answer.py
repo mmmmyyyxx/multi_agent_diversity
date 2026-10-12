@@ -14,8 +14,8 @@ from multi_dataset_diverse_rl.benchmarks.math_structured_answer import classify_
 from multi_dataset_diverse_rl.search.current_policy import require_current_contract
 from multi_dataset_diverse_rl.search.schemas import SearchContractError
 from tests.current.test_structured_system_contract import solve_sequence
-from tests.current.test_structured_optimization_evidence import contract
-from tests.current.test_structured_optimization_evidence import graph
+from tests.current.population_support import contract
+from tests.current.population_support import graph
 
 
 @pytest.mark.parametrize('text,expected', [
@@ -131,7 +131,7 @@ def test_five_member_vote_uses_equivalence_across_presentations():
 
 
 def test_natural_confirmation_reaches_gradient_and_full_commit_without_format_failure(tmp_path):
-    run, _, requests, _, _ = graph(tmp_path, answer_only=True, answer_only_form='natural_confirmation')
+    run, _, requests, _ = graph(tmp_path, answer_only=True, answer_only_form='natural_confirmation')
     result = asyncio.run(run.run(max_opportunities=1))
     assert result.transitions
     gradients = []

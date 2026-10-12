@@ -8,7 +8,7 @@ from typing import Any, Callable, Mapping, Protocol, Sequence
 from .. import versions
 from .benchmark import BenchmarkAdapter
 from .search_ports import SearchEngine
-from .evaluation import AdaptiveValidationGate, CandidateEvaluationPipeline
+from .evaluation import AdaptiveValidationGate
 from .history import HistoryState, MemoryProvider, NullMemoryProvider, NullPatternAnalyzer, PatternAnalyzer
 from .policies import (
     EvidencePolicy, GlobalStopPolicy, OpportunityFeasibilityPolicy,
@@ -48,7 +48,7 @@ class OpportunityTrace:
     child_state_id: str
     stop_reason: str | None
     proposal_exposed: int = 0
-    local_search_survival_update: int = 0
+    population_retained_candidates: int = 0
     evidence_audit: Mapping[str, Any] = field(default_factory=dict)
     memory_audit: Mapping[str, Any] = field(default_factory=dict)
     allocation_audit: Mapping[str, Any] = field(default_factory=dict)
@@ -62,6 +62,7 @@ class UnifiedSearchResult:
     trace: tuple[OpportunityTrace, ...]
     transitions: tuple[TransitionRecord, ...]
     method_identity: str
+    final_assembly: Mapping[str, Any] = field(default_factory=dict)
 
 
 class StateAnalyzer:
@@ -104,7 +105,7 @@ class UnifiedSearchOrchestrator:
         self, *, method: SearchMethodConfig, benchmark: BenchmarkAdapter,
         aggregation: Any, state: TeamStateStore, analyzer: StateAnalyzer,
         opportunities: OpportunityBuilder, engine: SearchEngine,
-        evaluation: CandidateEvaluationPipeline, transition: TransitionPolicy,
+        evaluation: Any, transition: TransitionPolicy,
         gate: AdaptiveValidationGate, committer: TeamStateCommitter,
         history: HistoryState | None = None,
         memory: MemoryProvider | None = None,
@@ -166,12 +167,10 @@ class UnifiedSearchOrchestrator:
             raise SearchContractError("SCIENTIFIC_DECISION_REQUIRED: aggregation-aware responsibility")
         if getattr(self.aggregation, "identity", None) != self.method.aggregation_policy:
             raise SearchContractError("aggregation implementation/method identity mismatch")
-        expected_acceptance='layer1_local_guidance_team_admission_v1'
+        expected_acceptance='population_retention_separate_joint_team_admission_v2'
         if self.method.search_acceptance_policy != expected_acceptance:
             raise SearchContractError("CURRENT_TEAM_ADMISSION_POLICY_MISMATCH")
-        if (self.opportunities.search_metric_budget != 42 or
-                self.opportunities.evidence.metric_budget != self.opportunities.search_metric_budget or
-                self.opportunities.evidence.minimum != 3):
+        if self.opportunities.search_metric_budget != 0:
             raise SearchContractError("CURRENT_LAYER1_BUDGET_MISMATCH")
         checks = ((self.engine, self.method.search_engine), (self.memory, self.method.memory_policy),
                   (self.opportunities.patterns, self.method.pattern_policy),
@@ -193,14 +192,16 @@ class UnifiedSearchOrchestrator:
         if scores is None or identity is None:
             raise SearchContractError("INITIAL_COMPETENCE_NOT_FROZEN")
         self.transition.bind_initial(scores, identity)
-        trace: list[OpportunityTrace] = []
+        self.evaluation.provider.bootstrap()
+        trace: list[OpportunityTrace] = list(getattr(self,'resume_trace',()))
         reason = "OPERATIONAL_OPPORTUNITY_CEILING"
-        for index in range(max_opportunities):
+        for index in range(getattr(self,'resume_ordinal',0),max_opportunities):
             if self._emergency_provider_limit_reached():
                 reason = "EMERGENCY_PROVIDER_CALL_CEILING"
                 break
             parent = self.state.snapshot()
             diagnosis = self.analyzer.analyze(parent, self.history)
+            self.checkpoint.pending(index)
             opportunity = self.opportunities.build(
                 state=parent, diagnosis=diagnosis,
                 history=self.history, update_index=index,
@@ -276,7 +277,7 @@ class UnifiedSearchOrchestrator:
                     "eligible_members", (opportunity.target_member,),
                 )),
                 selected_member=opportunity.target_member,
-                local_update=(searched.local_survival_update_count > 0),
+                local_update=any(r.diagnostics.get('population_update',{}).get('retained') for r in evaluated),
                 committed=committed is not None,
             )
             allocation = {}
@@ -314,18 +315,20 @@ class UnifiedSearchOrchestrator:
                 tuple(row.candidate_id for row in searched.candidates),
                 tuple(row.candidate.candidate_id for row in evaluated if row.promoted),
                 selected, committed, child.team_state_id, stopped,
-                searched.team_candidate_count, searched.local_survival_update_count,
+                searched.team_candidate_count, sum(bool(r.diagnostics.get('population_update',{}).get('retained')) for r in evaluated),
                 opportunity.evaluation_plan.get("evidence_audit", {}),
                 self.memory.audit() if hasattr(self.memory, "audit") else {},
                 allocation,
             ))
+            self.checkpoint.save(index+1,trace)
             if stopped is not None:
                 reason = stopped
                 break
             if self._emergency_provider_limit_reached():
                 reason = "EMERGENCY_PROVIDER_CALL_CEILING"
                 break
-        return UnifiedSearchResult(
-            initial, self.state.snapshot().team_state_id, reason,
-            tuple(trace), tuple(self.history.transitions), self.method.identity(),
-        )
+        self.checkpoint.close_selection()
+        assembly=await self.finalizer.finalize()
+        if self.execution_observer:self.execution_observer('FINAL_ASSEMBLY',assembly)
+        return UnifiedSearchResult(initial, assembly['proposed_team_state_id'], reason,
+            tuple(trace), tuple(self.history.transitions), self.method.identity(), assembly)

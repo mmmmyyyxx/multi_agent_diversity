@@ -44,15 +44,16 @@ invariants:
   critical: true
   status: ACTIVE
 - id: INV-MATH-INITIAL-SYMMETRY-001
-  description: Five byte-identical minimal V1_2 initial prompts with distinct member
-    IDs and independent Solver request/cache lanes; historical V1_1 is immutable.
-  authority: docs/design/CURRENT_SPEC.md
+  description: Frozen five-member initial prompt artifact retains independent member
+    Solver lanes; no historical realization initializes a new scope.
+  authority: docs/design/VOTE_GUIDED_PARENT_POPULATION_V29.md
   implementation_refs:
   - multi_dataset_diverse_rl/benchmarks/current_math_dependencies.py
   - multi_dataset_diverse_rl/benchmarks/initial_condition_contract.py
   - multi_dataset_diverse_rl/search/provider_runtime.py
   tests:
-  - tests/current/test_structured_system_contract.py
+  - tests/current/test_vote_parent_population.py
+  - tests/current/test_structured_production_entrypoint.py
   failure_refs: []
   critical: true
   status: ACTIVE
@@ -616,12 +617,14 @@ invariants:
   status: HISTORICAL_GIT_ONLY
   recovery_source: 4119d75f135537ed610edae3919f5203116b91e3
 - id: INV-VARIABLE-EVIDENCE-001
-  description: Active V2 mechanism contract; see normative specification.
-  authority: docs/design/CURRENT_SPEC.md
+  description: Shared selected-Pattern support is Optimize-only; all legal children
+    receive complete Optimize fitness, not a small-panel accuracy proxy.
+  authority: docs/design/VOTE_GUIDED_PARENT_POPULATION_V29.md
   implementation_refs:
   - multi_dataset_diverse_rl/search/variable_evidence.py
   tests:
-  - tests/current/test_structured_optimization_evidence.py
+  - tests/current/test_vote_parent_population.py
+  - tests/current/test_structured_production_entrypoint.py
   failure_refs: []
   critical: true
   status: ACTIVE
@@ -797,30 +800,33 @@ invariants:
   - tests/current/test_structured_system_contract.py
   failure_refs: []
   critical: true
-  status: HISTORICAL_GIT_ONLY
+  status: HISTORICAL_V28_SOURCE_PINNED
   recovery_source: 1f74d4df2dc2591f58b31807264a1505370035fe
+  replay_source: 905268bad94fa9a70fb9b719c0c68d6588cd7d9d
 - id: INV-V24-FRESH-ATTEMPT-001
   description: No historical execution, response imports, cache, competence Memory
     or authorization can initialize V2.4.
-  authority: docs/design/STRUCTURED_SYSTEM_PROMPT_V24.md
+  authority: docs/design/VOTE_GUIDED_PARENT_POPULATION_V29.md
   implementation_refs:
   - multi_dataset_diverse_rl/search/current_policy.py
   - multi_dataset_diverse_rl/benchmarks/math_structured_binding.py
   tests:
-  - tests/current/test_structured_system_contract.py
+  - tests/current/test_vote_parent_population.py
+  - tests/current/test_structured_production_entrypoint.py
   failure_refs: []
   critical: true
   status: ACTIVE
 - id: INV-V25-RESPONSIBILITY-001
   description: Any member wrong is eligible; positive responsibility priority and
     seeded zero fallback.
-  authority: docs/design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md
+  authority: docs/design/VOTE_GUIDED_PARENT_POPULATION_V29.md
   implementation_refs:
   - multi_dataset_diverse_rl/search/policies.py
   - multi_dataset_diverse_rl/search/variable_evidence.py
   - multi_dataset_diverse_rl/search/binary_runtime.py
   tests:
-  - tests/current/test_v25_repair_contract.py
+  - tests/current/test_vote_parent_population.py
+  - tests/current/test_structured_production_entrypoint.py
   failure_refs: []
   critical: true
   status: ACTIVE
@@ -847,7 +853,8 @@ invariants:
   - tests/current/test_v25_repair_contract.py
   failure_refs: []
   critical: true
-  status: ACTIVE
+  status: HISTORICAL_V28_SOURCE_PINNED
+  replay_source: 905268bad94fa9a70fb9b719c0c68d6588cd7d9d
 - id: INV-V25-EVALUATED-PARENT-001
   description: Every safe evaluated local edit advances temporary parent; complete
     actual chain retained.
@@ -859,9 +866,11 @@ invariants:
   - tests/current/test_v25_repair_contract.py
   failure_refs: []
   critical: true
-  status: ACTIVE
+  status: HISTORICAL_V28_SOURCE_PINNED
+  replay_source: 905268bad94fa9a70fb9b719c0c68d6588cd7d9d
 - id: INV-MATH-FLEXIBLE-ANSWER-001
-  description: Clear mathematical declarations and consistent confirmations are valid independently of correctness; conflicts and truncation stay invalid.
+  description: Clear mathematical declarations and consistent confirmations are valid
+    independently of correctness; conflicts and truncation stay invalid.
   authority: docs/design/FLEXIBLE_ANSWER_EXTRACTION_V3.md
   implementation_refs:
   - multi_dataset_diverse_rl/benchmarks/math_flexible_answer.py
@@ -873,7 +882,8 @@ invariants:
   critical: true
   status: ACTIVE
 - id: INV-V25-GENERATED-OUTPUT-RECOVERY-001
-  description: Only typed post-response generation failures recover within frozen bounds; integrity and unknown failures remain fatal.
+  description: Only typed post-response generation failures recover within frozen
+    bounds; integrity and unknown failures remain fatal.
   authority: docs/design/GENERATED_OUTPUT_RECOVERY_V25.md
   implementation_refs:
   - multi_dataset_diverse_rl/search/generation_failures.py
@@ -885,9 +895,11 @@ invariants:
   failure_refs:
   - FAIL-V25-GENERATED-OUTPUT-LOCALIZATION
   critical: true
-  status: ACTIVE
+  status: HISTORICAL_V28_SOURCE_PINNED
+  replay_source: 905268bad94fa9a70fb9b719c0c68d6588cd7d9d
 - id: INV-V25-GENERIC-PROVENANCE-001
-  description: Symbolic overlap requires bounded structure and generic context; gold and specific-answer provenance remain protected.
+  description: Symbolic overlap requires bounded structure and generic context; gold
+    and specific-answer provenance remain protected.
   authority: docs/design/GENERATED_OUTPUT_RECOVERY_V25.md
   implementation_refs:
   - multi_dataset_diverse_rl/search/symbolic_provenance.py
@@ -899,7 +911,8 @@ invariants:
   critical: true
   status: ACTIVE
 - id: INV-V25-TERMINAL-CLOSURE-001
-  description: Resource closure and verified durable evidence precede completion marker; milestones grant no resume authorization.
+  description: Resource closure and verified durable evidence precede completion marker;
+    milestones grant no resume authorization.
   authority: docs/design/GENERATED_OUTPUT_RECOVERY_V25.md
   implementation_refs:
   - multi_dataset_diverse_rl/governance/autonomous_math.py
@@ -959,8 +972,9 @@ invariants:
   critical: true
   status: ACTIVE
 - id: INV-V28-EXPERIENCE-SCOPE-001
-  description: Related measured Full experience is delivered within the existing context bound;
-    actual edits, applicability and measurement scope do not establish causal rules.
+  description: Related measured Full experience is delivered within the existing context
+    bound; actual edits, applicability and measurement scope do not establish causal
+    rules.
   authority: docs/design/SCOPED_EDIT_EXPERIENCE_LAYER1_V28.md
   implementation_refs:
   - multi_dataset_diverse_rl/search/scoped_edit_experience.py
@@ -970,10 +984,12 @@ invariants:
   failure_refs:
   - FAIL-V27-FULL-EXPERIENCE-DELIVERY
   critical: true
-  status: ACTIVE
+  status: HISTORICAL_V28_SOURCE_PINNED
+  replay_source: 905268bad94fa9a70fb9b719c0c68d6588cd7d9d
 - id: INV-V28-LAYER1-EVIDENCE-001
-  description: Mutation-only root diagnostics and worked references plus measured preceding-attempt
-    feedback reach Reflection; no held-out or optimizer-only evidence enters Solver.
+  description: Mutation-only root diagnostics and worked references plus measured
+    preceding-attempt feedback reach Reflection; no held-out or optimizer-only evidence
+    enters Solver.
   authority: docs/design/SCOPED_EDIT_EXPERIENCE_LAYER1_V28.md
   implementation_refs:
   - multi_dataset_diverse_rl/search/current_layer1.py
@@ -982,5 +998,39 @@ invariants:
   - tests/current/test_scoped_experience_layer1.py
   failure_refs:
   - FAIL-V27-LAYER1-EVIDENCE-LOSS
+  critical: true
+  status: HISTORICAL_V28_SOURCE_PINNED
+  replay_source: 905268bad94fa9a70fb9b719c0c68d6588cd7d9d
+- id: INV-V29-POPULATION-001
+  description: Three draws share a frozen population; lowest fitness eviction and
+    exact scope recovery.
+  authority: docs/design/VOTE_GUIDED_PARENT_POPULATION_V29.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/parent_population.py
+  tests:
+  - tests/current/test_vote_parent_population.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-V29-REFLECTION-001
+  description: One grounded block edit with distinct root/selected-parent evidence;
+    no abstention or inner feedback.
+  authority: docs/design/VOTE_GUIDED_PARENT_POPULATION_V29.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/current_layer1.py
+  tests:
+  - tests/current/test_vote_parent_population.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE
+- id: INV-V29-FINAL-001
+  description: Closure per-pool argmax is jointly evaluated; rejected proposal never
+    silently replaced.
+  authority: docs/design/VOTE_GUIDED_PARENT_POPULATION_V29.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/population_evaluation.py
+  tests:
+  - tests/current/test_vote_parent_population.py
+  failure_refs: []
   critical: true
   status: ACTIVE

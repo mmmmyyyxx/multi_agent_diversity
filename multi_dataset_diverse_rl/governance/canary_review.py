@@ -35,10 +35,11 @@ def initial_audit(contract,composed,run_root):
             for member,profiles in composed.state.profiles.items()
             for example,profile in zip(composed.state.examples,profiles,strict=True)))
     state=composed.state.snapshot()
-    if len(composed.memory.competence)!=5:
+    if (len(composed.memory.competence.get('initial_member_scores',()))!=5
+            or composed.memory.competence.get('initial_state_id')!=state.team_state_id):
         raise SearchContractError('CANARY_INITIAL_COMPETENCE_MEMORY_MISSING')
     return {**audit,'member_scores':state.member_scores,'initial_state_id':state.team_state_id,
-        'initial_memory_entries':5,'validation_calls':0,'test_calls':0}
+        'initial_memory_member_measurements':5,'validation_calls':0,'test_calls':0}
 
 
 def profile_audit(contract,solver,run_root,profiles):
@@ -81,10 +82,7 @@ def profile_audit(contract,solver,run_root,profiles):
 
 def opportunity_audit(contract,composed,run_root,opportunity):
     rows=trace_rows(run_root);gradient=composed.opportunities.patterns.extractor.provider
-    membership=opportunity.evaluation_plan['evidence_audit']['memberships']
-    groups=list(map(set,membership.values()))
-    if any(a&b for i,a in enumerate(groups) for b in groups[:i]):
-        raise SearchContractError('CANARY_EVIDENCE_ROLE_OVERLAP')
+    membership=opportunity.evaluation_plan['evidence_audit']['repair_example_ids']
     examples={e.item.input_id:e for e in composed.state.examples}
     diagnostics=[row for row in rows if row['role']=='pattern_gradient' and 'response' in row]
     wrong={r.example_id for r in opportunity.evaluation_plan['evidence_universe']
@@ -100,18 +98,18 @@ def opportunity_audit(contract,composed,run_root,opportunity):
         observed.append(xid)
     if set(observed)!=wrong or any(not 1<=n<=3 for n in Counter(observed).values()):
         raise SearchContractError('CANARY_INDEPENDENT_GRADIENT_MEMBERSHIP_MISMATCH')
-    mutation_problems=[r.signals['input_payload'] for r in opportunity.evidence.mutation_evidence]
+    mutation_problems=[r.signals['input_payload'] for r in opportunity.evidence.repair_examples]
     mutations=[row for row in rows if row['role']=='reflection']
     for row in mutations:
         text=row['request']['messages'][0]['content']
         packet=json.loads('{'+text.rsplit('\n{',1)[1])
-        if [r['problem'] for r in packet['current_panel_observations']]!=mutation_problems:
+        if [r['problem'] for r in packet['repair_examples']]!=mutation_problems:
             raise SearchContractError('CANARY_MUTATION_MEMBERSHIP_MISMATCH')
-    statuses=Counter(e.record['status'] for e in composed.memory.private)
-    return dict(target_member=opportunity.target_member,membership_disjoint=True,
+    if len(mutations)>6:raise SearchContractError('CANARY_POPULATION_DRAW_CEILING')
+    return dict(target_member=opportunity.target_member,shared_pattern_support=membership,
         gradient_diagnostics=len(wrong),gradient_physical_draws=len(observed),proposal_generations=len(mutations),
-        probe_candidates=len(composed.evaluation.provider.probed),
-        full_candidates=len(composed.evaluation.provider.fulled),memory_status_counts=dict(statuses),
+        independent_slots=3 if mutations else 0,
+        full_candidates=len(composed.evaluation.provider.fulled),memory_audit=composed.memory.audit(),
         branch_observation=dict(gradient='OBSERVED',mutation='OBSERVED' if mutations else 'NOT_OBSERVED',
             full='OBSERVED' if composed.evaluation.provider.fulled else 'NOT_OBSERVED'),
         observed_flow='ACTUAL_PROVIDER_REQUESTS_AND_COMMITTED_RUNTIME_STATE',

@@ -12,7 +12,7 @@ from multi_dataset_diverse_rl.search.schemas import SearchContractError
 from multi_dataset_diverse_rl.search.symbolic_provenance import abstraction_result
 from multi_dataset_diverse_rl.search.textual_gradients import validate_gradient
 from multi_dataset_diverse_rl.search.partition_completion import complete_known_alias_partition
-from tests.current.test_structured_optimization_evidence import graph,response,HYPOTHESIS
+from tests.current.population_support import graph,response,HYPOTHESIS
 
 def row(problem='Use the given data to compute the requested result.',gold='17',reference=''):
     return SimpleNamespace(example_id='synthetic',signals=dict(input_payload=problem,gold=gold,
@@ -59,7 +59,7 @@ def test_error_message_alone_never_grants_recovery():
 @pytest.mark.parametrize('bad_draws',[1,2,3])
 @pytest.mark.parametrize('bad_kind',['content','null'])
 def test_rejected_gradient_does_not_erase_valid_examples_or_block_layer1(tmp_path,bad_draws,bad_kind):
-    run,broker,requests,_,_=graph(tmp_path);original=broker.transport;counts=Counter();first=[]
+    run,broker,requests,_=graph(tmp_path);original=broker.transport;counts=Counter();first=[]
     def transport(req):
         if req['model']!='gpt-4o-mini' and len(req['messages'])==2:
             packet=json.loads(req['messages'][1]['content'])
@@ -82,10 +82,10 @@ def test_rejected_gradient_does_not_erase_valid_examples_or_block_layer1(tmp_pat
     assert result.trace[0].candidate_ids
     assert broker.usage['pattern_cluster']>0 and broker.usage['reflection']>0
     assert counts[first[0]]<=3
-    assert 'Return 2.' not in json.dumps([e.record for e in run.memory.private])
+    assert 'Return 2.' not in json.dumps(run.memory.export())
 
 def test_all_rejected_gradients_end_legitimately_without_clustering(tmp_path):
-    run,broker,_,_,_=graph(tmp_path);original=broker.transport;counts=Counter()
+    run,broker,_,_=graph(tmp_path);original=broker.transport;counts=Counter()
     def transport(req):
         if req['model']!='gpt-4o-mini' and len(req['messages'])==2:
             packet=json.loads(req['messages'][1]['content'])
@@ -101,7 +101,7 @@ def test_all_rejected_gradients_end_legitimately_without_clustering(tmp_path):
     assert all(d['disposition']=='NONACTIONABLE_EXHAUSTED' for d in run.opportunities.patterns.extractor.evidence_diagnostics)
 
 def test_invalid_pattern_drops_only_known_support_and_other_pattern_reaches_layer1(tmp_path):
-    run,broker,_,_,_=graph(tmp_path);original=broker.transport
+    run,broker,_,_=graph(tmp_path);original=broker.transport
     def transport(req):
         if req['model']!='gpt-4o-mini' and len(req['messages'])==2:
             packet=json.loads(req['messages'][1]['content'])
@@ -164,25 +164,9 @@ def test_truncated_optimizer_receipts_are_charged_not_cached_and_budget_prevents
                 messages=[dict(role='user',content='Synthetic failure evidence.')])
         assert len(calls)==2 and not ledger.inflight
 
-def test_truncated_reflection_is_charged_and_keeps_prior_successful_candidates(tmp_path):
-    run,broker,_,_,_=graph(tmp_path);original=broker.transport;reflection_draws=0
-    def transport(req):
-        nonlocal reflection_draws
-        value=original(req)
-        if req['model']!='gpt-4o-mini' and len(req['messages'])==1:
-            reflection_draws+=1
-            if reflection_draws==3:return {**value,'finish_reason':'length'}
-        return value
-    broker.transport=transport
-    result=asyncio.run(run.run(max_opportunities=1))
-    assert result.trace[0].candidate_ids
-    outcomes=run.synthetic_search.search_state['proposal_diagnostics']['proposal_outcomes']
-    assert outcomes[2]['status']=='GENERATION_REJECTED'
-    assert any(o['status']=='LOCALLY_EVALUATED' for o in outcomes[:2])
-    assert broker.usage['reflection']>=3
 
 def test_generation_recovery_does_not_hide_provider_integrity_failure(tmp_path):
-    run,broker,_,_,_=graph(tmp_path);original=broker.transport
+    run,broker,_,_=graph(tmp_path);original=broker.transport
     def transport(req):
         if req['model']!='gpt-4o-mini':raise SearchContractError('FROZEN_REQUEST_IDENTITY_MISMATCH')
         return original(req)

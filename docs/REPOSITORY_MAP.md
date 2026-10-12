@@ -3,11 +3,16 @@
 Current authority: AGENTS.md, docs/design/CURRENT_SPEC.md and
 [Responsibility Fallback V2.5](design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md) with
 [flexible extraction V3](design/FLEXIBLE_ANSWER_EXTRACTION_V3.md).
+The current Layer1 authority is [V2.9 population search](design/VOTE_GUIDED_PARENT_POPULATION_V29.md).
 
 | Path | Role |
 |---|---|
 | multi_dataset_diverse_rl/search/system_prompt.py | Sole structured member prompt state and block identity |
 | multi_dataset_diverse_rl/search/current_composition.py | Sole production graph |
+| multi_dataset_diverse_rl/search/parent_population.py | Bounded per-member fitness and independent sampling |
+| multi_dataset_diverse_rl/search/population_evaluation.py | Complete Optimize fitness and joint final assembly |
+| multi_dataset_diverse_rl/search/population_checkpoint.py | Atomic complete-boundary state recovery; no API grant |
+| multi_dataset_diverse_rl/search/population_memory.py | Scoped single-step measured edit experience |
 | multi_dataset_diverse_rl/search/optimizer_output_contract.py | Strict optimizer types and source-free bounded retry feedback |
 | multi_dataset_diverse_rl/current_contract.py | See package-root current_contract.py for closed identity imports |
 | multi_dataset_diverse_rl/benchmarks/math_structured_binding.py | Fresh V2.5 freeze and composition |

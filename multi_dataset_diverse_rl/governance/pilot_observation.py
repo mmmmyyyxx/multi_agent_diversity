@@ -14,17 +14,7 @@ def plain(value):
 
 
 def memory_snapshot(memory):
-    names=('revision','sequence','clock','private','failures','shared','failure_events',
-        'risk_counts','counts','peak','evictions','context_lengths','read_private_count',
-        'read_shared_count','write_count','limits')
-    result={k:plain(getattr(memory,k)) for k in names}
-    if getattr(memory,'optimization_evidence_policy',None):
-        result['competence']=plain(memory.competence)
-        result['optimization_evidence_policy']=plain(memory.optimization_evidence_policy)
-    for row,entry in zip(result['shared'],memory.shared,strict=True):
-        row.update(memory_id=entry.memory_id,visible=entry.visible())
-    result['audit']=plain(memory.audit())
-    return result
+    return {**memory.export(),'audit':plain(memory.audit())}
 
 
 def attach_pilot_observer(composed, run_root):
@@ -37,9 +27,8 @@ def attach_pilot_observer(composed, run_root):
         context.clear();context.update(opportunity_id=data['opportunity_id'],target_member=data['target_member'])
         journal(stage,data)
     def generation(stage,data):
-        context.update(opportunity_id=data['opportunity_id'],target_member=data['target_member'],generation=data['generation'])
+        context.update(slot=data['outcome']['slot'])
         journal(stage,data)
     composed.observation_observer=opportunity
-    composed.engine.optimizer.observation_observer=generation
-    memory.observation_observer=journal
+    composed.engine.optimizer.execution_observer=generation
     journal('PRE_PROFILE_MEMORY_STORAGE',{})

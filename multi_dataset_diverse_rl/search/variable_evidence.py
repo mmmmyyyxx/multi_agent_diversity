@@ -17,5 +17,5 @@ class VariableEvidenceFeasibilityV1:
             if not row.example_id or row.example_id in unique:raise SearchContractError('EVIDENCE_ID_DUPLICATE_OR_MISSING')
             if type(row.signals.get('target_member_correct')) is not bool:raise SearchContractError('TARGET_CORRECTNESS_SIGNAL_REQUIRED')
             unique[row.example_id]=row
-        if len(unique)<12:raise SearchContractError('DISJOINT_OPTIMIZE_EVIDENCE_INSUFFICIENT')
+        if not unique:raise SearchContractError('COMPLETE_OPTIMIZE_EVIDENCE_REQUIRED')
         return any(not r.signals['target_member_correct'] for r in unique.values())

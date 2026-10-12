@@ -3,16 +3,17 @@
 The sole active research architecture is Unified Team Prompt Search.
 Research interpretation follows [scientific principles](design/SCIENTIFIC_PRINCIPLES.md)
 and the [MATH measurement contract](design/MATH_SCIENTIFIC_CONTRACT.md).
-The sole current method is V2.8 scoped edit experience and Layer1 evidence feedback,
-`unified_team_prompt_search_v2_8_scoped_experience_v1`.
-See the [V2.8 experience and Layer1 amendment](design/SCOPED_EDIT_EXPERIENCE_LAYER1_V28.md).
+The sole current method is V2.9 Vote-Guided Parent Population Search,
+`unified_team_prompt_search_v2_9_vote_parent_population_v1`.
+See the [V2.9 population amendment](design/VOTE_GUIDED_PARENT_POPULATION_V29.md).
 
 [Current specification](design/CURRENT_SPEC.md) and
 [V2.5 scientific contract](design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md) define the
 complete editable Role/Strategy/Answer System Prompt, raw-question User message,
 natural response evidence, gold-blind extraction and bounded invalid recovery.
-V2.5 adds seeded zero-responsibility fallback, quota-free evidence, structural
-recovery, evaluated local parents and assigned repair plus independent Probe.
+Seeded zero-responsibility fallback and bounded structural recovery remain.
+V2.9 replaces the local chain/Probe with independent population repairs and
+complete Optimize fitness, then jointly evaluates the final per-pool argmax team.
 The [output recovery amendment](design/GENERATED_OUTPUT_RECOVERY_V25.md) localizes
 typed generated-content failures and checks symbolic overlap with source context.
 Full admission, plurality, Shadow, Memory transactions and atomic commit remain.

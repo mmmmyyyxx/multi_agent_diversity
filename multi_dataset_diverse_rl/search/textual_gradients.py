@@ -482,38 +482,3 @@ class GradientPatternDiscovery:
         if completion is not None:
             context['partition_completion_audit']=deepcopy(self.cluster_provider.partition_audit[-1]) if self.cluster_provider.partition_audit else None
         return context
-
-
-
-
-class DisjointGradientEvidence:
-    """Same Pattern hypothesis, separately measured Optimize scopes."""
-    def __init__(self,seed,policy):
-        from .optimization_evidence import EVIDENCE, frozen_policy
-        self.identity=EVIDENCE;self.seed=seed;self.policy=frozen_policy(policy)
-        self.metric_budget=42;self.minimum=3
-
-    def can_compose(self,rows):
-        # Before Gradient calls: reserve legal rows even for singleton support.
-        # This is a technical role-capacity check, not a local acceptance veto.
-        return len(rows)>=12 and any(not r.signals['target_member_correct'] for r in rows)
-
-    def compose_opportunity(self,state,diagnosis,member_id,rows,context,*,ordinal):
-        from .selected_evidence import compose_disjoint_evidence
-        view,audit=compose_disjoint_evidence(rows,context,seed=self.seed,member=member_id,ordinal=ordinal,state_id=state.team_state_id)
-        gradients={g['example_id']:g['gradient'] for g in context.get('per_example_gradients',())}
-        def enrich(row):
-            if 'REPAIR' not in row.roles:return row
-            if row.example_id not in gradients:return row
-            s=row.signals
-            return replace(row,signals={**s,'failure_trajectory':dict(
-                problem=s['input_payload'],reference=s['gold'],prediction=s.get('target_output'),
-                solver_trajectory=s['solver_trajectory'],per_example_gradient=gradients[row.example_id]),
-                'per_example_gradient':gradients[row.example_id]})
-        # Validation records do not become mutation input.
-        return replace(view,mutation_evidence=tuple(map(enrich,view.mutation_evidence))),{
-            **audit,'nonactionable':bool(context.get('nonactionable')),
-            'gradient_logical_calls':context.get('gradient_logical_calls',0),
-            'gradient_physical_calls':context.get('gradient_physical_calls',0),
-            'cluster_physical_calls':context.get('cluster_physical_calls',0),
-            'cluster_logical_calls':context.get('cluster_logical_calls',1)}

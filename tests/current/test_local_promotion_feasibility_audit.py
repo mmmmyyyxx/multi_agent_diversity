@@ -27,17 +27,6 @@ def test_selection_cannot_read_future_full_labels():
     assert before==[[r['candidate_id'] for r in f(mutated)] for f in (select_probe,select_local)]
 
 
-def test_probe_replay_matches_production_and_floor_removal_retains_risk_bound():
-    from multi_dataset_diverse_rl.search.evaluation import FixedPeerPromotion
-    from multi_dataset_diverse_rl.search.optimization_evidence import PROBE_POLICY
-    rows=[candidate('c1'),candidate('c2',assigned=0,vote=1),candidate('c3',risk=False,vote=5)]
-    fixtures=[]
-    for r in rows:
-        d=dict(probe_policy=PROBE_POLICY,assigned_repair_count=r['assigned_repairs'],risk_pass=r['probe_risk_pass'],
-            collateral_loss=0,team_probe_metrics=SimpleNamespace(vote_delta=r['probe_vote_delta'],target_delta=0,invalid_delta=0))
-        fixtures.append((SimpleNamespace(candidate_id=r['candidate_id']),SimpleNamespace(aggregation_diagnostics=d)))
-    assert list(FixedPeerPromotion().select(fixtures))==[r['candidate_id'] for r in select_probe(rows)]==['c1']
-    assert [r['candidate_id'] for r in select_probe(rows,assigned=False)]==['c2','c1']
 
 
 def test_wrong_cluster_change_can_improve_vote_without_assigned_repair():

@@ -6,7 +6,7 @@ All accounting and execution writes use a separate temporary workspace.
 import asyncio,json
 from pathlib import Path
 import pytest
-from tests.current.test_structured_optimization_evidence import response,HYPOTHESIS
+from tests.current.population_support import response,HYPOTHESIS
 from multi_dataset_diverse_rl.benchmarks.math_domain_binding import execution_binding
 from multi_dataset_diverse_rl.governance import autonomous_math,canary_review
 from multi_dataset_diverse_rl.persistence.durable_io import atomic_write_json,read_json
@@ -18,7 +18,8 @@ ROOT=Path(__file__).resolve().parents[2]
 FRESH='experiments/execution_bindings/a4_v25_seed81_canary_attempt1.json'
 
 def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct=False,structural=False,
-        seed=81,team_version=None,development_subsets=None,structural_kind='syntax',execution_policy=None,token_only=False):
+        seed=81,team_version=None,development_subsets=None,structural_kind='syntax',execution_policy=None,token_only=False,
+        legal_children=False):
     from hashlib import sha256
     from multi_dataset_diverse_rl.benchmarks.math_structured_binding import derive_structured_contract, gradient_prompt_artifact
     from multi_dataset_diverse_rl.search.optimization_evidence import POLICY
@@ -103,14 +104,15 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
     atomic_write_json(tmp_path/fresh,c)
     requests=[]
     from collections import Counter
-    gradient_draws=Counter();cluster_draws=0
+    gradient_draws=Counter();cluster_draws=0;reflection_draws=0
     def transport(req):
-        nonlocal cluster_draws
+        nonlocal cluster_draws,reflection_draws
         requests.append(req)
         if req['model']=='gpt-4o-mini':
             problem=req['messages'][1]['content']
             answer,i,split=answer_by_problem[problem]
-            return response('Synthetic visible calculation and constraint check.\nFinal answer: '+(answer if all_correct or i>=6 else '999999997'))
+            repaired=legal_children and 'conditional repair' in req['messages'][0]['content'] and i==0
+            return response('Synthetic visible calculation and constraint check.\nFinal answer: '+(answer if all_correct or repaired or i>=6 else '999999997'))
         if len(req['messages'])==2:
             p=json.loads(req['messages'][1]['content'])
             if 'example' in p:
@@ -125,6 +127,10 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
             if structural and cluster_draws==1:return response(None if structural_kind=='null' else 'malformed JSON')
             return response(json.dumps(dict(patterns=[dict(generalized_gradient=HYPOTHESIS,
                 support_ids=[g['example_id'] for g in p['gradients']])],unassigned_ids=[])))
+        reflection_draws+=1
+        if legal_children:return response(json.dumps(dict(target_block='strategy',
+            new_content=f'Apply conditional repair {reflection_draws}: check domains before transformation.',
+            change_summary='Apply one conditional domain repair.')))
         return response('{"decision":"NO_SAFE_EDIT"}')
     class Client:
         closed=False
@@ -153,10 +159,10 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
     assert [r['stage'] for r in reviews]==(['INITIAL_SOLVER_PROFILE'] if all_correct else
         ['INITIAL_SOLVER_PROFILE','FIRST_COMPLETE_OPPORTUNITY'])
     initial_profiles=750 if phase=='formal' else 300 if phase=='pilot' else 60
-    assert reviews[0]['audit']['logical_profiles']==initial_profiles and reviews[0]['audit']['initial_memory_entries']==5
+    assert reviews[0]['audit']['logical_profiles']==initial_profiles and reviews[0]['audit']['initial_memory_member_measurements']==5
     if not all_correct:
         assert reviews[1]['audit']['gradient_diagnostics']==6
-        assert reviews[1]['audit']['branch_observation']['full']=='NOT_OBSERVED'
+        assert reviews[1]['audit']['branch_observation']['full']==('OBSERVED' if legal_children else 'NOT_OBSERVED')
     opportunity_count=0 if all_correct else (len(result['result']['trace']) if phase=='formal' else 5 if phase=='pilot' else 1)
     assert len(result['result']['trace'])==opportunity_count
     assert result['result']['stop_reason']==('NO_REPAIR_SIGNAL' if all_correct else
@@ -164,8 +170,12 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
     if phase=='pilot':
         assert result['pilot_status']=='INCOMPLETE_OPERATIONAL_TRUNCATION'
     assert result['accounting']['authorized_total']==(None if phase=='formal' else 2_000_000) and not result['accounting']['reserved_inflight']
-    assert result['validation_calls']==result['test_calls']==0 and result['memory_audit']['initial_memory_entries']==5
-    assert len([r for r in requests if r['model']=='gpt-4o-mini'])==initial_profiles
+    assert result['validation_calls']==result['test_calls']==0
+    assert result['memory_audit']['stored']==(3 if legal_children else 0)
+    assert result['final_assembly']['admitted'] and result['final_assembly']['selection_repeated'] is False
+    if legal_children:
+        assert len([r for r in requests if r['model']=='gpt-4o-mini'])<=initial_profiles+3*c['initial_competence_binding']['count']+7*c['shadow_count']
+    else:assert len([r for r in requests if r['model']=='gpt-4o-mini'])==initial_profiles+5*c['shadow_count']
     assert result['pattern_gradient_calls']==6*opportunity_count*(2 if structural else 1)
     assert result['pattern_cluster_calls']==(0 if uncertain else opportunity_count+(1 if structural else 0))
     assert client.closed and read_json(run_root/'lifecycle.json')['status']=='EXECUTION_COMPLETE'
@@ -177,6 +187,18 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
     assert (run_root/'lifecycle.json').read_bytes()==closed_lifecycle
     assert (tmp_path/c['token_ledger_directory']/'events.jsonl').read_bytes()==closed_ledger
     return result,requests,client,reviews
+
+
+def test_mock_legal_child_complete_pipeline_records_pool_argmax_and_joint_final_state(tmp_path,monkeypatch):
+    result,requests,client,reviews=_entrypoint_fixture(tmp_path,monkeypatch,False,phase='canary',legal_children=True)
+    assert len(result['result']['trace'][0]['candidate_ids'])==3
+    assert len(result['result']['transitions'])==1
+    final=read_json(tmp_path/'runs/execution/final_team_private.json')
+    state=read_json(tmp_path/'runs/execution/final_state_private.json')
+    assert final['admitted'] and final['state_id']==state['team_state_id']==result['result']['final_state_id']
+    assert final['assembly']['selection']['selection']=='PER_MEMBER_ARGMAX_BEFORE_JOINT_EVALUATION'
+    assert (tmp_path/'runs/execution/parent_population.private.json').is_file()
+    assert result['validation_calls']==result['test_calls']==0
 
 
 @pytest.mark.parametrize('uncertain',[False,True])
@@ -299,7 +321,7 @@ def test_seed84_arm_b_frozen_panels_complete_with_fake_provider_only(tmp_path,mo
         seed=84,team_version=ARM_B_TEAM_VERSION,development_subsets=development)
     initial=read_json(tmp_path/'runs/execution/initial_state_private.json')
     assert len(set(json.dumps(p,sort_keys=True) for p in initial['member_prompts']))==1
-    assert result['accounting']['reserved_inflight']==0 and result['memory_audit']['initial_memory_entries']==5
+    assert result['accounting']['reserved_inflight']==0 and result['memory_audit']['stored']==0
 
 
 @pytest.mark.parametrize('artifact',['final_team_private.json','final_state_private.json'])

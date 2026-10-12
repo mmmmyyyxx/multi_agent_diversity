@@ -7,10 +7,12 @@ import json
 from ..current_contract import MATH_INITIAL_TEAM_VERSION,CURRENT_CACHE_POLICY
 from ..search.system_prompt import SEED, SystemPrompt, CONTRACT
 from ..search.current_policy import CURRENT_POLICY_BUNDLE
-from ..search.current_layer1 import CurrentOptimizer, EvidenceLayer1Config
+from ..search.current_layer1 import CurrentOptimizer, PopulationSearchConfig
 from ..search.current_composition import build_current_team_prompt_search
 from ..search.scientific_aggregation import EquivalencePluralityAggregation
-from ..search.optimization_evidence import POLICY, BINDING, METHOD, MEMORY, EVIDENCE, INPUT, GRADIENT_PROMPT_ID, PROBE_POLICY
+from ..search.optimization_evidence import POLICY, BINDING, METHOD, MEMORY, EVIDENCE, INPUT, GRADIENT_PROMPT_ID
+from ..search.parent_population import POLICY as POPULATION_POLICY
+from ..search.population_evaluation import FINAL_POLICY
 from ..search.textual_gradients import REFERENCE_GRADIENT_PROMPT, CLUSTER_PROMPT, pattern_policy_for_trajectory
 from ..search.schemas import SearchContractError
 from .math_structured_interface import MATHStructuredSystemBenchmark, SYSTEM_PROMPT_POLICY, system_interface_contract, system_prompt_policy
@@ -157,8 +159,9 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
         system_prompt_policy=system_prompt_policy(team_version),answer_extraction_policy=deepcopy(EXTRACTION),
         solver_output_interface=system_interface_contract(team_version),solver_trajectory_policy=trajectory_policy(),
         prediction_validity_policy=validity_contract(),invalid_recovery_policy=structured_recovery_contract(),
-        payload_parser_identity=PARSER,optimization_evidence_policy=deepcopy(POLICY),repair_probe_policy=deepcopy(PROBE_POLICY),
-        optimizer_input_schema=INPUT,layer1_search_policy=asdict(EvidenceLayer1Config()),
+        payload_parser_identity=PARSER,optimization_evidence_policy=deepcopy(POLICY),
+        parent_population_policy=deepcopy(POPULATION_POLICY),final_team_policy=deepcopy(FINAL_POLICY),
+        optimizer_input_schema=INPUT,layer1_search_policy=asdict(PopulationSearchConfig()),
         candidate_contract_identity=CONTRACT,memory_policy_identity=MEMORY,panel_evidence_policy=EVIDENCE,
         gradient_prompt_path=gradient_prompt_path,gradient_prompt_sha256=gradient_prompt_sha256,
         pattern_prompt_path=pattern_prompt_path,pattern_prompt_sha256=pattern_prompt_sha256,
@@ -222,22 +225,27 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
     c['partition_completion_policy']=GRADIENT_PARTITION_COMPLETION_VERSION
     from .protocols import MATH_PROTOCOL_FLEXIBLE_V7
     c['benchmark_protocol_sha256']=MATH_PROTOCOL_FLEXIBLE_V7.identity()
-    c['budget']['metric_calls']=42
+    c.pop('repair_probe_policy',None)
+    from ..search.population_memory import POLICY as memory_policy
+    c['shared_risk_policy']=deepcopy(memory_policy)
+    c['budget']['metric_calls']=0
     count=12 if execution_phase=='canary' else 150 if formal else 60
     name=execution_phase+'_optimize'
     c['initial_competence_binding'].update(count=count,support_identity=c['low_cost_protocol']['membership_hashes'][name])
-    bootstrap=5*(count+c['shadow_count']);per_op=dict(local=42,probe=36,full=2*count,shadow=c['shadow_count'])
-    solver=4*(bootstrap+max_opportunities*sum(per_op.values()))
+    bootstrap=5*(count+c['shadow_count']);per_op=dict(complete_children=3*count,shadow=c['shadow_count'])
+    final_shadow=5*c['shadow_count']
+    solver=4*(bootstrap+max_opportunities*sum(per_op.values())+final_shadow)
     gradients=3*count*max_opportunities;clusters=3*max_opportunities;reflection=6*max_opportunities
     successful=solver+gradients+clusters+reflection;transport=c['decoding']['transport_retries']+1
-    c['provider_bounds']=dict(max_opportunities=max_opportunities,max_proposals_per_opportunity=6,
+    c['provider_bounds']=dict(max_opportunities=max_opportunities,max_proposals_per_opportunity=3,
         solver_per_opportunity=sum(per_op.values()),physical_solver_per_opportunity=4*sum(per_op.values()),
         solver_calls=solver,pattern_gradient_calls=gradients,pattern_cluster_calls=clusters,
         pattern_calls=gradients+clusters,reflection_calls=reflection,successful_provider_calls=successful,
         transport_attempts=successful*transport,attempt_charged_token_ceiling=token_ceiling,
         cumulative_charged_token_ceiling=token_ceiling,reservation_peak_upper_bound=token_ceiling,
-        bound_proof=dict(identity='V25_STRUCTURED_RESOURCE_DERIVATION_V1',
+        bound_proof=dict(identity='V29_POPULATION_RESOURCE_DERIVATION_V1',
             bootstrap_logical_solver_calls=bootstrap,per_op_logical_solver=per_op,
+            final_joint_optimize_additional_calls=0,final_shadow_logical_solver_calls=final_shadow,
             solver_semantic_multiplier=4,gradient_semantic_multiplier=3,cluster_semantic_multiplier=3,transport_multiplier=transport,
             scientific_stopper_unchanged=True,guarantees_saturation=False,
             token_bound=('PRE_TRANSPORT_EXACT_RESERVATION_AND_FINITE_CALL_ADMISSION' if formal

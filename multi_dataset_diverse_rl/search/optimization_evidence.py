@@ -11,49 +11,39 @@ from ..current_contract import CURRENT_METHOD_VERSION as METHOD
 from ..current_contract import OPTIMIZATION_EVIDENCE_POLICY_VERSION as IDENTITY
 from ..current_contract import CURRENT_OPTIMIZER_INPUT_SCHEMA as INPUT
 from ..current_contract import CURRENT_LAYER1_SEARCH_VERSION as LAYER1
-EVIDENCE = 'DISJOINT_QUOTA_FREE_REPAIR_EVIDENCE_V2'
+EVIDENCE = 'SHARED_PATTERN_REPRESENTATIVE_SUPPORT_V3'
 from ..current_contract import CURRENT_EDIT_MEMORY_VERSION as MEMORY
 GRADIENT_INPUT = 'STRUCTURED_SYSTEM_GRADIENT_INPUT_V8'
 from ..current_contract import GRADIENT_PROMPT_VERSION as GRADIENT_PROMPT_ID
 from ..current_contract import MATH_STRUCTURED_SYSTEM_BINDING_VERSION as BINDING
 
-POLICY = dict(identity=IDENTITY, mutation_size=3, search_validation_size=3,
-    team_probe_size=6, assigned_repair='selected_pattern_wrong_mutation_ids_seen',
+POLICY = dict(identity=IDENTITY, maximum_support_examples=3,
+    candidate_evaluation='complete_optimize_member_accuracy_and_fixed_peer_vote',
     opportunity_eligibility='any_member_wrong_no_accuracy_quota',
     responsibility_fallback='seed_team_state_opportunity_ordinal_random_legal',
-    local_parent='every_contract_legal_evaluated_edit',
-    structural_recovery_draws=3, max_generations=6, max_returned_candidates=4,
-    metric_limit=42, sampling='seeded_disjoint_no_correct_wrong_quota_v2',
-    validation_feedback='measured_root_and_actual_parent_counts_next_iteration_v2',
-    selection='validation_net_then_preservation_then_mutation_net_then_generation',
+    local_parent='frozen_opportunity_start_population',
+    structural_draws_per_slot=2, independent_slots=3,
+    sampling='seeded_task_type_round_robin_pattern_support_up_to_three',
+    validation_feedback='none_within_opportunity',
+    selection='fitness_weighted_with_replacement',
     bootstrap='measured_initial_optimize_profiles_zero_llm',
-    edit_memory='scoped_actual_edit_budgeted_delivery_v2',
-    no_safe_edit='no_candidate_no_success', reference_solution_split='optimize',
+    edit_memory='scoped_single_step_actual_complete_optimize_observations',
+    abstention='invalid_output_generation_failure', reference_solution_split='optimize',
     reference_solution_max_chars=4096, candidate_guard='scoped_optimizer_dependency_guard_v2',
     prompt_state='STRUCTURED_SYSTEM_PROMPT_V1', mutation='single_block_per_generation',
     editable_blocks=['role','strategy','answer'], response_evidence='observed_content_optional_trajectory',
     answer_extraction='MATH_FLEXIBLE_ANSWER_EXTRACTION_V3',
-    generated_output_recovery='BOUNDED_REQUEST_OUTPUT_RECOVERY_V3',
+    generated_output_recovery='BOUNDED_SINGLE_STEP_OUTPUT_RECOVERY_V4',
     optimizer_output_feedback='TYPED_OPTIMIZER_OUTPUT_FEEDBACK_V1',
     abstraction='SOURCE_CONTEXT_SYMBOLIC_ABSTRACTION_GUARD_V1',
     optimizer_input_encoding='DIRECT_READABLE_OPTIMIZER_EVIDENCE_V2',
-    layer1_diagnosis='accepted_mutation_root_diagnostics_and_worked_reference_v1',
-    layer1_attempt_feedback='last_three_attempts_metadata_only_v1',
+    layer1_diagnosis='accepted_shared_root_diagnostics_and_actual_selected_parent_observations',
+    layer1_attempt_feedback='typed_structural_recovery_only',
     layer1_prompt_budget='exact_remaining_block_characters_v1',
-    memory_retrieval='related_full_then_complementary_outcome_then_local_v1',
-    memory_budget='protected_primary_full_action_then_complementary_cards_v1',
+    memory_retrieval='exact_parent_then_latest_measured_edit',
+    memory_budget='whole_cards_fit_budget',
     memory_whole_instruction_limit=600,
-    memory_relevance='pattern_terms_edit_concepts_types_block_and_parent_v1')
-
-# Six independent examples: losing at least half of this small panel is a
-# catastrophe. Lesser regression stays measurable; unchanged Full/Shadow decide.
-PROBE_POLICY = dict(identity='SEEN_ASSIGNED_REPAIR_INDEPENDENT_TEAM_PROBE_V2',
-    independent_size=6, minimum_assigned_binary_repairs=1,
-    catastrophic_vote_net_loss=3, catastrophic_target_net_loss=3,
-    catastrophic_collateral_loss=3, invalid_math='incorrect_observation_only',
-    rank=['vote_delta','target_delta','negative_collateral_loss','negative_invalid_delta','candidate_id'],
-    max_full=2, seen_repair_inference='SEEN_ASSIGNED_REPAIR_NOT_GENERALIZATION')
-
+    memory_relevance='explicit_edit_parent_match_and_scope')
 
 def frozen_policy(value):
     if value is None:
@@ -120,6 +110,9 @@ def executability_checks(prompt, *, private_texts=()):
     checks=[]
     if re.search(r'\b(?:selected_gradient|solver_trajectory|retrieved_memory|reference_solution|output_contract_feedback|'
             r'root_repair_diagnostic|worked_reference|preceding_attempts|edit_capacity|'
+            r'selected_parent_observation|root_observation|repair_direction|scoped_experience|'
+            r'selected_parent|selected_parent_sha256|repair_examples|reference_final_answer|accepted_root_diagnostic|'
+            r'fitness_provenance|selection_plan|parent_population|actual_edit_parent_effect|source_experience_id|'
             r'last_step_instruction|delivered_experience_ids|memory_input_sha256|'
             r'ground[_ -]?truth|gold[_ -]?answer)\b|\b(?:read|consult|copy|access|use)\b[^.;\n]{0,55}'
             r'\b(?:gradient|memory|reference answer|correct answer key)\b',prompt,re.I):

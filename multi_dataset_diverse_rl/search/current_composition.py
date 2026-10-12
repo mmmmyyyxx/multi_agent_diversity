@@ -1,7 +1,6 @@
 """The current scientific graph: Responsibility → Gradient → Memory → Layer1 → team."""
 from .binary_responsibility import BinaryPluralityResponsibilityAnalyzer
-from .binary_runtime import BinaryTeamStateStore, BinaryEvidenceSource, FixedPeerTeamEvaluationProvider, FixedPeerPromotion
-from .evaluation import CandidateEvaluationPipeline
+from .binary_runtime import BinaryTeamStateStore, BinaryEvidenceSource
 from .history import HistoryState
 from .orchestrator import StateAnalyzer, UnifiedSearchOrchestrator
 from .policies import TargetPolicyV1, GlobalStopPolicy
@@ -9,11 +8,14 @@ from .private_gate import private_binary_gate
 from .transition import TeamStateCommitter
 from .variable_evidence import VariableEvidenceFeasibilityV1
 from .target_or_team_transition import InitialCompetenceTargetOrTeamProgressV3
-from .current_layer1 import CurrentEngine, EvidenceLayer1Config
+from .current_layer1 import CurrentEngine, PopulationSearchConfig
 from .current_opportunity import CurrentOpportunityBuilder
 from .current_policy import CURRENT_POLICY_BUNDLE
 from .textual_gradients import GradientPatternDiscovery, GradientExtractor
-from .rolling_risk_memory import StructuredRollingRiskMemoryV4
+from .population_memory import PopulationEditMemory
+from .parent_population import ParentPopulation, digest
+from .population_evaluation import PopulationEvaluationProvider, PopulationEvaluationPipeline, PopulationFinalizer
+from .population_evidence import PatternSupportEvidence
 from .schemas import SearchContractError
 
 
@@ -51,7 +53,7 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
         raise SearchContractError('PATTERN_PARTITION_COMPLETION_POLICY_MISMATCH')
     if getattr(getattr(pattern_provider,'gradient_provider',None),'recovery_policy',None) != method.mechanism_config.get('gradient_recovery_policy'):
         raise SearchContractError('GRADIENT_CONTRACT_RECOVERY_POLICY_MISMATCH')
-    if optimizer.config != EvidenceLayer1Config():
+    if optimizer.config != PopulationSearchConfig():
         raise SearchContractError('CURRENT_LAYER1_POLICY_MISMATCH')
     if getattr(benchmark, 'solver_trajectory_policy', None) != method.mechanism_config.get('solver_trajectory_policy'):
         raise SearchContractError('CURRENT_VISIBLE_TRAJECTORY_POLICY_MISMATCH')
@@ -67,30 +69,41 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
     store=BinaryTeamStateStore(benchmark=benchmark,examples=examples,prompts=prompts,solver=solver,
         aggregation=aggregation,freeze_initial_competence=True)
     patterns=GradientPatternDiscovery(GradientExtractor(pattern_provider.gradient_provider),pattern_provider,seed=seed)
-    memory=StructuredRollingRiskMemoryV4(risk_policy=method.mechanism_config['shared_risk_policy'],
-        optimization_evidence_policy=revised,
-        **method.mechanism_config['memory'])
+    memory=PopulationEditMemory()
     if memory is None or memory.identity != method.memory_policy:
         raise SearchContractError('HOLD_PRE_PROVIDER: CURRENT_MEMORY_PROVIDER_NOT_BOUND')
     optimizer.memory=memory
     invalidity=bool(getattr(benchmark,'invalid_predictions_are_incorrect',False))
     transition=InitialCompetenceTargetOrTeamProgressV3(invalid_predictions_are_incorrect=invalidity,
         evaluation_count=len(store.examples))
-    provider=FixedPeerTeamEvaluationProvider(store,transition)
+    import hashlib, json
+    from pathlib import Path
+    support=hashlib.sha256(json.dumps([e.item.input_id for e in store.examples],separators=(',',':')).encode()).hexdigest()
+    contract=getattr(getattr(solver,'broker',None),'contract',{})
+    pool=ParentPopulation(scope=dict(method_identity=method.identity(),
+        source_identity=getattr(getattr(solver,'broker',None),'population_source_identity','OFFLINE_UNFROZEN'),
+        binding_identity=digest(contract),
+        attempt_identity=contract.get('execution_attempt_id','offline'),seed=seed,
+        models=contract.get('models',{}),member_lanes=list(range(5)),support_sha256=support,support_count=len(store.examples)),
+        checkpoint=Path(optimizer.run_root)/'parent_population.private.json')
+    provider=PopulationEvaluationProvider(store,transition,pool)
+    optimizer.population=pool;optimizer.profile_reader=provider.parent_observations
     gate=private_binary_gate(benchmark=benchmark,load_examples=shadow_loader,expected_count=shadow_count,
         solver=solver.for_gate() if hasattr(solver,'for_gate') else solver,store=store)
-    from .textual_gradients import DisjointGradientEvidence
     composed=UnifiedSearchOrchestrator(method=method,benchmark=benchmark,aggregation=aggregation,state=store,
         analyzer=StateAnalyzer(BinaryPluralityResponsibilityAnalyzer(benchmark.capabilities)),
         opportunities=CurrentOpportunityBuilder(source=BinaryEvidenceSource(store,history),
             feasibility=VariableEvidenceFeasibilityV1(),target=TargetPolicyV1(seed),
-            evidence=DisjointGradientEvidence(seed,revised),patterns=patterns,
-            search_metric_budget=42),
-        engine=CurrentEngine(optimizer,seed),evaluation=CandidateEvaluationPipeline(provider,
-            FixedPeerPromotion(invalid_predictions_are_incorrect=invalidity)),
+            evidence=PatternSupportEvidence(seed,revised),patterns=patterns,
+            search_metric_budget=0),
+        engine=CurrentEngine(optimizer,seed),evaluation=PopulationEvaluationPipeline(provider),
         transition=transition,gate=gate,committer=TeamStateCommitter(store),history=history,memory=memory,
         stop=(OneProductionOpportunityStop(method.global_stop.no_commit_patience) if execution_phase == 'canary'
             else GlobalStopPolicy(method.global_stop.no_commit_patience)),runtime_readiness=runtime_readiness,
         provider_call_reader=provider_call_reader)
     composed.operational_bound=operational_bound
+    composed.population=pool
+    composed.finalizer=PopulationFinalizer(provider,gate,transition)
+    from .population_checkpoint import PopulationCheckpoint
+    composed.checkpoint=PopulationCheckpoint(composed,Path(optimizer.run_root)/'search_boundary.private.json')
     return composed

@@ -9,7 +9,7 @@ import asyncio
 
 import pytest
 
-from tests.current import test_structured_optimization_evidence as fixture
+from tests.current import population_support as fixture
 from tests.current.test_gradient_diagnostic_limits_400 import output
 from multi_dataset_diverse_rl.search.schemas import SearchContractError
 from multi_dataset_diverse_rl.search.textual_gradients import GradientExtractor,PerExampleGradientProvider

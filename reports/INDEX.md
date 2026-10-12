@@ -347,3 +347,4 @@ Reports are immutable evidence, never design authority. Unresolved metadata does
 | [vote_aligned_confirmatory_seed76_77_v1](vote_aligned_confirmatory_seed76_77_v1/README.md) | Unknown | V17_V18_MEMBER_AWARE | SCIENTIFIC_RESULT | vote_aligned_confirmatory_seed76_77_v1 | COMPLETED |
 | [vote_aligned_generic_shadow_pilot_v1](vote_aligned_generic_shadow_pilot_v1/README.md) | Unknown | V17_V18_MEMBER_AWARE | SCIENTIFIC_RESULT | vote_aligned_generic_shadow_pilot_v1 | COMPLETED |
 | [vote_aligned_seed75_static_control_20260905](vote_aligned_seed75_static_control_20260905/README.md) | 20260905 | V17_V18_MEMBER_AWARE | SCIENTIFIC_RESULT | vote_aligned_seed75_static_control | COMPLETED |
+| [vote_parent_population_v29_preparation_20261012](vote_parent_population_v29_preparation_20261012/README.md) | 20261012 | UNIFIED_TEAM_PROMPT_SEARCH | PREEXECUTION | vote_parent_population_v29_preparation_v1 | IMPLEMENTED_NOT_EXECUTED |

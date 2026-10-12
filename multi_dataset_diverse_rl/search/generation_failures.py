@@ -2,9 +2,10 @@
 from copy import deepcopy
 from .schemas import SearchContractError
 
-IDENTITY = 'BOUNDED_REQUEST_OUTPUT_RECOVERY_V3'
+IDENTITY = 'BOUNDED_SINGLE_STEP_OUTPUT_RECOVERY_V4'
 POLICY = dict(identity=IDENTITY, gradient_draws_per_example=3,
-    cluster_draws_per_opportunity=3, reflection_draws_per_opportunity=6,
+    cluster_draws_per_opportunity=3, reflection_slots_per_opportunity=3,
+    reflection_draws_per_slot=2,
     rejected_text_reusable=False, exhausted_gradient='NONACTIONABLE_EXHAUSTED',
     invalid_pattern='known_support_to_unassigned',
     integrity_errors='fatal_without_regeneration', unknown_errors='fatal',

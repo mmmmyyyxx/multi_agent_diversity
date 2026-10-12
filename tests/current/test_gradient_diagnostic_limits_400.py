@@ -14,14 +14,14 @@ from multi_dataset_diverse_rl.search.current_policy import CURRENT_POLICY_BUNDLE
 from multi_dataset_diverse_rl.search.schemas import SearchContractError, SearchMethodConfig
 from multi_dataset_diverse_rl.search.textual_gradients import (
     GradientExtractor, PerExampleGradientProvider, REFERENCE_GRADIENT_PROMPT, GRADIENT_OUTPUT_LIMITS)
-from tests.current.test_structured_optimization_evidence import graph, contract, response, BASE, HYPOTHESIS
+from tests.current.population_support import graph, contract, response, BASE, HYPOTHESIS
 
 ROOT = Path(__file__).resolve().parents[2]
 
 
 @pytest.fixture(scope='module')
 def observed_row(tmp_path_factory):
-    run, broker, _, _, _ = graph(tmp_path_factory.mktemp('diagnostic_400'))
+    run, broker, _, _ = graph(tmp_path_factory.mktemp('diagnostic_400'))
     state = run.state.snapshot()
     diagnosis = run.analyzer.analyze(state, run.history)
     row = run.opportunities.source.for_member(state, diagnosis, 0)[0]
@@ -142,7 +142,7 @@ def test_current_prompt_names_each_field_limit_and_rejects_stale_prompt(observed
 
 
 def test_fake_full_graph_accepts_400_diagnostics_on_first_draw_and_isolates_solver(tmp_path):
-    run, broker, requests, _, _ = graph(tmp_path)
+    run, broker, requests, _ = graph(tmp_path)
     original = broker.transport
     def transport(req):
         value = original(req)
@@ -203,6 +203,7 @@ def test_historical_manifest_schema_branches_keep_their_original_contracts():
     assert now['oneOf'][1:len(old['oneOf'])] == old['oneOf'][1:]
     fallback = deepcopy(now['oneOf'][0])
     fallback['allOf'][0]['not']['properties']['method_family']['enum'].remove(current.CURRENT_METHOD_VERSION)
+    fallback['allOf'][0]['not']['properties']['method_family']['enum'].remove(versions.UNIFIED_SCOPED_EXPERIENCE_VERSION)
     fallback['allOf'][0]['not']['properties']['method_family']['enum'].remove(
         versions.UNIFIED_REQUEST_RECOVERY_VERSION)
     fallback['allOf'][0]['not']['properties']['method_family']['enum'].remove(

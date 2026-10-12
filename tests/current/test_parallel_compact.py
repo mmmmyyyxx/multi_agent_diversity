@@ -12,7 +12,7 @@ import time
 
 import pytest
 
-from tests.current.test_structured_optimization_evidence import contract, response, graph, BASE
+from tests.current.population_support import contract, response, graph, BASE
 from tests.current.test_parallel_solver_execution import broker_fixture, call
 from tests.current.test_gradient_diagnostic_limits_400 import output
 from multi_dataset_diverse_rl.search.optimizer_encoding import encode, decode, IDENTITY
@@ -78,7 +78,7 @@ def test_sixteen_actual_solver_requests_and_reservations_drain_with_timing(tmp_p
 
 
 def test_eight_gradient_workers_ordered_serial_per_example_recovery_and_readable_packets(tmp_path):
-    run,original,_,_,_=graph(tmp_path,long_response=True)
+    run,original,_,_=graph(tmp_path,long_response=True)
     state=run.state.snapshot();diagnosis=run.analyzer.analyze(state,run.history)
     template=next(r for r in run.opportunities.source.for_member(state,diagnosis,0)
         if not r.signals['target_member_correct'])
@@ -116,56 +116,6 @@ def test_eight_gradient_workers_ordered_serial_per_example_recovery_and_readable
         assert trajectory==expected
 
 
-@pytest.mark.parametrize('options', [dict(long_response=True), dict(answer_only=True), dict(format_repair=True)])
-def test_actual_gradient_and_reflection_boundaries_have_direct_readable_evidence(tmp_path, options):
-    import asyncio
-    from multi_dataset_diverse_rl.search.system_prompt import SystemPrompt
-    from multi_dataset_diverse_rl.search.readable_evidence import INSTRUCTION
-    run,broker,requests,packets,_=graph(tmp_path,**options)
-    asyncio.run(run.run(max_opportunities=1))
-    gradient_packets=[]
-    for request in requests:
-        if request['model']=='gpt-4o-mini':
-            assert 'Unicode slice' not in json.dumps(request)
-            continue
-        text=request['messages'][0]['content']
-        assert 'Unicode slice' not in text and 'LOSSLESS_OPTIMIZER_TRAJECTORY_ENCODING_V1' not in json.dumps(request)
-        if len(request['messages'])==2:
-            packet=json.loads(request['messages'][1]['content'])
-            if 'example' not in packet:
-                assert set(packet)=={'gradients'}
-                continue
-            assert text.startswith(INSTRUCTION)
-            gradient_packets.append(packet)
-            example=packet['example'];trajectory=example['solver_trajectory']
-            assert isinstance(trajectory['visible_solution'],str)
-            assert isinstance(trajectory['observed_response'],str)
-            assert trajectory['source']['mutable_prompt_sha256']==SystemPrompt.from_dict(packet['current_system_prompt']).prompt_hash
-            assert example['reference_solution']['source']=='dataset_worked_solution'
-            assert 'DATASET_WORKED_SOLUTION_' in example['reference_solution']['text']
-    assert gradient_packets and packets
-    for packet in packets:
-        assert packet['selected_pattern']['generalized_gradient']
-        assert set(packet['retrieved_memory'])=={'schema','initial_coverage','edit_effects','shared_risk','interpretation'}
-        assert packet['retrieved_memory']['schema']=='SCOPED_EDIT_EXPERIENCE_VIEW_V1'
-        assert 'not causal' in packet['retrieved_memory']['interpretation']
-        for example in packet['current_panel_observations']:
-            trajectory=example['solver_trajectory']
-            assert isinstance(trajectory['visible_solution'],str)
-            assert trajectory['source']['mutable_prompt_sha256']==SystemPrompt.from_dict(packet['current_parent']).prompt_hash
-            assert isinstance(trajectory['observed_response'],str) and trajectory['observed_response']
-            if trajectory['prediction_valid']:
-                assert 'Final answer:' in trajectory['observed_response']
-            else:
-                assert trajectory['invalid_reason'] and trajectory['solution_status']=='FINAL_BOUNDARY_INVALID'
-            if options.get('long_response'):
-                assert trajectory['observed_response'].count('Unicode数学核验 π。')==120
-                assert trajectory['feedback_truncated'] is True
-                assert len(trajectory['observed_response'])>len(trajectory['visible_solution'])==4096
-            if options.get('answer_only'):
-                assert trajectory['visible_solution']==''
-                assert trajectory['solution_status']=='TRAJECTORY_UNAVAILABLE'
-    assert broker.usage['validation']==broker.usage['test']==0
 
 
 def test_current_source_closure_excludes_interval_codec_and_rejects_old_execution_policy():

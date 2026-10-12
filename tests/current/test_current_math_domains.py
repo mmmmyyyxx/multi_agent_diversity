@@ -1,7 +1,7 @@
 """Preserved mathematical scoring and reference-boundary physics on V2.4."""
 import pytest
 from pathlib import Path
-from tests.current.test_structured_optimization_evidence import contract
+from tests.current.population_support import contract
 from multi_dataset_diverse_rl.benchmarks.math_structured_interface import MATHStructuredSystemBenchmark
 from multi_dataset_diverse_rl.benchmarks.math_domain_v2 import domain_matrix,require_scorable,final_payload
 from multi_dataset_diverse_rl.search.benchmark import BenchmarkInput

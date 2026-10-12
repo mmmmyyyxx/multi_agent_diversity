@@ -103,13 +103,11 @@ def validate_gradient_output(value, limits):
     return value
 
 def validate_reflection_output(value):
-    if value=={'decision':'NO_SAFE_EDIT'}:return value
     category='REFLECTION_OUTPUT_CONTRACT_INVALID';stage='reflection'
     if not isinstance(value,dict):reject(category,stage,[issue('output','TYPE',value)])
-    if set(value)!={'decision','target_block','new_content','change_summary'}:
+    if set(value)!={'target_block','new_content','change_summary'}:
         reject(category,stage,[issue('output','KEY_SET')])
     issues=[]
-    _enum(issues,value,'decision',{'PROPOSE_EDIT'})
     _enum(issues,value,'target_block',{'role','strategy','answer'})
     # Rendered total length and content checks remain in the edit guard.
     v=value['new_content']
@@ -117,7 +115,7 @@ def validate_reflection_output(value):
     elif not v.strip():issues.append(issue('new_content','EMPTY',v))
     summary=value['change_summary']
     if not isinstance(summary,str):issues.append(issue('change_summary','TYPE',summary,240))
-    elif not 0<len(summary)<=240:issues.append(issue('change_summary','EMPTY' if not summary else 'OVER_LIMIT',summary,240))
+    elif not summary.strip() or len(summary)>240:issues.append(issue('change_summary','EMPTY' if not summary.strip() else 'OVER_LIMIT',summary,240))
     if issues:reject(category,stage,issues)
     return value
 

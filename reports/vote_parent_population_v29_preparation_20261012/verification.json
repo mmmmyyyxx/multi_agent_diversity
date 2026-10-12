@@ -1,0 +1,74 @@
+{
+  "identity": "V29_ZERO_API_VERIFICATION_V1",
+  "scientific_source_hash": "576c5549e9255a148e94372abdedf89637c55b3a89cc1360f7a46e6eef2fd666",
+  "full_current_campaign": {
+    "identity": "current",
+    "tests": 726,
+    "passed": 721,
+    "failed": 3,
+    "skipped": 2,
+    "log_sha256": "bf7009831440a8b29398124711c840f5d6d29f1d310df8fe879c1a2ac48edf8c"
+  },
+  "scoped_incremental_campaigns": [
+    {
+      "identity": "population_final",
+      "tests": 31,
+      "passed": 31,
+      "failed": 0,
+      "skipped": 0,
+      "log_sha256": "764b83041a7ecaeafe62ccf3c688533bd456cb350d767f3f9f939e02a0116d73"
+    },
+    {
+      "identity": "semantic_final",
+      "tests": 23,
+      "passed": 23,
+      "failed": 0,
+      "skipped": 0,
+      "log_sha256": "8b2442d0bdba07bb20d29d26ae85b9971f7cc18cfd97ae22742c950b5050af63"
+    },
+    {
+      "identity": "repaired_fixtures",
+      "tests": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "log_sha256": "75333a572f9298787859ac0198aab226f4876a044fe309d71e210e5aaf9120bf"
+    },
+    {
+      "identity": "population_delivery",
+      "tests": 22,
+      "passed": 22,
+      "failed": 0,
+      "skipped": 0,
+      "log_sha256": "a09127db89770b7fb069e5a61a1d4f4c0ad4fd178242369c0283569255de37f8"
+    }
+  ],
+  "deduplicated_current_coverage": {
+    "tests": 735,
+    "passed": 733,
+    "skipped": 2,
+    "failed": 0,
+    "final_collection_count": 735,
+    "aggregation": "LATEST_RESULT_PER_CLASSNAME_AND_TEST_NAME_NOT_ONE_RERUN"
+  },
+  "omitted_modules": 224,
+  "retired_git_only_cases": 5,
+  "omitted_inventory": "tests/suite_classification.json",
+  "full_historical_replay_pass_claimed": false,
+  "compileall": "PASS",
+  "dependency_closure": "PASS",
+  "manifest_draft_and_closed_preflight": "PASS",
+  "governance": "PASS",
+  "governance_receipt_sha256": "4f378a89ca7494aed15ebb16070a8f64ea8cc0f6be7a139e83c52fedac68cdbb",
+  "diff_check": "PASS",
+  "real_api_calls": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "network_attempts_in_verification": 0,
+  "historical_reports_and_manifests": "UNCHANGED",
+  "push_performed": false,
+  "prototype_superiority": "UNKNOWN",
+  "real_vote_gain": "UNKNOWN",
+  "token_efficiency": "UNKNOWN",
+  "generalization": "UNKNOWN"
+}

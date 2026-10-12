@@ -51,6 +51,7 @@ def pytest_collection_modifyitems(config,items):
     items[:]=kept
     if excluded:config.hook.pytest_deselected(items=excluded)
     config._repository_suite_summary=dict(mode=mode,selected=len(kept),deselected=len(excluded),
+        retired_git_only_test_case_count=len(CLASSIFICATION.get('retired_git_only_test_cases',[])),
         private_artifact_test_cases=private,historical_replay_test_cases=historical,
         omitted_modules=[dict(path=r['path'],classification=r['classification'],
             original_source=r.get('replay_source'),scope_note=r.get('scope_note'))

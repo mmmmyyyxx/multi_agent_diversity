@@ -1,0 +1,98 @@
+{
+  "attempt_id": "a4_v28_seed87_controlled_flow_pilot_attempt1",
+  "base_source": "905268bad94fa9a70fb9b719c0c68d6588cd7d9d",
+  "branch_policy": "NO_FORCED_GENERATION_NO_EFFICACY_ADAPTATION",
+  "censored_candidate_values": "UNKNOWN_NO_EXTRA_FULL_OR_IMPUTATION",
+  "design": "SINGLE_ARM_CURRENT_METHOD_WITHOUT_ABLATION",
+  "evidence_endpoints": [
+    "accepted_mutation_diagnostics",
+    "worked_reference_provenance_and_truncation",
+    "recent_attempt_delivery",
+    "prompt_block_capacity",
+    "observed_edit_specificity_and_gradient_alignment"
+  ],
+  "experiment_id": "math_v28_seed87_controlled_flow_pilot_v1",
+  "historical_development_question_overlap_allowed": true,
+  "identity": "V28_CONTROLLED_REAL_FULL_FLOW_PREREGISTRATION_V1",
+  "improvement_claim": "OBSERVED_REAL_OPERATION_AND_QUALITY_DESCRIPTIVE_ONLY_NO_V27_V28_CAUSAL_GAIN",
+  "inference_limits": [
+    "No component causal identification",
+    "No historical control or seed robustness",
+    "No independent generalization",
+    "Five opportunities may not revisit a member or observe a Full/Shadow/Commit branch"
+  ],
+  "membership_selection": "METADATA_ONLY_UNSEEN_FIRST_MINIMUM_PRIOR_USE",
+  "memory_endpoints": [
+    "available_relevant_experience",
+    "delivered_complete_action_cards",
+    "omissions_and_character_budget",
+    "observable_explicit_reference_or_conditional_edit_alignment_not_hidden_utilization"
+  ],
+  "monitor": {
+    "interval_seconds": 300,
+    "owner_review_and_anomalies": "IMMEDIATE",
+    "unchanged_quiet": true
+  },
+  "new_authorization_not_a_historical_retry": true,
+  "no_old_responses_memory_cache_scores_or_authorization_reused": true,
+  "offline_guard": true,
+  "one_new_single_use_user_grant": true,
+  "owner_reviews": [
+    "INITIAL_SOLVER_PROFILE",
+    "FIRST_COMPLETE_OPPORTUNITY"
+  ],
+  "primary_process_endpoints": [
+    "legal_unique_edit_fraction",
+    "no_safe_edit_fraction",
+    "duplicate_edit_fraction",
+    "root_and_parent_local_gains",
+    "export_probe_full_shadow_commit_funnel",
+    "provider_tokens_per_legal_edit_and_full_candidate"
+  ],
+  "retry": "ONLY_EXISTING_FROZEN_TRANSPORT_AND_OUTPUT_RECOVERY_NO_AUTOMATIC_NEW_ATTEMPT",
+  "scope_fixed_before_first_provider_call": true,
+  "source_freeze": "AFTER_REGISTRATION",
+  "stop_classification": "SCIENTIFIC_COMPLETE_RESOURCE_TRUNCATED_ENGINEERING_ABORT_USER_STOP_DISTINCT",
+  "task": {
+    "ablation": false,
+    "algorithm_modules_changed": false,
+    "cache": "FRESH_SINGLE_ATTEMPT",
+    "gradient_concurrency": 8,
+    "historical_candidate_completion": false,
+    "initial": "FRESH_IDENTICAL_ARM_B5",
+    "max_opportunities": 5,
+    "memory": "FRESH_COMPETENCE_BOOTSTRAP_ONLY",
+    "method": "unified_team_prompt_search_v2_8_scoped_experience_v1",
+    "models": {
+      "optimizer": "qwen3.7-flash",
+      "solver": "gpt-4o-mini"
+    },
+    "monetary_price_or_invoice_claim": false,
+    "no_commit_patience": 4,
+    "optimize": 60,
+    "phase": "PILOT_SEARCH_ONLY",
+    "push_authorized": false,
+    "resource_mode": {
+      "authority": "EXPLICIT_USER_TOKEN_ONLY_INSTRUCTION",
+      "identity": "USER_SELECTED_TOKEN_ONLY_RESOURCE_CONTROL_V1",
+      "missing_usage": "CONSERVATIVE_FULL_RESERVATION_CHARGE",
+      "monetary_tracking": false,
+      "token_limits": "FROZEN_PHASE_LEDGER_HARD_LIMITS"
+    },
+    "scientific_stopper": "team_epoch_no_commit_v1",
+    "seed": 87,
+    "shadow": 40,
+    "solver_concurrency": 16,
+    "test_access": "SEALED",
+    "token_ceiling": 2000000,
+    "user_instruction_sha256": "bf40a5b5cc1bf5c4ff88b455fc57e49f1c350777e7ab48fa779404bf8059d4d1",
+    "validation_access": "NOT_AUTHORIZED"
+  },
+  "team_endpoints": [
+    "deployed_optimize_vote",
+    "oracle",
+    "member_correctness",
+    "full_repairs_and_losses",
+    "vote_pivotal_changes"
+  ]
+}

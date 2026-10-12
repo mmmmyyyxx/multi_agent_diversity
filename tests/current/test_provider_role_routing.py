@@ -12,7 +12,7 @@ from multi_dataset_diverse_rl.provider_factory import ProviderClientFactory
 from multi_dataset_diverse_rl.provider_routing import route_for_role
 from multi_dataset_diverse_rl.search.current_policy import CURRENT_POLICY_BUNDLE
 from multi_dataset_diverse_rl.search.schemas import SearchContractError
-from tests.current.test_structured_optimization_evidence import contract
+from tests.current.population_support import contract
 
 
 def test_all_roles_use_their_own_http_client_and_solver_wire(monkeypatch):
@@ -217,7 +217,7 @@ def test_openlux_output_cap_violation_is_charged_and_fails_closed(tmp_path, monk
 def test_five_identical_prompts_have_independent_lanes_and_exact_same_attempt_cache(tmp_path):
     from multi_dataset_diverse_rl.governance.token_accounting import TokenLedger, POLICY_V25_2M
     from tests.current.test_parallel_solver_execution import broker_fixture
-    from tests.current.test_structured_optimization_evidence import response
+    from tests.current.population_support import response
     c = contract()
     calls = []
     def transport(request):

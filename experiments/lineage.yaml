@@ -1050,6 +1050,12 @@ nodes:
 - experiment_id: local_evaluation_promotion_feasibility_audit_v1_20261012
   kind: FORENSIC_AUDIT
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: math_v28_seed87_controlled_flow_pilot_v1
+  kind: PILOT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: vote_parent_population_v29_preparation_v1
+  kind: ARCHITECTURE_REFACTOR
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2290,7 +2296,8 @@ edges:
   to: math_v27_seed86_evolution_bottleneck_audit_20261012
   relation: audit_of
   evidence: reports/math_v27_seed86_evolution_bottleneck_audit_20261012/README.md
-  scope: Zero-API mechanism diagnosis; no new method, model execution or causal efficacy claim.
+  scope: Zero-API mechanism diagnosis; no new method, model execution or causal efficacy
+    claim.
 - from: math_v27_seed86_precluster_continuation_v1
   to: scoped_edit_experience_layer1_v28_preparation_v1
   relation: derived_from
@@ -2321,4 +2328,28 @@ edges:
   evidence: reports/local_evaluation_promotion_feasibility_audit_20261012/README.md
   scope: Zero-API local evaluation and promotion feasibility; no current method or
     historical result changes.
+- from: scoped_edit_experience_layer1_v28_preparation_v1
+  to: math_v28_seed87_controlled_flow_pilot_v1
+  relation: derived_from
+  evidence: reports/math_v28_seed87_controlled_flow_freeze_20261012/README.md
+  scope: Fresh bounded real current-method flow; no old execution state, no causal
+    control.
+- from: local_evaluation_promotion_feasibility_audit_v1_20261012
+  to: math_v28_seed87_controlled_flow_pilot_v1
+  relation: derived_from
+  evidence: reports/math_v28_seed87_controlled_flow_freeze_20261012/README.md
+  scope: Fresh bounded real current-method flow; no old execution state, no causal
+    control.
+- from: scoped_edit_experience_layer1_v28_preparation_v1
+  to: vote_parent_population_v29_preparation_v1
+  relation: derived_from
+  evidence: reports/vote_parent_population_v29_preparation_20261012/README.md
+  scope: User-directed method change; evidence motivates questions, not superiority
+    claims.
+- from: local_evaluation_promotion_feasibility_audit_v1_20261012
+  to: vote_parent_population_v29_preparation_v1
+  relation: derived_from
+  evidence: reports/vote_parent_population_v29_preparation_20261012/README.md
+  scope: User-directed method change; evidence motivates questions, not superiority
+    claims.
 current_frontier: experiments/current_frontier.yaml

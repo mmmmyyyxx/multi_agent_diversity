@@ -278,8 +278,9 @@ async def execute_search(root, prep, run_root, payload):
             partition_completion_policy=c.get('partition_completion_policy'),
             partition_writer=(lambda r:append_jsonl(run_root/'partition_completion_private.jsonl',r))
                 if c.get('partition_completion_policy') is not None else None)
+        broker.population_source_identity=payload['manifest']['source_sha']
         composed = binding.compose(arm=arm,seed=c['execution_seed'],solver=solver,reflection=ReflectionProvider(broker),pattern_provider=pattern_provider,run_root=run_root)
-        if any(composed.memory.audit()[k] for k in ('success_writes','failure_writes','shared_writes')):
+        if composed.memory.audit()['stored']:
             raise OperationalAbort('FRESH_MEMORY_STATE_REQUIRED')
         # A naturally empty trajectory still needs a durable hashable receipt.
         with (run_root / "trajectory_private.jsonl").open("xb") as stream:
@@ -329,8 +330,14 @@ async def execute_search(root, prep, run_root, payload):
         if not scientific_complete and not operational_truncation:
             raise OperationalAbort("NONSCIENTIFIC_STOP_"+result.stop_reason)
         final = composed.state.snapshot()
-        checked_json(run_root / "final_team_private.json",dict(prompts=plain(final.member_prompts),state_id=final.team_state_id))
-        checked_json(run_root / "final_state_private.json",final)
+        # Final proposal is the frozen per-pool argmax, even on rejection. The
+        # safe incumbent remains separately labeled deployed state.
+        proposed=composed.finalizer.proposed_prompts
+        checked_json(run_root / "final_team_private.json",dict(prompts=plain(proposed),
+            state_id=result.final_state_id,admitted=result.final_assembly['admitted'],assembly=result.final_assembly))
+        checked_json(run_root / 'deployed_team_private.json',dict(prompts=plain(final.member_prompts),state_id=final.team_state_id))
+        checked_json(run_root / "final_state_private.json",composed.finalizer.proposed_state)
+        checked_json(run_root / "deployed_state_private.json",final)
         summary = dict(result=plain(result),ledger=broker.usage,accounting=budget.view(),validation_reserve=0,
             validation_search_raw_reads=0,validation_calls=0,test_raw_reads=0,test_calls=0,pattern_calls=broker.usage['pattern'],memory_activity=0)
         if c.get('operational_pilot'):
@@ -348,7 +355,7 @@ async def execute_search(root, prep, run_root, payload):
                 derived_token_snapshot_detached=budget.snapshot_updates_disabled,
                 snapshot_error_category=budget.snapshot_error_category)
         gradients=pattern_provider.gradient_provider
-        gradient_multiplier=c['optimization_evidence_policy']['structural_recovery_draws']
+        gradient_multiplier=c['generated_output_recovery_policy']['gradient_draws_per_example']
         summary.update(pattern_gradient_calls=broker.usage['pattern_gradient'],
             pattern_cluster_calls=broker.usage['pattern_cluster'],gradient_input_audit=gradients.input_audit)
         imported=continuation.imported_by_role if continuation is not None else {}
@@ -367,20 +374,23 @@ async def execute_search(root, prep, run_root, payload):
         expected_clusters=sum(t.evidence_audit.get('cluster_physical_calls',0) for t in result.trace)
         if c['execution_phase']=='canary' and (pattern_provider.calls!=expected_clusters
                 or gradients.calls!=len(gradients.input_audit)
-                or (any(t.candidate_ids for t in result.trace) and not composed.evaluation.provider.probed)):
+                or (any(t.candidate_ids for t in result.trace) and not composed.evaluation.provider.fulled)):
             raise OperationalAbort('PATTERN_CANARY_FLOW_INCOMPLETE')
         if c['execution_phase'] in {'pilot','formal'} and (pattern_provider.calls!=expected_clusters
                 or gradients.calls!=len(gradients.input_audit)
                 or not len(result.trace)<=gradients.calls<=gradient_multiplier*c['initial_competence_binding']['count']*len(result.trace)):
             raise OperationalAbort('PATTERN_PILOT_FLOW_INCOMPLETE')
-        summary['memory_activity']=composed.memory.audit()['stateful_write_count']
+        summary['memory_activity']=composed.memory.audit()['revision']
+        summary['final_assembly']=result.final_assembly
         summary['memory_audit']=composed.memory.audit()
         from .team_change import team_change_receipt
         summary['deployed_team_change']=team_change_receipt(initial_prompts(root,c),final.member_prompts)
+        summary['proposed_final_team_change']=team_change_receipt(initial_prompts(root,c),proposed)
         if c['execution_phase'] in {'pilot','formal'}:
             atomic_write_json(run_root/'VALIDATION_DISPOSITION.json',{
                 **summary['deployed_team_change'], 'validation_model_calls':0, 'validation_provider_calls':0,
-                'validation_status':('DEFERRED_BY_USER_SCOPE' if summary['deployed_team_change']['team_changed'] else 'SKIPPED_NO_TEAM_CHANGE'),
+                'validation_status':('BLOCKED_FINAL_ASSEMBLY_REJECTED' if not result.final_assembly['admitted'] else
+                    'DEFERRED_BY_USER_SCOPE' if summary['deployed_team_change']['team_changed'] else 'SKIPPED_NO_TEAM_CHANGE'),
                 'VoteAccDelta':'NOT_AVAILABLE', 'OracleAccDelta':'NOT_AVAILABLE', 'bootstrap':'NOT_RUN'})
         summary = plain(summary)
         close_resources()
@@ -404,7 +414,16 @@ async def execute_search(root, prep, run_root, payload):
                     if ('composed' in locals() and composed.state.initial_state_id is not None):
                         state=composed.state.snapshot()
                         checked_json(run_root/'final_state_private.json',state)
-                        checked_json(run_root/'final_team_private.json',dict(prompts=plain(state.member_prompts),state_id=state.team_state_id))
+                        from ..search.system_prompt import team_identity
+                        proposed=getattr(composed.finalizer,'proposed_prompts',None)
+                        if proposed is None:proposed,selection=composed.population.best_team()
+                        else:selection=composed.finalizer.pending['selection']
+                        partial['final_assembly']=dict(status='FINAL_ASSEMBLY_NOT_EVALUABLE',admitted=False,
+                            proposed_team_state_id=team_identity(proposed),selection=selection,
+                            deployed_team_state_id=state.team_state_id)
+                        checked_json(run_root/'final_team_private.json',dict(prompts=plain(proposed),
+                            state_id=team_identity(proposed),admitted=False,assembly=partial['final_assembly']))
+                        checked_json(run_root/'deployed_team_private.json',dict(prompts=plain(state.member_prompts),state_id=state.team_state_id))
                         from .pilot_observation import memory_snapshot
                         checked_json(run_root/'terminal_memory_private.json',memory_snapshot(composed.memory))
                     close_resources()

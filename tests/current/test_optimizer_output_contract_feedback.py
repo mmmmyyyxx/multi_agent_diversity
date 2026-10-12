@@ -5,7 +5,7 @@ import json
 
 import pytest
 
-from tests.current.test_structured_optimization_evidence import graph, BASE, GOOD, HYPOTHESIS, response
+from tests.current.population_support import graph, BASE, GOOD, HYPOTHESIS, response
 from tests.current.test_gradient_diagnostic_limits_400 import output
 from multi_dataset_diverse_rl.search.textual_gradients import (
     GradientExtractor, PerExampleGradientProvider, GRADIENT_OUTPUT_LIMITS, REFERENCE_GRADIENT_PROMPT)
@@ -94,45 +94,10 @@ def test_gradient_feedback_is_not_carried_to_another_example_and_uncertain_stops
     assert [d['generation_draws'] for d in extractor.evidence_diagnostics]==[2,1]
 
 
-def test_reflection_feedback_consumes_existing_slots_and_clears_after_valid_output(tmp_path):
-    run,broker,*_=graph(tmp_path);original=broker.transport;requests=[]
-    replies=[dict(decision='PROPOSE_EDIT',target_block={'strategy':'private rejected text'},
-        new_content=GOOD.strategy,change_summary='Change.'),
-        dict(decision='PROPOSE_EDIT',target_block='strategy',new_content=GOOD.strategy,change_summary='x'*241),
-        dict(decision='PROPOSE_EDIT',target_block='strategy',new_content='x'*3001,change_summary='Change.'),
-        dict(decision='PROPOSE_EDIT',target_block='strategy',new_content=GOOD.strategy,change_summary='Check constraints.'),
-        dict(decision='NO_SAFE_EDIT'),dict(decision='NO_SAFE_EDIT')]
-    def transport(req):
-        if req['model']=='qwen3.7-flash' and len(req['messages'])==1:
-            requests.append(deepcopy(req));return response(json.dumps(replies[len(requests)-1]))
-        return original(req)
-    broker.transport=transport
-    result=asyncio.run(run.run(max_opportunities=1))
-    assert len(requests)==6
-    texts=[r['messages'][0]['content'] for r in requests]
-    assert not texts[0].startswith('Previous draw')
-    assert all(texts[i].startswith('Previous draw') for i in (1,2,3))
-    assert not texts[4].startswith('Previous draw') and not texts[5].startswith('Previous draw')
-    assert all('private rejected text' not in t for t in texts)
-    assert '"target_block":"strategy"' in texts[0] and '"target_block":"role, strategy, or answer"' not in texts[0]
-    # Rejected draws do not change parent, observations or measured Memory.
-    evidence=[json.loads(t.splitlines()[-1]) for t in texts]
-    assert [{k:v for k,v in p.items() if k!='preceding_attempts'} for p in evidence[:4]]==[
-        {k:v for k,v in evidence[0].items() if k!='preceding_attempts'}]*4
-    assert [len(p['preceding_attempts']) for p in evidence[:4]]==[0,1,2,3]
-    assert all(x['outcome']=='CONTRACT_INVALID' for x in evidence[3]['preceding_attempts'])
-    lineage=[json.loads(s) for p in tmp_path.glob('*.lineage.jsonl') for s in p.read_text().splitlines()]
-    assert [r['status'] for r in lineage[:3]]==['CONTRACT_INVALID']*3
-    assert lineage[3]['status']=='LOCALLY_EVALUATED'
-    assert lineage[2]['output_contract_feedback']['issues'][0]['limit']==3000
-    issue=lineage[2]['output_contract_feedback']['issues'][0]
-    assert issue['field']=='rendered_system_prompt' and issue['actual_type']=='string'
-    assert issue['actual_characters']==len(BASE.role)+3001+len(BASE.answer)+4
-    assert POLICY['gradient_draws_per_example']==3 and POLICY['reflection_draws_per_opportunity']==6
 
 
 def test_reflection_valid_schema_does_not_override_content_guards():
-    value=dict(decision='PROPOSE_EDIT',target_block='strategy',new_content='Copy the gold answer.',change_summary='Change.')
+    value=dict(target_block='strategy',new_content='Copy the gold answer.',change_summary='Change.')
     # Schema acceptance is deliberately separate from the existing content guard.
     assert validate_reflection_output(value)==value
     from multi_dataset_diverse_rl.search.optimization_evidence import executability_checks

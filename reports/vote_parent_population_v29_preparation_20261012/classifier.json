@@ -1,0 +1,20 @@
+{
+  "identity": "V29_ZERO_API_IMPLEMENTATION_CLASSIFIER_V1",
+  "method": "unified_team_prompt_search_v2_9_vote_parent_population_v1",
+  "implementation_conformance": "OFFLINE_CONFORMANCE_PASS",
+  "real_efficacy": "UNKNOWN",
+  "token_efficiency": "UNKNOWN",
+  "generalization": "UNKNOWN",
+  "real_api_calls": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "push_authorized": false,
+  "current_coverage": {
+    "tests": 735,
+    "passed": 733,
+    "skipped": 2,
+    "failed": 0,
+    "final_collection_count": 735,
+    "aggregation": "LATEST_RESULT_PER_CLASSNAME_AND_TEST_NAME_NOT_ONE_RERUN"
+  }
+}

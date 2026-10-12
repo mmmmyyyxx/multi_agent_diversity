@@ -11,8 +11,8 @@ PREP_SCHEMA='unified_post_freeze_validation_prep_v1'
 ACCOUNTING_SCOPE='FRESH_V25_PAIRED_VALIDATION_6M_V1'
 BOUND=dict(identity='PAIRED_POST_FREEZE_VALIDATION_RESOURCE_BOUND_V1',
     max_opportunities=0,token_ceiling=6_000_000,scientific_stopper='NOT_SEARCH',guarantees_saturation=False)
-POLICY=dict(identity='CURRENT_PAIRED_VALIDATION_300_V1',count=300,
-    teams=['FROZEN_INITIAL_B5','LAST_COMMITTED_FINAL_TEAM'],member_slots=5,
+POLICY=dict(identity='CURRENT_ADMITTED_POPULATION_PAIRED_VALIDATION_300_V2',count=300,
+    teams=['FROZEN_INITIAL_B5','JOINTLY_ADMITTED_POPULATION_ARGMAX_TEAM'],member_slots=5,
     ordering='EXAMPLE_MEMBER_INITIAL_FINAL',paired_cache='EXACT_REQUEST_SAME_MEMBER_SLOT_SHARED_REALIZATION',
     selection='ALL_FROZEN_VALIDATION_METADATA',search_feedback=False,test_access='sealed',
     resource_truncation='NO_PARTIAL_SCORE_OR_OUTCOME_DEPENDENT_SUBSET',
@@ -122,6 +122,8 @@ def closed_search(root,search_run,search_payload):
         if file_sha(local_path(run,record['path']))!=record['sha256']:
             raise SearchContractError('VALIDATION_PARENT_EVIDENCE_HASH_MISMATCH')
     summary=read_json(run/'execution_summary.json')
+    if summary.get('final_assembly',{}).get('admitted') is not True:
+        raise SearchContractError('VALIDATION_REQUIRES_ADMITTED_FINAL_POPULATION_TEAM')
     if (summary['accounting']['reserved_inflight']!=0 or summary.get('validation_calls')!=0
             or summary.get('test_calls')!=0):
         raise SearchContractError('VALIDATION_PARENT_LEDGER_OR_ACCESS_MISMATCH')

@@ -9806,9 +9806,12 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Explicit pre-cluster prefix migration; four no-commit epochs and uncapped cumulative Token.
-  - Five members; no Validation/Test. Resource-truncated at 50 opportunities after five Commits; three full no-commit epochs.
-  - Single-run adaptive Optimize/Shadow gains are descriptive; independent generalization and component causality are not evaluable.
+  - Explicit pre-cluster prefix migration; four no-commit epochs and uncapped cumulative
+    Token.
+  - Five members; no Validation/Test. Resource-truncated at 50 opportunities after
+    five Commits; three full no-commit epochs.
+  - Single-run adaptive Optimize/Shadow gains are descriptive; independent generalization
+    and component causality are not evaluable.
 - experiment_id: math_v27_request_recovery_preparation_v1
   kind: PROTOCOL_FREEZE
   era: UNIFIED_TEAM_PROMPT_SEARCH
@@ -9851,13 +9854,17 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Read-only audit of sealed Optimize trajectories and existing code; zero model API and no Validation/Test raw access.
-  - No method, protocol, historical experiment or result changes; proposed studies are not implemented or authorized.
-  - Frozen-output substitution is a diagnostic, not a new experiment or causal search ablation.
+  - Read-only audit of sealed Optimize trajectories and existing code; zero model
+    API and no Validation/Test raw access.
+  - No method, protocol, historical experiment or result changes; proposed studies
+    are not implemented or authorized.
+  - Frozen-output substitution is a diagnostic, not a new experiment or causal search
+    ablation.
   unavailable:
     manifest: No new experiment; frozen parent manifest remains the execution authority.
     implementation_commit: Containing documentation publication; no runtime implementation.
-    execution_commit: No model experiment executed; parent source is pinned in the report.
+    execution_commit: No model experiment executed; parent source is pinned in the
+      report.
     result_commit: Containing sanitized evidence commit; no self-referential SHA.
 - experiment_id: scoped_edit_experience_layer1_v28_preparation_v1
   kind: PROTOCOL_FREEZE
@@ -9874,9 +9881,10 @@ experiments:
   manifest: experiments/manifests/scoped_edit_experience_layer1_v28_preparation_v1.yaml
   report: reports/scoped_edit_experience_layer1_v28_preparation_20261012
   classifier: reports/scoped_edit_experience_layer1_v28_preparation_20261012/classifier.json
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
-  superseded_by: []
+  superseded_by:
+  - vote_parent_population_v29_preparation_v1
   notes:
   - Fresh scoped experience and Layer1 evidence interfaces; existing WHO, Solver,
     scoring, aggregation and team admission unchanged.
@@ -9920,3 +9928,59 @@ experiments:
     implementation_commit: Containing audit-tool commit; no production algorithm implementation.
     execution_commit: No model experiment executed.
     result_commit: Containing sanitized audit commit; no self-referential SHA.
+- experiment_id: math_v28_seed87_controlled_flow_pilot_v1
+  kind: PILOT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_8_scoped_experience_v1
+  parent_ids:
+  - scoped_edit_experience_layer1_v28_preparation_v1
+  - local_evaluation_promotion_feasibility_audit_v1_20261012
+  status: ABANDONED
+  scientific_status: USER_SUPERSEDED_BEFORE_FREEZE_ZERO_API
+  implementation_commit: 63796dc815f8ce1195cd5a3950c2ad7e1ad59d5e
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/math_v28_seed87_controlled_flow_pilot_v1.yaml
+  report: reports/math_v28_seed87_controlled_flow_freeze_20261012
+  classifier: reports/math_v28_seed87_controlled_flow_freeze_20261012/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - New explicitly authorized cost-controlled real V2.8 current-method flow; no algorithm
+    change or ablation.
+  - Fresh seed87 Arm B5, Optimize60/Shadow40, five opportunities or2M conservatively
+    charged Token; Validation/Test closed.
+  - Memory delivery, observable use and candidate quality are separate evidence levels;
+    no causal or generalization claim.
+  - Superseded by the explicit no-API Vote-guided Parent Population implementation
+    task before freeze or usable API authorization.
+  unavailable:
+    execution_commit: Never source-frozen or executed; zero model calls.
+    result_commit: No real result at registration.
+- experiment_id: vote_parent_population_v29_preparation_v1
+  kind: ARCHITECTURE_REFACTOR
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_9_vote_parent_population_v1
+  parent_ids:
+  - scoped_edit_experience_layer1_v28_preparation_v1
+  - local_evaluation_promotion_feasibility_audit_v1_20261012
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_IMPLEMENTATION_EFFICACY_UNKNOWN
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/vote_parent_population_v29_preparation_v1.yaml
+  report: reports/vote_parent_population_v29_preparation_20261012
+  classifier: reports/vote_parent_population_v29_preparation_20261012/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Three independent single-step repairs from bounded fitness-weighted pools; final
+    argmax team jointly evaluated.
+  - No real APIs, no historical resume, no Validation/Test access and no Push authorization.
+  unavailable:
+    implementation_commit: Containing implementation commit; no self-reference.
+    execution_commit: No real model experiment executed.
+    result_commit: No real efficacy result.

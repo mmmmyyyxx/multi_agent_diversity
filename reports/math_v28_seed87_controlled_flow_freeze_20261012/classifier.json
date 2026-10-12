@@ -1,0 +1,8 @@
+{
+  "classification": "USER_SUPERSEDED_BEFORE_FREEZE_ZERO_API",
+  "model_api_calls": 0,
+  "source_frozen": false,
+  "test_calls": 0,
+  "usable_authorization_created": false,
+  "validation_calls": 0
+}

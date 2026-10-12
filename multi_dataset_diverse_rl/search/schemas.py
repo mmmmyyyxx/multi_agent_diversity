@@ -145,9 +145,6 @@ class SearchResult:
     search_meta_tokens: int = 0
     proposal_count: int = 0
     team_candidate_count: int = 0
-    local_survival_update_count: int = 0
-    strict_accepted_count: int = 0
-    strict_rejected_exported_count: int = 0
 
 
 @dataclass(frozen=True)

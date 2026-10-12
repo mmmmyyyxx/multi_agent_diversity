@@ -14,7 +14,6 @@ from ..peer_state import build_team_vote_state, soft_vote_utility
 from ..vote_aligned_scheduler import classify_opportunity_lane
 from ..team_search.schemas import TeamMiniBatchMetrics
 from ..candidate_selection import common_monotone_safe_measurement_key
-from .evaluation import FixedPeerPromotion
 from .binary_responsibility import binary_plurality_snapshot, observation_from_outputs
 from .schemas import EvidenceItem, SearchContractError, TeamEvaluation
 
@@ -247,43 +246,6 @@ class FixedPeerTeamEvaluationProvider:
                 'evaluation_count':len(states)})
         return result
 
-    async def team_probe(self, opportunity, candidate):
-        from .optimization_evidence import PROBE_POLICY
-        self.probed.append(candidate.candidate_id)
-        audit=opportunity.evaluation_plan['evidence_audit']
-        assigned=set(audit['assigned_repair_ids'])
-        independent={r.example_id for r in opportunity.evidence.team_probe_evidence}
-        mutation={r.example_id for r in opportunity.evidence.mutation_evidence}
-        if (not assigned<=mutation or assigned&independent or len(independent)!=6):
-            raise SearchContractError('ASSIGNED_REPAIR_PROBE_MEMBERSHIP_MISMATCH')
-        t=opportunity.target_member
-        repaired=0;assigned_effect=None
-        if assigned:
-            root,child=self._evaluate(opportunity,candidate,assigned,'assigned_repair_check')
-            if any(r.team_correctness[t] for r in root):raise SearchContractError('ASSIGNED_REPAIR_PARENT_NOT_WRONG')
-            assigned_effect=self._effect(root,child,t,'SEEN_ASSIGNED_REPAIR')
-            repaired=len(assigned_effect['fixed_ids'])
-        before,after=self._evaluate(opportunity,candidate,independent,'independent_team_probe')
-        old,new=self.evaluation(before),self.evaluation(after)
-        effect=self._effect(before,after,t,'INDEPENDENT_OPTIMIZE_TEAM_PROBE')
-        vote=int(new.aggregate_score-old.aggregate_score)
-        target=int(new.member_scores[t]-old.member_scores[t])
-        collateral=len(effect['broken_ids'])
-        regression=(vote<=-PROBE_POLICY['catastrophic_vote_net_loss'] or
-            target<=-PROBE_POLICY['catastrophic_target_net_loss'] or
-            collateral>=PROBE_POLICY['catastrophic_collateral_loss'] or
-            effect['invalid_delta']>0 and not self.invalid_predictions_are_incorrect)
-        reason=('ASSIGNED_REPAIR_FAILED' if repaired<PROBE_POLICY['minimum_assigned_binary_repairs'] else
-            'INDEPENDENT_PROBE_REGRESSION' if regression else 'PROBE_PASS')
-        metrics=TeamMiniBatchMetrics(target_delta=target,vote_delta=vote,team_net_vote_delta=vote,
-            responsibility_delta=repaired,broad_delta=target,invalid_delta=effect['invalid_delta'])
-        return replace(new,aggregation_diagnostics=dict(team_probe_metrics=metrics,
-            probe_policy=PROBE_POLICY,assigned_repair_count=repaired,assigned_repair_effect=assigned_effect,
-            assigned_repair_scope='SEEN_ASSIGNED_REPAIR',independent_count=6,
-            collateral_loss=collateral,risk_pass=not regression,promotion_reason=reason,
-            edit_effect=effect,
-            **({'scientific_risk_code':'TEAM_PROBE_REJECTION'} if reason!='PROBE_PASS' else {}),
-            **({'operational_failure':True} if not self.invalid_predictions_are_incorrect and any(not r.team_validity[t] for r in after) else {})))
 
     async def full(self, opportunity, candidate):
         self.fulled.append(candidate.candidate_id)
@@ -310,7 +272,7 @@ class FixedPeerTeamEvaluationProvider:
                 "team_score_delta": new.aggregate_score - old.aggregate_score,
                 "target_score_delta": new.member_scores[t] - old.member_scores[t],
                 "target_initial_margin": new.member_scores[t] - self.transition.initial_scores[t],
-                "promotion_reason":"FULL_PASS" if safe else "PROBE_PASS_FULL_REJECT"})
+                "promotion_reason":"FULL_PASS" if safe else "FULL_REJECT"})
         return replace(measurement, aggregation_diagnostics={**measurement.aggregation_diagnostics,
             **({"scientific_risk_code": "COMMON_SAFE_REJECTION"} if not safe else {})})
 
@@ -323,26 +285,3 @@ class FixedPeerTeamEvaluationProvider:
         effect=coverage_effect(project(before),child,scope=scope)
         effect['team_delta']=sum(r.vote_correct for r in after)-sum(r.vote_correct for r in before)
         return effect
-
-
-class FixedPeerCommonSafe:
-    """The frozen Common-Safe feasibility and S0-S2 key on neutral records."""
-    identity = "common_safe_v1"
-    def select(self, parent, candidates):
-        from .schemas import TransitionDecision
-        feasible = []
-        for r in candidates:
-            f = r.full
-            if not r.promoted or f is None:
-                continue
-            t = r.diagnostics["target_member"]
-            if (f.member_scores[t] >= parent.member_scores[t] and f.aggregate_score >= parent.aggregate_score
-                    and (f.member_scores[t] > parent.member_scores[t] or f.aggregate_score > parent.aggregate_score)
-                    and f.aggregation_diagnostics["terminal_invalid_delta"] <= 0):
-                d = f.aggregation_diagnostics
-                key = common_monotone_safe_measurement_key(vote_correct=f.aggregate_score, target_correct=f.member_scores[t],
-                    soft_vote_utility=d["mean_soft_vote_utility"], vote_loss_count=d["team_newly_broken_count"],
-                    invalid_count=d["target_invalid_count"], generation=r.candidate.backend_details.get("generation", 0),
-                    prompt_hash=hashlib.sha256(r.candidate.prompt.encode()).hexdigest())
-                feasible.append((key, r))
-        return TransitionDecision(max(feasible, key=lambda x: x[0])[1], "COMMON_SAFE_WINNER") if feasible else TransitionDecision(None, "NO_COMMON_SAFE_WINNER")

@@ -33,18 +33,30 @@ candidate_target > incumbent_target OR candidate_Vote > incumbent_Vote
 
 Other members are fixed. Target decline above the initial floor can pass with
 positive team progress; target-only improvement can pass with unchanged Vote.
-Finite collateral losses are allowed subject to the bound Probe, Full and Shadow
+Finite collateral losses are allowed subject to Full and Shadow
 contracts. Under current MATH invalid-as-incorrect semantics, invalidity is
 observed and affects correctness/vote eligibility; invalid delta is not a
 separate zero-regression Full or Shadow veto. Other benchmark policies can differ.
 
-Local Mutation and SearchValidation are Optimize search observations. Current
-V2.5 advances every safe, contract-legal, nonduplicate evaluated edit even with
-neutral or negative local effects. Assigned 0-to-1 repair and independent Probe
-risk checks control Full promotion. Full remains Optimize evidence. Only its
-selected winner reaches Shadow, whose current gate requires Vote nonregression
+V2.9 uses three independent single-step repairs from fitness-weighted Parent pools.
+Every legal candidate receives complete Optimize member Accuracy and actual
+fixed-peer Vote from the same predictions. Pools retain the three highest current
+fitness Prompts, independently of deployment admission. Historical local panels
+and assigned-repair Probe restrictions no longer control current promotion.
+Full remains Optimize evidence. Only its selected deployment winner reaches
+Shadow, whose current gate requires Vote nonregression
 and target loss no worse than two on its frozen support. Shadow pass can therefore
 coexist with no positive target replication. Commit follows all gates atomically.
+
+At closure each pool's highest fitness Prompt forms the exact proposed final team.
+Its joint complete Optimize Vote is measured, not inferred from historical scores.
+Initial aggregate floors extend to the changed members; final selection requires
+joint Vote nonregression but no additional strict progress over the safe incumbent.
+Per-opportunity Commit still requires target-or-team progress. The existing
+Shadow member-loss limit applies to each changed member in the single joint winner.
+Rejected combinations remain explicitly rejected proposals; the operational safe
+incumbent is separately labeled. See the normative V2.9 amendment for the exact
+simultaneous-admission rule and unchanged-assembly treatment.
 
 `team_epoch_no_commit_v1` observes complete eligible-member epochs at the same
 committed state; a commit resets its patience. Consecutive no-commit opportunities

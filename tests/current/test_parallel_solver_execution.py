@@ -10,7 +10,7 @@ import pytest
 from openai import APIConnectionError
 import httpx
 
-from tests.current.test_structured_optimization_evidence import contract, response
+from tests.current.population_support import contract, response
 from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker
 from multi_dataset_diverse_rl.search.solver_execution import POLICY, bounded_ordered_map
 from multi_dataset_diverse_rl.persistence.provider_receipts import ProviderResponseReceipts

@@ -8,26 +8,26 @@ Registry provides node metadata; current_frontier.yaml provides readiness only.
 ```yaml
 schema_version: current_frontier_v1
 current_architecture: Unified Team Prompt Search
-method_identity: unified_team_prompt_search_v2_8_scoped_experience_v1
-current_method: unified_team_prompt_search_v2_8_scoped_experience_v1
+method_identity: unified_team_prompt_search_v2_9_vote_parent_population_v1
+current_method: unified_team_prompt_search_v2_9_vote_parent_population_v1
 current_experiment: NO_AUTHORIZED_REAL_EXPERIMENT
 formal_manifest: null
-current_implementation: Scoped actual-edit experience delivery and Mutation-only diagnostic/reference/attempt
-  feedback.
+current_implementation: Three independent fitness-weighted parent selections; complete
+  Optimize fitness; joint final argmax admission.
 current_solver_model: gpt-4o-mini
 current_solver_provider_profile: openlux
 current_optimizer_model: qwen3.7-flash
 current_optimizer_provider_profile: lwj
 current_provider_routing_policy: OPENLUX_SOLVER_LWJ_OPTIMIZER_V1
-current_binding_identity: MATH_SCOPED_EXPERIENCE_BINDING_V11
-current_cache_policy: ROLE_ROUTED_SCOPED_EXPERIENCE_MEMBER_LANE_CACHE_V11
+current_binding_identity: MATH_VOTE_PARENT_POPULATION_BINDING_V12
+current_cache_policy: ROLE_ROUTED_VOTE_POPULATION_MEMBER_LANE_CACHE_V12
 current_benchmark_suite:
 - math
-last_governance_milestone: scoped_edit_experience_layer1_v28_preparation_v1
+last_governance_milestone: vote_parent_population_v29_preparation_v1
 real_execution_ready: false
 real_api_authorized: false
 ready_for_authorization: false
-current_preparation_status: IMPLEMENTED_OFFLINE_UNFROZEN
+current_preparation_status: IMPLEMENTED_OFFLINE_VERIFIED_UNFROZEN
 validation_access: not_authorized
 test_access: sealed
 current_execution_blocker: NEW_SOURCE_PHASE_FREEZE_AND_EXACT_AUTHORIZATION_REQUIRED
@@ -35,10 +35,10 @@ current_execution_blockers:
 - NEW_SOURCE_PHASE_FREEZE_AND_EXACT_AUTHORIZATION_REQUIRED
 current_runtime_builder: build_current_team_prompt_search
 current_execution_entrypoint: scripts/run_experiment.py
-current_runtime_composition: CURRENT_SCOPED_EXPERIENCE_COMPOSITION_V11
+current_runtime_composition: CURRENT_VOTE_PARENT_POPULATION_COMPOSITION_V12
 current_execution_binding: null
-current_layer1_backend: STRUCTURED_EVIDENCE_FEEDBACK_SEARCH_V4
-current_memory_policy: SCOPED_EDIT_EXPERIENCE_MEMORY_V4
+current_layer1_backend: VOTE_GUIDED_PARENT_POPULATION_SEARCH_V5
+current_memory_policy: POPULATION_SCOPED_EDIT_MEMORY_V5
 current_pattern_policy: gradient_output_contract_feedback_partition_v10
 current_gradient_prompt_identity: STRUCTURED_SYSTEM_GRADIENT_PROMPT_V11
 current_initial_team_version: MATH_IDENTICAL_ARM_B_STRUCTURED_SEED_V3
@@ -104,9 +104,9 @@ current_gradient_output_limits:
   diagnosis: 400
   reusable_correction: 400
   expected_effect: 240
-current_optimization_evidence_policy: SCOPED_EXPERIENCE_EVIDENCE_POLICY_V11
-current_preparation_experiment: scoped_edit_experience_layer1_v28_preparation_v1
-current_preparation_manifest: experiments/manifests/scoped_edit_experience_layer1_v28_preparation_v1.yaml
+current_optimization_evidence_policy: VOTE_PARENT_POPULATION_EVIDENCE_POLICY_V12
+current_preparation_experiment: vote_parent_population_v29_preparation_v1
+current_preparation_manifest: experiments/manifests/vote_parent_population_v29_preparation_v1.yaml
 last_gradient_limit_adoption_report: reports/gradient_diagnostic_limits_400_v2_preparation_20261011
 last_gradient_limit_adoption_real_api_calls: 0
 proposed_canary_token_ceiling: null
@@ -146,6 +146,10 @@ last_formal_manifest: experiments/manifests/math_v27_seed86_precluster_continuat
 last_formal_report: reports/math_v27_seed86_continuation_execution_20261012
 last_evolution_bottleneck_audit: reports/math_v27_seed86_evolution_bottleneck_audit_20261012
 last_scoped_experience_preparation_report: reports/scoped_edit_experience_layer1_v28_preparation_20261012
+last_controlled_flow_preparation_report: reports/math_v28_seed87_controlled_flow_freeze_20261012
+last_controlled_flow_preparation_status: ABANDONED_BEFORE_FREEZE_ZERO_API
+current_preparation_report: reports/vote_parent_population_v29_preparation_20261012
+current_preparation_verification: reports/vote_parent_population_v29_preparation_20261012/verification.json
 ```
 
 ## Experiment and engineering DAG
@@ -468,6 +472,8 @@ flowchart TD
     n336["math_v27_seed86_evolution_bottleneck_audit_20261012<br/>FORENSIC_AUDIT<br/>COMPLETED"]
     n337["scoped_edit_experience_layer1_v28_preparation_v1<br/>PROTOCOL_FREEZE<br/>IMPLEMENTED_NOT_EXECUTED"]
     n338["local_evaluation_promotion_feasibility_audit_v1_20261012<br/>FORENSIC_AUDIT<br/>COMPLETED"]
+    n339["math_v28_seed87_controlled_flow_pilot_v1<br/>PILOT<br/>ABANDONED"]
+    n340["vote_parent_population_v29_preparation_v1<br/>ARCHITECTURE_REFACTOR<br/>IMPLEMENTED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -750,6 +756,10 @@ flowchart TD
   n334 -->|audit_of| n338
   n336 -->|audit_of| n338
   n337 -->|audit_of| n338
+  n337 -->|derived_from| n339
+  n338 -->|derived_from| n339
+  n337 -->|derived_from| n340
+  n338 -->|derived_from| n340
 ```
 
 ## Archived branches and unresolved evidence

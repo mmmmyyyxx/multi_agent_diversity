@@ -5,7 +5,7 @@ from dataclasses import replace
 from types import SimpleNamespace as NS
 import pytest
 from multi_dataset_diverse_rl.search.schemas import SearchContractError
-from tests.current.test_structured_optimization_evidence import contract
+from tests.current.population_support import contract
 
 from multi_dataset_diverse_rl.benchmarks.math_optimizer_generation import pattern_cluster_generation_contract,frozen_cluster_policy
 from multi_dataset_diverse_rl.benchmarks.math_solver_decoding import generation_request_fields

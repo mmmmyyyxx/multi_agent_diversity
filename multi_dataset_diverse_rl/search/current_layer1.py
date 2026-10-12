@@ -1,163 +1,167 @@
-"""Current Gradient Layer1; no historical treatment inheritance."""
-from dataclasses import asdict, dataclass, replace
+"""Three independent single-step repairs from an opportunity-start population."""
+from dataclasses import asdict, dataclass
 import json
 from .. import current_contract as versions
 from ..local_optimizers.schemas import LocalEvidenceExample
-from .bounded_layer1 import BoundedMemoryOptimizer, LocalTaskEngine, MemoryLocalTask, build_optimizer_context, digest
-from .schemas import SearchContractError
-from .readable_evidence import INSTRUCTION
-from .optimizer_output_contract import JSON_INSTRUCTION
+from .schemas import SearchContractError, SearchCandidate, SearchResult
+from .parent_population import digest
+from .system_prompt import candidate_failed_checks, block_lineage
+from .optimization_evidence import executability_checks
+from .optimizer_output_contract import (JSON_INSTRUCTION, parse_output,
+    validate_reflection_output, feedback_for_error, reflection_feedback_prefix,
+    reject, issue)
+from .generation_failures import recoverable_output
 
 
 @dataclass(frozen=True)
-class GradientPatternLocalTask(MemoryLocalTask):
-    selected_pattern: str = ''
-    failure_trajectories: str = '[]'
-    pattern_support: tuple[str,...] = ()
-    private_feedback_texts: tuple[str,...] = ()
-    repair_evidence: str = '[]'
-    task_types: tuple[str,...] = ()
-    parent_state_id: str = ''
-
-
-@dataclass(frozen=True)
-class EvidenceLayer1Config:
+class PopulationSearchConfig:
     identity_version: str = versions.CURRENT_LAYER1_SEARCH_VERSION
-    metric_limit: int = 42
-    panel_size: int = 6
-    max_generations: int = 6
-    k_local_return: int = 4
+    optimizer_input_schema: str = versions.CURRENT_OPTIMIZER_INPUT_SCHEMA
+    offspring_slots: int = 3
+    maximum_parents: int = 3
+    structural_draws_per_slot: int = 2
+    maximum_support_examples: int = 3
     max_prompt_chars: int = 3000
     candidate_contract: str = versions.SEMANTIC_MUTABLE_CONTRACT_VERSION
-    official_gepa_fidelity: bool = False
-    optimizer_input_schema: str = versions.CURRENT_OPTIMIZER_INPUT_SCHEMA
-    panel_policy: str = 'DISJOINT_QUOTA_FREE_REPAIR_EVIDENCE_V2'
 
     def __post_init__(self):
-        defaults={name:field.default for name,field in self.__dataclass_fields__.items()}
-        if asdict(self)!=defaults:raise SearchContractError('EVIDENCE_LAYER1_CONFIG_MISMATCH')
+        if asdict(self) != {k:v.default for k,v in self.__dataclass_fields__.items()}:
+            raise SearchContractError('POPULATION_SEARCH_CONFIG_MISMATCH')
 
-    def identity(self):return digest(asdict(self))
+    def identity(self): return digest(asdict(self))
 
-def gradient_pattern_input(task,parent,observations,memory,attempt_feedback=()):
-    from .optimization_evidence import INPUT
-    if not observations or observations[0].get('evidence_revision')!=INPUT:
-        raise SearchContractError('CURRENT_LAYER1_EVIDENCE_REQUIRED')
-    value=build_optimizer_context(task,parent,observations,memory)
-    value.update(schema=INPUT,selected_pattern=json.loads(task.selected_pattern),
-        repair_objective='Develop a testable conditional repair for useful team improvement.',
-        preceding_attempts=list(attempt_feedback),
-        edit_capacity=dict(rendered_characters=len(parent.render()),maximum_characters=3000,
-            maximum_replacement_block_characters={k:3000-4-sum(len(getattr(parent,j))
-                for j in ('role','strategy','answer') if j!=k) for k in ('role','strategy','answer')}))
-    sources={r['example_id']:r for r in json.loads(task.repair_evidence)}
-    if set(sources)!={r['example_id'] for r in observations}:
-        raise SearchContractError('LAYER1_REPAIR_EVIDENCE_MEMBERSHIP_MISMATCH')
-    for obs,visible in zip(observations,value['current_panel_observations'],strict=True):
-        source=sources.get(obs['example_id'])
-        if source:
-            visible['worked_reference']=source['worked_reference']
-            if source.get('diagnostic'):
-                visible['root_repair_diagnostic']=source['diagnostic']
-    return (INSTRUCTION + '''Use only the supplied mutation examples and bounded measured Memory.
-The selected Pattern is a repair hypothesis, not a mandatory universal instruction.
-Do not introduce dependencies on optimizer-only evidence. Use the observed failure,
-diagnosis, reusable correction, expected effect and worked reference to judge the
-selected hypothesis. Root diagnostics describe the opportunity's ORIGINAL prompt;
-current written observations describe the current local parent. A diagnosis is not
-a proven cause, and previously fixed cases need not still require that repair.
-Memory opportunity_root_match compares earlier parent/child prompts and team to
-the ORIGINAL opportunity root, not the later local parent. last_step_instruction
-is only the final step in a possibly compound edit, not its isolated causal effect.
-Read scoped Memory as earlier complete-edit observations. Relate its actual edit,
-measured scope and parent applicability to this task; do not copy a past failure or
-treat either success or rejection as a universal rule. Existing successful behavior
-matters, but a small local loss is not a final team rejection. Full/Shadow decide
-team admission. Prefer one specific, conditional repair over broad new checklists.
-Appending the old block is not behavioral preservation: revise overlapping rules
-concisely when warranted. Respect the supplied exact replacement-block capacity.
-Use preceding attempts to avoid repeating unchanged abstentions or invalid edits;
-consider a distinct grounded hypothesis when evidence supports one. NO_SAFE_EDIT
-remains valid when no justified contract-legal edit can be proposed; do not invent
-a repair merely to fill a generation slot.
-Return {"decision":"NO_SAFE_EDIT"} or {"decision":"PROPOSE_EDIT",
-"target_block":"strategy", "new_content":"complete replacement block",
-"change_summary":"intended change, at most 240 characters"}. No other keys.
-Choose the block from the evidence.
-target_block must be ONE string: "role", "strategy", or "answer"; never an object,
-array, or comma-separated list. decision and new_content are strings, and
-change_summary is a nonempty string of at most 240 decoded characters.
-The example shows shape only; choose the appropriate block independently.
-All blocks, including presentation and reasoning preferences, are editable.
-Change exactly one block. The full rendered system
-prompt must remain at most 3000 characters. No fixed CoT or output format is required.
-SearchValidation is measured after generation; prior measurement counts may guide
-the next iteration but validation examples and answers are not supplied.
-Respect missing/truncated written evidence; do not infer hidden reasoning.
-''' + JSON_INSTRUCTION + json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=True))
 
-class GradientPatternMemoryOptimizer(BoundedMemoryOptimizer):
-    config_factory=EvidenceLayer1Config
-    prompt_builder=staticmethod(gradient_pattern_input)
+INSTRUCTION = '''Perform ONE evidence-grounded edit to the selected Parent Prompt.
+Layer2 has specified a repair hypothesis and representative erroneous samples.
+Root diagnostics concern the explicitly labeled root Prompt. Selected-parent
+observations are the actual outputs of the Parent you are editing; do not confuse
+them, invent hidden reasoning, or regenerate Responsibility. A Pattern is a
+hypothesis, not a universally proven rule. Use the complete readable evidence and
+worked reference to formulate a specific conditional repair. Scoped experience
+describes previous complete edits in their measured contexts, not causal laws.
+Generate a concrete edit; abstention is not an output option. Do not copy a problem,
+reference, answer or supplied solution into the Prompt. Do not introduce references
+to optimizer-only fields. All role/strategy/answer blocks are editable. Change
+exactly one block; the entire rendered system Prompt must remain <=3000 characters.
+Prefer concise coherent rules; appending redundant checklists is not preservation.
+Return exactly {"target_block":"strategy","new_content":"complete replacement block",
+"change_summary":"intended change, at most 240 characters"}. Choose the block from
+the evidence. No decision field or other keys. Fields must be strings; target_block
+must be exactly role, strategy or answer. Truncation is labeled; do not infer omitted
+content. Format-recovery feedback is not mathematical evidence or evaluation.
+'''
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        from .optimization_evidence import frozen_policy
-        broker=getattr(self.evaluator,'broker',None)
-        frozen_policy(getattr(broker,'contract',{}).get('optimization_evidence_policy'))
-        if getattr(broker,'solver_trajectory_policy',None) is None:
-            raise SearchContractError('CURRENT_VISIBLE_TRAJECTORY_REQUIRED')
 
-class GradientPatternMemoryEngine(LocalTaskEngine):
-    def __init__(self,optimizer,seed):
-        super().__init__(optimizer,seed)
-        self.identity=optimizer.config.identity_version
+class CurrentOptimizer:
+    def __init__(self, *, evaluator, reflection_lm, accounting_reader, run_root):
+        self.config = PopulationSearchConfig()
+        self.evaluator = evaluator; self.reflection_lm = reflection_lm
+        self.accounting_reader = accounting_reader; self.run_root = run_root
+        self.population = None; self.profile_reader = None; self.memory = None
+        self.execution_observer = None
+
+    async def search(self, opportunity, context, seed):
+        patterns = context.pattern_view
+        pattern = next((p for p in patterns.get('patterns', ())
+            if p['pattern_id'] == patterns.get('focus_mechanism_id')), None)
+        if pattern is None:
+            return SearchResult((), 'NO_ACTIONABLE_PATTERN')
+        if self.population is None or self.profile_reader is None or self.memory is None:
+            raise SearchContractError('POPULATION_PORTS_NOT_BOUND')
+        rows = opportunity.evidence.repair_examples
+        if not 1 <= len(rows) <= 3 or any(r.source_split != 'optimize'
+                or r.example_id not in pattern['support_ids'] for r in rows):
+            raise SearchContractError('PATTERN_SUPPORT_EVIDENCE_INVALID')
+        parents, plan = self.population.select_three(opportunity.target_member,
+            seed=seed, opportunity_id=opportunity.opportunity_id)
+        self.population.save()
+        diagnostics = {r['example_id']:r for r in patterns.get('gradient_diagnostics', ())
+            if r.get('disposition') == 'ACTIONABLE'}
+        seen = {p.identity for p in self.population.ordered(opportunity.target_member)}
+        candidates = []; outcomes = []; draws = 0
+        before = self.accounting_reader()
+        for slot, parent in enumerate(parents):
+            observations = self.profile_reader(opportunity.target_member, parent.prompt, rows)
+            examples = []; private = []
+            for row in rows:
+                s = row.signals; solution = s.get('reference_solution')
+                diagnostic = diagnostics.get(row.example_id)
+                if not isinstance(solution, str) or not solution.strip() or diagnostic is None:
+                    raise SearchContractError('SINGLE_STEP_REPAIR_EVIDENCE_REQUIRED')
+                actual = observations[row.example_id]
+                examples.append(dict(example_id=row.example_id, problem=s['input_payload'],
+                    reference_final_answer=s['gold'],
+                    worked_reference=dict(source='dataset_worked_solution', split='optimize',
+                        text=solution[:4096], original_characters=len(solution), truncated=len(solution)>4096),
+                    root_observation=dict(prompt_sha256=opportunity.parent_prompt.prompt_hash,
+                        trajectory=s['solver_trajectory'], correct=s['target_member_correct']),
+                    accepted_root_diagnostic={k:diagnostic[k] for k in
+                        ('observed_failure','diagnosis','reusable_correction','suggested_block','expected_effect')},
+                    selected_parent_observation=actual))
+                private.extend((solution, s['solver_trajectory'].get('observed_response', ''),
+                    actual['trajectory'].get('observed_response', ''), diagnostic['observed_failure'], diagnostic['diagnosis']))
+            memory = self.memory.read_for_member(opportunity.target_member, parent.identity)
+            packet = dict(schema=self.config.optimizer_input_schema,
+                selected_parent=parent.prompt.to_dict(), selected_parent_sha256=parent.identity,
+                repair_direction=dict(pattern_id=pattern['pattern_id'],
+                    generalized_gradient=pattern['generalized_gradient'],
+                    evidence_root_prompt_sha256=opportunity.parent_prompt.prompt_hash),
+                repair_examples=examples, scoped_experience=memory,
+                edit_capacity=dict(maximum_rendered_characters=3000,
+                    maximum_replacement_block_characters={k:3000-4-sum(len(getattr(parent.prompt,j))
+                        for j in ('role','strategy','answer') if j!=k) for k in ('role','strategy','answer')}))
+            feedback = None; errors = []; candidate = None
+            for draw in range(self.config.structural_draws_per_slot):
+                draws += 1
+                try:
+                    text = self.reflection_lm(reflection_feedback_prefix(feedback) + INSTRUCTION
+                        + JSON_INSTRUCTION + json.dumps(packet, sort_keys=True, separators=(',', ':'), ensure_ascii=True))
+                    value = validate_reflection_output(parse_output(text, stage='reflection'))
+                    if value['new_content'].strip()==getattr(parent.prompt,value['target_block']).strip():
+                        reject('REFLECTION_OUTPUT_CONTRACT_INVALID','reflection',[issue('new_content','CONTENT_REJECTED')])
+                    try: child = parent.prompt.edit(value['target_block'], value['new_content'])
+                    except SearchContractError as error:
+                        reject('REFLECTION_OUTPUT_CONTRACT_INVALID', 'reflection',
+                            [issue('new_content', 'OVER_LIMIT' if str(error)=='SYSTEM_PROMPT_OVER_LENGTH' else 'CONTENT_REJECTED')])
+                    check_examples = tuple(LocalEvidenceExample(row.example_id,
+                        row.signals['input_payload'], row.signals['gold']) for row in rows)
+                    failed = candidate_failed_checks(child, parent_prompt=parent.prompt, examples=check_examples)
+                    failed += executability_checks(child.render(), private_texts=private)
+                    if failed or child.prompt_hash in seen:
+                        reject('REFLECTION_OUTPUT_CONTRACT_INVALID', 'reflection', [issue('new_content', 'CONTENT_REJECTED')])
+                    seen.add(child.prompt_hash)
+                    lineage = block_lineage(parent.prompt, child)
+                    candidate = SearchCandidate(f'population:{slot}:{child.prompt_hash[:12]}', child,
+                        lineage=lineage, backend_details=dict(changed=True, contract_valid=True,
+                            opportunity_id=opportunity.opportunity_id, parent_state_id=opportunity.parent_state_id,
+                            slot=slot, selected_parent_sha256=parent.identity,
+                            selected_parent=parent.prompt.to_dict(), population_revision=plan['population_revision'],
+                            pattern_id=pattern['pattern_id'],repair_hypothesis=pattern['generalized_gradient'], support_ids=[r.example_id for r in rows],
+                            intended_change=value['change_summary'], reflection_input_sha256=digest(packet)))
+                    candidates.append(candidate); break
+                except SearchContractError as error:
+                    if not recoverable_output(error, 'reflection'): raise
+                    feedback = feedback_for_error(error, stage='reflection')
+                    errors.append(dict(draw=draw, category=str(error), feedback=feedback))
+            outcome = dict(slot=slot, selected_parent_sha256=parent.identity,
+                candidate_id=candidate.candidate_id if candidate else None,
+                disposition='GENERATED' if candidate else 'GENERATION_FAILED', errors=errors,
+                reflection_input_sha256=digest(packet))
+            outcomes.append(outcome)
+            if self.execution_observer:
+                self.execution_observer('POPULATION_SLOT', dict(packet=packet, outcome=outcome))
+        after = self.accounting_reader()
+        return SearchResult(tuple(candidates), 'THREE_SINGLE_STEP_SLOTS_COMPLETE',
+            search_state=dict(selection_plan=plan, generation_outcomes=outcomes,
+                reflection_draws=draws, independent_slots=3), proposal_count=3,
+            team_candidate_count=len(candidates), search_meta_calls=after['successful_calls']-before['successful_calls'],
+            search_meta_tokens=(after['input_tokens']+after['output_tokens']-before['input_tokens']-before['output_tokens']))
+
+
+class CurrentEngine:
+    def __init__(self, optimizer, seed):
+        self.optimizer=optimizer; self.seed=seed; self.identity=optimizer.config.identity_version
     async def search(self, opportunity, context):
-        result = await super().search(opportunity, context)
-        # Execution metadata only; no change to the provider-visible prompt.
-        return replace(result, candidates=tuple(replace(c, backend_details={**c.backend_details,
-            'parent_state_id':opportunity.parent_state_id}) for c in result.candidates))
+        return await self.optimizer.search(opportunity, context, self.seed)
 
-    def make_task(self,opportunity,context):
-        base=super().make_task(opportunity,context)
-        universe=opportunity.evaluation_plan['evidence_universe']
-        from .optimization_evidence import frozen_policy
-        frozen_policy(opportunity.evaluation_plan.get('optimization_evidence_policy'))
-        if any(r.source_split!='optimize' for r in universe):raise SearchContractError('LAYER1_HELDOUT_ACCESS')
-        p=next((p for p in context.pattern_view['patterns']
-            if p['pattern_id']==context.pattern_view['focus_mechanism_id']),None)
-        lane=('general' if context.pattern_view.get('selection_reason')=='SEEDED_ZERO_RESPONSIBILITY_FALLBACK' else opportunity.diagnosis.responsibility[opportunity.target_member].primary_lane)
-        repairs=[r for r in opportunity.evidence.mutation_evidence if 'REPAIR' in r.roles]
-        diagnostics={r['example_id']:r for r in context.pattern_view.get('gradient_diagnostics',())
-            if r.get('disposition')=='ACTIONABLE'}
-        repair_evidence=[]
-        for row in opportunity.evidence.mutation_evidence:
-            solution=row.signals.get('reference_solution')
-            if not isinstance(solution,str) or not solution.strip():raise SearchContractError('OPTIMIZE_REFERENCE_SOLUTION_REQUIRED')
-            diagnostic=diagnostics.get(row.example_id)
-            projection=({k:diagnostic[k] for k in ('observed_failure','diagnosis','reusable_correction',
-                'suggested_block','expected_effect')} if diagnostic and p and row.example_id in p['support_ids'] else None)
-            if projection:projection['basis']='original_opportunity_prompt_observation_hypothesis'
-            repair_evidence.append(dict(example_id=row.example_id,diagnostic=projection,
-                worked_reference=dict(source='dataset_worked_solution',split='optimize',text=solution[:4096],
-                    original_characters=len(solution),truncated=len(solution)>4096)))
-        return GradientPatternLocalTask(**{**base.__dict__,'optimization_context':lane},
-            responsibility_lane=lane,selected_pattern=json.dumps(self.pattern_projection(p) if p
-                else dict(pattern_id=None,generalized_gradient=None)),
-            pattern_support=tuple(p['support_ids']) if p else (),
-            repair_evidence=json.dumps(repair_evidence),parent_state_id=opportunity.parent_state_id,
-            task_types=tuple(sorted({r.signals['task_metadata']['type'] for r in opportunity.evidence.mutation_evidence
-                if isinstance(r.signals.get('task_metadata',{}).get('type'),str)})),
-            failure_trajectories=json.dumps([r.signals['failure_trajectory'] for r in repairs]),
-            private_feedback_texts=tuple(str(r.signals.get(k,'')) for r in universe
-                for k in ('reference_solution',)) + tuple(r.signals.get('solver_trajectory',{}).get('visible_solution','') for r in universe)
-                + tuple(str(d['diagnostic'][k]) for d in repair_evidence if d['diagnostic']
-                    for k in ('observed_failure','diagnosis')))
-
-    @staticmethod
-    def pattern_projection(pattern):
-        return {k:pattern[k] for k in ('pattern_id','generalized_gradient')}
-
-CurrentOptimizer=GradientPatternMemoryOptimizer
-CurrentEngine=GradientPatternMemoryEngine
-CurrentLayer1Config=EvidenceLayer1Config
+CurrentLayer1Config = PopulationSearchConfig

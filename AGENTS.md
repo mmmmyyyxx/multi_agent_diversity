@@ -39,7 +39,7 @@ The sole active research architecture is Unified Team Prompt Search.
 Member state is one Role/Strategy/Answer object; User content is the raw problem.
 All three blocks are editable. No immutable CoT or output-style instruction exists.
 `UnifiedSearchOrchestrator` owns the production graph. The current composition
-binds Gradient Pattern, Rolling Risk Memory and bounded Layer1 search through
+binds Gradient Pattern, versioned scoped Memory and bounded Layer1 search through
 one complete current policy bundle. Aggregation remains benchmark-selected.
 Structured optimizer history is separate from LLM memory.
 New experiments use `scripts/run_experiment.py`, the sole current composition

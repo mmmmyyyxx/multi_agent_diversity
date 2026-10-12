@@ -647,7 +647,7 @@ class ReflectionProvider:
         self.calls = self.input_tokens = self.output_tokens = 0
 
     def __call__(self, prompt):
-        result = self.broker.complete(role="reflection", split="optimize", stage="gepa_reflection", messages=[{"role": "user", "content": prompt}])
+        result = self.broker.complete(role="reflection", split="optimize", stage="population_reflection", messages=[{"role": "user", "content": prompt}])
         self.calls += int(result["provider_called"])
         self.input_tokens += result["input_tokens"]
         self.output_tokens += result["output_tokens"]

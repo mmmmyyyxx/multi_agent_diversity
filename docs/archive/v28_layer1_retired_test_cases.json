@@ -1,0 +1,36 @@
+{
+  "source": "905268bad94fa9a70fb9b719c0c68d6588cd7d9d",
+  "retired_modules": [
+    "test_structured_optimization_evidence.py",
+    "test_scoped_experience_layer1.py",
+    "test_v25_repair_contract.py",
+    "test_structured_system_contract.py"
+  ],
+  "retired_cases": [
+    {
+      "path": "tests/current/test_optimizer_output_contract_feedback.py",
+      "test": "test_reflection_feedback_consumes_existing_slots_and_clears_after_valid_output",
+      "replay_source": "905268bad94fa9a70fb9b719c0c68d6588cd7d9d"
+    },
+    {
+      "path": "tests/current/test_parallel_compact.py",
+      "test": "test_actual_gradient_and_reflection_boundaries_have_direct_readable_evidence",
+      "replay_source": "905268bad94fa9a70fb9b719c0c68d6588cd7d9d"
+    },
+    {
+      "path": "tests/current/test_generated_output_recovery.py",
+      "test": "test_truncated_reflection_is_charged_and_keeps_prior_successful_candidates",
+      "replay_source": "905268bad94fa9a70fb9b719c0c68d6588cd7d9d"
+    },
+    {
+      "path": "tests/current/test_current_admission.py",
+      "test": "test_target_only_teamprobe_signal_reaches_full_with_ceiling_two",
+      "replay_source": "905268bad94fa9a70fb9b719c0c68d6588cd7d9d"
+    },
+    {
+      "path": "tests/current/test_local_promotion_feasibility_audit.py",
+      "test": "test_probe_replay_matches_production_and_floor_removal_retains_risk_bound",
+      "replay_source": "905268bad94fa9a70fb9b719c0c68d6588cd7d9d"
+    }
+  ]
+}

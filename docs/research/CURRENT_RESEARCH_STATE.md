@@ -64,9 +64,15 @@ completed 50 opportunities and five Commits with Optimize Vote 118 to 125/150.
 This is resource-truncated descriptive development evidence, not independent
 generalization or component causality. Old scopes stay closed.
 
-The current [V2.8 amendment](../design/SCOPED_EDIT_EXPERIENCE_LAYER1_V28.md)
+The historical [V2.8 amendment](../design/SCOPED_EDIT_EXPERIENCE_LAYER1_V28.md)
 improves scoped actual-edit Memory delivery and Mutation-only Layer1 evidence
 feedback. Its [offline preparation report](../../reports/scoped_edit_experience_layer1_v28_preparation_20261012/README.md)
 separates delivery, actionable content and Mock wiring from real-model utilization
 and efficacy. No real V2.8 execution is authorized or evaluated.
 Full/Shadow admission and the formal stopper remain unchanged.
+
+The sole current method is [V2.9 Vote-Guided Parent Population](../design/VOTE_GUIDED_PARENT_POPULATION_V29.md).
+It is a user-directed algorithm change with three independent single-step repairs,
+complete Optimize fitness, bounded per-member pools and a jointly evaluated final
+argmax team. No real experiment, Token-efficiency or generalization claim follows
+from implementation. Readiness and exact authorization remain closed in the frontier.

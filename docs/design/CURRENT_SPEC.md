@@ -5,14 +5,16 @@ The [scientific principles](SCIENTIFIC_PRINCIPLES.md) constrain interpretation;
 the [MATH scientific contract](MATH_SCIENTIFIC_CONTRACT.md) clarifies benchmark
 measurement and admission. These clarifications add no algorithm or threshold.
 The sole executable method is
-`unified_team_prompt_search_v2_8_scoped_experience_v1`.
-The [scoped edit experience and Layer1 feedback amendment](SCOPED_EDIT_EXPERIENCE_LAYER1_V28.md)
-adds relevance-aware, budgeted Full experience delivery and Mutation-only root
-diagnostics/worked references plus measured preceding-attempt feedback. It keeps
-the 1200-character Memory bound, local budgets, evaluated-parent search, selection,
-WHO, Gradient semantics, Solver/scoring, Full/Shadow and stopping unchanged.
-No Preservation Gradient, panel or new hard constraint is introduced. Current
-contracts require fresh identities and cannot import the historical V2.7 prefix.
+`unified_team_prompt_search_v2_9_vote_parent_population_v1`.
+The [Vote-Guided Parent Population amendment](VOTE_GUIDED_PARENT_POPULATION_V29.md)
+replaces the six-step chain and Probe promotion with three independent single-step
+repairs, a three-parent pool per member, complete Optimize Vote fitness and a
+jointly evaluated final per-pool argmax team. Scoped single-step Memory and
+readable root/selected-parent observations support Reflection. It supersedes
+V2.8 local evaluation, serial parent progression and abstention. WHO, Gradient
+semantics, Solver/scoring and epoch stopping are unchanged. Single-member
+Full/Shadow deployment guards remain; final simultaneous assembly generalizes
+the same guards to all changed members. No new Preservation panel is introduced.
 [The V2.5 scientific contract](RESPONSIBILITY_FALLBACK_REPAIR_V25.md) and
 [flexible answer extraction amendment](FLEXIBLE_ANSWER_EXTRACTION_V3.md) and
 [bounded output recovery amendment](GENERATED_OUTPUT_RECOVERY_V25.md) are normative.
@@ -33,10 +35,12 @@ failure discount; all-zero fallback is seeded and replayable. Gradient and Patte
 recover typed model-output failures within three draws, preserving valid partial evidence.
 Source-aware symbolic provenance replaces literal-only overlap rejection. Integrity
 and unknown exceptions remain fatal; rejected text never enters optimizer state.
-Mutation3, SearchValidation3 and Independent TeamProbe6 are disjoint. Seen assigned
-repair must actually improve binary correctness before Full, under frozen Probe
-risk. Every safe evaluated local edit advances the temporary parent. Six generations,
-42 local evaluations, four exports and two Full promotions remain fixed.
+Selected Pattern support is shared across the three independent Reflection slots.
+The frozen pool is sampled with replacement before generation. Children cannot
+become Parents in the same opportunity. All legal unique candidates receive a
+complete Optimize profile and actual fixed-peer Team Vote. Pool retention does
+not imply admission. Local 3/3/6 partitions, repair-count Probe gating, four exports,
+two-Full limits and within-opportunity feedback are retired from current execution.
 
 The [V3 transition contract](TRANSITION_TARGET_OR_TEAM_PROGRESS_V3.md) remains
 normative: immutable initial competence floor, nonregressing Vote, target-or-team
@@ -46,15 +50,15 @@ monotonicity. Current MATH invalidity remains observation-only apart from binary
 incorrectness and vote eligibility; no extra zero-format-regression gate exists.
 Oracle coverage and deployed Vote gains are separate observations. Local, Full,
 Shadow, formal stopping and independent generalization have distinct evidence roles.
-Private measured Memory includes mathematical and format failures; shared risk
-contains closed generic categories only. No optimizer context enters Solver.
+Private measured Memory contains scoped single-step edit observations and actual
+complete measurement/admission context. No optimizer context enters Solver.
 
 Older runtime identities cannot execute through current production. Historical
 manifests and reports remain immutable evidence with their frozen source replay.
 No old scoring, response cache, competence, Memory or consumed scope is silently reusable.
 The [request recovery and explicit continuation amendment](V27_REQUEST_RECOVERY_CONTINUATION_V2.md)
 permitted only a historical V2.7 authorized, sealed zero-opportunity pre-cluster
-prefix. It does not grant V2.8 execution eligibility. Exact Solver lanes and optimizer wire responses retain parent
+prefix. It does not grant V2.9 execution eligibility. Exact Solver lanes and optimizer wire responses retain parent
 provenance and draw positions; adaptive Memory and completed opportunities cannot
 be imported. Generated alias conflicts now consume the existing bounded Cluster
 retry budget. Current formal scopes allow a null cumulative Token ceiling with
