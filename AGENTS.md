@@ -177,6 +177,8 @@ is main; freeze experiments by source SHA and hashes, not permanent branches.
 Only Sol commits. Push only on explicit user request. For authorized direct
 publishing, verify branch, remote, intended files and sanitization, stage only
 task files and run `git push origin main`; no side branch or pull request.
+An explicit push request does not expand verification scope. Apply section 11
+to the complete task diff and reuse applicable completed checks.
 Ignored runs, raw data, credentials, checkpoints and caches stay untracked.
 Publish only sanitized evidence: hashes, counters, categories and metrics, never
 prompts, questions, gold/model answers, raw responses, endpoints or host paths.
@@ -192,11 +194,45 @@ unique evidence and replay-required files are never cleanup deletion targets.
 Archive changes need provenance and an invariant index; deletion requires an
 inventory, dry-run plan and tombstone. Historical reports remain immutable.
 
-## 11. Required preflight checklist
+## 11. Verification scope and required preflight
 
-Run compileall, the explicitly classified current pytest suite, governance and
-manifest preflight, required deterministic smokes, sanitization and
-`git diff --check`. Report omitted historical private-artifact tests explicitly;
-never label a partial suite as all historical replay passing. Before real runs,
-verify frozen source/startup identity, split isolation, authorization, lifecycle,
-ledger, resource ceilings and exact command via the governed handoff.
+Choose checks from the complete task diff and intended action before launching
+them. State the change category and relevant checks briefly. Use the highest
+applicable category for mixed changes; publishing reports after code changes
+does not turn the task into a report-only change. File extension alone is not
+a classification: normative scientific documentation and behavior-affecting
+configuration belong to scientific changes.
+
+| Change category | Required verification |
+|---|---|
+| Reports, result artifacts, ordinary documentation or workflow instructions only | Check intended files, links, relevant report arithmetic/consistency, sanitization, artifact hashes and `git diff --check`. Use focused documentation guards when relevant. No production `compileall`, full current pytest suite or whole historical governance/manifest sweep solely to publish or push. |
+| Publication metadata only: report registration, parent links and derived indexes | Validate the changed records, references and lineage edges, plus affected generated views. Reuse unchanged manifest/source checks; do not revalidate every historical experiment. Changes to readiness, authorization, access or executable settings are not publication metadata. |
+| Code, tools or tests without scientific behavior changes | Compile affected Python modules; run relevant tests, deterministic smokes and affected governance checks under the offline network guard. Broaden to the full current suite only for a concrete cross-module risk or insufficient coverage, and explain that reason before starting. |
+| Scientific behavior, runnable protocol/configuration, or real experiment preparation/execution | Run production `compileall`, the explicitly classified current pytest suite, governance and manifest preflight, required deterministic smokes, sanitization and `git diff --check`. Verify the exact experiment freeze and handoff before real calls. |
+
+Scientific/runtime changes include models, prompts, evidence interfaces,
+sampling, evaluation, aggregation, admission, scheduling, memory, cache/retry,
+concurrency, budgets, stopping and split/access/authorization policies. They
+retain sections 5-8 and all frozen identity requirements. The full conformance
+checklist in an experiment workflow applies to preparing or executing an
+experiment; it is not a requirement for every documentation or report push.
+Changes to this file that only clarify verification workflow use the focused
+documentation category; changes to scientific or safety requirements do not.
+
+Reuse a completed check when its relevant source, inputs and configuration
+have not changed. Record the covered scope and reused evidence; do not claim
+the check was newly run. Do not repeat or broaden checks merely because the
+next step is commit/push. New changes, failures or unresolved risks may justify
+additional checks; explain the affected scope rather than restarting all
+preflights by default.
+
+Record unrelated known baseline failures without claiming they pass or
+silently fixing them during report publication. Failures affecting the changed
+artifacts or required experiment/safety contracts must be resolved or reported
+as blockers. Report omitted historical/private-artifact tests explicitly;
+never label a focused or partial suite as all historical replay passing.
+
+Before real runs, always verify frozen source/startup identity, split isolation,
+exact single-use authorization, lifecycle, ledger, resource ceilings and exact
+command via the governed handoff. Reusing offline check evidence never reuses
+an authorization, incompatible checkpoint/cache, or consumed execution scope.
