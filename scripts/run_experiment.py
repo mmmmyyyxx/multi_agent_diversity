@@ -19,6 +19,13 @@ def _load(path):
 
 
 def preflight(manifest):
+    if manifest.get('schema_version') == 'single_prompt_timeout_continuation_manifest_v1':
+        from multi_dataset_diverse_rl.research.single_prompt_continuation import validate_operation_manifest, operation_contract
+        from multi_dataset_diverse_rl.research.single_prompt_governance import validate_manifest, MANIFEST
+        validate_operation_manifest(manifest)
+        validate_manifest(ROOT, _load(ROOT/MANIFEST))
+        return dict(gate='INDEPENDENT_TIMEOUT_CONTINUATION_OFFLINE_ONLY', real_api_authorized=False,
+            provider_attempts=0, validation_calls=0, test_calls=0, operation_policy=operation_contract())
     if manifest.get('schema_version') == 'single_prompt_study_manifest_v1':
         from multi_dataset_diverse_rl.research.single_prompt_governance import validate_manifest
         from multi_dataset_diverse_rl.research.single_prompt_policy import call_ceiling
@@ -31,7 +38,7 @@ def preflight(manifest):
 
 def governed_preflight(prep):
     from multi_dataset_diverse_rl.research import single_prompt_governance as study
-    if _load(prep/'prep.json').get('schema_version') == study.PREP_SCHEMA:
+    if _load(prep/'prep.json').get('schema_version') in (study.PREP_SCHEMA, study.CONTINUATION_PREP_SCHEMA):
         scope = study.validate_prep(ROOT, prep)
         return dict(gate='INDEPENDENT_STUDY_FROZEN_NOT_AUTHORIZED', phase=scope['phase'],
             token_ceiling=scope['token_ceiling'], scope_identity=scope['scope_identity'], provider_attempts=0)
@@ -50,7 +57,7 @@ def governed_preflight(prep):
 
 async def execute_frozen(prep,run_root):
     from multi_dataset_diverse_rl.research import single_prompt_governance as study
-    if _load(prep/'prep.json').get('schema_version') == study.PREP_SCHEMA:
+    if _load(prep/'prep.json').get('schema_version') in (study.PREP_SCHEMA, study.CONTINUATION_PREP_SCHEMA):
         return await asyncio.to_thread(study.execute, ROOT, prep, run_root)
     from multi_dataset_diverse_rl.governance import postfreeze_validation
     if _load(prep/'prep.json').get('schema_version')==postfreeze_validation.PREP_SCHEMA:

@@ -1,0 +1,9 @@
+{
+  "status": "OFFLINE_PREPARATION",
+  "scientific_status": "NO_EFFICACY_CLAIM",
+  "real_api_calls_in_verification": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "source_change": "INDEPENDENT_STUDY_TIMEOUT_ONLY_CONTINUATION",
+  "historical_parent_evidence_preserved": true
+}

@@ -1,0 +1,37 @@
+{
+  "schema_version": "single_prompt_timeout_continuation_manifest_v1",
+  "experiment_id": "single_prompt_timeout_continuation_v1",
+  "parent_manifest": "experiments/manifests/single_prompt_gradient_pattern_v1.json",
+  "operation_policy": {
+    "identity": "SINGLE_PROMPT_TIMEOUT_DURABLE_CONTINUATION_V1",
+    "phase": "train",
+    "parent": "sealed_timeout_aborted_same_study_only",
+    "retry_errors": [
+      "APITimeoutError"
+    ],
+    "timeout_seconds": 120,
+    "backoff_seconds": [
+      2,
+      4,
+      8,
+      16,
+      30,
+      60
+    ],
+    "backoff_tail_seconds": 60,
+    "retries": "until_success_or_combined_physical_call_ceiling",
+    "timeout_consumes_semantic_draw": false,
+    "successful_draw_reuse": "exact_request_seed_round_role_stage_fifo",
+    "preserve_optimizer_response": true,
+    "replay_does_not_charge_twice": true,
+    "request_namespace": "preserve_root_parent_scope_for_byte_identical_optimizer_evidence",
+    "combined_physical_call_ceiling": 114480,
+    "cumulative_token_ceiling": null,
+    "automatic_timeout_recovery_authorized": true,
+    "non_timeout_failure": "abort",
+    "validation_access": false,
+    "test_access": false
+  },
+  "protocol_path": "docs/design/SINGLE_PROMPT_TIMEOUT_CONTINUATION_V1.md",
+  "real_api_authorized": false
+}

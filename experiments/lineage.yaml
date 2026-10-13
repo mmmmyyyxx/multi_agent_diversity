@@ -1091,6 +1091,9 @@ nodes:
   era: BENCHMARK_GENERALIZATION
 - experiment_id: single_prompt_gradient_pattern_canary_v1
   kind: REAL_CANARY
+- experiment_id: single_prompt_timeout_continuation_v1
+  kind: FORMAL_EXPERIMENT
+  era: BENCHMARK_GENERALIZATION
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2464,4 +2467,10 @@ edges:
   evidence: docs/design/SINGLE_PROMPT_CANARY_V1.md
   scope: Technical prefix12 canary; fresh state and scopes; no scientific outcome
     reuse.
+- from: single_prompt_gradient_pattern_v1
+  to: single_prompt_timeout_continuation_v1
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_TIMEOUT_CONTINUATION_V1.md
+  scope: Explicit timeout-only paid-prefix continuation; unchanged scientific policy,
+    new source and authorization, inherited calls count against the same finite ceiling.
 current_frontier: experiments/current_frontier.yaml

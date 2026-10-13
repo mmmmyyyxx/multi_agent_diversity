@@ -9,6 +9,7 @@ from dataclasses import asdict
 import hashlib
 import json
 import threading
+import time
 
 from ..benchmarks.math import MATHBenchmarkAdapter
 from ..benchmarks.math_flexible_answer import classify_prediction
@@ -90,6 +91,11 @@ class StudyBroker:
                           supplier_reported_tokens=0, fallback_usage_calls=0)
         for role in ('solver', 'reflection', 'pattern_gradient', 'pattern_cluster'):
             self.usage.update({role + '_input_tokens': 0, role + '_output_tokens': 0})
+        self.replay = None
+        self.timeout_recovery = scope.get('continuation', {}).get('operation_policy')
+        if self.timeout_recovery is not None:
+            self.usage.update(scope['continuation']['inherited_usage'])
+            self.usage.update(replayed_calls=0, timeout_retries=0)
 
     def usage_view(self):
         with self.lock:
@@ -118,37 +124,76 @@ class StudyBroker:
             if estimate > p['optimizer_input_limit'] or estimate + q['accounting_output_ceiling'] > p['optimizer_context_limit']:
                 raise SearchContractError('STUDY_FULL_EVIDENCE_CONTEXT_LIMIT')
         key = hashlib.sha256(serialized_request(request) + json.dumps([
-            self.scope['scope_identity'], split, self.seed, self.round_index, role]).encode()).hexdigest()
+            self.scope.get('continuation', {}).get('request_identity_scope', self.scope['scope_identity']),
+            split, self.seed, self.round_index, role]).encode()).hexdigest()
         return request, key
 
     def complete(self, *, role, split, stage, messages, capacity=None):
         request, key = self._request_identity(role=role, split=split, messages=messages, capacity=capacity)
         bound = reservation(request)
-        with self.lock:
-            self.dispatch_guard(self.cell_id)
-            if self.usage['provider_calls'] >= self.scope['call_ceiling']:
-                raise OperationalAbort('STUDY_CALL_CEILING')
-            if self.scope['token_ceiling'] is not None and self.ledger.totals['charged_total'] + self.ledger.reserved + bound['amount'] > self.scope['token_ceiling']:
-                raise OperationalAbort('STUDY_TOKEN_CEILING')
-            reservation_id = self.ledger.reserve(request, attempt_id=self.attempt_id,
-                stage=stage, role=role, model=request['model'])
-            receipt_store = ProviderResponseReceipts(self.receipts.directory,
-                attempt_id=self.attempt_id, startup_identity_sha256=self.receipts.startup)
-            self.usage['provider_calls'] += 1
-            self.usage[role] += 1
-        try:
-            response = self.transport.for_role(role, request) if hasattr(self.transport, 'for_role') else self.transport(request)
-        except BaseException as exc:
-            evidence = dict(error_category=type(exc).__name__, request=request,
-                            provider_evidence=getattr(exc, 'provider_evidence', None))
-            receipt = receipt_store.persist(reservation_id, evidence)
-            charged = self.ledger.reconcile(reservation_id, getattr(exc, 'token_usage', {}),
-                                            outcome='PROVIDER_FAILURE', response_receipt=receipt)
+        if self.replay is not None:
+            from .single_prompt_continuation import replay_key, replay_guard
+            with self.lock:
+                self.dispatch_guard(self.cell_id)
+                response = self.replay.take(replay_key(request,self.seed,self.round_index,role,stage),
+                    replay_guard(request,self.seed,self.round_index,role,stage))
+                if response is not None:
+                    self.usage['replayed_calls'] += 1
+            if response is not None:
+                return self._validated_response(response, request, role, key, bound)
+        timeout_count = 0
+        while True:
+            with self.lock:
+                self.dispatch_guard(self.cell_id)
+                if self.usage['provider_calls'] >= self.scope['call_ceiling']:
+                    raise OperationalAbort('STUDY_CALL_CEILING')
+                if self.scope['token_ceiling'] is not None and self.ledger.totals['charged_total'] + self.ledger.reserved + bound['amount'] > self.scope['token_ceiling']:
+                    raise OperationalAbort('STUDY_TOKEN_CEILING')
+                reservation_id = self.ledger.reserve(request, attempt_id=self.attempt_id,
+                    stage=stage, role=role, model=request['model'])
+                receipt_store = ProviderResponseReceipts(self.receipts.directory,
+                    attempt_id=self.attempt_id, startup_identity_sha256=self.receipts.startup)
+                self.usage['provider_calls'] += 1
+                self.usage[role] += 1
+            logical = dict(seed=self.seed, ordinal=self.round_index, role=role, stage=stage)
+            try:
+                response = self.transport.for_role(role, request) if hasattr(self.transport, 'for_role') else self.transport(request)
+            except BaseException as exc:
+                from openai import APITimeoutError
+                retry = self.timeout_recovery is not None and isinstance(exc, APITimeoutError)
+                evidence = dict(error_category=type(exc).__name__, request=request,
+                                provider_evidence=getattr(exc, 'provider_evidence', None))
+                if self.timeout_recovery is not None:
+                    evidence['logical_identity'] = logical
+                receipt = receipt_store.persist(reservation_id, evidence)
+                charged = self.ledger.reconcile(reservation_id, getattr(exc, 'token_usage', {}),
+                    outcome='PROVIDER_TIMEOUT' if retry else 'PROVIDER_FAILURE', response_receipt=receipt)
+                self._usage(charged, role)
+                if not retry:
+                    raise OperationalAbort('STUDY_PROVIDER_FAILURE') from exc
+                with self.lock:
+                    self.usage['timeout_retries'] += 1
+                    schedule = self.timeout_recovery['backoff_seconds']
+                    delay = schedule[min(timeout_count, len(schedule)-1)]
+                    append_jsonl(self.receipts.directory/'timeout_recovery.jsonl',
+                        dict(request_sha256=key, reservation_id=reservation_id, logical_identity=logical,
+                            backoff_seconds=delay, retry_index=timeout_count+1))
+                timeout_count += 1
+                # The durable failure receipt/charge precede the retry delay.
+                # The finite cumulative call ceiling is checked before every send.
+                time.sleep(delay)
+                continue
+            record = dict(request=request, response=response)
+            if self.timeout_recovery is not None:
+                response = dict(response, study_transport_timeout_attempts=timeout_count)
+                record['response'] = response
+                record['logical_identity'] = logical
+            receipt = receipt_store.persist(reservation_id, record)
+            charged = self.ledger.reconcile(reservation_id, response, outcome='PROVIDER_RESPONSE', response_receipt=receipt)
             self._usage(charged, role)
-            raise OperationalAbort('STUDY_PROVIDER_FAILURE') from exc
-        receipt = receipt_store.persist(reservation_id, dict(request=request, response=response))
-        charged = self.ledger.reconcile(reservation_id, response, outcome='PROVIDER_RESPONSE', response_receipt=receipt)
-        self._usage(charged, role)
+            return self._validated_response(response, request, role, key, bound)
+
+    def _validated_response(self, response, request, role, key, bound):
         if not isinstance(response, dict) or not isinstance(response.get('text'), str):
             raise OperationalAbort('STUDY_PROVIDER_RESPONSE_INVALID')
         if type(response.get('output_tokens')) is int and response['output_tokens'] > bound['output_hard_cap']:
@@ -198,16 +243,18 @@ class StudyBroker:
             return deepcopy(result)
         try:
             attempts = []
+            transport_timeout_attempts = 0
             for draw in range(policy()['solver_semantic_draws']):
                 capacity = (policy()['length_recovery_capacity'] if attempts and
                     attempts[-1].finish_reason in ('length', 'max_tokens', 'max_output_tokens') else policy()['first_solver_capacity'])
                 response = self.complete(role='solver', split=split, stage=f'{split}_checkpoint_{ordinal}_draw_{draw + 1}',
                                          messages=messages, capacity=capacity)
                 prediction = classify_prediction(response['text'], response.get('finish_reason'))
+                transport_timeout_attempts += response.get('study_transport_timeout_attempts', 0)
                 attempts.append(prediction)
                 if prediction.prediction_valid:
                     break
-            resolved = resolve_predictions(attempts)
+            resolved = resolve_predictions(attempts, transport_retry_attempts=transport_timeout_attempts)
             adapter = MATHBenchmarkAdapter()
             correct = bool(adapter.score_member_output(resolved.parsed(), row['reference_final_answer']))
             value = dict(prediction=asdict(resolved), valid=resolved.prediction_valid,

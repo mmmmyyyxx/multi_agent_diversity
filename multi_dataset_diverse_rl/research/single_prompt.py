@@ -141,6 +141,11 @@ def run_cell(cell, rows, evaluator, broker, persist):
     prompt = SystemPrompt.from_dict(cell['initial_prompt'])
     start_usage = broker.usage_view()
     history = [prompt.to_dict()]
+    historical = getattr(broker, 'scope', {}).get('continuation', {}).get('historical_cost_by_cell', {}).get(cell['cell_id'], {})
+    def cost_difference(before, after, historical_round=None):
+        additions = historical.get(str(historical_round), {}) if historical_round is not None else {
+            k:sum(cost.get(k,0) for cost in historical.values()) for k in after}
+        return {k:after[k]-before[k]+additions.get(k,0) for k in after}
     predictions = evaluator(prompt, rows, 'optimize', cell['seed'], 0)
     initial_usage = broker.usage_view()
     metrics = []
@@ -178,7 +183,7 @@ def run_cell(cell, rows, evaluator, broker, persist):
                 else 'UNCHANGED_LEGAL_CANDIDATE' if candidate_audit and not candidate_audit[-1]['errors']
                 else 'INVALID_CANDIDATE_CARRY',
             structured_feedback=structure,
-            cost={k: after_usage[k] - before_usage[k] for k in after_usage})
+            cost=cost_difference(before_usage, after_usage, ordinal))
         metrics.append(metric)
         history.append(prompt.to_dict())
         persist(f'checkpoint_{ordinal}', dict(prompt=prompt.to_dict(), observations=next_predictions,
@@ -187,8 +192,8 @@ def run_cell(cell, rows, evaluator, broker, persist):
     result = dict(cell_id=cell['cell_id'], arm=cell['arm'], seed=cell['seed'],
         prompt_history=history, metrics=metrics, final_prompt=prompt.to_dict(),
         final_accuracy=sum(x['correct'] for x in predictions.values()) / len(rows),
-        initial_cost={k: initial_usage[k] - start_usage[k] for k in start_usage},
-        total_cost={k: broker.usage_view()[k] - start_usage[k] for k in start_usage},
+        initial_cost=cost_difference(start_usage, initial_usage, 0),
+        total_cost=cost_difference(start_usage, broker.usage_view()),
         rounds_completed=len(metrics), final_selection=p['final_selection'])
     persist('result', result)
     return result

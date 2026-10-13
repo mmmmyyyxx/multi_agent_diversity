@@ -1,0 +1,104 @@
+{
+  "status": "PASS",
+  "change_category": "INDEPENDENT_STUDY_RUNTIME_OPERATIONAL_POLICY",
+  "current_campaign": {
+    "selected": 783,
+    "passed": 781,
+    "skipped": 2,
+    "failed": 0,
+    "coverage_complete": true,
+    "execution": "COMPLETE_CURRENT_CAMPAIGN_PLUS_FINAL_CHANGED_MODULE_SUPPLEMENT",
+    "source_note": "Final isolated continuation helper, per-cell historical cost attribution and added cases covered by final32-case focused supplement; unchanged current cases reused from complete campaign. Paid-prefix replay remains applicable: cost attribution changes no requests or scoring.",
+    "component_results": [
+      {
+        "path": "runs/single_prompt_preparation/continuation_current.xml",
+        "selected": 779,
+        "passed": 777,
+        "skipped": 2
+      },
+      {
+        "path": "runs/single_prompt_preparation/continuation_focused_complete.xml",
+        "selected": 32,
+        "passed": 32,
+        "skipped": 0
+      }
+    ],
+    "single_process_final_source_all_cases_claim": false
+  },
+  "production_compileall": "PASS",
+  "governance": "PASS",
+  "manifest_preflight": "PASS",
+  "paid_prefix_replay": {
+    "missing_solver_requests": 4,
+    "network_attempts": 0,
+    "optimizer_draw_reused": true,
+    "original_checkpoint_0_identical": true,
+    "parent_inventory_sha256": "daa8ccc18341d040b7cb22e7839bed40fecc50525dd9aee4db0773c4462299c8",
+    "parent_scope_identity": "45c7fdfb855289249471f4efc07174cd3d50c84ba4d99af860a9ae9cfb7ed78c",
+    "real_api_calls": 0,
+    "status": "PAID_PREFIX_REPLAY_PASS",
+    "successful_responses_replayed": 322,
+    "test_content_reads": 0,
+    "validation_content_reads": 0
+  },
+  "deterministic_smoke": {
+    "actual_test_content_reads": 0,
+    "actual_validation_content_reads": 0,
+    "cells_completed": 9,
+    "fake_provider_usage": {
+      "cache_hits": 60,
+      "fallback_usage_calls": 0,
+      "input_tokens": 186000,
+      "output_tokens": 93000,
+      "pattern_cluster": 60,
+      "pattern_cluster_input_tokens": 4800,
+      "pattern_cluster_output_tokens": 2400,
+      "pattern_gradient": 180,
+      "pattern_gradient_input_tokens": 14400,
+      "pattern_gradient_output_tokens": 7200,
+      "provider_calls": 2325,
+      "reflection": 210,
+      "reflection_input_tokens": 16800,
+      "reflection_output_tokens": 8400,
+      "solver": 1875,
+      "solver_input_tokens": 150000,
+      "solver_output_tokens": 75000,
+      "supplier_reported_tokens": 279000
+    },
+    "network_attempts": 0,
+    "pairwise_pairs": 36,
+    "prompt_checkpoints_per_cell": 21,
+    "real_api_calls": 0,
+    "rounds_per_cell": 20,
+    "status": "DRY_RUN_SYNTHETIC_COMPLETE_NOT_REAL_RESULTS",
+    "test_final_prompts": 9,
+    "unresolved_reservations": 0,
+    "validation_checkpoints": 189
+  },
+  "real_api_calls": 0,
+  "validation_content_reads": 0,
+  "test_content_reads": 0,
+  "network_attempts": 0,
+  "omitted_scope": {
+    "historical_private_modules": 224,
+    "retired_git_only_cases": 5,
+    "full_historical_replay_pass_claim": false
+  },
+  "sanitized_artifacts": "PASS_PRE_FREEZE",
+  "git_diff_check": "PASS_PRE_FREEZE",
+  "evidence_sha256": {
+    "runs/single_prompt_preparation/continuation_current_collection_cost_ids.log": "36c2308e65e549f41bfb5a7fb6b4981b0448821576cbd8a776de24a949ba45c2",
+    "runs/single_prompt_preparation/continuation_current.xml": "0d8626e8b39a79e83eb24dccdf86d3833dd4f1dac1e1a95b876249721b89845b",
+    "runs/single_prompt_preparation/continuation_current.log": "13152eb64362a814135ca7844fefc8fbe70b4a80ecf2a2999008278dda02d85e",
+    "runs/single_prompt_preparation/continuation_focused_complete.xml": "4c6bcf384ba546c712258f38377ef200a79a6f3f2462b1320f4affb9437bab02",
+    "runs/single_prompt_preparation/continuation_focused_complete.log": "00dcc4aa9f7dcb3834c6249e4777b862c614b73ea2a71962178c1a533de8b796",
+    "runs/single_prompt_preparation/continuation_compile_complete.log": "f8a90a71ced8e0100bacf2ccad052603f1a0d1a7e49eb569733cb77e4e2e45d8",
+    "runs/single_prompt_preparation/continuation_manifest_preflight.log": "baa70f563c9da0814fad780a2e4d4d92cd29a160f51a84ed3d92a0f74ea27ffd",
+    "runs/single_prompt_preparation/continuation_governance_sealed.log": "87f729a7ca920f63e5ce7cc16bca6fc4758d6a5ff4ea9f49cbaadee4b3152c33",
+    "runs/single_prompt_preparation/continuation_governance_sealed.json": "22f510e56df3093d2b7e100527fd8d3f1d07f64733cd6c30f739812dc1b4d76d",
+    "runs/single_prompt_preparation/continuation_dry_run.log": "4d5b5099017d724659517a117e578ef585f7d28a83161c9b23b7a7529c31b4ff",
+    "runs/single_prompt_preparation/continuation_prefix_replay_v3.log": "0523fcb2f8bf6992b55dd94745580bb24de4ee78cfd2191bdbc979d3ea5ded3e",
+    "runs/single_prompt_preparation/paid_prefix_replay_check_v3/summary.json": "1b53614d2b5478827d71a1b2b47389d6dc93175b23222df67b39cdcbe386727c",
+    "runs/single_prompt_preparation/continuation_dry_run/dry_run_summary.json": "14a41c46ff6e83b8996c4095a14f25b5bc081212950efc7743ec04f7b16b0b3b"
+  }
+}

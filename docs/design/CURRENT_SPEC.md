@@ -4,6 +4,9 @@ The sole active research architecture is Unified Team Prompt Search.
 The explicitly user-requested [independent single-Prompt mechanism study](SINGLE_PROMPT_GRADIENT_PATTERN_V1.md)
 is isolated from this method and routes only its own schema through the shared
 runner. Its approved 20-round/error-Batch protocol does not amend team defaults.
+Its separately authorized [timeout continuation amendment](SINGLE_PROMPT_TIMEOUT_CONTINUATION_V1.md)
+preserves the paid study prefix and adds accounted timeout recovery only to fresh
+independent training scopes; current team transport and held-out access are unchanged.
 The [scientific principles](SCIENTIFIC_PRINCIPLES.md) constrain interpretation;
 the [MATH scientific contract](MATH_SCIENTIFIC_CONTRACT.md) clarifies benchmark
 measurement and admission. These clarifications add no algorithm or threshold.

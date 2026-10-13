@@ -19,6 +19,10 @@ from ..search.system_prompt import SystemPrompt
 from .single_prompt_policy import policy, canary_contract, call_ceiling, STUDY, ARMS
 from .single_prompt_runtime import StudyBroker
 from .single_prompt import run_cell
+from .single_prompt_continuation import (
+    PREP_SCHEMA as CONTINUATION_PREP_SCHEMA, MANIFEST as CONTINUATION_MANIFEST,
+    validate_operation_manifest, frozen_parent, continuation_cells, audit_parent, ResponseReplay,
+)
 
 MANIFEST = 'experiments/manifests/single_prompt_gradient_pattern_v1.json'
 PREP_SCHEMA = 'single_prompt_phase_prep_v1'
@@ -115,6 +119,7 @@ def source_snapshot(root):
     paths = set(root.joinpath('multi_dataset_diverse_rl').rglob('*.py'))
     paths.update(root / p for p in ('AGENTS.md', 'scripts/run_experiment.py',
         'scripts/prepare_single_prompt_study.py', MANIFEST, CANARY_MANIFEST,
+        CONTINUATION_MANIFEST, 'tests/current/test_single_prompt_continuation.py',
         'scripts/dry_run_single_prompt_study.py', 'tests/current/test_single_prompt_study.py',
         'scripts/analyze_single_prompt_study.py',
         'tests/formal_zero_api_runner.py', 'tests/conftest.py',
@@ -190,7 +195,15 @@ def audit_complete_phase(directory, phase):
     view, events = audit_journal(directory / 'ledger', task_sha256=scope['scope_identity'], policy=POLICY_V27_FORMAL_UNCAPPED)
     authorized_ids = {c['attempt_id'] for c in scope['cells']}
     calls = [e for e in events if e['kind'] == 'RESERVE']
-    if len(calls) > scope['call_ceiling'] or any(e['attempt_id'] not in authorized_ids for e in calls):
+    inherited = 0
+    if 'continuation' in scope:
+        parent = scope['continuation']
+        repository_root = directory.resolve()
+        for _ in Path(scope['execution']['run_root']).parts:
+            repository_root = repository_root.parent
+        inherited = audit_parent(repository_root, repository_root/parent['parent_run_root'],
+            expected_inventory=parent['parent_inventory'])['inherited_usage']['provider_calls']
+    if len(calls) + inherited > scope['call_ceiling'] or any(e['attempt_id'] not in authorized_ids for e in calls):
         raise SearchContractError('STUDY_PHASE_LEDGER_SCOPE_MISMATCH')
     by_reservation = {e['reservation_id']: e for e in calls}
     for event in events:
@@ -206,8 +219,11 @@ def audit_complete_phase(directory, phase):
         raw_receipt = read_json(directory / 'provider_receipts' / (event['reservation_id'] + '.json'))
         if raw_receipt['integrity_sha256'] != receipt['integrity_sha256']:
             raise SearchContractError('STUDY_LEDGER_RECEIPT_SEAL_MISMATCH')
-    return dict(phase=phase, source_sha=scope['source_sha'], scope_identity=scope['scope_identity'],
-        physical_calls=len(calls), ledger=view, terminal_sha256=file_hash(directory / 'terminal.json'))
+    result = dict(phase=phase, source_sha=scope['source_sha'], scope_identity=scope['scope_identity'],
+        physical_calls=len(calls)+inherited, ledger=view, terminal_sha256=file_hash(directory / 'terminal.json'))
+    if 'continuation' in scope:
+        result.update(current_attempt_physical_calls=len(calls), inherited_physical_calls=inherited)
+    return result
 
 
 def audit_canary(directory):
@@ -248,7 +264,7 @@ def audit_canary(directory):
         accuracy_gate_used=False, heldout_access=False, scientific_results=False)
 
 
-def prepare(root, destination, *, phase, token_ceiling=None, search_root=None):
+def prepare(root, destination, *, phase, token_ceiling=None, search_root=None, continuation_root=None):
     destination = private_path(root, destination)
     if destination.exists():
         raise SearchContractError('STUDY_PREP_ALREADY_EXISTS')
@@ -285,9 +301,19 @@ def prepare(root, destination, *, phase, token_ceiling=None, search_root=None):
     run_relative = (destination.parent / (phase + '_run')).relative_to(root).as_posix()
     scope['execution'] = dict(prep_path=prep_relative, run_root=run_relative,
         command=[policy()['runtime_interpreter'], 'scripts/run_experiment.py', '--prep', prep_relative, '--run-root', run_relative, '--execute'])
+    if continuation_root is not None:
+        if phase != 'train':
+            raise SearchContractError('STUDY_CONTINUATION_TRAIN_ONLY')
+        validate_operation_manifest(read_json(root / CONTINUATION_MANIFEST))
+        parent = frozen_parent(root, continuation_root)
+        parent_scope = read_json(private_path(root,continuation_root)/'scope.json')
+        if parent_scope['runtime_identity'] != scope['runtime_identity'] or parent_scope['manifest_sha256'] != scope['manifest_sha256']:
+            raise SearchContractError('STUDY_CONTINUATION_RUNTIME_OR_DATA_CHANGED')
+        scope['cells'] = continuation_cells(manifest, prep_relative)
+        scope['continuation'] = dict(parent, operation_manifest_sha256=file_hash(root/CONTINUATION_MANIFEST))
     scope['scope_identity'] = digest(scope)
     destination.mkdir(parents=True)
-    atomic_write_json(destination / 'prep.json', dict(schema_version=PREP_SCHEMA, scope=scope))
+    atomic_write_json(destination / 'prep.json', dict(schema_version=CONTINUATION_PREP_SCHEMA if continuation_root is not None else PREP_SCHEMA, scope=scope))
     # Template is never approval. It is checked on every dispatch.
     atomic_write_json(destination / 'authorization.json', dict(scope_identity=scope['scope_identity'],
         approved=False, user_authorization_evidence_sha256=None,
@@ -300,10 +326,13 @@ def prepare(root, destination, *, phase, token_ceiling=None, search_root=None):
 def validate_prep(root, prep, *, authorized=False):
     prep = private_path(root, prep)
     value = read_json(prep / 'prep.json')
-    if value.get('schema_version') != PREP_SCHEMA or set(value) != {'schema_version', 'scope'}:
+    continuation = value.get('schema_version') == CONTINUATION_PREP_SCHEMA
+    if value.get('schema_version') not in (PREP_SCHEMA,CONTINUATION_PREP_SCHEMA) or set(value) != {'schema_version', 'scope'}:
         raise SearchContractError('STUDY_PREP_SCHEMA_INVALID')
     scope = value['scope']
     extra_keys = {'canary_contract'} if scope.get('phase') == 'canary' else set()
+    if continuation:
+        extra_keys.add('continuation')
     if (set(scope) != {'study_id', 'phase', 'source_sha', 'source_hashes', 'policy', 'manifest_sha256', 'runtime_identity',
                       'token_ceiling', 'call_ceiling', 'search_predecessor', 'cells', 'scope_identity', 'execution'} | extra_keys
             or scope.get('phase') not in ('canary', 'train', 'validation', 'test') or scope.get('study_id') != STUDY
@@ -315,6 +344,18 @@ def validate_prep(root, prep, *, authorized=False):
     if scope['runtime_identity'] != runtime_identity():
         raise SearchContractError('STUDY_FROZEN_RUNTIME_CHANGED')
     prep_relative = prep.relative_to(root).as_posix()
+    if continuation:
+        if scope['phase'] != 'train':
+            raise SearchContractError('STUDY_CONTINUATION_TRAIN_ONLY')
+        validate_operation_manifest(read_json(root/CONTINUATION_MANIFEST))
+        parent = scope['continuation']
+        expected_parent = dict(frozen_parent(root,root/parent['parent_run_root']),
+            operation_manifest_sha256=file_hash(root/CONTINUATION_MANIFEST))
+        if parent != expected_parent:
+            raise SearchContractError('STUDY_CONTINUATION_PARENT_CHANGED')
+        parent_scope = read_json(root/parent['parent_run_root']/'scope.json')
+        if parent_scope['runtime_identity'] != scope['runtime_identity'] or parent_scope['manifest_sha256'] != scope['manifest_sha256']:
+            raise SearchContractError('STUDY_CONTINUATION_RUNTIME_OR_DATA_CHANGED')
     run_relative = (prep.parent / (scope['phase'] + '_run')).relative_to(root).as_posix()
     if scope['execution'] != dict(prep_path=prep_relative, run_root=run_relative,
         command=[policy()['runtime_interpreter'], 'scripts/run_experiment.py', '--prep', prep_relative, '--run-root', run_relative, '--execute']):
@@ -330,7 +371,7 @@ def validate_prep(root, prep, *, authorized=False):
     current_sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
     if current_sha != scope['source_sha'] or subprocess.check_output(['git', 'status', '--porcelain', '--untracked-files=no'], cwd=root, text=True).strip():
         raise SearchContractError('STUDY_FROZEN_COMMIT_MISMATCH')
-    wanted = phase_cells(manifest, scope['phase'])
+    wanted = continuation_cells(manifest,prep_relative) if continuation else phase_cells(manifest, scope['phase'])
     if scope['cells'] != wanted:
         raise SearchContractError('STUDY_SCOPE_CELL_MISMATCH')
     predecessor = scope['search_predecessor']
@@ -427,6 +468,11 @@ def execute(root, prep, run_root):
             attempt_id=scope['scope_identity'], startup_identity_sha256=scope['scope_identity'])
         broker = StudyBroker(phase=scope['phase'], scope=scope, transport=transport,
             ledger=ledger, receipts=receipts, dispatch_guard=dispatch_guard)
+        if 'continuation' in scope:
+            parent = scope['continuation']
+            replay = audit_parent(root, root/parent['parent_run_root'], expected_inventory=parent['parent_inventory'])['replay']
+            broker.replay = ResponseReplay(replay, run_root/'response_replay.jsonl')
+            atomic_write_json(run_root/'parent_accounting.json', parent['inherited_usage'])
         reader = validate_manifest(root, read_json(root / MANIFEST))
         results = None
         if scope['phase'] in ('train', 'canary'):
@@ -477,6 +523,8 @@ def execute(root, prep, run_root):
                                   provider_calls=broker.usage_view()['provider_calls'])), flush=True)
         atomic_write_json(run_root / 'results.json', completed)
         validate_prep(root, prep, authorized=True)
+        if broker.replay is not None:
+            broker.replay.require_consumed()
         if ledger.inflight:
             raise SearchContractError('STUDY_UNRESOLVED_RESERVATION')
         ledger_snapshot = ledger.view()

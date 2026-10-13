@@ -16,9 +16,11 @@ def main():
     parser.add_argument('--destination', type=Path, required=True)
     parser.add_argument('--token-ceiling', type=int)
     parser.add_argument('--search-root', type=Path)
+    parser.add_argument('--continuation-root', type=Path)
     args = parser.parse_args()
     print(json.dumps(prepare(ROOT, args.destination, phase=args.phase,
-        token_ceiling=args.token_ceiling, search_root=args.search_root), indent=2))
+        token_ceiling=args.token_ceiling, search_root=args.search_root,
+        continuation_root=args.continuation_root), indent=2))
 
 
 if __name__ == '__main__':
