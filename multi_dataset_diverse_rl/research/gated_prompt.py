@@ -66,14 +66,23 @@ def generate_changed_candidate(prompt,feedback,broker,ordinal,persist_attempt):
     return None,draw
 
 
-def run_cell(cell,optimize_rows,validation_rows,broker,persist):
+def run_cell(cell,optimize_rows,validation_rows,broker,persist,*,resume=None):
     p=policy(); prompt=SystemPrompt.from_dict(cell['initial_prompt']); start_usage=broker.usage_view()
-    optimize=broker.evaluate(prompt,optimize_rows,'optimize',cell['seed'],0)
-    validation=broker.evaluate(prompt,validation_rows,'validation',cell['seed'],0)
     score=lambda rows:sum(v['correct'] for v in rows.values())
-    persist('checkpoint_0',dict(prompt=prompt.to_dict(),optimize=optimize,validation=validation))
-    metrics=[]; history=[prompt.to_dict()]
-    for ordinal in range(1,p['rounds']+1):
+    if resume is None or not resume['checkpoints']:
+        optimize=broker.evaluate(prompt,optimize_rows,'optimize',cell['seed'],0)
+        validation=broker.evaluate(prompt,validation_rows,'validation',cell['seed'],0)
+        persist('checkpoint_0',dict(prompt=prompt.to_dict(),optimize=optimize,validation=validation))
+        metrics=[];history=[prompt.to_dict()]
+    else:
+        checkpoints=resume['checkpoints']
+        if checkpoints[0]['prompt']!=cell['initial_prompt']:raise SearchContractError('GATED_RESUME_INITIAL_PROMPT_MISMATCH')
+        last=checkpoints[-1];prompt=SystemPrompt.from_dict(last['prompt'])
+        optimize,validation=last['optimize'],last['validation']
+        metrics=[c['metric'] for c in checkpoints[1:]];history=[c['prompt'] for c in checkpoints]
+    historical={} if resume is None else resume['round_costs']
+    prior_usage={} if resume is None else resume['historical_usage']
+    for ordinal in range(len(metrics)+1,p['rounds']+1):
         broker.round_index=ordinal
         before_usage=broker.usage_view()
         wrong=tuple(r['stable_example_id'] for r in optimize_rows if not optimize[r['stable_example_id']]['correct'])
@@ -97,7 +106,7 @@ def run_cell(cell,optimize_rows,validation_rows,broker,persist):
             validation_before=incumbent_score,validation_candidate=candidate_score,
             optimize_before=score(optimize),optimize_candidate=score(candidate_optimize) if candidate_optimize is not None else None,
             optimizer_example_count=len(rows),generation_draws=draws,
-            cost={k:broker.usage_view()[k]-v for k,v in before_usage.items()},
+            cost={k:broker.usage_view()[k]-v+historical.get(str(ordinal),{}).get(k,0) for k,v in before_usage.items()},
             lineage=block_lineage(prompt,candidate) if candidate is not None else None)
         # Preserve the incumbent observations as well as its Prompt on rejection.
         parent=prompt
@@ -111,6 +120,6 @@ def run_cell(cell,optimize_rows,validation_rows,broker,persist):
         candidates_evaluated=sum(m['candidate_evaluated'] for m in metrics),
         prompt_history=history,metrics=metrics,final_prompt=prompt.to_dict(),
         final_optimize_correct=score(optimize),final_validation_correct=score(validation),
-        final_selection=p['final_selection'],usage={k:broker.usage_view()[k]-v for k,v in start_usage.items()})
+        final_selection=p['final_selection'],usage={k:broker.usage_view()[k]-v+prior_usage.get(k,0) for k,v in start_usage.items()})
     persist('result',result)
     return result

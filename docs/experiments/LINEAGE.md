@@ -297,6 +297,7 @@ flowchart TD
     n361["single_prompt_validation_gated_v2_gradient_pattern_seed88<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
     n362["single_prompt_validation_gated_v2_gradient_pattern_seed89<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
     n363["single_prompt_validation_gated_v2_gradient_pattern_seed90<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n364["single_prompt_gated_network_continuation_v1<br/>FORMAL_EXPERIMENT<br/>IMPLEMENTED_NOT_EXECUTED"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -827,6 +828,7 @@ flowchart TD
   n354 -->|derived_from| n361
   n354 -->|derived_from| n362
   n354 -->|derived_from| n363
+  n354 -->|derived_from| n364
 ```
 
 ## Archived branches and unresolved evidence

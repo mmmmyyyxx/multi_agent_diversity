@@ -13,6 +13,7 @@ from ..search.schemas import SearchContractError
 from ..search.system_prompt import SystemPrompt
 from .gated_prompt import GatedPromptBroker
 from .gated_prompt_policy import policy
+from .gated_prompt_network import NetworkRecoveryMixin
 from .single_prompt_analysis import analyze_final
 
 FORMAL_MANIFEST='experiments/manifests/math_v27_direct_seed86_formal_v1.yaml'
@@ -42,10 +43,11 @@ def formal_test_plan(root,reader):
         authorization='conditional_exact_parent_train_scope_and_sealed_terminal_no_new_selection')
 
 
-class FinalTestBroker(GatedPromptBroker):
+class FinalTestBroker(NetworkRecoveryMixin,GatedPromptBroker):
     def legal_role_split(self,role,split):return self.phase=='test' and role=='solver' and split=='test'
     def cache_ordinal(self,split):return 0
     def timeout_policy(self):
+        if 'network_recovery' in self.scope:return dict(self.scope['network_recovery'],successful_semantic_call_ceiling=10800)
         return dict(policy()['timeout_recovery'],combined_physical_call_ceiling=10800)
 
 
@@ -70,8 +72,16 @@ def verify_training(directory,scope):
         if last['prompt']!=result['final_prompt']:raise SearchContractError('GATED_TEST_FINAL_CHECKPOINT_MISMATCH')
     view,events=audit_journal(directory/'ledger',task_sha256=scope['scope_identity'],policy=POLICY_V27_FORMAL_UNCAPPED)
     summary=read_json(directory/'execution_summary.json')
+    inherited=scope.get('continuation',{}).get('inherited_usage',{})
+    if 'continuation' in scope:
+        from .gated_prompt_network import frozen_parent
+        parent=scope['continuation']
+        parent_root=directory.parents[len(Path(scope['execution']['run_root']).parts)-1]
+        if frozen_parent(parent_root,parent_root/parent['parent_run_root'],expected_inventory=parent['parent_inventory'])!=parent:
+            raise SearchContractError('GATED_TEST_CONTINUATION_PARENT_CHANGED')
     if (view!=summary['token_ledger'] or summary['cells_completed']!=9
-            or len([e for e in events if e['kind']=='RESERVE'])!=summary['usage']['provider_calls']):
+            or len([e for e in events if e['kind']=='RESERVE'])+inherited.get('provider_calls',0)!=summary['usage']['provider_calls']
+            or view['charged_total']+inherited.get('input_tokens',0)+inherited.get('output_tokens',0)!=summary['usage']['input_tokens']+summary['usage']['output_tokens']):
         raise SearchContractError('GATED_TEST_PARENT_ACCOUNTING_MISMATCH')
     # Every parent request and charge must have its sealed provider receipt.
     reserved={e['reservation_id']:e for e in events if e['kind']=='RESERVE'}
@@ -103,6 +113,7 @@ def execute_final_test(root,prep,train):
         parent_scope_identity=scope['scope_identity'],parent_terminal_sha256=terminal_sha,
         parent_run_root=train.relative_to(root).as_posix(),
         policy=scope['test_plan'],cells=cells,call_ceiling=10800,token_ceiling=None)
+    if 'continuation' in scope:test_scope['network_recovery']=scope['continuation']['operation_policy']
     test_scope['scope_identity']=digest(test_scope)
     marker=root/'runs/gated_prompt_consumed'/(test_scope['scope_identity']+'.json')
     with marker.open('x',encoding='utf-8') as stream:

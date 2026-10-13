@@ -114,6 +114,16 @@ class StudyBroker:
     def cache_ordinal(self, split):
         return self.round_index
 
+    def recoverable_transport_error(self, exc):
+        from openai import APITimeoutError
+        return isinstance(exc, APITimeoutError)
+
+    def budgeted_provider_calls(self):
+        return self.usage['provider_calls']
+
+    def record_recovery_failure(self):
+        pass
+
     def _request_identity(self, *, role, split, messages, capacity=None):
         p = self.study_policy()
         legal = self.legal_role_split(role, split)
@@ -157,7 +167,7 @@ class StudyBroker:
         while True:
             with self.lock:
                 self.dispatch_guard(self.cell_id)
-                if self.usage['provider_calls'] >= self.scope['call_ceiling']:
+                if self.budgeted_provider_calls() >= self.scope['call_ceiling']:
                     raise OperationalAbort('STUDY_CALL_CEILING')
                 if self.scope['token_ceiling'] is not None and self.ledger.totals['charged_total'] + self.ledger.reserved + bound['amount'] > self.scope['token_ceiling']:
                     raise OperationalAbort('STUDY_TOKEN_CEILING')
@@ -172,7 +182,7 @@ class StudyBroker:
                 response = self.transport.for_role(role, request) if hasattr(self.transport, 'for_role') else self.transport(request)
             except BaseException as exc:
                 from openai import APITimeoutError
-                retry = self.timeout_recovery is not None and isinstance(exc, APITimeoutError)
+                retry = self.timeout_recovery is not None and self.recoverable_transport_error(exc)
                 evidence = dict(error_category=type(exc).__name__, request=request,
                                 provider_evidence=getattr(exc, 'provider_evidence', None))
                 if self.timeout_recovery is not None:
@@ -184,6 +194,7 @@ class StudyBroker:
                 if not retry:
                     raise OperationalAbort('STUDY_PROVIDER_FAILURE') from exc
                 with self.lock:
+                    self.record_recovery_failure()
                     self.usage['timeout_retries'] += 1
                     schedule = self.timeout_recovery['backoff_seconds']
                     delay = schedule[min(timeout_count, len(schedule)-1)]

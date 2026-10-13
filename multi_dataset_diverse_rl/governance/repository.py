@@ -110,6 +110,10 @@ def validate_registry_v2(root: Path, registry: Mapping) -> tuple[list[str],dict]
                 from ..research.gated_prompt_policy import MANIFEST as GATED_MANIFEST
                 try:validate_gated(root,load_yaml(root/GATED_MANIFEST))
                 except ValueError as exc:errors.append(f'{ident}: {exc}')
+            elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_gated_network_continuation_manifest_v1':
+                from ..research.gated_prompt_network import validate_operation_manifest
+                try:validate_operation_manifest(obj)
+                except ValueError as exc:errors.append(f'{ident}: {exc}')
             elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_timeout_continuation_manifest_v1':
                 from ..research.single_prompt_continuation import validate_operation_manifest
                 try:validate_operation_manifest(obj)

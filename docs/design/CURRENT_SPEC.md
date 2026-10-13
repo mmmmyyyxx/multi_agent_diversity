@@ -10,6 +10,9 @@ independent training scopes; current team transport and held-out access are unch
 The user-requested [independent Validation100 gated study V2](SINGLE_PROMPT_VALIDATION_GATED_V2.md)
 adds strict per-round candidate retention and three legal-candidate retries after the initial draw in its
 own fresh scopes. Validation is its adaptive gate; Test remains separately sealed.
+Its user-authorized [network continuation](SINGLE_PROMPT_GATED_NETWORK_CONTINUATION_V1.md)
+preserves V2 checkpoints and paid responses, with unbounded accounted timeout/connection
+retries between delays. Scientific selection and legitimate opportunity outcomes remain.
 The [scientific principles](SCIENTIFIC_PRINCIPLES.md) constrain interpretation;
 the [MATH scientific contract](MATH_SCIENTIFIC_CONTRACT.md) clarifies benchmark
 measurement and admission. These clarifications add no algorithm or threshold.

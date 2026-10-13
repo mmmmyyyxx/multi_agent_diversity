@@ -1,0 +1,36 @@
+{
+  "experiment_id": "single_prompt_gated_network_continuation_v1",
+  "operation_policy": {
+    "backoff_seconds": [
+      2,
+      4,
+      8,
+      16,
+      30,
+      60
+    ],
+    "cache": "hydrate_completed_paired_observations_preserve_root_request_namespace",
+    "checkpoint": "restore_completed_opportunities",
+    "combined_physical_call_ceiling": null,
+    "costs": "all_ancestor_attempts_plus_new_calls_no_double_charge",
+    "cumulative_token_ceiling": null,
+    "final_test": "preserve_conditional_formal_test300",
+    "identity": "GATED_ACCOUNTED_TIMEOUT_CONNECTION_CONTINUATION_V1",
+    "network_failed_attempts": "unlimited_until_success_or_human_stop_never_consume_opportunity",
+    "non_network_failure": "abort",
+    "parent": "sealed_compatible_network_aborted_gated_v2_only",
+    "response_reuse": "exact_request_seed_round_role_stage_fifo_unfinished_opportunity",
+    "retry_errors": [
+      "APITimeoutError",
+      "APIConnectionError"
+    ],
+    "scientific_policy": "unchanged_validation100_retry3_twenty_opportunity_gate",
+    "successful_semantic_call_ceiling": 190440,
+    "test_physical_call_ceiling": null,
+    "test_successful_semantic_call_ceiling": 10800
+  },
+  "parent_manifest": "experiments/manifests/single_prompt_validation_gated_v2.json",
+  "protocol_path": "docs/design/SINGLE_PROMPT_GATED_NETWORK_CONTINUATION_V1.md",
+  "real_api_authorized": false,
+  "schema_version": "single_prompt_gated_network_continuation_manifest_v1"
+}

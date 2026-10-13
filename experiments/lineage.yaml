@@ -1124,6 +1124,9 @@ nodes:
 - experiment_id: single_prompt_validation_gated_v2_gradient_pattern_seed90
   kind: ABLATION
   era: BENCHMARK_GENERALIZATION
+- experiment_id: single_prompt_gated_network_continuation_v1
+  kind: FORMAL_EXPERIMENT
+  era: BENCHMARK_GENERALIZATION
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2569,4 +2572,10 @@ edges:
   evidence: docs/design/SINGLE_PROMPT_VALIDATION_GATED_V2.md
   scope: Fresh Validation100 strict-gate mechanism amendment; no V1 execution state
     or authorization reuse.
+- from: single_prompt_validation_gated_v2
+  to: single_prompt_gated_network_continuation_v1
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_GATED_NETWORK_CONTINUATION_V1.md
+  scope: Explicit network-only checkpoint/paid-response continuation; scientific gate
+    and legitimate opportunities unchanged.
 current_frontier: experiments/current_frontier.yaml

@@ -10493,3 +10493,25 @@ experiments:
     then explicit opportunity abandonment; fresh all-nine state.
   - Human stop remains effective; fresh exact training and adaptive Validation authorization
     required; Test excluded.
+- experiment_id: single_prompt_gated_network_continuation_v1
+  kind: FORMAL_EXPERIMENT
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_VALIDATION100_STRICT_GATE_RETRY3_V2
+  parent_ids:
+  - single_prompt_validation_gated_v2
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: OPERATIONAL_NETWORK_CONTINUATION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_gated_network_continuation_v1.json
+  report: reports/single_prompt_gated_network_preparation_20261013
+  classifier: reports/single_prompt_gated_network_preparation_20261013/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit user-approved delayed unlimited typed connection/timeout retries; charged
+    failed attempts do not consume optimization opportunities.
+  - Compatible V2 checkpoint and paid-response continuation; fresh exact authorization;
+    conditional formal Test300 retained.
