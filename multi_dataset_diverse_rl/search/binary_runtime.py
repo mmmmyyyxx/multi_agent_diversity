@@ -11,7 +11,6 @@ import hashlib
 import json
 
 from ..peer_state import build_team_vote_state, soft_vote_utility
-from ..vote_aligned_scheduler import classify_opportunity_lane
 from ..team_search.schemas import TeamMiniBatchMetrics
 from ..candidate_selection import common_monotone_safe_measurement_key
 from .binary_responsibility import binary_plurality_snapshot, observation_from_outputs
@@ -140,14 +139,14 @@ class BinaryEvidenceSource:
                 pivotal = not build_team_vote_state(question_hash=row.question_hash, gold_answer=row.gold_answer,
                     answers=row.team_answers, valid_vector=validity).vote_correct
             if not row.team_correctness[member_id]:
-                lane = (classify_opportunity_lane(opportunity, diagnosis.benchmark_signals['margins'])
-                    if not row.vote_correct and opportunity is not None else 'general') or 'general'
-                lane = 'coverage' if lane == 'pure_coverage' else lane
+                labels = diagnosis.benchmark_signals['responsibility_labels'][member_id][row.question_hash]
+                lane = labels[0] if labels else 'general'
                 roles = {'REPAIR','target_wrong',lane}
                 if not row.vote_correct:roles.add('TEAM_HARD')
                 tags = ('repair',lane,'team_wrong' if not row.vote_correct else 'team_correct')
                 feedback = 'Repair this member failure while preserving fixed-peer team behavior.'
             else:
+                labels = ()
                 lane = 'preservation';roles = {'PRESERVATION','target_correct'}
                 if not row.vote_correct:roles.add('TEAM_HARD')
                 tags = ('preservation','target_correct')
@@ -174,7 +173,8 @@ class BinaryEvidenceSource:
                      target_member_correct=bool(row.team_correctness[member_id]),
                      team_correct=bool(row.vote_correct),
                      target_member_valid=bool(output.valid),
-                     responsibility_labels=tuple(name for name in ('direct_flip','near_margin','coverage') if name in roles),
+                     responsibility_labels=tuple(labels),
+                     responsibility_uncovered_reason=diagnosis.benchmark_signals['uncovered_errors'][member_id].get(row.question_hash),
                      target_output=output.answer if output.valid else None, feedback=feedback,
                      legacy_group="repair" if "REPAIR" in roles else "preservation" if "PRESERVATION" in roles else "team_hard",
                      legacy_tags=tags, lane=lane, team_disagreement=len({a for a, v in zip(row.team_answers, row.team_validity) if v}),

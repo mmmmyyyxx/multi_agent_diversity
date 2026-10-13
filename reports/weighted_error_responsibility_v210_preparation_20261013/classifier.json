@@ -1,0 +1,16 @@
+{
+  "current_tests": "PASS_FULL_CAMPAIGN_PLUS_FOCUSED_INCREMENTS",
+  "generalization": "UNKNOWN",
+  "historical_replay": "NOT_CLAIMED",
+  "implementation_conformance": "PASS",
+  "method_identity": "unified_team_prompt_search_v2_10_weighted_responsibility_v1",
+  "push_performed": false,
+  "real_api_calls": 0,
+  "real_execution_ready": false,
+  "scientific_status": "ZERO_API_IMPLEMENTATION_EFFICACY_UNKNOWN",
+  "source_frozen": false,
+  "team_vote_gain": "UNKNOWN",
+  "test_calls": 0,
+  "token_efficiency": "UNKNOWN",
+  "validation_calls": 0
+}

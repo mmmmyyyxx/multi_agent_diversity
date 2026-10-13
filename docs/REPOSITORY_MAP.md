@@ -4,6 +4,8 @@ Current authority: AGENTS.md, docs/design/CURRENT_SPEC.md and
 [Responsibility Fallback V2.5](design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md) with
 [flexible extraction V3](design/FLEXIBLE_ANSWER_EXTRACTION_V3.md).
 The current Layer1 authority is [V2.9 population search](design/VOTE_GUIDED_PARENT_POPULATION_V29.md).
+Current WHO/Pattern responsibility is defined by
+[V2.10 exclusive weighted errors](design/WEIGHTED_ERROR_RESPONSIBILITY_V210.md).
 
 | Path | Role |
 |---|---|
@@ -13,6 +15,7 @@ The current Layer1 authority is [V2.9 population search](design/VOTE_GUIDED_PARE
 | multi_dataset_diverse_rl/search/population_evaluation.py | Complete Optimize fitness and joint final assembly |
 | multi_dataset_diverse_rl/search/population_checkpoint.py | Atomic complete-boundary state recovery; no API grant |
 | multi_dataset_diverse_rl/search/population_memory.py | Scoped single-step measured edit experience |
+| multi_dataset_diverse_rl/search/weighted_responsibility.py | Exclusive D/N/C/R3/R4 labels and shared summed weights |
 | multi_dataset_diverse_rl/search/optimizer_output_contract.py | Strict optimizer types and source-free bounded retry feedback |
 | multi_dataset_diverse_rl/current_contract.py | See package-root current_contract.py for closed identity imports |
 | multi_dataset_diverse_rl/benchmarks/math_structured_binding.py | Fresh V2.5 freeze and composition |

@@ -3,8 +3,9 @@
 The sole active research architecture is Unified Team Prompt Search.
 Research interpretation follows [scientific principles](design/SCIENTIFIC_PRINCIPLES.md)
 and the [MATH measurement contract](design/MATH_SCIENTIFIC_CONTRACT.md).
-The sole current method is V2.9 Vote-Guided Parent Population Search,
-`unified_team_prompt_search_v2_9_vote_parent_population_v1`.
+The sole current method is V2.10 weighted error responsibility with V2.9 Parent Population,
+`unified_team_prompt_search_v2_10_weighted_responsibility_v1`.
+See the [weighted responsibility amendment](design/WEIGHTED_ERROR_RESPONSIBILITY_V210.md).
 See the [V2.9 population amendment](design/VOTE_GUIDED_PARENT_POPULATION_V29.md).
 
 [Current specification](design/CURRENT_SPEC.md) and

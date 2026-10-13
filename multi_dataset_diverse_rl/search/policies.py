@@ -7,7 +7,7 @@ import hashlib
 from typing import Mapping, Protocol, Sequence
 
 from .history import HistoryState
-from .responsibility_value import responsibility_value
+from .weighted_responsibility import responsibility_value
 from .schemas import (
     Diagnosis, EvidenceItem, EvidenceView, SearchContractError, TeamStateSnapshot,
 )
@@ -20,11 +20,20 @@ class ResponsibilitySignal:
     near_margin_count: int
     coverage_count: int
     primary_lane: str
+    r3_count: int = 0
+    r4_count: int = 0
+    uncovered_count: int = 0
+
+    def __post_init__(self):
+        responsibility_value(self.direct_count, self.near_margin_count,
+                             self.coverage_count, self.r3_count, self.r4_count)
+        if type(self.uncovered_count) is not int or self.uncovered_count < 0:
+            raise ValueError('uncovered count must be a nonnegative integer')
 
     @property
-    def raw_value(self) -> int:
+    def raw_value(self) -> float:
         return responsibility_value(self.direct_count, self.near_margin_count,
-                                    self.coverage_count)
+                                    self.coverage_count, self.r3_count, self.r4_count)
 
 
 class ResponsibilityAnalyzer(Protocol):

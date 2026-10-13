@@ -17,7 +17,8 @@ class SearchContractError(ValueError):
 # The current identity module also exports the structured seed, which imports
 # SearchContractError. Define that dependency before resolving closed identities.
 from ..current_contract import (CURRENT_METHOD_VERSION, GRADIENT_PATTERN_DISCOVERY_VERSION,
-    CURRENT_LAYER1_SEARCH_VERSION, CURRENT_EDIT_MEMORY_VERSION)
+    CURRENT_LAYER1_SEARCH_VERSION, CURRENT_EDIT_MEMORY_VERSION,
+    BINARY_PLURALITY_RESPONSIBILITY_VERSION, UNIFIED_TARGET_POLICY_VERSION)
 
 
 @dataclass(frozen=True)
@@ -222,8 +223,8 @@ class GlobalStopConfig:
 class SearchMethodConfig:
     method: str = CURRENT_METHOD_VERSION
     search_engine: str = CURRENT_LAYER1_SEARCH_VERSION
-    diagnosis_policy: str = versions.BINARY_PLURALITY_RESPONSIBILITY_VERSION
-    target_policy: str = versions.UNIFIED_FALLBACK_TARGET_VERSION
+    diagnosis_policy: str = BINARY_PLURALITY_RESPONSIBILITY_VERSION
+    target_policy: str = UNIFIED_TARGET_POLICY_VERSION
     feasibility_policy: str = versions.UNIFIED_REPAIR_FEASIBILITY_VERSION
     evidence_policy: str = 'DISJOINT_QUOTA_FREE_REPAIR_EVIDENCE_V2'
     evaluation_policy: str = 'SEEN_ASSIGNED_REPAIR_INDEPENDENT_TEAM_PROBE_V2'

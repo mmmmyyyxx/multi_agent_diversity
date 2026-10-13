@@ -142,6 +142,11 @@ MATH_PROTOCOL_FLEXIBLE_V7 = replace(MATH_PROTOCOL_REPAIR_V6,
     member_success_semantics='Gold-blind clear declarations and equivalent confirmations; multiline boxed supported; pinned binary mathematical equivalence unchanged; first valid answer stops recovery even when mathematically wrong; truncation and conflicts remain invalid')
 
 
+# Current Layer2 responsibility changes no Solver/scoring/aggregation fields.
+MATH_PROTOCOL_WEIGHTED_V8 = replace(MATH_PROTOCOL_FLEXIBLE_V7,
+    responsibility_policy_id=versions.WEIGHTED_BINARY_RESPONSIBILITY_VERSION)
+
+
 def protocol_input(benchmark_id: str, input_id: str, row: Mapping[str, object],
                    output_contract: str, *, protocol: BenchmarkProtocolSpec | None = None) -> BenchmarkInput:
     """Allowlist projection. Evaluator fields never reach solver/aggregator inputs."""

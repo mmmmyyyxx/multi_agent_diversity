@@ -8,22 +8,22 @@ Registry provides node metadata; current_frontier.yaml provides readiness only.
 ```yaml
 schema_version: current_frontier_v1
 current_architecture: Unified Team Prompt Search
-method_identity: unified_team_prompt_search_v2_9_vote_parent_population_v1
-current_method: unified_team_prompt_search_v2_9_vote_parent_population_v1
+method_identity: unified_team_prompt_search_v2_10_weighted_responsibility_v1
+current_method: unified_team_prompt_search_v2_10_weighted_responsibility_v1
 current_experiment: NO_AUTHORIZED_REAL_EXPERIMENT
 formal_manifest: null
-current_implementation: Three independent fitness-weighted parent selections; complete
-  Optimize fitness; joint final argmax admission.
+current_implementation: Summed exclusive D/N/C/R3/R4 responsibility; unchanged V2.9
+  Parent Population.
 current_solver_model: gpt-4o-mini
 current_solver_provider_profile: openlux
 current_optimizer_model: qwen3.7-flash
 current_optimizer_provider_profile: lwj
 current_provider_routing_policy: OPENLUX_SOLVER_LWJ_OPTIMIZER_V1
-current_binding_identity: MATH_VOTE_PARENT_POPULATION_BINDING_V12
-current_cache_policy: ROLE_ROUTED_VOTE_POPULATION_MEMBER_LANE_CACHE_V12
+current_binding_identity: MATH_WEIGHTED_RESPONSIBILITY_BINDING_V13
+current_cache_policy: ROLE_ROUTED_WEIGHTED_RESPONSIBILITY_MEMBER_LANE_CACHE_V13
 current_benchmark_suite:
 - math
-last_governance_milestone: vote_parent_population_v29_preparation_v1
+last_governance_milestone: weighted_error_responsibility_v210_preparation_v1
 real_execution_ready: false
 real_api_authorized: false
 ready_for_authorization: false
@@ -35,7 +35,7 @@ current_execution_blockers:
 - NEW_SOURCE_PHASE_FREEZE_AND_EXACT_AUTHORIZATION_REQUIRED
 current_runtime_builder: build_current_team_prompt_search
 current_execution_entrypoint: scripts/run_experiment.py
-current_runtime_composition: CURRENT_VOTE_PARENT_POPULATION_COMPOSITION_V12
+current_runtime_composition: CURRENT_WEIGHTED_RESPONSIBILITY_POPULATION_COMPOSITION_V13
 current_execution_binding: null
 current_layer1_backend: VOTE_GUIDED_PARENT_POPULATION_SEARCH_V5
 current_memory_policy: POPULATION_SCOPED_EDIT_MEMORY_V5
@@ -105,8 +105,8 @@ current_gradient_output_limits:
   reusable_correction: 400
   expected_effect: 240
 current_optimization_evidence_policy: VOTE_PARENT_POPULATION_EVIDENCE_POLICY_V12
-current_preparation_experiment: vote_parent_population_v29_preparation_v1
-current_preparation_manifest: experiments/manifests/vote_parent_population_v29_preparation_v1.yaml
+current_preparation_experiment: weighted_error_responsibility_v210_preparation_v1
+current_preparation_manifest: experiments/manifests/weighted_error_responsibility_v210_preparation_v1.yaml
 last_gradient_limit_adoption_report: reports/gradient_diagnostic_limits_400_v2_preparation_20261011
 last_gradient_limit_adoption_real_api_calls: 0
 proposed_canary_token_ceiling: null
@@ -141,15 +141,34 @@ estimated_remaining_time_policy: READ_ONLY_COMPLETED_OPPORTUNITY_ROLLING_COST_AN
 proposed_scientific_no_commit_patience: 4
 current_task_parent_provider_attempts: 0
 explicit_zero_op_prefix_continuation_policy: null
-current_optimizer_input_schema: STRUCTURED_SYSTEM_SCOPED_EDIT_INPUT_V12
+current_optimizer_input_schema: STRUCTURED_SINGLE_STEP_REPAIR_INPUT_V13
 last_formal_manifest: experiments/manifests/math_v27_seed86_precluster_continuation_v1.yaml
 last_formal_report: reports/math_v27_seed86_continuation_execution_20261012
 last_evolution_bottleneck_audit: reports/math_v27_seed86_evolution_bottleneck_audit_20261012
 last_scoped_experience_preparation_report: reports/scoped_edit_experience_layer1_v28_preparation_20261012
 last_controlled_flow_preparation_report: reports/math_v28_seed87_controlled_flow_freeze_20261012
 last_controlled_flow_preparation_status: ABANDONED_BEFORE_FREEZE_ZERO_API
-current_preparation_report: reports/vote_parent_population_v29_preparation_20261012
-current_preparation_verification: reports/vote_parent_population_v29_preparation_20261012/verification.json
+current_preparation_report: reports/weighted_error_responsibility_v210_preparation_20261013
+current_preparation_verification: reports/weighted_error_responsibility_v210_preparation_20261013/verification.json
+current_responsibility_policy:
+  identity: raw_responsibility_sum_4D_2N_C_R3_halfR4_v2
+  classification: binary_plurality_exclusive_weighted_responsibility_v2
+  weights:
+    direct_flip: 4.0
+    near_margin: 2.0
+    coverage: 1.0
+    r3: 1.0
+    r4: 0.5
+  mutually_exclusive: true
+  count_each_error_once: true
+  dnc: existing_lexicographic_counterfactual_assignment_and_exclusive_lane
+  r3: team_vote_correct_target_wrong_exactly_three_of_five_correct
+  r4: team_vote_correct_target_wrong_exactly_four_of_five_correct
+  uncovered: zero_weight_reported_eligible_for_existing_seeded_fallback
+  who: sum_divided_by_one_plus_failure_count
+  pattern: undiscounted_support_sum
+current_pattern_responsibility: pattern_exclusive_weighted_support_sum_seeded_fallback_v3
+current_target_policy: weighted_responsibility_failure_discount_seeded_fallback_v3
 ```
 
 ## Experiment and engineering DAG
@@ -474,6 +493,7 @@ flowchart TD
     n338["local_evaluation_promotion_feasibility_audit_v1_20261012<br/>FORENSIC_AUDIT<br/>COMPLETED"]
     n339["math_v28_seed87_controlled_flow_pilot_v1<br/>PILOT<br/>ABANDONED"]
     n340["vote_parent_population_v29_preparation_v1<br/>ARCHITECTURE_REFACTOR<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n341["weighted_error_responsibility_v210_preparation_v1<br/>ARCHITECTURE_REFACTOR<br/>IMPLEMENTED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -760,6 +780,7 @@ flowchart TD
   n338 -->|derived_from| n339
   n337 -->|derived_from| n340
   n338 -->|derived_from| n340
+  n340 -->|derived_from| n341
 ```
 
 ## Archived branches and unresolved evidence

@@ -1,0 +1,81 @@
+{
+  "compileall": "PASS",
+  "current_campaigns": [
+    {
+      "failed": 2,
+      "log_sha256": "750b3f37436911e914fdcce6befb094f1c09eea8ce163bcc8e948f3401a83d1b",
+      "name": "current",
+      "passed": 746,
+      "skipped": 2,
+      "source_scope": "Full current suite with targeted final identity/guard coverage and superseded-score assertion repairs",
+      "tests": 750
+    },
+    {
+      "log_sha256": "ac629a6a59507e9c3038460afe657a04fec1a363609ec71fdd4e89207dae0a26",
+      "name": "schema_repair",
+      "passed": 1,
+      "source_scope": "Full current suite with targeted final identity/guard coverage and superseded-score assertion repairs",
+      "tests": 1
+    },
+    {
+      "log_sha256": "12e3a394950eea5c72955eb93c60f8e316c108c59d59fbaaac7f2d7a32477165",
+      "name": "identity_final2",
+      "passed": 114,
+      "source_scope": "Full current suite with targeted final identity/guard coverage and superseded-score assertion repairs",
+      "tests": 114
+    },
+    {
+      "log_sha256": "35f4a3a8e06c3ca7744166cd784e268b39e275e7603fe07694de9ff766c9d7dc",
+      "name": "parity_repair",
+      "passed": 1,
+      "source_scope": "Full current suite with targeted final identity/guard coverage and superseded-score assertion repairs",
+      "tests": 1
+    },
+    {
+      "log_sha256": "e56f6f030c64b5c9cbf5007e825a858f7e560a7f113c5dbe850414f133149c2d",
+      "name": "policy_final",
+      "passed": 16,
+      "source_scope": "Full current suite with targeted final identity/guard coverage and superseded-score assertion repairs",
+      "tests": 16
+    }
+  ],
+  "current_collection_count": 751,
+  "deduplicated_current_coverage": {
+    "aggregation": "LATEST_RESULT_PER_CLASSNAME_AND_TEST_NAME_NOT_ONE_FULL_RERUN",
+    "passed": 749,
+    "skipped": 2,
+    "tests": 751
+  },
+  "dependency_closure": "PASS",
+  "full_historical_replay_pass_claimed": false,
+  "generalization": "UNKNOWN",
+  "governance": "PASS",
+  "governance_receipt_sha256": "fc06b1b75797d47ec029d35b8b1b5bee8ef793082e7bbc80017da73057500187",
+  "governance_source_note": "Unchanged registry/lineage/report contracts reused; final source dependency and compile/preflight separately verified.",
+  "historical_reports_and_manifests": "UNCHANGED",
+  "identity": "V210_ZERO_API_VERIFICATION_V1",
+  "manifest_schema": "PASS",
+  "network_attempts_in_checks": 0,
+  "omitted_inventory": "tests/suite_classification.json",
+  "omitted_modules": 224,
+  "preliminary_rejected_checks": [
+    "Initial synthetic D assertion actually described a margin tie; corrected the fixture and reran.",
+    "New binding initially inherited old responsibility identity; corrected fresh binding read point and reran.",
+    "Initial registry kind and derived view corrected before final governance pass.",
+    "One targeted collection inadvertently explicitly named an excluded historical module; no tests ran; correct current-only set subsequently passed.",
+    "Current old-schema and BBH parity assertions were updated to retain old classifications/branches while verifying the explicitly changed scoring."
+  ],
+  "push_performed": false,
+  "real_api_calls": 0,
+  "retired_git_only_cases": 5,
+  "scientific_source_hash": "be03f510544d1149ad4c1c162858f4b9b4cb708ec6a4b646df8b5b3831c9c4d5",
+  "team_vote_gain": "UNKNOWN",
+  "test_calls": 0,
+  "token_efficiency": "UNKNOWN",
+  "unchanged_components_receipt_sha256": "b361274bd435d35a095fadd8ca27623d1605793b499044543af367dc491a33a4",
+  "unfrozen_execution_blockers": [
+    "PREEXECUTION_NOT_FROZEN",
+    "EXECUTION_BINDING_NOT_FROZEN"
+  ],
+  "validation_calls": 0
+}

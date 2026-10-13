@@ -133,6 +133,8 @@ def current_scientific_files(root: Path, *, execution_closure: bool = False) -> 
     if experience_contract.is_file():result.append(experience_contract)
     population_contract=root/'docs/design/VOTE_GUIDED_PARENT_POPULATION_V29.md'
     if population_contract.is_file():result.append(population_contract)
+    weighted_contract=root/'docs/design/WEIGHTED_ERROR_RESPONSIBILITY_V210.md'
+    if weighted_contract.is_file():result.append(weighted_contract)
     routing_contract=root/'docs/design/PROVIDER_ROLE_ROUTING_V1.md'
     if routing_contract.is_file():result.append(routing_contract)
     risk_contract = root/'docs/design/SHARED_RISK_MEMORY_V4.md'

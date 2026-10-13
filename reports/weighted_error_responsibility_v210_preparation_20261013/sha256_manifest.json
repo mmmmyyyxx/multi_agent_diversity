@@ -1,0 +1,25 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "classifier.json",
+      "sha256": "56ebd1060ed2bc9a0204e4838f143c41507fd2b4ada7b3eabfd4cf3abaf0acb2"
+    },
+    {
+      "file": "historical_selection_recompute.json",
+      "sha256": "e36bbc24d768eb7be5e9d9aad5840d5a78a0adfc40b2223c47035ff0841e872f"
+    },
+    {
+      "file": "README.md",
+      "sha256": "fca62fd76b44e30130eada5b1224226e5a965a747e1b45e4eb24a19cf6be3424"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "afeae4d4e1a681bf62807a60e560041edd7c42ff64d4b41525bcec041bbc5496"
+    },
+    {
+      "file": "verification.json",
+      "sha256": "1aa4359211449e02d0185146337ac31aba389e8ca4819542480e8150c732c594"
+    }
+  ]
+}

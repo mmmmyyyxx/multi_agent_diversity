@@ -12,6 +12,7 @@ from ..search.current_composition import build_current_team_prompt_search
 from ..search.scientific_aggregation import EquivalencePluralityAggregation
 from ..search.optimization_evidence import POLICY, BINDING, METHOD, MEMORY, EVIDENCE, INPUT, GRADIENT_PROMPT_ID
 from ..search.parent_population import POLICY as POPULATION_POLICY
+from ..search.weighted_responsibility import POLICY as RESPONSIBILITY_POLICY
 from ..search.population_evaluation import FINAL_POLICY
 from ..search.textual_gradients import REFERENCE_GRADIENT_PROMPT, CLUSTER_PROMPT, pattern_policy_for_trajectory
 from ..search.schemas import SearchContractError
@@ -161,6 +162,8 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
         prediction_validity_policy=validity_contract(),invalid_recovery_policy=structured_recovery_contract(),
         payload_parser_identity=PARSER,optimization_evidence_policy=deepcopy(POLICY),
         parent_population_policy=deepcopy(POPULATION_POLICY),final_team_policy=deepcopy(FINAL_POLICY),
+        responsibility_policy=deepcopy(RESPONSIBILITY_POLICY),
+        responsibility=RESPONSIBILITY_POLICY['classification'],
         optimizer_input_schema=INPUT,layer1_search_policy=asdict(PopulationSearchConfig()),
         candidate_contract_identity=CONTRACT,memory_policy_identity=MEMORY,panel_evidence_policy=EVIDENCE,
         gradient_prompt_path=gradient_prompt_path,gradient_prompt_sha256=gradient_prompt_sha256,
@@ -223,8 +226,8 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
     from ..current_contract import PATTERN_SPECIFIC_CONTENT_GUARD_VERSION, GRADIENT_PARTITION_COMPLETION_VERSION
     c['pattern_abstraction_guard']=PATTERN_SPECIFIC_CONTENT_GUARD_VERSION
     c['partition_completion_policy']=GRADIENT_PARTITION_COMPLETION_VERSION
-    from .protocols import MATH_PROTOCOL_FLEXIBLE_V7
-    c['benchmark_protocol_sha256']=MATH_PROTOCOL_FLEXIBLE_V7.identity()
+    from .protocols import MATH_PROTOCOL_WEIGHTED_V8
+    c['benchmark_protocol_sha256']=MATH_PROTOCOL_WEIGHTED_V8.identity()
     c.pop('repair_probe_policy',None)
     from ..search.population_memory import POLICY as memory_policy
     c['shared_risk_policy']=deepcopy(memory_policy)

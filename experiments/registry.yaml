@@ -9973,9 +9973,10 @@ experiments:
   manifest: experiments/manifests/vote_parent_population_v29_preparation_v1.yaml
   report: reports/vote_parent_population_v29_preparation_20261012
   classifier: reports/vote_parent_population_v29_preparation_20261012/classifier.json
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
-  superseded_by: []
+  superseded_by:
+  - weighted_error_responsibility_v210_preparation_v1
   notes:
   - Three independent single-step repairs from bounded fitness-weighted pools; final
     argmax team jointly evaluated.
@@ -9983,4 +9984,28 @@ experiments:
   unavailable:
     implementation_commit: Containing implementation commit; no self-reference.
     execution_commit: No real model experiment executed.
+    result_commit: No real efficacy result.
+- experiment_id: weighted_error_responsibility_v210_preparation_v1
+  kind: ARCHITECTURE_REFACTOR
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_10_weighted_responsibility_v1
+  parent_ids:
+  - vote_parent_population_v29_preparation_v1
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_IMPLEMENTATION_EFFICACY_UNKNOWN
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/weighted_error_responsibility_v210_preparation_v1.yaml
+  report: reports/weighted_error_responsibility_v210_preparation_20261013
+  classifier: reports/weighted_error_responsibility_v210_preparation_20261013/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Exclusive summed D/N/C/R3/R4 responsibility with unchanged V2.9 Parent Population.
+  - Offline only; no real API or historical resume, Validation/Test or Push authorization.
+  unavailable:
+    implementation_commit: Containing implementation commit; no self-reference.
+    execution_commit: No model experiment executed.
     result_commit: No real efficacy result.

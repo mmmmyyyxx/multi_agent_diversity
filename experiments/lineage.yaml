@@ -1056,6 +1056,9 @@ nodes:
 - experiment_id: vote_parent_population_v29_preparation_v1
   kind: ARCHITECTURE_REFACTOR
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: weighted_error_responsibility_v210_preparation_v1
+  kind: ARCHITECTURE_REFACTOR
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2352,4 +2355,9 @@ edges:
   evidence: reports/vote_parent_population_v29_preparation_20261012/README.md
   scope: User-directed method change; evidence motivates questions, not superiority
     claims.
+- from: vote_parent_population_v29_preparation_v1
+  to: weighted_error_responsibility_v210_preparation_v1
+  relation: derived_from
+  evidence: reports/weighted_error_responsibility_v210_preparation_20261013/README.md
+  scope: User-defined exclusive weighted error responsibility; no efficacy inference.
 current_frontier: experiments/current_frontier.yaml

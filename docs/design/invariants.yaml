@@ -1034,3 +1034,16 @@ invariants:
   failure_refs: []
   critical: true
   status: ACTIVE
+- id: INV-V210-EXCLUSIVE-WEIGHTED-RESPONSIBILITY-001
+  description: WHO and Pattern share exclusive per-error summed weights; only WHO
+    failure-discounts.
+  authority: docs/design/WEIGHTED_ERROR_RESPONSIBILITY_V210.md
+  implementation_refs:
+  - multi_dataset_diverse_rl/search/weighted_responsibility.py
+  - multi_dataset_diverse_rl/search/binary_responsibility.py
+  - multi_dataset_diverse_rl/search/textual_gradients.py
+  tests:
+  - tests/current/test_weighted_error_responsibility.py
+  failure_refs: []
+  critical: true
+  status: ACTIVE

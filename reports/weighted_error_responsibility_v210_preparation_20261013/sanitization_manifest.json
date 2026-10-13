@@ -1,0 +1,11 @@
+{
+  "host_paths": 0,
+  "private_endpoints": 0,
+  "public_fields": "Hashes counters categories and metrics only",
+  "raw_answers": 0,
+  "raw_model_responses": 0,
+  "raw_prompts": 0,
+  "raw_questions": 0,
+  "secrets": 0,
+  "status": "PASS"
+}

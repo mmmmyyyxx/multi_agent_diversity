@@ -1,7 +1,7 @@
 """Fresh per-failure corrective signals, then a gradients-only semantic partition.
 
 Signals are hypotheses from observable evidence, never latent-cause witnesses.
-The LLM groups corrections; the unchanged shared responsibility primitive ranks.
+The LLM groups corrections; the current shared responsibility primitive ranks.
 """
 from copy import deepcopy
 from dataclasses import asdict, replace
@@ -14,6 +14,7 @@ import unicodedata
 from .. import current_contract as versions
 from .pattern_primitives import (guard_abstraction, wrong_universe, sample_labels,
     single_failure_example, PatternResponsibilitySignal)
+from .weighted_responsibility import LABELS, POLICY as RESPONSIBILITY_POLICY
 from .schemas import SearchContractError
 from .generation_failures import POLICY as OUTPUT_RECOVERY, generation_failure, recoverable_output
 from .readable_evidence import INSTRUCTION
@@ -83,6 +84,7 @@ GRADIENT_POLICY = dict(identity=versions.PER_EXAMPLE_GRADIENT_VERSION,
     abstraction_guard=versions.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION)
 POLICY = dict(discovery=versions.GRADIENT_PATTERN_DISCOVERY_VERSION,
     responsibility=versions.PATTERN_RESPONSIBILITY_VERSION, raw_value=versions.RAW_RESPONSIBILITY_VALUE_VERSION,
+    responsibility_policy=RESPONSIBILITY_POLICY,
     schema=versions.GRADIENT_PATTERN_SCHEMA_VERSION, correctness=versions.TARGET_CORRECTNESS_SIGNAL_VERSION,
     universe='all_selected_member_wrong_optimize', gradient_policy=GRADIENT_POLICY,
     cluster_calls_per_opportunity=3, provider_role='pattern_cluster', output_cache=False,
@@ -412,8 +414,10 @@ def score_gradient_partition(value,rows,gradients,*,seed=81,state_id='',ordinal=
         raise SearchContractError('PATTERN_GRADIENT_CLUSTER_INVALID_MEMBERSHIP')
     patterns=[]
     for p in grouped.values():
-        counts=[sum(label in sample_labels(universe[x]) for x in p['support_ids']) for label in ('direct_flip','near_margin','coverage')]
-        signal=PatternResponsibilitySignal(p['pattern_id'],*counts,len(p['support_ids']))
+        counts=[sum(label in sample_labels(universe[x]) for x in p['support_ids']) for label in LABELS]
+        uncovered=sum(not sample_labels(universe[x]) for x in p['support_ids'])
+        signal=PatternResponsibilitySignal(p['pattern_id'],*counts[:3],len(p['support_ids']),
+            r3_count=counts[3],r4_count=counts[4],uncovered_count=uncovered)
         patterns.append({**p,'responsibility':{**asdict(signal),'raw_value':signal.raw_value}})
     if not patterns:return dict(patterns=(),per_example_gradients=tuple(gradients),focus_mechanism_id=None,nonactionable=True,reason='NO_ACTIONABLE_PATTERN')
     positive=[p for p in patterns if p['responsibility']['raw_value']>0]
@@ -435,7 +439,7 @@ def score_gradient_partition(value,rows,gradients,*,seed=81,state_id='',ordinal=
         mixed_pattern_count=len(patterns),wrong_universe_size=total,
         valid_wrong_count=sum(r.signals['target_member_valid'] for r in rows),
         invalid_wrong_count=sum(not r.signals['target_member_valid'] for r in rows),
-        wrong_by_lane={k:sum(k in sample_labels(r) for r in rows) for k in ('direct_flip','near_margin','coverage')},
+        wrong_by_lane={k:sum(k in sample_labels(r) for r in rows) for k in LABELS},
         zero_responsibility_wrong_count=sum(not sample_labels(r) for r in rows),
         target_selected_before_pattern=True,pattern_memory_access_before_selection=False,
         selection_authority=versions.RAW_RESPONSIBILITY_VALUE_VERSION,

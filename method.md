@@ -4,8 +4,9 @@ The sole active research architecture is Unified Team Prompt Search.
 The endpoint is useful correct coverage and team task performance under the
 frozen aggregation. [Scientific principles](docs/design/SCIENTIFIC_PRINCIPLES.md)
 separate those measurements from textual diversity, validity and commit counts.
-The sole current method is V2.9 Vote-Guided Parent Population Search,
-`unified_team_prompt_search_v2_9_vote_parent_population_v1`.
+The sole current method is V2.10 weighted error responsibility with V2.9 Parent Population,
+`unified_team_prompt_search_v2_10_weighted_responsibility_v1`.
+See the [weighted responsibility amendment](docs/design/WEIGHTED_ERROR_RESPONSIBILITY_V210.md).
 See the [V2.9 population amendment](docs/design/VOTE_GUIDED_PARENT_POPULATION_V29.md).
 
 [Current specification](docs/design/CURRENT_SPEC.md) and

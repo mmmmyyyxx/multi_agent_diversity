@@ -1,7 +1,13 @@
 {
-  "current_suite_policy": "V2.9 current contracts; explicitly classified old method conformance requires its exact original source. Excluded tests are never PASS.",
+  "current_suite_policy": "V2.10 weighted responsibility with retained V2.9 Parent Population; excluded historical tests require exact frozen source.",
   "schema_version": "suite_classification_v1",
   "tests": [
+    {
+      "path": "tests/current/test_weighted_error_responsibility.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "current_suite_included": true,
+      "required_private_artifacts": []
+    },
     {
       "path": "tests/current/test_vote_parent_population.py",
       "classification": "CURRENT_ZERO_API_E2E",

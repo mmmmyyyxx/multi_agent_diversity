@@ -8,6 +8,7 @@ from .population_memory import POLICY as MEMORY_POLICY, LIMITS
 from .current_layer1 import PopulationSearchConfig
 from .parent_population import POLICY as POPULATION_POLICY
 from .population_evaluation import FINAL_POLICY
+from .weighted_responsibility import POLICY as RESPONSIBILITY_POLICY
 from .optimization_evidence import frozen_policy, METHOD, LAYER1, EVIDENCE, MEMORY, INPUT
 
 
@@ -18,12 +19,15 @@ def require_current_contract(contract):
     frozen_routing(contract)
     frozen_solver_policy(contract)
     from ..benchmarks.math_response_evidence import trajectory_policy
+    from ..benchmarks.protocols import MATH_PROTOCOL_WEIGHTED_V8
     from .optimization_evidence import BINDING
     if (contract.get('method_identity') != METHOD or contract.get('identity') != BINDING
             or contract.get('paired_realization_policy') is not None
             or contract.get('gradient_recovery_policy') is not None
             or contract.get('repair_probe_policy') is not None
             or contract.get('parent_population_policy') != POPULATION_POLICY
+            or contract.get('responsibility_policy') != RESPONSIBILITY_POLICY
+            or contract.get('benchmark_protocol_sha256') != MATH_PROTOCOL_WEIGHTED_V8.identity()
             or contract.get('final_team_policy') != FINAL_POLICY):
         raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
     frozen_policy(contract.get('optimization_evidence_policy'))
@@ -51,6 +55,7 @@ def require_current_contract(contract):
 @dataclass(frozen=True)
 class CurrentPolicyBundle:
     responsibility: str = identities.BINARY_PLURALITY_RESPONSIBILITY_VERSION
+    target: str = identities.UNIFIED_TARGET_POLICY_VERSION
     gradient: str = identities.PER_EXAMPLE_GRADIENT_VERSION
     abstraction_guard: str = identities.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION
     clustering: str = identities.GRADIENT_PATTERN_DISCOVERY_VERSION
@@ -81,6 +86,7 @@ class CurrentPolicyBundle:
             raise SearchContractError('PATTERN_PARTITION_COMPLETION_POLICY_MISMATCH')
         method = SearchMethodConfig(method=METHOD, search_engine=self.layer1,
             diagnosis_policy=self.responsibility, aggregation_policy=aggregation,
+            target_policy=self.target,
             evidence_policy=self.evidence, feasibility_policy=identities.UNIFIED_VARIABLE_FEASIBILITY_VERSION,
             transition_policy=self.transition, pattern_policy=self.clustering,
             memory_policy=self.memory, search_acceptance_policy='population_retention_separate_joint_team_admission_v2',
@@ -89,6 +95,7 @@ class CurrentPolicyBundle:
             mechanism_config=dict(memory=deepcopy(LIMITS), shared_risk_policy=deepcopy(MEMORY_POLICY),
                 optimizer_input_schema=INPUT, panel_policy=self.evidence, pattern_policy=pattern_policy,
                 parent_population_policy=deepcopy(POPULATION_POLICY),final_team_policy=deepcopy(FINAL_POLICY),
+                responsibility_policy=deepcopy(RESPONSIBILITY_POLICY),
                 pattern_provider_binding=provider_binding,generated_output_recovery_policy=deepcopy(recovery),
                 pattern_support_id_transport=identities.PATTERN_SUPPORT_ID_ALIAS_VERSION,
                 pattern_abstraction_guard=identities.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION))

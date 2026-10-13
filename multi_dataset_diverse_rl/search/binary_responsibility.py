@@ -1,4 +1,4 @@
-"""Benchmark-neutral raw legal binary plurality responsibility, unchanged BBH core."""
+"""Current weighted responsibility on the unchanged binary plurality counterfactual core."""
 from __future__ import annotations
 from copy import deepcopy
 from dataclasses import dataclass
@@ -6,8 +6,8 @@ from dataclasses import dataclass
 from ..peer_state import build_team_vote_state, build_peer_vote_context
 from ..responsibility import (ResponsibilityState, compute_repair_eligibility_sets,
                                compute_member_aware_repair_opportunity)
-from ..vote_aligned_scheduler import classify_opportunity_lane
-from .. import versions
+from .. import current_contract as versions
+from .weighted_responsibility import LABELS, WEIGHTS, classify_error, POLICY
 from .policies import ResponsibilitySignal
 from .schemas import BenchmarkCapabilities, Diagnosis, SearchContractError, TeamStateSnapshot
 
@@ -110,27 +110,38 @@ class BinaryPluralityResponsibilityAnalyzer:
         )
         margins = {row.question_hash: int(row.plurality_margin) for row in states}
         signals: dict[int, ResponsibilitySignal] = {}
+        labels_by_member = {}
+        uncovered_by_member = {}
         for member in range(len(state.member_prompts)):
-            counts = {"direct_flip": 0, "near_margin": 0, "coverage": 0}
-            for row in assigned.get(member, ()):
-                lane = classify_opportunity_lane(row, margins)
-                if lane == "pure_coverage":
-                    lane = "coverage"
-                if lane in counts:
+            counts = {label: 0 for label in LABELS}
+            assigned_ids = {row.question_hash for row in assigned.get(member, ())}
+            labels = {}; uncovered = {}
+            for row in states:
+                opportunity = state.diagnostics['opportunities'][row.question_hash][member]
+                lane, reason = classify_error(row, member, opportunity,
+                    assigned=row.question_hash in assigned_ids, margins=margins)
+                labels[row.question_hash] = (lane,) if lane else ()
+                if lane:
                     counts[lane] += 1
-            scores = {"direct_flip": 4 * counts["direct_flip"],
-                      "near_margin": 2 * counts["near_margin"],
-                      "coverage": counts["coverage"]}
+                if reason:
+                    uncovered[row.question_hash] = reason
+            labels_by_member[member] = labels
+            uncovered_by_member[member] = uncovered
+            scores = {label: WEIGHTS[label] * count for label, count in counts.items()}
+            # This descriptive lane never replaces the summed ranking value.
             lane = min(scores, key=lambda name: (-scores[name],
-                                                 ("direct_flip", "near_margin", "coverage").index(name)))
-            if max(scores.values()) == 0:
+                                                 LABELS.index(name)))
+            if sum(scores.values()) == 0:
                 lane = "general"
             signals[member] = ResponsibilitySignal(
                 member, counts["direct_flip"], counts["near_margin"],
-                counts["coverage"], lane,
+                counts["coverage"], lane, counts['r3'], counts['r4'], len(uncovered),
             )
         return Diagnosis(
             responsibility=signals,
             benchmark_signals={"assigned": {key: tuple(value) for key, value in assigned.items()},
-                               "margins": margins},
+                               "margins": margins,
+                               "responsibility_policy": POLICY,
+                               "responsibility_labels": labels_by_member,
+                               "uncovered_errors": uncovered_by_member},
         )

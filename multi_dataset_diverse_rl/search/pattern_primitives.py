@@ -4,7 +4,7 @@ from .. import current_contract as versions
 from ..evaluation.semantic_mutable_contract import semantic_violation_reasons
 from ..local_optimizers.example_text import contains_supplied_example_text
 from ..local_optimizers.schemas import LocalEvidenceExample
-from .responsibility_value import responsibility_value
+from .weighted_responsibility import responsibility_value, LABELS
 from .schemas import SearchContractError
 from .generation_failures import generation_failure
 from .symbolic_provenance import abstraction_result
@@ -16,11 +16,23 @@ class PatternResponsibilitySignal:
     near_margin_count: int
     coverage_count: int
     support_count: int
+    r3_count: int = 0
+    r4_count: int = 0
+    uncovered_count: int = 0
     identity: str = versions.PATTERN_RESPONSIBILITY_VERSION
+
+    def __post_init__(self):
+        counts = (self.direct_count, self.near_margin_count, self.coverage_count,
+                  self.r3_count, self.r4_count, self.uncovered_count)
+        if (any(type(n) is not int or n < 0 for n in counts)
+                or type(self.support_count) is not int or self.support_count < 0
+                or sum(counts) != self.support_count):
+            raise SearchContractError('PATTERN_EXCLUSIVE_RESPONSIBILITY_COUNTS_INVALID')
 
     @property
     def raw_value(self):
-        return responsibility_value(self.direct_count, self.near_margin_count, self.coverage_count)
+        return responsibility_value(self.direct_count, self.near_margin_count, self.coverage_count,
+                                    self.r3_count, self.r4_count)
 
 def wrong_universe(rows):
     rows = tuple(rows)
@@ -39,8 +51,9 @@ def wrong_universe(rows):
 
 def sample_labels(row):
     labels = row.signals.get('responsibility_labels')
-    if (not isinstance(labels, (tuple, list)) or len(set(labels)) != len(labels)
-            or not set(labels) <= {'direct_flip','near_margin','coverage'}):
+    if (not isinstance(labels, (tuple, list)) or len(labels) > 1
+            or any(not isinstance(label, str) for label in labels)
+            or not set(labels) <= set(LABELS)):
         raise SearchContractError('PATTERN_RESPONSIBILITY_LABELS_REQUIRED')
     return tuple(labels)
 

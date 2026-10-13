@@ -5,14 +5,20 @@ The [scientific principles](SCIENTIFIC_PRINCIPLES.md) constrain interpretation;
 the [MATH scientific contract](MATH_SCIENTIFIC_CONTRACT.md) clarifies benchmark
 measurement and admission. These clarifications add no algorithm or threshold.
 The sole executable method is
-`unified_team_prompt_search_v2_9_vote_parent_population_v1`.
+`unified_team_prompt_search_v2_10_weighted_responsibility_v1`.
+The [exclusive weighted responsibility amendment](WEIGHTED_ERROR_RESPONSIBILITY_V210.md)
+uses R = 4D + 2N + C + R3 + 0.5R4 for WHO and Pattern. D/N/C retain existing
+counterfactual assignment and exclusive lanes; R3/R4 require team-correct,
+target-wrong and exactly three/four correct members. WHO alone applies the existing
+failure discount. Uncovered member errors retain zero weight and explicit counters.
 The [Vote-Guided Parent Population amendment](VOTE_GUIDED_PARENT_POPULATION_V29.md)
 replaces the six-step chain and Probe promotion with three independent single-step
 repairs, a three-parent pool per member, complete Optimize Vote fitness and a
 jointly evaluated final per-pool argmax team. Scoped single-step Memory and
 readable root/selected-parent observations support Reflection. It supersedes
-V2.8 local evaluation, serial parent progression and abstention. WHO, Gradient
-semantics, Solver/scoring and epoch stopping are unchanged. Single-member
+V2.8 local evaluation, serial parent progression and abstention. Gradient generation,
+Solver/scoring and epoch stopping are unchanged. V2.10 supersedes WHO/Pattern
+responsibility scoring only. Single-member
 Full/Shadow deployment guards remain; final simultaneous assembly generalizes
 the same guards to all changed members. No new Preservation panel is introduced.
 [The V2.5 scientific contract](RESPONSIBILITY_FALLBACK_REPAIR_V25.md) and
@@ -30,7 +36,7 @@ exactly raw problem. Explicit gold-blind final declarations and pinned mathemati
 equivalence determine binary correctness. Four invalid semantic draws remain bounded.
 
 Members with any Optimize error are eligible, including zero responsibility and
-member-wrong/team-correct. Positive D/N/C responsibility retains priority and
+member-wrong/team-correct. Positive weighted error responsibility retains priority and
 failure discount; all-zero fallback is seeded and replayable. Gradient and Pattern
 recover typed model-output failures within three draws, preserving valid partial evidence.
 Source-aware symbolic provenance replaces literal-only overlap rejection. Integrity
