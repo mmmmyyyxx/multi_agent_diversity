@@ -1059,6 +1059,36 @@ nodes:
 - experiment_id: weighted_error_responsibility_v210_preparation_v1
   kind: ARCHITECTURE_REFACTOR
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: single_prompt_gradient_pattern_v1
+  kind: PROTOCOL_FREEZE
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: single_prompt_gradient_pattern_v1_full_errors_seed88
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: single_prompt_gradient_pattern_v1_full_errors_seed89
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: single_prompt_gradient_pattern_v1_full_errors_seed90
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: single_prompt_gradient_pattern_v1_batch_errors_seed88
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: single_prompt_gradient_pattern_v1_batch_errors_seed89
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: single_prompt_gradient_pattern_v1_batch_errors_seed90
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: single_prompt_gradient_pattern_v1_gradient_pattern_seed88
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: single_prompt_gradient_pattern_v1_gradient_pattern_seed89
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: single_prompt_gradient_pattern_v1_gradient_pattern_seed90
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2360,4 +2390,70 @@ edges:
   relation: derived_from
   evidence: reports/weighted_error_responsibility_v210_preparation_20261013/README.md
   scope: User-defined exclusive weighted error responsibility; no efficacy inference.
+- from: weighted_error_responsibility_v210_preparation_v1
+  to: single_prompt_gradient_pattern_v1
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_GRADIENT_PATTERN_V1.md
+  scope: Independent study derivation; data/contracts only, no old execution state
+    or API scope reuse.
+- from: math_v27_seed86_precluster_continuation_v1
+  to: single_prompt_gradient_pattern_v1
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_GRADIENT_PATTERN_V1.md
+  scope: Independent study derivation; data/contracts only, no old execution state
+    or API scope reuse.
+- from: single_prompt_gradient_pattern_v1
+  to: single_prompt_gradient_pattern_v1_full_errors_seed88
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_GRADIENT_PATTERN_V1.md
+  scope: Independent study derivation; data/contracts only, no old execution state
+    or API scope reuse.
+- from: single_prompt_gradient_pattern_v1
+  to: single_prompt_gradient_pattern_v1_full_errors_seed89
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_GRADIENT_PATTERN_V1.md
+  scope: Independent study derivation; data/contracts only, no old execution state
+    or API scope reuse.
+- from: single_prompt_gradient_pattern_v1
+  to: single_prompt_gradient_pattern_v1_full_errors_seed90
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_GRADIENT_PATTERN_V1.md
+  scope: Independent study derivation; data/contracts only, no old execution state
+    or API scope reuse.
+- from: single_prompt_gradient_pattern_v1
+  to: single_prompt_gradient_pattern_v1_batch_errors_seed88
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_GRADIENT_PATTERN_V1.md
+  scope: Independent study derivation; data/contracts only, no old execution state
+    or API scope reuse.
+- from: single_prompt_gradient_pattern_v1
+  to: single_prompt_gradient_pattern_v1_batch_errors_seed89
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_GRADIENT_PATTERN_V1.md
+  scope: Independent study derivation; data/contracts only, no old execution state
+    or API scope reuse.
+- from: single_prompt_gradient_pattern_v1
+  to: single_prompt_gradient_pattern_v1_batch_errors_seed90
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_GRADIENT_PATTERN_V1.md
+  scope: Independent study derivation; data/contracts only, no old execution state
+    or API scope reuse.
+- from: single_prompt_gradient_pattern_v1
+  to: single_prompt_gradient_pattern_v1_gradient_pattern_seed88
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_GRADIENT_PATTERN_V1.md
+  scope: Independent study derivation; data/contracts only, no old execution state
+    or API scope reuse.
+- from: single_prompt_gradient_pattern_v1
+  to: single_prompt_gradient_pattern_v1_gradient_pattern_seed89
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_GRADIENT_PATTERN_V1.md
+  scope: Independent study derivation; data/contracts only, no old execution state
+    or API scope reuse.
+- from: single_prompt_gradient_pattern_v1
+  to: single_prompt_gradient_pattern_v1_gradient_pattern_seed90
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_GRADIENT_PATTERN_V1.md
+  scope: Independent study derivation; data/contracts only, no old execution state
+    or API scope reuse.
 current_frontier: experiments/current_frontier.yaml

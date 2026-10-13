@@ -1,6 +1,9 @@
 # Current Implementation Specification
 
 The sole active research architecture is Unified Team Prompt Search.
+The explicitly user-requested [independent single-Prompt mechanism study](SINGLE_PROMPT_GRADIENT_PATTERN_V1.md)
+is isolated from this method and routes only its own schema through the shared
+runner. Its approved 20-round/error-Batch protocol does not amend team defaults.
 The [scientific principles](SCIENTIFIC_PRINCIPLES.md) constrain interpretation;
 the [MATH scientific contract](MATH_SCIENTIFIC_CONTRACT.md) clarifies benchmark
 measurement and admission. These clarifications add no algorithm or threshold.

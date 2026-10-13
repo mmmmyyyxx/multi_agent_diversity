@@ -1,0 +1,10 @@
+{
+  "status": "OFFLINE_IMPLEMENTATION_NOT_EXECUTED",
+  "scientific_validity": "NOT_EVALUABLE_NO_REAL_RUN",
+  "efficacy": "UNKNOWN",
+  "diversity": "UNKNOWN",
+  "real_api_calls": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "real_api_authorized": false
+}

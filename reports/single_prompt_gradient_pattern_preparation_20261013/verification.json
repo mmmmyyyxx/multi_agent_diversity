@@ -1,0 +1,79 @@
+{
+  "status": "OFFLINE_VERIFIED_NOT_EXECUTED",
+  "change_category": "SCIENTIFIC_BEHAVIOR_AND_REAL_EXPERIMENT_PREPARATION",
+  "verification_runtime": {
+    "environment_name": "runtime",
+    "python_version": "3.13.5 | packaged by Anaconda, Inc. | (main, Jun 12 2025, 16:37:03) [MSC v.1929 64 bit (AMD64)]",
+    "packages": {
+      "math-verify": "0.6.0",
+      "latex2sympy2_extended": "1.0.9",
+      "antlr4-python3-runtime": "4.13.2",
+      "sympy": "1.14.0",
+      "mpmath": "1.3.0",
+      "openai": "2.37.0",
+      "httpx": "0.28.1",
+      "jsonschema": "4.25.0",
+      "PyYAML": "6.0.2"
+    }
+  },
+  "current_suite": {
+    "selected": 772,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 2,
+    "passed": 770,
+    "skip_categories": [
+      "USER_DEFERRED_DOWNLOAD: no frozen real-data manifest",
+      "USER_DEFERRED_DOWNLOAD: no frozen real-data manifest"
+    ]
+  },
+  "focused_suite": {
+    "selected": 21,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 21,
+    "skip_categories": []
+  },
+  "production_compileall": "PASS",
+  "affected_scripts_and_tests_compile": "PASS",
+  "study_manifest_metadata_preflight": "PASS",
+  "governance_and_generated_views": "PASS",
+  "deterministic_synthetic_smoke": {
+    "cells": 9,
+    "rounds": 20,
+    "checkpoints_per_cell": 21,
+    "validation_checkpoints": 189,
+    "final_test_prompts": 9,
+    "pairs": 36,
+    "fake_provider_calls": 2325,
+    "unresolved_reservations": 0
+  },
+  "source_snapshot_sha256": "220f09a5482ea974a833f0733a43710b27d92b558926fd8bc323acb1cd478142",
+  "evidence_sha256": {
+    "runs/single_prompt_preparation/runtime_current.log": "b5248ce038f14e3de0b6d97d82ddec69ef7f2b5a4d4a20bd3ce27b1c426a2d1a",
+    "runs/single_prompt_preparation/runtime_current.xml": "6bb5f499e2b410e6498a283385e655e9d8ce67bb52ee8d1620f0fee92b4b3635",
+    "runs/single_prompt_preparation/runtime_focused.log": "04f1bc99bbab849412a7bc1a4bcaaa2a8caac506e01a211c2bd8a9e0b4d5fede",
+    "runs/single_prompt_preparation/runtime_focused.xml": "018bc7c8a5af3c19bb4b1257c8f8641a9bb01003b4a047fdf1ff5030b99d32f8",
+    "runs/single_prompt_preparation/runtime_dry_run.log": "4d5b5099017d724659517a117e578ef585f7d28a83161c9b23b7a7529c31b4ff",
+    "runs/single_prompt_preparation/runtime_compile.log": "f8a90a71ced8e0100bacf2ccad052603f1a0d1a7e49eb569733cb77e4e2e45d8",
+    "runs/single_prompt_preparation/runtime_preflight.log": "39b8684578139fa95ae69cd0d6d069361e1ad29171fe49aed1914a1f1f7e09a2",
+    "runs/single_prompt_preparation/runtime_governance.log": "2f5fc8a05d716522bd01673b072423893de9480bea54d4e2a7c146819f9e82b5",
+    "runs/single_prompt_preparation/runtime_governance.json": "d0420674ff6bb3bf9b46b82a54d318cbecceab8417321a385eaccaf17fc9d8b1",
+    "runs/single_prompt_preparation/runtime_metadata.json": "27af11f538207795ee2b71f92244fd19be8bf25c02a20787fd2177375bdde016"
+  },
+  "omitted_scope": {
+    "historical_private_module_inventory": "tests/suite_classification.json",
+    "omitted_module_count": 224,
+    "retired_git_only_case_count": 5,
+    "full_historical_replay_pass_claim": false
+  },
+  "real_api_calls": 0,
+  "validation_content_reads": 0,
+  "test_content_reads": 0,
+  "real_api_authorized": false,
+  "ready_to_run": false,
+  "git_diff_check": "PASS_BEFORE_FINAL_COMMIT",
+  "sanitization": "PASS",
+  "documentation_links": "PASS"
+}

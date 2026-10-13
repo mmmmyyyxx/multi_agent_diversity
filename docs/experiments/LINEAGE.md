@@ -275,6 +275,16 @@ flowchart TD
     n273["math_v2_1_gradient_pattern_seed81_canary_v2<br/>REAL_CANARY<br/>HOLD"]
     n274["math_v2_1_gradient_pattern_seed81_canary_v3<br/>REAL_CANARY<br/>COMPLETED"]
     n276["math_identical_initial_condition_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
+    n342["single_prompt_gradient_pattern_v1<br/>PROTOCOL_FREEZE<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n343["single_prompt_gradient_pattern_v1_full_errors_seed88<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n344["single_prompt_gradient_pattern_v1_full_errors_seed89<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n345["single_prompt_gradient_pattern_v1_full_errors_seed90<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n346["single_prompt_gradient_pattern_v1_batch_errors_seed88<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n347["single_prompt_gradient_pattern_v1_batch_errors_seed89<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n348["single_prompt_gradient_pattern_v1_batch_errors_seed90<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n349["single_prompt_gradient_pattern_v1_gradient_pattern_seed88<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n350["single_prompt_gradient_pattern_v1_gradient_pattern_seed89<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n351["single_prompt_gradient_pattern_v1_gradient_pattern_seed90<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -781,6 +791,17 @@ flowchart TD
   n337 -->|derived_from| n340
   n338 -->|derived_from| n340
   n340 -->|derived_from| n341
+  n341 -->|derived_from| n342
+  n334 -->|derived_from| n342
+  n342 -->|derived_from| n343
+  n342 -->|derived_from| n344
+  n342 -->|derived_from| n345
+  n342 -->|derived_from| n346
+  n342 -->|derived_from| n347
+  n342 -->|derived_from| n348
+  n342 -->|derived_from| n349
+  n342 -->|derived_from| n350
+  n342 -->|derived_from| n351
 ```
 
 ## Archived branches and unresolved evidence

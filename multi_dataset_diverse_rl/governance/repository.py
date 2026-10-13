@@ -93,6 +93,16 @@ def validate_registry_v2(root: Path, registry: Mapping) -> tuple[list[str],dict]
             obj=load_yaml(root/path);manifests[ident]=obj
             if isinstance(obj,dict) and obj.get('schema_version')=='experiment_manifest_v2':
                 errors.extend(f'{ident}: {e}' for e in validate_manifest_v2(root,obj))
+            elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_study_manifest_v1':
+                from ..research.single_prompt_governance import validate_manifest as validate_study
+                try:validate_study(root,obj)
+                except ValueError as exc:errors.append(f'{ident}: {exc}')
+            elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_cell_manifest_v1':
+                from ..research.single_prompt_governance import validate_manifest as validate_study, MANIFEST as STUDY_MANIFEST
+                try:
+                    validate_study(root,load_yaml(root/STUDY_MANIFEST))
+                    if obj.get('cell_id') != ident:errors.append(f'{ident}: independent cell ID mismatch')
+                except ValueError as exc:errors.append(f'{ident}: {exc}')
             elif isinstance(obj,dict) and obj.get('schema_version')=='experiment_manifest_v1':
                 from .manifest import validate_manifest
                 import hashlib

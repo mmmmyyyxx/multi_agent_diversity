@@ -10009,3 +10009,224 @@ experiments:
     implementation_commit: Containing implementation commit; no self-reference.
     execution_commit: No model experiment executed.
     result_commit: No real efficacy result.
+- experiment_id: single_prompt_gradient_pattern_v1
+  kind: PROTOCOL_FREEZE
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_GRADIENT_PATTERN_STUDY_V1
+  parent_ids:
+  - weighted_error_responsibility_v210_preparation_v1
+  - math_v27_seed86_precluster_continuation_v1
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_INDEPENDENT_MECHANISM_IMPLEMENTATION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_gradient_pattern_v1.json
+  report: reports/single_prompt_gradient_pattern_preparation_20261013
+  classifier: reports/single_prompt_gradient_pattern_preparation_20261013/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit user-approved independent20-round study; current team defaults and frozen
+    historical results unchanged.
+  - No real API, Validation/Test or Push authorization; cumulative Token ceiling null,
+    finite calls retained.
+- experiment_id: single_prompt_gradient_pattern_v1_full_errors_seed88
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_GRADIENT_PATTERN_STUDY_V1
+  parent_ids:
+  - single_prompt_gradient_pattern_v1
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_INDEPENDENT_MECHANISM_IMPLEMENTATION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_gradient_pattern_v1/single_prompt_gradient_pattern_v1_full_errors_seed88.json
+  report: reports/single_prompt_gradient_pattern_preparation_20261013
+  classifier: reports/single_prompt_gradient_pattern_preparation_20261013/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit user-approved independent20-round study; current team defaults and frozen
+    historical results unchanged.
+  - No real API, Validation/Test or Push authorization; cumulative Token ceiling null,
+    finite calls retained.
+- experiment_id: single_prompt_gradient_pattern_v1_full_errors_seed89
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_GRADIENT_PATTERN_STUDY_V1
+  parent_ids:
+  - single_prompt_gradient_pattern_v1
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_INDEPENDENT_MECHANISM_IMPLEMENTATION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_gradient_pattern_v1/single_prompt_gradient_pattern_v1_full_errors_seed89.json
+  report: reports/single_prompt_gradient_pattern_preparation_20261013
+  classifier: reports/single_prompt_gradient_pattern_preparation_20261013/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit user-approved independent20-round study; current team defaults and frozen
+    historical results unchanged.
+  - No real API, Validation/Test or Push authorization; cumulative Token ceiling null,
+    finite calls retained.
+- experiment_id: single_prompt_gradient_pattern_v1_full_errors_seed90
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_GRADIENT_PATTERN_STUDY_V1
+  parent_ids:
+  - single_prompt_gradient_pattern_v1
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_INDEPENDENT_MECHANISM_IMPLEMENTATION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_gradient_pattern_v1/single_prompt_gradient_pattern_v1_full_errors_seed90.json
+  report: reports/single_prompt_gradient_pattern_preparation_20261013
+  classifier: reports/single_prompt_gradient_pattern_preparation_20261013/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit user-approved independent20-round study; current team defaults and frozen
+    historical results unchanged.
+  - No real API, Validation/Test or Push authorization; cumulative Token ceiling null,
+    finite calls retained.
+- experiment_id: single_prompt_gradient_pattern_v1_batch_errors_seed88
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_GRADIENT_PATTERN_STUDY_V1
+  parent_ids:
+  - single_prompt_gradient_pattern_v1
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_INDEPENDENT_MECHANISM_IMPLEMENTATION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_gradient_pattern_v1/single_prompt_gradient_pattern_v1_batch_errors_seed88.json
+  report: reports/single_prompt_gradient_pattern_preparation_20261013
+  classifier: reports/single_prompt_gradient_pattern_preparation_20261013/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit user-approved independent20-round study; current team defaults and frozen
+    historical results unchanged.
+  - No real API, Validation/Test or Push authorization; cumulative Token ceiling null,
+    finite calls retained.
+- experiment_id: single_prompt_gradient_pattern_v1_batch_errors_seed89
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_GRADIENT_PATTERN_STUDY_V1
+  parent_ids:
+  - single_prompt_gradient_pattern_v1
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_INDEPENDENT_MECHANISM_IMPLEMENTATION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_gradient_pattern_v1/single_prompt_gradient_pattern_v1_batch_errors_seed89.json
+  report: reports/single_prompt_gradient_pattern_preparation_20261013
+  classifier: reports/single_prompt_gradient_pattern_preparation_20261013/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit user-approved independent20-round study; current team defaults and frozen
+    historical results unchanged.
+  - No real API, Validation/Test or Push authorization; cumulative Token ceiling null,
+    finite calls retained.
+- experiment_id: single_prompt_gradient_pattern_v1_batch_errors_seed90
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_GRADIENT_PATTERN_STUDY_V1
+  parent_ids:
+  - single_prompt_gradient_pattern_v1
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_INDEPENDENT_MECHANISM_IMPLEMENTATION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_gradient_pattern_v1/single_prompt_gradient_pattern_v1_batch_errors_seed90.json
+  report: reports/single_prompt_gradient_pattern_preparation_20261013
+  classifier: reports/single_prompt_gradient_pattern_preparation_20261013/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit user-approved independent20-round study; current team defaults and frozen
+    historical results unchanged.
+  - No real API, Validation/Test or Push authorization; cumulative Token ceiling null,
+    finite calls retained.
+- experiment_id: single_prompt_gradient_pattern_v1_gradient_pattern_seed88
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_GRADIENT_PATTERN_STUDY_V1
+  parent_ids:
+  - single_prompt_gradient_pattern_v1
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_INDEPENDENT_MECHANISM_IMPLEMENTATION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_gradient_pattern_v1/single_prompt_gradient_pattern_v1_gradient_pattern_seed88.json
+  report: reports/single_prompt_gradient_pattern_preparation_20261013
+  classifier: reports/single_prompt_gradient_pattern_preparation_20261013/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit user-approved independent20-round study; current team defaults and frozen
+    historical results unchanged.
+  - No real API, Validation/Test or Push authorization; cumulative Token ceiling null,
+    finite calls retained.
+- experiment_id: single_prompt_gradient_pattern_v1_gradient_pattern_seed89
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_GRADIENT_PATTERN_STUDY_V1
+  parent_ids:
+  - single_prompt_gradient_pattern_v1
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_INDEPENDENT_MECHANISM_IMPLEMENTATION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_gradient_pattern_v1/single_prompt_gradient_pattern_v1_gradient_pattern_seed89.json
+  report: reports/single_prompt_gradient_pattern_preparation_20261013
+  classifier: reports/single_prompt_gradient_pattern_preparation_20261013/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit user-approved independent20-round study; current team defaults and frozen
+    historical results unchanged.
+  - No real API, Validation/Test or Push authorization; cumulative Token ceiling null,
+    finite calls retained.
+- experiment_id: single_prompt_gradient_pattern_v1_gradient_pattern_seed90
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_GRADIENT_PATTERN_STUDY_V1
+  parent_ids:
+  - single_prompt_gradient_pattern_v1
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_INDEPENDENT_MECHANISM_IMPLEMENTATION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_gradient_pattern_v1/single_prompt_gradient_pattern_v1_gradient_pattern_seed90.json
+  report: reports/single_prompt_gradient_pattern_preparation_20261013
+  classifier: reports/single_prompt_gradient_pattern_preparation_20261013/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit user-approved independent20-round study; current team defaults and frozen
+    historical results unchanged.
+  - No real API, Validation/Test or Push authorization; cumulative Token ceiling null,
+    finite calls retained.

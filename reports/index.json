@@ -3479,6 +3479,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/single_prompt_gradient_pattern_preparation_20261013",
+      "document": "reports/single_prompt_gradient_pattern_preparation_20261013/README.md",
+      "date": "20261013",
+      "era": "BENCHMARK_GENERALIZATION",
+      "kind": "PREEXECUTION",
+      "experiment_id": "single_prompt_gradient_pattern_v1",
+      "status": "IMPLEMENTED_NOT_EXECUTED",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/solver_stage_attribution_closure_20260915",
       "document": "reports/solver_stage_attribution_closure_20260915/README.md",
       "date": "20260915",

@@ -19,10 +19,22 @@ def _load(path):
 
 
 def preflight(manifest):
+    if manifest.get('schema_version') == 'single_prompt_study_manifest_v1':
+        from multi_dataset_diverse_rl.research.single_prompt_governance import validate_manifest
+        from multi_dataset_diverse_rl.research.single_prompt_policy import call_ceiling
+        validate_manifest(ROOT, manifest)
+        return dict(gate='INDEPENDENT_STUDY_OFFLINE_PREPARATION_ONLY', real_api_authorized=False,
+            provider_attempts=0, validation_calls=0, test_calls=0,
+            call_ceilings={p: call_ceiling(p) for p in ('train', 'validation', 'test')})
     return bound_preflight(ROOT,manifest)
 
 
 def governed_preflight(prep):
+    from multi_dataset_diverse_rl.research import single_prompt_governance as study
+    if _load(prep/'prep.json').get('schema_version') == study.PREP_SCHEMA:
+        scope = study.validate_prep(ROOT, prep)
+        return dict(gate='INDEPENDENT_STUDY_FROZEN_NOT_AUTHORIZED', phase=scope['phase'],
+            token_ceiling=scope['token_ceiling'], scope_identity=scope['scope_identity'], provider_attempts=0)
     from multi_dataset_diverse_rl.governance import postfreeze_validation
     if _load(prep/'prep.json').get('schema_version')==postfreeze_validation.PREP_SCHEMA:
         value,_=postfreeze_validation.validate_prep(ROOT,prep)
@@ -37,6 +49,9 @@ def governed_preflight(prep):
 
 
 async def execute_frozen(prep,run_root):
+    from multi_dataset_diverse_rl.research import single_prompt_governance as study
+    if _load(prep/'prep.json').get('schema_version') == study.PREP_SCHEMA:
+        return await asyncio.to_thread(study.execute, ROOT, prep, run_root)
     from multi_dataset_diverse_rl.governance import postfreeze_validation
     if _load(prep/'prep.json').get('schema_version')==postfreeze_validation.PREP_SCHEMA:
         return await postfreeze_validation.execute(ROOT,prep,run_root)

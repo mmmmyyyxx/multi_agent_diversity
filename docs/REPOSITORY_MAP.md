@@ -10,6 +10,7 @@ Current WHO/Pattern responsibility is defined by
 | Path | Role |
 |---|---|
 | multi_dataset_diverse_rl/search/system_prompt.py | Sole structured member prompt state and block identity |
+| multi_dataset_diverse_rl/research/single_prompt*.py | Explicit independent 20-round mechanism study; outside current team composition |
 | multi_dataset_diverse_rl/search/current_composition.py | Sole production graph |
 | multi_dataset_diverse_rl/search/parent_population.py | Bounded per-member fitness and independent sampling |
 | multi_dataset_diverse_rl/search/population_evaluation.py | Complete Optimize fitness and joint final assembly |

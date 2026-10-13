@@ -1,0 +1,13 @@
+{
+  "schema_version": "single_prompt_cell_manifest_v1",
+  "study_id": "single_prompt_gradient_pattern_v1",
+  "cell_id": "single_prompt_gradient_pattern_v1_batch_errors_seed89",
+  "arm": "batch_errors",
+  "seed": 89,
+  "initial_prompt_path": "experiments/initial_teams/math_arm_b_structured_seed_v3.json",
+  "initial_prompt_sha256": "533ac46a1fd8418e7e9ca3d8995fa82c16d0e5685aac57986b7b26e8a086a526",
+  "policy_sha256": "3436e12119fb6ded1e322ae3c8ae6c286f99877b0fe38e50c48159844ec0edc4",
+  "source_base_sha": "d7de59818da609cff6b03c6ebb334fa79011aedd",
+  "status": "OFFLINE_PREPARATION_ONLY",
+  "real_api_authorized": false
+}
