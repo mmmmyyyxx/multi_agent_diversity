@@ -19,6 +19,13 @@ def _load(path):
 
 
 def preflight(manifest):
+    if manifest.get('schema_version') == 'single_prompt_validation_gated_manifest_v2':
+        from multi_dataset_diverse_rl.research.gated_prompt_governance import validate_manifest
+        from multi_dataset_diverse_rl.research.gated_prompt_policy import gate_membership,call_ceiling
+        reader=validate_manifest(ROOT,manifest)
+        return dict(gate='VALIDATION100_GATED_OFFLINE_ONLY',real_api_authorized=False,
+            provider_attempts=0,validation_content_reads=0,test_content_reads=0,
+            gate_membership_sha256=gate_membership(reader)['membership_sha256'],call_ceiling=call_ceiling())
     if manifest.get('schema_version') == 'single_prompt_timeout_continuation_manifest_v1':
         from multi_dataset_diverse_rl.research.single_prompt_continuation import validate_operation_manifest, operation_contract
         from multi_dataset_diverse_rl.research.single_prompt_governance import validate_manifest, MANIFEST
@@ -37,6 +44,10 @@ def preflight(manifest):
 
 
 def governed_preflight(prep):
+    from multi_dataset_diverse_rl.research import gated_prompt_governance as gated
+    if _load(prep/'prep.json').get('schema_version') == gated.PREP_SCHEMA:
+        scope=gated.validate_prep(ROOT,prep)
+        return dict(gate='VALIDATION100_GATED_FROZEN_NOT_AUTHORIZED',scope_identity=scope['scope_identity'],provider_attempts=0)
     from multi_dataset_diverse_rl.research import single_prompt_governance as study
     if _load(prep/'prep.json').get('schema_version') in (study.PREP_SCHEMA, study.CONTINUATION_PREP_SCHEMA):
         scope = study.validate_prep(ROOT, prep)
@@ -56,6 +67,9 @@ def governed_preflight(prep):
 
 
 async def execute_frozen(prep,run_root):
+    from multi_dataset_diverse_rl.research import gated_prompt_governance as gated
+    if _load(prep/'prep.json').get('schema_version') == gated.PREP_SCHEMA:
+        return await asyncio.to_thread(gated.execute,ROOT,prep,run_root)
     from multi_dataset_diverse_rl.research import single_prompt_governance as study
     if _load(prep/'prep.json').get('schema_version') in (study.PREP_SCHEMA, study.CONTINUATION_PREP_SCHEMA):
         return await asyncio.to_thread(study.execute, ROOT, prep, run_root)

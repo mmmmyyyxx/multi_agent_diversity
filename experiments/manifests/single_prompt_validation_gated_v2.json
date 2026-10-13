@@ -1,0 +1,299 @@
+{
+  "authorization": {
+    "adaptive_validation_access": false,
+    "real_api_authorized": false,
+    "test_access": false
+  },
+  "cells": [
+    {
+      "arm": "full_errors",
+      "cell_id": "single_prompt_validation_gated_v2_full_errors_seed88",
+      "manifest_path": "experiments/manifests/single_prompt_validation_gated_v2/single_prompt_validation_gated_v2_full_errors_seed88.json",
+      "seed": 88
+    },
+    {
+      "arm": "full_errors",
+      "cell_id": "single_prompt_validation_gated_v2_full_errors_seed89",
+      "manifest_path": "experiments/manifests/single_prompt_validation_gated_v2/single_prompt_validation_gated_v2_full_errors_seed89.json",
+      "seed": 89
+    },
+    {
+      "arm": "full_errors",
+      "cell_id": "single_prompt_validation_gated_v2_full_errors_seed90",
+      "manifest_path": "experiments/manifests/single_prompt_validation_gated_v2/single_prompt_validation_gated_v2_full_errors_seed90.json",
+      "seed": 90
+    },
+    {
+      "arm": "batch_errors",
+      "cell_id": "single_prompt_validation_gated_v2_batch_errors_seed88",
+      "manifest_path": "experiments/manifests/single_prompt_validation_gated_v2/single_prompt_validation_gated_v2_batch_errors_seed88.json",
+      "seed": 88
+    },
+    {
+      "arm": "batch_errors",
+      "cell_id": "single_prompt_validation_gated_v2_batch_errors_seed89",
+      "manifest_path": "experiments/manifests/single_prompt_validation_gated_v2/single_prompt_validation_gated_v2_batch_errors_seed89.json",
+      "seed": 89
+    },
+    {
+      "arm": "batch_errors",
+      "cell_id": "single_prompt_validation_gated_v2_batch_errors_seed90",
+      "manifest_path": "experiments/manifests/single_prompt_validation_gated_v2/single_prompt_validation_gated_v2_batch_errors_seed90.json",
+      "seed": 90
+    },
+    {
+      "arm": "gradient_pattern",
+      "cell_id": "single_prompt_validation_gated_v2_gradient_pattern_seed88",
+      "manifest_path": "experiments/manifests/single_prompt_validation_gated_v2/single_prompt_validation_gated_v2_gradient_pattern_seed88.json",
+      "seed": 88
+    },
+    {
+      "arm": "gradient_pattern",
+      "cell_id": "single_prompt_validation_gated_v2_gradient_pattern_seed89",
+      "manifest_path": "experiments/manifests/single_prompt_validation_gated_v2/single_prompt_validation_gated_v2_gradient_pattern_seed89.json",
+      "seed": 89
+    },
+    {
+      "arm": "gradient_pattern",
+      "cell_id": "single_prompt_validation_gated_v2_gradient_pattern_seed90",
+      "manifest_path": "experiments/manifests/single_prompt_validation_gated_v2/single_prompt_validation_gated_v2_gradient_pattern_seed90.json",
+      "seed": 90
+    }
+  ],
+  "data": {
+    "canonical_manifest_sha256": "7688acc214417677431dd34f63572740986c4dff32c70832274c659c24796a6f",
+    "canonical_root": "data/benchmark_suite_v1",
+    "counts": {
+      "optimize": 150,
+      "shadow": 300,
+      "test": 300,
+      "validation": 300
+    },
+    "membership_sha256": "bddbaef2fd356fa32b06d5076a2708aadca4ee72905b0cc918790bfc13c978e3",
+    "split_directory": "experiments/data_splits/math_v2_1_scorable_v1",
+    "split_manifest_sha256": "196f359dad5b90e5dcf5b3b4bf2d11f86ca85825becce5ccb34687ce59d14507"
+  },
+  "experiment_id": "single_prompt_validation_gated_v2",
+  "identity": "SINGLE_PROMPT_VALIDATION100_STRICT_GATE_RETRY3_V2",
+  "initial_prompt_path": "experiments/initial_teams/math_arm_b_structured_seed_v3.json",
+  "initial_prompt_sha256": "18c17cb3f9c0b3dfe67e3793102f609550a3251b68afa3cf6796c3c32fc8dbd7",
+  "parents": [
+    "experiments/manifests/single_prompt_gradient_pattern_v1.json",
+    "experiments/manifests/single_prompt_timeout_continuation_v1.json"
+  ],
+  "policy": {
+    "acceptance": "validation_correct_count_strictly_greater_than_retained_profile",
+    "arms": [
+      "full_errors",
+      "batch_errors",
+      "gradient_pattern"
+    ],
+    "batch_identity": "INDEPENDENT_UNIFORM_WRONG_WITHOUT_REPLACEMENT_V1",
+    "batch_order": "frozen_optimize_order_after_seeded_selection",
+    "batch_universe": "current_prompt_wrong_optimize",
+    "candidate_evaluation": "complete_optimize150_and_validation100",
+    "cluster_generation_policy": {
+      "accounting_output_ceiling": 8202,
+      "enable_thinking": false,
+      "frequency_penalty": 0,
+      "identity": "PATTERN_CLUSTER_GENERATION_POLICY_V1",
+      "max_completion_tokens": 8192,
+      "max_tokens": "NOT_SENT",
+      "measurement_tolerance_tokens": 10,
+      "model": "qwen3.7-flash",
+      "output_token_scope": "reasoning_plus_answer",
+      "presence_penalty": 1.5,
+      "roles": [
+        "pattern_cluster"
+      ],
+      "temperature": 0.7,
+      "top_k": 20,
+      "top_p": 0.8,
+      "truncation": "existing_operational_output_truncation"
+    },
+    "cumulative_token_ceiling": null,
+    "error_batch_size": 3,
+    "final_selection": "last_validation_retained_prompt",
+    "first_solver_capacity": 3600,
+    "generation_budget": "exact_replacement_block_budget_whole_prompt_max3000",
+    "gradient_concurrency": 8,
+    "gradient_policy": {
+      "abstraction_guard": "PATTERN_SOURCE_CONTEXT_CONTENT_GUARD_V8",
+      "generation_contract_role": "pattern",
+      "generation_policy": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+      "identity": "PER_EXAMPLE_OUTPUT_CONTRACT_FEEDBACK_GRADIENT_V7",
+      "logical_calls_per_wrong": 1,
+      "max_characters": 400,
+      "output_cache": false,
+      "output_limits": {
+        "diagnosis": 400,
+        "expected_effect": 240,
+        "identity": "GRADIENT_DIAGNOSTIC_FIELD_LIMITS_V2",
+        "observed_failure": 400,
+        "reusable_correction": 400
+      },
+      "output_recovery": {
+        "cluster_draws_per_opportunity": 3,
+        "exhausted_gradient": "NONACTIONABLE_EXHAUSTED",
+        "feedback_history": "LAST_FAILURE_ONLY_NO_REJECTED_TEXT",
+        "gradient_draws_per_example": 3,
+        "identity": "BOUNDED_SINGLE_STEP_OUTPUT_RECOVERY_V4",
+        "integrity_errors": "fatal_without_regeneration",
+        "invalid_pattern": "known_support_to_unassigned",
+        "output_feedback": "TYPED_OPTIMIZER_OUTPUT_FEEDBACK_V1",
+        "reflection_draws_per_slot": 2,
+        "reflection_slots_per_opportunity": 3,
+        "rejected_text_reusable": false,
+        "truncated_output": "charged_rejected_draw_no_capacity_change",
+        "unknown_errors": "fatal"
+      },
+      "prompt_identity": "STRUCTURED_SYSTEM_GRADIENT_PROMPT_V11",
+      "provider_role": "pattern_gradient",
+      "recovery_trigger": "TYPED_GENERATED_OUTPUT_ONLY",
+      "schema": "STRUCTURED_SYSTEM_GRADIENT_INPUT_V8",
+      "semantic_regeneration": true,
+      "successful_generations_per_wrong": 3,
+      "universe": "all_selected_member_wrong_optimize",
+      "valid_uncertain_stops": true
+    },
+    "identity": "SINGLE_PROMPT_VALIDATION100_STRICT_GATE_RETRY3_V2",
+    "input_estimate": "serialized_utf8_bytes_plus_1024",
+    "invalid_candidate": "initial_plus_three_retries_then_abandon_opportunity_keep_recorded_parent",
+    "length_recovery_capacity": 6144,
+    "memory": false,
+    "no_actionable_pattern": "retain_explicit_empty_diagnostics_generate_one_candidate",
+    "no_errors": "generate_changed_candidate_with_empty_error_feedback_no_fabrication",
+    "optimize_gate": false,
+    "optimizer_cache": false,
+    "optimizer_candidates_per_round": 1,
+    "optimizer_context_limit": 1000000,
+    "optimizer_generation_policy": {
+      "accounting_output_ceiling": 1810,
+      "enable_thinking": false,
+      "frequency_penalty": 0,
+      "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+      "max_completion_tokens": 1800,
+      "max_tokens": "NOT_SENT",
+      "measurement_tolerance_tokens": 10,
+      "model": "qwen3.7-flash",
+      "output_token_scope": "reasoning_plus_answer",
+      "presence_penalty": 1.5,
+      "roles": [
+        "reflection",
+        "pattern"
+      ],
+      "temperature": 0.7,
+      "top_k": 20,
+      "top_p": 0.8,
+      "truncation": "existing_operational_output_truncation"
+    },
+    "optimizer_input_limit": 991808,
+    "optimizer_structural_draws": 4,
+    "optimizer_structural_retries": 3,
+    "paired_cache": "same_seed_split_round_messages_and_sampling_share_realization",
+    "pattern_feedback": "all_legal_patterns_no_team_ranking",
+    "population": false,
+    "provider_failure": "timeout_retry_until_frozen_calls_other_failure_abort_no_fallback",
+    "provider_routing_policy": {
+      "identity": "OPENLUX_SOLVER_LWJ_OPTIMIZER_V1",
+      "provider_fallback": false,
+      "routes": {
+        "pattern_cluster": {
+          "api_key_env": "LWJ_DASHSCOPE_API_KEY",
+          "base_url_env": "LWJ_DASHSCOPE_BASE_URL",
+          "model": "qwen3.7-flash",
+          "provider_profile": "lwj"
+        },
+        "pattern_gradient": {
+          "api_key_env": "LWJ_DASHSCOPE_API_KEY",
+          "base_url_env": "LWJ_DASHSCOPE_BASE_URL",
+          "model": "qwen3.7-flash",
+          "provider_profile": "lwj"
+        },
+        "reflection": {
+          "api_key_env": "LWJ_DASHSCOPE_API_KEY",
+          "base_url_env": "LWJ_DASHSCOPE_BASE_URL",
+          "model": "qwen3.7-flash",
+          "provider_profile": "lwj"
+        },
+        "solver": {
+          "api_key_env": "OPENLUX_API_KEY",
+          "base_url_env": "OPENLUX_BASE_URL",
+          "model": "gpt-4o-mini",
+          "provider_profile": "openlux"
+        }
+      },
+      "unknown_role": "REJECT"
+    },
+    "provider_sdk_version": "2.37.0",
+    "provider_timeout_seconds": 120,
+    "round_definition": "one_opportunity_accepted_rejected_or_explicitly_abandoned_after_generation_exhaustion",
+    "rounds": 20,
+    "runtime_environment": "runs/math_v2_1/runtime",
+    "runtime_interpreter": "runs/math_v2_1/runtime/Scripts/python.exe",
+    "seeds": [
+      88,
+      89,
+      90
+    ],
+    "semantic_strategy_judge": false,
+    "solver_concurrency": 16,
+    "solver_decoding_policy": {
+      "enable_thinking": false,
+      "frequency_penalty": 0,
+      "identity": "OPENAI_SOLVER_DECODING_POLICY_V3",
+      "max_output_tokens": 3600,
+      "presence_penalty": 0,
+      "temperature": 0.2,
+      "top_p": 0.8
+    },
+    "solver_semantic_draws": 4,
+    "test": "post_search_final_prompt_only_separately_authorized",
+    "timeout_recovery": {
+      "backoff_seconds": [
+        2,
+        4,
+        8,
+        16,
+        30,
+        60
+      ],
+      "combined_physical_call_ceiling": 190440,
+      "cumulative_token_ceiling": null,
+      "identity": "GATED_PROMPT_ACCOUNTED_TIMEOUT_RECOVERY_V1",
+      "retry_errors": [
+        "APITimeoutError"
+      ]
+    },
+    "token_budget_identity": "USER_SELECTED_UNCAPPED_CUMULATIVE_TOKENS_FINITE_CALLS_V1",
+    "trajectory_policy": {
+      "adaptive_split": "optimize",
+      "final_only": "TRAJECTORY_UNAVAILABLE",
+      "gradient_input_schema": "STRUCTURED_SYSTEM_GRADIENT_INPUT_V8",
+      "gradient_prompt_identity": "STRUCTURED_SYSTEM_GRADIENT_PROMPT_V11",
+      "hidden_reasoning_claim": false,
+      "identity": "MATH_SCOPED_OPTIMIZER_OBSERVED_RESPONSE_POLICY_V9",
+      "max_visible_solution_characters": 4096,
+      "memory_trajectory_writes": false,
+      "observed_response": "complete_ordinary_content",
+      "optimizer_input_schema": "STRUCTURED_SINGLE_STEP_REPAIR_INPUT_V13",
+      "original_response_retention": "complete_private_resolved_prediction_and_attempts",
+      "profile_schema": "MATH_FLEXIBLE_SOLVER_PROFILE_V3",
+      "source": "ordinary_assistant_content",
+      "trajectory_schema": "MATH_FLEXIBLE_RESPONSE_EVIDENCE_V3",
+      "truncation": "optional_solution_unicode_prefix_explicit_metadata",
+      "visible_trajectory_required": false
+    },
+    "unchanged_candidate": "retry_not_a_candidate",
+    "validation": "adaptive_gate_100_fixed_members_no_raw_optimizer_feedback",
+    "validation_cache": "same_seed_same_request_all_rounds_arms_one_realization",
+    "validation_count": 100,
+    "validation_incumbent": "reuse_recorded_retained_profile_no_rescore_lottery",
+    "validation_membership_seed": 88,
+    "validation_sampling": "uniform_without_replacement_preserve_frozen_order"
+  },
+  "protocol_path": "docs/design/SINGLE_PROMPT_VALIDATION_GATED_V2.md",
+  "schema_version": "single_prompt_validation_gated_manifest_v2",
+  "source_base_sha": "d1baffa3d065f386d7077789f140c288a7253c94",
+  "status": "OFFLINE_PREPARATION_ONLY"
+}

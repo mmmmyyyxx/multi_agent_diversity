@@ -1,0 +1,40 @@
+{
+  "candidate_generation": "one_initial_plus_three_retries_then_explicit_opportunity_abandonment",
+  "current_suite_campaign": {
+    "failed": 0,
+    "final_affected_module_supplement_tests": 59,
+    "full_collection_run_tests": 806,
+    "full_historical_replay_claim": false,
+    "omitted_modules": 224,
+    "passed": 808,
+    "retired_git_only_cases_not_executed": 5,
+    "scope": "806-case current run plus final affected-module supplement; unchanged checks reused, not one final-source process",
+    "skipped": 2,
+    "unique_tests": 810
+  },
+  "evidence_hashes": {
+    "runs/gated_chain_offline_smoke_freeze_20261013/dry_run_summary.json": "fc5656e8b6f05f5b5cd9a2630ec4de182e9697ced1ce21d6915bc5523120d13c",
+    "runs/single_prompt_preparation/gated_chain_freeze_focused.xml": "07e583229179afe8511757207cc8e3095825faba562f4d927a501d19e8ddbd31",
+    "runs/single_prompt_preparation/gated_chain_governance.json": "6bcb5c14de763d2124f774ae9198c2ee9793102905b5d915957ff3aecc8675c6",
+    "runs/single_prompt_preparation/gated_retry3_current_suite.xml": "652cef319b12e0d925423ce22b457421fd2999ca1008a6fcce1521274e663294"
+  },
+  "final_test": "conditionally_authorized_exact_formal_test300_after_all_nine_sealed_training_cells",
+  "frozen_manifest_preflight": "PASS",
+  "governance": "PASS",
+  "production_compileall": "PASS",
+  "status": "OFFLINE_VERIFIED_NO_EFFICACY",
+  "synthetic_smoke": {
+    "abandoned": 9,
+    "actual_test_content_reads": 0,
+    "actual_validation_content_reads": 0,
+    "cells": 9,
+    "checkpoints": 189,
+    "final_test_prompts": 9,
+    "legal_rejections": 171,
+    "logical_test_answers": 2700,
+    "opportunities": 180,
+    "real_api_calls": 0,
+    "test_member_count": 300,
+    "unresolved_reservations": 0
+  }
+}

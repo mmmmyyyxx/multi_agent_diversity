@@ -1094,6 +1094,36 @@ nodes:
 - experiment_id: single_prompt_timeout_continuation_v1
   kind: FORMAL_EXPERIMENT
   era: BENCHMARK_GENERALIZATION
+- experiment_id: single_prompt_validation_gated_v2
+  kind: PROTOCOL_FREEZE
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: single_prompt_validation_gated_v2_full_errors_seed88
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: single_prompt_validation_gated_v2_full_errors_seed89
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: single_prompt_validation_gated_v2_full_errors_seed90
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: single_prompt_validation_gated_v2_batch_errors_seed88
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: single_prompt_validation_gated_v2_batch_errors_seed89
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: single_prompt_validation_gated_v2_batch_errors_seed90
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: single_prompt_validation_gated_v2_gradient_pattern_seed88
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: single_prompt_validation_gated_v2_gradient_pattern_seed89
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
+- experiment_id: single_prompt_validation_gated_v2_gradient_pattern_seed90
+  kind: ABLATION
+  era: BENCHMARK_GENERALIZATION
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2473,4 +2503,70 @@ edges:
   evidence: docs/design/SINGLE_PROMPT_TIMEOUT_CONTINUATION_V1.md
   scope: Explicit timeout-only paid-prefix continuation; unchanged scientific policy,
     new source and authorization, inherited calls count against the same finite ceiling.
+- from: single_prompt_gradient_pattern_v1
+  to: single_prompt_validation_gated_v2
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_VALIDATION_GATED_V2.md
+  scope: Fresh Validation100 strict-gate mechanism amendment; no V1 execution state
+    or authorization reuse.
+- from: single_prompt_timeout_continuation_v1
+  to: single_prompt_validation_gated_v2
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_VALIDATION_GATED_V2.md
+  scope: Fresh Validation100 strict-gate mechanism amendment; no V1 execution state
+    or authorization reuse.
+- from: single_prompt_validation_gated_v2
+  to: single_prompt_validation_gated_v2_full_errors_seed88
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_VALIDATION_GATED_V2.md
+  scope: Fresh Validation100 strict-gate mechanism amendment; no V1 execution state
+    or authorization reuse.
+- from: single_prompt_validation_gated_v2
+  to: single_prompt_validation_gated_v2_full_errors_seed89
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_VALIDATION_GATED_V2.md
+  scope: Fresh Validation100 strict-gate mechanism amendment; no V1 execution state
+    or authorization reuse.
+- from: single_prompt_validation_gated_v2
+  to: single_prompt_validation_gated_v2_full_errors_seed90
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_VALIDATION_GATED_V2.md
+  scope: Fresh Validation100 strict-gate mechanism amendment; no V1 execution state
+    or authorization reuse.
+- from: single_prompt_validation_gated_v2
+  to: single_prompt_validation_gated_v2_batch_errors_seed88
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_VALIDATION_GATED_V2.md
+  scope: Fresh Validation100 strict-gate mechanism amendment; no V1 execution state
+    or authorization reuse.
+- from: single_prompt_validation_gated_v2
+  to: single_prompt_validation_gated_v2_batch_errors_seed89
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_VALIDATION_GATED_V2.md
+  scope: Fresh Validation100 strict-gate mechanism amendment; no V1 execution state
+    or authorization reuse.
+- from: single_prompt_validation_gated_v2
+  to: single_prompt_validation_gated_v2_batch_errors_seed90
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_VALIDATION_GATED_V2.md
+  scope: Fresh Validation100 strict-gate mechanism amendment; no V1 execution state
+    or authorization reuse.
+- from: single_prompt_validation_gated_v2
+  to: single_prompt_validation_gated_v2_gradient_pattern_seed88
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_VALIDATION_GATED_V2.md
+  scope: Fresh Validation100 strict-gate mechanism amendment; no V1 execution state
+    or authorization reuse.
+- from: single_prompt_validation_gated_v2
+  to: single_prompt_validation_gated_v2_gradient_pattern_seed89
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_VALIDATION_GATED_V2.md
+  scope: Fresh Validation100 strict-gate mechanism amendment; no V1 execution state
+    or authorization reuse.
+- from: single_prompt_validation_gated_v2
+  to: single_prompt_validation_gated_v2_gradient_pattern_seed90
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_VALIDATION_GATED_V2.md
+  scope: Fresh Validation100 strict-gate mechanism amendment; no V1 execution state
+    or authorization reuse.
 current_frontier: experiments/current_frontier.yaml

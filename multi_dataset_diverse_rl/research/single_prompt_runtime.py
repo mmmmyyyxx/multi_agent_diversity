@@ -78,7 +78,7 @@ class StudyBroker:
         self.ledger = ledger
         self.receipts = receipts
         self.dispatch_guard = dispatch_guard
-        self.execution_policy = dict(gradient_max_concurrency=policy()['gradient_concurrency'])
+        self.execution_policy = dict(gradient_max_concurrency=self.study_policy()['gradient_concurrency'])
         self.lock = threading.RLock()
         self.cache = {}
         self.inflight = {}
@@ -92,19 +92,31 @@ class StudyBroker:
         for role in ('solver', 'reflection', 'pattern_gradient', 'pattern_cluster'):
             self.usage.update({role + '_input_tokens': 0, role + '_output_tokens': 0})
         self.replay = None
-        self.timeout_recovery = scope.get('continuation', {}).get('operation_policy')
+        self.timeout_recovery = self.timeout_policy()
         if self.timeout_recovery is not None:
-            self.usage.update(scope['continuation']['inherited_usage'])
+            self.usage.update(scope.get('continuation', {}).get('inherited_usage', {}))
             self.usage.update(replayed_calls=0, timeout_retries=0)
 
     def usage_view(self):
         with self.lock:
             return dict(self.usage)
 
+    def study_policy(self):
+        return policy()
+
+    def timeout_policy(self):
+        return self.scope.get('continuation', {}).get('operation_policy')
+
+    def legal_role_split(self, role, split):
+        return (split == 'optimize' and role in ('solver', 'reflection', 'pattern_gradient', 'pattern_cluster')
+                if self.phase in ('train', 'canary') else split == self.phase and role == 'solver')
+
+    def cache_ordinal(self, split):
+        return self.round_index
+
     def _request_identity(self, *, role, split, messages, capacity=None):
-        p = policy()
-        legal = (split == 'optimize' and role in ('solver', 'reflection', 'pattern_gradient', 'pattern_cluster')
-                 if self.phase in ('train', 'canary') else split == self.phase and role == 'solver')
+        p = self.study_policy()
+        legal = self.legal_role_split(role, split)
         if not legal or not self.attempt_id:
             raise SearchContractError('STUDY_PROVIDER_ROLE_SPLIT_FORBIDDEN')
         route = p['provider_routing_policy']['routes'][role]
@@ -125,7 +137,7 @@ class StudyBroker:
                 raise SearchContractError('STUDY_FULL_EVIDENCE_CONTEXT_LIMIT')
         key = hashlib.sha256(serialized_request(request) + json.dumps([
             self.scope.get('continuation', {}).get('request_identity_scope', self.scope['scope_identity']),
-            split, self.seed, self.round_index, role]).encode()).hexdigest()
+            split, self.seed, self.cache_ordinal(split), role]).encode()).hexdigest()
         return request, key
 
     def complete(self, *, role, split, stage, messages, capacity=None):
@@ -206,7 +218,7 @@ class StudyBroker:
 
     def _check_nonthinking(self, request, response, role, key):
         from ..benchmarks.math_optimizer_diagnostics import optimizer_response_telemetry, nonthinking_evidence_contract
-        p = policy()
+        p = self.study_policy()
         generation = p['cluster_generation_policy'] if role == 'pattern_cluster' else p['optimizer_generation_policy']
         audit = optimizer_response_telemetry(request, response, generation, nonthinking_evidence_contract())
         with self.lock:
@@ -244,9 +256,9 @@ class StudyBroker:
         try:
             attempts = []
             transport_timeout_attempts = 0
-            for draw in range(policy()['solver_semantic_draws']):
-                capacity = (policy()['length_recovery_capacity'] if attempts and
-                    attempts[-1].finish_reason in ('length', 'max_tokens', 'max_output_tokens') else policy()['first_solver_capacity'])
+            for draw in range(self.study_policy()['solver_semantic_draws']):
+                capacity = (self.study_policy()['length_recovery_capacity'] if attempts and
+                    attempts[-1].finish_reason in ('length', 'max_tokens', 'max_output_tokens') else self.study_policy()['first_solver_capacity'])
                 response = self.complete(role='solver', split=split, stage=f'{split}_checkpoint_{ordinal}_draw_{draw + 1}',
                                          messages=messages, capacity=capacity)
                 prediction = classify_prediction(response['text'], response.get('finish_reason'))
@@ -283,5 +295,5 @@ class StudyBroker:
             raise SearchContractError('STUDY_EVALUATION_MEMBERSHIP_INVALID')
         self.round_index = ordinal
         values = bounded_ordered_map(lambda row: self.prediction(prompt, row, split, seed, ordinal),
-                                    rows, policy()['solver_concurrency'])
+                                    rows, self.study_policy()['solver_concurrency'])
         return {r['stable_example_id']: value for r, value in zip(rows, values)}

@@ -10268,5 +10268,228 @@ experiments:
   historical_replay: false
   superseded_by: []
   notes:
-  - Explicit human instruction permits accounted timeout retry and preserved paid-prefix continuation.
-  - Exact execution authorization remains phase-scoped and private; Validation/Test excluded.
+  - Explicit human instruction permits accounted timeout retry and preserved paid-prefix
+    continuation.
+  - Exact execution authorization remains phase-scoped and private; Validation/Test
+    excluded.
+- experiment_id: single_prompt_validation_gated_v2
+  manifest: experiments/manifests/single_prompt_validation_gated_v2.json
+  kind: PROTOCOL_FREEZE
+  parent_ids:
+  - single_prompt_gradient_pattern_v1
+  - single_prompt_timeout_continuation_v1
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_VALIDATION100_STRICT_GATE_RETRY3_V2
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_VALIDATION100_GATE_PREPARATION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  report: reports/single_prompt_validation_gated_preparation_20261013
+  classifier: reports/single_prompt_validation_gated_preparation_20261013/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User-approved strict Validation100 gate; initial generation plus three retries
+    then explicit opportunity abandonment; fresh all-nine state.
+  - Human stop remains effective; fresh exact training and adaptive Validation authorization
+    required; Test excluded.
+- experiment_id: single_prompt_validation_gated_v2_full_errors_seed88
+  manifest: experiments/manifests/single_prompt_validation_gated_v2/single_prompt_validation_gated_v2_full_errors_seed88.json
+  kind: ABLATION
+  parent_ids:
+  - single_prompt_validation_gated_v2
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_VALIDATION100_STRICT_GATE_RETRY3_V2
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_VALIDATION100_GATE_PREPARATION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  report: reports/single_prompt_validation_gated_preparation_20261013
+  classifier: reports/single_prompt_validation_gated_preparation_20261013/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User-approved strict Validation100 gate; initial generation plus three retries
+    then explicit opportunity abandonment; fresh all-nine state.
+  - Human stop remains effective; fresh exact training and adaptive Validation authorization
+    required; Test excluded.
+- experiment_id: single_prompt_validation_gated_v2_full_errors_seed89
+  manifest: experiments/manifests/single_prompt_validation_gated_v2/single_prompt_validation_gated_v2_full_errors_seed89.json
+  kind: ABLATION
+  parent_ids:
+  - single_prompt_validation_gated_v2
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_VALIDATION100_STRICT_GATE_RETRY3_V2
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_VALIDATION100_GATE_PREPARATION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  report: reports/single_prompt_validation_gated_preparation_20261013
+  classifier: reports/single_prompt_validation_gated_preparation_20261013/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User-approved strict Validation100 gate; initial generation plus three retries
+    then explicit opportunity abandonment; fresh all-nine state.
+  - Human stop remains effective; fresh exact training and adaptive Validation authorization
+    required; Test excluded.
+- experiment_id: single_prompt_validation_gated_v2_full_errors_seed90
+  manifest: experiments/manifests/single_prompt_validation_gated_v2/single_prompt_validation_gated_v2_full_errors_seed90.json
+  kind: ABLATION
+  parent_ids:
+  - single_prompt_validation_gated_v2
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_VALIDATION100_STRICT_GATE_RETRY3_V2
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_VALIDATION100_GATE_PREPARATION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  report: reports/single_prompt_validation_gated_preparation_20261013
+  classifier: reports/single_prompt_validation_gated_preparation_20261013/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User-approved strict Validation100 gate; initial generation plus three retries
+    then explicit opportunity abandonment; fresh all-nine state.
+  - Human stop remains effective; fresh exact training and adaptive Validation authorization
+    required; Test excluded.
+- experiment_id: single_prompt_validation_gated_v2_batch_errors_seed88
+  manifest: experiments/manifests/single_prompt_validation_gated_v2/single_prompt_validation_gated_v2_batch_errors_seed88.json
+  kind: ABLATION
+  parent_ids:
+  - single_prompt_validation_gated_v2
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_VALIDATION100_STRICT_GATE_RETRY3_V2
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_VALIDATION100_GATE_PREPARATION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  report: reports/single_prompt_validation_gated_preparation_20261013
+  classifier: reports/single_prompt_validation_gated_preparation_20261013/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User-approved strict Validation100 gate; initial generation plus three retries
+    then explicit opportunity abandonment; fresh all-nine state.
+  - Human stop remains effective; fresh exact training and adaptive Validation authorization
+    required; Test excluded.
+- experiment_id: single_prompt_validation_gated_v2_batch_errors_seed89
+  manifest: experiments/manifests/single_prompt_validation_gated_v2/single_prompt_validation_gated_v2_batch_errors_seed89.json
+  kind: ABLATION
+  parent_ids:
+  - single_prompt_validation_gated_v2
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_VALIDATION100_STRICT_GATE_RETRY3_V2
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_VALIDATION100_GATE_PREPARATION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  report: reports/single_prompt_validation_gated_preparation_20261013
+  classifier: reports/single_prompt_validation_gated_preparation_20261013/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User-approved strict Validation100 gate; initial generation plus three retries
+    then explicit opportunity abandonment; fresh all-nine state.
+  - Human stop remains effective; fresh exact training and adaptive Validation authorization
+    required; Test excluded.
+- experiment_id: single_prompt_validation_gated_v2_batch_errors_seed90
+  manifest: experiments/manifests/single_prompt_validation_gated_v2/single_prompt_validation_gated_v2_batch_errors_seed90.json
+  kind: ABLATION
+  parent_ids:
+  - single_prompt_validation_gated_v2
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_VALIDATION100_STRICT_GATE_RETRY3_V2
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_VALIDATION100_GATE_PREPARATION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  report: reports/single_prompt_validation_gated_preparation_20261013
+  classifier: reports/single_prompt_validation_gated_preparation_20261013/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User-approved strict Validation100 gate; initial generation plus three retries
+    then explicit opportunity abandonment; fresh all-nine state.
+  - Human stop remains effective; fresh exact training and adaptive Validation authorization
+    required; Test excluded.
+- experiment_id: single_prompt_validation_gated_v2_gradient_pattern_seed88
+  manifest: experiments/manifests/single_prompt_validation_gated_v2/single_prompt_validation_gated_v2_gradient_pattern_seed88.json
+  kind: ABLATION
+  parent_ids:
+  - single_prompt_validation_gated_v2
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_VALIDATION100_STRICT_GATE_RETRY3_V2
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_VALIDATION100_GATE_PREPARATION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  report: reports/single_prompt_validation_gated_preparation_20261013
+  classifier: reports/single_prompt_validation_gated_preparation_20261013/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User-approved strict Validation100 gate; initial generation plus three retries
+    then explicit opportunity abandonment; fresh all-nine state.
+  - Human stop remains effective; fresh exact training and adaptive Validation authorization
+    required; Test excluded.
+- experiment_id: single_prompt_validation_gated_v2_gradient_pattern_seed89
+  manifest: experiments/manifests/single_prompt_validation_gated_v2/single_prompt_validation_gated_v2_gradient_pattern_seed89.json
+  kind: ABLATION
+  parent_ids:
+  - single_prompt_validation_gated_v2
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_VALIDATION100_STRICT_GATE_RETRY3_V2
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_VALIDATION100_GATE_PREPARATION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  report: reports/single_prompt_validation_gated_preparation_20261013
+  classifier: reports/single_prompt_validation_gated_preparation_20261013/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User-approved strict Validation100 gate; initial generation plus three retries
+    then explicit opportunity abandonment; fresh all-nine state.
+  - Human stop remains effective; fresh exact training and adaptive Validation authorization
+    required; Test excluded.
+- experiment_id: single_prompt_validation_gated_v2_gradient_pattern_seed90
+  manifest: experiments/manifests/single_prompt_validation_gated_v2/single_prompt_validation_gated_v2_gradient_pattern_seed90.json
+  kind: ABLATION
+  parent_ids:
+  - single_prompt_validation_gated_v2
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_VALIDATION100_STRICT_GATE_RETRY3_V2
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: ZERO_API_VALIDATION100_GATE_PREPARATION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  report: reports/single_prompt_validation_gated_preparation_20261013
+  classifier: reports/single_prompt_validation_gated_preparation_20261013/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User-approved strict Validation100 gate; initial generation plus three retries
+    then explicit opportunity abandonment; fresh all-nine state.
+  - Human stop remains effective; fresh exact training and adaptive Validation authorization
+    required; Test excluded.

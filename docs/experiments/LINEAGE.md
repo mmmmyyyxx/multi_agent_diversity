@@ -287,6 +287,16 @@ flowchart TD
     n351["single_prompt_gradient_pattern_v1_gradient_pattern_seed90<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
     n352["single_prompt_gradient_pattern_canary_v1<br/>REAL_CANARY<br/>IMPLEMENTED_NOT_EXECUTED"]
     n353["single_prompt_timeout_continuation_v1<br/>FORMAL_EXPERIMENT<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n354["single_prompt_validation_gated_v2<br/>PROTOCOL_FREEZE<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n355["single_prompt_validation_gated_v2_full_errors_seed88<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n356["single_prompt_validation_gated_v2_full_errors_seed89<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n357["single_prompt_validation_gated_v2_full_errors_seed90<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n358["single_prompt_validation_gated_v2_batch_errors_seed88<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n359["single_prompt_validation_gated_v2_batch_errors_seed89<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n360["single_prompt_validation_gated_v2_batch_errors_seed90<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n361["single_prompt_validation_gated_v2_gradient_pattern_seed88<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n362["single_prompt_validation_gated_v2_gradient_pattern_seed89<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n363["single_prompt_validation_gated_v2_gradient_pattern_seed90<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -806,6 +816,17 @@ flowchart TD
   n342 -->|derived_from| n351
   n342 -->|derived_from| n352
   n342 -->|derived_from| n353
+  n342 -->|derived_from| n354
+  n353 -->|derived_from| n354
+  n354 -->|derived_from| n355
+  n354 -->|derived_from| n356
+  n354 -->|derived_from| n357
+  n354 -->|derived_from| n358
+  n354 -->|derived_from| n359
+  n354 -->|derived_from| n360
+  n354 -->|derived_from| n361
+  n354 -->|derived_from| n362
+  n354 -->|derived_from| n363
 ```
 
 ## Archived branches and unresolved evidence

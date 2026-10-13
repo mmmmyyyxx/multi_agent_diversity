@@ -1,0 +1,10 @@
+{
+  "arm": "batch_errors",
+  "cell_id": "single_prompt_validation_gated_v2_batch_errors_seed88",
+  "manifest_path": "experiments/manifests/single_prompt_validation_gated_v2/single_prompt_validation_gated_v2_batch_errors_seed88.json",
+  "policy_sha256": "1f67f1db1ac651daeddf4b9d53bba17622ccd9f204fdb5b0b5faea12fd21c231",
+  "schema_version": "single_prompt_validation_gated_cell_v2",
+  "seed": 88,
+  "source_base_sha": "d1baffa3d065f386d7077789f140c288a7253c94",
+  "study_id": "single_prompt_validation_gated_v2"
+}

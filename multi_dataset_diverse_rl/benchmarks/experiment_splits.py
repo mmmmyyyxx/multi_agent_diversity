@@ -256,8 +256,19 @@ class ExperimentSplitReader:
         access.require(self)
         return self._read_rows('validation')
 
-    def _read_rows(self,role):
+    def _read_rows(self,role,*,frozen_subset_ids=None):
         selected = [r for r in self.members if r["project_split"] == role]
+        if len(selected) != self.manifest['counts'][role]:
+            raise SearchContractError('EXPERIMENT_SPLIT_COUNT_MISMATCH')
+        expected_count = len(selected)
+        if frozen_subset_ids is not None:
+            if (not isinstance(frozen_subset_ids,(list,tuple)) or not frozen_subset_ids
+                    or len(set(frozen_subset_ids)) != len(frozen_subset_ids)
+                    or not set(frozen_subset_ids) <= {r['stable_example_id'] for r in selected}):
+                raise SearchContractError('EXPERIMENT_FROZEN_SUBSET_MEMBERSHIP_INVALID')
+            wanted_ids = set(frozen_subset_ids)
+            selected = [r for r in selected if r['stable_example_id'] in wanted_ids]
+            expected_count = len(frozen_subset_ids)
         result = {}
         for source_split in {r["source_split"] for r in selected}:
             identities = [i for i in self.manifest["canonical_sources"] if i["name"] == source_split]
@@ -284,7 +295,7 @@ class ExperimentSplitReader:
                         from .math_domain_v2 import require_scorable
                         require_scorable(reference)
                     result[row["stable_example_id"]] = row
-        if len(result) != len(selected) or len(selected) != self.manifest["counts"][role]:
+        if len(result) != len(selected) or len(selected) != expected_count:
             raise SearchContractError("EXPERIMENT_SPLIT_COUNT_MISMATCH")
         return tuple(result[r["stable_example_id"]] for r in selected)
 
