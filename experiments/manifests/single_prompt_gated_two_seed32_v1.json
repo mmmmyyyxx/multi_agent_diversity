@@ -1,0 +1,29 @@
+{
+  "execution_amendment": {
+    "cells": "three_arms_two_seeds_sequential",
+    "checkpoint": "preserve_completed_and_exact_unfinished_paid_prefix",
+    "excluded_seed": "preserve_evidence_and_costs_no_new_seed90_dispatch",
+    "gradient_concurrency": 8,
+    "identity": "GATED_TWO_SEED_SOLVER32_CONTINUATION_V1",
+    "network_recovery": "unchanged_unlimited_typed_delayed_retry",
+    "parent_source_sha": "7a04de51636065cc5a15a4704c499fc55425f46f",
+    "parent_stop": "USER_REQUESTED_EXECUTION_AMENDMENT",
+    "rounds_per_cell": 20,
+    "scientific_gate": "unchanged_validation100_strict_gain_retry3",
+    "seeds": [
+      88,
+      89
+    ],
+    "test_alignment": "unchanged_formal_test300_solver_scoring_decoding_and_concurrency",
+    "test_final_prompts": 6,
+    "test_semantic_call_ceiling": 7200,
+    "test_solver_concurrency": 16,
+    "training_semantic_call_ceiling": 190440,
+    "training_solver_concurrency": 32
+  },
+  "experiment_id": "single_prompt_gated_two_seed32_v1",
+  "parent_manifest": "experiments/manifests/single_prompt_gated_network_continuation_v1.json",
+  "protocol_path": "docs/design/SINGLE_PROMPT_GATED_TWO_SEED32_V1.md",
+  "real_api_authorized": false,
+  "schema_version": "single_prompt_gated_two_seed32_manifest_v1"
+}

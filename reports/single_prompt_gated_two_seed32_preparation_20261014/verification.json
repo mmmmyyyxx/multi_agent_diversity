@@ -1,0 +1,73 @@
+{
+  "actual_test_content_reads": 0,
+  "actual_validation_content_reads": 0,
+  "concurrency_proof": {
+    "closed_charged_receipts": 32,
+    "default_current_solver": 16,
+    "gradient": 8,
+    "real_provider_throughput_at32": "UNMEASURED_BEFORE_AUTHORIZED_RUN",
+    "synthetic_simultaneous_solver_requests": 32,
+    "test_solver": 16,
+    "training_solver": 32
+  },
+  "current_suite_campaign": {
+    "failed": 0,
+    "fresh_affected_and_metadata_tests": 300,
+    "full_historical_replay_claim": false,
+    "omitted_modules": 224,
+    "passed": 832,
+    "retired_git_only_cases_not_executed": 5,
+    "reused_prior_current_checks": 534,
+    "scope": "fresh study/execution/source-governance checks and all current direct TokenLedger consumers; reuse unchanged current graph/Solver/scoring/method checks; not one final-source process",
+    "skipped": 2,
+    "unique_tests": 834
+  },
+  "deterministic_paid_prefix": {
+    "active_cell_seed": 89,
+    "active_opportunity": 19,
+    "active_seeds": [
+      88,
+      89
+    ],
+    "active_successful_responses_replayed": 50,
+    "actual_test_content_reads": 0,
+    "actual_validation_content_reads": 0,
+    "inherited_charged_tokens": 13634044,
+    "inherited_physical_calls": 8397,
+    "new_charged_tokens": 0,
+    "new_provider_calls": 0,
+    "paired_cache_observations": 7250,
+    "parent_inventory_unchanged": true,
+    "preserved_complete_cells": 1,
+    "preserved_completed_opportunities": 38,
+    "real_api_calls": 0,
+    "status": "REAL_PREFIX_DETERMINISTIC_REPLAY_OFFLINE_PASS_NO_NEW_MODEL_CALLS",
+    "training_solver_concurrency": 32
+  },
+  "evidence_hashes": {
+    "runs/gated_network_preparation/final_focused.xml": "a6ba44bc5a9f17121c18010ee52b6c4e395839cb1e135d78b35dc638ee536cc5",
+    "runs/gated_network_preparation/governance_tests.xml": "586c9714e4fa6f7676ddbca90e1bd9e32c980047e9f262af65d678a2f651705f",
+    "runs/gated_two_seed32_preparation/accounting_regression.xml": "5c2a69a7872e8307178e6bf3020a299d5407139b8d67df0f267600ba19e44225",
+    "runs/gated_two_seed32_preparation/execution_final.xml": "8c2bc36e1bdfe6412767a4c92e2f95994d072574d49110597871d39e40fe5f9e",
+    "runs/gated_two_seed32_preparation/focused_frozen.xml": "7fc85150b0ee8102923e2bf1c8832f723dcb106399ed57642ff0600c865bfa7b",
+    "runs/gated_two_seed32_preparation/governance_final.json": "45530a4d11945b07a54143a05491140e7d41a99071567c610fe8cfe76aecbd73",
+    "runs/gated_two_seed32_preparation/governance_tests.xml": "385d5151ced39874b691fa6a2eb6d1afde00f59b219f8125896a4caf8d92b933",
+    "runs/gated_two_seed32_preparation/parent_pin.json": "30d4a51a0ffcb80672f00fc9b48b46b091e0d1f6f78c9efbe9c55462961d3796",
+    "runs/gated_two_seed32_preparation/prefix_smoke_summary.json": "2331c52d759601f72fc76fbf81532a798362decdc11e569b26ac96516c6d925e",
+    "runs/gated_two_seed32_preparation/six_smoke_final/dry_run_summary.json": "fad05abfae4ab22c1415e166be72a24cb82c7a6b454068e11cc4da24b7248306",
+    "runs/single_prompt_preparation/gated_chain_freeze_focused.xml": "07e583229179afe8511757207cc8e3095825faba562f4d927a501d19e8ddbd31",
+    "runs/single_prompt_preparation/gated_retry3_current_suite.xml": "652cef319b12e0d925423ce22b457421fd2999ca1008a6fcce1521274e663294"
+  },
+  "execution_manifest_preflight": "PASS",
+  "governance": "PASS",
+  "production_compileall": "PASS",
+  "real_api_calls_in_verification": 0,
+  "sanitization": "PASS",
+  "six_cell_and_conditional_test_smoke": {
+    "cells": 6,
+    "opportunities": 120,
+    "test_final_prompts": 6,
+    "test_members": 300
+  },
+  "status": "OFFLINE_VERIFIED_NO_EFFICACY"
+}

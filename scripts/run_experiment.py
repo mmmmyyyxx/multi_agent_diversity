@@ -19,6 +19,10 @@ def _load(path):
 
 
 def preflight(manifest):
+    if manifest.get('schema_version') == 'single_prompt_gated_two_seed32_manifest_v1':
+        from multi_dataset_diverse_rl.research.gated_prompt_execution import validate_manifest,contract
+        validate_manifest(manifest)
+        return dict(status='PREFLIGHT_PASS',execution_amendment=contract(),real_api_calls=0)
     if manifest.get('schema_version') == 'single_prompt_gated_network_continuation_manifest_v1':
         from multi_dataset_diverse_rl.research.gated_prompt_network import validate_operation_manifest,operation_contract
         validate_operation_manifest(manifest)
@@ -49,7 +53,7 @@ def preflight(manifest):
 
 def governed_preflight(prep):
     from multi_dataset_diverse_rl.research import gated_prompt_governance as gated
-    if _load(prep/'prep.json').get('schema_version') in (gated.PREP_SCHEMA,gated.network.PREP_SCHEMA):
+    if _load(prep/'prep.json').get('schema_version') in (gated.PREP_SCHEMA,gated.network.PREP_SCHEMA,gated.execution_amendment.PREP_SCHEMA):
         scope=gated.validate_prep(ROOT,prep)
         return dict(gate='VALIDATION100_GATED_FROZEN_NOT_AUTHORIZED',scope_identity=scope['scope_identity'],provider_attempts=0)
     from multi_dataset_diverse_rl.research import single_prompt_governance as study
@@ -72,7 +76,7 @@ def governed_preflight(prep):
 
 async def execute_frozen(prep,run_root):
     from multi_dataset_diverse_rl.research import gated_prompt_governance as gated
-    if _load(prep/'prep.json').get('schema_version') in (gated.PREP_SCHEMA,gated.network.PREP_SCHEMA):
+    if _load(prep/'prep.json').get('schema_version') in (gated.PREP_SCHEMA,gated.network.PREP_SCHEMA,gated.execution_amendment.PREP_SCHEMA):
         return await asyncio.to_thread(gated.execute,ROOT,prep,run_root)
     from multi_dataset_diverse_rl.research import single_prompt_governance as study
     if _load(prep/'prep.json').get('schema_version') in (study.PREP_SCHEMA, study.CONTINUATION_PREP_SCHEMA):

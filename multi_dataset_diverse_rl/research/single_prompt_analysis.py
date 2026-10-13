@@ -43,15 +43,18 @@ def group_coverage(predictions):
         oracle_gain=oracle - mean(accuracy), seed_count=len(predictions))
 
 
-def analyze_final(cells, predictions, equivalent):
-    expected = {(a, s) for a in ARMS for s in policy()['seeds']}
-    if ({(c['arm'], c['seed']) for c in cells} != expected or len(cells) != 9
-            or len({c['cell_id'] for c in cells}) != 9 or set(predictions) != {c['cell_id'] for c in cells}):
+def analyze_final(cells, predictions, equivalent, *, seeds=None):
+    seeds = policy()['seeds'] if seeds is None else seeds
+    if seeds not in ([88,89,90],[88,89]):raise SearchContractError('STUDY_ANALYSIS_SEEDS_FORBIDDEN')
+    n_cells=len(ARMS)*len(seeds)
+    expected = {(a, s) for a in ARMS for s in seeds}
+    if ({(c['arm'], c['seed']) for c in cells} != expected or len(cells) != n_cells
+            or len({c['cell_id'] for c in cells}) != n_cells or set(predictions) != {c['cell_id'] for c in cells}):
         raise SearchContractError('STUDY_FINAL_NINE_REQUIRED')
     labels = [c['cell_id'] for c in cells]
     pairs = []
     by_id = {c['cell_id']: c for c in cells}
-    matrix = {name: [[None] * 9 for _ in labels] for name in (
+    matrix = {name: [[None] * n_cells for _ in labels] for name in (
         'answer_disagreement', 'correctness_disagreement', 'correctness_overlap', 'double_fault', 'oracle_gain')}
     for i, a in enumerate(labels):
         for j in range(i, len(labels)):
@@ -85,10 +88,10 @@ def analyze_final(cells, predictions, equivalent):
         subjects = sorted({r.get('task_type', 'UNAVAILABLE') for r in rows.values()})
         by_subject[name] = {s: dict(n=sum(r.get('task_type', 'UNAVAILABLE') == s for r in rows.values()),
             correct=sum(r['correct'] for r in rows.values() if r.get('task_type', 'UNAVAILABLE') == s)) for s in subjects}
-    return dict(labels=labels, matrices=matrix, all_36_pairs=pairs, within_arm_pairs=within,
+    return dict(labels=labels, matrices=matrix, **{('all_36_pairs' if n_cells==9 else 'all_15_pairs'):pairs}, within_arm_pairs=within,
         groups=groups, between_arms=comparisons,
         outcome_category_distribution=outcome_distributions, subject_counts_and_correct=by_subject,
-        all_nine_coverage=group_coverage([predictions[i] for i in labels]),
+        **{('all_nine_coverage' if n_cells==9 else 'all_six_coverage'):group_coverage([predictions[i] for i in labels])},
         semantic_strategy_analysis='OWNER_REVIEW_REQUIRED_NO_AUTOMATIC_CAUSAL_OR_SEMANTIC_CLAIM',
         answer_metric='pinned_math_equivalence_on_co_valid_pairs_invalidity_reported_separately',
-        statistical_scope='three_seeds_descriptive_no_significance_or_causal_pattern_only_claim')
+        statistical_scope=('three_seeds_descriptive_no_significance_or_causal_pattern_only_claim' if len(seeds)==3 else 'two_seeds_descriptive_no_significance_or_causal_pattern_only_claim'))

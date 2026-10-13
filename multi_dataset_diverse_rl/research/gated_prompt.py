@@ -18,12 +18,22 @@ appending checklists. Stay within the selected block's character limit.
 
 
 class GatedPromptBroker(StudyBroker):
-    def study_policy(self):return policy()
+    def study_policy(self):
+        from .gated_prompt_execution import runtime_policy
+        return runtime_policy(self.scope,self.phase)
     def timeout_policy(self):return self.study_policy()['timeout_recovery']
     def legal_role_split(self,role,split):
         return self.phase=='train' and ((split=='optimize' and role in ('solver','reflection','pattern_gradient','pattern_cluster'))
             or (split=='validation' and role=='solver'))
     def cache_ordinal(self,split):return 0 if split=='validation' else self.round_index
+    def evaluate(self,prompt,rows,split,seed,ordinal):
+        from .gated_prompt_execution import amendment,bounded_training_map
+        if self.phase!='train' or amendment(self.scope) is None:
+            return super().evaluate(prompt,rows,split,seed,ordinal)
+        if not rows or seed!=self.seed:raise SearchContractError('STUDY_EVALUATION_MEMBERSHIP_INVALID')
+        self.round_index=ordinal
+        values=bounded_training_map(lambda row:self.prediction(prompt,row,split,seed,ordinal),rows,self.scope)
+        return {r['stable_example_id']:v for r,v in zip(rows,values)}
 
 
 def replacement_budgets(prompt):

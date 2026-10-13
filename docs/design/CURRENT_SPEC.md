@@ -13,6 +13,9 @@ own fresh scopes. Validation is its adaptive gate; Test remains separately seale
 Its user-authorized [network continuation](SINGLE_PROMPT_GATED_NETWORK_CONTINUATION_V1.md)
 preserves V2 checkpoints and paid responses, with unbounded accounted timeout/connection
 retries between delays. Scientific selection and legitimate opportunity outcomes remain.
+Its separately user-selected [two-seed execution amendment](SINGLE_PROMPT_GATED_TWO_SEED32_V1.md)
+continues six cells with Solver32 training and formal Solver16 final Test300,
+preserving completed outcomes and paid parent evidence.
 The [scientific principles](SCIENTIFIC_PRINCIPLES.md) constrain interpretation;
 the [MATH scientific contract](MATH_SCIENTIFIC_CONTRACT.md) clarifies benchmark
 measurement and admission. These clarifications add no algorithm or threshold.

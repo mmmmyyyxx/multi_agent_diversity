@@ -15,6 +15,7 @@ from .gated_prompt import GatedPromptBroker
 from .gated_prompt_policy import policy
 from .gated_prompt_network import NetworkRecoveryMixin
 from .single_prompt_analysis import analyze_final
+from . import gated_prompt_execution as execution_amendment
 
 FORMAL_MANIFEST='experiments/manifests/math_v27_direct_seed86_formal_v1.yaml'
 
@@ -47,7 +48,7 @@ class FinalTestBroker(NetworkRecoveryMixin,GatedPromptBroker):
     def legal_role_split(self,role,split):return self.phase=='test' and role=='solver' and split=='test'
     def cache_ordinal(self,split):return 0
     def timeout_policy(self):
-        if 'network_recovery' in self.scope:return dict(self.scope['network_recovery'],successful_semantic_call_ceiling=10800)
+        if 'network_recovery' in self.scope:return dict(self.scope['network_recovery'],successful_semantic_call_ceiling=self.scope.get('call_ceiling',10800))
         return dict(policy()['timeout_recovery'],combined_physical_call_ceiling=10800)
 
 
@@ -60,7 +61,7 @@ def verify_training(directory,scope):
     actual=inventory(directory);actual.pop('terminal.json',None)
     if terminal['artifacts']!=actual:raise SearchContractError('GATED_TRAIN_TERMINAL_INVENTORY_CHANGED')
     results=read_json(directory/'results.json')
-    if len(results)!=9 or [r['cell_id'] for r in results]!=[c['cell_id'] for c in scope['cells']]:
+    if len(results)!=(6 if execution_amendment.amendment(scope) else 9) or [r['cell_id'] for r in results]!=[c['cell_id'] for c in scope['cells']]:
         raise SearchContractError('GATED_TEST_NINE_FINALS_REQUIRED')
     for cell,result in zip(scope['cells'],results):
         if (result['seed']!=cell['seed'] or result['arm']!=cell['arm'] or result['rounds_completed']!=20
@@ -70,16 +71,16 @@ def verify_training(directory,scope):
             raise SearchContractError('GATED_TEST_INCOMPLETE_FINAL_SELECTION')
         last=read_json(directory/cell['cell_id']/'checkpoint_20.json')
         if last['prompt']!=result['final_prompt']:raise SearchContractError('GATED_TEST_FINAL_CHECKPOINT_MISMATCH')
-    view,events=audit_journal(directory/'ledger',task_sha256=scope['scope_identity'],policy=POLICY_V27_FORMAL_UNCAPPED)
+    view,events=audit_journal(directory/'ledger',task_sha256=scope['scope_identity'],policy=execution_amendment.ledger_policy(scope))
     summary=read_json(directory/'execution_summary.json')
     inherited=scope.get('continuation',{}).get('inherited_usage',{})
     if 'continuation' in scope:
         from .gated_prompt_network import frozen_parent
         parent=scope['continuation']
         parent_root=directory.parents[len(Path(scope['execution']['run_root']).parts)-1]
-        if frozen_parent(parent_root,parent_root/parent['parent_run_root'],expected_inventory=parent['parent_inventory'])!=parent:
+        if frozen_parent(parent_root,parent_root/parent['parent_run_root'],expected_inventory=parent['parent_inventory'],allow_user_stop='execution_amendment' in scope)!=parent:
             raise SearchContractError('GATED_TEST_CONTINUATION_PARENT_CHANGED')
-    if (view!=summary['token_ledger'] or summary['cells_completed']!=9
+    if (view!=summary['token_ledger'] or summary['cells_completed']!=len(scope['cells'])
             or len([e for e in events if e['kind']=='RESERVE'])+inherited.get('provider_calls',0)!=summary['usage']['provider_calls']
             or view['charged_total']+inherited.get('input_tokens',0)+inherited.get('output_tokens',0)!=summary['usage']['input_tokens']+summary['usage']['output_tokens']):
         raise SearchContractError('GATED_TEST_PARENT_ACCOUNTING_MISMATCH')
@@ -112,8 +113,9 @@ def execute_final_test(root,prep,train):
     test_scope=dict(identity='GATED_POST_TRAIN_TEST_SCOPE_V1',phase='test',source_sha=scope['source_sha'],
         parent_scope_identity=scope['scope_identity'],parent_terminal_sha256=terminal_sha,
         parent_run_root=train.relative_to(root).as_posix(),
-        policy=scope['test_plan'],cells=cells,call_ceiling=10800,token_ceiling=None)
+        policy=scope['test_plan'],cells=cells,call_ceiling=scope['test_plan']['physical_call_ceiling'],token_ceiling=None)
     if 'continuation' in scope:test_scope['network_recovery']=scope['continuation']['operation_policy']
+    if 'execution_amendment' in scope:test_scope['execution_amendment']=scope['execution_amendment']
     test_scope['scope_identity']=digest(test_scope)
     marker=root/'runs/gated_prompt_consumed'/(test_scope['scope_identity']+'.json')
     with marker.open('x',encoding='utf-8') as stream:
@@ -144,7 +146,7 @@ def execute_final_test(root,prep,train):
         reader=gov.validate_manifest(root,read_json(root/gov.MANIFEST))
         # Gold-bearing Test content opens only after all parent checks and authorization.
         gov.validate_prep(root,prep,authorized=True)
-        if formal_test_plan(root,reader)!=scope['test_plan']:raise SearchContractError('GATED_TEST_POLICY_CHANGED')
+        if execution_amendment.test_plan(formal_test_plan(root,reader),'execution_amendment' in scope)!=scope['test_plan']:raise SearchContractError('GATED_TEST_POLICY_CHANGED')
         rows=reader.heldout_rows(gov.shared.StudyHeldoutAccess('test',reader.manifest_sha256,terminal_sha,
             lambda:gov.validate_prep(root,prep,authorized=True)))
         if [r['stable_example_id'] for r in rows]!=scope['test_plan']['sample_ids']:raise SearchContractError('GATED_TEST_MEMBERSHIP_CHANGED')
@@ -158,14 +160,14 @@ def execute_final_test(root,prep,train):
                 correct=sum(p['correct'] for p in predictions[current_cell].values()),count=300))
             print(json.dumps(dict(cell=current_cell,status='TEST_CELL_COMPLETE',provider_calls=broker.usage_view()['provider_calls'])),flush=True)
         from ..benchmarks.math import MATHBenchmarkAdapter
-        atomic_write_json(test_root/'analysis.json',analyze_final(results,predictions,MATHBenchmarkAdapter().equivalent))
-        atomic_write_json(test_root/'execution_summary.json',dict(usage=broker.usage_view(),token_ledger=ledger.view(),cells_completed=9))
+        atomic_write_json(test_root/'analysis.json',analyze_final(results,predictions,MATHBenchmarkAdapter().equivalent,seeds=execution_amendment.runtime_policy(scope,'test')['seeds']))
+        atomic_write_json(test_root/'execution_summary.json',dict(usage=broker.usage_view(),token_ledger=ledger.view(),cells_completed=len(cells)))
         if ledger.inflight:raise SearchContractError('GATED_TEST_UNRESOLVED_RESERVATION')
         gov.validate_prep(root,prep,authorized=True);verify_training(train,scope)
         ledger.close();ledger=None;clients.close();clients=None
         atomic_write_json(test_root/'lifecycle.json',dict(status='EXECUTION_COMPLETE',phase='test'))
         atomic_write_json(test_root/'terminal.json',dict(status='EXECUTION_COMPLETE',phase='test',scope_identity=test_scope['scope_identity'],artifacts=gov.shared.inventory(test_root)))
-        return dict(status='TRAIN_AND_TEST_EXECUTION_COMPLETE',cells_completed=9,test_final_prompts=9)
+        return dict(status='TRAIN_AND_TEST_EXECUTION_COMPLETE',cells_completed=len(cells),test_final_prompts=len(cells))
     except BaseException as exc:
         if ledger is not None:
             for key in tuple(ledger.inflight):ledger.reconcile(key,{},outcome='ABORT_FULL_RESERVATION_FALLBACK')

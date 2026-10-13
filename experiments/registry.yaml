@@ -10515,3 +10515,25 @@ experiments:
     failed attempts do not consume optimization opportunities.
   - Compatible V2 checkpoint and paid-response continuation; fresh exact authorization;
     conditional formal Test300 retained.
+- experiment_id: single_prompt_gated_two_seed32_v1
+  kind: FORMAL_EXPERIMENT
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_VALIDATION100_STRICT_GATE_RETRY3_V2
+  parent_ids:
+  - single_prompt_gated_network_continuation_v1
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: USER_SELECTED_TWO_SEED_EXECUTION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_gated_two_seed32_v1.json
+  report: reports/single_prompt_gated_two_seed32_preparation_20261014
+  classifier: reports/single_prompt_gated_two_seed32_preparation_20261014/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit two-seed continuation with sequential cells, Solver32 training and formal
+    Solver16 Test300.
+  - Paid ancestor accounting, legitimate outcomes and exact unfinished successful
+    responses retained; typed network retry unchanged.

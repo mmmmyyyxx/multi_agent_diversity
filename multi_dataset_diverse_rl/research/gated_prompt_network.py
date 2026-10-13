@@ -43,7 +43,9 @@ class NetworkRecoveryMixin:
     def network_enabled(self):return 'continuation' in self.scope or 'network_recovery' in self.scope
     def __init__(self,**kwargs):
         super().__init__(**kwargs);self.network_abort=threading.Event()
-        if self.network_enabled():self.usage.setdefault('network_failed_calls',0)
+        if self.network_enabled():
+            self.usage.setdefault('network_failed_calls',0)
+            self.usage['timeout_retries']=self.scope.get('continuation',{}).get('inherited_usage',{}).get('timeout_retries',0)
     def recoverable_transport_error(self,exc):
         if not self.network_enabled():return super().recoverable_transport_error(exc)
         from openai import APITimeoutError,APIConnectionError
@@ -74,7 +76,7 @@ class NetworkBroker(NetworkRecoveryMixin,GatedPromptBroker):
     def timeout_policy(self):return self.scope['continuation']['operation_policy']
 
 
-def audit_parent(root,directory,*,expected_inventory=None,seen=None):
+def audit_parent(root,directory,*,expected_inventory=None,seen=None,allow_user_stop=False):
     from . import gated_prompt_governance as gov
     directory=gov.shared.private_path(root,directory)
     seen=set() if seen is None else set(seen)
@@ -82,11 +84,16 @@ def audit_parent(root,directory,*,expected_inventory=None,seen=None):
     seen.add(str(directory));actual=gov.shared.inventory(directory)
     if expected_inventory is not None and actual!=expected_inventory:raise SearchContractError('GATED_NETWORK_PARENT_CHANGED')
     scope=read_json(directory/'scope.json');abort=read_json(directory/'abort.json');life=read_json(directory/'lifecycle.json')
+    stopped=allow_user_stop and abort['reason']=='USER_REQUESTED_EXECUTION_AMENDMENT'
+    orphaned=set()
+    if stopped:
+        from .gated_prompt_execution import validate_stop
+        orphaned=validate_stop(root,directory,scope,abort)
     if (scope['scope_identity']!=digest({k:v for k,v in scope.items() if k!='scope_identity'})
             or scope['study_id']!=gov.STUDY or scope['phase']!='train' or scope['policy']!=policy()
             or scope['manifest_sha256']!=file_hash(root/gov.MANIFEST)
             or scope['call_ceiling']!=call_ceiling() or scope['token_ceiling'] is not None
-            or life['status']!='EXECUTION_ABORTED' or abort['reason']!='STUDY_PROVIDER_FAILURE'
+            or life['status']!='EXECUTION_ABORTED' or (abort['reason']!='STUDY_PROVIDER_FAILURE' and not stopped)
             or (directory/'terminal.json').exists()):
         raise SearchContractError('GATED_NETWORK_COMPATIBLE_ABORT_REQUIRED')
     auth=read_json(directory/'authorization.json')
@@ -117,6 +124,19 @@ def audit_parent(root,directory,*,expected_inventory=None,seen=None):
     for e in events:
         if e['kind']!='CHARGE':continue
         reserve=reserves[e['reservation_id']];receipt=e.get('response_receipt')
+        if stopped and e['reservation_id'] in orphaned:
+            if (receipt is not None or (directory/'provider_receipts'/(e['reservation_id']+'.json')).exists()
+                    or e['outcome']!='CRASH_RECOVERY_FULL_CHARGE' or e['reliable_usage'] or e['charged']!=reserve['bound']['amount']):
+                raise SearchContractError('GATED_OWNER_STOP_ORPHAN_CHARGE_MISMATCH')
+            role=reserve['role'];cell=parent_cells[reserve['attempt_id']]
+            import re
+            match=re.search(r'(?:checkpoint_|round_)([0-9]+)',reserve['stage'])
+            if match is None:raise SearchContractError('GATED_OWNER_STOP_ORPHAN_ORDINAL_REQUIRED')
+            ordinal=int(match.group(1))
+            delta=dict(provider_calls=1,input_tokens=e['input_tokens'],output_tokens=e['output_tokens'],fallback_usage_calls=1,**{role:1,role+'_input_tokens':e['input_tokens'],role+'_output_tokens':e['output_tokens']})
+            per_round=costs.setdefault(cell['cell_id'],{}).setdefault(str(ordinal),{})
+            for k,v in delta.items():inherited[k]=inherited.get(k,0)+v;per_round[k]=per_round.get(k,0)+v
+            continue
         if receipt is None or reserve['attempt_id'] not in parent_cells:raise SearchContractError('GATED_NETWORK_RECEIPT_REQUIRED')
         cell=parent_cells[reserve['attempt_id']];role=reserve['role']
         store=ProviderResponseReceipts.__new__(ProviderResponseReceipts)
@@ -143,7 +163,7 @@ def audit_parent(root,directory,*,expected_inventory=None,seen=None):
             source_scope_identity=scope['scope_identity'],reservation_id=e['reservation_id'],
             source_receipt_sha256=receipt['integrity_sha256'],cell_id=cell['cell_id'],ordinal=ordinal,
             request=record['request'],seed=cell['seed'],role=role,stage=stage))
-    if not failures or inherited['provider_calls']-inherited['network_failed_calls']>=call_ceiling():raise SearchContractError('GATED_NETWORK_FAILURE_AND_REMAINING_BUDGET_REQUIRED')
+    if (not failures and not stopped) or inherited['provider_calls']-inherited['network_failed_calls']>=call_ceiling():raise SearchContractError('GATED_NETWORK_FAILURE_AND_REMAINING_BUDGET_REQUIRED')
     progress={};checkpoint_counts={}
     for cell in scope['cells']:
         folder=directory/cell['cell_id'];paths=sorted(folder.glob('checkpoint_*.json'),key=lambda p:int(p.stem.split('_')[-1]))
@@ -186,10 +206,11 @@ def frozen_parent(root,directory,**kwargs):
 
 
 def initialize_resume(root,run,scope,broker):
-    parent=scope['continuation'];audited=audit_parent(root,root/parent['parent_run_root'],expected_inventory=parent['parent_inventory'])
+    parent=scope['continuation'];audited=audit_parent(root,root/parent['parent_run_root'],expected_inventory=parent['parent_inventory'],allow_user_stop='execution_amendment' in scope)
     if {k:v for k,v in audited.items() if k not in ('replay','progress')}!=parent:
         raise SearchContractError('GATED_NETWORK_FROZEN_PARENT_MISMATCH')
-    broker.replay=ResponseReplay(audited['replay'],run/'response_replay.jsonl')
+    active_ids={c['cell_id'] for c in scope['cells']}
+    broker.replay=ResponseReplay([e for e in audited['replay'] if e['cell_id'] in active_ids],run/'response_replay.jsonl')
     for cell in scope['cells']:
         for cp in audited['progress'][cell['cell_id']]['checkpoints']:
             for field in ('optimize','validation','candidate_optimize','candidate_validation'):
