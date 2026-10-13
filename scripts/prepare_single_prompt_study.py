@@ -12,7 +12,7 @@ if str(ROOT) not in sys.path:
 def main():
     from multi_dataset_diverse_rl.research.single_prompt_governance import prepare
     parser = argparse.ArgumentParser()
-    parser.add_argument('--phase', choices=('train', 'validation', 'test'), required=True)
+    parser.add_argument('--phase', choices=('canary', 'train', 'validation', 'test'), required=True)
     parser.add_argument('--destination', type=Path, required=True)
     parser.add_argument('--token-ceiling', type=int)
     parser.add_argument('--search-root', type=Path)

@@ -353,7 +353,8 @@ def test_legal_unchanged_candidate_stops_after_one_draw(tmp_path):
         broker.ledger.close()
 
 
-def test_governed_phase_execution_and_ledger_closure_with_frozen_fake_scope(tmp_path, monkeypatch):
+@pytest.mark.parametrize('phase', ('train', 'canary'))
+def test_governed_phase_execution_and_ledger_closure_with_frozen_fake_scope(tmp_path, monkeypatch, phase):
     """Exact execution function, synthetic authority/data/transport in temp repo."""
     import shutil
     import multi_dataset_diverse_rl.research.single_prompt_governance as gov
@@ -361,13 +362,14 @@ def test_governed_phase_execution_and_ledger_closure_with_frozen_fake_scope(tmp_
     from multi_dataset_diverse_rl.benchmarks.data_freeze import digest, file_hash
     root = tmp_path / 'synthetic_repo'
     manifest = read_json(ROOT / gov.MANIFEST)
-    for relative in [gov.MANIFEST, manifest['initial_prompt_path'], *[c['manifest_path'] for c in manifest['cells']]]:
+    for relative in [gov.MANIFEST, gov.CANARY_MANIFEST, manifest['initial_prompt_path'], *[c['manifest_path'] for c in manifest['cells']]]:
         target = root / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ROOT / relative, target)
     class Reader:
+        members = [dict(stable_example_id=r['stable_example_id'], project_split='optimize') for r in toy_rows(12)]
         def rows(self, *args):
-            return toy_rows(2)
+            return toy_rows(12 if phase == 'canary' else 2)
     class Clients:
         closed = False
         def close(self):
@@ -378,25 +380,57 @@ def test_governed_phase_execution_and_ledger_closure_with_frozen_fake_scope(tmp_
     monkeypatch.setattr(gov, 'source_snapshot', lambda _: {})
     monkeypatch.setattr(gov.subprocess, 'check_output', lambda args, **kwargs: 'a' * 40 if args[1] == 'rev-parse' else '')
     monkeypatch.setattr(transport_module, 'create_transport', lambda _: (ToyTransport(), clients))
-    scope = dict(study_id=gov.STUDY, phase='train', source_sha='a' * 40, source_hashes={},
+    prep_relative, run_relative = f'runs/{phase}_prep', f'runs/{phase}_run'
+    scope = dict(study_id=gov.STUDY, phase=phase, source_sha='a' * 40, source_hashes={},
         runtime_identity=gov.runtime_identity(), policy=policy(), manifest_sha256=file_hash(root / gov.MANIFEST),
-        token_ceiling=None, call_ceiling=call_ceiling('train'), search_predecessor=None,
-        cells=[dict(c, attempt_id=c['cell_id'] + '_train_attempt1') for c in manifest['cells']],
-        execution=dict(prep_path='runs/train_prep', run_root='runs/train_run',
-            command=[policy()['runtime_interpreter'], 'scripts/run_experiment.py', '--prep', 'runs/train_prep', '--run-root', 'runs/train_run', '--execute']))
+        token_ceiling=None, call_ceiling=call_ceiling(phase), search_predecessor=None,
+        cells=gov.phase_cells(manifest, phase),
+        execution=dict(prep_path=prep_relative, run_root=run_relative,
+            command=[policy()['runtime_interpreter'], 'scripts/run_experiment.py', '--prep', prep_relative, '--run-root', run_relative, '--execute']))
+    if phase == 'canary':
+        scope['canary_contract'] = gov.frozen_canary_contract(Reader())
     scope['scope_identity'] = digest(scope)
-    prep = root / 'runs/train_prep'
+    prep = root / prep_relative
     atomic_write_json(prep / 'prep.json', dict(schema_version=gov.PREP_SCHEMA, scope=scope))
     atomic_write_json(prep / 'authorization.json', dict(scope_identity=scope['scope_identity'], approved=True,
         user_authorization_evidence_sha256='b' * 64, authorized_attempt_ids=[c['attempt_id'] for c in scope['cells']]))
-    result = execute(root, prep, root / 'runs/train_run')
-    assert result['cells_completed'] == 9 and clients.closed
-    results, _ = verify_search(root / 'runs/train_run', implementation_sha='a' * 40)
-    assert all(r['rounds_completed'] == 20 and len(r['prompt_history']) == 21 for r in results)
-    before = read_json(root / 'runs/train_run/terminal.json')
+    destination = root / run_relative
+    result = execute(root, prep, destination)
+    assert result['cells_completed'] == (3 if phase == 'canary' else 9) and clients.closed
+    if phase == 'canary':
+        audit = gov.audit_canary(destination)
+        assert audit['status'] == 'CANARY_PASS' and not audit['accuracy_gate_used']
+        with pytest.raises(SearchContractError, match='COMPLETE_SEARCH_REQUIRED'):
+            verify_search(destination)
+    else:
+        results, _ = verify_search(destination, implementation_sha='a' * 40)
+        assert all(r['rounds_completed'] == 20 and len(r['prompt_history']) == 21 for r in results)
+    before = read_json(destination / 'terminal.json')
     with pytest.raises(SearchContractError, match='EXISTING_RUN_ROOT'):
-        execute(root, prep, root / 'runs/train_run')
-    assert read_json(root / 'runs/train_run/terminal.json') == before
+        execute(root, prep, destination)
+    assert read_json(destination / 'terminal.json') == before
+
+
+def test_canary_prefix_and_training_horizon_and_access_remain_separate(tmp_path):
+    from multi_dataset_diverse_rl.research.single_prompt_policy import canary_contract
+    from multi_dataset_diverse_rl.research.single_prompt_governance import frozen_canary_contract
+    class Reader:
+        members = [dict(stable_example_id=f'id_{i}', project_split='optimize') for i in range(150)]
+    assert frozen_canary_contract(Reader())['sample_ids'] == [f'id_{i}' for i in range(12)]
+    assert call_ceiling('canary') == 306 and canary_contract()['rounds'] == 1
+    assert policy()['rounds'] == 20 and call_ceiling('train') == 114480
+    broker = broker_for(tmp_path, phase='canary')
+    try:
+        with pytest.raises(SearchContractError, match='ROLE_SPLIT_FORBIDDEN'):
+            broker.evaluate(SEED, toy_rows(12), 'test', 88, 0)
+        with pytest.raises(SearchContractError, match='CANARY_CELL_INVALID'):
+            run_cell(cell(), toy_rows(11), broker.evaluate, broker, lambda *_: None)
+        result = run_cell(cell(), toy_rows(12), lambda *args: {r['stable_example_id']: observation(True) for r in args[1]},
+                          broker, lambda *_: None)
+        assert result['rounds_completed'] == 1 and result['metrics'][0]['update_status'] == 'NO_ERRORS_CARRY'
+        assert not broker.transport.calls
+    finally:
+        broker.ledger.close()
 
 
 def test_solver_invalid_recovery_capacity_and_first_valid_wrong_stops(tmp_path):

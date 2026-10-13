@@ -10230,3 +10230,23 @@ experiments:
     historical results unchanged.
   - No real API, Validation/Test or Push authorization; cumulative Token ceiling null,
     finite calls retained.
+- experiment_id: single_prompt_gradient_pattern_canary_v1
+  kind: REAL_CANARY
+  era: BENCHMARK_GENERALIZATION
+  method_family: SINGLE_PROMPT_GRADIENT_PATTERN_STUDY_V1
+  parent_ids:
+  - single_prompt_gradient_pattern_v1
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: TECHNICAL_CANARY_ONLY_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_gradient_pattern_canary_v1.json
+  report: reports/single_prompt_canary_preparation_20261013
+  classifier: reports/single_prompt_canary_preparation_20261013/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User authorized smaller three-arm canary and conditional full optimization only;
+    Validation/Test require later confirmation. Exact grants remain private phase-scoped.

@@ -1089,6 +1089,8 @@ nodes:
 - experiment_id: single_prompt_gradient_pattern_v1_gradient_pattern_seed90
   kind: ABLATION
   era: BENCHMARK_GENERALIZATION
+- experiment_id: single_prompt_gradient_pattern_canary_v1
+  kind: REAL_CANARY
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2456,4 +2458,10 @@ edges:
   evidence: docs/design/SINGLE_PROMPT_GRADIENT_PATTERN_V1.md
   scope: Independent study derivation; data/contracts only, no old execution state
     or API scope reuse.
+- from: single_prompt_gradient_pattern_v1
+  to: single_prompt_gradient_pattern_canary_v1
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_CANARY_V1.md
+  scope: Technical prefix12 canary; fresh state and scopes; no scientific outcome
+    reuse.
 current_frontier: experiments/current_frontier.yaml

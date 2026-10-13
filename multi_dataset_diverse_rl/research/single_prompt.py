@@ -11,7 +11,7 @@ from ..search.system_prompt import SystemPrompt, candidate_failed_checks, block_
 from ..search.optimizer_output_contract import JSON_INSTRUCTION
 from ..search.optimization_evidence import coverage_effect
 from ..search.textual_gradients import GradientExtractor, gradient_identity
-from .single_prompt_policy import policy, ARMS
+from .single_prompt_policy import policy, canary_contract, ARMS
 
 OPTIMIZER_PROMPT = '''Improve the supplied editable Role/Strategy/Answer System Prompt
 to solve future problems accurately. Analyze the supplied Optimize errors freely,
@@ -130,6 +130,14 @@ def run_cell(cell, rows, evaluator, broker, persist):
     p = policy()
     if cell['arm'] not in ARMS or cell['seed'] not in p['seeds']:
         raise SearchContractError('STUDY_CELL_INVALID')
+    rounds = p['rounds']
+    if broker.phase == 'canary':
+        c = canary_contract()
+        if cell['seed'] != c['seed'] or len(rows) != c['optimize_count']:
+            raise SearchContractError('STUDY_CANARY_CELL_INVALID')
+        rounds = c['rounds']
+    elif broker.phase != 'train':
+        raise SearchContractError('STUDY_SEARCH_PHASE_FORBIDDEN')
     prompt = SystemPrompt.from_dict(cell['initial_prompt'])
     start_usage = broker.usage_view()
     history = [prompt.to_dict()]
@@ -137,7 +145,7 @@ def run_cell(cell, rows, evaluator, broker, persist):
     initial_usage = broker.usage_view()
     metrics = []
     persist('checkpoint_0', dict(prompt=prompt.to_dict(), observations=predictions))
-    for ordinal in range(1, p['rounds'] + 1):
+    for ordinal in range(1, rounds + 1):
         broker.round_index = ordinal
         before_usage = broker.usage_view()
         old = prompt

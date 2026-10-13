@@ -51,8 +51,20 @@ def policy():
         optimizer_cache=False, semantic_strategy_judge=False)
 
 
+def canary_contract():
+    return dict(identity='SINGLE_PROMPT_THREE_ARM_PREFIX12_CANARY_V1', seed=88,
+        rounds=1, optimize_count=12, selection='frozen_optimize_membership_prefix',
+        scientific_results=False, formal_reuse=False,
+        passing='all_roles_covered_legal_candidates_legal_pattern_sealed_receipts_and_ledger',
+        accuracy_gate=False, automatic_retry=False, automatic_expansion=False)
+
+
 def call_ceiling(phase):
     p = policy()
+    if phase == 'canary':
+        c = canary_contract()
+        return (3 * (c['rounds'] + 1) * c['optimize_count'] * p['solver_semantic_draws']
+                + 3 * p['optimizer_structural_draws'] + p['error_batch_size'] * 3 + 3)
     if phase == 'train':
         return (9 * (p['rounds'] + 1) * 150 * 4
                 + 9 * p['rounds'] * 2

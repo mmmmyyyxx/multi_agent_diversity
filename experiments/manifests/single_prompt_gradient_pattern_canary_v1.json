@@ -1,0 +1,20 @@
+{
+  "schema_version": "single_prompt_canary_manifest_v1",
+  "experiment_id": "single_prompt_gradient_pattern_canary_v1",
+  "parent_manifest": "experiments/manifests/single_prompt_gradient_pattern_v1.json",
+  "contract": {
+    "identity": "SINGLE_PROMPT_THREE_ARM_PREFIX12_CANARY_V1",
+    "seed": 88,
+    "rounds": 1,
+    "optimize_count": 12,
+    "selection": "frozen_optimize_membership_prefix",
+    "scientific_results": false,
+    "formal_reuse": false,
+    "passing": "all_roles_covered_legal_candidates_legal_pattern_sealed_receipts_and_ledger",
+    "accuracy_gate": false,
+    "automatic_retry": false,
+    "automatic_expansion": false
+  },
+  "protocol_path": "docs/design/SINGLE_PROMPT_CANARY_V1.md",
+  "real_api_authorized": false
+}

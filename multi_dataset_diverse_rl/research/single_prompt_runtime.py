@@ -98,7 +98,7 @@ class StudyBroker:
     def _request_identity(self, *, role, split, messages, capacity=None):
         p = policy()
         legal = (split == 'optimize' and role in ('solver', 'reflection', 'pattern_gradient', 'pattern_cluster')
-                 if self.phase == 'train' else split == self.phase and role == 'solver')
+                 if self.phase in ('train', 'canary') else split == self.phase and role == 'solver')
         if not legal or not self.attempt_id:
             raise SearchContractError('STUDY_PROVIDER_ROLE_SPLIT_FORBIDDEN')
         route = p['provider_routing_policy']['routes'][role]

@@ -285,6 +285,7 @@ flowchart TD
     n349["single_prompt_gradient_pattern_v1_gradient_pattern_seed88<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
     n350["single_prompt_gradient_pattern_v1_gradient_pattern_seed89<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
     n351["single_prompt_gradient_pattern_v1_gradient_pattern_seed90<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n352["single_prompt_gradient_pattern_canary_v1<br/>REAL_CANARY<br/>IMPLEMENTED_NOT_EXECUTED"]
   end
   subgraph era1["FORMAL_V3_V4"]
     n50["gepa_layer2_local_to_team_transfer_diagnostic_v4<br/>DIAGNOSTIC<br/>STATUS_UNRESOLVED"]
@@ -802,6 +803,7 @@ flowchart TD
   n342 -->|derived_from| n349
   n342 -->|derived_from| n350
   n342 -->|derived_from| n351
+  n342 -->|derived_from| n352
 ```
 
 ## Archived branches and unresolved evidence

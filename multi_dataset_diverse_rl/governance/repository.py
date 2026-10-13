@@ -97,6 +97,10 @@ def validate_registry_v2(root: Path, registry: Mapping) -> tuple[list[str],dict]
                 from ..research.single_prompt_governance import validate_manifest as validate_study
                 try:validate_study(root,obj)
                 except ValueError as exc:errors.append(f'{ident}: {exc}')
+            elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_canary_manifest_v1':
+                from ..research.single_prompt_governance import validate_canary_manifest
+                try:validate_canary_manifest(root,obj)
+                except ValueError as exc:errors.append(f'{ident}: {exc}')
             elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_cell_manifest_v1':
                 from ..research.single_prompt_governance import validate_manifest as validate_study, MANIFEST as STUDY_MANIFEST
                 try:

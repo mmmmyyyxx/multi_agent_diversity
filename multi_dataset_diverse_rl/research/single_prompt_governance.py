@@ -16,7 +16,7 @@ from ..persistence.provider_receipts import ProviderResponseReceipts
 from ..governance.token_accounting import TokenLedger, POLICY_V27_FORMAL_UNCAPPED, audit_journal
 from ..search.schemas import SearchContractError
 from ..search.system_prompt import SystemPrompt
-from .single_prompt_policy import policy, call_ceiling, STUDY, ARMS
+from .single_prompt_policy import policy, canary_contract, call_ceiling, STUDY, ARMS
 from .single_prompt_runtime import StudyBroker
 from .single_prompt import run_cell
 
@@ -24,6 +24,31 @@ MANIFEST = 'experiments/manifests/single_prompt_gradient_pattern_v1.json'
 PREP_SCHEMA = 'single_prompt_phase_prep_v1'
 CELL_SCHEMA = 'single_prompt_cell_manifest_v1'
 SOURCE_BASE = 'd7de59818da609cff6b03c6ebb334fa79011aedd'
+CANARY_MANIFEST = 'experiments/manifests/single_prompt_gradient_pattern_canary_v1.json'
+CANARY_STUDY = 'single_prompt_gradient_pattern_canary_v1'
+
+
+def validate_canary_manifest(root, value):
+    expected = dict(schema_version='single_prompt_canary_manifest_v1', experiment_id=CANARY_STUDY,
+        parent_manifest=MANIFEST, contract=canary_contract(),
+        protocol_path='docs/design/SINGLE_PROMPT_CANARY_V1.md', real_api_authorized=False)
+    if value != expected:
+        raise SearchContractError('STUDY_CANARY_MANIFEST_INVALID')
+
+
+def phase_cells(manifest, phase):
+    cells = manifest['cells']
+    if phase == 'canary':
+        cells = [c for c in cells if c['seed'] == canary_contract()['seed']]
+    return [dict(c, attempt_id=c['cell_id'] + '_' + phase + '_attempt1') for c in cells]
+
+
+def frozen_canary_contract(reader):
+    c = canary_contract()
+    ids = [m['stable_example_id'] for m in reader.members if m['project_split'] == 'optimize'][:c['optimize_count']]
+    if len(ids) != c['optimize_count']:
+        raise SearchContractError('STUDY_CANARY_MEMBERSHIP_INCOMPLETE')
+    return dict(c, sample_ids=ids, membership_sha256=digest(ids))
 
 
 def private_path(root, path):
@@ -89,7 +114,7 @@ def validate_manifest(root, manifest):
 def source_snapshot(root):
     paths = set(root.joinpath('multi_dataset_diverse_rl').rglob('*.py'))
     paths.update(root / p for p in ('AGENTS.md', 'scripts/run_experiment.py',
-        'scripts/prepare_single_prompt_study.py', MANIFEST,
+        'scripts/prepare_single_prompt_study.py', MANIFEST, CANARY_MANIFEST,
         'scripts/dry_run_single_prompt_study.py', 'tests/current/test_single_prompt_study.py',
         'scripts/analyze_single_prompt_study.py',
         'tests/formal_zero_api_runner.py', 'tests/conftest.py',
@@ -185,14 +210,54 @@ def audit_complete_phase(directory, phase):
         physical_calls=len(calls), ledger=view, terminal_sha256=file_hash(directory / 'terminal.json'))
 
 
+def audit_canary(directory):
+    audit = audit_complete_phase(directory, 'canary')
+    scope = read_json(directory / 'scope.json')
+    results = read_json(directory / 'results.json')
+    c = canary_contract()
+    if (scope.get('canary_contract', {}).get('identity') != c['identity']
+            or len(results) != 3 or {(r['arm'], r['seed']) for r in results} != {(a, c['seed']) for a in ARMS}
+            or {r['cell_id'] for r in results} != {r['cell_id'] for r in scope['cells']}):
+        raise SearchContractError('STUDY_CANARY_RESULTS_INVALID')
+    problems = []
+    usage = read_json(directory / 'execution_summary.json')['usage']
+    if any(usage[role] == 0 for role in ('solver', 'reflection', 'pattern_gradient', 'pattern_cluster')):
+        problems.append('REQUIRED_ROLE_NOT_COVERED')
+    for result in results:
+        if (result['rounds_completed'] != 1 or len(result['prompt_history']) != 2
+                or result['final_prompt'] != result['prompt_history'][-1] or len(result['metrics']) != 1):
+            raise SearchContractError('STUDY_CANARY_HORIZON_INVALID')
+        for ordinal in (0, 1):
+            checkpoint = read_json(directory / result['cell_id'] / f'checkpoint_{ordinal}.json')
+            if (set(checkpoint['observations']) != set(scope['canary_contract']['sample_ids'])
+                    or checkpoint['prompt'] != result['prompt_history'][ordinal]):
+                raise SearchContractError('STUDY_CANARY_CHECKPOINT_INVALID')
+        metric = result['metrics'][0]
+        expected = metric['error_count'] if result['arm'] == 'full_errors' else min(policy()['error_batch_size'], metric['error_count'])
+        if metric['optimizer_example_count'] != expected:
+            raise SearchContractError('STUDY_CANARY_ERROR_FEEDBACK_INVALID')
+        if metric['update_status'] not in ('REPLACED', 'UNCHANGED_LEGAL_CANDIDATE'):
+            problems.append(result['arm'] + '_NO_LEGAL_CANDIDATE')
+        if result['arm'] == 'gradient_pattern':
+            feedback = metric['structured_feedback']
+            if not feedback['gradients'] or not feedback['patterns']:
+                problems.append('LEGAL_GRADIENT_PATTERN_NOT_COVERED')
+    return dict(status='CANARY_PASS' if not problems else 'CANARY_NOT_PASSED',
+        reasons=problems, phase_integrity=audit, role_calls={r: usage[r] for r in
+            ('solver', 'reflection', 'pattern_gradient', 'pattern_cluster')},
+        accuracy_gate_used=False, heldout_access=False, scientific_results=False)
+
+
 def prepare(root, destination, *, phase, token_ceiling=None, search_root=None):
     destination = private_path(root, destination)
     if destination.exists():
         raise SearchContractError('STUDY_PREP_ALREADY_EXISTS')
-    if phase not in ('train', 'validation', 'test') or token_ceiling is not None:
+    if phase not in ('canary', 'train', 'validation', 'test') or token_ceiling is not None:
         raise SearchContractError('STUDY_PHASE_OR_BUDGET_INVALID')
     manifest = read_json(root / MANIFEST)
-    validate_manifest(root, manifest)
+    reader = validate_manifest(root, manifest)
+    if phase == 'canary':
+        validate_canary_manifest(root, read_json(root / CANARY_MANIFEST))
     require_selected_runtime(root)
     sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
     if subprocess.check_output(['git', 'status', '--porcelain', '--untracked-files=no'], cwd=root, text=True).strip():
@@ -202,7 +267,7 @@ def prepare(root, destination, *, phase, token_ceiling=None, search_root=None):
     if set(sources) - tracked:
         raise SearchContractError('STUDY_SOURCE_NOT_COMMITTED')
     predecessor = None
-    if phase != 'train':
+    if phase in ('validation', 'test'):
         if search_root is None:
             raise SearchContractError('STUDY_HELDOUT_SEARCH_PREDECESSOR_REQUIRED')
         search_root = private_path(root, search_root)
@@ -213,7 +278,9 @@ def prepare(root, destination, *, phase, token_ceiling=None, search_root=None):
         source_hashes=sources, policy=policy(), manifest_sha256=file_hash(root / MANIFEST),
         token_ceiling=token_ceiling, call_ceiling=call_ceiling(phase),
         search_predecessor=predecessor,
-        cells=[dict(c, attempt_id=c['cell_id'] + '_' + phase + '_attempt1') for c in manifest['cells']])
+        cells=phase_cells(manifest, phase))
+    if phase == 'canary':
+        scope['canary_contract'] = frozen_canary_contract(reader)
     prep_relative = destination.relative_to(root).as_posix()
     run_relative = (destination.parent / (phase + '_run')).relative_to(root).as_posix()
     scope['execution'] = dict(prep_path=prep_relative, run_root=run_relative,
@@ -236,9 +303,10 @@ def validate_prep(root, prep, *, authorized=False):
     if value.get('schema_version') != PREP_SCHEMA or set(value) != {'schema_version', 'scope'}:
         raise SearchContractError('STUDY_PREP_SCHEMA_INVALID')
     scope = value['scope']
+    extra_keys = {'canary_contract'} if scope.get('phase') == 'canary' else set()
     if (set(scope) != {'study_id', 'phase', 'source_sha', 'source_hashes', 'policy', 'manifest_sha256', 'runtime_identity',
-                      'token_ceiling', 'call_ceiling', 'search_predecessor', 'cells', 'scope_identity', 'execution'}
-            or scope.get('phase') not in ('train', 'validation', 'test') or scope.get('study_id') != STUDY
+                      'token_ceiling', 'call_ceiling', 'search_predecessor', 'cells', 'scope_identity', 'execution'} | extra_keys
+            or scope.get('phase') not in ('canary', 'train', 'validation', 'test') or scope.get('study_id') != STUDY
             or re.fullmatch('[0-9a-f]{40}', str(scope.get('source_sha'))) is None
             or scope.get('policy') != policy() or scope.get('scope_identity') != digest({k: v for k, v in scope.items() if k != 'scope_identity'})
             or scope.get('call_ceiling') != call_ceiling(scope['phase']) or scope.get('token_ceiling') is not None):
@@ -252,17 +320,21 @@ def validate_prep(root, prep, *, authorized=False):
         command=[policy()['runtime_interpreter'], 'scripts/run_experiment.py', '--prep', prep_relative, '--run-root', run_relative, '--execute']):
         raise SearchContractError('STUDY_FROZEN_COMMAND_MISMATCH')
     manifest = read_json(root / MANIFEST)
-    validate_manifest(root, manifest)
+    reader = validate_manifest(root, manifest)
+    if scope['phase'] == 'canary':
+        validate_canary_manifest(root, read_json(root / CANARY_MANIFEST))
+        if scope['canary_contract'] != frozen_canary_contract(reader):
+            raise SearchContractError('STUDY_CANARY_CONTRACT_MISMATCH')
     if scope['manifest_sha256'] != file_hash(root / MANIFEST) or scope['source_hashes'] != source_snapshot(root):
         raise SearchContractError('STUDY_FROZEN_SOURCE_CHANGED')
     current_sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
     if current_sha != scope['source_sha'] or subprocess.check_output(['git', 'status', '--porcelain', '--untracked-files=no'], cwd=root, text=True).strip():
         raise SearchContractError('STUDY_FROZEN_COMMIT_MISMATCH')
-    wanted = [dict(c, attempt_id=c['cell_id'] + '_' + scope['phase'] + '_attempt1') for c in manifest['cells']]
+    wanted = phase_cells(manifest, scope['phase'])
     if scope['cells'] != wanted:
         raise SearchContractError('STUDY_SCOPE_CELL_MISMATCH')
     predecessor = scope['search_predecessor']
-    if scope['phase'] == 'train':
+    if scope['phase'] in ('train', 'canary'):
         if predecessor is not None:
             raise SearchContractError('STUDY_TRAIN_PREDECESSOR_FORBIDDEN')
     else:
@@ -357,8 +429,12 @@ def execute(root, prep, run_root):
             ledger=ledger, receipts=receipts, dispatch_guard=dispatch_guard)
         reader = validate_manifest(root, read_json(root / MANIFEST))
         results = None
-        if scope['phase'] == 'train':
+        if scope['phase'] in ('train', 'canary'):
             rows = reader.rows('optimize', DataPurpose.SEARCH_EVALUATION)
+            if scope['phase'] == 'canary':
+                rows = rows[:canary_contract()['optimize_count']]
+                if [r['stable_example_id'] for r in rows] != scope['canary_contract']['sample_ids']:
+                    raise SearchContractError('STUDY_CANARY_DATA_ORDER_MISMATCH')
         else:
             parent_root = private_path(root, scope['search_predecessor']['path'])
             results, terminal_hash = verify_search(parent_root, implementation_sha=scope['source_sha'])
@@ -382,7 +458,7 @@ def execute(root, prep, run_root):
                     raise SearchContractError('STUDY_ARTIFACT_ALREADY_EXISTS')
                 atomic_write_json(target, payload)
 
-            if scope['phase'] == 'train':
+            if scope['phase'] in ('train', 'canary'):
                 initial = read_json(root / cell_manifest['initial_prompt_path'])['members'][0]['prompt']
                 item = run_cell(dict(cell_manifest, initial_prompt=initial), rows, broker.evaluate, broker, persist)
             else:
@@ -404,7 +480,7 @@ def execute(root, prep, run_root):
         if ledger.inflight:
             raise SearchContractError('STUDY_UNRESOLVED_RESERVATION')
         ledger_snapshot = ledger.view()
-        atomic_write_json(run_root / 'execution_summary.json', dict(phase=scope['phase'], cells_completed=9,
+        atomic_write_json(run_root / 'execution_summary.json', dict(phase=scope['phase'], cells_completed=len(completed),
             usage=broker.usage_view(), token_ledger=ledger_snapshot))
         # Cleanup errors cannot follow a published completion receipt.
         ledger.close()
@@ -414,7 +490,7 @@ def execute(root, prep, run_root):
         atomic_write_json(run_root / 'lifecycle.json', dict(status='EXECUTION_COMPLETE', phase=scope['phase']))
         atomic_write_json(run_root / 'terminal.json', dict(status='EXECUTION_COMPLETE', phase=scope['phase'],
             source_sha=scope['source_sha'], scope_identity=scope['scope_identity'], artifacts=inventory(run_root)))
-        return dict(status='EXECUTION_COMPLETE', phase=scope['phase'], cells_completed=9)
+        return dict(status='EXECUTION_COMPLETE', phase=scope['phase'], cells_completed=len(completed))
     except BaseException as exc:
         # The evaluator drains its issued worker requests before this boundary.
         # Failed persistence cannot leave a free or reusable reservation.
