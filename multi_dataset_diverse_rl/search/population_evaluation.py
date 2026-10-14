@@ -13,7 +13,9 @@ FINAL_POLICY=dict(identity='POPULATION_ARGMAX_JOINT_ADMISSION_V1',selection='one
     rejected='explicit_rejected_proposal_no_silent_fallback',reselection=False)
 
 class PopulationEvaluationProvider(FixedPeerTeamEvaluationProvider):
-    def __init__(self,store,transition,population):
+    def __init__(self,store,transition,population,*,fitness_policy=None):
+        from .measurement_policies import CompleteOptimizeFitness
+        self.fitness_policy=fitness_policy or CompleteOptimizeFitness()
         super().__init__(store,transition);self.population=population;self.member_profiles={};self.known_prompts={}
         self.initial_prompts=store.prompts
     def bootstrap(self):
@@ -26,10 +28,7 @@ class PopulationEvaluationProvider(FixedPeerTeamEvaluationProvider):
             self.population.update(m,p,self.fitness(state,m,'TEAM_VOTE','initial:'+str(m)),accuracy)
         self.population.save()
     def fitness(self,state,member,source,observation_id):
-        correct=state.team_scores['vote_correct_count'] if source=='TEAM_VOTE' else state.member_scores[member]
-        return Fitness(source,int(correct),len(self.store.examples),
-            state.diagnostics['evaluation_support_identity'],state.team_state_id,
-            tuple(p.prompt_hash for p in state.member_prompts),observation_id)
+        return self.fitness_policy.assign(state,member,source,observation_id,len(self.store.examples))
     def profile(self,member,prompt):
         self.known_prompts[prompt.prompt_hash]=prompt
         key=(member,prompt.prompt_hash)
@@ -78,7 +77,9 @@ class PopulationEvaluationProvider(FixedPeerTeamEvaluationProvider):
         return result
 
 class PopulationEvaluationPipeline:
-    def __init__(self,provider):self.provider=provider
+    def __init__(self,provider,*,pool_update=None):
+        from .measurement_policies import MeasuredPoolUpdate
+        self.provider=provider;self.pool_update=pool_update or MeasuredPoolUpdate()
     async def evaluate(self,opportunity,search):
         if len(search.candidates)>3:raise SearchContractError('POPULATION_SLOT_CEILING')
         rows=[];seen=set();seen_slots=set()
@@ -118,7 +119,7 @@ class PopulationEvaluationPipeline:
             c=replace(c,backend_details={**d,'selected_parent_member_effect':dict(
                 fixed=len(effect['fixed_ids']),broken=len(effect['broken_ids']),count=len(self.provider.store.examples)),
                 'solver_evaluated':True})
-            update=self.provider.population.update(t,c.prompt,vote,proxy)
+            update=self.pool_update.update(self.provider.population,t,c.prompt,vote,proxy)
             self.provider.population.save()
             full=replace(full,aggregation_diagnostics={**full.aggregation_diagnostics,
                 'fitness_provenance':dict(member_accuracy_proxy=proxy.__dict__,actual_vote=vote.__dict__),
@@ -129,7 +130,9 @@ class PopulationEvaluationPipeline:
         return tuple(rows)
 
 class PopulationFinalizer:
-    def __init__(self,provider,gate,transition):
+    def __init__(self,provider,gate,transition,*,admission=None):
+        from .measurement_policies import JointFinalAdmission
+        self.admission=admission or JointFinalAdmission()
         self.provider=provider;self.gate=gate;self.transition=transition
     async def finalize(self):
         store=self.provider.store;pool=self.provider.population
@@ -144,9 +147,9 @@ class PopulationFinalizer:
         changed=[m for m in range(5) if proposed[m]!=baseline.member_prompts[m]]
         invalid=sum(not all(s.team_validity) for s in child.diagnostics['team_states'])
         parent_invalid=sum(not all(s.team_validity) for s in baseline.diagnostics['team_states'])
-        allowed=(all(child.member_scores[m]>=self.transition.initial_scores[m] for m in changed)
-            and child.team_scores['vote_correct_count']>=baseline.team_scores['vote_correct_count']
-            and (self.provider.invalid_predictions_are_incorrect or invalid<=parent_invalid))
+        allowed=self.admission.allowed(child=child,baseline=baseline,changed=changed,
+            initial_scores=self.transition.initial_scores,invalid=invalid,parent_invalid=parent_invalid,
+            invalidity=self.provider.invalid_predictions_are_incorrect)
         shadow=await self.gate.check_team(proposed,baseline) if allowed else None
         accepted=bool(allowed and shadow)
         for m,p in enumerate(proposed):

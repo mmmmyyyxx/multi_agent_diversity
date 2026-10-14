@@ -29,7 +29,17 @@ class OneProductionOpportunityStop(GlobalStopPolicy):
 def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompts, solver,
         optimizer, method, seed, shadow_loader, shadow_count, runtime_readiness,
         pattern_provider, provider_call_reader=None, policy_bundle=CURRENT_POLICY_BUNDLE,
-        execution_phase='canary', operational_bound=None):
+        execution_phase='canary', operational_bound=None,modules=None,synthetic_intervention=False):
+    from .mechanisms import DEFAULT_TEAM_MODULES
+    from .reflection_steps import FrozenParentSelection,TeamGroupChannel,ReflectionEvidenceComposition,SingleStepReflection
+    if modules is None or not modules.changed():
+        expected={'parent_selection':FrozenParentSelection,'group_channel':TeamGroupChannel,
+            'evidence_composition':ReflectionEvidenceComposition,'candidate_generation':SingleStepReflection}
+        if any(type(getattr(optimizer,k,None)) is not t for k,t in expected.items()):
+            raise SearchContractError('UNDECLARED_OPTIMIZER_MECHANISM_OVERRIDE')
+    modules=modules or DEFAULT_TEAM_MODULES
+    module_binding=modules.validate(synthetic_intervention=synthetic_intervention)
+    modules.configure_optimizer(optimizer)
     if execution_phase not in {'canary', 'pilot', 'formal'}:
         raise SearchContractError('CURRENT_EXECUTION_PHASE_UNBOUND')
     if execution_phase == 'formal':
@@ -68,13 +78,15 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
     history=HistoryState()
     store=BinaryTeamStateStore(benchmark=benchmark,examples=examples,prompts=prompts,solver=solver,
         aggregation=aggregation,freeze_initial_competence=True)
-    patterns=GradientPatternDiscovery(GradientExtractor(pattern_provider.gradient_provider),pattern_provider,seed=seed)
-    memory=PopulationEditMemory()
+    patterns=GradientPatternDiscovery(modules.gradient(pattern_provider.gradient_provider),pattern_provider,seed=seed,
+        scorer=modules.pattern_scoring(),selector=modules.pattern_selection())
+    memory=PopulationEditMemory(recorder=modules.memory_recording(),
+        retrieval=modules.memory_retrieval(),delivery=modules.memory_delivery())
     if memory is None or memory.identity != method.memory_policy:
         raise SearchContractError('HOLD_PRE_PROVIDER: CURRENT_MEMORY_PROVIDER_NOT_BOUND')
     optimizer.memory=memory
     invalidity=bool(getattr(benchmark,'invalid_predictions_are_incorrect',False))
-    transition=InitialCompetenceTargetOrTeamProgressV3(invalid_predictions_are_incorrect=invalidity,
+    transition=modules.team_admission(invalid_predictions_are_incorrect=invalidity,
         evaluation_count=len(store.examples))
     import hashlib, json
     from pathlib import Path
@@ -85,8 +97,10 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
         binding_identity=digest(contract),
         attempt_identity=contract.get('execution_attempt_id','offline'),seed=seed,
         models=contract.get('models',{}),member_lanes=list(range(5)),support_sha256=support,support_count=len(store.examples)),
-        checkpoint=Path(optimizer.run_root)/'parent_population.private.json')
-    provider=PopulationEvaluationProvider(store,transition,pool)
+        checkpoint=Path(optimizer.run_root)/'parent_population.private.json',
+        sampling=modules.population_sampling(),retention=modules.population_retention(),assembly=modules.final_selection())
+    if modules.changed():pool.scope['module_intervention']=digest(module_binding)
+    provider=PopulationEvaluationProvider(store,transition,pool,fitness_policy=modules.fitness())
     optimizer.population=pool;optimizer.profile_reader=provider.parent_observations
     from .group_diagnosis import RootTeamEvidence
     from .provider_runtime import GroupDiagnosisProvider
@@ -97,12 +111,12 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
     gate=private_binary_gate(benchmark=benchmark,load_examples=shadow_loader,expected_count=shadow_count,
         solver=solver.for_gate() if hasattr(solver,'for_gate') else solver,store=store)
     composed=UnifiedSearchOrchestrator(method=method,benchmark=benchmark,aggregation=aggregation,state=store,
-        analyzer=StateAnalyzer(BinaryPluralityResponsibilityAnalyzer(benchmark.capabilities)),
+        analyzer=StateAnalyzer(modules.responsibility(benchmark.capabilities)),
         opportunities=CurrentOpportunityBuilder(source=BinaryEvidenceSource(store,history),
-            feasibility=VariableEvidenceFeasibilityV1(),target=TargetPolicyV1(seed),
-            evidence=PatternSupportEvidence(seed,revised),patterns=patterns,
+            feasibility=VariableEvidenceFeasibilityV1(),target=modules.who(seed),
+            evidence=modules.support_sampling(seed,revised),patterns=patterns,
             search_metric_budget=0),
-        engine=CurrentEngine(optimizer,seed),evaluation=PopulationEvaluationPipeline(provider),
+        engine=CurrentEngine(optimizer,seed),evaluation=PopulationEvaluationPipeline(provider,pool_update=modules.pool_update()),
         transition=transition,gate=gate,committer=TeamStateCommitter(store),history=history,memory=memory,
         stop=(OneProductionOpportunityStop(method.global_stop.no_commit_patience) if execution_phase == 'canary'
             else GlobalStopPolicy(method.global_stop.no_commit_patience)),runtime_readiness=runtime_readiness,
@@ -110,7 +124,9 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
     composed.operational_bound=operational_bound
     optimizer.execution_observer=lambda stage,data: composed.execution_observer(stage,data) if composed.execution_observer else None
     composed.population=pool
-    composed.finalizer=PopulationFinalizer(provider,gate,transition)
+    composed.finalizer=PopulationFinalizer(provider,gate,transition,admission=modules.final_admission())
+    composed.module_binding=module_binding
+    if modules.changed():composed.experiment_identity=digest([method.identity(),module_binding])
     from .population_checkpoint import PopulationCheckpoint
     composed.checkpoint=PopulationCheckpoint(composed,Path(optimizer.run_root)/'search_boundary.private.json')
     return composed

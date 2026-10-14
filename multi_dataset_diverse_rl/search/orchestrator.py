@@ -331,4 +331,4 @@ class UnifiedSearchOrchestrator:
         assembly=await self.finalizer.finalize()
         if self.execution_observer:self.execution_observer('FINAL_ASSEMBLY',assembly)
         return UnifiedSearchResult(initial, assembly['proposed_team_state_id'], reason,
-            tuple(trace), tuple(self.history.transitions), self.method.identity(), assembly)
+            tuple(trace), tuple(self.history.transitions), getattr(self,'experiment_identity',self.method.identity()), assembly)

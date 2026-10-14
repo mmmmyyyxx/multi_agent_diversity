@@ -1,0 +1,37 @@
+{
+  "schema": "modular_default_witness_v1",
+  "baseline_source": "c93838ea922353a5772ca146333a025ea0088681",
+  "comparison": "complete_solver_payload_multiset_per_contiguous_solver_block_optimizer_and_event_order_preserved",
+  "cases": {
+    "default": {
+      "canonical_sha256": "9e910da35f01bda61d935a8637036cfae64ca9c78e3175bbfc477beb4da87901",
+      "request_count": 176,
+      "difference_count": 0
+    },
+    "group_exhaustion": {
+      "canonical_sha256": "9811a7d51fe573245c9bf5dbc7fb75550b0156f9bd9afb79a0ff87cb959f89c7",
+      "request_count": 177,
+      "difference_count": 0
+    },
+    "multi_opportunity": {
+      "canonical_sha256": "a638ddd9e52d7834b6ceea2f7cd2216ba2b641ab08523ff97c3eb31277f4101c",
+      "request_count": 247,
+      "difference_count": 0
+    },
+    "pool_evolution": {
+      "canonical_sha256": "d249783c16ea16ae59b868aa183d5d309c1c3fad16ace306395d9d89de9b2598",
+      "request_count": 240,
+      "difference_count": 0
+    },
+    "reflection_recovery": {
+      "canonical_sha256": "94ecbddc889d83ea2cf1300041b5c380140491e917dd686725dd26f5e169ed4a",
+      "request_count": 177,
+      "difference_count": 0
+    },
+    "uncertain": {
+      "canonical_sha256": "c5cababdb808b642f1b9fbffeec73c9db587ea02edad0f1875cb741b718611bd",
+      "request_count": 111,
+      "difference_count": 0
+    }
+  }
+}

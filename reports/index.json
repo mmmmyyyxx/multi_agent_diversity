@@ -3101,6 +3101,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/modular_mechanisms_v212_preparation_20261014",
+      "document": "reports/modular_mechanisms_v212_preparation_20261014/README.md",
+      "date": "20261014",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "PREEXECUTION",
+      "experiment_id": "modular_mechanisms_v212_preparation_v1",
+      "status": "IMPLEMENTED_NOT_EXECUTED",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/multibench_dataset_migration_v1_20261001",
       "document": "reports/multibench_dataset_migration_v1_20261001/README.md",
       "date": "20261001",

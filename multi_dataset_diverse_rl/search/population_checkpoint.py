@@ -43,8 +43,8 @@ class PopulationCheckpoint:
             raise SearchContractError('SEARCH_CHECKPOINT_NOT_COMPLETE_OR_SCOPE_MISMATCH')
         # Construct and verify everything in detached objects first. Cache
         # request identity and response provenance remain enforced by the scorer.
-        pool=ParentPopulation(scope=r.population.scope);pool.restore(body['pool'])
-        memory=PopulationEditMemory();memory.restore(body['memory'])
+        pool=r.population.detached();pool.restore(body['pool'])
+        memory=r.memory.detached();memory.restore(body['memory'])
         known={};profiles={}
         for row in body['profiles']:
             prompt=SystemPrompt.from_dict(row['prompt']);m=row['member'];h=row['prompt_sha256']

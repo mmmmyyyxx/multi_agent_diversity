@@ -1,5 +1,5 @@
 {
-  "current_suite_policy": "V2.11 Group-Diagnosed Reflection and evidence projection; unchanged V2.10 responsibility and V2.9 population; historical tests require frozen source.",
+  "current_suite_policy": "V2.12 count responsibility and modular default equivalence; historical/private tests require frozen source and explicit assets.",
   "schema_version": "suite_classification_v1",
   "tests": [
     {
@@ -1381,6 +1381,20 @@
       "classification": "CURRENT_ZERO_API_E2E",
       "required_private_artifacts": [],
       "current_suite_included": true
+    },
+    {
+      "path": "tests/current/test_modular_mechanisms.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "current_suite_included": true,
+      "required_private_artifacts": [],
+      "reason": "Current modular capability contracts and synthetic-only interventions"
+    },
+    {
+      "path": "tests/current/test_modular_default_witness.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "current_suite_included": true,
+      "required_private_artifacts": [],
+      "reason": "Complete original c938 synthetic witness regression under the offline guard"
     }
   ],
   "current_source_scope": "V23 only; historical replay requires original frozen source, not current constructors.",

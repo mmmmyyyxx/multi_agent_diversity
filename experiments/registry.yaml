@@ -10600,14 +10600,40 @@ experiments:
   manifest: experiments/manifests/count_responsibility_v212_preparation_v1.yaml
   report: reports/count_responsibility_v212_preparation_20261014
   classifier: reports/count_responsibility_v212_preparation_20261014/classifier.json
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
-  superseded_by: []
+  superseded_by:
+  - modular_mechanisms_v212_preparation_v1
   notes:
   - Every wrong member receives count-only C/N/D/R3/R4 responsibility; old Vote assignment
     removed.
   - Offline preparation only; no real API, held-out data, historical execution or
     Push authorization.
+  unavailable:
+    implementation_commit: Containing implementation commit; no self-reference.
+    execution_commit: No model experiment executed.
+    result_commit: No real efficacy result.
+- experiment_id: modular_mechanisms_v212_preparation_v1
+  kind: ARCHITECTURE_REFACTOR
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_v2_12_count_responsibility_v1
+  parent_ids:
+  - count_responsibility_v212_preparation_v1
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: BEHAVIOR_PRESERVING_SYNTHETIC_VERIFICATION_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/modular_mechanisms_v212_preparation_v1.yaml
+  report: reports/modular_mechanisms_v212_preparation_20261014
+  classifier: reports/modular_mechanisms_v212_preparation_20261014/classifier.json
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Default scientific method and model wires preserved; separate modular architecture
+    identity.
+  - No real API, held-out access, historical execution or Push authorization.
   unavailable:
     implementation_commit: Containing implementation commit; no self-reference.
     execution_commit: No model experiment executed.

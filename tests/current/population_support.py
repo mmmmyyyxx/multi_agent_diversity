@@ -38,7 +38,7 @@ def response(text):
         provider_usage_details={},provider_thinking_indicators=[])
 def graph(tmp_path,*,reflection=None,solver_behavior=None,uncertain=False,long_response=False,
         answer_only=False,answer_only_form='markdown',block='strategy',format_repair=False,
-        prompts=None,solver_answer=None,group=None):
+        prompts=None,solver_answer=None,group=None,modules=None,synthetic_intervention=False):
     c=contract();adapter=MATHStructuredSystemBenchmark(c);requests=[];packets=[]
     def examples(split):
         return tuple(CorrectnessExample(protocol_input('math',f'{split}{i}',{'problem':f'Synthetic case {i}: find the result.'},
@@ -82,6 +82,7 @@ def graph(tmp_path,*,reflection=None,solver_behavior=None,uncertain=False,long_r
     run=build_current_team_prompt_search(benchmark=adapter,aggregation=EquivalencePluralityAggregation(),
         examples=examples('optimize'),prompts=prompts or (BASE,)*5,solver=solver,optimizer=optimizer,method=method,
         seed=81,shadow_loader=lambda:examples('shadow'),shadow_count=3,runtime_readiness=lambda:(),
-        pattern_provider=pattern,provider_call_reader=lambda:broker.successes)
+        pattern_provider=pattern,provider_call_reader=lambda:broker.successes,
+        modules=modules,synthetic_intervention=synthetic_intervention)
     run.state.initialize()
     return run,broker,requests,packets

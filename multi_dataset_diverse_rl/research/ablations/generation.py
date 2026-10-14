@@ -3,7 +3,7 @@ import json
 import re
 
 from ...local_optimizers.schemas import LocalEvidenceExample
-from ...search.system_prompt import candidate_failed_checks
+from ...search.system_prompt import candidate_failed_checks, replacement_budgets
 from ...search.schemas import SearchContractError
 from ...search.optimizer_output_contract import JSON_INSTRUCTION, parse_output
 from ...search.generation_failures import GeneratedOutputFailure
@@ -21,11 +21,6 @@ block_character_limits are exact complete replacement budgets: rewrite or shorte
 when space is tight. Test outcomes and team feedback are unavailable.
 Output-contract feedback contains only the last structural error, not task evidence.
 ''' + JSON_INSTRUCTION
-
-
-def replacement_budgets(prompt):
-    return {k: 3000 - 4 - sum(len(v) for b, v in prompt.to_dict().items() if b != k)
-            for k in ('role', 'strategy', 'answer')}
 
 
 def generate_candidate(prompt, prepared, broker, ordinal, draws, persist):

@@ -384,7 +384,7 @@ def validate_records(gradients):
         raise SearchContractError('PATTERN_GRADIENT_EXTRACTION_INVALID')
 
 
-def score_gradient_partition(value,rows,gradients,*,seed=81,state_id='',ordinal=0):
+def normalize_gradient_partition(value,rows,gradients):
     rows=tuple(rows)
     if not rows or wrong_universe(rows)!=rows or len({r.example_id for r in rows})!=len(rows):
         raise SearchContractError('PATTERN_GRADIENT_WRONG_UNIVERSE_REQUIRED')
@@ -412,21 +412,18 @@ def score_gradient_partition(value,rows,gradients,*,seed=81,state_id='',ordinal=
     if (any(not isinstance(x,str) for x in remaining) or len(set(remaining))!=len(remaining)
             or used & set(remaining) or used|set(remaining)!=set(universe)):
         raise SearchContractError('PATTERN_GRADIENT_CLUSTER_INVALID_MEMBERSHIP')
-    patterns=[]
-    for p in grouped.values():
-        counts=[sum(label in sample_labels(universe[x]) for x in p['support_ids']) for label in LABELS]
-        uncovered=sum(not sample_labels(universe[x]) for x in p['support_ids'])
-        signal=PatternResponsibilitySignal(p['pattern_id'],*counts[:3],len(p['support_ids']),
-            r3_count=counts[3],r4_count=counts[4],uncovered_count=uncovered)
-        patterns.append({**p,'responsibility':{**asdict(signal),'raw_value':signal.raw_value}})
+    return dict(patterns=tuple(grouped.values()),unassigned_ids=tuple(remaining),assigned_ids=frozenset(used))
+
+
+def score_gradient_partition(value,rows,gradients,*,seed=81,state_id='',ordinal=0,scorer=None,selector=None):
+    from .pattern_selection import WeightedSupportScorer, WeightedResponsibilitySelector
+    rows=tuple(rows)
+    normalized=normalize_gradient_partition(value,rows,gradients)
+    universe={r.example_id:r for r in rows}
+    remaining=normalized['unassigned_ids'];used=normalized['assigned_ids']
+    patterns=(scorer or WeightedSupportScorer()).score(normalized['patterns'],universe)
     if not patterns:return dict(patterns=(),per_example_gradients=tuple(gradients),focus_mechanism_id=None,nonactionable=True,reason='NO_ACTIONABLE_PATTERN')
-    positive=[p for p in patterns if p['responsibility']['raw_value']>0]
-    if positive:
-        focus=min(positive,key=lambda p:(-p['responsibility']['raw_value'],p['pattern_id']));selection_reason='POSITIVE_RESPONSIBILITY'
-    else:
-        import random
-        focus=random.Random(f'{seed}:{state_id}:{ordinal}:pattern-fallback-v2').choice(sorted(patterns,key=lambda p:p['pattern_id']))
-        selection_reason='SEEDED_ZERO_RESPONSIBILITY_FALLBACK'
+    focus,selection_reason=(selector or WeightedResponsibilitySelector()).select(patterns,seed=seed,state_id=state_id,ordinal=ordinal)
     total=len(rows);assigned=len(used);size=len(focus['support_ids']);weights=[len(p['support_ids'])/assigned for p in patterns]
     return dict(selection_reason=selection_reason,fallback_seed=seed,fallback_state=state_id,fallback_ordinal=ordinal,patterns=tuple(sorted(patterns,key=lambda p:p['pattern_id'])),
         per_example_gradients=tuple(gradients),focus_mechanism_id=focus['pattern_id'],dominant_pattern_id=focus['pattern_id'],
@@ -442,14 +439,15 @@ def score_gradient_partition(value,rows,gradients,*,seed=81,state_id='',ordinal=
         wrong_by_lane={k:sum(k in sample_labels(r) for r in rows) for k in LABELS},
         zero_responsibility_wrong_count=sum(not sample_labels(r) for r in rows),
         target_selected_before_pattern=True,pattern_memory_access_before_selection=False,
-        selection_authority=versions.RAW_RESPONSIBILITY_VALUE_VERSION,
+        selection_authority=(selector or WeightedResponsibilitySelector()).identity,
         gradient_logical_calls=total,gradient_physical_calls=total,gradient_cache_hits=0,
         cluster_logical_calls=1,cluster_physical_calls=1,cluster_cache_hits=0,total_pattern_meta_calls=total+1)
 
 
 class GradientPatternDiscovery:
     identity=versions.GRADIENT_PATTERN_DISCOVERY_VERSION
-    def __init__(self,extractor,cluster_provider,*,seed=81):
+    def __init__(self,extractor,cluster_provider,*,seed=81,scorer=None,selector=None):
+        self.scorer=scorer;self.selector=selector
         self.seed=seed
         if extractor is None or cluster_provider is None:raise SearchContractError('PATTERN_GRADIENT_PROVIDER_NOT_BOUND')
         self.extractor=extractor;self.cluster_provider=cluster_provider;self.attempted_opportunities=set()
@@ -474,7 +472,7 @@ class GradientPatternDiscovery:
         completion=getattr(self.cluster_provider,'partition_completion_policy',None)
         cluster_before=self.cluster_provider.calls
         value=self.cluster_provider.cluster(payload,evidence_rows=rows)
-        context=score_gradient_partition(value,rows,gradients,seed=self.seed,state_id=state.team_state_id,ordinal=sum(history.target_counts.values()))
+        context=score_gradient_partition(value,rows,gradients,seed=self.seed,state_id=state.team_state_id,ordinal=sum(history.target_counts.values()),scorer=self.scorer,selector=self.selector)
         if rich:
             context.update(gradient_diagnostics=diagnostics,gradient_logical_calls=len(diagnostics),
                 selected_member_wrong_universe_count=len(diagnostics),

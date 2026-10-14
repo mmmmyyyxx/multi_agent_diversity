@@ -1,0 +1,16 @@
+{
+  "schema": "modular_mechanisms_architecture_preparation_v1",
+  "architecture": "V212_MODULAR_MECHANISMS_ARCHITECTURE_V1",
+  "method": "unified_team_prompt_search_v2_12_count_responsibility_v1",
+  "baseline_source": "c93838ea922353a5772ca146333a025ea0088681",
+  "default_equivalence": "SIX_SYNTHETIC_FULL_TRACE_WITNESSES_ZERO_DIFFERENCES",
+  "module_interventions": "SYNTHETIC_ONLY",
+  "real_ablation": "NOT_EXECUTED",
+  "real_api_calls": 0,
+  "validation_raw_reads": 0,
+  "test_raw_reads": 0,
+  "team_vote_effect": "UNKNOWN",
+  "token_efficiency": "UNKNOWN",
+  "generalization": "UNKNOWN",
+  "push_authorized": false
+}

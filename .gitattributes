@@ -173,3 +173,9 @@ experiments/protocols/math_v28_seed87_controlled_flow_pilot_v1/** text eol=lf
 experiments/manifests/vote_parent_population_v29_preparation_v1.yaml text eol=lf
 experiments/manifests/math_v28_seed87_controlled_flow_pilot_v1.yaml text eol=lf
 docs/design/VOTE_GUIDED_PARENT_POPULATION_V29.md text eol=lf
+
+# Modular architecture evidence and its replay receipts retain publication bytes.
+reports/modular_mechanisms_v212_preparation_20261014/** text eol=lf
+docs/design/MODULAR_MECHANISMS_V212.md text eol=lf
+experiments/manifests/modular_mechanisms_v212_preparation_v1.yaml text eol=lf
+tests/current/modular_default_witness.json text eol=lf

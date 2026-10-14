@@ -1,0 +1,12 @@
+{
+  "schema": "modular_report_artifact_hashes_v1",
+  "report_files": {
+    "capabilities.json": "2521a61e899287d0ab3739c9d8bbb209b68d4afc09dcc8235169c3ab340655a4",
+    "classifier.json": "e6e3012f11a827eb360d79fac4af6702dbb521cbbe14e7b4f59eba083f39c5ca",
+    "equivalence.json": "97016075da5be4770bb445b9809588c59eaca53c109979c4fdea5b6672d83062",
+    "README.md": "7d06ac34450c6f36764c6aaf9dd1ef332ecd3701888c0932a22ac0a20f595fca",
+    "verification.json": "b9de2e128227de9e48ffe720fb831c031243d03719b91718b99b460d6b09d51a"
+  },
+  "architecture_contract_sha256": "0c22737562e4801e8d6aa52f896ffaa94817d798a904d12ce11659d6ecdaba9f",
+  "baseline_fixture_sha256": "97016075da5be4770bb445b9809588c59eaca53c109979c4fdea5b6672d83062"
+}

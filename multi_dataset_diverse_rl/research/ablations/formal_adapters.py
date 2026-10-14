@@ -12,7 +12,7 @@ from ...search.optimizer_output_contract import parse_output
 from ...search.generation_failures import generation_failure
 from ...search.schemas import EvidenceItem
 from ...search.textual_gradients import (PerExampleGradientProvider, GradientClusterProvider,
-    GradientExtractor, REFERENCE_GRADIENT_PROMPT, CLUSTER_PROMPT, score_gradient_partition)
+    GradientExtractor, REFERENCE_GRADIENT_PROMPT, CLUSTER_PROMPT, normalize_gradient_partition)
 from ...search.population_memory import PopulationEditMemory, POLICY as MEMORY_POLICY, LIMITS as MEMORY_LIMITS
 from ...current_contract import GRADIENT_PARTITION_COMPLETION_VERSION
 
@@ -58,7 +58,7 @@ class ClusterTransportAdapter(GradientClusterProvider):
             raise generation_failure('PATTERN_GRADIENT_CLUSTER_INVALID') from exc
 
 
-def discover(context, provider):
+def discover(context, provider, *, clustering=True):
     evidence = []
     for row in context.rows:
         ident = row['stable_example_id']
@@ -74,19 +74,17 @@ def discover(context, provider):
     cluster = ClusterTransportAdapter(provider)
     gradients = extractor.extract(context.prompt, tuple(evidence)) if evidence else ()
     partition = dict(patterns=[], unassigned_ids=[])
-    if gradients:
+    if gradients and clustering:
         actionable = {g['example_id'] for g in gradients}
         partition = cluster.cluster(dict(gradients=list(gradients)),
             evidence_rows=tuple(e for e in evidence if e.example_id in actionable))
-    # Use the actual formal normalization/merging/partition validator. No invented
-    # team responsibility labels: its focus is deliberately not the study focus.
-    normalized = []
-    if gradients:
-        result = score_gradient_partition(partition,
-            tuple(e for e in evidence if e.example_id in actionable), gradients,
-            seed=context.seed, state_id=context.prompt.prompt_hash, ordinal=context.ordinal)
-        normalized = [dict(pattern_id=p['pattern_id'], generalized_gradient=p['generalized_gradient'],
-                           support_ids=list(p['support_ids'])) for p in result['patterns']]
+    # Normalization is authoritative and has no team ranking or fabricated labels.
+    normalized=[]
+    if gradients and clustering:
+        result=normalize_gradient_partition(partition,
+            tuple(e for e in evidence if e.example_id in actionable),gradients)
+        normalized=[dict(pattern_id=p['pattern_id'],generalized_gradient=p['generalized_gradient'],
+            support_ids=list(p['support_ids'])) for p in sorted(result['patterns'],key=lambda p:p['pattern_id'])]
     return dict(gradients=list(gradients), diagnostics=getattr(extractor, 'evidence_diagnostics', []),
         patterns=normalized, unassigned_ids=partition['unassigned_ids'],
         partition_audit=cluster.partition_audit,

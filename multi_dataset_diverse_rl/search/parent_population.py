@@ -82,7 +82,11 @@ class Parent:
 
 
 class ParentPopulation:
-    def __init__(self, *, scope, checkpoint: Path | None = None):
+    def __init__(self, *, scope, checkpoint: Path | None = None,sampling=None,retention=None,assembly=None):
+        from .population_policies import FitnessWeightedSampling,BestThreeRetention,PerMemberArgmaxAssembly
+        self.sampling=sampling or FitnessWeightedSampling()
+        self.retention=retention or BestThreeRetention()
+        self.assembly=assembly or PerMemberArgmaxAssembly()
         if (not isinstance(scope, dict) or not scope.get('method_identity')
                 or not isinstance(scope.get('support_sha256'),str)
                 or re.fullmatch('[a-f0-9]{64}',scope['support_sha256']) is None
@@ -119,9 +123,13 @@ class ParentPopulation:
         # Re-reading an individual score must not replace a measured Vote.
         if existing and existing.fitness.source == 'TEAM_VOTE' and fitness.source != 'TEAM_VOTE':
             parent = Parent(parent.prompt, existing.fitness, member_accuracy)
-        self.members[member][parent.identity] = parent
-        kept = self.ordered(member)[:POLICY['maximum_parents_per_member']]
-        evicted = sorted(set(self.members[member]) - {p.identity for p in kept})
+        staged={**self.members[member],parent.identity:parent}
+        ordered=tuple(sorted(staged.values(),key=lambda p:(-p.fitness.value,p.identity)))
+        kept=tuple(self.retention.keep(ordered))
+        if (not 1<=len(kept)<=3 or len({p.identity for p in kept})!=len(kept)
+                or any(p not in ordered for p in kept)):
+            raise SearchContractError('POPULATION_RETENTION_OUTPUT_INVALID')
+        evicted = sorted(set(staged) - {p.identity for p in kept})
         self.members[member] = {p.identity:p for p in kept}
         self.revision += 1
         return dict(retained=parent.identity in self.members[member], evicted=evicted,
@@ -131,10 +139,12 @@ class ParentPopulation:
         parents = self.ordered(member)
         if not parents:
             raise SearchContractError('POPULATION_NOT_BOOTSTRAPPED')
-        best = max(p.fitness.value for p in parents)
-        weights = [math.exp(POLICY['inverse_temperature'] * (p.fitness.value - best)) for p in parents]
-        total = math.fsum(weights); epsilon = POLICY['uniform_mixture']
-        return parents, tuple(epsilon / len(parents) + (1 - epsilon) * w / total for w in weights)
+        probabilities=tuple(self.sampling.probabilities(parents))
+        if (len(probabilities)!=len(parents) or any(type(q) not in (int,float)
+                or not math.isfinite(q) or not 0<q<=1 for q in probabilities)
+                or abs(math.fsum(probabilities)-1)>1e-12):
+            raise SearchContractError('POPULATION_SAMPLING_OUTPUT_INVALID')
+        return parents,probabilities
 
     def select_three(self, member, *, seed, opportunity_id):
         if type(seed) is not int or not opportunity_id:
@@ -143,15 +153,11 @@ class ParentPopulation:
         if key in self.plans:
             raise SearchContractError('POPULATION_OPPORTUNITY_ALREADY_SELECTED')
         parents, probabilities = self.probabilities(member)
-        rng = random.Random(int(digest([self.scope, seed, opportunity_id, member]), 16))
-        chosen = []
-        for _ in range(POLICY['offspring_slots']):
-            x = rng.random(); cumulative = 0.0; selected = parents[-1]
-            for parent, probability in zip(parents, probabilities, strict=True):
-                cumulative += probability
-                if x < cumulative:
-                    selected = parent; break
-            chosen.append(selected)
+        chosen=self.sampling.draw(parents,probabilities,scope=self.scope,seed=seed,
+            opportunity_id=opportunity_id,member=member)
+        chosen=tuple(chosen)
+        if len(chosen)!=3 or any(p not in parents for p in chosen):
+            raise SearchContractError('POPULATION_DRAW_OUTPUT_INVALID')
         plan = dict(member=member, seed=seed, opportunity_id=opportunity_id,
             population_revision=self.revision,
             distribution=[dict(prompt_sha256=p.identity, probability=q, fitness=asdict(p.fitness))
@@ -163,7 +169,10 @@ class ParentPopulation:
     def best_team(self):
         if any(not self.members[m] for m in range(5)):
             raise SearchContractError('POPULATION_NOT_BOOTSTRAPPED')
-        parents = tuple(self.ordered(m)[0] for m in range(5))
+        parents = self.assembly.select(tuple(self.ordered(m) for m in range(5)))
+        parents=tuple(parents)
+        if len(parents)!=5 or any(p not in self.ordered(m) for m,p in enumerate(parents)):
+            raise SearchContractError('POPULATION_ASSEMBLY_OUTPUT_INVALID')
         return tuple(p.prompt for p in parents), dict(population_revision=self.revision,
             selected=[dict(member=m, prompt_sha256=p.identity, fitness=asdict(p.fitness))
                 for m,p in enumerate(parents)], selection='PER_MEMBER_ARGMAX_BEFORE_JOINT_EVALUATION')
@@ -224,24 +233,23 @@ class ParentPopulation:
                 if any(f.count!=self.scope['support_count'] or f.membership_sha256!=self.scope['support_sha256']
                         or f.team_prompt_hashes[plan['member']]!=h for f,h in zip(fitness,ids,strict=True)):
                     raise SearchContractError('POPULATION_SELECTION_PLAN_INVALID')
-                best=max(f.value for f in fitness);weights=[math.exp(4*(f.value-best)) for f in fitness]
-                probs=[.1/len(dist)+.9*w/math.fsum(weights) for w in weights]
+                # Replay the same selected strategy, not a second hardcoded formula.
+                from types import SimpleNamespace
+                candidates=tuple(SimpleNamespace(fitness=f,identity=h) for f,h in zip(fitness,ids,strict=True))
+                probs=self.sampling.probabilities(candidates)
                 if any(not isinstance(r['probability'],(float,int)) or not math.isfinite(r['probability'])
                         or abs(r['probability']-p)>1e-15 for r,p in zip(dist,probs,strict=True)):
                     raise SearchContractError('POPULATION_SELECTION_PLAN_INVALID')
-                rng=random.Random(int(digest([self.scope,plan['seed'],plan['opportunity_id'],plan['member']]),16))
-                expected=[]
-                for _ in range(3):
-                    x=rng.random();total=0.;choice=ids[-1]
-                    for pid,q in zip(ids,probs,strict=True):
-                        total+=q
-                        if x<total:choice=pid;break
-                    expected.append(choice)
+                expected=[p.identity for p in self.sampling.draw(candidates,probs,scope=self.scope,
+                    seed=plan['seed'],opportunity_id=plan['opportunity_id'],member=plan['member'])]
                 if expected!=plan['selected_prompt_sha256']:raise SearchContractError('POPULATION_SELECTION_PLAN_INVALID')
         except (KeyError, TypeError, ValueError) as error:
             raise SearchContractError('POPULATION_CHECKPOINT_INVALID') from error
         # The live object changes only after the entire checkpoint validates.
         self.members = members; self.revision = body['revision']; self.plans = deepcopy(body['plans'])
+
+    def detached(self):
+        return ParentPopulation(scope=self.scope,sampling=self.sampling,retention=self.retention,assembly=self.assembly)
 
     def load(self):
         if self.checkpoint is None:

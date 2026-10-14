@@ -1,6 +1,10 @@
 # Current Implementation Specification
 
 The sole active research architecture is Unified Team Prompt Search.
+The [V2.12 modular mechanisms architecture](MODULAR_MECHANISMS_V212.md) separates
+strategy, evidence, generation, measurement and state authorities while preserving
+the default scientific method and optimizer wires. Alternate module combinations
+are synthetic-only until separately specified, frozen and authorized.
 The user-requested [single-Prompt module ablation framework](SINGLE_PROMPT_MODULE_ABLATIONS_V1.md)
 isolates an independent optimizer kernel and adapters to actual formal modules.
 Its seed42/five-repeat defaults are unapproved preparation settings, not team defaults

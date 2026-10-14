@@ -119,3 +119,9 @@ def candidate_failed_checks(prompt, *, parent_prompt, examples, max_chars=MAX_CH
         reasons.append('example_copying')
     reasons.extend(executability_checks(text))
     return tuple(dict.fromkeys(reasons))
+
+
+def replacement_budgets(prompt):
+    """Exact complete-block budgets for the unchanged three-block renderer."""
+    return {k:3000-4-sum(len(v) for b,v in prompt.to_dict().items() if b!=k)
+            for k in ('role','strategy','answer')}

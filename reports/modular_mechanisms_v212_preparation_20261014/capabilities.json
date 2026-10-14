@@ -1,0 +1,623 @@
+{
+  "architecture": "V212_MODULAR_MECHANISMS_ARCHITECTURE_V1",
+  "modules": {
+    "responsibility": {
+      "identity": "five_member_correctness_count_responsibility_v3",
+      "input_schema": "five_boolean_member_results",
+      "output_schema": "exclusive_error_labels",
+      "dependencies": [],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "stateless",
+      "authority": "classify_member_errors",
+      "disabled": false,
+      "disable_behavior": "explicit_control_required",
+      "single_prompt_adaptation": "team_context_adapter_required",
+      "implementation": "multi_dataset_diverse_rl.search.binary_responsibility.BinaryPluralityResponsibilityAnalyzer"
+    },
+    "who": {
+      "identity": "count_responsibility_failure_discount_v4",
+      "input_schema": "member_responsibility_and_failure_history",
+      "output_schema": "selected_member",
+      "dependencies": [
+        "responsibility"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "stateless",
+      "authority": "select_member",
+      "disabled": false,
+      "disable_behavior": "explicit_control_required",
+      "single_prompt_adaptation": "team_context_adapter_required",
+      "implementation": "multi_dataset_diverse_rl.search.policies.TargetPolicyV1"
+    },
+    "gradient": {
+      "identity": "GradientExtractor",
+      "input_schema": "root_member_error_response_and_reference",
+      "output_schema": "validated_repair_hypotheses",
+      "dependencies": [
+        "who"
+      ],
+      "model_roles": [
+        "pattern_gradient"
+      ],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "per_opportunity_diagnostics",
+      "authority": "diagnose_only",
+      "disabled": false,
+      "disable_behavior": "explicit_control_required",
+      "single_prompt_adaptation": "compatible_context_required",
+      "implementation": "multi_dataset_diverse_rl.search.textual_gradients.GradientExtractor"
+    },
+    "pattern_scoring": {
+      "identity": "pattern_correctness_count_support_sum_v4",
+      "input_schema": "validated_partition_and_responsibility_labels",
+      "output_schema": "support_weight_sums",
+      "dependencies": [
+        "gradient",
+        "responsibility"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "stateless",
+      "authority": "score_only",
+      "disabled": false,
+      "disable_behavior": "explicit_control_required",
+      "single_prompt_adaptation": "team_context_adapter_required",
+      "implementation": "multi_dataset_diverse_rl.search.pattern_selection.WeightedSupportScorer"
+    },
+    "pattern_selection": {
+      "identity": "count_responsibility_sum_4D_2N_C_R3_halfR4_v3",
+      "input_schema": "scored_partition",
+      "output_schema": "chosen_pattern",
+      "dependencies": [
+        "pattern_scoring"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "stateless",
+      "authority": "select_repair_direction",
+      "disabled": false,
+      "disable_behavior": "explicit_control_required",
+      "single_prompt_adaptation": "team_context_adapter_required",
+      "implementation": "multi_dataset_diverse_rl.search.pattern_selection.WeightedResponsibilitySelector"
+    },
+    "support_sampling": {
+      "identity": "SHARED_PATTERN_REPRESENTATIVE_SUPPORT_V3",
+      "input_schema": "chosen_pattern_wrong_supports",
+      "output_schema": "representative_supports",
+      "dependencies": [
+        "pattern_selection"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "stateless",
+      "authority": "select_supports",
+      "disabled": false,
+      "disable_behavior": "explicit_control_required",
+      "single_prompt_adaptation": "team_context_adapter_required",
+      "implementation": "multi_dataset_diverse_rl.search.population_evidence.PatternSupportEvidence"
+    },
+    "parent_selection": {
+      "identity": "OPPORTUNITY_START_THREE_FROZEN_PARENTS_V1",
+      "input_schema": "population_and_opportunity_identity",
+      "output_schema": "three_frozen_parents",
+      "dependencies": [
+        "population_sampling"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "persisted_selection_plan",
+      "authority": "select_parents_only",
+      "disabled": false,
+      "disable_behavior": "explicit_control_required",
+      "single_prompt_adaptation": "team_context_adapter_required",
+      "implementation": "multi_dataset_diverse_rl.search.reflection_steps.FrozenParentSelection"
+    },
+    "group_channel": {
+      "identity": "ROOT_TEAM_GROUP_CHANNEL_V1",
+      "input_schema": "verified_root_team_supports",
+      "output_schema": "auxiliary_experience",
+      "dependencies": [
+        "support_sampling"
+      ],
+      "model_roles": [
+        "group_diagnosis"
+      ],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "private_canonical_draw_audit",
+      "authority": "diagnose_only",
+      "disabled": false,
+      "disable_behavior": "explicit_control_required",
+      "single_prompt_adaptation": "team_context_adapter_required",
+      "implementation": "multi_dataset_diverse_rl.search.reflection_steps.TeamGroupChannel"
+    },
+    "reflection_evidence": {
+      "identity": "READABLE_SINGLE_STEP_EVIDENCE_COMPOSITION_V1",
+      "input_schema": "root_and_actual_parent_observations",
+      "output_schema": "readable_reflection_view",
+      "dependencies": [
+        "support_sampling",
+        "parent_selection",
+        "memory_delivery",
+        "group_channel"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "canonical_private_audit",
+      "authority": "compose_only",
+      "disabled": false,
+      "disable_behavior": "explicit_control_required",
+      "single_prompt_adaptation": "compatible_context_required",
+      "implementation": "multi_dataset_diverse_rl.search.reflection_steps.ReflectionEvidenceComposition"
+    },
+    "reflection_generation": {
+      "identity": "BOUNDED_SINGLE_STEP_REFLECTION_V1",
+      "input_schema": "one_parent_readable_view",
+      "output_schema": "legal_single_block_candidate",
+      "dependencies": [
+        "reflection_evidence"
+      ],
+      "model_roles": [
+        "reflection"
+      ],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "bounded_slot_audit",
+      "authority": "propose_edit_only",
+      "disabled": false,
+      "disable_behavior": "explicit_control_required",
+      "single_prompt_adaptation": "compatible_context_required",
+      "implementation": "multi_dataset_diverse_rl.search.reflection_steps.SingleStepReflection"
+    },
+    "population_sampling": {
+      "identity": "EPSILON_SOFTMAX_FITNESS_SAMPLING_V1",
+      "input_schema": "measured_parent_fitness",
+      "output_schema": "positive_probabilities_and_draws",
+      "dependencies": [
+        "fitness"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "seeded_stateless",
+      "authority": "sample_only",
+      "disabled": false,
+      "disable_behavior": "explicit_control_required",
+      "single_prompt_adaptation": "team_context_adapter_required",
+      "implementation": "multi_dataset_diverse_rl.search.population_policies.FitnessWeightedSampling"
+    },
+    "population_retention": {
+      "identity": "TOP_THREE_FITNESS_HASH_RETENTION_V1",
+      "input_schema": "measured_parents",
+      "output_schema": "at_most_three_parents",
+      "dependencies": [
+        "fitness"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "population_checkpoint",
+      "authority": "retain_search_state_only",
+      "disabled": false,
+      "disable_behavior": "explicit_control_required",
+      "single_prompt_adaptation": "team_context_adapter_required",
+      "implementation": "multi_dataset_diverse_rl.search.population_policies.BestThreeRetention"
+    },
+    "final_selection": {
+      "identity": "PER_MEMBER_ARGMAX_ASSEMBLY_SELECTION_V1",
+      "input_schema": "five_populations",
+      "output_schema": "one_argmax_prompt_per_member",
+      "dependencies": [
+        "population_retention"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "frozen_final_selection",
+      "authority": "propose_final_team_only",
+      "disabled": false,
+      "disable_behavior": "explicit_control_required",
+      "single_prompt_adaptation": "team_context_adapter_required",
+      "implementation": "multi_dataset_diverse_rl.search.population_policies.PerMemberArgmaxAssembly"
+    },
+    "memory_recording": {
+      "identity": "SINGLE_STEP_COMPLETE_MEASUREMENT_RECORDER_V1",
+      "input_schema": "actual_complete_edit_measurements_and_admission",
+      "output_schema": "scoped_experience_records",
+      "dependencies": [
+        "fitness",
+        "team_admission"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "transaction_delta",
+      "authority": "record_observations_only",
+      "disabled": false,
+      "disable_behavior": "explicit_control_required",
+      "single_prompt_adaptation": "team_context_adapter_required",
+      "implementation": "multi_dataset_diverse_rl.search.memory_components.MeasuredEditExperienceRecorder"
+    },
+    "memory_retrieval": {
+      "identity": "EXACT_PARENT_THEN_LATEST_MEMORY_RETRIEVAL_V1",
+      "input_schema": "stored_experiences_and_parent_hash",
+      "output_schema": "ranked_experiences",
+      "dependencies": [
+        "memory_recording"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "stateless",
+      "authority": "rank_only",
+      "disabled": false,
+      "disable_behavior": "explicit_control_required",
+      "single_prompt_adaptation": "compatible_context_required",
+      "implementation": "multi_dataset_diverse_rl.search.memory_components.ParentScopedMemoryRetrieval"
+    },
+    "memory_delivery": {
+      "identity": "WHOLE_MEASURED_CARDS_BUDGET_DELIVERY_V1",
+      "input_schema": "ranked_measured_cards_and_budget",
+      "output_schema": "optimizer_only_context",
+      "dependencies": [
+        "memory_retrieval"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "delivery_counter",
+      "authority": "deliver_only",
+      "disabled": false,
+      "disable_behavior": "explicit_control_required",
+      "single_prompt_adaptation": "compatible_context_required",
+      "implementation": "multi_dataset_diverse_rl.search.memory_components.WholeMeasuredCardDelivery"
+    },
+    "fitness": {
+      "identity": "COMPLETE_OPTIMIZE_MEASURED_FITNESS_V1",
+      "input_schema": "complete_optimize_member_and_team_scores",
+      "output_schema": "provenance_bearing_fitness",
+      "dependencies": [],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "measured_profile_cache",
+      "authority": "assign_measured_score_only",
+      "disabled": false,
+      "disable_behavior": "explicit_control_required",
+      "single_prompt_adaptation": "team_context_adapter_required",
+      "implementation": "multi_dataset_diverse_rl.search.measurement_policies.CompleteOptimizeFitness"
+    },
+    "pool_update": {
+      "identity": "MEASURED_CHILD_POOL_UPSERT_V1",
+      "input_schema": "measured_child_fitness",
+      "output_schema": "population_upsert",
+      "dependencies": [
+        "fitness",
+        "population_retention"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "population_checkpoint",
+      "authority": "retain_search_state_only",
+      "disabled": false,
+      "disable_behavior": "explicit_control_required",
+      "single_prompt_adaptation": "team_context_adapter_required",
+      "implementation": "multi_dataset_diverse_rl.search.measurement_policies.MeasuredPoolUpdate"
+    },
+    "team_admission": {
+      "identity": "initial_competence_target_or_team_progress_v3",
+      "input_schema": "complete_optimize_candidate_scores_and_initial_floor",
+      "output_schema": "deployment_proposal",
+      "dependencies": [
+        "fitness"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "initial_competence_binding",
+      "authority": "select_safe_proposal_no_commit",
+      "disabled": false,
+      "disable_behavior": "explicit_control_required",
+      "single_prompt_adaptation": "team_context_adapter_required",
+      "implementation": "multi_dataset_diverse_rl.search.target_or_team_transition.InitialCompetenceTargetOrTeamProgressV3"
+    },
+    "final_admission": {
+      "identity": "JOINT_INITIAL_FLOOR_VOTE_NONREGRESSION_V1",
+      "input_schema": "joint_final_scores_and_initial_floor",
+      "output_schema": "joint_full_pass",
+      "dependencies": [
+        "final_selection",
+        "fitness"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "stateless",
+      "authority": "admit_full_before_private_shadow",
+      "disabled": false,
+      "disable_behavior": "explicit_control_required",
+      "single_prompt_adaptation": "team_context_adapter_required",
+      "implementation": "multi_dataset_diverse_rl.search.measurement_policies.JointFinalAdmission"
+    }
+  },
+  "boundary_capabilities": {
+    "gradient_provider": {
+      "implementation": "multi_dataset_diverse_rl.search.textual_gradients.PerExampleGradientProvider",
+      "input_schema": "root_wrong_evidence",
+      "output_schema": "validated_diagnostic_draws",
+      "dependencies": [
+        "who"
+      ],
+      "model_roles": [
+        "pattern_gradient"
+      ],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "private_draw_audit",
+      "port": "provider_port",
+      "single_prompt_adaptation": "direct_adapter",
+      "disable_behavior": "requires_explicit_legal_control_and_new_frozen_protocol"
+    },
+    "pattern_clustering": {
+      "implementation": "multi_dataset_diverse_rl.search.textual_gradients.GradientClusterProvider",
+      "input_schema": "validated_gradients",
+      "output_schema": "semantic_partition",
+      "dependencies": [
+        "gradient"
+      ],
+      "model_roles": [
+        "pattern_cluster"
+      ],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "private_draw_audit",
+      "port": "provider_port",
+      "single_prompt_adaptation": "direct_adapter",
+      "disable_behavior": "requires_explicit_legal_control_and_new_frozen_protocol"
+    },
+    "partition_validation": {
+      "implementation": "multi_dataset_diverse_rl.search.textual_gradients.normalize_gradient_partition",
+      "input_schema": "partition_and_known_wrong_support",
+      "output_schema": "validated_partition",
+      "dependencies": [
+        "pattern_clustering"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "stateless",
+      "port": "shared_guard",
+      "single_prompt_adaptation": "direct_adapter",
+      "disable_behavior": "requires_explicit_legal_control_and_new_frozen_protocol"
+    },
+    "root_team_evidence": {
+      "implementation": "multi_dataset_diverse_rl.search.group_diagnosis.RootTeamEvidence",
+      "input_schema": "verified_root_snapshot_and_support",
+      "output_schema": "canonical_root_team",
+      "dependencies": [
+        "support_sampling"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "private_snapshot",
+      "port": "evidence_source_port",
+      "single_prompt_adaptation": "team_only",
+      "disable_behavior": "requires_explicit_legal_control_and_new_frozen_protocol"
+    },
+    "group_generation": {
+      "implementation": "multi_dataset_diverse_rl.search.group_diagnosis.GroupDiagnoser",
+      "input_schema": "canonical_root_team",
+      "output_schema": "validated_auxiliary_experience",
+      "dependencies": [
+        "root_team_evidence"
+      ],
+      "model_roles": [
+        "group_diagnosis"
+      ],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "private_draw_audit",
+      "port": "group_channel_generate_port",
+      "single_prompt_adaptation": "team_only",
+      "disable_behavior": "requires_explicit_legal_control_and_new_frozen_protocol"
+    },
+    "group_validation": {
+      "implementation": "multi_dataset_diverse_rl.search.group_diagnosis.validate_experience",
+      "input_schema": "raw_diagnosis_and_canonical_sources",
+      "output_schema": "source_checked_experience",
+      "dependencies": [
+        "root_team_evidence"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "stateless",
+      "port": "shared_guard",
+      "single_prompt_adaptation": "team_only",
+      "disable_behavior": "requires_explicit_legal_control_and_new_frozen_protocol"
+    },
+    "reflection_projection": {
+      "implementation": "multi_dataset_diverse_rl.search.reflector_view.project_reflector",
+      "input_schema": "canonical_packet",
+      "output_schema": "lossless_readable_view",
+      "dependencies": [
+        "reflection_evidence"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "canonical_evidence_retained",
+      "port": "evidence_composition_port",
+      "single_prompt_adaptation": "context_adapter_required",
+      "disable_behavior": "requires_explicit_legal_control_and_new_frozen_protocol"
+    },
+    "prompt_edit_guard": {
+      "implementation": "multi_dataset_diverse_rl.search.system_prompt.candidate_failed_checks",
+      "input_schema": "parent_child_and_support",
+      "output_schema": "legality_findings",
+      "dependencies": [],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "stateless",
+      "port": "shared_guard",
+      "single_prompt_adaptation": "direct_adapter",
+      "disable_behavior": "requires_explicit_legal_control_and_new_frozen_protocol"
+    },
+    "solver_measurement": {
+      "implementation": "multi_dataset_diverse_rl.search.population_evaluation.PopulationEvaluationProvider",
+      "input_schema": "prompt_and_fixed_peers",
+      "output_schema": "complete_actual_profiles",
+      "dependencies": [],
+      "model_roles": [
+        "solver"
+      ],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "identity_bound_profile_cache",
+      "port": "evaluation_provider_port",
+      "single_prompt_adaptation": "member_measurement_adapter_required",
+      "disable_behavior": "requires_explicit_legal_control_and_new_frozen_protocol"
+    },
+    "private_shadow": {
+      "implementation": "multi_dataset_diverse_rl.search.private_gate.private_binary_gate",
+      "input_schema": "full_admitted_proposal",
+      "output_schema": "private_pass_or_reject",
+      "dependencies": [
+        "team_admission"
+      ],
+      "model_roles": [
+        "solver"
+      ],
+      "data_scopes": [
+        "adaptive_gate"
+      ],
+      "state_contract": "private_gate_profiles",
+      "port": "gate_port",
+      "single_prompt_adaptation": "team_only",
+      "disable_behavior": "requires_explicit_legal_control_and_new_frozen_protocol"
+    },
+    "team_commit": {
+      "implementation": "multi_dataset_diverse_rl.search.transition.TeamStateCommitter",
+      "input_schema": "admitted_proposal_and_gate_receipt",
+      "output_schema": "deployed_team",
+      "dependencies": [
+        "private_shadow"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize_plus_gate_receipt"
+      ],
+      "state_contract": "team_state",
+      "port": "committer_port",
+      "single_prompt_adaptation": "team_only",
+      "disable_behavior": "requires_explicit_legal_control_and_new_frozen_protocol"
+    },
+    "scientific_stop": {
+      "implementation": "multi_dataset_diverse_rl.search.policies.GlobalStopPolicy",
+      "input_schema": "opportunity_commit_outcomes",
+      "output_schema": "stop_or_continue",
+      "dependencies": [
+        "team_commit"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "boundary_checkpoint",
+      "port": "stop_port",
+      "single_prompt_adaptation": "team_only",
+      "disable_behavior": "requires_explicit_legal_control_and_new_frozen_protocol"
+    },
+    "population_storage": {
+      "implementation": "multi_dataset_diverse_rl.search.parent_population.ParentPopulation",
+      "input_schema": "measured_parents_and_plans",
+      "output_schema": "identity_bound_pool",
+      "dependencies": [
+        "pool_update"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "private_population_checkpoint",
+      "port": "storage_authority",
+      "single_prompt_adaptation": "team_only",
+      "disable_behavior": "requires_explicit_legal_control_and_new_frozen_protocol"
+    },
+    "memory_storage": {
+      "implementation": "multi_dataset_diverse_rl.search.population_memory.PopulationEditMemory",
+      "input_schema": "actual_edit_records",
+      "output_schema": "scoped_store",
+      "dependencies": [
+        "memory_recording"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "private_memory_transaction",
+      "port": "storage_authority",
+      "single_prompt_adaptation": "measurement_adapter_unresolved",
+      "disable_behavior": "requires_explicit_legal_control_and_new_frozen_protocol"
+    },
+    "boundary_recovery": {
+      "implementation": "multi_dataset_diverse_rl.search.population_checkpoint.PopulationCheckpoint",
+      "input_schema": "complete_identity_bound_boundary",
+      "output_schema": "verified_atomic_restore",
+      "dependencies": [
+        "population_storage",
+        "memory_storage"
+      ],
+      "model_roles": [],
+      "data_scopes": [
+        "optimize"
+      ],
+      "state_contract": "private_boundary_checkpoint",
+      "port": "recovery_authority",
+      "single_prompt_adaptation": "separate_framework_checkpoint",
+      "disable_behavior": "requires_explicit_legal_control_and_new_frozen_protocol"
+    }
+  }
+}

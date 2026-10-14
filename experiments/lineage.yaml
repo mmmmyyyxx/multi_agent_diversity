@@ -1139,6 +1139,9 @@ nodes:
 - experiment_id: count_responsibility_v212_preparation_v1
   kind: ARCHITECTURE_REFACTOR
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: modular_mechanisms_v212_preparation_v1
+  kind: ARCHITECTURE_REFACTOR
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2613,4 +2616,10 @@ edges:
   relation: derived_from
   evidence: docs/design/COUNT_RESPONSIBILITY_V212.md
   scope: Count-only exhaustive responsibility; no historical outcomes changed.
+- from: count_responsibility_v212_preparation_v1
+  to: modular_mechanisms_v212_preparation_v1
+  relation: derived_from
+  evidence: docs/design/MODULAR_MECHANISMS_V212.md
+  scope: Behavior-preserving default composition refactor; synthetic-only module interfaces,
+    immutable historical evidence.
 current_frontier: experiments/current_frontier.yaml

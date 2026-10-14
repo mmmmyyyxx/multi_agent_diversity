@@ -1,0 +1,98 @@
+{
+  "schema": "modular_mechanisms_offline_verification_v1",
+  "status": "PASS",
+  "full_current_suite": {
+    "selected": 925,
+    "passed": 923,
+    "failed": 0,
+    "skipped": 2
+  },
+  "full_suite_scope": "explicit_tests_root_classified_current_under_credential_free_network_guard",
+  "full_suite_evidence_sha256": "4a2cd1856b9ca1385afa1886c36ce2e9706f09559cba16692905dc96da4df6e1",
+  "targeted_final": {
+    "selected": 24,
+    "passed": 24,
+    "failed": 0,
+    "skipped": 0
+  },
+  "targeted_evidence_sha256": "7d7407fddd26ab3a291bf1e531e37fa8a1659c6076b096784defadd791a25446",
+  "omitted_historical_private_modules": 224,
+  "retired_git_only_cases": 5,
+  "compileall": "PASS",
+  "skipped_cases": [
+    {
+      "case": "test_frozen_real_data_identity[hover]",
+      "reason": "USER_DEFERRED_DOWNLOAD_NO_FROZEN_MANIFEST"
+    },
+    {
+      "case": "test_frozen_real_data_identity[pupa]",
+      "reason": "USER_DEFERRED_DOWNLOAD_NO_FROZEN_MANIFEST"
+    }
+  ],
+  "governance": "PASS_CURRENT_REGISTRY_LINEAGE_MANIFEST_SOURCE_AND_GENERATED_VIEWS",
+  "draft_manifest": "PASS",
+  "paid_preflight_blockers": [
+    "PREEXECUTION_NOT_FROZEN",
+    "EXECUTION_BINDING_NOT_FROZEN"
+  ],
+  "current_dependency_closure": {
+    "module_count": 166,
+    "legacy_namespace_dependencies": [],
+    "legacy_class_definitions": []
+  },
+  "unchanged_authorities": [
+    "multi_dataset_diverse_rl/current_contract.py",
+    "multi_dataset_diverse_rl/versions.py",
+    "multi_dataset_diverse_rl/search/current_policy.py",
+    "multi_dataset_diverse_rl/search/policies.py",
+    "multi_dataset_diverse_rl/search/weighted_responsibility.py",
+    "multi_dataset_diverse_rl/search/binary_responsibility.py",
+    "multi_dataset_diverse_rl/search/population_evidence.py",
+    "multi_dataset_diverse_rl/search/group_diagnosis.py",
+    "multi_dataset_diverse_rl/search/reflector_view.py",
+    "multi_dataset_diverse_rl/search/provider_runtime.py",
+    "multi_dataset_diverse_rl/search/private_gate.py",
+    "multi_dataset_diverse_rl/search/target_or_team_transition.py",
+    "multi_dataset_diverse_rl/search/scientific_aggregation.py",
+    "docs/design/COUNT_RESPONSIBILITY_V212.md",
+    "docs/design/GROUP_DIAGNOSED_REFLECTION_V211.md",
+    "docs/design/VOTE_GUIDED_PARENT_POPULATION_V29.md",
+    "experiments/manifests/count_responsibility_v212_preparation_v1.yaml"
+  ],
+  "scientific_source_hash": "700daa7aed02ee2457b67997a46c8082e672fbde73c514d4716299db4df00a64",
+  "architecture_identity": "V212_MODULAR_MECHANISMS_ARCHITECTURE_V1",
+  "method_identity": "unified_team_prompt_search_v2_12_count_responsibility_v1",
+  "baseline_source": "c93838ea922353a5772ca146333a025ea0088681",
+  "default_replay": {
+    "cases": 6,
+    "differences": 0,
+    "scope": "complete_canonical_mock_trace"
+  },
+  "interventions_tested": [
+    "WHO replacement",
+    "sampling replacement and restore",
+    "Group disabled",
+    "Reflection disabled",
+    "Memory delivery disabled and restore",
+    "invalid interfaces",
+    "invalid strategy outputs",
+    "unsafe candidate rejection",
+    "single_prompt_actual_gradient_no_cluster"
+  ],
+  "network_attempts": 0,
+  "real_api_calls": 0,
+  "validation_raw_reads": 0,
+  "test_raw_reads": 0,
+  "failures_during_development": [
+    {
+      "category": "TEST_FIXTURE_INCOMPLETE_FIVE_MEMBER_POOL",
+      "resolved": true
+    }
+  ],
+  "historical_evidence": "UNCHANGED",
+  "real_ablation": "NOT_EXECUTED",
+  "team_vote_effect": "UNKNOWN",
+  "token_efficiency": "UNKNOWN",
+  "generalization": "UNKNOWN",
+  "verification_reuse": "Current checks are not rerun for commit; previous focused 44/69/34 test runs are supporting stages, not additive unique suite counts."
+}

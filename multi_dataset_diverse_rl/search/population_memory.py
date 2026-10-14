@@ -13,7 +13,11 @@ POLICY=dict(identity=CURRENT_EDIT_MEMORY_VERSION,retrieval='exact_parent_then_la
 
 class PopulationEditMemory:
     identity=CURRENT_EDIT_MEMORY_VERSION
-    def __init__(self):
+    def __init__(self,*,recorder=None,retrieval=None,delivery=None):
+        from .memory_components import MeasuredEditExperienceRecorder,ParentScopedMemoryRetrieval,WholeMeasuredCardDelivery
+        self.recorder=recorder or MeasuredEditExperienceRecorder()
+        self.retrieval=retrieval or ParentScopedMemoryRetrieval()
+        self.delivery=delivery or WholeMeasuredCardDelivery()
         self.limits=deepcopy(LIMITS);self.competence={};self.entries={m:[] for m in range(5)}
         self.revision=0;self.delivered=0
     def bootstrap(self,store):
@@ -22,49 +26,14 @@ class PopulationEditMemory:
             initial_member_scores=list(store.initial_member_scores),
             support_sha256=state.diagnostics['evaluation_support_identity'])
     def read_for_member(self, member, parent_hash):
-        rows=sorted(self.entries[member],key=lambda r:(r['edit_parent_sha256']!=parent_hash,-r['sequence']))
-        cards=[]
-        for row in rows:
-            card={k:row.get(k) for k in ('edited_block','edit_instruction','instruction_omitted',
-                'intended_change','repair_hypothesis','actual_edit_parent_effect','full_vote','member_accuracy',
-                'scope','count','scoring_team_state','full_vote_delta_to_deployed_baseline','admission','committed','shadow_passed')}
-            card.update(source_experience_id=digest(row),selected_parent_matches_edit_parent=row['edit_parent_sha256']==parent_hash)
-            if len(json.dumps([card],ensure_ascii=True,separators=(',',':')))>self.limits['max_context_chars']:
-                card['repair_hypothesis']=None;card['hypothesis_omitted']=True
-            if len(json.dumps([card],ensure_ascii=True,separators=(',',':')))>self.limits['max_context_chars']:
-                card['edit_instruction']=None;card['instruction_omitted']=True
-            if len(json.dumps(cards+[card],ensure_ascii=True,separators=(',',':')))>self.limits['max_context_chars']:continue
-            cards.append(card)
-            if len(cards)==self.limits['delivered_entries']:break
-        self.delivered+=len(cards)
-        return dict(identity=self.identity,entries=deepcopy(cards),interpretation=POLICY['interpretation'])
+        ranked=self.retrieval.rank(self.entries[member],parent_hash)
+        view=self.delivery.deliver(ranked,parent_hash,self.limits,self.identity)
+        self.delivered+=len(view['entries'])
+        return view
     def read_for_opportunity(self,opportunity):
         return dict(identity=self.identity,delivery='selected_parent_at_single_step')
     def prepare_outcome(self,outcome):
-        records=[]
-        for row in outcome.evaluated:
-            if row.full is None:continue
-            d=row.candidate.backend_details; parent=d['selected_parent'];child=row.candidate.prompt.to_dict()
-            changed=[k for k in child if child[k]!=parent[k]]
-            if len(changed)!=1:raise SearchContractError('MEMORY_SINGLE_STEP_EDIT_REQUIRED')
-            k=changed[0]; content=child[k]
-            # Do not truncate an instruction into a misleading partial rule.
-            # Long edits retain an explicit omission plus intent/source hashes.
-            records.append(dict(sequence=self.revision+1+len(records),member=outcome.opportunity.target_member,
-                edit_parent_sha256=d['selected_parent_sha256'],child_sha256=row.candidate.prompt.prompt_hash,
-                edited_block=k,edit_instruction=content if len(content)<=600 else None,
-                instruction_omitted=len(content)>600,intended_change=d['intended_change'],
-                full_vote=row.full.aggregate_score,member_accuracy=row.full.member_scores[outcome.opportunity.target_member],
-                actual_edit_parent_effect=d.get('selected_parent_member_effect'),
-                repair_hypothesis=d.get('repair_hypothesis'),
-                scope='complete_optimize',count=row.full.aggregation_diagnostics['evaluation_count'],
-                scoring_team_state=row.full.aggregation_diagnostics['fitness_provenance']['actual_vote']['team_state_id'],
-                deployment_baseline_state=outcome.opportunity.parent_state_id,
-                full_vote_delta_to_deployed_baseline=row.full.aggregation_diagnostics['team_score_delta'],
-                admission=row.diagnostics.get('promotion_reason','FULL_MEASURED'),
-                selected=row.candidate.candidate_id==outcome.selected_candidate_id,
-                committed=outcome.committed and row.candidate.candidate_id==outcome.selected_candidate_id,
-                shadow_passed=outcome.gate_passed if row.candidate.candidate_id==outcome.selected_candidate_id else None))
+        records=self.recorder.records(outcome,self.revision)
         return dict(revision=self.revision,member=outcome.opportunity.target_member,records=records)
     def validate_delta(self,delta):
         if delta['revision']!=self.revision or delta['member'] not in range(5):
@@ -79,6 +48,8 @@ class PopulationEditMemory:
         payload=dict(identity=self.identity,revision=self.revision,competence=self.competence,
             entries={str(k):v for k,v in self.entries.items()},delivered=self.delivered)
         return {**deepcopy(payload),'integrity_sha256':digest(payload)}
+    def detached(self):
+        return PopulationEditMemory(recorder=self.recorder,retrieval=self.retrieval,delivery=self.delivery)
     def restore(self,value):
         body={k:v for k,v in value.items() if k!='integrity_sha256'}
         if value.get('integrity_sha256')!=digest(body) or body.get('identity')!=self.identity:

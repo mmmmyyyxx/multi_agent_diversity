@@ -1,7 +1,7 @@
 """Production discovery with the previously approved independent largest focus."""
 from copy import deepcopy
 from pathlib import Path
-import random
+from ...search.pattern_selection import LargestUniqueSupportSelector
 
 from ...benchmarks.data_freeze import digest, file_hash
 from ...search.schemas import SearchContractError
@@ -35,9 +35,9 @@ def project(feedback, seed, ordinal):
         return dict(errors=errors, structured_feedback=None), audit
     maximum = max(map(len, supports.values()))
     ties = sorted(p for p, support in supports.items() if len(support) == maximum)
-    chosen = random.Random(int(digest([seed, ordinal, 'largest_pattern_tie_v1']), 16)).choice(ties)
+    selected,ties=LargestUniqueSupportSelector().select(patterns,seed=seed,ordinal=ordinal)
+    chosen=selected['pattern_id']
     support = supports[chosen]
-    selected = next(p for p in patterns if p['pattern_id'] == chosen)
     audit.update(selected_pattern_id=chosen, selected_support_ids=sorted(support), tie_ids=ties)
     complete = (len(patterns) == 1 and support == batch == grad_ids
         and not sf['unassigned_ids'] and not sf['cluster_structural_errors']
@@ -52,7 +52,7 @@ def project(feedback, seed, ordinal):
 class LargestPatternModule:
     def binding(self):
         root = Path(__file__).resolve().parents[2]
-        files = ['search/textual_gradients.py', 'search/pattern_primitives.py',
+        files = ['search/textual_gradients.py', 'search/pattern_primitives.py', 'search/pattern_selection.py',
                  'search/optimizer_output_contract.py', 'search/generation_failures.py',
                  'search/weighted_responsibility.py', 'search/optimization_evidence.py',
                  'search/readable_evidence.py', 'search/partition_completion.py',
@@ -63,7 +63,7 @@ class LargestPatternModule:
             production_implementations=['search.textual_gradients.GradientExtractor',
                 'search.textual_gradients.PerExampleGradientProvider',
                 'search.textual_gradients.GradientClusterProvider',
-                'search.textual_gradients.score_gradient_partition'],
+                'search.textual_gradients.normalize_gradient_partition'],
             production_source_hashes={p: file_hash(root / p) for p in files},
             gradient_policy=deepcopy(GRADIENT_POLICY), output_recovery=deepcopy(OUTPUT_RECOVERY),
             partition_completion_policy=GRADIENT_PARTITION_COMPLETION_VERSION,
@@ -83,3 +83,18 @@ class LargestPatternModule:
 
     def observe(self, outcome, state):
         return state
+
+
+class GradientOnlyModule(LargestPatternModule):
+    """Actual formal diagnostics; clustering is explicitly omitted, not failed."""
+    def binding(self):
+        value=super().binding()
+        value.update(identity='ABLATION_FORMAL_GRADIENT_ONLY_V1',
+            implementation='ablations.pattern.GradientOnlyModule',semantic_calls_per_opportunity=9,
+            focus='all_actionable_gradients_no_cluster',pattern_status='MODULE_DISABLED')
+        return value
+
+    def prepare(self,context,state,provider):
+        structured=discover(context,provider,clustering=False)
+        return PreparedFeedback([raw_error(r,context.observations[r['stable_example_id']])
+            for r in context.rows],structured,None,dict(pattern_status='MODULE_DISABLED'),None)
