@@ -1,0 +1,32 @@
+{
+  "experiment_id": "single_prompt_largest_pattern_v1",
+  "method_amendment": {
+    "additional_test_semantic_ceiling": 2400,
+    "additional_train_semantic_ceiling": 42640,
+    "auxiliary_audits": "retain_only_when_entire_batch_is_selected_else_strip_from_optimizer",
+    "continuation": "only_contiguous_byte_identical_projected_feedback_prefix",
+    "controls": "reference_all_A_B_results_no_new_control_calls",
+    "cumulative_token_ceiling": null,
+    "evidence": "selected_support_errors_gradients_diagnostics_only",
+    "focus": "one_pattern_max_unique_support_count",
+    "identity": "GATED_LARGEST_SUPPORT_PATTERN_FOCUS_V1",
+    "network": "unchanged_unbounded_accounted_typed_recovery",
+    "no_pattern": "raw_original_batch_structured_feedback_none_exact_B",
+    "optimizer_wire_template": "unchanged_gated_generator",
+    "parent_source_sha": "fd27547f3044903a496d28289aefd25f165a7b5c",
+    "response_cache": "exact_request_seed_round_role_stage_parent_C_then_B_then_A",
+    "rounds": 20,
+    "seeds": [
+      88,
+      89
+    ],
+    "solver_cache": "exact_frozen_request_identity_and_membership_only",
+    "test_cache": "separate_final_phase_only_exact_parent_test_request_identity",
+    "tie": "sorted_pattern_ids_seed_round_sha256_random_choice",
+    "tie_namespace": "largest_pattern_tie_v1"
+  },
+  "parent_manifest": "experiments/manifests/single_prompt_gated_two_seed32_v1.json",
+  "protocol_path": "docs/design/SINGLE_PROMPT_LARGEST_PATTERN_V1.md",
+  "real_api_authorized": false,
+  "schema_version": "single_prompt_largest_pattern_manifest_v1"
+}

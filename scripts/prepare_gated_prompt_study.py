@@ -9,4 +9,5 @@ if __name__=='__main__':
     parser.add_argument('--continuation-root',type=Path)
     parser.add_argument('--parent-inventory-pin',type=Path)
     parser.add_argument('--two-seed32',action='store_true')
-    args=parser.parse_args();print(json.dumps(prepare(ROOT,args.destination,continuation_root=args.continuation_root,parent_inventory_pin=args.parent_inventory_pin,amended=args.two_seed32),indent=2))
+    parser.add_argument('--largest-pattern',action='store_true')
+    args=parser.parse_args();print(json.dumps(prepare(ROOT,args.destination,continuation_root=args.continuation_root,parent_inventory_pin=args.parent_inventory_pin,amended=args.two_seed32,largest_pattern=args.largest_pattern),indent=2))

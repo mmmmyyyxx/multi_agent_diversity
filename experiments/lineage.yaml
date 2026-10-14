@@ -1130,6 +1130,9 @@ nodes:
 - experiment_id: single_prompt_gated_two_seed32_v1
   kind: FORMAL_EXPERIMENT
   era: BENCHMARK_GENERALIZATION
+- experiment_id: single_prompt_largest_pattern_v1
+  kind: FORMAL_EXPERIMENT
+  era: BENCHMARK_GENERALIZATION
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2587,4 +2590,10 @@ edges:
   evidence: docs/design/SINGLE_PROMPT_GATED_TWO_SEED32_V1.md
   scope: User-selected six-cell Solver32 training continuation; formal Test16 and
     unchanged Validation100 scientific gate.
+- from: single_prompt_gated_two_seed32_v1
+  to: single_prompt_largest_pattern_v1
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_LARGEST_PATTERN_V1.md
+  scope: User-intent correction to one largest support Pattern; exact compatible training
+    data and immutable control references.
 current_frontier: experiments/current_frontier.yaml

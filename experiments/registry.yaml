@@ -10537,3 +10537,25 @@ experiments:
     Solver16 Test300.
   - Paid ancestor accounting, legitimate outcomes and exact unfinished successful
     responses retained; typed network retry unchanged.
+- experiment_id: single_prompt_largest_pattern_v1
+  kind: FORMAL_EXPERIMENT
+  era: BENCHMARK_GENERALIZATION
+  method_family: GATED_LARGEST_SUPPORT_PATTERN_FOCUS_V1
+  parent_ids:
+  - single_prompt_gated_two_seed32_v1
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: USER_INTENT_CORRECTION_OFFLINE_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_largest_pattern_v1.json
+  report: reports/single_prompt_largest_pattern_preparation_20261014
+  classifier: reports/single_prompt_largest_pattern_preparation_20261014/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - One largest Pattern and only its supported evidence; no Pattern uses original
+    raw Batch B.
+  - Reconstruct corrected C from the exact compatible prefix; historical caches only
+    by unchanged request identity; original controls are referenced.

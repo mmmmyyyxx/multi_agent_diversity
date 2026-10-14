@@ -16,6 +16,10 @@ retries between delays. Scientific selection and legitimate opportunity outcomes
 Its separately user-selected [two-seed execution amendment](SINGLE_PROMPT_GATED_TWO_SEED32_V1.md)
 continues six cells with Solver32 training and formal Solver16 final Test300,
 preserving completed outcomes and paid parent evidence.
+The [largest-Pattern correction](SINGLE_PROMPT_LARGEST_PATTERN_V1.md) selects one
+maximum-support Pattern with only its support evidence, using raw Batch B when
+none exists. It reconstructs corrected C under a fresh identity and references
+unchanged A/B evidence; old all-Pattern results and approvals remain historical.
 The [scientific principles](SCIENTIFIC_PRINCIPLES.md) constrain interpretation;
 the [MATH scientific contract](MATH_SCIENTIFIC_CONTRACT.md) clarifies benchmark
 measurement and admission. These clarifications add no algorithm or threshold.

@@ -15,6 +15,7 @@ from .gated_prompt_policy import policy,gate_membership,call_ceiling,STUDY,MANIF
 from .gated_prompt import GatedPromptBroker,run_cell
 from . import gated_prompt_network as network
 from . import gated_prompt_execution as execution_amendment
+from . import gated_prompt_largest as largest
 
 PREP_SCHEMA='single_prompt_validation_gated_prep_v2'
 MANIFEST_SCHEMA='single_prompt_validation_gated_manifest_v2'
@@ -65,7 +66,8 @@ def source_snapshot(root):
     paths=[MANIFEST,'experiments/manifests/math_v27_direct_seed86_formal_v1.yaml','scripts/prepare_gated_prompt_study.py','scripts/dry_run_gated_prompt_study.py',
         'tests/current/test_gated_prompt_study.py',network.MANIFEST,
         'tests/current/test_gated_prompt_network.py',execution_amendment.MANIFEST,
-        'tests/current/test_gated_prompt_execution.py']+[c['manifest_path'] for c in manifest['cells']]
+        'tests/current/test_gated_prompt_execution.py',largest.MANIFEST,
+        'tests/current/test_gated_prompt_largest.py']+[c['manifest_path'] for c in manifest['cells']]
     result.update({p:file_hash(root/p) for p in paths})
     return result
 
@@ -75,7 +77,10 @@ def phase_cells(manifest,destination,amended=False):
     return [dict(c,attempt_id=c['cell_id']+'_train_'+suffix) for c in execution_amendment.selected_cells(manifest,amended)]
 
 
-def prepare(root,destination,*,continuation_root=None,parent_inventory_pin=None,amended=False):
+def prepare(root,destination,*,continuation_root=None,parent_inventory_pin=None,amended=False,largest_pattern=False):
+    if largest_pattern:
+        from .gated_prompt_largest_governance import prepare as prepare_largest
+        return prepare_largest(root,destination,parent_root=continuation_root,parent_inventory_pin=parent_inventory_pin)
     destination=shared.private_path(root,destination)
     if destination.exists():raise SearchContractError('GATED_PREP_ALREADY_EXISTS')
     manifest=read_json(root/MANIFEST);reader=validate_manifest(root,manifest)
@@ -118,6 +123,9 @@ def prepare(root,destination,*,continuation_root=None,parent_inventory_pin=None,
 
 def validate_prep(root,directory,*,authorized=False):
     directory=shared.private_path(root,directory); prep=read_json(directory/'prep.json')
+    if prep.get('schema_version')==largest.PREP_SCHEMA:
+        from .gated_prompt_largest_governance import validate_prep as validate_largest
+        return validate_largest(root,directory,authorized=authorized)
     amended=prep.get('schema_version')==execution_amendment.PREP_SCHEMA
     continuation=amended or prep.get('schema_version')==network.PREP_SCHEMA
     if set(prep)!={'schema_version','scope'} or prep['schema_version'] not in (PREP_SCHEMA,network.PREP_SCHEMA,execution_amendment.PREP_SCHEMA):raise SearchContractError('GATED_PREP_SCHEMA_MISMATCH')
@@ -188,7 +196,8 @@ def execute(root,prep,run):
         broker_class=network.NetworkBroker if 'continuation' in scope else GatedPromptBroker
         broker=broker_class(phase='train',scope=scope,transport=transport,ledger=ledger,
             receipts=ProviderResponseReceipts(run/'provider_receipts',attempt_id=scope['scope_identity'],startup_identity_sha256=scope['scope_identity']),dispatch_guard=guard)
-        progress=network.initialize_resume(root,run,scope,broker) if 'continuation' in scope else {}
+        progress=(largest.initialize_resume(root,run,scope,broker) if largest.enabled(scope) else
+            network.initialize_resume(root,run,scope,broker) if 'continuation' in scope else {})
         reader=validate_manifest(root,read_json(root/MANIFEST))
         optimize=reader.rows('optimize',DataPurpose.SEARCH_EVALUATION)
         validation=read_gate_rows(reader,AdaptiveGateAccess(scope['scope_identity'],scope['gate_membership'],lambda:validate_prep(root,prep,authorized=True)))
@@ -196,7 +205,8 @@ def execute(root,prep,run):
         for cell in scope['cells']:
             validate_prep(root,prep,authorized=True);current_cell=cell['cell_id']
             broker.cell_id,broker.attempt_id,broker.seed=cell['cell_id'],cell['attempt_id'],cell['seed']
-            directory=network.import_cell(root,run,scope,cell) if 'continuation' in scope else run/current_cell
+            directory=(largest.import_cell(root,run,scope,cell) if largest.enabled(scope) else
+                network.import_cell(root,run,scope,cell) if 'continuation' in scope else run/current_cell)
             if 'continuation' not in scope:directory.mkdir()
             if (directory/'result.json').exists():
                 completed.append(read_json(directory/'result.json'))
@@ -219,6 +229,9 @@ def execute(root,prep,run):
         ledger.close();ledger=None;clients.close();clients=None
         atomic_write_json(run/'lifecycle.json',dict(status='EXECUTION_COMPLETE',phase='train'))
         atomic_write_json(run/'terminal.json',dict(status='EXECUTION_COMPLETE',phase='train',source_sha=scope['source_sha'],scope_identity=scope['scope_identity'],artifacts=shared.inventory(run)))
+        if read_json(prep/'authorization.json')['test_access'] and largest.enabled(scope):
+            from .gated_prompt_largest_governance import execute_final_test as largest_test
+            return largest_test(root,prep,run)
         if read_json(prep/'authorization.json')['test_access']:
             from .gated_prompt_test import execute_final_test
             return execute_final_test(root,prep,run)

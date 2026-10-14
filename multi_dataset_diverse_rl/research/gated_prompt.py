@@ -100,6 +100,12 @@ def run_cell(cell,optimize_rows,validation_rows,broker,persist,*,resume=None):
         rows=tuple(r for r in optimize_rows if r['stable_example_id'] in set(selected))
         structure=structured_feedback(prompt,rows,optimize,broker) if cell['arm']=='gradient_pattern' else None
         feedback=dict(errors=[raw_error(r,optimize[r['stable_example_id']]) for r in rows],structured_feedback=structure)
+        from .gated_prompt_largest import enabled,project_feedback
+        if enabled(broker.scope):
+            if cell['arm']!='gradient_pattern':raise SearchContractError('LARGEST_PATTERN_ONLY_C_DISPATCH')
+            persist(f'round_{ordinal}_diagnosis',dict(feedback=feedback))
+            feedback,focus=project_feedback(feedback,cell['seed'],ordinal)
+            persist(f'round_{ordinal}_focus',focus)
         persist(f'round_{ordinal}_opportunity',dict(parent_prompt=prompt.to_dict(),feedback=feedback,
             retained_validation_correct=score(validation),round_complete=False))
         candidate,draws=generate_changed_candidate(prompt,feedback,broker,ordinal,persist)
@@ -115,7 +121,7 @@ def run_cell(cell,optimize_rows,validation_rows,broker,persist,*,resume=None):
         metric=dict(round=ordinal,accepted=accepted,decision=decision,candidate_evaluated=candidate is not None,
             validation_before=incumbent_score,validation_candidate=candidate_score,
             optimize_before=score(optimize),optimize_candidate=score(candidate_optimize) if candidate_optimize is not None else None,
-            optimizer_example_count=len(rows),generation_draws=draws,
+            optimizer_example_count=len(feedback['errors']),generation_draws=draws,
             cost={k:broker.usage_view()[k]-v+historical.get(str(ordinal),{}).get(k,0) for k,v in before_usage.items()},
             lineage=block_lineage(prompt,candidate) if candidate is not None else None)
         # Preserve the incumbent observations as well as its Prompt on rejection.
