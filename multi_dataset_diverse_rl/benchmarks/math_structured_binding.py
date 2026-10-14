@@ -231,8 +231,8 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
     from ..current_contract import PATTERN_SPECIFIC_CONTENT_GUARD_VERSION, GRADIENT_PARTITION_COMPLETION_VERSION
     c['pattern_abstraction_guard']=PATTERN_SPECIFIC_CONTENT_GUARD_VERSION
     c['partition_completion_policy']=GRADIENT_PARTITION_COMPLETION_VERSION
-    from .protocols import MATH_PROTOCOL_WEIGHTED_V8
-    c['benchmark_protocol_sha256']=MATH_PROTOCOL_WEIGHTED_V8.identity()
+    from .protocols import MATH_PROTOCOL_COUNT_V9
+    c['benchmark_protocol_sha256']=MATH_PROTOCOL_COUNT_V9.identity()
     c.pop('repair_probe_policy',None)
     from ..search.population_memory import POLICY as memory_policy
     c['shared_risk_policy']=deepcopy(memory_policy)

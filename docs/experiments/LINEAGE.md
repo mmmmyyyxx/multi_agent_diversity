@@ -8,22 +8,22 @@ Registry provides node metadata; current_frontier.yaml provides readiness only.
 ```yaml
 schema_version: current_frontier_v1
 current_architecture: Unified Team Prompt Search
-method_identity: unified_team_prompt_search_v2_11_group_diagnosed_reflection_v1
-current_method: unified_team_prompt_search_v2_11_group_diagnosed_reflection_v1
+method_identity: unified_team_prompt_search_v2_12_count_responsibility_v1
+current_method: unified_team_prompt_search_v2_12_count_responsibility_v1
 current_experiment: NO_AUTHORIZED_REAL_EXPERIMENT
 formal_manifest: null
-current_implementation: One shared Root Team diagnosis plus verified readable Reflection
-  views; unchanged V2.10 responsibility and V2.9 Parent Population.
+current_implementation: Exhaustive correctness-count responsibility with existing
+  Group diagnosis and Parent Population.
 current_solver_model: gpt-4o-mini
 current_solver_provider_profile: openlux
 current_optimizer_model: qwen3.7-flash
 current_optimizer_provider_profile: lwj
 current_provider_routing_policy: OPENLUX_SOLVER_LWJ_GROUP_OPTIMIZER_V2
-current_binding_identity: MATH_GROUP_DIAGNOSED_REFLECTION_BINDING_V14
-current_cache_policy: GROUP_DIAGNOSED_MEMBER_LANE_CACHE_V14
+current_binding_identity: MATH_COUNT_RESPONSIBILITY_BINDING_V15
+current_cache_policy: COUNT_RESPONSIBILITY_MEMBER_LANE_CACHE_V15
 current_benchmark_suite:
 - math
-last_governance_milestone: group_diagnosed_reflection_v211_preparation_v1
+last_governance_milestone: count_responsibility_v212_preparation_v1
 real_execution_ready: false
 real_api_authorized: false
 ready_for_authorization: false
@@ -35,7 +35,7 @@ current_execution_blockers:
 - NEW_SOURCE_PHASE_FREEZE_AND_EXACT_AUTHORIZATION_REQUIRED
 current_runtime_builder: build_current_team_prompt_search
 current_execution_entrypoint: scripts/run_experiment.py
-current_runtime_composition: CURRENT_GROUP_DIAGNOSED_POPULATION_COMPOSITION_V14
+current_runtime_composition: CURRENT_COUNT_RESPONSIBILITY_POPULATION_COMPOSITION_V15
 current_execution_binding: null
 current_layer1_backend: GROUP_DIAGNOSED_PARENT_POPULATION_SEARCH_V6
 current_memory_policy: POPULATION_SCOPED_EDIT_MEMORY_V5
@@ -104,9 +104,9 @@ current_gradient_output_limits:
   diagnosis: 400
   reusable_correction: 400
   expected_effect: 240
-current_optimization_evidence_policy: GROUP_DIAGNOSED_POPULATION_EVIDENCE_POLICY_V13
-current_preparation_experiment: group_diagnosed_reflection_v211_preparation_v1
-current_preparation_manifest: experiments/manifests/group_diagnosed_reflection_v211_preparation_v1.yaml
+current_optimization_evidence_policy: COUNT_RESPONSIBILITY_POPULATION_EVIDENCE_POLICY_V14
+current_preparation_experiment: count_responsibility_v212_preparation_v1
+current_preparation_manifest: experiments/manifests/count_responsibility_v212_preparation_v1.yaml
 last_gradient_limit_adoption_report: reports/gradient_diagnostic_limits_400_v2_preparation_20261011
 last_gradient_limit_adoption_real_api_calls: 0
 proposed_canary_token_ceiling: null
@@ -148,11 +148,11 @@ last_evolution_bottleneck_audit: reports/math_v27_seed86_evolution_bottleneck_au
 last_scoped_experience_preparation_report: reports/scoped_edit_experience_layer1_v28_preparation_20261012
 last_controlled_flow_preparation_report: reports/math_v28_seed87_controlled_flow_freeze_20261012
 last_controlled_flow_preparation_status: ABANDONED_BEFORE_FREEZE_ZERO_API
-current_preparation_report: reports/group_diagnosed_reflection_v211_preparation_20261014
-current_preparation_verification: reports/group_diagnosed_reflection_v211_preparation_20261014/verification.json
+current_preparation_report: reports/count_responsibility_v212_preparation_20261014
+current_preparation_verification: reports/count_responsibility_v212_preparation_20261014/verification.json
 current_responsibility_policy:
-  identity: raw_responsibility_sum_4D_2N_C_R3_halfR4_v2
-  classification: binary_plurality_exclusive_weighted_responsibility_v2
+  identity: count_responsibility_sum_4D_2N_C_R3_halfR4_v3
+  classification: five_member_correctness_count_responsibility_v3
   weights:
     direct_flip: 4.0
     near_margin: 2.0
@@ -161,14 +161,21 @@ current_responsibility_policy:
     r4: 0.5
   mutually_exclusive: true
   count_each_error_once: true
-  dnc: existing_lexicographic_counterfactual_assignment_and_exclusive_lane
-  r3: team_vote_correct_target_wrong_exactly_three_of_five_correct
-  r4: team_vote_correct_target_wrong_exactly_four_of_five_correct
-  uncovered: zero_weight_reported_eligible_for_existing_seeded_fallback
+  label_correct_counts:
+    coverage: 0
+    near_margin: 1
+    direct_flip: 2
+    r3: 3
+    r4: 4
+  labels: D_N_C_R3_R4_serialized_aliases_not_vote_counterfactual_claims
+  input: five_boolean_member_correctness_results_only
+  assignment: every_wrong_member_no_counterfactual_filter
+  invalid: incorrect_under_unchanged_benchmark_scoring
+  uncovered: impossible_for_valid_five_member_correctness_observations
   who: sum_divided_by_one_plus_failure_count
   pattern: undiscounted_support_sum
-current_pattern_responsibility: pattern_exclusive_weighted_support_sum_seeded_fallback_v3
-current_target_policy: weighted_responsibility_failure_discount_seeded_fallback_v3
+current_pattern_responsibility: pattern_correctness_count_support_sum_v4
+current_target_policy: count_responsibility_failure_discount_v4
 current_group_diagnosis_policy: ROOT_TEAM_GROUP_DIAGNOSIS_POLICY_V1
 current_reflector_view_policy: DIRECT_READABLE_REFLECTOR_VIEW_V3
 ```
@@ -522,6 +529,7 @@ flowchart TD
     n340["vote_parent_population_v29_preparation_v1<br/>ARCHITECTURE_REFACTOR<br/>IMPLEMENTED_NOT_EXECUTED"]
     n341["weighted_error_responsibility_v210_preparation_v1<br/>ARCHITECTURE_REFACTOR<br/>IMPLEMENTED_NOT_EXECUTED"]
     n367["group_diagnosed_reflection_v211_preparation_v1<br/>ARCHITECTURE_REFACTOR<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n368["count_responsibility_v212_preparation_v1<br/>ARCHITECTURE_REFACTOR<br/>IMPLEMENTED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -837,6 +845,7 @@ flowchart TD
   n364 -->|derived_from| n365
   n365 -->|derived_from| n366
   n341 -->|derived_from| n367
+  n367 -->|derived_from| n368
 ```
 
 ## Archived branches and unresolved evidence

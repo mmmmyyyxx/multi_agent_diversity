@@ -1,6 +1,7 @@
-"""V2.10 classification, counterfactual preservation and production delivery."""
+"""Exhaustive V2.12 count classification and production WHO/Pattern delivery."""
 from itertools import product
 import asyncio
+import json
 from collections import Counter
 import pytest
 from multi_dataset_diverse_rl.search.binary_responsibility import (
@@ -11,7 +12,6 @@ from multi_dataset_diverse_rl.search.history import HistoryState
 from multi_dataset_diverse_rl.search.policies import ResponsibilitySignal, TargetPolicyV1
 from multi_dataset_diverse_rl.search.pattern_primitives import sample_labels, PatternResponsibilitySignal
 from multi_dataset_diverse_rl.search.textual_gradients import score_gradient_partition, gradient_identity
-from multi_dataset_diverse_rl.vote_aligned_scheduler import classify_opportunity_lane
 from tests.current.population_support import graph
 
 CAP = BenchmarkCapabilities(True, True, True)
@@ -24,49 +24,69 @@ def snapshot(answers):
         observations=rows, capabilities=CAP)
 
 
-def test_exhaustive_dnc_unchanged_exclusive_and_complete_error_accounting():
-    # 4^5: gold, two equivalent wrong classes and an invalid/no-vote answer.
-    state = snapshot(product(('g', 'a', 'b', ''), repeat=5))
+def test_exhaustive_count_only_exclusive_and_complete_error_accounting():
+    # 6^5: gold, four wrong equivalence classes and an invalid/no-vote answer.
+    state = snapshot(product(('g', 'a', 'b', 'c', 'd', ''), repeat=5))
     diagnosis = BinaryPluralityResponsibilityAnalyzer(CAP).analyze(state, HistoryState())
+    expected = {0:'coverage',1:'near_margin',2:'direct_flip',3:'r3',4:'r4'}
     for member, signal in diagnosis.responsibility.items():
         assigned = {o.question_hash: o for o in diagnosis.benchmark_signals['assigned'][member]}
         counts = Counter()
         for row in state.diagnostics['team_states']:
             actual = diagnosis.benchmark_signals['responsibility_labels'][member][row.question_hash]
-            assert len(actual) <= 1
-            old = classify_opportunity_lane(assigned[row.question_hash], diagnosis.benchmark_signals['margins']) if row.question_hash in assigned else None
-            old = 'coverage' if old == 'pure_coverage' else old
-            assert tuple(x for x in actual if x in LABELS[:3]) == ((old,) if old else ())
             if row.team_correctness[member]:
-                assert not actual
-            elif row.vote_correct and sum(row.team_correctness) in (3, 4):
-                assert actual == ('r3' if sum(row.team_correctness) == 3 else 'r4',)
+                assert not actual and row.question_hash not in assigned
+            else:
+                assert actual == (expected[sum(row.team_correctness)],)
+                assert WEIGHTS[actual[0]] > 0 and row.question_hash in assigned
             if actual:
                 counts[actual[0]] += 1
         assert signal.raw_value == sum(counts[k]*WEIGHTS[k] for k in LABELS)
-        assert sum(counts.values()) + signal.uncovered_count == sum(not r.team_correctness[member] for r in state.diagnostics['team_states'])
+        assert signal.uncovered_count == 0
+        assert not diagnosis.benchmark_signals['uncovered_errors'][member]
+        assert sum(counts.values()) == sum(not r.team_correctness[member] for r in state.diagnostics['team_states'])
 
 
-def test_d_and_n_are_not_correct_member_count_categories():
-    # Same one-correct count, different wrong-class partition and Vote counterfactual.
-    state = snapshot([('a','g','b','c','d'), ('a','g','a','a','a')])
+def test_count_labels_ignore_answer_classes_counterfactuals_and_vote():
+    # Two correct members can produce a correct, tied or incorrect native Vote.
+    state = snapshot([('a','g','g','b','c'), ('a','g','g','a','b'), ('a','g','g','a','a'),
+                      ('a','g','b','c','d'), ('a','g','a','a','a')])
     diagnosis = BinaryPluralityResponsibilityAnalyzer(CAP).analyze(state, HistoryState())
     labels = diagnosis.benchmark_signals['responsibility_labels'][0]
-    assert labels['0'] == ('direct_flip',)
-    assert labels['1'] == ()
-    # N is the abstaining M=0 boundary; one repair does not yet make Vote correct.
-    state = snapshot([('a','g','a','a','b')])
-    diagnosis = BinaryPluralityResponsibilityAnalyzer(CAP).analyze(state, HistoryState())
-    assert diagnosis.benchmark_signals['responsibility_labels'][0]['0'] == ('near_margin',)
+    assert [labels[str(i)] for i in range(3)] == [('direct_flip',)]*3
+    assert [labels[str(i)] for i in (3,4)] == [('near_margin',)]*2
+    rows=state.diagnostics['team_states']
+    assert [r.vote_correct for r in rows[:3]] == [True,False,False]
+    assert [r.top_tie for r in rows[:3]] == [False,True,False]
 
 
-def test_team_correct_two_correct_is_explicitly_uncovered():
+def test_team_correct_two_correct_is_positive_d():
     state = snapshot([('a','g','g','b','c')])
     diagnosis = BinaryPluralityResponsibilityAnalyzer(CAP).analyze(state, HistoryState())
     assert state.diagnostics['team_states'][0].vote_correct
-    assert diagnosis.responsibility[0].uncovered_count == 1
-    assert diagnosis.responsibility[0].raw_value == 0
-    assert diagnosis.benchmark_signals['uncovered_errors'][0]['0'] == 'TEAM_CORRECT_OTHER_CORRECT_COUNT'
+    assert diagnosis.responsibility[0].uncovered_count == 0
+    assert diagnosis.responsibility[0].raw_value == 4
+    assert diagnosis.benchmark_signals['responsibility_labels'][0]['0'] == ('direct_flip',)
+
+
+def test_classifier_needs_only_five_boolean_scores():
+    from types import SimpleNamespace
+    from multi_dataset_diverse_rl.search.weighted_responsibility import classify_error
+    # No answers, Vote, margin, opportunities or assignment on this object.
+    for count,label in enumerate(('coverage','near_margin','direct_flip','r3','r4')):
+        row=SimpleNamespace(team_correctness=(False,)+tuple(i<count for i in range(4)))
+        assert classify_error(row,0) == (label,None)
+    for values in ((False,)*4,(False,)*6,(0,True,False,False,False)):
+        with pytest.raises(SearchContractError):classify_error(SimpleNamespace(team_correctness=values),0)
+
+
+def test_legacy_counterfactual_assignment_is_not_called(monkeypatch):
+    import multi_dataset_diverse_rl.responsibility as legacy
+    def forbidden(**kwargs):raise AssertionError('legacy assignment must not classify member errors')
+    monkeypatch.setattr(legacy,'compute_repair_eligibility_sets',forbidden)
+    diagnosis=BinaryPluralityResponsibilityAnalyzer(CAP).analyze(
+        snapshot([('a','g','a','a','a')]),HistoryState())
+    assert all(s.raw_value == 2 for m,s in diagnosis.responsibility.items() if m != 1)
 
 
 def test_who_sum_and_existing_failure_discount():
@@ -89,19 +109,19 @@ def row(i, label):
         input_payload='Synthetic problem without supplied constants.',gold='reference',target_output='other'))
 
 
-def test_pattern_sum_includes_r3_r4_and_uncovered_without_discount():
+def test_pattern_sum_includes_all_five_categories_without_discount():
     rows = [row(0,'direct_flip'),row(1,'near_margin'),row(2,'near_margin'),
-            row(3,'r3'),row(4,'r4'),row(5,None)]
+            row(3,'r3'),row(4,'r4'),row(5,'coverage')]
     texts = ('Check the domain before a transformation.', 'Verify the sign under the applicable condition.')
     gradients = [dict(example_id=r.example_id,gradient=texts[0] if i==0 else texts[1]) for i,r in enumerate(rows)]
     partition = dict(patterns=[dict(generalized_gradient=texts[0],support_ids=['0']),
         dict(generalized_gradient=texts[1],support_ids=['1','2','3','4','5'])],unassigned_ids=[])
     result = score_gradient_partition(partition,rows,gradients)
     assert result['focus_mechanism_id'] == gradient_identity(texts[1])
-    assert result['selected_pattern_responsibility'] == 5.5
+    assert result['selected_pattern_responsibility'] == 6.5
     chosen = next(p['responsibility'] for p in result['patterns'] if p['pattern_id']==result['focus_mechanism_id'])
-    assert (chosen['r3_count'],chosen['r4_count'],chosen['uncovered_count']) == (1,1,1)
-    assert result['zero_responsibility_wrong_count'] == 1
+    assert (chosen['r3_count'],chosen['r4_count'],chosen['uncovered_count']) == (1,1,0)
+    assert result['zero_responsibility_wrong_count'] == 0
 
 
 @pytest.mark.parametrize('labels',[('r3','r4'),('direct_flip','coverage'),('unknown',),('r3','r3')])
@@ -172,4 +192,29 @@ def test_r3_r4_reach_production_pattern_and_three_shared_independent_slots(tmp_p
     assert len(packets)==3 and len({str(p['selected_parent']) for p in packets})==1
     assert len({str(p['repair_direction']) for p in packets})==1
     assert len({str(p['repair_examples']) for p in packets})==1
+    assert result.final_assembly['selection_repeated'] is False
+
+
+def test_previously_uncovered_team_correct_errors_reach_who_pattern_and_group(tmp_path):
+    from multi_dataset_diverse_rl.search.system_prompt import SEED
+    names=('zero','one','two','three','four')
+    prompts=[SEED.edit('role',f'Synthetic lane {name}.') for name in names]
+    def behavior(prompt,index,request):return any(f'lane {x}' in prompt for x in ('one','two'))
+    def answer(prompt,index,request):
+        return '2' if behavior(prompt,index,request) else str(3+next(i for i,x in enumerate(names) if f'lane {x}' in prompt))
+    run,broker,requests,packets=graph(tmp_path,solver_behavior=behavior,solver_answer=answer,prompts=prompts)
+    events={}
+    run.execution_observer=lambda stage,data:events.update({stage:data})
+    result=asyncio.run(run.run(max_opportunities=1))
+    op=events['OPPORTUNITY']['opportunity']
+    assert op.target_member == 0 and op.objective['raw_responsibility'] == 72
+    assert op.pattern_context['selected_pattern_responsibility'] == 72
+    assert op.pattern_context['zero_responsibility_wrong_count'] == 0
+    assert all(r.signals['responsibility_labels']==('direct_flip',) for r in op.evidence.repair_examples)
+    group_packet=json.loads(next(r['messages'][0]['content'].splitlines()[-1] for r in requests
+        if r['messages'][0]['content'].startswith('Diagnose only')))['evidence']
+    assert group_packet['responsibility_definition']['label_correct_counts']['direct_flip']==2
+    assert all(e['team_vote']['correct'] and len(e['correct_members'])==2
+        and e['responsibility_label']==['direct_flip'] for e in group_packet['examples'])
+    assert len(packets)==3 and len({str(p['repair_direction']) for p in packets})==1
     assert result.final_assembly['selection_repeated'] is False

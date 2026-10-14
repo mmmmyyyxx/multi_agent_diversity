@@ -31,7 +31,7 @@ def require_current_contract(contract):
         raise SearchContractError('GROUP_DIAGNOSIS_COMPLETE_POLICY_REQUIRED')
     frozen_solver_policy(contract)
     from ..benchmarks.math_response_evidence import trajectory_policy
-    from ..benchmarks.protocols import MATH_PROTOCOL_WEIGHTED_V8
+    from ..benchmarks.protocols import MATH_PROTOCOL_COUNT_V9
     from .optimization_evidence import BINDING
     if (contract.get('method_identity') != METHOD or contract.get('identity') != BINDING
             or contract.get('paired_realization_policy') is not None
@@ -39,7 +39,7 @@ def require_current_contract(contract):
             or contract.get('repair_probe_policy') is not None
             or contract.get('parent_population_policy') != POPULATION_POLICY
             or contract.get('responsibility_policy') != RESPONSIBILITY_POLICY
-            or contract.get('benchmark_protocol_sha256') != MATH_PROTOCOL_WEIGHTED_V8.identity()
+            or contract.get('benchmark_protocol_sha256') != MATH_PROTOCOL_COUNT_V9.identity()
             or contract.get('final_team_policy') != FINAL_POLICY):
         raise SearchContractError('CURRENT_RUNTIME_LEGACY_POLICY_FORBIDDEN')
     frozen_policy(contract.get('optimization_evidence_policy'))

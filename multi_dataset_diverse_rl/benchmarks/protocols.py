@@ -146,6 +146,9 @@ MATH_PROTOCOL_FLEXIBLE_V7 = replace(MATH_PROTOCOL_REPAIR_V6,
 MATH_PROTOCOL_WEIGHTED_V8 = replace(MATH_PROTOCOL_FLEXIBLE_V7,
     responsibility_policy_id=versions.WEIGHTED_BINARY_RESPONSIBILITY_VERSION)
 
+MATH_PROTOCOL_COUNT_V9 = replace(MATH_PROTOCOL_FLEXIBLE_V7,
+    responsibility_policy_id=versions.COUNT_BINARY_RESPONSIBILITY_VERSION)
+
 
 def protocol_input(benchmark_id: str, input_id: str, row: Mapping[str, object],
                    output_contract: str, *, protocol: BenchmarkProtocolSpec | None = None) -> BenchmarkInput:

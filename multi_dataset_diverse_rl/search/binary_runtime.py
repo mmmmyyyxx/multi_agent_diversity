@@ -125,13 +125,11 @@ class BinaryEvidenceSource:
     def for_member(self, state, diagnosis, member_id):
         if state.team_state_id != self.store.snapshot().team_state_id:
             raise SearchContractError("EVIDENCE_PARENT_MISMATCH")
-        assigned = {r.question_hash: r for r in diagnosis.benchmark_signals["assigned"].get(member_id, ())}
         latest = self.history.latest_member_transition(member_id)
         focus = set(latest.newly_broken_ids) if latest else set()
         anchor = set(latest.newly_fixed_ids) if latest else set()
         result = []
         for index, (example, row) in enumerate(zip(self.store.examples, state.diagnostics["team_states"], strict=True)):
-            opportunity = assigned.get(row.question_hash)
             pivotal = False
             if row.vote_correct:
                 validity = list(row.team_validity)
@@ -140,7 +138,9 @@ class BinaryEvidenceSource:
                     answers=row.team_answers, valid_vector=validity).vote_correct
             if not row.team_correctness[member_id]:
                 labels = diagnosis.benchmark_signals['responsibility_labels'][member_id][row.question_hash]
-                lane = labels[0] if labels else 'general'
+                if len(labels) != 1:
+                    raise SearchContractError('MEMBER_ERROR_RESPONSIBILITY_REQUIRED')
+                lane = labels[0]
                 roles = {'REPAIR','target_wrong',lane}
                 if not row.vote_correct:roles.add('TEAM_HARD')
                 tags = ('repair',lane,'team_wrong' if not row.vote_correct else 'team_correct')
@@ -171,6 +171,7 @@ class BinaryEvidenceSource:
                      **trajectory,
                      correctness_signal_identity=versions.TARGET_CORRECTNESS_SIGNAL_VERSION,
                      target_member_correct=bool(row.team_correctness[member_id]),
+                     team_correct_member_count=sum(row.team_correctness),
                      team_correct=bool(row.vote_correct),
                      target_member_valid=bool(output.valid),
                      responsibility_labels=tuple(labels),

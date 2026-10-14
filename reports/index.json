@@ -455,6 +455,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/count_responsibility_v212_preparation_20261014",
+      "document": "reports/count_responsibility_v212_preparation_20261014/README.md",
+      "date": "20261014",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "PREEXECUTION",
+      "experiment_id": "count_responsibility_v212_preparation_v1",
+      "status": "IMPLEMENTED_NOT_EXECUTED",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/cross_method_cost_accounting_20260907",
       "document": "reports/cross_method_cost_accounting_20260907/README.md",
       "date": "20260907",

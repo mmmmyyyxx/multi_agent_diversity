@@ -302,26 +302,29 @@ def bbh_parity_receipt():
                    for _, s in sorted(diagnosis.responsibility.items())]
     old_vectors = [(s.direct_count, s.near_margin_count, s.coverage_count)
                    for s in reference]
-    assert new_vectors == old_vectors
-    # Preserve counterfactual D/N/C, not the explicitly superseded max score.
+    assert new_vectors != old_vectors
+    # The native adapter now follows the independent correctness-count rule;
+    # old counterfactual eligibility is deliberately NOT current classification.
+    assert snapshot.diagnostics['team_states'] == states
     expected_raw = {}
-    for s in reference:
-        member = s.member_id
-        r3 = sum(row.vote_correct and not row.team_correctness[member]
-                 and sum(row.team_correctness) == 3 for row in states)
-        r4 = sum(row.vote_correct and not row.team_correctness[member]
-                 and sum(row.team_correctness) == 4 for row in states)
-        expected_raw[member] = 4*s.direct_count + 2*s.near_margin_count + s.coverage_count + r3 + .5*r4
-        signal = diagnosis.responsibility[member]
-        assert (signal.r3_count, signal.r4_count, signal.raw_value) == (r3, r4, expected_raw[member])
     for member in range(5):
-        assert diagnosis.benchmark_signals["assigned"][member] == tuple(old.assigned[member])
+        d,n,c,r3,r4 = (sum(not row.team_correctness[member]
+            and sum(row.team_correctness) == count for row in states)
+            for count in (2,1,0,3,4))
+        expected_raw[member] = 4*d + 2*n + c + r3 + .5*r4
+        signal = diagnosis.responsibility[member]
+        assert (signal.direct_count,signal.near_margin_count,signal.coverage_count,
+                signal.r3_count,signal.r4_count,signal.raw_value) == (d,n,c,r3,r4,expected_raw[member])
+        assert signal.uncovered_count == 0
+    for member in range(5):
+        assert diagnosis.benchmark_signals['assigned'][member] == tuple(opportunities[row.question_hash][member]
+            for row in states if not row.team_correctness[member])
     receipts = []
     for mask in itertools.product((False, True), repeat=5):
         feasible = tuple(i for i in range(5) if mask[i])
         decision = TargetPolicyV1().select(state=snapshot, diagnosis=diagnosis, feasible_members=feasible, history=history)
-        scores = {s.member_id: expected_raw[s.member_id] / (1 + history.failure_counts[s.member_id])
-                  for s in reference if s.member_id in feasible}
+        scores = {member: expected_raw[member] / (1 + history.failure_counts[member])
+                  for member in range(5) if member in feasible}
         assert decision.target_scores == scores
         expected = min(scores, key=lambda m: (-scores[m], m)) if scores else None
         assert decision.selected_member == expected
@@ -330,7 +333,7 @@ def bbh_parity_receipt():
         "fields": ["D", "N", "C", "R3", "R4", "R_sum", "raw_legal_portfolios", "target_scores", "selected_member"],
         "diagnosis_sha256": hashlib.sha256(json.dumps(new_vectors, sort_keys=True).encode()).hexdigest(),
         "target_sha256": hashlib.sha256(json.dumps(receipts, sort_keys=True).encode()).hexdigest(),
-        "reference": "frozen D/N/C counterfactual portfolios plus explicit V2.10 weighted rule"}
+        "reference": "independent V2.12 correctness-count specification; native state/vote unchanged"}
 
 
 def test_binary_plurality_responsibility_bbh_parity():

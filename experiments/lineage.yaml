@@ -1136,6 +1136,9 @@ nodes:
 - experiment_id: group_diagnosed_reflection_v211_preparation_v1
   kind: ARCHITECTURE_REFACTOR
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: count_responsibility_v212_preparation_v1
+  kind: ARCHITECTURE_REFACTOR
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2605,4 +2608,9 @@ edges:
   evidence: docs/design/GROUP_DIAGNOSED_REFLECTION_V211.md
   scope: Auxiliary Root Team diagnosis and Reflection projection only; historical
     evidence immutable.
+- from: group_diagnosed_reflection_v211_preparation_v1
+  to: count_responsibility_v212_preparation_v1
+  relation: derived_from
+  evidence: docs/design/COUNT_RESPONSIBILITY_V212.md
+  scope: Count-only exhaustive responsibility; no historical outcomes changed.
 current_frontier: experiments/current_frontier.yaml

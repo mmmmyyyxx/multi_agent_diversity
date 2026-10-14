@@ -113,6 +113,10 @@ def verify_canonical(value):
         vote=e['team_vote']
         reconstructed=build_team_vote_state(question_hash=e['example_id'],gold_answer=vote['gold_answer'],
             answers=vote['team_answers'],valid_vector=vote['team_validity'])
+        from .weighted_responsibility import classify_error
+        label, _ = classify_error(reconstructed, value['target_member'])
+        if label is None or e['responsibility_label'] != [label]:
+            raise SearchContractError('GROUP_RESPONSIBILITY_SOURCE_MISMATCH')
         impact=compute_member_aware_repair_opportunity(team_state=reconstructed,
             peer_context=build_peer_vote_context(reconstructed,value['target_member']))
         if digest(asdict(reconstructed))!=digest(vote) or digest(asdict(impact))!=digest(e['team_impact']):
@@ -143,7 +147,11 @@ def group_view(canonical):
             invalid_members=[m['member_id'] for m in e['members'] if not m['valid']],
             team_vote=dict(answer=final_answer,answer_class=vote_class,correct=vote['vote_correct'],top_tie=vote['top_tie'],
                 plurality_margin=vote['plurality_margin']),responsibility_label=e['responsibility_label'],team_impact=e['team_impact']))
+    from .weighted_responsibility import POLICY as responsibility_policy
     return dict(schema=POLICY['input_schema'],root_team_state_id=canonical['root_team_state_id'],
+        responsibility_definition=dict(classification=responsibility_policy['classification'],
+            label_correct_counts=responsibility_policy['label_correct_counts'],
+            weights=responsibility_policy['weights'],input=responsibility_policy['input']),
         target_member=canonical['target_member'],root_prompts=canonical['root_prompts'],aggregation=canonical['aggregation'],
         selected_pattern=dict(generalized_gradient=canonical['pattern']['generalized_gradient'],
             support_ids=canonical['pattern']['support_ids'],diagnosed_support_ids=[e['example_id'] for e in examples]),examples=examples)

@@ -1,11 +1,9 @@
-"""Current weighted responsibility on the unchanged binary plurality counterfactual core."""
+"""Exhaustive count-based responsibility; actual vote physics remain unchanged."""
 from __future__ import annotations
-from copy import deepcopy
 from dataclasses import dataclass
 
 from ..peer_state import build_team_vote_state, build_peer_vote_context
-from ..responsibility import (ResponsibilityState, compute_repair_eligibility_sets,
-                               compute_member_aware_repair_opportunity)
+from ..responsibility import compute_member_aware_repair_opportunity
 from .. import current_contract as versions
 from .weighted_responsibility import LABELS, WEIGHTS, classify_error, POLICY
 from .policies import ResponsibilitySignal
@@ -94,32 +92,25 @@ class BinaryPluralityResponsibilityAnalyzer:
         self.capabilities = capabilities
 
     def analyze(self, state, history, *, responsibility_state=None):
-        del history
+        del history, responsibility_state
         require_binary_plurality(self.capabilities)
         if len(state.member_prompts) != 5:
             raise SearchContractError("TEAM_REQUIRES_EXACTLY_FIVE_EQUAL_MEMBERS")
-        if responsibility_state is None:
-            responsibility_state = ResponsibilityState(
-                updates_since_selected_by_agent={i: 0 for i in range(5)})
         states = tuple(state.diagnostics["team_states"])
-        by_id = {row.question_hash: row for row in states}
-        _, assigned, _ = compute_repair_eligibility_sets(
-            team_states=by_id,
-            opportunities=state.diagnostics["opportunities"],
-            state=deepcopy(responsibility_state),
-        )
+        if len({row.question_hash for row in states}) != len(states):
+            raise SearchContractError('BINARY_PLURALITY_DUPLICATE_INPUT')
+        # Retained observation key, now ALL member errors; never an eligibility filter.
+        assigned = {member: tuple(state.diagnostics['opportunities'][row.question_hash][member]
+            for row in states if not row.team_correctness[member]) for member in range(5)}
         margins = {row.question_hash: int(row.plurality_margin) for row in states}
         signals: dict[int, ResponsibilitySignal] = {}
         labels_by_member = {}
         uncovered_by_member = {}
         for member in range(len(state.member_prompts)):
             counts = {label: 0 for label in LABELS}
-            assigned_ids = {row.question_hash for row in assigned.get(member, ())}
             labels = {}; uncovered = {}
             for row in states:
-                opportunity = state.diagnostics['opportunities'][row.question_hash][member]
-                lane, reason = classify_error(row, member, opportunity,
-                    assigned=row.question_hash in assigned_ids, margins=margins)
+                lane, reason = classify_error(row, member)
                 labels[row.question_hash] = (lane,) if lane else ()
                 if lane:
                     counts[lane] += 1

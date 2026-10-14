@@ -38,14 +38,14 @@ class MATHStructuredSystemBenchmark(MATHBenchmarkAdapterV2):
         from ..search.current_policy import require_current_contract
         from .math_response_evidence import frozen_trajectory_policy
         from .math_prediction_validity import frozen_prediction_policy
-        from .protocols import MATH_PROTOCOL_WEIGHTED_V8
+        from .protocols import MATH_PROTOCOL_COUNT_V9
         require_current_contract(contract)
         if contract.get('solver_output_interface') != system_interface_contract(contract.get('initial_team_version')):
             raise SearchContractError('MATH_STRUCTURED_INTERFACE_BINDING_MISMATCH')
         self._contract = contract
         # Metadata identity only; it is never sent as a Solver instruction.
         self.output_contract = versions.MATH_SOLVER_INTERFACE_V9_VERSION
-        self.protocol = MATH_PROTOCOL_WEIGHTED_V8
+        self.protocol = MATH_PROTOCOL_COUNT_V9
         self.solver_trajectory_policy = frozen_trajectory_policy(contract)
         self.prediction_validity_policy = frozen_prediction_policy(contract)
 

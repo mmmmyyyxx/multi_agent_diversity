@@ -203,6 +203,7 @@ def test_historical_manifest_schema_branches_keep_their_original_contracts():
     assert now['oneOf'][1:len(old['oneOf'])] == old['oneOf'][1:]
     fallback = deepcopy(now['oneOf'][0])
     fallback['allOf'][0]['not']['properties']['method_family']['enum'].remove(current.CURRENT_METHOD_VERSION)
+    fallback['allOf'][0]['not']['properties']['method_family']['enum'].remove(versions.UNIFIED_GROUP_DIAGNOSED_VERSION)
     fallback['allOf'][0]['not']['properties']['method_family']['enum'].remove(versions.UNIFIED_WEIGHTED_RESPONSIBILITY_VERSION)
     fallback['allOf'][0]['not']['properties']['method_family']['enum'].remove(versions.UNIFIED_VOTE_POPULATION_VERSION)
     fallback['allOf'][0]['not']['properties']['method_family']['enum'].remove(versions.UNIFIED_SCOPED_EXPERIENCE_VERSION)

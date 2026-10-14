@@ -9,7 +9,7 @@ from .schemas import SearchContractError,TransitionRecord
 from .system_prompt import SystemPrompt,team_identity
 from .history import HistoryState
 
-SCHEMA='V211_GROUP_COMPLETE_SEARCH_BOUNDARY_V2'
+SCHEMA='V212_COUNT_COMPLETE_SEARCH_BOUNDARY_V3'
 class PopulationCheckpoint:
     def __init__(self,run,path):self.run=run;self.path=Path(path)
     def pending(self,ordinal):

@@ -28,26 +28,30 @@ The [scientific principles](SCIENTIFIC_PRINCIPLES.md) constrain interpretation;
 the [MATH scientific contract](MATH_SCIENTIFIC_CONTRACT.md) clarifies benchmark
 measurement and admission. These clarifications add no algorithm or threshold.
 The sole executable method is
-`unified_team_prompt_search_v2_11_group_diagnosed_reflection_v1`.
+`unified_team_prompt_search_v2_12_count_responsibility_v1`.
 The [Group-Diagnosed Reflection amendment](GROUP_DIAGNOSED_REFLECTION_V211.md)
 adds one bounded Root Team diagnosis after frozen Parent sampling and shares it
 across three Reflection slots. Verified readable views remove duplicate previews
 and identical actual root/Parent observations, preserving canonical evidence.
-Group hypotheses are auxiliary; V2.10 responsibility and V2.9 population, Memory,
-Solver/scoring, evaluation, admission and stopping retain their semantics.
-The [exclusive weighted responsibility amendment](WEIGHTED_ERROR_RESPONSIBILITY_V210.md)
-uses R = 4D + 2N + C + R3 + 0.5R4 for WHO and Pattern. D/N/C retain existing
-counterfactual assignment and exclusive lanes; R3/R4 require team-correct,
-target-wrong and exactly three/four correct members. WHO alone applies the existing
-failure discount. Uncovered member errors retain zero weight and explicit counters.
+Group hypotheses remain auxiliary; V2.9 population, Memory, Solver/scoring,
+evaluation, admission and stopping retain their semantics. V2.12 replaces
+responsibility classification only; Group evidence retains actual Vote diagnostics.
+The [count-only responsibility amendment](COUNT_RESPONSIBILITY_V212.md)
+uses R = 4D + 2N + C + R3 + 0.5R4 for WHO and Pattern. Every wrong member
+receives exactly one positive label from the five Boolean correctness results:
+zero/one/two/three/four correct members map to C/N/D/R3/R4 respectively.
+Answer classes, Vote correctness, counterfactual assignment and margin do not
+control these labels. WHO alone applies the existing failure discount.
+This supersedes the historical V2.10 D/N/C counterfactual predicates and
+uncovered-error semantics, without modifying actual team aggregation.
 The [Vote-Guided Parent Population amendment](VOTE_GUIDED_PARENT_POPULATION_V29.md)
 replaces the six-step chain and Probe promotion with three independent single-step
 repairs, a three-parent pool per member, complete Optimize Vote fitness and a
 jointly evaluated final per-pool argmax team. Scoped single-step Memory and
 readable root/selected-parent observations support Reflection. It supersedes
 V2.8 local evaluation, serial parent progression and abstention. Gradient generation,
-Solver/scoring and epoch stopping are unchanged. V2.10 supersedes WHO/Pattern
-responsibility scoring only. Single-member
+Solver/scoring and epoch stopping are unchanged. V2.12 supersedes WHO/Pattern
+responsibility classification and scoring only. Single-member
 Full/Shadow deployment guards remain; final simultaneous assembly generalizes
 the same guards to all changed members. No new Preservation panel is introduced.
 [The V2.5 scientific contract](RESPONSIBILITY_FALLBACK_REPAIR_V25.md) and

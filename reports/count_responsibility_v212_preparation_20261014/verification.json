@@ -1,0 +1,53 @@
+{
+  "schema": "v212_offline_verification_v1",
+  "scope": "complete_classified_current_suite_plus_targeted_repairs_latest_result_per_case",
+  "full_suite_evidence": "current.xml",
+  "covered": 901,
+  "passed": 899,
+  "failed": 0,
+  "skipped": 2,
+  "full_suite_initial": {
+    "passed": 897,
+    "skipped": 2,
+    "failed": 2
+  },
+  "targeted_repair_evidence": "repair.xml",
+  "targeted_repair_cases": 58,
+  "targeted_final_evidence": "targeted_final.xml",
+  "targeted_final_passed": 41,
+  "omitted_historical_or_private_modules": 224,
+  "retired_git_only_cases": 5,
+  "compileall": "PASS",
+  "governance": "PASS_TARGETED_COMPLETE_GOVERNANCE_AUDIT",
+  "dependency_closure": "PASS",
+  "draft_manifest": "PASS",
+  "paid_preflight": "HOLD_EXPECTED_UNFROZEN_UNAUTHORIZED",
+  "preflight_blockers": [
+    "PREEXECUTION_NOT_FROZEN",
+    "EXECUTION_BINDING_NOT_FROZEN"
+  ],
+  "unchanged_scientific_components": [
+    "search/current_layer1.py",
+    "search/parent_population.py",
+    "search/population_evidence.py",
+    "search/population_memory.py",
+    "search/scientific_aggregation.py",
+    "search/target_or_team_transition.py",
+    "search/policies.py",
+    "search/private_gate.py",
+    "search/reflector_view.py",
+    "benchmarks/math_response_evidence.py",
+    "benchmarks/math_domain_worker.py",
+    "benchmarks/math_flexible_answer.py",
+    "benchmarks/math_solver_decoding.py",
+    "benchmarks/math_optimizer_generation.py",
+    "search/provider_runtime.py"
+  ],
+  "real_api_calls": 0,
+  "validation_data_reads": 0,
+  "test_data_reads": 0,
+  "network_guard": "credential_free_guarded_subprocesses_network_attempt_count_zero",
+  "historical_evidence": "UNCHANGED",
+  "note": "One complete current run had an old counterfactual-parity assertion and a stale generated Lineage view. They were corrected and relevant cases rerun; latest per-case results are combined, not a single all-pass full rerun. An explicit retired replay selection was a scope mistake and remains excluded; no retired implementation was restored.",
+  "scientific_source_hash": "5dda478af6df3d0afe68a8efc05af2a6294ff3c5db797da9e8ad379104dcc55f"
+}

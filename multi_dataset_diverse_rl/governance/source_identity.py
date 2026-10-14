@@ -96,6 +96,8 @@ def current_scientific_files(root: Path, *, execution_closure: bool = False) -> 
     # Benchmark contracts and governance dependencies receive independent hashes.
     result = list(seen) if execution_closure else [p for p in seen if not p.relative_to(root).as_posix().startswith(
         ('multi_dataset_diverse_rl/benchmarks/', 'multi_dataset_diverse_rl/governance/'))]
+    count_contract = root/'docs/design/COUNT_RESPONSIBILITY_V212.md'
+    if count_contract.is_file():result.append(count_contract)
     spec = root/'docs/design/CURRENT_SPEC.md'
     if spec.is_file():
         result.append(spec)

@@ -3,16 +3,17 @@
 The sole active research architecture is Unified Team Prompt Search.
 Research claims follow [scientific principles](../design/SCIENTIFIC_PRINCIPLES.md)
 and the [MATH measurement contract](../design/MATH_SCIENTIFIC_CONTRACT.md).
-The sole current method is V2.11 Group-Diagnosed Reflection with unchanged V2.10 responsibility and V2.9 Parent Population,
-`unified_team_prompt_search_v2_11_group_diagnosed_reflection_v1`.
+The sole current method is V2.12 count-only exhaustive responsibility with existing Group diagnosis and V2.9 Parent Population,
+`unified_team_prompt_search_v2_12_count_responsibility_v1`.
+See the [count-only responsibility amendment](../design/COUNT_RESPONSIBILITY_V212.md).
 See the [V2.11 auxiliary diagnosis and evidence projection amendment](../design/GROUP_DIAGNOSED_REFLECTION_V211.md).
-See the [weighted responsibility amendment](../design/WEIGHTED_ERROR_RESPONSIBILITY_V210.md).
+See the [historical weighted responsibility amendment](../design/WEIGHTED_ERROR_RESPONSIBILITY_V210.md).
 
 [Current specification](../design/CURRENT_SPEC.md) and
 [V2.5 scientific contract](../design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md) define the
 complete editable Role/Strategy/Answer System Prompt, raw-question User message,
 natural response evidence, gold-blind extraction and bounded invalid recovery.
-The current flow retains seeded zero-responsibility fallback and structural
+Every member error has positive responsibility; the current flow retains structural
 recovery, with three independent repairs and complete Optimize fitness. Legacy
 local-chain/Probe promotion is superseded by Parent Population search.
 The [output recovery amendment](../design/GENERATED_OUTPUT_RECOVERY_V25.md) localizes
