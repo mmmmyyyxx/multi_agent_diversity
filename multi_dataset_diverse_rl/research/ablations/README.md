@@ -5,7 +5,7 @@
 正式团队实验的组合入口和已冻结单 Prompt 实验均保留。
 
 默认配置在 [default.json](../../../experiments/ablations/pattern/default.json)：
-每组5次，五次均使用种子42，重复编号为1–5；每次20个优化机会。
+每组3次，三次均使用种子42，重复编号为1–3；每次20个优化机会。
 不同重复不共享响应缓存，同一重复的组间、轮间相同 Solver 请求可以配对复用。
 Optimizer、Gradient、Cluster 不复用响应；本次不导入旧实验缓存。
 种子控制抽样和并列选择，不承诺不同重复必然产生不同 Prompt。
@@ -53,4 +53,4 @@ Memory 应直接包装正式 `PopulationEditMemory`。当前已提供原生类�
 
 完整方法约定见 [设计说明](../../../docs/design/SINGLE_PROMPT_MODULE_ABLATIONS_V1.md)。
 本次重复实验与 Solver 缓存修订见
-[V2 协议](../../../docs/design/SINGLE_PROMPT_PATTERN_REPEAT_SOLVER_CACHE_V2.md)。
+[V3 三次重复修订](../../../docs/design/SINGLE_PROMPT_PATTERN_REPEAT3_SOLVER_CACHE_V3.md)。

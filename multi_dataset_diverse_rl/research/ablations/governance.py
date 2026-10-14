@@ -34,10 +34,12 @@ from .analysis import summarize
 from .runtime import AblationBroker
 from ...local_optimizers.schemas import LocalEvidenceExample
 
-MANIFEST = 'experiments/manifests/single_prompt_pattern_repeat_solver_cache_v2.json'
-PROTOCOL = 'docs/design/SINGLE_PROMPT_PATTERN_REPEAT_SOLVER_CACHE_V2.md'
-MANIFEST_SCHEMA = 'single_prompt_ablation_execution_manifest_v2'
-PREP_SCHEMA = 'single_prompt_ablation_execution_prep_v2'
+HISTORICAL_MANIFEST = 'experiments/manifests/single_prompt_pattern_repeat_solver_cache_v2.json'
+HISTORICAL_MANIFEST_SHA256 = 'c9f7aa5a18f1a18cd48c9243fc72008563a6d3dc3ae9b9af8ab83031835cdcb5'
+MANIFEST = 'experiments/manifests/single_prompt_pattern_repeat3_solver_cache_v3.json'
+PROTOCOL = 'docs/design/SINGLE_PROMPT_PATTERN_REPEAT3_SOLVER_CACHE_V3.md'
+MANIFEST_SCHEMA = 'single_prompt_ablation_execution_manifest_v3'
+PREP_SCHEMA = 'single_prompt_ablation_execution_prep_v3'
 DATA_PARENT = 'experiments/manifests/single_prompt_gradient_pattern_v1.json'
 INTERPRETER = 'runs/math_v2_1/runtime/Scripts/python.exe'
 
@@ -46,13 +48,19 @@ def manifest_template(root):
     parent = read_json(root / DATA_PARENT)
     return dict(schema_version=MANIFEST_SCHEMA,
         experiment_id=default_config()['experiment_id'],
-        parents=['experiments/manifests/single_prompt_largest_pattern_v1.json',
-                 'experiments/manifests/modular_mechanisms_v212_preparation_v1.yaml'],
+        parents=[HISTORICAL_MANIFEST],
         protocol_path=PROTOCOL, config=default_config(), plan=build_plan(default_config()),
         data=parent['data'], initial_prompt_path=parent['initial_prompt_path'],
         initial_prompt_sha256=parent['initial_prompt_sha256'],
         authorization=dict(real_api_authorized=False, adaptive_validation_access=False, test_access=False),
         status='PREPARED_NOT_EXECUTED')
+
+
+def validate_historical_manifest(root, manifest):
+    """Preserved, unexecuted five-repeat preregistration grants no eligibility."""
+    if (file_hash(root / HISTORICAL_MANIFEST) != HISTORICAL_MANIFEST_SHA256
+            or manifest != read_json(root / HISTORICAL_MANIFEST)):
+        raise SearchContractError('ABLATION_HISTORICAL_PREREGISTRATION_CHANGED')
 
 
 def validate_manifest(root, manifest):
@@ -78,7 +86,7 @@ def validate_manifest(root, manifest):
 def test_plan(root, reader, plan):
     formal = formal_test_plan(root, reader)
     return dict(formal, identity='ABLATION_REPEAT_SCOPED_FINAL_TEST300_V2',
-        selection='all_fifteen_last_validation_retained_prompts_after_audited_training',
+        selection='all_frozen_cells_last_validation_retained_prompts_after_audited_training',
         physical_call_ceiling=None,
         successful_semantic_call_ceiling=plan['final_test_semantic_call_ceiling'],
         cache=plan['cache_policy'], non_solver_cache='forbidden')
@@ -168,7 +176,7 @@ def handoff_template(root, destination, scope):
     return dict(
         schema_version='sol_luna_experiment_handoff_v1', experiment_id=scope['study_id'],
         source=dict(repository_commit=scope['source_sha'], tracked_worktree_status='clean'),
-        protocol=dict(name='Single Prompt Pattern repeat-scoped Solver cache', version='V2',
+        protocol=dict(name='Single Prompt Pattern three repeat-scoped Solver realizations', version='V3',
             protocol_sha256=file_hash(root / PROTOCOL), manifest_path=MANIFEST,
             manifest_sha256=scope['manifest_sha256'], preregistration_path=PROTOCOL,
             preregistration_sha256=file_hash(root / PROTOCOL)),
@@ -177,7 +185,9 @@ def handoff_template(root, destination, scope):
             adaptive_validation_membership_sha256=scope['gate_membership']['membership_sha256']),
         models=dict(solver='gpt-4o-mini', optimizer_or_reflection='qwen3.7-flash', thinking=False,
             local_optimizer_backend='single_prompt_one_block', local_optimizer_version_or_sha256=scope['plan']['plan_identity']),
-        execution=dict(seeds=[42], repeat_ids=[1, 2, 3, 4, 5], opportunity_budget=300,
+        execution=dict(seeds=sorted({c['seed'] for c in scope['plan']['cells']}),
+            repeat_ids=sorted({c['repeat_id'] for c in scope['plan']['cells']}),
+            opportunity_budget=len(scope['plan']['cells']) * scope['plan']['config']['rounds'],
             early_stop_rule='none_efficacy_independent_stop_after_twenty_per_cell',
             exact_runner_command=scope['execution']['command'], expected_output_directory=scope['execution']['run_root'],
             expected_checkpoint_path=scope['execution']['run_root'] + '/' + scope['plan']['cells'][0]['cell_id'] + '/checkpoint_0.json',
@@ -189,7 +199,7 @@ def handoff_template(root, destination, scope):
             test_successful_semantic_call_ceiling=scope['test_plan']['successful_semantic_call_ceiling'],
             cumulative_token_ceiling=None),
         authorization=dict(api_scope=scope['scope_identity'], validation_access_policy='exact_adaptive_validation100',
-            test_access_policy='conditional_test300_after_all_fifteen_audited_cells'),
+            test_access_policy='conditional_test300_after_all_frozen_audited_cells'),
         fail_closed_conditions=['identity_or_hash_mismatch', 'tracked_source_mutation',
             'command_seed_model_split_budget_mismatch', 'non_network_provider_failure',
             'checkpoint_ledger_receipt_corruption', 'budget_overrun', 'unexpected_data_access', 'protocol_change'],

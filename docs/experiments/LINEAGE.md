@@ -534,6 +534,7 @@ flowchart TD
     n368["count_responsibility_v212_preparation_v1<br/>ARCHITECTURE_REFACTOR<br/>IMPLEMENTED_NOT_EXECUTED"]
     n369["modular_mechanisms_v212_preparation_v1<br/>ARCHITECTURE_REFACTOR<br/>IMPLEMENTED_NOT_EXECUTED"]
     n370["single_prompt_pattern_repeat_solver_cache_v2<br/>ABLATION<br/>PREPARED_NOT_EXECUTED"]
+    n371["single_prompt_pattern_repeat3_solver_cache_v3<br/>ABLATION<br/>PREPARED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -853,6 +854,7 @@ flowchart TD
   n368 -->|derived_from| n369
   n366 -->|derived_from| n370
   n369 -->|derived_from| n370
+  n370 -->|derived_from| n371
 ```
 
 ## Archived branches and unresolved evidence

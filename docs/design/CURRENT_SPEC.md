@@ -7,7 +7,7 @@ the default scientific method and optimizer wires. Alternate module combinations
 are synthetic-only until separately specified, frozen and authorized.
 The user-requested [single-Prompt module ablation framework](SINGLE_PROMPT_MODULE_ABLATIONS_V1.md)
 isolates an independent optimizer kernel and adapters to actual formal modules.
-Its seed42/five-repeat defaults are unapproved preparation settings, not team defaults
+Its seed42/three-repeat defaults are independent preparation settings, not team defaults
 or a grant to reuse historical scopes. Memory adaptation remains explicitly unbound.
 The explicitly user-requested [independent single-Prompt mechanism study](SINGLE_PROMPT_GRADIENT_PATTERN_V1.md)
 is isolated from this method and routes only its own schema through the shared
@@ -155,8 +155,8 @@ Canary reliability remains unobserved; no earlier Canary is represented as V2.7.
 Initial-profile and first-opportunity owner reviews, resource control and all
 scientific rules remain mandatory.
 
-The [isolated repeat-scoped single-Prompt ablation](SINGLE_PROMPT_PATTERN_REPEAT_SOLVER_CACHE_V2.md)
-binds five seed42 repeats per arm, Solver-only reuse within a repeat across arms
+The [isolated repeat-scoped single-Prompt ablation](SINGLE_PROMPT_PATTERN_REPEAT3_SOLVER_CACHE_V3.md)
+binds three seed42 repeats per arm, Solver-only reuse within a repeat across arms
 and rounds, and fresh per-call Teacher responses. Its independent Validation100
 gate and conditional final Test300 do not change the active team composition.
 Every new attempt needs its own committed source freeze and exact authorization.

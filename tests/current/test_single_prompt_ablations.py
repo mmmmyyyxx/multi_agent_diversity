@@ -82,14 +82,14 @@ def run_small(plan, broker=None, registry=None, cell=None, resume=None):
     return result, artifacts
 
 
-def test_default_five_repeats_same_seed_and_no_real_grant():
+def test_default_three_repeats_same_seed_and_no_real_grant():
     plan = build_plan(default_config())
-    assert len(plan['cells']) == 15 and {c['seed'] for c in plan['cells']} == {42}
-    assert {c['repeat_id'] for c in plan['cells']} == {1, 2, 3, 4, 5}
-    assert len({c['cell_id'] for c in plan['cells']}) == 15
+    assert len(plan['cells']) == 9 and {c['seed'] for c in plan['cells']} == {42}
+    assert {c['repeat_id'] for c in plan['cells']} == {1, 2, 3}
+    assert len({c['cell_id'] for c in plan['cells']}) == 9
     assert not plan['ready_to_run'] and not plan['config']['real_api_authorized']
-    assert plan['training_semantic_call_ceiling'] == 317400
-    assert plan['final_test_semantic_call_ceiling'] == 18000
+    assert plan['training_semantic_call_ceiling'] == 190440
+    assert plan['final_test_semantic_call_ceiling'] == 10800
     validate_plan(plan)
     assert json.loads((ROOT / 'experiments/ablations/pattern/default.json').read_text(encoding='utf-8')) == default_config()
 
@@ -97,7 +97,7 @@ def test_default_five_repeats_same_seed_and_no_real_grant():
 def test_repeat_namespace_pairs_arms_but_never_repeats():
     plan = build_plan(default_config())
     values = [request_namespace(plan['plan_identity'], 42, c['repeat_id']) for c in plan['cells']]
-    assert len(set(values)) == 5 and values[0] == values[5] == values[10]
+    assert len(set(values)) == 3 and values[0] == values[3] == values[6]
     assert values[0] != values[1]
 
 
@@ -277,13 +277,13 @@ def test_optimizer_error_copying_cannot_be_smuggled_by_module():
     with pytest.raises(SearchContractError, match='PROVENANCE'): run_small(plan, registry=registry)
 
 
-def test_default_full_fifteen_cell_twenty_opportunity_smoke(tmp_path):
+def test_default_full_nine_cell_twenty_opportunity_smoke(tmp_path):
     plan = build_plan(default_config())
     summary = smoke(plan, tmp_path / 'fresh_smoke')
     assert summary['status'] == 'SYNTHETIC_SMOKE_COMPLETE_NOT_EFFICACY'
     assert summary['real_api_calls'] == summary['network_attempts'] == summary['unresolved_reservations'] == 0
-    assert len(summary['rows']) == 15 and len(summary['within_arm_repeat_pairs']) == 30
-    assert all(g['repeats'] == 5 and g['rejected'] == 100 for g in summary['groups'])
+    assert len(summary['rows']) == 9 and len(summary['within_arm_repeat_pairs']) == 9
+    assert all(g['repeats'] == 3 and g['rejected'] == 60 for g in summary['groups'])
     assert all(g['updates'] == g['exhausted'] == 0 for g in summary['groups'])
     # Request realization identities differ by repeat, but pair A/B identical
     # initial Prompts within one repeat. These are actual checkpoint observations.
@@ -298,7 +298,7 @@ def test_default_full_fifteen_cell_twenty_opportunity_smoke(tmp_path):
 def test_draft_preflight_is_not_current_team_execution():
     from scripts.run_experiment import preflight
     result = preflight(default_config())
-    assert not result['ready_to_run'] and result['real_api_calls'] == 0 and result['cells'] == 15
+    assert not result['ready_to_run'] and result['real_api_calls'] == 0 and result['cells'] == 9
 
 
 @pytest.mark.parametrize('failure_type', ['timeout', 'connection'])

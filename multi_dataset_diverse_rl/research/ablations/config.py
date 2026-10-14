@@ -22,7 +22,7 @@ def runtime_defaults():
              optimize_gate=False, final_selection='last_validation_retained_prompt',
              validation_count=100, validation_membership_seed=88,
              solver_concurrency=32, gradient_concurrency=8,
-             test_solver_concurrency=16, repeats_per_arm=5,
+             test_solver_concurrency=16, repeats_per_arm=3,
              provider_routing_policy=routing_contract(), solver_decoding_policy=solver_decoding_contract(),
              optimizer_generation_policy=optimizer_generation_contract(),
              cluster_generation_policy=pattern_cluster_generation_contract(),
@@ -42,8 +42,8 @@ def runtime_defaults():
 
 
 def default_config():
-    return dict(schema_version=SCHEMA, experiment_id='single_prompt_pattern_repeat_solver_cache_v2',
-        parent_manifest=PARENT, seed=42, repeats_per_arm=5, rounds=20,
+    return dict(schema_version=SCHEMA, experiment_id='single_prompt_pattern_repeat3_solver_cache_v3',
+        parent_manifest=PARENT, seed=42, repeats_per_arm=3, rounds=20,
         arms=[dict(arm_id='A', error_source='all_wrong', module='none'),
               dict(arm_id='B', error_source='random_wrong_batch', module='none'),
               dict(arm_id='C', error_source='random_wrong_batch', module='largest_pattern')],

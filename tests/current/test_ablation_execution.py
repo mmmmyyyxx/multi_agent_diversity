@@ -40,7 +40,7 @@ def test_same_repeat_solver_reused_across_arms_rounds_only(broker):
     b, plan, transport = broker
     row = synthetic_rows('optimize', 1)[0]
     first = b.prediction(SEED, row, 'optimize', 42, 0)
-    b.bind_cell(plan['cells'][5], plan)
+    b.bind_cell(next(c for c in plan['cells'] if c['arm_id'] == 'B' and c['repeat_id'] == 1), plan)
     assert b.prediction(SEED, row, 'optimize', 42, 17) == first
     assert b.usage_view()['solver'] == 1 and b.usage_view()['cache_hits'] == 1
     b.bind_cell(plan['cells'][1], plan)
@@ -120,8 +120,35 @@ def test_frozen_manifest_metadata_and_formal_test_alignment():
     reader = gov.validate_manifest(ROOT, manifest)
     final = gov.test_plan(ROOT, reader, manifest['plan'])
     assert final['count'] == 300 and final['solver_concurrency'] == 16
-    assert final['successful_semantic_call_ceiling'] == 18000 and final['physical_call_ceiling'] is None
+    assert final['successful_semantic_call_ceiling'] == 10800 and final['physical_call_ceiling'] is None
     assert final['solver_decoding'] == manifest['config']['runtime']['solver_decoding_policy']
+
+
+def test_five_repeat_parent_is_preserved_but_not_executable():
+    from scripts.run_experiment import preflight
+    historical = read_json(ROOT / gov.HISTORICAL_MANIFEST)
+    gov.validate_historical_manifest(ROOT, historical)
+    assert historical['config']['repeats_per_arm'] == 5 and len(historical['plan']['cells']) == 15
+    assert preflight(historical)['status'] == 'ABLATION_HISTORICAL_PREREGISTRATION_ONLY_NOT_EXECUTABLE'
+    with pytest.raises(SearchContractError): gov.validate_manifest(ROOT, historical)
+    with pytest.raises(SearchContractError):
+        gov.validate_prep(ROOT, ROOT / 'runs/ablations/pattern_seed42_repeat5_20261015/prep')
+
+
+def test_three_repeat_handoff_counts_are_derived_from_frozen_plan(tmp_path):
+    scope = gov._scope(ROOT, ROOT / 'runs/ablations/synthetic_metadata/prep')
+    atomic_write_json(tmp_path / 'prep.json', dict(scope=scope))
+    # Use an ignored repository-local destination so all relative handoff paths bind.
+    destination = ROOT / 'runs/ablations/synthetic_metadata/prep'
+    import unittest.mock
+    with unittest.mock.patch.object(gov, 'file_hash', wraps=gov.file_hash) as hash_file:
+        hash_file.side_effect = lambda p: digest('synthetic prep') if p == destination / 'prep.json' else hash_file._mock_wraps(p)
+        handoff = gov.handoff_template(ROOT, destination, scope)
+    assert handoff['execution']['repeat_ids'] == [1, 2, 3]
+    assert handoff['execution']['opportunity_budget'] == 180
+    assert len(handoff['execution']['expected_checkpoint_paths']) == 189
+    assert scope['call_ceiling'] == 190440
+    assert scope['test_plan']['successful_semantic_call_ceiling'] == 10800
 
 
 @pytest.mark.parametrize('mutation', ['unapproved', 'wrong_scope', 'wrong_attempt', 'validation', 'test', 'evidence'])

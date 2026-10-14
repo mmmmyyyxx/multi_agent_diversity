@@ -1,9 +1,9 @@
 {
   "schema_version": "single_prompt_module_ablation_draft_v2",
-  "experiment_id": "single_prompt_pattern_repeat_solver_cache_v2",
+  "experiment_id": "single_prompt_pattern_repeat3_solver_cache_v3",
   "parent_manifest": "experiments/manifests/single_prompt_largest_pattern_v1.json",
   "seed": 42,
-  "repeats_per_arm": 5,
+  "repeats_per_arm": 3,
   "rounds": 20,
   "arms": [
     {
@@ -39,7 +39,7 @@
     "solver_concurrency": 32,
     "gradient_concurrency": 8,
     "test_solver_concurrency": 16,
-    "repeats_per_arm": 5,
+    "repeats_per_arm": 3,
     "provider_routing_policy": {
       "identity": "OPENLUX_SOLVER_LWJ_OPTIMIZER_V1",
       "routes": {

@@ -20,6 +20,10 @@ def _load(path):
 
 def preflight(manifest):
     if manifest.get('schema_version') == 'single_prompt_ablation_execution_manifest_v2':
+        from multi_dataset_diverse_rl.research.ablations.governance import validate_historical_manifest
+        validate_historical_manifest(ROOT, manifest)
+        return dict(status='ABLATION_HISTORICAL_PREREGISTRATION_ONLY_NOT_EXECUTABLE', real_api_calls=0, ready_to_run=False)
+    if manifest.get('schema_version') == 'single_prompt_ablation_execution_manifest_v3':
         from multi_dataset_diverse_rl.research.ablations.governance import validate_manifest
         validate_manifest(ROOT, manifest)
         return dict(status='ABLATION_EXECUTION_MANIFEST_PREFLIGHT_PASS_NOT_AUTHORIZED',

@@ -10655,14 +10655,40 @@ experiments:
   classifier: null
   active_for_new_work: false
   historical_replay: false
-  superseded_by: []
+  superseded_by:
+  - single_prompt_pattern_repeat3_solver_cache_v3
   notes:
   - Fresh A/B/C five fixed-seed42 repeats; Solver-only cache within repeat across
     arms and rounds.
   - Zero-API preparation; real execution requires exact fresh scope authorization.
-  unavailable:
+  - Superseded before execution by explicit user amendment to three repeats; original
+    manifest retained.
+  unavailable: &id001
     implementation_commit: Containing implementation commit; no self-reference.
     execution_commit: Not executed.
     result_commit: No efficacy evidence.
     report: Preparation protocol in registered manifest; real result pending.
     classifier: Scientific classification pending real evidence.
+- experiment_id: single_prompt_pattern_repeat3_solver_cache_v3
+  kind: ABLATION
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: single_prompt_module_ablation_v2
+  parent_ids:
+  - single_prompt_pattern_repeat_solver_cache_v2
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: NOT_EVALUATED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_pattern_repeat3_solver_cache_v3.json
+  report: null
+  classifier: null
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit user-selected three repeats per arm, all seed42; previous five-repeat
+    preparation unexecuted.
+  - Real execution uses fresh source/scope and the user grant recorded in its private
+    authorization.
+  unavailable: *id001
