@@ -54,3 +54,8 @@ Current diagnostic limits and identity amendment: [Gradient 400 V2](design/GRADI
 
 Current readable evidence and retained parallel timing contract: [Direct readable V2](design/DIRECT_READABLE_OPTIMIZER_EVIDENCE_V2.md).
 The interval codec `search/optimizer_encoding.py` is an offline historical analysis utility, outside current runtime; its original execution source is commit `74e2e0b7818b4cc307e6bcf0aa7d713558113f91`.
+
+V2.11 current auxiliary group diagnosis and verified Reflection projection live in
+`search/group_diagnosis.py` and `search/reflector_view.py`.
+[Scientific contract](design/GROUP_DIAGNOSED_REFLECTION_V211.md); historical
+V2.10 source is recoverable at `d7de59818da609cff6b03c6ebb334fa79011aedd`.

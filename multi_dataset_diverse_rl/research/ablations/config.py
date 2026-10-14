@@ -6,7 +6,7 @@ from ...benchmarks.data_freeze import digest
 from ...search.schemas import SearchContractError
 from ...benchmarks.math_optimizer_generation import optimizer_generation_contract, pattern_cluster_generation_contract
 from ...benchmarks.math_solver_decoding import solver_decoding_contract
-from ...benchmarks.math_response_evidence import trajectory_policy
+from ..single_prompt_policy import independent_trajectory_policy as trajectory_policy
 from ...provider_routing import routing_contract
 
 SCHEMA = 'single_prompt_module_ablation_draft_v1'

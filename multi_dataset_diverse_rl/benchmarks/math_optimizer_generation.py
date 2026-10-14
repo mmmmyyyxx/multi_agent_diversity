@@ -45,7 +45,18 @@ def frozen_cluster_policy(contract):
     return dict(policy)
 
 
+def group_generation_contract():
+    policy=optimizer_generation_contract()
+    policy.update(identity='GROUP_DIAGNOSIS_GENERATION_POLICY_V1',roles=['group_diagnosis'],
+        max_completion_tokens=4096,accounting_output_ceiling=4106)
+    return policy
+
 def frozen_optimizer_role_policy(contract, role):
     optimizer = frozen_optimizer_policy(contract)
+    if role=='group_diagnosis':
+        expected=group_generation_contract()
+        if contract.get('group_generation_policy')!=expected:
+            raise SearchContractError('GROUP_GENERATION_POLICY_MISMATCH')
+        return expected
     cluster = frozen_cluster_policy(contract)
     return cluster if role == 'pattern_cluster' and cluster is not None else optimizer

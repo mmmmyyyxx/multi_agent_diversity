@@ -31,7 +31,9 @@ def execution_scope(manifest,contract):
         preregistration_identity=manifest['preregistration_identity'],binding_sha256=manifest['execution_binding']['sha256'],
         method=contract['method_identity'],transition=contract['transition_policy'],models=contract['models'],
         provider=contract['provider'],provider_routing_policy=contract['provider_routing_policy'],
-        roles=['solver','reflection','pattern_gradient','pattern_cluster'],
+        roles=['solver','reflection','pattern_gradient','pattern_cluster','group_diagnosis'],
+        group_diagnosis_policy=contract['group_diagnosis_policy'],reflector_view_policy=contract['reflector_view_policy'],
+        group_generation_policy=contract['group_generation_policy'],
         operational_pilot=contract['operational_pilot'],provider_bounds=contract['provider_bounds'],
         initial_team_sha256=contract['initial_team_sha256'],initial_memory_member_measurements=5,
         parent_population_policy=contract['parent_population_policy'],final_team_policy=contract['final_team_policy'],
@@ -256,7 +258,8 @@ def preexecution_manifest(root, *, source_sha, frozen=True, binding_path=None, e
         manifest['precluster_continuation_policy']=contract['precluster_continuation_policy']
     for k in ('solver_execution_policy','system_prompt_policy','answer_extraction_policy',
             'canary_review_policy','accounting_scope_policy','accounting_policy_sha256',
-            'heldout_accounting_reserve','parent_population_policy','final_team_policy','responsibility_policy','generated_output_recovery_policy'):
+            'heldout_accounting_reserve','parent_population_policy','final_team_policy','responsibility_policy','generated_output_recovery_policy',
+            'group_diagnosis_policy','group_generation_policy','reflector_view_policy'):
         if k in contract:manifest[k]=contract[k]
     for k in ("invalid_recovery_policy", "low_cost_protocol", "low_cost_subsets_sha256", "optimizer_generation_policy", "optimizer_amendment_authorization_sha256", "optimizer_nonthinking_evidence_policy", "layer1_search_policy", "candidate_contract_identity", "post_search_validation_policy", "pattern_support_id_transport", "pattern_abstraction_guard"):
         if k in contract:manifest[k]=contract[k]

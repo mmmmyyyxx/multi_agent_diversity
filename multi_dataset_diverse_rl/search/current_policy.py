@@ -9,6 +9,9 @@ from .current_layer1 import PopulationSearchConfig
 from .parent_population import POLICY as POPULATION_POLICY
 from .population_evaluation import FINAL_POLICY
 from .weighted_responsibility import POLICY as RESPONSIBILITY_POLICY
+from .group_diagnosis import POLICY as GROUP_POLICY
+from .reflector_view import POLICY as REFLECTOR_POLICY
+from ..benchmarks.math_optimizer_generation import group_generation_contract
 from .optimization_evidence import frozen_policy, METHOD, LAYER1, EVIDENCE, MEMORY, INPUT
 
 
@@ -17,6 +20,15 @@ def require_current_contract(contract):
     from ..provider_routing import frozen_routing
     from ..benchmarks.math_solver_decoding import frozen_solver_policy
     frozen_routing(contract)
+    from ..provider_routing import group_routing_contract
+    from .group_diagnosis import POLICY as group_policy
+    from .reflector_view import POLICY as reflector_policy
+    from ..benchmarks.math_optimizer_generation import group_generation_contract
+    if (contract.get('provider_routing_policy')!=group_routing_contract()
+            or contract.get('group_diagnosis_policy')!=group_policy
+            or contract.get('reflector_view_policy')!=reflector_policy
+            or contract.get('group_generation_policy')!=group_generation_contract()):
+        raise SearchContractError('GROUP_DIAGNOSIS_COMPLETE_POLICY_REQUIRED')
     frozen_solver_policy(contract)
     from ..benchmarks.math_response_evidence import trajectory_policy
     from ..benchmarks.protocols import MATH_PROTOCOL_WEIGHTED_V8
@@ -96,6 +108,9 @@ class CurrentPolicyBundle:
                 optimizer_input_schema=INPUT, panel_policy=self.evidence, pattern_policy=pattern_policy,
                 parent_population_policy=deepcopy(POPULATION_POLICY),final_team_policy=deepcopy(FINAL_POLICY),
                 responsibility_policy=deepcopy(RESPONSIBILITY_POLICY),
+                group_diagnosis_policy=deepcopy(GROUP_POLICY),
+                reflector_view_policy=deepcopy(REFLECTOR_POLICY),
+                group_generation_policy=group_generation_contract(),
                 pattern_provider_binding=provider_binding,generated_output_recovery_policy=deepcopy(recovery),
                 pattern_support_id_transport=identities.PATTERN_SUPPORT_ID_ALIAS_VERSION,
                 pattern_abstraction_guard=identities.PATTERN_SPECIFIC_CONTENT_GUARD_VERSION))

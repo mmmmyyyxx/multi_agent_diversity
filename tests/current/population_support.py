@@ -38,7 +38,7 @@ def response(text):
         provider_usage_details={},provider_thinking_indicators=[])
 def graph(tmp_path,*,reflection=None,solver_behavior=None,uncertain=False,long_response=False,
         answer_only=False,answer_only_form='markdown',block='strategy',format_repair=False,
-        prompts=None,solver_answer=None):
+        prompts=None,solver_answer=None,group=None):
     c=contract();adapter=MATHStructuredSystemBenchmark(c);requests=[];packets=[]
     def examples(split):
         return tuple(CorrectnessExample(protocol_input('math',f'{split}{i}',{'problem':f'Synthetic case {i}: find the result.'},
@@ -46,6 +46,10 @@ def graph(tmp_path,*,reflection=None,solver_behavior=None,uncertain=False,long_r
             for i in range(18 if split=='optimize' else 3))
     def transport(req):
         requests.append(deepcopy(req))
+        if req['messages'][0]['content'].startswith('Diagnose only the selected Pattern'):
+            packet=json.loads(req['messages'][0]['content'].splitlines()[-1])
+            return response(group(packet) if group else json.dumps(dict(status='NO_SUPPORTED_INSIGHT',
+                wrong_peer_contrast=None,negative_experience=None,correct_peer_contrast=None,positive_experience=None)))
         if req['model']=='gpt-4o-mini':
             index=int(re.search(r'case (\d+):',req['messages'][1]['content'])[1]);prompt=req['messages'][0]['content']
             correct=solver_behavior(prompt,index,req) if solver_behavior else index>=6 or 'conditional repair' in prompt and index==0

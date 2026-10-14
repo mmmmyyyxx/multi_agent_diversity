@@ -88,6 +88,12 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
         checkpoint=Path(optimizer.run_root)/'parent_population.private.json')
     provider=PopulationEvaluationProvider(store,transition,pool)
     optimizer.population=pool;optimizer.profile_reader=provider.parent_observations
+    from .group_diagnosis import RootTeamEvidence
+    from .provider_runtime import GroupDiagnosisProvider
+    optimizer.group_evidence=RootTeamEvidence(store)
+    broker=getattr(optimizer.reflection_lm,'broker',None)
+    if broker is None:raise SearchContractError('GROUP_ACCOUNTED_PROVIDER_REQUIRED')
+    optimizer.group_provider=GroupDiagnosisProvider(broker)
     gate=private_binary_gate(benchmark=benchmark,load_examples=shadow_loader,expected_count=shadow_count,
         solver=solver.for_gate() if hasattr(solver,'for_gate') else solver,store=store)
     composed=UnifiedSearchOrchestrator(method=method,benchmark=benchmark,aggregation=aggregation,state=store,
@@ -102,6 +108,7 @@ def build_current_team_prompt_search(*, benchmark, aggregation, examples, prompt
             else GlobalStopPolicy(method.global_stop.no_commit_patience)),runtime_readiness=runtime_readiness,
         provider_call_reader=provider_call_reader)
     composed.operational_bound=operational_bound
+    optimizer.execution_observer=lambda stage,data: composed.execution_observer(stage,data) if composed.execution_observer else None
     composed.population=pool
     composed.finalizer=PopulationFinalizer(provider,gate,transition)
     from .population_checkpoint import PopulationCheckpoint

@@ -15,9 +15,15 @@ def routing_contract():
     return dict(identity=IDENTITY, routes=routes, unknown_role='REJECT', provider_fallback=False)
 
 
+def group_routing_contract():
+    value=routing_contract()
+    value['identity']='OPENLUX_SOLVER_LWJ_GROUP_OPTIMIZER_V2'
+    value['routes']['group_diagnosis']=dict(value['routes']['reflection'])
+    return value
+
 def frozen_routing(contract):
-    expected = routing_contract()
-    if (contract.get('provider') != IDENTITY or contract.get('provider_routing_policy') != expected
+    expected = group_routing_contract() if contract.get("provider")==group_routing_contract()["identity"] else routing_contract()
+    if (contract.get('provider') != expected['identity'] or contract.get('provider_routing_policy') != expected
             or contract.get('models') != dict(solver=SOLVER_MODEL,
                 optimizer_reflection=OPTIMIZER_MODEL, pattern=OPTIMIZER_MODEL, solver_thinking=False)):
         raise SearchContractError('CURRENT_PROVIDER_ROUTING_MISMATCH')

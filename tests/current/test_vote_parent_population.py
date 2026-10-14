@@ -61,7 +61,7 @@ def test_three_independent_slots_complete_vote_and_final_joint(tmp_path):
     result=asyncio.run(run.run(max_opportunities=1));t=result.trace[0].target_member
     search=events['EVALUATION']['search'];evaluated=events['EVALUATION']['evaluated']
     assert len(packets)==3 and len(search.candidates)==3 and len(run.evaluation.provider.fulled)==3
-    assert {p['selected_parent_sha256'] for p in packets}=={BASE.prompt_hash}
+    assert all(p['selected_parent']==BASE.to_dict() for p in packets)
     assert len({json.dumps(p['repair_direction'],sort_keys=True) for p in packets})==1
     assert len({json.dumps(p['repair_examples'],sort_keys=True) for p in packets})==1
     assert all('preceding_attempts' not in p and 'current_panel_observations' not in p for p in packets)
@@ -106,12 +106,17 @@ def test_root_diagnosis_and_selected_parent_actual_observation_are_distinct(tmp_
     run.population.members[t].clear();run.population.update(t,other,vote,proxy)
     context=UnifiedSearchContext(run.benchmark,run.aggregation,run.history,op.pattern_context,{})
     asyncio.run(run.engine.search(op,context))
-    assert {p['selected_parent_sha256'] for p in packets}=={other.prompt_hash}
+    assert all(p['selected_parent']==other.to_dict() for p in packets)
     for p in packets:
         for e in p['repair_examples']:
+            assert [o['applies_to'] for o in e['observations']]==[['root'],['selected_parent']]
+    # Provenance hashes stay in canonical private evidence, outside the LLM view.
+    records=list(tmp_path.glob('group_reflection.private/*/slot_*.json'))
+    assert len(records)==3
+    for path in records:
+        for e in json.loads(path.read_text())['canonical']['repair_examples']:
             assert e['root_observation']['prompt_sha256']==BASE.prompt_hash
             assert e['selected_parent_observation']['prompt_sha256']==other.prompt_hash
-            assert e['selected_parent_observation']['source']=='actual_cached_complete_optimize_response'
 
 def test_rejected_pool_argmax_does_not_silently_become_incumbent(tmp_path):
     run,broker,requests,packets=graph(tmp_path,solver_behavior=lambda prompt,i,req:
@@ -210,7 +215,7 @@ def test_slot_format_feedback_resets_and_truncation_preserves_other_slots(tmp_pa
     from tests.current.population_support import response
     run,broker,requests,packets=graph(tmp_path);original=broker.transport;draws=[]
     def transport(req):
-        if req['model']!='gpt-4o-mini' and len(req['messages'])==1:
+        if req['model']!='gpt-4o-mini' and len(req['messages'])==1 and not req['messages'][0]['content'].startswith('Diagnose only'):
             draws.append(req['messages'][0]['content']);n=len(draws)
             if n==1:return response('{invalid json')
             if n==4:return {**response('{}'),'finish_reason':'length'}
@@ -222,6 +227,9 @@ def test_slot_format_feedback_resets_and_truncation_preserves_other_slots(tmp_pa
     assert 'invalid json' not in draws[1]
     packets=[json.loads(t.splitlines()[-1]) for t in draws]
     assert packets[0]==packets[1] and packets[3]==packets[4]
+    records=[json.loads(p.read_text()) for p in tmp_path.glob('group_reflection.private/*/slot_*.json')]
+    assert sum(r['outcome']['input_statistics']['accounting']['successful_calls'] for r in records)==5
+    assert sum(r['outcome']['input_statistics']['accounting']['input_tokens'] for r in records)==10
 
 def test_joint_team_measurement_cannot_be_replaced_by_high_historical_votes(tmp_path):
     run,broker,requests,packets=graph(tmp_path,solver_behavior=lambda prompt,i,req:

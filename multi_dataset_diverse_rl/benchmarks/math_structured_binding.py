@@ -147,11 +147,15 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
     from ..governance.canary_review import STRUCTURED_POLICY
     from ..search.generation_failures import POLICY as output_recovery
     from ..provider_routing import IDENTITY as provider, SOLVER_MODEL, OPTIMIZER_MODEL, routing_contract
+    from ..provider_routing import group_routing_contract
+    from ..search.group_diagnosis import POLICY as group_policy
+    from ..search.reflector_view import POLICY as reflector_policy
+    from .math_optimizer_generation import group_generation_contract
     from .math_solver_decoding import solver_decoding_contract
     c.pop('verify_settings_path', None)
     c.pop('verify_settings_sha256', None)
     c.update(identity=BINDING,method_identity=METHOD,execution_attempt_id=attempt,
-        provider=provider,provider_routing_policy=routing_contract(),
+        provider='OPENLUX_SOLVER_LWJ_GROUP_OPTIMIZER_V2',provider_routing_policy=group_routing_contract(),
         models=dict(solver=SOLVER_MODEL,optimizer_reflection=OPTIMIZER_MODEL,
             pattern=OPTIMIZER_MODEL,solver_thinking=False),solver_decoding_policy=solver_decoding_contract(),
         canary_attempt_id=attempt,cache_namespace=attempt,binding_path=binding_path,
@@ -162,7 +166,8 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
         prediction_validity_policy=validity_contract(),invalid_recovery_policy=structured_recovery_contract(),
         payload_parser_identity=PARSER,optimization_evidence_policy=deepcopy(POLICY),
         parent_population_policy=deepcopy(POPULATION_POLICY),final_team_policy=deepcopy(FINAL_POLICY),
-        responsibility_policy=deepcopy(RESPONSIBILITY_POLICY),
+        responsibility_policy=deepcopy(RESPONSIBILITY_POLICY),group_diagnosis_policy=deepcopy(group_policy),
+        reflector_view_policy=deepcopy(reflector_policy),group_generation_policy=group_generation_contract(),
         responsibility=RESPONSIBILITY_POLICY['classification'],
         optimizer_input_schema=INPUT,layer1_search_policy=asdict(PopulationSearchConfig()),
         candidate_contract_identity=CONTRACT,memory_policy_identity=MEMORY,panel_evidence_policy=EVIDENCE,
@@ -239,17 +244,18 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
     final_shadow=5*c['shadow_count']
     solver=4*(bootstrap+max_opportunities*sum(per_op.values())+final_shadow)
     gradients=3*count*max_opportunities;clusters=3*max_opportunities;reflection=6*max_opportunities
-    successful=solver+gradients+clusters+reflection;transport=c['decoding']['transport_retries']+1
+    group_calls=2*max_opportunities
+    successful=solver+gradients+clusters+reflection+group_calls;transport=c['decoding']['transport_retries']+1
     c['provider_bounds']=dict(max_opportunities=max_opportunities,max_proposals_per_opportunity=3,
         solver_per_opportunity=sum(per_op.values()),physical_solver_per_opportunity=4*sum(per_op.values()),
         solver_calls=solver,pattern_gradient_calls=gradients,pattern_cluster_calls=clusters,
-        pattern_calls=gradients+clusters,reflection_calls=reflection,successful_provider_calls=successful,
+        pattern_calls=gradients+clusters,reflection_calls=reflection,group_diagnosis_calls=group_calls,successful_provider_calls=successful,
         transport_attempts=successful*transport,attempt_charged_token_ceiling=token_ceiling,
         cumulative_charged_token_ceiling=token_ceiling,reservation_peak_upper_bound=token_ceiling,
-        bound_proof=dict(identity='V29_POPULATION_RESOURCE_DERIVATION_V1',
+        bound_proof=dict(identity='V211_GROUP_POPULATION_RESOURCE_DERIVATION_V2',
             bootstrap_logical_solver_calls=bootstrap,per_op_logical_solver=per_op,
             final_joint_optimize_additional_calls=0,final_shadow_logical_solver_calls=final_shadow,
-            solver_semantic_multiplier=4,gradient_semantic_multiplier=3,cluster_semantic_multiplier=3,transport_multiplier=transport,
+            solver_semantic_multiplier=4,gradient_semantic_multiplier=3,cluster_semantic_multiplier=3,group_diagnosis_multiplier=2,transport_multiplier=transport,
             scientific_stopper_unchanged=True,guarantees_saturation=False,
             token_bound=('PRE_TRANSPORT_EXACT_RESERVATION_AND_FINITE_CALL_ADMISSION' if formal
                 else 'PRE_TRANSPORT_EXACT_RESERVATION_AND_CUMULATIVE_ATTEMPT_ADMISSION')))
@@ -333,7 +339,8 @@ class MATHStructuredBinding:
         c=self.contract
         provider_binding=digest({k:c[k] for k in ('provider','provider_routing_policy','models','gradient_prompt_sha256',
             'pattern_prompt_sha256','optimizer_generation_policy','pattern_policy',
-            'partition_completion_policy','pattern_cluster_generation_policy')})
+            'partition_completion_policy','pattern_cluster_generation_policy',
+            'group_diagnosis_policy','group_generation_policy','reflector_view_policy')})
         return CURRENT_POLICY_BUNDLE.method(aggregation=c['aggregation'],provider_binding=provider_binding,
             successful_provider_calls=c['provider_bounds']['successful_provider_calls'],no_commit_patience=c['scientific_no_commit_patience'],
             partition_completion_policy=c['partition_completion_policy'],

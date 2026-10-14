@@ -36,8 +36,10 @@ POLICY = dict(identity=IDENTITY, maximum_support_examples=3,
     generated_output_recovery='BOUNDED_SINGLE_STEP_OUTPUT_RECOVERY_V4',
     optimizer_output_feedback='TYPED_OPTIMIZER_OUTPUT_FEEDBACK_V1',
     abstraction='SOURCE_CONTEXT_SYMBOLIC_ABSTRACTION_GUARD_V1',
-    optimizer_input_encoding='DIRECT_READABLE_OPTIMIZER_EVIDENCE_V2',
-    layer1_diagnosis='accepted_shared_root_diagnostics_and_actual_selected_parent_observations',
+    optimizer_input_encoding='DIRECT_READABLE_REFLECTOR_VIEW_V3',
+    layer1_diagnosis='accepted_shared_root_and_actual_parent_plus_verified_group_experience',
+    reflector_view='DIRECT_READABLE_REFLECTOR_VIEW_V3',
+    reflection_instruction='GROUP_DIAGNOSED_REFLECTION_INSTRUCTION_V1',
     layer1_attempt_feedback='typed_structural_recovery_only',
     layer1_prompt_budget='exact_remaining_block_characters_v1',
     memory_retrieval='exact_parent_then_latest_measured_edit',
@@ -112,6 +114,7 @@ def executability_checks(prompt, *, private_texts=()):
             r'root_repair_diagnostic|worked_reference|preceding_attempts|edit_capacity|'
             r'selected_parent_observation|root_observation|repair_direction|scoped_experience|'
             r'selected_parent|selected_parent_sha256|repair_examples|reference_final_answer|accepted_root_diagnostic|'
+            r'group_experience|root_diagnostic|applies_to|positive_experience|negative_experience|'
             r'fitness_provenance|selection_plan|parent_population|actual_edit_parent_effect|source_experience_id|'
             r'last_step_instruction|delivered_experience_ids|memory_input_sha256|'
             r'ground[_ -]?truth|gold[_ -]?answer)\b|\b(?:read|consult|copy|access|use)\b[^.;\n]{0,55}'

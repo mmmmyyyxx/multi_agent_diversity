@@ -8,11 +8,22 @@ from ..benchmarks.math_solver_decoding import solver_decoding_contract
 from ..benchmarks.math_response_evidence import trajectory_policy
 from ..provider_routing import routing_contract
 from ..search.textual_gradients import GRADIENT_POLICY
+from ..versions import POPULATION_LAYER1_INPUT_VERSION
 
 IDENTITY = 'SINGLE_PROMPT_GRADIENT_PATTERN_STUDY_V1'
 ARMS = ('full_errors', 'batch_errors', 'gradient_pattern')
 STUDY = 'single_prompt_gradient_pattern_v1'
 
+
+def independent_trajectory_policy():
+    """This study's existing metadata must not float with the team Reflector.
+
+    Ordinary response codec/scoring physics are unchanged. This pin grants no
+    old-source execution, checkpoint or authorization eligibility.
+    """
+    value=trajectory_policy()
+    value['optimizer_input_schema']=POPULATION_LAYER1_INPUT_VERSION
+    return value
 
 def policy():
     return dict(identity=IDENTITY, arms=list(ARMS), seeds=[88, 89, 90],
@@ -33,7 +44,7 @@ def policy():
         solver_decoding_policy=solver_decoding_contract(),
         optimizer_generation_policy=optimizer_generation_contract(),
         cluster_generation_policy=pattern_cluster_generation_contract(),
-        trajectory_policy=trajectory_policy(),
+        trajectory_policy=independent_trajectory_policy(),
         solver_concurrency=16, gradient_concurrency=8,
         provider_timeout_seconds=120,
         solver_semantic_draws=4, first_solver_capacity=3600,

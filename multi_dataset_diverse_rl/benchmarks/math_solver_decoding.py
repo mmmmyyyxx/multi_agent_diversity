@@ -20,7 +20,7 @@ def frozen_solver_policy(contract):
 def generation_request_fields(contract,role):
     policy=frozen_solver_policy(contract)
     from .math_optimizer_generation import frozen_optimizer_role_policy
-    if role in {'reflection','pattern_gradient','pattern_cluster'}:
+    if role in {'reflection','pattern_gradient','pattern_cluster','group_diagnosis'}:
         optimizer=frozen_optimizer_role_policy(contract,role)
         if not optimizer:raise SearchContractError('CURRENT_OPTIMIZER_GENERATION_REQUIRED')
         return dict(temperature=optimizer['temperature'],max_completion_tokens=optimizer['max_completion_tokens'],

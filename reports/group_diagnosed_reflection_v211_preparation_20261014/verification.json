@@ -1,0 +1,45 @@
+{
+  "schema": "v211_offline_verification_v1",
+  "scope": "classified_current_suite_plus_focused_repairs_latest_result_per_case",
+  "runs": [
+    {
+      "evidence": "current.xml",
+      "passed": 877,
+      "failed": 18,
+      "skipped": 2
+    },
+    {
+      "evidence": "increment.xml",
+      "passed": 276,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "evidence": "final_group.xml",
+      "passed": 61,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "evidence": "slot_accounting.xml",
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "current_coverage": 898,
+  "passed": 896,
+  "failed": 0,
+  "skipped": 2,
+  "omitted_historical_or_private_modules": 224,
+  "retired_git_only_cases": 5,
+  "compileall": "PASS",
+  "governance": "PASS",
+  "draft_manifest": "PASS",
+  "scientific_source_hash": "5b730c3948d6ced6740a8701bc0f76ca220d562d3efba441b790c029f71b815c",
+  "real_api_calls": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "network_guard": "credential_free_guarded_subprocesses",
+  "note": "The full current suite was run once; focused repair results replace affected cases. No single all-pass full rerun is claimed."
+}

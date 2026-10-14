@@ -9,7 +9,7 @@ import re
 from .token_accounting import OperationalAbort
 
 IDENTITY='ROLE_ROUTED_SUPPLIER_COST_RESERVATION_V1'
-ROLE_PROFILE=dict(solver='openlux',reflection='lwj',pattern_gradient='lwj',pattern_cluster='lwj')
+ROLE_PROFILE=dict(solver='openlux',reflection='lwj',pattern_gradient='lwj',pattern_cluster='lwj',group_diagnosis='lwj')
 SCALE=1_000_000
 TOKEN_ONLY_POLICY=dict(identity='USER_SELECTED_TOKEN_ONLY_RESOURCE_CONTROL_V1',
     monetary_tracking=False,token_limits='FROZEN_PHASE_LEDGER_HARD_LIMITS',

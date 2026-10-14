@@ -3,8 +3,9 @@
 The sole active research architecture is Unified Team Prompt Search.
 Research claims follow [scientific principles](../design/SCIENTIFIC_PRINCIPLES.md)
 and the [MATH measurement contract](../design/MATH_SCIENTIFIC_CONTRACT.md).
-The sole current method is V2.10 weighted error responsibility with V2.9 Parent Population,
-`unified_team_prompt_search_v2_10_weighted_responsibility_v1`.
+The sole current method is V2.11 Group-Diagnosed Reflection with unchanged V2.10 responsibility and V2.9 Parent Population,
+`unified_team_prompt_search_v2_11_group_diagnosed_reflection_v1`.
+See the [V2.11 auxiliary diagnosis and evidence projection amendment](../design/GROUP_DIAGNOSED_REFLECTION_V211.md).
 See the [weighted responsibility amendment](../design/WEIGHTED_ERROR_RESPONSIBILITY_V210.md).
 
 [Current specification](../design/CURRENT_SPEC.md) and
@@ -73,7 +74,7 @@ separates delivery, actionable content and Mock wiring from real-model utilizati
 and efficacy. No real V2.8 execution is authorized or evaluated.
 Full/Shadow admission and the formal stopper remain unchanged.
 
-The sole current method is [V2.9 Vote-Guided Parent Population](../design/VOTE_GUIDED_PARENT_POPULATION_V29.md).
+The retained population component is [V2.9 Vote-Guided Parent Population](../design/VOTE_GUIDED_PARENT_POPULATION_V29.md).
 It is a user-directed algorithm change with three independent single-step repairs,
 complete Optimize fitness, bounded per-member pools and a jointly evaluated final
 argmax team. No real experiment, Token-efficiency or generalization claim follows

@@ -1,0 +1,22 @@
+{
+  "correct_peer_contrast": null,
+  "negative_experience": null,
+  "positive_experience": null,
+  "root_team_state_id": "299eebe00777dafa8afc72b4168c964e3efc1142c89a7f9b2abc0eefee6db93c",
+  "source": "root_team_snapshot",
+  "status": "SUPPORTED_INSIGHT",
+  "wrong_peer_contrast": {
+    "hypothesis": "Shared omissions may limit the proposed repair.",
+    "modification_implication": "Check applicability before adopting another approach.",
+    "observation": "The compared written approaches omit a domain check.",
+    "support": [
+      {
+        "example_id": "optimize2",
+        "member_ids": [
+          0,
+          1
+        ]
+      }
+    ]
+  }
+}

@@ -987,6 +987,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/group_diagnosed_reflection_v211_preparation_20261014",
+      "document": "reports/group_diagnosed_reflection_v211_preparation_20261014/README.md",
+      "date": "20261014",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "PREEXECUTION",
+      "experiment_id": "group_diagnosed_reflection_v211_preparation_v1",
+      "status": "IMPLEMENTED_NOT_EXECUTED",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/layer2_pre_pilot_repository_audit_20260921",
       "document": "reports/layer2_pre_pilot_repository_audit_20260921/README.md",
       "date": "20260921",

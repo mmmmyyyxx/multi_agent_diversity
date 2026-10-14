@@ -27,7 +27,7 @@ def attach_pilot_observer(composed, run_root):
         context.clear();context.update(opportunity_id=data['opportunity_id'],target_member=data['target_member'])
         journal(stage,data)
     def generation(stage,data):
-        context.update(slot=data['outcome']['slot'])
+        if stage=='POPULATION_SLOT':context.update(slot=data['outcome']['slot'])
         journal(stage,data)
     composed.observation_observer=opportunity
     composed.engine.optimizer.execution_observer=generation

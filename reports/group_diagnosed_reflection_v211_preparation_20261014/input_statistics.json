@@ -1,0 +1,210 @@
+{
+  "schema": "v211_wire_comparison_v1",
+  "comparison": "matched_canonical_records_old_template_vs_new_actual_serialized_wire_not_old_model_replay",
+  "rows": [
+    {
+      "case": "same_root_parent_three_short_supports",
+      "slot": 0,
+      "old_wire_characters": 13004,
+      "new_wire_characters": 5916,
+      "saved_characters": 7088,
+      "relative_saving": 0.5450630575207629,
+      "estimate_method": "characters_divided_by_four_illustrative_not_Qwen_tokenization",
+      "old_token_estimate": 3251.0,
+      "new_token_estimate": 1479.0,
+      "real_provider_tokens": null,
+      "synthetic_provider_input_tokens": 2,
+      "statistics": {
+        "accounting": {
+          "input_tokens": 2,
+          "output_tokens": 2,
+          "successful_calls": 1
+        },
+        "deduplicated_response_characters": 174,
+        "group_experience_characters": 528,
+        "new_packet_serialized_characters": 3540,
+        "old_packet_serialized_characters": 11264,
+        "original_full_response_characters": 348,
+        "original_observation_body_characters": 600,
+        "preview_removed_characters": 252,
+        "root_parent_deduplications": 3,
+        "root_parent_response_removed_characters": 174,
+        "wire_characters_per_draw": [
+          5916
+        ]
+      }
+    },
+    {
+      "case": "same_root_parent_three_short_supports",
+      "slot": 1,
+      "old_wire_characters": 13004,
+      "new_wire_characters": 5916,
+      "saved_characters": 7088,
+      "relative_saving": 0.5450630575207629,
+      "estimate_method": "characters_divided_by_four_illustrative_not_Qwen_tokenization",
+      "old_token_estimate": 3251.0,
+      "new_token_estimate": 1479.0,
+      "real_provider_tokens": null,
+      "synthetic_provider_input_tokens": 2,
+      "statistics": {
+        "accounting": {
+          "input_tokens": 2,
+          "output_tokens": 2,
+          "successful_calls": 1
+        },
+        "deduplicated_response_characters": 174,
+        "group_experience_characters": 528,
+        "new_packet_serialized_characters": 3540,
+        "old_packet_serialized_characters": 11264,
+        "original_full_response_characters": 348,
+        "original_observation_body_characters": 600,
+        "preview_removed_characters": 252,
+        "root_parent_deduplications": 3,
+        "root_parent_response_removed_characters": 174,
+        "wire_characters_per_draw": [
+          5916
+        ]
+      }
+    },
+    {
+      "case": "same_root_parent_three_short_supports",
+      "slot": 2,
+      "old_wire_characters": 13004,
+      "new_wire_characters": 5916,
+      "saved_characters": 7088,
+      "relative_saving": 0.5450630575207629,
+      "estimate_method": "characters_divided_by_four_illustrative_not_Qwen_tokenization",
+      "old_token_estimate": 3251.0,
+      "new_token_estimate": 1479.0,
+      "real_provider_tokens": null,
+      "synthetic_provider_input_tokens": 2,
+      "statistics": {
+        "accounting": {
+          "input_tokens": 2,
+          "output_tokens": 2,
+          "successful_calls": 1
+        },
+        "deduplicated_response_characters": 174,
+        "group_experience_characters": 528,
+        "new_packet_serialized_characters": 3540,
+        "old_packet_serialized_characters": 11264,
+        "original_full_response_characters": 348,
+        "original_observation_body_characters": 600,
+        "preview_removed_characters": 252,
+        "root_parent_deduplications": 3,
+        "root_parent_response_removed_characters": 174,
+        "wire_characters_per_draw": [
+          5916
+        ]
+      }
+    },
+    {
+      "case": "same_root_parent_one_long_unicode_support",
+      "slot": 0,
+      "old_wire_characters": 40746,
+      "new_wire_characters": 12044,
+      "saved_characters": 28702,
+      "relative_saving": 0.7044127030874197,
+      "estimate_method": "characters_divided_by_four_illustrative_not_Qwen_tokenization",
+      "old_token_estimate": 10186.5,
+      "new_token_estimate": 3011.0,
+      "real_provider_tokens": null,
+      "synthetic_provider_input_tokens": 2,
+      "statistics": {
+        "accounting": {
+          "input_tokens": 2,
+          "output_tokens": 2,
+          "successful_calls": 1
+        },
+        "deduplicated_response_characters": 7618,
+        "group_experience_characters": 528,
+        "new_packet_serialized_characters": 9668,
+        "old_packet_serialized_characters": 39006,
+        "original_full_response_characters": 15236,
+        "original_observation_body_characters": 23428,
+        "preview_removed_characters": 8192,
+        "root_parent_deduplications": 1,
+        "root_parent_response_removed_characters": 7618,
+        "wire_characters_per_draw": [
+          12044
+        ]
+      }
+    },
+    {
+      "case": "same_root_parent_one_long_unicode_support",
+      "slot": 1,
+      "old_wire_characters": 40746,
+      "new_wire_characters": 12044,
+      "saved_characters": 28702,
+      "relative_saving": 0.7044127030874197,
+      "estimate_method": "characters_divided_by_four_illustrative_not_Qwen_tokenization",
+      "old_token_estimate": 10186.5,
+      "new_token_estimate": 3011.0,
+      "real_provider_tokens": null,
+      "synthetic_provider_input_tokens": 2,
+      "statistics": {
+        "accounting": {
+          "input_tokens": 2,
+          "output_tokens": 2,
+          "successful_calls": 1
+        },
+        "deduplicated_response_characters": 7618,
+        "group_experience_characters": 528,
+        "new_packet_serialized_characters": 9668,
+        "old_packet_serialized_characters": 39006,
+        "original_full_response_characters": 15236,
+        "original_observation_body_characters": 23428,
+        "preview_removed_characters": 8192,
+        "root_parent_deduplications": 1,
+        "root_parent_response_removed_characters": 7618,
+        "wire_characters_per_draw": [
+          12044
+        ]
+      }
+    },
+    {
+      "case": "same_root_parent_one_long_unicode_support",
+      "slot": 2,
+      "old_wire_characters": 40746,
+      "new_wire_characters": 12044,
+      "saved_characters": 28702,
+      "relative_saving": 0.7044127030874197,
+      "estimate_method": "characters_divided_by_four_illustrative_not_Qwen_tokenization",
+      "old_token_estimate": 10186.5,
+      "new_token_estimate": 3011.0,
+      "real_provider_tokens": null,
+      "synthetic_provider_input_tokens": 2,
+      "statistics": {
+        "accounting": {
+          "input_tokens": 2,
+          "output_tokens": 2,
+          "successful_calls": 1
+        },
+        "deduplicated_response_characters": 7618,
+        "group_experience_characters": 528,
+        "new_packet_serialized_characters": 9668,
+        "old_packet_serialized_characters": 39006,
+        "original_full_response_characters": 15236,
+        "original_observation_body_characters": 23428,
+        "preview_removed_characters": 8192,
+        "root_parent_deduplications": 1,
+        "root_parent_response_removed_characters": 7618,
+        "wire_characters_per_draw": [
+          12044
+        ]
+      }
+    }
+  ],
+  "group": {
+    "input_support_count": 3,
+    "input_wire_characters": 9712,
+    "synthetic_accounting": {
+      "input_tokens": 2,
+      "output_tokens": 2,
+      "successful_calls": 1
+    },
+    "nonempty_experiences": 1,
+    "real_provider_tokens": null
+  },
+  "real_api_calls": 0
+}

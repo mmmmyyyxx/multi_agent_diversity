@@ -169,7 +169,7 @@ def test_r3_r4_reach_production_pattern_and_three_shared_independent_slots(tmp_p
     assert op.diagnosis.responsibility[0].r4_count == 1
     assert op.objective['raw_responsibility'] == 1.5
     assert op.pattern_context['selected_pattern_responsibility'] == 1.5
-    assert len(packets)==3 and len({p['selected_parent_sha256'] for p in packets})==1
+    assert len(packets)==3 and len({str(p['selected_parent']) for p in packets})==1
     assert len({str(p['repair_direction']) for p in packets})==1
     assert len({str(p['repair_examples']) for p in packets})==1
     assert result.final_assembly['selection_repeated'] is False

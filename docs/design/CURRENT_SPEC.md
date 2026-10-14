@@ -28,7 +28,13 @@ The [scientific principles](SCIENTIFIC_PRINCIPLES.md) constrain interpretation;
 the [MATH scientific contract](MATH_SCIENTIFIC_CONTRACT.md) clarifies benchmark
 measurement and admission. These clarifications add no algorithm or threshold.
 The sole executable method is
-`unified_team_prompt_search_v2_10_weighted_responsibility_v1`.
+`unified_team_prompt_search_v2_11_group_diagnosed_reflection_v1`.
+The [Group-Diagnosed Reflection amendment](GROUP_DIAGNOSED_REFLECTION_V211.md)
+adds one bounded Root Team diagnosis after frozen Parent sampling and shares it
+across three Reflection slots. Verified readable views remove duplicate previews
+and identical actual root/Parent observations, preserving canonical evidence.
+Group hypotheses are auxiliary; V2.10 responsibility and V2.9 population, Memory,
+Solver/scoring, evaluation, admission and stopping retain their semantics.
 The [exclusive weighted responsibility amendment](WEIGHTED_ERROR_RESPONSIBILITY_V210.md)
 uses R = 4D + 2N + C + R3 + 0.5R4 for WHO and Pattern. D/N/C retain existing
 counterfactual assignment and exclusive lanes; R3/R4 require team-correct,
@@ -120,9 +126,9 @@ leakage guards, Solver, aggregation, team gates and stopping remain unchanged.
 No paid execution or efficacy is established by this offline adoption.
 
 The [direct readable evidence amendment](DIRECT_READABLE_OPTIMIZER_EVIDENCE_V2.md)
-supersedes interval references. Gradient and Reflection receive original complete
-Solver response and preview strings, with clear source labels and no character
-slicing task. Solver16, independent Gradient8 and private request timing remain.
+supersedes interval references. Gradient retains original complete Solver response and preview strings, with
+clear source labels and no character slicing task. V2.11 Reflection instead uses
+the verified lossless projection and keeps previews in canonical evidence only. Solver16, independent Gradient8 and private request timing remain.
 Fresh identities and scope are required. Scoring, evidence split boundaries,
 output limits, strict guards, recovery and stopping remain unchanged.
 

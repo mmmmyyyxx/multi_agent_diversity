@@ -135,6 +135,8 @@ def current_scientific_files(root: Path, *, execution_closure: bool = False) -> 
     if population_contract.is_file():result.append(population_contract)
     weighted_contract=root/'docs/design/WEIGHTED_ERROR_RESPONSIBILITY_V210.md'
     if weighted_contract.is_file():result.append(weighted_contract)
+    group_contract=root/'docs/design/GROUP_DIAGNOSED_REFLECTION_V211.md'
+    if group_contract.is_file():result.append(group_contract)
     routing_contract=root/'docs/design/PROVIDER_ROLE_ROUTING_V1.md'
     if routing_contract.is_file():result.append(routing_contract)
     risk_contract = root/'docs/design/SHARED_RISK_MEMORY_V4.md'

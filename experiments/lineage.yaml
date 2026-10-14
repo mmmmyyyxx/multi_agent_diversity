@@ -1133,6 +1133,9 @@ nodes:
 - experiment_id: single_prompt_largest_pattern_v1
   kind: FORMAL_EXPERIMENT
   era: BENCHMARK_GENERALIZATION
+- experiment_id: group_diagnosed_reflection_v211_preparation_v1
+  kind: ARCHITECTURE_REFACTOR
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2596,4 +2599,10 @@ edges:
   evidence: docs/design/SINGLE_PROMPT_LARGEST_PATTERN_V1.md
   scope: User-intent correction to one largest support Pattern; exact compatible training
     data and immutable control references.
+- from: weighted_error_responsibility_v210_preparation_v1
+  to: group_diagnosed_reflection_v211_preparation_v1
+  relation: derived_from
+  evidence: docs/design/GROUP_DIAGNOSED_REFLECTION_V211.md
+  scope: Auxiliary Root Team diagnosis and Reflection projection only; historical
+    evidence immutable.
 current_frontier: experiments/current_frontier.yaml

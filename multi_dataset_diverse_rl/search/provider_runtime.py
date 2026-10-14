@@ -51,7 +51,8 @@ class RequestBroker:
         self.cache = {}
         self.cache_seals = {}
         self.usage = usage if usage is not None else dict(attempts=0, successes=0, failures=0, input_tokens=0, output_tokens=0,
-            solver=0, reflection=0, pattern=0, validation=0, test=0)
+            solver=0, reflection=0, pattern=0, group_diagnosis=0, validation=0, test=0)
+        self.role_usage=self.usage.setdefault('role_usage',{})
         self.lock = lock if lock is not None else threading.RLock()
         self.execution_policy = frozen_execution_policy(contract)
         self.shared_requests = shared_requests if shared_requests is not None else {}
@@ -112,14 +113,14 @@ class RequestBroker:
     def _request_identity(self, *, role, split, messages, member_slot=None, output_capacity=None):
         pattern_roles={'pattern_gradient','pattern_cluster'}
         legal=((role=='solver' and split=='validation') if self.validation_only else
-            (role in {'solver','reflection',*pattern_roles} and split in {'optimize','shadow'}
+            (role in {'solver','reflection','group_diagnosis',*pattern_roles} and split in {'optimize','shadow'}
             and (role=='solver' or split=='optimize')))
         if not legal:
             raise SearchContractError("PROVIDER_ROLE_SPLIT_FORBIDDEN")
         if role in pattern_roles and not self.contract["arms"][self.arm][0]:
             raise SearchContractError("PATTERN_CALL_FORBIDDEN_IN_NULL_ARM")
         c = self.contract
-        model = c["models"]["solver" if role == "solver" else "optimizer_reflection" if role == "reflection" else "pattern"]
+        model = c["models"]["solver" if role == "solver" else "optimizer_reflection" if role in {'reflection','group_diagnosis'} else "pattern"]
         request = dict(model=model, messages=messages, **generation_request_fields(c, role))
         if output_capacity is not None:
             allowed = {3600, 6144} if self.execution_policy else {3600}
@@ -162,10 +163,18 @@ class RequestBroker:
             identity['validation_treatment']={k:c[k] for k in ('post_freeze_validation_policy','validation_scope_identity')}
         if self.solver_trajectory_policy is not None:
             identity['solver_trajectory_policy'] = self.solver_trajectory_policy
-        if role in {'reflection','pattern','pattern_gradient','pattern_cluster'} and self.optimizer_policy:
+        if role in {'reflection','pattern','pattern_gradient','pattern_cluster','group_diagnosis'} and self.optimizer_policy:
             identity['optimizer_generation_policy'] = frozen_optimizer_role_policy(c, role)
             if c.get('optimizer_nonthinking_evidence_policy'):
                 identity['optimizer_nonthinking_evidence_policy']=c['optimizer_nonthinking_evidence_policy']
+        if role=='group_diagnosis':
+            from .group_diagnosis import POLICY as group_policy
+            from ..governance.token_accounting import reservation
+            bounds=reservation(request)
+            if (bounds['serialized_request_bytes']>group_policy['maximum_input_bytes']
+                    or bounds['amount']>group_policy['configured_context_token_ceiling']):
+                raise SearchContractError('GROUP_DIAGNOSIS_RESOURCE_INFEASIBLE')
+            identity['group_diagnosis_policy']=c['group_diagnosis_policy']
         if role == "solver":
             if self.execution_policy:
                 identity['solver_execution_policy'] = self.execution_policy
@@ -413,7 +422,7 @@ class RequestBroker:
                 if not isinstance(result, dict) or (not isinstance(result.get("text"), str)
                         and not ("text" in result and result["text"] is None and
                             (role == "solver" and self.prediction_policy or
-                             role in {'reflection','pattern_gradient','pattern_cluster'}
+                             role in {'reflection','pattern_gradient','pattern_cluster','group_diagnosis'}
                              and result.get('provider_response_accepted') is True
                              and result.get('provider_metadata_loss_audited') is True))) or any(type(result.get(k)) is not int or result[k] < 0 for k in ("input_tokens", "output_tokens")):
                     self.usage["failures"] += 1
@@ -421,6 +430,9 @@ class RequestBroker:
                     self.abort("PROVIDER_RESPONSE_ACCOUNTING_INVALID")
                 self.usage["successes"] += 1
                 self.usage[role] += 1
+                role_totals=self.role_usage.setdefault(role,dict(successful_calls=0,input_tokens=0,output_tokens=0))
+                role_totals['successful_calls']+=1
+                for field in ('input_tokens','output_tokens'):role_totals[field]+=result[field]
                 if role in {'pattern_gradient','pattern_cluster'}:self.usage['pattern']+=1
                 if split == "validation":
                     self.usage["validation"] += 1
@@ -431,7 +443,7 @@ class RequestBroker:
                 self._write(dict(kind='PROVIDER_REQUEST_TIMING',role=role,split=split,stage=stage,
                     request_sha256=key,physical_attempt_no=physical_attempt_no,
                     outcome='RESPONSE',request_timing=timing))
-                if role in {'reflection','pattern','pattern_gradient','pattern_cluster'} and self.optimizer_policy:
+                if role in {'reflection','pattern','pattern_gradient','pattern_cluster','group_diagnosis'} and self.optimizer_policy:
                     from ..benchmarks.math_optimizer_diagnostics import optimizer_response_telemetry
                     role_policy=frozen_optimizer_role_policy(c, role)
                     telemetry=optimizer_response_telemetry(request,result,role_policy,c.get('optimizer_nonthinking_evidence_policy'))
@@ -441,7 +453,7 @@ class RequestBroker:
                 if self.raw_writer:
                     self.raw_writer(dict(role=role, split=split, stage=stage, request_sha256=key, request=request, response=result,
                         semantic_attempt_no=semantic_attempt_no,physical_attempt_no=physical_attempt_no))
-                if role in {'reflection','pattern','pattern_gradient','pattern_cluster'} and self.optimizer_policy and self.optimizer_policy['enable_thinking'] is False:
+                if role in {'reflection','pattern','pattern_gradient','pattern_cluster','group_diagnosis'} and self.optimizer_policy and self.optimizer_policy['enable_thinking'] is False:
                     reasoning=telemetry['reasoning_tokens']
                     if telemetry['nonthinking_evidence_level']=='CONTRADICTORY':
                         self.abort('PROVIDER_NONTHINKING_CONTROL_NOT_HONORED')
@@ -454,7 +466,7 @@ class RequestBroker:
                 if (self.token_ledger or role != 'solver' and self.optimizer_policy) and type(reported) is int and reported > ceiling:
                     self.abort("OPERATIONAL_OUTPUT_CAP_NOT_ENFORCED")
                 if result.get('finish_reason') in {'length','max_tokens','max_output_tokens'}:
-                    if role in {'reflection','pattern_gradient','pattern_cluster'}:
+                    if role in {'reflection','pattern_gradient','pattern_cluster','group_diagnosis'}:
                         from .generation_failures import generation_failure,frozen_recovery
                         frozen_recovery(c.get('generated_output_recovery_policy'))
                         raise generation_failure('GENERATED_OUTPUT_TRUNCATED')
@@ -641,17 +653,26 @@ class BenchmarkSolver:
             parsed.valid, input_tokens=result["input_tokens"], output_tokens=result["output_tokens"], provider_called=result["provider_called"])
 
 
+class GroupDiagnosisProvider:
+    def __init__(self,broker):self.broker=broker;self.broker.usage.setdefault('group_diagnosis',0)
+    def __call__(self,prompt):
+        return self.broker.complete(role='group_diagnosis',split='optimize',stage='root_team_group_diagnosis',
+            messages=[{'role':'user','content':prompt}])['text']
+    def accounting(self):
+        return dict(self.broker.role_usage.get('group_diagnosis',dict(successful_calls=0,input_tokens=0,output_tokens=0)))
+
 class ReflectionProvider:
     def __init__(self, broker):
         self.broker = broker
         self.calls = self.input_tokens = self.output_tokens = 0
 
     def __call__(self, prompt):
-        result = self.broker.complete(role="reflection", split="optimize", stage="population_reflection", messages=[{"role": "user", "content": prompt}])
-        self.calls += int(result["provider_called"])
-        self.input_tokens += result["input_tokens"]
-        self.output_tokens += result["output_tokens"]
+        try:
+            result = self.broker.complete(role="reflection", split="optimize", stage="population_reflection", messages=[{"role": "user", "content": prompt}])
+        finally:
+            totals=self.accounting()
+            self.calls=totals['successful_calls'];self.input_tokens=totals['input_tokens'];self.output_tokens=totals['output_tokens']
         return result["text"]
 
     def accounting(self):
-        return dict(successful_calls=self.calls, input_tokens=self.input_tokens, output_tokens=self.output_tokens)
+        return dict(self.broker.role_usage.get('reflection',dict(successful_calls=0,input_tokens=0,output_tokens=0)))

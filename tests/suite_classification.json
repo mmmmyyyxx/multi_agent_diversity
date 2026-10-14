@@ -1,7 +1,13 @@
 {
-  "current_suite_policy": "V2.10 weighted responsibility with retained V2.9 Parent Population; excluded historical tests require exact frozen source.",
+  "current_suite_policy": "V2.11 Group-Diagnosed Reflection and evidence projection; unchanged V2.10 responsibility and V2.9 population; historical tests require frozen source.",
   "schema_version": "suite_classification_v1",
   "tests": [
+    {
+      "path": "tests/current/test_group_diagnosed_reflection.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "current_suite_included": true,
+      "required_private_artifacts": []
+    },
     {
       "path": "tests/current/test_single_prompt_ablations.py",
       "classification": "CURRENT_ZERO_API_E2E",

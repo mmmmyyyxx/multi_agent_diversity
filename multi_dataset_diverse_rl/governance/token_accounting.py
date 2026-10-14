@@ -94,6 +94,9 @@ def reservation(request):
             raise OperationalAbort('FROZEN_OPTIMIZER_OUTPUT_BOUND_REQUIRED')
         policy = optimizer_generation_contract(identity)
         cluster = pattern_cluster_generation_contract()
+        from ..benchmarks.math_optimizer_generation import group_generation_contract
+        group=group_generation_contract()
+        if request['max_completion_tokens']==group['max_completion_tokens']:policy=group
         if (identity == versions.MATH_OPTIMIZER_GENERATION_POLICY_V3_VERSION
                 and request['max_completion_tokens'] == cluster['max_completion_tokens']):
             policy = cluster
