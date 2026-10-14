@@ -10638,3 +10638,31 @@ experiments:
     implementation_commit: Containing implementation commit; no self-reference.
     execution_commit: No model experiment executed.
     result_commit: No real efficacy result.
+- experiment_id: single_prompt_pattern_repeat_solver_cache_v2
+  kind: ABLATION
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: single_prompt_module_ablation_v2
+  parent_ids:
+  - single_prompt_largest_pattern_v1
+  - modular_mechanisms_v212_preparation_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: NOT_EVALUATED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_pattern_repeat_solver_cache_v2.json
+  report: null
+  classifier: null
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Fresh A/B/C five fixed-seed42 repeats; Solver-only cache within repeat across
+    arms and rounds.
+  - Zero-API preparation; real execution requires exact fresh scope authorization.
+  unavailable:
+    implementation_commit: Containing implementation commit; no self-reference.
+    execution_commit: Not executed.
+    result_commit: No efficacy evidence.
+    report: Preparation protocol in registered manifest; real result pending.
+    classifier: Scientific classification pending real evidence.

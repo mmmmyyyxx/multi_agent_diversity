@@ -154,3 +154,9 @@ verification record and exact single-use formal authorization. Current-version
 Canary reliability remains unobserved; no earlier Canary is represented as V2.7.
 Initial-profile and first-opportunity owner reviews, resource control and all
 scientific rules remain mandatory.
+
+The [isolated repeat-scoped single-Prompt ablation](SINGLE_PROMPT_PATTERN_REPEAT_SOLVER_CACHE_V2.md)
+binds five seed42 repeats per arm, Solver-only reuse within a repeat across arms
+and rounds, and fresh per-call Teacher responses. Its independent Validation100
+gate and conditional final Test300 do not change the active team composition.
+Every new attempt needs its own committed source freeze and exact authorization.

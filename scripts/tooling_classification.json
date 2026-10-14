@@ -2,6 +2,12 @@
   "schema_version": "tooling_classification_v1",
   "scripts": [
     {
+      "path": "scripts/ablations/prepare.py",
+      "classification": "CURRENT_TOOL",
+      "move": false,
+      "reason": "Zero-API freeze for registered independent module ablation; exact new authorization required."
+    },
+    {
       "path": "scripts/ablations/study.py",
       "classification": "CURRENT_TOOL",
       "move": false,

@@ -9,8 +9,8 @@ from ...benchmarks.math_solver_decoding import solver_decoding_contract
 from ..single_prompt_policy import independent_trajectory_policy as trajectory_policy
 from ...provider_routing import routing_contract
 
-SCHEMA = 'single_prompt_module_ablation_draft_v1'
-IDENTITY = 'SINGLE_PROMPT_MODULE_ABLATION_KERNEL_V1'
+SCHEMA = 'single_prompt_module_ablation_draft_v2'
+IDENTITY = 'SINGLE_PROMPT_MODULE_ABLATION_KERNEL_V2'
 PARENT = 'experiments/manifests/single_prompt_largest_pattern_v1.json'
 
 
@@ -30,7 +30,8 @@ def runtime_defaults():
              solver_semantic_draws=4, first_solver_capacity=3600, length_recovery_capacity=6144,
              optimizer_input_limit=991808, optimizer_context_limit=1000000,
              runtime_environment='runs/math_v2_1/runtime', provider_sdk_version='2.37.0',
-             paired_cache='same_repeat_seed_split_ordinal_request_share_realization',
+             paired_cache='solver_only_same_repeat_seed_split_complete_request_across_arms_and_rounds',
+             non_solver_cache='forbidden_including_paid_response_replay',
              optimizer_wire='SINGLE_PROMPT_MODULE_OPTIMIZER_WIRE_V1',
              memory='module_explicit_not_implicit',
              provider_failure='accounted_typed_network_retry_other_failure_abort',
@@ -41,7 +42,7 @@ def runtime_defaults():
 
 
 def default_config():
-    return dict(schema_version=SCHEMA, experiment_id='single_prompt_pattern_ablation_v1',
+    return dict(schema_version=SCHEMA, experiment_id='single_prompt_pattern_repeat_solver_cache_v2',
         parent_manifest=PARENT, seed=42, repeats_per_arm=5, rounds=20,
         arms=[dict(arm_id='A', error_source='all_wrong', module='none'),
               dict(arm_id='B', error_source='random_wrong_batch', module='none'),
@@ -103,7 +104,7 @@ def build_plan(config, registry=None):
         training += config['repeats_per_arm'] * config['rounds'] * bound
     body = dict(identity=IDENTITY, config=config, module_bindings=bindings, cells=cells,
         cell_order='arm_then_repeat_sequential',
-        cache_policy='paired_within_repeat_never_across_repeats_no_legacy_cache',
+        cache_policy='solver_only_paired_within_repeat_across_arms_and_rounds_no_legacy_cache',
         training_semantic_call_ceiling=training,
         final_test_semantic_call_ceiling=len(cells) * 300 * p['solver_semantic_draws'],
         cumulative_token_ceiling=None, ready_to_run=False,
@@ -119,4 +120,4 @@ def validate_plan(plan, registry=None):
 def request_namespace(plan_identity, seed, repeat_id):
     if type(repeat_id) is not int or repeat_id < 1:
         raise SearchContractError('ABLATION_REPEAT_ID_REQUIRED')
-    return digest(['single_prompt_ablation_repeat_v1', plan_identity, seed, repeat_id])
+    return digest(['single_prompt_ablation_repeat_v2', plan_identity, seed, repeat_id])

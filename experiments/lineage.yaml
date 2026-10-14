@@ -1142,6 +1142,9 @@ nodes:
 - experiment_id: modular_mechanisms_v212_preparation_v1
   kind: ARCHITECTURE_REFACTOR
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: single_prompt_pattern_repeat_solver_cache_v2
+  kind: ABLATION
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2622,4 +2625,16 @@ edges:
   evidence: docs/design/MODULAR_MECHANISMS_V212.md
   scope: Behavior-preserving default composition refactor; synthetic-only module interfaces,
     immutable historical evidence.
+- to: single_prompt_pattern_repeat_solver_cache_v2
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_PATTERN_REPEAT_SOLVER_CACHE_V2.md
+  scope: Fresh isolated fixed-seed repeats and Solver-only cache amendment; production
+    modules directly reused.
+  from: single_prompt_largest_pattern_v1
+- to: single_prompt_pattern_repeat_solver_cache_v2
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_PATTERN_REPEAT_SOLVER_CACHE_V2.md
+  scope: Fresh isolated fixed-seed repeats and Solver-only cache amendment; production
+    modules directly reused.
+  from: modular_mechanisms_v212_preparation_v1
 current_frontier: experiments/current_frontier.yaml

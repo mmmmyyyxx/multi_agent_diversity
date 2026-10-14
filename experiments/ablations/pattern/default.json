@@ -1,6 +1,6 @@
 {
-  "schema_version": "single_prompt_module_ablation_draft_v1",
-  "experiment_id": "single_prompt_pattern_ablation_v1",
+  "schema_version": "single_prompt_module_ablation_draft_v2",
+  "experiment_id": "single_prompt_pattern_repeat_solver_cache_v2",
   "parent_manifest": "experiments/manifests/single_prompt_largest_pattern_v1.json",
   "seed": 42,
   "repeats_per_arm": 5,
@@ -23,7 +23,7 @@
     }
   ],
   "runtime": {
-    "identity": "SINGLE_PROMPT_MODULE_ABLATION_KERNEL_V1",
+    "identity": "SINGLE_PROMPT_MODULE_ABLATION_KERNEL_V2",
     "seeds": [
       42
     ],
@@ -145,7 +145,8 @@
     "optimizer_context_limit": 1000000,
     "runtime_environment": "runs/math_v2_1/runtime",
     "provider_sdk_version": "2.37.0",
-    "paired_cache": "same_repeat_seed_split_ordinal_request_share_realization",
+    "paired_cache": "solver_only_same_repeat_seed_split_complete_request_across_arms_and_rounds",
+    "non_solver_cache": "forbidden_including_paid_response_replay",
     "optimizer_wire": "SINGLE_PROMPT_MODULE_OPTIMIZER_WIRE_V1",
     "memory": "module_explicit_not_implicit",
     "provider_failure": "accounted_typed_network_retry_other_failure_abort",

@@ -91,7 +91,11 @@ def validate_registry_v2(root: Path, registry: Mapping) -> tuple[list[str],dict]
         path=row.get('manifest')
         if path and (root/path).is_file():
             obj=load_yaml(root/path);manifests[ident]=obj
-            if isinstance(obj,dict) and obj.get('schema_version')=='experiment_manifest_v2':
+            if isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_ablation_execution_manifest_v2':
+                from ..research.ablations.governance import validate_manifest as validate_ablation
+                try:validate_ablation(root,obj)
+                except ValueError as exc:errors.append(f'{ident}: {exc}')
+            elif isinstance(obj,dict) and obj.get('schema_version')=='experiment_manifest_v2':
                 errors.extend(f'{ident}: {e}' for e in validate_manifest_v2(root,obj))
             elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_study_manifest_v1':
                 from ..research.single_prompt_governance import validate_manifest as validate_study

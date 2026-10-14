@@ -6,7 +6,8 @@
 
 默认配置在 [default.json](../../../experiments/ablations/pattern/default.json)：
 每组5次，五次均使用种子42，重复编号为1–5；每次20个优化机会。
-不同重复不共享响应缓存，同一重复的组间相同 Solver 请求可以配对复用。
+不同重复不共享响应缓存，同一重复的组间、轮间相同 Solver 请求可以配对复用。
+Optimizer、Gradient、Cluster 不复用响应；本次不导入旧实验缓存。
 种子控制抽样和并列选择，不承诺不同重复必然产生不同 Prompt。
 
 | 文件 | 用途 |
@@ -19,6 +20,7 @@
 | pattern.py | 已确认的最大支持 Pattern 选择及证据过滤 |
 | modules.py | 显式模块注册；未知模块直接拒绝 |
 | analysis.py | Validation/Test 准确率、优化 Token、更新/拒绝/耗尽及组内差异 |
+| runtime.py、governance.py | Solver 缓存、阶段授权、冻结、真实运行和终端审计 |
 | offline_runtime.py、synthetic.py | 网络隔离的假 Provider 与端到端演练 |
 
 Gradient 和 Pattern 的生成、重试、解析、内容校验、分区规范化及合并来自
@@ -34,7 +36,9 @@ Gradient 和 Pattern 的生成、重试、解析、内容校验、分区规范�
 
 两个输出目录都必须是新的目录。假运行使用合成数据，不能解释为真实性能。
 配置和模块身份进入计划哈希；真实实验还需登记、冻结源码/数据/阶段、
-预算与授权，以及绑定受治理的运行端口。本次框架没有发放真实执行绑定。
+预算与授权。V2 已提供受治理的运行端口，准备入口为
+`scripts/ablations/prepare.py`，实际执行统一经 `scripts/run_experiment.py`。
+配置草案和准备清单都不能授权真实调用。
 
 后续接入模块时，实现 `binding/initial_state/prepare/observe`，由注册表创建
 每个组别/重复独有的模块实例。`prepare` 接收当前 Prompt、选中 Optimize
@@ -48,3 +52,5 @@ Memory 应直接包装正式 `PopulationEditMemory`。当前已提供原生类�
 怎样向共同优化器交付经验。不能伪造团队指标，也不能把 Accuracy 称为 Vote。
 
 完整方法约定见 [设计说明](../../../docs/design/SINGLE_PROMPT_MODULE_ABLATIONS_V1.md)。
+本次重复实验与 Solver 缓存修订见
+[V2 协议](../../../docs/design/SINGLE_PROMPT_PATTERN_REPEAT_SOLVER_CACHE_V2.md)。
