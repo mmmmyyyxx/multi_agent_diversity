@@ -2,6 +2,12 @@
   "schema_version": "tooling_classification_v1",
   "scripts": [
     {
+      "path": "scripts/ablations/study.py",
+      "classification": "CURRENT_TOOL",
+      "move": false,
+      "reason": "Isolated single-Prompt draft planning and guarded synthetic smoke; no real execution authorization."
+    },
+    {
       "path": "scripts/audit_gradient_diagnostic_thresholds.py",
       "classification": "ONE_OFF_AUDIT",
       "move": false,

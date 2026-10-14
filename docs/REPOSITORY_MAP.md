@@ -11,6 +11,9 @@ Current WHO/Pattern responsibility is defined by
 |---|---|
 | multi_dataset_diverse_rl/search/system_prompt.py | Sole structured member prompt state and block identity |
 | multi_dataset_diverse_rl/research/single_prompt*.py | Explicit independent 20-round mechanism study; outside current team composition |
+| multi_dataset_diverse_rl/research/ablations/ | Isolated independent single-Prompt kernel and adapters importing formal modules; repeat-scoped, offline preparation only |
+| scripts/ablations/study.py | Thin isolated draft/synthetic CLI; cannot authorize real execution |
+| experiments/ablations/pattern/default.json | Editable seed42/five-repeat preparation defaults, outside frozen historical manifests |
 | multi_dataset_diverse_rl/search/current_composition.py | Sole production graph |
 | multi_dataset_diverse_rl/search/parent_population.py | Bounded per-member fitness and independent sampling |
 | multi_dataset_diverse_rl/search/population_evaluation.py | Complete Optimize fitness and joint final assembly |

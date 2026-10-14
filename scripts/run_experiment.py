@@ -19,6 +19,13 @@ def _load(path):
 
 
 def preflight(manifest):
+    if manifest.get('schema_version') == 'single_prompt_module_ablation_draft_v1':
+        from multi_dataset_diverse_rl.research.ablations.config import build_plan
+        plan = build_plan(manifest)
+        return dict(status='ABLATION_DRAFT_PREFLIGHT_PASS_NOT_AUTHORIZED',
+            plan_identity=plan['plan_identity'], cells=len(plan['cells']),
+            ready_to_run=False, real_api_calls=0,
+            execution_blocker=plan['execution_blocker'])
     if manifest.get('schema_version') == 'single_prompt_largest_pattern_manifest_v1':
         from multi_dataset_diverse_rl.research.gated_prompt_largest import validate_manifest,contract
         validate_manifest(manifest)

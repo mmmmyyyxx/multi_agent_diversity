@@ -1,0 +1,172 @@
+{
+  "schema_version": "single_prompt_module_ablation_draft_v1",
+  "experiment_id": "single_prompt_pattern_ablation_v1",
+  "parent_manifest": "experiments/manifests/single_prompt_largest_pattern_v1.json",
+  "seed": 42,
+  "repeats_per_arm": 5,
+  "rounds": 20,
+  "arms": [
+    {
+      "arm_id": "A",
+      "error_source": "all_wrong",
+      "module": "none"
+    },
+    {
+      "arm_id": "B",
+      "error_source": "random_wrong_batch",
+      "module": "none"
+    },
+    {
+      "arm_id": "C",
+      "error_source": "random_wrong_batch",
+      "module": "largest_pattern"
+    }
+  ],
+  "runtime": {
+    "identity": "SINGLE_PROMPT_MODULE_ABLATION_KERNEL_V1",
+    "seeds": [
+      42
+    ],
+    "rounds": 20,
+    "error_batch_size": 3,
+    "optimizer_structural_draws": 4,
+    "optimizer_structural_retries": 3,
+    "acceptance": "validation_correct_count_strictly_greater_than_retained_profile",
+    "optimize_gate": false,
+    "final_selection": "last_validation_retained_prompt",
+    "validation_count": 100,
+    "validation_membership_seed": 88,
+    "solver_concurrency": 32,
+    "gradient_concurrency": 8,
+    "test_solver_concurrency": 16,
+    "repeats_per_arm": 5,
+    "provider_routing_policy": {
+      "identity": "OPENLUX_SOLVER_LWJ_OPTIMIZER_V1",
+      "routes": {
+        "solver": {
+          "provider_profile": "openlux",
+          "model": "gpt-4o-mini",
+          "api_key_env": "OPENLUX_API_KEY",
+          "base_url_env": "OPENLUX_BASE_URL"
+        },
+        "reflection": {
+          "provider_profile": "lwj",
+          "model": "qwen3.7-flash",
+          "api_key_env": "LWJ_DASHSCOPE_API_KEY",
+          "base_url_env": "LWJ_DASHSCOPE_BASE_URL"
+        },
+        "pattern_gradient": {
+          "provider_profile": "lwj",
+          "model": "qwen3.7-flash",
+          "api_key_env": "LWJ_DASHSCOPE_API_KEY",
+          "base_url_env": "LWJ_DASHSCOPE_BASE_URL"
+        },
+        "pattern_cluster": {
+          "provider_profile": "lwj",
+          "model": "qwen3.7-flash",
+          "api_key_env": "LWJ_DASHSCOPE_API_KEY",
+          "base_url_env": "LWJ_DASHSCOPE_BASE_URL"
+        }
+      },
+      "unknown_role": "REJECT",
+      "provider_fallback": false
+    },
+    "solver_decoding_policy": {
+      "identity": "OPENAI_SOLVER_DECODING_POLICY_V3",
+      "enable_thinking": false,
+      "temperature": 0.2,
+      "top_p": 0.8,
+      "presence_penalty": 0,
+      "frequency_penalty": 0,
+      "max_output_tokens": 3600
+    },
+    "optimizer_generation_policy": {
+      "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+      "model": "qwen3.7-flash",
+      "roles": [
+        "reflection",
+        "pattern"
+      ],
+      "enable_thinking": false,
+      "temperature": 0.7,
+      "max_completion_tokens": 1800,
+      "max_tokens": "NOT_SENT",
+      "output_token_scope": "reasoning_plus_answer",
+      "measurement_tolerance_tokens": 10,
+      "accounting_output_ceiling": 1810,
+      "truncation": "existing_operational_output_truncation",
+      "top_p": 0.8,
+      "top_k": 20,
+      "presence_penalty": 1.5,
+      "frequency_penalty": 0
+    },
+    "cluster_generation_policy": {
+      "identity": "PATTERN_CLUSTER_GENERATION_POLICY_V1",
+      "model": "qwen3.7-flash",
+      "roles": [
+        "pattern_cluster"
+      ],
+      "enable_thinking": false,
+      "temperature": 0.7,
+      "max_completion_tokens": 8192,
+      "max_tokens": "NOT_SENT",
+      "output_token_scope": "reasoning_plus_answer",
+      "measurement_tolerance_tokens": 10,
+      "accounting_output_ceiling": 8202,
+      "truncation": "existing_operational_output_truncation",
+      "top_p": 0.8,
+      "top_k": 20,
+      "presence_penalty": 1.5,
+      "frequency_penalty": 0
+    },
+    "trajectory_policy": {
+      "identity": "MATH_SCOPED_OPTIMIZER_OBSERVED_RESPONSE_POLICY_V9",
+      "profile_schema": "MATH_FLEXIBLE_SOLVER_PROFILE_V3",
+      "trajectory_schema": "MATH_FLEXIBLE_RESPONSE_EVIDENCE_V3",
+      "gradient_input_schema": "STRUCTURED_SYSTEM_GRADIENT_INPUT_V8",
+      "gradient_prompt_identity": "STRUCTURED_SYSTEM_GRADIENT_PROMPT_V11",
+      "optimizer_input_schema": "STRUCTURED_SINGLE_STEP_REPAIR_INPUT_V13",
+      "max_visible_solution_characters": 4096,
+      "observed_response": "complete_ordinary_content",
+      "truncation": "optional_solution_unicode_prefix_explicit_metadata",
+      "original_response_retention": "complete_private_resolved_prediction_and_attempts",
+      "source": "ordinary_assistant_content",
+      "adaptive_split": "optimize",
+      "visible_trajectory_required": false,
+      "final_only": "TRAJECTORY_UNAVAILABLE",
+      "hidden_reasoning_claim": false,
+      "memory_trajectory_writes": false
+    },
+    "provider_timeout_seconds": 120,
+    "solver_semantic_draws": 4,
+    "first_solver_capacity": 3600,
+    "length_recovery_capacity": 6144,
+    "optimizer_input_limit": 991808,
+    "optimizer_context_limit": 1000000,
+    "runtime_environment": "runs/math_v2_1/runtime",
+    "provider_sdk_version": "2.37.0",
+    "paired_cache": "same_repeat_seed_split_ordinal_request_share_realization",
+    "optimizer_wire": "SINGLE_PROMPT_MODULE_OPTIMIZER_WIRE_V1",
+    "memory": "module_explicit_not_implicit",
+    "provider_failure": "accounted_typed_network_retry_other_failure_abort",
+    "timeout_recovery": {
+      "identity": "ABLATION_ACCOUNTED_NETWORK_RECOVERY_V1",
+      "retry_errors": [
+        "APITimeoutError",
+        "APIConnectionError"
+      ],
+      "backoff_seconds": [
+        2,
+        4,
+        8,
+        16,
+        30,
+        60
+      ],
+      "physical_call_ceiling": null
+    },
+    "test": "separate_frozen_authorized_final_test300_after_all_cells_sealed"
+  },
+  "preparation_only": true,
+  "real_api_authorized": false
+}

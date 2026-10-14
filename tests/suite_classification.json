@@ -3,6 +3,12 @@
   "schema_version": "suite_classification_v1",
   "tests": [
     {
+      "path": "tests/current/test_single_prompt_ablations.py",
+      "classification": "CURRENT_ZERO_API_E2E",
+      "current_suite_included": true,
+      "required_private_artifacts": []
+    },
+    {
       "path": "tests/current/test_gated_prompt_largest.py",
       "classification": "CURRENT_ZERO_API_E2E",
       "current_suite_included": true,
