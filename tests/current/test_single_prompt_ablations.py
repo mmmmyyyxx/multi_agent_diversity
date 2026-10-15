@@ -166,15 +166,16 @@ def test_strict_gate_records_one_update_then_tie_and_regression_rejections():
     assert artifacts['checkpoint_3']['validation'] == artifacts['checkpoint_1']['validation']
 
 
-def test_invalid_overlong_and_unchanged_retry_before_one_opportunity():
+def test_invalid_output_retries_but_long_candidate_is_measured():
     outputs = ['not JSON', json.dumps(dict(block='strategy', content='x' * 3001)),
                json.dumps(dict(block='strategy', content=SEED.strategy)),
                json.dumps(dict(block='strategy', content='Check transformations carefully.'))]
     broker = ScriptedPort(outputs)
     result, artifacts = run_small(small_plan(rounds=1), broker)
-    assert result['metrics'][0]['generation_draws'] == 4 and result['metrics'][0]['accepted']
+    assert result['metrics'][0]['generation_draws'] == 2
+    assert result['metrics'][0]['candidate_evaluated']
     assert len(broker.evaluations) == 4
-    assert len([k for k in artifacts if 'generation_' in k]) == 4
+    assert len([k for k in artifacts if 'generation_' in k]) == 2
     assert 'x' * 50 not in json.dumps(broker.packets)
 
 
@@ -185,14 +186,14 @@ def test_four_failed_draws_exhaust_one_opportunity_without_candidate_evaluation(
     assert len(broker.evaluations) == 2 and result['final_prompt'] == SEED.to_dict()
 
 
-def test_generated_prompt_cannot_depend_on_new_module_context_field():
+def test_keywords_do_not_grant_an_inference_channel_or_trigger_retries():
     broker = ScriptedPort([
         json.dumps(dict(block='strategy', content='Consult module_context while solving.')),
         json.dumps(dict(block='strategy', content='Check each transformation carefully.'))])
     result, artifacts = run_small(small_plan(rounds=1), broker)
-    assert result['metrics'][0]['generation_draws'] == 2
-    assert artifacts['round_1_generation_1']['errors'] == ['optimizer_only_dependency']
-    assert 'module_context' not in json.dumps(result['final_prompt'])
+    assert result['metrics'][0]['generation_draws'] == 1
+    assert artifacts['round_1_generation_1']['errors'] == []
+    assert result['metrics'][0]['candidate_evaluated']
 
 
 def test_non_generation_fault_propagates_without_completed_checkpoint():

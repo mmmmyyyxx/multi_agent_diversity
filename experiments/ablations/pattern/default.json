@@ -1,7 +1,7 @@
 {
-  "schema_version": "single_prompt_module_ablation_draft_v4",
-  "experiment_id": "single_prompt_module_alignment_v6",
-  "parent_manifest": "experiments/manifests/single_prompt_full_diagnosis_pattern_v5.json",
+  "schema_version": "single_prompt_module_ablation_draft_v5",
+  "experiment_id": "single_prompt_structural_candidates_v11",
+  "parent_manifest": "experiments/manifests/single_prompt_pattern_c_only_v7.json",
   "seed": 42,
   "repeats_per_arm": 3,
   "rounds": 20,
@@ -23,7 +23,7 @@
     }
   ],
   "runtime": {
-    "identity": "SINGLE_PROMPT_FORMAL_MODULE_ALIGNMENT_KERNEL_V4",
+    "identity": "SINGLE_PROMPT_STRUCTURAL_ALIGNED_KERNEL_V5",
     "seeds": [
       42
     ],
@@ -147,7 +147,9 @@
     "provider_sdk_version": "2.37.0",
     "paired_cache": "solver_only_same_repeat_seed_split_complete_request_across_arms_and_rounds",
     "non_solver_cache": "forbidden_including_paid_response_replay",
-    "optimizer_wire": "SINGLE_PROMPT_MODULE_OPTIMIZER_WIRE_V2",
+    "optimizer_wire": "SINGLE_PROMPT_STRUCTURAL_OPTIMIZER_WIRE_V3",
+    "candidate_guard": "STRUCTURAL_SINGLE_BLOCK_CANDIDATE_CONTRACT_V2",
+    "no_op": "record_skip_evaluation_no_regeneration",
     "memory": "module_explicit_not_implicit",
     "provider_failure": "accounted_typed_network_retry_other_failure_abort",
     "timeout_recovery": {
@@ -187,7 +189,6 @@
       "genuine_control_integrity_or_unknown_failure": "abort_preserve_evidence",
       "incomplete_teacher": "no_response_replay_carry_semantic_draw_counts"
     },
-    "candidate_guard": "FORMAL_PRIVATE_EVIDENCE_AND_INFERENCE_GUARDS_V1",
     "module_admission": "EXPLICIT_FORMAL_ALIGNMENT_REVIEW_V1"
   },
   "preparation_only": true,

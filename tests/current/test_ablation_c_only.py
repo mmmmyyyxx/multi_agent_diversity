@@ -17,9 +17,11 @@ ROOT=Path(__file__).resolve().parents[2]
 def test_exact_reviewed_c_subset_preserves_runtime_and_fresh_budgets():
     c=read_json(ROOT/aligned.C_MANIFEST)
     base=read_json(ROOT/aligned.MANIFEST)
-    aligned.validate_manifest(ROOT,c,c_only=True)
+    from multi_dataset_diverse_rl.governance.frozen_documents import validate_published_single_prompt
+    assert validate_published_single_prompt(ROOT,aligned.C_MANIFEST,c)
+    with pytest.raises(SearchContractError):aligned.validate_manifest(ROOT,c,c_only=True)
     assert c['config']['runtime']==base['config']['runtime']
-    assert c['plan']==build_plan(c['config'])
+    with pytest.raises(SearchContractError):build_plan(c['config'])
     assert [(v['arm_id'],v['seed'],v['repeat_id']) for v in c['plan']['cells']]==[
         ('C',42,1),('C',42,2),('C',42,3)]
     assert c['plan']['training_semantic_call_ceiling']==90420
@@ -28,7 +30,7 @@ def test_exact_reviewed_c_subset_preserves_runtime_and_fresh_budgets():
     assert c['isolation']['import_old_caches'] is False
     assert c['isolation']['import_old_teacher_responses'] is False
     from scripts.run_experiment import preflight
-    assert preflight(c)['status']=='ABLATION_C_ONLY_PREFLIGHT_PASS_NOT_AUTHORIZED'
+    with pytest.raises(SearchContractError):preflight(c)
     with pytest.raises(SearchContractError):aligned.validate_manifest(ROOT,c)
 
 
@@ -44,41 +46,11 @@ def test_c_only_frozen_manifest_cannot_be_widened(alter):
         aligned.validate_manifest(ROOT,value,c_only=True)
 
 
-def test_c_only_prep_freeze_scope_phase_grant_and_handoff(tmp_path,monkeypatch):
-    prep=ROOT/'runs/ablations/verification_c_only_v7'/('fake_'+tmp_path.name)/'prep'
-    original=gov._git
-    def fake_git(root,*args):
-        if args==('status','--porcelain','--untracked-files=no'):return ''
-        if args==('rev-parse','HEAD'):return '0'*40
-        return original(root,*args)
-    monkeypatch.setattr(gov,'_git',fake_git)
-    scope=aligned._scope(ROOT,prep,c_only=True)
-    assert scope['call_ceiling']==90420 and 'continuation' not in scope
-    assert scope['test_plan']['successful_semantic_call_ceiling']==3600
-    assert all(c['arm_id']=='C' for c in scope['plan']['cells'])
-    atomic_write_json(prep/'prep.json',dict(schema_version=aligned.C_PREP_SCHEMA,scope=scope))
-    atomic_write_json(prep/'authorization.json',gov.authorization_template(scope))
-    atomic_write_json(prep/'execution_plan.json',gov.execution_plan_template(scope))
-    atomic_write_json(prep/'handoff.json',aligned.handoff_template(ROOT,prep,scope,c_only=True))
-    assert gov.validate_prep(ROOT,prep)==scope
-    with pytest.raises(SearchContractError,match='USER_PHASE_AUTHORIZATION'):
-        gov.validate_prep(ROOT,prep,authorized=True)
-    old=read_json(ROOT/aligned.MANIFEST)['plan']
-    old_auth=gov.authorization_template(dict(scope_identity=digest('old'),plan=old))
-    with pytest.raises(SearchContractError,match='AUTHORIZATION_SCOPE'):
-        gov.validate_authorization(scope,old_auth,required=True)
-    atomic_write_json(prep/'user_authorization_evidence.json',dict(synthetic_fixture_not_human_grant=True))
-    auth=gov.authorization_template(scope)
-    auth.update(approved=True,adaptive_validation_access=True,test_access=True,
-        user_authorization_evidence_sha256=file_hash(prep/'user_authorization_evidence.json'))
-    atomic_write_json(prep/'authorization.json',auth)
-    handoff=aligned.handoff_template(ROOT,prep,scope,c_only=True);handoff['READY_TO_RUN']=True
-    atomic_write_json(prep/'handoff.json',handoff)
-    assert gov.validate_prep(ROOT,prep,authorized=True)==scope
-    handoff['protocol']['manifest_path']=aligned.MANIFEST
-    atomic_write_json(prep/'handoff.json',handoff)
-    with pytest.raises(SearchContractError,match='HANDOFF_CHANGED'):
-        gov.validate_prep(ROOT,prep,authorized=True)
+def test_historical_c_prep_cannot_freeze_revised_candidate_policy(tmp_path):
+    prep=ROOT/'runs/structural_guard_v2_20261015'/tmp_path.name/'prep'
+    with pytest.raises(SearchContractError,match='MANIFEST_MISMATCH'):
+        aligned._scope(ROOT,prep,c_only=True)
+    assert not prep.exists()
 
 
 @pytest.mark.parametrize('phase_smoke',['c_only'],indirect=True)

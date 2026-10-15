@@ -104,9 +104,11 @@ current_gradient_output_limits:
   diagnosis: 400
   reusable_correction: 400
   expected_effect: 240
-current_optimization_evidence_policy: COUNT_RESPONSIBILITY_POPULATION_EVIDENCE_POLICY_V14
-current_preparation_experiment: modular_mechanisms_v212_preparation_v1
-current_preparation_manifest: experiments/manifests/modular_mechanisms_v212_preparation_v1.yaml
+current_optimization_evidence_policy: STRUCTURAL_CANDIDATE_POPULATION_EVIDENCE_POLICY_V15
+current_candidate_contract: STRUCTURAL_SINGLE_BLOCK_CANDIDATE_CONTRACT_V2
+current_candidate_policy_status: OFFLINE_IMPLEMENTATION_NEW_FREEZE_REQUIRED
+current_preparation_experiment: structural_candidate_policy_v2_20261015
+current_preparation_manifest: experiments/manifests/structural_candidate_contract_v2_preparation_v1.yaml
 last_gradient_limit_adoption_report: reports/gradient_diagnostic_limits_400_v2_preparation_20261011
 last_gradient_limit_adoption_real_api_calls: 0
 proposed_canary_token_ceiling: null
@@ -542,6 +544,8 @@ flowchart TD
     n376["single_prompt_c_test_resume_v8<br/>ABLATION<br/>PREPARED_NOT_EXECUTED"]
     n377["single_prompt_c_test_deadline_v9<br/>ABLATION<br/>PREPARED_NOT_EXECUTED"]
     n378["single_prompt_c_test_certified_v10<br/>ABLATION<br/>PREPARED_NOT_EXECUTED"]
+    n379["historical_candidate_guard_audit_20261015<br/>FORENSIC_AUDIT<br/>COMPLETED"]
+    n380["structural_candidate_policy_v2_20261015<br/>ZERO_API_AUDIT<br/>IMPLEMENTED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -869,6 +873,8 @@ flowchart TD
   n375 -->|derived_from| n376
   n376 -->|derived_from| n377
   n377 -->|derived_from| n378
+  n375 -->|audit_of| n379
+  n375 -->|audit_of| n380
 ```
 
 ## Archived branches and unresolved evidence

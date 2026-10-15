@@ -29,8 +29,8 @@ POLICY = dict(identity=IDENTITY, maximum_support_examples=3,
     bootstrap='measured_initial_optimize_profiles_zero_llm',
     edit_memory='scoped_single_step_actual_complete_optimize_observations',
     abstention='invalid_output_generation_failure', reference_solution_split='optimize',
-    reference_solution_max_chars=4096, candidate_guard='scoped_optimizer_dependency_guard_v2',
-    prompt_state='STRUCTURED_SYSTEM_PROMPT_V1', mutation='single_block_per_generation',
+    reference_solution_max_chars=4096, candidate_guard='STRUCTURAL_SINGLE_BLOCK_CANDIDATE_CONTRACT_V2',
+    prompt_state='STRUCTURED_SYSTEM_PROMPT_V2', mutation='single_block_per_generation',
     editable_blocks=['role','strategy','answer'], response_evidence='observed_content_optional_trajectory',
     answer_extraction='MATH_FLEXIBLE_ANSWER_EXTRACTION_V3',
     generated_output_recovery='BOUNDED_SINGLE_STEP_OUTPUT_RECOVERY_V4',
@@ -41,7 +41,7 @@ POLICY = dict(identity=IDENTITY, maximum_support_examples=3,
     reflector_view='DIRECT_READABLE_REFLECTOR_VIEW_V3',
     reflection_instruction='GROUP_DIAGNOSED_REFLECTION_INSTRUCTION_V1',
     layer1_attempt_feedback='typed_structural_recovery_only',
-    layer1_prompt_budget='exact_remaining_block_characters_v1',
+    layer1_prompt_budget='model_context_only_no_character_budget_v2',
     memory_retrieval='exact_parent_then_latest_measured_edit',
     memory_budget='whole_cards_fit_budget',
     memory_whole_instruction_limit=600,
@@ -106,26 +106,7 @@ def rotated_correct(rows, *, seed, member, ordinal):
 
 
 def executability_checks(prompt, *, private_texts=()):
-    """Bounded known dependency/leakage checks, not a semantic proof."""
+    """Text type/nonemptiness only; private evidence never filters candidates."""
     from .system_prompt import SystemPrompt
     if isinstance(prompt, SystemPrompt): prompt = prompt.render()
-    checks=[]
-    if re.search(r'\b(?:selected_gradient|solver_trajectory|retrieved_memory|reference_solution|output_contract_feedback|'
-            r'root_repair_diagnostic|worked_reference|preceding_attempts|edit_capacity|'
-            r'selected_parent_observation|root_observation|repair_direction|scoped_experience|'
-            r'selected_parent|selected_parent_sha256|repair_examples|reference_final_answer|accepted_root_diagnostic|'
-            r'group_experience|root_diagnostic|applies_to|positive_experience|negative_experience|'
-            r'fitness_provenance|selection_plan|parent_population|actual_edit_parent_effect|source_experience_id|'
-            r'last_step_instruction|delivered_experience_ids|memory_input_sha256|'
-            r'ground[_ -]?truth|gold[_ -]?answer)\b|\b(?:read|consult|copy|access|use)\b[^.;\n]{0,55}'
-            r'\b(?:gradient|memory|reference answer|correct answer key)\b',prompt,re.I):
-        checks.append('optimizer_only_dependency')
-    if re.search(r'\b(?:if the (?:problem|question) (?:is|equals)|answer lookup|memorized answers?)\b',prompt,re.I):
-        checks.append('example_answer_lookup')
-    normalized=' '.join(prompt.casefold().split())
-    for text in private_texts:
-        # Long verbatim fragments only; individual mathematical constants are legal.
-        words=str(text or '').split()
-        if any(' '.join(words[i:i+8]).casefold() in normalized for i in range(max(0,len(words)-7))):
-            checks.append('private_solution_or_response_copy');break
-    return tuple(checks)
+    return () if isinstance(prompt,str) and prompt.strip() else ('empty_or_nonstring_prompt',)

@@ -78,12 +78,10 @@ def generation_diagnostics(content, candidate_contract=None, input_schema=None):
         if candidate_contract != versions.SEMANTIC_MUTABLE_CONTRACT_VERSION:
             raise SearchContractError('OPTIMIZER_DIAGNOSTIC_CONTRACT_MISMATCH')
         try:
-            obj=json.loads(text)
-            valid_envelope=(isinstance(obj,dict) and set(obj)=={'decision','target_block','new_content','change_summary'}
-                and obj['decision']=='PROPOSE_EDIT' and obj['target_block'] in {'role','strategy','answer'}
-                and isinstance(obj['new_content'],str) and isinstance(obj['change_summary'],str)
-                and 0<len(obj['change_summary'])<=240)
-            candidate=obj['new_content'] if valid_envelope else None
+            from ..search.candidate_contract import parse_candidate_edit
+            from ..search.system_prompt import SEED
+            edit=parse_candidate_edit(text,parent=SEED)
+            candidate=getattr(edit.prompt,edit.block)
         except (ValueError,TypeError):candidate=None
     delimiters=text.count('```')
     first=text.find('```')
@@ -91,14 +89,12 @@ def generation_diagnostics(content, candidate_contract=None, input_schema=None):
     if '```' in prefix:prefix=prefix.split('```',1)[0]
     fraction=duplicates/len(lines) if lines else 0
     if candidate_contract is not None:
-        from ..evaluation.semantic_mutable_contract import semantic_violation_reasons
-        violations=list(semantic_violation_reasons(candidate)) if candidate is not None else ['invalid_structure']
+        violations=[] if candidate is not None else ['invalid_structure']
     else:
         violations=[]
-    if candidate is not None and len(candidate)>3000:violations.append('over_length')
     if candidate is not None and not candidate:violations.append('empty')
     return dict(**({'candidate_contract_identity':candidate_contract,'candidate_envelope':'json_single_structured_block_edit_v1',
-            'diagnostic_scope':'structure_semantics_length_only; full admission belongs to Layer1'} if candidate_contract else {}),
+            'diagnostic_scope':'structure_only; full admission belongs to Layer1'} if candidate_contract else {}),
         output_chars=len(text),output_lines=len(text.splitlines()),nonempty_lines=len(lines),
         unique_lines=len(counts),duplicate_lines=duplicates,duplicate_line_fraction=fraction,
         max_identical_line_run=max_run,repeated_8gram_fraction=(len(grams)-len(gram_counts))/len(grams) if grams else 0,

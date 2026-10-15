@@ -1,0 +1,159 @@
+{
+  "summary": {
+    "draws": 493,
+    "new_decisions": {
+      "ELIGIBLE_FOR_EVALUATION": 372,
+      "NO_OP_SKIP": 92,
+      "STRUCTURAL_OR_PARSE_REJECT": 29
+    },
+    "transitions": {
+      "PASSED -> ELIGIBLE_FOR_EVALUATION": 332,
+      "REJECTED -> NO_OP_SKIP": 92,
+      "REJECTED -> STRUCTURAL_OR_PARSE_REJECT": 29,
+      "REJECTED -> ELIGIBLE_FOR_EVALUATION": 40
+    },
+    "by_old_reason": {
+      "parent_no_op": {
+        "NO_OP_SKIP": 92
+      },
+      "REFLECTION_OUTPUT_CONTRACT_INVALID": {
+        "STRUCTURAL_OR_PARSE_REJECT": 29
+      },
+      "SYSTEM_PROMPT_OVER_LENGTH": {
+        "ELIGIBLE_FOR_EVALUATION": 23
+      },
+      "example_copying": {
+        "ELIGIBLE_FOR_EVALUATION": 3
+      },
+      "private_solution_or_response_copy": {
+        "ELIGIBLE_FOR_EVALUATION": 14
+      }
+    },
+    "confirmed_false_rejections": 10,
+    "confirmed_false_now_eligible": 10
+  },
+  "by_arm": {
+    "A": {
+      "draws": 151,
+      "new_decisions": {
+        "ELIGIBLE_FOR_EVALUATION": 89,
+        "NO_OP_SKIP": 62
+      },
+      "transitions": {
+        "PASSED -> ELIGIBLE_FOR_EVALUATION": 89,
+        "REJECTED -> NO_OP_SKIP": 62
+      },
+      "by_old_reason": {
+        "parent_no_op": {
+          "NO_OP_SKIP": 62
+        }
+      },
+      "confirmed_false_rejections": 0,
+      "confirmed_false_now_eligible": 0
+    },
+    "B": {
+      "draws": 136,
+      "new_decisions": {
+        "NO_OP_SKIP": 16,
+        "ELIGIBLE_FOR_EVALUATION": 100,
+        "STRUCTURAL_OR_PARSE_REJECT": 20
+      },
+      "transitions": {
+        "REJECTED -> NO_OP_SKIP": 16,
+        "PASSED -> ELIGIBLE_FOR_EVALUATION": 98,
+        "REJECTED -> STRUCTURAL_OR_PARSE_REJECT": 20,
+        "REJECTED -> ELIGIBLE_FOR_EVALUATION": 2
+      },
+      "by_old_reason": {
+        "parent_no_op": {
+          "NO_OP_SKIP": 16
+        },
+        "REFLECTION_OUTPUT_CONTRACT_INVALID": {
+          "STRUCTURAL_OR_PARSE_REJECT": 20
+        },
+        "SYSTEM_PROMPT_OVER_LENGTH": {
+          "ELIGIBLE_FOR_EVALUATION": 1
+        },
+        "example_copying": {
+          "ELIGIBLE_FOR_EVALUATION": 1
+        }
+      },
+      "confirmed_false_rejections": 0,
+      "confirmed_false_now_eligible": 0
+    },
+    "C": {
+      "draws": 206,
+      "new_decisions": {
+        "ELIGIBLE_FOR_EVALUATION": 183,
+        "NO_OP_SKIP": 14,
+        "STRUCTURAL_OR_PARSE_REJECT": 9
+      },
+      "transitions": {
+        "PASSED -> ELIGIBLE_FOR_EVALUATION": 145,
+        "REJECTED -> NO_OP_SKIP": 14,
+        "REJECTED -> STRUCTURAL_OR_PARSE_REJECT": 9,
+        "REJECTED -> ELIGIBLE_FOR_EVALUATION": 38
+      },
+      "by_old_reason": {
+        "parent_no_op": {
+          "NO_OP_SKIP": 14
+        },
+        "REFLECTION_OUTPUT_CONTRACT_INVALID": {
+          "STRUCTURAL_OR_PARSE_REJECT": 9
+        },
+        "private_solution_or_response_copy": {
+          "ELIGIBLE_FOR_EVALUATION": 14
+        },
+        "SYSTEM_PROMPT_OVER_LENGTH": {
+          "ELIGIBLE_FOR_EVALUATION": 22
+        },
+        "example_copying": {
+          "ELIGIBLE_FOR_EVALUATION": 2
+        }
+      },
+      "confirmed_false_rejections": 10,
+      "confirmed_false_now_eligible": 10
+    }
+  },
+  "primary": {
+    "A": {
+      "draws": 65,
+      "new_decisions": {
+        "ELIGIBLE_FOR_EVALUATION": 60,
+        "NO_OP_SKIP": 5
+      },
+      "old_to_new": {
+        "PASSED -> ELIGIBLE_FOR_EVALUATION": 60,
+        "REJECTED -> NO_OP_SKIP": 5
+      }
+    },
+    "B": {
+      "draws": 87,
+      "new_decisions": {
+        "NO_OP_SKIP": 12,
+        "ELIGIBLE_FOR_EVALUATION": 60,
+        "STRUCTURAL_OR_PARSE_REJECT": 15
+      },
+      "old_to_new": {
+        "REJECTED -> NO_OP_SKIP": 12,
+        "PASSED -> ELIGIBLE_FOR_EVALUATION": 58,
+        "REJECTED -> STRUCTURAL_OR_PARSE_REJECT": 15,
+        "REJECTED -> ELIGIBLE_FOR_EVALUATION": 2
+      }
+    },
+    "C": {
+      "draws": 77,
+      "new_decisions": {
+        "ELIGIBLE_FOR_EVALUATION": 71,
+        "STRUCTURAL_OR_PARSE_REJECT": 3,
+        "NO_OP_SKIP": 3
+      },
+      "old_to_new": {
+        "PASSED -> ELIGIBLE_FOR_EVALUATION": 56,
+        "REJECTED -> ELIGIBLE_FOR_EVALUATION": 15,
+        "REJECTED -> STRUCTURAL_OR_PARSE_REJECT": 3,
+        "REJECTED -> NO_OP_SKIP": 3
+      }
+    }
+  }
+}

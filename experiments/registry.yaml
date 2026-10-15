@@ -10627,7 +10627,7 @@ experiments:
   manifest: experiments/manifests/modular_mechanisms_v212_preparation_v1.yaml
   report: reports/modular_mechanisms_v212_preparation_20261014
   classifier: reports/modular_mechanisms_v212_preparation_20261014/classifier.json
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
   superseded_by: []
   notes:
@@ -10882,3 +10882,52 @@ experiments:
     result_commit: Pending completed Test.
     report: Test continuation protocol; execution evidence stays private.
     classifier: No completed-Test classification yet.
+- experiment_id: historical_candidate_guard_audit_20261015
+  kind: FORENSIC_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: historical_candidate_guard_audit
+  parent_ids:
+  - single_prompt_pattern_c_only_v7
+  status: COMPLETED
+  scientific_status: OFFLINE_ONLY_NO_EFFICACY_INFERENCE
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: null
+  report: reports/historical_candidate_guard_audit_20261015
+  classifier: null
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Read-only historical audit; no historical artifacts or outcomes changed.
+  unavailable:
+    implementation_commit: Containing publication commit; no self-reference.
+    execution_commit: No real model execution.
+    result_commit: Containing evidence commit; no self-reference.
+    manifest: Offline audit/amendment only; no executable experiment manifest.
+    classifier: No efficacy classification.
+- experiment_id: structural_candidate_policy_v2_20261015
+  kind: ZERO_API_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: structural_candidate_contract_v2
+  parent_ids:
+  - single_prompt_pattern_c_only_v7
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: OFFLINE_ONLY_NO_EFFICACY_INFERENCE
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/structural_candidate_contract_v2_preparation_v1.yaml
+  report: reports/structural_candidate_policy_v2_20261015
+  classifier: null
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User-requested structural candidate amendment and offline493 comparison; no real experiment or API authorization.
+  unavailable:
+    implementation_commit: Containing publication commit; no self-reference.
+    execution_commit: No real model execution.
+    result_commit: Containing evidence commit; no self-reference.
+    classifier: No efficacy classification.

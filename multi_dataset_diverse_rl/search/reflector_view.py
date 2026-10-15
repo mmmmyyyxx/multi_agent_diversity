@@ -37,7 +37,7 @@ def project_reflector(packet,*,root_prompt,selected_parent,target_member):
     direction=dict(generalized_gradient=packet['repair_direction']['generalized_gradient'],source='root_diagnostics')
     view=dict(schema='GROUP_DIAGNOSED_READABLE_REFLECTION_INPUT_V6',selected_parent=deepcopy(packet['selected_parent']),
         repair_direction=direction,repair_examples=examples,scoped_experience=deepcopy(packet['scoped_experience']),
-        edit_capacity=deepcopy(packet['edit_capacity']),group_experience=deepcopy(packet['group_experience']))
+        group_experience=deepcopy(packet['group_experience']))
     # The old comparison excludes the new channel; it is a wire-template size
     # comparison on these same canonical records, never an old model replay.
     old={k:v for k,v in packet.items() if k!='group_experience'}

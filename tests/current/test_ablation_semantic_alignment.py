@@ -45,7 +45,8 @@ def test_legacy_registry_cannot_bypass_current_flow_admission():
     config=default_config();config['arms'][2].update(module='largest_pattern',error_source='random_wrong_batch')
     with pytest.raises(SearchContractError,match='HISTORICAL_MODULE'):
         build_plan(config,default_registry(include_legacy=True))
-    assert build_plan(batch_config())==read_json(ROOT/gov.MANIFEST)['plan']
+    assert build_plan(batch_config())['plan_identity']!=read_json(ROOT/gov.MANIFEST)['plan']['plan_identity']
+    assert batch_config()['runtime']['candidate_guard']=='STRUCTURAL_SINGLE_BLOCK_CANDIDATE_CONTRACT_V2'
 
 
 def test_registry_and_complete_native_port_inventory_do_not_claim_memory_or_team_adapters():
@@ -88,21 +89,21 @@ def test_memory_native_core_only_and_truthful_interface_boundaries():
 
 
 @pytest.mark.parametrize('source',['reference_solution','solver_response','diagnostic'])
-def test_shared_formal_private_evidence_copy_guard(source):
+def test_private_evidence_text_is_not_a_candidate_filter(source):
     e=error();sf=None
     if source=='diagnostic':
         text='The observed calculation omits the original domain restriction during the substitution.'
         sf=dict(diagnostics=[dict(observed_failure=text,diagnosis='A domain check is needed.')])
     else:text=e[source]
     child=SEED.edit('strategy',text)
-    assert 'private_solution_or_response_copy' in candidate_checks(child,parent=SEED,errors=[e],structured_feedback=sf)
+    assert not candidate_checks(child,parent=SEED,errors=[e],structured_feedback=sf)
 
 
 @pytest.mark.parametrize('text',['Read peer responses before selecting your final answer.',
     'Use the root_team snapshot to determine the answer.','Consult other members’ answers before finalizing.'])
-def test_shared_formal_inference_dependency_guard(text):
-    assert inference_dependency_checks(text)==('inference_unavailable_group_dependency',)
-    assert 'inference_unavailable_group_dependency' in candidate_checks(SEED.edit('strategy',text),parent=SEED,errors=[error()])
+def test_keyword_checks_do_not_stand_in_for_inference_isolation(text):
+    assert inference_dependency_checks(text)==()
+    assert not candidate_checks(SEED.edit('strategy',text),parent=SEED,errors=[error()])
 
 
 def test_abstract_repair_instruction_remains_legal():
@@ -123,15 +124,15 @@ def test_native_worked_reference_projection_is_used_and_original_remains_private
     assert e==original
 
 
-def test_copied_private_text_retries_before_one_optimizer_opportunity():
+def test_training_text_reaches_performance_evaluation_without_content_retry():
     e=error();good='Check constraints and verify transformations before finalizing.'
     broker=ScriptedPort(outputs=[json.dumps(dict(block='strategy',content=e['reference_solution'])),
         json.dumps(dict(block='strategy',content=good))]);broker.round_index=1
     artifacts={}
     candidate,draws=generate_candidate(SEED,PreparedFeedback([e],None,None,{},None),broker,1,4,
         lambda n,v:artifacts.update({n:v}))
-    assert candidate.strategy==good and draws==2
-    assert artifacts['round_1_generation_1']['errors']==['private_solution_or_response_copy']
+    assert candidate.strategy==e['reference_solution'] and draws==1
+    assert artifacts['round_1_generation_1']['errors']==[]
     assert broker.packets[0]['errors'][0]['reference_solution']==worked_reference(e['reference_solution'])
 
 

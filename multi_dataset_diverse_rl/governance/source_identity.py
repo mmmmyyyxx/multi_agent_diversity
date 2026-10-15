@@ -100,6 +100,8 @@ def current_scientific_files(root: Path, *, execution_closure: bool = False) -> 
     if count_contract.is_file():result.append(count_contract)
     modular_contract = root/'docs/design/MODULAR_MECHANISMS_V212.md'
     if modular_contract.is_file():result.append(modular_contract)
+    candidate_contract = root/'docs/design/STRUCTURAL_CANDIDATES_V2.md'
+    if candidate_contract.is_file():result.append(candidate_contract)
     spec = root/'docs/design/CURRENT_SPEC.md'
     if spec.is_file():
         result.append(spec)

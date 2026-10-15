@@ -62,9 +62,9 @@ def inventory():
             preserved=['one_candidate_per_opportunity','twenty_opportunities','strict_Validation100_gain',
                 'formal_Solver_scoring_decoding','repeat_scoped_Solver_only_cache',
                 'bounded_generated_output_recovery','accounted_unbounded_network_retry'],
-            formal_shared_guards=['single_block_legality','exact_character_capacity',
+            formal_shared_guards=['nonempty_three_block_structure','single_block_legality',
                 'formal_4096_worked_reference_with_explicit_provenance',
-                'private_reference_response_diagnostic_copy_guard','inference_unavailable_dependency_guard'],
+                'actual_solver_input_isolation_without_keyword_filters','no_op_skip_without_retry'],
             excluded_team_only=['WHO','five_member_Group_inputs','three_Parent_population_slots',
                 'Team_Vote_fitness','Full_Shadow_team_admission','joint_team_assembly']),
         real_api_authorized=False)

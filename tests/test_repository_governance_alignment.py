@@ -171,6 +171,7 @@ def identity_workspace(tmp_path):
         'multi_dataset_diverse_rl/versions.py':'POLICY = "one"\n',
         'multi_dataset_diverse_rl/search/core.py':'VALUE = 1\n',
         'docs/design/CURRENT_SPEC.md':'Current scientific contract\n',
+        'docs/design/STRUCTURAL_CANDIDATES_V2.md':'Structural candidate contract\n',
         'AGENTS.md':'Governance\n','README.md':'Overview\n',
         'docs/archive/old.md':'History\n','reports/old/README.md':'Evidence\n',
         'multi_dataset_diverse_rl/benchmarks/contract.py':'BENCHMARK = 1\n',
@@ -187,6 +188,7 @@ def test_current_source_identity_excludes_archive(identity_workspace,path):
 
 
 @pytest.mark.parametrize('path,text',[('docs/design/CURRENT_SPEC.md','Scientific change\n'),
+    ('docs/design/STRUCTURAL_CANDIDATES_V2.md','Candidate policy change\n'),
     ('multi_dataset_diverse_rl/search/core.py','VALUE = 2\n'),
     ('multi_dataset_diverse_rl/versions.py','POLICY = "two"\n')])
 def test_scientific_changes_affect_identity(identity_workspace,path,text):

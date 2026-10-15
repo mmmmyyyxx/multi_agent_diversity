@@ -51,7 +51,7 @@ def test_network_failure_does_not_consume_four_format_draws(tmp_path,monkeypatch
         def for_role(self,role,request):
             self.attempts+=1
             if self.attempts%2:raise APIConnectionError(request=httpx.Request('POST','https://synthetic.invalid'))
-            result=super().for_role(role,request);result['text']=json.dumps(dict(block='strategy',content=SEED.strategy));return result
+            result=super().for_role(role,request);result['text']='{malformed';return result
     monkeypatch.setattr(runtime.time,'sleep',lambda _:None);broker=broker_for(tmp_path,Alternating())
     artifacts={}
     try:

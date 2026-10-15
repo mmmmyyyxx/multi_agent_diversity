@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 from multi_dataset_diverse_rl.research.gated_prompt import (
-    GatedPromptBroker,generate_changed_candidate,replacement_budgets,run_cell,
+    GatedPromptBroker,generate_changed_candidate,run_cell,
 )
 from multi_dataset_diverse_rl.research.gated_prompt_policy import policy,call_ceiling,gate_membership
 from multi_dataset_diverse_rl.research import gated_prompt_governance as gov
@@ -32,7 +32,10 @@ def broker_for(path,transport=None):
 
 def test_frozen_settings_and_metadata_only_membership():
     manifest=gov.manifest_template(ROOT)
-    reader=gov.validate_manifest(ROOT,manifest)
+    # Historical cell hashes stay frozen; only metadata membership is read here.
+    reader=gov.shared.validate_manifest(ROOT,gov.read_json(ROOT/gov.shared.MANIFEST))
+    with pytest.raises(SearchContractError,match='GATED_CELL_MISMATCH'):
+        gov.validate_manifest(ROOT,manifest)
     subset=gate_membership(reader)
     assert subset==gate_membership(reader) and subset['count']==100 and subset['source_count']==300
     original=[r['stable_example_id'] for r in reader.members if r['project_split']=='validation']
@@ -43,7 +46,7 @@ def test_frozen_settings_and_metadata_only_membership():
     assert manifest['authorization']==dict(real_api_authorized=False,adaptive_validation_access=False,test_access=False)
 
 
-def test_more_than_two_invalid_draws_retry_before_one_changed_candidate(tmp_path):
+def test_format_retry_then_long_candidate_without_character_budget(tmp_path):
     class Sequence(fixture.ToyTransport):
         def for_role(self,role,request):
             result=super().for_role(role,request)
@@ -55,16 +58,17 @@ def test_more_than_two_invalid_draws_retry_before_one_changed_candidate(tmp_path
     broker=broker_for(tmp_path,Sequence());artifacts={}
     try:
         candidate,draws=generate_changed_candidate(SEED,dict(errors=[],structured_feedback=None),broker,1,artifacts.__setitem__)
-        assert draws==4 and candidate!=SEED and len(artifacts)==4
-        assert all(v['candidate'] is None for v in list(artifacts.values())[:3])
+        assert draws==2 and len(candidate.strategy)==3001 and len(artifacts)==2
+        assert artifacts['round_1_generation_1']['candidate'] is None
         packets=[json.loads(r['messages'][1]['content']) for _,r in broker.transport.calls]
         assert 'output_contract_feedback' not in packets[0]
         assert all('x'*50 not in json.dumps(p) for p in packets)
-        assert packets[-1]['output_contract_feedback']['errors']==['parent_no_op']
+        assert packets[-1]['output_contract_feedback']['errors']==['REFLECTION_OUTPUT_CONTRACT_INVALID']
+        assert all('block_character_limits' not in p for p in packets)
     finally:broker.ledger.close()
 
 
-@pytest.mark.parametrize('kind',('malformed','overlong','unchanged'))
+@pytest.mark.parametrize('kind',('malformed',))
 def test_four_failed_generations_abandon_each_of_twenty_opportunities_without_rescoring(tmp_path,kind):
     class Invalid(fixture.ToyTransport):
         def for_role(self,role,request):
@@ -92,13 +96,11 @@ def test_four_failed_generations_abandon_each_of_twenty_opportunities_without_re
     finally:broker.ledger.close()
 
 
-def test_exact_replacement_budget_can_rewrite_near_full_prompt():
+def test_named_block_replacement_has_no_character_budget():
     parent=SystemPrompt(SEED.role,'x'*2650,SEED.answer)
-    budgets=replacement_budgets(parent)
-    for block,budget in budgets.items():
-        child=parent.edit(block,'z'*budget)
-        assert len(child.render())==3000
-        with pytest.raises(SearchContractError,match='OVER_LENGTH'):parent.edit(block,'z'*(budget+1))
+    for block in ('role','strategy','answer'):
+        child=parent.edit(block,'z'*20000)
+        assert len(child.render())>20000
     assert len(parent.edit('strategy','Check calculations.').render())<len(parent.render())
 
 
@@ -297,7 +299,7 @@ def test_persistence_failure_does_not_complete_an_opportunity(tmp_path):
 
 def test_formal_test_alignment_uses_metadata_and_same_inference_contract():
     from multi_dataset_diverse_rl.research.gated_prompt_test import formal_test_plan
-    reader=gov.validate_manifest(ROOT,gov.manifest_template(ROOT))
+    reader=gov.shared.validate_manifest(ROOT,gov.read_json(ROOT/gov.shared.MANIFEST))
     plan=formal_test_plan(ROOT,reader)
     assert plan['count']==300 and plan['physical_call_ceiling']==10800
     assert plan['solver_decoding']==policy()['solver_decoding_policy']

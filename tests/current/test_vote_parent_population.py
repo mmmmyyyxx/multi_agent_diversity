@@ -268,12 +268,15 @@ def test_pattern_support_is_optimize_only_representative_and_never_correct_fille
     with pytest.raises(SearchContractError):evidence.compose_opportunity(State(),None,0,wrong_split,context,ordinal=0)
 
 @pytest.mark.parametrize('field',['selected_parent','reference_final_answer','scoped_experience','repair_examples','fitness_provenance'])
-def test_new_optimizer_only_dependencies_are_rejected_before_solver(tmp_path,field):
+def test_prompt_private_context_names_do_not_create_inference_channels(tmp_path,field):
     run,broker,requests,packets=graph(tmp_path,reflection=lambda p,n:json.dumps(dict(target_block='strategy',
         new_content=f'Consult {field} before solving the problem.',change_summary='Use supplied context.')))
     result=asyncio.run(run.run(max_opportunities=1))
-    assert len(packets)==6 and not result.trace[0].candidate_ids
-    assert all(field not in json.dumps(r) for r in requests if r['model']=='gpt-4o-mini')
+    assert len(packets)==3 and len(result.trace[0].candidate_ids)==3
+    solver=[r for r in requests if r['model']=='gpt-4o-mini']
+    assert any(field in r['messages'][0]['content'] for r in solver)
+    assert all(len(r['messages'])==2 and r['messages'][1]['role']=='user' for r in solver)
+    assert all(field not in r['messages'][1]['content'] for r in solver)
 
 def test_neutral_safe_final_assembly_is_not_an_extra_optimization_commit(tmp_path):
     run,broker,requests,packets=graph(tmp_path);provider=run.evaluation.provider;provider.bootstrap()

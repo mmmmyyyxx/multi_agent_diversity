@@ -116,7 +116,11 @@ def test_inflight_identical_solver_requests_share_one_realization(broker):
 
 def test_frozen_manifest_metadata_and_formal_test_alignment():
     manifest = gov.manifest_template(ROOT)
-    assert read_json(ROOT / gov.MANIFEST) == manifest
+    frozen=read_json(ROOT / gov.MANIFEST)
+    assert frozen!=manifest
+    from multi_dataset_diverse_rl.governance.frozen_documents import validate_published_single_prompt
+    assert validate_published_single_prompt(ROOT,gov.MANIFEST,frozen)
+    with pytest.raises(SearchContractError):gov.validate_manifest(ROOT,frozen)
     reader = gov.validate_manifest(ROOT, manifest)
     final = gov.test_plan(ROOT, reader, manifest['plan'])
     assert final['count'] == 300 and final['solver_concurrency'] == 16
@@ -136,7 +140,18 @@ def test_five_repeat_parent_is_preserved_but_not_executable():
 
 
 def test_three_repeat_handoff_counts_are_derived_from_frozen_plan(tmp_path):
-    scope = gov._scope(ROOT, ROOT / 'runs/ablations/synthetic_metadata/prep')
+    # New policy cannot acquire an execution scope from a historical manifest.
+    with pytest.raises(SearchContractError):
+        gov._scope(ROOT, ROOT / 'runs/ablations/synthetic_metadata/prep')
+    plan=build_plan(default_config())
+    scope=dict(study_id='synthetic_structural_draft',source_sha='0'*40,
+        manifest_sha256=digest('fake manifest'),plan=plan,
+        gate_membership=dict(membership_sha256=digest('fake gate')),
+        call_ceiling=plan['training_semantic_call_ceiling'],
+        test_plan=dict(successful_semantic_call_ceiling=10800),
+        execution=dict(command=['fake'],run_root='runs/ablations/synthetic_metadata/train_run'),
+        network_recovery=plan['config']['runtime']['timeout_recovery'],
+        scope_identity=digest('fake scope'),runtime_identity={},source_hashes={})
     atomic_write_json(tmp_path / 'prep.json', dict(scope=scope))
     # Use an ignored repository-local destination so all relative handoff paths bind.
     destination = ROOT / 'runs/ablations/synthetic_metadata/prep'

@@ -1,6 +1,13 @@
 # Current Implementation Specification
 
 The sole active research architecture is Unified Team Prompt Search.
+The [structural candidate amendment](STRUCTURAL_CANDIDATES_V2.md) replaces candidate
+content Guards with nonempty three-block structure and one-block replacement,
+removes character budgets and records no-op skips without legality retries.
+Selection remains measured performance. This supersedes the candidate-boundary
+claims in prior preparation documents, not their frozen historical evidence.
+New independent drafts use schemaV5/kernelV5 and require new freezes; old manifests
+and authorizations cannot execute the revised candidate treatment.
 The [V2.12 modular mechanisms architecture](MODULAR_MECHANISMS_V212.md) separates
 strategy, evidence, generation, measurement and state authorities while preserving
 the default scientific method and optimizer wires. Alternate module combinations

@@ -1,5 +1,12 @@
 # Current MATH measurement and admission semantics
 
+Candidate proposals now use
+[STRUCTURAL_SINGLE_BLOCK_CANDIDATE_CONTRACT_V2](STRUCTURAL_CANDIDATES_V2.md):
+three nonempty blocks, one named replacement, no text-content or character-budget
+filter. No-op proposals are recorded without candidate measurement or regeneration.
+This explicit scientific amendment changes candidate eligibility only; all MATH
+measurement and performance-admission rules below remain unchanged.
+
 Scope: the current MATH binding, not every benchmark. This document clarifies
 existing behavior; it changes no runtime identity, scoring or admission rule.
 Executable identities remain in `current_contract.py`, benchmark `protocols.py`

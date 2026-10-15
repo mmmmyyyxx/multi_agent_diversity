@@ -1,0 +1,12 @@
+{
+  "normalization": "LF text bytes",
+  "files": {
+    "candidate_comparison.json": "6070fb5ef16c6090ebfa9bafab5c183e9b907690f10adfcc5ba89f05a5cf4ecd",
+    "historical_integrity.json": "4a5ea4908c7fe8789e5bc092ffe29ef5dcdcaa8eb9f0891f7be90a813172c351",
+    "implementation_files.json": "fc0ff787494e3d3afb1af13ecb03ddfe74e7d2452a80f9c6cd039a95d92bd3d3",
+    "README.md": "6dfaa390070e8263aed81d86652d24720eed20be0c9ed995f3b0250f2a32a06b",
+    "sanitization_manifest.json": "28b81f5b61779d37d0912e72a5b10e5c6f339c0e4e76c5408d171a3287249ad0",
+    "summary.json": "cf0440809a32fd9dcc971acee1cd8deeac51b3de013021d325b14d27862bd870",
+    "verification.json": "ee24ec2768acfc135ec2bbdc56b21639a4e12597a7f9a28c0fa7ae84d17640d0"
+  }
+}

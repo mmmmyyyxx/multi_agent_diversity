@@ -129,14 +129,14 @@ def test_diagnosis_failure_is_labeled_and_reflection_continues(tmp_path):
     assert all(p['group_experience']['status']=='GENERATION_FAILED' for p in packets)
     assert out.trace[0].candidate_ids
 
-def test_peer_specific_fixed_answer_cannot_enter_solver(tmp_path):
+def test_fixed_answer_text_is_measured_without_a_content_guard(tmp_path):
     run,broker,requests,packets=graph(tmp_path,reflection=lambda p,n:json.dumps(dict(target_block='answer',
         new_content='Always return 3.',change_summary='Copy a wrong peer final answer.')))
     out=asyncio.run(run.run(max_opportunities=1))
-    assert not out.trace[0].candidate_ids and len(packets)==6
-    assert all('Always return 3.' not in json.dumps(r) for r in requests if r['model']=='gpt-4o-mini')
+    assert out.trace[0].candidate_ids and len(packets)==3
+    assert any('Always return 3.' in json.dumps(r) for r in requests if r['model']=='gpt-4o-mini')
 
-def test_peer_context_dependency_is_rejected_and_group_truncation_is_accounted(tmp_path):
+def test_peer_keywords_do_not_grant_access_and_group_recovery_is_unchanged(tmp_path):
     run,broker,requests,packets=graph(tmp_path,reflection=lambda p,n:json.dumps(dict(target_block='strategy',
         new_content='Consult peer answers before solving the problem.',change_summary='Use peer context.')))
     original=broker.transport;group_draws=[]
@@ -147,7 +147,11 @@ def test_peer_context_dependency_is_rejected_and_group_truncation_is_accounted(t
         return original(req)
     broker.transport=transport
     out=asyncio.run(run.run(max_opportunities=1))
-    assert not out.trace[0].candidate_ids and len(packets)==6 and len(group_draws)==2
+    assert out.trace[0].candidate_ids and len(packets)==3 and len(group_draws)==2
+    for req in requests:
+        if req['model']=='gpt-4o-mini':
+            assert len(req['messages'])==2 and req['messages'][1]['role']=='user'
+            assert 'group_experience' not in req['messages'][1]['content']
     search=next(json.loads(p.read_text()) for p in tmp_path.glob('group_reflection.private/*/group.json'))
     assert search['audit']['accounting']==dict(successful_calls=2,input_tokens=4,output_tokens=4)
     assert search['audit']['attempts'][0]['category']=='GENERATED_OUTPUT_TRUNCATED'

@@ -5,12 +5,7 @@ from .. import current_contract as versions
 from ..local_optimizers.schemas import LocalEvidenceExample
 from .schemas import SearchContractError, SearchCandidate, SearchResult
 from .parent_population import digest
-from .system_prompt import candidate_failed_checks, block_lineage
-from .optimization_evidence import executability_checks
-from .optimizer_output_contract import (JSON_INSTRUCTION, parse_output,
-    validate_reflection_output, feedback_for_error, reflection_feedback_prefix,
-    reject, issue)
-from .generation_failures import recoverable_output
+from .system_prompt import block_lineage
 from .reflection_steps import (FrozenParentSelection,TeamGroupChannel,ReflectionEvidenceComposition,
     SingleStepReflection,SlotGeneration)
 
@@ -23,7 +18,6 @@ class PopulationSearchConfig:
     maximum_parents: int = 3
     structural_draws_per_slot: int = 2
     maximum_support_examples: int = 3
-    max_prompt_chars: int = 3000
     candidate_contract: str = versions.SEMANTIC_MUTABLE_CONTRACT_VERSION
 
     def __post_init__(self):
@@ -42,13 +36,11 @@ them, invent hidden reasoning, or regenerate Responsibility. A Pattern is a
 hypothesis, not a universally proven rule. Use the complete readable evidence and
 worked reference to formulate a specific conditional repair. Scoped experience
 describes previous complete edits in their measured contexts, not causal laws.
-Generate a concrete edit; abstention is not an output option. Do not copy a problem,
-reference, answer or supplied solution into the Prompt. Do not introduce references
-to optimizer-only fields. All role/strategy/answer blocks are editable. Change
-exactly one block; the entire rendered system Prompt must remain <=3000 characters.
-Prefer concise coherent rules; appending redundant checklists is not preservation.
+Generate a replacement for exactly one role/strategy/answer block. Extract useful
+domain information and strategies from the supplied training feedback. There is no
+character budget. An unchanged replacement is recorded and skipped without evaluation.
 Return exactly {"target_block":"strategy","new_content":"complete replacement block",
-"change_summary":"intended change, at most 240 characters"}. Choose the block from
+"change_summary":"intended change"}. Choose the block from
 the evidence. No decision field or other keys. Fields must be strings; target_block
 must be exactly role, strategy or answer. Truncation is labeled; do not infer omitted
 content. Format-recovery feedback is not mathematical evidence or evaluation.
@@ -57,8 +49,8 @@ Team, not causality, a new Pattern, or Parent-specific Responsibility. Positive
 experience may suggest useful changes; negative experience may suggest ineffective
 or risky directions, not hard prohibitions. Use only relevant insights; you need
 not adopt every suggestion. If Parent differs from Root, check its actual responses
-for applicability. Never copy peer Prompts or make the edited Solver depend on
-team/optimizer information unavailable at inference.
+for applicability. At inference the Solver receives only its edited Prompt and
+the raw problem, with no team/optimizer evidence channel.
 '''
 
 
@@ -119,8 +111,11 @@ class CurrentOptimizer:
                         canonical_group=canonical_group,seen=seen_before):
                     raise SearchContractError('REFLECTION_COMPONENT_UNSAFE_OUTPUT')
                 if len(block_lineage(parent.prompt,candidate.prompt)['edited_blocks'])!=1:
-                    raise SearchContractError('REFLECTION_COMPONENT_EDIT_SCOPE_INVALID')
-                seen.add(candidate.prompt.prompt_hash)
+                    if candidate.prompt==parent.prompt:
+                        candidate=None
+                        generated=SlotGeneration(None,errors,generated.draws,wire_sizes,'NO_OP')
+                    else:raise SearchContractError('REFLECTION_COMPONENT_EDIT_SCOPE_INVALID')
+                if candidate is not None:seen.add(candidate.prompt.prompt_hash)
             draws+=generated.draws
             if candidate is not None:candidates.append(candidate)
             outcome = dict(slot=slot, selected_parent_sha256=parent.identity,

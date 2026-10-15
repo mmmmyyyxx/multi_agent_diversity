@@ -165,8 +165,10 @@ def test_continuation_prefix_hydrates_only_solver_and_preserves_costs_then_test(
 
 def test_recovery_manifest_is_exact_and_preserves_three_repeat_parent():
     manifest=read_json(ROOT/cont.MANIFEST)
+    from multi_dataset_diverse_rl.governance.frozen_documents import validate_published_single_prompt
+    assert validate_published_single_prompt(ROOT,cont.MANIFEST,manifest)
     assert manifest==cont.manifest_template(ROOT)
-    cont.validate_manifest(ROOT,manifest)
+    with pytest.raises(SearchContractError):cont.validate_manifest(ROOT,manifest)
     assert manifest['generation_recovery']['diagnostic_truncation_exhaustion']=='skip_failed_gradient_item_cluster_successful_items_continue_optimizer'
     assert gov.manifest_template(ROOT)['config']['repeats_per_arm']==3
     changed=deepcopy(manifest);changed['generation_recovery']['gradient_draws_per_example']=4

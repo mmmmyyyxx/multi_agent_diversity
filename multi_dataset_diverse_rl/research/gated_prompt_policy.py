@@ -13,7 +13,7 @@ def policy():
     value=original_policy()
     value.update(identity=IDENTITY,optimizer_structural_draws=4,optimizer_structural_retries=3,
         invalid_candidate='initial_plus_three_retries_then_abandon_opportunity_keep_recorded_parent',
-        unchanged_candidate='retry_not_a_candidate',
+        unchanged_candidate='record_skip_evaluation_no_regeneration',
         acceptance='validation_correct_count_strictly_greater_than_retained_profile',
         optimize_gate=False,final_selection='last_validation_retained_prompt',
         no_errors='generate_changed_candidate_with_empty_error_feedback_no_fabrication',
@@ -24,7 +24,7 @@ def policy():
         validation_incumbent='reuse_recorded_retained_profile_no_rescore_lottery',
         candidate_evaluation='complete_optimize150_and_validation100',
         round_definition='one_opportunity_accepted_rejected_or_explicitly_abandoned_after_generation_exhaustion',
-        generation_budget='exact_replacement_block_budget_whole_prompt_max3000',
+        generation_budget='model_context_only_no_character_budget',
         provider_failure='timeout_retry_until_frozen_calls_other_failure_abort_no_fallback',
         timeout_recovery=timeout_policy())
     return value

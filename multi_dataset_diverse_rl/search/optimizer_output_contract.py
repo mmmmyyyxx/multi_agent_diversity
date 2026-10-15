@@ -56,7 +56,7 @@ def feedback_for_error(error, *, stage):
     if supplied is not None:return validate_feedback(supplied,stage=stage)
     category=str(error)
     row=issue('output','TRUNCATED') if category=='GENERATED_OUTPUT_TRUNCATED' else issue(
-        'reusable_correction' if stage=='gradient' else 'output','CONTENT_REJECTED')
+        'reusable_correction' if stage=='gradient' else 'output','TYPE' if stage=='reflection' else 'CONTENT_REJECTED')
     return validate_feedback(dict(identity=IDENTITY,stage=stage,category=category,issues=[row]),stage=stage)
 
 def reject(category,stage,issues):
@@ -114,8 +114,8 @@ def validate_reflection_output(value):
     if not isinstance(v,str):issues.append(issue('new_content','TYPE',v))
     elif not v.strip():issues.append(issue('new_content','EMPTY',v))
     summary=value['change_summary']
-    if not isinstance(summary,str):issues.append(issue('change_summary','TYPE',summary,240))
-    elif not summary.strip() or len(summary)>240:issues.append(issue('change_summary','EMPTY' if not summary.strip() else 'OVER_LIMIT',summary,240))
+    if not isinstance(summary,str):issues.append(issue('change_summary','TYPE',summary))
+    # This metadata does not impose a candidate text or character budget.
     if issues:reject(category,stage,issues)
     return value
 

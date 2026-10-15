@@ -360,10 +360,20 @@ def audit_cells(directory, scope, *, results=None, allow_partial=False):
                         or metric['generation_draws'] != 4 or metric['candidate_evaluated']
                         or cp['candidate_validation'] is not None or cp['candidate_optimize'] is not None):
                     raise SearchContractError('ABLATION_EXHAUSTION_MISMATCH')
+            elif candidate == previous['prompt']:
+                if type(metric['generation_draws']) is not int or not 1<=metric['generation_draws']<=4:
+                    raise SearchContractError('ABLATION_NO_OP_MISMATCH')
+                generation=read_json(folder/f"round_{n}_generation_{metric['generation_draws']}.json")
+                if (decision!='SKIPPED_NO_OP' or metric['accepted'] or metric['candidate_evaluated']
+                        or not 1<=metric['generation_draws']<=4
+                        or cp['candidate_validation'] is not None or cp['candidate_optimize'] is not None
+                        or generation['errors'] or generation['candidate']!=candidate or generation.get('disposition')!='NO_OP'
+                        or metric['lineage']!=block_lineage(SystemPrompt.from_dict(previous['prompt']),SystemPrompt.from_dict(candidate))):
+                    raise SearchContractError('ABLATION_NO_OP_MISMATCH')
             else:
                 prompt = SystemPrompt.from_dict(candidate)
                 lineage = block_lineage(SystemPrompt.from_dict(previous['prompt']), prompt)
-                if (len(prompt.render()) > 3000 or lineage != metric['lineage']
+                if (lineage != metric['lineage']
                         or len(lineage['edited_blocks']) != 1
                         or candidate_checks(prompt,parent=SystemPrompt.from_dict(previous['prompt']),
                             errors=opportunity['errors'],structured_feedback=opportunity['structured_feedback'])

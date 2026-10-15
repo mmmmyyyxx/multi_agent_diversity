@@ -5,7 +5,7 @@ import json
 from .schemas import SearchContractError
 from .parent_population import digest
 from .generation_failures import GeneratedOutputFailure
-from .optimization_evidence import executability_checks
+from .diagnostic_source_checks import group_diagnostic_source_rejected
 from .optimizer_output_contract import JSON_INSTRUCTION
 
 KINDS=('wrong_peer_contrast','negative_experience','correct_peer_contrast','positive_experience')
@@ -196,7 +196,7 @@ def validate_experience(value,canonical,rows):
         for text in texts:
             try:guard_abstraction(text,rows,abstraction_guard_version=PATTERN_SPECIFIC_CONTENT_GUARD_VERSION)
             except GeneratedOutputFailure:invalid('GROUP_SPECIFIC_CONTENT_REJECTED')
-            if executability_checks(text,private_texts=private):invalid('GROUP_SPECIFIC_CONTENT_REJECTED')
+            if group_diagnostic_source_rejected(text,private_texts=private):invalid('GROUP_SPECIFIC_CONTENT_REJECTED')
         if item['modification_implication'].strip().casefold()==canonical['pattern']['generalized_gradient'].strip().casefold():
             invalid('GROUP_ONLY_PATTERN_REPETITION')
     if (n==0)!=(value['status']=='NO_SUPPORTED_INSIGHT'):invalid('GROUP_STATUS_CONTENT_MISMATCH')

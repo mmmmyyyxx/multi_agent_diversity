@@ -1015,6 +1015,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/historical_candidate_guard_audit_20261015",
+      "document": "reports/historical_candidate_guard_audit_20261015/README.md",
+      "date": "20261015",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "FORENSIC",
+      "experiment_id": "historical_candidate_guard_audit_20261015",
+      "status": "COMPLETED",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/layer2_pre_pilot_repository_audit_20260921",
       "document": "reports/layer2_pre_pilot_repository_audit_20260921/README.md",
       "date": "20260921",
@@ -3738,6 +3752,20 @@
       "kind": "SCIENTIFIC_RESULT",
       "experiment_id": "strict_v2_s345_20260803",
       "status": "STATUS_UNRESOLVED",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
+      "path": "reports/structural_candidate_policy_v2_20261015",
+      "document": "reports/structural_candidate_policy_v2_20261015/README.md",
+      "date": "20261015",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "ZERO_API",
+      "experiment_id": "structural_candidate_policy_v2_20261015",
+      "status": "IMPLEMENTED_NOT_EXECUTED",
       "source_commit": null,
       "historical_current": "historical_evidence",
       "registry_referenced": true,

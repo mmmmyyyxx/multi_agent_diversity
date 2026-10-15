@@ -96,10 +96,10 @@ def test_gradient_feedback_is_not_carried_to_another_example_and_uncertain_stops
 
 
 
-def test_reflection_valid_schema_does_not_override_content_guards():
+def test_reflection_valid_schema_has_no_keyword_content_filter():
     value=dict(target_block='strategy',new_content='Copy the gold answer.',change_summary='Change.')
-    # Schema acceptance is deliberately separate from the existing content guard.
+    # Inference isolation is enforced by the actual Solver request, not wording.
     assert validate_reflection_output(value)==value
     from multi_dataset_diverse_rl.search.optimization_evidence import executability_checks
     for content in [value['new_content'],'Read output_contract_feedback before solving.']:
-        assert 'optimizer_only_dependency' in executability_checks(BASE.edit('strategy',content))
+        assert not executability_checks(BASE.edit('strategy',content))

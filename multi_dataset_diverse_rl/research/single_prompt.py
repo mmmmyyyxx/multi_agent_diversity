@@ -9,6 +9,8 @@ from ..local_optimizers.schemas import LocalEvidenceExample
 from ..search.schemas import EvidenceItem, SearchContractError
 from ..search.system_prompt import SystemPrompt, candidate_failed_checks, block_lineage
 from ..search.optimizer_output_contract import JSON_INSTRUCTION
+from ..search.candidate_contract import parse_candidate_edit
+from ..search.generation_failures import GeneratedOutputFailure
 from ..search.optimization_evidence import coverage_effect
 from ..search.textual_gradients import GradientExtractor, gradient_identity
 from .single_prompt_policy import policy, canary_contract, ARMS
@@ -18,10 +20,11 @@ to solve future problems accurately. Analyze the supplied Optimize errors freely
 including any common causes or useful patterns you discover. The reference_solution
 is dataset feedback, not hidden Solver reasoning. Use supplied structured diagnoses
 and patterns when present; they are hypotheses, not proven causes. Generate exactly
-one modification to exactly one block. All three blocks are editable. Do not copy
-questions, example-specific answers, or depend on optimizer-only inputs at inference.
+one replacement to exactly one block. All three blocks are editable. Extract useful
+domain knowledge and strategies. At inference only the edited Prompt and raw
+problem are supplied, with no optimizer-side evidence channel.
 Return only {"block":"role or strategy or answer","content":"complete replacement
-text for that block"}. The rendered complete Prompt must remain within 3000 characters.
+text for that block"}. There is no character budget.
 No historical scores, best Prompt, memory, held-out outcomes or team feedback exist.
 Output-contract feedback, when present, contains only the last structural error.
 ''' + JSON_INSTRUCTION
@@ -98,27 +101,14 @@ def generate_candidate(prompt, feedback, broker, round_index):
         # Provider/ledger/persistence failures propagate; only generated output is local.
         errors = []
         try:
-            value = json.loads(response['text'])
-        except (json.JSONDecodeError, TypeError):
-            errors = ['invalid_json']
+            edit=parse_candidate_edit(response['text'],parent=prompt,finish_reason=response.get('finish_reason'))
+        except GeneratedOutputFailure as exc:
+            errors = [str(exc)]
         if not errors:
-            if response['finish_reason'] != 'stop':
-                errors = ['output_truncated']
-            elif not isinstance(value, dict) or set(value) != {'block', 'content'}:
-                errors = ['invalid_output_schema']
-            elif value['block'] not in ('role', 'strategy', 'answer'):
-                errors = ['invalid_block']
-            else:
-                try:
-                    child = prompt.edit(value['block'], value['content'])
-                except SearchContractError as exc:
-                    if str(exc) not in ('SYSTEM_PROMPT_BLOCK_INVALID', 'SYSTEM_PROMPT_OVER_LENGTH'):
-                        raise
-                    errors = [str(exc)]
-                if not errors:
-                    errors = [r for r in candidate_failed_checks(child, parent_prompt=prompt, examples=examples)
-                              if r != 'parent_no_op']
-        audits.append(dict(draw=draw, errors=errors, request_sha256=response['request_sha256']))
+            child=edit.prompt
+            errors=list(candidate_failed_checks(child,parent_prompt=prompt,examples=examples))
+        audits.append(dict(draw=draw, errors=errors, request_sha256=response['request_sha256'],
+            disposition='FORMAT_RETRY' if errors else 'NO_OP' if edit.no_op else 'GENERATED'))
         if not errors:
             return child, audits
         payload['output_contract_feedback'] = dict(stage='reflection', errors=errors)
@@ -164,7 +154,9 @@ def run_cell(cell, rows, evaluator, broker, persist):
         candidate_audit = []
         if wrong:
             prompt, candidate_audit = generate_candidate(prompt, feedback, broker, ordinal)
-        next_predictions = evaluator(prompt, rows, 'optimize', cell['seed'], ordinal)
+        no_op=bool(candidate_audit and not candidate_audit[-1]['errors'] and prompt==old)
+        next_predictions = (predictions if no_op else
+                            evaluator(prompt, rows, 'optimize', cell['seed'], ordinal))
         ids = [r['stable_example_id'] for r in rows]
         previous_correct = {i for i in ids if predictions[i]['correct']}
         current_correct = {i for i in ids if next_predictions[i]['correct']}
@@ -180,7 +172,7 @@ def run_cell(cell, rows, evaluator, broker, persist):
             optimizer_feedback_bytes=len(json.dumps(feedback, ensure_ascii=True).encode()),
             candidate_draws=candidate_audit,
             update_status='REPLACED' if prompt != old else 'NO_ERRORS_CARRY' if not wrong
-                else 'UNCHANGED_LEGAL_CANDIDATE' if candidate_audit and not candidate_audit[-1]['errors']
+                else 'SKIPPED_NO_OP' if candidate_audit and not candidate_audit[-1]['errors']
                 else 'INVALID_CANDIDATE_CARRY',
             structured_feedback=structure,
             cost=cost_difference(before_usage, after_usage, ordinal))

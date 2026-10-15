@@ -56,7 +56,7 @@ def preflight(manifest):
         validate_manifest(ROOT, manifest)
         return dict(status='ABLATION_FROZEN_V3_HISTORICAL_ONLY_NOT_EXECUTABLE',
             cells=len(manifest['plan']['cells']), real_api_calls=0, ready_to_run=False)
-    if manifest.get('schema_version') in ('single_prompt_module_ablation_draft_v2','single_prompt_module_ablation_draft_v4'):
+    if manifest.get('schema_version') in ('single_prompt_module_ablation_draft_v2','single_prompt_module_ablation_draft_v4','single_prompt_module_ablation_draft_v5'):
         from multi_dataset_diverse_rl.research.ablations.config import build_plan
         plan = build_plan(manifest)
         return dict(status='ABLATION_DRAFT_PREFLIGHT_PASS_NOT_AUTHORIZED',

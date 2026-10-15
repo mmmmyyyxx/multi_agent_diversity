@@ -6,9 +6,8 @@ import json
 from .schemas import SearchContractError
 
 BLOCKS = ('role', 'strategy', 'answer')
-IDENTITY = 'STRUCTURED_SYSTEM_PROMPT_V1'
-CONTRACT = 'STRUCTURED_SYSTEM_BLOCK_MUTATION_CONTRACT_V1'
-MAX_CHARS = 3000
+IDENTITY = 'STRUCTURED_SYSTEM_PROMPT_V2'
+CONTRACT = 'STRUCTURAL_SINGLE_BLOCK_CANDIDATE_CONTRACT_V2'
 
 
 @dataclass(frozen=True)
@@ -21,8 +20,6 @@ class SystemPrompt:
         if any(not isinstance(getattr(self, key), str) or not getattr(self, key).strip()
                for key in BLOCKS):
             raise SearchContractError('SYSTEM_PROMPT_BLOCK_INVALID')
-        if len(self.render()) > MAX_CHARS:
-            raise SearchContractError('SYSTEM_PROMPT_OVER_LENGTH')
 
     @classmethod
     def from_dict(cls, value):
@@ -98,30 +95,18 @@ def block_lineage(parent, child):
             actual_block_diff=actual_diff(getattr(parent, key), getattr(child, key))) for key in changed])
 
 
-def candidate_failed_checks(prompt, *, parent_prompt, examples, max_chars=MAX_CHARS):
-    from ..evaluation.semantic_mutable_contract import _FIXED_ANSWER_PAYLOAD
-    from ..local_optimizers.example_text import contains_supplied_example_text
-    from .optimization_evidence import executability_checks
-    import re
+def candidate_failed_checks(prompt, *, parent_prompt, examples=()):
+    """Structure and edit scope only. Text and performance are not legality rules.
+
+    Identical parents are structurally valid. Controllers record NO_OP and skip
+    their evaluation, without requesting another legal-candidate draw.
+    """
     if not isinstance(prompt, SystemPrompt):
         return ('invalid_structure',)
-    reasons = []
-    text = prompt.render()
-    if len(text) > max_chars:
-        reasons.append('over_length')
-    if prompt == parent_prompt:
-        reasons.append('parent_no_op')
-    if _FIXED_ANSWER_PAYLOAD.search(text) or re.search(
-            r'\b(?:always|regardless\s+of\s+the\s+problem)\s+(?:answer|return|output)\s+["\']?[-+]?\d'
-            r'|\b(?:output|return|print)\s+(?:(?:only|exactly|always)\s+)?(?:###\s*|\\boxed\{)?[-+]?\d', text, re.I):
-        reasons.append('fixed_answer_payload')
-    if contains_supplied_example_text(text, examples):
-        reasons.append('example_copying')
-    reasons.extend(executability_checks(text))
-    return tuple(dict.fromkeys(reasons))
-
-
-def replacement_budgets(prompt):
-    """Exact complete-block budgets for the unchanged three-block renderer."""
-    return {k:3000-4-sum(len(v) for b,v in prompt.to_dict().items() if b!=k)
-            for k in ('role','strategy','answer')}
+    if not isinstance(parent_prompt, SystemPrompt):
+        return ('invalid_parent_structure',)
+    if any(not isinstance(getattr(prompt,k),str) or not getattr(prompt,k).strip() for k in BLOCKS):
+        return ('empty_or_nonstring_block',)
+    if sum(getattr(prompt,k)!=getattr(parent_prompt,k) for k in BLOCKS)>1:
+        return ('multiple_block_edit',)
+    return ()

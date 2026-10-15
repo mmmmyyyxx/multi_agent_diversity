@@ -1,5 +1,23 @@
 schema_version: failure_registry_v1
 failures:
+- failure_id: FAIL-CANDIDATE-CONTENT-GUARD-FALSE-REJECTION
+  title: Private diagnostic overlap rejected reusable candidate instructions
+  status: MITIGATED
+  lifecycle: REAL_OBSERVED_OFFLINE_REPRODUCED
+  first_observed: historical_candidate_guard_audit_20261015
+  affected_components:
+  - prompt_candidate_legality
+  - bounded_candidate_generation
+  evidence:
+  - reports/historical_candidate_guard_audit_20261015
+  - docs/design/STRUCTURAL_CANDIDATES_V2.md
+  evidence_level: observed
+  symptom: Ten confirmed false rejections across all four exhausted C opportunities.
+  root_cause_status: Eight-word private diagnostic matches included existing parent formatting and reusable vector methods.
+  mitigation: User-requested structural single-block contract replaces candidate content filters; no character budget and no-op skips without regeneration.
+  forbidden_inference: Offline reclassification is not historical acceptance, measured Validation gain, or authorization to rerun.
+  regression_tests:
+  - tests/current/test_structural_candidate_contract.py
 - failure_id: FAIL-ABLATION-SYMBOLIC-EXPANSION-RETRY-LIVELOCK
   title: Repeated local scoring recreated the same expensive symbolic expansion
   status: MITIGATED

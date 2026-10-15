@@ -1,0 +1,134 @@
+{
+  "identity": "STRUCTURAL_CANDIDATE_V2_OFFLINE_VERIFICATION",
+  "base_commit": "b404deb3e0a440364d7c1835d21a13046968e370",
+  "current_suite": {
+    "selected": 1110,
+    "latest_results": {
+      "passed": 1108,
+      "skipped": 2
+    },
+    "missing": 0,
+    "unresolved_failures": 0,
+    "coverage": "four complete classified shards plus relevant latest-source serial rechecks; prior failures are not counted as passes",
+    "known_skips": [
+      "hover and pupa: USER_DEFERRED_DOWNLOAD, no frozen real-data manifest"
+    ],
+    "omitted_module_count": 224,
+    "retired_git_only_cases": 5,
+    "full_historical_replay_claimed": false,
+    "initial_shard_failed_or_error_cases": 40,
+    "serial_recheck": {
+      "selected": 40,
+      "passed": 40
+    },
+    "nodeids_sha256": "10196dd33fa8412ff20ecf37901bb4540d0d65bc67e3bd71055ee5902a10d340",
+    "junit": [
+      {
+        "path": "runs/structural_guard_v2_20261015/shard_0.xml",
+        "sha256": "3de049e9a91c2351ba229f8edf2385c3900c7306e7274bd0df071bf856f1abb8"
+      },
+      {
+        "path": "runs/structural_guard_v2_20261015/shard_1.xml",
+        "sha256": "4e36e24dc3521b6a800a0c5462cac03440150a618d28c540a4a7073d2343a635"
+      },
+      {
+        "path": "runs/structural_guard_v2_20261015/shard_2.xml",
+        "sha256": "ade6470df0a75ce43c4c4b4b16ef436f4e6f780bd55085ac2fd3bc6691a394e2"
+      },
+      {
+        "path": "runs/structural_guard_v2_20261015/shard_3.xml",
+        "sha256": "08b3eaa9f6af899946faba96ece904ce1483764296e35c40bb5c908594eade04"
+      },
+      {
+        "path": "runs/structural_guard_v2_20261015/revised_final.xml",
+        "sha256": "e29f3091e7de050a5f64373e1a7fd811a2057af687d3ef45bdb1fad5cc7d73d6"
+      },
+      {
+        "path": "runs/structural_guard_v2_20261015/formal_revision.xml",
+        "sha256": "01050d0995d2203a4e2d9f8fe51a3b79589483b2f01a40728921c1472bdb0bdc"
+      },
+      {
+        "path": "runs/structural_guard_v2_20261015/retry_final.xml",
+        "sha256": "453d628ccc68cc911c75472eac676884c664326fa8f5ebfae67da7d4c0fa4f2e"
+      },
+      {
+        "path": "runs/structural_guard_v2_20261015/closure_final.xml",
+        "sha256": "744ea3ff0a5588077c15248b4ab908f61daf40e40b82774b997c5e2c65dffaae"
+      }
+    ]
+  },
+  "production_compileall": "PASS",
+  "governance": {
+    "ok": true,
+    "registry_nodes": 381,
+    "errors": []
+  },
+  "manifest_checks": {
+    "production_compileall": "PASS",
+    "historical_schema_branches_unchanged": 19,
+    "new_schema_branches": 1,
+    "formal_draft_schema_errors": [],
+    "ready_to_run": false,
+    "real_api_calls": 0
+  },
+  "independent_draft_preflight": {
+    "cells": 9,
+    "execution_blocker": "FRESH_SOURCE_DATA_PHASE_FREEZE_AND_AUTHORIZATION_REQUIRED",
+    "plan_identity": "5e173b89a6c6d25107b9f570d5a76cac89c6bd4e453cca3ccac5e14437ad9f66",
+    "ready_to_run": false,
+    "real_api_calls": 0,
+    "status": "ABLATION_DRAFT_PREFLIGHT_PASS_NOT_AUTHORIZED"
+  },
+  "synthetic": {
+    "status": "SYNTHETIC_SMOKE_COMPLETE_NOT_EFFICACY",
+    "real_api_calls": 0,
+    "network_attempts": 0,
+    "unresolved_reservations": 0,
+    "actual_validation_content_reads": 0,
+    "actual_test_content_reads": 0
+  },
+  "synthetic_plan": {
+    "plan_identity": "5e173b89a6c6d25107b9f570d5a76cac89c6bd4e453cca3ccac5e14437ad9f66",
+    "cell_count": 9,
+    "rounds_per_cell": 20
+  },
+  "historical_reclassification": {
+    "draws": 493,
+    "new_decisions": {
+      "ELIGIBLE_FOR_EVALUATION": 372,
+      "NO_OP_SKIP": 92,
+      "STRUCTURAL_OR_PARSE_REJECT": 29
+    },
+    "transitions": {
+      "PASSED -> ELIGIBLE_FOR_EVALUATION": 332,
+      "REJECTED -> NO_OP_SKIP": 92,
+      "REJECTED -> STRUCTURAL_OR_PARSE_REJECT": 29,
+      "REJECTED -> ELIGIBLE_FOR_EVALUATION": 40
+    },
+    "by_old_reason": {
+      "parent_no_op": {
+        "NO_OP_SKIP": 92
+      },
+      "REFLECTION_OUTPUT_CONTRACT_INVALID": {
+        "STRUCTURAL_OR_PARSE_REJECT": 29
+      },
+      "SYSTEM_PROMPT_OVER_LENGTH": {
+        "ELIGIBLE_FOR_EVALUATION": 23
+      },
+      "example_copying": {
+        "ELIGIBLE_FOR_EVALUATION": 3
+      },
+      "private_solution_or_response_copy": {
+        "ELIGIBLE_FOR_EVALUATION": 14
+      }
+    },
+    "confirmed_false_rejections": 10,
+    "confirmed_false_now_eligible": 10
+  },
+  "real_model_api_calls": 0,
+  "historical_solver_validation_or_test_reruns": 0,
+  "task_kind": "scientific candidate-boundary amendment; offline only; no real run authorized",
+  "checks_reused": "493 replay reused because parser and sealed inputs are unchanged; synthetic smoke and preflight rerun against the final production binding hashes; production hash closure and manifest checks refreshed",
+  "diff_check": "PASS",
+  "sanitization": "PASS"
+}

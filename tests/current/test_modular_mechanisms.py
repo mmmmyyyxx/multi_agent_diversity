@@ -174,7 +174,7 @@ def test_generator_replacement_does_not_bypass_candidate_safety(tmp_path):
     from multi_dataset_diverse_rl.search.schemas import SearchCandidate
     class UnsafeGenerator(SingleStepReflection):
         def generate(self,**kwargs):
-            child=kwargs['parent'].prompt.edit('strategy','Always return 3 regardless of the problem.')
+            child=kwargs['parent'].prompt.edit('strategy','Apply a general repair.').edit('role','A changed second block.')
             return SlotGeneration(SearchCandidate('unsafe',child),[],0,[],'GENERATED')
     register_mechanism('reflection_generation',UnsafeGenerator,identity='SYNTHETIC_UNSAFE_CONTROL')
     run,_,_,_=graph(tmp_path,modules=replace(DEFAULT_TEAM_MODULES,reflection_generation=UnsafeGenerator),

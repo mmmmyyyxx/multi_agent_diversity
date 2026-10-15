@@ -131,7 +131,9 @@ def run_cell(plan, cell, initial_prompt, optimize_rows, validation_rows, broker,
         candidate_score = None
         accepted = False
         decision = 'ABANDONED_GENERATION_RETRIES_EXHAUSTED'
-        if candidate is not None:
+        no_op=candidate==prompt
+        if no_op:decision='SKIPPED_NO_OP'
+        if candidate is not None and not no_op:
             candidate_optimize = _observations(optimize_rows,
                 broker.evaluate(candidate, optimize_rows, 'optimize', cell['seed'], ordinal))
             candidate_validation = _observations(validation_rows,
@@ -143,10 +145,10 @@ def run_cell(plan, cell, initial_prompt, optimize_rows, validation_rows, broker,
         event = OptimizeOutcome(ordinal, prompt, candidate, retained, deepcopy(optimize),
             deepcopy(candidate_optimize), decision)
         next_state = _state(module.observe(event, deepcopy(state)), binding)
-        metric = dict(round=ordinal, accepted=accepted, decision=decision, candidate_evaluated=candidate is not None,
-            generation_draws=draws, optimizer_example_count=len(prepared.errors),
+        metric = dict(round=ordinal, accepted=accepted, decision=decision, candidate_evaluated=candidate is not None and not no_op,
+            generation_draws=draws, optimizer_example_count=len(prepared.errors),no_op=no_op,
             validation_before=score(validation), validation_candidate=candidate_score,
-            optimize_before=score(optimize), optimize_candidate=score(candidate_optimize) if candidate is not None else None,
+            optimize_before=score(optimize), optimize_candidate=score(candidate_optimize) if candidate_optimize is not None else None,
             lineage=block_lineage(prompt, candidate) if candidate is not None else None,
             cost={k: broker.usage_view()[k] - v for k, v in before.items()})
         parent = prompt

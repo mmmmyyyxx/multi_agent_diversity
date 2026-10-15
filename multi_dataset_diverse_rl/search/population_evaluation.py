@@ -90,8 +90,7 @@ class PopulationEvaluationPipeline:
             raise SearchContractError('CANDIDATE_SELECTION_PLAN_NOT_FROZEN')
         for c in search.candidates:
             d=c.backend_details
-            if (c.prompt.prompt_hash in seen or d.get('opportunity_id')!=opportunity.opportunity_id
-                    or not d.get('changed') or not d.get('contract_valid')
+            if (d.get('opportunity_id')!=opportunity.opportunity_id or not d.get('contract_valid')
                     or d.get('parent_state_id')!=opportunity.parent_state_id):
                 raise SearchContractError('POPULATION_CANDIDATE_INVALID')
             slot=d.get('slot')
@@ -101,6 +100,17 @@ class PopulationEvaluationPipeline:
                 raise SearchContractError('CANDIDATE_SELECTED_PARENT_MISMATCH')
             seen_slots.add(slot)
             seen.add(c.prompt.prompt_hash)
+            selected_parent=SystemPrompt.from_dict(d['selected_parent'])
+            from .system_prompt import candidate_failed_checks
+            if candidate_failed_checks(c.prompt,parent_prompt=selected_parent):
+                raise SearchContractError('POPULATION_EDIT_SCOPE_INVALID')
+            if c.prompt==selected_parent:
+                # The generator normally records this before evaluation. Keep
+                # this defensive boundary free of no-op metric calls as well.
+                if isinstance(search.search_state,dict):
+                    search.search_state.setdefault('evaluation_skips',[]).append(dict(candidate_id=c.candidate_id,disposition='NO_OP'))
+                continue
+            if not d.get('changed'):raise SearchContractError('POPULATION_CHANGE_METADATA_MISMATCH')
             full=await self.provider.full(opportunity,c)
             t=opportunity.target_member
             prompts=list(self.provider.store.snapshot().member_prompts);prompts[t]=c.prompt

@@ -4,9 +4,9 @@ import json
 from ..local_optimizers.schemas import LocalEvidenceExample
 from .schemas import SearchContractError, SearchCandidate
 from .parent_population import digest
-from .system_prompt import candidate_failed_checks, block_lineage, replacement_budgets
-from .optimization_evidence import executability_checks
-from .optimizer_output_contract import (JSON_INSTRUCTION,parse_output,validate_reflection_output,
+from .system_prompt import candidate_failed_checks, block_lineage
+from .candidate_contract import parse_candidate_edit
+from .optimizer_output_contract import (JSON_INSTRUCTION,
     feedback_for_error,reflection_feedback_prefix,reject,issue)
 from .generation_failures import recoverable_output
 from .group_diagnosis import GroupDiagnoser,KINDS
@@ -90,9 +90,7 @@ class ReflectionEvidenceComposition:
                 generalized_gradient=pattern['generalized_gradient'],
                 evidence_root_prompt_sha256=opportunity.parent_prompt.prompt_hash),
             repair_examples=examples, scoped_experience=memory,
-            group_experience=group_experience,
-            edit_capacity=dict(maximum_rendered_characters=3000,
-                maximum_replacement_block_characters=replacement_budgets(parent.prompt)))
+            group_experience=group_experience)
         view,view_stats=project_reflector(packet,root_prompt=opportunity.parent_prompt,
             selected_parent=parent.prompt,target_member=opportunity.target_member)
         private.extend(p['trajectory']['observed_response'] for e in canonical_group['examples'] for p in e['members'])
@@ -107,27 +105,13 @@ class SlotGeneration:
     disposition: str
 
 def inference_dependency_checks(text):
-    """Shared formal guard: inference cannot access optimizer-only team evidence."""
-    import re
-    if re.search(r'\b(?:peer_prompt|peer_answer|root_team|team_snapshot|correct_members|wrong_members)\b|'
-            r'\b(?:read|consult|copy|access|use)\b[^.;\n]{0,65}\b(?:peer (?:answers?|prompts?|responses?)|'
-            r"other members['’]? (?:answers?|prompts?|responses?)|group diagnosis|team snapshot)\b",
-            text,re.I):return ('inference_unavailable_group_dependency',)
+    """Inference isolation is a data-flow contract, not a text classifier."""
     return ()
 
 
 def candidate_legality(child,*,parent,rows,private,canonical_group,seen):
-    """Shared output boundary; replacing a generator does not replace safety."""
-    check_examples=tuple(LocalEvidenceExample(row.example_id,row.signals['input_payload'],
-        row.signals['gold']) for row in rows)
-    failed=candidate_failed_checks(child,parent_prompt=parent.prompt,examples=check_examples)
-    if failed:return failed
-    failed+=executability_checks(child.render(),private_texts=private)
-    failed+=inference_dependency_checks(child.render())
-    if child.to_dict() in canonical_group['root_prompts'] and child!=parent.prompt:
-        failed+=('peer_prompt_copy',)
-    if child.prompt_hash in seen:failed+=('duplicate_prompt',)
-    return failed
+    """Shared structure/single-block boundary; no content or repetition filter."""
+    return candidate_failed_checks(child,parent_prompt=parent.prompt)
 
 class SingleStepReflection:
     identity='BOUNDED_SINGLE_STEP_REFLECTION_V1'
@@ -141,17 +125,13 @@ class SingleStepReflection:
                 wire=reflection_feedback_prefix(feedback)+INSTRUCTION+JSON_INSTRUCTION+json.dumps(view,sort_keys=True,separators=(',',':'),ensure_ascii=False)
                 wire_sizes.append(len(wire))
                 text = reflection_lm(wire)
-                value = validate_reflection_output(parse_output(text, stage='reflection'))
-                if value['new_content'].strip()==getattr(parent.prompt,value['target_block']).strip():
-                    reject('REFLECTION_OUTPUT_CONTRACT_INVALID','reflection',[issue('new_content','CONTENT_REJECTED')])
-                try: child = parent.prompt.edit(value['target_block'], value['new_content'])
-                except SearchContractError as error:
-                    reject('REFLECTION_OUTPUT_CONTRACT_INVALID', 'reflection',
-                        [issue('new_content', 'OVER_LIMIT' if str(error)=='SYSTEM_PROMPT_OVER_LENGTH' else 'CONTENT_REJECTED')])
+                edit=parse_candidate_edit(text,parent=parent.prompt)
+                child=edit.prompt
+                if edit.no_op:return SlotGeneration(None,errors,draws,wire_sizes,'NO_OP')
                 failed=candidate_legality(child,parent=parent,rows=rows,private=private,
                     canonical_group=canonical_group,seen=seen)
                 if failed:
-                    reject('REFLECTION_OUTPUT_CONTRACT_INVALID', 'reflection', [issue('new_content', 'CONTENT_REJECTED')])
+                    reject('REFLECTION_OUTPUT_CONTRACT_INVALID', 'reflection', [issue('new_content', 'TYPE')])
                 seen.add(child.prompt_hash)
                 lineage = block_lineage(parent.prompt, child)
                 candidate = SearchCandidate(f'population:{slot}:{child.prompt_hash[:12]}', child,
@@ -160,7 +140,7 @@ class SingleStepReflection:
                         slot=slot, selected_parent_sha256=parent.identity,
                         selected_parent=parent.prompt.to_dict(), population_revision=plan['population_revision'],
                         pattern_id=pattern['pattern_id'],repair_hypothesis=pattern['generalized_gradient'], support_ids=[r.example_id for r in rows],
-                        intended_change=value['change_summary'], reflection_input_sha256=digest(packet)))
+                        intended_change=edit.change_summary, reflection_input_sha256=digest(packet)))
                 break
             except SearchContractError as error:
                 if not recoverable_output(error, 'reflection'): raise

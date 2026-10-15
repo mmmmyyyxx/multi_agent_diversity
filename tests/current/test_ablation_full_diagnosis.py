@@ -153,11 +153,11 @@ def test_new_identity_budgets_defaults_and_historical_manifest_preservation():
     assert plan['module_bindings']['C']['semantic_calls_per_opportunity']==453
     assert len(plan['cells'])==9 and {c['seed'] for c in plan['cells']}=={42}
     assert default_config()['arms'][2]==dict(arm_id='C',error_source='all_wrong',module='full_gradient_pattern')
-    assert build_plan(batch_config())==historical['plan']
+    assert build_plan(batch_config())['plan_identity']!=historical['plan']['plan_identity']
     assert historical['config']['arms'][2]['error_source']=='random_wrong_batch'
     assert plan['plan_identity']!=historical['plan']['plan_identity']
     assert read_json(ROOT/'experiments/ablations/pattern/default.json')==default_config()
-    assert aligned.validate_manifest(ROOT,read_json(ROOT/aligned.MANIFEST)) is not None
+    with pytest.raises(SearchContractError):aligned.validate_manifest(ROOT,read_json(ROOT/aligned.MANIFEST))
     assert not plan['ready_to_run']
 
 
@@ -176,7 +176,7 @@ def test_wrong_sampling_metadata_cannot_reproject(full):
 def test_full_manifest_cannot_reuse_historical_scope_or_authorization():
     from scripts.run_experiment import preflight
     manifest=read_json(ROOT/aligned.MANIFEST)
-    assert preflight(manifest)['status']=='ABLATION_MODULE_ALIGNMENT_PREFLIGHT_PASS_NOT_AUTHORIZED'
+    with pytest.raises(SearchContractError):preflight(manifest)
     old=dict(scope_identity=digest('old-scope'),plan=build_plan(batch_config()))
     scope=dict(scope_identity=digest(['new-plan',manifest['plan']['plan_identity']]),plan=manifest['plan'])
     old_auth=gov.authorization_template(old)
@@ -218,34 +218,13 @@ def test_fewer_than_three_supports_are_not_padded(full):
 
 
 def test_full_freeze_and_exact_fresh_grant_checks_without_real_authorization(tmp_path,monkeypatch):
-    from multi_dataset_diverse_rl.persistence.durable_io import atomic_write_json
-    from multi_dataset_diverse_rl.benchmarks.data_freeze import file_hash
-    prep=ROOT/'runs/ablations/verification_full_diagnosis_v5'/('fake_freeze_'+tmp_path.name)/'prep'
-    original=gov._git
-    def fake_git(root,*args):
-        if args==('status','--porcelain','--untracked-files=no'):return ''
-        if args==('rev-parse','HEAD'):return '0'*40 # impossible real startup source
-        return original(root,*args)
-    monkeypatch.setattr(gov,'_git',fake_git)
-    scope=aligned._scope(ROOT,prep)
-    assert scope['call_ceiling']==216900 and 'continuation' not in scope
-    assert scope['generation_recovery']==default_config()['runtime']['diagnosis_recovery']
-    atomic_write_json(prep/'prep.json',dict(schema_version=aligned.PREP_SCHEMA,scope=scope))
-    atomic_write_json(prep/'authorization.json',gov.authorization_template(scope))
-    atomic_write_json(prep/'execution_plan.json',gov.execution_plan_template(scope))
-    atomic_write_json(prep/'handoff.json',aligned.handoff_template(ROOT,prep,scope))
-    assert gov.validate_prep(ROOT,prep)==scope
-    with pytest.raises(SearchContractError,match='USER_PHASE_AUTHORIZATION'):gov.validate_prep(ROOT,prep,authorized=True)
-    atomic_write_json(prep/'user_authorization_evidence.json',dict(synthetic_fixture_only_not_a_human_grant=True))
-    auth=gov.authorization_template(scope);auth.update(approved=True,adaptive_validation_access=True,test_access=True,
-        user_authorization_evidence_sha256=file_hash(prep/'user_authorization_evidence.json'))
-    atomic_write_json(prep/'authorization.json',auth)
-    handoff=aligned.handoff_template(ROOT,prep,scope);handoff['READY_TO_RUN']=True
-    atomic_write_json(prep/'handoff.json',handoff)
-    assert gov.validate_prep(ROOT,prep,authorized=True)==scope
-    handoff['execution']['train_successful_semantic_call_ceiling']-=1
-    atomic_write_json(prep/'handoff.json',handoff)
-    with pytest.raises(SearchContractError,match='HANDOFF_CHANGED'):gov.validate_prep(ROOT,prep,authorized=True)
+    # The archived module-alignment manifest cannot freeze the new Guard identity.
+    prep=ROOT/'runs/ablations/verification_full_diagnosis_v5'/('structural_reject_'+tmp_path.name)/'prep'
+    from multi_dataset_diverse_rl.governance.frozen_documents import validate_published_single_prompt
+    frozen=read_json(ROOT/aligned.MANIFEST)
+    assert validate_published_single_prompt(ROOT,aligned.MANIFEST,frozen)
+    with pytest.raises(SearchContractError):aligned._scope(ROOT,prep)
+    assert not prep.exists()
 
 
 

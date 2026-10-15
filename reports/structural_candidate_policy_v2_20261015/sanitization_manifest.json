@@ -1,0 +1,5 @@
+{
+  "status": "PASS",
+  "findings": [],
+  "policy": "hashes_counters_categories_only_no_historical_prompt_question_answer_response_endpoint_or_host_path"
+}

@@ -5,16 +5,12 @@ from ..search.system_prompt import SystemPrompt,candidate_failed_checks,block_li
 from ..search.schemas import SearchContractError
 from ..search.optimizer_output_contract import parse_output
 from ..search.generation_failures import GeneratedOutputFailure
+from ..search.candidate_contract import parse_candidate_edit
 from .single_prompt import OPTIMIZER_PROMPT,raw_error,batch_ids,structured_feedback
 from .single_prompt_runtime import StudyBroker
 from .gated_prompt_policy import policy
 
-GENERATOR_PROMPT=OPTIMIZER_PROMPT+'''
-The candidate must actually change the Prompt. Do not return an unchanged block.
-The supplied block_character_limits are exact COMPLETE replacement budgets.
-Rewrite, shorten or reorganize the block when space is tight; do not keep
-appending checklists. Stay within the selected block's character limit.
-'''
+GENERATOR_PROMPT=OPTIMIZER_PROMPT
 
 
 class GatedPromptBroker(StudyBroker):
@@ -36,43 +32,27 @@ class GatedPromptBroker(StudyBroker):
         return {r['stable_example_id']:v for r,v in zip(rows,values)}
 
 
-def replacement_budgets(prompt):
-    return {k:3000-4-sum(len(v) for b,v in prompt.to_dict().items() if b!=k) for k in ('role','strategy','answer')}
-
-
 def generate_changed_candidate(prompt,feedback,broker,ordinal,persist_attempt):
     packet=dict(current_system_prompt=prompt.to_dict(),errors=feedback['errors'],
         structured_feedback=feedback['structured_feedback'],
-        block_character_limits=replacement_budgets(prompt),
-        full_prompt_characters=len(prompt.render()),maximum_prompt_characters=3000,
-        objective='Improve future accuracy with one genuinely changed legal block')
+        objective='Improve future accuracy with one block replacement')
     examples=tuple(LocalEvidenceExample(x['example_id'],x['problem'],x['reference']) for x in feedback['errors'])
     for draw in range(1,policy()['optimizer_structural_draws']+1):
         response=broker.complete(role='reflection',split='optimize',stage=f'round_{ordinal}_legal_candidate_draw_{draw}',
             messages=[dict(role='system',content=GENERATOR_PROMPT),dict(role='user',content=json.dumps(packet,sort_keys=True,ensure_ascii=True))])
-        errors=[]; child=None; proposed_length=None
-        try:value=parse_output(response['text'],stage='reflection')
+        errors=[]; child=None
+        try:edit=parse_candidate_edit(response['text'],parent=prompt,finish_reason=response.get('finish_reason'))
         except GeneratedOutputFailure as exc:errors=[str(exc)]
         else:
-            if response.get('finish_reason')!='stop':errors=['output_truncated']
-            elif not isinstance(value,dict) or set(value)!={'block','content'}:errors=['invalid_output_schema']
-            elif value['block'] not in ('role','strategy','answer'):errors=['invalid_block']
-            else:
-                try:child=prompt.edit(value['block'],value['content'])
-                except SearchContractError as exc:
-                    if str(exc) not in ('SYSTEM_PROMPT_BLOCK_INVALID','SYSTEM_PROMPT_OVER_LENGTH'):raise
-                    errors=[str(exc)]
-                    if isinstance(value['content'],str):
-                        proposed_length=4+sum(len(value['content']) if k==value['block'] else len(v) for k,v in prompt.to_dict().items())
-                if not errors:errors=list(candidate_failed_checks(child,parent_prompt=prompt,examples=examples))
+            child=edit.prompt
+            errors=list(candidate_failed_checks(child,parent_prompt=prompt,examples=examples))
         audit=dict(draw=draw,errors=errors,request_sha256=response['request_sha256'],
-            proposed_prompt_characters=proposed_length,block_character_limits=packet['block_character_limits'])
+            disposition='NO_OP' if child==prompt and not errors else 'GENERATED' if not errors else 'FORMAT_RETRY')
         persist_attempt(f'round_{ordinal}_generation_{draw}',dict(audit=audit,parent_prompt=prompt.to_dict(),
             candidate=child.to_dict() if child is not None and not errors else None))
         if not errors:return child,draw
         packet['output_contract_feedback']=dict(stage='reflection',errors=errors,
-            proposed_prompt_characters=proposed_length,maximum_prompt_characters=3000,
-            instruction='Return a changed complete replacement; shorten or rewrite to fit the exact block budget.')
+            instruction='Return an unambiguous object naming one block and its nonempty string replacement.')
     return None,draw
 
 
@@ -109,16 +89,17 @@ def run_cell(cell,optimize_rows,validation_rows,broker,persist,*,resume=None):
         persist(f'round_{ordinal}_opportunity',dict(parent_prompt=prompt.to_dict(),feedback=feedback,
             retained_validation_correct=score(validation),round_complete=False))
         candidate,draws=generate_changed_candidate(prompt,feedback,broker,ordinal,persist)
-        if candidate is None:
+        if candidate is None or candidate==prompt:
             candidate_optimize=candidate_validation=None
-            candidate_score=None;accepted=False;decision='ABANDONED_GENERATION_RETRIES_EXHAUSTED'
+            candidate_score=None;accepted=False
+            decision='SKIPPED_NO_OP' if candidate==prompt else 'ABANDONED_GENERATION_RETRIES_EXHAUSTED'
         else:
             candidate_optimize=broker.evaluate(candidate,optimize_rows,'optimize',cell['seed'],ordinal)
             candidate_validation=broker.evaluate(candidate,validation_rows,'validation',cell['seed'],ordinal)
             candidate_score=score(candidate_validation);accepted=candidate_score>score(validation)
             decision='ACCEPTED_STRICT_VALIDATION_GAIN' if accepted else 'REJECTED_NO_STRICT_VALIDATION_GAIN'
         incumbent_score=score(validation)
-        metric=dict(round=ordinal,accepted=accepted,decision=decision,candidate_evaluated=candidate is not None,
+        metric=dict(round=ordinal,accepted=accepted,decision=decision,candidate_evaluated=candidate is not None and candidate!=prompt,
             validation_before=incumbent_score,validation_candidate=candidate_score,
             optimize_before=score(optimize),optimize_candidate=score(candidate_optimize) if candidate_optimize is not None else None,
             optimizer_example_count=len(feedback['errors']),generation_draws=draws,

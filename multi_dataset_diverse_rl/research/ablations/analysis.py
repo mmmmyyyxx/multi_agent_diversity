@@ -21,7 +21,8 @@ def summarize(plan, results, final_predictions=None):
         metrics = r['metrics']
         counts = dict(updates=sum(m['decision'] == 'ACCEPTED_STRICT_VALIDATION_GAIN' for m in metrics),
             rejected=sum(m['decision'] == 'REJECTED_NO_STRICT_VALIDATION_GAIN' for m in metrics),
-            exhausted=sum(m['decision'] == 'ABANDONED_GENERATION_RETRIES_EXHAUSTED' for m in metrics))
+            exhausted=sum(m['decision'] == 'ABANDONED_GENERATION_RETRIES_EXHAUSTED' for m in metrics),
+            no_op=sum(m['decision'] == 'SKIPPED_NO_OP' for m in metrics))
         if sum(counts.values()) != plan['config']['rounds']:
             raise SearchContractError('ABLATION_ANALYSIS_OPPORTUNITY_TOTAL')
         row = dict(cell_id=ident, arm_id=cell['arm_id'], seed=cell['seed'], repeat_id=cell['repeat_id'],
@@ -39,7 +40,7 @@ def summarize(plan, results, final_predictions=None):
         group = dict(arm_id=arm['arm_id'], repeats=len(subset),
             mean_validation_accuracy=sum(r['validation_accuracy'] for r in subset) / len(subset),
             optimization_tokens=sum(r['optimization_tokens'] for r in subset),
-            **{k: sum(r[k] for r in subset) for k in ('updates', 'rejected', 'exhausted')})
+            **{k: sum(r[k] for r in subset) for k in ('updates', 'rejected', 'exhausted','no_op')})
         if final_predictions is not None:
             group['mean_test_accuracy'] = sum(r['test_accuracy'] for r in subset) / len(subset)
         groups.append(group)

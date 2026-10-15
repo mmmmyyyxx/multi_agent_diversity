@@ -11,7 +11,7 @@ from ...benchmarks.math_response_evidence import trajectory_policy as formal_tra
 from ...provider_routing import routing_contract
 
 SCHEMA = 'single_prompt_module_ablation_draft_v2'
-IDENTITY = 'SINGLE_PROMPT_MODULE_ABLATION_KERNEL_V2'
+IDENTITY = 'SINGLE_PROMPT_STRUCTURAL_CANDIDATE_KERNEL_V3'
 PARENT = 'experiments/manifests/single_prompt_largest_pattern_v1.json'
 
 
@@ -33,7 +33,9 @@ def runtime_defaults():
              runtime_environment='runs/math_v2_1/runtime', provider_sdk_version='2.37.0',
              paired_cache='solver_only_same_repeat_seed_split_complete_request_across_arms_and_rounds',
              non_solver_cache='forbidden_including_paid_response_replay',
-             optimizer_wire='SINGLE_PROMPT_MODULE_OPTIMIZER_WIRE_V1',
+             optimizer_wire='SINGLE_PROMPT_STRUCTURAL_OPTIMIZER_WIRE_V3',
+             candidate_guard='STRUCTURAL_SINGLE_BLOCK_CANDIDATE_CONTRACT_V2',
+             no_op='record_skip_evaluation_no_regeneration',
              memory='module_explicit_not_implicit',
              provider_failure='accounted_typed_network_retry_other_failure_abort',
              timeout_recovery=dict(identity='ABLATION_ACCOUNTED_NETWORK_RECOVERY_V1',
@@ -51,9 +53,9 @@ def batch_config():
         runtime=runtime_defaults(), preparation_only=True, real_api_authorized=False)
 
 
-ALIGNED_SCHEMA = 'single_prompt_module_ablation_draft_v4'
-ALIGNED_IDENTITY = 'SINGLE_PROMPT_FORMAL_MODULE_ALIGNMENT_KERNEL_V4'
-ALIGNED_PARENT = 'experiments/manifests/single_prompt_full_diagnosis_pattern_v5.json'
+ALIGNED_SCHEMA = 'single_prompt_module_ablation_draft_v5'
+ALIGNED_IDENTITY = 'SINGLE_PROMPT_STRUCTURAL_ALIGNED_KERNEL_V5'
+ALIGNED_PARENT = 'experiments/manifests/single_prompt_pattern_c_only_v7.json'
 
 
 def aligned_runtime():
@@ -62,16 +64,16 @@ def aligned_runtime():
     value.update(identity=ALIGNED_IDENTITY, diagnosis_universe='all_current_optimize_errors',
         pattern_representative_count=3, pattern_support_sampling='formal_seeded_task_type_round_robin',
         diagnosis_recovery=recovery_policy(),
-        candidate_guard='FORMAL_PRIVATE_EVIDENCE_AND_INFERENCE_GUARDS_V1',
+        candidate_guard='STRUCTURAL_SINGLE_BLOCK_CANDIDATE_CONTRACT_V2',
         module_admission='EXPLICIT_FORMAL_ALIGNMENT_REVIEW_V1',
-        optimizer_wire='SINGLE_PROMPT_MODULE_OPTIMIZER_WIRE_V2',
+        optimizer_wire='SINGLE_PROMPT_STRUCTURAL_OPTIMIZER_WIRE_V3',
         trajectory_policy=formal_trajectory_policy())
     return value
 
 
 def default_config():
     value = batch_config()
-    value.update(schema_version=ALIGNED_SCHEMA, experiment_id='single_prompt_module_alignment_v6',
+    value.update(schema_version=ALIGNED_SCHEMA, experiment_id='single_prompt_structural_candidates_v11',
         parent_manifest=ALIGNED_PARENT, runtime=aligned_runtime())
     value['arms'][2].update(error_source='all_wrong', module='full_gradient_pattern')
     return value

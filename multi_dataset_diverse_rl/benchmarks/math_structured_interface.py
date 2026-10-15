@@ -8,7 +8,7 @@ from .math_flexible_answer import POLICY, IDENTITY as PARSER, classify_predictio
 SYSTEM_PROMPT_POLICY = dict(identity=IDENTITY, blocks=['role','strategy','answer'],
     serialization='ordered_role_strategy_answer_ascii_json_compact',
     rendering='role_double_newline_strategy_double_newline_answer',
-    mutation=CONTRACT, single_block_per_generation=True, max_rendered_characters=3000,
+    mutation=CONTRACT, single_block_per_generation=True, max_rendered_characters=None,
     seed=SEED.to_dict(), user_message='raw_problem_only', extra_solver_instructions=False,
     deduplication='canonical_structured_bytes', block_hash='sha256_utf8',
     full_hash='sha256_canonical_structured_bytes', system_hash='sha256_rendered_utf8')
