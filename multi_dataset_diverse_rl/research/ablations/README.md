@@ -10,6 +10,11 @@
 Optimizer、Gradient、Cluster 不复用响应；本次不导入旧实验缓存。
 种子控制抽样和并列选择，不承诺不同重复必然产生不同 Prompt。
 
+仅重跑 C 使用 [C-only V7](../../../docs/design/SINGLE_PROMPT_PATTERN_C_ONLY_V7.md)
+和 `scripts/ablations/prepare.py --c-only --destination ...`，不改默认九条配置。
+它从初始 Prompt 新跑3次，不导入旧状态或缓存；旧 A/B 仅作历史参考。
+准备命令不授予真实 API 或 Test 访问权限。
+
 | 文件 | 用途 |
 |---|---|
 | config.py | 配置校验、重复编号、模块身份和预算草案 |

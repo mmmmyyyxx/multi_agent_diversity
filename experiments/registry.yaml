@@ -10772,3 +10772,30 @@ experiments:
     result_commit: No efficacy evidence.
     report: Protocol and interface audit only; real result pending.
     classifier: No efficacy classification.
+- experiment_id: single_prompt_pattern_c_only_v7
+  kind: ABLATION
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: single_prompt_formal_module_alignment_v4
+  parent_ids:
+  - single_prompt_module_alignment_v6
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: NOT_EVALUATED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_pattern_c_only_v7.json
+  report: null
+  classifier: null
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User-requested fresh C-only subset, three repeats at Seed42, twenty opportunities each.
+  - No old state/cache/authorization imported; historical A/B are descriptive references only.
+  - No real API authorized by preparation metadata.
+  unavailable:
+    implementation_commit: Containing implementation commit; no self-reference.
+    execution_commit: Not executed.
+    result_commit: No efficacy evidence.
+    report: Preparation protocol only; real result pending.
+    classifier: No efficacy classification.

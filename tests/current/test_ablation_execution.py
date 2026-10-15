@@ -198,6 +198,9 @@ def phase_smoke(tmp_path, monkeypatch, request):
     if getattr(request,'param',False):
         from multi_dataset_diverse_rl.research.ablations.config import default_config as full_config
         config=full_config()
+        if request.param=='c_only':
+            config['arms']=[a for a in config['arms'] if a['arm_id']=='C']
+            config['parent_manifest']='experiments/manifests/single_prompt_module_alignment_v6.json'
     else:
         config=default_config()
     config['rounds'] = config['runtime']['rounds'] = 1 if getattr(request,'param',False) else 2

@@ -80,12 +80,14 @@ def default_config():
 def validate_config(value):
     aligned = isinstance(value, dict) and value.get('schema_version') == ALIGNED_SCHEMA
     expected = default_config() if aligned else batch_config()
+    parents={expected['parent_manifest']}
+    if aligned:parents.add('experiments/manifests/single_prompt_module_alignment_v6.json')
     if not isinstance(value, dict) or set(value) != set(expected):
         raise SearchContractError('ABLATION_CONFIG_SCHEMA')
     for key in ('seed', 'repeats_per_arm', 'rounds'):
         if type(value[key]) is not int or value[key] < (0 if key == 'seed' else 1):
             raise SearchContractError('ABLATION_CONFIG_INTEGER')
-    if (value['schema_version'] != expected['schema_version'] or value['parent_manifest'] != expected['parent_manifest']
+    if (value['schema_version'] != expected['schema_version'] or value['parent_manifest'] not in parents
             or value['preparation_only'] is not True or value['real_api_authorized'] is not False
             or not isinstance(value['experiment_id'], str)
             or not re.fullmatch('[a-z][a-z0-9_]{0,79}', value['experiment_id'])):

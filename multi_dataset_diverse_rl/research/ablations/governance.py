@@ -116,8 +116,8 @@ def source_snapshot(root):
     paths.add(root / manifest['data']['canonical_root'] / 'manifests/math.json')
     from .continuation import MANIFEST as amendment_manifest
     paths.add(root / amendment_manifest)
-    from .aligned import MANIFEST as aligned_manifest, HISTORICAL_MANIFEST as aligned_parent
-    paths.update(root/p for p in (aligned_manifest,aligned_parent))
+    from .aligned import MANIFEST as aligned_manifest, HISTORICAL_MANIFEST as aligned_parent, C_MANIFEST
+    paths.update(root/p for p in (aligned_manifest,aligned_parent,C_MANIFEST))
     return {p.relative_to(root).as_posix(): file_hash(p) for p in sorted(paths)}
 
 
@@ -237,7 +237,7 @@ def validate_authorization(scope, authorization, *, required=False, test=False):
 def validate_prep(root,directory,*,authorized=False):
     from . import aligned
     directory=private_path(root,directory)
-    if read_json(directory/'prep.json').get('schema_version')!=aligned.PREP_SCHEMA:
+    if read_json(directory/'prep.json').get('schema_version') not in (aligned.PREP_SCHEMA,aligned.C_PREP_SCHEMA):
         raise SearchContractError('ABLATION_HISTORICAL_PREP_NOT_CURRENT_EXECUTION')
     return aligned.validate_prep(root,directory,authorized=authorized)
 

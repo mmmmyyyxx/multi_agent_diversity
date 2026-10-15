@@ -14,6 +14,8 @@ up to three representative supports. Its largest-support selector remains explic
 The [module-flow audit](SINGLE_PROMPT_MODULE_ALIGNMENT_V6.md) binds shared formal
 reference/legality helpers and explicit module admission. Gradient-only and Memory
 remain unenabled by user choice; team-only ports require a real context.
+The [C-only rerun](SINGLE_PROMPT_PATTERN_C_ONLY_V7.md) selects three fresh C repeats
+from that reviewed kernel; historical A/B remain descriptive references only.
 The explicitly user-requested [independent single-Prompt mechanism study](SINGLE_PROMPT_GRADIENT_PATTERN_V1.md)
 is isolated from this method and routes only its own schema through the shared
 runner. Its approved 20-round/error-Batch protocol does not amend team defaults.

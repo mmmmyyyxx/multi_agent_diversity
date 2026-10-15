@@ -107,6 +107,10 @@ def validate_registry_v2(root: Path, registry: Mapping) -> tuple[list[str],dict]
                 from ..research.ablations.aligned import validate_manifest as validate_alignment
                 try:validate_alignment(root,obj)
                 except ValueError as exc:errors.append(f'{ident}: {exc}')
+            elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_pattern_c_only_manifest_v7':
+                from ..research.ablations.aligned import validate_manifest as validate_c_only
+                try:validate_c_only(root,obj,c_only=True)
+                except ValueError as exc:errors.append(f'{ident}: {exc}')
             elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_ablation_continuation_manifest_v4':
                 from ..research.ablations.continuation import validate_manifest as validate_ablation_continuation
                 try:validate_ablation_continuation(root,obj)
