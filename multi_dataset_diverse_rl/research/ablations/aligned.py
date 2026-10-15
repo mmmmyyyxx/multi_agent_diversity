@@ -8,16 +8,25 @@ from ..single_prompt_governance import private_path,require_selected_runtime
 from . import governance as gov
 from .config import default_config,build_plan
 
-MANIFEST='experiments/manifests/single_prompt_full_diagnosis_pattern_v5.json'
-PROTOCOL='docs/design/SINGLE_PROMPT_FULL_DIAGNOSIS_PATTERN_V5.md'
-MANIFEST_SCHEMA='single_prompt_full_diagnosis_manifest_v5'
-PREP_SCHEMA='single_prompt_full_diagnosis_prep_v5'
+HISTORICAL_MANIFEST='experiments/manifests/single_prompt_full_diagnosis_pattern_v5.json'
+HISTORICAL_NORMALIZED_SHA256='ebb37d318a06b972723f4cf3267da90afa475c4fde21e5d19163d0777cf5d8aa'
+MANIFEST='experiments/manifests/single_prompt_module_alignment_v6.json'
+PROTOCOL='docs/design/SINGLE_PROMPT_MODULE_ALIGNMENT_V6.md'
+MANIFEST_SCHEMA='single_prompt_module_alignment_manifest_v6'
+PREP_SCHEMA='single_prompt_module_alignment_prep_v6'
+
+
+def validate_historical_manifest(root,value):
+    import hashlib
+    if (hashlib.sha256((root/HISTORICAL_MANIFEST).read_bytes().replace(b'\r\n',b'\n')).hexdigest()!=HISTORICAL_NORMALIZED_SHA256
+            or value!=read_json(root/HISTORICAL_MANIFEST)):
+        raise SearchContractError('ABLATION_FROZEN_V5_MANIFEST_CHANGED')
 
 
 def manifest_template(root):
     value=gov.manifest_template(root)
     value.update(schema_version=MANIFEST_SCHEMA,experiment_id=default_config()['experiment_id'],
-        parents=['experiments/manifests/single_prompt_pattern_truncation_continuation_v4.json'],
+        parents=[HISTORICAL_MANIFEST],
         protocol_path=PROTOCOL,config=default_config(),plan=build_plan(default_config()))
     return value
 
@@ -42,7 +51,7 @@ def _scope(root,destination):
 
 def handoff_template(root,destination,scope):
     value=gov.handoff_template(root,destination,scope)
-    value['protocol'].update(name='Single Prompt full wrong-set diagnosis and formal representatives',version='V5',
+    value['protocol'].update(name='Single Prompt full wrong-set diagnosis and formal representatives',version='V6',
         protocol_sha256=file_hash(root/PROTOCOL),manifest_path=MANIFEST,preregistration_path=PROTOCOL,
         preregistration_sha256=file_hash(root/PROTOCOL))
     value['execution']['allowed_retries']=dict(network=scope['network_recovery'],generation=scope['generation_recovery'])

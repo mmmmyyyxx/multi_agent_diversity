@@ -92,17 +92,13 @@ def test_new_source_is_required_but_default_method_contract_is_unchanged():
     CURRENT_POLICY_BUNDLE.validate_contract(contract())
 
 
-def test_gradient_only_adapter_calls_actual_gradient_and_no_cluster(tmp_path,monkeypatch):
+def test_gradient_only_is_not_enabled_by_an_adapter_name():
     from tests.current.test_single_prompt_ablations import small_plan
-    from multi_dataset_diverse_rl.research.ablations.synthetic import smoke,SyntheticTransport
-    original=SyntheticTransport.for_role;roles=[]
-    def observed(self,role,request):
-        roles.append(role);return original(self,role,request)
-    monkeypatch.setattr(SyntheticTransport,'for_role',observed)
-    plan=small_plan(rounds=1,module='formal_gradient')
-    result=smoke(plan,tmp_path/'gradient_only')
-    assert result['real_api_calls']==0 and result['unresolved_reservations']==0
-    assert 'pattern_gradient' in roles and 'reflection' in roles and 'pattern_cluster' not in roles
+    from multi_dataset_diverse_rl.research.ablations.modules import default_registry
+    with pytest.raises(SearchContractError,match='USER_DISABLED'):
+        small_plan(rounds=1,module='formal_gradient')
+    with pytest.raises(SearchContractError,match='NOT_REGISTERED'):
+        default_registry().create('memory')
 
 
 def test_sampler_replacement_replays_its_own_plans_and_detached_policies():

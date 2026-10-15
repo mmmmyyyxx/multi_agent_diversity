@@ -1,7 +1,7 @@
 {
-  "schema_version": "single_prompt_module_ablation_draft_v3",
-  "experiment_id": "single_prompt_full_diagnosis_pattern_v5",
-  "parent_manifest": "experiments/manifests/single_prompt_pattern_truncation_continuation_v4.json",
+  "schema_version": "single_prompt_module_ablation_draft_v4",
+  "experiment_id": "single_prompt_module_alignment_v6",
+  "parent_manifest": "experiments/manifests/single_prompt_full_diagnosis_pattern_v5.json",
   "seed": 42,
   "repeats_per_arm": 3,
   "rounds": 20,
@@ -23,7 +23,7 @@
     }
   ],
   "runtime": {
-    "identity": "SINGLE_PROMPT_FULL_DIAGNOSIS_KERNEL_V3",
+    "identity": "SINGLE_PROMPT_FORMAL_MODULE_ALIGNMENT_KERNEL_V4",
     "seeds": [
       42
     ],
@@ -125,7 +125,7 @@
       "trajectory_schema": "MATH_FLEXIBLE_RESPONSE_EVIDENCE_V3",
       "gradient_input_schema": "STRUCTURED_SYSTEM_GRADIENT_INPUT_V8",
       "gradient_prompt_identity": "STRUCTURED_SYSTEM_GRADIENT_PROMPT_V11",
-      "optimizer_input_schema": "STRUCTURED_SINGLE_STEP_REPAIR_INPUT_V13",
+      "optimizer_input_schema": "GROUP_DIAGNOSED_READABLE_REFLECTION_INPUT_V6",
       "max_visible_solution_characters": 4096,
       "observed_response": "complete_ordinary_content",
       "truncation": "optional_solution_unicode_prefix_explicit_metadata",
@@ -147,7 +147,7 @@
     "provider_sdk_version": "2.37.0",
     "paired_cache": "solver_only_same_repeat_seed_split_complete_request_across_arms_and_rounds",
     "non_solver_cache": "forbidden_including_paid_response_replay",
-    "optimizer_wire": "SINGLE_PROMPT_MODULE_OPTIMIZER_WIRE_V1",
+    "optimizer_wire": "SINGLE_PROMPT_MODULE_OPTIMIZER_WIRE_V2",
     "memory": "module_explicit_not_implicit",
     "provider_failure": "accounted_typed_network_retry_other_failure_abort",
     "timeout_recovery": {
@@ -186,7 +186,9 @@
       "ordinary_no_pattern": "unchanged_raw_batch_B_fallback",
       "genuine_control_integrity_or_unknown_failure": "abort_preserve_evidence",
       "incomplete_teacher": "no_response_replay_carry_semantic_draw_counts"
-    }
+    },
+    "candidate_guard": "FORMAL_PRIVATE_EVIDENCE_AND_INFERENCE_GUARDS_V1",
+    "module_admission": "EXPLICIT_FORMAL_ALIGNMENT_REVIEW_V1"
   },
   "preparation_only": true,
   "real_api_authorized": false

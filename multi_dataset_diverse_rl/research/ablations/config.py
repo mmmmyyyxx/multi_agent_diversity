@@ -7,6 +7,7 @@ from ...search.schemas import SearchContractError
 from ...benchmarks.math_optimizer_generation import optimizer_generation_contract, pattern_cluster_generation_contract
 from ...benchmarks.math_solver_decoding import solver_decoding_contract
 from ..single_prompt_policy import independent_trajectory_policy as trajectory_policy
+from ...benchmarks.math_response_evidence import trajectory_policy as formal_trajectory_policy
 from ...provider_routing import routing_contract
 
 SCHEMA = 'single_prompt_module_ablation_draft_v2'
@@ -50,9 +51,9 @@ def batch_config():
         runtime=runtime_defaults(), preparation_only=True, real_api_authorized=False)
 
 
-ALIGNED_SCHEMA = 'single_prompt_module_ablation_draft_v3'
-ALIGNED_IDENTITY = 'SINGLE_PROMPT_FULL_DIAGNOSIS_KERNEL_V3'
-ALIGNED_PARENT = 'experiments/manifests/single_prompt_pattern_truncation_continuation_v4.json'
+ALIGNED_SCHEMA = 'single_prompt_module_ablation_draft_v4'
+ALIGNED_IDENTITY = 'SINGLE_PROMPT_FORMAL_MODULE_ALIGNMENT_KERNEL_V4'
+ALIGNED_PARENT = 'experiments/manifests/single_prompt_full_diagnosis_pattern_v5.json'
 
 
 def aligned_runtime():
@@ -60,13 +61,17 @@ def aligned_runtime():
     value = runtime_defaults()
     value.update(identity=ALIGNED_IDENTITY, diagnosis_universe='all_current_optimize_errors',
         pattern_representative_count=3, pattern_support_sampling='formal_seeded_task_type_round_robin',
-        diagnosis_recovery=recovery_policy())
+        diagnosis_recovery=recovery_policy(),
+        candidate_guard='FORMAL_PRIVATE_EVIDENCE_AND_INFERENCE_GUARDS_V1',
+        module_admission='EXPLICIT_FORMAL_ALIGNMENT_REVIEW_V1',
+        optimizer_wire='SINGLE_PROMPT_MODULE_OPTIMIZER_WIRE_V2',
+        trajectory_policy=formal_trajectory_policy())
     return value
 
 
 def default_config():
     value = batch_config()
-    value.update(schema_version=ALIGNED_SCHEMA, experiment_id='single_prompt_full_diagnosis_pattern_v5',
+    value.update(schema_version=ALIGNED_SCHEMA, experiment_id='single_prompt_module_alignment_v6',
         parent_manifest=ALIGNED_PARENT, runtime=aligned_runtime())
     value['arms'][2].update(error_source='all_wrong', module='full_gradient_pattern')
     return value
@@ -108,7 +113,9 @@ def validate_config(value):
 def build_plan(config, registry=None):
     from .modules import default_registry
     config = validate_config(config)
-    registry = registry or default_registry()
+    if config['schema_version']==ALIGNED_SCHEMA and any(a['module'] in ('formal_gradient','memory') for a in config['arms']):
+        raise SearchContractError('ABLATION_USER_DISABLED_MODULE')
+    registry = registry or default_registry(include_legacy=config['schema_version']==SCHEMA)
     bindings = {a['arm_id']: registry.binding(a['module']) for a in config['arms']}
     for arm in config['arms']:
         required = bindings[arm['arm_id']].get('required_error_source')
@@ -125,6 +132,10 @@ def build_plan(config, registry=None):
     for arm in config['arms']:
         bound = bindings[arm['arm_id']]['semantic_calls_per_opportunity']
         training += config['repeats_per_arm'] * config['rounds'] * bound
+    from .semantic_alignment import module_review
+    reviews = {a['arm_id']:module_review(a['module'],bindings[a['arm_id']]) for a in config['arms']}
+    if config['schema_version']==ALIGNED_SCHEMA and any(v['status']=='HISTORICAL_BATCH_ONLY' for v in reviews.values()):
+        raise SearchContractError('ABLATION_HISTORICAL_MODULE_NOT_CURRENT_FLOW')
     body = dict(identity=p['identity'], config=config, module_bindings=bindings, cells=cells,
         cell_order='arm_then_repeat_sequential',
         cache_policy='solver_only_paired_within_repeat_across_arms_and_rounds_no_legacy_cache',
@@ -132,6 +143,10 @@ def build_plan(config, registry=None):
         final_test_semantic_call_ceiling=len(cells) * 300 * p['solver_semantic_draws'],
         cumulative_token_ceiling=None, ready_to_run=False,
         execution_blocker='FRESH_SOURCE_DATA_PHASE_FREEZE_AND_AUTHORIZATION_REQUIRED')
+    if config['schema_version']==ALIGNED_SCHEMA:
+        body['module_alignment']=reviews
+        if any(v['status']=='UNREVIEWED' for v in reviews.values()):
+            body['execution_blocker']='MODULE_ALIGNMENT_REVIEW_REQUIRED'
     return dict(body, plan_identity=digest(body))
 
 

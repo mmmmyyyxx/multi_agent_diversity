@@ -1,4 +1,4 @@
-"""Sanitized per-repeat metrics; repeated seed42 is not five distinct seeds."""
+"""Sanitized per-repeat metrics; fixed-seed repeats are not distinct algorithm seeds."""
 from itertools import combinations
 from difflib import SequenceMatcher
 

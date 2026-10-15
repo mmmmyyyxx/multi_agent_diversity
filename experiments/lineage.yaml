@@ -1154,6 +1154,9 @@ nodes:
 - experiment_id: single_prompt_full_diagnosis_pattern_v5
   kind: ABLATION
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: single_prompt_module_alignment_v6
+  kind: ABLATION
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2664,4 +2667,10 @@ edges:
   evidence: docs/design/SINGLE_PROMPT_FULL_DIAGNOSIS_PATTERN_V5.md
   scope: All-error diagnostic universe before formal representative sampling; historical evidence preserved,
     no execution authorization.
+- from: single_prompt_full_diagnosis_pattern_v5
+  to: single_prompt_module_alignment_v6
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_MODULE_ALIGNMENT_V6.md
+  scope: Formal-flow audit, shared reference/candidate guards and explicit disabled adapter boundaries;
+    no real execution.
 current_frontier: experiments/current_frontier.yaml

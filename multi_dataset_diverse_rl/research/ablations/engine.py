@@ -37,7 +37,8 @@ def _checkpoint(persist, name, value):
 def run_cell(plan, cell, initial_prompt, optimize_rows, validation_rows, broker, persist,
              *, registry=None, resume=None):
     from .modules import default_registry
-    registry = registry or default_registry()
+    from .config import SCHEMA
+    registry = registry or default_registry(include_legacy=plan['config']['schema_version']==SCHEMA)
     validate_plan(plan, registry)
     if cell not in plan['cells']:
         raise SearchContractError('ABLATION_CELL_NOT_BOUND')

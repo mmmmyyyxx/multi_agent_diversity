@@ -137,10 +137,11 @@ bounded recovery, partition normalization and safety checks are reused through
 selection uses the explicitly named largest unique support selector. Normalization
 does not invoke team scoring with fabricated labels or a zero-weight fallback.
 
-The synthetic `formal_gradient` adapter uses real shared Gradient generation,
-omits clustering explicitly, and reports its disabled Pattern status. It is a
-mock interface validation, not a newly frozen real study. Existing independent
-control/generation/Validation gate/checkpoint semantics remain unchanged.
+The historical synthetic `formal_gradient` adapter was an interface prototype
+with a preselected diagnostic Batch. The user-requested [module-flow audit](SINGLE_PROMPT_MODULE_ALIGNMENT_V6.md)
+disables it in the current registry; its class is not a runnable scientific arm.
+Current independent controls retain their approved kernel and use full discovery
+only through the reviewed complete Gradient Pattern adapter.
 
 WHO, Group diagnosis, plurality, Full/Shadow, final team assembly and team stopping
 are intrinsically team mechanisms. Independent reuse would require a different

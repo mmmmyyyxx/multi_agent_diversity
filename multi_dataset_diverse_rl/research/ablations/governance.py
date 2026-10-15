@@ -31,6 +31,7 @@ from ..gated_prompt_test import formal_test_plan
 from .config import build_plan, batch_config as default_config, validate_plan, request_namespace
 from .engine import run_cell
 from .analysis import summarize
+from .generation import candidate_checks
 from .runtime import AblationBroker
 from ...local_optimizers.schemas import LocalEvidenceExample
 
@@ -115,8 +116,8 @@ def source_snapshot(root):
     paths.add(root / manifest['data']['canonical_root'] / 'manifests/math.json')
     from .continuation import MANIFEST as amendment_manifest
     paths.add(root / amendment_manifest)
-    from .aligned import MANIFEST as aligned_manifest
-    paths.add(root / aligned_manifest)
+    from .aligned import MANIFEST as aligned_manifest, HISTORICAL_MANIFEST as aligned_parent
+    paths.update(root/p for p in (aligned_manifest,aligned_parent))
     return {p.relative_to(root).as_posix(): file_hash(p) for p in sorted(paths)}
 
 
@@ -150,7 +151,12 @@ def authorization_template(scope):
         authorized_attempt_ids=[scope['scope_identity'] + '_train_' + c['cell_id'] for c in scope['plan']['cells']])
 
 
-def prepare(root, destination):
+def prepare(root,destination):
+    from .aligned import prepare as current_prepare
+    return current_prepare(root,destination)
+
+
+def _prepare_legacy_metadata(root, destination):
     destination = private_path(root, destination)
     if destination.exists():
         raise SearchContractError('ABLATION_FRESH_PREPARATION_REQUIRED')
@@ -228,7 +234,15 @@ def validate_authorization(scope, authorization, *, required=False, test=False):
         raise SearchContractError('ABLATION_FRESH_USER_PHASE_AUTHORIZATION_REQUIRED')
 
 
-def validate_prep(root, directory, *, authorized=False):
+def validate_prep(root,directory,*,authorized=False):
+    from . import aligned
+    directory=private_path(root,directory)
+    if read_json(directory/'prep.json').get('schema_version')!=aligned.PREP_SCHEMA:
+        raise SearchContractError('ABLATION_HISTORICAL_PREP_NOT_CURRENT_EXECUTION')
+    return aligned.validate_prep(root,directory,authorized=authorized)
+
+
+def _validate_legacy_prep_metadata(root, directory, *, authorized=False):
     directory = private_path(root, directory)
     prep = read_json(directory / 'prep.json')
     from . import continuation
@@ -348,10 +362,8 @@ def audit_cells(directory, scope, *, results=None, allow_partial=False):
                 lineage = block_lineage(SystemPrompt.from_dict(previous['prompt']), prompt)
                 if (len(prompt.render()) > 3000 or lineage != metric['lineage']
                         or len(lineage['edited_blocks']) != 1
-                        or candidate_failed_checks(prompt, parent_prompt=SystemPrompt.from_dict(previous['prompt']),
-                            examples=tuple(LocalEvidenceExample(e['example_id'], e['problem'], e['reference'])
-                                           for e in opportunity['errors']))
-                        or re.search(r'\bmodule_context\b', prompt.render(), re.I)
+                        or candidate_checks(prompt,parent=SystemPrompt.from_dict(previous['prompt']),
+                            errors=opportunity['errors'],structured_feedback=opportunity['structured_feedback'])
                         or not 1 <= metric['generation_draws'] <= 4 or not metric['candidate_evaluated']
                         or len(cp['candidate_validation']) != 100 or len(cp['candidate_optimize']) != 150
                         or set(cp['candidate_validation']) != set(previous['validation'])
@@ -401,6 +413,10 @@ def audit_accounting(directory, scope, phase, *, summary=None, results=None):
         record = store.read(receipt['reservation_id'])
         if read_json(store.directory / (receipt['reservation_id'] + '.json'))['integrity_sha256'] != receipt['integrity_sha256']:
             raise SearchContractError('ABLATION_RECEIPT_SEAL_CHANGED')
+        if phase=='train' and reserves[e['reservation_id']]['role']=='reflection':
+            from .generation import audit_optimizer_request
+            cell_id=receipt['attempt_id'].removeprefix(scope['scope_identity']+'_train_')
+            audit_optimizer_request(directory,cell_id,record)
         network_failed += record.get('error_category') in ('APITimeoutError', 'APIConnectionError')
     if network_failed != usage['network_failed_calls'] or usage.get('replayed_calls', 0) != 0:
         raise SearchContractError('ABLATION_NETWORK_OR_REPLAY_ACCOUNTING')

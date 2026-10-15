@@ -53,6 +53,14 @@ class DisabledGroupChannel(TeamGroupChannel):
             status='MODULE_DISABLED',module_identity=self.identity,input_support_count=len(rows),
             nonempty_experiences=0,structural_draws=0,structural_errors=[])
 
+
+def worked_reference(solution):
+    """Actual formal worked-solution view; original source remains private."""
+    if not isinstance(solution,str) or not solution.strip():
+        raise SearchContractError('SINGLE_STEP_REPAIR_EVIDENCE_REQUIRED')
+    return dict(source='dataset_worked_solution',split='optimize',text=solution[:4096],
+        original_characters=len(solution),truncated=len(solution)>4096)
+
 class ReflectionEvidenceComposition:
     identity='READABLE_SINGLE_STEP_EVIDENCE_COMPOSITION_V1'
     def compose(self,*,opportunity,parent,rows,pattern,diagnostics,canonical_group,
@@ -67,8 +75,7 @@ class ReflectionEvidenceComposition:
             actual = observations[row.example_id]
             examples.append(dict(example_id=row.example_id, problem=s['input_payload'],
                 reference_final_answer=s['gold'],
-                worked_reference=dict(source='dataset_worked_solution', split='optimize',
-                    text=solution[:4096], original_characters=len(solution), truncated=len(solution)>4096),
+                worked_reference=worked_reference(solution),
                 root_observation=dict(prompt_sha256=opportunity.parent_prompt.prompt_hash,
                     trajectory=s['solver_trajectory'], correct=s['target_member_correct']),
                 accepted_root_diagnostic={k:diagnostic[k] for k in
@@ -99,6 +106,16 @@ class SlotGeneration:
     wire_sizes: list
     disposition: str
 
+def inference_dependency_checks(text):
+    """Shared formal guard: inference cannot access optimizer-only team evidence."""
+    import re
+    if re.search(r'\b(?:peer_prompt|peer_answer|root_team|team_snapshot|correct_members|wrong_members)\b|'
+            r'\b(?:read|consult|copy|access|use)\b[^.;\n]{0,65}\b(?:peer (?:answers?|prompts?|responses?)|'
+            r"other members['’]? (?:answers?|prompts?|responses?)|group diagnosis|team snapshot)\b",
+            text,re.I):return ('inference_unavailable_group_dependency',)
+    return ()
+
+
 def candidate_legality(child,*,parent,rows,private,canonical_group,seen):
     """Shared output boundary; replacing a generator does not replace safety."""
     check_examples=tuple(LocalEvidenceExample(row.example_id,row.signals['input_payload'],
@@ -106,11 +123,7 @@ def candidate_legality(child,*,parent,rows,private,canonical_group,seen):
     failed=candidate_failed_checks(child,parent_prompt=parent.prompt,examples=check_examples)
     if failed:return failed
     failed+=executability_checks(child.render(),private_texts=private)
-    import re
-    if re.search(r'\b(?:peer_prompt|peer_answer|root_team|team_snapshot|correct_members|wrong_members)\b|'
-            r'\b(?:read|consult|copy|access|use)\b[^.;\n]{0,65}\b(?:peer (?:answers?|prompts?|responses?)|'
-            r"other members['’]? (?:answers?|prompts?|responses?)|group diagnosis|team snapshot)\b",
-            child.render(),re.I):failed+=('inference_unavailable_group_dependency',)
+    failed+=inference_dependency_checks(child.render())
     if child.to_dict() in canonical_group['root_prompts'] and child!=parent.prompt:
         failed+=('peer_prompt_copy',)
     if child.prompt_hash in seen:failed+=('duplicate_prompt',)

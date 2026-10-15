@@ -11,7 +11,9 @@ Its seed42/three-repeat defaults are independent preparation settings, not team 
 or a grant to reuse historical scopes. The [full-diagnosis ablation amendment](SINGLE_PROMPT_FULL_DIAGNOSIS_PATTERN_V5.md)
 makes new C plans diagnose all current errors before formal clustering and sampling
 up to three representative supports. Its largest-support selector remains explicit.
-Memory adaptation remains explicitly unbound.
+The [module-flow audit](SINGLE_PROMPT_MODULE_ALIGNMENT_V6.md) binds shared formal
+reference/legality helpers and explicit module admission. Gradient-only and Memory
+remain unenabled by user choice; team-only ports require a real context.
 The explicitly user-requested [independent single-Prompt mechanism study](SINGLE_PROMPT_GRADIENT_PATTERN_V1.md)
 is isolated from this method and routes only its own schema through the shared
 runner. Its approved 20-round/error-Batch protocol does not amend team defaults.

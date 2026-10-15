@@ -16,10 +16,8 @@ def main():
     parser.add_argument('--continue-parent', type=Path)
     args = parser.parse_args()
     if args.continue_parent:
-        from multi_dataset_diverse_rl.research.ablations.continuation import prepare as prepare_continuation
-        value = prepare_continuation(ROOT, args.destination, args.continue_parent)
-    else:
-        value = prepare(ROOT, args.destination)
+        parser.error('Historical Batch continuation is not a current module-aligned experiment; use its frozen Git source for historical replay.')
+    value = prepare(ROOT,args.destination)
     print(json.dumps(value, indent=2))
 
 

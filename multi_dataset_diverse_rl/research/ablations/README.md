@@ -54,3 +54,9 @@ Memory 应直接包装正式 `PopulationEditMemory`。当前已提供原生类�
 完整方法约定见 [设计说明](../../../docs/design/SINGLE_PROMPT_MODULE_ABLATIONS_V1.md)。
 本次重复实验与 Solver 缓存修订见
 [V3 三次重复修订](../../../docs/design/SINGLE_PROMPT_PATTERN_REPEAT3_SOLVER_CACHE_V3.md)。
+
+当前模块语义对齐规则见 [V6 审计](../../../docs/design/SINGLE_PROMPT_MODULE_ALIGNMENT_V6.md)。
+当前默认注册表仅开放 `none` 与完整 `full_gradient_pattern`；旧 Batch Pattern
+仅供历史协议检查，Gradient-only 与 Memory 按用户确认保持未启用。
+`study.py --plan` 同时输出完整模块对齐清单；未审计的自定义模块不能据此获得真实执行资格。
+共同优化器复用正式参考解投影、私有文本防照抄及推理时不可用信息检查。

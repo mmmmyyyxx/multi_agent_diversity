@@ -75,7 +75,8 @@ def test_more_than_three_errors_all_diagnosed_before_cluster_then_only_three_exa
     audit=artifacts['round_1_module']['audit']
     assert len(audit['complete_diagnosis']['structured_feedback']['diagnostics'])==8
     projected,focus=project_full(audit['complete_diagnosis'],42,1,audit['sampling_context'])
-    assert projected['errors']==optimizer['errors'] and focus==audit['focus']
+    from multi_dataset_diverse_rl.research.ablations.generation import optimizer_error_view
+    assert [optimizer_error_view(e) for e in projected['errors']]==optimizer['errors'] and focus==audit['focus']
     assert result['metrics'][0]['candidate_evaluated'] and result['usage']['pattern_gradient']==8
     assert result['usage']['reflection']==1
 
@@ -175,7 +176,7 @@ def test_wrong_sampling_metadata_cannot_reproject(full):
 def test_full_manifest_cannot_reuse_historical_scope_or_authorization():
     from scripts.run_experiment import preflight
     manifest=read_json(ROOT/aligned.MANIFEST)
-    assert preflight(manifest)['status']=='ABLATION_FULL_DIAGNOSIS_PREFLIGHT_PASS_NOT_AUTHORIZED'
+    assert preflight(manifest)['status']=='ABLATION_MODULE_ALIGNMENT_PREFLIGHT_PASS_NOT_AUTHORIZED'
     old=dict(scope_identity=digest('old-scope'),plan=build_plan(batch_config()))
     scope=dict(scope_identity=digest(['new-plan',manifest['plan']['plan_identity']]),plan=manifest['plan'])
     old_auth=gov.authorization_template(old)

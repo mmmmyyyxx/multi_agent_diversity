@@ -30,6 +30,8 @@ def main():
             raise SystemExit('Fresh destination required.')
         atomic_write_json(destination / 'plan.json', plan)
         atomic_write_json(destination / 'future_memory_binding.json', production_memory_binding())
+        from multi_dataset_diverse_rl.research.ablations.semantic_alignment import inventory
+        atomic_write_json(destination / 'module_alignment_inventory.json',inventory())
         print(json.dumps(dict(status='DRAFT_NOT_AUTHORIZED', cells=len(plan['cells']),
             seed=config['seed'], repeats_per_arm=config['repeats_per_arm'],
             plan_identity=plan['plan_identity'], real_api_calls=0), indent=2))

@@ -1,5 +1,27 @@
 schema_version: failure_registry_v1
 failures:
+- failure_id: FAIL-ABLATION-PARTIAL-FORMAL-ADAPTER-CONFORMANCE
+  title: Formal imports did not guarantee complete input and candidate-boundary alignment
+  status: MITIGATED
+  lifecycle: OFFLINE_VERIFICATION
+  first_observed: single_prompt_full_diagnosis_pattern_v5
+  affected_components:
+  - gradient_only_registry
+  - optimizer_reference_view
+  - private_content_and_inference_guards
+  - trajectory_policy_metadata
+  symptom: Gradient-only retained Batch input; independent Optimizer omitted some formal guards and reference
+    metadata.
+  evidence:
+  - docs/design/SINGLE_PROMPT_MODULE_ALIGNMENT_V6.md
+  evidence_level: source_verified
+  root_cause_status: Adapter import equality was treated as stronger evidence than end-to-end flow conformance.
+  mitigation: Reviewed registry only, disabled unresolved adapters, shared formal helpers and request-to-opportunity
+    audit.
+  forbidden_inference: No runnable Memory or Gradient-only efficacy is established by importing their
+    native classes.
+  regression_tests:
+  - tests/current/test_ablation_semantic_alignment.py
 - failure_id: FAIL-ABLATION-PATTERN-DIAGNOSIS-UNIVERSE
   title: Pre-sampling three errors prevented full wrong-set Pattern discovery
   status: MITIGATED

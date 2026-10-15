@@ -37,7 +37,7 @@ class GradientTransportAdapter(PerExampleGradientProvider):
         self.calls += 1
         self.last_response = self.broker.complete(role=self.role, split='optimize', stage=self.stage,
             messages=[dict(role='system', content=self.prompt),
-                      dict(role='user', content=json.dumps(payload, sort_keys=True, ensure_ascii=True))])
+                      dict(role='user', content=json.dumps(payload, sort_keys=True, separators=(',',':'), ensure_ascii=True))])
         return parse_output(self.last_response['text'], stage='gradient')
 
 
@@ -51,7 +51,7 @@ class ClusterTransportAdapter(GradientClusterProvider):
         self.calls += 1
         self.last_response = self.broker.complete(role=self.role, split='optimize', stage=self.stage,
             messages=[dict(role='system', content=self.prompt),
-                      dict(role='user', content=json.dumps(payload, sort_keys=True, ensure_ascii=True))])
+                      dict(role='user', content=json.dumps(payload, sort_keys=True, separators=(',',':'), ensure_ascii=True))])
         try:
             return json.loads(self.last_response['text'])
         except (ValueError, TypeError) as exc:
@@ -94,7 +94,8 @@ def discover(context, provider, *, clustering=True):
 def production_memory_binding():
     return dict(implementation='multi_dataset_diverse_rl.search.population_memory.PopulationEditMemory',
         policy=deepcopy(MEMORY_POLICY), limits=deepcopy(MEMORY_LIMITS),
-        status='ADAPTATION_POLICY_REQUIRED',
+        status='ADAPTATION_POLICY_REQUIRED',runnable=False,
+        user_decision='keep_unenabled_interface_audit_only',
         unresolved=['single_prompt_bootstrap_scope', 'absent_team_vote_and_shadow_fields',
                     'which_candidate_outcomes_to_record', 'optimizer_delivery_contract'])
 

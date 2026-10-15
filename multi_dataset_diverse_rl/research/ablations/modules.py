@@ -51,12 +51,12 @@ class ModuleRegistry:
         return deepcopy(self.create(name).binding())
 
 
-def default_registry():
-    from .pattern import LargestPatternModule,GradientOnlyModule
+def default_registry(*, include_legacy=False):
+    from .pattern import LargestPatternModule
     from .full_pattern import FullDiagnosisPatternModule
     registry = ModuleRegistry()
     registry.register('none', NoModule)
-    registry.register('largest_pattern', LargestPatternModule)
+    if include_legacy:
+        registry.register('largest_pattern', LargestPatternModule)
     registry.register('full_gradient_pattern', FullDiagnosisPatternModule)
-    registry.register('formal_gradient', GradientOnlyModule)
     return registry
