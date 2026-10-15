@@ -96,7 +96,11 @@ def validate_registry_v2(root: Path, registry: Mapping) -> tuple[list[str],dict]
                 if validate_published_single_prompt(root,path,obj):continue
             except ValueError as exc:
                 errors.append(f'{ident}: {exc}');continue
-            if isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_ablation_execution_manifest_v2':
+            if isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_module_ablation_draft_v6':
+                from ..research.ablations.config import build_plan
+                try:build_plan(obj)
+                except ValueError as exc:errors.append(f'{ident}: {exc}')
+            elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_ablation_execution_manifest_v2':
                 from ..research.ablations.governance import validate_historical_manifest
                 try:validate_historical_manifest(root,obj)
                 except ValueError as exc:errors.append(f'{ident}: {exc}')
@@ -120,6 +124,9 @@ def validate_registry_v2(root: Path, registry: Mapping) -> tuple[list[str],dict]
                 from ..research.ablations.continuation import validate_manifest as validate_ablation_continuation
                 try:validate_ablation_continuation(root,obj)
                 except ValueError as exc:errors.append(f'{ident}: {exc}')
+            elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_completed_ab_test_manifest_v13':
+                from ..research.ablations.completed_ab_test import manifest_template
+                if obj!=manifest_template():errors.append(f'{ident}: AB_TEST_MANIFEST_CHANGED')
             elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_c_test_certified_manifest_v10':
                 from ..research.ablations.test_certified import validate_manifest as validate_certified
                 try:validate_certified(root,obj)

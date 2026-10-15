@@ -30,6 +30,13 @@ def summarize(plan, results, final_predictions=None):
             optimize_accuracy=r['final_optimize_correct'] / r['optimize_count'],
             optimization_tokens=r['usage']['input_tokens'] + r['usage']['output_tokens'],
             optimization_provider_calls=r['usage']['provider_calls'], **counts)
+        if 'final_admission' in r:
+            row.update(final_admitted=r['final_admission']['admitted'],
+                final_status=r['final_admission']['status'],
+                running_validation_accuracy=sum(v['correct'] for v in r['final_admission']['running_validation'].values())/r['validation_count'],
+                measured_children=sum(s['disposition']=='MEASURED' for m in metrics for s in m['slots']),
+                exhausted_slots=sum(s['disposition']=='EXHAUSTED' for m in metrics for s in m['slots']),
+                no_op_slots=sum(s['disposition']=='NO_OP' for m in metrics for s in m['slots']))
         if final_predictions is not None:
             values = final_predictions[ident]
             row.update(test_count=len(values), test_accuracy=sum(v['correct'] for v in values.values()) / len(values))
@@ -43,6 +50,9 @@ def summarize(plan, results, final_predictions=None):
             **{k: sum(r[k] for r in subset) for k in ('updates', 'rejected', 'exhausted','no_op')})
         if final_predictions is not None:
             group['mean_test_accuracy'] = sum(r['test_accuracy'] for r in subset) / len(subset)
+        if all('final_admitted' in r for r in subset):
+            group['final_admitted_count']=sum(r['final_admitted'] for r in subset)
+            group['final_rejected_count']=len(subset)-group['final_admitted_count']
         groups.append(group)
     pairs = []
     for arm in plan['config']['arms']:

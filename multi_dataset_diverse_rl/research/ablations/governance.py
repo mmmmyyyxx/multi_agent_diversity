@@ -26,7 +26,17 @@ from ..single_prompt_governance import (
     private_path, inventory, runtime_identity, require_selected_runtime,
     StudySplitReader, StudyHeldoutAccess,
 )
-from ..gated_prompt_policy import gate_membership
+from ..gated_prompt_policy import gate_membership as historical_gate_membership
+
+
+def gate_membership(reader,seed=88):
+    if seed==88:return historical_gate_membership(reader)
+    if seed!=42:raise SearchContractError('ABLATION_GATE_SEED_NOT_BOUND')
+    import random
+    ids=[r['stable_example_id'] for r in reader.members if r['project_split']=='validation']
+    chosen=set(random.Random(seed).sample(ids,100));selected=[i for i in ids if i in chosen]
+    return dict(identity='FROZEN_VALIDATION100_FROM300_UNIFORM_SEED42_V2',sample_ids=selected,
+        membership_sha256=digest(selected),source_count=len(ids),count=100)
 from ..gated_prompt_test import formal_test_plan
 from .config import build_plan, batch_config as default_config, validate_plan, request_namespace
 from .engine import run_cell
@@ -86,11 +96,16 @@ def validate_manifest(root, manifest):
 
 def test_plan(root, reader, plan):
     formal = formal_test_plan(root, reader)
-    return dict(formal, identity='ABLATION_REPEAT_SCOPED_FINAL_TEST300_V2',
+    value=dict(formal, identity='ABLATION_REPEAT_SCOPED_FINAL_TEST300_V2',
         selection='all_frozen_cells_last_validation_retained_prompts_after_audited_training',
         physical_call_ceiling=None,
         successful_semantic_call_ceiling=plan['final_test_semantic_call_ceiling'],
         cache=plan['cache_policy'], non_solver_cache='forbidden')
+    from .config import MULTI_SCHEMA
+    if plan['config']['schema_version']==MULTI_SCHEMA:
+        value.update(identity='ABLATION_POPULATION_PROPOSAL_FINAL_TEST300_V3',
+            selection='all_final_pool_argmax_proposals_after_nonregression_gate')
+    return value
 
 
 def source_snapshot(root):
@@ -239,7 +254,10 @@ def validate_authorization(scope, authorization, *, required=False, test=False):
 
 def validate_prep(root,directory,*,authorized=False):
     from . import aligned
+    from . import population_governance
     directory=private_path(root,directory)
+    if read_json(directory/'prep.json').get('schema_version')==population_governance.PREP_SCHEMA:
+        return population_governance.validate_prep(root,directory,authorized=authorized)
     if read_json(directory/'prep.json').get('schema_version') not in (aligned.PREP_SCHEMA,aligned.C_PREP_SCHEMA):
         raise SearchContractError('ABLATION_HISTORICAL_PREP_NOT_CURRENT_EXECUTION')
     return aligned.validate_prep(root,directory,authorized=authorized)
@@ -276,11 +294,12 @@ class GateAccess:
     scope_identity: str
     membership: dict
     require_authorization: object
+    seed:int=88
 
 
 def read_gate_rows(reader, access):
     if (type(access) is not GateAccess or re.fullmatch('[0-9a-f]{64}', access.scope_identity) is None
-            or access.membership != gate_membership(reader)):
+            or access.membership != gate_membership(reader,access.seed)):
         raise SearchContractError('ABLATION_ADAPTIVE_VALIDATION_CAPABILITY_REQUIRED')
     access.require_authorization()
     return reader._read_rows('validation', frozen_subset_ids=access.membership['sample_ids'])
@@ -290,6 +309,10 @@ def audit_cells(directory, scope, *, results=None, allow_partial=False):
     """Recheck each persisted gate transition before authorizing Test access."""
     plan = scope['plan']
     validate_plan(plan)
+    from .config import MULTI_SCHEMA
+    if plan['config']['schema_version']==MULTI_SCHEMA:
+        from .population_audit import audit_cells as population_audit
+        return population_audit(directory,scope,results,allow_partial)
     results = read_json(directory / 'results.json') if results is None else results
     expected = plan['cells'][:len(results)] if allow_partial else plan['cells']
     if [r['cell'] for r in results] != expected:
@@ -487,6 +510,8 @@ def _transport():
 def _execute_phase(root, prep, directory, scope, *, train_scope, parent_results=None, terminal_sha=None):
     phase = scope['phase']
     plan = train_scope['plan']
+    if phase=='test' and any(not r.get('final_admission',{}).get('admitted',True) for r in (parent_results or [])):
+        raise SearchContractError('MULTI_PARENT_FINAL_PROPOSAL_REJECTED_TEST_FORBIDDEN')
     if directory.exists():
         raise SearchContractError('ABLATION_EXISTING_RUN_FORBIDDEN')
     validate_prep(root, prep, authorized=True)
@@ -524,12 +549,17 @@ def _execute_phase(root, prep, directory, scope, *, train_scope, parent_results=
         broker = AblationBroker(plan=plan, phase=phase, scope=scope, transport=transport, ledger=ledger,
             receipts=ProviderResponseReceipts(directory / 'provider_receipts', attempt_id=scope['scope_identity'],
                 startup_identity_sha256=scope['scope_identity']), dispatch_guard=guard)
-        manifest = read_json(root / MANIFEST)
-        reader = validate_manifest(root, manifest)
+        from .config import MULTI_SCHEMA
+        if plan['config']['schema_version']==MULTI_SCHEMA:
+            from .population_governance import inputs
+            manifest,reader=inputs(root)
+        else:
+            manifest = read_json(root / MANIFEST)
+            reader = validate_manifest(root, manifest)
         if phase == 'train':
             optimize = reader.rows('optimize', DataPurpose.SEARCH_EVALUATION)
             validation = read_gate_rows(reader, GateAccess(scope['scope_identity'], scope['gate_membership'],
-                lambda: validate_prep(root, prep, authorized=True)))
+                lambda: validate_prep(root, prep, authorized=True),plan['config']['runtime']['validation_membership_seed']))
             initial = read_json(root / manifest['initial_prompt_path'])['members'][0]['prompt']
             atomic_write_json(directory / 'access.json', dict(optimize_ids=[r['stable_example_id'] for r in optimize],
                 validation_gate_ids=scope['gate_membership']['sample_ids'], test_access=False))

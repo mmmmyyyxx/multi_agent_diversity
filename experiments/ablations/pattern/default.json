@@ -1,6 +1,6 @@
 {
-  "schema_version": "single_prompt_module_ablation_draft_v5",
-  "experiment_id": "single_prompt_structural_candidates_v11",
+  "schema_version": "single_prompt_module_ablation_draft_v6",
+  "experiment_id": "single_prompt_multi_parent_v12",
   "parent_manifest": "experiments/manifests/single_prompt_pattern_c_only_v7.json",
   "seed": 42,
   "repeats_per_arm": 3,
@@ -23,7 +23,7 @@
     }
   ],
   "runtime": {
-    "identity": "SINGLE_PROMPT_STRUCTURAL_ALIGNED_KERNEL_V5",
+    "identity": "SINGLE_PROMPT_MULTI_PARENT_KERNEL_V6",
     "seeds": [
       42
     ],
@@ -33,9 +33,9 @@
     "optimizer_structural_retries": 3,
     "acceptance": "validation_correct_count_strictly_greater_than_retained_profile",
     "optimize_gate": false,
-    "final_selection": "last_validation_retained_prompt",
+    "final_selection": "pool_optimize_argmax_with_validation_nonregression",
     "validation_count": 100,
-    "validation_membership_seed": 88,
+    "validation_membership_seed": 42,
     "solver_concurrency": 32,
     "gradient_concurrency": 8,
     "test_solver_concurrency": 16,
@@ -147,7 +147,7 @@
     "provider_sdk_version": "2.37.0",
     "paired_cache": "solver_only_same_repeat_seed_split_complete_request_across_arms_and_rounds",
     "non_solver_cache": "forbidden_including_paid_response_replay",
-    "optimizer_wire": "SINGLE_PROMPT_STRUCTURAL_OPTIMIZER_WIRE_V3",
+    "optimizer_wire": "SINGLE_PROMPT_ROOT_PARENT_WIRE_V4",
     "candidate_guard": "STRUCTURAL_SINGLE_BLOCK_CANDIDATE_CONTRACT_V2",
     "no_op": "record_skip_evaluation_no_regeneration",
     "memory": "module_explicit_not_implicit",
@@ -189,7 +189,28 @@
       "genuine_control_integrity_or_unknown_failure": "abort_preserve_evidence",
       "incomplete_teacher": "no_response_replay_carry_semantic_draw_counts"
     },
-    "module_admission": "EXPLICIT_FORMAL_ALIGNMENT_REVIEW_V1"
+    "module_admission": "EXPLICIT_FORMAL_ALIGNMENT_REVIEW_V1",
+    "population": {
+      "identity": "SINGLE_PROMPT_NATIVE_PARENT_POLICIES_V1",
+      "capacity": 3,
+      "slots": 3,
+      "sampling": "EPSILON_SOFTMAX_FITNESS_SAMPLING_V1",
+      "retention": "TOP_THREE_FITNESS_HASH_RETENTION_V1",
+      "final_selection": "PER_MEMBER_ARGMAX_ASSEMBLY_SELECTION_V1",
+      "fitness": "complete_optimize_accuracy",
+      "pool_admission": "all_measured_children_independent_of_validation",
+      "winner": "highest_optimize_then_prompt_sha256_then_slot",
+      "validation": "one_winner_strict_gain_vs_running_root",
+      "final_gate": "nonregression_vs_running_root",
+      "diagnosis": "once_per_round_running_root_shared_across_slots",
+      "sampling_scope": "scientific_policy_membership_no_repeat_or_arm_salt",
+      "no_op": "skip_slot_no_regeneration",
+      "format_draws_per_slot": 4,
+      "final_rejection": "explicit_proposal_rejected_no_silent_incumbent_substitution",
+      "checkpoint_resume": "whole_boundary_only_fresh_resume_contract_required",
+      "production_source_sha256": "1971d326bc4ad0755682999f72625ef220fcb708c47915c24a4707d2d41452f7",
+      "provider_generation_seed": "not_exposed_by_current_generation_contracts"
+    }
   },
   "preparation_only": true,
   "real_api_authorized": false

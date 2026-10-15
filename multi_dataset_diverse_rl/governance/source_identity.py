@@ -102,6 +102,10 @@ def current_scientific_files(root: Path, *, execution_closure: bool = False) -> 
     if modular_contract.is_file():result.append(modular_contract)
     candidate_contract = root/'docs/design/STRUCTURAL_CANDIDATES_V2.md'
     if candidate_contract.is_file():result.append(candidate_contract)
+    single_population_contract = root/'docs/design/SINGLE_PROMPT_MULTI_PARENT_V12.md'
+    if single_population_contract.is_file():result.append(single_population_contract)
+    ab_test_contract = root/'docs/design/SINGLE_PROMPT_COMPLETED_AB_TEST_V13.md'
+    if ab_test_contract.is_file():result.append(ab_test_contract)
     spec = root/'docs/design/CURRENT_SPEC.md'
     if spec.is_file():
         result.append(spec)

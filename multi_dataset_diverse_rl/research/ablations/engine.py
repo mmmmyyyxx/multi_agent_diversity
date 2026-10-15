@@ -36,6 +36,11 @@ def _checkpoint(persist, name, value):
 
 def run_cell(plan, cell, initial_prompt, optimize_rows, validation_rows, broker, persist,
              *, registry=None, resume=None):
+    from .config import MULTI_SCHEMA
+    if plan['config']['schema_version']==MULTI_SCHEMA:
+        from .multi_parent import run_cell as population_run
+        return population_run(plan,cell,initial_prompt,optimize_rows,validation_rows,broker,persist,
+            registry=registry,resume=resume)
     from .modules import default_registry
     from .config import SCHEMA
     registry = registry or default_registry(include_legacy=plan['config']['schema_version']==SCHEMA)

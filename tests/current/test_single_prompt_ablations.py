@@ -91,7 +91,8 @@ def test_default_three_repeats_same_seed_and_no_real_grant():
     assert plan['training_semantic_call_ceiling'] == 216900
     assert plan['final_test_semantic_call_ceiling'] == 10800
     validate_plan(plan)
-    assert json.loads((ROOT / 'experiments/ablations/pattern/default.json').read_text(encoding='utf-8')) == default_config()
+    from multi_dataset_diverse_rl.research.ablations.config import current_config
+    assert json.loads((ROOT / 'experiments/ablations/pattern/default.json').read_text(encoding='utf-8')) == current_config()
 
 
 def test_repeat_namespace_pairs_arms_but_never_repeats():

@@ -156,7 +156,8 @@ def test_new_identity_budgets_defaults_and_historical_manifest_preservation():
     assert build_plan(batch_config())['plan_identity']!=historical['plan']['plan_identity']
     assert historical['config']['arms'][2]['error_source']=='random_wrong_batch'
     assert plan['plan_identity']!=historical['plan']['plan_identity']
-    assert read_json(ROOT/'experiments/ablations/pattern/default.json')==default_config()
+    from multi_dataset_diverse_rl.research.ablations.config import current_config
+    assert read_json(ROOT/'experiments/ablations/pattern/default.json')==current_config()
     with pytest.raises(SearchContractError):aligned.validate_manifest(ROOT,read_json(ROOT/aligned.MANIFEST))
     assert not plan['ready_to_run']
 

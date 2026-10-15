@@ -6,7 +6,15 @@ content Guards with nonempty three-block structure and one-block replacement,
 removes character budgets and records no-op skips without legality retries.
 Selection remains measured performance. This supersedes the candidate-boundary
 claims in prior preparation documents, not their frozen historical evidence.
-New independent drafts use schemaV5/kernelV5 and require new freezes; old manifests
+The [single-Prompt multi-Parent amendment](SINGLE_PROMPT_MULTI_PARENT_V12.md)
+is the new A/B/C preparation default: native three-Parent sampling/retention,
+three independent slots, Optimize accuracy fitness, a strict Validation winner
+gate and a separate final pool proposal. It uses schema V6/kernel V6 and requires
+a fresh freeze. It does not amend the production five-member team method.
+The [historical A/B Test-only scope](SINGLE_PROMPT_COMPLETED_AB_TEST_V13.md)
+finishes six previously completed single-Parent cells; it cannot launch new
+training or alter them into multi-Parent results.
+The predecessor structural drafts use schemaV5/kernelV5; old manifests
 and authorizations cannot execute the revised candidate treatment.
 The [V2.12 modular mechanisms architecture](MODULAR_MECHANISMS_V212.md) separates
 strategy, evidence, generation, measurement and state authorities while preserving

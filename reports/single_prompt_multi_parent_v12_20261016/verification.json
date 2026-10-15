@@ -1,0 +1,44 @@
+{
+  "scope": "Multi-Parent implementation and historical A/B Test-only preparation; zero model APIs in verification",
+  "classified_current_cases": 1125,
+  "unique_passed": 1123,
+  "skipped": 2,
+  "unresolved_cases": [],
+  "reused_initial_passing_cases": 1079,
+  "resumed_cases": 46,
+  "initial_failure_categories": {
+    "E   MemoryError": 14,
+    "E   multi_dataset_diverse_rl.search.schemas.SearchContractError: MATH_EVALUATOR_TIMEOUT": 1
+  },
+  "resumed_failure_categories": {
+    "E   multi_dataset_diverse_rl.search.schemas.SearchContractError: MATH_PREDICTION_WORKER_RESPONSE_INVALID": 1
+  },
+  "final_worker_recheck_passed": true,
+  "verification_only_yaml_parse_cache": {
+    "reads": 1950,
+    "parses": 256,
+    "hits": 1694
+  },
+  "verification_interruptions": [
+    "initial logger used Path.open patched by an I/O-denial test; replaced with captured builtin open",
+    "first resume collection encountered host MemoryError before any cases"
+  ],
+  "coverage_note": "Combined passing evidence and explicit skips; no clean first-pass claim. Unchanged passing cases reused; all failures and latest changed feature modules rechecked. A text-keyed safe_load parse cache in the verification harness avoids repeat YAML parsing only; each current file read, all validators and assertions execute; results deep-copied and cache mutation controls pass. No production cache or model cache is changed.",
+  "omitted_historical_private_modules": 224,
+  "full_historical_replay_claim": false,
+  "network_attempts": 0,
+  "production_compileall": true,
+  "repository_governance": true,
+  "manifest_preflights": true,
+  "default_fake_smoke": {
+    "cells": 9,
+    "opportunities": 180,
+    "slots": 540,
+    "all_final_proposals_admitted": true,
+    "real_api_calls": 0,
+    "network_attempts": 0,
+    "unresolved_reservations": 0
+  },
+  "historical_inputs_unchanged": 1548,
+  "native_population_and_team_search_files_modified": false
+}

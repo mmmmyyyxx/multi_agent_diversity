@@ -18,10 +18,15 @@ def main():
     parser.add_argument('--resume-c-test',action='store_true',help='Test-only continuation of the pinned scorer-aborted C Test.')
     parser.add_argument('--extend-c-test-deadline',action='store_true',help='Test-only thirty-second grading continuation of the stopped V8 attempt.')
     parser.add_argument('--certify-c-test',action='store_true',help='Test-only exact far-inequality certificate continuation.')
+    parser.add_argument('--completed-ab-test',action='store_true',help='Test only the six completed historical A/B cells.')
     args = parser.parse_args()
     if args.continue_parent:
         parser.error('Historical Batch continuation is not a current module-aligned experiment; use its frozen Git source for historical replay.')
-    if args.certify_c_test:
+    if args.completed_ab_test:
+        if args.c_only or args.resume_c_test or args.extend_c_test_deadline or args.certify_c_test:parser.error('Test-only scopes cannot be combined.')
+        from multi_dataset_diverse_rl.research.ablations.completed_ab_test import prepare as prepare_ab
+        value=prepare_ab(ROOT,args.destination)
+    elif args.certify_c_test:
         if args.c_only or args.resume_c_test or args.extend_c_test_deadline:parser.error('Each Test continuation has its own frozen scope.')
         from multi_dataset_diverse_rl.research.ablations.test_certified import prepare as prepare_certified
         value=prepare_certified(ROOT,args.destination)
@@ -33,7 +38,10 @@ def main():
         if args.c_only:parser.error('C-only training and Test continuation are separate scopes.')
         from multi_dataset_diverse_rl.research.ablations.test_resume import prepare as prepare_test
         value=prepare_test(ROOT,args.destination)
-    else:value = prepare(ROOT,args.destination,c_only=args.c_only)
+    elif args.c_only:value = prepare(ROOT,args.destination,c_only=True)
+    else:
+        from multi_dataset_diverse_rl.research.ablations.population_governance import prepare as population_prepare
+        value=population_prepare(ROOT,args.destination)
     print(json.dumps(value, indent=2))
 
 

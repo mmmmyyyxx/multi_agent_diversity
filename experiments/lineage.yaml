@@ -1175,6 +1175,12 @@ nodes:
 - experiment_id: structural_candidate_policy_v2_20261015
   kind: ZERO_API_AUDIT
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: single_prompt_multi_parent_v12
+  kind: ARCHITECTURE_REFACTOR
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: single_prompt_completed_ab_test_v13
+  kind: FORMAL_EXPERIMENT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2723,4 +2729,24 @@ edges:
   relation: audit_of
   evidence: reports/structural_candidate_policy_v2_20261015/README.md
   scope: User-requested structural candidate amendment and offline493 comparison; no real experiment or API authorization.
+- from: single_prompt_pattern_c_only_v7
+  to: single_prompt_multi_parent_v12
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_MULTI_PARENT_V12.md
+  scope: User-approved single-Prompt pool/three-slot adaptation; no real execution.
+- from: structural_candidate_policy_v2_20261015
+  to: single_prompt_multi_parent_v12
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_MULTI_PARENT_V12.md
+  scope: User-approved single-Prompt pool/three-slot adaptation; no real execution.
+- from: single_prompt_pattern_repeat3_solver_cache_v3
+  to: single_prompt_completed_ab_test_v13
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_COMPLETED_AB_TEST_V13.md
+  scope: Complete only six historical A/B final Tests; no training changes.
+- from: single_prompt_c_test_certified_v10
+  to: single_prompt_completed_ab_test_v13
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_COMPLETED_AB_TEST_V13.md
+  scope: Reuse verified Test scoring recovery, no new C evaluation.
 current_frontier: experiments/current_frontier.yaml

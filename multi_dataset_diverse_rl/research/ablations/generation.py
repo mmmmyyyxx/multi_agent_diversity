@@ -32,11 +32,12 @@ def optimizer_error_view(error):
     return value
 
 
-def optimizer_packet(prompt,errors,structured_feedback,module_context):
+def optimizer_packet(prompt,errors,structured_feedback,module_context,parent_context=None):
     packet=dict(current_system_prompt=prompt.to_dict(),errors=[optimizer_error_view(e) for e in errors],
         structured_feedback=structured_feedback,
         objective='Improve future accuracy with one block replacement')
     if module_context is not None:packet['module_context']=module_context
+    if parent_context is not None:packet['parent_context']=parent_context
     return packet
 
 
@@ -50,12 +51,13 @@ def candidate_checks(child, *, parent, errors, structured_feedback=None):
     return candidate_failed_checks(child,parent_prompt=parent)
 
 
-def generate_candidate(prompt, prepared, broker, ordinal, draws, persist):
-    packet=optimizer_packet(prompt,prepared.errors,prepared.structured_feedback,prepared.module_context)
+def generate_candidate(prompt, prepared, broker, ordinal, draws, persist,*,parent_context=None):
+    packet=optimizer_packet(prompt,prepared.errors,prepared.structured_feedback,prepared.module_context,parent_context)
+    instruction=INSTRUCTION if parent_context is None else INSTRUCTION+POPULATION_CONTEXT_INSTRUCTION
     for draw in range(1, draws + 1):
         response = broker.complete(role='reflection', split='optimize',
             stage=f'round_{ordinal}_legal_candidate_draw_{draw}',
-            messages=[dict(role='system', content=INSTRUCTION),
+            messages=[dict(role='system', content=instruction),
                       dict(role='user', content=json.dumps(packet, sort_keys=True, ensure_ascii=True))])
         child = None
         errors = []
@@ -78,24 +80,34 @@ def generate_candidate(prompt, prepared, broker, ordinal, draws, persist):
 
 
 
+POPULATION_CONTEXT_INSTRUCTION='''
+Errors and structured diagnoses belong to the running Root Prompt. You are editing
+the selected Parent in current_system_prompt. Its actual observations are labeled
+in parent_context and may already solve a Root error. Check applicability using
+these distinct observations; do not treat a Root diagnosis as a Parent diagnosis.
+The other candidates from this round, pool fitness and Validation are unavailable.
+'''
+
+
 def audit_optimizer_request(directory,cell_id,record):
     """Bind the actual paid Optimizer request to its private opportunity evidence."""
     from ...persistence.durable_io import read_json
     logical=record.get('logical_identity',{})
-    match=re.fullmatch(r'round_(\d+)_legal_candidate_draw_(\d+)',logical.get('stage',''))
+    match=re.fullmatch(r'round_(\d+)(?:_slot_([0-2]))?_legal_candidate_draw_(\d+)',logical.get('stage',''))
     if match is None:
         raise SearchContractError('ABLATION_OPTIMIZER_REQUEST_STAGE')
-    ordinal,draw=map(int,match.groups())
+    ordinal,slot,draw=match.groups();ordinal,draw=int(ordinal),int(draw)
+    prefix=f'round_{ordinal}'+(f'_slot_{slot}' if slot is not None else '')
     folder=directory/cell_id
-    opportunity=read_json(folder/f'round_{ordinal}_opportunity.json')
+    opportunity=read_json(folder/f'{prefix}_opportunity.json')
     from ...search.system_prompt import SystemPrompt
     parent=SystemPrompt.from_dict(opportunity['parent_prompt'])
-    expected=optimizer_packet(parent,opportunity['errors'],opportunity['structured_feedback'],opportunity['module_context'])
+    expected=optimizer_packet(parent,opportunity['errors'],opportunity['structured_feedback'],opportunity['module_context'],opportunity.get('parent_context'))
     if draw>1:
-        prior=read_json(folder/f'round_{ordinal}_generation_{draw-1}.json')
+        prior=read_json(folder/f'{prefix}_generation_{draw-1}.json')
         expected['output_contract_feedback']=retry_feedback(prior['errors'])
     messages=record['request']['messages']
     if (logical.get('ordinal')!=ordinal or not 1<=draw<=4 or len(messages)!=2
-            or messages[0]!=dict(role='system',content=INSTRUCTION)
+            or messages[0]!=dict(role='system',content=INSTRUCTION+(POPULATION_CONTEXT_INSTRUCTION if slot is not None else ''))
             or messages[1].get('role')!='user' or json.loads(messages[1]['content'])!=expected):
         raise SearchContractError('ABLATION_OPTIMIZER_REQUEST_EVIDENCE_MISMATCH')

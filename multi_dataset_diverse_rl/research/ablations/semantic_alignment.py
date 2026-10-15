@@ -39,6 +39,7 @@ def inventory():
         single_prompt_adaptation=row['single_prompt_adaptation'],data_scopes=row['data_scopes'])
         for name,row in team['boundary_capabilities'].items()}
     return dict(identity=IDENTITY,team_modules=ports,boundary_capabilities=boundaries,
+        current_kernel='multi_parent_kernel',
         independent=dict(
             none=dict(status='APPROVED_CONTROL',activation='explicit_A_all_errors_B_random_three'),
             full_gradient_pattern=dict(status='FORMAL_WITH_APPROVED_ADAPTATIONS',
@@ -59,6 +60,7 @@ def inventory():
             reflection_generation='pipeline_negative_control_zero_candidates_not_optimizer_efficacy',
             memory_delivery='delivery_only_disabled_true_recording_storage_preserved'),
         common_kernel=dict(status='USER_APPROVED_INDEPENDENT_KERNEL_NOT_TEAM_LAYER1',
+            applies_to_schemas=['single_prompt_module_ablation_draft_v2','single_prompt_module_ablation_draft_v5'],
             preserved=['one_candidate_per_opportunity','twenty_opportunities','strict_Validation100_gain',
                 'formal_Solver_scoring_decoding','repeat_scoped_Solver_only_cache',
                 'bounded_generated_output_recovery','accounted_unbounded_network_retry'],
@@ -67,4 +69,12 @@ def inventory():
                 'actual_solver_input_isolation_without_keyword_filters','no_op_skip_without_retry'],
             excluded_team_only=['WHO','five_member_Group_inputs','three_Parent_population_slots',
                 'Team_Vote_fitness','Full_Shadow_team_admission','joint_team_assembly']),
+        multi_parent_kernel=dict(status='USER_APPROVED_SINGLE_LANE_ADAPTATION',
+            schema='single_prompt_module_ablation_draft_v6',
+            native_policies=['FitnessWeightedSampling','BestThreeRetention','PerMemberArgmaxAssembly'],
+            capacity=3,slots=3,fitness='complete_optimize_accuracy',
+            diagnosis='running_root_once_shared_by_three_frozen_parent_slots',
+            intermediate_gate='highest_optimize_child_strict_validation_gain',
+            final_gate='pool_argmax_validation_nonregression_no_fallback',
+            memory='disabled',group='no_fabricated_team_context'),
         real_api_authorized=False)

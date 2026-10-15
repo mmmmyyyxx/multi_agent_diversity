@@ -10,7 +10,7 @@ if str(ROOT) not in sys.path:
 
 
 def main():
-    from multi_dataset_diverse_rl.research.ablations.config import build_plan, default_config
+    from multi_dataset_diverse_rl.research.ablations.config import build_plan, current_config
     from multi_dataset_diverse_rl.research.ablations.formal_adapters import production_memory_binding
     from multi_dataset_diverse_rl.persistence.durable_io import atomic_write_json
     parser = argparse.ArgumentParser()
@@ -20,7 +20,7 @@ def main():
     modes.add_argument('--smoke', action='store_true')
     parser.add_argument('--destination', type=Path, required=True)
     args = parser.parse_args()
-    config = default_config() if args.config is None else json.loads(args.config.read_text(encoding='utf-8'))
+    config = current_config() if args.config is None else json.loads(args.config.read_text(encoding='utf-8'))
     plan = build_plan(config)
     destination = args.destination.resolve()
     if not destination.is_relative_to((ROOT / 'runs').resolve()):

@@ -79,14 +79,16 @@ def smoke(plan, destination):
         # final phase additionally needs terminal seals and its own authorization.
         broker.phase = 'test'
         predictions = {}
-        for result in results:
+        eligible=all(r.get('final_admission',{}).get('admitted',True) for r in results)
+        for result in (results if eligible else []):
             cell = result['cell']
             broker.cell_id = cell['cell_id']
             broker.seed, broker.repeat_id = cell['seed'], cell['repeat_id']
             broker.attempt_id = 'SYNTHETIC_TEST_' + cell['cell_id']
             predictions[cell['cell_id']] = broker.evaluate(SystemPrompt.from_dict(result['final_prompt']),
                 synthetic_rows('test', 4), 'test', cell['seed'], plan['config']['rounds'])
-        summary = summarize(plan, results, predictions)
+        summary = summarize(plan, results, predictions if eligible else None)
+        summary['final_test_gate']='ALL_ADMITTED' if eligible else 'REJECTED_PROPOSAL_TEST_BLOCKED'
         summary.update(status='SYNTHETIC_SMOKE_COMPLETE_NOT_EFFICACY', real_api_calls=0,
             actual_validation_content_reads=0, actual_test_content_reads=0,
             network_attempts=sitecustomize.network_attempt_count(), unresolved_reservations=len(ledger.inflight))

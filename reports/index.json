@@ -3605,6 +3605,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/single_prompt_multi_parent_v12_20261016",
+      "document": "reports/single_prompt_multi_parent_v12_20261016/README.md",
+      "date": "20261016",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "ARCHITECTURE",
+      "experiment_id": "single_prompt_multi_parent_v12",
+      "status": "IMPLEMENTED_NOT_EXECUTED",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/single_prompt_timeout_continuation_preparation_20261013",
       "document": "reports/single_prompt_timeout_continuation_preparation_20261013/README.md",
       "date": "20261013",

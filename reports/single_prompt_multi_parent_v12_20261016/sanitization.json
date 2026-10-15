@@ -1,0 +1,11 @@
+{
+  "checked": [
+    "historical_integrity.json",
+    "README.md",
+    "source_hashes.json",
+    "verification.json"
+  ],
+  "secret_or_host_path_matches": 0,
+  "links_valid": true,
+  "raw_prompts_questions_answers_responses_published": false
+}

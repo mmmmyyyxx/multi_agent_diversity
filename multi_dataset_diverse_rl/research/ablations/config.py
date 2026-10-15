@@ -79,9 +79,30 @@ def default_config():
     return value
 
 
+MULTI_SCHEMA='single_prompt_module_ablation_draft_v6'
+
+
+def population_runtime():
+    from .multi_parent import POLICY
+    value=aligned_runtime()
+    value.update(identity='SINGLE_PROMPT_MULTI_PARENT_KERNEL_V6',population=deepcopy(POLICY),
+        validation_membership_seed=42,final_selection='pool_optimize_argmax_with_validation_nonregression',
+        optimizer_wire='SINGLE_PROMPT_ROOT_PARENT_WIRE_V4')
+    return value
+
+
+def current_config():
+    """New preparation default; default_config retains the pinned V5 kernel API."""
+    value=default_config()
+    value.update(schema_version=MULTI_SCHEMA,experiment_id='single_prompt_multi_parent_v12',
+        runtime=population_runtime())
+    return value
+
+
 def validate_config(value):
-    aligned = isinstance(value, dict) and value.get('schema_version') == ALIGNED_SCHEMA
-    expected = default_config() if aligned else batch_config()
+    multi=isinstance(value,dict) and value.get('schema_version')==MULTI_SCHEMA
+    aligned = isinstance(value, dict) and value.get('schema_version') in (ALIGNED_SCHEMA,MULTI_SCHEMA)
+    expected = current_config() if multi else default_config() if aligned else batch_config()
     parents={expected['parent_manifest']}
     if aligned:parents.add('experiments/manifests/single_prompt_module_alignment_v6.json')
     if not isinstance(value, dict) or set(value) != set(expected):
@@ -94,7 +115,7 @@ def validate_config(value):
             or not isinstance(value['experiment_id'], str)
             or not re.fullmatch('[a-z][a-z0-9_]{0,79}', value['experiment_id'])):
         raise SearchContractError('ABLATION_DRAFT_NOT_EXECUTION_AUTHORIZATION')
-    runtime = aligned_runtime() if aligned else runtime_defaults()
+    runtime = population_runtime() if multi else aligned_runtime() if aligned else runtime_defaults()
     runtime.update(seeds=[value['seed']], rounds=value['rounds'], repeats_per_arm=value['repeats_per_arm'])
     if digest(value['runtime']) != digest(runtime):
         raise SearchContractError('ABLATION_RUNTIME_POLICY_MISMATCH')
@@ -117,7 +138,7 @@ def validate_config(value):
 def build_plan(config, registry=None):
     from .modules import default_registry
     config = validate_config(config)
-    if config['schema_version']==ALIGNED_SCHEMA and any(a['module'] in ('formal_gradient','memory') for a in config['arms']):
+    if config['schema_version'] in (ALIGNED_SCHEMA,MULTI_SCHEMA) and any(a['module'] in ('formal_gradient','memory') for a in config['arms']):
         raise SearchContractError('ABLATION_USER_DISABLED_MODULE')
     registry = registry or default_registry(include_legacy=config['schema_version']==SCHEMA)
     bindings = {a['arm_id']: registry.binding(a['module']) for a in config['arms']}
@@ -133,12 +154,15 @@ def build_plan(config, registry=None):
     # Transport failures are accounted but excluded from finite semantic ceilings.
     training = len(cells) * ((config['rounds'] + 1) * (150 + 100) * p['solver_semantic_draws']
                             + config['rounds'] * p['optimizer_structural_draws'])
+    if config['schema_version']==MULTI_SCHEMA:
+        training=len(cells)*((250+config['rounds']*(3*150+100)+100)*p['solver_semantic_draws']
+            +config['rounds']*3*p['optimizer_structural_draws'])
     for arm in config['arms']:
         bound = bindings[arm['arm_id']]['semantic_calls_per_opportunity']
         training += config['repeats_per_arm'] * config['rounds'] * bound
     from .semantic_alignment import module_review
     reviews = {a['arm_id']:module_review(a['module'],bindings[a['arm_id']]) for a in config['arms']}
-    if config['schema_version']==ALIGNED_SCHEMA and any(v['status']=='HISTORICAL_BATCH_ONLY' for v in reviews.values()):
+    if config['schema_version'] in (ALIGNED_SCHEMA,MULTI_SCHEMA) and any(v['status']=='HISTORICAL_BATCH_ONLY' for v in reviews.values()):
         raise SearchContractError('ABLATION_HISTORICAL_MODULE_NOT_CURRENT_FLOW')
     body = dict(identity=p['identity'], config=config, module_bindings=bindings, cells=cells,
         cell_order='arm_then_repeat_sequential',
@@ -147,7 +171,7 @@ def build_plan(config, registry=None):
         final_test_semantic_call_ceiling=len(cells) * 300 * p['solver_semantic_draws'],
         cumulative_token_ceiling=None, ready_to_run=False,
         execution_blocker='FRESH_SOURCE_DATA_PHASE_FREEZE_AND_AUTHORIZATION_REQUIRED')
-    if config['schema_version']==ALIGNED_SCHEMA:
+    if config['schema_version'] in (ALIGNED_SCHEMA,MULTI_SCHEMA):
         body['module_alignment']=reviews
         if any(v['status']=='UNREVIEWED' for v in reviews.values()):
             body['execution_blocker']='MODULE_ALIGNMENT_REVIEW_REQUIRED'

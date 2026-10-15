@@ -10931,3 +10931,58 @@ experiments:
     execution_commit: No real model execution.
     result_commit: Containing evidence commit; no self-reference.
     classifier: No efficacy classification.
+- experiment_id: single_prompt_multi_parent_v12
+  kind: ARCHITECTURE_REFACTOR
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: single_prompt_native_parent_population_v1
+  parent_ids:
+  - single_prompt_pattern_c_only_v7
+  - structural_candidate_policy_v2_20261015
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: OFFLINE_ONLY_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_multi_parent_v12.json
+  report: reports/single_prompt_multi_parent_v12_20261016
+  classifier: null
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User-confirmed native Parent policies shared by A/B/C; one real single-Prompt accuracy pool, no fabricated team values.
+  - New Validation100 sampling seed42; no historical artifacts, data partitions or authorizations modified.
+  - No real model API or new experiment authorized.
+  unavailable:
+    implementation_commit: Containing implementation commit; no self-reference.
+    execution_commit: No real execution.
+    result_commit: No efficacy evidence.
+    classifier: Offline conformance only.
+- experiment_id: single_prompt_completed_ab_test_v13
+  kind: FORMAL_EXPERIMENT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: historical_single_prompt_AB_final_test
+  parent_ids:
+  - single_prompt_pattern_repeat3_solver_cache_v3
+  - single_prompt_c_test_certified_v10
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: NOT_EVALUATED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_completed_ab_test_v13.json
+  report: null
+  classifier: null
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Fresh Test-only completion of six previously completed A/B cells; no new training or C evaluation.
+  - Same original Test300 and Solver contract, certified scorer inherited from completed C Test.
+  - Human authorization must be bound privately to the exact fresh frozen source and scope before execution.
+  unavailable:
+    implementation_commit: Containing implementation commit; no self-reference.
+    execution_commit: Pending exact frozen attempt.
+    result_commit: No new Test results yet.
+    report: Private final evaluation pending.
+    classifier: Completion and integrity audit pending.
