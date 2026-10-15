@@ -149,17 +149,18 @@ def audit_new_run(run,scope,usage):
                 or record['logical_identity']!=dict(seed=42,ordinal=0,role='solver',stage=r['stage'])):
             raise SearchContractError('TEST_RESUME_NEW_RECEIPT_CHANGED')
         failures+=record.get('error_category') in ('APITimeoutError','APIConnectionError')
-    if failures!=usage['network_failed_calls'] or len(reserves)-failures>2865:
+    if failures!=usage['network_failed_calls'] or len(reserves)-failures>scope.get('call_ceiling',2865):
         raise SearchContractError('TEST_RESUME_SEMANTIC_BUDGET')
     return view
 
 
-def execute(root,prep,run):
+def execute(root,prep,run,*,contract=None):
+    if contract is None:contract=__import__(__name__,fromlist=['execute'])
     prep,run=private_path(root,prep),private_path(root,run)
-    scope=validate_prep(root,prep,authorized=True)
+    scope=contract.validate_prep(root,prep,authorized=True)
     if run!=root/scope['execution']['run_root'] or run.exists():
         raise SearchContractError('TEST_RESUME_EXACT_FRESH_RUN_REQUIRED')
-    parent=audit_parent(root);gov._consume(root,scope,run);run.mkdir(parents=True)
+    parent=contract.audit_parent(root);gov._consume(root,scope,run);run.mkdir(parents=True)
     atomic_write_json(run/'scope.json',scope);atomic_write_json(run/'authorization.json',read_json(prep/'authorization.json'))
     atomic_write_json(run/'lifecycle.json',dict(status='RUNNING',phase='test',cells_completed=0))
     files={p:(root/p).stat() for p in scope['source_hashes']}
@@ -175,17 +176,17 @@ def execute(root,prep,run):
     try:
         transport,clients=gov._transport()
         ledger=TokenLedger(run/'ledger',task_sha256=scope['scope_identity'],policy=POLICY_V27_FORMAL_UNCAPPED)
-        broker=TestResumeBroker(plan=scope['plan'],phase='test',scope=scope,transport=transport,ledger=ledger,
+        broker=contract.TestResumeBroker(plan=scope['plan'],phase='test',scope=scope,transport=transport,ledger=ledger,
             receipts=ProviderResponseReceipts(run/'provider_receipts',attempt_id=scope['scope_identity'],startup_identity_sha256=scope['scope_identity']),
             dispatch_guard=guard,paid_prefix=parent['paid_prefix'],terminal_observations=parent['terminal_observations'])
         reader=gov.validate_manifest(root,read_json(root/gov.MANIFEST))
         rows=broker.retry_local(lambda:reader.heldout_rows(StudyHeldoutAccess('test',reader.manifest_sha256,parent['terminal_sha256'],
-            lambda:validate_prep(root,prep,authorized=True))),dict(operation='test_membership_reference_check'))
+            lambda:contract.validate_prep(root,prep,authorized=True))),dict(operation='test_membership_reference_check'))
         if [r['stable_example_id'] for r in rows]!=scope['test_plan']['sample_ids']:
             raise SearchContractError('TEST_RESUME_TEST_MEMBERSHIP_CHANGED')
         atomic_write_json(run/'access.json',dict(test_ids=scope['test_plan']['sample_ids'],optimize_access=False,validation_access=False))
         for index,cell in enumerate(scope['plan']['cells']):
-            validate_prep(root,prep,authorized=True);active=cell['cell_id'];broker.bind_cell(cell,scope['plan'])
+            contract.validate_prep(root,prep,authorized=True);active=cell['cell_id'];broker.bind_cell(cell,scope['plan'])
             folder=run/active;folder.mkdir();before=broker.usage_view()
             atomic_write_json(run/'lifecycle.json',dict(status='RUNNING',phase='test',current_cell=active,cells_completed=len(completed)))
             values=(deepcopy(parent['first_result']['predictions']) if index==0 else
@@ -196,7 +197,7 @@ def execute(root,prep,run):
                 completed_parent_cell_reused=index==0)
             atomic_write_json(folder/'result.json',result);completed.append(result)
             print(__import__('json').dumps(dict(cell=active,status='CELL_COMPLETE',new_provider_calls=broker.usage_view()['provider_calls'])),flush=True)
-        audit_parent(root);validate_prep(root,prep,authorized=True)
+        contract.audit_parent(root);contract.validate_prep(root,prep,authorized=True)
         usage=broker.usage_view();view=audit_new_run(run,scope,usage)
         replay_path=run/'provider_receipts/solver_paid_prefix.jsonl'
         replay_rows=[__import__('json').loads(v) for v in replay_path.read_bytes().splitlines()] if replay_path.exists() else []
@@ -214,15 +215,15 @@ def execute(root,prep,run):
         predictions={r['cell']['cell_id']:r['predictions'] for r in completed}
         summary=summarize(scope['plan'],parent['train_results'],predictions)
         summary.update(test_continuation=True,historical_test_previously_exposed=True,
-            new_test_tokens=view['charged_total'],inherited_test_tokens=786747,
-            combined_train_and_test_tokens=37131963+view['charged_total'],
-            new_test_physical_calls=usage['provider_calls'],inherited_all_physical_calls=21586,
-            combined_all_physical_calls=21586+usage['provider_calls'],
+            new_test_tokens=view['charged_total'],inherited_test_tokens=parent.get('inherited_test_tokens',786747),
+            combined_train_and_test_tokens=parent.get('inherited_all_tokens',37131963)+view['charged_total'],
+            new_test_physical_calls=usage['provider_calls'],inherited_all_physical_calls=parent.get('inherited_all_calls',21586),
+            combined_all_physical_calls=parent.get('inherited_all_calls',21586)+usage['provider_calls'],
             local_evaluator_retries=broker.local_retry_count,paid_solver_responses_reused=usage['replayed_calls'],
             completed_parent_test_predictions_reused=len(parent['first_result']['predictions']))
         atomic_write_json(run/'results.json',completed);atomic_write_json(run/'summary.json',summary)
         atomic_write_json(run/'execution_summary.json',dict(usage=usage,token_ledger=view,local_evaluator_retries=broker.local_retry_count,
-            inherited_train_tokens=36345216,inherited_test_tokens=786747))
+            inherited_train_tokens=36345216,inherited_test_tokens=parent.get('inherited_test_tokens',786747)))
         ledger.close();ledger=None;clients.close();clients=None
         atomic_write_json(run/'lifecycle.json',dict(status='EXECUTION_COMPLETE',phase='test',cells_completed=3))
         atomic_write_json(run/'terminal.json',dict(status='EXECUTION_COMPLETE',phase='test',source_sha=scope['source_sha'],

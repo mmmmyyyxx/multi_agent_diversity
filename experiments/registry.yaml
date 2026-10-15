@@ -10826,3 +10826,31 @@ experiments:
     result_commit: Pending completed Test.
     report: Test continuation protocol; execution evidence stays private.
     classifier: No completed-Test classification yet.
+- experiment_id: single_prompt_c_test_deadline_v9
+  kind: ABLATION
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: single_prompt_formal_module_alignment_v4
+  parent_ids:
+  - single_prompt_c_test_resume_v8
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: NOT_EVALUATED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_c_test_deadline_v9.json
+  report: null
+  classifier: null
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User-authorized thirty-second local scoring deadline after four same-answer timeouts;
+    paid prefixes and all terminal scores preserved.
+  - Fresh Test-only scope and authorization; no training, Validation, Teacher or changed
+    mathematical equivalence.
+  unavailable:
+    implementation_commit: Containing implementation commit; no self-reference.
+    execution_commit: Not executed at registration.
+    result_commit: Pending completed Test.
+    report: Test continuation protocol; execution evidence stays private.
+    classifier: No completed-Test classification yet.

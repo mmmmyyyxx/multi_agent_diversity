@@ -540,6 +540,7 @@ flowchart TD
     n374["single_prompt_module_alignment_v6<br/>ABLATION<br/>PREPARED_NOT_EXECUTED"]
     n375["single_prompt_pattern_c_only_v7<br/>ABLATION<br/>PREPARED_NOT_EXECUTED"]
     n376["single_prompt_c_test_resume_v8<br/>ABLATION<br/>PREPARED_NOT_EXECUTED"]
+    n377["single_prompt_c_test_deadline_v9<br/>ABLATION<br/>PREPARED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -865,6 +866,7 @@ flowchart TD
   n373 -->|derived_from| n374
   n374 -->|derived_from| n375
   n375 -->|derived_from| n376
+  n376 -->|derived_from| n377
 ```
 
 ## Archived branches and unresolved evidence

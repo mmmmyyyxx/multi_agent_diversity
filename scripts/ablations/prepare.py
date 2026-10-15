@@ -16,10 +16,15 @@ def main():
     parser.add_argument('--continue-parent', type=Path)
     parser.add_argument('--c-only',action='store_true',help='Fresh reviewed C-only three-repeat experiment; no old state/cache.')
     parser.add_argument('--resume-c-test',action='store_true',help='Test-only continuation of the pinned scorer-aborted C Test.')
+    parser.add_argument('--extend-c-test-deadline',action='store_true',help='Test-only thirty-second grading continuation of the stopped V8 attempt.')
     args = parser.parse_args()
     if args.continue_parent:
         parser.error('Historical Batch continuation is not a current module-aligned experiment; use its frozen Git source for historical replay.')
-    if args.resume_c_test:
+    if args.extend_c_test_deadline:
+        if args.c_only or args.resume_c_test:parser.error('Each Test continuation has its own frozen scope.')
+        from multi_dataset_diverse_rl.research.ablations.test_deadline import prepare as prepare_deadline
+        value=prepare_deadline(ROOT,args.destination)
+    elif args.resume_c_test:
         if args.c_only:parser.error('C-only training and Test continuation are separate scopes.')
         from multi_dataset_diverse_rl.research.ablations.test_resume import prepare as prepare_test
         value=prepare_test(ROOT,args.destination)

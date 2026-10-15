@@ -1,5 +1,7 @@
 """Shared pinned mathematical equivalence; no Solver instruction policy."""
 from functools import lru_cache
+from contextlib import contextmanager
+from contextvars import ContextVar
 import json
 import subprocess
 import sys
@@ -19,6 +21,18 @@ SETTINGS = dict(identity='MATH_VERIFY_SETTINGS_V2',strict=True,float_rounding=6,
 SETTINGS['object_families']=['expression','relation','tuple','matrix','finite_set','infinite_set']
 SETTINGS['maximum_expression_characters']=2048
 
+_WORKER_DEADLINE=ContextVar('math_worker_deadline',default=None)
+
+
+@contextmanager
+def worker_deadline(seconds):
+    """Explicit caller-scoped operational deadline; default mathematical policy is unchanged."""
+    if type(seconds) is not int or seconds<SETTINGS['process_deadline']:
+        raise SearchContractError('MATH_WORKER_DEADLINE_INVALID')
+    token=_WORKER_DEADLINE.set(seconds)
+    try:yield
+    finally:_WORKER_DEADLINE.reset(token)
+
 
 def final_payload(raw):
     from .math_structured_answer import extract_answer
@@ -32,7 +46,7 @@ def domain_matrix(expressions):
         raise SearchContractError('MATH_EXPRESSION_SHAPE_INVALID')
     try:
         result=subprocess.run([sys.executable,'-m','multi_dataset_diverse_rl.benchmarks.math_domain_worker'],
-            input=json.dumps({'expressions':expressions}),capture_output=True,text=True,timeout=SETTINGS['process_deadline'],check=False)
+            input=json.dumps({'expressions':expressions}),capture_output=True,text=True,timeout=_WORKER_DEADLINE.get() or SETTINGS['process_deadline'],check=False)
         if result.returncode:
             raise SearchContractError('MATH_EVALUATOR_FAILURE')
         data=json.loads(result.stdout)

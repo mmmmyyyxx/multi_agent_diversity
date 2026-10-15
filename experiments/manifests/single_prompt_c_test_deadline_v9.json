@@ -1,0 +1,89 @@
+{
+  "schema_version": "single_prompt_c_test_deadline_manifest_v9",
+  "experiment_id": "single_prompt_c_test_deadline_v9",
+  "parents": [
+    "experiments/manifests/single_prompt_c_test_resume_v8.json"
+  ],
+  "protocol_path": "docs/design/SINGLE_PROMPT_C_TEST_DEADLINE_V9.md",
+  "parent_root": "runs/ablations/pattern_c_only_test_resume_v8",
+  "parent_pin_path": "runs/ablations/pattern_c_only_test_deadline_v9/parent_pin.json",
+  "parent_pin_sha256": "b97d2ec193ce78974e56acd5a1379b41542d6778ef2930e6fa3dc06aa8f8c069",
+  "operation_policy": {
+    "identity": "TEST_ONLY_SAME_ANSWER_LOCAL_EVALUATOR_DEADLINE30_V2",
+    "roles": [
+      "solver"
+    ],
+    "phase": "test",
+    "local_retry_errors": [
+      "MATH_EVALUATOR_TIMEOUT"
+    ],
+    "backoff_seconds": [
+      2,
+      4,
+      8,
+      16,
+      30,
+      60
+    ],
+    "local_retry_limit": null,
+    "local_retry_new_model_calls": 0,
+    "mathematical_settings": {
+      "identity": "MATH_VERIFY_SETTINGS_V2",
+      "strict": true,
+      "float_rounding": 6,
+      "numeric_precision": 15,
+      "parsing_timeout": 3,
+      "verification_timeout": 3,
+      "process_deadline": 8,
+      "fallback_mode": "no_fallback",
+      "extraction_mode": "first_match",
+      "latex_extraction": {
+        "try_extract_without_anchor": true,
+        "boxed_match_priority": 50,
+        "normalization_config": {
+          "basic_latex": true,
+          "units": true,
+          "malformed_operators": true,
+          "nits": true,
+          "boxed": "all",
+          "equations": false
+        }
+      },
+      "conversion_config": {
+        "interpret_as_mixed_fractions": true,
+        "interpret_simple_eq_as_assignment": false,
+        "interpret_contains_as_eq": true
+      },
+      "allow_set_relation_comp": "NOT_EXPOSED_BY_PINNED_API; DISJOINT_CONTAINER_TYPES_REQUIRED",
+      "two_component_parentheses": "AMBIGUOUS_REFERENCE_UNSCORABLE_AFTER_NATIVE_PARSE",
+      "correctness_direction": "gold_first_prediction_second",
+      "object_families": [
+        "expression",
+        "relation",
+        "tuple",
+        "matrix",
+        "finite_set",
+        "infinite_set"
+      ],
+      "maximum_expression_characters": 2048
+    },
+    "reference_wrapper": "retry_only_if_REFERENCE_UNSCORABLE_caused_by_MATH_EVALUATOR_TIMEOUT",
+    "successful_semantic_and_inflight_ceiling": 3600,
+    "inherited_successful_calls": 737,
+    "new_call_ceiling": 2863,
+    "token_ceiling": null,
+    "teacher_replay": false,
+    "solver_prefix": "exact_cell_stage_complete_request_only",
+    "inherited_completed_cell": "retain_verified_C1_300_predictions",
+    "inherited_partial_cell": "merge_exact_V7_and_V8_paid_outputs_verify_all_recorded_terminal_hashes",
+    "other_failure": "abort_preserve_evidence",
+    "train_access": false,
+    "validation_access": false,
+    "future_all42_rule": "not_a_new_repeated_training_experiment_preserve_parent_memberships",
+    "worker_deadline_seconds": 30,
+    "prior_worker_deadline_seconds": 8,
+    "trigger_same_context_timeouts": 3
+  },
+  "status": "PREPARED_NOT_EXECUTED",
+  "real_api_authorized": false
+}

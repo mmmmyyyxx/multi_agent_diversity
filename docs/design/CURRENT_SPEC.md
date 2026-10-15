@@ -18,6 +18,9 @@ The [C-only rerun](SINGLE_PROMPT_PATTERN_C_ONLY_V7.md) selects three fresh C rep
 from that reviewed kernel; historical A/B remain descriptive references only.
 Its [Test-only continuation](SINGLE_PROMPT_C_TEST_RESUME_V8.md) preserves paid Solver
 outputs and retries the same local mathematical score after evaluator timeout.
+Its [thirty-second grading continuation](SINGLE_PROMPT_C_TEST_DEADLINE_V9.md)
+extends only the local worker deadline after repeated timeout, preserving paid
+answers and all previously recorded terminal scores.
 The explicitly user-requested [independent single-Prompt mechanism study](SINGLE_PROMPT_GRADIENT_PATTERN_V1.md)
 is isolated from this method and routes only its own schema through the shared
 runner. Its approved 20-round/error-Batch protocol does not amend team defaults.

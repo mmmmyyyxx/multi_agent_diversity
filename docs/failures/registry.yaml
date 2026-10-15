@@ -1,5 +1,24 @@
 schema_version: failure_registry_v1
 failures:
+- failure_id: FAIL-ABLATION-TEST-REPEATED-SCORER-DEADLINE
+  title: Fixed local worker deadline repeatedly timed out on the same paid answer
+  status: MITIGATED
+  lifecycle: REAL_OBSERVED_OFFLINE_REPRODUCED
+  first_observed: single_prompt_c_test_resume_v8
+  affected_components:
+  - test_local_scoring_resources
+  symptom: Four consecutive same-answer local scoring timeouts at eight seconds.
+  evidence:
+  - docs/design/SINGLE_PROMPT_C_TEST_DEADLINE_V9.md
+  evidence_level: observed
+  root_cause_status: Eight-second outer process deadline repeatedly expired; no model
+    transport error was involved.
+  mitigation: User-authorized fresh Test-only continuation uses a caller-scoped thirty-second
+    worker deadline and exact paid prefix replay.
+  forbidden_inference: No old score rewriting, new training, changed equivalence or
+    free replacement Solver answer.
+  regression_tests:
+  - tests/current/test_ablation_test_deadline.py
 - failure_id: FAIL-ABLATION-TEST-LOCAL-SCORER-TIMEOUT-FATAL
   title: Local mathematical worker timeout aborted otherwise recoverable final Test
   status: MITIGATED

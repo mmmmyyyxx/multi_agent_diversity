@@ -1163,6 +1163,9 @@ nodes:
 - experiment_id: single_prompt_c_test_resume_v8
   kind: ABLATION
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: single_prompt_c_test_deadline_v9
+  kind: ABLATION
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2689,4 +2692,10 @@ edges:
   relation: derived_from
   evidence: docs/design/SINGLE_PROMPT_C_TEST_RESUME_V8.md
   scope: Complete existing Test from paid Solver prefix with same-answer local scorer timeout retry.
+- from: single_prompt_c_test_resume_v8
+  to: single_prompt_c_test_deadline_v9
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_C_TEST_DEADLINE_V9.md
+  scope: Explicit local scoring deadline extension with paid answers and recorded
+    scores preserved.
 current_frontier: experiments/current_frontier.yaml
