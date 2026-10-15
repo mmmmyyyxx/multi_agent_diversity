@@ -1,0 +1,170 @@
+[
+  {
+    "run": "runs/ablations/pattern_seed42_repeat3_20261015/train_run",
+    "source": "241f725797080b1b5fc714834b222b675a09d0e8",
+    "scope_manifest_sha256": "ea31ae82555538beeb5cdac383a2ce7ad7fdaa441345d1bc1c203270483250eb",
+    "manifests": [
+      {
+        "path": "experiments/manifests/single_prompt_pattern_repeat3_solver_cache_v3.json",
+        "git_blob_sha256": "fdc54e5ff73492b7aa15307706d95b4a6935457f39d629edb452a40863942fc2",
+        "matches_scope_manifest": true,
+        "frozen_source_hash": "ea31ae82555538beeb5cdac383a2ce7ad7fdaa441345d1bc1c203270483250eb",
+        "protocol_path": "docs/design/SINGLE_PROMPT_PATTERN_REPEAT3_SOLVER_CACHE_V3.md"
+      }
+    ]
+  },
+  {
+    "run": "runs/ablations/pattern_seed42_repeat3_truncation_continuation_20261015/train_run",
+    "source": "49d49e7e95dc308b414f0f8dda8ed2f927127764",
+    "scope_manifest_sha256": "db86bdee9f6c0f43bdc96d494e356a8ec13fa26388eb377e7a77db412b161a4c",
+    "manifests": [
+      {
+        "path": "experiments/manifests/single_prompt_pattern_truncation_continuation_v4.json",
+        "git_blob_sha256": "bb25c24b14e064926d3f1c758ee32225584814ceacc8824b284c283b57e6af06",
+        "matches_scope_manifest": true,
+        "frozen_source_hash": "db86bdee9f6c0f43bdc96d494e356a8ec13fa26388eb377e7a77db412b161a4c",
+        "protocol_path": "docs/design/SINGLE_PROMPT_PATTERN_TRUNCATION_CONTINUATION_V4.md"
+      }
+    ]
+  },
+  {
+    "run": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run",
+    "source": "211a05c569f676f40067ed67eb445b0e5a93d8a0",
+    "scope_manifest_sha256": "682458821cf366cb9a66e73aeda5514eb552ff45882fe0ac72e434f42f82b516",
+    "manifests": [
+      {
+        "path": "experiments/manifests/single_prompt_pattern_c_only_v7.json",
+        "git_blob_sha256": "ec031c4742b86644f889ab14f357c8920e4de924af7d870515e1f16ca4314ddd",
+        "matches_scope_manifest": true,
+        "frozen_source_hash": "682458821cf366cb9a66e73aeda5514eb552ff45882fe0ac72e434f42f82b516",
+        "protocol_path": "docs/design/SINGLE_PROMPT_PATTERN_C_ONLY_V7.md"
+      }
+    ]
+  },
+  {
+    "run": "runs/single_prompt_validation_gated_v2/execution_20261013/train_run",
+    "source": "4d1b7125926ca6353b269a71110fee880d722261",
+    "scope_manifest_sha256": "2ca60937c4f102d5f8dcf36a4bd344ea337d0759bc70f12b807a804f040d591f",
+    "manifests": [
+      {
+        "path": "experiments/manifests/single_prompt_validation_gated_v2.json",
+        "git_blob_sha256": "2ca60937c4f102d5f8dcf36a4bd344ea337d0759bc70f12b807a804f040d591f",
+        "matches_scope_manifest": true,
+        "frozen_source_hash": "2ca60937c4f102d5f8dcf36a4bd344ea337d0759bc70f12b807a804f040d591f",
+        "protocol_path": "docs/design/SINGLE_PROMPT_VALIDATION_GATED_V2.md"
+      }
+    ]
+  },
+  {
+    "run": "runs/single_prompt_validation_gated_v2/network_continuation_20261013/train_run",
+    "source": "7a04de51636065cc5a15a4704c499fc55425f46f",
+    "scope_manifest_sha256": "2ca60937c4f102d5f8dcf36a4bd344ea337d0759bc70f12b807a804f040d591f",
+    "manifests": [
+      {
+        "path": "experiments/manifests/single_prompt_gated_network_continuation_v1.json",
+        "git_blob_sha256": "effef6ed0837d15978a69bea169f9503c64106d15d16423559809eda2494a56d",
+        "matches_scope_manifest": false,
+        "frozen_source_hash": "effef6ed0837d15978a69bea169f9503c64106d15d16423559809eda2494a56d",
+        "protocol_path": "docs/design/SINGLE_PROMPT_GATED_NETWORK_CONTINUATION_V1.md"
+      },
+      {
+        "path": "experiments/manifests/single_prompt_validation_gated_v2.json",
+        "git_blob_sha256": "2ca60937c4f102d5f8dcf36a4bd344ea337d0759bc70f12b807a804f040d591f",
+        "matches_scope_manifest": true,
+        "frozen_source_hash": "2ca60937c4f102d5f8dcf36a4bd344ea337d0759bc70f12b807a804f040d591f",
+        "protocol_path": "docs/design/SINGLE_PROMPT_VALIDATION_GATED_V2.md"
+      }
+    ]
+  },
+  {
+    "run": "runs/single_prompt_validation_gated_v2/two_seed32_continuation_20261014/train_run",
+    "source": "fd27547f3044903a496d28289aefd25f165a7b5c",
+    "scope_manifest_sha256": "2ca60937c4f102d5f8dcf36a4bd344ea337d0759bc70f12b807a804f040d591f",
+    "manifests": [
+      {
+        "path": "experiments/manifests/single_prompt_gated_two_seed32_v1.json",
+        "git_blob_sha256": "b54f02c674e8f6e6bc1598ba841908140fe02b1c239dd79883d26dc5b83b3064",
+        "matches_scope_manifest": false,
+        "frozen_source_hash": "b54f02c674e8f6e6bc1598ba841908140fe02b1c239dd79883d26dc5b83b3064",
+        "protocol_path": "docs/design/SINGLE_PROMPT_GATED_TWO_SEED32_V1.md"
+      },
+      {
+        "path": "experiments/manifests/single_prompt_validation_gated_v2.json",
+        "git_blob_sha256": "2ca60937c4f102d5f8dcf36a4bd344ea337d0759bc70f12b807a804f040d591f",
+        "matches_scope_manifest": true,
+        "frozen_source_hash": "2ca60937c4f102d5f8dcf36a4bd344ea337d0759bc70f12b807a804f040d591f",
+        "protocol_path": "docs/design/SINGLE_PROMPT_VALIDATION_GATED_V2.md"
+      }
+    ]
+  },
+  {
+    "run": "runs/single_prompt_largest_pattern_v1/execution_20261014/train_run",
+    "source": "821bd56cfb013abec10788b558e3565a804702d2",
+    "scope_manifest_sha256": "a614fe497e3767cf5780e2143e5d3a37a1112f43faf98e5c620fb36b594e70ce",
+    "manifests": [
+      {
+        "path": "experiments/manifests/single_prompt_largest_pattern_v1.json",
+        "git_blob_sha256": "a614fe497e3767cf5780e2143e5d3a37a1112f43faf98e5c620fb36b594e70ce",
+        "matches_scope_manifest": true,
+        "frozen_source_hash": "a614fe497e3767cf5780e2143e5d3a37a1112f43faf98e5c620fb36b594e70ce",
+        "protocol_path": "docs/design/SINGLE_PROMPT_LARGEST_PATTERN_V1.md"
+      }
+    ]
+  },
+  {
+    "run": "runs/single_prompt_gradient_pattern_v1/execution_v1/canary_run",
+    "source": "93c7f7f6804dfda30c0ab2452f78c806d3c3814c",
+    "scope_manifest_sha256": "fee4ddb8013da9486bbca86b001dd8d53fa9975b17b81b3f75a0d5cbb94979dc",
+    "manifests": [
+      {
+        "path": "experiments/manifests/single_prompt_gradient_pattern_canary_v1.json",
+        "git_blob_sha256": "002393411fb0a157ee90587291ca8aadd23399b87881bde9cfd2fda84036dbb5",
+        "matches_scope_manifest": false,
+        "frozen_source_hash": "8ba7b8d06ab84a9bd652c7712cad26bb19e2303f3db247a29cf7d0eb188ad731",
+        "protocol_path": "docs/design/SINGLE_PROMPT_CANARY_V1.md"
+      },
+      {
+        "path": "experiments/manifests/single_prompt_gradient_pattern_v1.json",
+        "git_blob_sha256": "3b1a663990e928158a28f2d88d408fbc194d2a57a57052db7c3fe8100d49c8d6",
+        "matches_scope_manifest": true,
+        "frozen_source_hash": "fee4ddb8013da9486bbca86b001dd8d53fa9975b17b81b3f75a0d5cbb94979dc",
+        "protocol_path": "docs/design/SINGLE_PROMPT_GRADIENT_PATTERN_V1.md"
+      }
+    ]
+  },
+  {
+    "run": "runs/single_prompt_gradient_pattern_v1/execution_v1/train_run",
+    "source": "93c7f7f6804dfda30c0ab2452f78c806d3c3814c",
+    "scope_manifest_sha256": "fee4ddb8013da9486bbca86b001dd8d53fa9975b17b81b3f75a0d5cbb94979dc",
+    "manifests": [
+      {
+        "path": "experiments/manifests/single_prompt_gradient_pattern_v1.json",
+        "git_blob_sha256": "3b1a663990e928158a28f2d88d408fbc194d2a57a57052db7c3fe8100d49c8d6",
+        "matches_scope_manifest": true,
+        "frozen_source_hash": "fee4ddb8013da9486bbca86b001dd8d53fa9975b17b81b3f75a0d5cbb94979dc",
+        "protocol_path": "docs/design/SINGLE_PROMPT_GRADIENT_PATTERN_V1.md"
+      }
+    ]
+  },
+  {
+    "run": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run",
+    "source": "d1baffa3d065f386d7077789f140c288a7253c94",
+    "scope_manifest_sha256": "fee4ddb8013da9486bbca86b001dd8d53fa9975b17b81b3f75a0d5cbb94979dc",
+    "manifests": [
+      {
+        "path": "experiments/manifests/single_prompt_timeout_continuation_v1.json",
+        "git_blob_sha256": "ad32f5cb8e6c982899b6e53ff0a49419d165b77a6aa54692a90f6983384fb5f4",
+        "matches_scope_manifest": false,
+        "frozen_source_hash": "9b36ced554aa0eebd175f045ec4cb5d8941779d1c4e6453979fd937e858537cf",
+        "protocol_path": "docs/design/SINGLE_PROMPT_TIMEOUT_CONTINUATION_V1.md"
+      },
+      {
+        "path": "experiments/manifests/single_prompt_gradient_pattern_v1.json",
+        "git_blob_sha256": "3b1a663990e928158a28f2d88d408fbc194d2a57a57052db7c3fe8100d49c8d6",
+        "matches_scope_manifest": true,
+        "frozen_source_hash": "fee4ddb8013da9486bbca86b001dd8d53fa9975b17b81b3f75a0d5cbb94979dc",
+        "protocol_path": "docs/design/SINGLE_PROMPT_GRADIENT_PATTERN_V1.md"
+      }
+    ]
+  }
+]

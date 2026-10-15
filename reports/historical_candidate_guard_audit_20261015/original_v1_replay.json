@@ -1,0 +1,146 @@
+[
+  {
+    "receipt": "runs/single_prompt_gradient_pattern_v1/execution_v1/train_run/provider_receipts/327.json",
+    "receipt_sha256": "5779673ab8a1479726dcda1eea07f6dbc8cc53c077918cf307f2e69797ae6380",
+    "source": "93c7f7f6804dfda30c0ab2452f78c806d3c3814c",
+    "cell": "single_prompt_gradient_pattern_v1_full_errors_seed88",
+    "round": 1,
+    "draw": 1,
+    "replayed_errors": [],
+    "original_decision_verified": true,
+    "checkpoint": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run/single_prompt_gradient_pattern_v1_full_errors_seed88/checkpoint_1.json"
+  },
+  {
+    "receipt": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run/provider_receipts/9.json",
+    "receipt_sha256": "97bef17bf30933edc4b4b6883a938775c0752abd41f09de7a32f493eccd465c4",
+    "source": "d1baffa3d065f386d7077789f140c288a7253c94",
+    "cell": "single_prompt_gradient_pattern_v1_full_errors_seed88",
+    "round": 2,
+    "draw": 1,
+    "replayed_errors": [],
+    "original_decision_verified": true,
+    "checkpoint": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run/single_prompt_gradient_pattern_v1_full_errors_seed88/checkpoint_2.json"
+  },
+  {
+    "receipt": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run/provider_receipts/333.json",
+    "receipt_sha256": "6b6582e5130ec590775ef53c92c1ba89399c9ca3e40e51b2821e43355f35ef36",
+    "source": "d1baffa3d065f386d7077789f140c288a7253c94",
+    "cell": "single_prompt_gradient_pattern_v1_full_errors_seed88",
+    "round": 3,
+    "draw": 1,
+    "replayed_errors": [],
+    "original_decision_verified": true,
+    "checkpoint": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run/single_prompt_gradient_pattern_v1_full_errors_seed88/checkpoint_3.json"
+  },
+  {
+    "receipt": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run/provider_receipts/677.json",
+    "receipt_sha256": "ada081a406d44b7e624ea20563a87fc3a2556ecd5f0142a77fc28840dce892cb",
+    "source": "d1baffa3d065f386d7077789f140c288a7253c94",
+    "cell": "single_prompt_gradient_pattern_v1_full_errors_seed88",
+    "round": 4,
+    "draw": 1,
+    "replayed_errors": [],
+    "original_decision_verified": true,
+    "checkpoint": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run/single_prompt_gradient_pattern_v1_full_errors_seed88/checkpoint_4.json"
+  },
+  {
+    "receipt": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run/provider_receipts/1017.json",
+    "receipt_sha256": "1acc27925960f3ef92205e27f240c959a80fd64cf7b69ac07bac7c3e8fb6c949",
+    "source": "d1baffa3d065f386d7077789f140c288a7253c94",
+    "cell": "single_prompt_gradient_pattern_v1_full_errors_seed88",
+    "round": 5,
+    "draw": 1,
+    "replayed_errors": [],
+    "original_decision_verified": true,
+    "checkpoint": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run/single_prompt_gradient_pattern_v1_full_errors_seed88/checkpoint_5.json"
+  },
+  {
+    "receipt": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run/provider_receipts/1379.json",
+    "receipt_sha256": "703210906fc1dd90353f9b7c8b7c400783d346a2c0651f4e369859964087102a",
+    "source": "d1baffa3d065f386d7077789f140c288a7253c94",
+    "cell": "single_prompt_gradient_pattern_v1_full_errors_seed88",
+    "round": 6,
+    "draw": 1,
+    "replayed_errors": [],
+    "original_decision_verified": true,
+    "checkpoint": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run/single_prompt_gradient_pattern_v1_full_errors_seed88/checkpoint_6.json"
+  },
+  {
+    "receipt": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run/provider_receipts/1735.json",
+    "receipt_sha256": "3cc52c8890c09db2db5dfa324443231ab09a1027a3046009d61e60fe3c8cddee",
+    "source": "d1baffa3d065f386d7077789f140c288a7253c94",
+    "cell": "single_prompt_gradient_pattern_v1_full_errors_seed88",
+    "round": 7,
+    "draw": 1,
+    "replayed_errors": [
+      "SYSTEM_PROMPT_OVER_LENGTH"
+    ],
+    "original_decision_verified": true,
+    "checkpoint": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run/single_prompt_gradient_pattern_v1_full_errors_seed88/checkpoint_7.json"
+  },
+  {
+    "receipt": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run/provider_receipts/1737.json",
+    "receipt_sha256": "6d0e503aed14809c36045763bd0a75e97c6407b1a4fb67b5b6d09bc2e8e4032f",
+    "source": "d1baffa3d065f386d7077789f140c288a7253c94",
+    "cell": "single_prompt_gradient_pattern_v1_full_errors_seed88",
+    "round": 7,
+    "draw": 2,
+    "replayed_errors": [
+      "SYSTEM_PROMPT_OVER_LENGTH"
+    ],
+    "original_decision_verified": true,
+    "checkpoint": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run/single_prompt_gradient_pattern_v1_full_errors_seed88/checkpoint_7.json"
+  },
+  {
+    "receipt": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run/provider_receipts/2085.json",
+    "receipt_sha256": "8be85969e4a7fc848039ffacf5b03bca2613dfa5acecadd7171bcae207c1f09c",
+    "source": "d1baffa3d065f386d7077789f140c288a7253c94",
+    "cell": "single_prompt_gradient_pattern_v1_full_errors_seed88",
+    "round": 8,
+    "draw": 1,
+    "replayed_errors": [
+      "SYSTEM_PROMPT_OVER_LENGTH"
+    ],
+    "original_decision_verified": true,
+    "checkpoint": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run/single_prompt_gradient_pattern_v1_full_errors_seed88/checkpoint_8.json"
+  },
+  {
+    "receipt": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run/provider_receipts/2087.json",
+    "receipt_sha256": "50a236832dcfd50499716af507b7323b7d9b80aff8f193f99b28944034c64196",
+    "source": "d1baffa3d065f386d7077789f140c288a7253c94",
+    "cell": "single_prompt_gradient_pattern_v1_full_errors_seed88",
+    "round": 8,
+    "draw": 2,
+    "replayed_errors": [
+      "SYSTEM_PROMPT_OVER_LENGTH"
+    ],
+    "original_decision_verified": true,
+    "checkpoint": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run/single_prompt_gradient_pattern_v1_full_errors_seed88/checkpoint_8.json"
+  },
+  {
+    "receipt": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run/provider_receipts/2451.json",
+    "receipt_sha256": "7b03c88223632a19e475ac8550df49c9748554075e11b6a2ad5ae557cd0184f3",
+    "source": "d1baffa3d065f386d7077789f140c288a7253c94",
+    "cell": "single_prompt_gradient_pattern_v1_full_errors_seed88",
+    "round": 9,
+    "draw": 1,
+    "replayed_errors": [
+      "SYSTEM_PROMPT_OVER_LENGTH"
+    ],
+    "original_decision_verified": false,
+    "checkpoint": null
+  },
+  {
+    "receipt": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run/provider_receipts/2453.json",
+    "receipt_sha256": "a42461d9b4c32008e0de2423a87f50c26dd9216a64a7da66b2dc3611f90e57a7",
+    "source": "d1baffa3d065f386d7077789f140c288a7253c94",
+    "cell": "single_prompt_gradient_pattern_v1_full_errors_seed88",
+    "round": 9,
+    "draw": 2,
+    "replayed_errors": [
+      "SYSTEM_PROMPT_OVER_LENGTH"
+    ],
+    "original_decision_verified": false,
+    "checkpoint": null
+  }
+]

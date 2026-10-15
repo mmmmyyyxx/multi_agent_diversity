@@ -1,0 +1,14 @@
+{
+  "affected_opportunities.json": "a3dde34a165d70c71baeceadf0989d8d2acd4e9ca4e162c0a8bd47cf823dd82b",
+  "evidence_index.json": "1a5438edc5b32264ec1f5abfd9d71985b01d8d9c4923c52dace669de61ceece5",
+  "false_rejections.json": "5496f074464a1a7097ce3e3918d204bef7352d5953f8c63d2ece5adb5a74cb52",
+  "guard_provenance.json": "bfbdc21659bd44c546eda4464d7ae39022104d6a34b3853910136087b08523f0",
+  "manifest_evidence.json": "1cc4619ed75966c4dea39ce12602a8c2941bb6352636c0d6930f7349ed0de99b",
+  "original_v1_replay.json": "3bb7a34db33a609441f48424f0d4cdb60ec298e7a70933fdc7f6aaa53ad224ae",
+  "README.md": "a3ce67a14439e36521bb67a17b08975cdfb73e19a7562736e3bdc4fe58d9ebb0",
+  "run_inventory.json": "b807662a5d4b54955dc822da0ad015b5bd1636821a83120e3937eb08b58f5d44",
+  "source_functions.json": "9613c912bd207cf632f641fe674f67798b39e1dadae390763ba882f62186807c",
+  "summary.json": "9fa55e24ad5384409a218b03d637f64998a4601000e51dfba7b56646c4259a59",
+  "undetermined.json": "6db8c9af240f80262a190e364ea71cadf328825e1cb4bc51773afbf43274877d",
+  "verification.json": "4ffe9ce7c622121f5d8ea462547dafb440413b6d838c304937ef05d84e0fe9c6"
+}

@@ -1,0 +1,119 @@
+[
+  {
+    "source": "211a05c569f676f40067ed67eb445b0e5a93d8a0",
+    "path": "multi_dataset_diverse_rl/search/optimization_evidence.py",
+    "git_blob_sha256": "e9e4ec1ccc3fca807ee71a0dc61cba75396c034920490ae435734c66b82cb10a",
+    "function": "executability_checks",
+    "function_sha256": "cbf136bc79bb7f85adfa22a9d2c9cb386aac98450de2816dd8e8d4243dc220fc",
+    "line": 108,
+    "guards": [
+      "example_answer_lookup",
+      "optimizer_only_dependency",
+      "private_solution_or_response_copy"
+    ]
+  },
+  {
+    "source": "241f725797080b1b5fc714834b222b675a09d0e8",
+    "path": "multi_dataset_diverse_rl/search/optimization_evidence.py",
+    "git_blob_sha256": "e9e4ec1ccc3fca807ee71a0dc61cba75396c034920490ae435734c66b82cb10a",
+    "function": "executability_checks",
+    "function_sha256": "cbf136bc79bb7f85adfa22a9d2c9cb386aac98450de2816dd8e8d4243dc220fc",
+    "line": 108,
+    "guards": [
+      "example_answer_lookup",
+      "optimizer_only_dependency",
+      "private_solution_or_response_copy"
+    ]
+  },
+  {
+    "source": "49d49e7e95dc308b414f0f8dda8ed2f927127764",
+    "path": "multi_dataset_diverse_rl/search/optimization_evidence.py",
+    "git_blob_sha256": "e9e4ec1ccc3fca807ee71a0dc61cba75396c034920490ae435734c66b82cb10a",
+    "function": "executability_checks",
+    "function_sha256": "cbf136bc79bb7f85adfa22a9d2c9cb386aac98450de2816dd8e8d4243dc220fc",
+    "line": 108,
+    "guards": [
+      "example_answer_lookup",
+      "optimizer_only_dependency",
+      "private_solution_or_response_copy"
+    ]
+  },
+  {
+    "source": "4d1b7125926ca6353b269a71110fee880d722261",
+    "path": "multi_dataset_diverse_rl/search/optimization_evidence.py",
+    "git_blob_sha256": "14609b1c7cf74a7d19be2ad978390c1cc693eb1c067695b4748b3e6964826cb0",
+    "function": "executability_checks",
+    "function_sha256": "a3dc3b7a30ab622610be681036c3ddf24d65d3cc5b778edf606eebb93567098f",
+    "line": 106,
+    "guards": [
+      "example_answer_lookup",
+      "optimizer_only_dependency",
+      "private_solution_or_response_copy"
+    ]
+  },
+  {
+    "source": "7a04de51636065cc5a15a4704c499fc55425f46f",
+    "path": "multi_dataset_diverse_rl/search/optimization_evidence.py",
+    "git_blob_sha256": "14609b1c7cf74a7d19be2ad978390c1cc693eb1c067695b4748b3e6964826cb0",
+    "function": "executability_checks",
+    "function_sha256": "a3dc3b7a30ab622610be681036c3ddf24d65d3cc5b778edf606eebb93567098f",
+    "line": 106,
+    "guards": [
+      "example_answer_lookup",
+      "optimizer_only_dependency",
+      "private_solution_or_response_copy"
+    ]
+  },
+  {
+    "source": "821bd56cfb013abec10788b558e3565a804702d2",
+    "path": "multi_dataset_diverse_rl/search/optimization_evidence.py",
+    "git_blob_sha256": "14609b1c7cf74a7d19be2ad978390c1cc693eb1c067695b4748b3e6964826cb0",
+    "function": "executability_checks",
+    "function_sha256": "a3dc3b7a30ab622610be681036c3ddf24d65d3cc5b778edf606eebb93567098f",
+    "line": 106,
+    "guards": [
+      "example_answer_lookup",
+      "optimizer_only_dependency",
+      "private_solution_or_response_copy"
+    ]
+  },
+  {
+    "source": "93c7f7f6804dfda30c0ab2452f78c806d3c3814c",
+    "path": "multi_dataset_diverse_rl/search/optimization_evidence.py",
+    "git_blob_sha256": "14609b1c7cf74a7d19be2ad978390c1cc693eb1c067695b4748b3e6964826cb0",
+    "function": "executability_checks",
+    "function_sha256": "a3dc3b7a30ab622610be681036c3ddf24d65d3cc5b778edf606eebb93567098f",
+    "line": 106,
+    "guards": [
+      "example_answer_lookup",
+      "optimizer_only_dependency",
+      "private_solution_or_response_copy"
+    ]
+  },
+  {
+    "source": "d1baffa3d065f386d7077789f140c288a7253c94",
+    "path": "multi_dataset_diverse_rl/search/optimization_evidence.py",
+    "git_blob_sha256": "14609b1c7cf74a7d19be2ad978390c1cc693eb1c067695b4748b3e6964826cb0",
+    "function": "executability_checks",
+    "function_sha256": "a3dc3b7a30ab622610be681036c3ddf24d65d3cc5b778edf606eebb93567098f",
+    "line": 106,
+    "guards": [
+      "example_answer_lookup",
+      "optimizer_only_dependency",
+      "private_solution_or_response_copy"
+    ]
+  },
+  {
+    "source": "fd27547f3044903a496d28289aefd25f165a7b5c",
+    "path": "multi_dataset_diverse_rl/search/optimization_evidence.py",
+    "git_blob_sha256": "14609b1c7cf74a7d19be2ad978390c1cc693eb1c067695b4748b3e6964826cb0",
+    "function": "executability_checks",
+    "function_sha256": "a3dc3b7a30ab622610be681036c3ddf24d65d3cc5b778edf606eebb93567098f",
+    "line": 106,
+    "guards": [
+      "example_answer_lookup",
+      "optimizer_only_dependency",
+      "private_solution_or_response_copy"
+    ]
+  }
+]

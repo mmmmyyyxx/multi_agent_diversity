@@ -1,0 +1,149 @@
+[
+  {
+    "id": "7996fcc24db781407b65049b5f955415783603e5b6aa40521c24d710ff7b7236",
+    "run": "runs/ablations/pattern_seed42_repeat3_20261015/train_run",
+    "source": "241f725797080b1b5fc714834b222b675a09d0e8",
+    "scope": "624d623e7ef83118f58d953b7b34cdd01110b7d1e07a8bbaba4b001267d6c1d6",
+    "arm": "B",
+    "cell": "B_seed42_repeat02",
+    "round": 3,
+    "draw": 1,
+    "log": "runs/ablations/pattern_seed42_repeat3_20261015/train_run/B_seed42_repeat02/round_3_generation_1.json",
+    "receipt": "runs/ablations/pattern_seed42_repeat3_20261015/train_run/provider_receipts/47305.json",
+    "request_sha256": "ae36ff9fd15f1fb4d56304a625002b8a110aa01ad0823d6fcc85771be1ad5556",
+    "response_sha256": "d4c2d5c64d1f66c296220aea5c02b5ef9434807c164eb657fcf7a649e1980af8",
+    "candidate_sha256": "d185429f67a0b4b1f0e725cc37dede4cc48e883479881b730c556b889cc20c97",
+    "logged_errors": [
+      "example_copying"
+    ],
+    "replayed": true,
+    "classification": "undetermined",
+    "rationale": "Matched source is a parameterized polynomial system or symbolic radical expression. Both reusable mathematical template and source-question copying are plausible; no keyword-only adjudication."
+  },
+  {
+    "id": "bc25ba6e6e144fae7b3736e8763c4c4f670357e01abc4f03923ec023a65788c0",
+    "run": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run",
+    "source": "211a05c569f676f40067ed67eb445b0e5a93d8a0",
+    "scope": "bcf7e264e671d0f1a9403726e2c18a1d8c7627c4507ca6e7a0be58b61c964055",
+    "arm": "C",
+    "cell": "C_seed42_repeat02",
+    "round": 18,
+    "draw": 1,
+    "log": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/C_seed42_repeat02/round_18_generation_1.json",
+    "receipt": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/provider_receipts/26581.json",
+    "request_sha256": "42474db26cc332b16b36b2910bee9a7b640bc37bb6e37b1df7e3ebcba80873f1",
+    "response_sha256": "3a0df6ce5dbdd7e74c3c56a9c750840b7c888cbbe18495d7ab571269210c8f6a",
+    "candidate_sha256": "c3e292663dbc532fc20dc045a1b157be2b0dffc8a017108535299867d74225f4",
+    "logged_errors": [
+      "private_solution_or_response_copy"
+    ],
+    "replayed": true,
+    "classification": "undetermined",
+    "rationale": "Trigger is generic output-format prose, but full candidate also reproduces actual supplied final-answer values as notation examples. Cannot establish that the whole candidate is protocol-legal."
+  },
+  {
+    "id": "6f61ec09d788d5f8a1ed975943a6b42ca1c72985d91e320a41fc4ce2da9b1e01",
+    "run": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run",
+    "source": "211a05c569f676f40067ed67eb445b0e5a93d8a0",
+    "scope": "bcf7e264e671d0f1a9403726e2c18a1d8c7627c4507ca6e7a0be58b61c964055",
+    "arm": "C",
+    "cell": "C_seed42_repeat02",
+    "round": 18,
+    "draw": 3,
+    "log": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/C_seed42_repeat02/round_18_generation_3.json",
+    "receipt": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/provider_receipts/26585.json",
+    "request_sha256": "e222e4ac5c71fb1e5d6a5666acc55dbd48f6b4253674b2942745df857784f753",
+    "response_sha256": "6c308ad97db18283b1ad4a6c3724134b1a7f8bd67f2c2c27ec32a8cafe5e5e0d",
+    "candidate_sha256": "8918226e332aa52d30b36f5b838f0a60723277f069b46780b8018e4248da38a5",
+    "logged_errors": [
+      "private_solution_or_response_copy"
+    ],
+    "replayed": true,
+    "classification": "undetermined",
+    "rationale": "Trigger is generic output-format prose, but full candidate also reproduces actual supplied final-answer values as notation examples. Cannot establish that the whole candidate is protocol-legal."
+  },
+  {
+    "id": "198cb34c4254bc805946df551465452c04437db3d2113fa042b1724cad0f6641",
+    "run": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run",
+    "source": "211a05c569f676f40067ed67eb445b0e5a93d8a0",
+    "scope": "bcf7e264e671d0f1a9403726e2c18a1d8c7627c4507ca6e7a0be58b61c964055",
+    "arm": "C",
+    "cell": "C_seed42_repeat03",
+    "round": 8,
+    "draw": 1,
+    "log": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/C_seed42_repeat03/round_8_generation_1.json",
+    "receipt": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/provider_receipts/33703.json",
+    "request_sha256": "b82e281b391aea6fc2b6ec175af963d5ddc96e722db715c6fd3c349c279688d0",
+    "response_sha256": "71b149d0f4d65d4c00ac31b051c420416ea936be527b520c78250521011c3a1d",
+    "candidate_sha256": "d604aa7f3dcae3cdfb65dedb53fdd6f821aac508fd742ffbfb4f9f9d2c30d2d4",
+    "logged_errors": [
+      "private_solution_or_response_copy"
+    ],
+    "replayed": true,
+    "classification": "undetermined",
+    "rationale": "Trigger is generic output-format prose, but full candidate also reproduces actual supplied final-answer values as notation examples. Cannot establish that the whole candidate is protocol-legal."
+  },
+  {
+    "id": "3960a65f36287b3acfbae838ad79040281b593b553f205252629d929f455b72b",
+    "run": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run",
+    "source": "211a05c569f676f40067ed67eb445b0e5a93d8a0",
+    "scope": "bcf7e264e671d0f1a9403726e2c18a1d8c7627c4507ca6e7a0be58b61c964055",
+    "arm": "C",
+    "cell": "C_seed42_repeat03",
+    "round": 8,
+    "draw": 3,
+    "log": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/C_seed42_repeat03/round_8_generation_3.json",
+    "receipt": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/provider_receipts/33707.json",
+    "request_sha256": "57a5ba9fab4d1fa34963f2f46575fd8cc69c52f0933e0bfae2f87db39241f763",
+    "response_sha256": "e9c5226b21d07954f4cbb9da4a9b5ef88d2fae4a8806b6e66002ad9bd8af8834",
+    "candidate_sha256": "dabc297a67717e1589a9f0ae121915befadacd1e945f6b53cac0f105b12cabe8",
+    "logged_errors": [
+      "private_solution_or_response_copy"
+    ],
+    "replayed": true,
+    "classification": "undetermined",
+    "rationale": "Trigger is generic output-format prose, but full candidate also reproduces actual supplied final-answer values as notation examples. Cannot establish that the whole candidate is protocol-legal."
+  },
+  {
+    "id": "283c30adec04e2508b4ce3bc704621d54c73b8e8395f07239d6b668f976353da",
+    "run": "runs/single_prompt_validation_gated_v2/two_seed32_continuation_20261014/train_run",
+    "source": "fd27547f3044903a496d28289aefd25f165a7b5c",
+    "scope": "4cd56cc930e0d0cb9620ea265bc66a33ad638e04e794e1898ad192760a6cf6ce",
+    "arm": "C",
+    "cell": "single_prompt_validation_gated_v2_gradient_pattern_seed88",
+    "round": 9,
+    "draw": 2,
+    "log": "runs/single_prompt_validation_gated_v2/two_seed32_continuation_20261014/train_run/single_prompt_validation_gated_v2_gradient_pattern_seed88/round_9_generation_2.json",
+    "receipt": "runs/single_prompt_validation_gated_v2/two_seed32_continuation_20261014/train_run/provider_receipts/27731.json",
+    "request_sha256": "2f42003710e12c0d82f0ca51b40c38e97f61fbdbb5428275aee8e73af8232b21",
+    "response_sha256": "fc0a199642ced892cb41d40900aa834ac90708ccddcb7772b0206921dc18e335",
+    "candidate_sha256": "7965e6d33959e9e72fa14821a26d58e21daef58ee835b12563473063112d097c",
+    "logged_errors": [
+      "example_copying"
+    ],
+    "replayed": true,
+    "classification": "undetermined",
+    "rationale": "Matched source is a parameterized polynomial system or symbolic radical expression. Both reusable mathematical template and source-question copying are plausible; no keyword-only adjudication."
+  },
+  {
+    "id": "da1d9eb08d6541d4ee4df0e51c87e00f89f260c5734690830d6129b56ca3476d",
+    "run": "runs/single_prompt_validation_gated_v2/two_seed32_continuation_20261014/train_run",
+    "source": "fd27547f3044903a496d28289aefd25f165a7b5c",
+    "scope": "4cd56cc930e0d0cb9620ea265bc66a33ad638e04e794e1898ad192760a6cf6ce",
+    "arm": "C",
+    "cell": "single_prompt_validation_gated_v2_gradient_pattern_seed89",
+    "round": 9,
+    "draw": 2,
+    "log": "runs/single_prompt_validation_gated_v2/two_seed32_continuation_20261014/train_run/single_prompt_validation_gated_v2_gradient_pattern_seed89/round_9_generation_2.json",
+    "receipt": "runs/single_prompt_validation_gated_v2/two_seed32_continuation_20261014/train_run/provider_receipts/39805.json",
+    "request_sha256": "7754da27927325e61e23365ce7622cd6b7ac35c277d61e0e1d6424eecd9fb1eb",
+    "response_sha256": "c4975f13dbdac15f3bbc931a1c3101085c55b5589f51aa4ab3ec21ea4a66d4f3",
+    "candidate_sha256": "1dd2acd1e934022bfd3c428696a4dc05a7f303082009a74f0aa664de857c29f2",
+    "logged_errors": [
+      "example_copying"
+    ],
+    "replayed": true,
+    "classification": "undetermined",
+    "rationale": "Matched source is a parameterized polynomial system or symbolic radical expression. Both reusable mathematical template and source-question copying are plausible; no keyword-only adjudication."
+  }
+]

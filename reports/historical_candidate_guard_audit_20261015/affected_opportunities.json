@@ -1,0 +1,70 @@
+[
+  {
+    "cell": "C_seed42_repeat01",
+    "round": 13,
+    "checkpoint": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/C_seed42_repeat01/checkpoint_13.json",
+    "checkpoint_sha256": "52dcc91c042af08e0b3ace696955e09323e7f91f0d613ea2ae06768ffb3b8c7a",
+    "decision": "ABANDONED_GENERATION_RETRIES_EXHAUSTED",
+    "candidate_evaluated": false,
+    "certain_false": 3,
+    "undetermined": 0,
+    "certain_protocol_violation": 1,
+    "candidate_ids": [
+      "a2c870381bd244915fb230bee7822b6fdce5ed550800ff514af250dda2b1bbae",
+      "0b91d0c741834fe4dba163c0d379892c315a938ce46c231727f0e1c280e7f492",
+      "42e0b5d56b666cc01b73807d6fb927bede19cc27f6ce17c56051b48672668ffa",
+      "a81203491257c071669d6fd2c0d51195f120f1bb7c8a958d87307bfc7e62e0c0"
+    ]
+  },
+  {
+    "cell": "C_seed42_repeat02",
+    "round": 18,
+    "checkpoint": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/C_seed42_repeat02/checkpoint_18.json",
+    "checkpoint_sha256": "c341c484f3aa1211e8b21fca2aee0cb0fa07655141642dcc92bc1b9a7e21cea1",
+    "decision": "ABANDONED_GENERATION_RETRIES_EXHAUSTED",
+    "candidate_evaluated": false,
+    "certain_false": 2,
+    "undetermined": 2,
+    "certain_protocol_violation": 0,
+    "candidate_ids": [
+      "bc25ba6e6e144fae7b3736e8763c4c4f670357e01abc4f03923ec023a65788c0",
+      "427ad27ed74ee52af07ad979fb1d3664ff5d2f30b1e948f9e7425dc10c608258",
+      "6f61ec09d788d5f8a1ed975943a6b42ca1c72985d91e320a41fc4ce2da9b1e01",
+      "5c2a12ccea30281ac9e8a139c1438295e319e27a95e645b5ac393daf8daa0304"
+    ]
+  },
+  {
+    "cell": "C_seed42_repeat03",
+    "round": 8,
+    "checkpoint": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/C_seed42_repeat03/checkpoint_8.json",
+    "checkpoint_sha256": "cf6ec909cc7c586bae06b3e18ca218aeea0c29e883f2adbdbf363bac0f80467c",
+    "decision": "ABANDONED_GENERATION_RETRIES_EXHAUSTED",
+    "candidate_evaluated": false,
+    "certain_false": 2,
+    "undetermined": 2,
+    "certain_protocol_violation": 0,
+    "candidate_ids": [
+      "198cb34c4254bc805946df551465452c04437db3d2113fa042b1724cad0f6641",
+      "032bd9c55771089e45918d87e3d3358f90f9a3aea7af05b7b6f759e55d01e2b7",
+      "3960a65f36287b3acfbae838ad79040281b593b553f205252629d929f455b72b",
+      "bcea7cfb6abcdc13d0fe0d98c928868654a39dc9e7f7ea0a6cfb405b0792829a"
+    ]
+  },
+  {
+    "cell": "C_seed42_repeat03",
+    "round": 18,
+    "checkpoint": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/C_seed42_repeat03/checkpoint_18.json",
+    "checkpoint_sha256": "45cbe63ad1ac171f4add2e1e82f538ec80e21f1689ba12d71835fef4aafca321",
+    "decision": "ABANDONED_GENERATION_RETRIES_EXHAUSTED",
+    "candidate_evaluated": false,
+    "certain_false": 3,
+    "undetermined": 0,
+    "certain_protocol_violation": 1,
+    "candidate_ids": [
+      "85bf2c194f0c1b025c2f0de4951ccd914865ec3497bf2ca63ddbc917976f210d",
+      "be8db8e653ba860fc7660ede78d622017dcdd984109d1b697e2675afcd3cb8d4",
+      "6ddbef57ac27c192e236e3a2f41eca51b772aa41863382000098646715d63d6e",
+      "adc6b971d1d39f23e9d8fda1bbe378176f4b5e1e2ab30fa15266ab85f4747b29"
+    ]
+  }
+]

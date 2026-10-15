@@ -1,0 +1,139 @@
+[
+  {
+    "path": "runs/ablations/pattern_seed42_repeat3_20261015/train_run",
+    "source": "241f725797080b1b5fc714834b222b675a09d0e8",
+    "kind": "ablation",
+    "lifecycle": {
+      "cells_completed": 6,
+      "current_cell": "C_seed42_repeat01",
+      "error_type": "OperationalAbort",
+      "phase": "train",
+      "status": "EXECUTION_ABORTED"
+    },
+    "scope": "624d623e7ef83118f58d953b7b34cdd01110b7d1e07a8bbaba4b001267d6c1d6",
+    "generation_logs": 167,
+    "observed_status": "EXECUTION_ABORTED"
+  },
+  {
+    "path": "runs/ablations/pattern_seed42_repeat3_truncation_continuation_20261015/train_run",
+    "source": "49d49e7e95dc308b414f0f8dda8ed2f927127764",
+    "kind": "ablation",
+    "lifecycle": {
+      "cells_completed": 6,
+      "current_cell": "C_seed42_repeat01",
+      "phase": "train",
+      "status": "RUNNING"
+    },
+    "scope": "c3f62774da24b185c0843f9b3f65cd936c9af5b3c7cfe9583826d09c48f8b0e7",
+    "generation_logs": 172,
+    "observed_status": "USER_STOPPED_PROCESS_CONFIRMED",
+    "stop_evidence": "runs/ablations/pattern_seed42_repeat3_truncation_continuation_20261015/user_stop.json",
+    "stop_evidence_sha256": "3717740ccedb98e8003e37425f0c42d3264b06da4b36ac9b4ec9eecdc7779a0f"
+  },
+  {
+    "path": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run",
+    "source": "211a05c569f676f40067ed67eb445b0e5a93d8a0",
+    "kind": "ablation",
+    "lifecycle": {
+      "cells_completed": 3,
+      "phase": "train",
+      "status": "EXECUTION_COMPLETE"
+    },
+    "scope": "bcf7e264e671d0f1a9403726e2c18a1d8c7627c4507ca6e7a0be58b61c964055",
+    "generation_logs": 77,
+    "observed_status": "EXECUTION_COMPLETE"
+  },
+  {
+    "path": "runs/single_prompt_validation_gated_v2/execution_20261013/train_run",
+    "source": "4d1b7125926ca6353b269a71110fee880d722261",
+    "kind": "gated",
+    "lifecycle": {
+      "cell_id": "single_prompt_validation_gated_v2_full_errors_seed89",
+      "cells_completed": 1,
+      "phase": "train",
+      "status": "EXECUTION_ABORTED"
+    },
+    "scope": "3f091bea2d6665e6828aa313af868d85e9fe53665775914f19ff317d4b4283df",
+    "generation_logs": 59,
+    "observed_status": "EXECUTION_ABORTED"
+  },
+  {
+    "path": "runs/single_prompt_validation_gated_v2/network_continuation_20261013/train_run",
+    "source": "7a04de51636065cc5a15a4704c499fc55425f46f",
+    "kind": "gated",
+    "lifecycle": {
+      "phase": "train",
+      "status": "EXECUTION_ABORTED",
+      "stop_category": "USER_REQUESTED_EXECUTION_AMENDMENT"
+    },
+    "scope": "b35d0af9d88c58861ca894d2bfd97fdb96dea09fbf0fba807c6e2cbf284ebf6e",
+    "generation_logs": 85,
+    "observed_status": "EXECUTION_ABORTED"
+  },
+  {
+    "path": "runs/single_prompt_validation_gated_v2/two_seed32_continuation_20261014/train_run",
+    "source": "fd27547f3044903a496d28289aefd25f165a7b5c",
+    "kind": "gated",
+    "lifecycle": {
+      "phase": "train",
+      "status": "EXECUTION_COMPLETE"
+    },
+    "scope": "4cd56cc930e0d0cb9620ea265bc66a33ad638e04e794e1898ad192760a6cf6ce",
+    "generation_logs": 199,
+    "observed_status": "EXECUTION_COMPLETE"
+  },
+  {
+    "path": "runs/single_prompt_largest_pattern_v1/execution_20261014/train_run",
+    "source": "821bd56cfb013abec10788b558e3565a804702d2",
+    "kind": "gated",
+    "lifecycle": {
+      "phase": "train",
+      "status": "EXECUTION_COMPLETE"
+    },
+    "scope": "e3fcf2ffa9b67f1107e61931924393eef74985e77f1db376ce705ece705f6670",
+    "generation_logs": 48,
+    "observed_status": "EXECUTION_COMPLETE"
+  },
+  {
+    "path": "runs/single_prompt_gradient_pattern_v1/execution_v1/canary_run",
+    "source": "93c7f7f6804dfda30c0ab2452f78c806d3c3814c",
+    "kind": "original",
+    "lifecycle": {
+      "phase": "canary",
+      "status": "EXECUTION_COMPLETE"
+    },
+    "scope": "1f9da12be9979e4cbe7d256c837281ac596cb0d701985eb7392e433dce476d58",
+    "generation_logs": 0,
+    "observed_status": "EXECUTION_COMPLETE"
+  },
+  {
+    "path": "runs/single_prompt_gradient_pattern_v1/execution_v1/train_run",
+    "source": "93c7f7f6804dfda30c0ab2452f78c806d3c3814c",
+    "kind": "original",
+    "lifecycle": {
+      "cell_id": "single_prompt_gradient_pattern_v1_full_errors_seed88",
+      "cells_completed": 0,
+      "error_category": "OperationalAbort",
+      "phase": "train",
+      "status": "EXECUTION_ABORTED"
+    },
+    "scope": "45c7fdfb855289249471f4efc07174cd3d50c84ba4d99af860a9ae9cfb7ed78c",
+    "generation_logs": 0,
+    "observed_status": "EXECUTION_ABORTED"
+  },
+  {
+    "path": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run",
+    "source": "d1baffa3d065f386d7077789f140c288a7253c94",
+    "kind": "original",
+    "lifecycle": {
+      "cell_id": "single_prompt_gradient_pattern_v1_full_errors_seed88",
+      "cells_completed": 0,
+      "error_category": "OperationalAbort",
+      "phase": "train",
+      "status": "EXECUTION_ABORTED"
+    },
+    "scope": "d05ee85d4417c4a0b15c2939e1278d1ed419653d51b25d4c5b3e009e4de5847b",
+    "generation_logs": 0,
+    "observed_status": "EXECUTION_ABORTED"
+  }
+]

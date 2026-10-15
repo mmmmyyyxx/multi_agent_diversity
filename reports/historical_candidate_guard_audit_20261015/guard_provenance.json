@@ -1,0 +1,260 @@
+[
+  {
+    "run": "runs/ablations/pattern_seed42_repeat3_20261015/train_run",
+    "source": "241f725797080b1b5fc714834b222b675a09d0e8",
+    "guards": {
+      "multi_dataset_diverse_rl/search/optimization_evidence.py": {
+        "frozen_hash": "1035385d4ecbc912ac3a28770f0d84f2e10234f54d4e5033c190a7c12069728e",
+        "git_blob_sha256": "e9e4ec1ccc3fca807ee71a0dc61cba75396c034920490ae435734c66b82cb10a",
+        "source_matches": true,
+        "line_ending": "CRLF"
+      },
+      "multi_dataset_diverse_rl/search/system_prompt.py": {
+        "frozen_hash": "919e28a61c5db3baa3e26450d3dd6adf5a673bbdfcc6795c43737081e2db581b",
+        "git_blob_sha256": "9788a4bb5fd0dfdb0593e190649da781ed52542a154ff6c0240cab5e961550f4",
+        "source_matches": true,
+        "line_ending": "CRLF"
+      },
+      "multi_dataset_diverse_rl/local_optimizers/example_text.py": {
+        "frozen_hash": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881",
+        "git_blob_sha256": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881",
+        "source_matches": true,
+        "line_ending": "LF"
+      },
+      "multi_dataset_diverse_rl/research/ablations/generation.py": {
+        "frozen_hash": "f710bf1979e7336dd5da141679706e4f062c7730732e4c02ec83fbf080e7badd",
+        "git_blob_sha256": "f710bf1979e7336dd5da141679706e4f062c7730732e4c02ec83fbf080e7badd",
+        "source_matches": true,
+        "line_ending": "LF"
+      }
+    }
+  },
+  {
+    "run": "runs/ablations/pattern_seed42_repeat3_truncation_continuation_20261015/train_run",
+    "source": "49d49e7e95dc308b414f0f8dda8ed2f927127764",
+    "guards": {
+      "multi_dataset_diverse_rl/search/optimization_evidence.py": {
+        "frozen_hash": "1035385d4ecbc912ac3a28770f0d84f2e10234f54d4e5033c190a7c12069728e",
+        "git_blob_sha256": "e9e4ec1ccc3fca807ee71a0dc61cba75396c034920490ae435734c66b82cb10a",
+        "source_matches": true,
+        "line_ending": "CRLF"
+      },
+      "multi_dataset_diverse_rl/search/system_prompt.py": {
+        "frozen_hash": "919e28a61c5db3baa3e26450d3dd6adf5a673bbdfcc6795c43737081e2db581b",
+        "git_blob_sha256": "9788a4bb5fd0dfdb0593e190649da781ed52542a154ff6c0240cab5e961550f4",
+        "source_matches": true,
+        "line_ending": "CRLF"
+      },
+      "multi_dataset_diverse_rl/local_optimizers/example_text.py": {
+        "frozen_hash": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881",
+        "git_blob_sha256": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881",
+        "source_matches": true,
+        "line_ending": "LF"
+      },
+      "multi_dataset_diverse_rl/research/ablations/generation.py": {
+        "frozen_hash": "f710bf1979e7336dd5da141679706e4f062c7730732e4c02ec83fbf080e7badd",
+        "git_blob_sha256": "f710bf1979e7336dd5da141679706e4f062c7730732e4c02ec83fbf080e7badd",
+        "source_matches": true,
+        "line_ending": "LF"
+      }
+    }
+  },
+  {
+    "run": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run",
+    "source": "211a05c569f676f40067ed67eb445b0e5a93d8a0",
+    "guards": {
+      "multi_dataset_diverse_rl/search/optimization_evidence.py": {
+        "frozen_hash": "1035385d4ecbc912ac3a28770f0d84f2e10234f54d4e5033c190a7c12069728e",
+        "git_blob_sha256": "e9e4ec1ccc3fca807ee71a0dc61cba75396c034920490ae435734c66b82cb10a",
+        "source_matches": true,
+        "line_ending": "CRLF"
+      },
+      "multi_dataset_diverse_rl/search/system_prompt.py": {
+        "frozen_hash": "919e28a61c5db3baa3e26450d3dd6adf5a673bbdfcc6795c43737081e2db581b",
+        "git_blob_sha256": "9788a4bb5fd0dfdb0593e190649da781ed52542a154ff6c0240cab5e961550f4",
+        "source_matches": true,
+        "line_ending": "CRLF"
+      },
+      "multi_dataset_diverse_rl/local_optimizers/example_text.py": {
+        "frozen_hash": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881",
+        "git_blob_sha256": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881",
+        "source_matches": true,
+        "line_ending": "LF"
+      },
+      "multi_dataset_diverse_rl/research/ablations/generation.py": {
+        "frozen_hash": "7fcded1db88de7d57a307b6b32ecc45fabacadf0b9b3fe3616bca6b4cbb77221",
+        "git_blob_sha256": "35dc2eaa6837c3b3fe7ef15a3de46cf553eece4ecc96d119c8785d7f092b5b2e",
+        "source_matches": true,
+        "line_ending": "CRLF"
+      }
+    }
+  },
+  {
+    "run": "runs/single_prompt_validation_gated_v2/execution_20261013/train_run",
+    "source": "4d1b7125926ca6353b269a71110fee880d722261",
+    "guards": {
+      "multi_dataset_diverse_rl/search/optimization_evidence.py": {
+        "frozen_hash": "45f038ff7e7b97e2494e454aa572f77aedc537aae8be12813674bd68e235e323",
+        "git_blob_sha256": "14609b1c7cf74a7d19be2ad978390c1cc693eb1c067695b4748b3e6964826cb0",
+        "source_matches": true,
+        "line_ending": "CRLF"
+      },
+      "multi_dataset_diverse_rl/search/system_prompt.py": {
+        "frozen_hash": "93f3c78c85673e43f296dc7950e84bc7c20167f48d49f4f8007ef585309aaaf4",
+        "git_blob_sha256": "93f3c78c85673e43f296dc7950e84bc7c20167f48d49f4f8007ef585309aaaf4",
+        "source_matches": true,
+        "line_ending": "LF"
+      },
+      "multi_dataset_diverse_rl/local_optimizers/example_text.py": {
+        "frozen_hash": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881",
+        "git_blob_sha256": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881",
+        "source_matches": true,
+        "line_ending": "LF"
+      }
+    }
+  },
+  {
+    "run": "runs/single_prompt_validation_gated_v2/network_continuation_20261013/train_run",
+    "source": "7a04de51636065cc5a15a4704c499fc55425f46f",
+    "guards": {
+      "multi_dataset_diverse_rl/search/optimization_evidence.py": {
+        "frozen_hash": "45f038ff7e7b97e2494e454aa572f77aedc537aae8be12813674bd68e235e323",
+        "git_blob_sha256": "14609b1c7cf74a7d19be2ad978390c1cc693eb1c067695b4748b3e6964826cb0",
+        "source_matches": true,
+        "line_ending": "CRLF"
+      },
+      "multi_dataset_diverse_rl/search/system_prompt.py": {
+        "frozen_hash": "93f3c78c85673e43f296dc7950e84bc7c20167f48d49f4f8007ef585309aaaf4",
+        "git_blob_sha256": "93f3c78c85673e43f296dc7950e84bc7c20167f48d49f4f8007ef585309aaaf4",
+        "source_matches": true,
+        "line_ending": "LF"
+      },
+      "multi_dataset_diverse_rl/local_optimizers/example_text.py": {
+        "frozen_hash": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881",
+        "git_blob_sha256": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881",
+        "source_matches": true,
+        "line_ending": "LF"
+      }
+    }
+  },
+  {
+    "run": "runs/single_prompt_validation_gated_v2/two_seed32_continuation_20261014/train_run",
+    "source": "fd27547f3044903a496d28289aefd25f165a7b5c",
+    "guards": {
+      "multi_dataset_diverse_rl/search/optimization_evidence.py": {
+        "frozen_hash": "45f038ff7e7b97e2494e454aa572f77aedc537aae8be12813674bd68e235e323",
+        "git_blob_sha256": "14609b1c7cf74a7d19be2ad978390c1cc693eb1c067695b4748b3e6964826cb0",
+        "source_matches": true,
+        "line_ending": "CRLF"
+      },
+      "multi_dataset_diverse_rl/search/system_prompt.py": {
+        "frozen_hash": "93f3c78c85673e43f296dc7950e84bc7c20167f48d49f4f8007ef585309aaaf4",
+        "git_blob_sha256": "93f3c78c85673e43f296dc7950e84bc7c20167f48d49f4f8007ef585309aaaf4",
+        "source_matches": true,
+        "line_ending": "LF"
+      },
+      "multi_dataset_diverse_rl/local_optimizers/example_text.py": {
+        "frozen_hash": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881",
+        "git_blob_sha256": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881",
+        "source_matches": true,
+        "line_ending": "LF"
+      }
+    }
+  },
+  {
+    "run": "runs/single_prompt_largest_pattern_v1/execution_20261014/train_run",
+    "source": "821bd56cfb013abec10788b558e3565a804702d2",
+    "guards": {
+      "multi_dataset_diverse_rl/search/optimization_evidence.py": {
+        "frozen_hash": "45f038ff7e7b97e2494e454aa572f77aedc537aae8be12813674bd68e235e323",
+        "git_blob_sha256": "14609b1c7cf74a7d19be2ad978390c1cc693eb1c067695b4748b3e6964826cb0",
+        "source_matches": true,
+        "line_ending": "CRLF"
+      },
+      "multi_dataset_diverse_rl/search/system_prompt.py": {
+        "frozen_hash": "93f3c78c85673e43f296dc7950e84bc7c20167f48d49f4f8007ef585309aaaf4",
+        "git_blob_sha256": "93f3c78c85673e43f296dc7950e84bc7c20167f48d49f4f8007ef585309aaaf4",
+        "source_matches": true,
+        "line_ending": "LF"
+      },
+      "multi_dataset_diverse_rl/local_optimizers/example_text.py": {
+        "frozen_hash": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881",
+        "git_blob_sha256": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881",
+        "source_matches": true,
+        "line_ending": "LF"
+      }
+    }
+  },
+  {
+    "run": "runs/single_prompt_gradient_pattern_v1/execution_v1/canary_run",
+    "source": "93c7f7f6804dfda30c0ab2452f78c806d3c3814c",
+    "guards": {
+      "multi_dataset_diverse_rl/search/optimization_evidence.py": {
+        "frozen_hash": "45f038ff7e7b97e2494e454aa572f77aedc537aae8be12813674bd68e235e323",
+        "git_blob_sha256": "14609b1c7cf74a7d19be2ad978390c1cc693eb1c067695b4748b3e6964826cb0",
+        "source_matches": true,
+        "line_ending": "CRLF"
+      },
+      "multi_dataset_diverse_rl/search/system_prompt.py": {
+        "frozen_hash": "93f3c78c85673e43f296dc7950e84bc7c20167f48d49f4f8007ef585309aaaf4",
+        "git_blob_sha256": "93f3c78c85673e43f296dc7950e84bc7c20167f48d49f4f8007ef585309aaaf4",
+        "source_matches": true,
+        "line_ending": "LF"
+      },
+      "multi_dataset_diverse_rl/local_optimizers/example_text.py": {
+        "frozen_hash": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881",
+        "git_blob_sha256": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881",
+        "source_matches": true,
+        "line_ending": "LF"
+      }
+    }
+  },
+  {
+    "run": "runs/single_prompt_gradient_pattern_v1/execution_v1/train_run",
+    "source": "93c7f7f6804dfda30c0ab2452f78c806d3c3814c",
+    "guards": {
+      "multi_dataset_diverse_rl/search/optimization_evidence.py": {
+        "frozen_hash": "45f038ff7e7b97e2494e454aa572f77aedc537aae8be12813674bd68e235e323",
+        "git_blob_sha256": "14609b1c7cf74a7d19be2ad978390c1cc693eb1c067695b4748b3e6964826cb0",
+        "source_matches": true,
+        "line_ending": "CRLF"
+      },
+      "multi_dataset_diverse_rl/search/system_prompt.py": {
+        "frozen_hash": "93f3c78c85673e43f296dc7950e84bc7c20167f48d49f4f8007ef585309aaaf4",
+        "git_blob_sha256": "93f3c78c85673e43f296dc7950e84bc7c20167f48d49f4f8007ef585309aaaf4",
+        "source_matches": true,
+        "line_ending": "LF"
+      },
+      "multi_dataset_diverse_rl/local_optimizers/example_text.py": {
+        "frozen_hash": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881",
+        "git_blob_sha256": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881",
+        "source_matches": true,
+        "line_ending": "LF"
+      }
+    }
+  },
+  {
+    "run": "runs/single_prompt_gradient_pattern_v1/execution_v2/train_run",
+    "source": "d1baffa3d065f386d7077789f140c288a7253c94",
+    "guards": {
+      "multi_dataset_diverse_rl/search/optimization_evidence.py": {
+        "frozen_hash": "45f038ff7e7b97e2494e454aa572f77aedc537aae8be12813674bd68e235e323",
+        "git_blob_sha256": "14609b1c7cf74a7d19be2ad978390c1cc693eb1c067695b4748b3e6964826cb0",
+        "source_matches": true,
+        "line_ending": "CRLF"
+      },
+      "multi_dataset_diverse_rl/search/system_prompt.py": {
+        "frozen_hash": "93f3c78c85673e43f296dc7950e84bc7c20167f48d49f4f8007ef585309aaaf4",
+        "git_blob_sha256": "93f3c78c85673e43f296dc7950e84bc7c20167f48d49f4f8007ef585309aaaf4",
+        "source_matches": true,
+        "line_ending": "LF"
+      },
+      "multi_dataset_diverse_rl/local_optimizers/example_text.py": {
+        "frozen_hash": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881",
+        "git_blob_sha256": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881",
+        "source_matches": true,
+        "line_ending": "LF"
+      }
+    }
+  }
+]

@@ -1,0 +1,212 @@
+[
+  {
+    "id": "a2c870381bd244915fb230bee7822b6fdce5ed550800ff514af250dda2b1bbae",
+    "run": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run",
+    "source": "211a05c569f676f40067ed67eb445b0e5a93d8a0",
+    "scope": "bcf7e264e671d0f1a9403726e2c18a1d8c7627c4507ca6e7a0be58b61c964055",
+    "arm": "C",
+    "cell": "C_seed42_repeat01",
+    "round": 13,
+    "draw": 1,
+    "log": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/C_seed42_repeat01/round_13_generation_1.json",
+    "receipt": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/provider_receipts/9353.json",
+    "request_sha256": "cfa4e5854ca33c09f5b8dcdd44c2b56854f0f48b5399111b809ddfdb71d92fb5",
+    "response_sha256": "291da785bf27194f474709c7a102eb30ac1127ad2621b59816ce1bcbf6e8e9a7",
+    "candidate_sha256": "6ed170d1a9a45a174d35ae3fd010a87f32b1d01b53de994d7d2f05d05c256b86",
+    "logged_errors": [
+      "private_solution_or_response_copy"
+    ],
+    "replayed": true,
+    "classification": "certain_false_rejection",
+    "rationale": "Full candidate is a general output-format rule or reusable vector-substitution method. Trigger is only generic eight-word overlap with diagnostic prose; no example-specific answer or inference-only evidence dependency identified."
+  },
+  {
+    "id": "0b91d0c741834fe4dba163c0d379892c315a938ce46c231727f0e1c280e7f492",
+    "run": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run",
+    "source": "211a05c569f676f40067ed67eb445b0e5a93d8a0",
+    "scope": "bcf7e264e671d0f1a9403726e2c18a1d8c7627c4507ca6e7a0be58b61c964055",
+    "arm": "C",
+    "cell": "C_seed42_repeat01",
+    "round": 13,
+    "draw": 2,
+    "log": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/C_seed42_repeat01/round_13_generation_2.json",
+    "receipt": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/provider_receipts/9355.json",
+    "request_sha256": "c6c6cbf59e7417dbe923888d881acfac332c2fc219d027855b7c4b34dc7e063d",
+    "response_sha256": "cb1bbc8998d3aad94547ba4d26c50712e6b81a29a91e2dfc3a00021832375e7c",
+    "candidate_sha256": "47319884c3dd5a84898df20d222b240d571d2319c0190230c47f2889a3dbfa4e",
+    "logged_errors": [
+      "private_solution_or_response_copy"
+    ],
+    "replayed": true,
+    "classification": "certain_false_rejection",
+    "rationale": "Full candidate is a general output-format rule or reusable vector-substitution method. Trigger is only generic eight-word overlap with diagnostic prose; no example-specific answer or inference-only evidence dependency identified."
+  },
+  {
+    "id": "a81203491257c071669d6fd2c0d51195f120f1bb7c8a958d87307bfc7e62e0c0",
+    "run": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run",
+    "source": "211a05c569f676f40067ed67eb445b0e5a93d8a0",
+    "scope": "bcf7e264e671d0f1a9403726e2c18a1d8c7627c4507ca6e7a0be58b61c964055",
+    "arm": "C",
+    "cell": "C_seed42_repeat01",
+    "round": 13,
+    "draw": 4,
+    "log": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/C_seed42_repeat01/round_13_generation_4.json",
+    "receipt": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/provider_receipts/9359.json",
+    "request_sha256": "3193ff3232cd023c4e24f346cf01cfcce0a0d29accf5ff5398463dbbab612dac",
+    "response_sha256": "574440a0cb75497e1ca781465d333353b602809efea5c0367e3382baf1bc4731",
+    "candidate_sha256": "a2bde1b4db2c51cd3dffc264689445c07db78e0285b2022dc89f4b864c31a241",
+    "logged_errors": [
+      "private_solution_or_response_copy"
+    ],
+    "replayed": true,
+    "classification": "certain_false_rejection",
+    "rationale": "Full candidate is a general output-format rule or reusable vector-substitution method. Trigger is only generic eight-word overlap with diagnostic prose; no example-specific answer or inference-only evidence dependency identified."
+  },
+  {
+    "id": "427ad27ed74ee52af07ad979fb1d3664ff5d2f30b1e948f9e7425dc10c608258",
+    "run": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run",
+    "source": "211a05c569f676f40067ed67eb445b0e5a93d8a0",
+    "scope": "bcf7e264e671d0f1a9403726e2c18a1d8c7627c4507ca6e7a0be58b61c964055",
+    "arm": "C",
+    "cell": "C_seed42_repeat02",
+    "round": 18,
+    "draw": 2,
+    "log": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/C_seed42_repeat02/round_18_generation_2.json",
+    "receipt": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/provider_receipts/26583.json",
+    "request_sha256": "e222e4ac5c71fb1e5d6a5666acc55dbd48f6b4253674b2942745df857784f753",
+    "response_sha256": "ffcf83b5aa179f44d5d1af5e60ec2314aeb93603673fa810d02df6e0d3e7dee4",
+    "candidate_sha256": "6f1306e3cb315a5813fe6e495d84e641a99a7579de817301f1908fd34e911f29",
+    "logged_errors": [
+      "private_solution_or_response_copy"
+    ],
+    "replayed": true,
+    "classification": "certain_false_rejection",
+    "rationale": "Full candidate is a general output-format rule or reusable vector-substitution method. Trigger is only generic eight-word overlap with diagnostic prose; no example-specific answer or inference-only evidence dependency identified."
+  },
+  {
+    "id": "5c2a12ccea30281ac9e8a139c1438295e319e27a95e645b5ac393daf8daa0304",
+    "run": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run",
+    "source": "211a05c569f676f40067ed67eb445b0e5a93d8a0",
+    "scope": "bcf7e264e671d0f1a9403726e2c18a1d8c7627c4507ca6e7a0be58b61c964055",
+    "arm": "C",
+    "cell": "C_seed42_repeat02",
+    "round": 18,
+    "draw": 4,
+    "log": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/C_seed42_repeat02/round_18_generation_4.json",
+    "receipt": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/provider_receipts/26587.json",
+    "request_sha256": "e222e4ac5c71fb1e5d6a5666acc55dbd48f6b4253674b2942745df857784f753",
+    "response_sha256": "4185585ad07a655f911e50dbafb1f9643b660266df5981ead657e89576f49874",
+    "candidate_sha256": "8e5d3d4093963e069a9fa4d4d617d0abe5061859ef1ae5bd7e2a133f4e54434f",
+    "logged_errors": [
+      "private_solution_or_response_copy"
+    ],
+    "replayed": true,
+    "classification": "certain_false_rejection",
+    "rationale": "Full candidate is a general output-format rule or reusable vector-substitution method. Trigger is only generic eight-word overlap with diagnostic prose; no example-specific answer or inference-only evidence dependency identified."
+  },
+  {
+    "id": "85bf2c194f0c1b025c2f0de4951ccd914865ec3497bf2ca63ddbc917976f210d",
+    "run": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run",
+    "source": "211a05c569f676f40067ed67eb445b0e5a93d8a0",
+    "scope": "bcf7e264e671d0f1a9403726e2c18a1d8c7627c4507ca6e7a0be58b61c964055",
+    "arm": "C",
+    "cell": "C_seed42_repeat03",
+    "round": 18,
+    "draw": 1,
+    "log": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/C_seed42_repeat03/round_18_generation_1.json",
+    "receipt": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/provider_receipts/40225.json",
+    "request_sha256": "74bcc55fe8edd645f8f61b1a6a99e31c94ef251e596ac07096c425a4074e1ff5",
+    "response_sha256": "5290efd1ce1646eeb3512052b04ebff8852ab2cf2006dc7ef7627365a67e673a",
+    "candidate_sha256": "6d7ea387f0fa072a1fb836d85bb261ea31a1f72cace688614a5aa079a307525c",
+    "logged_errors": [
+      "private_solution_or_response_copy"
+    ],
+    "replayed": true,
+    "classification": "certain_false_rejection",
+    "rationale": "Full candidate is a general output-format rule or reusable vector-substitution method. Trigger is only generic eight-word overlap with diagnostic prose; no example-specific answer or inference-only evidence dependency identified."
+  },
+  {
+    "id": "be8db8e653ba860fc7660ede78d622017dcdd984109d1b697e2675afcd3cb8d4",
+    "run": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run",
+    "source": "211a05c569f676f40067ed67eb445b0e5a93d8a0",
+    "scope": "bcf7e264e671d0f1a9403726e2c18a1d8c7627c4507ca6e7a0be58b61c964055",
+    "arm": "C",
+    "cell": "C_seed42_repeat03",
+    "round": 18,
+    "draw": 2,
+    "log": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/C_seed42_repeat03/round_18_generation_2.json",
+    "receipt": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/provider_receipts/40227.json",
+    "request_sha256": "c72ac0ddea8798c727956559a826541954cbc8d0b4583c331779b90f0a62b0ec",
+    "response_sha256": "0a13744188b23d83d679090f6eb8d11860f948a7ad79a41d84b7a40b5322cd25",
+    "candidate_sha256": "5dc75610c8cac1bb21fe10f66e934b2100e2a4f7e0747e73f3bb4bab64d315f0",
+    "logged_errors": [
+      "private_solution_or_response_copy"
+    ],
+    "replayed": true,
+    "classification": "certain_false_rejection",
+    "rationale": "Full candidate is a general output-format rule or reusable vector-substitution method. Trigger is only generic eight-word overlap with diagnostic prose; no example-specific answer or inference-only evidence dependency identified."
+  },
+  {
+    "id": "6ddbef57ac27c192e236e3a2f41eca51b772aa41863382000098646715d63d6e",
+    "run": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run",
+    "source": "211a05c569f676f40067ed67eb445b0e5a93d8a0",
+    "scope": "bcf7e264e671d0f1a9403726e2c18a1d8c7627c4507ca6e7a0be58b61c964055",
+    "arm": "C",
+    "cell": "C_seed42_repeat03",
+    "round": 18,
+    "draw": 3,
+    "log": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/C_seed42_repeat03/round_18_generation_3.json",
+    "receipt": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/provider_receipts/40229.json",
+    "request_sha256": "c72ac0ddea8798c727956559a826541954cbc8d0b4583c331779b90f0a62b0ec",
+    "response_sha256": "be31ef662110d564894ef36775aa66694454b058ea391d9c39c3a15dbf36be64",
+    "candidate_sha256": "440aab8d0410e565d729248c99f22c1c83a4c3c74cbfd62fda980a9bdcd93892",
+    "logged_errors": [
+      "private_solution_or_response_copy"
+    ],
+    "replayed": true,
+    "classification": "certain_false_rejection",
+    "rationale": "Full candidate is a general output-format rule or reusable vector-substitution method. Trigger is only generic eight-word overlap with diagnostic prose; no example-specific answer or inference-only evidence dependency identified."
+  },
+  {
+    "id": "032bd9c55771089e45918d87e3d3358f90f9a3aea7af05b7b6f759e55d01e2b7",
+    "run": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run",
+    "source": "211a05c569f676f40067ed67eb445b0e5a93d8a0",
+    "scope": "bcf7e264e671d0f1a9403726e2c18a1d8c7627c4507ca6e7a0be58b61c964055",
+    "arm": "C",
+    "cell": "C_seed42_repeat03",
+    "round": 8,
+    "draw": 2,
+    "log": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/C_seed42_repeat03/round_8_generation_2.json",
+    "receipt": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/provider_receipts/33705.json",
+    "request_sha256": "57a5ba9fab4d1fa34963f2f46575fd8cc69c52f0933e0bfae2f87db39241f763",
+    "response_sha256": "6ca24b07540c25c2ad01ffab2151655b071cb74d1225edcc4a70db72b955d853",
+    "candidate_sha256": "4a0d21fe376d5645259b3f988bbadd29b6170050301306e5895fb0ca4efc6e3c",
+    "logged_errors": [
+      "private_solution_or_response_copy"
+    ],
+    "replayed": true,
+    "classification": "certain_false_rejection",
+    "rationale": "Full candidate is a general output-format rule or reusable vector-substitution method. Trigger is only generic eight-word overlap with diagnostic prose; no example-specific answer or inference-only evidence dependency identified."
+  },
+  {
+    "id": "bcea7cfb6abcdc13d0fe0d98c928868654a39dc9e7f7ea0a6cfb405b0792829a",
+    "run": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run",
+    "source": "211a05c569f676f40067ed67eb445b0e5a93d8a0",
+    "scope": "bcf7e264e671d0f1a9403726e2c18a1d8c7627c4507ca6e7a0be58b61c964055",
+    "arm": "C",
+    "cell": "C_seed42_repeat03",
+    "round": 8,
+    "draw": 4,
+    "log": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/C_seed42_repeat03/round_8_generation_4.json",
+    "receipt": "runs/ablations/pattern_c_only_seed42_repeat3_v7/train_run/provider_receipts/33709.json",
+    "request_sha256": "57a5ba9fab4d1fa34963f2f46575fd8cc69c52f0933e0bfae2f87db39241f763",
+    "response_sha256": "b7536f53bfb262c9748db145188bbd755250dc6f63848d4bc80f8974b65c6616",
+    "candidate_sha256": "888542f975e911cdb228d82009495874788fdb599ee7393a34a60053bccaeb1b",
+    "logged_errors": [
+      "private_solution_or_response_copy"
+    ],
+    "replayed": true,
+    "classification": "certain_false_rejection",
+    "rationale": "Full candidate is a general output-format rule or reusable vector-substitution method. Trigger is only generic eight-word overlap with diagnostic prose; no example-specific answer or inference-only evidence dependency identified."
+  }
+]
