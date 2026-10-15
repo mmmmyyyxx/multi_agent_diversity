@@ -115,6 +115,10 @@ def validate_registry_v2(root: Path, registry: Mapping) -> tuple[list[str],dict]
                 from ..research.ablations.continuation import validate_manifest as validate_ablation_continuation
                 try:validate_ablation_continuation(root,obj)
                 except ValueError as exc:errors.append(f'{ident}: {exc}')
+            elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_c_test_resume_manifest_v8':
+                from ..research.ablations.test_resume import validate_manifest as validate_test_resume
+                try:validate_test_resume(root,obj)
+                except ValueError as exc:errors.append(f'{ident}: {exc}')
             elif isinstance(obj,dict) and obj.get('schema_version')=='experiment_manifest_v2':
                 errors.extend(f'{ident}: {e}' for e in validate_manifest_v2(root,obj))
             elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_study_manifest_v1':

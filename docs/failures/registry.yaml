@@ -1,5 +1,25 @@
 schema_version: failure_registry_v1
 failures:
+- failure_id: FAIL-ABLATION-TEST-LOCAL-SCORER-TIMEOUT-FATAL
+  title: Local mathematical worker timeout aborted otherwise recoverable final Test
+  status: MITIGATED
+  lifecycle: REAL_OBSERVED_OFFLINE_REPRODUCED
+  first_observed: single_prompt_pattern_c_only_v7
+  affected_components:
+  - single_prompt_test_scoring_boundary
+  - paid_solver_prefix_continuation
+  symptom: Complete training and one Test cell were preserved, but a local evaluator timeout
+    aborted the second Test cell after297 terminal scored observations.
+  evidence:
+  - docs/design/SINGLE_PROMPT_C_TEST_RESUME_V8.md
+  evidence_level: observed
+  root_cause_status: MATH_EVALUATOR_TIMEOUT was outside the frozen network-only retry contract.
+  mitigation: Explicit Test-only continuation retries the unchanged local score on the same paid
+    Solver answer, verifies inherited terminal hashes, and accounts parent plus child calls separately.
+  forbidden_inference: No permission to change mathematical equivalence, regenerate paid answers,
+    rewrite historical scores, rerun training or reuse old authorization.
+  regression_tests:
+  - tests/current/test_ablation_test_resume.py
 - failure_id: FAIL-ABLATION-PARTIAL-FORMAL-ADAPTER-CONFORMANCE
   title: Formal imports did not guarantee complete input and candidate-boundary alignment
   status: MITIGATED

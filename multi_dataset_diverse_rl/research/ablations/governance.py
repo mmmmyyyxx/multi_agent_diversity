@@ -118,6 +118,7 @@ def source_snapshot(root):
     paths.add(root / amendment_manifest)
     from .aligned import MANIFEST as aligned_manifest, HISTORICAL_MANIFEST as aligned_parent, C_MANIFEST
     paths.update(root/p for p in (aligned_manifest,aligned_parent,C_MANIFEST))
+    paths.add(root/'experiments/manifests/single_prompt_c_test_resume_v8.json')
     return {p.relative_to(root).as_posix(): file_hash(p) for p in sorted(paths)}
 
 

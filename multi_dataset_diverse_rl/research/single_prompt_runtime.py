@@ -278,8 +278,7 @@ class StudyBroker:
                 if prediction.prediction_valid:
                     break
             resolved = resolve_predictions(attempts, transport_retry_attempts=transport_timeout_attempts)
-            adapter = MATHBenchmarkAdapter()
-            correct = bool(adapter.score_member_output(resolved.parsed(), row['reference_final_answer']))
+            correct = self.score_resolved(resolved, row)
             value = dict(prediction=asdict(resolved), valid=resolved.prediction_valid,
                          answer=resolved.answer, correct=correct, request_sha256=key,
                          task_type=row['content'].get('type', 'SYNTHETIC'),
@@ -300,6 +299,10 @@ class StudyBroker:
         finally:
             with self.lock:
                 self.inflight.pop(key, None)
+
+    def score_resolved(self, resolved, row):
+        """Default mathematical scoring; scoped Test recovery may retry this boundary."""
+        return bool(MATHBenchmarkAdapter().score_member_output(resolved.parsed(), row['reference_final_answer']))
 
     def evaluate(self, prompt, rows, split, seed, ordinal):
         if not rows or seed != self.seed:

@@ -15,10 +15,15 @@ def main():
     parser.add_argument('--destination', type=Path, required=True)
     parser.add_argument('--continue-parent', type=Path)
     parser.add_argument('--c-only',action='store_true',help='Fresh reviewed C-only three-repeat experiment; no old state/cache.')
+    parser.add_argument('--resume-c-test',action='store_true',help='Test-only continuation of the pinned scorer-aborted C Test.')
     args = parser.parse_args()
     if args.continue_parent:
         parser.error('Historical Batch continuation is not a current module-aligned experiment; use its frozen Git source for historical replay.')
-    value = prepare(ROOT,args.destination,c_only=args.c_only)
+    if args.resume_c_test:
+        if args.c_only:parser.error('C-only training and Test continuation are separate scopes.')
+        from multi_dataset_diverse_rl.research.ablations.test_resume import prepare as prepare_test
+        value=prepare_test(ROOT,args.destination)
+    else:value = prepare(ROOT,args.destination,c_only=args.c_only)
     print(json.dumps(value, indent=2))
 
 

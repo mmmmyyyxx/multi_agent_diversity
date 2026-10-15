@@ -10799,3 +10799,30 @@ experiments:
     result_commit: No efficacy evidence.
     report: Preparation protocol only; real result pending.
     classifier: No efficacy classification.
+- experiment_id: single_prompt_c_test_resume_v8
+  kind: ABLATION
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: single_prompt_formal_module_alignment_v4
+  parent_ids:
+  - single_prompt_pattern_c_only_v7
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: NOT_EVALUATED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_c_test_resume_v8.json
+  report: null
+  classifier: null
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User-requested Test-only continuation; complete training and aborted Test remain immutable.
+  - Exact paid Solver prefix reuse; local scorer timeouts retry the same answer without new model calls.
+  - Preparation metadata is not an API authorization; the fresh scope records the explicit continuation grant.
+  unavailable:
+    implementation_commit: Containing implementation commit; no self-reference.
+    execution_commit: Not executed at registration.
+    result_commit: Pending completed Test.
+    report: Test continuation protocol; execution evidence stays private.
+    classifier: No completed-Test classification yet.

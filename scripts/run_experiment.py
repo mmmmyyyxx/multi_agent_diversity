@@ -19,6 +19,10 @@ def _load(path):
 
 
 def preflight(manifest):
+    if manifest.get('schema_version')=='single_prompt_c_test_resume_manifest_v8':
+        from multi_dataset_diverse_rl.research.ablations.test_resume import validate_manifest
+        validate_manifest(ROOT,manifest)
+        return dict(status='TEST_RESUME_PREFLIGHT_PASS_NOT_AUTHORIZED',real_api_calls=0,ready_to_run=False)
     if manifest.get('schema_version')=='single_prompt_pattern_c_only_manifest_v7':
         from multi_dataset_diverse_rl.research.ablations.aligned import validate_manifest
         validate_manifest(ROOT,manifest,c_only=True)
@@ -88,6 +92,10 @@ def preflight(manifest):
 
 
 def governed_preflight(prep):
+    if _load(prep/'prep.json').get('schema_version')=='single_prompt_c_test_resume_prep_v8':
+        from multi_dataset_diverse_rl.research.ablations.test_resume import validate_prep as validate_test_resume
+        scope=validate_test_resume(ROOT,prep)
+        return dict(gate='TEST_RESUME_FROZEN_NOT_AUTHORIZED',scope_identity=scope['scope_identity'],provider_attempts=0)
     from multi_dataset_diverse_rl.research.ablations import governance as ablation
     if _load(prep/'prep.json').get('schema_version') in (ablation.PREP_SCHEMA, 'single_prompt_ablation_continuation_prep_v4','single_prompt_module_alignment_prep_v6','single_prompt_pattern_c_only_prep_v7','single_prompt_full_diagnosis_prep_v5'):
         scope = ablation.validate_prep(ROOT, prep)
@@ -115,6 +123,9 @@ def governed_preflight(prep):
 
 
 async def execute_frozen(prep,run_root):
+    if _load(prep/'prep.json').get('schema_version')=='single_prompt_c_test_resume_prep_v8':
+        from multi_dataset_diverse_rl.research.ablations.test_resume import execute as execute_test_resume
+        return await asyncio.to_thread(execute_test_resume,ROOT,prep,run_root)
     from multi_dataset_diverse_rl.research.ablations import governance as ablation
     if _load(prep/'prep.json').get('schema_version') in (ablation.PREP_SCHEMA, 'single_prompt_ablation_continuation_prep_v4','single_prompt_module_alignment_prep_v6','single_prompt_pattern_c_only_prep_v7','single_prompt_full_diagnosis_prep_v5'):
         return await asyncio.to_thread(ablation.execute, ROOT, prep, run_root)

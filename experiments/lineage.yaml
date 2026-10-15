@@ -1160,6 +1160,9 @@ nodes:
 - experiment_id: single_prompt_pattern_c_only_v7
   kind: ABLATION
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: single_prompt_c_test_resume_v8
+  kind: ABLATION
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2681,4 +2684,9 @@ edges:
   relation: derived_from
   evidence: docs/design/SINGLE_PROMPT_PATTERN_C_ONLY_V7.md
   scope: Fresh reviewed C-only three-repeat subset; no historical state/cache or authorization reuse.
+- from: single_prompt_pattern_c_only_v7
+  to: single_prompt_c_test_resume_v8
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_C_TEST_RESUME_V8.md
+  scope: Complete existing Test from paid Solver prefix with same-answer local scorer timeout retry.
 current_frontier: experiments/current_frontier.yaml
