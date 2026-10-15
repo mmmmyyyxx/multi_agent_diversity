@@ -1166,6 +1166,9 @@ nodes:
 - experiment_id: single_prompt_c_test_deadline_v9
   kind: ABLATION
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: single_prompt_c_test_certified_v10
+  kind: ABLATION
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2698,4 +2701,10 @@ edges:
   evidence: docs/design/SINGLE_PROMPT_C_TEST_DEADLINE_V9.md
   scope: Explicit local scoring deadline extension with paid answers and recorded
     scores preserved.
+- from: single_prompt_c_test_deadline_v9
+  to: single_prompt_c_test_certified_v10
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_C_TEST_CERTIFIED_V10.md
+  scope: Certified far-inequality proof before native symbolic verification; preserved
+    paid prefix and scores.
 current_frontier: experiments/current_frontier.yaml

@@ -115,6 +115,10 @@ def validate_registry_v2(root: Path, registry: Mapping) -> tuple[list[str],dict]
                 from ..research.ablations.continuation import validate_manifest as validate_ablation_continuation
                 try:validate_ablation_continuation(root,obj)
                 except ValueError as exc:errors.append(f'{ident}: {exc}')
+            elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_c_test_certified_manifest_v10':
+                from ..research.ablations.test_certified import validate_manifest as validate_certified
+                try:validate_certified(root,obj)
+                except ValueError as exc:errors.append(f'{ident}: {exc}')
             elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_c_test_deadline_manifest_v9':
                 from ..research.ablations.test_deadline import validate_manifest as validate_test_deadline
                 try:validate_test_deadline(root,obj)

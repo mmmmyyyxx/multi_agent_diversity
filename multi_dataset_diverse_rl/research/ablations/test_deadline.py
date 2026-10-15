@@ -18,11 +18,16 @@ PREP_SCHEMA='single_prompt_c_test_deadline_prep_v9'
 PARENT='runs/ablations/pattern_c_only_test_resume_v8'
 PIN='runs/ablations/pattern_c_only_test_deadline_v9/parent_pin.json'
 PIN_SHA256='b97d2ec193ce78974e56acd5a1379b41542d6778ef2930e6fa3dc06aa8f8c069'
+EXPERIMENT_ID='single_prompt_c_test_deadline_v9'
+PARENT_MANIFEST=prior.MANIFEST
+VERSION='V9'
+HANDOFF_NAME='C-only Test continuation with thirty-second local grading'
 
 
-def parent_pin(root):
-    if file_hash(root/PIN)!=PIN_SHA256:raise SearchContractError('TEST_DEADLINE_PARENT_PIN_CHANGED')
-    return read_json(root/PIN)
+def parent_pin(root,*,contract=None):
+    c=contract or sys.modules[__name__]
+    if file_hash(root/c.PIN)!=c.PIN_SHA256:raise SearchContractError('TEST_DEADLINE_PARENT_PIN_CHANGED')
+    return read_json(root/c.PIN)
 
 
 def operation_policy():
@@ -34,15 +39,16 @@ def operation_policy():
     return result
 
 
-def manifest_template():
-    return dict(schema_version=SCHEMA,experiment_id='single_prompt_c_test_deadline_v9',
-        parents=[prior.MANIFEST],protocol_path=PROTOCOL,parent_root=PARENT,
-        parent_pin_path=PIN,parent_pin_sha256=PIN_SHA256,operation_policy=operation_policy(),
+def manifest_template(*,contract=None):
+    c=contract or sys.modules[__name__]
+    return dict(schema_version=c.SCHEMA,experiment_id=c.EXPERIMENT_ID,
+        parents=[c.PARENT_MANIFEST],protocol_path=c.PROTOCOL,parent_root=c.PARENT,
+        parent_pin_path=c.PIN,parent_pin_sha256=c.PIN_SHA256,operation_policy=c.operation_policy(),
         status='PREPARED_NOT_EXECUTED',real_api_authorized=False)
 
 
-def validate_manifest(root,value):
-    if value!=manifest_template():raise SearchContractError('TEST_DEADLINE_MANIFEST_CHANGED')
+def validate_manifest(root,value,*,contract=None):
+    if value!=manifest_template(contract=contract):raise SearchContractError('TEST_DEADLINE_MANIFEST_CHANGED')
 
 
 def audit_parent(root):
@@ -104,12 +110,13 @@ class TestResumeBroker(PriorBroker):
             return super().retry_local(operation,context)
 
 
-def _scope(root,prep):
-    validate_manifest(root,read_json(root/MANIFEST));pin=parent_pin(root)
+def _scope(root,prep,*,contract=None):
+    c=contract or sys.modules[__name__]
+    c.validate_manifest(root,read_json(root/c.MANIFEST));pin=c.parent_pin(root)
     scope=prior._scope(root,prep);scope.pop('scope_identity')
-    scope.update(study_id='single_prompt_c_test_deadline_v9',manifest_sha256=file_hash(root/MANIFEST),
-        protocol_sha256=file_hash(root/PROTOCOL),parent_pin_sha256=PIN_SHA256,
-        call_ceiling=2863,local_evaluator_recovery=operation_policy(),
+    scope.update(study_id=c.EXPERIMENT_ID,manifest_sha256=file_hash(root/c.MANIFEST),
+        protocol_sha256=file_hash(root/c.PROTOCOL),parent_pin_sha256=c.PIN_SHA256,
+        call_ceiling=c.operation_policy()['new_call_ceiling'],local_evaluator_recovery=c.operation_policy(),
         deadline_parent_scope_identity=pin['parent_scope'])
     return dict(scope,scope_identity=digest(scope))
 
@@ -117,43 +124,46 @@ def _scope(root,prep):
 authorization_template=prior.authorization_template
 
 
-def handoff_template(root,prep,scope):
+def handoff_template(root,prep,scope,*,contract=None):
+    c=contract or sys.modules[__name__]
     value=prior.handoff_template(root,prep,scope)
     value['experiment_id']=scope['study_id']
-    value['protocol'].update(name='C-only Test continuation with thirty-second local grading',version='V9',
-        protocol_sha256=file_hash(root/PROTOCOL),manifest_path=MANIFEST,manifest_sha256=file_hash(root/MANIFEST),
-        preregistration_path=PROTOCOL,preregistration_sha256=file_hash(root/PROTOCOL))
-    value['execution'].update(new_successful_semantic_and_inflight_ceiling=2863,
-        allowed_retries=dict(local=operation_policy(),network=scope['network_recovery']))
+    value['protocol'].update(name=c.HANDOFF_NAME,version=c.VERSION,
+        protocol_sha256=file_hash(root/c.PROTOCOL),manifest_path=c.MANIFEST,manifest_sha256=file_hash(root/c.MANIFEST),
+        preregistration_path=c.PROTOCOL,preregistration_sha256=file_hash(root/c.PROTOCOL))
+    value['execution'].update(new_successful_semantic_and_inflight_ceiling=c.operation_policy()['new_call_ceiling'],
+        allowed_retries=dict(local=c.operation_policy(),network=scope['network_recovery']))
     return value
 
 
-def prepare(root,prep):
+def prepare(root,prep,*,contract=None):
+    c=contract or sys.modules[__name__]
     prep=private_path(root,prep);require_selected_runtime(root)
     if prep.exists() or gov._git(root,'status','--porcelain','--untracked-files=no'):
         raise SearchContractError('TEST_DEADLINE_FRESH_CLEAN_PREPARATION_REQUIRED')
-    audit_parent(root);scope=_scope(root,prep)
+    c.audit_parent(root);scope=_scope(root,prep,contract=c)
     if set(scope['source_hashes'])-set(gov._git(root,'ls-files').splitlines()):
         raise SearchContractError('TEST_DEADLINE_UNCOMMITTED_FREEZE')
     prep.mkdir(parents=True)
-    atomic_write_json(prep/'prep.json',dict(schema_version=PREP_SCHEMA,scope=scope))
+    atomic_write_json(prep/'prep.json',dict(schema_version=c.PREP_SCHEMA,scope=scope))
     atomic_write_json(prep/'authorization.json',authorization_template(scope))
     atomic_write_json(prep/'execution_plan.json',scope['execution'])
-    atomic_write_json(prep/'handoff.json',handoff_template(root,prep,scope))
+    atomic_write_json(prep/'handoff.json',handoff_template(root,prep,scope,contract=c))
     return dict(status='FROZEN_NOT_AUTHORIZED',source_sha=scope['source_sha'],scope_identity=scope['scope_identity'],real_api_calls=0)
 
 
-def validate_prep(root,prep,*,authorized=False):
+def validate_prep(root,prep,*,authorized=False,contract=None):
+    c=contract or sys.modules[__name__]
     prep=private_path(root,prep);require_selected_runtime(root);value=read_json(prep/'prep.json')
-    if (value.get('schema_version')!=PREP_SCHEMA or gov._git(root,'status','--porcelain','--untracked-files=no')
-            or value['scope']!=_scope(root,prep)):
+    if (value.get('schema_version')!=c.PREP_SCHEMA or gov._git(root,'status','--porcelain','--untracked-files=no')
+            or value['scope']!=_scope(root,prep,contract=c)):
         raise SearchContractError('TEST_DEADLINE_FROZEN_IDENTITY_CHANGED')
     scope=value['scope'];auth=read_json(prep/'authorization.json');expected=authorization_template(scope)
     mutable=('approved','test_access','user_authorization_evidence_sha256')
     if (set(auth)!=set(expected) or any(auth[k]!=expected[k] for k in expected if k not in mutable)
             or type(auth['approved']) is not bool or type(auth['test_access']) is not bool):
         raise SearchContractError('TEST_DEADLINE_EXACT_AUTHORIZATION_REQUIRED')
-    handoff=read_json(prep/'handoff.json');wanted=handoff_template(root,prep,scope)
+    handoff=read_json(prep/'handoff.json');wanted=handoff_template(root,prep,scope,contract=c)
     if (read_json(prep/'execution_plan.json')!=scope['execution'] or set(handoff)!=set(wanted)
             or any(handoff[k]!=v for k,v in wanted.items() if k not in ('READY_TO_RUN','status'))):
         raise SearchContractError('TEST_DEADLINE_HANDOFF_CHANGED')

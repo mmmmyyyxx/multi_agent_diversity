@@ -21,6 +21,9 @@ outputs and retries the same local mathematical score after evaluator timeout.
 Its [thirty-second grading continuation](SINGLE_PROMPT_C_TEST_DEADLINE_V9.md)
 extends only the local worker deadline after repeated timeout, preserving paid
 answers and all previously recorded terminal scores.
+The [certified-negative scoring repair](SINGLE_PROMPT_C_TEST_CERTIFIED_V10.md)
+adds bounded exact enclosures before expensive native symbolic comparison only
+to the authorized C Test continuation; the current team evaluator is unchanged.
 The explicitly user-requested [independent single-Prompt mechanism study](SINGLE_PROMPT_GRADIENT_PATTERN_V1.md)
 is isolated from this method and routes only its own schema through the shared
 runner. Its approved 20-round/error-Batch protocol does not amend team defaults.

@@ -19,6 +19,10 @@ def _load(path):
 
 
 def preflight(manifest):
+    if manifest.get('schema_version')=='single_prompt_c_test_certified_manifest_v10':
+        from multi_dataset_diverse_rl.research.ablations.test_certified import validate_manifest
+        validate_manifest(ROOT,manifest)
+        return dict(status='TEST_CERTIFIED_PREFLIGHT_PASS_NOT_AUTHORIZED',real_api_calls=0,ready_to_run=False)
     if manifest.get('schema_version')=='single_prompt_c_test_deadline_manifest_v9':
         from multi_dataset_diverse_rl.research.ablations.test_deadline import validate_manifest
         validate_manifest(ROOT,manifest)
@@ -96,6 +100,10 @@ def preflight(manifest):
 
 
 def governed_preflight(prep):
+    if _load(prep/'prep.json').get('schema_version')=='single_prompt_c_test_certified_prep_v10':
+        from multi_dataset_diverse_rl.research.ablations.test_certified import validate_prep as validate_certified
+        scope=validate_certified(ROOT,prep)
+        return dict(status='TEST_CERTIFIED_SCOPE_VERIFIED_NOT_EXECUTED',scope_identity=scope['scope_identity'],real_api_calls=0)
     if _load(prep/'prep.json').get('schema_version')=='single_prompt_c_test_deadline_prep_v9':
         from multi_dataset_diverse_rl.research.ablations.test_deadline import validate_prep as validate_test_deadline
         scope=validate_test_deadline(ROOT,prep)
@@ -131,6 +139,9 @@ def governed_preflight(prep):
 
 
 async def execute_frozen(prep,run_root):
+    if _load(prep/'prep.json').get('schema_version')=='single_prompt_c_test_certified_prep_v10':
+        from multi_dataset_diverse_rl.research.ablations.test_certified import execute as execute_certified
+        return await asyncio.to_thread(execute_certified,ROOT,prep,run_root)
     if _load(prep/'prep.json').get('schema_version')=='single_prompt_c_test_deadline_prep_v9':
         from multi_dataset_diverse_rl.research.ablations.test_deadline import execute as execute_test_deadline
         return await asyncio.to_thread(execute_test_deadline,ROOT,prep,run_root)
