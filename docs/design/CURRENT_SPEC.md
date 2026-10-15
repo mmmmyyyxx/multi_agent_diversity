@@ -8,7 +8,10 @@ are synthetic-only until separately specified, frozen and authorized.
 The user-requested [single-Prompt module ablation framework](SINGLE_PROMPT_MODULE_ABLATIONS_V1.md)
 isolates an independent optimizer kernel and adapters to actual formal modules.
 Its seed42/three-repeat defaults are independent preparation settings, not team defaults
-or a grant to reuse historical scopes. Memory adaptation remains explicitly unbound.
+or a grant to reuse historical scopes. The [full-diagnosis ablation amendment](SINGLE_PROMPT_FULL_DIAGNOSIS_PATTERN_V5.md)
+makes new C plans diagnose all current errors before formal clustering and sampling
+up to three representative supports. Its largest-support selector remains explicit.
+Memory adaptation remains explicitly unbound.
 The explicitly user-requested [independent single-Prompt mechanism study](SINGLE_PROMPT_GRADIENT_PATTERN_V1.md)
 is isolated from this method and routes only its own schema through the shared
 runner. Its approved 20-round/error-Batch protocol does not amend team defaults.

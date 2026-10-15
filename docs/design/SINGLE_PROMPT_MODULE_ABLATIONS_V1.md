@@ -1,5 +1,9 @@
 # Isolated single-Prompt module ablations
 
+New defaults are superseded by [full-diagnosis V5](SINGLE_PROMPT_FULL_DIAGNOSIS_PATTERN_V5.md):
+three repeats, all-error C diagnosis before clustering, and formal representative sampling.
+The original Batch/five-repeat preparation below describes the historical V1 design.
+
 This user-requested framework is separate from Unified Team Prompt Search and
 from every frozen historical single-Prompt attempt. It migrates reusable study
 orchestration into `multi_dataset_diverse_rl/research/ablations/`. Historical

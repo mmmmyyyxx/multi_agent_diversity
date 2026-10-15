@@ -41,7 +41,7 @@ def runtime_defaults():
              test='separate_frozen_authorized_final_test300_after_all_cells_sealed')
 
 
-def default_config():
+def batch_config():
     return dict(schema_version=SCHEMA, experiment_id='single_prompt_pattern_repeat3_solver_cache_v3',
         parent_manifest=PARENT, seed=42, repeats_per_arm=3, rounds=20,
         arms=[dict(arm_id='A', error_source='all_wrong', module='none'),
@@ -50,19 +50,42 @@ def default_config():
         runtime=runtime_defaults(), preparation_only=True, real_api_authorized=False)
 
 
+ALIGNED_SCHEMA = 'single_prompt_module_ablation_draft_v3'
+ALIGNED_IDENTITY = 'SINGLE_PROMPT_FULL_DIAGNOSIS_KERNEL_V3'
+ALIGNED_PARENT = 'experiments/manifests/single_prompt_pattern_truncation_continuation_v4.json'
+
+
+def aligned_runtime():
+    from .continuation import recovery_policy
+    value = runtime_defaults()
+    value.update(identity=ALIGNED_IDENTITY, diagnosis_universe='all_current_optimize_errors',
+        pattern_representative_count=3, pattern_support_sampling='formal_seeded_task_type_round_robin',
+        diagnosis_recovery=recovery_policy())
+    return value
+
+
+def default_config():
+    value = batch_config()
+    value.update(schema_version=ALIGNED_SCHEMA, experiment_id='single_prompt_full_diagnosis_pattern_v5',
+        parent_manifest=ALIGNED_PARENT, runtime=aligned_runtime())
+    value['arms'][2].update(error_source='all_wrong', module='full_gradient_pattern')
+    return value
+
+
 def validate_config(value):
-    expected = default_config()
+    aligned = isinstance(value, dict) and value.get('schema_version') == ALIGNED_SCHEMA
+    expected = default_config() if aligned else batch_config()
     if not isinstance(value, dict) or set(value) != set(expected):
         raise SearchContractError('ABLATION_CONFIG_SCHEMA')
     for key in ('seed', 'repeats_per_arm', 'rounds'):
         if type(value[key]) is not int or value[key] < (0 if key == 'seed' else 1):
             raise SearchContractError('ABLATION_CONFIG_INTEGER')
-    if (value['schema_version'] != SCHEMA or value['parent_manifest'] != PARENT
+    if (value['schema_version'] != expected['schema_version'] or value['parent_manifest'] != expected['parent_manifest']
             or value['preparation_only'] is not True or value['real_api_authorized'] is not False
             or not isinstance(value['experiment_id'], str)
             or not re.fullmatch('[a-z][a-z0-9_]{0,79}', value['experiment_id'])):
         raise SearchContractError('ABLATION_DRAFT_NOT_EXECUTION_AUTHORIZATION')
-    runtime = runtime_defaults()
+    runtime = aligned_runtime() if aligned else runtime_defaults()
     runtime.update(seeds=[value['seed']], rounds=value['rounds'], repeats_per_arm=value['repeats_per_arm'])
     if digest(value['runtime']) != digest(runtime):
         raise SearchContractError('ABLATION_RUNTIME_POLICY_MISMATCH')
@@ -102,7 +125,7 @@ def build_plan(config, registry=None):
     for arm in config['arms']:
         bound = bindings[arm['arm_id']]['semantic_calls_per_opportunity']
         training += config['repeats_per_arm'] * config['rounds'] * bound
-    body = dict(identity=IDENTITY, config=config, module_bindings=bindings, cells=cells,
+    body = dict(identity=p['identity'], config=config, module_bindings=bindings, cells=cells,
         cell_order='arm_then_repeat_sequential',
         cache_policy='solver_only_paired_within_repeat_across_arms_and_rounds_no_legacy_cache',
         training_semantic_call_ceiling=training,

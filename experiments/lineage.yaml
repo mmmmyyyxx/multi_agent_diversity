@@ -1151,6 +1151,9 @@ nodes:
 - experiment_id: single_prompt_pattern_truncation_continuation_v4
   kind: ABLATION
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: single_prompt_full_diagnosis_pattern_v5
+  kind: ABLATION
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2655,4 +2658,10 @@ edges:
   evidence: docs/design/SINGLE_PROMPT_PATTERN_TRUNCATION_CONTINUATION_V4.md
   scope: Bounded discarded-output recovery with immutable completed prefix and Solver-only continuation
     cache.
+- from: single_prompt_pattern_truncation_continuation_v4
+  to: single_prompt_full_diagnosis_pattern_v5
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_FULL_DIAGNOSIS_PATTERN_V5.md
+  scope: All-error diagnostic universe before formal representative sampling; historical evidence preserved,
+    no execution authorization.
 current_frontier: experiments/current_frontier.yaml

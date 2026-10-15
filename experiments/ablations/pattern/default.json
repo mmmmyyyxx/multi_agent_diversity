@@ -1,7 +1,7 @@
 {
-  "schema_version": "single_prompt_module_ablation_draft_v2",
-  "experiment_id": "single_prompt_pattern_repeat3_solver_cache_v3",
-  "parent_manifest": "experiments/manifests/single_prompt_largest_pattern_v1.json",
+  "schema_version": "single_prompt_module_ablation_draft_v3",
+  "experiment_id": "single_prompt_full_diagnosis_pattern_v5",
+  "parent_manifest": "experiments/manifests/single_prompt_pattern_truncation_continuation_v4.json",
   "seed": 42,
   "repeats_per_arm": 3,
   "rounds": 20,
@@ -18,12 +18,12 @@
     },
     {
       "arm_id": "C",
-      "error_source": "random_wrong_batch",
-      "module": "largest_pattern"
+      "error_source": "all_wrong",
+      "module": "full_gradient_pattern"
     }
   ],
   "runtime": {
-    "identity": "SINGLE_PROMPT_MODULE_ABLATION_KERNEL_V2",
+    "identity": "SINGLE_PROMPT_FULL_DIAGNOSIS_KERNEL_V3",
     "seeds": [
       42
     ],
@@ -166,7 +166,27 @@
       ],
       "physical_call_ceiling": null
     },
-    "test": "separate_frozen_authorized_final_test300_after_all_cells_sealed"
+    "test": "separate_frozen_authorized_final_test300_after_all_cells_sealed",
+    "diagnosis_universe": "all_current_optimize_errors",
+    "pattern_representative_count": 3,
+    "pattern_support_sampling": "formal_seeded_task_type_round_robin",
+    "diagnosis_recovery": {
+      "identity": "ABLATION_DISCARDED_LENGTH_BOUNDED_RECOVERY_V1",
+      "discarded_finish_reasons": [
+        "length",
+        "max_tokens",
+        "max_output_tokens"
+      ],
+      "nonthinking": "discard_length_before_missing_witness_guard_never_accept_positive_thinking",
+      "gradient_draws_per_example": 3,
+      "cluster_draws_per_opportunity": 3,
+      "optimizer_draws_per_opportunity": 4,
+      "capacity_change": false,
+      "diagnostic_truncation_exhaustion": "skip_failed_gradient_item_cluster_successful_items_continue_optimizer",
+      "ordinary_no_pattern": "unchanged_raw_batch_B_fallback",
+      "genuine_control_integrity_or_unknown_failure": "abort_preserve_evidence",
+      "incomplete_teacher": "no_response_replay_carry_semantic_draw_counts"
+    }
   },
   "preparation_only": true,
   "real_api_authorized": false

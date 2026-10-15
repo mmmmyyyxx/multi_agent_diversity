@@ -1,5 +1,24 @@
 schema_version: failure_registry_v1
 failures:
+- failure_id: FAIL-ABLATION-PATTERN-DIAGNOSIS-UNIVERSE
+  title: Pre-sampling three errors prevented full wrong-set Pattern discovery
+  status: MITIGATED
+  lifecycle: OFFLINE_VERIFICATION
+  first_observed: single_prompt_pattern_repeat3_solver_cache_v3
+  affected_components:
+  - ablation_module_input_universe
+  - pattern_representative_sampling
+  symptom: C diagnosed only the preselected three-error Batch rather than the complete current wrong set.
+  evidence:
+  - docs/design/SINGLE_PROMPT_FULL_DIAGNOSIS_PATTERN_V5.md
+  evidence_level: source_verified
+  root_cause_status: Production extractor and cluster code were reused behind a restricted ablation input
+    adapter.
+  mitigation: Full wrong-set input precedes formal discovery and formal representative sampling under
+    a distinct identity.
+  forbidden_inference: Stopped Batch results do not establish efficacy of full wrong-set diagnosis.
+  regression_tests:
+  - tests/current/test_ablation_full_diagnosis.py
 - failure_id: FAIL-V27-OPTIMIZER-OUTPUT-CONTRACT-AMBIGUITY
   title: Gradient block mappings and JSON syntax repeatedly exhaust output recovery
   status: MITIGATED

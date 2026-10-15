@@ -10718,3 +10718,30 @@ experiments:
     result_commit: No efficacy evidence.
     report: Preparation protocol in registered manifest; real result pending.
     classifier: Scientific classification pending real evidence.
+- experiment_id: single_prompt_full_diagnosis_pattern_v5
+  kind: ABLATION
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: single_prompt_full_diagnosis_ablation_v3
+  parent_ids:
+  - single_prompt_pattern_truncation_continuation_v4
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: NOT_EVALUATED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_full_diagnosis_pattern_v5.json
+  report: null
+  classifier: null
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - All wrong-set Gradient diagnosis and clustering before production representative sampling; maximum
+    support focus retained.
+  - Preparation only; stopped Batch runs preserved, no inherited state or authorization.
+  unavailable:
+    implementation_commit: Containing implementation commit; no self-reference.
+    execution_commit: Not executed.
+    result_commit: No efficacy evidence.
+    report: Preparation protocol in registered manifest; real result pending.
+    classifier: Scientific classification pending real evidence.

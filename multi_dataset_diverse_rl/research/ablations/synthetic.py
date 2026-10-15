@@ -59,7 +59,9 @@ def smoke(plan, destination):
     scope_id = digest(['SYNTHETIC_ONLY', plan['plan_identity']])
     ledger = TokenLedger(destination / 'ledger', task_sha256=scope_id, policy=POLICY_GATED_32_UNCAPPED)
     broker = OfflineAblationBroker(plan=plan, phase='train', scope=dict(scope_identity=scope_id,
-        token_ceiling=None, call_ceiling=plan['training_semantic_call_ceiling'], network_recovery=True),
+        token_ceiling=None, call_ceiling=plan['training_semantic_call_ceiling'], network_recovery=True,
+        **({'generation_recovery':plan['config']['runtime']['diagnosis_recovery']}
+           if 'diagnosis_recovery' in plan['config']['runtime'] else {})),
         transport=SyntheticTransport(), ledger=ledger,
         receipts=ProviderResponseReceipts(destination / 'receipts', attempt_id='SYNTHETIC', startup_identity_sha256=scope_id),
         dispatch_guard=lambda _: None)

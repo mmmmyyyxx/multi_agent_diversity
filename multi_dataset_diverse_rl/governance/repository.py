@@ -99,6 +99,10 @@ def validate_registry_v2(root: Path, registry: Mapping) -> tuple[list[str],dict]
                 from ..research.ablations.governance import validate_manifest as validate_ablation
                 try:validate_ablation(root,obj)
                 except ValueError as exc:errors.append(f'{ident}: {exc}')
+            elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_full_diagnosis_manifest_v5':
+                from ..research.ablations.aligned import validate_manifest as validate_full_diagnosis
+                try:validate_full_diagnosis(root,obj)
+                except ValueError as exc:errors.append(f'{ident}: {exc}')
             elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_ablation_continuation_manifest_v4':
                 from ..research.ablations.continuation import validate_manifest as validate_ablation_continuation
                 try:validate_ablation_continuation(root,obj)

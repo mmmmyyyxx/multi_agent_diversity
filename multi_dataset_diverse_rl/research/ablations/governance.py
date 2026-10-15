@@ -28,7 +28,7 @@ from ..single_prompt_governance import (
 )
 from ..gated_prompt_policy import gate_membership
 from ..gated_prompt_test import formal_test_plan
-from .config import build_plan, default_config, validate_plan, request_namespace
+from .config import build_plan, batch_config as default_config, validate_plan, request_namespace
 from .engine import run_cell
 from .analysis import summarize
 from .runtime import AblationBroker
@@ -115,6 +115,8 @@ def source_snapshot(root):
     paths.add(root / manifest['data']['canonical_root'] / 'manifests/math.json')
     from .continuation import MANIFEST as amendment_manifest
     paths.add(root / amendment_manifest)
+    from .aligned import MANIFEST as aligned_manifest
+    paths.add(root / aligned_manifest)
     return {p.relative_to(root).as_posix(): file_hash(p) for p in sorted(paths)}
 
 
@@ -230,6 +232,9 @@ def validate_prep(root, directory, *, authorized=False):
     directory = private_path(root, directory)
     prep = read_json(directory / 'prep.json')
     from . import continuation
+    from . import aligned
+    if prep.get('schema_version') == aligned.PREP_SCHEMA:
+        return aligned.validate_prep(root,directory,authorized=authorized)
     if prep.get('schema_version') == continuation.PREP_SCHEMA:
         return continuation.validate_prep(root, directory, authorized=authorized)
     if set(prep) != {'schema_version', 'scope'} or prep['schema_version'] != PREP_SCHEMA:
@@ -309,9 +314,21 @@ def audit_cells(directory, scope, *, results=None, allow_partial=False):
                     or opportunity['retained_validation_correct'] != sum(v['correct'] for v in previous['validation'].values())
                     or module['module_binding'] != plan['module_bindings'][cell['arm_id']]):
                 raise SearchContractError('ABLATION_OPPORTUNITY_PROVENANCE')
-            if cell['module'] == 'largest_pattern':
-                from .pattern import project
-                projected, focus = project(module['audit']['complete_diagnosis'], cell['seed'], n)
+            if cell['module'] in ('largest_pattern','full_gradient_pattern'):
+                if cell['module']=='full_gradient_pattern':
+                    from .full_pattern import project_full
+                    projected,focus=project_full(module['audit']['complete_diagnosis'],cell['seed'],n,
+                        module['audit']['sampling_context'])
+                    wrong={i for i,v in previous['optimize'].items() if not v['correct']}
+                    full=module['audit']['complete_diagnosis']
+                    if ({e['example_id'] for e in full['errors']}!=wrong
+                            or {d['example_id'] for d in full['structured_feedback']['diagnostics']}!=wrong
+                            or module['audit']['sampling_context']['cell_id']!=cell['cell_id']
+                            or module['audit']['sampling_context']['prompt_sha256']!=SystemPrompt.from_dict(previous['prompt']).prompt_hash):
+                        raise SearchContractError('ABLATION_FULL_DIAGNOSIS_UNIVERSE_MISMATCH')
+                else:
+                    from .pattern import project
+                    projected,focus=project(module['audit']['complete_diagnosis'],cell['seed'],n)
                 if (projected['errors'] != opportunity['errors']
                         or projected['structured_feedback'] != opportunity['structured_feedback']
                         or focus != module['audit']['focus'] or opportunity['module_context'] is not None):

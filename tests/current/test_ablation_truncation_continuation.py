@@ -12,7 +12,7 @@ from multi_dataset_diverse_rl.research.ablations.formal_adapters import discover
 from multi_dataset_diverse_rl.research.ablations.pattern import LargestPatternModule
 from multi_dataset_diverse_rl.research.ablations.runtime import AblationBroker
 from multi_dataset_diverse_rl.research.ablations.synthetic import SyntheticTransport, synthetic_rows
-from multi_dataset_diverse_rl.research.ablations.config import build_plan, default_config
+from multi_dataset_diverse_rl.research.ablations.config import build_plan, batch_config as default_config
 from multi_dataset_diverse_rl.research.ablations.offline_runtime import OfflineAblationBroker
 from multi_dataset_diverse_rl.benchmarks.data_freeze import digest
 from multi_dataset_diverse_rl.governance.token_accounting import TokenLedger, POLICY_GATED_32_UNCAPPED, OperationalAbort

@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 import pytest
 
 from multi_dataset_diverse_rl.research.ablations import governance as gov
-from multi_dataset_diverse_rl.research.ablations.config import build_plan, default_config
+from multi_dataset_diverse_rl.research.ablations.config import build_plan, batch_config as default_config
 from multi_dataset_diverse_rl.research.ablations.offline_runtime import OfflineAblationBroker
 from multi_dataset_diverse_rl.research.ablations.synthetic import SyntheticTransport, synthetic_rows
 from multi_dataset_diverse_rl.benchmarks.data_freeze import digest
@@ -194,9 +194,13 @@ def test_test_requires_exact_complete_training_terminal_before_access(tmp_path):
 
 
 @pytest.fixture
-def phase_smoke(tmp_path, monkeypatch):
-    config = default_config()
-    config['rounds'] = config['runtime']['rounds'] = 2
+def phase_smoke(tmp_path, monkeypatch, request):
+    if getattr(request,'param',False):
+        from multi_dataset_diverse_rl.research.ablations.config import default_config as full_config
+        config=full_config()
+    else:
+        config=default_config()
+    config['rounds'] = config['runtime']['rounds'] = 1 if getattr(request,'param',False) else 2
     config['repeats_per_arm'] = config['runtime']['repeats_per_arm'] = 1
     plan = build_plan(config)
     optimize = synthetic_rows('optimize', 150)

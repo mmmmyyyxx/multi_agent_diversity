@@ -88,7 +88,7 @@ def test_default_three_repeats_same_seed_and_no_real_grant():
     assert {c['repeat_id'] for c in plan['cells']} == {1, 2, 3}
     assert len({c['cell_id'] for c in plan['cells']}) == 9
     assert not plan['ready_to_run'] and not plan['config']['real_api_authorized']
-    assert plan['training_semantic_call_ceiling'] == 190440
+    assert plan['training_semantic_call_ceiling'] == 216900
     assert plan['final_test_semantic_call_ceiling'] == 10800
     validate_plan(plan)
     assert json.loads((ROOT / 'experiments/ablations/pattern/default.json').read_text(encoding='utf-8')) == default_config()
@@ -108,7 +108,7 @@ def test_draft_or_binding_mutation_fails_closed(change):
     elif change == 'runtime': c['runtime']['optimizer_structural_draws'] = 2
     elif change == 'duplicate_arm': c['arms'].append(deepcopy(c['arms'][0]))
     elif change == 'unknown_module': c['arms'][0]['module'] = 'memory'
-    elif change == 'wrong_pattern_source': c['arms'][2]['error_source'] = 'all_wrong'
+    elif change == 'wrong_pattern_source': c['arms'][2]['error_source'] = 'random_wrong_batch'
     elif change == 'float_seed': c['seed'] = 42.0
     else:
         plan = build_plan(c); plan['cells'][0]['repeat_id'] = 2

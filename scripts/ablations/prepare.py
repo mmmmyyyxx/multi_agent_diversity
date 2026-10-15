@@ -10,7 +10,7 @@ if str(ROOT) not in sys.path:
 
 
 def main():
-    from multi_dataset_diverse_rl.research.ablations.governance import prepare
+    from multi_dataset_diverse_rl.research.ablations.aligned import prepare
     parser = argparse.ArgumentParser()
     parser.add_argument('--destination', type=Path, required=True)
     parser.add_argument('--continue-parent', type=Path)

@@ -53,8 +53,10 @@ class ModuleRegistry:
 
 def default_registry():
     from .pattern import LargestPatternModule,GradientOnlyModule
+    from .full_pattern import FullDiagnosisPatternModule
     registry = ModuleRegistry()
     registry.register('none', NoModule)
     registry.register('largest_pattern', LargestPatternModule)
+    registry.register('full_gradient_pattern', FullDiagnosisPatternModule)
     registry.register('formal_gradient', GradientOnlyModule)
     return registry
