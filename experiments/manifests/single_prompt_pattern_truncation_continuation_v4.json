@@ -1,0 +1,36 @@
+{
+  "schema_version": "single_prompt_ablation_continuation_manifest_v4",
+  "experiment_id": "single_prompt_pattern_truncation_continuation_v4",
+  "parents": [
+    "experiments/manifests/single_prompt_pattern_repeat3_solver_cache_v3.json"
+  ],
+  "protocol_path": "docs/design/SINGLE_PROMPT_PATTERN_TRUNCATION_CONTINUATION_V4.md",
+  "generation_recovery": {
+    "identity": "ABLATION_DISCARDED_LENGTH_BOUNDED_RECOVERY_V1",
+    "discarded_finish_reasons": [
+      "length",
+      "max_tokens",
+      "max_output_tokens"
+    ],
+    "nonthinking": "discard_length_before_missing_witness_guard_never_accept_positive_thinking",
+    "gradient_draws_per_example": 3,
+    "cluster_draws_per_opportunity": 3,
+    "optimizer_draws_per_opportunity": 4,
+    "capacity_change": false,
+    "diagnostic_truncation_exhaustion": "skip_failed_gradient_item_cluster_successful_items_continue_optimizer",
+    "ordinary_no_pattern": "unchanged_raw_batch_B_fallback",
+    "genuine_control_integrity_or_unknown_failure": "abort_preserve_evidence",
+    "incomplete_teacher": "no_response_replay_carry_semantic_draw_counts"
+  },
+  "parent_expectation": {
+    "source_sha": "241f725797080b1b5fc714834b222b675a09d0e8",
+    "scope_identity": "624d623e7ef83118f58d953b7b34cdd01110b7d1e07a8bbaba4b001267d6c1d6",
+    "completed_opportunities": 133,
+    "provider_calls": 38053,
+    "charged_tokens": 45105780
+  },
+  "scientific_plan": "unchanged_parent_three_repeats_seed42_twenty_opportunities",
+  "cache": "exact_parent_solver_terminal_observations_same_repeat_only_no_teacher_replay",
+  "budgets": "parent_plus_new_training_190440_semantic_test_separate_10800_tokens_uncapped",
+  "real_api_authorized": false
+}

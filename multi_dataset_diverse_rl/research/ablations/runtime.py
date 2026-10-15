@@ -64,6 +64,35 @@ class AblationBroker(NetworkRecoveryMixin, StudyBroker):
             raise SearchContractError('ABLATION_NON_SOLVER_REPLAY_FORBIDDEN')
         return super().complete(**kwargs)
 
+    def _check_nonthinking(self, request, response, role, key):
+        # A discarded length response is not an accepted nonthinking witness.
+        # Check contradictions first; never turn positive thinking evidence into
+        # an ordinary output retry. The amendment is opt-in and scope-bound.
+        if (self.scope.get('generation_recovery') and
+                response.get('finish_reason') in ('length', 'max_tokens', 'max_output_tokens')):
+            from ...benchmarks.math_optimizer_diagnostics import (
+                optimizer_response_telemetry, nonthinking_evidence_contract)
+            from ...search.generation_failures import generation_failure
+            from ...governance.token_accounting import OperationalAbort
+            p = self.study_policy()
+            policy = p['cluster_generation_policy'] if role == 'pattern_cluster' else p['optimizer_generation_policy']
+            audit = optimizer_response_telemetry(request, response, policy, nonthinking_evidence_contract())
+            with self.lock:
+                append_jsonl(self.receipts.directory / 'optimizer_telemetry.jsonl', dict(
+                    request_sha256=key, role=role, cell_id=self.cell_id, telemetry=audit,
+                    disposition='DISCARDED_LENGTH_RESPONSE'))
+            if (audit['enable_thinking'] is not False or
+                    audit['nonthinking_evidence_level'] == 'CONTRADICTORY' or
+                    audit['reasoning_tokens'] is not None and type(audit['reasoning_tokens']) is not int or
+                    audit['reasoning_tokens'] not in (None, 0) or
+                    audit['reasoning_content_chars'] not in (None, 0)):
+                raise OperationalAbort('STUDY_OPTIMIZER_NONTHINKING_UNCONFIRMED_OR_CONTRADICTORY')
+            if role in ('pattern_gradient', 'pattern_cluster'):
+                raise generation_failure('GENERATED_OUTPUT_TRUNCATED')
+            # Reflection's existing four-draw generator handles finish_reason.
+            return
+        return super()._check_nonthinking(request, response, role, key)
+
     def prediction(self, prompt, row, split, seed, ordinal):
         if seed != self.seed or not self.legal_role_split('solver', split):
             raise SearchContractError('ABLATION_SOLVER_SCOPE')

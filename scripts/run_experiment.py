@@ -19,6 +19,10 @@ def _load(path):
 
 
 def preflight(manifest):
+    if manifest.get('schema_version') == 'single_prompt_ablation_continuation_manifest_v4':
+        from multi_dataset_diverse_rl.research.ablations.continuation import validate_manifest
+        validate_manifest(ROOT, manifest)
+        return dict(status='ABLATION_CONTINUATION_PREFLIGHT_PASS_NOT_AUTHORIZED', real_api_calls=0, ready_to_run=False)
     if manifest.get('schema_version') == 'single_prompt_ablation_execution_manifest_v2':
         from multi_dataset_diverse_rl.research.ablations.governance import validate_historical_manifest
         validate_historical_manifest(ROOT, manifest)
@@ -73,7 +77,7 @@ def preflight(manifest):
 
 def governed_preflight(prep):
     from multi_dataset_diverse_rl.research.ablations import governance as ablation
-    if _load(prep/'prep.json').get('schema_version') == ablation.PREP_SCHEMA:
+    if _load(prep/'prep.json').get('schema_version') in (ablation.PREP_SCHEMA, 'single_prompt_ablation_continuation_prep_v4'):
         scope = ablation.validate_prep(ROOT, prep)
         return dict(gate='ABLATION_FROZEN_NOT_AUTHORIZED', scope_identity=scope['scope_identity'], provider_attempts=0)
     from multi_dataset_diverse_rl.research import gated_prompt_governance as gated
@@ -100,7 +104,7 @@ def governed_preflight(prep):
 
 async def execute_frozen(prep,run_root):
     from multi_dataset_diverse_rl.research.ablations import governance as ablation
-    if _load(prep/'prep.json').get('schema_version') == ablation.PREP_SCHEMA:
+    if _load(prep/'prep.json').get('schema_version') in (ablation.PREP_SCHEMA, 'single_prompt_ablation_continuation_prep_v4'):
         return await asyncio.to_thread(ablation.execute, ROOT, prep, run_root)
     from multi_dataset_diverse_rl.research import gated_prompt_governance as gated
     if _load(prep/'prep.json').get('schema_version') in (gated.PREP_SCHEMA,gated.network.PREP_SCHEMA,gated.execution_amendment.PREP_SCHEMA,gated.largest.PREP_SCHEMA):

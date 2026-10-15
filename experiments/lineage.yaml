@@ -1148,6 +1148,9 @@ nodes:
 - experiment_id: single_prompt_pattern_repeat3_solver_cache_v3
   kind: ABLATION
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: single_prompt_pattern_truncation_continuation_v4
+  kind: ABLATION
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2646,4 +2649,10 @@ edges:
   evidence: docs/design/SINGLE_PROMPT_PATTERN_REPEAT3_SOLVER_CACHE_V3.md
   scope: Explicit three-repeat amendment with fresh reduced-call execution scope;
     five-repeat preparation preserved unexecuted.
+- from: single_prompt_pattern_repeat3_solver_cache_v3
+  to: single_prompt_pattern_truncation_continuation_v4
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_PATTERN_TRUNCATION_CONTINUATION_V4.md
+  scope: Bounded discarded-output recovery with immutable completed prefix and Solver-only continuation
+    cache.
 current_frontier: experiments/current_frontier.yaml

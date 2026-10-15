@@ -10692,3 +10692,29 @@ experiments:
   - Real execution uses fresh source/scope and the user grant recorded in its private
     authorization.
   unavailable: *id001
+- experiment_id: single_prompt_pattern_truncation_continuation_v4
+  kind: ABLATION
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: single_prompt_module_ablation_v2
+  parent_ids:
+  - single_prompt_pattern_repeat3_solver_cache_v3
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: NOT_EVALUATED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_pattern_truncation_continuation_v4.json
+  report: null
+  classifier: null
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User-authorized bounded truncation continuation; preserve133 opportunities and all paid costs; no
+    Teacher replay.
+  unavailable:
+    implementation_commit: Containing implementation commit; no self-reference.
+    execution_commit: Not executed.
+    result_commit: No efficacy evidence.
+    report: Preparation protocol in registered manifest; real result pending.
+    classifier: Scientific classification pending real evidence.

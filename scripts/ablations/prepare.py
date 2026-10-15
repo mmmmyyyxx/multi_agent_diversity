@@ -13,8 +13,14 @@ def main():
     from multi_dataset_diverse_rl.research.ablations.governance import prepare
     parser = argparse.ArgumentParser()
     parser.add_argument('--destination', type=Path, required=True)
+    parser.add_argument('--continue-parent', type=Path)
     args = parser.parse_args()
-    print(json.dumps(prepare(ROOT, args.destination), indent=2))
+    if args.continue_parent:
+        from multi_dataset_diverse_rl.research.ablations.continuation import prepare as prepare_continuation
+        value = prepare_continuation(ROOT, args.destination, args.continue_parent)
+    else:
+        value = prepare(ROOT, args.destination)
+    print(json.dumps(value, indent=2))
 
 
 if __name__ == '__main__':

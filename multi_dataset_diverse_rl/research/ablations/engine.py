@@ -108,8 +108,11 @@ def run_cell(plan, cell, initial_prompt, optimize_rows, validation_rows, broker,
         selected_rows = tuple(r for r in optimize_rows if r['stable_example_id'] in set(selected))
         context = OptimizeContext(cell['cell_id'], cell['seed'], cell['repeat_id'], ordinal,
             prompt, deepcopy(selected_rows), {i: deepcopy(optimize[i]) for i in selected})
-        prepared = module.prepare(context, deepcopy(state),
-            ModuleProvider(broker, binding['semantic_calls_per_opportunity']))
+        provider = ModuleProvider(broker, binding['semantic_calls_per_opportunity'])
+        prepared = module.prepare(context, deepcopy(state), provider)
+        if getattr(broker, 'scope', {}).get('generation_recovery'):
+            prepared = PreparedFeedback(prepared.errors, prepared.structured_feedback, prepared.module_context,
+                dict(prepared.audit, diagnostic_draw_counts=provider.draw_counts()), prepared.state)
         if not isinstance(prepared, PreparedFeedback):
             raise SearchContractError('ABLATION_MODULE_FEEDBACK_TYPE')
         originals = {r['stable_example_id']: raw_error(r, optimize[r['stable_example_id']]) for r in selected_rows}

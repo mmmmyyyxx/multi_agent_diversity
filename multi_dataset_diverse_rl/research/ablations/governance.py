@@ -113,6 +113,8 @@ def source_snapshot(root):
     paths.add(root / manifest['initial_prompt_path'])
     paths.update(p for p in (root / manifest['data']['split_directory']).iterdir() if p.is_file())
     paths.add(root / manifest['data']['canonical_root'] / 'manifests/math.json')
+    from .continuation import MANIFEST as amendment_manifest
+    paths.add(root / amendment_manifest)
     return {p.relative_to(root).as_posix(): file_hash(p) for p in sorted(paths)}
 
 
@@ -227,6 +229,9 @@ def validate_authorization(scope, authorization, *, required=False, test=False):
 def validate_prep(root, directory, *, authorized=False):
     directory = private_path(root, directory)
     prep = read_json(directory / 'prep.json')
+    from . import continuation
+    if prep.get('schema_version') == continuation.PREP_SCHEMA:
+        return continuation.validate_prep(root, directory, authorized=authorized)
     if set(prep) != {'schema_version', 'scope'} or prep['schema_version'] != PREP_SCHEMA:
         raise SearchContractError('ABLATION_PREP_SCHEMA')
     require_selected_runtime(root)
@@ -259,19 +264,21 @@ def read_gate_rows(reader, access):
     return reader._read_rows('validation', frozen_subset_ids=access.membership['sample_ids'])
 
 
-def audit_cells(directory, scope):
+def audit_cells(directory, scope, *, results=None, allow_partial=False):
     """Recheck each persisted gate transition before authorizing Test access."""
     plan = scope['plan']
     validate_plan(plan)
-    results = read_json(directory / 'results.json')
-    if [r['cell'] for r in results] != plan['cells']:
+    results = read_json(directory / 'results.json') if results is None else results
+    expected = plan['cells'][:len(results)] if allow_partial else plan['cells']
+    if [r['cell'] for r in results] != expected:
         raise SearchContractError('ABLATION_COMPLETE_ORDERED_CELLS_REQUIRED')
     for cell, result in zip(plan['cells'], results):
         folder = directory / cell['cell_id']
-        cps = [read_json(folder / f'checkpoint_{n}.json') for n in range(plan['config']['rounds'] + 1)]
+        count = result['rounds_completed'] if allow_partial else plan['config']['rounds']
+        cps = [read_json(folder / f'checkpoint_{n}.json') for n in range(count + 1)]
         first = cps[0]
-        if (result != read_json(folder / 'result.json')
-                or result['rounds_completed'] != plan['config']['rounds']
+        if ((not allow_partial or (folder / 'result.json').exists()) and result != read_json(folder / 'result.json')
+                or not 0 <= count <= plan['config']['rounds'] or result['rounds_completed'] != count
                 or result['prompt_history'] != [cp['prompt'] for cp in cps]
                 or result['metrics'] != [cp['metric'] for cp in cps[1:]]
                 or result['final_prompt'] != cps[-1]['prompt']
@@ -348,16 +355,18 @@ def audit_cells(directory, scope):
     return results
 
 
-def audit_accounting(directory, scope, phase):
+def audit_accounting(directory, scope, phase, *, summary=None, results=None):
     policy = POLICY_GATED_32_UNCAPPED if phase == 'train' else POLICY_V27_FORMAL_UNCAPPED
     view, events = audit_journal(directory / 'ledger', task_sha256=scope['scope_identity'], policy=policy)
-    summary = read_json(directory / 'execution_summary.json')
-    usage = summary['usage']
+    summary = read_json(directory / 'execution_summary.json') if summary is None else summary
+    total_usage = summary['usage']
+    inherited = scope.get('continuation', {}).get('inherited_usage', {})
+    usage = {k: v - inherited.get(k, 0) for k, v in total_usage.items()}
     reserves = {e['reservation_id']: e for e in events if e['kind'] == 'RESERVE'}
     charges = [e for e in events if e['kind'] == 'CHARGE']
     if (view != summary['token_ledger'] or len(reserves) != usage['provider_calls']
             or len(charges) != len(reserves) or view['charged_total'] != usage['input_tokens'] + usage['output_tokens']
-            or usage['provider_calls'] - usage['network_failed_calls'] > scope['call_ceiling']):
+            or total_usage['provider_calls'] - total_usage['network_failed_calls'] > scope['call_ceiling']):
         raise SearchContractError('ABLATION_ACCOUNTING_MISMATCH')
     network_failed = 0
     expected_attempts = {scope['scope_identity'] + '_' + phase + '_' + c['cell_id'] for c in scope['plan']['cells']}
@@ -383,16 +392,20 @@ def audit_accounting(directory, scope, phase):
         if (usage[role] != values.get('physical_attempts', 0)
                 or any(usage[role + '_' + k] != values.get(k, 0) for k in ('input_tokens', 'output_tokens'))):
             raise SearchContractError('ABLATION_ROLE_COST_MISMATCH')
-    for result in read_json(directory / 'results.json'):
+    for result in (read_json(directory / 'results.json') if results is None else results):
         ident = scope['scope_identity'] + '_' + phase + '_' + result['cell']['cell_id']
         values = view['by_attempt'].get(ident, {})
-        if (result['usage']['provider_calls'] != values.get('physical_attempts', 0)
-                or any(result['usage'][k] != values.get(k, 0) for k in ('input_tokens', 'output_tokens'))):
+        old = scope.get('continuation', {}).get('cell_usage', {}).get(result['cell']['cell_id'], {})
+        if (result['usage']['provider_calls'] - old.get('provider_calls', 0) != values.get('physical_attempts', 0)
+                or any(result['usage'][k] - old.get(k, 0) != values.get(k, 0) for k in ('input_tokens', 'output_tokens'))):
             raise SearchContractError('ABLATION_CELL_COST_MISMATCH')
     return dict(physical_calls=len(reserves), charged_tokens=view['charged_total'], network_failed_calls=network_failed)
 
 
 def verify_training(directory, scope):
+    if 'continuation' in scope:
+        from .continuation import verify_parent
+        verify_parent(directory, scope)
     terminal = read_json(directory / 'terminal.json')
     actual = inventory(directory)
     actual.pop('terminal.json', None)
@@ -432,6 +445,9 @@ def _execute_phase(root, prep, directory, scope, *, train_scope, parent_results=
         raise SearchContractError('ABLATION_EXISTING_RUN_FORBIDDEN')
     validate_prep(root, prep, authorized=True)
     validate_authorization(train_scope, read_json(prep / 'authorization.json'), required=True, test=phase == 'test')
+    if phase == 'train' and 'continuation' in scope:
+        from .continuation import verify_parent
+        verify_parent(directory, scope)
     if phase == 'test':
         checked_results, checked_terminal = verify_training(directory.parent / 'train_run', train_scope)
         if checked_results != parent_results or checked_terminal != terminal_sha or scope != final_test_scope(train_scope, terminal_sha):
@@ -471,6 +487,9 @@ def _execute_phase(root, prep, directory, scope, *, train_scope, parent_results=
             initial = read_json(root / manifest['initial_prompt_path'])['members'][0]['prompt']
             atomic_write_json(directory / 'access.json', dict(optimize_ids=[r['stable_example_id'] for r in optimize],
                 validation_gate_ids=scope['gate_membership']['sample_ids'], test_access=False))
+            if 'continuation' in scope:
+                from .continuation import hydrate_solver
+                hydrate_solver(root, scope, broker, optimize, validation, directory)
         else:
             # All train files/ledger/receipts are checked again before opening Test rows.
             verify_training(directory.parent / 'train_run', train_scope)
@@ -493,7 +512,11 @@ def _execute_phase(root, prep, directory, scope, *, train_scope, parent_results=
                     raise SearchContractError('ABLATION_ARTIFACT_OVERWRITE_FORBIDDEN')
                 atomic_write_json(path, data)
             if phase == 'train':
-                result = run_cell(plan, cell, initial, optimize, validation, broker, persist)
+                resume = None
+                if 'continuation' in scope:
+                    from .continuation import restore_prefix
+                    resume = restore_prefix(root, scope, cell, folder)
+                result = run_cell(plan, cell, initial, optimize, validation, broker, persist, resume=resume)
             else:
                 broker.bind_cell(cell, plan)
                 begin = broker.usage_view()
