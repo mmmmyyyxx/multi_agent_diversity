@@ -548,6 +548,7 @@ flowchart TD
     n380["structural_candidate_policy_v2_20261015<br/>ZERO_API_AUDIT<br/>IMPLEMENTED_NOT_EXECUTED"]
     n381["single_prompt_multi_parent_v12<br/>ARCHITECTURE_REFACTOR<br/>IMPLEMENTED_NOT_EXECUTED"]
     n382["single_prompt_completed_ab_test_v13<br/>FORMAL_EXPERIMENT<br/>PREPARED_NOT_EXECUTED"]
+    n383["single_prompt_completed_ab_test_v14<br/>FORMAL_EXPERIMENT<br/>PREPARED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -881,6 +882,7 @@ flowchart TD
   n380 -->|derived_from| n381
   n371 -->|derived_from| n382
   n378 -->|derived_from| n382
+  n382 -->|derived_from| n383
 ```
 
 ## Archived branches and unresolved evidence

@@ -19,7 +19,7 @@ def _load(path):
 
 
 def preflight(manifest):
-    if manifest.get('schema_version')=='single_prompt_completed_ab_test_manifest_v13':
+    if manifest.get('schema_version')=='single_prompt_completed_ab_test_manifest_v14':
         from multi_dataset_diverse_rl.research.ablations.completed_ab_test import manifest_template
         if manifest!=manifest_template():raise SearchContractError('AB_TEST_MANIFEST_CHANGED')
         return dict(status='COMPLETED_AB_TEST_PREFLIGHT_NOT_AUTHORIZED',real_api_calls=0,ready_to_run=False)
@@ -104,7 +104,7 @@ def preflight(manifest):
 
 
 def governed_preflight(prep):
-    if _load(prep/'prep.json').get('schema_version')=='single_prompt_completed_ab_test_prep_v13':
+    if _load(prep/'prep.json').get('schema_version')=='single_prompt_completed_ab_test_prep_v14':
         from multi_dataset_diverse_rl.research.ablations.completed_ab_test import validate_prep as validate_ab
         scope=validate_ab(ROOT,prep)
         return dict(status='COMPLETED_AB_TEST_FROZEN_NOT_EXECUTED',scope_identity=scope['scope_identity'],real_api_calls=0)
@@ -147,7 +147,7 @@ def governed_preflight(prep):
 
 
 async def execute_frozen(prep,run_root):
-    if _load(prep/'prep.json').get('schema_version')=='single_prompt_completed_ab_test_prep_v13':
+    if _load(prep/'prep.json').get('schema_version')=='single_prompt_completed_ab_test_prep_v14':
         from multi_dataset_diverse_rl.research.ablations.completed_ab_test import execute as execute_ab
         return await asyncio.to_thread(execute_ab,ROOT,prep,run_root)
     if _load(prep/'prep.json').get('schema_version')=='single_prompt_c_test_certified_prep_v10':

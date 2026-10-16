@@ -10986,3 +10986,29 @@ experiments:
     result_commit: No new Test results yet.
     report: Private final evaluation pending.
     classifier: Completion and integrity audit pending.
+- experiment_id: single_prompt_completed_ab_test_v14
+  kind: FORMAL_EXPERIMENT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: historical_single_prompt_AB_final_test
+  parent_ids:
+  - single_prompt_completed_ab_test_v13
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: NOT_EVALUATED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_completed_ab_test_v14.json
+  report: null
+  classifier: null
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User-authorized bounded checkpoint audit repair and remaining six historical A/B Tests; no new training or C calls.
+  - Original Test membership, Solver contract, scoring, cache and recovery preserved; fresh exact single-use scope.
+  unavailable:
+    implementation_commit: Containing repair commit; no self-reference.
+    execution_commit: Fresh exact frozen attempt pending.
+    result_commit: No new Test results yet.
+    report: Private completion evidence pending.
+    classifier: Completion and integrity audit pending.

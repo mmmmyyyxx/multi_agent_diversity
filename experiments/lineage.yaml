@@ -1181,6 +1181,9 @@ nodes:
 - experiment_id: single_prompt_completed_ab_test_v13
   kind: FORMAL_EXPERIMENT
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: single_prompt_completed_ab_test_v14
+  kind: FORMAL_EXPERIMENT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2749,4 +2752,9 @@ edges:
   relation: derived_from
   evidence: docs/design/SINGLE_PROMPT_COMPLETED_AB_TEST_V13.md
   scope: Reuse verified Test scoring recovery, no new C evaluation.
+- from: single_prompt_completed_ab_test_v13
+  to: single_prompt_completed_ab_test_v14
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_COMPLETED_AB_TEST_V14.md
+  scope: Bounded audit execution repair; identical six historical A/B Test inputs.
 current_frontier: experiments/current_frontier.yaml

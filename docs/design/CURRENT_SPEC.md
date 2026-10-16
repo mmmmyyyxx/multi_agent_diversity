@@ -14,6 +14,9 @@ a fresh freeze. It does not amend the production five-member team method.
 The [historical A/B Test-only scope](SINGLE_PROMPT_COMPLETED_AB_TEST_V13.md)
 finishes six previously completed single-Parent cells; it cannot launch new
 training or alter them into multi-Parent results.
+Its [bounded-audit repair V14](SINGLE_PROMPT_COMPLETED_AB_TEST_V14.md) preserves
+those exact Test read points while streaming checkpoint validation and rehashing
+the fully audited parent inventory at execution boundaries in a fresh scope.
 The predecessor structural drafts use schemaV5/kernelV5; old manifests
 and authorizations cannot execute the revised candidate treatment.
 The [V2.12 modular mechanisms architecture](MODULAR_MECHANISMS_V212.md) separates

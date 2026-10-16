@@ -1,5 +1,21 @@
 schema_version: failure_registry_v1
 failures:
+- failure_id: FAIL-ABLATION-AB-TRAJECTORY-AUDIT-MEMORY
+  title: Full trajectory JSON retention exhausted memory before final Test dispatch
+  status: MITIGATED
+  lifecycle: REAL_OBSERVED_OFFLINE_REPRODUCED
+  first_observed: single_prompt_completed_ab_test_v13
+  affected_components:
+  - historical_completed_cell_audit
+  evidence:
+  - docs/design/SINGLE_PROMPT_COMPLETED_AB_TEST_V14.md
+  evidence_level: observed
+  symptom: MemoryError decoding a checkpoint before any A/B Solver request.
+  root_cause_status: Twenty-one complete checkpoints retained together and fully reparsed at boundaries.
+  mitigation: V14 sequential adjacent-checkpoint audit and per-boundary complete file rehash; fresh exact scope.
+  forbidden_inference: Zero-call failure does not authorize changing Test, reducing evidence checks or consuming the old scope twice.
+  regression_tests:
+  - tests/current/test_completed_ab_test.py
 - failure_id: FAIL-CANDIDATE-CONTENT-GUARD-FALSE-REJECTION
   title: Private diagnostic overlap rejected reusable candidate instructions
   status: MITIGATED
