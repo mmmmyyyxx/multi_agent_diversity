@@ -17,6 +17,9 @@ training or alter them into multi-Parent results.
 Its [bounded-audit repair V14](SINGLE_PROMPT_COMPLETED_AB_TEST_V14.md) preserves
 those exact Test read points while streaming checkpoint validation and rehashing
 the fully audited parent inventory at execution boundaries in a fresh scope.
+Its [paid Test continuation V15](SINGLE_PROMPT_COMPLETED_AB_TEST_V15.md) adds an
+exact monotone power witness and bounded local stall diagnosis while retaining
+all prior paid responses and recorded scores; team scoring is unchanged.
 The predecessor structural drafts use schemaV5/kernelV5; old manifests
 and authorizations cannot execute the revised candidate treatment.
 The [V2.12 modular mechanisms architecture](MODULAR_MECHANISMS_V212.md) separates

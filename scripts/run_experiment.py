@@ -19,6 +19,10 @@ def _load(path):
 
 
 def preflight(manifest):
+    if manifest.get('schema_version')=='single_prompt_completed_ab_test_manifest_v15':
+        from multi_dataset_diverse_rl.research.ablations.ab_test_continuation import validate_manifest
+        if manifest!=validate_manifest(ROOT):raise SearchContractError('AB_CONTINUATION_MANIFEST')
+        return dict(status='AB_TEST_CONTINUATION_PREFLIGHT_NOT_AUTHORIZED',real_api_calls=0,ready_to_run=False)
     if manifest.get('schema_version')=='single_prompt_completed_ab_test_manifest_v14':
         from multi_dataset_diverse_rl.research.ablations.completed_ab_test import manifest_template
         if manifest!=manifest_template():raise SearchContractError('AB_TEST_MANIFEST_CHANGED')
@@ -104,6 +108,10 @@ def preflight(manifest):
 
 
 def governed_preflight(prep):
+    if _load(prep/'prep.json').get('schema_version')=='single_prompt_completed_ab_test_prep_v15':
+        from multi_dataset_diverse_rl.research.ablations.ab_test_continuation import validate_prep as validate_ab_continuation
+        scope=validate_ab_continuation(ROOT,prep)
+        return dict(status='AB_TEST_CONTINUATION_FROZEN_NOT_EXECUTED',scope_identity=scope['scope_identity'],real_api_calls=0)
     if _load(prep/'prep.json').get('schema_version')=='single_prompt_completed_ab_test_prep_v14':
         from multi_dataset_diverse_rl.research.ablations.completed_ab_test import validate_prep as validate_ab
         scope=validate_ab(ROOT,prep)
@@ -147,6 +155,9 @@ def governed_preflight(prep):
 
 
 async def execute_frozen(prep,run_root):
+    if _load(prep/'prep.json').get('schema_version')=='single_prompt_completed_ab_test_prep_v15':
+        from multi_dataset_diverse_rl.research.ablations.ab_test_continuation import execute as execute_ab_continuation
+        return await asyncio.to_thread(execute_ab_continuation,ROOT,prep,run_root)
     if _load(prep/'prep.json').get('schema_version')=='single_prompt_completed_ab_test_prep_v14':
         from multi_dataset_diverse_rl.research.ablations.completed_ab_test import execute as execute_ab
         return await asyncio.to_thread(execute_ab,ROOT,prep,run_root)

@@ -1,5 +1,23 @@
 schema_version: failure_registry_v1
 failures:
+- failure_id: FAIL-ABLATION-UNEVALUATED-EXPONENT-SCORER-LIVELOCK
+  title: Unsupported unevaluated exponent fell back to repeated symbolic expansion
+  status: MITIGATED
+  lifecycle: REAL_OBSERVED_OFFLINE_REPRODUCED
+  first_observed: single_prompt_completed_ab_test_v14
+  affected_components:
+  - test_exact_power_certificate
+  - local_scoring_stall_diagnosis
+  evidence:
+  - docs/design/SINGLE_PROMPT_COMPLETED_AB_TEST_V15.md
+  evidence_level: observed
+  symptom: Forty-seven local timeouts on one paid answer after four complete Test cells.
+  root_cause_status: Literal-Rational-only exponent admission declined an unevaluated huge integer exponent; native simplify expanded it repeatedly.
+  mitigation: Scoped monotone lower-bound inequality proof; three local timeouts retain a private traceback and trigger diagnosis.
+  forbidden_inference: A timeout is never an incorrect score, a replacement paid response or permission to change a prior terminal result.
+  regression_tests:
+  - tests/current/test_math_power_certificate.py
+  - tests/current/test_ab_test_continuation.py
 - failure_id: FAIL-ABLATION-AB-TRAJECTORY-AUDIT-MEMORY
   title: Full trajectory JSON retention exhausted memory before final Test dispatch
   status: MITIGATED

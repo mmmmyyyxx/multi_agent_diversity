@@ -124,6 +124,11 @@ def validate_registry_v2(root: Path, registry: Mapping) -> tuple[list[str],dict]
                 from ..research.ablations.continuation import validate_manifest as validate_ablation_continuation
                 try:validate_ablation_continuation(root,obj)
                 except ValueError as exc:errors.append(f'{ident}: {exc}')
+            elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_completed_ab_test_manifest_v15':
+                from ..research.ablations.ab_test_continuation import validate_manifest as validate_ab_continuation
+                try:
+                    if obj!=validate_ab_continuation(root):errors.append(f'{ident}: AB_CONTINUATION_MANIFEST')
+                except ValueError as exc:errors.append(f'{ident}: {exc}')
             elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_completed_ab_test_manifest_v14':
                 from ..research.ablations.completed_ab_test import manifest_template
                 if obj!=manifest_template():errors.append(f'{ident}: AB_TEST_MANIFEST_CHANGED')

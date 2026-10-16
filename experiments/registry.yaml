@@ -11012,3 +11012,30 @@ experiments:
     result_commit: No new Test results yet.
     report: Private completion evidence pending.
     classifier: Completion and integrity audit pending.
+- experiment_id: single_prompt_completed_ab_test_v15
+  kind: FORMAL_EXPERIMENT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: historical_single_prompt_AB_paid_final_test_continuation
+  parent_ids:
+  - single_prompt_completed_ab_test_v14
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: NOT_EVALUATED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_completed_ab_test_v15.json
+  report: null
+  classifier: null
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User-authorized local scoring diagnosis and exact power witness repair; preserve four complete cells and paid partial fifth cell.
+  - Original six A/B final Prompts, Test300 and Solver contract; no new training or C calls.
+  - Fresh exact source, scope and human authorization required; all prior terminal hashes verified offline.
+  unavailable:
+    implementation_commit: Containing repair commit; no self-reference.
+    execution_commit: Exact fresh freeze pending.
+    result_commit: Remaining Test evidence pending.
+    report: Private continuation evidence pending.
+    classifier: Completion and integrity audit pending.

@@ -1184,6 +1184,9 @@ nodes:
 - experiment_id: single_prompt_completed_ab_test_v14
   kind: FORMAL_EXPERIMENT
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: single_prompt_completed_ab_test_v15
+  kind: FORMAL_EXPERIMENT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2757,4 +2760,9 @@ edges:
   relation: derived_from
   evidence: docs/design/SINGLE_PROMPT_COMPLETED_AB_TEST_V14.md
   scope: Bounded audit execution repair; identical six historical A/B Test inputs.
+- from: single_prompt_completed_ab_test_v14
+  to: single_prompt_completed_ab_test_v15
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_COMPLETED_AB_TEST_V15.md
+  scope: Exact power witness, local stall diagnosis and paid Test continuation; no prior score changed.
 current_frontier: experiments/current_frontier.yaml
