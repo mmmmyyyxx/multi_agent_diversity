@@ -1,0 +1,17 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "contract_audit.json",
+      "sha256": "85b5e9d6f0e7273b269c1aa7c16619843b7dcb48a3c24764b0e4bcf24c36d1b0"
+    },
+    {
+      "file": "README.md",
+      "sha256": "691546341210e852ff64eae16a072a358a03f94554737f713ec098b97a4674ce"
+    },
+    {
+      "file": "verification.json",
+      "sha256": "d66cb6dbc03bb61e69af88ca0f208dc7d12bcb002f73030b35ceac989aee5065"
+    }
+  ]
+}

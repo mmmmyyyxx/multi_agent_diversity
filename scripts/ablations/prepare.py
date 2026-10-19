@@ -15,12 +15,19 @@ def main():
     parser.add_argument('--destination', type=Path, required=True)
     parser.add_argument('--continue-parent', type=Path)
     parser.add_argument('--c-only',action='store_true',help='Fresh reviewed C-only three-repeat experiment; no old state/cache.')
+    parser.add_argument('--pattern-directions',action='store_true',help='Fresh C0/C1 sequential/C2 parallel single-Parent freeze; zero API.')
     parser.add_argument('--resume-c-test',action='store_true',help='Test-only continuation of the pinned scorer-aborted C Test.')
     parser.add_argument('--extend-c-test-deadline',action='store_true',help='Test-only thirty-second grading continuation of the stopped V8 attempt.')
     parser.add_argument('--certify-c-test',action='store_true',help='Test-only exact far-inequality certificate continuation.')
     parser.add_argument('--completed-ab-test',action='store_true',help='Test only the six completed historical A/B cells.')
     parser.add_argument('--resume-ab-test',action='store_true',help='Continue paid A/B Tests after local scorer repair.')
     args = parser.parse_args()
+    if args.pattern_directions:
+        if any((args.continue_parent,args.c_only,args.resume_c_test,args.extend_c_test_deadline,args.certify_c_test,args.completed_ab_test,args.resume_ab_test)):
+            parser.error('Top-2 Pattern is a separate single-Parent experiment.')
+        from multi_dataset_diverse_rl.research.ablations.proposal_governance import prepare as prepare_proposals
+        print(json.dumps(prepare_proposals(ROOT,args.destination),indent=2))
+        return
     if args.continue_parent:
         parser.error('Historical Batch continuation is not a current module-aligned experiment; use its frozen Git source for historical replay.')
     if args.resume_ab_test:

@@ -253,6 +253,10 @@ def validate_authorization(scope, authorization, *, required=False, test=False):
 
 
 def validate_prep(root,directory,*,authorized=False):
+    directory=private_path(root,directory)
+    from . import proposal_governance
+    if read_json(directory/'prep.json').get('schema_version')==proposal_governance.PREP_SCHEMA:
+        return proposal_governance.validate_prep(root,directory,authorized=authorized)
     from . import aligned
     from . import population_governance
     directory=private_path(root,directory)
@@ -309,6 +313,10 @@ def audit_cells(directory, scope, *, results=None, allow_partial=False):
     """Recheck each persisted gate transition before authorizing Test access."""
     plan = scope['plan']
     validate_plan(plan)
+    from .proposal_config import SCHEMA as proposal_schema
+    if plan['config']['schema_version']==proposal_schema:
+        from .proposal_audit import audit_cells as proposal_audit
+        return proposal_audit(directory,scope,results,allow_partial)
     from .config import MULTI_SCHEMA
     if plan['config']['schema_version']==MULTI_SCHEMA:
         from .population_audit import audit_cells as population_audit
@@ -550,7 +558,11 @@ def _execute_phase(root, prep, directory, scope, *, train_scope, parent_results=
             receipts=ProviderResponseReceipts(directory / 'provider_receipts', attempt_id=scope['scope_identity'],
                 startup_identity_sha256=scope['scope_identity']), dispatch_guard=guard)
         from .config import MULTI_SCHEMA
-        if plan['config']['schema_version']==MULTI_SCHEMA:
+        from .proposal_config import SCHEMA as proposal_schema
+        if plan['config']['schema_version']==proposal_schema:
+            from .proposal_governance import inputs
+            manifest,reader=inputs(root)
+        elif plan['config']['schema_version']==MULTI_SCHEMA:
             from .population_governance import inputs
             manifest,reader=inputs(root)
         else:

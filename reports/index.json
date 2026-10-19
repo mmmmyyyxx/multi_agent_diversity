@@ -3143,6 +3143,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/pattern_diagnosis_transfer_audit_20261019",
+      "document": "reports/pattern_diagnosis_transfer_audit_20261019/README.md",
+      "date": "20261019",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "FORENSIC",
+      "experiment_id": "pattern_diagnosis_transfer_audit_20261019",
+      "status": "COMPLETED",
+      "source_commit": "ccd97d81825271ee8a5ff9a12a54ad371a77e718",
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/post_refactor_readiness_20260923",
       "document": "reports/post_refactor_readiness_20260923/README.md",
       "date": "20260923",
@@ -3625,6 +3639,20 @@
       "era": "UNIFIED_TEAM_PROMPT_SEARCH",
       "kind": "ARCHITECTURE",
       "experiment_id": "single_prompt_multi_parent_v12",
+      "status": "IMPLEMENTED_NOT_EXECUTED",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
+      "path": "reports/single_prompt_pattern_scheduling_preparation_20261019",
+      "document": "reports/single_prompt_pattern_scheduling_preparation_20261019/README.md",
+      "date": "20261019",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "PREEXECUTION",
+      "experiment_id": "single_prompt_pattern_scheduling_v1",
       "status": "IMPLEMENTED_NOT_EXECUTED",
       "source_commit": null,
       "historical_current": "historical_evidence",

@@ -11064,3 +11064,57 @@ experiments:
     implementation_commit: Local uncommitted diagnostic sources identified by hashes.
     execution_commit: Zero-API diagnostic, not a new model experiment.
     result_commit: Local sanitized evidence, not committed or pushed.
+- experiment_id: pattern_diagnosis_transfer_audit_20261019
+  kind: FORENSIC_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: retrospective_pattern_diagnosis_and_transfer_evidence_audit
+  parent_ids:
+  - single_prompt_pattern_c_only_v7
+  status: COMPLETED
+  scientific_status: LIMITED_RETROSPECTIVE_EVIDENCE_NO_DIAGNOSIS_OR_TRANSFER_CONFIRMATION
+  implementation_commit: ccd97d81825271ee8a5ff9a12a54ad371a77e718
+  execution_commit: null
+  result_commit: ccd97d81825271ee8a5ff9a12a54ad371a77e718
+  manifest: null
+  report: reports/pattern_diagnosis_transfer_audit_20261019
+  classifier: null
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Publication registration of the existing immutable report used by the direction-scheduling preparation; no historical artifact changed.
+  - Sixty historical C opportunities; structural evidence and scored repairs do not confirm semantic diagnosis accuracy or held-out same-family transfer.
+  - Zero new API calls, Solver reevaluations or historical state changes.
+  unavailable:
+    manifest: Read-only historical artifact audit, not a new model experiment.
+    execution_commit: No new model execution.
+    classifier: Report states evidence limitations without classifying a new experiment.
+- experiment_id: single_prompt_pattern_scheduling_v1
+  kind: ABLATION
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: single_parent_pattern_direction_scheduling_v1
+  parent_ids:
+  - single_prompt_pattern_c_only_v7
+  - structural_candidate_policy_v2_20261015
+  - pattern_diagnosis_transfer_audit_20261019
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: OFFLINE_ONLY_NO_EFFICACY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_pattern_scheduling_v1.json
+  report: reports/single_prompt_pattern_scheduling_preparation_20261019
+  classifier: null
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Independent single-Parent C0 single Pattern, C1 Top-2 sequential cumulative, C2 Top-2 parallel competition; no V12 population.
+  - User-confirmed shared Validation100 seed42; Optimize150, formal Test300 and initial Prompt inherited unchanged.
+  - One full diagnosis per round; sequential latest-Parent gates or parallel frozen-Parent competition; missing directions never duplicated.
+  - No real API, Test access or automatic push authorized.
+  unavailable:
+    implementation_commit: Containing implementation commit; no self-reference.
+    execution_commit: No real model execution.
+    result_commit: No efficacy evidence.
+    classifier: Offline conformance only.

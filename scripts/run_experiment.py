@@ -19,6 +19,11 @@ def _load(path):
 
 
 def preflight(manifest):
+    if manifest.get('schema_version')=='single_prompt_pattern_scheduling_draft_v1':
+        from multi_dataset_diverse_rl.research.ablations.proposal_config import build_plan
+        plan=build_plan(manifest)
+        return dict(status='PATTERN_PROPOSALS_PREFLIGHT_NOT_AUTHORIZED',plan_identity=plan['plan_identity'],
+            cells=len(plan['cells']),ready_to_run=False,real_api_calls=0)
     if manifest.get('schema_version')=='single_prompt_completed_ab_test_manifest_v15':
         from multi_dataset_diverse_rl.research.ablations.ab_test_continuation import validate_manifest
         if manifest!=validate_manifest(ROOT):raise SearchContractError('AB_CONTINUATION_MANIFEST')
@@ -108,6 +113,10 @@ def preflight(manifest):
 
 
 def governed_preflight(prep):
+    if _load(prep/'prep.json').get('schema_version')=='single_prompt_pattern_scheduling_prep_v1':
+        from multi_dataset_diverse_rl.research.ablations.proposal_governance import validate_prep as validate_proposals
+        scope=validate_proposals(ROOT,prep)
+        return dict(status='PATTERN_PROPOSALS_FROZEN_NOT_AUTHORIZED',scope_identity=scope['scope_identity'],real_api_calls=0)
     if _load(prep/'prep.json').get('schema_version')=='single_prompt_completed_ab_test_prep_v15':
         from multi_dataset_diverse_rl.research.ablations.ab_test_continuation import validate_prep as validate_ab_continuation
         scope=validate_ab_continuation(ROOT,prep)
@@ -155,6 +164,9 @@ def governed_preflight(prep):
 
 
 async def execute_frozen(prep,run_root):
+    if _load(prep/'prep.json').get('schema_version')=='single_prompt_pattern_scheduling_prep_v1':
+        from multi_dataset_diverse_rl.research.ablations import governance as proposal_gov
+        return await asyncio.to_thread(proposal_gov.execute,ROOT,prep,run_root)
     if _load(prep/'prep.json').get('schema_version')=='single_prompt_completed_ab_test_prep_v15':
         from multi_dataset_diverse_rl.research.ablations.ab_test_continuation import execute as execute_ab_continuation
         return await asyncio.to_thread(execute_ab_continuation,ROOT,prep,run_root)

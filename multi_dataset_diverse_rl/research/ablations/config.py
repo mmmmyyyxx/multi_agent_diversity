@@ -100,6 +100,9 @@ def current_config():
 
 
 def validate_config(value):
+    from .proposal_config import SCHEMA as proposal_schema,validate_config as validate_proposals
+    if isinstance(value,dict) and value.get('schema_version')==proposal_schema:
+        return validate_proposals(value)
     multi=isinstance(value,dict) and value.get('schema_version')==MULTI_SCHEMA
     aligned = isinstance(value, dict) and value.get('schema_version') in (ALIGNED_SCHEMA,MULTI_SCHEMA)
     expected = current_config() if multi else default_config() if aligned else batch_config()
@@ -136,6 +139,9 @@ def validate_config(value):
 
 
 def build_plan(config, registry=None):
+    from .proposal_config import SCHEMA as proposal_schema,build_plan as proposal_plan
+    if isinstance(config,dict) and config.get('schema_version')==proposal_schema:
+        return proposal_plan(config,registry)
     from .modules import default_registry
     config = validate_config(config)
     if config['schema_version'] in (ALIGNED_SCHEMA,MULTI_SCHEMA) and any(a['module'] in ('formal_gradient','memory') for a in config['arms']):

@@ -1,6 +1,12 @@
 schema_version: experiment_lineage_v2
 authority: sole experiment lineage authority
 nodes:
+- experiment_id: pattern_diagnosis_transfer_audit_20261019
+  kind: FORENSIC_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: single_prompt_pattern_scheduling_v1
+  kind: ABLATION
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 - experiment_id: v17_formal_5arm_3seed
   kind: FORMAL_EXPERIMENT
   era: V17_V18_MEMBER_AWARE
@@ -1191,6 +1197,26 @@ nodes:
   kind: FORENSIC_AUDIT
   era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
+- from: single_prompt_pattern_c_only_v7
+  to: pattern_diagnosis_transfer_audit_20261019
+  relation: audit_of
+  evidence: reports/pattern_diagnosis_transfer_audit_20261019/README.md
+  scope: Existing immutable zero-API retrospective audit; publication registration only.
+- from: pattern_diagnosis_transfer_audit_20261019
+  to: single_prompt_pattern_scheduling_v1
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_PATTERN_SCHEDULING_V1.md
+  scope: Prior evidence limits motivate measured scheduling comparisons, not a semantic-validity claim.
+- from: single_prompt_pattern_c_only_v7
+  to: single_prompt_pattern_scheduling_v1
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_PATTERN_SCHEDULING_V1.md
+  scope: Single-Parent Top-2 sequential cumulative versus same-Parent parallel competition; no execution authorized.
+- from: structural_candidate_policy_v2_20261015
+  to: single_prompt_pattern_scheduling_v1
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_PATTERN_SCHEDULING_V1.md
+  scope: Shared structural candidate checks across newly matched C0/C1/C2.
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
   relation: audit_of

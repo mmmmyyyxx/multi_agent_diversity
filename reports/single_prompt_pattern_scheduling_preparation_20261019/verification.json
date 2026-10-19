@@ -1,0 +1,64 @@
+{
+  "status": "OFFLINE_IMPLEMENTATION_VERIFIED_REAL_EXECUTION_BLOCKED",
+  "real_api_calls": 0,
+  "historical_resume": false,
+  "actual_validation_content_access": false,
+  "actual_test_content_access": false,
+  "execution_authorized": false,
+  "push_authorized": false,
+  "production_compileall": "PASS",
+  "current_suite": {
+    "selected": 1207,
+    "passed": 1205,
+    "skipped": 2,
+    "seconds": 3109.14,
+    "omitted_modules": 224,
+    "full_historical_replay_claim": false,
+    "skip_reasons": "Not emitted by original quiet invocation; skips are not counted as PASS",
+    "scope_note": "Comprehensive current campaign; later summary counters and added feature cases separately checked by the final 37-case feature campaign"
+  },
+  "final_feature_suite": {
+    "passed": 37,
+    "seconds": 131.47
+  },
+  "final_information_flow_recheck": {
+    "passed": 6,
+    "overlaps_feature_suite": true
+  },
+  "evidence_is_not_additive": true,
+  "network_attempt_count": 0,
+  "repository_governance": "PASS",
+  "manifest_preflight": {
+    "status": "BLOCKED_BY_UNCHANGED_BASELINE",
+    "errors": [
+      "FAIL-ABLATION-PARTIAL-FORMAL-ADAPTER-CONFORMANCE: invalid evidence_level",
+      "FAIL-ABLATION-PATTERN-DIAGNOSIS-UNIVERSE: invalid evidence_level"
+    ],
+    "baseline_file_sha256": "adc81e01d6c67247c2dd207230f1ebbab7c736407da119f0f73bf0a10a6b50be"
+  },
+  "standalone_manifest_preflight": "PASS_NOT_AUTHORIZED",
+  "plan": "PASS_NINE_CELLS_SEED42_THREE_REPEATS",
+  "fake_smoke": {
+    "cells": 9,
+    "outer_opportunities": 180,
+    "real_api_calls": 0,
+    "actual_validation_content_reads": 0,
+    "actual_test_content_reads": 0,
+    "unresolved_reservations": 0
+  },
+  "governed_fake_train_and_test": "PASS_SYNTHETIC_ONLY_IN_FEATURE_SUITE",
+  "C0_equivalence": "PASS_SAME_OBSERVATIONS_REQUESTS_STATE_USAGE_EXCEPT_SEPARATE_RECEIPT_IDS_AND_WORKER_ORDER",
+  "initial_collection_failures": {
+    "category": "WINDOWS_GMPY_DLL_SEARCH_FAILURE",
+    "resolution": "Process-local existing DLL search directory; no package version or numerical backend changed"
+  },
+  "evidence_sha256": {
+    "current_suite": "7807094e123c30efda7e7b877f2427b30f4ed8c92f8f870a5ab899144353f58f",
+    "feature_suite": "73e41bf6e373027409e7c3c82ef4edd9358f779821bb51908f1f2276f5e85ef4",
+    "information_flow": "55c602fc72362f72df9e65c422db3c76631f111e40ae488d86812f2e9d5e1030",
+    "repository_governance": "92ecc9456ae0d25fa2af80a03571d6627d7efad0710e8dd4f3d75ebf550cddcd",
+    "manifest_preflight": "acacfbb1da525e3c2f743bc233e6772b365b87bb76e23ec71ed64be9b7ffb139",
+    "baseline_failure": "dcce1304e4dc454142487a6b0fb6e2b40ac496197a1fc80c4e80da89ef7d2be4",
+    "fake_smoke": "6ba2024ed101f3627f5dcf13c090f1ed37bd50bbebe81ff584670dbbae24d8fe"
+  }
+}

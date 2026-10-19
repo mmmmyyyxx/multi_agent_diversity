@@ -551,6 +551,8 @@ flowchart TD
     n383["single_prompt_completed_ab_test_v14<br/>FORMAL_EXPERIMENT<br/>PREPARED_NOT_EXECUTED"]
     n384["single_prompt_completed_ab_test_v15<br/>FORMAL_EXPERIMENT<br/>PREPARED_NOT_EXECUTED"]
     n385["repair_path_responsibility_offline_v1<br/>FORENSIC_AUDIT<br/>COMPLETED"]
+    n386["pattern_diagnosis_transfer_audit_20261019<br/>FORENSIC_AUDIT<br/>COMPLETED"]
+    n387["single_prompt_pattern_scheduling_v1<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -588,6 +590,10 @@ flowchart TD
     n137["v18_harmful_commit_m2f_repair_pilot_20260824<br/>ZERO_API_AUDIT<br/>STATUS_UNRESOLVED"]
     n138["v18_trajectory_gain_loss_decomposition_20260824<br/>PILOT<br/>STATUS_UNRESOLVED"]
   end
+  n375 -->|audit_of| n386
+  n386 -->|derived_from| n387
+  n375 -->|derived_from| n387
+  n380 -->|derived_from| n387
   n0 -->|audit_of| n1
   n1 -->|followup_of| n2
   n2 -->|derived_from| n3

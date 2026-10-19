@@ -1,0 +1,72 @@
+{
+  "identity": "PATTERN_DIRECTION_SCHEDULING_PREPARATION_AUDIT_V1",
+  "audit_base_sha": "ccd97d81825271ee8a5ff9a12a54ad371a77e718",
+  "plan_identity": "2c80a132203ee13c300d670cccfd5afd2a94cde051154a3e8375488c9e9d8a5f",
+  "manifest_sha256": "9b63b52f15988a7cb59e89d36f827b63a26daa3b145bc9e01b4fa19a0fe9311c",
+  "kernel_identity": "SINGLE_PARENT_PATTERN_DIRECTION_SCHEDULING_KERNEL_V1",
+  "groups": [
+    {
+      "arm_id": "C0",
+      "mode": "single"
+    },
+    {
+      "arm_id": "C1",
+      "mode": "sequential"
+    },
+    {
+      "arm_id": "C2",
+      "mode": "parallel"
+    }
+  ],
+  "cells": 9,
+  "seed": 42,
+  "repeats": 3,
+  "rounds": 20,
+  "candidate_ceiling": 300,
+  "training_ceiling": 391740,
+  "test_ceiling": 10800,
+  "validation_seed": 42,
+  "validation_membership_sha256": "43a2a02bae12168d1736038e99f7320ee9460b6c620d82d48de6ebbc6ca9351f",
+  "validation_count": 100,
+  "optimize_count": 150,
+  "test_count": 300,
+  "test_membership_sha256": "3d8af2d055316da986934025bcc4c6e2f3f39d1c25838a5f23e709b9b5da3c44",
+  "formal_module_identity": "ABLATION_FULL_WRONG_GRADIENT_PATTERN_REPRESENTATIVES_V1",
+  "production_implementations": [
+    "search.textual_gradients.GradientExtractor",
+    "search.textual_gradients.PerExampleGradientProvider",
+    "search.textual_gradients.GradientClusterProvider",
+    "search.textual_gradients.normalize_gradient_partition",
+    "search.population_evidence.sample_pattern_support"
+  ],
+  "production_source_hashes": {
+    "search/textual_gradients.py": "cf7d30327e4825e75b38644e4a73ccf74eda2537eb937ff319b7b19101e38bd9",
+    "search/pattern_primitives.py": "19717b782b3c8066ed55e9c336962b4b267da81ac71325d702618090343601a3",
+    "search/pattern_selection.py": "b63ee58d4d0bdd6afc733d17ee84a387ce9762bfb4021968b0ea0f5e17da6efa",
+    "search/optimizer_output_contract.py": "501288baea6a8bd041228fcf3a1df6fdf878ff7f4ac31198043d596f5dc67c7f",
+    "search/generation_failures.py": "c1de933c1d2f3099e466f1755f7f1535803a4020a372632675987a2bd8ab29f0",
+    "search/weighted_responsibility.py": "fbe19438cf364cffe87c0c26516a0e4deec832cc37d371c375381bb83b68a38a",
+    "search/optimization_evidence.py": "4baaf6140eccd8ede09c629fb8adc36f683f36a6fb51415ab42172f14be42cd7",
+    "search/readable_evidence.py": "b7abe4628bccc613e9e1f003d20648630d878bc41003cc974c11d162166f2c95",
+    "search/partition_completion.py": "71e2262fd12bfe1fccafffb8c035d88b306aab2b1b9f9f4971a506450b9cf937",
+    "benchmarks/math_response_evidence.py": "aa37fd10d9ff8e1925894c952266bda6eaec0ea4b747faf57174721c4f588365",
+    "current_contract.py": "41eee88787c14ad3e7c7124e2a26c7c8abbe22b38277350a6f6c836ac38f19ce",
+    "versions.py": "039b2f199b29ff6af5e10abc36d0a1e32e15c7590d6028a00d19a33733591d4c",
+    "search/population_evidence.py": "cbeff76e3c5c6a0e4693917742b819685c90dee342250f9a01504ce55dd4d525"
+  },
+  "unchanged_paths": [
+    "multi_dataset_diverse_rl/search",
+    "multi_dataset_diverse_rl/benchmarks",
+    "multi_dataset_diverse_rl/current_contract.py",
+    "multi_dataset_diverse_rl/versions.py",
+    "experiments/current_frontier.yaml",
+    "experiments/ablations/pattern/default.json",
+    "experiments/manifests/single_prompt_pattern_c_only_v7.json"
+  ],
+  "real_api_calls": 0,
+  "actual_validation_content_reads": 0,
+  "actual_test_content_reads": 0,
+  "network_attempt_count": 0,
+  "source_freeze": "separate_clean_commit_preparation_required",
+  "execution_authorized": false
+}

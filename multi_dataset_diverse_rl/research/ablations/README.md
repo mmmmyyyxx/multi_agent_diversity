@@ -4,6 +4,14 @@
 门槛与保留；外接模块只改变提供给优化器的证据或上下文。
 正式团队实验的组合入口和已冻结单 Prompt 实验均保留。
 
+多方向 Pattern 调度使用独立单 Parent 配置
+[pattern_directions/default.json](../../../experiments/ablations/pattern_directions/default.json)，
+不使用默认多 Parent 内核。C0 单方向、C1 前二 Pattern 顺序累积（最多两次更新）、
+C2 同父独立候选择优（最多一次更新）；每轮只诊断一次。缺少方向不复制。
+当前传输明确顺序派发独立候选，不声称 API 同时并发。
+协议见 [多方向调度 V1](../../../docs/design/SINGLE_PROMPT_PATTERN_SCHEDULING_V1.md)。
+使用 `prepare.py --pattern-directions` 冻结，新授权前不能真实执行。
+
 默认配置在 [default.json](../../../experiments/ablations/pattern/default.json)：
 每组3次，三次均使用种子42，重复编号为1–3；每次20个优化机会。
 不同重复不共享响应缓存，同一重复的组间、轮间相同 Solver 请求可以配对复用。
@@ -64,4 +72,5 @@ Memory 应直接包装正式 `PopulationEditMemory`。当前已提供原生类�
 当前默认注册表仅开放 `none` 与完整 `full_gradient_pattern`；旧 Batch Pattern
 仅供历史协议检查，Gradient-only 与 Memory 按用户确认保持未启用。
 `study.py --plan` 同时输出完整模块对齐清单；未审计的自定义模块不能据此获得真实执行资格。
-共同优化器复用正式参考解投影、私有文本防照抄及推理时不可用信息检查。
+共同优化器复用正式参考解投影、非空三块结构与单块替换检查；当前结构候选
+契约不再包含关键词、文本重合或任意字符长度 Guard。优化器私有证据仍不进入 Solver。

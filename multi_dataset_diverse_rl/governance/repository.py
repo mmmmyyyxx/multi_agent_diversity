@@ -96,7 +96,11 @@ def validate_registry_v2(root: Path, registry: Mapping) -> tuple[list[str],dict]
                 if validate_published_single_prompt(root,path,obj):continue
             except ValueError as exc:
                 errors.append(f'{ident}: {exc}');continue
-            if isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_module_ablation_draft_v6':
+            if isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_pattern_scheduling_draft_v1':
+                from ..research.ablations.proposal_config import build_plan
+                try:build_plan(obj)
+                except ValueError as exc:errors.append(f'{ident}: {exc}')
+            elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_module_ablation_draft_v6':
                 from ..research.ablations.config import build_plan
                 try:build_plan(obj)
                 except ValueError as exc:errors.append(f'{ident}: {exc}')
