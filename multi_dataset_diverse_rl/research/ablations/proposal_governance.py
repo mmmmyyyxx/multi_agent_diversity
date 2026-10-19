@@ -57,8 +57,10 @@ def prepare(root,destination):
     require(not set(scope['source_hashes'])-set(gov._git(root,'ls-files').splitlines()),'UNCOMMITTED_FREEZE_FILE')
     destination.mkdir(parents=True)
     for name,value in [('prep',dict(schema_version=PREP_SCHEMA,scope=scope)),
-        ('authorization',gov.authorization_template(scope)),('execution_plan',gov.execution_plan_template(scope)),
-        ('handoff',handoff(root,destination,scope))]:atomic_write_json(destination/(name+'.json'),value)
+        ('authorization',gov.authorization_template(scope)),('execution_plan',gov.execution_plan_template(scope))]:
+        atomic_write_json(destination/(name+'.json'),value)
+    # The handoff hashes prep.json and must be constructed only after persistence.
+    atomic_write_json(destination/'handoff.json',handoff(root,destination,scope))
     return dict(status='FROZEN_NOT_AUTHORIZED',source_sha=scope['source_sha'],scope_identity=scope['scope_identity'],
         cells=len(scope['plan']['cells']),real_api_calls=0,ready_to_run=False)
 

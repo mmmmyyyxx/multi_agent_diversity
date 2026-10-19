@@ -60,5 +60,15 @@
     "manifest_preflight": "acacfbb1da525e3c2f743bc233e6772b365b87bb76e23ec71ed64be9b7ffb139",
     "baseline_failure": "dcce1304e4dc454142487a6b0fb6e2b40ac496197a1fc80c4e80da89ef7d2be4",
     "fake_smoke": "6ba2024ed101f3627f5dcf13c090f1ed37bd50bbebe81ff584670dbbae24d8fe"
+  },
+  "preparation_write_order_followup": {
+    "initial_preparation": "ZERO_API_FILE_NOT_FOUND_BEFORE_AUTHORIZATION",
+    "change": "Persist prep authorization and plan before constructing handoff hash",
+    "targeted_recheck_passed": 6,
+    "new_regression_cases": 1,
+    "overlaps_previous_authorization_cases": 5,
+    "evidence_sha256": "bd199e536fb7199232686bddd56333335cf8caa538bae5ed1fd3d375c7377ed7",
+    "full_suite_repeated": false,
+    "reuse": "Unchanged scheduling generation evaluation analysis and terminal audit checks reused"
   }
 }

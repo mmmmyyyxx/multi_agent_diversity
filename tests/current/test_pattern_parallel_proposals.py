@@ -362,3 +362,21 @@ def test_frozen_preparation_refuses_mismatch_before_transport(tmp_path,monkeypat
         auth.update(approved=True,adaptive_validation_access=True,user_authorization_evidence_sha256=digest('missing proof'))
         atomic_write_json(folder/'authorization.json',auth)
     with pytest.raises(SearchContractError):gov.validate_prep(tmp_path,folder,authorized=True)
+
+
+def test_prepare_persists_identity_before_building_hashed_handoff(tmp_path,monkeypatch):
+    scope=dict(source_sha='0'*40,source_hashes={},scope_identity=digest('fresh'),
+        plan=dict(cells=[dict(cell_id='C0_seed42_repeat01')]))
+    monkeypatch.setattr(gov,'require_selected_runtime',lambda root:None)
+    monkeypatch.setattr(gov,'_git',lambda *a:'')
+    monkeypatch.setattr(pg,'scope_template',lambda *a:deepcopy(scope))
+    monkeypatch.setattr(gov,'execution_plan_template',lambda *a:dict(identity='fake execution'))
+    def hashed_handoff(root,folder,actual):
+        assert actual==scope
+        assert all((folder/(name+'.json')).is_file() for name in ('prep','authorization','execution_plan'))
+        return dict(prep_identity=digest(read_json(folder/'prep.json')),READY_TO_RUN=False)
+    monkeypatch.setattr(pg,'handoff',hashed_handoff)
+    folder=tmp_path/'runs/fresh/prep';result=pg.prepare(tmp_path,folder)
+    assert result['real_api_calls']==0 and result['ready_to_run'] is False
+    assert read_json(folder/'handoff.json')['prep_identity']==digest(read_json(folder/'prep.json'))
+    assert read_json(folder/'authorization.json')['approved'] is False
