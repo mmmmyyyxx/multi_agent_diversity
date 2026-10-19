@@ -1,0 +1,62 @@
+{
+  "status": "OFFLINE_GOVERNANCE_PREFLIGHT_PASS_NOT_AUTHORIZED",
+  "audit_base_sha": "917ca8ba3e8734e1091efcd9f6c29d871437e4ae",
+  "new_tests": {
+    "governance_passed": 55,
+    "preparation_boundary_passed": 7,
+    "new_failure_category_cases": 26
+  },
+  "production_compileall": "PASS",
+  "repository_governance": "PASS",
+  "complete_manifest_preflight": "PASS",
+  "known_failures_generated_view": "PASS",
+  "scheduling_manifest_preflight": "PASS_NOT_AUTHORIZED",
+  "unchanged_algorithm_and_history": {
+    "unchanged_source_paths": [
+      "multi_dataset_diverse_rl/research/ablations",
+      "multi_dataset_diverse_rl/search",
+      "multi_dataset_diverse_rl/benchmarks",
+      "multi_dataset_diverse_rl/current_contract.py",
+      "multi_dataset_diverse_rl/versions.py",
+      "experiments/manifests/single_prompt_pattern_scheduling_v1.json",
+      "experiments/ablations/pattern_directions/default.json",
+      "docs/design/SINGLE_PROMPT_PATTERN_SCHEDULING_V1.md",
+      "docs/failures/registry.yaml"
+    ],
+    "failure_registry_sha256": "adc81e01d6c67247c2dd207230f1ebbab7c736407da119f0f73bf0a10a6b50be",
+    "failure_count": 59,
+    "validation_errors": [],
+    "source_verified_entries": [
+      "FAIL-ABLATION-PARTIAL-FORMAL-ADAPTER-CONFORMANCE",
+      "FAIL-ABLATION-PATTERN-DIAGNOSIS-UNIVERSE"
+    ],
+    "real_api_calls": 0
+  },
+  "reused_checks": {
+    "current_suite_passed": 1205,
+    "current_suite_skipped": 2,
+    "scheduling_feature_suite_passed": 37,
+    "prior_verification_sha256": "4aec50ef342ba1d8fe61b3a666afa62a4004a3cd2e7cf23a3c99acbdd1ddf096",
+    "not_newly_run": true,
+    "scope": "Only unchanged scheduling, model, scoring, data, cache, retry, admission, ledger and authorization checks; affected registry/metadata checks rerun",
+    "full_current_suite_repeated": false,
+    "full_historical_replay_claim": false
+  },
+  "test_launcher_issue": "Initial basetemp parent missing; corrected parent setup, fresh destination, no assertion changes",
+  "real_api_calls": 0,
+  "validation_evaluations": 0,
+  "test_evaluations": 0,
+  "network_attempt_count": 0,
+  "READY_TO_RUN": false,
+  "canary_authorized": false,
+  "training_authorized": false,
+  "test_access_authorized": false,
+  "push_authorized": false,
+  "evidence_sha256": {
+    "governance": "5459cf5a277a44a9a4d879082821ce37aa7cc05fa27b7303a4b80e68d3bff223",
+    "preparation": "794354009003daf8244991dec682dcdcf09d26f9c2abb3b260ed5ec86e14f25f",
+    "manifest": "733239a2f27dc63a82c11d281f59bbd48896ab0f036482ac83a1e8e8706d5d7d",
+    "repository": "360cc715d6be939d8bb92c458b4addf7327151ada6974636dc4d590c219294c1",
+    "unchanged": "7ea4839bf8881ed092948dc227d835831cc6fefbba008550cca95b225f941a1a"
+  }
+}

@@ -1,6 +1,9 @@
 schema_version: experiment_lineage_v2
 authority: sole experiment lineage authority
 nodes:
+- experiment_id: source_verified_failure_registry_compat_v1
+  kind: ZERO_API_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 - experiment_id: pattern_diagnosis_transfer_audit_20261019
   kind: FORENSIC_AUDIT
   era: UNIFIED_TEAM_PROMPT_SEARCH
@@ -1197,6 +1200,11 @@ nodes:
   kind: FORENSIC_AUDIT
   era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
+- from: single_prompt_pattern_scheduling_v1
+  to: source_verified_failure_registry_compat_v1
+  relation: followup_of
+  evidence: reports/source_verified_failure_registry_compatibility_20261019/README.md
+  scope: Governance category compatibility only; no method, execution or authorization change.
 - from: single_prompt_pattern_c_only_v7
   to: pattern_diagnosis_transfer_audit_20261019
   relation: audit_of

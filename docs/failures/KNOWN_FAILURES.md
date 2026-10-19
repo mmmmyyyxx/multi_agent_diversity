@@ -2,6 +2,104 @@
 
 Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this file.
 
+Evidence categories: [definitions and limits](../design/FAILURE_EVIDENCE_LEVELS_V1.md).
+
+## FAIL-ABLATION-UNEVALUATED-EXPONENT-SCORER-LIVELOCK: Unsupported unevaluated exponent fell back to repeated symbolic expansion
+
+- Status: `MITIGATED`
+- Lifecycle: `REAL_OBSERVED_OFFLINE_REPRODUCED`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `single_prompt_completed_ab_test_v14`
+- Root-cause status: Literal-Rational-only exponent admission declined an unevaluated huge integer exponent; native simplify expanded it repeatedly.
+- Symptom: Forty-seven local timeouts on one paid answer after four complete Test cells.
+- Forbidden inference: A timeout is never an incorrect score, a replacement paid response or permission to change a prior terminal result.
+- Mitigation: Scoped monotone lower-bound inequality proof; three local timeouts retain a private traceback and trigger diagnosis.
+
+## FAIL-ABLATION-AB-TRAJECTORY-AUDIT-MEMORY: Full trajectory JSON retention exhausted memory before final Test dispatch
+
+- Status: `MITIGATED`
+- Lifecycle: `REAL_OBSERVED_OFFLINE_REPRODUCED`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `single_prompt_completed_ab_test_v13`
+- Root-cause status: Twenty-one complete checkpoints retained together and fully reparsed at boundaries.
+- Symptom: MemoryError decoding a checkpoint before any A/B Solver request.
+- Forbidden inference: Zero-call failure does not authorize changing Test, reducing evidence checks or consuming the old scope twice.
+- Mitigation: V14 sequential adjacent-checkpoint audit and per-boundary complete file rehash; fresh exact scope.
+
+## FAIL-CANDIDATE-CONTENT-GUARD-FALSE-REJECTION: Private diagnostic overlap rejected reusable candidate instructions
+
+- Status: `MITIGATED`
+- Lifecycle: `REAL_OBSERVED_OFFLINE_REPRODUCED`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `historical_candidate_guard_audit_20261015`
+- Root-cause status: Eight-word private diagnostic matches included existing parent formatting and reusable vector methods.
+- Symptom: Ten confirmed false rejections across all four exhausted C opportunities.
+- Forbidden inference: Offline reclassification is not historical acceptance, measured Validation gain, or authorization to rerun.
+- Mitigation: User-requested structural single-block contract replaces candidate content filters; no character budget and no-op skips without regeneration.
+
+## FAIL-ABLATION-SYMBOLIC-EXPANSION-RETRY-LIVELOCK: Repeated local scoring recreated the same expensive symbolic expansion
+
+- Status: `MITIGATED`
+- Lifecycle: `REAL_OBSERVED_OFFLINE_REPRODUCED`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `single_prompt_c_test_deadline_v9`
+- Root-cause status: Identical native symbolic expansion repeated after every killed worker; inner dependency timeout decorators are disabled.
+- Symptom: Thirteen thirty-second retries on one paid answer; parser and numeric checks complete quickly, simplify/cancel expands a high integer power.
+- Forbidden inference: No special-case item score, numerical approximate equality shortcut, old terminal score rewrite or new training.
+- Mitigation: Explicit scoped exact negative certificates avoid far-unequal expansions; near/equal/unsupported cases retain the native predicate and timeout is never silently wrong.
+
+## FAIL-ABLATION-TEST-REPEATED-SCORER-DEADLINE: Fixed local worker deadline repeatedly timed out on the same paid answer
+
+- Status: `MITIGATED`
+- Lifecycle: `REAL_OBSERVED_OFFLINE_REPRODUCED`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `single_prompt_c_test_resume_v8`
+- Root-cause status: Eight-second outer process deadline repeatedly expired; no model transport error was involved.
+- Symptom: Four consecutive same-answer local scoring timeouts at eight seconds.
+- Forbidden inference: No old score rewriting, new training, changed equivalence or free replacement Solver answer.
+- Mitigation: User-authorized fresh Test-only continuation uses a caller-scoped thirty-second worker deadline and exact paid prefix replay.
+
+## FAIL-ABLATION-TEST-LOCAL-SCORER-TIMEOUT-FATAL: Local mathematical worker timeout aborted otherwise recoverable final Test
+
+- Status: `MITIGATED`
+- Lifecycle: `REAL_OBSERVED_OFFLINE_REPRODUCED`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `single_prompt_pattern_c_only_v7`
+- Root-cause status: MATH_EVALUATOR_TIMEOUT was outside the frozen network-only retry contract.
+- Symptom: Complete training and one Test cell were preserved, but a local evaluator timeout aborted the second Test cell after297 terminal scored observations.
+- Forbidden inference: No permission to change mathematical equivalence, regenerate paid answers, rewrite historical scores, rerun training or reuse old authorization.
+- Mitigation: Explicit Test-only continuation retries the unchanged local score on the same paid Solver answer, verifies inherited terminal hashes, and accounts parent plus child calls separately.
+
+## FAIL-ABLATION-PARTIAL-FORMAL-ADAPTER-CONFORMANCE: Formal imports did not guarantee complete input and candidate-boundary alignment
+
+- Status: `MITIGATED`
+- Lifecycle: `OFFLINE_VERIFICATION`
+- Lifecycle context: See evidence below.
+- Evidence level: `source_verified`
+- First observed: `single_prompt_full_diagnosis_pattern_v5`
+- Root-cause status: Adapter import equality was treated as stronger evidence than end-to-end flow conformance.
+- Symptom: Gradient-only retained Batch input; independent Optimizer omitted some formal guards and reference metadata.
+- Forbidden inference: No runnable Memory or Gradient-only efficacy is established by importing their native classes.
+- Mitigation: Reviewed registry only, disabled unresolved adapters, shared formal helpers and request-to-opportunity audit.
+
+## FAIL-ABLATION-PATTERN-DIAGNOSIS-UNIVERSE: Pre-sampling three errors prevented full wrong-set Pattern discovery
+
+- Status: `MITIGATED`
+- Lifecycle: `OFFLINE_VERIFICATION`
+- Lifecycle context: See evidence below.
+- Evidence level: `source_verified`
+- First observed: `single_prompt_pattern_repeat3_solver_cache_v3`
+- Root-cause status: Production extractor and cluster code were reused behind a restricted ablation input adapter.
+- Symptom: C diagnosed only the preselected three-error Batch rather than the complete current wrong set.
+- Forbidden inference: Stopped Batch results do not establish efficacy of full wrong-set diagnosis.
+- Mitigation: Full wrong-set input precedes formal discovery and formal representative sampling under a distinct identity.
+
 ## FAIL-V27-OPTIMIZER-OUTPUT-CONTRACT-AMBIGUITY: Gradient block mappings and JSON syntax repeatedly exhaust output recovery
 
 - Status: `MITIGATED`

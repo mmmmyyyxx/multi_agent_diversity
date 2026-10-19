@@ -25,7 +25,9 @@ from multi_dataset_diverse_rl.governance.manifest import (
 )
 from multi_dataset_diverse_rl.governance.provenance import build_provenance
 from multi_dataset_diverse_rl.governance.registries import (
+    FAILURE_EVIDENCE_LEVELS,
     load_yaml,
+    validate_failure_registry,
     validate_experiment_registry,
     validate_invariants,
     validate_lineage,
@@ -39,6 +41,63 @@ from multi_dataset_diverse_rl.governance.telemetry import (
 
 ROOT = Path(__file__).resolve().parents[2]
 SCHEMA = load_yaml(ROOT / "infrastructure" / "experiment_manifest.schema.json")
+
+
+@pytest.fixture
+def failure_record(tmp_path):
+    (tmp_path/'source_evidence.md').write_text('Synthetic source inspection; no API execution.',encoding='utf-8')
+    (tmp_path/'test_source.py').write_text('def test_source(): pass\n',encoding='utf-8')
+    return dict(failure_id='FAIL-SYNTHETIC-SOURCE',title='Synthetic source property',
+        status='MITIGATED',first_observed='synthetic_source_revision',
+        affected_components=['synthetic_adapter'],symptom='Synthetic flow mismatch',
+        evidence=['source_evidence.md'],evidence_level='source_verified',
+        root_cause_status='Source-level flow verified; runtime incidence unmeasured.',
+        forbidden_inference='No causal or efficacy claim.',mitigation='Synthetic scoped fix',
+        regression_tests=['test_source.py::test_source'])
+
+
+@pytest.mark.parametrize('level',sorted(FAILURE_EVIDENCE_LEVELS))
+def test_failure_evidence_categories_preserve_records(tmp_path,failure_record,level):
+    from copy import deepcopy
+    record=dict(failure_record,evidence_level=level);before=deepcopy(record)
+    assert validate_failure_registry(tmp_path,dict(failures=[record]))==[]
+    assert record==before and record['evidence_level']==level
+
+
+@pytest.mark.parametrize('level',['source_verifed','SOURCE_VERIFIED','verified',None])
+def test_unknown_failure_evidence_category_fails(tmp_path,failure_record,level):
+    assert any('invalid evidence_level' in e for e in validate_failure_registry(
+        tmp_path,dict(failures=[dict(failure_record,evidence_level=level)])))
+
+
+@pytest.mark.parametrize('key',['evidence','regression_tests'])
+@pytest.mark.parametrize('references',[[],None,False,'source_evidence.md',{},[None]])
+def test_source_verified_requires_traceable_references(tmp_path,failure_record,key,references):
+    record=dict(failure_record);record[key]=references
+    assert any('source_verified requires nonempty '+key in e
+        for e in validate_failure_registry(tmp_path,dict(failures=[record])))
+
+
+@pytest.mark.parametrize('defect',['missing_evidence','missing_test','missing_field','duplicate','status'])
+def test_source_verified_keeps_other_failure_guards(tmp_path,failure_record,defect):
+    from copy import deepcopy
+    record=deepcopy(failure_record);rows=[record]
+    if defect=='missing_evidence':record['evidence']=['missing.md']
+    elif defect=='missing_test':record['regression_tests']=['missing_test.py::test_source']
+    elif defect=='missing_field':del record['mitigation']
+    elif defect=='duplicate':rows.append(deepcopy(record))
+    else:record['status']='UNREVIEWED'
+    assert validate_failure_registry(tmp_path,dict(failures=rows))
+
+
+def test_existing_source_verified_records_validate_without_reclassification():
+    from copy import deepcopy
+    registry=load_yaml(ROOT/'docs/failures/registry.yaml');before=deepcopy(registry)
+    assert validate_failure_registry(ROOT,registry)==[]
+    assert registry==before
+    records={r['failure_id']:r for r in registry['failures']}
+    for ident in ('FAIL-ABLATION-PARTIAL-FORMAL-ADAPTER-CONFORMANCE','FAIL-ABLATION-PATTERN-DIAGNOSIS-UNIVERSE'):
+        assert records[ident]['evidence_level']=='source_verified' and records[ident]['status']=='MITIGATED'
 
 
 def manifest(*, status: str = "DRAFT", api: bool = False) -> dict:

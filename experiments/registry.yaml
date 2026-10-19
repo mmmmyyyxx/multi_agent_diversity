@@ -10958,6 +10958,34 @@ experiments:
     execution_commit: No real execution.
     result_commit: No efficacy evidence.
     classifier: Offline conformance only.
+- experiment_id: source_verified_failure_registry_compat_v1
+  kind: ZERO_API_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: failure_registry_evidence_category_compatibility
+  parent_ids:
+  - single_prompt_pattern_scheduling_v1
+  status: COMPLETED
+  scientific_status: OFFLINE_GOVERNANCE_COMPATIBILITY_NO_METHOD_CHANGE
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: null
+  report: reports/source_verified_failure_registry_compatibility_20261019
+  classifier: null
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Defines source_verified as source/flow evidence, without causal, efficacy or real-runtime claims; original failure records unchanged.
+  - Unknown categories and existing failure guards remain enforced; nonempty trace references required for source_verified.
+  - Scheduling manifest, algorithm, models, data and budgets unchanged; fresh source preparation required.
+  - No API, Canary, Test access or push authorized.
+  unavailable:
+    implementation_commit: Containing governance repair commit; no self-reference.
+    execution_commit: No real experiment executed.
+    result_commit: Containing sanitized verification commit.
+    manifest: Governance compatibility repair; existing scheduling manifest unchanged.
+    classifier: No new scientific efficacy classification.
 - experiment_id: single_prompt_completed_ab_test_v13
   kind: FORMAL_EXPERIMENT
   era: UNIFIED_TEAM_PROMPT_SEARCH

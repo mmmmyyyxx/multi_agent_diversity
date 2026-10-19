@@ -23,6 +23,8 @@ def render(workspace: Path) -> str:
         "",
         "Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this file.",
         "",
+        "Evidence categories: [definitions and limits](../design/FAILURE_EVIDENCE_LEVELS_V1.md).",
+        "",
     ]
     for row in registry["failures"]:
         lines.extend(

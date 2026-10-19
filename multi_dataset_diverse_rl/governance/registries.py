@@ -11,6 +11,14 @@ import yaml
 from .manifest import load_manifest, validate_manifest
 
 
+# Categories, not a ranking of scientific strength. See
+# docs/design/FAILURE_EVIDENCE_LEVELS_V1.md. Source inspection never implies
+# runtime occurrence, intervention-supported causality, efficacy or authorization.
+FAILURE_EVIDENCE_LEVELS = frozenset({
+    "observed", "causally_supported", "hypothesized", "source_verified",
+})
+
+
 def load_yaml(path: str | Path) -> Any:
     return yaml.safe_load(Path(path).read_text(encoding="utf-8"))
 
@@ -161,7 +169,6 @@ def validate_failure_registry(
     allowed_statuses = {
         "OPEN", "DIAGNOSED", "MITIGATED", "RESOLVED", "NOT_PRIMARY", "NOT_SUPPORTED"
     }
-    allowed_evidence = {"observed", "causally_supported", "hypothesized"}
     required = {
         "failure_id", "title", "status", "first_observed", "affected_components",
         "symptom", "evidence", "root_cause_status", "forbidden_inference",
@@ -174,12 +181,20 @@ def validate_failure_registry(
             errors.append(f"{failure_id}: missing fields {missing}")
         if row.get("status") not in allowed_statuses:
             errors.append(f"{failure_id}: invalid status")
-        if row.get("evidence_level") not in allowed_evidence:
+        if row.get("evidence_level") not in FAILURE_EVIDENCE_LEVELS:
             errors.append(f"{failure_id}: invalid evidence_level")
-        for evidence in row.get("evidence", []):
+        references_by_kind = {key: row.get(key, []) for key in ("evidence", "regression_tests")}
+        if row.get("evidence_level") == "source_verified":
+            for key, references in references_by_kind.items():
+                if not isinstance(references, list) or not references or not all(
+                        isinstance(reference, str) and reference.strip() for reference in references):
+                    errors.append(f"{failure_id}: source_verified requires nonempty {key} references")
+                    references_by_kind[key] = []
+        # Reference existence checks still apply to every category below.
+        for evidence in references_by_kind["evidence"]:
             if not (root / evidence).exists():
                 errors.append(f"{failure_id}: missing evidence {evidence}")
-        for test in row.get("regression_tests", []):
+        for test in references_by_kind["regression_tests"]:
             if not (root / test.split("::", 1)[0]).is_file():
                 errors.append(f"{failure_id}: missing regression test {test}")
     return errors

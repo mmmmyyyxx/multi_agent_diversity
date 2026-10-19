@@ -1,6 +1,9 @@
 # Current Implementation Specification
 
 The sole active research architecture is Unified Team Prompt Search.
+The [failure evidence categories](FAILURE_EVIDENCE_LEVELS_V1.md) distinguish
+source/flow verification from observed execution and causal support. Metadata
+compatibility does not change the method or grant experiment authorization.
 The independent [multi-direction Pattern scheduling ablation](SINGLE_PROMPT_PATTERN_SCHEDULING_V1.md)
 adds an opt-in single-Parent C0 baseline,C1 Top-2 sequential cumulative updates
 and C2 Top-2 same-Parent competition. Diagnosis is shared once per round and all

@@ -547,12 +547,13 @@ flowchart TD
     n379["historical_candidate_guard_audit_20261015<br/>FORENSIC_AUDIT<br/>COMPLETED"]
     n380["structural_candidate_policy_v2_20261015<br/>ZERO_API_AUDIT<br/>IMPLEMENTED_NOT_EXECUTED"]
     n381["single_prompt_multi_parent_v12<br/>ARCHITECTURE_REFACTOR<br/>IMPLEMENTED_NOT_EXECUTED"]
-    n382["single_prompt_completed_ab_test_v13<br/>FORMAL_EXPERIMENT<br/>PREPARED_NOT_EXECUTED"]
-    n383["single_prompt_completed_ab_test_v14<br/>FORMAL_EXPERIMENT<br/>PREPARED_NOT_EXECUTED"]
-    n384["single_prompt_completed_ab_test_v15<br/>FORMAL_EXPERIMENT<br/>PREPARED_NOT_EXECUTED"]
-    n385["repair_path_responsibility_offline_v1<br/>FORENSIC_AUDIT<br/>COMPLETED"]
-    n386["pattern_diagnosis_transfer_audit_20261019<br/>FORENSIC_AUDIT<br/>COMPLETED"]
-    n387["single_prompt_pattern_scheduling_v1<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n382["source_verified_failure_registry_compat_v1<br/>ZERO_API_AUDIT<br/>COMPLETED"]
+    n383["single_prompt_completed_ab_test_v13<br/>FORMAL_EXPERIMENT<br/>PREPARED_NOT_EXECUTED"]
+    n384["single_prompt_completed_ab_test_v14<br/>FORMAL_EXPERIMENT<br/>PREPARED_NOT_EXECUTED"]
+    n385["single_prompt_completed_ab_test_v15<br/>FORMAL_EXPERIMENT<br/>PREPARED_NOT_EXECUTED"]
+    n386["repair_path_responsibility_offline_v1<br/>FORENSIC_AUDIT<br/>COMPLETED"]
+    n387["pattern_diagnosis_transfer_audit_20261019<br/>FORENSIC_AUDIT<br/>COMPLETED"]
+    n388["single_prompt_pattern_scheduling_v1<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -590,10 +591,11 @@ flowchart TD
     n137["v18_harmful_commit_m2f_repair_pilot_20260824<br/>ZERO_API_AUDIT<br/>STATUS_UNRESOLVED"]
     n138["v18_trajectory_gain_loss_decomposition_20260824<br/>PILOT<br/>STATUS_UNRESOLVED"]
   end
-  n375 -->|audit_of| n386
-  n386 -->|derived_from| n387
-  n375 -->|derived_from| n387
-  n380 -->|derived_from| n387
+  n388 -->|followup_of| n382
+  n375 -->|audit_of| n387
+  n387 -->|derived_from| n388
+  n375 -->|derived_from| n388
+  n380 -->|derived_from| n388
   n0 -->|audit_of| n1
   n1 -->|followup_of| n2
   n2 -->|derived_from| n3
@@ -888,12 +890,12 @@ flowchart TD
   n375 -->|audit_of| n380
   n375 -->|derived_from| n381
   n380 -->|derived_from| n381
-  n371 -->|derived_from| n382
-  n378 -->|derived_from| n382
-  n382 -->|derived_from| n383
+  n371 -->|derived_from| n383
+  n378 -->|derived_from| n383
   n383 -->|derived_from| n384
-  n334 -->|audit_of| n385
-  n369 -->|audit_of| n385
+  n384 -->|derived_from| n385
+  n334 -->|audit_of| n386
+  n369 -->|audit_of| n386
 ```
 
 ## Archived branches and unresolved evidence
