@@ -3241,6 +3241,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/repair_path_responsibility_offline_20261019",
+      "document": "reports/repair_path_responsibility_offline_20261019/README.md",
+      "date": "20261019",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "FORENSIC",
+      "experiment_id": "repair_path_responsibility_offline_v1",
+      "status": "COMPLETED",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/repository_hygiene_alignment_v1_20261001",
       "document": "reports/repository_hygiene_alignment_v1_20261001/README.md",
       "date": "20261001",

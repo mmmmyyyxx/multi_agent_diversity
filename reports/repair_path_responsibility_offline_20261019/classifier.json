@@ -1,0 +1,14 @@
+{
+  "scientific_status": "RETROSPECTIVE_DIAGNOSTIC_EFFICACY_NOT_ESTABLISHED",
+  "oracle_game_verified": true,
+  "selection_equivalence_to_count": false,
+  "predictive_superiority_established": false,
+  "algorithm_adoption_recommended": false,
+  "feasibility_distribution_estimated": false,
+  "causal_claim": false,
+  "generalization_claim": false,
+  "runtime_method_changed": false,
+  "real_api_calls": 0,
+  "validation_raw_reads": 0,
+  "test_raw_reads": 0
+}

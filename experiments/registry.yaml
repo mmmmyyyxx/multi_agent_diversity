@@ -11039,3 +11039,28 @@ experiments:
     result_commit: Remaining Test evidence pending.
     report: Private continuation evidence pending.
     classifier: Completion and integrity audit pending.
+- experiment_id: repair_path_responsibility_offline_v1
+  kind: FORENSIC_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: offline_repair_path_diagnostic_v1
+  parent_ids:
+  - math_v27_seed86_precluster_continuation_v1
+  - modular_mechanisms_v212_preparation_v1
+  status: COMPLETED
+  scientific_status: RETROSPECTIVE_DIAGNOSTIC_EFFICACY_NOT_ESTABLISHED
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/repair_path_responsibility_offline_v1.json
+  report: reports/repair_path_responsibility_offline_20261019
+  classifier: reports/repair_path_responsibility_offline_20261019/classifier.json
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Offline fixed-state Oracle Repair Shapley diagnostic; current runtime unchanged.
+  - Optimize observations only; no real API, held-out reads or publication authorization.
+  unavailable:
+    implementation_commit: Local uncommitted diagnostic sources identified by hashes.
+    execution_commit: Zero-API diagnostic, not a new model experiment.
+    result_commit: Local sanitized evidence, not committed or pushed.

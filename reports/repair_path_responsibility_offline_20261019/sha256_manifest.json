@@ -1,0 +1,30 @@
+{
+  "schema": "sha256_bytes_v1",
+  "excludes_self": true,
+  "files": {
+    "classifier.json": {
+      "bytes": 473,
+      "sha256": "99437fd300dd44449d7e829f833cac56b1f121d93c850b125cccff9d49146ffa"
+    },
+    "diagnostic.json": {
+      "bytes": 355473,
+      "sha256": "f499bcab05325a2005b2342653290f32641703ef520c227b5c3553bedf2d53f4"
+    },
+    "README.md": {
+      "bytes": 9845,
+      "sha256": "6db23f686dd6eb99d2fa0e62b108420d3d7a0c1c213c378f951ecf8a20b0f816"
+    },
+    "sanitization_manifest.json": {
+      "bytes": 528,
+      "sha256": "242e929bcf97a3c17875ab4b9eadecc4a9bf71a373334a8018f88d12a586ba70"
+    },
+    "verification.json": {
+      "bytes": 1904,
+      "sha256": "3a1b697ea95e656c57275b572349713c0b1b804b381a6f3d5027dfe52910549c"
+    },
+    "WHO.csv": {
+      "bytes": 759,
+      "sha256": "4efecb078224f306c3b4bc779263536143a7829d769923c94848668b775dbe32"
+    }
+  }
+}

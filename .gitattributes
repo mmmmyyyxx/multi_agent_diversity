@@ -179,3 +179,10 @@ reports/modular_mechanisms_v212_preparation_20261014/** text eol=lf
 docs/design/MODULAR_MECHANISMS_V212.md text eol=lf
 experiments/manifests/modular_mechanisms_v212_preparation_v1.yaml text eol=lf
 tests/current/modular_default_witness.json text eol=lf
+
+# Preserve the frozen byte hashes of the offline Repair-Path diagnostic.
+reports/repair_path_responsibility_offline_20261019/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+experiments/manifests/repair_path_responsibility_offline_v1.json -text whitespace=trailing-space,space-before-tab,cr-at-eol
+multi_dataset_diverse_rl/diagnostics/repair_path.py -text whitespace=trailing-space,space-before-tab,cr-at-eol
+multi_dataset_diverse_rl/diagnostics/repair_path_replay.py -text whitespace=trailing-space,space-before-tab,cr-at-eol
+scripts/audit_repair_path_responsibility.py -text whitespace=trailing-space,space-before-tab,cr-at-eol

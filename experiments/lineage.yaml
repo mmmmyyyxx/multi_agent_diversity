@@ -1187,6 +1187,9 @@ nodes:
 - experiment_id: single_prompt_completed_ab_test_v15
   kind: FORMAL_EXPERIMENT
   era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: repair_path_responsibility_offline_v1
+  kind: FORENSIC_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: v17_formal_5arm_3seed
   to: v17_failure_decomposition
@@ -2765,4 +2768,14 @@ edges:
   relation: derived_from
   evidence: docs/design/SINGLE_PROMPT_COMPLETED_AB_TEST_V15.md
   scope: Exact power witness, local stall diagnosis and paid Test continuation; no prior score changed.
+- from: math_v27_seed86_precluster_continuation_v1
+  to: repair_path_responsibility_offline_v1
+  relation: audit_of
+  evidence: reports/repair_path_responsibility_offline_20261019/README.md
+  scope: Fixed-state Optimize replay only; no method adoption or historical outcome changes.
+- from: modular_mechanisms_v212_preparation_v1
+  to: repair_path_responsibility_offline_v1
+  relation: audit_of
+  evidence: reports/repair_path_responsibility_offline_20261019/README.md
+  scope: Fixed-state Optimize replay only; no method adoption or historical outcome changes.
 current_frontier: experiments/current_frontier.yaml

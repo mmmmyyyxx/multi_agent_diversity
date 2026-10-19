@@ -1,0 +1,55 @@
+{
+  "schema_version": "offline_repair_path_diagnostic_v1",
+  "experiment_id": "repair_path_responsibility_offline_v1",
+  "parent_ids": [
+    "math_v27_seed86_precluster_continuation_v1",
+    "modular_mechanisms_v212_preparation_v1"
+  ],
+  "repository_base_sha": "de5013cb097fcf453c4d0a7fcddd17e579b3e4a7",
+  "diagnostic_source_freeze": "Exact input hashes; no new runtime method or real execution scope",
+  "input_sha256": {
+    "multi_dataset_diverse_rl/diagnostics/repair_path.py": "d986db8fed56f4662c3fd2944c54160984fe0cdb7788850ba5ddddf2dcf677d2",
+    "multi_dataset_diverse_rl/diagnostics/repair_path_replay.py": "af54d164f8fb62e7bce2c84970bc896b2663c209c9c3263d41f7c2c90d79ebf2",
+    "scripts/audit_repair_path_responsibility.py": "340684c78b297f165b02363572201feb5f8c2ade1d8bb52c846d4d3412289e4b",
+    "multi_dataset_diverse_rl/search/scientific_aggregation.py": "5760784f1b91a6084f75893c654afea8a31682cbd363d3bb531c01028f263894",
+    "multi_dataset_diverse_rl/search/policies.py": "d3238823693bdc9693d8d822fa7c3c9c190b7965afc95541190922e090f33b7c",
+    "multi_dataset_diverse_rl/search/weighted_responsibility.py": "fbe19438cf364cffe87c0c26516a0e4deec832cc37d371c375381bb83b68a38a",
+    "docs/design/CURRENT_SPEC.md": "1f9b696754cfdf767912494ff11b9e2c3b632c8239bf9016ac4a74f6457b93e8",
+    "experiments/current_frontier.yaml": "a69f85b91a4da294fc027f913b2b6a06e677432069cfd0e1ee73da63471cec7e",
+    "docs/failures/registry.yaml": "adc81e01d6c67247c2dd207230f1ebbab7c736407da119f0f73bf0a10a6b50be",
+    "experiments/manifests/math_v27_seed86_precluster_continuation_v1.yaml": "ead27180155fd88f03b2293e773d0d4975969693ec313909cab5ab3d57006c59",
+    "experiments/manifests/modular_mechanisms_v212_preparation_v1.yaml": "cbf96f93d77a02439b6c04bf7f1c8c14195a2f3f98e567d8c1a9117ec97a105b",
+    "multi_dataset_diverse_rl/benchmarks/protocols.py": "950497f3e5295f15b70cb161d517fdb8da0d002b95d944060bd3653533f8771d",
+    "reports/math_v27_seed86_evolution_bottleneck_audit_20261012/diagnosis_summary.json": "2d96269720d22b1282d9a97abc5d4fa434bd2e617726f7a4ce3805f6c5ade361",
+    "runs/a4_v27_seed86_continuation_attempt1/execution/trajectory_private.jsonl": "8a7d39af0ab963209b11bee80d3a6339f095fff575cc1e0eb2761c407cebea14"
+  },
+  "trajectory": "runs/a4_v27_seed86_continuation_attempt1/execution/trajectory_private.jsonl",
+  "prior_mechanism_summary": "reports/math_v27_seed86_evolution_bottleneck_audit_20261012/diagnosis_summary.json",
+  "expected_inventory": {
+    "opportunities": 50,
+    "rows": 7500,
+    "errors": 8359,
+    "full_candidates": 31,
+    "exported_candidates": 70
+  },
+  "comparison": [
+    "V2.12 count sum with observed failure discount",
+    "Immediate-only with same discount",
+    "Oracle repair Shapley with same discount",
+    "Equal 1/m on failed votes only: diagnostic normalization control"
+  ],
+  "tie_policy": "Exact rational WHO scores; lowest member index or Pattern ID among positive maxima; all-zero unresolved",
+  "candidate_analysis": "Pre-edit scores vs observed Full net Vote/target changes; opportunity mean is primary unit",
+  "scope": "Optimize only; fixed historical eligible members, failure counts and original-target Pattern partitions",
+  "real_api_calls": 0,
+  "validation_raw_reads": 0,
+  "test_raw_reads": 0,
+  "production_method_unchanged": true,
+  "historical_results_immutable": true,
+  "real_api_authorized": false,
+  "push_authorized": false,
+  "report": "reports/repair_path_responsibility_offline_20261019",
+  "analysis_command": "python tests/formal_zero_api_runner.py --offline-command scripts/audit_repair_path_responsibility.py --out reports/repair_path_responsibility_offline_20261019/diagnostic.json",
+  "offline_preflight_repair": "Prior report schema key is full_candidates; initial offline command stopped before output, zero network attempts.",
+  "sensitivity": "Also aggregate observed candidates by exact historical parent ordinal and target; report no statistical efficacy claim."
+}

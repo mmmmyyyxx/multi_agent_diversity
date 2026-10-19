@@ -1,0 +1,40 @@
+{
+  "category": "CODE_TOOLS_WITHOUT_SCIENTIFIC_BEHAVIOR_CHANGE",
+  "focused_tests": {
+    "passed": 30,
+    "failures": 0,
+    "private_artifact_tests_executed": 0,
+    "receipt_sha256": "b049da125c2aa2a7ff7c3e127ebfa07f4c281761bb8f75b3daa9cbf88ade05fe"
+  },
+  "verification_scope": "New diagnostic and existing responsibility contracts, no full current/historical suite.",
+  "environment_repair": "Initial default interpreter lacked pinned math-verify; unchanged checks pass in existing matching environment.",
+  "compiled_affected_files": true,
+  "all_production_vote_configurations_compared": 16807,
+  "parent_membership_verified": {
+    "frozen_optimize_questions": 150,
+    "parent_states": 6,
+    "state_question_combinations": 900
+  },
+  "input_hashes_checked_before_and_after": true,
+  "manifest_sha256": "aec7a6e1d0b06c7e525fa95384d75abf827c55adeb070d87bd379370517a4049",
+  "reused_evidence": "Previous mechanism audit Full arithmetic and frozen trajectory integrity; no new Solver/math scoring.",
+  "full_arithmetic_crosschecks": 31,
+  "new_record_and_parent_links_valid": true,
+  "lineage_dag_valid": true,
+  "lineage_view_regenerated": true,
+  "report_indexes_unchanged_under_tracked_report_rule": true,
+  "report_index_note": "Inactive untracked report enters generated index when tracked; no staging or commit performed.",
+  "runtime_diff_scope": "Only diagnostics, runner, tests, new offline manifest, report and publication metadata.",
+  "real_api_calls": 0,
+  "network_attempts": 0,
+  "validation_raw_reads": 0,
+  "test_raw_reads": 0,
+  "scientific_behavior_changed": false,
+  "historical_reports_changed": false,
+  "deterministic_replay_byte_identical": true,
+  "report_links_valid": true,
+  "sanitization_pass": true,
+  "git_diff_check_pass": true,
+  "complete_tracked_diff_scope_checked": true,
+  "runtime_and_normative_spec_unchanged": true
+}

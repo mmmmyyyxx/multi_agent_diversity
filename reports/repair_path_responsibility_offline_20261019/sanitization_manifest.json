@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "scope": "Only new diagnostic report and its offline manifest",
+  "retained": [
+    "Hashes",
+    "Counters",
+    "Metrics",
+    "Synthetic classes",
+    "Anonymous structure multiplicities",
+    "Member indices",
+    "Pattern hashes"
+  ],
+  "omitted": [
+    "Historical prompts",
+    "Questions",
+    "Gold/model answers",
+    "Raw responses",
+    "Credentials",
+    "Endpoints",
+    "Host paths"
+  ],
+  "real_api_calls": 0,
+  "validation_raw_reads": 0,
+  "test_raw_reads": 0
+}

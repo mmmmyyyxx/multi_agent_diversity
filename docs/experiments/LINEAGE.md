@@ -550,6 +550,7 @@ flowchart TD
     n382["single_prompt_completed_ab_test_v13<br/>FORMAL_EXPERIMENT<br/>PREPARED_NOT_EXECUTED"]
     n383["single_prompt_completed_ab_test_v14<br/>FORMAL_EXPERIMENT<br/>PREPARED_NOT_EXECUTED"]
     n384["single_prompt_completed_ab_test_v15<br/>FORMAL_EXPERIMENT<br/>PREPARED_NOT_EXECUTED"]
+    n385["repair_path_responsibility_offline_v1<br/>FORENSIC_AUDIT<br/>COMPLETED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -885,6 +886,8 @@ flowchart TD
   n378 -->|derived_from| n382
   n382 -->|derived_from| n383
   n383 -->|derived_from| n384
+  n334 -->|audit_of| n385
+  n369 -->|audit_of| n385
 ```
 
 ## Archived branches and unresolved evidence
