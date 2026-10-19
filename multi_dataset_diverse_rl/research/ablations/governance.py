@@ -196,7 +196,7 @@ def _prepare_legacy_metadata(root, destination):
 def execution_plan_template(scope):
     return dict(
         command=scope['execution']['command'], cells=scope['plan']['cells'],
-        train_call_ceiling=scope['call_ceiling'], test_plan=scope['test_plan'], token_ceiling=None,
+        train_call_ceiling=scope['call_ceiling'], test_plan=scope['test_plan'], token_ceiling=scope.get('token_ceiling'),
         source_sha=scope['source_sha'], scope_identity=scope['scope_identity'])
 
 
@@ -254,6 +254,9 @@ def validate_authorization(scope, authorization, *, required=False, test=False):
 
 def validate_prep(root,directory,*,authorized=False):
     directory=private_path(root,directory)
+    from . import proposal_canary
+    if read_json(directory/'prep.json').get('schema_version')==proposal_canary.PREP_SCHEMA:
+        return proposal_canary.validate_prep(root,directory,authorized=authorized)
     from . import proposal_governance
     if read_json(directory/'prep.json').get('schema_version')==proposal_governance.PREP_SCHEMA:
         return proposal_governance.validate_prep(root,directory,authorized=authorized)

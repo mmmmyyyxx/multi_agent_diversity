@@ -11146,3 +11146,30 @@ experiments:
     execution_commit: No real model execution.
     result_commit: No efficacy evidence.
     classifier: Offline conformance only.
+- experiment_id: single_prompt_pattern_canary_v1
+  kind: REAL_CANARY
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: single_parent_pattern_direction_scheduling_operational_canary_v1
+  parent_ids:
+  - single_prompt_pattern_scheduling_v1
+  - source_verified_failure_registry_compat_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: UNMEASURED_OPERATIONAL_CANARY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_pattern_canary_v1.json
+  report: reports/pattern_scheduling_canary_preparation_20261019
+  classifier: null
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Independent C0/C1/C2 one-repeat one-round full Optimize150/Validation100 seed42 operational canary; Test prohibited.
+  - Fresh source and exact authorization required; no real calls during preparation and no formal prefix reuse.
+  - Hard ceilings of 9379 successful semantic/inflight calls and 3000000 accounted Tokens.
+  unavailable:
+    implementation_commit: Containing Canary preparation commit; no self-reference.
+    execution_commit: Exact Canary authorization pending.
+    result_commit: No real execution or efficacy evidence.
+    classifier: Offline preparation only.

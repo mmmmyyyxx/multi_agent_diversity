@@ -9,6 +9,9 @@ adds an opt-in single-Parent C0 baseline,C1 Top-2 sequential cumulative updates
 and C2 Top-2 same-Parent competition. Diagnosis is shared once per round and all
 admission uses strict Validation gain. It does not use the V12 Parent pool,
 change the production team or authorize real execution.
+Its [independent one-round API Canary](SINGLE_PROMPT_PATTERN_CANARY_V1.md)
+checks those same paths under separate hard resource ceilings, with Test access
+prohibited. Canary data cannot become formal experiment state or efficacy evidence.
 The [structural candidate amendment](STRUCTURAL_CANDIDATES_V2.md) replaces candidate
 content Guards with nonempty three-block structure and one-block replacement,
 removes character budgets and records no-op skips without legality retries.

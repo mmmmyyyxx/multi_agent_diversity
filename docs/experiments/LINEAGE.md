@@ -554,6 +554,7 @@ flowchart TD
     n386["repair_path_responsibility_offline_v1<br/>FORENSIC_AUDIT<br/>COMPLETED"]
     n387["pattern_diagnosis_transfer_audit_20261019<br/>FORENSIC_AUDIT<br/>COMPLETED"]
     n388["single_prompt_pattern_scheduling_v1<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n389["single_prompt_pattern_canary_v1<br/>REAL_CANARY<br/>PREPARED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -591,6 +592,8 @@ flowchart TD
     n137["v18_harmful_commit_m2f_repair_pilot_20260824<br/>ZERO_API_AUDIT<br/>STATUS_UNRESOLVED"]
     n138["v18_trajectory_gain_loss_decomposition_20260824<br/>PILOT<br/>STATUS_UNRESOLVED"]
   end
+  n388 -->|derived_from| n389
+  n382 -->|derived_from| n389
   n388 -->|followup_of| n382
   n375 -->|audit_of| n387
   n387 -->|derived_from| n388

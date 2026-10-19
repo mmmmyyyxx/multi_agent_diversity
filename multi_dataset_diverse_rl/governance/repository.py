@@ -96,7 +96,11 @@ def validate_registry_v2(root: Path, registry: Mapping) -> tuple[list[str],dict]
                 if validate_published_single_prompt(root,path,obj):continue
             except ValueError as exc:
                 errors.append(f'{ident}: {exc}');continue
-            if isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_pattern_scheduling_draft_v1':
+            if isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_pattern_canary_manifest_v1':
+                from ..research.ablations.proposal_canary import validate_manifest
+                try:validate_manifest(obj)
+                except ValueError as exc:errors.append(f'{ident}: {exc}')
+            elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_pattern_scheduling_draft_v1':
                 from ..research.ablations.proposal_config import build_plan
                 try:build_plan(obj)
                 except ValueError as exc:errors.append(f'{ident}: {exc}')

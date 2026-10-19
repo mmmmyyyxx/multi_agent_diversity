@@ -1,0 +1,62 @@
+{
+  "status": "OFFLINE_CANARY_PREPARATION_PASS_NOT_AUTHORIZED",
+  "base_source_sha": "a47877167e3e7ee4953c33f7b2a4fcf8b02ab6d7",
+  "new_checks": {
+    "first_campaign_passed": 108,
+    "final_canary_and_entrypoints_passed": 70,
+    "production_compileall": "PASS",
+    "repository_governance": "PASS",
+    "complete_manifest_preflight": "PASS",
+    "canary_manifest_entrypoint": "PASS_NOT_AUTHORIZED"
+  },
+  "reused_checks": {
+    "current_suite_passed": 1205,
+    "current_suite_skipped": 2,
+    "not_newly_run": true,
+    "evidence": "reports/source_verified_failure_registry_compatibility_20261019/verification.json",
+    "evidence_sha256": "716926c60e37df10f1805a19013a47dce2a05fa52eb868d8a1ef5c019f0f7b6d",
+    "scope": "Unchanged science, scoring, cache, recovery, data and production method; changed scheduling preparation, execution metadata and entrypoints rerun",
+    "not_a_new_full_suite": true,
+    "full_historical_replay_claim": false
+  },
+  "canary": {
+    "cells": 3,
+    "repeats": 1,
+    "rounds": 1,
+    "seed": 42,
+    "optimize_count": 150,
+    "validation_count": 100,
+    "validation_seed": 42,
+    "successful_semantic_and_inflight_ceiling": 9379,
+    "cumulative_accounted_token_ceiling": 3000000,
+    "test_call_ceiling": 0
+  },
+  "unchanged_scientific_source_paths": [
+    "multi_dataset_diverse_rl/research/ablations/pattern_proposals.py",
+    "multi_dataset_diverse_rl/research/ablations/proposal_config.py",
+    "multi_dataset_diverse_rl/search",
+    "multi_dataset_diverse_rl/benchmarks",
+    "docs/failures/registry.yaml",
+    "experiments/manifests/single_prompt_pattern_scheduling_v1.json",
+    "experiments/ablations/pattern_directions/default.json",
+    "experiments/current_frontier.yaml"
+  ],
+  "failure_registry_sha256": "adc81e01d6c67247c2dd207230f1ebbab7c736407da119f0f73bf0a10a6b50be",
+  "incomplete_check_attempts": "Initial uncompleted launcher logs retained; process-local DLL bootstrap used for native tests without package changes. Preliminary governance runs were replaced after deferred-import change; only final completed checks count.",
+  "real_api_calls": 0,
+  "real_validation_evaluations": 0,
+  "test_evaluations": 0,
+  "network_attempt_count": 0,
+  "READY_TO_RUN": false,
+  "test_access": false,
+  "canary_executed": false,
+  "formal_execution_authorized": false,
+  "push_authorized": false,
+  "evidence_sha256": {
+    "first_campaign": "90903b676cc089844f69d1c5bb28fe932d5656ab66e69dba6c806111d3d5bf6d",
+    "final_canary_and_shared_entrypoints": "fa398e506f24922af9741f84f6b053b00c32190e5f2ba5b33f39a57471fcee1c",
+    "repository": "30cac12460938c333d2b55fbdb21c3334d8df1875f4fbf34d600faa37113f5d1",
+    "complete_manifest_preflight": "4663b4c26f0892ddcce3665e5ed996335fcb60871136ce8748d0d3a0f351946d",
+    "canary_manifest_main_entry": "8e3a817151b6912d391bea2709a63dd78c990342e8698843de298e477369600f"
+  }
+}

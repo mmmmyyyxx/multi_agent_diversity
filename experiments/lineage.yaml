@@ -1,6 +1,9 @@
 schema_version: experiment_lineage_v2
 authority: sole experiment lineage authority
 nodes:
+- experiment_id: single_prompt_pattern_canary_v1
+  kind: REAL_CANARY
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 - experiment_id: source_verified_failure_registry_compat_v1
   kind: ZERO_API_AUDIT
   era: UNIFIED_TEAM_PROMPT_SEARCH
@@ -1200,6 +1203,16 @@ nodes:
   kind: FORENSIC_AUDIT
   era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
+- from: single_prompt_pattern_scheduling_v1
+  to: single_prompt_pattern_canary_v1
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_PATTERN_CANARY_V1.md
+  scope: Independent bounded operational check only; no Test access or formal prefix reuse.
+- from: source_verified_failure_registry_compat_v1
+  to: single_prompt_pattern_canary_v1
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_PATTERN_CANARY_V1.md
+  scope: Independent bounded operational check only; no Test access or formal prefix reuse.
 - from: single_prompt_pattern_scheduling_v1
   to: source_verified_failure_registry_compat_v1
   relation: followup_of
