@@ -1,0 +1,344 @@
+{
+  "status": "OFFLINE_REVIEW_DRAFT_NOT_FROZEN",
+  "reviewed": 40,
+  "mathematical_error_proposals": 34,
+  "boundary_adjudication_pending": 0,
+  "boundary_user_confirmed_exclusions": 6,
+  "adjudication_evidence_sha256": "04fd8cd970fe23e08b0bc78f2b657ab3cdb2af2ffe4a62f0330c63e47635a065",
+  "families": {
+    "COMPLEX_MODULUS_CASES": 1,
+    "CONDITIONAL_DIGIT_COUNTS": 1,
+    "CONSTRUCTION_MULTIPLICITY": 1,
+    "DIAGRAM_INCIDENCE": 1,
+    "DIAGRAM_REGION_DECOMPOSITION": 1,
+    "DISTRIBUTIVE_TERM_PRESERVATION": 3,
+    "EXACT_INTEGER_ARITHMETIC": 1,
+    "GEOMETRIC_AFFINE_PARAMETERIZATION": 1,
+    "GEOMETRIC_AFFINE_RELATION": 1,
+    "GEOMETRIC_AREA_THEOREM": 1,
+    "GEOMETRIC_SQUARE_CONFIGURATION": 1,
+    "GEOMETRIC_TANGENT_COORDINATE": 1,
+    "GEOMETRIC_VERTEX_CONSTRAINT": 1,
+    "GLOBAL_EXTREMUM_CERTIFICATE": 2,
+    "MODULAR_ARITHMETIC": 1,
+    "OFFSET_PATH_GEOMETRY": 1,
+    "ORDER_REPETITION_ASSUMPTIONS": 1,
+    "OVERLAP_UNION_CARDINALITY": 1,
+    "POWER_SUM_COEFFICIENT_SIGNS": 2,
+    "PROBABILITY_JOINT_STAGE_SPACE": 1,
+    "PROBABILITY_PAIR_SPACE_CONSISTENCY": 1,
+    "PROJECTION_INVARIANT": 1,
+    "RATIONAL_FACTOR_PRESERVATION": 3,
+    "SUM_INDEX_SYMMETRY": 1,
+    "UNSUPPORTED_FINAL_TARGET": 1,
+    "UNVERIFIED_SYSTEM_SOLUTION": 3
+  },
+  "families_with_at_least_three_items": {
+    "UNVERIFIED_SYSTEM_SOLUTION": 3,
+    "DISTRIBUTIVE_TERM_PRESERVATION": 3,
+    "RATIONAL_FACTOR_PRESERVATION": 3
+  },
+  "necessary_not_sufficient_repair": true,
+  "network_attempts": 0,
+  "interpretation": "Provisional single AI reviewer labels, not semantic Pattern accuracy or gold truth.",
+  "adjudication": {
+    "status": "USER_CONFIRMED",
+    "decision_date": "2026-10-19",
+    "review_ids": [
+      "Q002",
+      "Q004",
+      "Q030",
+      "Q031",
+      "Q038",
+      "Q039"
+    ],
+    "main_reasoning_analysis": "EXCLUDE",
+    "separate_boundary_reporting": true,
+    "historical_scores": "PRESERVE_UNCHANGED",
+    "mathematical_label_freeze": false,
+    "split_freeze": false,
+    "real_api_authorized": false
+  },
+  "cases": [
+    {
+      "review_id": "Q001",
+      "family": "DIAGRAM_INCIDENCE",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": true,
+      "packet_sha256": "ce6826e962833194f8b3886bec2c71e49d4bb8bae4faf63c5598266e38310e8e"
+    },
+    {
+      "review_id": "Q002",
+      "family": "PERCENT_REPRESENTATION_BOUNDARY",
+      "status": "USER_CONFIRMED_EXCLUDED_REASONING_PRIMARY",
+      "multiple_failures": false,
+      "packet_sha256": "baa3a343920a29c1d2bba357330e1162c8d137148723cac44cb292b717dd9143"
+    },
+    {
+      "review_id": "Q003",
+      "family": "UNVERIFIED_SYSTEM_SOLUTION",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": true,
+      "packet_sha256": "f4e44bb4dfe94a478fed1e45f0b00d75e6c30cacec663685bbbbdcbb67ae98d3"
+    },
+    {
+      "review_id": "Q004",
+      "family": "MATRIX_REPRESENTATION_BOUNDARY",
+      "status": "USER_CONFIRMED_EXCLUDED_REASONING_PRIMARY",
+      "multiple_failures": false,
+      "packet_sha256": "f26ceb63500671f51c86d56ad625e76c4f471bdfdb363e5722ecc82d66e1d2fb"
+    },
+    {
+      "review_id": "Q005",
+      "family": "UNVERIFIED_SYSTEM_SOLUTION",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": true,
+      "packet_sha256": "d69aa85a5c9e0d0df7e6f9280d37055cde0ae97939204b3641632480050a2bbf"
+    },
+    {
+      "review_id": "Q006",
+      "family": "POWER_SUM_COEFFICIENT_SIGNS",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": false,
+      "packet_sha256": "c6aafd346d25ca69920ff3a7786af64856537d74a594809d3dcba313a8bb66ac"
+    },
+    {
+      "review_id": "Q007",
+      "family": "DIAGRAM_REGION_DECOMPOSITION",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": false,
+      "packet_sha256": "742510b5fbdb641fc1d5acbac1e06a71c4790ab6ff5b36c3e5d3fd58ec6d56f8"
+    },
+    {
+      "review_id": "Q008",
+      "family": "GEOMETRIC_AFFINE_PARAMETERIZATION",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": true,
+      "packet_sha256": "b0c19a7eff6e0ee5c646085fb309f97d3578b5d2cfa6f56a2762194875144d63"
+    },
+    {
+      "review_id": "Q009",
+      "family": "PROBABILITY_PAIR_SPACE_CONSISTENCY",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": false,
+      "packet_sha256": "40904ec7e3682b7c1923bf83e9fe082f6dd3f47b6f7c721ce1cbe62124616a56"
+    },
+    {
+      "review_id": "Q010",
+      "family": "ORDER_REPETITION_ASSUMPTIONS",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": false,
+      "packet_sha256": "d99bc4e6a84d925ad172064bb61026a444bf092559dca2c4c63645277875ad73"
+    },
+    {
+      "review_id": "Q011",
+      "family": "DISTRIBUTIVE_TERM_PRESERVATION",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": true,
+      "packet_sha256": "2d4b70241c797a154c96fa449de6a4f8dffc52da85b630eec562d58a6d125fc8"
+    },
+    {
+      "review_id": "Q012",
+      "family": "SUM_INDEX_SYMMETRY",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": false,
+      "packet_sha256": "7f2243bc5b231a788d770b114ae3ee3ebe1a749b30f1f31c4225281d84eb3c9c"
+    },
+    {
+      "review_id": "Q013",
+      "family": "GLOBAL_EXTREMUM_CERTIFICATE",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": false,
+      "packet_sha256": "bd574227ad79b890ca8defd68256c237ea4313fed7b9737a09b4266ee553f20a"
+    },
+    {
+      "review_id": "Q014",
+      "family": "DISTRIBUTIVE_TERM_PRESERVATION",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": true,
+      "packet_sha256": "39f664936b40de7513b22333e149ecd3bbadebd4e830fcaec8863af665e4e367"
+    },
+    {
+      "review_id": "Q015",
+      "family": "UNSUPPORTED_FINAL_TARGET",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": true,
+      "packet_sha256": "6e2936607499841a309da8559d9a1d35dea34bd4345d81096662d61d2751e072"
+    },
+    {
+      "review_id": "Q016",
+      "family": "COMPLEX_MODULUS_CASES",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": true,
+      "packet_sha256": "7773895f0e33d3e8a597e985daf53a2890fb2802f1974dbcc1915bf36cc70d27"
+    },
+    {
+      "review_id": "Q017",
+      "family": "GEOMETRIC_AFFINE_RELATION",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": true,
+      "packet_sha256": "5d672bf9999de6d065464b5d6d1cc74cdd285e1a7a4867ade1341b8a02f8eeda"
+    },
+    {
+      "review_id": "Q018",
+      "family": "POWER_SUM_COEFFICIENT_SIGNS",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": true,
+      "packet_sha256": "1f3500e7b616a60a33c5ba92bd30da25b43987ce8b991c1243acb3b396b1e168"
+    },
+    {
+      "review_id": "Q019",
+      "family": "GEOMETRIC_AREA_THEOREM",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": true,
+      "packet_sha256": "e53b3171be7197be7786910642291a6e206a0adf3759d48af24c123ef19c319f"
+    },
+    {
+      "review_id": "Q020",
+      "family": "RATIONAL_FACTOR_PRESERVATION",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": true,
+      "packet_sha256": "d7836571bc2a1e572481ad026626e74de1fe70c771542f5f98ac44c4636f990d"
+    },
+    {
+      "review_id": "Q021",
+      "family": "GLOBAL_EXTREMUM_CERTIFICATE",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": true,
+      "packet_sha256": "d775bc1c39569217a22a03e47a1a7137fffbf86c2b033c60e918df76c3add297"
+    },
+    {
+      "review_id": "Q022",
+      "family": "RATIONAL_FACTOR_PRESERVATION",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": false,
+      "packet_sha256": "812ffc6285a6e0013828dcf8e5a30bb95510e7f9973574272bd94b56b9a51f6e"
+    },
+    {
+      "review_id": "Q023",
+      "family": "GEOMETRIC_TANGENT_COORDINATE",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": true,
+      "packet_sha256": "618368f6e86fb81bcc703c3e3cde8596c4b18ad1c676af2f3e81a3bbc17e8f0b"
+    },
+    {
+      "review_id": "Q024",
+      "family": "CONDITIONAL_DIGIT_COUNTS",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": false,
+      "packet_sha256": "fe878662fce89638297976a0011e62d42a2a1a915ef05bc244037a9ab67ed401"
+    },
+    {
+      "review_id": "Q025",
+      "family": "RATIONAL_FACTOR_PRESERVATION",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": false,
+      "packet_sha256": "609922774bbd9a2dd6476a136add8d26779d9be3275bc762bf42c36001b056a3"
+    },
+    {
+      "review_id": "Q026",
+      "family": "GEOMETRIC_SQUARE_CONFIGURATION",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": true,
+      "packet_sha256": "43ecc6ac9f1ad01b786a3f10043432da8bc3c449b7292b52242bd52f318b962d"
+    },
+    {
+      "review_id": "Q027",
+      "family": "DISTRIBUTIVE_TERM_PRESERVATION",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": true,
+      "packet_sha256": "d3d09bbbdfe704414c166c570652e5295eabf98bb5ad1869fccb04031a884c0f"
+    },
+    {
+      "review_id": "Q028",
+      "family": "PROJECTION_INVARIANT",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": false,
+      "packet_sha256": "3b92f68fe348af807535b4d5f6839f31ac29d26e9b14afddb6c618756d108a76"
+    },
+    {
+      "review_id": "Q029",
+      "family": "PROBABILITY_JOINT_STAGE_SPACE",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": true,
+      "packet_sha256": "be08894e00a57eed22882d3143b99e7af3e42894d55a15352177984d21f4df5c"
+    },
+    {
+      "review_id": "Q030",
+      "family": "RADICAL_REPRESENTATION_BOUNDARY",
+      "status": "USER_CONFIRMED_EXCLUDED_REASONING_PRIMARY",
+      "multiple_failures": false,
+      "packet_sha256": "514444edb4c63c02889067e521866406f31a533751af9e04fc05e92fddfe49d7"
+    },
+    {
+      "review_id": "Q031",
+      "family": "REFERENCE_ANSWER_INCOMPLETE",
+      "status": "USER_CONFIRMED_EXCLUDED_REASONING_PRIMARY",
+      "multiple_failures": false,
+      "packet_sha256": "839532aef502685a366d7fbcd71e3b56c418b730969abfcb7c52f59bac40f904"
+    },
+    {
+      "review_id": "Q032",
+      "family": "MODULAR_ARITHMETIC",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": true,
+      "packet_sha256": "2e576c34909984224102d19781e0049a80a0b69e0b971c77326e4a5b7eff2d3f"
+    },
+    {
+      "review_id": "Q033",
+      "family": "OVERLAP_UNION_CARDINALITY",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": true,
+      "packet_sha256": "644a6fd9071f880bf5788c319aa433daa0ee086df1cca56c0ee38910b89889ce"
+    },
+    {
+      "review_id": "Q034",
+      "family": "EXACT_INTEGER_ARITHMETIC",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": false,
+      "packet_sha256": "37f935ec2afe9452ab650073f7e622f92c2fbdb6df32573a0b654a5833db4995"
+    },
+    {
+      "review_id": "Q035",
+      "family": "GEOMETRIC_VERTEX_CONSTRAINT",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": true,
+      "packet_sha256": "561bd24c5a5d01f14b364dbbf2faf01f725a27f3eb8f5c4bcebaadb6c4621d54"
+    },
+    {
+      "review_id": "Q036",
+      "family": "UNVERIFIED_SYSTEM_SOLUTION",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": false,
+      "packet_sha256": "f57cb094a2c71e7239a6eeef2e6ecb04373a88a9a0dbfca33b710a19e1f79a72"
+    },
+    {
+      "review_id": "Q037",
+      "family": "OFFSET_PATH_GEOMETRY",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": true,
+      "packet_sha256": "e84f87cd57f7a4432cda5c888d0a4b848048580a6c7c044cedea752183f55b24"
+    },
+    {
+      "review_id": "Q038",
+      "family": "INTERVAL_OUTPUT_CORRUPTION",
+      "status": "USER_CONFIRMED_EXCLUDED_REASONING_PRIMARY",
+      "multiple_failures": false,
+      "packet_sha256": "62a7dfb2063ef089840fdfe32898f6b38c946c38ae2efa65f76b49249e948e0f"
+    },
+    {
+      "review_id": "Q039",
+      "family": "INTERVAL_OUTPUT_CORRUPTION",
+      "status": "USER_CONFIRMED_EXCLUDED_REASONING_PRIMARY",
+      "multiple_failures": false,
+      "packet_sha256": "32c325e713925d28bc28a0a348d579f060a668f2174dfd53e56ceade43f9ccc4"
+    },
+    {
+      "review_id": "Q040",
+      "family": "CONSTRUCTION_MULTIPLICITY",
+      "status": "PROVISIONAL_MATHEMATICAL_ERROR",
+      "multiple_failures": false,
+      "packet_sha256": "27fc92963bbfdc984fd486663634efff113a4dd1cabd70cbf6cde4443985364e"
+    }
+  ]
+}

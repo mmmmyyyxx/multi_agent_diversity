@@ -1,0 +1,3900 @@
+{
+  "training_source_sha": "211a05c569f676f40067ed67eb445b0e5a93d8a0",
+  "terminal_sha256": "9194886a25e456ac303cb3f63978ad5404ed43697d412656968ff2c8163fa71f",
+  "verified_input_files": 183,
+  "network_attempts": 0,
+  "denominator": "question-opportunity exposures, repeated questions are not independent",
+  "decisions": {
+    "ACCEPTED_STRICT_VALIDATION_GAIN": 7,
+    "REJECTED_NO_STRICT_VALIDATION_GAIN": 49,
+    "ABANDONED_GENERATION_RETRIES_EXHAUSTED": 4
+  },
+  "support_sizes": {
+    "2": 2,
+    "5": 9,
+    "3": 16,
+    "8": 5,
+    "6": 5,
+    "4": 11,
+    "10": 2,
+    "7": 5,
+    "12": 1,
+    "1": 1,
+    "9": 1,
+    "13": 1
+  },
+  "pattern_rounds_with_nonrepresentative_support": 40,
+  "measured_rounds_with_nonrepresentative_support": 39,
+  "rounds_with_nonrepresentative_support_repairs": 21,
+  "aggregates": {
+    "all": {
+      "rounds": 60,
+      "measured": 56,
+      "changes": {
+        "shown_change": {
+          "n": 164,
+          "repairs": 43,
+          "regressions": 0
+        },
+        "all_errors_change": {
+          "n": 2011,
+          "repairs": 452,
+          "regressions": 0
+        },
+        "other_errors_change": {
+          "n": 1725,
+          "repairs": 380,
+          "regressions": 0
+        },
+        "optimize_all_change": {
+          "n": 8400,
+          "repairs": 452,
+          "regressions": 399
+        },
+        "validation_all_change": {
+          "n": 5600,
+          "repairs": 190,
+          "regressions": 319
+        },
+        "validation_errors_change": {
+          "n": 1192,
+          "repairs": 190,
+          "regressions": 0
+        },
+        "nonrepresentative_support_change": {
+          "n": 125,
+          "repairs": 31,
+          "regressions": 0
+        },
+        "selected_support_change": {
+          "n": 286,
+          "repairs": 72,
+          "regressions": 0
+        }
+      }
+    },
+    "accepted": {
+      "rounds": 7,
+      "measured": 7,
+      "changes": {
+        "shown_change": {
+          "n": 20,
+          "repairs": 7,
+          "regressions": 0
+        },
+        "all_errors_change": {
+          "n": 253,
+          "repairs": 63,
+          "regressions": 0
+        },
+        "other_errors_change": {
+          "n": 221,
+          "repairs": 52,
+          "regressions": 0
+        },
+        "optimize_all_change": {
+          "n": 1050,
+          "repairs": 63,
+          "regressions": 59
+        },
+        "validation_all_change": {
+          "n": 700,
+          "repairs": 45,
+          "regressions": 23
+        },
+        "validation_errors_change": {
+          "n": 171,
+          "repairs": 45,
+          "regressions": 0
+        },
+        "nonrepresentative_support_change": {
+          "n": 12,
+          "repairs": 4,
+          "regressions": 0
+        },
+        "selected_support_change": {
+          "n": 32,
+          "repairs": 11,
+          "regressions": 0
+        }
+      }
+    },
+    "rejected": {
+      "rounds": 49,
+      "measured": 49,
+      "changes": {
+        "shown_change": {
+          "n": 144,
+          "repairs": 36,
+          "regressions": 0
+        },
+        "all_errors_change": {
+          "n": 1758,
+          "repairs": 389,
+          "regressions": 0
+        },
+        "other_errors_change": {
+          "n": 1504,
+          "repairs": 328,
+          "regressions": 0
+        },
+        "optimize_all_change": {
+          "n": 7350,
+          "repairs": 389,
+          "regressions": 340
+        },
+        "validation_all_change": {
+          "n": 4900,
+          "repairs": 145,
+          "regressions": 296
+        },
+        "validation_errors_change": {
+          "n": 1021,
+          "repairs": 145,
+          "regressions": 0
+        },
+        "nonrepresentative_support_change": {
+          "n": 113,
+          "repairs": 27,
+          "regressions": 0
+        },
+        "selected_support_change": {
+          "n": 254,
+          "repairs": 61,
+          "regressions": 0
+        }
+      }
+    },
+    "pattern": {
+      "rounds": 59,
+      "measured": 55,
+      "changes": {
+        "shown_change": {
+          "n": 161,
+          "repairs": 41,
+          "regressions": 0
+        },
+        "all_errors_change": {
+          "n": 1975,
+          "repairs": 444,
+          "regressions": 0
+        },
+        "other_errors_change": {
+          "n": 1689,
+          "repairs": 372,
+          "regressions": 0
+        },
+        "optimize_all_change": {
+          "n": 8250,
+          "repairs": 444,
+          "regressions": 392
+        },
+        "validation_all_change": {
+          "n": 5500,
+          "repairs": 187,
+          "regressions": 314
+        },
+        "validation_errors_change": {
+          "n": 1171,
+          "repairs": 187,
+          "regressions": 0
+        },
+        "nonrepresentative_support_change": {
+          "n": 125,
+          "repairs": 31,
+          "regressions": 0
+        },
+        "selected_support_change": {
+          "n": 286,
+          "repairs": 72,
+          "regressions": 0
+        }
+      }
+    },
+    "fallback": {
+      "rounds": 1,
+      "measured": 1,
+      "changes": {
+        "shown_change": {
+          "n": 3,
+          "repairs": 2,
+          "regressions": 0
+        },
+        "all_errors_change": {
+          "n": 36,
+          "repairs": 8,
+          "regressions": 0
+        },
+        "other_errors_change": {
+          "n": 36,
+          "repairs": 8,
+          "regressions": 0
+        },
+        "optimize_all_change": {
+          "n": 150,
+          "repairs": 8,
+          "regressions": 7
+        },
+        "validation_all_change": {
+          "n": 100,
+          "repairs": 3,
+          "regressions": 5
+        },
+        "validation_errors_change": {
+          "n": 21,
+          "repairs": 3,
+          "regressions": 0
+        }
+      }
+    },
+    "repeat_1": {
+      "rounds": 20,
+      "measured": 19,
+      "changes": {
+        "shown_change": {
+          "n": 56,
+          "repairs": 9,
+          "regressions": 0
+        },
+        "all_errors_change": {
+          "n": 634,
+          "repairs": 121,
+          "regressions": 0
+        },
+        "other_errors_change": {
+          "n": 548,
+          "repairs": 105,
+          "regressions": 0
+        },
+        "optimize_all_change": {
+          "n": 2850,
+          "repairs": 121,
+          "regressions": 167
+        },
+        "validation_all_change": {
+          "n": 1900,
+          "repairs": 88,
+          "regressions": 114
+        },
+        "validation_errors_change": {
+          "n": 431,
+          "repairs": 88,
+          "regressions": 0
+        },
+        "nonrepresentative_support_change": {
+          "n": 30,
+          "repairs": 7,
+          "regressions": 0
+        },
+        "selected_support_change": {
+          "n": 86,
+          "repairs": 16,
+          "regressions": 0
+        }
+      }
+    },
+    "repeat_2": {
+      "rounds": 20,
+      "measured": 19,
+      "changes": {
+        "shown_change": {
+          "n": 55,
+          "repairs": 12,
+          "regressions": 0
+        },
+        "all_errors_change": {
+          "n": 695,
+          "repairs": 145,
+          "regressions": 0
+        },
+        "other_errors_change": {
+          "n": 601,
+          "repairs": 126,
+          "regressions": 0
+        },
+        "optimize_all_change": {
+          "n": 2850,
+          "repairs": 145,
+          "regressions": 84
+        },
+        "validation_all_change": {
+          "n": 1900,
+          "repairs": 54,
+          "regressions": 106
+        },
+        "validation_errors_change": {
+          "n": 398,
+          "repairs": 54,
+          "regressions": 0
+        },
+        "nonrepresentative_support_change": {
+          "n": 42,
+          "repairs": 9,
+          "regressions": 0
+        },
+        "selected_support_change": {
+          "n": 94,
+          "repairs": 19,
+          "regressions": 0
+        }
+      }
+    },
+    "repeat_3": {
+      "rounds": 20,
+      "measured": 18,
+      "changes": {
+        "shown_change": {
+          "n": 53,
+          "repairs": 22,
+          "regressions": 0
+        },
+        "all_errors_change": {
+          "n": 682,
+          "repairs": 186,
+          "regressions": 0
+        },
+        "other_errors_change": {
+          "n": 576,
+          "repairs": 149,
+          "regressions": 0
+        },
+        "optimize_all_change": {
+          "n": 2700,
+          "repairs": 186,
+          "regressions": 148
+        },
+        "validation_all_change": {
+          "n": 1800,
+          "repairs": 48,
+          "regressions": 99
+        },
+        "validation_errors_change": {
+          "n": 363,
+          "repairs": 48,
+          "regressions": 0
+        },
+        "nonrepresentative_support_change": {
+          "n": 53,
+          "repairs": 15,
+          "regressions": 0
+        },
+        "selected_support_change": {
+          "n": 106,
+          "repairs": 37,
+          "regressions": 0
+        }
+      }
+    }
+  },
+  "rounds": [
+    {
+      "repeat": 1,
+      "round": 1,
+      "fallback": false,
+      "patterns": 4,
+      "errors": 40,
+      "support": 2,
+      "representatives": 2,
+      "nonrepresentative_support": 0,
+      "accepted": true,
+      "decision": "ACCEPTED_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 2,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 40,
+        "repairs": 13,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 38,
+        "repairs": 12,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 13,
+        "regressions": 6
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 11,
+        "regressions": 4
+      },
+      "validation_errors_change": {
+        "n": 31,
+        "repairs": 11,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 0,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 2,
+        "repairs": 1,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "round": 2,
+      "fallback": false,
+      "patterns": 4,
+      "errors": 33,
+      "support": 5,
+      "representatives": 3,
+      "nonrepresentative_support": 2,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 33,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 28,
+        "repairs": 5,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 6,
+        "regressions": 13
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 6,
+        "regressions": 6
+      },
+      "validation_errors_change": {
+        "n": 24,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 2,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 5,
+        "repairs": 1,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "round": 3,
+      "fallback": false,
+      "patterns": 17,
+      "errors": 33,
+      "support": 3,
+      "representatives": 3,
+      "nonrepresentative_support": 0,
+      "accepted": true,
+      "decision": "ACCEPTED_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 33,
+        "repairs": 8,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 30,
+        "repairs": 8,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 8,
+        "regressions": 8
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 6,
+        "regressions": 4
+      },
+      "validation_errors_change": {
+        "n": 24,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 0,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "round": 4,
+      "fallback": false,
+      "patterns": 11,
+      "errors": 33,
+      "support": 5,
+      "representatives": 3,
+      "nonrepresentative_support": 2,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 33,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 28,
+        "repairs": 5,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 6,
+        "regressions": 6
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 5,
+        "regressions": 5
+      },
+      "validation_errors_change": {
+        "n": 22,
+        "repairs": 5,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 2,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 5,
+        "repairs": 1,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "round": 5,
+      "fallback": false,
+      "patterns": 4,
+      "errors": 33,
+      "support": 8,
+      "representatives": 3,
+      "nonrepresentative_support": 5,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 33,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 25,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 3,
+        "regressions": 11
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 5,
+        "regressions": 6
+      },
+      "validation_errors_change": {
+        "n": 22,
+        "repairs": 5,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 5,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 8,
+        "repairs": 0,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "round": 6,
+      "fallback": false,
+      "patterns": 6,
+      "errors": 33,
+      "support": 5,
+      "representatives": 3,
+      "nonrepresentative_support": 2,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 33,
+        "repairs": 10,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 28,
+        "repairs": 9,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 10,
+        "regressions": 10
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 5,
+        "regressions": 8
+      },
+      "validation_errors_change": {
+        "n": 22,
+        "repairs": 5,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 2,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 5,
+        "repairs": 1,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "round": 7,
+      "fallback": false,
+      "patterns": 6,
+      "errors": 33,
+      "support": 3,
+      "representatives": 3,
+      "nonrepresentative_support": 0,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 33,
+        "repairs": 5,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 30,
+        "repairs": 5,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 5,
+        "regressions": 4
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 5,
+        "regressions": 5
+      },
+      "validation_errors_change": {
+        "n": 22,
+        "repairs": 5,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 0,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "round": 8,
+      "fallback": false,
+      "patterns": 5,
+      "errors": 33,
+      "support": 5,
+      "representatives": 3,
+      "nonrepresentative_support": 2,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 33,
+        "repairs": 8,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 28,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 8,
+        "regressions": 12
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 3,
+        "regressions": 4
+      },
+      "validation_errors_change": {
+        "n": 22,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 2,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 5,
+        "repairs": 2,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "round": 9,
+      "fallback": false,
+      "patterns": 7,
+      "errors": 33,
+      "support": 8,
+      "representatives": 3,
+      "nonrepresentative_support": 5,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 33,
+        "repairs": 7,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 25,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 7,
+        "regressions": 10
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 3,
+        "regressions": 6
+      },
+      "validation_errors_change": {
+        "n": 22,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 5,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 8,
+        "repairs": 1,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "round": 10,
+      "fallback": false,
+      "patterns": 5,
+      "errors": 33,
+      "support": 6,
+      "representatives": 3,
+      "nonrepresentative_support": 3,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 33,
+        "repairs": 7,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 27,
+        "repairs": 5,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 7,
+        "regressions": 9
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 3,
+        "regressions": 7
+      },
+      "validation_errors_change": {
+        "n": 22,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 6,
+        "repairs": 2,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "round": 11,
+      "fallback": false,
+      "patterns": 5,
+      "errors": 33,
+      "support": 3,
+      "representatives": 3,
+      "nonrepresentative_support": 0,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 33,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 30,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 6,
+        "regressions": 8
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 5,
+        "regressions": 9
+      },
+      "validation_errors_change": {
+        "n": 22,
+        "repairs": 5,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 0,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "round": 12,
+      "fallback": false,
+      "patterns": 10,
+      "errors": 33,
+      "support": 3,
+      "representatives": 3,
+      "nonrepresentative_support": 0,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 33,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 30,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 6,
+        "regressions": 11
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 3,
+        "regressions": 8
+      },
+      "validation_errors_change": {
+        "n": 22,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 0,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "round": 13,
+      "fallback": false,
+      "patterns": 5,
+      "errors": 33,
+      "support": 3,
+      "representatives": 3,
+      "nonrepresentative_support": 0,
+      "accepted": false,
+      "decision": "ABANDONED_GENERATION_RETRIES_EXHAUSTED",
+      "measured": false
+    },
+    {
+      "repeat": 1,
+      "round": 14,
+      "fallback": false,
+      "patterns": 6,
+      "errors": 33,
+      "support": 3,
+      "representatives": 3,
+      "nonrepresentative_support": 0,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 33,
+        "repairs": 2,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 30,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 2,
+        "regressions": 11
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 4,
+        "regressions": 6
+      },
+      "validation_errors_change": {
+        "n": 22,
+        "repairs": 4,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 0,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "round": 15,
+      "fallback": false,
+      "patterns": 4,
+      "errors": 33,
+      "support": 4,
+      "representatives": 3,
+      "nonrepresentative_support": 1,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 33,
+        "repairs": 4,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 29,
+        "repairs": 4,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 4,
+        "regressions": 9
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 3,
+        "regressions": 4
+      },
+      "validation_errors_change": {
+        "n": 22,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 1,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 4,
+        "repairs": 0,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "round": 16,
+      "fallback": false,
+      "patterns": 4,
+      "errors": 33,
+      "support": 3,
+      "representatives": 3,
+      "nonrepresentative_support": 0,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 33,
+        "repairs": 7,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 30,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 7,
+        "regressions": 12
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 5,
+        "regressions": 8
+      },
+      "validation_errors_change": {
+        "n": 22,
+        "repairs": 5,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 0,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "round": 17,
+      "fallback": false,
+      "patterns": 14,
+      "errors": 33,
+      "support": 3,
+      "representatives": 3,
+      "nonrepresentative_support": 0,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 33,
+        "repairs": 5,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 30,
+        "repairs": 5,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 5,
+        "regressions": 7
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 5,
+        "regressions": 7
+      },
+      "validation_errors_change": {
+        "n": 22,
+        "repairs": 5,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 0,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "round": 18,
+      "fallback": false,
+      "patterns": 5,
+      "errors": 33,
+      "support": 4,
+      "representatives": 3,
+      "nonrepresentative_support": 1,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 2,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 33,
+        "repairs": 5,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 29,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 5,
+        "regressions": 5
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 4,
+        "regressions": 5
+      },
+      "validation_errors_change": {
+        "n": 22,
+        "repairs": 4,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 1,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 4,
+        "repairs": 2,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "round": 19,
+      "fallback": false,
+      "patterns": 4,
+      "errors": 33,
+      "support": 10,
+      "representatives": 3,
+      "nonrepresentative_support": 7,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 33,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 23,
+        "repairs": 4,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 6,
+        "regressions": 5
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 4,
+        "regressions": 6
+      },
+      "validation_errors_change": {
+        "n": 22,
+        "repairs": 4,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 7,
+        "repairs": 2,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 10,
+        "repairs": 2,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "round": 20,
+      "fallback": false,
+      "patterns": 4,
+      "errors": 33,
+      "support": 3,
+      "representatives": 3,
+      "nonrepresentative_support": 0,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 33,
+        "repairs": 7,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 30,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 7,
+        "regressions": 10
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 3,
+        "regressions": 6
+      },
+      "validation_errors_change": {
+        "n": 22,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 0,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "round": 1,
+      "fallback": false,
+      "patterns": 7,
+      "errors": 35,
+      "support": 5,
+      "representatives": 3,
+      "nonrepresentative_support": 2,
+      "accepted": true,
+      "decision": "ACCEPTED_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 35,
+        "repairs": 7,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 30,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 7,
+        "regressions": 8
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 9,
+        "regressions": 4
+      },
+      "validation_errors_change": {
+        "n": 26,
+        "repairs": 9,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 2,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 5,
+        "repairs": 1,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "round": 2,
+      "fallback": false,
+      "patterns": 6,
+      "errors": 36,
+      "support": 10,
+      "representatives": 3,
+      "nonrepresentative_support": 7,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 36,
+        "repairs": 7,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 26,
+        "repairs": 7,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 7,
+        "regressions": 6
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 1,
+        "regressions": 6
+      },
+      "validation_errors_change": {
+        "n": 21,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 7,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 10,
+        "repairs": 0,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "round": 3,
+      "fallback": false,
+      "patterns": 2,
+      "errors": 36,
+      "support": 8,
+      "representatives": 3,
+      "nonrepresentative_support": 5,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 36,
+        "repairs": 7,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 28,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 7,
+        "regressions": 5
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 3,
+        "regressions": 5
+      },
+      "validation_errors_change": {
+        "n": 21,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 5,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 8,
+        "repairs": 4,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "round": 4,
+      "fallback": false,
+      "patterns": 14,
+      "errors": 36,
+      "support": 7,
+      "representatives": 3,
+      "nonrepresentative_support": 4,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 36,
+        "repairs": 9,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 29,
+        "repairs": 8,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 9,
+        "regressions": 4
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 3,
+        "regressions": 6
+      },
+      "validation_errors_change": {
+        "n": 21,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 4,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 7,
+        "repairs": 1,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "round": 5,
+      "fallback": false,
+      "patterns": 3,
+      "errors": 36,
+      "support": 12,
+      "representatives": 3,
+      "nonrepresentative_support": 9,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 36,
+        "repairs": 8,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 24,
+        "repairs": 7,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 8,
+        "regressions": 8
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 2,
+        "regressions": 4
+      },
+      "validation_errors_change": {
+        "n": 21,
+        "repairs": 2,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 9,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 12,
+        "repairs": 1,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "round": 6,
+      "fallback": false,
+      "patterns": 1,
+      "errors": 36,
+      "support": 3,
+      "representatives": 3,
+      "nonrepresentative_support": 0,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 36,
+        "repairs": 11,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 33,
+        "repairs": 10,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 11,
+        "regressions": 3
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 1,
+        "regressions": 7
+      },
+      "validation_errors_change": {
+        "n": 21,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 0,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "round": 7,
+      "fallback": false,
+      "patterns": 11,
+      "errors": 36,
+      "support": 4,
+      "representatives": 3,
+      "nonrepresentative_support": 1,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 2,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 36,
+        "repairs": 13,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 32,
+        "repairs": 11,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 13,
+        "regressions": 4
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 1,
+        "regressions": 4
+      },
+      "validation_errors_change": {
+        "n": 21,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 1,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 4,
+        "repairs": 2,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "round": 8,
+      "fallback": false,
+      "patterns": 10,
+      "errors": 36,
+      "support": 4,
+      "representatives": 3,
+      "nonrepresentative_support": 1,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 36,
+        "repairs": 10,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 32,
+        "repairs": 9,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 10,
+        "regressions": 4
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 1,
+        "regressions": 6
+      },
+      "validation_errors_change": {
+        "n": 21,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 1,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 4,
+        "repairs": 1,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "round": 9,
+      "fallback": false,
+      "patterns": 5,
+      "errors": 36,
+      "support": 4,
+      "representatives": 3,
+      "nonrepresentative_support": 1,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 36,
+        "repairs": 8,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 32,
+        "repairs": 8,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 8,
+        "regressions": 3
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 4,
+        "regressions": 7
+      },
+      "validation_errors_change": {
+        "n": 21,
+        "repairs": 4,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 1,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 4,
+        "repairs": 0,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "round": 10,
+      "fallback": false,
+      "patterns": 5,
+      "errors": 36,
+      "support": 3,
+      "representatives": 3,
+      "nonrepresentative_support": 0,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 36,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 33,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 6,
+        "regressions": 4
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 5,
+        "regressions": 6
+      },
+      "validation_errors_change": {
+        "n": 21,
+        "repairs": 5,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 0,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "round": 11,
+      "fallback": false,
+      "patterns": 8,
+      "errors": 36,
+      "support": 4,
+      "representatives": 3,
+      "nonrepresentative_support": 1,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 36,
+        "repairs": 4,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 32,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 4,
+        "regressions": 5
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 3,
+        "regressions": 4
+      },
+      "validation_errors_change": {
+        "n": 21,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 1,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 4,
+        "repairs": 1,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "round": 12,
+      "fallback": true,
+      "patterns": 0,
+      "errors": 36,
+      "support": 0,
+      "representatives": 3,
+      "nonrepresentative_support": 0,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 2,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 36,
+        "repairs": 8,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 36,
+        "repairs": 8,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 8,
+        "regressions": 7
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 3,
+        "regressions": 5
+      },
+      "validation_errors_change": {
+        "n": 21,
+        "repairs": 3,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "round": 13,
+      "fallback": false,
+      "patterns": 3,
+      "errors": 36,
+      "support": 3,
+      "representatives": 3,
+      "nonrepresentative_support": 0,
+      "accepted": true,
+      "decision": "ACCEPTED_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 36,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 33,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 3,
+        "regressions": 5
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 5,
+        "regressions": 4
+      },
+      "validation_errors_change": {
+        "n": 21,
+        "repairs": 5,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 0,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "round": 14,
+      "fallback": false,
+      "patterns": 20,
+      "errors": 38,
+      "support": 4,
+      "representatives": 3,
+      "nonrepresentative_support": 1,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 38,
+        "repairs": 8,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 34,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 8,
+        "regressions": 3
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 1,
+        "regressions": 7
+      },
+      "validation_errors_change": {
+        "n": 20,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 1,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 4,
+        "repairs": 2,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "round": 15,
+      "fallback": false,
+      "patterns": 7,
+      "errors": 38,
+      "support": 5,
+      "representatives": 3,
+      "nonrepresentative_support": 2,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 38,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 33,
+        "repairs": 5,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 6,
+        "regressions": 1
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 2,
+        "regressions": 6
+      },
+      "validation_errors_change": {
+        "n": 20,
+        "repairs": 2,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 2,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 5,
+        "repairs": 1,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "round": 16,
+      "fallback": false,
+      "patterns": 19,
+      "errors": 38,
+      "support": 4,
+      "representatives": 3,
+      "nonrepresentative_support": 1,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 38,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 34,
+        "repairs": 5,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 6,
+        "regressions": 2
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 2,
+        "regressions": 5
+      },
+      "validation_errors_change": {
+        "n": 20,
+        "repairs": 2,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 1,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 4,
+        "repairs": 1,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "round": 17,
+      "fallback": false,
+      "patterns": 36,
+      "errors": 38,
+      "support": 1,
+      "representatives": 1,
+      "nonrepresentative_support": 0,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 1,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 38,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 37,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 6,
+        "regressions": 3
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 1,
+        "regressions": 7
+      },
+      "validation_errors_change": {
+        "n": 20,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 0,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 1,
+        "repairs": 0,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "round": 18,
+      "fallback": false,
+      "patterns": 28,
+      "errors": 38,
+      "support": 3,
+      "representatives": 3,
+      "nonrepresentative_support": 0,
+      "accepted": false,
+      "decision": "ABANDONED_GENERATION_RETRIES_EXHAUSTED",
+      "measured": false
+    },
+    {
+      "repeat": 2,
+      "round": 19,
+      "fallback": false,
+      "patterns": 9,
+      "errors": 38,
+      "support": 6,
+      "representatives": 3,
+      "nonrepresentative_support": 3,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 38,
+        "repairs": 11,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 32,
+        "repairs": 10,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 11,
+        "regressions": 7
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 3,
+        "regressions": 5
+      },
+      "validation_errors_change": {
+        "n": 20,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 6,
+        "repairs": 1,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "round": 20,
+      "fallback": false,
+      "patterns": 2,
+      "errors": 38,
+      "support": 7,
+      "representatives": 3,
+      "nonrepresentative_support": 4,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 38,
+        "repairs": 7,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 31,
+        "repairs": 5,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 7,
+        "regressions": 2
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 4,
+        "regressions": 8
+      },
+      "validation_errors_change": {
+        "n": 20,
+        "repairs": 4,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 4,
+        "repairs": 2,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 7,
+        "repairs": 2,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 3,
+      "round": 1,
+      "fallback": false,
+      "patterns": 3,
+      "errors": 37,
+      "support": 4,
+      "representatives": 3,
+      "nonrepresentative_support": 1,
+      "accepted": true,
+      "decision": "ACCEPTED_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 37,
+        "repairs": 12,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 33,
+        "repairs": 8,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 12,
+        "regressions": 8
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 5,
+        "regressions": 2
+      },
+      "validation_errors_change": {
+        "n": 26,
+        "repairs": 5,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 1,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 4,
+        "repairs": 4,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 3,
+      "round": 2,
+      "fallback": false,
+      "patterns": 8,
+      "errors": 33,
+      "support": 7,
+      "representatives": 3,
+      "nonrepresentative_support": 4,
+      "accepted": true,
+      "decision": "ACCEPTED_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 33,
+        "repairs": 8,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 26,
+        "repairs": 7,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 8,
+        "regressions": 14
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 5,
+        "regressions": 2
+      },
+      "validation_errors_change": {
+        "n": 23,
+        "repairs": 5,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 4,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 7,
+        "repairs": 1,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 3,
+      "round": 3,
+      "fallback": false,
+      "patterns": 7,
+      "errors": 39,
+      "support": 8,
+      "representatives": 3,
+      "nonrepresentative_support": 5,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 39,
+        "repairs": 12,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 31,
+        "repairs": 9,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 12,
+        "regressions": 9
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 2,
+        "regressions": 6
+      },
+      "validation_errors_change": {
+        "n": 20,
+        "repairs": 2,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 5,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 8,
+        "repairs": 3,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 3,
+      "round": 4,
+      "fallback": false,
+      "patterns": 5,
+      "errors": 39,
+      "support": 4,
+      "representatives": 3,
+      "nonrepresentative_support": 1,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 2,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 39,
+        "repairs": 11,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 35,
+        "repairs": 9,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 11,
+        "regressions": 7
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 2,
+        "regressions": 6
+      },
+      "validation_errors_change": {
+        "n": 20,
+        "repairs": 2,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 1,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 4,
+        "repairs": 2,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 3,
+      "round": 5,
+      "fallback": false,
+      "patterns": 7,
+      "errors": 39,
+      "support": 5,
+      "representatives": 3,
+      "nonrepresentative_support": 2,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 2,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 39,
+        "repairs": 9,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 34,
+        "repairs": 7,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 9,
+        "regressions": 7
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 3,
+        "regressions": 7
+      },
+      "validation_errors_change": {
+        "n": 20,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 2,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 5,
+        "repairs": 2,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 3,
+      "round": 6,
+      "fallback": false,
+      "patterns": 8,
+      "errors": 39,
+      "support": 3,
+      "representatives": 3,
+      "nonrepresentative_support": 0,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 39,
+        "repairs": 12,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 36,
+        "repairs": 11,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 12,
+        "regressions": 7
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 2,
+        "regressions": 6
+      },
+      "validation_errors_change": {
+        "n": 20,
+        "repairs": 2,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 0,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 3,
+      "round": 7,
+      "fallback": false,
+      "patterns": 7,
+      "errors": 39,
+      "support": 6,
+      "representatives": 3,
+      "nonrepresentative_support": 3,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 2,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 39,
+        "repairs": 12,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 33,
+        "repairs": 9,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 12,
+        "regressions": 3
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 1,
+        "regressions": 3
+      },
+      "validation_errors_change": {
+        "n": 20,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 6,
+        "repairs": 3,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 3,
+      "round": 8,
+      "fallback": false,
+      "patterns": 33,
+      "errors": 39,
+      "support": 3,
+      "representatives": 3,
+      "nonrepresentative_support": 0,
+      "accepted": false,
+      "decision": "ABANDONED_GENERATION_RETRIES_EXHAUSTED",
+      "measured": false
+    },
+    {
+      "repeat": 3,
+      "round": 9,
+      "fallback": false,
+      "patterns": 11,
+      "errors": 39,
+      "support": 7,
+      "representatives": 3,
+      "nonrepresentative_support": 4,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 39,
+        "repairs": 10,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 32,
+        "repairs": 8,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 10,
+        "regressions": 8
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 2,
+        "regressions": 6
+      },
+      "validation_errors_change": {
+        "n": 20,
+        "repairs": 2,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 4,
+        "repairs": 2,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 7,
+        "repairs": 2,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 3,
+      "round": 10,
+      "fallback": false,
+      "patterns": 5,
+      "errors": 39,
+      "support": 7,
+      "representatives": 3,
+      "nonrepresentative_support": 4,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 2,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 39,
+        "repairs": 12,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 32,
+        "repairs": 10,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 12,
+        "regressions": 12
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 3,
+        "regressions": 4
+      },
+      "validation_errors_change": {
+        "n": 20,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 4,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 7,
+        "repairs": 2,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 3,
+      "round": 11,
+      "fallback": false,
+      "patterns": 4,
+      "errors": 39,
+      "support": 9,
+      "representatives": 3,
+      "nonrepresentative_support": 6,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 39,
+        "repairs": 13,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 30,
+        "repairs": 11,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 13,
+        "regressions": 5
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 1,
+        "regressions": 4
+      },
+      "validation_errors_change": {
+        "n": 20,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 6,
+        "repairs": 2,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 9,
+        "repairs": 2,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 3,
+      "round": 12,
+      "fallback": false,
+      "patterns": 34,
+      "errors": 39,
+      "support": 2,
+      "representatives": 2,
+      "nonrepresentative_support": 0,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 2,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 39,
+        "repairs": 11,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 37,
+        "repairs": 10,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 11,
+        "regressions": 10
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 3,
+        "regressions": 5
+      },
+      "validation_errors_change": {
+        "n": 20,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 0,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 2,
+        "repairs": 1,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 3,
+      "round": 13,
+      "fallback": false,
+      "patterns": 4,
+      "errors": 39,
+      "support": 8,
+      "representatives": 3,
+      "nonrepresentative_support": 5,
+      "accepted": true,
+      "decision": "ACCEPTED_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 39,
+        "repairs": 12,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 31,
+        "repairs": 8,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 12,
+        "regressions": 10
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 4,
+        "regressions": 3
+      },
+      "validation_errors_change": {
+        "n": 20,
+        "repairs": 4,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 5,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 8,
+        "repairs": 4,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 3,
+      "round": 14,
+      "fallback": false,
+      "patterns": 3,
+      "errors": 37,
+      "support": 5,
+      "representatives": 3,
+      "nonrepresentative_support": 2,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 37,
+        "repairs": 11,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 32,
+        "repairs": 9,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 11,
+        "regressions": 8
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 4,
+        "regressions": 6
+      },
+      "validation_errors_change": {
+        "n": 19,
+        "repairs": 4,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 2,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 5,
+        "repairs": 2,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 3,
+      "round": 15,
+      "fallback": false,
+      "patterns": 6,
+      "errors": 37,
+      "support": 6,
+      "representatives": 3,
+      "nonrepresentative_support": 3,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 37,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 31,
+        "repairs": 6,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 6,
+        "regressions": 2
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 3,
+        "regressions": 7
+      },
+      "validation_errors_change": {
+        "n": 19,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 6,
+        "repairs": 0,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 3,
+      "round": 16,
+      "fallback": false,
+      "patterns": 5,
+      "errors": 37,
+      "support": 5,
+      "representatives": 3,
+      "nonrepresentative_support": 2,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 37,
+        "repairs": 8,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 32,
+        "repairs": 7,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 8,
+        "regressions": 8
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 0,
+        "regressions": 9
+      },
+      "validation_errors_change": {
+        "n": 19,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 2,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 5,
+        "repairs": 1,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 3,
+      "round": 17,
+      "fallback": false,
+      "patterns": 3,
+      "errors": 37,
+      "support": 4,
+      "representatives": 3,
+      "nonrepresentative_support": 1,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 37,
+        "repairs": 9,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 33,
+        "repairs": 7,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 9,
+        "regressions": 9
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 2,
+        "regressions": 8
+      },
+      "validation_errors_change": {
+        "n": 19,
+        "repairs": 2,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 1,
+        "repairs": 1,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 4,
+        "repairs": 2,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 3,
+      "round": 18,
+      "fallback": false,
+      "patterns": 8,
+      "errors": 37,
+      "support": 6,
+      "representatives": 3,
+      "nonrepresentative_support": 3,
+      "accepted": false,
+      "decision": "ABANDONED_GENERATION_RETRIES_EXHAUSTED",
+      "measured": false
+    },
+    {
+      "repeat": 3,
+      "round": 19,
+      "fallback": false,
+      "patterns": 5,
+      "errors": 37,
+      "support": 3,
+      "representatives": 3,
+      "nonrepresentative_support": 0,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 37,
+        "repairs": 9,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 34,
+        "repairs": 9,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 9,
+        "regressions": 10
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 2,
+        "regressions": 8
+      },
+      "validation_errors_change": {
+        "n": 19,
+        "repairs": 2,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 0,
+        "repairs": 0,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 3,
+        "repairs": 0,
+        "regressions": 0
+      }
+    },
+    {
+      "repeat": 3,
+      "round": 20,
+      "fallback": false,
+      "patterns": 4,
+      "errors": 37,
+      "support": 13,
+      "representatives": 3,
+      "nonrepresentative_support": 10,
+      "accepted": false,
+      "decision": "REJECTED_NO_STRICT_VALIDATION_GAIN",
+      "measured": true,
+      "shown_change": {
+        "n": 3,
+        "repairs": 2,
+        "regressions": 0
+      },
+      "all_errors_change": {
+        "n": 37,
+        "repairs": 9,
+        "regressions": 0
+      },
+      "other_errors_change": {
+        "n": 24,
+        "repairs": 4,
+        "regressions": 0
+      },
+      "optimize_all_change": {
+        "n": 150,
+        "repairs": 9,
+        "regressions": 11
+      },
+      "validation_all_change": {
+        "n": 100,
+        "repairs": 4,
+        "regressions": 7
+      },
+      "validation_errors_change": {
+        "n": 19,
+        "repairs": 4,
+        "regressions": 0
+      },
+      "nonrepresentative_support_change": {
+        "n": 10,
+        "repairs": 3,
+        "regressions": 0
+      },
+      "selected_support_change": {
+        "n": 13,
+        "repairs": 5,
+        "regressions": 0
+      }
+    }
+  ],
+  "diagnostic_coverage": {
+    "totals": {
+      "diagnostic_error_exposures": 2158,
+      "actionable_gradient_exposures": 1957,
+      "pattern_assigned_exposures": 1267,
+      "unassigned_actionable_exposures": 690,
+      "exhausted_gradient_exposures": 197
+    },
+    "dispositions": {
+      "ACTIONABLE": 1957,
+      "NONACTIONABLE_EXHAUSTED": 197,
+      "UNCERTAIN": 4
+    },
+    "rounds": [
+      {
+        "repeat": 1,
+        "round": 1,
+        "diagnosed": 40,
+        "actionable": 36,
+        "assigned": 7,
+        "unassigned": 29
+      },
+      {
+        "repeat": 1,
+        "round": 2,
+        "diagnosed": 33,
+        "actionable": 31,
+        "assigned": 12,
+        "unassigned": 19
+      },
+      {
+        "repeat": 1,
+        "round": 3,
+        "diagnosed": 33,
+        "actionable": 30,
+        "assigned": 29,
+        "unassigned": 1
+      },
+      {
+        "repeat": 1,
+        "round": 4,
+        "diagnosed": 33,
+        "actionable": 29,
+        "assigned": 27,
+        "unassigned": 2
+      },
+      {
+        "repeat": 1,
+        "round": 5,
+        "diagnosed": 33,
+        "actionable": 30,
+        "assigned": 24,
+        "unassigned": 6
+      },
+      {
+        "repeat": 1,
+        "round": 6,
+        "diagnosed": 33,
+        "actionable": 31,
+        "assigned": 17,
+        "unassigned": 14
+      },
+      {
+        "repeat": 1,
+        "round": 7,
+        "diagnosed": 33,
+        "actionable": 30,
+        "assigned": 13,
+        "unassigned": 17
+      },
+      {
+        "repeat": 1,
+        "round": 8,
+        "diagnosed": 33,
+        "actionable": 29,
+        "assigned": 17,
+        "unassigned": 12
+      },
+      {
+        "repeat": 1,
+        "round": 9,
+        "diagnosed": 33,
+        "actionable": 31,
+        "assigned": 29,
+        "unassigned": 2
+      },
+      {
+        "repeat": 1,
+        "round": 10,
+        "diagnosed": 33,
+        "actionable": 29,
+        "assigned": 26,
+        "unassigned": 3
+      },
+      {
+        "repeat": 1,
+        "round": 11,
+        "diagnosed": 33,
+        "actionable": 31,
+        "assigned": 14,
+        "unassigned": 17
+      },
+      {
+        "repeat": 1,
+        "round": 12,
+        "diagnosed": 33,
+        "actionable": 29,
+        "assigned": 26,
+        "unassigned": 3
+      },
+      {
+        "repeat": 1,
+        "round": 13,
+        "diagnosed": 33,
+        "actionable": 31,
+        "assigned": 12,
+        "unassigned": 19
+      },
+      {
+        "repeat": 1,
+        "round": 14,
+        "diagnosed": 33,
+        "actionable": 31,
+        "assigned": 12,
+        "unassigned": 19
+      },
+      {
+        "repeat": 1,
+        "round": 15,
+        "diagnosed": 33,
+        "actionable": 30,
+        "assigned": 16,
+        "unassigned": 14
+      },
+      {
+        "repeat": 1,
+        "round": 16,
+        "diagnosed": 33,
+        "actionable": 29,
+        "assigned": 8,
+        "unassigned": 21
+      },
+      {
+        "repeat": 1,
+        "round": 17,
+        "diagnosed": 33,
+        "actionable": 27,
+        "assigned": 25,
+        "unassigned": 2
+      },
+      {
+        "repeat": 1,
+        "round": 18,
+        "diagnosed": 33,
+        "actionable": 28,
+        "assigned": 18,
+        "unassigned": 10
+      },
+      {
+        "repeat": 1,
+        "round": 19,
+        "diagnosed": 33,
+        "actionable": 29,
+        "assigned": 29,
+        "unassigned": 0
+      },
+      {
+        "repeat": 1,
+        "round": 20,
+        "diagnosed": 33,
+        "actionable": 30,
+        "assigned": 8,
+        "unassigned": 22
+      },
+      {
+        "repeat": 2,
+        "round": 1,
+        "diagnosed": 35,
+        "actionable": 34,
+        "assigned": 26,
+        "unassigned": 8
+      },
+      {
+        "repeat": 2,
+        "round": 2,
+        "diagnosed": 36,
+        "actionable": 32,
+        "assigned": 31,
+        "unassigned": 1
+      },
+      {
+        "repeat": 2,
+        "round": 3,
+        "diagnosed": 36,
+        "actionable": 32,
+        "assigned": 9,
+        "unassigned": 23
+      },
+      {
+        "repeat": 2,
+        "round": 4,
+        "diagnosed": 36,
+        "actionable": 35,
+        "assigned": 34,
+        "unassigned": 1
+      },
+      {
+        "repeat": 2,
+        "round": 5,
+        "diagnosed": 36,
+        "actionable": 32,
+        "assigned": 31,
+        "unassigned": 1
+      },
+      {
+        "repeat": 2,
+        "round": 6,
+        "diagnosed": 36,
+        "actionable": 33,
+        "assigned": 3,
+        "unassigned": 30
+      },
+      {
+        "repeat": 2,
+        "round": 7,
+        "diagnosed": 36,
+        "actionable": 34,
+        "assigned": 20,
+        "unassigned": 14
+      },
+      {
+        "repeat": 2,
+        "round": 8,
+        "diagnosed": 36,
+        "actionable": 34,
+        "assigned": 26,
+        "unassigned": 8
+      },
+      {
+        "repeat": 2,
+        "round": 9,
+        "diagnosed": 36,
+        "actionable": 31,
+        "assigned": 15,
+        "unassigned": 16
+      },
+      {
+        "repeat": 2,
+        "round": 10,
+        "diagnosed": 36,
+        "actionable": 32,
+        "assigned": 12,
+        "unassigned": 20
+      },
+      {
+        "repeat": 2,
+        "round": 11,
+        "diagnosed": 36,
+        "actionable": 33,
+        "assigned": 22,
+        "unassigned": 11
+      },
+      {
+        "repeat": 2,
+        "round": 12,
+        "diagnosed": 36,
+        "actionable": 33,
+        "assigned": 0,
+        "unassigned": 33
+      },
+      {
+        "repeat": 2,
+        "round": 13,
+        "diagnosed": 36,
+        "actionable": 32,
+        "assigned": 8,
+        "unassigned": 24
+      },
+      {
+        "repeat": 2,
+        "round": 14,
+        "diagnosed": 38,
+        "actionable": 32,
+        "assigned": 32,
+        "unassigned": 0
+      },
+      {
+        "repeat": 2,
+        "round": 15,
+        "diagnosed": 38,
+        "actionable": 33,
+        "assigned": 26,
+        "unassigned": 7
+      },
+      {
+        "repeat": 2,
+        "round": 16,
+        "diagnosed": 38,
+        "actionable": 35,
+        "assigned": 35,
+        "unassigned": 0
+      },
+      {
+        "repeat": 2,
+        "round": 17,
+        "diagnosed": 38,
+        "actionable": 36,
+        "assigned": 36,
+        "unassigned": 0
+      },
+      {
+        "repeat": 2,
+        "round": 18,
+        "diagnosed": 38,
+        "actionable": 35,
+        "assigned": 34,
+        "unassigned": 1
+      },
+      {
+        "repeat": 2,
+        "round": 19,
+        "diagnosed": 38,
+        "actionable": 35,
+        "assigned": 33,
+        "unassigned": 2
+      },
+      {
+        "repeat": 2,
+        "round": 20,
+        "diagnosed": 38,
+        "actionable": 33,
+        "assigned": 14,
+        "unassigned": 19
+      },
+      {
+        "repeat": 3,
+        "round": 1,
+        "diagnosed": 37,
+        "actionable": 33,
+        "assigned": 9,
+        "unassigned": 24
+      },
+      {
+        "repeat": 3,
+        "round": 2,
+        "diagnosed": 33,
+        "actionable": 28,
+        "assigned": 27,
+        "unassigned": 1
+      },
+      {
+        "repeat": 3,
+        "round": 3,
+        "diagnosed": 39,
+        "actionable": 33,
+        "assigned": 30,
+        "unassigned": 3
+      },
+      {
+        "repeat": 3,
+        "round": 4,
+        "diagnosed": 39,
+        "actionable": 35,
+        "assigned": 19,
+        "unassigned": 16
+      },
+      {
+        "repeat": 3,
+        "round": 5,
+        "diagnosed": 39,
+        "actionable": 36,
+        "assigned": 27,
+        "unassigned": 9
+      },
+      {
+        "repeat": 3,
+        "round": 6,
+        "diagnosed": 39,
+        "actionable": 35,
+        "assigned": 11,
+        "unassigned": 24
+      },
+      {
+        "repeat": 3,
+        "round": 7,
+        "diagnosed": 39,
+        "actionable": 35,
+        "assigned": 19,
+        "unassigned": 16
+      },
+      {
+        "repeat": 3,
+        "round": 8,
+        "diagnosed": 39,
+        "actionable": 35,
+        "assigned": 35,
+        "unassigned": 0
+      },
+      {
+        "repeat": 3,
+        "round": 9,
+        "diagnosed": 39,
+        "actionable": 37,
+        "assigned": 37,
+        "unassigned": 0
+      },
+      {
+        "repeat": 3,
+        "round": 10,
+        "diagnosed": 39,
+        "actionable": 37,
+        "assigned": 20,
+        "unassigned": 17
+      },
+      {
+        "repeat": 3,
+        "round": 11,
+        "diagnosed": 39,
+        "actionable": 38,
+        "assigned": 18,
+        "unassigned": 20
+      },
+      {
+        "repeat": 3,
+        "round": 12,
+        "diagnosed": 39,
+        "actionable": 35,
+        "assigned": 35,
+        "unassigned": 0
+      },
+      {
+        "repeat": 3,
+        "round": 13,
+        "diagnosed": 39,
+        "actionable": 36,
+        "assigned": 24,
+        "unassigned": 12
+      },
+      {
+        "repeat": 3,
+        "round": 14,
+        "diagnosed": 37,
+        "actionable": 36,
+        "assigned": 8,
+        "unassigned": 28
+      },
+      {
+        "repeat": 3,
+        "round": 15,
+        "diagnosed": 37,
+        "actionable": 35,
+        "assigned": 25,
+        "unassigned": 10
+      },
+      {
+        "repeat": 3,
+        "round": 16,
+        "diagnosed": 37,
+        "actionable": 32,
+        "assigned": 18,
+        "unassigned": 14
+      },
+      {
+        "repeat": 3,
+        "round": 17,
+        "diagnosed": 37,
+        "actionable": 32,
+        "assigned": 9,
+        "unassigned": 23
+      },
+      {
+        "repeat": 3,
+        "round": 18,
+        "diagnosed": 37,
+        "actionable": 32,
+        "assigned": 31,
+        "unassigned": 1
+      },
+      {
+        "repeat": 3,
+        "round": 19,
+        "diagnosed": 37,
+        "actionable": 34,
+        "assigned": 14,
+        "unassigned": 20
+      },
+      {
+        "repeat": 3,
+        "round": 20,
+        "diagnosed": 37,
+        "actionable": 36,
+        "assigned": 35,
+        "unassigned": 1
+      }
+    ]
+  },
+  "repair_interpretation": "Original frozen scored correctness transitions; not independently established mathematical reasoning repairs.",
+  "no_semantic_diagnostic_accuracy_estimate": true,
+  "no_diagnosis_outside_same_family_transfer_estimate": true
+}

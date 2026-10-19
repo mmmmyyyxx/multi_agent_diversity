@@ -1,0 +1,38 @@
+{
+  "status": "PASS_REPORT_PUBLICATION_CHECKS",
+  "date": "2026-10-19",
+  "category": "REPORT_ONLY_NO_RUNTIME_OR_PROTOCOL_CHANGE",
+  "historical_files_rehashed": 183,
+  "checkpoint_integrity_checked": true,
+  "frozen_git_source_files_checked": 5,
+  "review_packets_checked": 40,
+  "boundary_exclusions_user_confirmed": 6,
+  "report_links_checked": 8,
+  "arithmetic_and_denominators": "PASS",
+  "sanitization": "PASS",
+  "network_attempts": 0,
+  "model_api_calls": 0,
+  "reused_checks": [
+    "Prior read-only per-round evidence projection and scoring-transition computation; unchanged inputs rehashed before publication."
+  ],
+  "newly_checked": [
+    "Diagnostic coverage aggregates",
+    "Frozen-source blob hashes",
+    "Annotation and adjudication hashes",
+    "Report arithmetic, links and sanitization"
+  ],
+  "omitted_checks": [
+    "No production compileall or current full pytest: report-only scope.",
+    "No full historical authorization/ledger replay or independent semantic Pattern adjudication claimed."
+  ],
+  "no_history_rewrite": true,
+  "no_new_experiment": true,
+  "publication_byte_policy": "UTF-8 LF; report-local .gitattributes preserves Git and checkout hash identity.",
+  "publication_sha256": {
+    ".gitattributes": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9",
+    "annotation_summary.json": "55f98d0a95a4a9e1b4c4df9acdebb8a28bbb488aa82e5805f760fdd4b77d7bd8",
+    "evidence_index.json": "cd69a3848ce2e63cf3a3307f9ef3401903c29f77a6c1474873e793a33f39964b",
+    "metrics.json": "22e34d60b145974ad0ca5ca5965a1bfb29e54d507170d8bcd3482babc630d79f",
+    "README.md": "01b390755390d3f622e9751bfcfb34efda4f6f3d918b0b07a5a11dc415b11b14"
+  }
+}
