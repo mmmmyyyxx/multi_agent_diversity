@@ -16,8 +16,12 @@ def require(value,reason):
     if not value:raise SearchContractError('PROPOSAL_'+reason)
 
 
-def project_proposals(prepared,seed,ordinal,mode):
+def project_proposals(prepared,seed,ordinal,mode,*,raw_control=False):
     """Reproject the second focus with the same native sampler, never rediagnose."""
+    if raw_control:
+        from .full_error_control import project_feedback
+        require(mode=='parallel','RAW_CONTROL_MODE')
+        return project_feedback(prepared.audit)
     full=prepared.audit['complete_diagnosis'];sampling=prepared.audit['sampling_context']
     patterns=full['structured_feedback']['patterns']
     require(len({p['pattern_id'] for p in patterns})==len(patterns),'DUPLICATE_PATTERN')
@@ -54,6 +58,9 @@ def score(profile):return sum(v['correct'] for v in profile.values())
 def current_view(prepared,view,diagnosis_parent,current_parent,optimize,seed,ordinal):
     """Keep the root Pattern identity; resample only still-wrong support evidence."""
     view=deepcopy(view);support=view['focus']['selected_support_ids']
+    if view['focus'].get('raw_all_error_control'):
+        require(diagnosis_parent==current_parent,'RAW_CONTROL_PARENT_CHANGED')
+        return view,None,True
     active=[i for i in support if not optimize[i]['correct']]
     view['focus']['active_support_ids']=active
     if support and not active:return view,None,False
@@ -117,6 +124,8 @@ def run_cell(plan,cell,initial_prompt,optimize_rows,validation_rows,broker,persi
     from .engine import _observations,_checkpoint
     from ..single_prompt import raw_error
     from .proposal_audit import audit_transition,audit_initial
+    from .full_error_control import SCHEMA as control_schema,bind_feedback
+    raw_control=plan['config']['schema_version']==control_schema
     registry=registry or default_registry();validate_plan(plan,registry)
     require(cell in plan['cells'] and broker.phase=='train','CELL_PHASE')
     optimize_rows,validation_rows=tuple(optimize_rows),tuple(validation_rows)
@@ -181,8 +190,11 @@ def run_cell(plan,cell,initial_prompt,optimize_rows,validation_rows,broker,persi
         else:prepared=module.prepare(context,None,provider)
         require(isinstance(prepared,PreparedFeedback) and prepared.state is None and prepared.module_context is None,'MODULE_FEEDBACK')
         originals={r['stable_example_id']:raw_error(r,optimize[r['stable_example_id']]) for r in wrong}
-        require(prepared.audit['complete_diagnosis']['errors']==list(originals.values()),'DIAGNOSIS_SOURCE')
-        views,selection=project_proposals(prepared,42,ordinal,cell['proposal_mode'])
+        if raw_control:
+            require(not restoring,'RAW_CONTROL_FRESH_ONLY')
+            prepared=bind_feedback(prepared,parent,cell,previous,oi)
+        else:require(prepared.audit['complete_diagnosis']['errors']==list(originals.values()),'DIAGNOSIS_SOURCE')
+        views,selection=project_proposals(prepared,42,ordinal,cell['proposal_mode'],raw_control=raw_control)
         diagnostic_cost=deepcopy(partial['diagnostic_usage']) if restoring else delta(broker.usage_view(),start)
         record=dict(module_binding=binding,module_state=None,audit=dict(prepared.audit,
             diagnostic_draw_counts=(saved['audit']['diagnostic_draw_counts'] if restoring else provider.draw_counts())),selection=selection)

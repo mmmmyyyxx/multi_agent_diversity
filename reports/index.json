@@ -777,6 +777,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/full_error_two_proposals_preparation_20261020",
+      "document": "reports/full_error_two_proposals_preparation_20261020/README.md",
+      "date": "20261020",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "PREEXECUTION",
+      "experiment_id": "single_prompt_full_error_control_v2",
+      "status": "PREPARED_NOT_EXECUTED",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/gate_runs",
       "document": "reports/gate_runs",
       "date": null,
@@ -3163,6 +3177,20 @@
       "era": "UNIFIED_TEAM_PROMPT_SEARCH",
       "kind": "PREEXECUTION",
       "experiment_id": "single_prompt_pattern_canary_v1",
+      "status": "PREPARED_NOT_EXECUTED",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
+      "path": "reports/pattern_scheduling_concurrency_continuation_20261020",
+      "document": "reports/pattern_scheduling_concurrency_continuation_20261020/README.md",
+      "date": "20261020",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "SCIENTIFIC_RESULT",
+      "experiment_id": "single_prompt_pattern_scheduling_continuation_v2",
       "status": "PREPARED_NOT_EXECUTED",
       "source_commit": null,
       "historical_current": "historical_evidence",

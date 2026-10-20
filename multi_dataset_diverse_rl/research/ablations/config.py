@@ -100,6 +100,9 @@ def current_config():
 
 
 def validate_config(value):
+    from .full_error_control import SCHEMA as control_schema, validate_config as validate_control
+    if isinstance(value, dict) and value.get('schema_version') == control_schema:
+        return validate_control(value)
     from .proposal_config import SCHEMA as proposal_schema,validate_config as validate_proposals
     if isinstance(value,dict) and value.get('schema_version')==proposal_schema:
         return validate_proposals(value)
@@ -139,6 +142,9 @@ def validate_config(value):
 
 
 def build_plan(config, registry=None):
+    from .full_error_control import SCHEMA as control_schema, build_plan as control_plan
+    if isinstance(config, dict) and config.get('schema_version') == control_schema:
+        return control_plan(config, registry)
     from .proposal_config import SCHEMA as proposal_schema,build_plan as proposal_plan
     if isinstance(config,dict) and config.get('schema_version')==proposal_schema:
         return proposal_plan(config,registry)

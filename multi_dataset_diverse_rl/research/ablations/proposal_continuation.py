@@ -376,7 +376,8 @@ class SchedulingResumeBroker(AblationBroker):
 
 
 def broker_type(scope):
-    return SchedulingResumeBroker if scope.get('execution_concurrency') and scope['phase']=='train' else AblationBroker
+    return (SchedulingResumeBroker if scope.get('execution_concurrency') and scope.get('continuation')
+            and scope['phase']=='train' else AblationBroker)
 
 
 def hydrate_solver(root,scope,broker,optimize,validation,directory):

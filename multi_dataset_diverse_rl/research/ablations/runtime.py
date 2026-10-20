@@ -14,6 +14,14 @@ from .config import validate_plan, request_namespace
 from ...persistence.durable_io import append_jsonl
 
 
+def execution_concurrency(scope):
+    from .full_error_control import SCHEMA, execution_concurrency as control_concurrency
+    if scope.get('plan', {}).get('config', {}).get('schema_version') == SCHEMA:
+        return control_concurrency(scope)
+    from .proposal_continuation import execution_concurrency as continuation_concurrency
+    return continuation_concurrency(scope)
+
+
 class AblationBroker(NetworkRecoveryMixin, StudyBroker):
     def __init__(self, *, plan, **kwargs):
         validate_plan(plan)
@@ -41,7 +49,6 @@ class AblationBroker(NetworkRecoveryMixin, StudyBroker):
     def study_policy(self):
         value = deepcopy(self.plan['config']['runtime'])
         if self.scope.get('execution_concurrency') is not None:
-            from .proposal_continuation import execution_concurrency
             value.update(execution_concurrency(self.scope))
         return value
 
@@ -57,6 +64,9 @@ class AblationBroker(NetworkRecoveryMixin, StudyBroker):
         self.round_index = 0
 
     def legal_role_split(self, role, split):
+        from .full_error_control import SCHEMA
+        if self.plan['config']['schema_version'] == SCHEMA and role not in ('solver', 'reflection'):
+            return False
         return ((self.phase == 'train' and ((split == 'optimize' and role in
                  ('solver', 'reflection', 'pattern_gradient', 'pattern_cluster'))
                  or (split == 'validation' and role == 'solver')))

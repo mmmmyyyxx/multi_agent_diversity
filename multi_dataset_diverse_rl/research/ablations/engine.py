@@ -37,7 +37,8 @@ def _checkpoint(persist, name, value):
 def run_cell(plan, cell, initial_prompt, optimize_rows, validation_rows, broker, persist,
              *, registry=None, resume=None):
     from .proposal_config import SCHEMA as proposal_schema
-    if plan['config']['schema_version']==proposal_schema:
+    from .full_error_control import SCHEMA as control_schema
+    if plan['config']['schema_version'] in (proposal_schema,control_schema):
         from .pattern_proposals import run_cell as proposal_run
         return proposal_run(plan,cell,initial_prompt,optimize_rows,validation_rows,broker,persist,
             registry=registry,resume=resume)

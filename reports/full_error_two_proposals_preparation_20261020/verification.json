@@ -1,0 +1,132 @@
+{
+  "category": "SCIENTIFIC_EXECUTABLE_PREPARATION",
+  "real_api_calls": 0,
+  "production_compileall": "PASS",
+  "full_current_run": {
+    "passed": 1279,
+    "skipped": 2,
+    "failed": 1,
+    "seconds": 3424.46,
+    "outbound_attempts": 0,
+    "failure": "generated_report_indexes_stale",
+    "preserved_failed_evidence": true
+  },
+  "focused_existing_and_control": {
+    "passed": 51,
+    "seconds": 168.33
+  },
+  "final_control_and_new_registry_branch": {
+    "passed": 17,
+    "seconds": 5.34,
+    "added_after_full_collection": 4
+  },
+  "failed_case_after_generated_index_refresh": {
+    "passed": 1,
+    "seconds": 134.61,
+    "status": "PASS"
+  },
+  "final_current_coverage": {
+    "status": "PASS_COMBINED_FULL_RUN_AND_FOCUSED_RECHECKS",
+    "distinct_passed": 1284,
+    "skipped": 2,
+    "second_full_run_claimed": false,
+    "scope_note": "Full kernel regression reused; final explicit Manifest branch covered by 17 focused tests, four new cases, updated full manifest preflight and failed complete-governance recheck."
+  },
+  "skips": [
+    "hover_real_data_user_deferred",
+    "pupa_real_data_user_deferred"
+  ],
+  "omitted_historical_or_private_modules": 224,
+  "full_historical_replay_claimed": false,
+  "governance_manifest_preflight": {
+    "ok": true,
+    "mode": "zero_api_zero_dataset_evaluation",
+    "api_calls": 0,
+    "validation_calls": 0,
+    "test_calls": 0,
+    "experiment_count": 258,
+    "active_invariant_count": 32,
+    "failure_count": 59,
+    "lineage_node_count": 392,
+    "deterministic_hash_replay": "PASS",
+    "sanitization_fixture": "PASS",
+    "errors": []
+  },
+  "matched_contracts": {
+    "status": "MATCHED_METADATA_ONLY_PASS",
+    "optimize_count": 150,
+    "validation_count": 100,
+    "test_count": 300,
+    "initial_prompt_sha256": "533ac46a1fd8418e7e9ca3d8995fa82c16d0e5685aac57986b7b26e8a086a526",
+    "optimize_membership_sha256": "c2abe712782f0b673fb29a182883858c7466b79a66f2c323cae7903c976178fa",
+    "validation_membership_sha256": "43a2a02bae12168d1736038e99f7320ee9460b6c620d82d48de6ebbc6ca9351f",
+    "test_membership_sha256": "3d8af2d055316da986934025bcc4c6e2f3f39d1c25838a5f23e709b9b5da3c44",
+    "matched_runtime_fields": [
+      "provider_routing_policy",
+      "solver_decoding_policy",
+      "optimizer_generation_policy",
+      "candidate_guard",
+      "trajectory_policy",
+      "solver_semantic_draws",
+      "first_solver_capacity",
+      "length_recovery_capacity",
+      "optimizer_input_limit",
+      "optimizer_context_limit",
+      "runtime_environment",
+      "provider_sdk_version",
+      "optimizer_structural_draws",
+      "timeout_recovery"
+    ],
+    "historical_cache_or_predictions_imported": false,
+    "test_content_opened": false,
+    "real_api_calls": 0
+  },
+  "resources": {
+    "repeats": 3,
+    "seed": 42,
+    "rounds_per_repeat": 20,
+    "proposals_per_round": 2,
+    "training_semantic_ceiling": 123480,
+    "test_semantic_ceiling": 3600,
+    "token_ceiling": null,
+    "train_solver": 96,
+    "test_solver": 96,
+    "local_grading": 16,
+    "diagnostic_calls": 0
+  },
+  "initial_check_setup_failures": [
+    "focused_campaign_missing_preimport_guard_aborted_not_counted",
+    "full_collection_native_DLL_search_setup_failure_preserved_not_counted"
+  ],
+  "native_DLL_setup": "selected_interpreter_native_DLL_directory_test_parent_only_no_package_SDK_or_scoring_algorithm_changes",
+  "private_evidence": {
+    "current_native_dll.log": {
+      "path": "runs/ablations/full_error_two_proposals_preparation_20261020/current_native_dll.log",
+      "sha256": "9ce47678392e496b0e58f11d3284d15f7e72d05e9c8a0a857fce6af3ab377fb5"
+    },
+    "current_junit.xml": {
+      "path": "runs/ablations/full_error_two_proposals_preparation_20261020/current_junit.xml",
+      "sha256": "c6eb875597084e046bd4c74cb8ddf935df2a3577088e46c1bd7186705dd56a37"
+    },
+    "current_exit.json": {
+      "path": "runs/ablations/full_error_two_proposals_preparation_20261020/current_exit.json",
+      "sha256": "f206cb0620bb856bd97001b9587e9bc4f4a19d336039b8a060e8f82ae73e146f"
+    },
+    "governance_recheck.log": {
+      "path": "runs/ablations/full_error_two_proposals_preparation_20261020/governance_recheck.log",
+      "sha256": "570f6350ed4d6754d123d8ae6b5af4b88fadcd5ad697e0614d43ae3dfaddcd14"
+    },
+    "manifest_preflight_final.log": {
+      "path": "runs/ablations/full_error_two_proposals_preparation_20261020/manifest_preflight_final.log",
+      "sha256": "0f770dd185a3df53838748507bdc240fe6b367b844108d8e65fe48327511d07b"
+    },
+    "matched_contracts.json": {
+      "path": "runs/ablations/full_error_two_proposals_preparation_20261020/matched_contracts.json",
+      "sha256": "8e2d3fb220d08a3b7d8f5a1142149fa83b7969a3bace14bdd0e543f7d4fb7871"
+    },
+    "superseded_unexecuted_draft_inventory.json": {
+      "path": "runs/ablations/full_error_two_proposals_preparation_20261020/superseded_unexecuted_draft_inventory.json",
+      "sha256": "db0a5dccd7ecfe99e4a03f28e992c21813f2b79fa336106bae2eded1e7bd640d"
+    }
+  }
+}

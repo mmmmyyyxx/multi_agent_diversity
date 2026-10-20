@@ -27,23 +27,30 @@ def audit_initial(cp,scope,oi,vi,*,check_seal=True,check_initial_prompt=True):
     profile(cp['optimize'],oi);profile(cp['validation'],vi)
 
 
-def audit_transition(previous,cp,plan,cell,n,read):
+def audit_transition(previous,cp,plan,cell,n,read,*,optimize_ids=None):
     from .generation import candidate_checks
     sealed(cp);parent=SystemPrompt.from_dict(previous['prompt'])
     require(cp['scope_identity']==previous['scope_identity'] and cp['parent_prompt']==parent.to_dict(),'PARENT')
     profile(cp['optimize'],previous['optimize']);profile(cp['validation'],previous['validation'])
-    module=read(f'round_{n}_module');audit=module['audit'];full=audit['complete_diagnosis']
+    from .full_error_control import SCHEMA as control_schema,audit_raw_module
+    raw_control=plan['config']['schema_version']==control_schema
+    module=read(f'round_{n}_module');audit=module['audit']
+    full=audit['raw_feedback'] if raw_control else audit['complete_diagnosis']
     wrong={i for i,v in previous['optimize'].items() if not v['correct']}
     require(module['module_binding']==plan['module_bindings'][cell['arm_id']] and module['module_state'] is None,'MODULE_BINDING')
-    require({e['example_id'] for e in full['errors']}==wrong and len(full['errors'])==len(wrong)
-        and {d['example_id'] for d in full['structured_feedback']['diagnostics']}==wrong,'DIAGNOSIS_UNIVERSE')
-    require(audit['sampling_context']['prompt_sha256']==parent.prompt_hash
-        and audit['sampling_context']['cell_id']==cell['cell_id'],'SAMPLING_PARENT')
+    require({e['example_id'] for e in full['errors']}==wrong and len(full['errors'])==len(wrong),'DIAGNOSIS_UNIVERSE')
+    if raw_control:
+        audit_raw_module(audit,previous,cell,list(previous['optimize']) if optimize_ids is None else optimize_ids,
+                         cp['metric']['shared_diagnostic_cost'])
+    else:
+        require({d['example_id'] for d in full['structured_feedback']['diagnostics']}==wrong,'DIAGNOSIS_UNIVERSE')
+        require(audit['sampling_context']['prompt_sha256']==parent.prompt_hash
+            and audit['sampling_context']['cell_id']==cell['cell_id'],'SAMPLING_PARENT')
     for error in full['errors']:
         observed=previous['optimize'][error['example_id']]
         require(error['correct'] is False and error['valid']==observed['valid']
             and error['prediction']==observed['answer'],'DIAGNOSIS_OBSERVATION')
-    views,selection=project_proposals(PreparedFeedback([],None,None,audit,None),42,n,cell['proposal_mode'])
+    views,selection=project_proposals(PreparedFeedback([],None,None,audit,None),42,n,cell['proposal_mode'],raw_control=raw_control)
     require(module['selection']==selection,'SELECTION')
     m=cp['metric'];proposals=m['proposals']
     require(m['round']==n and m['validation_before']==score(previous['validation'])
@@ -157,7 +164,7 @@ def audit_cells(directory,scope,results=None,allow_partial=False,*,cell_offset=0
         require(allow_partial or count==plan['config']['rounds'],'INCOMPLETE_TRAINING')
         history=[previous['prompt']];metrics=[];usage=deepcopy(previous['bootstrap_usage'])
         for n in range(1,count+1):
-            current=read(f'checkpoint_{n}');audit_transition(previous,current,plan,cell,n,read)
+            current=read(f'checkpoint_{n}');audit_transition(previous,current,plan,cell,n,read,optimize_ids=scope['optimize_sample_ids'])
             history.append(current['prompt']);metrics.append(current['metric'])
             usage={k:usage[k]+current['metric']['cost'][k] for k in usage};previous=current
         require(result['prompt_history']==history and result['metrics']==metrics and result['final_prompt']==previous['prompt']

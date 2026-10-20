@@ -1,6 +1,11 @@
 # Current Implementation Specification
 
 The sole active research architecture is Unified Team Prompt Search.
+The independent [all-error same-Parent two-proposal control](SINGLE_PROMPT_FULL_ERROR_CONTROL_V2.md)
+reuses the no-module adapter and C2 same-Parent proposal kernel for three fresh
+Seed42 repeats, two proposals per round and the current96-slot
+Solver transport. It imports no historical observations, runs no diagnosis and
+requires a new exact training/conditional-Test freeze and authorization.
 The independent [scheduling concurrency continuation](SINGLE_PROMPT_PATTERN_SCHEDULING_CONTINUATION_V2.md)
 preserves a stopped paid scheduling prefix and explicitly binds Solver96, Gradient16
 and Test96 under a fresh scope; production and historical freezes are unchanged.

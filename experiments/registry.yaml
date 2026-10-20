@@ -1,6 +1,31 @@
 schema_version: experiment_registry_v2
 authority: experiment metadata only; reports never normative
 experiments:
+- experiment_id: single_prompt_full_error_control_v2
+  kind: ABLATION
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: same_parent_two_all_errors_proposals_control_v2
+  parent_ids:
+  - single_prompt_pattern_scheduling_continuation_v2
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: UNMEASURED_CONTROL
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_full_error_control_v2.json
+  report: reports/full_error_two_proposals_preparation_20261020
+  classifier: null
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Three fresh Seed42 single-Parent repeats, all Optimize errors directly to Optimizer; no diagnosis or historical cache.
+  - Two same-Parent raw all-error proposals per round; separate training and conditional final Test authorization required.
+  unavailable:
+    implementation_commit: Containing control preparation commit; no self-reference.
+    execution_commit: Exact frozen API scope pending.
+    result_commit: No real calls during preparation.
+    classifier: Offline preparation only.
 - experiment_id: v17_formal_5arm_3seed
   kind: FORMAL_EXPERIMENT
   era: V17_V18_MEMBER_AWARE

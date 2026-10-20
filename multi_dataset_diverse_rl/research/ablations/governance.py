@@ -255,6 +255,9 @@ def validate_authorization(scope, authorization, *, required=False, test=False):
 
 
 def validate_prep(root,directory,*,authorized=False):
+    from . import full_error_control
+    if read_json(directory/'prep.json').get('schema_version') == full_error_control.PREP_SCHEMA:
+        return full_error_control.validate_prep(root,directory,authorized=authorized)
     from . import proposal_continuation
     if read_json(directory/"prep.json").get("schema_version")==proposal_continuation.PREP_SCHEMA:
         return proposal_continuation.validate_prep(root,directory,authorized=authorized)
@@ -322,7 +325,8 @@ def audit_cells(directory, scope, *, results=None, allow_partial=False):
     plan = scope['plan']
     validate_plan(plan)
     from .proposal_config import SCHEMA as proposal_schema
-    if plan['config']['schema_version']==proposal_schema:
+    from .full_error_control import SCHEMA as control_schema
+    if plan['config']['schema_version'] in (proposal_schema,control_schema):
         from .proposal_audit import audit_cells as proposal_audit
         return proposal_audit(directory,scope,results,allow_partial)
     from .config import MULTI_SCHEMA
@@ -463,6 +467,10 @@ def audit_accounting(directory, scope, phase, *, summary=None, results=None):
         store = ProviderResponseReceipts(directory / 'provider_receipts', attempt_id=receipt['attempt_id'],
             startup_identity_sha256=scope['scope_identity'])
         record = store.read(receipt['reservation_id'])
+        from .full_error_control import SCHEMA as control_schema
+        if (scope['plan']['config']['schema_version'] == control_schema
+                and reserves[e['reservation_id']]['role'] not in ('solver', 'reflection')):
+            raise SearchContractError('FULL_ERROR_CONTROL_FORBIDDEN_DIAGNOSTIC_CALL')
         if read_json(store.directory / (receipt['reservation_id'] + '.json'))['integrity_sha256'] != receipt['integrity_sha256']:
             raise SearchContractError('ABLATION_RECEIPT_SEAL_CHANGED')
         if phase=='train' and reserves[e['reservation_id']]['role']=='reflection':
@@ -568,7 +576,11 @@ def _execute_phase(root, prep, directory, scope, *, train_scope, parent_results=
                 startup_identity_sha256=scope['scope_identity']), dispatch_guard=guard)
         from .config import MULTI_SCHEMA
         from .proposal_config import SCHEMA as proposal_schema
-        if plan['config']['schema_version']==proposal_schema:
+        from .full_error_control import SCHEMA as control_schema
+        if plan['config']['schema_version'] == control_schema:
+            from .full_error_control import inputs
+            manifest,reader=inputs(root)
+        elif plan['config']['schema_version']==proposal_schema:
             from .proposal_governance import inputs
             manifest,reader=inputs(root)
         elif plan['config']['schema_version']==MULTI_SCHEMA:
@@ -695,7 +707,7 @@ def final_test_scope(scope, terminal_sha):
 
 def accounting_policy(scope, phase):
     if scope.get("execution_concurrency"):
-        from .proposal_continuation import execution_concurrency
+        from .runtime import execution_concurrency
         from ...governance.token_accounting import POLICY_PATTERN_96_UNCAPPED
         execution_concurrency(scope)
         return POLICY_PATTERN_96_UNCAPPED
