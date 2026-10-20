@@ -1,6 +1,9 @@
 # Current Implementation Specification
 
 The sole active research architecture is Unified Team Prompt Search.
+The independent [scheduling concurrency continuation](SINGLE_PROMPT_PATTERN_SCHEDULING_CONTINUATION_V2.md)
+preserves a stopped paid scheduling prefix and explicitly binds Solver96, Gradient16
+and Test96 under a fresh scope; production and historical freezes are unchanged.
 The [failure evidence categories](FAILURE_EVIDENCE_LEVELS_V1.md) distinguish
 source/flow verification from observed execution and causal support. Metadata
 compatibility does not change the method or grant experiment authorization.

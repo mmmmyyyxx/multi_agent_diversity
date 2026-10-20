@@ -1,0 +1,99 @@
+{
+  "compileall": "PASS",
+  "complete_manifest_preflight": "PASS",
+  "concurrency": {
+    "gradient": 16,
+    "local_parsing_and_scoring": 16,
+    "test_solver": 96,
+    "train_solver": 96
+  },
+  "current_suite": {
+    "added_after_collection_local_queue_test": {
+      "deselected": 11,
+      "passed": 1
+    },
+    "execution": "serial_fresh_run_under_credential_free_network_guard",
+    "historical_or_private_modules_not_run": 183,
+    "modules": 60,
+    "passed": 1266,
+    "seconds": 2899.85,
+    "skipped": 2
+  },
+  "deterministic_smoke": {
+    "fake_provider_peak": 96,
+    "observations": 96,
+    "real_api_calls": 0,
+    "status": "PASS",
+    "wall_seconds": 16.25172790000215
+  },
+  "exact_paid_solver_recovery": {
+    "new_provider_calls": 0,
+    "paid_draws": 35,
+    "status": "EXACT_PAID_PREFIX_LOCAL_REPLAY_PASS",
+    "terminal_hashes_unchanged": true,
+    "terminal_observations": 34,
+    "two_draw_prediction_metadata": {
+      "invalid_reason": null,
+      "prediction_valid": true,
+      "raw_invalid_count": 1,
+      "recovered_invalid": true,
+      "semantic_attempt_count": 2,
+      "terminal_invalid": false,
+      "transport_retry_attempts": 0
+    }
+  },
+  "full_historical_replay_claim": false,
+  "incomplete_or_failed_checks": "Directory-only and oversubscribed shard campaigns interrupted, not counted; unbounded and scoring-only96 cold parser overload smokes preserved and superseded by passing shared parser/scorer16 admission smoke",
+  "inherited": {
+    "accounted_tokens": 133562350,
+    "completed_opportunities": 152,
+    "network_failures": 54,
+    "physical_calls": 75704,
+    "unknown_stop_conservative_tokens": 345235,
+    "unknown_stop_reservations": 32
+  },
+  "manifest_entrypoint": "PASS_NOT_AUTHORIZED",
+  "network_attempt_count": 0,
+  "private_evidence": {
+    "complete_manifest_preflight": {
+      "path": "runs/pattern_scheduling_formal_launch_20261019/continuation_checks/manifest_preflight_final.log",
+      "sha256": "652128d6edf3f0f9dcc2f8d9a8b91eec1326174182ead9dbfe29c2d119ede082"
+    },
+    "concurrency96": {
+      "path": "runs/pattern_scheduling_formal_launch_20261019/continuation_checks/solver96_local16_smoke/result.json",
+      "sha256": "a13413f11835944e019d28f6921d49e117e1b6a5e223c71bbb5d4ce8241ce5c2"
+    },
+    "current_suite": {
+      "path": "runs/pattern_scheduling_formal_launch_20261019/continuation_checks/current_serial.log",
+      "sha256": "7930a165d5ada62d41d75bd25018e62ada5c47a4688d993daebdaf02e7a50866"
+    },
+    "exact_paid_solver_restore": {
+      "path": "runs/pattern_scheduling_formal_launch_20261019/continuation_checks/partial_solver_review/result.json",
+      "sha256": "59f2eef534424be2fcd2a7ee04da9335408eb3973e14354e562ee7d0da7a324a"
+    },
+    "extra_local_queue": {
+      "path": "runs/pattern_scheduling_formal_launch_20261019/continuation_checks/local_queue_test.log",
+      "sha256": "0efb0c79af660d0ae6fd6b651d0f2ac050c5beac7a79244fd35fc6e3b6eaa8b7"
+    },
+    "manifest_entrypoint": {
+      "path": "runs/pattern_scheduling_formal_launch_20261019/continuation_checks/entrypoint_preflight_final_v2.log",
+      "sha256": "a680b5dc495b57a4f0a39ce82e73d082bd04dfb18403bfff789bb160cfb16d69"
+    },
+    "module_inventory": {
+      "path": "runs/pattern_scheduling_formal_launch_20261019/continuation_checks/current_serial_modules.json",
+      "sha256": "32fc883c11008e9bf73670df005033ad5018b3219d89241d06c5da68d4257d33"
+    },
+    "repository_preflight": {
+      "path": "runs/pattern_scheduling_formal_launch_20261019/continuation_repository_preflight_final.json",
+      "sha256": "ab01977174d6797a7dc6d0200a1ff3affee8a9b681a3279782088e62ddd55230"
+    },
+    "reviewed_parent_audit": {
+      "path": "runs/pattern_scheduling_formal_launch_20261019/stopped_parent_audit_reviewed.json",
+      "sha256": "ac858b7d010eed1010b239d635d572fc942d91eaa0fb1419850a480fb03a59f6"
+    }
+  },
+  "real_api_calls": 0,
+  "repository_governance": "PASS",
+  "reused_preflight_scope": "Report metadata finalized after source/configuration-matched complete preflights; final report sanitization and hashes freshly checked",
+  "status": "OFFLINE_VERIFICATION_PASS"
+}

@@ -555,6 +555,7 @@ flowchart TD
     n387["pattern_diagnosis_transfer_audit_20261019<br/>FORENSIC_AUDIT<br/>COMPLETED"]
     n388["single_prompt_pattern_scheduling_v1<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
     n389["single_prompt_pattern_canary_v1<br/>REAL_CANARY<br/>PREPARED_NOT_EXECUTED"]
+    n390["single_prompt_pattern_scheduling_continuation_v2<br/>ABLATION<br/>PREPARED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n0["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -899,6 +900,7 @@ flowchart TD
   n384 -->|derived_from| n385
   n334 -->|audit_of| n386
   n369 -->|audit_of| n386
+  n388 -->|derived_from| n390
 ```
 
 ## Archived branches and unresolved evidence

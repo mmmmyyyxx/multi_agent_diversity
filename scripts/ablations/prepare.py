@@ -22,7 +22,14 @@ def main():
     parser.add_argument('--certify-c-test',action='store_true',help='Test-only exact far-inequality certificate continuation.')
     parser.add_argument('--completed-ab-test',action='store_true',help='Test only the six completed historical A/B cells.')
     parser.add_argument('--resume-ab-test',action='store_true',help='Continue paid A/B Tests after local scorer repair.')
+    parser.add_argument('--resume-pattern-scheduling',action='store_true',help='Frozen paid-prefix continuation with Solver96/Gradient16/Test96.')
     args = parser.parse_args()
+    if args.resume_pattern_scheduling:
+        if any(value for key,value in vars(args).items() if key not in ('resume_pattern_scheduling','destination')):
+            parser.error('Scheduling continuation cannot be combined with other modes.')
+        from multi_dataset_diverse_rl.research.ablations.proposal_continuation import prepare as resume_prepare
+        print(json.dumps(resume_prepare(ROOT,args.destination),indent=2))
+        return
     if args.pattern_canary:
         if any(value for key,value in vars(args).items() if key not in ('pattern_canary','destination')):
             parser.error('Canary cannot be combined with other preparation modes.')

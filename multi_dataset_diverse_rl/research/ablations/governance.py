@@ -194,10 +194,12 @@ def _prepare_legacy_metadata(root, destination):
 
 
 def execution_plan_template(scope):
-    return dict(
+    value = dict(
         command=scope['execution']['command'], cells=scope['plan']['cells'],
         train_call_ceiling=scope['call_ceiling'], test_plan=scope['test_plan'], token_ceiling=scope.get('token_ceiling'),
         source_sha=scope['source_sha'], scope_identity=scope['scope_identity'])
+    if scope.get('execution_concurrency'):value['execution_concurrency']=scope['execution_concurrency']
+    return value
 
 
 def handoff_template(root, destination, scope):
@@ -253,6 +255,9 @@ def validate_authorization(scope, authorization, *, required=False, test=False):
 
 
 def validate_prep(root,directory,*,authorized=False):
+    from . import proposal_continuation
+    if read_json(directory/"prep.json").get("schema_version")==proposal_continuation.PREP_SCHEMA:
+        return proposal_continuation.validate_prep(root,directory,authorized=authorized)
     directory=private_path(root,directory)
     from . import proposal_canary
     if read_json(directory/'prep.json').get('schema_version')==proposal_canary.PREP_SCHEMA:
@@ -432,7 +437,7 @@ def audit_cells(directory, scope, *, results=None, allow_partial=False):
 
 
 def audit_accounting(directory, scope, phase, *, summary=None, results=None):
-    policy = POLICY_GATED_32_UNCAPPED if phase == 'train' else POLICY_V27_FORMAL_UNCAPPED
+    policy = accounting_policy(scope, phase)
     view, events = audit_journal(directory / 'ledger', task_sha256=scope['scope_identity'], policy=policy)
     summary = read_json(directory / 'execution_summary.json') if summary is None else summary
     total_usage = summary['usage']
@@ -556,8 +561,9 @@ def _execute_phase(root, prep, directory, scope, *, train_scope, parent_results=
     try:
         transport, clients = _transport()
         ledger = TokenLedger(directory / 'ledger', task_sha256=scope['scope_identity'],
-            policy=POLICY_GATED_32_UNCAPPED if phase == 'train' else POLICY_V27_FORMAL_UNCAPPED)
-        broker = AblationBroker(plan=plan, phase=phase, scope=scope, transport=transport, ledger=ledger,
+            policy=accounting_policy(scope, phase))
+        from .proposal_continuation import broker_type
+        broker = broker_type(scope)(plan=plan, phase=phase, scope=scope, transport=transport, ledger=ledger,
             receipts=ProviderResponseReceipts(directory / 'provider_receipts', attempt_id=scope['scope_identity'],
                 startup_identity_sha256=scope['scope_identity']), dispatch_guard=guard)
         from .config import MULTI_SCHEMA
@@ -579,8 +585,10 @@ def _execute_phase(root, prep, directory, scope, *, train_scope, parent_results=
             atomic_write_json(directory / 'access.json', dict(optimize_ids=[r['stable_example_id'] for r in optimize],
                 validation_gate_ids=scope['gate_membership']['sample_ids'], test_access=False))
             if 'continuation' in scope:
+                from .proposal_continuation import hydrate_solver as hydrate_scheduling
                 from .continuation import hydrate_solver
-                hydrate_solver(root, scope, broker, optimize, validation, directory)
+                hydrate = hydrate_scheduling if scope.get('execution_concurrency') else hydrate_solver
+                hydrate(root, scope, broker, optimize, validation, directory)
         else:
             # All train files/ledger/receipts are checked again before opening Test rows.
             verify_training(directory.parent / 'train_run', train_scope)
@@ -605,8 +613,10 @@ def _execute_phase(root, prep, directory, scope, *, train_scope, parent_results=
             if phase == 'train':
                 resume = None
                 if 'continuation' in scope:
+                    from .proposal_continuation import restore_prefix as restore_scheduling
                     from .continuation import restore_prefix
-                    resume = restore_prefix(root, scope, cell, folder)
+                    restore = restore_scheduling if scope.get('execution_concurrency') else restore_prefix
+                    resume = restore(root, scope, cell, folder)
                 result = run_cell(plan, cell, initial, optimize, validation, broker, persist, resume=resume)
             else:
                 broker.bind_cell(cell, plan)
@@ -678,4 +688,15 @@ def final_test_scope(scope, terminal_sha):
         parent_terminal_sha256=terminal_sha, plan=scope['plan'], test_plan=scope['test_plan'],
         call_ceiling=scope['test_plan']['successful_semantic_call_ceiling'], token_ceiling=None,
         network_recovery=scope['network_recovery'])
+    if scope.get('execution_concurrency'):
+        body['execution_concurrency']=scope['execution_concurrency']
     return dict(body, scope_identity=digest(body))
+
+
+def accounting_policy(scope, phase):
+    if scope.get("execution_concurrency"):
+        from .proposal_continuation import execution_concurrency
+        from ...governance.token_accounting import POLICY_PATTERN_96_UNCAPPED
+        execution_concurrency(scope)
+        return POLICY_PATTERN_96_UNCAPPED
+    return POLICY_GATED_32_UNCAPPED if phase=="train" else POLICY_V27_FORMAL_UNCAPPED

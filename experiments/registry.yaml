@@ -11173,3 +11173,29 @@ experiments:
     execution_commit: Exact Canary authorization pending.
     result_commit: No real execution or efficacy evidence.
     classifier: Offline preparation only.
+
+- experiment_id: single_prompt_pattern_scheduling_continuation_v2
+  kind: ABLATION
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: single_parent_pattern_direction_scheduling_continuation_v2
+  parent_ids:
+  - single_prompt_pattern_scheduling_v1
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: UNMEASURED_CONTINUATION
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_pattern_scheduling_continuation_v2.json
+  report: reports/pattern_scheduling_concurrency_continuation_20261020
+  classifier: null
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - User-selected Solver96 for training and Test, Gradient16; original scientific plan and paid prefix preserved.
+  - Separate parent stop accounting; no Teacher response replay, no completed opportunity reruns.
+  unavailable:
+    implementation_commit: Containing implementation commit; no self-reference.
+    execution_commit: Exact new frozen API authorization required.
+    result_commit: No new real execution during offline preparation.
+    classifier: Offline preparation only.

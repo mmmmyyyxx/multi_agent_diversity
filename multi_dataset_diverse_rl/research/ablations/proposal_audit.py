@@ -138,11 +138,12 @@ def audit_transition(previous,cp,plan,cell,n,read):
     require(cp['module_state'] is None,'UNEXPECTED_MEMORY')
 
 
-def audit_cells(directory,scope,results=None,allow_partial=False):
+def audit_cells(directory,scope,results=None,allow_partial=False,*,cell_offset=0):
     from .config import validate_plan,request_namespace
     plan=scope['plan'];validate_plan(plan)
     results=read_json(directory/'results.json') if results is None else results
-    expected=plan['cells'][:len(results)] if allow_partial else plan['cells']
+    require(type(cell_offset) is int and 0<=cell_offset<len(plan['cells']) and (allow_partial or cell_offset==0),'AUDIT_CELL_OFFSET')
+    expected=plan['cells'][cell_offset:cell_offset+len(results)] if allow_partial else plan['cells']
     require([r['cell'] for r in results]==expected,'COMPLETE_ORDERED_CELLS')
     for cell,result in zip(expected,results):
         folder=directory/cell['cell_id'];read=lambda name:read_json(folder/(name+'.json'))

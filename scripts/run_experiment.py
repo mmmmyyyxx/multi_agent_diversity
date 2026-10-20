@@ -19,6 +19,10 @@ def _load(path):
 
 
 def preflight(manifest):
+    if manifest.get('schema_version')=='single_prompt_pattern_scheduling_continuation_manifest_v2':
+        from multi_dataset_diverse_rl.research.ablations.proposal_continuation import validate_manifest
+        validate_manifest(manifest)
+        return dict(status='PATTERN_CONTINUATION_PREFLIGHT_NOT_AUTHORIZED',ready_to_run=False,real_api_calls=0)
     if manifest.get('schema_version')=='single_prompt_pattern_canary_manifest_v1':
         from multi_dataset_diverse_rl.research.ablations.proposal_canary import validate_manifest
         plan=validate_manifest(manifest)
@@ -119,6 +123,10 @@ def preflight(manifest):
 
 
 def governed_preflight(prep):
+    if _load(prep/"prep.json").get("schema_version")=="single_prompt_pattern_scheduling_continuation_prep_v2":
+        from multi_dataset_diverse_rl.research.ablations.proposal_continuation import validate_prep as validate_resume
+        scope=validate_resume(ROOT,prep)
+        return dict(status="PATTERN_CONTINUATION_FROZEN_NOT_AUTHORIZED",scope_identity=scope["scope_identity"],real_api_calls=0)
     if _load(prep/'prep.json').get('schema_version')=='single_prompt_pattern_canary_prep_v1':
         from multi_dataset_diverse_rl.research.ablations.proposal_canary import validate_prep as validate_canary
         scope=validate_canary(ROOT,prep)
@@ -174,6 +182,9 @@ def governed_preflight(prep):
 
 
 async def execute_frozen(prep,run_root):
+    if _load(prep/"prep.json").get("schema_version")=="single_prompt_pattern_scheduling_continuation_prep_v2":
+        from multi_dataset_diverse_rl.research.ablations import governance as resume_gov
+        return await asyncio.to_thread(resume_gov.execute,ROOT,prep,run_root)
     if _load(prep/'prep.json').get('schema_version')=='single_prompt_pattern_canary_prep_v1':
         from multi_dataset_diverse_rl.research.ablations.proposal_canary import execute as execute_pattern_canary
         return await asyncio.to_thread(execute_pattern_canary,ROOT,prep,run_root)

@@ -1,0 +1,13 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "README.md",
+      "sha256": "8fd7e2d5b0c83a4437151f8493563bd2171cf45e339821ad4d4346eea64536d9"
+    },
+    {
+      "file": "verification.json",
+      "sha256": "28b71a43a86203fca132949963cfe7526ca80ca61a593deb71b80f7c2d69df18"
+    }
+  ]
+}

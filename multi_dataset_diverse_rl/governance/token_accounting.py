@@ -60,6 +60,11 @@ POLICY_GATED_32_UNCAPPED = {**POLICY_V27_FORMAL_UNCAPPED,
     "identity": "GATED_TWO_SEED32_UNCAPPED_ACCOUNTING_V1", "concurrency": 32}
 
 
+# Fresh opt-in scheduling continuation; never amends a parent journal.
+POLICY_PATTERN_96_UNCAPPED = {**POLICY_V27_FORMAL_UNCAPPED,
+    "identity": "PATTERN_CONTINUATION96_UNCAPPED_ACCOUNTING_V1", "concurrency": 96}
+
+
 class OperationalAbort(BaseException):
     """Cannot be swallowed by optimizer code handling ordinary exceptions."""
 
@@ -135,7 +140,7 @@ class TokenLedger:
     def __init__(self, directory: Path, *, task_sha256: str, policy=POLICY,
                  best_effort_snapshots=False, cost_policy=None):
         if policy not in (POLICY, POLICY_40M, POLICY_V23_2M, POLICY_V23_PARALLEL_2M, POLICY_V24_2M, POLICY_V25_2M,
-                POLICY_V25_FORMAL_30M, POLICY_V25_VALIDATION_6M, POLICY_V26_2M, POLICY_V26_FORMAL_30M, POLICY_V26_VALIDATION_6M, POLICY_V27_FORMAL_UNCAPPED, POLICY_GATED_32_UNCAPPED) or len(task_sha256) != 64:
+                POLICY_V25_FORMAL_30M, POLICY_V25_VALIDATION_6M, POLICY_V26_2M, POLICY_V26_FORMAL_30M, POLICY_V26_VALIDATION_6M, POLICY_V27_FORMAL_UNCAPPED, POLICY_GATED_32_UNCAPPED, POLICY_PATTERN_96_UNCAPPED) or len(task_sha256) != 64:
             raise OperationalAbort("TOKEN_ACCOUNTING_POLICY_IDENTITY_MISMATCH")
         self.directory = Path(directory)
         from .cost_accounting import frozen_policy as frozen_cost_policy
@@ -169,7 +174,7 @@ class TokenLedger:
         self.task_sha256 = task_sha256
         self.policy = dict(policy)
         fresh_policies=(POLICY, POLICY_V23_2M, POLICY_V23_PARALLEL_2M, POLICY_V24_2M, POLICY_V25_2M,
-            POLICY_V25_FORMAL_30M, POLICY_V25_VALIDATION_6M, POLICY_V26_2M, POLICY_V26_FORMAL_30M, POLICY_V26_VALIDATION_6M, POLICY_V27_FORMAL_UNCAPPED, POLICY_GATED_32_UNCAPPED)
+            POLICY_V25_FORMAL_30M, POLICY_V25_VALIDATION_6M, POLICY_V26_2M, POLICY_V26_FORMAL_30M, POLICY_V26_VALIDATION_6M, POLICY_V27_FORMAL_UNCAPPED, POLICY_GATED_32_UNCAPPED, POLICY_PATTERN_96_UNCAPPED)
         self.authorized_total = policy['authorized_total'] if policy in fresh_policies else POLICY["authorized_total"]
         self.authorization_amendments = []
         self.events = []
@@ -211,7 +216,7 @@ class TokenLedger:
             raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")
         if row["kind"] == "AUTHORIZE":
             if (self.events or row["policy"] not in (POLICY, POLICY_V23_2M, POLICY_V23_PARALLEL_2M, POLICY_V24_2M, POLICY_V25_2M,
-                    POLICY_V25_FORMAL_30M, POLICY_V25_VALIDATION_6M, POLICY_V26_2M, POLICY_V26_FORMAL_30M, POLICY_V26_VALIDATION_6M, POLICY_V27_FORMAL_UNCAPPED, POLICY_GATED_32_UNCAPPED)
+                    POLICY_V25_FORMAL_30M, POLICY_V25_VALIDATION_6M, POLICY_V26_2M, POLICY_V26_FORMAL_30M, POLICY_V26_VALIDATION_6M, POLICY_V27_FORMAL_UNCAPPED, POLICY_GATED_32_UNCAPPED, POLICY_PATTERN_96_UNCAPPED)
                     or row['policy'] != (POLICY if self.policy == POLICY_40M else self.policy)
                     or row.get('cost_policy') != self.cost_policy):
                 raise OperationalAbort("TOKEN_LEDGER_CORRUPTION")

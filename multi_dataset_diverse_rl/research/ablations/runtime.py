@@ -21,9 +21,29 @@ class AblationBroker(NetworkRecoveryMixin, StudyBroker):
         self.repeat_id = None
         self.example_context = threading.local()
         super().__init__(**kwargs)
+        self.grading_slots = (threading.BoundedSemaphore(self.study_policy()['local_grading_concurrency'])
+                              if self.scope.get('execution_concurrency') else None)
+
+    def score_resolved(self, resolved, row):
+        if self.grading_slots is None:
+            return super().score_resolved(resolved, row)
+        # Queue outside the mathematical worker: its unchanged deadline begins
+        # only when a local worker can run. Provider dispatch still has96 slots.
+        with self.grading_slots:
+            return super().score_resolved(resolved, row)
+
+    def classify_response(self, response):
+        if self.grading_slots is None:
+            return super().classify_response(response)
+        with self.grading_slots:
+            return super().classify_response(response)
 
     def study_policy(self):
-        return deepcopy(self.plan['config']['runtime'])
+        value = deepcopy(self.plan['config']['runtime'])
+        if self.scope.get('execution_concurrency') is not None:
+            from .proposal_continuation import execution_concurrency
+            value.update(execution_concurrency(self.scope))
+        return value
 
     def timeout_policy(self):
         return self.study_policy()['timeout_recovery']

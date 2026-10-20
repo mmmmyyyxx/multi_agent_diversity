@@ -1,6 +1,9 @@
 schema_version: experiment_lineage_v2
 authority: sole experiment lineage authority
 nodes:
+- experiment_id: single_prompt_pattern_scheduling_continuation_v2
+  kind: ABLATION
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 - experiment_id: single_prompt_pattern_canary_v1
   kind: REAL_CANARY
   era: UNIFIED_TEAM_PROMPT_SEARCH
@@ -2825,4 +2828,9 @@ edges:
   relation: audit_of
   evidence: reports/repair_path_responsibility_offline_20261019/README.md
   scope: Fixed-state Optimize replay only; no method adoption or historical outcome changes.
+- from: single_prompt_pattern_scheduling_v1
+  to: single_prompt_pattern_scheduling_continuation_v2
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_PATTERN_SCHEDULING_CONTINUATION_V2.md
+  scope: Immutable paid-prefix continuation with explicitly selected Solver96 and Gradient16.
 current_frontier: experiments/current_frontier.yaml

@@ -1,0 +1,15 @@
+{
+  "schema_version": "single_prompt_pattern_scheduling_continuation_manifest_v2",
+  "experiment_id": "single_prompt_pattern_scheduling_continuation_v2",
+  "parents": ["experiments/manifests/single_prompt_pattern_scheduling_v1.json"],
+  "protocol_path": "docs/design/SINGLE_PROMPT_PATTERN_SCHEDULING_CONTINUATION_V2.md",
+  "scientific_plan": "unchanged_original_nine_cells_seed42_twenty_rounds",
+  "execution_concurrency": {"solver_concurrency": 96, "gradient_concurrency": 16, "test_solver_concurrency": 96, "local_grading_concurrency": 16},
+  "continuation": "immutable_completed_prefix_saved_partial_diagnosis_edit_exact_paid_solver_draws",
+  "parent_journal": "read_only_full_bound_uncertain_stopped_reservations_in_separate_audit",
+  "training_semantic_call_ceiling": 391740,
+  "test_semantic_call_ceiling": 10800,
+  "cumulative_token_ceiling": null,
+  "real_api_authorized": false,
+  "status": "PREPARED_NOT_EXECUTED"
+}

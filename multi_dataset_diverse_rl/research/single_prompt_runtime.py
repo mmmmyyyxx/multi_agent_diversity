@@ -272,7 +272,7 @@ class StudyBroker:
                     attempts[-1].finish_reason in ('length', 'max_tokens', 'max_output_tokens') else self.study_policy()['first_solver_capacity'])
                 response = self.complete(role='solver', split=split, stage=f'{split}_checkpoint_{ordinal}_draw_{draw + 1}',
                                          messages=messages, capacity=capacity)
-                prediction = classify_prediction(response['text'], response.get('finish_reason'))
+                prediction = self.classify_response(response)
                 transport_timeout_attempts += response.get('study_transport_timeout_attempts', 0)
                 attempts.append(prediction)
                 if prediction.prediction_valid:
@@ -299,6 +299,10 @@ class StudyBroker:
         finally:
             with self.lock:
                 self.inflight.pop(key, None)
+
+    def classify_response(self, response):
+        """Unchanged parser; scoped executors may queue local worker admission."""
+        return classify_prediction(response['text'], response.get('finish_reason'))
 
     def score_resolved(self, resolved, row):
         """Default mathematical scoring; scoped Test recovery may retry this boundary."""

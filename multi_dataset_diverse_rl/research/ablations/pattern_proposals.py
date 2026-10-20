@@ -128,6 +128,15 @@ def run_cell(plan,cell,initial_prompt,optimize_rows,validation_rows,broker,persi
         optimize_membership_sha256=digest(oi),validation_membership_sha256=digest(vi),module_binding=binding,
         repeat_namespace=request_namespace(plan['plan_identity'],cell['seed'],cell['repeat_id']))
     scope_id=digest(scope);metrics=[];history=[];old_usage={k:0 for k in begin}
+    partial={} if resume is None else resume.get('partial',{})
+    if partial:
+        from .proposal_continuation import validate_partial_resume
+        validate_partial_resume(resume,cell)
+        original_persist=persist
+        def persist(name,data):
+            if name in resume['artifacts']:
+                require(data==resume['artifacts'][name],'RESTORED_ARTIFACT_CHANGED')
+            else:original_persist(name,data)
     if resume is None:
         bootstrap_clock=perf_counter()
         optimize=_observations(optimize_rows,broker.evaluate(initial,optimize_rows,'optimize',42,0))
@@ -153,24 +162,30 @@ def run_cell(plan,cell,initial_prompt,optimize_rows,validation_rows,broker,persi
         require(previous is not None and old_usage==resume['historical_usage'],'RESUME_USAGE')
         # A paid partial round cannot be silently regenerated. A future continuation
         # must bind exact receipts; completed boundaries never reissue Teacher calls.
-        require(not any(k.startswith(f'round_{len(metrics)+1}_') for k in artifacts),'PARTIAL_ROUND_REQUIRES_FRESH_CONTINUATION')
+        require(partial or not any(k.startswith(f'round_{len(metrics)+1}_') for k in artifacts),'PARTIAL_ROUND_REQUIRES_FRESH_CONTINUATION')
+        if partial:old_usage={k:old_usage[k]+partial['usage'][k] for k in old_usage}
     audit_initial(dict(scope=scope,scope_identity=scope_id,prompt=initial.to_dict(),optimize=previous['optimize'],
         validation=previous['validation']),scope,oi,vi,check_seal=False,check_initial_prompt=False)
     for ordinal in range(len(metrics)+1,plan['config']['rounds']+1):
         parent=SystemPrompt.from_dict(previous['prompt']);optimize=previous['optimize'];validation=previous['validation']
         broker.round_index=ordinal;start=broker.usage_view();round_start=perf_counter()
+        restoring=bool(partial and ordinal==partial['ordinal'])
+        if restoring:start={k:v-partial['usage'][k] for k,v in start.items()}
         wrong=[r for r in optimize_rows if not optimize[r['stable_example_id']]['correct']]
         context=OptimizeContext(cell['cell_id'],42,cell['repeat_id'],ordinal,parent,deepcopy(tuple(wrong)),
             {r['stable_example_id']:deepcopy(optimize[r['stable_example_id']]) for r in wrong})
         provider=ModuleProvider(broker,binding['semantic_calls_per_opportunity'])
-        prepared=module.prepare(context,None,provider)
+        if restoring:
+            saved=artifacts[f'round_{ordinal}_module']
+            prepared=PreparedFeedback([],None,None,deepcopy(saved['audit']),None)
+        else:prepared=module.prepare(context,None,provider)
         require(isinstance(prepared,PreparedFeedback) and prepared.state is None and prepared.module_context is None,'MODULE_FEEDBACK')
         originals={r['stable_example_id']:raw_error(r,optimize[r['stable_example_id']]) for r in wrong}
         require(prepared.audit['complete_diagnosis']['errors']==list(originals.values()),'DIAGNOSIS_SOURCE')
         views,selection=project_proposals(prepared,42,ordinal,cell['proposal_mode'])
-        diagnostic_cost=delta(broker.usage_view(),start)
+        diagnostic_cost=deepcopy(partial['diagnostic_usage']) if restoring else delta(broker.usage_view(),start)
         record=dict(module_binding=binding,module_state=None,audit=dict(prepared.audit,
-            diagnostic_draw_counts=provider.draw_counts()),selection=selection)
+            diagnostic_draw_counts=(saved['audit']['diagnostic_draw_counts'] if restoring else provider.draw_counts())),selection=selection)
         persist(f'round_{ordinal}_module',record)
         proposals=[];sequential=cell['proposal_mode']=='sequential'
         current_parent,current_optimize,current_validation=parent,optimize,validation
@@ -184,7 +199,12 @@ def run_cell(plan,cell,initial_prompt,optimize_rows,validation_rows,broker,persi
             if diagnosis_context is not None:opportunity['diagnosis_context']=diagnosis_context
             persist(f'round_{ordinal}_proposal_{slot}_opportunity',opportunity)
             before=broker.usage_view();clock=perf_counter();candidate=None;draws=0
-            if eligible:
+            saved_key=f'round_{ordinal}_proposal_{slot}_generation_'
+            saved_draws=sorted((v for k,v in artifacts.items() if k.startswith(saved_key)),key=lambda v:v['draw']) if restoring else []
+            if saved_draws:
+                final=saved_draws[-1];draws=final['draw']
+                candidate=None if final['candidate'] is None else SystemPrompt.from_dict(final['candidate'])
+            elif eligible:
                 candidate,draws=generate_candidate(actual_parent,
                     PreparedFeedback(feedback['errors'],feedback['structured_feedback'],None,{},None),
                     broker,ordinal,plan['config']['runtime']['optimizer_structural_draws'],persist,
@@ -198,8 +218,10 @@ def run_cell(plan,cell,initial_prompt,optimize_rows,validation_rows,broker,persi
                 candidate_prompt=None if candidate is None else candidate.to_dict(),accepted=False,
                 lineage=None if candidate is None else block_lineage(actual_parent,candidate),
                 candidate_optimize=None,candidate_validation=None,candidate_optimize_score=None,candidate_validation_score=None,
-                generation_cost=delta(broker.usage_view(),before),evaluation_cost={k:0 for k in before},
-                generation_seconds=perf_counter()-clock,evaluation_seconds=0.0,repair_metrics=None,
+                generation_cost=deepcopy(partial['generation_usage'].get(str(slot),{k:0 for k in before})) if saved_draws else delta(broker.usage_view(),before),evaluation_cost={k:0 for k in before},
+                generation_seconds=0.0 if saved_draws else perf_counter()-clock,
+                **({'generation_timing_status':'UNAVAILABLE_RESTORED_STAGE'} if saved_draws else {}),
+                evaluation_seconds=0.0,repair_metrics=None,
                 current_focus=view['focus'],same_block_as_first_accepted_edit=None)
 
         def evaluate(proposal,before_optimize):
@@ -209,7 +231,7 @@ def run_cell(plan,cell,initial_prompt,optimize_rows,validation_rows,broker,persi
                 cv=_observations(validation_rows,broker.evaluate(candidate,validation_rows,'validation',42,ordinal))
                 proposal.update(generation_status='MEASURED',candidate_optimize=co,candidate_validation=cv,
                     candidate_optimize_score=score(co),candidate_validation_score=score(cv),
-                    evaluation_cost=delta(broker.usage_view(),before),evaluation_seconds=perf_counter()-clock,
+                    evaluation_cost={k:v+(partial['evaluation_usage'].get(str(proposal['slot']),{}).get(k,0) if restoring else 0) for k,v in delta(broker.usage_view(),before).items()},evaluation_seconds=perf_counter()-clock,
                     repair_metrics=repair_metrics(optimize,before_optimize,co,proposal['current_focus']['selected_support_ids']))
 
         if sequential:
