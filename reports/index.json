@@ -3577,6 +3577,20 @@
       "context": "Current/active wording refers only to report generation time."
     },
     {
+      "path": "reports/scoring_residual_cleanup_20261021",
+      "document": "reports/scoring_residual_cleanup_20261021/README.md",
+      "date": "20261021",
+      "era": "UNIFIED_TEAM_PROMPT_SEARCH",
+      "kind": "ZERO_API",
+      "experiment_id": "cevolve_hendrycks_scoring_v1_preparation_20261021",
+      "status": "IMPLEMENTED_NOT_EXECUTED",
+      "source_commit": null,
+      "historical_current": "historical_evidence",
+      "registry_referenced": true,
+      "registry_ref": "experiments/registry.yaml",
+      "context": "Current/active wording refers only to report generation time."
+    },
+    {
       "path": "reports/seed78_gepa_differential_audit_20260914",
       "document": "reports/seed78_gepa_differential_audit_20260914/README.md",
       "date": "20260914",

@@ -204,3 +204,8 @@ multi_dataset_diverse_rl/math_scoring/upstream.json -text whitespace=trailing-sp
 
 # Verbatim upstream helper whitespace is part of its pinned source receipt.
 multi_dataset_diverse_rl/math_scoring/_hendrycks.py whitespace=-blank-at-eol
+
+# Exact-byte evidence for retirement-only scorer cleanup.
+reports/scoring_residual_cleanup_20261021/** text eol=lf
+multi_dataset_diverse_rl/benchmarks/math_interval_certificate.py text eol=lf
+multi_dataset_diverse_rl/benchmarks/math_power_certificate.py text eol=lf

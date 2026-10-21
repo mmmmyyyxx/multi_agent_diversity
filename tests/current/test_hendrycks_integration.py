@@ -119,3 +119,22 @@ def test_historical_data_parent_grants_no_heldout_or_old_execution_access():
     with pytest.raises(SearchContractError):validate_manifest(root,old)
     with pytest.raises(SearchContractError):reader.heldout_rows(None)
     assert reader.manifest['counts']==old['data']['counts']
+
+
+@pytest.mark.parametrize('module,function',[
+    ('math_interval_certificate','enclosure'),
+    ('math_interval_certificate','certified_far_unequal'),
+    ('math_power_certificate','power_lower_witness'),
+    ('math_power_certificate','certified_far_unequal'),
+])
+def test_retired_certificate_helpers_cannot_execute_symbolic_judgment(module,function):
+    from importlib import import_module
+    import ast
+    from pathlib import Path
+    target=import_module('multi_dataset_diverse_rl.benchmarks.'+module)
+    assert target.POLICY['identity'].startswith('MATH_EXACT_')
+    with pytest.raises(RetiredMathScorerError,match='CERTIFICATE_RETIRED'):
+        getattr(target,function)(None,None)
+    # Recovery metadata must not leave an independently callable old evaluator.
+    tree=ast.parse(Path(target.__file__).read_text(encoding='utf-8'))
+    assert [n.name for n in tree.body if isinstance(n,ast.FunctionDef)]==['_retired']

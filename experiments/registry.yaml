@@ -11265,6 +11265,8 @@ experiments:
   result_commit: null
   manifest: experiments/manifests/cevolve_hendrycks_scoring_v1_preparation.yaml
   report: reports/cevolve_hendrycks_scoring_migration_20261021
+  reports:
+  - reports/scoring_residual_cleanup_20261021
   classifier: null
   active_for_new_work: true
   historical_replay: false
