@@ -144,6 +144,7 @@ def test_final_phase_references_controls_and_reuses_only_exact_seed_solver_ident
     from multi_dataset_diverse_rl.governance.token_accounting import TokenLedger,POLICY_V27_FORMAL_UNCAPPED
     from multi_dataset_diverse_rl.persistence.provider_receipts import ProviderResponseReceipts
     from multi_dataset_diverse_rl.benchmarks.data_freeze import digest,file_hash
+    from multi_dataset_diverse_rl.math_scoring.prediction import cache_identity
     import multi_dataset_diverse_rl.governance.autonomous_math as provider
     import multi_dataset_diverse_rl.research.single_prompt_runtime as runtime
     monkeypatch.setattr(runtime.MATHBenchmarkAdapter,'score_member_output',lambda *_:0.0)
@@ -153,7 +154,7 @@ def test_final_phase_references_controls_and_reuses_only_exact_seed_solver_ident
     parent_train=tmp_path/'runs/parent/train_run';parent_test=parent_train.parent/'test_run'
     atomic_write_json(parent_train/'results.json',oldcells)
     namespace='c'*64;transport=toy.ToyTransport();ledger=TokenLedger(tmp_path/'old_ledger',task_sha256=namespace,policy=POLICY_V27_FORMAL_UNCAPPED)
-    oldbroker=FinalTestBroker(phase='test',scope=dict(scope_identity=namespace,call_ceiling=2400,token_ceiling=None,execution_amendment=ex.contract(),network_recovery=operation_contract()),transport=transport,ledger=ledger,receipts=ProviderResponseReceipts(tmp_path/'old_receipts',attempt_id='synthetic',startup_identity_sha256=namespace),dispatch_guard=lambda _:None)
+    oldbroker=FinalTestBroker(phase='test',scope=dict(policy=dict(ex.policy(),**cache_identity()),scope_identity=namespace,call_ceiling=2400,token_ceiling=None,execution_amendment=ex.contract(),network_recovery=operation_contract()),transport=transport,ledger=ledger,receipts=ProviderResponseReceipts(tmp_path/'old_receipts',attempt_id='synthetic',startup_identity_sha256=namespace),dispatch_guard=lambda _:None)
     try:
         for cell in oldcells:
             oldbroker.cell_id=oldbroker.attempt_id=cell['cell_id'];oldbroker.seed=cell['seed']
@@ -166,8 +167,8 @@ def test_final_phase_references_controls_and_reuses_only_exact_seed_solver_ident
     atomic_write_json(prep/'prep.json',dict(synthetic=True));atomic_write_json(prep/'authorization.json',dict(test_access=True))
     atomic_write_json(train/'terminal.json',dict(synthetic_seal=True));(tmp_path/'runs/gated_prompt_consumed').mkdir()
     corrected=[c for c in oldcells if c['arm']=='gradient_pattern'];newcells=[dict(c,attempt_id=c['cell_id']+'_train_new') for c in corrected]
-    scope=dict(scope_identity='d'*64,source_sha='e'*40,source_hashes={},execution=dict(run_root=train.relative_to(tmp_path).as_posix()),execution_amendment=ex.contract(),cells=newcells,
-        test_plan=dict(physical_call_ceiling=3000,sample_ids=[r['stable_example_id'] for r in rows]),continuation=dict(parent_run_root=parent_train.relative_to(tmp_path).as_posix(),parent_test_scope_identity=namespace,inherited_test_usage=oldusage,operation_policy=operation_contract()))
+    scope=dict(policy=dict(ex.policy(),**cache_identity()),scope_identity='d'*64,source_sha='e'*40,source_hashes={},execution=dict(run_root=train.relative_to(tmp_path).as_posix()),execution_amendment=ex.contract(),cells=newcells,
+        test_plan=dict(**cache_identity(),physical_call_ceiling=3000,sample_ids=[r['stable_example_id'] for r in rows]),continuation=dict(parent_run_root=parent_train.relative_to(tmp_path).as_posix(),parent_test_scope_identity=namespace,inherited_test_usage=oldusage,operation_policy=operation_contract()))
     monkeypatch.setattr(lg,'validate_prep',lambda *a,**k:scope)
     monkeypatch.setattr(lg,'verify_training',lambda *a:(corrected,file_hash(train/'terminal.json')))
     class Reader:

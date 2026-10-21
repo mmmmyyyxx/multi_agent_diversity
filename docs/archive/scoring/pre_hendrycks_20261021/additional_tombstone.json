@@ -1,0 +1,5 @@
+{
+  "archive_sha256": "2fd704a0bd86f514c9dfb60f4a3432d49e63af85e3a8e7f737c10568a14f6cf8",
+  "inventory": "additional_inventory.json",
+  "recovery": "Extract archive into an isolated historical checkout; never import into current runtime."
+}

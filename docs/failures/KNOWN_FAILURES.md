@@ -4,6 +4,18 @@ Generated from `docs/failures/registry.yaml`; edit the YAML authority, not this 
 
 Evidence categories: [definitions and limits](../design/FAILURE_EVIDENCE_LEVELS_V1.md).
 
+## FAIL-A2-TEST-NATIVE-SCORER-EXPANSION: Native mathematical comparison exceeded local deadline on a paid Test answer
+
+- Status: `MITIGATED`
+- Lifecycle: `REAL_OBSERVED_OFFLINE_REPRODUCED`
+- Lifecycle context: See evidence below.
+- Evidence level: `observed`
+- First observed: `single_prompt_full_error_control_v2`
+- Root-cause status: Same saved expression pair exceeds native deadline; existing exact power certificate worker resolves it below one second.
+- Symptom: Completed training followed by a native eight-second Test scorer timeout.
+- Forbidden inference: A timeout is never an incorrect score, permission to regenerate a paid response, or authority to change a prior terminal observation.
+- Mitigation: Fresh Test-only scope reuses paid draws and prior terminal hashes with exact power certificates and bounded local stall diagnosis.
+
 ## FAIL-ABLATION-UNEVALUATED-EXPONENT-SCORER-LIVELOCK: Unsupported unevaluated exponent fell back to repeated symbolic expansion
 
 - Status: `MITIGATED`

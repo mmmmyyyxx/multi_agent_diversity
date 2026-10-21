@@ -18,7 +18,8 @@ class DurableExactOutputCache:
         self.directory=Path(directory)
         if set(context)!=FIELDS or any(not isinstance(v,str) or not v for v in context.values()):
             raise SearchContractError('DURABLE_CACHE_CONTEXT_INVALID')
-        self.context=dict(context)
+        from ..math_scoring.prediction import cache_identity
+        self.context={**context, **cache_identity()}
         self.directory.mkdir(parents=True,exist_ok=True)
         scope=self.directory/'scope.json'
         if scope.exists():

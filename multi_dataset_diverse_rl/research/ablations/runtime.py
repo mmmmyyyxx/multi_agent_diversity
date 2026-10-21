@@ -15,6 +15,9 @@ from ...persistence.durable_io import append_jsonl
 
 
 def execution_concurrency(scope):
+    if scope.get('test_resume_identity') == 'single_prompt_full_error_test_resume_prep_v3':
+        from .full_error_test_resume import execution_concurrency as resume_concurrency
+        return resume_concurrency(scope)
     from .full_error_control import SCHEMA, execution_concurrency as control_concurrency
     if scope.get('plan', {}).get('config', {}).get('schema_version') == SCHEMA:
         return control_concurrency(scope)

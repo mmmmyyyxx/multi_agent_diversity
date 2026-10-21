@@ -58,7 +58,7 @@ def test_sixteen_actual_solver_requests_and_reservations_drain_with_timing(tmp_p
         barrier.wait(timeout=15)
         time.sleep(.01)
         with lock:active-=1
-        return response('Synthetic step.\nFinal answer: 2')
+        return response('Synthetic step.\n'+r'\boxed{2}')
     with TokenLedger(tmp_path/'accounting',task_sha256='e'*64,policy=POLICY_V26_2M) as ledger:
         broker=broker_fixture(tmp_path,parallel_contract(),transport,ledger)
         values=bounded_ordered_map(lambda i:call(broker,i),range(16),16)

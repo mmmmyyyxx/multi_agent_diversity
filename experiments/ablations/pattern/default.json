@@ -23,6 +23,8 @@
     }
   ],
   "runtime": {
+    "math_scoring_contract": "cevolve_hendrycks_math_v1",
+    "math_scoring_sha256": "c4a1166c3ab181bd7b4c92302584f20a40ba92e6bf7db2061d1f9c2fa6ac1b34",
     "identity": "SINGLE_PROMPT_MULTI_PARENT_KERNEL_V6",
     "seeds": [
       42

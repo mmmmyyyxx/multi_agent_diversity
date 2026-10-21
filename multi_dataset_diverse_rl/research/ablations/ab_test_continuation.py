@@ -131,13 +131,7 @@ def handoff(root,s):
 
 
 def prepare(root,prep):
-    prep=gov.private_path(root,prep);gov.require_selected_runtime(root)
-    ab.require(not prep.exists() and not gov._git(root,'status','--porcelain','--untracked-files=no'),'AB_CONTINUATION_FRESH_CLEAN_SOURCE')
-    s=scope_template(root,prep)
-    ab.require(not set(s['source_hashes'])-set(gov._git(root,'ls-files').splitlines()),'AB_CONTINUATION_UNTRACKED_SOURCE')
-    for name,v in dict(prep=dict(schema_version=PREP_SCHEMA,scope=s),authorization=ab.authorization_template(s),
-        handoff=handoff(root,s),execution_plan=s['execution']).items():atomic_write_json(prep/(name+'.json'),v)
-    return dict(status='FROZEN_NOT_AUTHORIZED',scope_identity=s['scope_identity'],source_sha=s['source_sha'])
+    raise RuntimeError('HISTORICAL_MATH_SCORER_RETIRED_USE_NEW_FROZEN_ATTEMPT')
 
 
 def validate_prep(root,prep,*,authorized=False,snapshots=None):
@@ -175,18 +169,7 @@ class Broker(PreviousBroker):
                 time.sleep(self.scope['local_evaluator_recovery']['backoff_seconds'][attempt])
 
     def score_resolved(self,resolved,row):
-        context=dict(operation='resolved_answer_scoring',example_id=row['stable_example_id'],resolved_prediction_sha256=digest(asdict(resolved)))
-        def score():
-            require_scorable(row['reference_final_answer'])
-            if not resolved.prediction_valid:return False
-            value=power_matrix((str(row['reference_final_answer']),resolved.answer))
-            if not value['valid'][0]:raise SearchContractError('REFERENCE_UNSCORABLE')
-            correct=bool(value['valid'][1] and value['equivalence'][0][1])
-            with self.lock:append_jsonl(self.receipts.directory/'local_scoring_certificates.jsonl',dict(context,
-                cell_id=self.cell_id,policy=POLICY['identity'],input_sha256=digest([str(row['reference_final_answer']),resolved.answer]),
-                certified_pair_rejections=value['certified_pair_rejections'],correct=correct))
-            return correct
-        return self.retry_local(score,context)
+        raise RuntimeError('HISTORICAL_MATH_SCORER_RETIRED_USE_NEW_FROZEN_ATTEMPT')
 
 
 def audit_continuation(run,s,broker,parent,results):
@@ -226,68 +209,4 @@ def audit_continuation(run,s,broker,parent,results):
 
 
 def execute(root,prep,run):
-    prep,run=gov.private_path(root,prep),gov.private_path(root,run)
-    auth=read_json(prep/'authorization.json');ab.require(auth.get('approved') is True and auth.get('test_access') is True,'AB_CONTINUATION_UNAUTHORIZED')
-    snapshots=(ab.parent_evidence(root),audit_test_parent(root));training,parent=snapshots
-    s=validate_prep(root,prep,authorized=True,snapshots=snapshots)
-    ab.require(run==root/s['execution']['run_root'] and not run.exists(),'AB_CONTINUATION_FRESH_RUN')
-    gov._consume(root,s,run);run.mkdir(parents=True)
-    atomic_write_json(run/'scope.json',s);atomic_write_json(run/'authorization.json',auth)
-    pins={n:file_hash(prep/n) for n in ('prep.json','authorization.json','handoff.json','execution_plan.json')}
-    signatures={p:(root/p).stat() for p in s['source_hashes']};active=None;results=[];ledger=clients=broker=None
-    def guard(cell):
-        ab.require(cell==active and all(file_hash(prep/n)==h for n,h in pins.items()),'AB_CONTINUATION_ACTIVE_SCOPE')
-        ab.require(all(((root/p).stat().st_size,(root/p).stat().st_mtime_ns)==(v.st_size,v.st_mtime_ns) for p,v in signatures.items()),'AB_CONTINUATION_SOURCE_CHANGED')
-    atomic_write_json(run/'lifecycle.json',dict(status='RUNNING',phase='test',cells_completed=0))
-    try:
-        transport,clients=gov._transport();ledger=TokenLedger(run/'ledger',task_sha256=s['scope_identity'],policy=POLICY_V27_FORMAL_UNCAPPED)
-        broker=Broker(plan=s['plan'],phase='test',scope=s,transport=transport,ledger=ledger,
-            receipts=ProviderResponseReceipts(run/'provider_receipts',attempt_id=s['scope_identity'],startup_identity_sha256=s['scope_identity']),
-            dispatch_guard=guard,paid_prefix=parent['paid_prefix'],terminal_observations=parent['terminal_observations'])
-        # Preserve paired realizations when a later arm has the exact same final
-        # Prompt/request within its repeat. The request key already scopes repeat.
-        for completed in parent['completed'].values():
-            for value in completed['predictions'].values():
-                key=value['request_sha256']
-                ab.require(key not in broker.cache or broker.cache[key]==value,'AB_CONTINUATION_INHERITED_CACHE_CONFLICT')
-                broker.cache[key]=deepcopy(value)
-        from .population_governance import inputs
-        _,reader=inputs(root)
-        rows=broker.retry_local(lambda:reader.heldout_rows(StudyHeldoutAccess('test',reader.manifest_sha256,s['parent_evidence_sha256'],
-            lambda:validate_prep(root,prep,authorized=True,snapshots=snapshots))),dict(operation='test_membership_reference_check'))
-        ab.require([r['stable_example_id'] for r in rows]==s['test_plan']['sample_ids'],'AB_CONTINUATION_MEMBERSHIP')
-        atomic_write_json(run/'access.json',dict(test_ids=s['test_plan']['sample_ids'],optimize_access=False,validation_access=False))
-        for cell,trained in zip(s['plan']['cells'],training[1]):
-            validate_prep(root,prep,authorized=True,snapshots=snapshots);active=cell['cell_id']
-            broker.bind_cell(cell,s['plan']);before=broker.usage_view()
-            atomic_write_json(run/'lifecycle.json',dict(status='RUNNING',phase='test',current_cell=active,cells_completed=len(results)))
-            if active in parent['completed']:
-                prior=parent['completed'][active];predictions=deepcopy(prior['predictions'])
-            else:predictions=broker.evaluate(SystemPrompt.from_dict(trained['final_prompt']),rows,'test',42,0)
-            ab.require(set(predictions)==set(s['test_plan']['sample_ids']),'AB_CONTINUATION_INCOMPLETE_CELL')
-            result=dict(cell=cell,predictions=predictions,usage={k:broker.usage_view()[k]-v for k,v in before.items()},
-                inherited_complete=active in parent['completed'])
-            atomic_write_json(run/active/'result.json',result);results.append(result)
-            print(json.dumps(dict(cell=active,status='CELL_COMPLETE',inherited_complete=result['inherited_complete'],provider_calls=broker.usage_view()['provider_calls'])),flush=True)
-        validate_prep(root,prep,authorized=True,snapshots=snapshots);view=audit_continuation(run,s,broker,parent,results)
-        summary=summarize(dict(s['plan'],cells=[p['cell'] for p in training[1]]),training[1],{r['cell']['cell_id']:r['predictions'] for r in results})
-        summary.update(test_only=True,historical_test_previously_exposed=True,matched_causal_ablation=False,
-            new_test_tokens=view['charged_total'],new_test_physical_calls=broker.usage_view()['provider_calls'],
-            inherited_test_tokens=s['inherited_test_ledger']['charged_total'],inherited_test_physical_calls=s['inherited_physical_calls'],
-            combined_test_tokens=view['charged_total']+s['inherited_test_ledger']['charged_total'],
-            combined_test_physical_calls=broker.usage_view()['provider_calls']+s['inherited_physical_calls'],
-            paid_draws_replayed=len(broker.used_prefix),local_evaluator_retries=broker.local_retry_count)
-        for n,v in dict(results=results,summary=summary,execution_summary=dict(usage=broker.usage_view(),token_ledger=view)).items():atomic_write_json(run/(n+'.json'),v)
-        ledger.close();ledger=None;clients.close();clients=None
-        atomic_write_json(run/'lifecycle.json',dict(status='EXECUTION_COMPLETE',phase='test',cells_completed=6))
-        atomic_write_json(run/'terminal.json',dict(status='EXECUTION_COMPLETE',phase='test',source_sha=s['source_sha'],scope_identity=s['scope_identity'],artifacts=gov.inventory(run)))
-        return dict(status='EXECUTION_COMPLETE',cells_completed=6)
-    except BaseException as exc:
-        if ledger is not None:
-            for key in tuple(ledger.inflight):ledger.reconcile(key,{},outcome='ABORT_FULL_RESERVATION_FALLBACK')
-            atomic_write_json(run/'abort.json',dict(error_type=type(exc).__name__,error_category=str(exc),usage=broker.usage_view() if broker else None,token_ledger=ledger.view()))
-        atomic_write_json(run/'lifecycle.json',dict(status='EXECUTION_ABORTED',phase='test',current_cell=active,cells_completed=len(results),error_type=type(exc).__name__))
-        raise
-    finally:
-        if ledger is not None:ledger.close()
-        if clients is not None:clients.close()
+    raise RuntimeError('HISTORICAL_MATH_SCORER_RETIRED_USE_NEW_FROZEN_ATTEMPT')

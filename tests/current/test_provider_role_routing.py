@@ -145,7 +145,7 @@ def _usage_http_transport(monkeypatch, usage):
     def factory(cls, **kwargs):
         def handler(request):
             requests.append(request.content)
-            return httpx.Response(200, json=dict(choices=[dict(message=dict(content='Final answer: 5'),
+            return httpx.Response(200, json=dict(choices=[dict(message=dict(content=r'\boxed{5}'),
                 finish_reason='stop')], usage=usage))
         http = httpx.Client(transport=httpx.MockTransport(handler))
         return SimpleNamespace(_client=http, close=http.close,
@@ -222,7 +222,7 @@ def test_five_identical_prompts_have_independent_lanes_and_exact_same_attempt_ca
     calls = []
     def transport(request):
         calls.append(deepcopy(request))
-        return response('Final answer: ' + str(len(calls)))
+        return response(r'\boxed{' + str(len(calls)) + '}')
     messages = [dict(role='user', content='Same synthetic problem')]
     def complete(broker, member, split='optimize', stage='initial'):
         return broker.complete(role='solver', split=split, stage=stage, messages=messages, member_slot=member)

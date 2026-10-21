@@ -112,7 +112,7 @@ def _entrypoint_fixture(tmp_path,monkeypatch,uncertain,phase='pilot',all_correct
             problem=req['messages'][1]['content']
             answer,i,split=answer_by_problem[problem]
             repaired=legal_children and 'conditional repair' in req['messages'][0]['content'] and i==0
-            return response('Synthetic visible calculation and constraint check.\nFinal answer: '+(answer if all_correct or repaired or i>=6 else '999999997'))
+            return response('Synthetic visible calculation and constraint check.\n'+r'\boxed{'+(answer if all_correct or repaired or i>=6 else '999999997')+'}')
         if len(req['messages'])==2:
             p=json.loads(req['messages'][1]['content'])
             if 'example' in p:

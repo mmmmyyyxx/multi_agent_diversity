@@ -96,7 +96,11 @@ def validate_registry_v2(root: Path, registry: Mapping) -> tuple[list[str],dict]
                 if validate_published_single_prompt(root,path,obj):continue
             except ValueError as exc:
                 errors.append(f'{ident}: {exc}');continue
-            if isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_full_error_control_draft_v2':
+            if isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_full_error_test_resume_manifest_v3':
+                from ..research.ablations.full_error_test_resume import validate_manifest
+                try:validate_manifest(root,obj)
+                except ValueError as exc:errors.append(f'{ident}: {exc}')
+            elif isinstance(obj,dict) and obj.get('schema_version')=='single_prompt_full_error_control_draft_v2':
                 from ..research.ablations.full_error_control import build_plan
                 try:build_plan(obj)
                 except ValueError as exc:errors.append(f'{ident}: {exc}')

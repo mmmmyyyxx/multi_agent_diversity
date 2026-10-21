@@ -27,8 +27,7 @@ def test_order_set_and_interval_boundaries():
         # Native parse attempted, representation remains genuinely ambiguous.
         result=domain_matrix((expression,))
         assert result['parsed_types'][0]
-        with pytest.raises(SearchContractError,match='REFERENCE_UNSCORABLE'):
-            require_scorable(expression)
+        assert require_scorable(expression) is None  # reference validity is finite string normalization
     for a,c in [('[1,2]','[1,2)'),('[1,2)','(1,2]'),('(1,2]','[1,2]')]:
         assert not b.equivalent(a,c)
     assert b.equivalent('x=2','x=2')
@@ -51,8 +50,9 @@ def test_reference_projection_cannot_be_search_context():
 
 def test_unscorable_reference_not_silently_wrong():
     from multi_dataset_diverse_rl.search.schemas import ParsedOutput
-    with pytest.raises(SearchContractError,match='REFERENCE_UNSCORABLE'):
-        MATHBenchmarkAdapterV2().score_member_output(ParsedOutput('',False),'(1,2)')
+    from multi_dataset_diverse_rl.math_scoring import InvalidGroundTruthError
+    with pytest.raises(InvalidGroundTruthError):
+        MATHBenchmarkAdapterV2().score_member_output(ParsedOutput('',False),'')
 
 
 @pytest.mark.parametrize('failure',['MATH_EVALUATOR_FAILURE','MATH_EVALUATOR_TIMEOUT'])
@@ -61,8 +61,8 @@ def test_evaluator_operational_failure_not_prediction_wrong(monkeypatch,failure)
     def broken(expressions):
         raise SearchContractError(failure)
     monkeypatch.setattr(domain,'domain_matrix',broken)
-    with pytest.raises(SearchContractError,match=failure):
-        domain.MATHBenchmarkAdapterV2().parse_member_output('Final answer: 1',BenchmarkInput('synthetic','Synthetic one','FINAL_ANSWER',benchmark_id='math'))
+    parsed=domain.MATHBenchmarkAdapterV2().parse_member_output(r'\boxed{1}',BenchmarkInput('synthetic','Synthetic one','FINAL_ANSWER',benchmark_id='math'))
+    assert parsed.valid and domain.MATHBenchmarkAdapterV2().score_member_output(parsed,'1')==1
 
 
 
@@ -71,6 +71,6 @@ def test_unscorable_reference_rejected_before_actual_solver_port():
     from multi_dataset_diverse_rl.local_optimizers.schemas import LocalEvidenceExample
     calls=[];c=contract()
     solver=BenchmarkSolver(MATHStructuredSystemBenchmark(c),RequestBroker(contract=c,arm='A4',seed=81,transport=lambda r:calls.append(r)))
-    with pytest.raises(SearchContractError,match='REFERENCE_UNSCORABLE'):
-        solver.evaluate(__import__('multi_dataset_diverse_rl.search.system_prompt',fromlist=['SEED']).SEED,LocalEvidenceExample(example_id='synthetic',input_payload='Synthetic problem.',gold='(1,2)'))
+    with pytest.raises(SearchContractError,match='MATH_LOCAL_EVALUATION_FAILURE_InvalidGroundTruthError'):
+        solver.evaluate(__import__('multi_dataset_diverse_rl.search.system_prompt',fromlist=['SEED']).SEED,LocalEvidenceExample(example_id='synthetic',input_payload='Synthetic problem.',gold=r'\frac'))
     assert not calls

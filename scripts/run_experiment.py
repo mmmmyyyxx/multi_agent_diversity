@@ -19,6 +19,23 @@ def _load(path):
 
 
 def preflight(manifest):
+    if manifest.get('schema_version') == 'math_scoring_amendment_draft_v1':
+        from multi_dataset_diverse_rl.math_scoring.prediction import cache_identity
+        expected=cache_identity()
+        if any(manifest.get(k)!=v for k,v in expected.items()) or manifest.get('READY_TO_RUN') is not False or manifest.get('real_api_authorized') is not False:
+            raise SearchContractError('SCORING_AMENDMENT_FRESH_UNAUTHORIZED_DRAFT_REQUIRED')
+        config=manifest['algorithm_config']
+        if any(config.get('runtime',{}).get(k)!=v for k,v in expected.items()):
+            raise SearchContractError('SCORING_AMENDMENT_ALGORITHM_BINDING_MISMATCH')
+        from multi_dataset_diverse_rl.research.ablations.full_error_control import SCHEMA,build_plan as control_plan
+        from multi_dataset_diverse_rl.research.ablations.proposal_config import build_plan as proposal_plan
+        plan=(control_plan if config.get('schema_version')==SCHEMA else proposal_plan)(config)
+        return dict(status='HENDRYCKS_DRAFT_PREFLIGHT_NOT_AUTHORIZED',**expected,
+            plan_identity=plan['plan_identity'],cells=len(plan['cells']),ready_to_run=False,real_api_calls=0)
+    if manifest.get('schema_version') == 'single_prompt_full_error_test_resume_manifest_v3':
+        from multi_dataset_diverse_rl.research.ablations.full_error_test_resume import validate_manifest
+        validate_manifest(ROOT,manifest)
+        return dict(status='A2_TEST_RESUME_PREFLIGHT_PASS_NOT_AUTHORIZED',real_api_calls=0)
     if manifest.get('schema_version') == 'single_prompt_full_error_control_draft_v2':
         from multi_dataset_diverse_rl.research.ablations.full_error_control import build_plan
         plan=build_plan(manifest)
@@ -129,6 +146,10 @@ def preflight(manifest):
 
 
 def governed_preflight(prep):
+    if _load(prep/'prep.json').get('schema_version') == 'single_prompt_full_error_test_resume_prep_v3':
+        from multi_dataset_diverse_rl.research.ablations.full_error_test_resume import validate_prep
+        scope=validate_prep(ROOT,prep)
+        return dict(status='A2_TEST_RESUME_FROZEN_NOT_AUTHORIZED',scope_identity=scope['scope_identity'],real_api_calls=0)
     if _load(prep/'prep.json').get('schema_version') == 'single_prompt_full_error_control_prep_v2':
         from multi_dataset_diverse_rl.research.ablations.full_error_control import validate_prep
         scope=validate_prep(ROOT,prep)
@@ -192,6 +213,9 @@ def governed_preflight(prep):
 
 
 async def execute_frozen(prep,run_root):
+    if _load(prep/'prep.json').get('schema_version') == 'single_prompt_full_error_test_resume_prep_v3':
+        from multi_dataset_diverse_rl.research.ablations.full_error_test_resume import execute
+        return await asyncio.to_thread(execute,ROOT,prep,run_root)
     if _load(prep/'prep.json').get('schema_version') == 'single_prompt_full_error_control_prep_v2':
         from multi_dataset_diverse_rl.research.ablations import governance as control_gov
         return await asyncio.to_thread(control_gov.execute,ROOT,prep,run_root)

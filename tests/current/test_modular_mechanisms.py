@@ -84,11 +84,12 @@ def test_who_is_replaced_without_editing_gradient_or_layer1(tmp_path):
     assert events['OPPORTUNITY']['opportunity'].target_member==4 and len(packets)==3
 
 
-def test_new_source_is_required_but_default_method_contract_is_unchanged():
+def test_scoring_replacement_keeps_the_search_policy_bundle():
     from tests.current.population_support import contract
     from multi_dataset_diverse_rl.search.current_policy import CURRENT_POLICY_BUNDLE
     from multi_dataset_diverse_rl import current_contract
-    assert current_contract.CURRENT_METHOD_VERSION=='unified_team_prompt_search_v2_12_count_responsibility_v1'
+    from multi_dataset_diverse_rl.versions import UNIFIED_HENDRYCKS_SCORING_VERSION
+    assert current_contract.CURRENT_METHOD_VERSION==UNIFIED_HENDRYCKS_SCORING_VERSION
     CURRENT_POLICY_BUNDLE.validate_contract(contract())
 
 

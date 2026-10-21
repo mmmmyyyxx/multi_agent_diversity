@@ -73,12 +73,12 @@ def graph(tmp_path,*,mode='both',uncertain=False,block='strategy',answer_only=Fa
             if prompt.startswith(bad_prompt.render()) and i in danger and mode!='neutral_compound':correct=False
             if format_repair and i<6 and prompt==BASE.render():return response('Ambiguous unmarked calculations: 2 and 3.')
             answer=('2' if correct else '3')
-            if answer_only and answer_only_form=='underscore':return response('FINAL_ANSWER: '+answer)
+            if answer_only and answer_only_form=='underscore':return response(r'\boxed{'+answer+'}')
             if answer_only and answer_only_form=='boxed_label':return response('Final answer: \\boxed{'+answer+'}')
-            if answer_only and answer_only_form=='natural_confirmation':return response('Final answer: '+answer+'\nTherefore, x = '+answer+'.')
+            if answer_only and answer_only_form=='natural_confirmation':return response(r'\boxed{'+answer+'}\nTherefore, x = '+answer+'.')
             written='' if answer_only else 'ACTUAL_WRITTEN_OPERATION_'+str(i)+'.\n'
             if long_response:written+='A synthetic ordinary operation is written here. Unicode数学核验 π。\n'*120
-            return response(written+'Final answer: '+('\\boxed{'+answer+'}' if format_repair else answer))
+            return response(written+r'\boxed{'+answer+'}')
         if len(req['messages'])==2:
             p=json.loads(req['messages'][1]['content'])
             if 'example' in p:

@@ -46,7 +46,7 @@ class Transport(SyntheticTransport):
             text=request['messages'][0]['content'];number=int(request['messages'][1]['content'].split(':')[-1])
             method=next(i for i in range(1,10) if f'Proposal method {i}' in text)
             threshold=self.scores[0 if method==1 else 1]
-            value['text']=f'Final answer: {number if number<threshold else number+1}'
+            value['text']=r'\boxed{'+str(number if number<threshold else number+1)+'}'
         return value
 
 

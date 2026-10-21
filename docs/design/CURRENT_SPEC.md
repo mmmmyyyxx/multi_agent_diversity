@@ -1,6 +1,14 @@
 # Current Implementation Specification
 
 The sole active research architecture is Unified Team Prompt Search.
+The sole current MATH correctness contract is
+[`cevolve_hendrycks_math_v1`](../math_scoring_cevolve_hendrycks_v1.md): pinned
+Hendrycks boxed extraction and finite normalization/string equality, without a
+symbolic judge or selectable fallback. This explicitly replaces prior scientific
+scoring semantics. Fresh bindings, records and caches carry its source digest;
+historical results and manifests keep their original identities and cannot resume
+under this source. Legacy Test-only repair modules are archival, not executable.
+Existing gold-blind plurality/tie-abstain aggregation remains separate and unchanged.
 The independent [all-error same-Parent two-proposal control](SINGLE_PROMPT_FULL_ERROR_CONTROL_V2.md)
 reuses the no-module adapter and C2 same-Parent proposal kernel for three fresh
 Seed42 repeats, two proposals per round and the current96-slot
@@ -87,7 +95,8 @@ The [scientific principles](SCIENTIFIC_PRINCIPLES.md) constrain interpretation;
 the [MATH scientific contract](MATH_SCIENTIFIC_CONTRACT.md) clarifies benchmark
 measurement and admission. These clarifications add no algorithm or threshold.
 The sole executable method is
-`unified_team_prompt_search_v2_12_count_responsibility_v1`.
+`unified_team_prompt_search_count_responsibility_hendrycks_v1`.
+Its search operators remain V2.12; the changed identity binds the explicit MATH scoring replacement.
 The [Group-Diagnosed Reflection amendment](GROUP_DIAGNOSED_REFLECTION_V211.md)
 adds one bounded Root Team diagnosis after frozen Parent sampling and shares it
 across three Reflection slots. Verified readable views remove duplicate previews

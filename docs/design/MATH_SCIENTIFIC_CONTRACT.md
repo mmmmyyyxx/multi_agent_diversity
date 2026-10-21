@@ -1,3 +1,14 @@
+# Current scoring amendment: C-EVOLVE / Hendrycks V1
+
+The sole current correctness contract is [cevolve_hendrycks_math_v1](../math_scoring_cevolve_hendrycks_v1.md).
+It replaces the legacy mathematical verification and extraction rules below for
+new runs. Those rules remain historical provenance and do not execute as current
+correctness. Dataset membership, seed prompts, candidate selection, budgets and
+gold-blind plurality aggregation are unchanged. Cache and execution identities
+must use the new contract and source digest; no old execution scope is reusable.
+
+## Historical pre-amendment benchmark description
+
 # Current MATH measurement and admission semantics
 
 Candidate proposals now use

@@ -109,14 +109,8 @@ def display_box_diagnostic(text, finish_reason='stop'):
 
 
 def grade_compatibility(extracted, reference):
-    if extracted.get('policy_identity') != COMPAT_ID or extracted.get('usage_scope') != 'DIAGNOSTIC_ONLY':
-        raise ValueError('COMPATIBILITY_DIAGNOSTIC_IDENTITY_REQUIRED')
-    if not extracted['valid']:
-        return None
-    relation = domain_matrix((reference, extracted['payload']))
-    if not relation['valid'][0]:
-        raise ValueError('REFERENCE_UNSCORABLE')
-    return bool(relation['valid'][1] and relation['equivalence'][0][1])
+    from ..math_scoring import RetiredMathScorerError
+    raise RetiredMathScorerError('HISTORICAL_MULTI_POLICY_DIAGNOSTIC_RETIRED_USE_CURRENT_RAW_RESPONSE_AUDIT')
 
 
 def b_residual_catalog(logicals):

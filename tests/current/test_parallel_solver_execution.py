@@ -57,7 +57,7 @@ def measure_fixture(path,concurrency):
         with mutex:active-=1;completed.append(i)
         if i%53==0 and ordinal==1:
             raise APIConnectionError(request=httpx.Request('POST','https://offline.invalid'))
-        return response('Synthetic arithmetic step.\nFinal answer: '+('2' if i%3 else '3'))
+        return response('Synthetic arithmetic step.\n'+r'\boxed{'+('2' if i%3 else '3')+'}')
     c['decoding']={**c['decoding'],'retry_sleep_seconds':0}
     # 300 logical observations, 270 distinct keys, adjacent in-flight duplicates.
     jobs=tuple(range(8))+tuple(i for i in range(8,30) for _ in range(2))+tuple(range(8))+tuple(range(30,270))
@@ -111,7 +111,7 @@ def test_300_serial_parallel_equivalence_dedup_ledger_receipts_and_actual_inflig
 
 
 def test_capacity_only_after_length_and_never_resets_four_draws(tmp_path):
-    requests=[];replies=[('length','unfinished'),('stop','missing marker'),('length','again'),('stop','step\nFinal answer: 2')]
+    requests=[];replies=[('length','unfinished'),('stop','missing marker'),('length','again'),('stop','step\n'+r'\boxed{2}')]
     def transport(req):
         requests.append(req);finish,text=replies[len(requests)-1]
         return {**response(text),'finish_reason':finish}
@@ -146,7 +146,7 @@ def test_batch_fatal_failure_stops_dispatch_drains_and_persists(tmp_path):
         time.sleep(0.01 if i==0 else 0.15)
         with mutex:active-=1
         if i==0:raise RuntimeError('SYNTHETIC_TERMINAL_FAILURE')
-        return response('step\nFinal answer: 2')
+        return response('step\n'+r'\boxed{2}')
     with TokenLedger(tmp_path/'accounting',task_sha256='e'*64,policy=POLICY_V25_2M) as ledger:
         broker=broker_fixture(tmp_path,c,transport,ledger)
         with pytest.raises(OperationalAbort,match='PROVIDER_TERMINAL_RuntimeError'):

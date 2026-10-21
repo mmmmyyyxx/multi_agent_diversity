@@ -58,7 +58,7 @@ def frozen_trajectory_policy(contract):
                 or contract.get('models', {}).get('solver_thinking') is not False):
             raise SearchContractError('MATH_VISIBLE_TRAJECTORY_BINDING_MISMATCH')
         return deepcopy(policy)
-    if policy is not None or contract.get('solver_output_interface', {}).get('identity') == versions.MATH_SOLVER_INTERFACE_V9_VERSION:
+    if policy is not None or contract.get('solver_output_interface', {}).get('identity') == versions.MATH_HENDRYCKS_INTERFACE_VERSION:
         raise SearchContractError('MATH_VISIBLE_TRAJECTORY_REQUIRES_FRESH_BINDING')
     raise SearchContractError('CURRENT_VISIBLE_TRAJECTORY_REQUIRED')
 
@@ -107,7 +107,7 @@ def solver_profile(result, prediction, *, member_id, prompt, example_id, split, 
     source = dict(member_id=member_id, mutable_prompt_sha256=text_hash(prompt),
         benchmark_input_sha256=text_hash(problem),
         example_id=example_id, split=split, request_sha256=request_hash,
-        solver_interface_identity=versions.MATH_SOLVER_INTERFACE_V9_VERSION)
+        solver_interface_identity=versions.MATH_HENDRYCKS_INTERFACE_VERSION)
     return dict(schema=versions.MATH_FLEXIBLE_PROFILE_VERSION,
         prediction=asdict(prediction), solver_trajectory=_projection(prediction, source))
 
@@ -125,7 +125,7 @@ def profile_prediction(profile, *, example_id=None):
             or type(source['member_id']) is not int or source['member_id'] not in range(5)
             or not isinstance(source['example_id'], str) or not source['example_id']
             or source['split'] not in {'optimize', 'shadow', 'validation'}
-            or source['solver_interface_identity'] != versions.MATH_SOLVER_INTERFACE_V9_VERSION
+            or source['solver_interface_identity'] != versions.MATH_HENDRYCKS_INTERFACE_VERSION
             or any(not isinstance(source[k], str) or re.fullmatch('[0-9a-f]{64}', source[k]) is None
                 for k in ('mutable_prompt_sha256', 'benchmark_input_sha256', 'request_sha256'))
             or example_id is not None and source['example_id'] != example_id
@@ -170,7 +170,7 @@ def validate_adaptive_trajectory(trajectory, *, example_id, member_id=None, prom
             or not isinstance(source, dict) or set(source) != source_keys
             or type(source['member_id']) is not int or source['member_id'] not in range(5)
             or source['split'] != 'optimize' or source['example_id'] != example_id
-            or source['solver_interface_identity'] != versions.MATH_SOLVER_INTERFACE_V9_VERSION
+            or source['solver_interface_identity'] != versions.MATH_HENDRYCKS_INTERFACE_VERSION
             or any(not isinstance(source[k], str) or re.fullmatch('[0-9a-f]{64}', source[k]) is None
                 for k in ('mutable_prompt_sha256', 'benchmark_input_sha256', 'request_sha256'))
             or trajectory.get('schema') != versions.MATH_FLEXIBLE_RESPONSE_VERSION

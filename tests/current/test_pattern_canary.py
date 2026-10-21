@@ -17,7 +17,9 @@ ROOT=Path(__file__).resolve().parents[2]
 
 
 def test_canary_exact_budget_native_data_and_formal_defaults_unchanged():
-    manifest=read_json(ROOT/canary.MANIFEST);plan=canary.validate_manifest(manifest)
+    manifest=canary.manifest_template();plan=canary.validate_manifest(manifest)
+    with pytest.raises(SearchContractError,match='CANARY_MANIFEST_CHANGED'):
+        canary.validate_manifest(read_json(ROOT/canary.MANIFEST))
     assert len(plan['cells'])==3 and all(c['seed']==42 and c['repeat_id']==1 for c in plan['cells'])
     assert plan['config']['rounds']==1 and plan['config']['runtime']['validation_membership_seed']==42
     assert plan['training_semantic_calls_by_arm']=={'C0':2457,'C1':3461,'C2':3461}
@@ -45,6 +47,8 @@ def test_scope_handoff_and_main_entry_bind_actual_canary_limits(monkeypatch):
         execution=dict(run_root='runs/ablations/fake_canary_scope/train_run'),
         test_plan=dict(sample_ids=['metadata_only_test_id'],successful_semantic_call_ceiling=10800))
     monkeypatch.setattr(pg,'scope_template',lambda *a:deepcopy(formal))
+    original_read=canary.read_json
+    monkeypatch.setattr(canary,'read_json',lambda p:canary.manifest_template() if Path(p)==ROOT/canary.MANIFEST else original_read(p))
     scope=canary.scope_template(ROOT,destination)
     assert scope['study_id']==canary.STUDY and len(scope['plan']['cells'])==3
     assert scope['scope_identity']==digest({k:v for k,v in scope.items() if k!='scope_identity'})

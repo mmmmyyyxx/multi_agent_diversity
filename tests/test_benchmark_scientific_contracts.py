@@ -171,63 +171,52 @@ def test_ifbench_hidden_fields_not_in_solver_input_or_aggregator_request():
         IFBenchBenchmarkAdapter().evaluate(a.parse_member_output("core", q), reference)
 
 
-@pytest.mark.parametrize("left,right", [
-    ("1/2", ".5"), ("x=2", "x=2"), (r"\sqrt{4}", "2"), (r"\frac{1}{2}", ".5"),
-    (r"\boxed{2}", "2"), (r"\{1,2\}", r"\{2,1\}"),
+@pytest.mark.parametrize("left,right,expected", [
+    ("1/2", ".5",1), ("x=2", "x=2",1), (r"\sqrt{4}", "2",0), (r"\frac{1}{2}", ".5",1),
+    (r"\boxed{2}", "2",1), (r"\{1,2\}", r"\{2,1\}",0),
 ])
-def test_math_equivalence_cases(left, right):
+def test_math_finite_normalization_cases(left, right, expected):
     a = MATHBenchmarkAdapter()
-    p = a.parse_member_output("reasoning not scored\nFinal answer: " + left, item(a))
-    assert p.valid and a.score_member_output(p, right) == 1
-
+    p = a.parse_member_output("reasoning not scored\n"+r"\boxed{"+left+"}", item(a))
+    assert p.valid and a.score_member_output(p, right) == expected
 
 def test_math_strict_set_tuple_and_wrong_answer():
-    a = MATHBenchmarkAdapter()
-    assert not a.parse_member_output("Final answer: (1,2)", item(a)).valid
-    assert not a.equivalent(r"\{1,2\}", "(1,2)")
-    assert not a.equivalent("1/2", "3")
+    a=MATHBenchmarkAdapter()
+    assert not a.parse_member_output("Final answer: (1,2)",item(a)).valid
+    assert not a.equivalent(r"\{1,2\}","(1,2)")
+    assert not a.equivalent("1/2","3")
 
-
-def test_math_invalid_parse_and_timeout_fail_closed(monkeypatch):
-    a = MATHBenchmarkAdapter()
-    q = item(a)
-    assert a.parse_member_output("Final answer: 2\nafter", q).valid
-    for raw in ("Final answer: nonsense", "Final answer:", "Final answer: 2\nTherefore, x=3.",
-                "Final answer: 2\nFinal answer: 3", "Unmarked prose 2", "Final answer: unknown prose 2",
-                "Final answer: 2+", r"Final answer: \frac{1}{"):
-        assert not a.parse_member_output(raw, q).valid
+def test_math_invalid_parse_and_aggregation_timeout_are_distinct(monkeypatch):
+    a=MATHBenchmarkAdapter();q=item(a)
+    assert a.parse_member_output(r"\boxed{2}"+"\nafter",q).valid
+    for raw in ("Final answer: nonsense","Final answer:","Final answer: 2\nTherefore, x=3.",
+        "Final answer: 2\nFinal answer: 3","Unmarked prose 2",r"\boxed{2"):
+        assert not a.parse_member_output(raw,q).valid
     import multi_dataset_diverse_rl.benchmarks.math_domain_v2 as module
     equivalence_matrix.cache_clear()
-    def timed_out(*args, **kwargs):
+    def timed_out(*args,**kwargs):
         import subprocess
-        raise subprocess.TimeoutExpired("offline-worker", 8)
-    monkeypatch.setattr(module.subprocess, "run", timed_out)
-    assert not a.parse_member_output("Final answer: 938", q).valid
-    with pytest.raises(SearchContractError, match="REFERENCE_UNSCORABLE"):
-        a.score_member_output(ParsedOutput("938", True), "938")
-    with pytest.raises(SearchContractError, match="MATH_EVALUATOR_TIMEOUT"):
-        equivalence_matrix(("938",))
-
+        raise subprocess.TimeoutExpired("offline-worker",8)
+    monkeypatch.setattr(module.subprocess,"run",timed_out)
+    assert a.score_member_output(ParsedOutput("938",True),"938")==1
+    with pytest.raises(SearchContractError,match="MATH_EVALUATOR_TIMEOUT"):equivalence_matrix(("938",))
 
 def test_math_equivalence_plurality_tie_invalid_and_e2e():
-    a = MATHBenchmarkAdapter()
-    q = item(a)
-    agg = EquivalencePluralityAggregation()
-    outputs = ("Final answer: 1/2", "Final answer: .5", r"Final answer: \frac{1}{2}",
-               "Final answer: 3", "invalid")
-    result = asyncio.run(agg.aggregate(item=q, member_outputs=outputs, benchmark=a))
-    assert result.raw_output == outputs[0] and result.diagnostics["winner_member"] == 0
-    assert result.diagnostics["invalid_abstentions"] == 1
-    assert a.score_member_output(result.parsed_output, ".5") == 1
-    parsed = tuple(a.parse_member_output(raw, q) for raw in outputs)
-    success = tuple(a.score_member_output(p, ".5") for p in parsed)
-    classes = ("half", "half", "half", "three", "invalid")
-    assert len(binary_diagnosis(a, parsed, success, classes).responsibility) == 5
-    observation = observation_from_outputs(benchmark=a, item=q, member_outputs=outputs, gold=".5")
-    assert observation.member_success == (True, True, True, False, False)
-    assert observation.vote_classes[:3] == ("class:0",) * 3
-    tie = ("Final answer: 1/2", "Final answer: .5", "Final answer: 3", "Final answer: 3", "invalid")
-    assert not asyncio.run(agg.aggregate(item=q, member_outputs=tie, benchmark=a)).parsed_output.valid
+    a=MATHBenchmarkAdapter();q=item(a);agg=EquivalencePluralityAggregation()
+    outputs=(r"\boxed{1/2}",r"\boxed{.5}",r"\boxed{\frac{1}{2}}",r"\boxed{3}","invalid")
+    result=asyncio.run(agg.aggregate(item=q,member_outputs=outputs,benchmark=a))
+    assert result.raw_output==outputs[0] and result.diagnostics["winner_member"]==0
+    assert result.diagnostics["invalid_abstentions"]==1
+    assert a.score_member_output(result.parsed_output,".5")==1
+    parsed=tuple(a.parse_member_output(raw,q) for raw in outputs)
+    success=tuple(a.score_member_output(p,".5") for p in parsed)
+    classes=("half","half","half","three","invalid")
+    assert len(binary_diagnosis(a,parsed,success,classes).responsibility)==5
+    observation=observation_from_outputs(benchmark=a,item=q,member_outputs=outputs,gold=".5")
+    assert observation.member_success==(True,True,True,False,False)
+    assert observation.vote_classes[:3]==("class:0",)*3
+    tie=(r"\boxed{1/2}",r"\boxed{.5}",r"\boxed{3}",r"\boxed{3}","invalid")
+    assert not asyncio.run(agg.aggregate(item=q,member_outputs=tie,benchmark=a)).parsed_output.valid
 
 
 def test_equivalence_non_transitive_guard():

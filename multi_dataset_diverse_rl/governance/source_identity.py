@@ -109,6 +109,8 @@ def current_scientific_files(root: Path, *, execution_closure: bool = False) -> 
     spec = root/'docs/design/CURRENT_SPEC.md'
     if spec.is_file():
         result.append(spec)
+    scoring_contract = root/'docs/math_scoring_cevolve_hendrycks_v1.md'
+    if scoring_contract.is_file():result.append(scoring_contract)
     semantic_contract = root/'docs/design/TRANSITION_TARGET_OR_TEAM_PROGRESS_V3.md'
     if not semantic_contract.is_file():
         # Preserve synthetic and explicit original-source workspace hashing.

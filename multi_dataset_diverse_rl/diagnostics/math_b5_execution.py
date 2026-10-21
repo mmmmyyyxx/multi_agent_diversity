@@ -220,23 +220,7 @@ def verify_bundle(root,prep,credential_check=False):
 
 
 def execute_paid(root,prep):
-    root=Path(root)
-    scope,_,selected=verify_bundle(root,prep,credential_check=True)
-    marker=root/'runs/math_b5_authorization_consumed'/(scope['startup_identity_sha256']+'.json')
-    run_root=root/scope['run_root']
-    if marker.exists() or run_root.exists():raise CalibrationAbort('B5_SINGLE_USE_SCOPE_CONSUMED')
-    transport,client=create_exact_transport(scope)
-    marker.parent.mkdir(parents=True,exist_ok=True)
-    try:
-        with marker.open('x',encoding='utf-8',newline='\n') as handle:
-            json.dump(dict(scope_sha256=scope['startup_identity_sha256'],source_sha=scope['source_sha']),handle)
-            handle.flush();os.fsync(handle.fileno())
-        run_root.mkdir()
-        atomic_write_json(run_root/'consumed_authorization_private.json',scope)
-        def guard():
-            check_dispatch_source(root,scope)
-        return run_panel(selected,scope,run_root,transport,dispatch_guard=guard)
-    finally:client.close()
+    raise RuntimeError('HISTORICAL_SCORING_EXECUTION_RETIRED_NEW_PROTOCOL_REQUIRED')
 
 
 def check_dispatch_source(root,scope):
@@ -247,80 +231,8 @@ def check_dispatch_source(root,scope):
 
 
 def run_logical(member,row,scope,transport,ledger,receipts,*,sleep=time.sleep,dispatch_guard=lambda:None):
-    arm="B"
-    attempts=[];previous=None;physical_retries=0
-    xid=row['stable_example_id'];xhash=hashlib.sha256(xid.encode()).hexdigest()
-    for ordinal in range(1,5):
-        capacity=6144 if previous in TRUNCATED else 3600
-        request=request_for(arm,row['content']['problem'],capacity)
-        for physical in range(1,22):
-            dispatch_guard()
-            lane=dict(stage='b_five_member_development',arm=arm,example_id_sha256=xhash,member=member,
-                semantic_draw=ordinal,physical_attempt=physical,attempt_id=scope['attempt_id'])
-            key=ledger.reserve(request,lane)
-            try: response=transport(request)
-            except Exception as error:
-                category=type(error).__name__
-                try:
-                    receipt=receipts.persist(key,dict(lane=lane,request=request,error_category=category,
-                        provider_evidence=getattr(error,'provider_evidence',None)))
-                except BaseException:
-                    ledger.charge(key,None,'RECEIPT_PERSISTENCE_FAILURE');raise
-                ledger.charge(key,getattr(error,'token_usage',None),category,receipt)
-                if category not in RETRYABLE or physical==21:
-                    raise CalibrationAbort('PROVIDER_TERMINAL_'+category) from None
-                physical_retries+=1
-                sleep(min(1.5*2**(physical-1),60));continue
-            try: receipt=receipts.persist(key,dict(lane=lane,request=request,response=response))
-            except BaseException:
-                ledger.charge(key,None,'RECEIPT_PERSISTENCE_FAILURE');raise
-            charged,reliable=ledger.charge(key,response,'RESPONSE',receipt)
-            if not reliable: raise CalibrationAbort('CALIBRATION_USAGE_NOT_RELIABLE')
-            try:validate_response(response,request)
-            except RuntimeError as error:raise CalibrationAbort(str(error)) from None
-            break
-        native=native_extract(arm,response['text'],response['finish_reason'])
-        attempts.append(dict(lane=lane,reservation_id=key,receipt=receipt,request=request,response=response,
-            native=native,charged_tokens=charged,output_capacity=capacity))
-        previous=response['finish_reason']
-        if native['valid']:break
-    return dict(example_id=xid,example_id_sha256=xhash,arm=arm,member=member,stage='b_five_member_development',
-        reference=row['reference_final_answer'],subject=row['content']['type'],level=row['content']['level'],
-        first_native=attempts[0]['native'],recovered_native=attempts[-1]['native'],
-        semantic_draws=len(attempts),transport_retries=physical_retries,attempts=attempts,
-        input_tokens=sum(a['response']['input_tokens'] for a in attempts),
-        output_tokens=sum(a['response']['output_tokens'] for a in attempts))
+    raise RuntimeError('HISTORICAL_SCORING_EXECUTION_RETIRED_NEW_PROTOCOL_REQUIRED')
 
 
 def run_panel(selected,scope,run_root,transport,*,sleep=time.sleep,progress=print,dispatch_guard=lambda:None):
-    run_root=Path(run_root)
-    ledger=CalibrationLedger(run_root/'accounting',scope['startup_identity_sha256'])
-    receipts=ProviderResponseReceipts(run_root/'provider_receipts_private',attempt_id=scope['attempt_id'],
-        startup_identity_sha256=scope['startup_identity_sha256'])
-    completed=[];status='EXECUTION_ABORTED';reason='UNEXPECTED_PROCESS_OR_PERSISTENCE_FAILURE'
-    try:
-        atomic_write_json(run_root/'lifecycle.json',dict(status='RUNNING',attempt_id=scope['attempt_id'],source_sha=scope['source_sha']))
-        for index,row in enumerate(selected):
-            order=tuple(range(5))[index%5:]+tuple(range(5))[:index%5]
-            for member in order:
-                result=run_logical(member,row,scope,transport,ledger,receipts,sleep=sleep,dispatch_guard=dispatch_guard)
-                completed.append(result)
-                envelope=dict(scope_sha256=scope['startup_identity_sha256'],completed=completed)
-                envelope['integrity_sha256']=digest(envelope)
-                atomic_write_json(run_root/'checkpoint_private.json',envelope)
-                progress(json.dumps(dict(completed_logicals=len(completed),expected_logicals=5*len(selected),
-                    physical_attempts=ledger.state['physical_attempts'],charged_tokens=ledger.state['charged_total'],
-                    reserved_tokens=ledger.state['reserved_total']),sort_keys=True))
-        status='EXECUTION_COMPLETE';reason='FIXED_FIVE_MEMBER_PANEL_COMPLETE'
-    except BaseException as error:
-        reason=str(error) if isinstance(error,CalibrationAbort) else type(error).__name__
-    finally:
-        try:
-            ledger.terminal(status)
-            summary=dict(status=status,termination_reason=reason,completed_logicals=len(completed),expected_logicals=5*len(selected),
-                accounting=ledger.state,source_sha=scope['source_sha'],startup_identity_sha256=scope['startup_identity_sha256'],
-                validation_calls=0,test_calls=0,shadow_calls=0,optimizer_calls=0)
-            atomic_write_json(run_root/'execution_summary.json',summary)
-            atomic_write_json(run_root/'lifecycle.json',summary)
-        finally: ledger.close()
-    return summary
+    raise RuntimeError('HISTORICAL_SCORING_EXECUTION_RETIRED_NEW_PROTOCOL_REQUIRED')

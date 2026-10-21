@@ -390,3 +390,8 @@ COUNT_BINARY_RESPONSIBILITY_VERSION = 'five_member_correctness_count_responsibil
 COUNT_RAW_RESPONSIBILITY_VERSION = 'count_responsibility_sum_4D_2N_C_R3_halfR4_v3'
 COUNT_TARGET_VERSION = 'count_responsibility_failure_discount_v4'
 COUNT_PATTERN_RESPONSIBILITY_VERSION = 'pattern_correctness_count_support_sum_v4'
+
+# Scientific scoring replacement; every preceding identity remains historical.
+UNIFIED_HENDRYCKS_SCORING_VERSION = 'unified_team_prompt_search_count_responsibility_hendrycks_v1'
+MATH_HENDRYCKS_BINDING_VERSION = 'MATH_CEVOLVE_HENDRYCKS_BINDING_V1'
+MATH_HENDRYCKS_INTERFACE_VERSION = 'MATH_CEVOLVE_HENDRYCKS_BOXED_INTERFACE_V1'

@@ -1,0 +1,15 @@
+{
+  "identity": "RETIRED_MULTI_POLICY_MODULES_V1",
+  "paths": [
+    "multi_dataset_diverse_rl/math_scoring/api.py",
+    "multi_dataset_diverse_rl/math_scoring/audit.py",
+    "multi_dataset_diverse_rl/math_scoring/compat_maspo.py",
+    "multi_dataset_diverse_rl/math_scoring/extraction.py",
+    "multi_dataset_diverse_rl/math_scoring/kernel_binding.py",
+    "multi_dataset_diverse_rl/math_scoring/policy.py",
+    "multi_dataset_diverse_rl/math_scoring/semantic.py",
+    "multi_dataset_diverse_rl/math_scoring/supervisor.py",
+    "multi_dataset_diverse_rl/math_scoring/worker.py"
+  ],
+  "action": "Archived byte-for-byte then removed from current package"
+}

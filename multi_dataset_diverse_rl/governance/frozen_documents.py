@@ -9,6 +9,16 @@ PRE_STRUCTURAL_SOURCE='b404deb3e0a440364d7c1835d21a13046968e370'
 LATER_HISTORICAL_SOURCES={
     'experiments/manifests/single_prompt_completed_ab_test_v13.json':
         '395909a6683ffac51d711bb1a98f651b023d4e4b',
+    # Immutable pre-Hendrycks metadata. These pins validate descriptions only,
+    # and confer no eligibility to run old scoring or resume its checkpoints.
+    'experiments/manifests/single_prompt_full_error_control_v2.json':
+        'ad10b68077bebb4edc93a96e8c41e3104d646b19',
+    'experiments/manifests/single_prompt_multi_parent_v12.json':
+        'ad10b68077bebb4edc93a96e8c41e3104d646b19',
+    'experiments/manifests/single_prompt_pattern_scheduling_v1.json':
+        'ad10b68077bebb4edc93a96e8c41e3104d646b19',
+    'experiments/manifests/single_prompt_pattern_canary_v1.json':
+        'ad10b68077bebb4edc93a96e8c41e3104d646b19',
 }
 
 def validate_published_single_prompt(root,path,value):

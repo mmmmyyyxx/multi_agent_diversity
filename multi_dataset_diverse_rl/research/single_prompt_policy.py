@@ -26,7 +26,7 @@ def independent_trajectory_policy():
     return value
 
 def policy():
-    return dict(identity=IDENTITY, arms=list(ARMS), seeds=[88, 89, 90],
+    return dict(**scoring_identity(), identity=IDENTITY, arms=list(ARMS), seeds=[88, 89, 90],
         rounds=20, error_batch_size=3,
         batch_identity='INDEPENDENT_UNIFORM_WRONG_WITHOUT_REPLACEMENT_V1',
         batch_universe='current_prompt_wrong_optimize',
@@ -86,3 +86,8 @@ def call_ceiling(phase):
     if phase == 'test':
         return 9 * 300 * 4
     raise ValueError('STUDY_PHASE_INVALID')
+
+
+def scoring_identity():
+    from ..math_scoring.prediction import cache_identity
+    return cache_identity()

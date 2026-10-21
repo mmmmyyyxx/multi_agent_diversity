@@ -1,5 +1,22 @@
 schema_version: failure_registry_v1
 failures:
+- failure_id: FAIL-A2-TEST-NATIVE-SCORER-EXPANSION
+  title: Native mathematical comparison exceeded local deadline on a paid Test answer
+  status: MITIGATED
+  lifecycle: REAL_OBSERVED_OFFLINE_REPRODUCED
+  first_observed: single_prompt_full_error_control_v2
+  affected_components:
+  - test_local_scoring
+  - exact_paid_response_continuation
+  evidence:
+  - docs/design/SINGLE_PROMPT_FULL_ERROR_TEST_RESUME_V3.md
+  evidence_level: observed
+  symptom: Completed training followed by a native eight-second Test scorer timeout.
+  root_cause_status: Same saved expression pair exceeds native deadline; existing exact power certificate worker resolves it below one second.
+  mitigation: Fresh Test-only scope reuses paid draws and prior terminal hashes with exact power certificates and bounded local stall diagnosis.
+  forbidden_inference: A timeout is never an incorrect score, permission to regenerate a paid response, or authority to change a prior terminal observation.
+  regression_tests:
+  - tests/current/test_full_error_test_resume.py
 - failure_id: FAIL-ABLATION-UNEVALUATED-EXPONENT-SCORER-LIVELOCK
   title: Unsupported unevaluated exponent fell back to repeated symbolic expansion
   status: MITIGATED

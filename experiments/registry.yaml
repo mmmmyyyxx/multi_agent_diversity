@@ -10946,9 +10946,10 @@ experiments:
   manifest: experiments/manifests/structural_candidate_contract_v2_preparation_v1.yaml
   report: reports/structural_candidate_policy_v2_20261015
   classifier: null
-  active_for_new_work: true
+  active_for_new_work: false
   historical_replay: false
-  superseded_by: []
+  superseded_by:
+  - cevolve_hendrycks_scoring_v1_preparation_20261021
   notes:
   - User-requested structural candidate amendment and offline493 comparison; no real experiment or API authorization.
   unavailable:
@@ -11224,3 +11225,83 @@ experiments:
     execution_commit: Exact new frozen API authorization required.
     result_commit: No new real execution during offline preparation.
     classifier: Offline preparation only.
+
+- experiment_id: single_prompt_full_error_test_resume_v3
+  kind: ABLATION
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: single_prompt_a2_paid_test_continuation_v3
+  parent_ids:
+  - single_prompt_full_error_control_v2
+  status: PREPARED_NOT_EXECUTED
+  scientific_status: UNMEASURED_TEST_CONTINUATION
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/single_prompt_full_error_test_resume_v3.json
+  report: reports/full_error_test_repair_preparation_20261021
+  classifier: null
+  active_for_new_work: false
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Test-only exact reuse of 350 paid Solver draws; all sixty training transitions and parent evidence retained.
+  - Scoped exact power certificate worker and local timeout diagnosis; no production scoring or training changes.
+  unavailable:
+    implementation_commit: Containing implementation commit; no self-reference.
+    execution_commit: New exact frozen authorization required.
+    result_commit: No new API during preparation.
+    classifier: Offline operational preparation only.
+
+- experiment_id: cevolve_hendrycks_scoring_v1_preparation_20261021
+  kind: ZERO_API_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: unified_team_prompt_search_count_responsibility_hendrycks_v1
+  parent_ids:
+  - structural_candidate_policy_v2_20261015
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: OFFLINE_ONLY_NO_EFFICACY_INFERENCE
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: experiments/manifests/cevolve_hendrycks_scoring_v1_preparation.yaml
+  report: reports/cevolve_hendrycks_scoring_migration_20261021
+  classifier: null
+  active_for_new_work: true
+  historical_replay: false
+  superseded_by: []
+  notes:
+  - Explicit sole MATH scoring replacement; historical manifests remain immutable;
+    no API authorization.
+  unavailable:
+    implementation_commit: Containing publication commit; no self-reference.
+    execution_commit: No real model execution.
+    result_commit: Containing evidence commit; no self-reference.
+    classifier: No efficacy classification.
+
+- experiment_id: math_unified_scoring_v1_historical_audit_20261021
+  kind: ZERO_API_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+  method_family: historical_offline_math_scoring_audit_v1
+  parent_ids: []
+  status: IMPLEMENTED_NOT_EXECUTED
+  scientific_status: OFFLINE_ONLY_HISTORICAL_EVIDENCE_NOT_CURRENT_POLICY
+  implementation_commit: null
+  execution_commit: null
+  result_commit: null
+  manifest: null
+  report: reports/math_unified_scoring_v1_20261021
+  classifier: null
+  active_for_new_work: false
+  historical_replay: true
+  superseded_by:
+  - cevolve_hendrycks_scoring_v1_preparation_20261021
+  notes:
+  - Publication registration of immutable pre-migration offline audit; source is recovery-only
+    and no real experiment is authorized.
+  unavailable:
+    manifest: Read-only portfolio audit; no executable experiment manifest.
+    implementation_commit: Uncommitted predecessor source preserved by hashed recovery
+      archives.
+    execution_commit: Offline only; no model execution.
+    result_commit: Containing publication commit; no self-reference.
+    classifier: No method efficacy inference.

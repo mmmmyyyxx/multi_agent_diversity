@@ -1,0 +1,44 @@
+{
+  "candidate_policy": {
+    "identity": "STRUCTURAL_SINGLE_BLOCK_CANDIDATE_CONTRACT_V2",
+    "blocks": [
+      "role",
+      "strategy",
+      "answer"
+    ],
+    "nonempty_strings": true,
+    "edits_per_candidate": 1,
+    "maximum_prompt_characters": null,
+    "content_filters": false,
+    "parsing": "unique_json_object_optional_complete_fence_v1",
+    "no_op": "record_skip_evaluation_no_regeneration",
+    "selection": "existing_measured_performance"
+  },
+  "scoring_contract": "cevolve_hendrycks_math_v1",
+  "cases": {
+    "default": {
+      "canonical_sha256": "95ece845703b586afbf50c8f0c5c67def8bff4927703ea76ea3c821587fffbd3",
+      "request_count": 176
+    },
+    "reflection_recovery": {
+      "canonical_sha256": "c8a1b82d3031dcd052fbbf91ad0f8f7680f235d84ab77ff619886cae572b2559",
+      "request_count": 177
+    },
+    "group_exhaustion": {
+      "canonical_sha256": "7436f62a7dde672d0beb4067a97d5560abea389b0f4716a13ee73b60428bb356",
+      "request_count": 177
+    },
+    "uncertain": {
+      "canonical_sha256": "e7718ae8b7a5e54dd3810af3a625a2cf7a37d21d20eab7e21cdc9bea694991f4",
+      "request_count": 111
+    },
+    "multi_opportunity": {
+      "canonical_sha256": "b5db11442916bf70c29ef647701492456623a363032b8a3d6dc22a440e1bfa8e",
+      "request_count": 247
+    },
+    "pool_evolution": {
+      "canonical_sha256": "742bc02a90c5bcb8efcc5a32d65bbd68dd6fadfd53e582647204b72157d3c4ca",
+      "request_count": 240
+    }
+  }
+}

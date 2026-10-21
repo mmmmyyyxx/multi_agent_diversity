@@ -17,7 +17,7 @@ PARENT = 'experiments/manifests/single_prompt_largest_pattern_v1.json'
 
 def runtime_defaults():
     # Native provider/scoring contracts, not a historical execution policy.
-    return dict(identity=IDENTITY, seeds=[42], rounds=20, error_batch_size=3,
+    return dict(**scoring_identity(), identity=IDENTITY, seeds=[42], rounds=20, error_batch_size=3,
              optimizer_structural_draws=4, optimizer_structural_retries=3,
              acceptance='validation_correct_count_strictly_greater_than_retained_profile',
              optimize_gate=False, final_selection='last_validation_retained_prompt',
@@ -199,3 +199,8 @@ def request_namespace(plan_identity, seed, repeat_id):
     if type(repeat_id) is not int or repeat_id < 1:
         raise SearchContractError('ABLATION_REPEAT_ID_REQUIRED')
     return digest(['single_prompt_ablation_repeat_v2', plan_identity, seed, repeat_id])
+
+
+def scoring_identity():
+    from ...math_scoring.prediction import cache_identity
+    return cache_identity()

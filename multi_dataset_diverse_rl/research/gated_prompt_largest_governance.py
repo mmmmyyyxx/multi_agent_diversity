@@ -167,6 +167,8 @@ def execute_final_test(root,prep,train):
             old=read_json(parent_test/(c['cell_id']+'.json'))
             if old['count']!=300 or set(old['predictions'])!=set(scope['test_plan']['sample_ids']):raise SearchContractError('LARGEST_PATTERN_PARENT_TEST_MEMBERSHIP')
             for value in old['predictions'].values():
+                from .single_prompt_runtime import validate_scoring_observation
+                validate_scoring_observation(value)
                 key=value['request_sha256']
                 if key in broker.cache and broker.cache[key]!=value:raise SearchContractError('LARGEST_PATTERN_TEST_CACHE_CONFLICT')
                 broker.cache[key]=deepcopy_value(value)

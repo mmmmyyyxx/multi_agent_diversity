@@ -1,6 +1,9 @@
 schema_version: experiment_lineage_v2
 authority: sole experiment lineage authority
 nodes:
+- experiment_id: single_prompt_full_error_test_resume_v3
+  kind: ABLATION
+  era: UNIFIED_TEAM_PROMPT_SEARCH
 - experiment_id: single_prompt_full_error_control_v2
   kind: ABLATION
   era: UNIFIED_TEAM_PROMPT_SEARCH
@@ -1207,6 +1210,12 @@ nodes:
   era: UNIFIED_TEAM_PROMPT_SEARCH
 - experiment_id: repair_path_responsibility_offline_v1
   kind: FORENSIC_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: cevolve_hendrycks_scoring_v1_preparation_20261021
+  kind: ZERO_API_AUDIT
+  era: UNIFIED_TEAM_PROMPT_SEARCH
+- experiment_id: math_unified_scoring_v1_historical_audit_20261021
+  kind: ZERO_API_AUDIT
   era: UNIFIED_TEAM_PROMPT_SEARCH
 edges:
 - from: single_prompt_pattern_scheduling_v1
@@ -2841,4 +2850,16 @@ edges:
   relation: ablation_of
   evidence: docs/design/SINGLE_PROMPT_FULL_ERROR_CONTROL_V2.md
   scope: Fresh all-error two-proposal same-Parent control; no historical evidence or authorization imports.
+- from: single_prompt_full_error_control_v2
+  to: single_prompt_full_error_test_resume_v3
+  relation: derived_from
+  evidence: docs/design/SINGLE_PROMPT_FULL_ERROR_TEST_RESUME_V3.md
+  scope: Paid Test continuation after local scoring timeout; sealed training and every prior terminal score retained.
+- from: structural_candidate_policy_v2_20261015
+  to: cevolve_hendrycks_scoring_v1_preparation_20261021
+  relation: audit_of
+  evidence: reports/cevolve_hendrycks_scoring_migration_20261021/README.md
+  scope: Explicit sole MATH scoring replacement; historical manifests remain immutable;
+    no API authorization.
+
 current_frontier: experiments/current_frontier.yaml

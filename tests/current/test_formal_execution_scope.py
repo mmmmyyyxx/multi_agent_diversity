@@ -244,7 +244,7 @@ def validation_contract():
 def test_validation_broker_forbids_every_search_role_and_test_and_shares_identical_pairs():
     from multi_dataset_diverse_rl.search.provider_runtime import RequestBroker
     c=validation_contract();calls=[]
-    broker=RequestBroker(contract=c,transport=lambda req:(calls.append(req) or fixture.response('Final answer: 2')),
+    broker=RequestBroker(contract=c,transport=lambda req:(calls.append(req) or fixture.response(r'\boxed{2}')),
         arm='A4',seed=81,validation_only=True)
     messages=[dict(role='system',content=fixture.BASE.render()),dict(role='user',content='Synthetic arithmetic.')]
     for split in ('optimize','shadow','test'):
@@ -253,7 +253,7 @@ def test_validation_broker_forbids_every_search_role_and_test_and_shares_identic
         with pytest.raises(SearchContractError):broker.complete(role=role,split='validation',stage='forbidden',messages=messages)
     values=[broker.complete(role='solver',split='validation',stage='paired',messages=messages,member_slot=m)
         for _ in range(2) for m in range(5)]
-    assert len(calls)==5 and [v['text'] for v in values]==['Final answer: 2']*10
+    assert len(calls)==5 and [v['text'] for v in values]==[r'\boxed{2}']*10
     assert len({v['request_sha256'] for v in values})==5
     with pytest.raises(SearchContractError):RequestBroker(contract=c,transport=lambda _:None,arm='A4',seed=81)
     c=fixture.contract()
@@ -337,7 +337,7 @@ def test_post_search_validation_real_wrapper_is_single_use_and_gold_never_enters
         assert req['model']=='gpt-4o-mini' and len(req['messages'])==2
         assert req['messages'][1]['content'].startswith('SYNTHETIC_HELDOUT_PROBLEM_')
         assert 'reference_final_answer' not in json.dumps(req) and 'SYNTHETIC_REFERENCE' not in json.dumps(req)
-        return fixture.response('Final answer: 2')
+        return fixture.response(r'\boxed{2}')
     monkeypatch.setattr(autonomous_math,'create_transport',lambda _: (transport,Client()))
     prep=tmp_path/'runs/validation_prep';run=tmp_path/'runs/validation_execution'
     payload=evaluation.prepare(tmp_path,tmp_path/'runs/prep',prep,attempt='synthetic_validation',

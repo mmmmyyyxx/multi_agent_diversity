@@ -1,4 +1,4 @@
-"""Shared pinned mathematical equivalence; no Solver instruction policy."""
+"""Legacy path: current correctness plus separate unchanged vote equivalence."""
 from functools import lru_cache
 from contextlib import contextmanager
 from contextvars import ContextVar
@@ -7,7 +7,8 @@ import subprocess
 import sys
 from ..search.schemas import SearchContractError
 from ..search.schemas import ParsedOutput, BenchmarkCapabilities
-from .protocols import MATH_PROTOCOL_V2
+from .protocols import MATH_PROTOCOL_HENDRYCKS
+from ..math_scoring import CONTRACT_ID
 
 SETTINGS = dict(identity='MATH_VERIFY_SETTINGS_V2',strict=True,float_rounding=6,
     numeric_precision=15,parsing_timeout=3,verification_timeout=3,process_deadline=8,
@@ -63,24 +64,18 @@ def domain_matrix(expressions):
 
 
 def require_scorable(reference):
-    if not isinstance(reference,str) or not reference.strip():
-        raise SearchContractError('REFERENCE_UNSCORABLE')
-    try:
-        result=domain_matrix((reference,))
-        if not result['valid'][0] or not result['equivalence'][0][0]:
-            raise SearchContractError('REFERENCE_UNSCORABLE')
-    except SearchContractError as exc:
-        raise SearchContractError('REFERENCE_UNSCORABLE') from exc
+    from ..math_scoring import prepare_ground_truth
+    prepare_ground_truth(reference)
 
 
 class MATHBenchmarkAdapterV2:
     benchmark_id='math'
     preferred_aggregation='equivalence_plurality'
     capabilities=BenchmarkCapabilities(True,True,True,True,True)
-    output_contract='MATH_EXPLICIT_FINAL_ANSWER_EXTRACTION_V1'
-    protocol=MATH_PROTOCOL_V2
-    parser_identity='MATH_PAYLOAD_PARSER_V2'
-    evaluator_identity='MATH_EQUIVALENCE_V2'
+    output_contract='hendrycks_last_boxed_answer_v1'
+    protocol=MATH_PROTOCOL_HENDRYCKS
+    parser_identity=CONTRACT_ID+'/last_boxed'
+    evaluator_identity=CONTRACT_ID
     final_payload=staticmethod(final_payload)
     require_scorable=staticmethod(require_scorable)
 
@@ -90,11 +85,10 @@ class MATHBenchmarkAdapterV2:
         return 'correct' if self.score_member_output(parsed,gold) else 'incorrect'
 
     def parse_member_output(self,raw,item):
-        expression=final_payload(raw)
-        if item.benchmark_id!=self.benchmark_id or expression is None:
+        from .math_flexible_answer import classify_prediction
+        if item.benchmark_id!=self.benchmark_id:
             return ParsedOutput('',False)
-        valid=domain_matrix((expression,))['valid'][0]
-        return ParsedOutput(expression,valid)
+        return classify_prediction(raw).parsed()
 
     parse_output=parse_member_output
 
@@ -105,11 +99,5 @@ class MATHBenchmarkAdapterV2:
         return all(result['valid']) and result['equivalence'][0][1]
 
     def score_member_output(self,parsed,gold):
-        require_scorable(gold)
-        if not parsed.valid:
-            return 0.0
-        # Correctness is directed. Aggregation uses the separate symmetric seam.
-        result=domain_matrix((str(gold),parsed.answer))
-        if not result['valid'][0]:
-            raise SearchContractError('REFERENCE_UNSCORABLE')
-        return float(result['valid'][1] and result['equivalence'][0][1])
+        from ..math_scoring import score_parsed_answer
+        return float(score_parsed_answer(parsed.answer, parsed.valid, gold).score)

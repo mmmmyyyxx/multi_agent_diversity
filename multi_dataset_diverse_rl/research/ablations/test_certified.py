@@ -38,7 +38,8 @@ def parent_pin(root):return previous.parent_pin(root,contract=_contract())
 def manifest_template():return previous.manifest_template(contract=_contract())
 def validate_manifest(root,value):return previous.validate_manifest(root,value,contract=_contract())
 def handoff_template(root,prep,scope):return previous.handoff_template(root,prep,scope,contract=_contract())
-def prepare(root,prep):return previous.prepare(root,prep,contract=_contract())
+def prepare(root,prep):
+    raise RuntimeError('HISTORICAL_MATH_SCORER_RETIRED_USE_NEW_FROZEN_ATTEMPT')
 def validate_prep(root,prep,*,authorized=False):return previous.validate_prep(root,prep,authorized=authorized,contract=_contract())
 authorization_template=previous.authorization_template
 
@@ -77,21 +78,8 @@ def audit_parent(root):
 
 class TestResumeBroker(previous.TestResumeBroker):
     def score_resolved(self,resolved,row):
-        context=dict(operation='resolved_answer_scoring',example_id=row['stable_example_id'],
-            resolved_prediction_sha256=digest(asdict(resolved)))
-        def operation():
-            require_scorable(row['reference_final_answer'])
-            if not resolved.prediction_valid:return False
-            value=certified_matrix((str(row['reference_final_answer']),resolved.answer))
-            if not value['valid'][0]:raise SearchContractError('REFERENCE_UNSCORABLE')
-            correct=bool(value['valid'][1] and value['equivalence'][0][1])
-            with self.lock:
-                append_jsonl(self.receipts.directory/'local_scoring_certificates.jsonl',dict(context,
-                    cell_id=self.cell_id,policy=POLICY['identity'],
-                    input_sha256=digest([str(row['reference_final_answer']),resolved.answer]),
-                    certified_pair_rejections=value['certified_pair_rejections'],correct=correct))
-            return correct
-        return self.retry_local(operation,context)
+        raise RuntimeError('HISTORICAL_MATH_SCORER_RETIRED_USE_NEW_FROZEN_ATTEMPT')
 
 
-def execute(root,prep,run):return skeleton.execute(root,prep,run,contract=_contract())
+def execute(root,prep,run):
+    raise RuntimeError('HISTORICAL_MATH_SCORER_RETIRED_USE_NEW_FROZEN_ATTEMPT')

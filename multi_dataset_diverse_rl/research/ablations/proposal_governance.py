@@ -13,8 +13,7 @@ PREP_SCHEMA='single_prompt_pattern_scheduling_prep_v1'
 
 
 def inputs(root):
-    parent=read_json(root/shared.MANIFEST)
-    return parent,shared.validate_manifest(root,parent)
+    return shared.historical_data_inputs(root,shared.MANIFEST)
 
 
 def scope_template(root,destination):

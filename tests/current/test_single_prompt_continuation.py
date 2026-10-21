@@ -83,7 +83,7 @@ def test_timeout_and_length_recovery_keep_distinct_draws(tmp_path, monkeypatch):
             self.calls.append((role,deepcopy(request)))
             if len(self.calls)==2:
                 raise timeout()
-            text,finish=('incomplete','length') if len(self.calls)==1 else ('Final answer: 1','stop')
+            text,finish=('incomplete','length') if len(self.calls)==1 else (r'\boxed{1}','stop')
             return dict(text=text,finish_reason=finish,input_tokens=10,output_tokens=10)
     b=broker_for(tmp_path,transport=LengthThenTimeout(),cap=None)
     enable_recovery(b)

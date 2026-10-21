@@ -149,13 +149,8 @@ def diagnostic_extract(text,finish_reason='stop'):
 
 
 def grade_diagnostic(extraction,reference):
-    """Reference is consulted only after immutable, gold-blind extraction."""
-    if extraction.policy_identity!=DIAGNOSTIC_ID or extraction.usage_scope!='DIAGNOSTIC_ONLY':
-        raise ValueError('DIAGNOSTIC_IDENTITY_REQUIRED')
-    if extraction.payload is None:return None
-    relation=domain_matrix((reference,extraction.payload))
-    if not relation['valid'][0]:raise ValueError('REFERENCE_UNSCORABLE')
-    return bool(relation['valid'][1] and relation['equivalence'][0][1])
+    from ..math_scoring import RetiredMathScorerError
+    raise RetiredMathScorerError('HISTORICAL_MULTI_POLICY_DIAGNOSTIC_RETIRED_USE_CURRENT_RAW_RESPONSE_AUDIT')
 
 
 def primary_reason(text,finish_reason,native):
@@ -187,32 +182,18 @@ def secondary_flags(text,finish_reason):
 
 
 def boxed_native(text,finish_reason='stop'):
-    lines=[line.strip() for line in (text or '').splitlines() if line.strip()]
-    payload=balanced_box(lines[-1]) if lines else None
-    reason=('OUTPUT_TRUNCATED' if finish_reason in TRUNCATED else
-        'OTHER_OUTPUT_CONTRACT_FAILURE' if finish_reason!='stop' else
-        'MISSING_TERMINAL_BOXED' if payload is None else classify_payload(payload))
-    return dict(policy_identity=BOXED_ID,usage_scope='ARM_NATIVE',valid=reason is None,
-        payload=payload if reason is None else None,invalid_reason=reason)
+    from ..math_scoring import RetiredMathScorerError
+    raise RetiredMathScorerError('HISTORICAL_MULTI_POLICY_DIAGNOSTIC_RETIRED_USE_CURRENT_RAW_RESPONSE_AUDIT')
 
 
 def native_extract(arm,text,finish_reason='stop'):
-    if arm in ('A','B'):
-        prediction=classify_prediction(text,finish_reason)
-        return dict(policy_identity=NATIVE_ID,usage_scope='ARM_NATIVE',valid=prediction.prediction_valid,
-            payload=prediction.answer if prediction.prediction_valid else None,invalid_reason=prediction.invalid_reason)
-    if arm=='C':return boxed_native(text,finish_reason)
-    raise ValueError('CALIBRATION_ARM_UNKNOWN')
+    from ..math_scoring import RetiredMathScorerError
+    raise RetiredMathScorerError('HISTORICAL_MULTI_POLICY_DIAGNOSTIC_RETIRED_USE_CURRENT_RAW_RESPONSE_AUDIT')
 
 
 def primary_correctness(native,reference):
-    if (not isinstance(native,dict) or native.get('usage_scope')!='ARM_NATIVE'
-            or native.get('policy_identity') not in {NATIVE_ID,BOXED_ID}):
-        raise ValueError('DIAGNOSTIC_CANNOT_SUPPLY_PRIMARY_SCORE')
-    if not native['valid']:return False
-    relation=domain_matrix((reference,native['payload']))
-    if not relation['valid'][0]:raise ValueError('REFERENCE_UNSCORABLE')
-    return bool(relation['valid'][1] and relation['equivalence'][0][1])
+    from ..math_scoring import RetiredMathScorerError
+    raise RetiredMathScorerError('HISTORICAL_MULTI_POLICY_DIAGNOSTIC_RETIRED_USE_CURRENT_RAW_RESPONSE_AUDIT')
 
 
 def summarize_rounds(logicals,attempts,errors):

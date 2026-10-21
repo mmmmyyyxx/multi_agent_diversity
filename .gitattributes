@@ -186,3 +186,21 @@ experiments/manifests/repair_path_responsibility_offline_v1.json -text whitespac
 multi_dataset_diverse_rl/diagnostics/repair_path.py -text whitespace=trailing-space,space-before-tab,cr-at-eol
 multi_dataset_diverse_rl/diagnostics/repair_path_replay.py -text whitespace=trailing-space,space-before-tab,cr-at-eol
 scripts/audit_repair_path_responsibility.py -text whitespace=trailing-space,space-before-tab,cr-at-eol
+
+# The mirrored scorer's source digest hashes exact bytes in both repositories.
+multi_dataset_diverse_rl/math_scoring/** text eol=lf
+configs/cevolve_hendrycks_math_v1.json text eol=lf
+tests/fixtures/hendrycks_oracle.json text eol=lf
+tests/current/test_cevolve_hendrycks_scoring.py text eol=lf
+tests/current/test_hendrycks_integration.py text eol=lf
+reports/cevolve_hendrycks_scoring_migration_20261021/** text eol=lf
+
+# Preserve the newly published historical audit and recovery evidence bytes.
+reports/math_unified_scoring_v1_20261021/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+docs/archive/scoring/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+
+# Byte-hashed mirrored provenance metadata retains its verified exact bytes.
+multi_dataset_diverse_rl/math_scoring/upstream.json -text whitespace=trailing-space,space-before-tab,cr-at-eol
+
+# Verbatim upstream helper whitespace is part of its pinned source receipt.
+multi_dataset_diverse_rl/math_scoring/_hendrycks.py whitespace=-blank-at-eol

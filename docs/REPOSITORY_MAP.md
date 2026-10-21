@@ -1,30 +1,29 @@
 # Repository Map
 
-Current authority: AGENTS.md, docs/design/CURRENT_SPEC.md and
-[Responsibility Fallback V2.5](design/RESPONSIBILITY_FALLBACK_REPAIR_V25.md) with
-[flexible extraction V3](design/FLEXIBLE_ANSWER_EXTRACTION_V3.md).
-The current Layer1 authority is [V2.9 population search](design/VOTE_GUIDED_PARENT_POPULATION_V29.md).
-Current WHO/Pattern responsibility is defined by
-[V2.10 exclusive weighted errors](design/WEIGHTED_ERROR_RESPONSIBILITY_V210.md).
+Current authority: AGENTS.md, docs/design/CURRENT_SPEC.md and the
+[sole Hendrycks MATH correctness contract](math_scoring_cevolve_hendrycks_v1.md).
+Search retains [V2.12 count responsibility](design/COUNT_RESPONSIBILITY_V212.md)
+and [V2.9 population search](design/VOTE_GUIDED_PARENT_POPULATION_V29.md).
 
 | Path | Role |
 |---|---|
+| multi_dataset_diverse_rl/math_scoring/ | Sole current MATH correctness: pinned Hendrycks extraction and finite normalization, versioned as cevolve_hendrycks_math_v1 |
 | multi_dataset_diverse_rl/search/system_prompt.py | Sole structured member prompt state and block identity |
 | multi_dataset_diverse_rl/research/single_prompt*.py | Explicit independent 20-round mechanism study; outside current team composition |
 | multi_dataset_diverse_rl/research/ablations/ | Isolated independent single-Prompt kernel and adapters importing formal modules; repeat-scoped, offline preparation only |
 | scripts/ablations/study.py | Thin isolated draft/synthetic CLI; cannot authorize real execution |
-| experiments/ablations/pattern/default.json | Editable seed42/five-repeat preparation defaults, outside frozen historical manifests |
+| experiments/ablations/pattern/default.json | Editable seed42 preparation defaults, outside frozen historical manifests |
 | multi_dataset_diverse_rl/search/current_composition.py | Sole production graph |
 | multi_dataset_diverse_rl/search/parent_population.py | Bounded per-member fitness and independent sampling |
 | multi_dataset_diverse_rl/search/population_evaluation.py | Complete Optimize fitness and joint final assembly |
 | multi_dataset_diverse_rl/search/population_checkpoint.py | Atomic complete-boundary state recovery; no API grant |
 | multi_dataset_diverse_rl/search/population_memory.py | Scoped single-step measured edit experience |
-| multi_dataset_diverse_rl/search/weighted_responsibility.py | Exclusive D/N/C/R3/R4 labels and shared summed weights |
+| multi_dataset_diverse_rl/search/weighted_responsibility.py | Current count responsibility; historical module name retained |
 | multi_dataset_diverse_rl/search/optimizer_output_contract.py | Strict optimizer types and source-free bounded retry feedback |
 | multi_dataset_diverse_rl/current_contract.py | See package-root current_contract.py for closed identity imports |
-| multi_dataset_diverse_rl/benchmarks/math_structured_binding.py | Fresh V2.5 freeze and composition |
-| multi_dataset_diverse_rl/benchmarks/math_flexible_answer.py | Current gold-blind flexible extraction |
-| multi_dataset_diverse_rl/benchmarks/math_structured_answer.py | Frozen V2 baseline replay parser; not current extraction |
+| multi_dataset_diverse_rl/benchmarks/math_structured_binding.py | Fresh current MATH freeze and composition |
+| multi_dataset_diverse_rl/benchmarks/math_flexible_answer.py | Current gold-blind Hendrycks boxed extraction adapter |
+| multi_dataset_diverse_rl/benchmarks/math_structured_answer.py | Thin current extraction adapter; predecessor source is archived |
 | multi_dataset_diverse_rl/benchmarks/math_response_evidence.py | Private ordinary content with optional written steps |
 | multi_dataset_diverse_rl/governance/ | Authorization, source/startup freeze, accounting and registries |
 | multi_dataset_diverse_rl/benchmarks/math_formal_scope.py | Versioned formal resource bound and metadata-only memberships |
@@ -59,3 +58,11 @@ V2.11 current auxiliary group diagnosis and verified Reflection projection live 
 `search/group_diagnosis.py` and `search/reflector_view.py`.
 [Scientific contract](design/GROUP_DIAGNOSED_REFLECTION_V211.md); historical
 V2.10 source is recoverable at `d7de59818da609cff6b03c6ebb334fa79011aedd`.
+
+
+Current MATH correctness: `multi_dataset_diverse_rl/math_scoring/` is the sole
+`cevolve_hendrycks_math_v1` implementation. Benchmark and single-prompt adapters
+delegate to it. In current execution MathVerify is aggregation-only; retained offline
+data-census utilities are historical provenance analysis, not correctness judges. Retired scoring source and tests
+are inventoried in `docs/archive/scoring/pre_hendrycks_20261021/`; they cannot
+execute as current. Historical V1 reports describe the earlier opt-in audit.

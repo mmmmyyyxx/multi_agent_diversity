@@ -8,26 +8,26 @@ Registry provides node metadata; current_frontier.yaml provides readiness only.
 ```yaml
 schema_version: current_frontier_v1
 current_architecture: Unified Team Prompt Search
-method_identity: unified_team_prompt_search_v2_12_count_responsibility_v1
-current_method: unified_team_prompt_search_v2_12_count_responsibility_v1
+method_identity: unified_team_prompt_search_count_responsibility_hendrycks_v1
+current_method: unified_team_prompt_search_count_responsibility_hendrycks_v1
 current_experiment: NO_AUTHORIZED_REAL_EXPERIMENT
 formal_manifest: null
-current_implementation: Modular composition of unchanged count responsibility,
-  Group diagnosis and Parent Population.
+current_implementation: Modular composition of unchanged count responsibility, Group
+  diagnosis and Parent Population.
 current_solver_model: gpt-4o-mini
 current_solver_provider_profile: openlux
 current_optimizer_model: qwen3.7-flash
 current_optimizer_provider_profile: lwj
 current_provider_routing_policy: OPENLUX_SOLVER_LWJ_GROUP_OPTIMIZER_V2
-current_binding_identity: MATH_COUNT_RESPONSIBILITY_BINDING_V15
-current_cache_policy: COUNT_RESPONSIBILITY_MEMBER_LANE_CACHE_V15
+current_binding_identity: MATH_CEVOLVE_HENDRYCKS_BINDING_V1
+current_cache_policy: CEVOLVE_HENDRYCKS_MEMBER_LANE_CACHE_V1
 current_benchmark_suite:
 - math
 last_governance_milestone: modular_mechanisms_v212_preparation_v1
 real_execution_ready: false
 real_api_authorized: false
 ready_for_authorization: false
-current_preparation_status: IMPLEMENTED_OFFLINE_VERIFIED_UNFROZEN
+current_preparation_status: SCORING_MIGRATION_OFFLINE_VERIFICATION_UNFROZEN
 validation_access: not_authorized
 test_access: sealed
 current_execution_blocker: NEW_SOURCE_PHASE_FREEZE_AND_EXACT_AUTHORIZATION_REQUIRED
@@ -35,7 +35,7 @@ current_execution_blockers:
 - NEW_SOURCE_PHASE_FREEZE_AND_EXACT_AUTHORIZATION_REQUIRED
 current_runtime_builder: build_current_team_prompt_search
 current_execution_entrypoint: scripts/run_experiment.py
-current_runtime_composition: CURRENT_COUNT_RESPONSIBILITY_POPULATION_COMPOSITION_V15
+current_runtime_composition: CURRENT_COUNT_RESPONSIBILITY_HENDRYCKS_COMPOSITION_V1
 current_execution_binding: null
 current_layer1_backend: GROUP_DIAGNOSED_PARENT_POPULATION_SEARCH_V6
 current_memory_policy: POPULATION_SCOPED_EDIT_MEMORY_V5
@@ -43,7 +43,7 @@ current_pattern_policy: gradient_output_contract_feedback_partition_v10
 current_gradient_prompt_identity: STRUCTURED_SYSTEM_GRADIENT_PROMPT_V11
 current_initial_team_version: MATH_IDENTICAL_ARM_B_STRUCTURED_SEED_V3
 current_initial_team_path: experiments/initial_teams/math_arm_b_structured_seed_v3.json
-current_solver_interface: MATH_FLEXIBLE_ANSWER_SYSTEM_INTERFACE_V9
+current_solver_interface: MATH_CEVOLVE_HENDRYCKS_BOXED_INTERFACE_V1
 current_transition_policy: initial_competence_target_or_team_progress_v3
 current_configuration_arm: A4
 current_pattern_enabled: true
@@ -83,7 +83,7 @@ last_canary_attempt_id: a4_v25_arm_b_openlux_seed84_canary_attempt1
 last_pilot_attempt_id: a4_v25_arm_b_openlux_seed84_pilot_attempt1
 authorization_scopes_closed: true
 unresolved_reservations: 0
-parser_identity: MATH_FLEXIBLE_ANSWER_EXTRACTION_V3
+parser_identity: cevolve_hendrycks_math_v1/last_boxed
 baseline_b5_strict_review_compatible_with_current_source: false
 exact_dual_scope_user_authorization_received: false
 current_task_pilot_calls: 0
@@ -107,8 +107,8 @@ current_gradient_output_limits:
 current_optimization_evidence_policy: STRUCTURAL_CANDIDATE_POPULATION_EVIDENCE_POLICY_V15
 current_candidate_contract: STRUCTURAL_SINGLE_BLOCK_CANDIDATE_CONTRACT_V2
 current_candidate_policy_status: OFFLINE_IMPLEMENTATION_NEW_FREEZE_REQUIRED
-current_preparation_experiment: structural_candidate_policy_v2_20261015
-current_preparation_manifest: experiments/manifests/structural_candidate_contract_v2_preparation_v1.yaml
+current_preparation_experiment: cevolve_hendrycks_scoring_v1_preparation_20261021
+current_preparation_manifest: experiments/manifests/cevolve_hendrycks_scoring_v1_preparation.yaml
 last_gradient_limit_adoption_report: reports/gradient_diagnostic_limits_400_v2_preparation_20261011
 last_gradient_limit_adoption_real_api_calls: 0
 proposed_canary_token_ceiling: null
@@ -150,8 +150,8 @@ last_evolution_bottleneck_audit: reports/math_v27_seed86_evolution_bottleneck_au
 last_scoped_experience_preparation_report: reports/scoped_edit_experience_layer1_v28_preparation_20261012
 last_controlled_flow_preparation_report: reports/math_v28_seed87_controlled_flow_freeze_20261012
 last_controlled_flow_preparation_status: ABANDONED_BEFORE_FREEZE_ZERO_API
-current_preparation_report: reports/modular_mechanisms_v212_preparation_20261014
-current_preparation_verification: reports/modular_mechanisms_v212_preparation_20261014/verification.json
+current_preparation_report: reports/cevolve_hendrycks_scoring_migration_20261021
+current_preparation_verification: reports/cevolve_hendrycks_scoring_migration_20261021/conformance.json
 current_responsibility_policy:
   identity: count_responsibility_sum_4D_2N_C_R3_halfR4_v3
   classification: five_member_correctness_count_responsibility_v3
@@ -182,6 +182,8 @@ current_group_diagnosis_policy: ROOT_TEAM_GROUP_DIAGNOSIS_POLICY_V1
 current_reflector_view_policy: DIRECT_READABLE_REFLECTOR_VIEW_V3
 current_module_architecture: V212_MODULAR_MECHANISMS_ARCHITECTURE_V1
 current_module_interventions: SYNTHETIC_ONLY_NEW_REAL_PROTOCOL_REQUIRED
+math_scoring_contract: cevolve_hendrycks_math_v1
+math_scoring_sha256: c4a1166c3ab181bd7b4c92302584f20a40ba92e6bf7db2061d1f9c2fa6ac1b34
 ```
 
 ## Experiment and engineering DAG
@@ -557,6 +559,9 @@ flowchart TD
     n389["single_prompt_pattern_scheduling_v1<br/>ABLATION<br/>IMPLEMENTED_NOT_EXECUTED"]
     n390["single_prompt_pattern_canary_v1<br/>REAL_CANARY<br/>PREPARED_NOT_EXECUTED"]
     n391["single_prompt_pattern_scheduling_continuation_v2<br/>ABLATION<br/>PREPARED_NOT_EXECUTED"]
+    n392["single_prompt_full_error_test_resume_v3<br/>ABLATION<br/>PREPARED_NOT_EXECUTED"]
+    n393["cevolve_hendrycks_scoring_v1_preparation_20261021<br/>ZERO_API_AUDIT<br/>IMPLEMENTED_NOT_EXECUTED"]
+    n394["math_unified_scoring_v1_historical_audit_20261021<br/>ZERO_API_AUDIT<br/>IMPLEMENTED_NOT_EXECUTED"]
   end
   subgraph era5["V17_V18_MEMBER_AWARE"]
     n1["v17_formal_5arm_3seed<br/>FORMAL_EXPERIMENT<br/>COMPLETED"]
@@ -903,6 +908,8 @@ flowchart TD
   n370 -->|audit_of| n387
   n389 -->|derived_from| n391
   n391 -->|ablation_of| n0
+  n0 -->|derived_from| n392
+  n381 -->|audit_of| n393
 ```
 
 ## Archived branches and unresolved evidence
@@ -1102,3 +1109,4 @@ flowchart TD
 | a4_v23_only_pilot_v1 | UNIFIED_TEAM_PROMPT_SEARCH | INVALID | reports/a4_v23_only_pilot_execution_20261009/classifier.json |
 | a4_v25_arm_b_flexible_seed83_canary_v1 | UNIFIED_TEAM_PROMPT_SEARCH | INVALID | reports/a4_v25_arm_b_flexible_seed83_canary_v1_execution_20261010/classifier.json |
 | a4_v25_arm_b_recovery_seed84_canary_v1 | UNIFIED_TEAM_PROMPT_SEARCH | INVALID | reports/a4_v25_arm_b_recovery_seed84_dual_scope_execution_20261010/classifier.json |
+| math_unified_scoring_v1_historical_audit_20261021 | UNIFIED_TEAM_PROMPT_SEARCH | IMPLEMENTED_NOT_EXECUTED | Not established |

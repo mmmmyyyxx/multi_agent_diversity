@@ -120,7 +120,7 @@ def test_correct_items_never_enter_diagnosis(full):
     def respond(role,request):
         value=original(role,request)
         if role=='solver' and request['messages'][1]['content']==rows[0]['content']['problem']:
-            value['text']='Final answer: 0'
+            value['text']=r'\boxed{0}'
         return value
     t.for_role=respond;_,artifacts=run_full(full)
     diagnoses=artifacts['round_1_module']['audit']['complete_diagnosis']['structured_feedback']['diagnostics']

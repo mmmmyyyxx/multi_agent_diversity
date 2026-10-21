@@ -1,0 +1,202 @@
+{
+  "schema_version": "math_scoring_amendment_draft_v1",
+  "math_scoring_contract": "cevolve_hendrycks_math_v1",
+  "math_scoring_sha256": "c4a1166c3ab181bd7b4c92302584f20a40ba92e6bf7db2061d1f9c2fa6ac1b34",
+  "algorithm_config": {
+    "schema_version": "single_prompt_full_error_control_draft_v2",
+    "experiment_id": "single_prompt_full_error_control_v2",
+    "parent_manifest": "experiments/manifests/single_prompt_pattern_scheduling_continuation_v2.json",
+    "seed": 42,
+    "repeats_per_arm": 3,
+    "rounds": 20,
+    "arms": [
+      {
+        "arm_id": "A2",
+        "error_source": "all_wrong",
+        "module": "none",
+        "proposal_mode": "parallel"
+      }
+    ],
+    "runtime": {
+      "math_scoring_contract": "cevolve_hendrycks_math_v1",
+      "math_scoring_sha256": "c4a1166c3ab181bd7b4c92302584f20a40ba92e6bf7db2061d1f9c2fa6ac1b34",
+      "identity": "SAME_PARENT_TWO_ALL_ERRORS_PROPOSALS_CONTROL_KERNEL_V2",
+      "seeds": [
+        42
+      ],
+      "rounds": 20,
+      "error_batch_size": 3,
+      "optimizer_structural_draws": 4,
+      "optimizer_structural_retries": 3,
+      "acceptance": "validation_correct_count_strictly_greater_than_retained_profile",
+      "optimize_gate": false,
+      "final_selection": "last_validation_retained_prompt",
+      "validation_count": 100,
+      "validation_membership_seed": 42,
+      "solver_concurrency": 96,
+      "gradient_concurrency": 16,
+      "test_solver_concurrency": 96,
+      "repeats_per_arm": 3,
+      "provider_routing_policy": {
+        "identity": "OPENLUX_SOLVER_LWJ_OPTIMIZER_V1",
+        "routes": {
+          "solver": {
+            "provider_profile": "openlux",
+            "model": "gpt-4o-mini",
+            "api_key_env": "OPENLUX_API_KEY",
+            "base_url_env": "OPENLUX_BASE_URL"
+          },
+          "reflection": {
+            "provider_profile": "lwj",
+            "model": "qwen3.7-flash",
+            "api_key_env": "LWJ_DASHSCOPE_API_KEY",
+            "base_url_env": "LWJ_DASHSCOPE_BASE_URL"
+          },
+          "pattern_gradient": {
+            "provider_profile": "lwj",
+            "model": "qwen3.7-flash",
+            "api_key_env": "LWJ_DASHSCOPE_API_KEY",
+            "base_url_env": "LWJ_DASHSCOPE_BASE_URL"
+          },
+          "pattern_cluster": {
+            "provider_profile": "lwj",
+            "model": "qwen3.7-flash",
+            "api_key_env": "LWJ_DASHSCOPE_API_KEY",
+            "base_url_env": "LWJ_DASHSCOPE_BASE_URL"
+          }
+        },
+        "unknown_role": "REJECT",
+        "provider_fallback": false
+      },
+      "solver_decoding_policy": {
+        "identity": "OPENAI_SOLVER_DECODING_POLICY_V3",
+        "enable_thinking": false,
+        "temperature": 0.2,
+        "top_p": 0.8,
+        "presence_penalty": 0,
+        "frequency_penalty": 0,
+        "max_output_tokens": 3600
+      },
+      "optimizer_generation_policy": {
+        "identity": "OPTIMIZER_REFLECTION_GENERATION_POLICY_V3",
+        "model": "qwen3.7-flash",
+        "roles": [
+          "reflection",
+          "pattern"
+        ],
+        "enable_thinking": false,
+        "temperature": 0.7,
+        "max_completion_tokens": 1800,
+        "max_tokens": "NOT_SENT",
+        "output_token_scope": "reasoning_plus_answer",
+        "measurement_tolerance_tokens": 10,
+        "accounting_output_ceiling": 1810,
+        "truncation": "existing_operational_output_truncation",
+        "top_p": 0.8,
+        "top_k": 20,
+        "presence_penalty": 1.5,
+        "frequency_penalty": 0
+      },
+      "cluster_generation_policy": {
+        "identity": "PATTERN_CLUSTER_GENERATION_POLICY_V1",
+        "model": "qwen3.7-flash",
+        "roles": [
+          "pattern_cluster"
+        ],
+        "enable_thinking": false,
+        "temperature": 0.7,
+        "max_completion_tokens": 8192,
+        "max_tokens": "NOT_SENT",
+        "output_token_scope": "reasoning_plus_answer",
+        "measurement_tolerance_tokens": 10,
+        "accounting_output_ceiling": 8202,
+        "truncation": "existing_operational_output_truncation",
+        "top_p": 0.8,
+        "top_k": 20,
+        "presence_penalty": 1.5,
+        "frequency_penalty": 0
+      },
+      "trajectory_policy": {
+        "identity": "MATH_SCOPED_OPTIMIZER_OBSERVED_RESPONSE_POLICY_V9",
+        "profile_schema": "MATH_FLEXIBLE_SOLVER_PROFILE_V3",
+        "trajectory_schema": "MATH_FLEXIBLE_RESPONSE_EVIDENCE_V3",
+        "gradient_input_schema": "STRUCTURED_SYSTEM_GRADIENT_INPUT_V8",
+        "gradient_prompt_identity": "STRUCTURED_SYSTEM_GRADIENT_PROMPT_V11",
+        "optimizer_input_schema": "GROUP_DIAGNOSED_READABLE_REFLECTION_INPUT_V6",
+        "max_visible_solution_characters": 4096,
+        "observed_response": "complete_ordinary_content",
+        "truncation": "optional_solution_unicode_prefix_explicit_metadata",
+        "original_response_retention": "complete_private_resolved_prediction_and_attempts",
+        "source": "ordinary_assistant_content",
+        "adaptive_split": "optimize",
+        "visible_trajectory_required": false,
+        "final_only": "TRAJECTORY_UNAVAILABLE",
+        "hidden_reasoning_claim": false,
+        "memory_trajectory_writes": false
+      },
+      "provider_timeout_seconds": 120,
+      "solver_semantic_draws": 4,
+      "first_solver_capacity": 3600,
+      "length_recovery_capacity": 6144,
+      "optimizer_input_limit": 991808,
+      "optimizer_context_limit": 1000000,
+      "runtime_environment": "runs/math_v2_1/runtime",
+      "provider_sdk_version": "2.37.0",
+      "paired_cache": "solver_only_same_repeat_seed_split_complete_request_across_arms_and_rounds",
+      "non_solver_cache": "forbidden_including_paid_response_replay",
+      "optimizer_wire": "SINGLE_PROMPT_STRUCTURAL_OPTIMIZER_WIRE_V3",
+      "candidate_guard": "STRUCTURAL_SINGLE_BLOCK_CANDIDATE_CONTRACT_V2",
+      "no_op": "record_skip_evaluation_no_regeneration",
+      "memory": "module_explicit_not_implicit",
+      "provider_failure": "accounted_typed_network_retry_other_failure_abort",
+      "timeout_recovery": {
+        "identity": "ABLATION_ACCOUNTED_NETWORK_RECOVERY_V1",
+        "retry_errors": [
+          "APITimeoutError",
+          "APIConnectionError"
+        ],
+        "backoff_seconds": [
+          2,
+          4,
+          8,
+          16,
+          30,
+          60
+        ],
+        "physical_call_ceiling": null
+      },
+      "test": "separate_frozen_authorized_final_test300_after_all_cells_sealed",
+      "diagnosis_universe": "all_current_optimize_errors",
+      "pattern_representative_count": 3,
+      "pattern_support_sampling": "formal_seeded_task_type_round_robin",
+      "diagnosis_recovery": {
+        "identity": "ABLATION_DISCARDED_LENGTH_BOUNDED_RECOVERY_V1",
+        "discarded_finish_reasons": [
+          "length",
+          "max_tokens",
+          "max_output_tokens"
+        ],
+        "nonthinking": "discard_length_before_missing_witness_guard_never_accept_positive_thinking",
+        "gradient_draws_per_example": 3,
+        "cluster_draws_per_opportunity": 3,
+        "optimizer_draws_per_opportunity": 4,
+        "capacity_change": false,
+        "diagnostic_truncation_exhaustion": "skip_failed_gradient_item_cluster_successful_items_continue_optimizer",
+        "ordinary_no_pattern": "unchanged_raw_batch_B_fallback",
+        "genuine_control_integrity_or_unknown_failure": "abort_preserve_evidence",
+        "incomplete_teacher": "no_response_replay_carry_semantic_draw_counts"
+      },
+      "module_admission": "EXPLICIT_FORMAL_ALIGNMENT_REVIEW_V1",
+      "proposals_per_round": 2,
+      "proposal_evidence": "all_current_parent_errors_each_slot",
+      "proposal_dispatch": "all_generation_before_any_evaluation",
+      "proposal_selection": "maximum_validation_then_slot_strict_gain",
+      "local_grading_concurrency": 16
+    },
+    "preparation_only": true,
+    "real_api_authorized": false
+  },
+  "historical_execution_eligible": false,
+  "READY_TO_RUN": false,
+  "real_api_authorized": false
+}

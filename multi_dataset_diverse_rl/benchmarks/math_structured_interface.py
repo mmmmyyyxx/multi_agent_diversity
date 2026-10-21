@@ -24,7 +24,7 @@ def system_prompt_policy(team_version=None):
 
 
 def system_interface_contract(team_version=None):
-    return dict(identity=versions.MATH_SOLVER_INTERFACE_V9_VERSION,
+    return dict(identity=versions.MATH_HENDRYCKS_INTERFACE_VERSION,
         parser_identity=PARSER, system_prompt_policy=system_prompt_policy(team_version),
         answer_extraction_policy=POLICY, solver_max_output_tokens=3600, reflection_max_output_tokens=1800)
 
@@ -38,14 +38,14 @@ class MATHStructuredSystemBenchmark(MATHBenchmarkAdapterV2):
         from ..search.current_policy import require_current_contract
         from .math_response_evidence import frozen_trajectory_policy
         from .math_prediction_validity import frozen_prediction_policy
-        from .protocols import MATH_PROTOCOL_COUNT_V9
+        from .protocols import MATH_PROTOCOL_HENDRYCKS
         require_current_contract(contract)
         if contract.get('solver_output_interface') != system_interface_contract(contract.get('initial_team_version')):
             raise SearchContractError('MATH_STRUCTURED_INTERFACE_BINDING_MISMATCH')
         self._contract = contract
         # Metadata identity only; it is never sent as a Solver instruction.
-        self.output_contract = versions.MATH_SOLVER_INTERFACE_V9_VERSION
-        self.protocol = MATH_PROTOCOL_COUNT_V9
+        self.output_contract = versions.MATH_HENDRYCKS_INTERFACE_VERSION
+        self.protocol = MATH_PROTOCOL_HENDRYCKS
         self.solver_trajectory_policy = frozen_trajectory_policy(contract)
         self.prediction_validity_policy = frozen_prediction_policy(contract)
 

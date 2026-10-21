@@ -25,7 +25,6 @@ def formal_test_plan(root,reader):
     p=policy()
     if (formal['split_identity']!=reader.manifest_sha256
             or formal['solver_decoding_policy']!=p['solver_decoding_policy']
-            or formal['invalid_recovery_policy']!=structured_recovery_contract()
             or formal['models']['solver']!='gpt-4o-mini' or formal['models']['solver_thinking'] is not False
             or formal['solver_execution_policy']['first_output_tokens']!=p['first_solver_capacity']
             or formal['solver_execution_policy']['length_recovery_output_tokens']!=p['length_recovery_capacity']
@@ -33,7 +32,9 @@ def formal_test_plan(root,reader):
         raise SearchContractError('GATED_FORMAL_TEST_ALIGNMENT_MISMATCH')
     ids=[r['stable_example_id'] for r in reader.members if r['project_split']=='test']
     if len(ids)!=300:raise SearchContractError('GATED_TEST300_MEMBERSHIP_REQUIRED')
-    return dict(identity='GATED_AUTOMATIC_FINAL_TEST300_V1',formal_manifest=FORMAL_MANIFEST,
+    from ..math_scoring.prediction import cache_identity
+    return dict(**cache_identity(),identity='GATED_HENDRYCKS_FINAL_TEST300_V1',formal_manifest=FORMAL_MANIFEST,
+        historical_manifest_usage='membership_models_and_resource_provenance_only_not_scoring_or_authorization',
         formal_manifest_sha256=file_hash(root/FORMAL_MANIFEST),split_manifest_sha256=reader.manifest_sha256,
         sample_ids=ids,membership_sha256=digest(ids),count=300,roles=['solver'],
         selection='last_validation_retained_prompt_after_all_nine_twenty_opportunity_cells',

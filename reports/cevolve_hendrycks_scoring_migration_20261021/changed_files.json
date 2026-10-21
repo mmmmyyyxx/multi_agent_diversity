@@ -1,0 +1,708 @@
+{
+  "before_commit_head": "ad10b68077bebb4edc93a96e8c41e3104d646b19",
+  "identity": "AUTHORIZED_SCORING_PUBLICATION_FILES_V1",
+  "paths_included_in_task": [
+    ".gitattributes",
+    "README.md",
+    "configs/all_errors_hendrycks_v1.json",
+    "configs/cevolve_hendrycks_math_v1.json",
+    "configs/gradient_pattern_hendrycks_v1.json",
+    "configs/math_unified_scoring_v1.json",
+    "docs/REPOSITORY_MAP.md",
+    "docs/archive/scoring/pre_hendrycks_20261021/PLAN.md",
+    "docs/archive/scoring/pre_hendrycks_20261021/PROVENANCE_ADDENDUM.md",
+    "docs/archive/scoring/pre_hendrycks_20261021/additional_inventory.json",
+    "docs/archive/scoring/pre_hendrycks_20261021/additional_plan.md",
+    "docs/archive/scoring/pre_hendrycks_20261021/additional_source.zip",
+    "docs/archive/scoring/pre_hendrycks_20261021/additional_tombstone.json",
+    "docs/archive/scoring/pre_hendrycks_20261021/diagnostic_inventory.json",
+    "docs/archive/scoring/pre_hendrycks_20261021/diagnostic_plan.md",
+    "docs/archive/scoring/pre_hendrycks_20261021/diagnostic_source.zip",
+    "docs/archive/scoring/pre_hendrycks_20261021/diagnostic_tombstone.json",
+    "docs/archive/scoring/pre_hendrycks_20261021/historical_test_inventory.json",
+    "docs/archive/scoring/pre_hendrycks_20261021/historical_test_plan.md",
+    "docs/archive/scoring/pre_hendrycks_20261021/historical_test_tombstone.json",
+    "docs/archive/scoring/pre_hendrycks_20261021/historical_tests.zip",
+    "docs/archive/scoring/pre_hendrycks_20261021/inventory.json",
+    "docs/archive/scoring/pre_hendrycks_20261021/math_unified_scoring_v1.json",
+    "docs/archive/scoring/pre_hendrycks_20261021/retired_cli_inventory.json",
+    "docs/archive/scoring/pre_hendrycks_20261021/retired_cli_plan.md",
+    "docs/archive/scoring/pre_hendrycks_20261021/retired_cli_source.zip",
+    "docs/archive/scoring/pre_hendrycks_20261021/retired_cli_tombstone.json",
+    "docs/archive/scoring/pre_hendrycks_20261021/retired_paths.json",
+    "docs/archive/scoring/pre_hendrycks_20261021/source.zip",
+    "docs/archive/scoring/pre_hendrycks_20261021/tombstone.json",
+    "docs/design/CURRENT_SPEC.md",
+    "docs/design/MATH_SCIENTIFIC_CONTRACT.md",
+    "docs/design/SINGLE_PROMPT_FULL_ERROR_TEST_RESUME_V3.md",
+    "docs/experiments/LINEAGE.md",
+    "docs/failures/KNOWN_FAILURES.md",
+    "docs/failures/registry.yaml",
+    "docs/math_scoring_cevolve_hendrycks_v1.md",
+    "docs/math_unified_scoring_v1.md",
+    "experiments/ablations/pattern/default.json",
+    "experiments/current_frontier.yaml",
+    "experiments/lineage.yaml",
+    "experiments/manifests/cevolve_hendrycks_scoring_v1_preparation.yaml",
+    "experiments/manifests/single_prompt_full_error_test_resume_v3.json",
+    "experiments/registry.yaml",
+    "experiments/schema/experiment_manifest_v2.schema.json",
+    "multi_dataset_diverse_rl/benchmarks/math.py",
+    "multi_dataset_diverse_rl/benchmarks/math_certified_domain.py",
+    "multi_dataset_diverse_rl/benchmarks/math_certified_worker.py",
+    "multi_dataset_diverse_rl/benchmarks/math_domain_v2.py",
+    "multi_dataset_diverse_rl/benchmarks/math_flexible_answer.py",
+    "multi_dataset_diverse_rl/benchmarks/math_power_domain.py",
+    "multi_dataset_diverse_rl/benchmarks/math_power_worker.py",
+    "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+    "multi_dataset_diverse_rl/benchmarks/math_prediction_worker.py",
+    "multi_dataset_diverse_rl/benchmarks/math_response_evidence.py",
+    "multi_dataset_diverse_rl/benchmarks/math_structured_answer.py",
+    "multi_dataset_diverse_rl/benchmarks/math_structured_binding.py",
+    "multi_dataset_diverse_rl/benchmarks/math_structured_interface.py",
+    "multi_dataset_diverse_rl/benchmarks/math_worker.py",
+    "multi_dataset_diverse_rl/benchmarks/protocols.py",
+    "multi_dataset_diverse_rl/current_contract.py",
+    "multi_dataset_diverse_rl/diagnostics/math_b5_execution.py",
+    "multi_dataset_diverse_rl/diagnostics/math_baseline_calibration.py",
+    "multi_dataset_diverse_rl/diagnostics/math_baseline_followup.py",
+    "multi_dataset_diverse_rl/diagnostics/math_calibration_execution.py",
+    "multi_dataset_diverse_rl/governance/frozen_documents.py",
+    "multi_dataset_diverse_rl/governance/repository.py",
+    "multi_dataset_diverse_rl/governance/source_identity.py",
+    "multi_dataset_diverse_rl/math_scoring/HENDRYCKS_LICENSE.txt",
+    "multi_dataset_diverse_rl/math_scoring/__init__.py",
+    "multi_dataset_diverse_rl/math_scoring/_hendrycks.py",
+    "multi_dataset_diverse_rl/math_scoring/audit.py",
+    "multi_dataset_diverse_rl/math_scoring/contract.py",
+    "multi_dataset_diverse_rl/math_scoring/prediction.py",
+    "multi_dataset_diverse_rl/math_scoring/score.py",
+    "multi_dataset_diverse_rl/math_scoring/upstream.json",
+    "multi_dataset_diverse_rl/persistence/exact_output_cache.py",
+    "multi_dataset_diverse_rl/research/ablations/ab_test_continuation.py",
+    "multi_dataset_diverse_rl/research/ablations/config.py",
+    "multi_dataset_diverse_rl/research/ablations/full_error_test_resume.py",
+    "multi_dataset_diverse_rl/research/ablations/proposal_governance.py",
+    "multi_dataset_diverse_rl/research/ablations/runtime.py",
+    "multi_dataset_diverse_rl/research/ablations/synthetic.py",
+    "multi_dataset_diverse_rl/research/ablations/test_certified.py",
+    "multi_dataset_diverse_rl/research/gated_prompt_largest_governance.py",
+    "multi_dataset_diverse_rl/research/gated_prompt_test.py",
+    "multi_dataset_diverse_rl/research/single_prompt_governance.py",
+    "multi_dataset_diverse_rl/research/single_prompt_policy.py",
+    "multi_dataset_diverse_rl/research/single_prompt_runtime.py",
+    "multi_dataset_diverse_rl/search/current_policy.py",
+    "multi_dataset_diverse_rl/search/optimization_evidence.py",
+    "multi_dataset_diverse_rl/versions.py",
+    "reports/INDEX.md",
+    "reports/cevolve_hendrycks_scoring_migration_20261021/README.md",
+    "reports/cevolve_hendrycks_scoring_migration_20261021/aggregation_scoring_compatibility.md",
+    "reports/cevolve_hendrycks_scoring_migration_20261021/changed_files.json",
+    "reports/cevolve_hendrycks_scoring_migration_20261021/conformance.json",
+    "reports/cevolve_hendrycks_scoring_migration_20261021/publication_metadata.json",
+    "reports/cevolve_hendrycks_scoring_migration_20261021/summary.json",
+    "reports/cevolve_hendrycks_scoring_migration_20261021/verification.json",
+    "reports/full_error_test_repair_preparation_20261021/README.md",
+    "reports/index.json",
+    "reports/math_unified_scoring_v1_20261021/README.md",
+    "reports/math_unified_scoring_v1_20261021/artifact_manifest.json",
+    "reports/math_unified_scoring_v1_20261021/case_index.jsonl",
+    "reports/math_unified_scoring_v1_20261021/final_checks.json",
+    "reports/math_unified_scoring_v1_20261021/manual_review.json",
+    "reports/math_unified_scoring_v1_20261021/old_evidence_groups.json",
+    "reports/math_unified_scoring_v1_20261021/slow_regression.json",
+    "reports/math_unified_scoring_v1_20261021/summary.json",
+    "reports/math_unified_scoring_v1_20261021/terminal_bridge_index.json",
+    "reports/math_unified_scoring_v1_20261021/terminal_comparison.csv",
+    "reports/math_unified_scoring_v1_20261021/terminal_pairwise.json",
+    "reports/math_unified_scoring_v1_20261021/verification.json",
+    "scripts/ablations/prepare.py",
+    "scripts/audit_math_unified_v1.py",
+    "scripts/run_experiment.py",
+    "tests/current/modular_hendrycks_scoring_witness_v1.json",
+    "tests/current/population_support.py",
+    "tests/current/test_ablation_full_diagnosis.py",
+    "tests/current/test_cevolve_hendrycks_scoring.py",
+    "tests/current/test_current_math_domains.py",
+    "tests/current/test_formal_execution_scope.py",
+    "tests/current/test_full_error_test_resume.py",
+    "tests/current/test_gated_prompt_execution.py",
+    "tests/current/test_gated_prompt_largest.py",
+    "tests/current/test_gated_prompt_study.py",
+    "tests/current/test_gradient_diagnostic_limits_400.py",
+    "tests/current/test_group_diagnosed_reflection.py",
+    "tests/current/test_hendrycks_integration.py",
+    "tests/current/test_modular_default_witness.py",
+    "tests/current/test_modular_mechanisms.py",
+    "tests/current/test_parallel_compact.py",
+    "tests/current/test_parallel_solver_execution.py",
+    "tests/current/test_pattern_canary.py",
+    "tests/current/test_pattern_parallel_proposals.py",
+    "tests/current/test_provider_role_routing.py",
+    "tests/current/test_single_prompt_continuation.py",
+    "tests/current/test_single_prompt_study.py",
+    "tests/current/test_structured_optimization_evidence.py",
+    "tests/current/test_structured_production_entrypoint.py",
+    "tests/current/test_structured_system_contract.py",
+    "tests/fixtures/hendrycks_oracle.json",
+    "tests/suite_classification.json",
+    "tests/test_benchmark_scientific_contracts.py"
+  ],
+  "repository": "multi",
+  "self_reference_policy": "Migration report files listed without recursive content hashes; other hashes use staged blobs.",
+  "source_and_existing_evidence_blobs": [
+    {
+      "path": ".gitattributes",
+      "staged_blob_sha256": "0c0144c3a557bb3c5e110e3fe85240b4dffe4398aee9633a675d6ea3c4d3a654"
+    },
+    {
+      "path": "README.md",
+      "staged_blob_sha256": "d2e28be3d492fdb7c2853e100db3251744774734e866a4fd34555223f0e1b71e"
+    },
+    {
+      "path": "configs/all_errors_hendrycks_v1.json",
+      "staged_blob_sha256": "966b6e929656f0da9a0813915a257ee9cc11ed280cfe6669b651c5c001fb6d11"
+    },
+    {
+      "path": "configs/cevolve_hendrycks_math_v1.json",
+      "staged_blob_sha256": "8282b7a122636f861112d322c3854d6c7c7bf145923d2e768213bef94283e5b1"
+    },
+    {
+      "path": "configs/gradient_pattern_hendrycks_v1.json",
+      "staged_blob_sha256": "3133ced72928c374264085a9ef8c4c9e7afac4a98748a47cac3342f60ec7ac80"
+    },
+    {
+      "path": "configs/math_unified_scoring_v1.json",
+      "staged_blob_sha256": "492fb29d1515dea1273b2e064962a4957bfb29f39511c406e1913b23dc78dd61"
+    },
+    {
+      "path": "docs/REPOSITORY_MAP.md",
+      "staged_blob_sha256": "c41cbf1481418f53f8213993ec2a23e04813d044dc92baf2ab315fb2704b886d"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/PLAN.md",
+      "staged_blob_sha256": "6ac4267f5c4d1452e18b7061ff654fbc1fb9f064f3b1be10098622d86d65583f"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/PROVENANCE_ADDENDUM.md",
+      "staged_blob_sha256": "226eb8aaf714dc0c659724889e0fa0ea9c56efac7cfd35efa070fa0fef437a23"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/additional_inventory.json",
+      "staged_blob_sha256": "62092f5370cc79d61a81b9beeafaa9939be5715ef5d57f589dc4b771907d023f"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/additional_plan.md",
+      "staged_blob_sha256": "a57f64681164e7cebf412485c4e08c08aa879308cda2e8638fe071528ec926bf"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/additional_source.zip",
+      "staged_blob_sha256": "2fd704a0bd86f514c9dfb60f4a3432d49e63af85e3a8e7f737c10568a14f6cf8"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/additional_tombstone.json",
+      "staged_blob_sha256": "4b80ba88fa620b87d730ac8ad35dcc1e49f2ce9d686d12e6d0afe6f595d67439"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/diagnostic_inventory.json",
+      "staged_blob_sha256": "e034d58a7c9d95c3a8b2809592b0dfade4d40d4389d24c6d5dc3398a0622585f"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/diagnostic_plan.md",
+      "staged_blob_sha256": "05a2b8f262efe8fb0501839f312dfe6e19c45095a2a0e694552174725947e474"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/diagnostic_source.zip",
+      "staged_blob_sha256": "d9cf69d65ed703c47322db1da8de80d4e69a26648775cec1742fc60be6a119ea"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/diagnostic_tombstone.json",
+      "staged_blob_sha256": "0fb051b636e8e982465736b9dcc191216d734b38f89cfa067dc7e7ef0b6e2ffe"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/historical_test_inventory.json",
+      "staged_blob_sha256": "8bca64b1eca9fdd42c6eb815cf05bc2c2df8b705fc66bbc5670392892ba8daf7"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/historical_test_plan.md",
+      "staged_blob_sha256": "b78241daae40791ec85b25ea4a27cf9791d349179ad59db52317b4ce83841e4c"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/historical_test_tombstone.json",
+      "staged_blob_sha256": "80d3fe9a4b4e19c6a9222c285499495044f2dc6c5c1a306dd0d15671815a7382"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/historical_tests.zip",
+      "staged_blob_sha256": "7c4895d4e56c509f6f6aa27cce86cceebe47d5a1e64b7f9fba045156efa3a282"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/inventory.json",
+      "staged_blob_sha256": "9e191c74ed8f3a3fb36f5b0ab8cdc9d49c61e210159c966026149db4567b4c6d"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/math_unified_scoring_v1.json",
+      "staged_blob_sha256": "229e446104d38bce1f2fd02d291a0e392d54e3c4dd8864f9eba74bd10b7c3c1b"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/retired_cli_inventory.json",
+      "staged_blob_sha256": "3b2db68aafbdeae749a86038921b5530811618169dbb24456105cae0d8cf671a"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/retired_cli_plan.md",
+      "staged_blob_sha256": "752e3ca20d5d5075e23d423366252c8d805c1e964bec7b124c20d5b27e580920"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/retired_cli_source.zip",
+      "staged_blob_sha256": "8f9ef0ad6da2b7fef2d8b96908c2d025bc3b1960c9381a5cdca1d36e3771d791"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/retired_cli_tombstone.json",
+      "staged_blob_sha256": "86659e70f80e5f8bde3fff3373067f0d9a86f8c5338ec7be49479a7f07d37ff9"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/retired_paths.json",
+      "staged_blob_sha256": "42e99d41f07f52874436b96552c7a294d424b4f29d05f1cd8971bb8035996a08"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/source.zip",
+      "staged_blob_sha256": "017c898ce8cb228c5fd5d1a564b536198ae90274ffda79af952689c9c4903109"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/tombstone.json",
+      "staged_blob_sha256": "4fcf5b1dcf211aef3ef5c4ba07c2cdde2438b9424d8909dc04efcb74393d4e89"
+    },
+    {
+      "path": "docs/design/CURRENT_SPEC.md",
+      "staged_blob_sha256": "1a7bde85772029e722488bf2dd74dfcccd9777eb3eb3046c9fdc61f3bfb1e97d"
+    },
+    {
+      "path": "docs/design/MATH_SCIENTIFIC_CONTRACT.md",
+      "staged_blob_sha256": "bb4b5909c94b4b78c4d5879d660d8c72ca90bda9b68f58092b32be14a7036fd2"
+    },
+    {
+      "path": "docs/design/SINGLE_PROMPT_FULL_ERROR_TEST_RESUME_V3.md",
+      "staged_blob_sha256": "7103c287fb42c8cb0099921c5f572b39d3e15e368e8230ac802b69e04c3aed76"
+    },
+    {
+      "path": "docs/experiments/LINEAGE.md",
+      "staged_blob_sha256": "2ebcc523edc70f4d3cbf327b8010403112ca7e0f2093d383e402e0acbe5fa5bc"
+    },
+    {
+      "path": "docs/failures/KNOWN_FAILURES.md",
+      "staged_blob_sha256": "e32877e18db9d91ea86348b9c0418e8965e966d79949a768d1bee22fb010fc30"
+    },
+    {
+      "path": "docs/failures/registry.yaml",
+      "staged_blob_sha256": "5373516e97ff3f6ef98229403e7d12aaf4114900dbb5addfc852992557e87397"
+    },
+    {
+      "path": "docs/math_scoring_cevolve_hendrycks_v1.md",
+      "staged_blob_sha256": "8d4634d0a624b9a34f1c507683483cfac0ccab6e3afdc78bc6996fc7eeea2486"
+    },
+    {
+      "path": "docs/math_unified_scoring_v1.md",
+      "staged_blob_sha256": "c542647db9b29f8aa2e5241cdfec5772b97528cd2e51d41c873aa008c61f2983"
+    },
+    {
+      "path": "experiments/ablations/pattern/default.json",
+      "staged_blob_sha256": "702fada8402fbbc4f571fba88d0034215f9b18b2caf1727f0d36449bf38f0ace"
+    },
+    {
+      "path": "experiments/current_frontier.yaml",
+      "staged_blob_sha256": "b654bb14128b7906de8ff47740f772ed43959d3f9b7b57320ed244331547a1af"
+    },
+    {
+      "path": "experiments/lineage.yaml",
+      "staged_blob_sha256": "78822e404d41637d1c6dfb4a1ff7782d1b454002d7bddee4a26956d354e47715"
+    },
+    {
+      "path": "experiments/manifests/cevolve_hendrycks_scoring_v1_preparation.yaml",
+      "staged_blob_sha256": "828bbc1f8c9486579a9376993e3ef2d0757afb2aae5428d51ad27230a6a3b9c9"
+    },
+    {
+      "path": "experiments/manifests/single_prompt_full_error_test_resume_v3.json",
+      "staged_blob_sha256": "cc627254bd216087c22d0c0eb2a9e47cc29ee7af6d34ca0312725b48bce03cad"
+    },
+    {
+      "path": "experiments/registry.yaml",
+      "staged_blob_sha256": "6a98b96287e5cb410d2f96b8074e9a8052c1d25ff0ba00667dbf8fc141bb7b59"
+    },
+    {
+      "path": "experiments/schema/experiment_manifest_v2.schema.json",
+      "staged_blob_sha256": "c49ea8f997c651b6342d194540a3f3a77fca7761bacaef0c2eb832aebd149f98"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/math.py",
+      "staged_blob_sha256": "3f828e27a8829ddacf311ee915d488a1e84836d432d5cc7d9e5b7b56487d1557"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/math_certified_domain.py",
+      "staged_blob_sha256": "6ea311fdf626af963734b0da3c2a5f509b8a013785cba860b42119374a58c81e"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/math_certified_worker.py",
+      "staged_blob_sha256": "dc99618a301a53b76e94575f1e89222564885aaabebde801ca0968cde83d147b"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/math_domain_v2.py",
+      "staged_blob_sha256": "4c1a61d343ce8405efed1f191bb08cafc75605abc0ccde96363106955339a3dc"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/math_flexible_answer.py",
+      "staged_blob_sha256": "d3a5275421e1a94dde31d895b041942fe63b9800ea914b762c3b7b0e03b298a5"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/math_power_domain.py",
+      "staged_blob_sha256": "16c22339ec9a24f96230e044853075bf882729bc5b2286a693847f2a98a62ea8"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/math_power_worker.py",
+      "staged_blob_sha256": "32d76e1869e2a47b3ebe6605d3ec4cb1390ed419d48cde3173f0b03a5aec2121"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+      "staged_blob_sha256": "b734a2422a0f590ddd9f30def912a81f77651f6166398ee0dd1756f0411cc716"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/math_prediction_worker.py",
+      "staged_blob_sha256": "ce2a406d58640000b512a384d52819b4ce21a673a88c0f6007a0e320698c816b"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/math_response_evidence.py",
+      "staged_blob_sha256": "76589ef6705e8646f5fd7ceee2ec7587ac1f2fbfa05d42ae4d6bed55e6e0e856"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/math_structured_answer.py",
+      "staged_blob_sha256": "8ecec54eb1f56964acc76da8430ac1c3ab596264f1de6479c3fa70cdab714213"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/math_structured_binding.py",
+      "staged_blob_sha256": "2a7671702f8afdd58f17fe70f895516623a047714c2b94af2028774d7755a919"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/math_structured_interface.py",
+      "staged_blob_sha256": "4fca303ccfb4d25f67400476bffe14d4883346ae3cd73d7cf2b832fb29df6d6e"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/math_worker.py",
+      "staged_blob_sha256": "f0e73e71e005ba8760999d1c96229ac804ddd57b790c10a2131413e39564aa2d"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/benchmarks/protocols.py",
+      "staged_blob_sha256": "15e5d17ef47f32bc5eff74c96b458807de00fb0cb440ed2d452b0b73028d54d6"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/current_contract.py",
+      "staged_blob_sha256": "b03d2e1243ace4b90c99dc9669f29e070c6538b1c196f1b3d4363afb7205364a"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/diagnostics/math_b5_execution.py",
+      "staged_blob_sha256": "47ef8174dd8186d70f0378381e22c46b08a52c9eb13257d326706bf1f8a95f81"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/diagnostics/math_baseline_calibration.py",
+      "staged_blob_sha256": "9bcdf7624c73d1961604e0047cc10c49c45d4f05f902636c9bf4fea809a85d56"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/diagnostics/math_baseline_followup.py",
+      "staged_blob_sha256": "6761568462da0639604b1a0820f398bfd711e9ff1eccc41059a220106c311f7e"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/diagnostics/math_calibration_execution.py",
+      "staged_blob_sha256": "462749ae465d4dcb1455f80fe254ec71237b4871bfb7d21cc12565de5a1be39c"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/frozen_documents.py",
+      "staged_blob_sha256": "f032966b4336ed34298a78f24931cd5651f28e07260e756f550c37f39503998a"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/repository.py",
+      "staged_blob_sha256": "2fccc537c7c2a5ed3dad8c3ffec5bcedb8c21eca3753a67def84c14f28ffeaf0"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/source_identity.py",
+      "staged_blob_sha256": "d14707eee3a56b3b019490ca809fa9120065884c2611f222e6c6d7ced2712a48"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/math_scoring/HENDRYCKS_LICENSE.txt",
+      "staged_blob_sha256": "8f6401fb0b1fbfcac17aac8d61e4e1b0d2de9aa190d8aa655fedc5fd783b2ace"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/math_scoring/__init__.py",
+      "staged_blob_sha256": "02f7aa26014b4b30c15bf8ca07cf92fde8c19deb03a466d279d0bba573b540fc"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/math_scoring/_hendrycks.py",
+      "staged_blob_sha256": "9e85c501891e867db4eb27e6b6785cd27ce4f705724959a76e4097133c8aa0a6"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/math_scoring/audit.py",
+      "staged_blob_sha256": "f80ffbe5f68198af2e5f3977bf962c9272f194050c789169b9ff6664ea23a237"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/math_scoring/contract.py",
+      "staged_blob_sha256": "b5613715dd9ab5cc6ec0a37c3f4ff6c7c917a2c3166402a3ea4eebf597ae05a2"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/math_scoring/prediction.py",
+      "staged_blob_sha256": "0698c482d0c4fc2359adcd05bd01302e744b949ace05202df8d7465ced2ddb4d"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/math_scoring/score.py",
+      "staged_blob_sha256": "224903569eb748e06e12c047265b44ecc3731bd6c5a26e65002eb1025ee98162"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/math_scoring/upstream.json",
+      "staged_blob_sha256": "d7f6a3b0750869cc260e3fb06c80da7af78c778997621829a98a8ac524e6b274"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/persistence/exact_output_cache.py",
+      "staged_blob_sha256": "a0ada45bf18fb4172167fe9455419f50c24cbfb0cea36be1949c10626f7cf238"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/research/ablations/ab_test_continuation.py",
+      "staged_blob_sha256": "85aa4ecb4a6348704a1c5b36688bb308567409c65bb582c03a276378d4adc43e"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/research/ablations/config.py",
+      "staged_blob_sha256": "c2fabc9e10d2b20d1b37bca1f97035ce3fce477500b4c3682b8746a01c597d1a"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/research/ablations/full_error_test_resume.py",
+      "staged_blob_sha256": "1852434460652743f094c331ca9c3b04a33bf10293d0015cd75ad4e7011ee52c"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/research/ablations/proposal_governance.py",
+      "staged_blob_sha256": "75458976b62f27a227026bd1f802de79e3f16756f3d0ed0cb5282b61aebc1462"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/research/ablations/runtime.py",
+      "staged_blob_sha256": "d243744aec25c91b001d32eebe36f2d8da82e4b27a59d5af0551f1655d79667d"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/research/ablations/synthetic.py",
+      "staged_blob_sha256": "7e85c9e975899e915bce7ad09e14fa43d345b1c88e86fdb99276955c81dfb13b"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/research/ablations/test_certified.py",
+      "staged_blob_sha256": "08e841aaa714f202a04849b17b96a94977306bd8a246848af740afe5748d9a84"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/research/gated_prompt_largest_governance.py",
+      "staged_blob_sha256": "012a2d2ccf5174ad5455bc06a9e76eeb79f626117a88d347e6ba8fae813a3162"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/research/gated_prompt_test.py",
+      "staged_blob_sha256": "7d867c90472cece82c344ea403c720e03c4d544938941dc0eb855b383ce1d172"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/research/single_prompt_governance.py",
+      "staged_blob_sha256": "5c52a594374b7923b1a03345f58a263da8de138a66555f545f7374f967b483ab"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/research/single_prompt_policy.py",
+      "staged_blob_sha256": "2b8e243812a3d1e67305f7dbf3df638542f39f72c942333e85b83bce37b0e762"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/research/single_prompt_runtime.py",
+      "staged_blob_sha256": "e5af15e46fd42e032524e5c3f062643df49a7a182f04c922949626d1a2dabfe9"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/current_policy.py",
+      "staged_blob_sha256": "c39fdd1a239e6d183923650b28f93794fed58b496efa0fe1dd7450b4eea4b3e0"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/search/optimization_evidence.py",
+      "staged_blob_sha256": "136be3ab4b7a5418bb99c8cf693eac156b02623d807305efeede4c271695e5a8"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/versions.py",
+      "staged_blob_sha256": "20573225ffd3fc96487080cc9f2816037c4795fb1526dab93703fbe47abd833f"
+    },
+    {
+      "path": "reports/INDEX.md",
+      "staged_blob_sha256": "e8c2f43598784c70c701af0becce500de00fad9be8539015c633aa375af5d89d"
+    },
+    {
+      "path": "reports/full_error_test_repair_preparation_20261021/README.md",
+      "staged_blob_sha256": "b53c670f5404869271dd23efe2b7032883454c0194b89483ee09772f7d3be96c"
+    },
+    {
+      "path": "reports/index.json",
+      "staged_blob_sha256": "f405ed1f40794bdff1c424de95184cd83c0367c7eb51da91fe5a3f75dd92197d"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/README.md",
+      "staged_blob_sha256": "40cede52b82f84c0e2e03c7adc40855051f272b8e70e8479d850e6583a042695"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/artifact_manifest.json",
+      "staged_blob_sha256": "4fef028c09ce699ef25c3b7f130682ff705c6a0ed9816b8a5178c53e7f206ec2"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/case_index.jsonl",
+      "staged_blob_sha256": "14183d865ffa9002106a1f76044c2e336994ef0cf9fcff1bcde7573c1a0326d0"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/final_checks.json",
+      "staged_blob_sha256": "274eb918e7014c56b9cd1a5892a79e288109d3c2e3d23a15a460e89f9fd90657"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/manual_review.json",
+      "staged_blob_sha256": "1dce3d715270784c2b2f4c1f312063fe037ccb8284303f9ff6d28e192553ebde"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/old_evidence_groups.json",
+      "staged_blob_sha256": "de4c5e0d6fd762ad90cb327806f63ba55184edf0e57a1d5321c109eea083a226"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/slow_regression.json",
+      "staged_blob_sha256": "54fe9c3bfd8438d6fa94cc914dd1f11602290a5fe1a280950fdceb43ab48691d"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/summary.json",
+      "staged_blob_sha256": "fefd759ed5cd2c9cc35052ab20805182348f7186da1a6e9cc68a635b664f8ace"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/terminal_bridge_index.json",
+      "staged_blob_sha256": "5467b4adf64c26f7e92534c09e8677861e0693965cdc9cef03fc68bcce36af76"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/terminal_comparison.csv",
+      "staged_blob_sha256": "479847abbd2df04a6652ad26cfc553858b99cd21722275b183e04fd4d620435b"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/terminal_pairwise.json",
+      "staged_blob_sha256": "2727416c39441b0e6fa6bd70e142be0ebdec972a932cf931f7644316069317ea"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/verification.json",
+      "staged_blob_sha256": "b1fa4f4c577f523aa097ba05858c39ba46e6d50c2db558f799693701f0b73f6e"
+    },
+    {
+      "path": "scripts/ablations/prepare.py",
+      "staged_blob_sha256": "74dd4b3034515c385d27b872f99c8509eecb7bf710332c2f0b4a2fa594e9c7c0"
+    },
+    {
+      "path": "scripts/audit_math_unified_v1.py",
+      "staged_blob_sha256": "b75815989a4d408b49ba5f3e74ee58de085f6119e0521eea6d07762900db7890"
+    },
+    {
+      "path": "scripts/run_experiment.py",
+      "staged_blob_sha256": "68769b52adf6e8f48e20a4aa3a6d0bb4bebbeb5bd30f572285b5291cae73ddc4"
+    },
+    {
+      "path": "tests/current/modular_hendrycks_scoring_witness_v1.json",
+      "staged_blob_sha256": "400d46e1edae6ecf0c74075efa91feb67efdb7883ac8ca4f5edab645492d7206"
+    },
+    {
+      "path": "tests/current/population_support.py",
+      "staged_blob_sha256": "1e41b00a6294fe1b4c2bd3eb152d2048b674f1e0560c3f7d494bdeacfd3f3c24"
+    },
+    {
+      "path": "tests/current/test_ablation_full_diagnosis.py",
+      "staged_blob_sha256": "426b3cc077d046670502e48b2ca8a197f5bd2506c54eadcf2d258a5fc6952431"
+    },
+    {
+      "path": "tests/current/test_cevolve_hendrycks_scoring.py",
+      "staged_blob_sha256": "3e53d17237d3222b08cbe3ac5308958979706f202321d4dd92531212df79ab69"
+    },
+    {
+      "path": "tests/current/test_current_math_domains.py",
+      "staged_blob_sha256": "0b14eb8009983566386b9cfe6714e25a88ed67c4f6424939e3c10f3d5e317bde"
+    },
+    {
+      "path": "tests/current/test_formal_execution_scope.py",
+      "staged_blob_sha256": "b8f60480000962bc42bb30d5f493dbf7f2549974eaa16cd6bdc4d562234b969a"
+    },
+    {
+      "path": "tests/current/test_full_error_test_resume.py",
+      "staged_blob_sha256": "b2c8cf2a2ecaf6cba795308771633c294e4a3d7e167b95db9a6edab5a289b4e9"
+    },
+    {
+      "path": "tests/current/test_gated_prompt_execution.py",
+      "staged_blob_sha256": "3449c7a9095a591522014726b074207b69255533a75e9ce6f34612b97c467104"
+    },
+    {
+      "path": "tests/current/test_gated_prompt_largest.py",
+      "staged_blob_sha256": "bc059a96583c8418e4dea8edc60a0d14f94c9349d4100801327ba779c8a0ce7e"
+    },
+    {
+      "path": "tests/current/test_gated_prompt_study.py",
+      "staged_blob_sha256": "0be632fb0ff4b2bf1aeed7ef338bbacffd8fbf40cdea35d02e1d4c056a70c9ea"
+    },
+    {
+      "path": "tests/current/test_gradient_diagnostic_limits_400.py",
+      "staged_blob_sha256": "32f2d2a3d27f17ad35f4c607acef7e291bbc92c41ad06dbada1d39333cb4b1ff"
+    },
+    {
+      "path": "tests/current/test_group_diagnosed_reflection.py",
+      "staged_blob_sha256": "18a5574dfdb4dfcbce27100d9fcd05dd1b890988508ea89058ede1efa15cb3d7"
+    },
+    {
+      "path": "tests/current/test_hendrycks_integration.py",
+      "staged_blob_sha256": "dfdedd1351000382e9af114dfebbd99988d8b04851812109e8e68b1427c50766"
+    },
+    {
+      "path": "tests/current/test_modular_default_witness.py",
+      "staged_blob_sha256": "3df4c04dcbbd400e732088396d7f86bc27bb6ed77ed49994dca6be50453a091e"
+    },
+    {
+      "path": "tests/current/test_modular_mechanisms.py",
+      "staged_blob_sha256": "c6c04755b8afe096e1775fc0ad9cb25429f46f47f9867c831520003fd4e61751"
+    },
+    {
+      "path": "tests/current/test_parallel_compact.py",
+      "staged_blob_sha256": "c5ad43e91fbbd02e4d891956548596218b782292ecf9270bdcc242800ecd6f81"
+    },
+    {
+      "path": "tests/current/test_parallel_solver_execution.py",
+      "staged_blob_sha256": "02c8cb5bd28d09fca706c8e52e5fd8f657e0b300d903fe6efb4fe176e291fb09"
+    },
+    {
+      "path": "tests/current/test_pattern_canary.py",
+      "staged_blob_sha256": "a15a5408d4c5317f41562412706207c2a274b5e16da6c952fa79031a66262a5f"
+    },
+    {
+      "path": "tests/current/test_pattern_parallel_proposals.py",
+      "staged_blob_sha256": "4b68bda63fdc703ad73b5ff4f1904af0c1b7362913bcd996267f3df355ef4b3c"
+    },
+    {
+      "path": "tests/current/test_provider_role_routing.py",
+      "staged_blob_sha256": "d86f07d2449ef5ed8046e1bb7ede1611b1aefd8de18446c96883dc4193b701d6"
+    },
+    {
+      "path": "tests/current/test_single_prompt_continuation.py",
+      "staged_blob_sha256": "863e5d8c8c59edcb77cdbc4fa38e2db5a36a16069d3d17e81c91b27fe305a8d1"
+    },
+    {
+      "path": "tests/current/test_single_prompt_study.py",
+      "staged_blob_sha256": "c5358bfc226c0ca85b2e7ccc50038cf0cf04c1dd4a212922568ea1f67b5eada5"
+    },
+    {
+      "path": "tests/current/test_structured_optimization_evidence.py",
+      "staged_blob_sha256": "907596287c6697d0dc1a82894bc52b20f2e6c91ac0112c2b8e500ccf05fe4ac3"
+    },
+    {
+      "path": "tests/current/test_structured_production_entrypoint.py",
+      "staged_blob_sha256": "34393dc2677c35b3412bdd50dda586fa36f2e57892443996d8c92ed4c4701988"
+    },
+    {
+      "path": "tests/current/test_structured_system_contract.py",
+      "staged_blob_sha256": "895b7dad6a6bf8054f0801b1e01083c279ebf4801f83019fe7beb63e42d797bb"
+    },
+    {
+      "path": "tests/fixtures/hendrycks_oracle.json",
+      "staged_blob_sha256": "3ecc018f0f6fce738ed953d6dc330f386f5612524d19278a78238ccaecaa4c89"
+    },
+    {
+      "path": "tests/suite_classification.json",
+      "staged_blob_sha256": "8a33cad1bb74f0898be0ee9092c2ead604ea92f909d30ee53c392ed695f22bbb"
+    },
+    {
+      "path": "tests/test_benchmark_scientific_contracts.py",
+      "staged_blob_sha256": "fdfe1a42f42d783238b72fb282bf0c5a9754ea947fc5dc1f22eedd5bb8d7d32b"
+    }
+  ],
+  "unrelated_work": "Provider extension and other diagnostics remain local; mixed root documents and test classification staged selectively."
+}

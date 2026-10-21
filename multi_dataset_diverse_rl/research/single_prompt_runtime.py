@@ -30,6 +30,18 @@ from ..search.optimization_evidence import POLICY as EVIDENCE_POLICY
 from .single_prompt_policy import policy
 
 
+def validate_scoring_observation(value):
+    """A persisted grade must belong to the current, raw-verified prediction codec."""
+    from ..benchmarks.math_flexible_answer import prediction_from_persisted
+    if not isinstance(value,dict) or type(value.get('correct')) is not bool:
+        raise SearchContractError('MATH_CACHED_OBSERVATION_GRADE_INVALID')
+    prediction=prediction_from_persisted(value.get('prediction'))
+    if (value.get('valid')!=prediction.prediction_valid or value.get('answer')!=prediction.answer
+            or value['correct'] and not prediction.prediction_valid):
+        raise SearchContractError('MATH_CACHED_OBSERVATION_PREDICTION_MISMATCH')
+    return value
+
+
 class StudyGradientProvider(PerExampleGradientProvider):
     """Reuse the exact Gradient input validator/extractor with a study broker."""
     def __init__(self, broker):
@@ -72,6 +84,10 @@ class StudyClusterProvider(GradientClusterProvider):
 
 class StudyBroker:
     def __init__(self, *, phase, scope, transport, ledger, receipts, dispatch_guard):
+        from ..math_scoring import CONTRACT_ID, contract_sha256, RetiredMathScorerError
+        runtime = scope.get('plan', getattr(self, 'plan', {})).get('config', {}).get('runtime', scope.get('policy', {}))
+        if runtime.get('math_scoring_contract') != CONTRACT_ID or runtime.get('math_scoring_sha256') != contract_sha256():
+            raise RetiredMathScorerError('NEW_MATH_SCORING_SCOPE_REQUIRED_NO_HISTORICAL_RESUME')
         self.phase = phase
         self.scope = scope
         self.transport = transport
@@ -145,9 +161,10 @@ class StudyBroker:
             estimate = len(serialized_request(request)) + 1024
             if estimate > p['optimizer_input_limit'] or estimate + q['accounting_output_ceiling'] > p['optimizer_context_limit']:
                 raise SearchContractError('STUDY_FULL_EVIDENCE_CONTEXT_LIMIT')
+        from ..math_scoring.prediction import cache_identity
         key = hashlib.sha256(serialized_request(request) + json.dumps([
             self.scope.get('continuation', {}).get('request_identity_scope', self.scope['scope_identity']),
-            split, self.seed, self.cache_ordinal(split), role]).encode()).hexdigest()
+            split, self.seed, self.cache_ordinal(split), role, cache_identity()]).encode()).hexdigest()
         return request, key
 
     def complete(self, *, role, split, stage, messages, capacity=None):
@@ -254,7 +271,7 @@ class StudyBroker:
         with self.lock:
             if key in self.cache:
                 self.usage['cache_hits'] += 1
-                return deepcopy(self.cache[key])
+                return deepcopy(validate_scoring_observation(self.cache[key]))
             future = self.inflight.get(key)
             owner = future is None
             if owner:
@@ -305,8 +322,9 @@ class StudyBroker:
         return classify_prediction(response['text'], response.get('finish_reason'))
 
     def score_resolved(self, resolved, row):
-        """Default mathematical scoring; scoped Test recovery may retry this boundary."""
-        return bool(MATHBenchmarkAdapter().score_member_output(resolved.parsed(), row['reference_final_answer']))
+        """All phases use the same boxed-response correctness contract."""
+        from ..math_scoring import score_math_response
+        return score_math_response(resolved.text, row['reference_final_answer']).correct
 
     def evaluate(self, prompt, rows, split, seed, ordinal):
         if not rows or seed != self.seed:

@@ -35,7 +35,7 @@ def synthetic(answers=('3','2','2','4','5'),*,text=None,valid=None):
         aggregation=EquivalencePluralityAggregation(),freeze_initial_competence=True)
     profiles={}
     for m,a in enumerate(answers):
-        raw=(text or 'Written condition checking is recorded.\n')+'Final answer: '+a
+        raw=(text or 'Written condition checking is recorded.\n')+r'\boxed{'+a+'}'
         if valid is not None and not valid[m]:raw='An unfinished output without a final declaration.'
         pred=classify_prediction(raw,'stop')
         profiles[m]=(solver_profile(dict(request_sha256=digest([m,raw])),pred,member_id=m,prompt=prompts[m],

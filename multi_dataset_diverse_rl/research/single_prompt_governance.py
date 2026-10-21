@@ -63,6 +63,27 @@ def private_path(root, path):
     return value
 
 
+def historical_data_inputs(root, path=MANIFEST):
+    """Read pinned membership/initial-state provenance without old run eligibility.
+
+    New scoring protocols may retain the original data and initial prompt, while
+    validate_manifest still rejects historical policies for current execution.
+    This constructor reads metadata only and grants no held-out capability.
+    """
+    from ..governance.frozen_documents import validate_published_single_prompt
+    value=read_json(root/path)
+    if not validate_published_single_prompt(root,path,value):
+        raise SearchContractError('HISTORICAL_DATA_PARENT_NOT_PINNED')
+    if file_hash(root/value['initial_prompt_path'])!=value['initial_prompt_sha256']:
+        raise SearchContractError('HISTORICAL_DATA_INITIAL_PROMPT_HASH_MISMATCH')
+    data=value['data']
+    reader=StudySplitReader(root/data['canonical_root'],root/data['split_directory'],'math',
+        expected_manifest_sha256=data['split_manifest_sha256'],expected_protocol='benchmark_experiment_split_v2')
+    if reader.manifest['counts']!=data['counts']:
+        raise SearchContractError('HISTORICAL_DATA_COUNT_MISMATCH')
+    return value,reader
+
+
 def validate_manifest(root, manifest):
     expected_keys = {'schema_version', 'experiment_id', 'identity', 'source_base_sha',
         'policy', 'parents', 'data', 'initial_prompt_path', 'initial_prompt_sha256',

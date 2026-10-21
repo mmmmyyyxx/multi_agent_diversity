@@ -13,6 +13,7 @@ def main():
     from multi_dataset_diverse_rl.research.ablations.aligned import prepare
     parser = argparse.ArgumentParser()
     parser.add_argument('--destination', type=Path, required=True)
+    parser.add_argument('--resume-full-error-test',action='store_true',help='Test-only exact paid-prefix A2 continuation, zero API preparation.')
     parser.add_argument('--full-error-control', action='store_true', help='Fresh all-error A control, three Seed42 repeats; zero API preparation.')
     parser.add_argument('--continue-parent', type=Path)
     parser.add_argument('--c-only',action='store_true',help='Fresh reviewed C-only three-repeat experiment; no old state/cache.')
@@ -25,6 +26,12 @@ def main():
     parser.add_argument('--resume-ab-test',action='store_true',help='Continue paid A/B Tests after local scorer repair.')
     parser.add_argument('--resume-pattern-scheduling',action='store_true',help='Frozen paid-prefix continuation with Solver96/Gradient16/Test96.')
     args = parser.parse_args()
+    if args.resume_full_error_test:
+        if any(v for k,v in vars(args).items() if k not in ('resume_full_error_test','destination')):
+            parser.error('A2 Test continuation cannot be combined with other modes.')
+        from multi_dataset_diverse_rl.research.ablations.full_error_test_resume import prepare as prepare_test
+        print(json.dumps(prepare_test(ROOT,args.destination),indent=2))
+        return
     if args.full_error_control:
         if any(value for key,value in vars(args).items() if key not in ('full_error_control','destination')):
             parser.error('All-error control cannot be combined with other preparation modes.')

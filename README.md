@@ -1,8 +1,9 @@
 # Unified Team Prompt Search
 
 The sole active research architecture is Unified Team Prompt Search.
-The sole current method is V2.12 count-only exhaustive responsibility with existing Group diagnosis and V2.9 Parent Population,
-`unified_team_prompt_search_v2_12_count_responsibility_v1`.
+The sole current method retains V2.12 count-only exhaustive responsibility,
+Group diagnosis and V2.9 Parent Population, with the explicit Hendrycks scoring
+replacement: `unified_team_prompt_search_count_responsibility_hendrycks_v1`.
 See the [count-only responsibility amendment](docs/design/COUNT_RESPONSIBILITY_V212.md).
 See the [V2.11 auxiliary diagnosis and evidence projection amendment](docs/design/GROUP_DIAGNOSED_REFLECTION_V211.md).
 See the [historical weighted responsibility amendment](docs/design/WEIGHTED_ERROR_RESPONSIBILITY_V210.md).
@@ -36,3 +37,8 @@ The [direct readable evidence amendment](docs/design/DIRECT_READABLE_OPTIMIZER_E
 restores original complete response and preview strings for Gradient and Reflection.
 Solver concurrency 16, Gradient concurrency 8 and private request timing remain.
 This version has no real execution or model capability result; old scopes stay closed.
+
+
+Current MATH scoring uses only [C-EVOLVE / Hendrycks V1](docs/math_scoring_cevolve_hendrycks_v1.md).
+Old scoring continuations, caches and frozen experiment authorizations cannot be
+reused. This migration performs no model calls and does not resume A2 Test.

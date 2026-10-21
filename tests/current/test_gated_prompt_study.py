@@ -33,8 +33,8 @@ def broker_for(path,transport=None):
 def test_frozen_settings_and_metadata_only_membership():
     manifest=gov.manifest_template(ROOT)
     # Historical cell hashes stay frozen; only metadata membership is read here.
-    reader=gov.shared.validate_manifest(ROOT,gov.read_json(ROOT/gov.shared.MANIFEST))
-    with pytest.raises(SearchContractError,match='GATED_CELL_MISMATCH'):
+    reader=fixture.metadata_reader()
+    with pytest.raises(SearchContractError,match='STUDY_MANIFEST_POLICY_MISMATCH'):
         gov.validate_manifest(ROOT,manifest)
     subset=gate_membership(reader)
     assert subset==gate_membership(reader) and subset['count']==100 and subset['source_count']==300
@@ -299,7 +299,7 @@ def test_persistence_failure_does_not_complete_an_opportunity(tmp_path):
 
 def test_formal_test_alignment_uses_metadata_and_same_inference_contract():
     from multi_dataset_diverse_rl.research.gated_prompt_test import formal_test_plan
-    reader=gov.shared.validate_manifest(ROOT,gov.read_json(ROOT/gov.shared.MANIFEST))
+    reader=fixture.metadata_reader()
     plan=formal_test_plan(ROOT,reader)
     assert plan['count']==300 and plan['physical_call_ceiling']==10800
     assert plan['solver_decoding']==policy()['solver_decoding_policy']

@@ -56,8 +56,8 @@ def graph(tmp_path,*,reflection=None,solver_behavior=None,uncertain=False,long_r
             written='' if answer_only else 'Actual substitution operation is recorded.\n'
             if long_response:written+='A synthetic ordinary operation is written here. Unicode数学核验 π。\n'*120
             answer=solver_answer(prompt,index,req) if solver_answer else '2' if correct else '3'
-            if answer_only_form=='natural_confirmation':return response('Final answer: '+answer+'\nTherefore, x = '+answer+'.')
-            return response(written+'Final answer: '+answer)
+            if answer_only_form=='natural_confirmation':return response(r'\boxed{'+answer+'}\nTherefore, x = '+answer+'.')
+            return response(written+r'\boxed{'+answer+'}')
         if len(req['messages'])==2:
             p=json.loads(req['messages'][1]['content'])
             if 'example' in p:

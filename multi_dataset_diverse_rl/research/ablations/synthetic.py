@@ -23,7 +23,7 @@ class SyntheticTransport:
         self.calls.append((role, deepcopy(request)))
         if role == 'solver':
             number = int(request['messages'][1]['content'].split(':')[-1])
-            text = f'Final answer: {number + 1}'
+            text = r'\boxed{' + str(number + 1) + '}'
         elif role == 'reflection':
             text = json.dumps(dict(block='strategy', content='Check calculations carefully and verify each transformation.'))
         elif role == 'pattern_gradient':

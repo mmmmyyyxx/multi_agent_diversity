@@ -35,7 +35,7 @@ class ToyTransport:
         self.calls.append((role, deepcopy(request)))
         if role == 'solver':
             number = int(request['messages'][1]['content'].split(':')[-1])
-            text = f'Final answer: {number + 1}'
+            text = r'\boxed{' + str(number + 1) + '}'
         elif role == 'reflection':
             self.reflections += 1
             text = json.dumps(dict(block='strategy', content='Check calculations carefully. ' + 'Verify the result. ' * self.reflections))
@@ -60,6 +60,16 @@ def toy_rows(n=5):
         content=dict(problem=f'Synthetic fixture value: {i}', solution=f'The reference value is {i}.')) for i in range(n))
 
 
+def metadata_reader():
+    """Historical membership metadata grants no current scoring execution."""
+    from multi_dataset_diverse_rl.governance.frozen_documents import validate_published_single_prompt
+    manifest=read_json(ROOT/'experiments/manifests/single_prompt_gradient_pattern_v1.json')
+    assert validate_published_single_prompt(ROOT,'experiments/manifests/single_prompt_gradient_pattern_v1.json',manifest)
+    data=manifest['data']
+    return StudySplitReader(ROOT/data['canonical_root'],ROOT/data['split_directory'],'math',
+        expected_manifest_sha256=data['split_manifest_sha256'],expected_protocol='benchmark_experiment_split_v2')
+
+
 def cell(arm='full_errors', seed=88):
     return dict(cell_id=f'{arm}_seed{seed}', arm=arm, seed=seed, initial_prompt=SEED.to_dict())
 
@@ -67,14 +77,14 @@ def cell(arm='full_errors', seed=88):
 def broker_for(tmp_path, *, phase='train', transport=None, cap=10**9):
     ledger = TokenLedger(tmp_path / 'ledger', task_sha256='a' * 64, policy=POLICY_V27_FORMAL_UNCAPPED)
     receipts = ProviderResponseReceipts(tmp_path / 'receipts', attempt_id='toy', startup_identity_sha256='a' * 64)
-    broker = StudyBroker(phase=phase, scope=dict(scope_identity='a' * 64, token_ceiling=cap, call_ceiling=100000),
+    broker = StudyBroker(phase=phase, scope=dict(policy=policy(), scope_identity='a' * 64, token_ceiling=cap, call_ceiling=100000),
         transport=transport or ToyTransport(), ledger=ledger, receipts=receipts, dispatch_guard=lambda _: None)
     broker.attempt_id, broker.cell_id, broker.seed = 'toy', 'toy', 88
     return broker
 
 
 def observation(correct=False):
-    pred = resolve_predictions([classify_prediction('Final answer: 1')])
+    pred = resolve_predictions([classify_prediction(r'\boxed{1}')])
     return dict(correct=correct, valid=True, answer='1', prediction=asdict(pred))
 
 
@@ -83,7 +93,10 @@ def test_confirmed_manifest_and_resource_arithmetic():
     assert p['rounds'] == 20 and p['error_batch_size'] == 3 and p['seeds'] == [88, 89, 90]
     assert [call_ceiling(x) for x in ('train', 'validation', 'test')] == [114480, 226800, 10800]
     manifest = read_json(ROOT / 'experiments/manifests/single_prompt_gradient_pattern_v1.json')
-    reader = validate_manifest(ROOT, manifest)
+    from multi_dataset_diverse_rl.governance.frozen_documents import validate_published_single_prompt
+    assert validate_published_single_prompt(ROOT,'experiments/manifests/single_prompt_gradient_pattern_v1.json',manifest)
+    with pytest.raises(SearchContractError):validate_manifest(ROOT,manifest)
+    reader = metadata_reader()
     assert reader.metadata('test')['count'] == 300
     with pytest.raises(SearchContractError, match='POLICY_MISMATCH'):
         validate_manifest(ROOT, dict(manifest, policy=dict(p, rounds=19)))
@@ -437,7 +450,7 @@ def test_solver_invalid_recovery_capacity_and_first_valid_wrong_stops(tmp_path):
     class TruncatedThenWrong(ToyTransport):
         def for_role(self, role, request):
             self.calls.append((role, request))
-            return dict(text='Final answer: 10', finish_reason='length' if len(self.calls) == 1 else 'stop', input_tokens=1, output_tokens=1)
+            return dict(text='incomplete' if len(self.calls)==1 else r'\boxed{10}', finish_reason='length' if len(self.calls) == 1 else 'stop', input_tokens=1, output_tokens=1)
     broker = broker_for(tmp_path / 'length', transport=TruncatedThenWrong())
     try:
         result = broker.evaluate(SEED, toy_rows(1), 'optimize', 88, 0)['toy_0']

@@ -149,6 +149,20 @@ MATH_PROTOCOL_WEIGHTED_V8 = replace(MATH_PROTOCOL_FLEXIBLE_V7,
 MATH_PROTOCOL_COUNT_V9 = replace(MATH_PROTOCOL_FLEXIBLE_V7,
     responsibility_policy_id=versions.COUNT_BINARY_RESPONSIBILITY_VERSION)
 
+MATH_PROTOCOL_HENDRYCKS = replace(MATH_PROTOCOL_COUNT_V9,
+    task_contract_id='cevolve_hendrycks_math_v1',
+    system_contract_id=versions.MATH_HENDRYCKS_INTERFACE_VERSION,
+    output_contract_id='hendrycks_last_boxed_answer_v1',
+    parser_contract_id='cevolve_hendrycks_math_v1/last_boxed',
+    member_metric_id='cevolve_hendrycks_math_v1',
+    team_metric_id='cevolve_hendrycks_math_v1',
+    member_success_semantics='Final boxed extraction and pinned Hendrycks normalized string equality; valid gold plus extraction failure is zero; invalid gold is an evaluation-input error',
+    aggregation_output_semantics='Existing equal-weight equivalence plurality with tie abstention; winner correctness uses Hendrycks; not C-EVOLVE random fallback aggregation',
+    system_dependencies=(SystemDependency('HENDRYCKS_MATH_985bdc1696e88e8643f081a0ff4719da39f2ae2a',
+        ('vendored_pure_extraction_and_normalization', 'stdlib_only_correctness',
+         'unchanged_math_verify_dependency_for_aggregation_only'), True, None),))
+PROTOCOLS['math'] = MATH_PROTOCOL_HENDRYCKS
+
 
 def protocol_input(benchmark_id: str, input_id: str, row: Mapping[str, object],
                    output_contract: str, *, protocol: BenchmarkProtocolSpec | None = None) -> BenchmarkInput:

@@ -54,7 +54,7 @@ def test_32_real_broker_requests_overlap_and_have_closed_charged_receipts(tmp_pa
                 return super().for_role(role,request)
             finally:
                 with lock:state['active']-=1
-    scope=dict(scope_identity='a'*64,call_ceiling=100,token_ceiling=None,execution_amendment=ex.contract())
+    scope=dict(policy=ex.policy(),scope_identity='a'*64,call_ceiling=100,token_ceiling=None,execution_amendment=ex.contract())
     ledger=TokenLedger(tmp_path/'ledger',task_sha256='a'*64,policy=ex.ledger_policy(scope))
     broker=GatedPromptBroker(phase='train',scope=scope,transport=Transport(),ledger=ledger,
         receipts=ProviderResponseReceipts(tmp_path/'receipts',attempt_id='fake',startup_identity_sha256='a'*64),dispatch_guard=lambda _:None)

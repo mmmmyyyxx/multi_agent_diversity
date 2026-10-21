@@ -192,6 +192,8 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
         operational_pilot=dict(identity='TARGET_OR_TEAM_PROGRESS_OPERATIONAL_PILOT_BOUND_V1',
             max_opportunities=max_opportunities,token_ceiling=token_ceiling,
             scientific_stopper='team_epoch_no_commit_v1',guarantees_saturation=False))
+    from ..math_scoring import CONTRACT_ID, contract_sha256
+    c.update(math_scoring_contract=CONTRACT_ID, math_scoring_sha256=contract_sha256())
     if formal:
         c.update(accounting_scope_policy=formal_accounting,operational_pilot=deepcopy(formal_bound))
         from ..governance.canary_review import FORMAL_POLICY
@@ -231,8 +233,8 @@ def derive_structured_contract(parent, *, attempt, binding_path, parent_path, pa
     from ..current_contract import PATTERN_SPECIFIC_CONTENT_GUARD_VERSION, GRADIENT_PARTITION_COMPLETION_VERSION
     c['pattern_abstraction_guard']=PATTERN_SPECIFIC_CONTENT_GUARD_VERSION
     c['partition_completion_policy']=GRADIENT_PARTITION_COMPLETION_VERSION
-    from .protocols import MATH_PROTOCOL_COUNT_V9
-    c['benchmark_protocol_sha256']=MATH_PROTOCOL_COUNT_V9.identity()
+    from .protocols import MATH_PROTOCOL_HENDRYCKS
+    c['benchmark_protocol_sha256']=MATH_PROTOCOL_HENDRYCKS.identity()
     c.pop('repair_probe_policy',None)
     from ..search.population_memory import POLICY as memory_policy
     c['shared_risk_policy']=deepcopy(memory_policy)
